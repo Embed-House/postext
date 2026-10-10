@@ -87,16 +87,18 @@ const band = { enabled: true, minHeight: mm(70), slot: { elements: [
   { kind: 'box', id: 'band', style: { backgroundColor: col('teal') },
     placement: { anchor: { to: 'bleed', edge: 'top-left' },
       size: { width: mm(216), height: mm(86) } } },
-  // Design text takes the document's direction; an English title says 'ltr' and aligns left.
+  // A heading's design is set in the flow and mirrored with the page: 'left' is the side the
+  // text starts on, the sheet's right in this book, and 'right' its left. Design text takes
+  // the document's direction; the English title says 'ltr' and starts from the sheet's left.
   { kind: 'text', id: 'org', content: '{attr.org}', fontFamily: ARABIC, fontSize: pt(13),
-    fontWeight: 600, color: col('tint'), align: 'right',
-    placement: { anchor: { to: 'page', edge: 'top-right' }, offset: { x: mm(-SIDE), y: mm(18) } } },
+    fontWeight: 600, color: col('tint'), align: 'start',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(SIDE), y: mm(18) } } },
   { kind: 'text', id: 'title', content: '{titleText}', fontFamily: ARABIC, fontSize: pt(50),
-    fontWeight: 700, lineHeight: 1.15, color: col('paper'), align: 'right',
-    placement: { anchor: { to: 'page', edge: 'top-right' }, offset: { x: mm(-SIDE), y: mm(30) } } },
+    fontWeight: 700, lineHeight: 1.15, color: col('paper'), align: 'start',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(SIDE), y: mm(30) } } },
   { kind: 'text', id: 'title-2', content: '{attr.second}', direction: 'ltr', fontFamily: LATIN,
-    fontSize: pt(20), fontWeight: 300, color: col('tint'), align: 'left',
-    placement: { anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(SIDE), y: mm(66) } } },
+    fontSize: pt(18), fontWeight: 300, color: col('tint'), align: 'start',
+    placement: { anchor: { to: 'page', edge: 'top-right' }, offset: { x: mm(-SIDE), y: mm(66) } } },
 ] } };
 // #endregion
 

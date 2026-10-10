@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-arabic-english-report",
-  "sourceHash": "9b128e2d27fa95cb1aed6cce660543596c7aac9ddfac51e3bb22ebde477caa69",
+  "sourceHash": "5d4f29f62a9b8d6b664837de444336d333d68094d469b863dd1c2c5676d9445e",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.135Z",
+  "capturedAt": "2026-10-10T19:12:54.295Z",
   "variants": {
     "en": {
-      "hash8": "fa85de4b",
-      "vdtHash": "4bceb305cd96b95e4ecc6e961222346b21659658",
+      "hash8": "4865b9c1",
+      "vdtHash": "8590d9b59032e62092fd0ab1303d6d23b1fa59e2",
       "timings": {
-        "importMs": 160,
-        "fontsMs": 65,
-        "buildMs": 65,
-        "totalMs": 828,
+        "importMs": 756,
+        "fontsMs": 119,
+        "buildMs": 178,
+        "totalMs": 1727,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "IBM Plex Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 141
+        "ownLines": 143
       },
       "pages": [
         {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 76122,
+          "bytes": 75292,
           "alt": "Opening page ١: التقرير السنوي ٢٠٢٥."
         },
         {
@@ -100,12 +100,12 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82782,
+        "bytes": 82790,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16521,
+        "bytes": 16248,
         "folio": "3c25eba8"
       },
       "detected": {
@@ -328,17 +328,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "a2c3fb03",
-      "vdtHash": "5566b29fc623b9305db2e752679458380661b1bf",
+      "hash8": "d67560d8",
+      "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 58,
-        "buildMs": 73,
-        "totalMs": 830,
+        "importMs": 252,
+        "fontsMs": 95,
+        "buildMs": 118,
+        "totalMs": 1076,
         "builds": 1
       },
       "specimen": {
@@ -359,7 +365,7 @@
           "IBM Plex Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 141
+        "ownLines": 143
       },
       "pages": [
         {
@@ -370,7 +376,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 77950,
+          "bytes": 77062,
           "alt": "Página de apertura ١: التقرير السنوي ٢٠٢٥."
         },
         {
@@ -421,12 +427,12 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 83719,
+        "bytes": 83716,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16802,
+        "bytes": 16575,
         "folio": "3c25eba8"
       },
       "detected": {
@@ -649,7 +655,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
