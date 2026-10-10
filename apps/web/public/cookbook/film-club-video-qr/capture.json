@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "film-club-video-qr",
-  "sourceHash": "5934403cd3b1b8b4f843ec2a7784ed17033ee8464c2775b157a6e9d5896f024a",
+  "sourceHash": "fcb07ddf34fa39c21b852ed8ef260568730a1a9d167778fd12b2296e66358a00",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.461Z",
+  "capturedAt": "2026-10-10T18:55:30.248Z",
   "variants": {
     "en": {
-      "hash8": "52c022b5",
+      "hash8": "cbb6b3f8",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 182,
-        "fontsMs": 110,
-        "buildMs": 44,
-        "totalMs": 925,
+        "importMs": 429,
+        "fontsMs": 245,
+        "buildMs": 156,
+        "totalMs": 2120,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84126,
+          "bytes": 84134,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 79092,
+          "bytes": 78968,
           "alt": "Opening page 5: Spring. Film 4. Spring. Blender Studio."
         },
         {
@@ -141,12 +141,12 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 299440,
+        "bytes": 298164,
         "pages": 6
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 411675,
+        "bytes": 410375,
         "folio": "edbbafa0"
       },
       "detected": {
@@ -402,13 +402,13 @@
       }
     },
     "es": {
-      "hash8": "666147d3",
-      "vdtHash": "80469d22f149be1907cf7e9ea6c697761367045f",
+      "hash8": "95c3c847",
+      "vdtHash": "524112d7bf7c2be7058945f34b56f0b081943cdc",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 104,
+        "importMs": 169,
+        "fontsMs": 129,
         "buildMs": 49,
-        "totalMs": 913,
+        "totalMs": 1000,
         "builds": 1
       },
       "specimen": {
@@ -463,7 +463,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 90628,
+          "bytes": 90602,
           "alt": "Página de apertura 3: Big Buck Bunny. Película 2. Big Buck Bunny. Proyecto Peach, Blender Institute."
         },
         {
@@ -485,7 +485,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 82420,
+          "bytes": 82402,
           "alt": "Página de apertura 5: Spring. Película 4. Spring. Blender Studio."
         },
         {
@@ -496,7 +496,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 96234,
+          "bytes": 95560,
           "alt": "Página de apertura 6: En el cineclub."
         }
       ],
@@ -532,12 +532,12 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 313740,
+        "bytes": 311584,
         "pages": 6
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 420945,
+        "bytes": 419163,
         "folio": "edbbafa0"
       },
       "detected": {
@@ -789,7 +789,13 @@
           "share": 0,
           "worst": 1.83
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

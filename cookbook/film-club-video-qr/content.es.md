@@ -23,7 +23,7 @@ Elephants Dream se hizo en Ámsterdam a partir de septiembre de 2005, con el nom
 
 Un conejo enorme y bonachón pasa la mañana mirando mariposas hasta que tres roedores, con una ardilla voladora a la cabeza, empiezan a tirarle fruta y matan a dos de las mariposas. Él responde con una serie de trampas. Nadie habla: la historia se cuenta con el ritmo y el gesto, como en los cortos de dibujos animados que recuerda.
 
-El Proyecto Peach reunió a siete artistas en el Blender Institute de Ámsterdam entre octubre de 2007 y abril de 2008, y la película se estrenó allí el 10 de abril de 2008. El pelaje de los animales y la hierba del bosque obligaron a mejorar el programa, y esas novedades llegaron a todos con Blender 2.46. Como es luminosa, variada y de uso libre, Big Buck Bunny es además un clip de prueba habitual para los reproductores de vídeo: puede que ya la hayas visto sin saber cómo se llamaba.
+Entre octubre de 2007 y abril de 2008, el Proyecto Peach reunió a siete artistas en el Blender Institute de Ámsterdam, y la película se estrenó allí el 10 de abril de 2008. El pelaje de los animales y la hierba del bosque obligaron a mejorar el programa, y esas novedades llegaron a todos con Blender 2.46. Como es luminosa, variada y de uso libre, Big Buck Bunny es además un clip de prueba habitual para los reproductores de vídeo: puede que ya la hayas visto sin saber cómo se llamaba.
 
 # Tears of Steel {kicker="Sesión 3 · Viernes 20 de noviembre" credits="Escrita y dirigida por Ian Hubert · Países Bajos, 2012 · 12 min · En inglés"}
 
@@ -47,11 +47,11 @@ Las proyecciones empiezan a las 20.30. La entrada es gratuita para los socios y 
 
 ## Por qué podemos proyectarlas
 
-Cada película se publica con una licencia Creative Commons de reconocimiento, que permite a cualquiera copiar, compartir y proyectar la obra, también en público y cobrando entrada, siempre que se cite a sus autores. La Blender Foundation pide que los créditos finales se mantengan, y los mantenemos.
+Cada película se publica con una licencia Creative Commons de reconocimiento, que permite a cualquiera copiar, compartir y proyectar la obra, también en público y cobrando entrada, siempre que se nombre a sus autores. La fundación pide que los créditos finales se mantengan, y los mantenemos.
 
 ## Verlas en casa
 
-Los códigos de las cartelas abren las películas en los canales de Blender en YouTube. Si tu móvil no lee un código, escribe la dirección corta que va impresa bajo la imagen. En el PDF de este programa, que está en la web del cineclub, cada cartela enlaza con su película.
+Los códigos de las cartelas abren las películas en YouTube, en los canales de Blender. Si tu móvil no lee un código, escribe la dirección corta impresa bajo la imagen. En el PDF de este programa, que está en la web del cineclub, cada cartela enlaza con su película.
 
 ## Créditos
 

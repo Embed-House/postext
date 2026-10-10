@@ -284,7 +284,7 @@ const MOTIFS = {
     });
     g.fillStyle = mix(bg, '#000000', 0.6);
     for (let i = 0; i < 9; i++) {
-      const [x, h] = [760 + i * 70 + rand() * 30, 130 + rand() * 120];
+      const [x, h] = [920 + i * 58 + rand() * 30, 130 + rand() * 120];
       g.beginPath();
       g.moveTo(x - h * 0.22, 640);
       g.lineTo(x, 640 - h);
