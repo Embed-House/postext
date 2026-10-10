@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "clinical-trial-consort-flow",
-  "sourceHash": "e8c6fcb0c2e838c91f020563b8c18ad2b946f010965ab6aebd509acdae186797",
+  "sourceHash": "b3cb0cd6f5bc44cb0b60a4cc9544d2c31e3dc686c06111c49d7b6204de01866a",
   "engine": {
     "postext": "1.25.4",
     "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:07:32.087Z",
+  "capturedAt": "2026-10-10T20:43:22.359Z",
   "variants": {
     "en": {
-      "hash8": "343d884f",
-      "vdtHash": "730b13854e6938eb663895b913f237aa247637c7",
+      "hash8": "b4b7cfd2",
+      "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 595,
-        "fontsMs": 138,
-        "buildMs": 508,
-        "totalMs": 1876,
+        "importMs": 316,
+        "fontsMs": 120,
+        "buildMs": 520,
+        "totalMs": 1556,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Nunito Sans"
         ],
         "pages": 8,
-        "ownLines": 229
+        "ownLines": 231
       },
       "pages": [
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 200416,
+          "bytes": 199822,
           "alt": "Page 3: Woebot."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 114028,
+          "bytes": 114032,
           "alt": "Page 5: Completer Analysis. Figure 1. Participant flow through the trial (CONSORT diagram). · Table 1. Demographic and clinical variables of participants at baseline."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 147640,
+          "bytes": 147542,
           "alt": "Page 6: Qualitative Results. Table 2. Results of ITT analysis of entire sample on primary outcomes in the study at T2. · Figure 2. Best features of the Woebot experience: themes of the answers to “What was the best thing about your experience using Woebot?” · Figure 3. Least f…"
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 210436,
+          "bytes": 210466,
           "alt": "Page 7: Conclusions."
         }
       ],
@@ -130,12 +130,12 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 238883,
+        "bytes": 238879,
         "pages": 8
       },
       "sandbox": {
         "file": "clinical-trial-consort-flow.postext",
-        "bytes": 121991,
+        "bytes": 121986,
         "folio": "a7ebcb67"
       },
       "detected": {
@@ -476,15 +476,15 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 4,
-          "share": 0.0119,
+          "count": 1,
+          "share": 0.003,
           "worst": 2.15
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 5 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages)"
           },
           {
             "check": "vdt",

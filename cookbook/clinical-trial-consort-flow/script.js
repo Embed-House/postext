@@ -148,10 +148,12 @@ const config = () => ({
     { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // any page: no forced recto
     { level: 2, ...sans(11.5, 800), lineHeight: pt(LEAD), marginTop: pt(LEAD),
       marginBottom: pt(0) },
+    // A whole line above a sub-head and none under it: half a line above left the head off
+    // the grid, close to its text or half a line clear of it by where it fell.
     { level: 3, ...sans(9.4, 700), color: col('ink'), lineHeight: pt(LEAD),
-      marginTop: pt(LEAD / 2), marginBottom: pt(0) },
+      marginTop: pt(LEAD), marginBottom: pt(0) },
     { level: 4, fontFamily: SERIF, fontSize: pt(9.4), fontWeight: 700, italic: true,
-      color: col('ink'), lineHeight: pt(LEAD), marginTop: pt(LEAD / 2), marginBottom: pt(0) },
+      color: col('ink'), lineHeight: pt(LEAD), marginTop: pt(LEAD), marginBottom: pt(0) },
   ] },
   unorderedLists: { bulletChar: '•', color: col('accent'), marginTop: pt(0),
     marginBottom: pt(0) },
