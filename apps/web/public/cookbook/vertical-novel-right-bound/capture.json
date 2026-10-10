@@ -3,21 +3,21 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "4256cbaf87fdfc9ffd95d8398c9406472fc3104902d79e1f4f007f2982d30380",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.818Z",
+  "capturedAt": "2026-10-10T22:20:08.977Z",
   "variants": {
     "en": {
-      "hash8": "b1e1a772",
+      "hash8": "b17c6b92",
       "vdtHash": "58000b5255810f22acfb16d4f41cad6543f075f1",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 344,
+        "importMs": 169,
+        "fontsMs": 352,
         "buildMs": 49,
-        "totalMs": 1135,
+        "totalMs": 1105,
         "builds": 1
       },
       "specimen": {
@@ -356,13 +356,13 @@
       }
     },
     "es": {
-      "hash8": "94dab267",
+      "hash8": "d5b9f3de",
       "vdtHash": "bcdcb37b970cfa95fdc05fce7542f1935663495b",
       "timings": {
-        "importMs": 166,
+        "importMs": 167,
         "fontsMs": 346,
-        "buildMs": 49,
-        "totalMs": 1089,
+        "buildMs": 48,
+        "totalMs": 1142,
         "builds": 1
       },
       "specimen": {

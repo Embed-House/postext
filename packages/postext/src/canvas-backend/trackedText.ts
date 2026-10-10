@@ -1,4 +1,7 @@
+import { needsBidi } from '../bidi';
 import { graphemesOf } from '../measure/graphemes';
+import { joiningScriptIn } from '../measure/joining';
+import { paintAsOneRun } from './mirrorFrame';
 
 /**
  * Tracked words keep their ligatures (#663).
@@ -19,6 +22,19 @@ import { graphemesOf } from '../measure/graphemes';
  * letter-spacing, is not their natural width. A word the browser shapes
  * the same either way (nearly all of them) is painted as before, with one
  * `fillText`.
+ *
+ * Two rules of direction (#685):
+ * - the pieces are one run. On a right-to-left page, painted through a
+ *   mirror that turns every `fillText` back about its own box
+ *   (`mirrorFrame.ts`), the word is turned once, about the box it was
+ *   measured in, and its pieces are set inside it from its left end, as on
+ *   a left-to-right page. Turned one by one they stood in the mirror's
+ *   order: "five" read "vefi";
+ * - a word that holds a right-to-left letter (Hebrew, Arabic…) or a letter
+ *   of a joining script is never cut, whoever asks: its letters run the
+ *   other way, and an Arabic word painted in pieces loses its joins. The
+ *   painters already keep such words away (`fillSegmentWord`); this is the
+ *   rule where the cut is made.
  */
 
 /** One piece of a word painted apart from the rest. */
@@ -42,15 +58,36 @@ const TOLERANCE = 0.05;
 /** Words remembered per font before the memory starts over. */
 const MAX_WORDS = 8192;
 
+/** A word painted in pieces. */
+interface TrackedWord {
+  pieces: readonly TrackedPiece[];
+  /** The word's natural width, px: its ligatures counted, no tracking. */
+  natural: number;
+  /** Its letters (graphemes): each was measured with the tracking after it. */
+  letters: number;
+}
+
+/** What is known of each text set in a font. */
+interface Known {
+  otherwise: Map<string, boolean>;
+  words: Map<string, TrackedWord | null>;
+}
+
 /** Font string → what is known of each text set in it. */
-const knownByFont = new Map<string, { otherwise: Map<string, boolean>; pieces: Map<string, readonly TrackedPiece[] | null> }>();
+const knownByFont = new Map<string, Known>();
 
 type Ctx = Pick<CanvasRenderingContext2D, 'font' | 'letterSpacing' | 'measureText'>;
 
-function known(font: string): { otherwise: Map<string, boolean>; pieces: Map<string, readonly TrackedPiece[] | null> } {
+function known(font: string): Known {
   let k = knownByFont.get(font);
-  if (!k) knownByFont.set(font, k = { otherwise: new Map(), pieces: new Map() });
+  if (!k) knownByFont.set(font, k = { otherwise: new Map(), words: new Map() });
   return k;
+}
+
+/** Whether `text` may be painted in pieces at all: no right-to-left letter
+ *  in it and no letter of a joining script (see the module comment). */
+function divisible(text: string): boolean {
+  return !needsBidi(text) && !joiningScriptIn(text);
 }
 
 function widthAt(ctx: Ctx, text: string, spacing: number): number {
@@ -82,7 +119,8 @@ function otherwise(ctx: Ctx, font: string, text: string): boolean {
   return changed;
 }
 
-function piecesOf(ctx: Ctx, font: string, text: string): readonly TrackedPiece[] | null {
+function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
+  if (!divisible(text)) return null;
   const letters = graphemesOf(text);
   if (letters.length < 2 || !otherwise(ctx, font, text)) return null;
   // Two neighbours that shape otherwise under letter-spacing are a
@@ -104,7 +142,7 @@ function piecesOf(ctx: Ctx, font: string, text: string): readonly TrackedPiece[]
   ctx.letterSpacing = '0px';
   const natural = (from: number, to: number): number => ctx.measureText(letters.slice(from, to).join('')).width;
   let glyphs = 0;
-  return groups.map((g) => {
+  const pieces = groups.map((g) => {
     // Up to the piece's first letter in the natural shaping, the kerning
     // before it counted: the pieces meet as the whole word's letters do.
     const offset = g.start === 0 ? 0 : natural(0, g.start + 1) - natural(g.start, g.start + 1);
@@ -112,6 +150,23 @@ function piecesOf(ctx: Ctx, font: string, text: string): readonly TrackedPiece[]
     glyphs += g.ligature ? 1 : g.end - g.start;
     return piece;
   });
+  return { pieces, natural: natural(0, letters.length), letters: letters.length };
+}
+
+/** {@link trackedPieces} with the word's measures. */
+function trackedWord(ctx: CanvasRenderingContext2D, text: string): TrackedWord | null {
+  if (text.length < 2 || !measures(ctx)) return null;
+  const font = ctx.font;
+  const { words } = known(font);
+  let word = words.get(text);
+  if (word === undefined) {
+    const spacing = ctx.letterSpacing;
+    word = wordOf(ctx, font, text);
+    ctx.letterSpacing = spacing;
+    if (words.size >= MAX_WORDS) words.clear();
+    words.set(text, word);
+  }
+  return word;
 }
 
 /** Whether the context can be asked: it has a `letterSpacing` and measures. */
@@ -138,29 +193,22 @@ export function shapedOtherwise(ctx: CanvasRenderingContext2D, text: string): bo
 /**
  * The pieces a tracked word is painted in, in the context's font, or null
  * when it is painted whole (the browser shapes it the same under
- * letter-spacing, or the context measures none). The context's
- * `letterSpacing` is put back as it was found.
+ * letter-spacing, the context measures none, or the word holds a
+ * right-to-left or joining letter). The context's `letterSpacing` is put
+ * back as it was found.
  */
 export function trackedPieces(ctx: CanvasRenderingContext2D, text: string): readonly TrackedPiece[] | null {
-  if (text.length < 2 || !measures(ctx)) return null;
-  const font = ctx.font;
-  const { pieces: words } = known(font);
-  let pieces = words.get(text);
-  if (pieces === undefined) {
-    const spacing = ctx.letterSpacing;
-    pieces = piecesOf(ctx, font, text);
-    ctx.letterSpacing = spacing;
-    if (words.size >= MAX_WORDS) words.clear();
-    words.set(text, pieces);
-  }
-  return pieces;
+  return trackedWord(ctx, text)?.pieces ?? null;
 }
 
 /**
  * Paint a word of a tracked line with `paint` (the caller's `fillText`) at
- * `x`, `y`. `tracking` is the context's `letterSpacing` on entry, px, and
- * on return. A word that would lose its ligatures to it is painted in its
- * {@link trackedPieces}; any other with one `paint`.
+ * `x`, `y`: its left end on a left-to-right page, the start of its box in
+ * a mirrored frame. `tracking` is the context's `letterSpacing` on entry,
+ * px, and on return. A word that would lose its ligatures to it is painted
+ * in its {@link trackedPieces}, as one run (`paintAsOneRun`): its box is
+ * the one the frame turns a word painted whole about, its natural width
+ * and the tracking after each letter. Any other word with one `paint`.
  */
 export function fillTrackedWord(
   ctx: CanvasRenderingContext2D,
@@ -170,14 +218,16 @@ export function fillTrackedWord(
   tracking: number,
   paint: (text: string, x: number, y: number) => void,
 ): void {
-  const pieces = tracking !== 0 ? trackedPieces(ctx, text) : null;
-  if (!pieces) {
+  const word = tracking !== 0 ? trackedWord(ctx, text) : null;
+  if (!word) {
     paint(text, x, y);
     return;
   }
-  for (const piece of pieces) {
-    if (piece.ligature) ctx.letterSpacing = '0px';
-    paint(piece.text, x + piece.offset + tracking * piece.glyphsBefore, y);
-    if (piece.ligature) ctx.letterSpacing = `${tracking}px`;
-  }
+  paintAsOneRun(ctx, x, word.natural + tracking * word.letters, () => {
+    for (const piece of word.pieces) {
+      if (piece.ligature) ctx.letterSpacing = '0px';
+      paint(piece.text, x + piece.offset + tracking * piece.glyphsBefore, y);
+      if (piece.ligature) ctx.letterSpacing = `${tracking}px`;
+    }
+  });
 }

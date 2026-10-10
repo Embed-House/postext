@@ -3,21 +3,21 @@
   "slug": "tebeo-album-page",
   "sourceHash": "a5373512a56a2a428b308b3b7d45847b652716ec1c26605a050700e5fa6febf2",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:46:51.657Z",
+  "capturedAt": "2026-10-10T22:19:22.757Z",
   "variants": {
     "en": {
-      "hash8": "8f83866f",
+      "hash8": "d0bb169d",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 548,
-        "fontsMs": 256,
-        "buildMs": 2267,
-        "totalMs": 3963,
+        "importMs": 165,
+        "fontsMs": 94,
+        "buildMs": 420,
+        "totalMs": 1243,
         "builds": 1
       },
       "specimen": {
@@ -283,11 +283,6 @@
             "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 2267 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -296,13 +291,13 @@
       }
     },
     "es": {
-      "hash8": "aef88e27",
+      "hash8": "b975bb10",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 548,
-        "fontsMs": 200,
-        "buildMs": 1662,
-        "totalMs": 9345,
+        "importMs": 165,
+        "fontsMs": 83,
+        "buildMs": 321,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -573,11 +568,6 @@
             "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 1662 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -586,13 +576,13 @@
       }
     },
     "ca": {
-      "hash8": "b4542942",
+      "hash8": "87c36319",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 107,
-        "buildMs": 385,
-        "totalMs": 1313,
+        "importMs": 167,
+        "fontsMs": 81,
+        "buildMs": 330,
+        "totalMs": 1138,
         "builds": 1
       },
       "specimen": {
@@ -871,13 +861,13 @@
       }
     },
     "zh": {
-      "hash8": "7ea7bf3e",
+      "hash8": "23c896ec",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 261,
-        "buildMs": 444,
-        "totalMs": 1443,
+        "importMs": 166,
+        "fontsMs": 257,
+        "buildMs": 392,
+        "totalMs": 1390,
         "builds": 1
       },
       "specimen": {
@@ -944,7 +934,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157833,
+        "bytes": 1157831,
         "pages": 2
       },
       "sandbox": {
@@ -1152,13 +1142,13 @@
       }
     },
     "ar": {
-      "hash8": "57157765",
+      "hash8": "4e867bd2",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 123,
-        "buildMs": 398,
-        "totalMs": 1226,
+        "importMs": 162,
+        "fontsMs": 110,
+        "buildMs": 353,
+        "totalMs": 1157,
         "builds": 1
       },
       "specimen": {
@@ -1226,7 +1216,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1135151,
+        "bytes": 1135149,
         "pages": 2
       },
       "sandbox": {
@@ -1436,13 +1426,13 @@
       }
     },
     "ja": {
-      "hash8": "be969b08",
+      "hash8": "a2239c5d",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 227,
-        "buildMs": 322,
-        "totalMs": 1298,
+        "importMs": 237,
+        "fontsMs": 332,
+        "buildMs": 332,
+        "totalMs": 1476,
         "builds": 1
       },
       "specimen": {
@@ -1719,13 +1709,13 @@
       }
     },
     "pt": {
-      "hash8": "82ca0582",
+      "hash8": "a894a99a",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 97,
-        "buildMs": 380,
-        "totalMs": 1205,
+        "importMs": 172,
+        "fontsMs": 96,
+        "buildMs": 337,
+        "totalMs": 1166,
         "builds": 1
       },
       "specimen": {

@@ -3,20 +3,20 @@
   "slug": "newspaper-front-page",
   "sourceHash": "97f96cbaf2570e577385a042145b779ae7d05672595c1a59abe32847e636287b",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.464Z",
+  "capturedAt": "2026-10-10T22:17:23.210Z",
   "variants": {
     "en": {
-      "hash8": "ebefd2bc",
-      "vdtHash": "09ecca8a345c42b910663f23feb1eb91c8d953dc",
+      "hash8": "c2fa90e9",
+      "vdtHash": "338876c0f2e56a0f9c060018b95b0ea7b14d4da0",
       "timings": {
-        "importMs": 135,
+        "importMs": 154,
         "fontsMs": 34,
-        "buildMs": 105,
-        "totalMs": 2725,
+        "buildMs": 110,
+        "totalMs": 925,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 184104,
+          "bytes": 185390,
           "alt": "Opening page 2: Town & Valley. The rebuilt pier. Its new concrete footing (red) goes six metres below the riverbed. Both arches were relaid with their own stones. · The next five days · How the wards voted."
         }
       ],

@@ -3,21 +3,21 @@
   "slug": "clinical-trial-consort-flow",
   "sourceHash": "b3cb0cd6f5bc44cb0b60a4cc9544d2c31e3dc686c06111c49d7b6204de01866a",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:43:22.359Z",
+  "capturedAt": "2026-10-10T22:13:20.083Z",
   "variants": {
     "en": {
-      "hash8": "b4b7cfd2",
+      "hash8": "0e313a02",
       "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 316,
-        "fontsMs": 120,
-        "buildMs": 520,
-        "totalMs": 1556,
+        "importMs": 190,
+        "fontsMs": 112,
+        "buildMs": 451,
+        "totalMs": 1332,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 157212,
+          "bytes": 157176,
           "alt": "Opening page 1: Delivering Cognitive Behavior Therapy to Young Adults With Symptoms of Depression and Anxiety Using a Fully Automated Conversational Agent (Woebot): A Randomized Controlled Trial."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 199822,
+          "bytes": 200122,
           "alt": "Page 3: Woebot."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 210466,
+          "bytes": 210484,
           "alt": "Page 7: Conclusions."
         }
       ],
@@ -130,7 +130,7 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 238879,
+        "bytes": 238861,
         "pages": 8
       },
       "sandbox": {
@@ -485,11 +485,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "tang-poems-facing-english",
   "sourceHash": "a6c48ab9a379dfdccff45f0c96c93d15e5b1577d4c06bbb3c34a15bc2e4a9a25",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:16:21.934Z",
+  "capturedAt": "2026-10-10T22:19:22.749Z",
   "variants": {
     "en": {
-      "hash8": "b2fd08cf",
+      "hash8": "e1ba448e",
       "vdtHash": "30b924a160302ddcb74d766509cb1835ed0590eb",
       "timings": {
-        "importMs": 1339,
-        "fontsMs": 1497,
-        "buildMs": 212,
-        "totalMs": 3736,
+        "importMs": 165,
+        "fontsMs": 248,
+        "buildMs": 67,
+        "totalMs": 1052,
         "builds": 1
       },
       "specimen": {
@@ -195,7 +195,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 153201,
+        "bytes": 153202,
         "pages": 10
       },
       "sandbox": {
@@ -425,23 +425,17 @@
           "share": 0,
           "worst": 1.81
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "3fe0e2c9",
+      "hash8": "ec46b863",
       "vdtHash": "2c81fc2df165fa4f1c0987f2b966255d50d5b9a1",
       "timings": {
-        "importMs": 350,
-        "fontsMs": 331,
-        "buildMs": 106,
-        "totalMs": 1494,
+        "importMs": 169,
+        "fontsMs": 238,
+        "buildMs": 73,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -619,7 +613,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 155459,
+        "bytes": 155460,
         "pages": 10
       },
       "sandbox": {
@@ -849,13 +843,7 @@
           "share": 0,
           "worst": 1.79
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

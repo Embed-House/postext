@@ -31,7 +31,7 @@ note{at=bottom-end}: El *Gannet* feia quaranta anys que pescava des de Porthcove
 maya{whisper}: Tranquil, Biscuit. L’avi ja ho ha fet altres vegades.
 biscuit{thought}: Segur?
 ::panel{art=bk-shout}
-tomas{shout}: *Gannet*! Proa a la llum! No la perdis!
+tomas{shout at="27% 82%"}: *Gannet*! Proa a la llum! No la perdis!
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: BRRROOM!
 skipper{at="44% 22%"}: La veiem… veiem la llum…

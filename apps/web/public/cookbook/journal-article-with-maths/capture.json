@@ -3,21 +3,21 @@
   "slug": "journal-article-with-maths",
   "sourceHash": "8f2684c4d9e02c552b9aee803528a78a99b6458b24aac3f705d875ca2fd08e3b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.260Z",
+  "capturedAt": "2026-10-10T22:15:26.556Z",
   "variants": {
     "en": {
-      "hash8": "ee937c2f",
+      "hash8": "2e7028b7",
       "vdtHash": "5983265a2aefc88ff1af9b6a409f96fc03e06dce",
       "timings": {
         "importMs": 172,
-        "fontsMs": 110,
-        "buildMs": 129,
-        "totalMs": 1025,
+        "fontsMs": 109,
+        "buildMs": 128,
+        "totalMs": 1023,
         "builds": 1
       },
       "specimen": {
@@ -430,13 +430,7 @@
           "share": 0,
           "worst": 1.93
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -3,20 +3,20 @@
   "slug": "two-tier-tankobon",
   "sourceHash": "09418af666e90223936244e2d93c530116133d7ff865555df8d2d4f080214ae7",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.965Z",
+  "capturedAt": "2026-10-10T22:20:08.954Z",
   "variants": {
     "en": {
-      "hash8": "abc6a7b8",
+      "hash8": "676e1ca9",
       "vdtHash": "09d7d319dbab446fd8b42929455865cf6ede7689",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 313,
-        "buildMs": 60,
+        "importMs": 170,
+        "fontsMs": 320,
+        "buildMs": 61,
         "totalMs": 1095,
         "builds": 1
       },
@@ -105,7 +105,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140630,
+          "bytes": 140486,
           "alt": "Page 216."
         },
         {
@@ -153,7 +153,7 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281137,
+        "bytes": 281262,
         "pages": 7
       },
       "sandbox": {
@@ -335,13 +335,13 @@
       }
     },
     "es": {
-      "hash8": "d908e8ec",
+      "hash8": "d8b2256e",
       "vdtHash": "b9cfdc8c7358f549f9c08cb0fb706c7ac4927e57",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 299,
-        "buildMs": 60,
-        "totalMs": 1075,
+        "importMs": 170,
+        "fontsMs": 319,
+        "buildMs": 62,
+        "totalMs": 1096,
         "builds": 1
       },
       "specimen": {
@@ -429,7 +429,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140630,
+          "bytes": 140486,
           "alt": "Página 216."
         },
         {
@@ -477,7 +477,7 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281284,
+        "bytes": 281407,
         "pages": 7
       },
       "sandbox": {

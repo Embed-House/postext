@@ -3,20 +3,20 @@
   "slug": "annotated-classic-glosses",
   "sourceHash": "8686fda572d419bfb398dfbaffac13e039237309b6505b9688be0865df00c6ab",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:38:27.958Z",
+  "capturedAt": "2026-10-10T22:11:34.446Z",
   "variants": {
     "en": {
       "hash8": "987c0396",
       "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 142,
-        "fontsMs": 27,
-        "buildMs": 81,
-        "totalMs": 848,
+        "importMs": 131,
+        "fontsMs": 25,
+        "buildMs": 77,
+        "totalMs": 826,
         "builds": 1
       },
       "specimen": {
@@ -306,11 +306,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

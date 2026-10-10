@@ -3,20 +3,20 @@
   "slug": "chapter-opener-bleed-band",
   "sourceHash": "a2ddeef213e710b29a94719d87094f5b8b9e14c39744e61a11e25cbb79a8ef43",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.278Z",
+  "capturedAt": "2026-10-10T22:13:20.034Z",
   "variants": {
     "en": {
-      "hash8": "9e28e70d",
+      "hash8": "376d0413",
       "vdtHash": "09940d9699e7702a8cda351e3491448efa48de26",
       "timings": {
-        "importMs": 127,
+        "importMs": 134,
         "fontsMs": 2,
-        "buildMs": 216,
-        "totalMs": 964,
+        "buildMs": 210,
+        "totalMs": 969,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 216292,
+          "bytes": 216270,
           "alt": "Page 42: 3.2 Where plates meet."
         },
         {
@@ -333,10 +333,10 @@
       "hash8": "fb0ded86",
       "vdtHash": "256f874234a5d86a1ea1a8b1319f24f1128a52f6",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 3,
-        "buildMs": 69,
-        "totalMs": 812,
+        "importMs": 136,
+        "fontsMs": 2,
+        "buildMs": 66,
+        "totalMs": 815,
         "builds": 1
       },
       "specimen": {

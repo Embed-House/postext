@@ -3,21 +3,21 @@
   "slug": "qasida-diwan-page",
   "sourceHash": "4a6e2d3eac2dba5096c9aa7740ab1431e80138cf5d69c39c4936efbe9df510bf",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:25:52.921Z",
+  "capturedAt": "2026-10-10T22:17:56.285Z",
   "variants": {
     "en": {
-      "hash8": "45af433d",
+      "hash8": "4146f850",
       "vdtHash": "f102f2524ca3308171d09c7ba1bb3aefdde8ade6",
       "timings": {
-        "importMs": 1900,
-        "fontsMs": 289,
-        "buildMs": 116,
-        "totalMs": 3001,
+        "importMs": 170,
+        "fontsMs": 67,
+        "buildMs": 71,
+        "totalMs": 852,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79862,
+        "bytes": 79914,
         "pages": 4
       },
       "sandbox": {
@@ -310,23 +310,17 @@
           "share": 0,
           "worst": 1.6300000000000001
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "e01f39d2",
+      "hash8": "3df923ae",
       "vdtHash": "c9812a0a496fb9e4ef6a09580918ee5a56587ed4",
       "timings": {
-        "importMs": 393,
-        "fontsMs": 113,
-        "buildMs": 90,
-        "totalMs": 1383,
+        "importMs": 170,
+        "fontsMs": 68,
+        "buildMs": 73,
+        "totalMs": 852,
         "builds": 1
       },
       "specimen": {
@@ -425,7 +419,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 80029,
+        "bytes": 80092,
         "pages": 4
       },
       "sandbox": {
@@ -619,13 +613,7 @@
           "share": 0,
           "worst": 1.11
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

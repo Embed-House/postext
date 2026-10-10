@@ -3,21 +3,21 @@
   "slug": "newspaper-daily-strip",
   "sourceHash": "acd3c1784c92f9d30c4fe0598b082d5d6b6fca4cc8af55ba90a4be000474beb5",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:42:24.816Z",
+  "capturedAt": "2026-10-10T22:16:33.951Z",
   "variants": {
     "en": {
-      "hash8": "f1393b1c",
+      "hash8": "1bf89c18",
       "vdtHash": "7c58e6cfa88a77a6031e0925359cc20fe5564a87",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 122,
-        "buildMs": 360,
-        "totalMs": 1246,
+        "importMs": 168,
+        "fontsMs": 124,
+        "buildMs": 320,
+        "totalMs": 1177,
         "builds": 1
       },
       "specimen": {
@@ -328,23 +328,18 @@
             "check": "C24",
             "severity": "warn",
             "detail": "3 of 62 justified lines (4.8 %) stretch past 2× (worst 2.64×); loosest: p. 2 2.64× “explains the croissants. The pen-”, p. 2 2.18× “Barlow grew up above her par-”, p. 2 2.17× “balloons are drawn around them.””"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2d88e461",
+      "hash8": "790f93eb",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 119,
-        "buildMs": 457,
-        "totalMs": 1317,
+        "importMs": 170,
+        "fontsMs": 121,
+        "buildMs": 418,
+        "totalMs": 1275,
         "builds": 1
       },
       "specimen": {
@@ -415,7 +410,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884693,
+        "bytes": 884694,
         "pages": 2
       },
       "sandbox": {
@@ -650,23 +645,17 @@
           "share": 0.0139,
           "worst": 2.0100000000000002
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "a324d5c7",
+      "hash8": "6b92a4bf",
       "vdtHash": "a0da22d4b46aa5c414ed1a91b28e254f2ed7b140",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 117,
-        "buildMs": 342,
-        "totalMs": 1200,
+        "importMs": 185,
+        "fontsMs": 119,
+        "buildMs": 317,
+        "totalMs": 1191,
         "builds": 1
       },
       "specimen": {
@@ -977,23 +966,18 @@
             "check": "C24",
             "severity": "warn",
             "detail": "2 of 68 justified lines (2.9 %) stretch past 2× (worst 2.0300000000000002×); loosest: p. 2 2.0300000000000002× “Els dibuixos arriben al diari sense”, p. 2 2.0100000000000002× “Ines Barlow dibuixa un pingüí i”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "8dd94214",
+      "hash8": "595377b2",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 610,
-        "buildMs": 338,
-        "totalMs": 1650,
+        "importMs": 163,
+        "fontsMs": 639,
+        "buildMs": 310,
+        "totalMs": 1648,
         "builds": 1
       },
       "specimen": {
@@ -1300,23 +1284,17 @@
           "share": 0,
           "worst": 0.13
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "eb77df66",
+      "hash8": "f5f8d428",
       "vdtHash": "aae0108a4aba55215abfdd0eff0f356ca90464d8",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 143,
-        "buildMs": 362,
-        "totalMs": 1210,
+        "importMs": 170,
+        "fontsMs": 144,
+        "buildMs": 334,
+        "totalMs": 1191,
         "builds": 1
       },
       "specimen": {
@@ -1622,23 +1600,17 @@
           "share": 0,
           "worst": 1.8900000000000001
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "fa0b3e7a",
+      "hash8": "3a578902",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 689,
-        "buildMs": 334,
-        "totalMs": 1724,
+        "importMs": 172,
+        "fontsMs": 716,
+        "buildMs": 314,
+        "totalMs": 1739,
         "builds": 1
       },
       "specimen": {
@@ -1947,23 +1919,17 @@
           "share": 0,
           "worst": 0.16
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "a614c153",
+      "hash8": "62ad896d",
       "vdtHash": "67d2737420920f6703f7f93e2ede51cc8c46527d",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 117,
-        "buildMs": 411,
-        "totalMs": 1259,
+        "importMs": 166,
+        "fontsMs": 120,
+        "buildMs": 366,
+        "totalMs": 1224,
         "builds": 1
       },
       "specimen": {
@@ -2034,7 +2000,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882678,
+        "bytes": 882677,
         "pages": 2
       },
       "sandbox": {
@@ -2274,11 +2240,6 @@
             "check": "C24",
             "severity": "warn",
             "detail": "5 of 70 justified lines (7.1 %) stretch past 2× (worst 2.32×); loosest: p. 2 2.32× “O trabalho começa na segunda,”, p. 2 2.23× “jornais brasileiros recebem Acabou”, p. 2 2.07× “da época, Martin Fry, publicou as”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "bulaq-framed-page",
   "sourceHash": "dddbcd9dda86950234e970d597a37957cf5835ff6d06190681d56a72bdc02eb9",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:21:28.553Z",
+  "capturedAt": "2026-10-10T22:12:14.956Z",
   "variants": {
     "en": {
-      "hash8": "b5b9df96",
+      "hash8": "6bc1a70c",
       "vdtHash": "ee470893091a2ee6fb9dc398c5a1826189c0683d",
       "timings": {
-        "importMs": 649,
-        "fontsMs": 139,
-        "buildMs": 319,
-        "totalMs": 2094,
+        "importMs": 163,
+        "fontsMs": 67,
+        "buildMs": 92,
+        "totalMs": 864,
         "builds": 1
       },
       "specimen": {
@@ -142,7 +142,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 109716,
+        "bytes": 109715,
         "pages": 6
       },
       "sandbox": {
@@ -362,23 +362,17 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "04e1801c",
+      "hash8": "c1a5841f",
       "vdtHash": "493b41b66dfbdfd7c28b306def6923ed6f602698",
       "timings": {
-        "importMs": 269,
-        "fontsMs": 85,
-        "buildMs": 114,
-        "totalMs": 1102,
+        "importMs": 166,
+        "fontsMs": 64,
+        "buildMs": 93,
+        "totalMs": 865,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +497,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110647,
+        "bytes": 110640,
         "pages": 6
       },
       "sandbox": {
@@ -723,13 +717,7 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

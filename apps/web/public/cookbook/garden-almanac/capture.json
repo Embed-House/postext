@@ -3,20 +3,20 @@
   "slug": "garden-almanac",
   "sourceHash": "df7dfb705bc04d519ec93db187f1ac2110e7fd22cd70274213a1572df743ebc9",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:26:17.251Z",
+  "capturedAt": "2026-10-10T22:14:44.245Z",
   "variants": {
     "en": {
       "hash8": "1e478df8",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 68,
-        "buildMs": 60,
-        "totalMs": 880,
+        "importMs": 129,
+        "fontsMs": 69,
+        "buildMs": 57,
+        "totalMs": 848,
         "builds": 1
       },
       "specimen": {
@@ -390,23 +390,17 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "91e3fd2a",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 70,
-        "buildMs": 60,
-        "totalMs": 908,
+        "importMs": 130,
+        "fontsMs": 64,
+        "buildMs": 58,
+        "totalMs": 837,
         "builds": 1
       },
       "specimen": {
@@ -780,13 +774,7 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

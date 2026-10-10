@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "katakana-majiri-proclamation",
-  "sourceHash": "95fa058fdb5c285ff6794e3dc3839693e00cd7b9bd561f1119f07f6d95f441e7",
+  "sourceHash": "d501aaa2df498a17b3b17910a25e364efde0536f838f8bc70acd7ecf207a80b2",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.417Z",
+  "capturedAt": "2026-10-10T22:10:30.185Z",
   "variants": {
     "en": {
-      "hash8": "c56bbc7e",
+      "hash8": "c092f9e5",
       "vdtHash": "fbedc6e1ff7d668a1ac2a61b9b8ca3a2e70faecb",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 406,
-        "buildMs": 51,
-        "totalMs": 1201,
+        "importMs": 164,
+        "fontsMs": 423,
+        "buildMs": 49,
+        "totalMs": 1198,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 8,
-        "ownLines": 160
+        "ownLines": 162
       },
       "pages": [
         {
@@ -104,7 +104,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 61952,
+          "bytes": 61940,
           "alt": "Page 六."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 68892,
+          "bytes": 68942,
           "alt": "Page 七: 第二章 臣民權利義務."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1419,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 49128,
+          "bytes": 49174,
           "alt": "Page 八."
         }
       ],
@@ -167,12 +167,12 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 340925,
+        "bytes": 340922,
         "pages": 8
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 9960,
+        "bytes": 9968,
         "folio": "d5f2cfd5"
       },
       "detected": {
@@ -264,6 +264,7 @@
           "orderedLists.itemSpacing",
           "orderedLists.marginBottom",
           "orderedLists.marginTop",
+          "orderedLists.numberAlign",
           "orderedLists.numberFormat",
           "orderedLists.prefix",
           "orderedLists.separator",
@@ -316,7 +317,7 @@
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 210,
+        "configLeaves": 211,
         "designElements": 7,
         "directives": [
           ":::paragraphs"
@@ -384,23 +385,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "dde9ad0c",
+      "hash8": "a09b48cb",
       "vdtHash": "1d7187ca807561c20bcda7dd4fdfa3456547ee78",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 374,
-        "buildMs": 51,
-        "totalMs": 1169,
+        "importMs": 168,
+        "fontsMs": 367,
+        "buildMs": 49,
+        "totalMs": 1149,
         "builds": 1
       },
       "specimen": {
@@ -421,7 +416,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 8,
-        "ownLines": 160
+        "ownLines": 162
       },
       "pages": [
         {
@@ -487,7 +482,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 61952,
+          "bytes": 61940,
           "alt": "Página 六."
         },
         {
@@ -498,7 +493,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 68892,
+          "bytes": 68942,
           "alt": "Página 七: 第二章 臣民權利義務."
         },
         {
@@ -509,7 +504,7 @@
           "h": 1419,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 50824,
+          "bytes": 50834,
           "alt": "Página 八."
         }
       ],
@@ -550,12 +545,12 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 341373,
+        "bytes": 341367,
         "pages": 8
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 9995,
+        "bytes": 10004,
         "folio": "d5f2cfd5"
       },
       "detected": {
@@ -647,6 +642,7 @@
           "orderedLists.itemSpacing",
           "orderedLists.marginBottom",
           "orderedLists.marginTop",
+          "orderedLists.numberAlign",
           "orderedLists.numberFormat",
           "orderedLists.prefix",
           "orderedLists.separator",
@@ -699,7 +695,7 @@
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 210,
+        "configLeaves": 211,
         "designElements": 7,
         "directives": [
           ":::paragraphs"
@@ -767,13 +763,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

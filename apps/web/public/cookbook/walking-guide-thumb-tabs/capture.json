@@ -3,20 +3,20 @@
   "slug": "walking-guide-thumb-tabs",
   "sourceHash": "d1571a7ba53f07983d28a33b237f519c03bc20fb7d59bb9965282b64883951c7",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.836Z",
+  "capturedAt": "2026-10-10T22:20:08.990Z",
   "variants": {
     "en": {
-      "hash8": "aa604b16",
+      "hash8": "2492c8da",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 26,
-        "buildMs": 33,
-        "totalMs": 794,
+        "importMs": 131,
+        "fontsMs": 27,
+        "buildMs": 32,
+        "totalMs": 797,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1667,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 138464,
+          "bytes": 159142,
           "alt": "Opening page 1: Lisbon on Foot."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1667,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 93766,
+          "bytes": 95790,
           "alt": "Page 2: Before you set out. Map 1. The three walks. The numbered pins are the stops in the text."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1667,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 114772,
+          "bytes": 116964,
           "alt": "Opening page 3: Alfama."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1667,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 120910,
+          "bytes": 121050,
           "alt": "Page 4: 3 Largo das Portas do Sol."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1667,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 53762,
+          "bytes": 62748,
           "alt": "Blank page 6."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1667,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 103108,
+          "bytes": 104690,
           "alt": "Opening page 7: Baixa."
         }
       ],
@@ -420,23 +420,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "fb57ef34",
+      "hash8": "8128bb4d",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 27,
+        "importMs": 127,
+        "fontsMs": 26,
         "buildMs": 31,
-        "totalMs": 795,
+        "totalMs": 790,
         "builds": 1
       },
       "specimen": {
@@ -469,7 +463,7 @@
           "h": 1667,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 137506,
+          "bytes": 158218,
           "alt": "Página de apertura 1: Lisboa a pie."
         },
         {
@@ -480,7 +474,7 @@
           "h": 1667,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 96056,
+          "bytes": 98092,
           "alt": "Página 2: Antes de salir. Plano 1. Los tres paseos. Los pines numerados son las paradas del texto."
         },
         {
@@ -491,7 +485,7 @@
           "h": 1667,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116422,
+          "bytes": 118742,
           "alt": "Página de apertura 3: Alfama."
         },
         {
@@ -502,7 +496,7 @@
           "h": 1667,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 119810,
+          "bytes": 119738,
           "alt": "Página 4: 3 Largo das Portas do Sol."
         },
         {
@@ -524,7 +518,7 @@
           "h": 1667,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 53762,
+          "bytes": 62748,
           "alt": "Página en blanco 6."
         },
         {
@@ -535,7 +529,7 @@
           "h": 1667,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 105314,
+          "bytes": 106730,
           "alt": "Página de apertura 7: Baixa."
         }
       ],
@@ -842,9 +836,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "C20",
+            "severity": "warn",
+            "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "sist02-research-paper",
   "sourceHash": "225ff080633517e73479b74eed7f6ed0321b471e49112d26ac3b8c758d73febf",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:19:06.267Z",
+  "capturedAt": "2026-10-10T22:19:22.683Z",
   "variants": {
     "en": {
-      "hash8": "28a03082",
+      "hash8": "1b23469e",
       "vdtHash": "b15599082b08ed020a8f607cba5431b870f80046",
       "timings": {
-        "importMs": 538,
-        "fontsMs": 811,
-        "buildMs": 728,
-        "totalMs": 2645,
+        "importMs": 189,
+        "fontsMs": 279,
+        "buildMs": 156,
+        "totalMs": 1156,
         "builds": 1
       },
       "specimen": {
@@ -363,7 +363,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 4,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -374,23 +374,17 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "049126f5",
+      "hash8": "21934af3",
       "vdtHash": "505453953d470b1cbd63be9b7d48fb7378d996a6",
       "timings": {
-        "importMs": 225,
-        "fontsMs": 285,
-        "buildMs": 149,
-        "totalMs": 1262,
+        "importMs": 178,
+        "fontsMs": 263,
+        "buildMs": 135,
+        "totalMs": 1113,
         "builds": 1
       },
       "specimen": {
@@ -463,7 +457,7 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226992,
+        "bytes": 226997,
         "pages": 2
       },
       "sandbox": {
@@ -736,7 +730,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 4,
+        "iterationCount": 3,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -747,13 +741,7 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

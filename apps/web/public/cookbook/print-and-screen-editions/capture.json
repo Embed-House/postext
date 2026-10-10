@@ -3,20 +3,20 @@
   "slug": "print-and-screen-editions",
   "sourceHash": "bb523de2efc3fc9042ec3590a545ec7b81203b2a871431ac1033b48abdbf45d3",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.693Z",
+  "capturedAt": "2026-10-10T22:17:56.254Z",
   "variants": {
     "en": {
-      "hash8": "ddc76c05",
-      "vdtHash": "cc87c7261b2e48619ba709c49b9fb9a15ec7ee96",
+      "hash8": "9838687b",
+      "vdtHash": "60ae331f534d41cc28044aa2c9aacd6a0cd8b8ac",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 41,
-        "buildMs": 229,
-        "totalMs": 952,
+        "importMs": 129,
+        "fontsMs": 43,
+        "buildMs": 226,
+        "totalMs": 960,
         "builds": 2
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 110144,
+          "bytes": 110020,
           "alt": "Opening page 2: Rain. Figure 1. The rain gauge in section: the funnel feeds a tube with a tenth of its area."
         },
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 186513,
+        "bytes": 186501,
         "folio": "d9a24b31"
       },
       "detected": {
@@ -340,10 +340,10 @@
       "hash8": "f32099e5",
       "vdtHash": "b21de88e54730916b7395c401324be276c556e68",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 49,
-        "buildMs": 95,
-        "totalMs": 838,
+        "importMs": 126,
+        "fontsMs": 39,
+        "buildMs": 93,
+        "totalMs": 830,
         "builds": 2
       },
       "specimen": {

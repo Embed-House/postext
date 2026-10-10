@@ -3,20 +3,20 @@
   "slug": "letters-edition",
   "sourceHash": "705ea482810917128238e06b865e03691dc16e37d28180f49c5976d3c05e14c5",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.457Z",
+  "capturedAt": "2026-10-10T22:15:26.591Z",
   "variants": {
     "en": {
-      "hash8": "53ad51ef",
+      "hash8": "4e0cf341",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 28,
+        "importMs": 127,
+        "fontsMs": 27,
         "buildMs": 37,
-        "totalMs": 793,
+        "totalMs": 791,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 91064,
+          "bytes": 90430,
           "alt": "Opening page 1: Mon sort est changé."
         },
         {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212145,
+        "bytes": 212085,
         "folio": "a3ceaa8c"
       },
       "detected": {
@@ -280,23 +280,17 @@
           "share": 0,
           "worst": 1.97
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "e70792f9",
+      "hash8": "c792acad",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 128,
+        "importMs": 131,
         "fontsMs": 26,
-        "buildMs": 37,
-        "totalMs": 786,
+        "buildMs": 36,
+        "totalMs": 775,
         "builds": 1
       },
       "specimen": {
@@ -329,7 +323,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 91064,
+          "bytes": 90430,
           "alt": "Página de apertura 1: Mon sort est changé."
         },
         {
@@ -405,7 +399,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212180,
+        "bytes": 212120,
         "folio": "a3ceaa8c"
       },
       "detected": {
@@ -560,13 +554,7 @@
           "share": 0,
           "worst": 1.97
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

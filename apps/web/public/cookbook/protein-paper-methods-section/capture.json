@@ -3,21 +3,21 @@
   "slug": "protein-paper-methods-section",
   "sourceHash": "7f49cea4043bea9e59944abb1f9d23d63bc67f67d3a32931278083f0eda85d63",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.821Z",
+  "capturedAt": "2026-10-10T22:17:56.276Z",
   "variants": {
     "en": {
-      "hash8": "102fdf8b",
+      "hash8": "f673f937",
       "vdtHash": "7d65b4d482af7e0ae5727f913c9c9a21dd94b38d",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 64,
-        "buildMs": 836,
-        "totalMs": 1670,
+        "importMs": 179,
+        "fontsMs": 61,
+        "buildMs": 804,
+        "totalMs": 1636,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 272928,
+          "bytes": 272908,
           "alt": "Page 2: The AlphaFold network."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 264446,
+          "bytes": 264434,
           "alt": "Page 4: Methods. Table 1 | Inference times. One model on one V100 GPU, by protein length."
         },
         {
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "protein-paper-methods-section.pdf",
-        "bytes": 204711,
+        "bytes": 204706,
         "pages": 5
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77812,
+        "bytes": 77638,
         "folio": "9eaee533"
       },
       "detected": {

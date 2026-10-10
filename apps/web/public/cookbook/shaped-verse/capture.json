@@ -3,20 +3,20 @@
   "slug": "shaped-verse",
   "sourceHash": "5e4f95b8a7587a67f42e11396b5915e5e81ac0fae933b509750315524bfb91dc",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.636Z",
+  "capturedAt": "2026-10-10T22:18:26.921Z",
   "variants": {
     "en": {
       "hash8": "5d3a7c45",
       "vdtHash": "e68d134f3f30cd3f24d988e99b3f3a1d9ea8578a",
       "timings": {
-        "importMs": 130,
+        "importMs": 128,
         "fontsMs": 0,
         "buildMs": 19,
-        "totalMs": 765,
+        "totalMs": 759,
         "builds": 1
       },
       "specimen": {
@@ -232,10 +232,10 @@
       "hash8": "d1381d9e",
       "vdtHash": "41a22084e64aec2a822b75bbd8eb77fceb4ecb07",
       "timings": {
-        "importMs": 133,
-        "fontsMs": 0,
+        "importMs": 127,
+        "fontsMs": 1,
         "buildMs": 19,
-        "totalMs": 760,
+        "totalMs": 759,
         "builds": 1
       },
       "specimen": {

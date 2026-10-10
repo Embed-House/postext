@@ -3,21 +3,21 @@
   "slug": "gojuon-index",
   "sourceHash": "c863e5d95ad746d701c8a5dad8cb41d69810b0d4c2d32dd6e87b5700468160cc",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.158Z",
+  "capturedAt": "2026-10-10T22:14:44.261Z",
   "variants": {
     "en": {
-      "hash8": "68c3a3c3",
+      "hash8": "4c65d233",
       "vdtHash": "eb2b64521167f50315cf593d726c23a0c81ed164",
       "timings": {
-        "importMs": 182,
-        "fontsMs": 278,
-        "buildMs": 67,
-        "totalMs": 1105,
+        "importMs": 169,
+        "fontsMs": 261,
+        "buildMs": 68,
+        "totalMs": 1068,
         "builds": 1
       },
       "specimen": {
@@ -99,12 +99,12 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137025,
+        "bytes": 137022,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15343,
+        "bytes": 15335,
         "folio": "3266640a"
       },
       "detected": {
@@ -318,11 +318,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
@@ -331,13 +326,13 @@
       }
     },
     "es": {
-      "hash8": "6d246cf3",
+      "hash8": "e89bb85a",
       "vdtHash": "a49f02abb3e8fe18ccafa2fcf863e4235bcb9071",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 234,
+        "importMs": 170,
+        "fontsMs": 233,
         "buildMs": 66,
-        "totalMs": 1037,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -419,12 +414,12 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 136986,
+        "bytes": 136981,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15417,
+        "bytes": 15408,
         "folio": "3266640a"
       },
       "detected": {
@@ -637,11 +632,6 @@
           "worst": 0.03
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

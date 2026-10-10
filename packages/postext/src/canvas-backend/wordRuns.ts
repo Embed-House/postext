@@ -30,7 +30,9 @@ const MARK_RE = /\p{M}/u;
  *
  * A left-to-right word of a tracked line that the browser would shape
  * without its ligatures under letter-spacing is painted with them, as it
- * was measured (`fillTrackedWord`, #663).
+ * was measured (`fillTrackedWord`, #663): in pieces, which a mirrored page
+ * turns back as one run (#685). A right-to-left word and a word of a
+ * joining script are never painted in pieces.
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,

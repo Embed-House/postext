@@ -3,21 +3,21 @@
   "slug": "bunko-novel-furigana",
   "sourceHash": "a9fb2e403e0a34e8535ed4c888fb0a2ce3caf1a94b58b7da3ca06e8f9c7c3829",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:23:29.259Z",
+  "capturedAt": "2026-10-10T22:12:14.966Z",
   "variants": {
     "en": {
-      "hash8": "cdbc49a2",
+      "hash8": "0dd4fac7",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 604,
-        "fontsMs": 867,
-        "buildMs": 184,
-        "totalMs": 2955,
+        "importMs": 167,
+        "fontsMs": 299,
+        "buildMs": 53,
+        "totalMs": 1076,
         "builds": 1
       },
       "specimen": {
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330743,
+        "bytes": 330739,
         "pages": 9
       },
       "sandbox": {
@@ -340,23 +340,17 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "348ec3e5",
+      "hash8": "d242b9fc",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 232,
-        "fontsMs": 326,
-        "buildMs": 56,
-        "totalMs": 1258,
+        "importMs": 168,
+        "fontsMs": 267,
+        "buildMs": 54,
+        "totalMs": 1048,
         "builds": 1
       },
       "specimen": {
@@ -491,7 +485,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330861,
+        "bytes": 330863,
         "pages": 9
       },
       "sandbox": {
@@ -679,13 +673,7 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

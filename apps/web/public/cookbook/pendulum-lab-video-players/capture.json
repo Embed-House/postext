@@ -3,21 +3,21 @@
   "slug": "pendulum-lab-video-players",
   "sourceHash": "7535c6df5c6766b366a162bd3a713974f490b5346c2cb0adffb41410dd9e9e2b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.518Z",
+  "capturedAt": "2026-10-10T22:17:23.287Z",
   "variants": {
     "en": {
-      "hash8": "e5eab7e4",
+      "hash8": "5d45b151",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 59,
-        "buildMs": 130,
-        "totalMs": 1110,
+        "importMs": 174,
+        "fontsMs": 65,
+        "buildMs": 128,
+        "totalMs": 1018,
         "builds": 2
       },
       "specimen": {
@@ -440,13 +440,13 @@
       }
     },
     "es": {
-      "hash8": "6a7fdf73",
+      "hash8": "fe7ac5d2",
       "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 53,
+        "importMs": 172,
+        "fontsMs": 57,
         "buildMs": 112,
-        "totalMs": 1038,
+        "totalMs": 1040,
         "builds": 2
       },
       "specimen": {
@@ -519,7 +519,7 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 86783,
+        "bytes": 86784,
         "pages": 2
       },
       "sandbox": {

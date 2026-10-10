@@ -3,21 +3,21 @@
   "slug": "catalan-pocket-novella",
   "sourceHash": "6ee033bd6190ba2a5098b8407b622a361f8fabff192d8e405ae0f8a3db0d3cc8",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:06:48.329Z",
+  "capturedAt": "2026-10-10T22:12:14.976Z",
   "variants": {
     "en": {
-      "hash8": "84f42562",
+      "hash8": "40565cbb",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 3102,
-        "fontsMs": 935,
-        "buildMs": 1037,
-        "totalMs": 5745,
+        "importMs": 194,
+        "fontsMs": 70,
+        "buildMs": 886,
+        "totalMs": 1751,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151794,
+          "bytes": 151786,
           "alt": "Opening page 5: I."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 141036,
+          "bytes": 141024,
           "alt": "Page 6."
         },
         {
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777290,
+        "bytes": 1777292,
         "pages": 32
       },
       "sandbox": {
@@ -362,8 +362,8 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 6,
-          "share": 0.0105,
+          "count": 1,
+          "share": 0.0018,
           "worst": 1.94
         },
         "findings": [
@@ -376,13 +376,13 @@
       }
     },
     "es": {
-      "hash8": "23c15f18",
+      "hash8": "ff0d9f90",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 837,
-        "fontsMs": 98,
-        "buildMs": 985,
-        "totalMs": 2648,
+        "importMs": 167,
+        "fontsMs": 70,
+        "buildMs": 878,
+        "totalMs": 1718,
         "builds": 1
       },
       "specimen": {
@@ -448,7 +448,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151794,
+          "bytes": 151786,
           "alt": "Página de apertura 5: I."
         },
         {
@@ -459,7 +459,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 141036,
+          "bytes": 141024,
           "alt": "Página 6."
         },
         {
@@ -532,7 +532,7 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777290,
+        "bytes": 1777292,
         "pages": 32
       },
       "sandbox": {
@@ -727,8 +727,8 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 6,
-          "share": 0.0105,
+          "count": 1,
+          "share": 0.0018,
           "worst": 1.94
         },
         "findings": [

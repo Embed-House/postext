@@ -3,21 +3,21 @@
   "slug": "red-ink-commentary",
   "sourceHash": "4ba9384339fee275d61dbd51102ead27a11517597de61917fc2415d5c525b9d3",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.861Z",
+  "capturedAt": "2026-10-10T22:18:26.874Z",
   "variants": {
     "en": {
-      "hash8": "27070d82",
+      "hash8": "168d9aa4",
       "vdtHash": "6bcc10bf0972de587731689d1de8bfd218e14f53",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 359,
+        "importMs": 174,
+        "fontsMs": 365,
         "buildMs": 54,
-        "totalMs": 1144,
+        "totalMs": 1162,
         "builds": 1
       },
       "specimen": {
@@ -143,7 +143,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513416,
+        "bytes": 513415,
         "pages": 6
       },
       "sandbox": {
@@ -354,23 +354,17 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "18b5259b",
+      "hash8": "30e10fe9",
       "vdtHash": "bbefe167e001047624420ad7be7dadd865d92a05",
       "timings": {
-        "importMs": 177,
+        "importMs": 166,
         "fontsMs": 345,
-        "buildMs": 54,
-        "totalMs": 1146,
+        "buildMs": 53,
+        "totalMs": 1140,
         "builds": 1
       },
       "specimen": {
@@ -496,7 +490,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513497,
+        "bytes": 513498,
         "pages": 6
       },
       "sandbox": {
@@ -707,13 +701,7 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

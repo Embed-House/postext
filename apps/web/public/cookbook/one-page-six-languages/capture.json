@@ -3,21 +3,21 @@
   "slug": "one-page-six-languages",
   "sourceHash": "664665aa421a79efd0163675762cc78064e74d51831a15676aa37850eee99652",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.515Z",
+  "capturedAt": "2026-10-10T22:17:23.229Z",
   "variants": {
     "en": {
-      "hash8": "ec333b85",
+      "hash8": "5935e0c1",
       "vdtHash": "f449370ee3262648d8ec670b3847b33451c2fdda",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 90,
-        "buildMs": 171,
-        "totalMs": 1107,
+        "importMs": 167,
+        "fontsMs": 88,
+        "buildMs": 156,
+        "totalMs": 1076,
         "builds": 2
       },
       "specimen": {
@@ -234,13 +234,13 @@
       }
     },
     "es": {
-      "hash8": "2f094bf9",
+      "hash8": "fb81ce29",
       "vdtHash": "a17aabb0ecf88ff14b0fcb36da2997ab31273c85",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 90,
-        "buildMs": 177,
-        "totalMs": 1113,
+        "importMs": 174,
+        "fontsMs": 92,
+        "buildMs": 159,
+        "totalMs": 1084,
         "builds": 2
       },
       "specimen": {
@@ -457,13 +457,13 @@
       }
     },
     "zh": {
-      "hash8": "79c717f7",
+      "hash8": "db4130e6",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 230,
-        "buildMs": 690,
-        "totalMs": 6030,
+        "importMs": 171,
+        "fontsMs": 199,
+        "buildMs": 155,
+        "totalMs": 1197,
         "builds": 2
       },
       "specimen": {
@@ -534,7 +534,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 809978,
+        "bytes": 809979,
         "pages": 1
       },
       "sandbox": {
@@ -687,13 +687,13 @@
       }
     },
     "ar": {
-      "hash8": "1d7cceca",
+      "hash8": "17fde80e",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 109,
-        "buildMs": 155,
-        "totalMs": 1087,
+        "importMs": 170,
+        "fontsMs": 110,
+        "buildMs": 137,
+        "totalMs": 1055,
         "builds": 2
       },
       "specimen": {
@@ -765,7 +765,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 806251,
+        "bytes": 806252,
         "pages": 1
       },
       "sandbox": {
@@ -920,13 +920,13 @@
       }
     },
     "ja": {
-      "hash8": "900c604a",
+      "hash8": "0d3f9e9f",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 192,
-        "buildMs": 134,
-        "totalMs": 1198,
+        "importMs": 172,
+        "fontsMs": 194,
+        "buildMs": 128,
+        "totalMs": 1174,
         "builds": 2
       },
       "specimen": {
@@ -998,7 +998,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 820374,
+        "bytes": 820376,
         "pages": 1
       },
       "sandbox": {

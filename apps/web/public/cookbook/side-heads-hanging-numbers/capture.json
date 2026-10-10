@@ -3,20 +3,20 @@
   "slug": "side-heads-hanging-numbers",
   "sourceHash": "83fe709e48636cb5300f4e566c65367acb33ee71c10cef0c209b581150aaa53d",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.658Z",
+  "capturedAt": "2026-10-10T22:19:22.681Z",
   "variants": {
     "es": {
       "hash8": "2482255c",
       "vdtHash": "cc90da5f778b435d2f2a01e5a54259e7f794e1a7",
       "timings": {
-        "importMs": 143,
-        "fontsMs": 4,
+        "importMs": 141,
+        "fontsMs": 3,
         "buildMs": 39,
-        "totalMs": 802,
+        "totalMs": 799,
         "builds": 1
       },
       "specimen": {

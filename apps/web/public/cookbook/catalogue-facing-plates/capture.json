@@ -3,20 +3,20 @@
   "slug": "catalogue-facing-plates",
   "sourceHash": "0d08daea7029d41bb2f0658db4e854d670a32dbebebb2002e9d994e347f64e23",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.250Z",
+  "capturedAt": "2026-10-10T22:13:20.019Z",
   "variants": {
     "en": {
       "hash8": "12444f46",
       "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
       "timings": {
-        "importMs": 137,
-        "fontsMs": 50,
+        "importMs": 207,
+        "fontsMs": 53,
         "buildMs": 44,
-        "totalMs": 814,
+        "totalMs": 896,
         "builds": 1
       },
       "specimen": {
@@ -400,11 +400,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -3,20 +3,20 @@
   "slug": "puzzle-book",
   "sourceHash": "1401e476f0fc021b6f818157489acffb04c3e828d0d15205cab7d51182610e7f",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.831Z",
+  "capturedAt": "2026-10-10T22:17:56.279Z",
   "variants": {
     "en": {
       "hash8": "cf07df16",
       "vdtHash": "7fc9d6b0d819dec89885d5ae89ec48f5a6537d79",
       "timings": {
-        "importMs": 137,
+        "importMs": 127,
         "fontsMs": 31,
         "buildMs": 31,
-        "totalMs": 786,
+        "totalMs": 769,
         "builds": 1
       },
       "specimen": {
@@ -359,23 +359,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "8f818b66",
       "vdtHash": "a641d94188496fe2b5955581bc4ed838524e62c1",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 34,
-        "buildMs": 32,
-        "totalMs": 775,
+        "importMs": 128,
+        "fontsMs": 33,
+        "buildMs": 31,
+        "totalMs": 776,
         "builds": 1
       },
       "specimen": {
@@ -718,13 +712,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

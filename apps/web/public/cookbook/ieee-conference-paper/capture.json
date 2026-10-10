@@ -3,21 +3,21 @@
   "slug": "ieee-conference-paper",
   "sourceHash": "124db60bb34be3fe50d044a8af44956d6ecba3f446717d00f1e04cf28585ccee",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.241Z",
+  "capturedAt": "2026-10-10T22:15:26.542Z",
   "variants": {
     "en": {
-      "hash8": "2985c529",
+      "hash8": "4b5cb85e",
       "vdtHash": "a7deaa0f1a97485124d6bd47275305a161055c6b",
       "timings": {
-        "importMs": 200,
-        "fontsMs": 33,
-        "buildMs": 301,
-        "totalMs": 1163,
+        "importMs": 190,
+        "fontsMs": 32,
+        "buildMs": 284,
+        "totalMs": 1127,
         "builds": 1
       },
       "specimen": {
@@ -311,13 +311,13 @@
       }
     },
     "es": {
-      "hash8": "b212999a",
+      "hash8": "6de6e32d",
       "vdtHash": "d4da76d880d1b66ac924fa5412e02479ed910d3d",
       "timings": {
-        "importMs": 183,
+        "importMs": 181,
         "fontsMs": 31,
-        "buildMs": 140,
-        "totalMs": 972,
+        "buildMs": 138,
+        "totalMs": 969,
         "builds": 1
       },
       "specimen": {

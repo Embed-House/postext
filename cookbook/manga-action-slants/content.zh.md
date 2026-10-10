@@ -13,8 +13,8 @@ hana{inner}: ……看见了
 sfx{rotate=-12}: 嗒
 rival{shout}: 面——！
 ::panel{art=strike border=none}
-sfx{at="74% 26%" rotate=-8 size=2.6 font="Dela Gothic One" break}: ドン
-sfx{at="64% 80%" rotate=-8 size=0.9}: 咚
+sfx{at="74% 30%" rotate=-8 size=2.6 font="Dela Gothic One" break}: ドン
+sfx{at="64% 86%" rotate=-8 size=0.9}: 咚
 hana{shout}: 面！！
 ::panel{art=coach}
 shinpan{tail=top}: 面，有效！

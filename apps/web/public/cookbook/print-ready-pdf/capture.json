@@ -3,21 +3,21 @@
   "slug": "print-ready-pdf",
   "sourceHash": "d110acdc0b47a4cd31f2a002f0366e1fc447d0a28ef5c6cf29f427b8d8a2f3bc",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.784Z",
+  "capturedAt": "2026-10-10T22:17:56.258Z",
   "variants": {
     "es": {
-      "hash8": "2ea4d766",
+      "hash8": "3dc021c2",
       "vdtHash": "d75476b65d721b2af71c3ac07956033c86c6b167",
       "timings": {
-        "importMs": 451,
-        "fontsMs": 227,
-        "buildMs": 179,
-        "totalMs": 4451,
+        "importMs": 166,
+        "fontsMs": 39,
+        "buildMs": 27,
+        "totalMs": 816,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1297,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 40954,
+          "bytes": 40914,
           "alt": "Página de apertura 1: Cartografías imaginarias."
         },
         {

@@ -28,7 +28,7 @@ skipper: Faro de Porthcove, aquí el *Gannet*. Motor parado. Vamos a la deriva.
 tomas: *Gannet*, te oigo. Aguanta.
 note{at=bottom-end}: El *Gannet* llevaba cuarenta años faenando desde Porthcove. —N. del E.
 ::panel{art=bk-whisper}
-maya{whisper}: Tranquilo, Biscuit. El abuelo ya ha hecho esto otras veces.
+maya{whisper at="29% 14%"}: Tranquilo, Biscuit. El abuelo ya ha hecho esto otras veces.
 biscuit{thought}: ¿Seguro?
 ::panel{art=bk-shout}
 tomas{shout}: ¡*Gannet*! ¡Proa a la luz! ¡No la pierdas!

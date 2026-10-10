@@ -3,21 +3,21 @@
   "slug": "pepper-and-carrot-page",
   "sourceHash": "07c9aa08831cc93e20ba512e605878e46c15524a6ec8aca691f4f0d0fd872404",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.576Z",
+  "capturedAt": "2026-10-10T22:17:23.290Z",
   "variants": {
     "en": {
-      "hash8": "85210fb6",
+      "hash8": "1397e843",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 229,
-        "fontsMs": 297,
-        "buildMs": 408,
-        "totalMs": 2069,
+        "importMs": 170,
+        "fontsMs": 168,
+        "buildMs": 146,
+        "totalMs": 1044,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 687852,
+        "bytes": 687854,
         "pages": 3
       },
       "sandbox": {
@@ -280,13 +280,13 @@
       }
     },
     "es": {
-      "hash8": "e9060594",
+      "hash8": "b0c68dff",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 167,
-        "buildMs": 170,
-        "totalMs": 1114,
+        "importMs": 169,
+        "fontsMs": 164,
+        "buildMs": 153,
+        "totalMs": 1053,
         "builds": 1
       },
       "specimen": {
@@ -549,13 +549,13 @@
       }
     },
     "ca": {
-      "hash8": "550bb6fc",
+      "hash8": "97252bec",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 157,
-        "buildMs": 172,
-        "totalMs": 1062,
+        "importMs": 170,
+        "fontsMs": 160,
+        "buildMs": 154,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -818,13 +818,13 @@
       }
     },
     "zh": {
-      "hash8": "f37ecfd1",
+      "hash8": "692a1813",
       "vdtHash": "8b40fa0916623ac081d84978d36feb6c069d0414",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 365,
-        "buildMs": 163,
-        "totalMs": 1265,
+        "importMs": 167,
+        "fontsMs": 362,
+        "buildMs": 142,
+        "totalMs": 1240,
         "builds": 1
       },
       "specimen": {
@@ -1088,13 +1088,13 @@
       }
     },
     "ar": {
-      "hash8": "3134cc08",
+      "hash8": "b8cd8b16",
       "vdtHash": "a4ca6da349dc5fbfdffab04252ec4b91e132b04c",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 128,
-        "buildMs": 161,
-        "totalMs": 3149,
+        "importMs": 167,
+        "fontsMs": 127,
+        "buildMs": 143,
+        "totalMs": 970,
         "builds": 1
       },
       "specimen": {
@@ -1148,7 +1148,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103308,
+          "bytes": 103466,
           "alt": "الصفحة ٣."
         }
       ],
@@ -1177,12 +1177,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 692886,
+        "bytes": 692883,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676758
+        "bytes": 676762
       },
       "detected": {
         "apis": [
@@ -1361,13 +1361,13 @@
       }
     },
     "ja": {
-      "hash8": "b4566f93",
+      "hash8": "44d8eb8b",
       "vdtHash": "d96a7805773f5919b05691d4d1559da70cc6a370",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 407,
-        "buildMs": 164,
-        "totalMs": 1317,
+        "importMs": 166,
+        "fontsMs": 417,
+        "buildMs": 154,
+        "totalMs": 1314,
         "builds": 1
       },
       "specimen": {
@@ -1450,7 +1450,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 725158,
+        "bytes": 725141,
         "pages": 3
       },
       "sandbox": {
@@ -1633,13 +1633,13 @@
       }
     },
     "pt": {
-      "hash8": "aefec940",
+      "hash8": "1eb48212",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 165,
-        "buildMs": 167,
-        "totalMs": 1064,
+        "importMs": 166,
+        "fontsMs": 157,
+        "buildMs": 146,
+        "totalMs": 1034,
         "builds": 1
       },
       "specimen": {

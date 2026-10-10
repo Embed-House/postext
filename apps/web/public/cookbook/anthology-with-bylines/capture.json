@@ -3,20 +3,20 @@
   "slug": "anthology-with-bylines",
   "sourceHash": "4bfd7fd35889e5a09520e2b75f147c42c825890761212f94ac80b8e823f2ba44",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.651Z",
+  "capturedAt": "2026-10-10T22:11:34.454Z",
   "variants": {
     "en": {
-      "hash8": "54760cd7",
+      "hash8": "eb9e3721",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 28,
-        "buildMs": 57,
-        "totalMs": 813,
+        "importMs": 129,
+        "fontsMs": 26,
+        "buildMs": 56,
+        "totalMs": 801,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 70508,
+          "bytes": 70024,
           "alt": "Opening page 2: Contents."
         },
         {

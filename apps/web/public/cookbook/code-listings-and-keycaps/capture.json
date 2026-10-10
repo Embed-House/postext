@@ -3,20 +3,20 @@
   "slug": "code-listings-and-keycaps",
   "sourceHash": "fef937359c580eda8e67714031d33588e6b39afc8466042a93b332ccce4e83eb",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.094Z",
+  "capturedAt": "2026-10-10T22:13:20.087Z",
   "variants": {
     "en": {
       "hash8": "f5b3d481",
       "vdtHash": "8b3311fe4bda801d997d19193889d8a025dee896",
       "timings": {
-        "importMs": 142,
-        "fontsMs": 37,
-        "buildMs": 61,
-        "totalMs": 868,
+        "importMs": 132,
+        "fontsMs": 30,
+        "buildMs": 55,
+        "totalMs": 777,
         "builds": 1
       },
       "specimen": {
@@ -398,10 +398,10 @@
       "hash8": "483c90bb",
       "vdtHash": "f61d6e1ac7d69bfb6a85cc1f21905dd10cfc0c68",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 27,
-        "buildMs": 60,
-        "totalMs": 781,
+        "importMs": 133,
+        "fontsMs": 26,
+        "buildMs": 57,
+        "totalMs": 780,
         "builds": 1
       },
       "specimen": {

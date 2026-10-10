@@ -3,20 +3,20 @@
   "slug": "paper-swatch-book",
   "sourceHash": "bb355a52de4a3d1fc92170476755368760b29c58a6f3f65db940bbdb07e01936",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:02:16.431Z",
+  "capturedAt": "2026-10-10T22:17:23.265Z",
   "variants": {
     "en": {
       "hash8": "b1471052",
       "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 160,
-        "fontsMs": 3,
+        "importMs": 144,
+        "fontsMs": 2,
         "buildMs": 42,
-        "totalMs": 986,
+        "totalMs": 776,
         "builds": 1
       },
       "specimen": {
@@ -430,13 +430,7 @@
           "share": 0,
           "worst": 1.8900000000000001
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

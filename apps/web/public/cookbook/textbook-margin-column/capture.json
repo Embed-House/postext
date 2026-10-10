@@ -3,20 +3,20 @@
   "slug": "textbook-margin-column",
   "sourceHash": "1b0f04efeedd69639fd2c4158b993f6901e6ef2a2120f4289d2391d713afe8e3",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.932Z",
+  "capturedAt": "2026-10-10T22:20:08.936Z",
   "variants": {
     "en": {
-      "hash8": "5a5b729d",
+      "hash8": "51bff762",
       "vdtHash": "a601945d5147436ead9c994844b45ac4ec76a676",
       "timings": {
-        "importMs": 124,
+        "importMs": 138,
         "fontsMs": 4,
-        "buildMs": 54,
-        "totalMs": 3853,
+        "buildMs": 53,
+        "totalMs": 813,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1310,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 146766,
+          "bytes": 146778,
           "alt": "Page 88: 4.2 Dispersion. Figure 4.2. Entering glass, a ray bends towards the normal (dashed): the angle of refraction (green) is less than the angle of incidence (amber). · Figure 4.3. Rays aimed at the centre of a semicircular block. At 25° the ray escapes, bent away from the…"
         },
         {
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29406,
+        "bytes": 29422,
         "folio": "ccdc6a5d"
       },
       "detected": {
@@ -384,13 +384,13 @@
       }
     },
     "es": {
-      "hash8": "e1c4de6a",
+      "hash8": "647bb06a",
       "vdtHash": "d981da01d244693a337bfbf8fe84d097564a7a42",
       "timings": {
-        "importMs": 127,
+        "importMs": 141,
         "fontsMs": 4,
-        "buildMs": 54,
-        "totalMs": 804,
+        "buildMs": 55,
+        "totalMs": 813,
         "builds": 1
       },
       "specimen": {
@@ -488,7 +488,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29853,
+        "bytes": 29839,
         "folio": "ccdc6a5d"
       },
       "detected": {

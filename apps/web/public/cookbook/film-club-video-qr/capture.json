@@ -3,21 +3,21 @@
   "slug": "film-club-video-qr",
   "sourceHash": "fcb07ddf34fa39c21b852ed8ef260568730a1a9d167778fd12b2296e66358a00",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:55:30.248Z",
+  "capturedAt": "2026-10-10T22:14:44.209Z",
   "variants": {
     "en": {
-      "hash8": "cbb6b3f8",
+      "hash8": "d98528bb",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 429,
-        "fontsMs": 245,
-        "buildMs": 156,
-        "totalMs": 2120,
+        "importMs": 191,
+        "fontsMs": 121,
+        "buildMs": 44,
+        "totalMs": 958,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84134,
+          "bytes": 84112,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -141,7 +141,7 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 298164,
+        "bytes": 298161,
         "pages": 6
       },
       "sandbox": {
@@ -402,13 +402,13 @@
       }
     },
     "es": {
-      "hash8": "95c3c847",
+      "hash8": "1336f92d",
       "vdtHash": "524112d7bf7c2be7058945f34b56f0b081943cdc",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 129,
-        "buildMs": 49,
-        "totalMs": 1000,
+        "importMs": 181,
+        "fontsMs": 104,
+        "buildMs": 48,
+        "totalMs": 921,
         "builds": 1
       },
       "specimen": {
@@ -789,13 +789,7 @@
           "share": 0,
           "worst": 1.83
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

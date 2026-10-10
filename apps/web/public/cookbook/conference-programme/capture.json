@@ -3,20 +3,20 @@
   "slug": "conference-programme",
   "sourceHash": "4b620f45bd4f2b5f99fcc4d8eafc6121dede39b84cc1563317a1aedff628a17e",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.393Z",
+  "capturedAt": "2026-10-10T22:14:05.074Z",
   "variants": {
     "en": {
       "hash8": "9b819592",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 134,
+        "importMs": 127,
         "fontsMs": 35,
-        "buildMs": 53,
-        "totalMs": 810,
+        "buildMs": 54,
+        "totalMs": 802,
         "builds": 1
       },
       "specimen": {
@@ -408,10 +408,10 @@
       "hash8": "9c6f48a3",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 130,
+        "importMs": 125,
         "fontsMs": 30,
-        "buildMs": 53,
-        "totalMs": 797,
+        "buildMs": 54,
+        "totalMs": 796,
         "builds": 1
       },
       "specimen": {

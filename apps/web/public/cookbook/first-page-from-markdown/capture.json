@@ -3,20 +3,20 @@
   "slug": "first-page-from-markdown",
   "sourceHash": "44b0b50daec0c12d2116a4229a1e18806071e0c1549480b6dab91776d22ec409",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.471Z",
+  "capturedAt": "2026-10-10T22:14:44.218Z",
   "variants": {
     "en": {
-      "hash8": "2df698a1",
+      "hash8": "9a4e640f",
       "vdtHash": "07c56b8d23023596323db7886c283256ac133054",
       "timings": {
-        "importMs": 129,
+        "importMs": 135,
         "fontsMs": 26,
-        "buildMs": 408,
-        "totalMs": 1373,
+        "buildMs": 120,
+        "totalMs": 872,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 136772,
+          "bytes": 136754,
           "alt": "Page 2: What came back."
         }
       ],
@@ -282,10 +282,10 @@
       "hash8": "362f52cc",
       "vdtHash": "1e26a3350d2d18641aafd17b9408bbe5a95fba4b",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 25,
-        "buildMs": 49,
-        "totalMs": 789,
+        "importMs": 131,
+        "fontsMs": 23,
+        "buildMs": 48,
+        "totalMs": 787,
         "builds": 1
       },
       "specimen": {
@@ -551,10 +551,10 @@
       "hash8": "1201e0c7",
       "vdtHash": "e0adb9fecd13a0fc4c60faa93b63baaf7b57aed8",
       "timings": {
-        "importMs": 125,
-        "fontsMs": 26,
+        "importMs": 130,
+        "fontsMs": 27,
         "buildMs": 88,
-        "totalMs": 822,
+        "totalMs": 830,
         "builds": 1
       },
       "specimen": {

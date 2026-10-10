@@ -3,21 +3,21 @@
   "slug": "novel-footnotes-column-foot",
   "sourceHash": "a14c861225b1b8b687ff573f03cd0ba8c0e3ac6e9a71f64072784e1f36982887",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.490Z",
+  "capturedAt": "2026-10-10T22:17:23.223Z",
   "variants": {
     "en": {
-      "hash8": "56b37e2d",
+      "hash8": "d394cc5c",
       "vdtHash": "5e2f78d12d75f69073655b3d404ccb6b754adca5",
       "timings": {
-        "importMs": 160,
+        "importMs": 172,
         "fontsMs": 27,
-        "buildMs": 87,
-        "totalMs": 1024,
+        "buildMs": 83,
+        "totalMs": 1059,
         "builds": 1
       },
       "specimen": {
@@ -303,13 +303,13 @@
       }
     },
     "es": {
-      "hash8": "6a524e32",
-      "vdtHash": "f6952fe633c94c97ded0382829ed146da818bac3",
+      "hash8": "613763e9",
+      "vdtHash": "7b765a6fa54d1b01d92ef9092ae0b3f291a372dd",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 26,
-        "buildMs": 671,
-        "totalMs": 2688,
+        "importMs": 168,
+        "fontsMs": 27,
+        "buildMs": 268,
+        "totalMs": 1447,
         "builds": 1
       },
       "specimen": {
@@ -343,7 +343,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 99286,
+          "bytes": 99186,
           "alt": "Página de apertura 1: Prólogo."
         },
         {
@@ -393,7 +393,7 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 103586,
+        "bytes": 103545,
         "pages": 3
       },
       "sandbox": {
@@ -585,11 +585,11 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 4,
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.96
+          "worst": 1.97
         },
         "findings": []
       }

@@ -3,21 +3,21 @@
   "slug": "proper-name-marks",
   "sourceHash": "b38180bed6bafe4e10bba49a5cb5c235bd3854170098330cc9fc13a25754b5d0",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.811Z",
+  "capturedAt": "2026-10-10T22:17:56.271Z",
   "variants": {
     "en": {
-      "hash8": "32143f19",
+      "hash8": "d24ffa53",
       "vdtHash": "666b14ae1706626f3a5dda2a0371d7dcbd4dd76e",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 369,
-        "buildMs": 50,
-        "totalMs": 1177,
+        "importMs": 167,
+        "fontsMs": 339,
+        "buildMs": 47,
+        "totalMs": 1099,
         "builds": 1
       },
       "specimen": {
@@ -308,13 +308,13 @@
       }
     },
     "es": {
-      "hash8": "78c7d000",
+      "hash8": "04924ddc",
       "vdtHash": "4ef88f23fb888f40f39312aab00daabe9b7c9bf4",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 343,
-        "buildMs": 156,
-        "totalMs": 4630,
+        "importMs": 168,
+        "fontsMs": 308,
+        "buildMs": 48,
+        "totalMs": 1073,
         "builds": 1
       },
       "specimen": {

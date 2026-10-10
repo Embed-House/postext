@@ -13,7 +13,7 @@ hana{inner}: ……見える
 sfx{rotate=-12}: ダンッ
 rival{shout}: メェェン！
 ::panel{art=strike border=none}
-sfx{at="74% 26%" rotate=-8 size=2.6 font="Dela Gothic One" break}: ドン
+sfx{at="74% 30%" rotate=-8 size=2.6 font="Dela Gothic One" break}: ドン
 hana{shout}: メン！！
 ::panel{art=coach}
 shinpan{tail=top}: 面あり！

@@ -3,21 +3,21 @@
   "slug": "riso-zine-single-ink",
   "sourceHash": "10dc3931ca8b556190ac1b3ddfe9163a4d05bbcd38f3f47a39b136ad0565fc02",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.878Z",
+  "capturedAt": "2026-10-10T22:18:26.884Z",
   "variants": {
     "en": {
-      "hash8": "09651e77",
+      "hash8": "41a7faa9",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 49,
+        "importMs": 167,
+        "fontsMs": 50,
         "buildMs": 27,
-        "totalMs": 802,
+        "totalMs": 810,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 55612,
+          "bytes": 58454,
           "alt": "Opening page 1: Night Buses."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84400,
+          "bytes": 84338,
           "alt": "Page 3: As drawn. The network from the pink drum.  loops round the rest. Terminals and changes only."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91642,
+          "bytes": 94002,
           "alt": "Opening page 4: Not in Service."
         }
       ],
@@ -115,12 +115,12 @@
       },
       "pdf": {
         "file": "riso-zine-single-ink.pdf",
-        "bytes": 198846,
+        "bytes": 198845,
         "pages": 4
       },
       "sandbox": {
         "file": "riso-zine-single-ink.postext",
-        "bytes": 68769,
+        "bytes": 69121,
         "folio": "ead0b06f"
       },
       "detected": {

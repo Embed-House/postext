@@ -13,7 +13,7 @@ hana{inner}: …Ho veig.
 sfx{rotate=-12}: PAM!
 rival{shout}: MEEEN!
 ::panel{art=strike border=none}
-sfx{at="74% 26%" rotate=-8 size=2.6 font="Dela Gothic One" vertical break}: ドン
+sfx{at="74% 30%" rotate=-8 size=2.6 font="Dela Gothic One" vertical break}: ドン
 sfx{at="64% 80%" rotate=-8 size=0.9}: ZAS!
 hana{shout}: MEN!!
 ::panel{art=coach}

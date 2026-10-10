@@ -3,21 +3,21 @@
   "slug": "front-matter-roman-to-arabic",
   "sourceHash": "667ed24f49d997210a3d0d3f49f43578b20fe83d5bbeb00a48fb5c5b68599970",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:09:47.343Z",
+  "capturedAt": "2026-10-10T22:14:44.236Z",
   "variants": {
     "en": {
-      "hash8": "e0a9b163",
+      "hash8": "77cf3f3b",
       "vdtHash": "b64a2effb7df23604c0ca0a5c95947db80d396fe",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 61,
-        "buildMs": 129,
-        "totalMs": 980,
+        "importMs": 175,
+        "fontsMs": 63,
+        "buildMs": 130,
+        "totalMs": 960,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1535,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 6746,
+          "bytes": 6720,
           "alt": "Opening page iii: Half title."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1535,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 19038,
+          "bytes": 19162,
           "alt": "Opening page v: Title page."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1535,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 26908,
+          "bytes": 26886,
           "alt": "Opening page vii: Dedication."
         },
         {
@@ -171,7 +171,7 @@
           "h": 1535,
           "file": "p14.webp",
           "strip": "p14.s.webp",
-          "bytes": 136590,
+          "bytes": 136566,
           "alt": "Page 4."
         }
       ],
@@ -223,7 +223,7 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815984,
+        "bytes": 815988,
         "pages": 14
       },
       "sandbox": {
@@ -461,13 +461,7 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

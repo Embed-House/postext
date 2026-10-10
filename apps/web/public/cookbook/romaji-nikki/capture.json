@@ -3,21 +3,21 @@
   "slug": "romaji-nikki",
   "sourceHash": "32e68e6ec20019661f1579e397ef50da080c2e3987cf95083f55e78d275c4909",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:34:59.648Z",
+  "capturedAt": "2026-10-10T22:18:26.887Z",
   "variants": {
     "en": {
-      "hash8": "8cb416ea",
+      "hash8": "5127e5f6",
       "vdtHash": "82d693e9a6d7d3ffcdce158b9dfa43e9084eed21",
       "timings": {
-        "importMs": 17953,
-        "fontsMs": 262,
-        "buildMs": 178,
-        "totalMs": 19639,
+        "importMs": 164,
+        "fontsMs": 120,
+        "buildMs": 51,
+        "totalMs": 907,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93266,
+          "bytes": 93282,
           "alt": "Page 4."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 124445,
+        "bytes": 124495,
         "pages": 4
       },
       "sandbox": {
@@ -304,23 +304,17 @@
           "share": 0,
           "worst": 0.04
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "9aab7d07",
+      "hash8": "3be0a1a3",
       "vdtHash": "05ba8ba6c5d7b5df7fd90f8904b3f6f58bc75dad",
       "timings": {
-        "importMs": 17891,
-        "fontsMs": 125,
-        "buildMs": 57,
-        "totalMs": 18688,
+        "importMs": 165,
+        "fontsMs": 107,
+        "buildMs": 52,
+        "totalMs": 895,
         "builds": 1
       },
       "specimen": {
@@ -386,7 +380,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 95980,
+          "bytes": 96018,
           "alt": "Página 4."
         }
       ],
@@ -418,7 +412,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 125078,
+        "bytes": 125121,
         "pages": 4
       },
       "sandbox": {
@@ -607,13 +601,7 @@
           "share": 0,
           "worst": 0.04
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

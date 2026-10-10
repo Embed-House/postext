@@ -3,20 +3,20 @@
   "slug": "critical-edition-line-numbers",
   "sourceHash": "37d983ea84084bfc17c6dd8c53d7bad6063b1ba76d5a3aa5d5b7fff0254aaa82",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.399Z",
+  "capturedAt": "2026-10-10T22:14:05.081Z",
   "variants": {
     "en": {
       "hash8": "9e67fbab",
       "vdtHash": "97b236012d609303db3366f6b877ca2cf481634a",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 21,
-        "buildMs": 54,
-        "totalMs": 800,
+        "importMs": 128,
+        "fontsMs": 19,
+        "buildMs": 52,
+        "totalMs": 795,
         "builds": 1
       },
       "specimen": {
@@ -344,13 +344,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

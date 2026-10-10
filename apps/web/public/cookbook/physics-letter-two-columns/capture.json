@@ -3,21 +3,21 @@
   "slug": "physics-letter-two-columns",
   "sourceHash": "aa997701def0fb6aadcc9149558bf806cc15cf578dd718ad92cb53bf4068d233",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:18:28.718Z",
+  "capturedAt": "2026-10-10T22:17:56.242Z",
   "variants": {
     "en": {
-      "hash8": "5226810d",
+      "hash8": "d9786d20",
       "vdtHash": "ccc61807386589cdec3b00574c62ed2acb3a74f6",
       "timings": {
-        "importMs": 533,
-        "fontsMs": 162,
-        "buildMs": 253,
-        "totalMs": 1568,
+        "importMs": 184,
+        "fontsMs": 136,
+        "buildMs": 209,
+        "totalMs": 1118,
         "builds": 1
       },
       "specimen": {
@@ -442,11 +442,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.13 MB (warning at 0.9 MB for 5 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

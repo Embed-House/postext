@@ -3,20 +3,20 @@
   "slug": "research-poster",
   "sourceHash": "661b074ad9461f6b7b744c9909275e78b04b6cf78a52ee47a4449707628ae026",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.873Z",
+  "capturedAt": "2026-10-10T22:18:26.882Z",
   "variants": {
     "en": {
       "hash8": "776b921d",
       "vdtHash": "152bbae97cbf2ff3c7d0228699c51b639930e246",
       "timings": {
-        "importMs": 125,
+        "importMs": 126,
         "fontsMs": 29,
         "buildMs": 44,
-        "totalMs": 1718,
+        "totalMs": 772,
         "builds": 1
       },
       "specimen": {
@@ -292,23 +292,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "d0f7cdb2",
       "vdtHash": "565a8c265171499f754da27b53b2f58943f172da",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 29,
+        "importMs": 134,
+        "fontsMs": 27,
         "buildMs": 43,
-        "totalMs": 789,
+        "totalMs": 771,
         "builds": 1
       },
       "specimen": {
@@ -584,13 +578,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

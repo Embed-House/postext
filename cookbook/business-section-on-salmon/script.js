@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 134 · A business section on salmon newsprint ═══════════════
 // https://postext.dev/en/cookbook/business-section-on-salmon
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated (CC BY 4.0)
-// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.26.0
 //
 // An eight-page Berliner daily: four news pages on grey-white newsprint in five columns, then
 // the Business section on salmon paper in six, with its own flag and accent.

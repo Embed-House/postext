@@ -3,21 +3,21 @@
   "slug": "yonkoma",
   "sourceHash": "b646d2c05e52659f973306ab62dd126a8281cdb8392940422b599cd0cd650ff0",
   "engine": {
-    "postext": "1.25.1",
-    "postextPdf": "1.25.1",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T15:15:02.272Z",
+  "capturedAt": "2026-10-10T22:20:39.448Z",
   "variants": {
     "en": {
-      "hash8": "d45c2199",
+      "hash8": "3df9e4c4",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 467,
-        "fontsMs": 333,
-        "buildMs": 353,
-        "totalMs": 1927,
+        "importMs": 164,
+        "fontsMs": 213,
+        "buildMs": 316,
+        "totalMs": 1441,
         "builds": 2
       },
       "specimen": {
@@ -234,13 +234,13 @@
       }
     },
     "es": {
-      "hash8": "3fca5777",
+      "hash8": "0d361583",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 208,
-        "fontsMs": 216,
-        "buildMs": 339,
-        "totalMs": 1567,
+        "importMs": 168,
+        "fontsMs": 213,
+        "buildMs": 317,
+        "totalMs": 1468,
         "builds": 2
       },
       "specimen": {
@@ -457,13 +457,13 @@
       }
     },
     "ca": {
-      "hash8": "690fd737",
+      "hash8": "27ad3757",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
         "importMs": 166,
-        "fontsMs": 209,
-        "buildMs": 331,
-        "totalMs": 1491,
+        "fontsMs": 216,
+        "buildMs": 317,
+        "totalMs": 1482,
         "builds": 2
       },
       "specimen": {
@@ -680,13 +680,13 @@
       }
     },
     "zh": {
-      "hash8": "1157552b",
+      "hash8": "becc27a5",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 228,
-        "buildMs": 332,
-        "totalMs": 1781,
+        "importMs": 170,
+        "fontsMs": 219,
+        "buildMs": 318,
+        "totalMs": 1620,
         "builds": 2
       },
       "specimen": {
@@ -752,7 +752,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1338567,
+        "bytes": 1338563,
         "pages": 2
       },
       "sandbox": {
@@ -903,13 +903,13 @@
       }
     },
     "ar": {
-      "hash8": "1c1b60b3",
+      "hash8": "52d319e6",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 173,
-        "fontsMs": 211,
-        "buildMs": 326,
-        "totalMs": 1475,
+        "importMs": 168,
+        "fontsMs": 235,
+        "buildMs": 317,
+        "totalMs": 1490,
         "builds": 2
       },
       "specimen": {
@@ -975,7 +975,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1328961,
+        "bytes": 1328960,
         "pages": 2
       },
       "sandbox": {
@@ -1126,13 +1126,13 @@
       }
     },
     "ja": {
-      "hash8": "1158ff42",
+      "hash8": "85ccc8e5",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 249,
-        "fontsMs": 242,
-        "buildMs": 341,
-        "totalMs": 1609,
+        "importMs": 167,
+        "fontsMs": 222,
+        "buildMs": 316,
+        "totalMs": 1454,
         "builds": 2
       },
       "specimen": {
@@ -1198,7 +1198,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1322844,
+        "bytes": 1322846,
         "pages": 2
       },
       "sandbox": {
@@ -1349,13 +1349,13 @@
       }
     },
     "pt": {
-      "hash8": "d84004d7",
+      "hash8": "80e403e9",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 246,
-        "buildMs": 359,
-        "totalMs": 1591,
+        "importMs": 167,
+        "fontsMs": 221,
+        "buildMs": 319,
+        "totalMs": 1478,
         "builds": 2
       },
       "specimen": {

@@ -3,11 +3,11 @@
   "slug": "section-heads-field-manual",
   "sourceHash": "50e8c61f208ee5b1d7040f5abb9b03a48e8b1a2f144e313734f36d5beb251531",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.624Z",
+  "capturedAt": "2026-10-10T22:18:26.912Z",
   "variants": {
     "en": {
       "hash8": "e6b26fd0",
@@ -15,8 +15,8 @@
       "timings": {
         "importMs": 130,
         "fontsMs": 4,
-        "buildMs": 63,
-        "totalMs": 790,
+        "buildMs": 64,
+        "totalMs": 793,
         "builds": 1
       },
       "specimen": {
@@ -332,10 +332,10 @@
       "hash8": "a8108c5e",
       "vdtHash": "e435c4dc3a3581b9691ecb4da3ca88efd1e9587b",
       "timings": {
-        "importMs": 138,
+        "importMs": 126,
         "fontsMs": 3,
         "buildMs": 53,
-        "totalMs": 794,
+        "totalMs": 787,
         "builds": 1
       },
       "specimen": {
