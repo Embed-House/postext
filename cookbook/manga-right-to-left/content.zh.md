@@ -35,7 +35,9 @@ hana{tail=bottom}: 是！
 sora{thought}: 居然没挨骂……
 hana: 谢谢你，相泽。我会戴着的
 ::panel{art=roof}
-hana: ……其实，我有点害怕
+hana: ……其实，\
+  我有点\
+  害怕
 sora: 我也是。明明我又不上场
 hana: 噗，你在说什么呀
 :::
