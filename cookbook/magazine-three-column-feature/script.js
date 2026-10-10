@@ -145,7 +145,8 @@ const config = () => ({
     textAlign: 'justify', firstLineIndent: mm(3), indentAfterHeading: false,
     // A 40-character measure: a line no break can set within twice the normal space takes up
     // to 0.015 em of tracking for the rest instead of spreading its spaces wider still.
-    minWordSpacing: 0.7, maxJustifyTracking: 15 },
+    minWordSpacing: 0.7, maxJustifyTracking: 15,
+    hyphenateAcrossColumns: false }, // no word is divided over a column or a page
   headings: { fontFamily: 'Fraunces', fontWeight: 600, color: col('sea'), levels: [
     // parity 'any': the spread opens on the next page (the default waits for a recto).
     { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' } },
