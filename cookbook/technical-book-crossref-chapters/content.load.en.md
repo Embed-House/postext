@@ -8,7 +8,7 @@ The example is a stone cabin of 48 m² at 1,100 m in a valley that faces south
 
 Walk round the cabin with a notebook and write down everything that plugs in or is wired in, with its power in watts and the hours it runs on a winter day. The power is on the rating plate or in the manual; for anything with a motor or a compressor, a plug-in meter left for a day gives a truer figure than the plate. @Tbl:loads is the list for the example cabin.
 
-Two lines in the table are easy to forget. The inverter, which turns the battery's 24 volts into 230 volts for the sockets, draws 8 W from the moment it is switched on, whether anything is plugged in or not: over a day that is more than the lights. The router runs all night as well. Both are worth a timer or a switch by the door, and the saving is worked out in @sec:winter-margin.
+Two lines in the table are easy to forget. The inverter, which turns the battery’s 24 volts into 230 volts for the sockets, draws 8 W from the moment it is switched on, whether anything is plugged in or not: over a day that is more than the lights. The router runs all night as well. Both are worth a timer or a switch by the door, and the saving is worked out in @sec:winter-margin.
 
 The fridge figure needs care. A chest fridge of 100 litres draws 55 W while its compressor runs, and in a cool cabin the compressor runs about five hours in twenty-four. In August it may run nine, but August is not the month that sizes the system, as @sec:sun-hours shows on :ref{id="sec:sun-hours" style=page}.
 
