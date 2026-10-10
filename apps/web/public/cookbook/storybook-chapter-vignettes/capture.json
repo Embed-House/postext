@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "storybook-chapter-vignettes",
-  "sourceHash": "6d42061f0fdbf29a41ff2c74e196ea2f515b4f406c821bb9c837d43f4e9c3fef",
+  "sourceHash": "20201aef39302db471deb5ce728eb4ea67fb0cdbded3259f508130a2eb88d789",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.785Z",
+  "capturedAt": "2026-10-10T18:41:27.967Z",
   "variants": {
     "en": {
-      "hash8": "543ba649",
-      "vdtHash": "80bef070de771a40c5d40c51e1be4067e521cc0a",
+      "hash8": "05b18071",
+      "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 143,
-        "fontsMs": 32,
+        "importMs": 359,
+        "fontsMs": 47,
         "buildMs": 170,
-        "totalMs": 958,
+        "totalMs": 1415,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Quicksand"
         ],
         "pages": 5,
-        "ownLines": 159
+        "ownLines": 162
       },
       "pages": [
         {
@@ -71,7 +71,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130498,
+          "bytes": 130140,
           "alt": "Page 8."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 92674,
+          "bytes": 93106,
           "alt": "Page 9."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90918,
+          "bytes": 91172,
           "alt": "Opening page 10: Capitolo II."
         }
       ],
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820910,
+        "bytes": 820939,
         "folio": "ebfafef3"
       },
       "detected": {
@@ -143,7 +143,9 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
           "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
           "bodyText.referenceColor",
           "colorPalette",
           "colorPalette[].id",
@@ -246,7 +248,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 267,
+        "configLeaves": 269,
         "designElements": 13,
         "directives": [
           "::resource",
@@ -308,17 +310,17 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 1,
         "looseLines": {
-          "count": 3,
-          "share": 0.0698,
-          "worst": 1.58
+          "count": 1,
+          "share": 0.0227,
+          "worst": 1.45
         },
         "findings": [
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "3 of 43 justified lines (7.0 %) stretch past 1.45× (worst 1.58×); loosest: p. 3 1.58× “— Ho capito; — disse allora ridendo e grattando…”, p. 4 1.55× “Questa volta il povero maestro Ciliegia cadde g…”, p. 3 1.48× “E ripresa l’ascia in mano, tirò giù un solennis…”"
+            "detail": "1 of 44 justified lines (2.3 %) stretch past 1.45× (worst 1.45×); loosest: p. 5 1.45× “Geppetto era bizzosissimo. Guai a chiamarlo Pol…”"
           },
           {
             "check": "vdt",
@@ -334,13 +336,13 @@
       }
     },
     "es": {
-      "hash8": "1225cf2f",
-      "vdtHash": "80bef070de771a40c5d40c51e1be4067e521cc0a",
+      "hash8": "c2683f3b",
+      "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
         "importMs": 137,
         "fontsMs": 33,
-        "buildMs": 167,
-        "totalMs": 942,
+        "buildMs": 42,
+        "totalMs": 892,
         "builds": 1
       },
       "specimen": {
@@ -362,7 +364,7 @@
           "Quicksand"
         ],
         "pages": 5,
-        "ownLines": 159
+        "ownLines": 162
       },
       "pages": [
         {
@@ -395,7 +397,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130498,
+          "bytes": 130140,
           "alt": "Página 8."
         },
         {
@@ -406,7 +408,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 92674,
+          "bytes": 93106,
           "alt": "Página 9."
         },
         {
@@ -417,7 +419,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90918,
+          "bytes": 91172,
           "alt": "Página de apertura 10: Capitolo II."
         }
       ],
@@ -449,7 +451,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820957,
+        "bytes": 820987,
         "folio": "ebfafef3"
       },
       "detected": {
@@ -467,7 +469,9 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
           "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
           "bodyText.referenceColor",
           "colorPalette",
           "colorPalette[].id",
@@ -570,7 +574,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 267,
+        "configLeaves": 269,
         "designElements": 13,
         "directives": [
           "::resource",
@@ -632,17 +636,17 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 1,
         "looseLines": {
-          "count": 3,
-          "share": 0.0698,
-          "worst": 1.58
+          "count": 1,
+          "share": 0.0227,
+          "worst": 1.45
         },
         "findings": [
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "3 of 43 justified lines (7.0 %) stretch past 1.45× (worst 1.58×); loosest: p. 3 1.58× “— Ho capito; — disse allora ridendo e grattando…”, p. 4 1.55× “Questa volta il povero maestro Ciliegia cadde g…”, p. 3 1.48× “E ripresa l’ascia in mano, tirò giù un solennis…”"
+            "detail": "1 of 44 justified lines (2.3 %) stretch past 1.45× (worst 1.45×); loosest: p. 5 1.45× “Geppetto era bizzosissimo. Guai a chiamarlo Pol…”"
           },
           {
             "check": "vdt",
