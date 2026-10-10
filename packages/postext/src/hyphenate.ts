@@ -107,12 +107,59 @@ export function hyphenateText(text: string, locale?: LocaleTag): string {
         // A word of a joining script (an Arabic word quoted in an English
         // book) is never divided: its letters connect (`measure/joining.ts`).
         hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : hyphenator.hyphenateText(word);
+        if (loc === 'en-us' && APOSTROPHE_RE.test(word)) hyphenated = withoutApostropheBreaks(word, hyphenated, enUs.leftmin, enUs.rightmin);
         if (memo.size >= WORD_MEMO_SLOTS) memo.clear();
         memo.set(word, hyphenated);
       }
       out += hyphenated;
     }
     i = j;
+  }
+  return out;
+}
+
+const APOSTROPHE_RE = /['’]/;
+const LETTER_RE = /[\p{L}\p{M}]/u;
+
+/**
+ * `hyphenated` — the English dictionary's division of `word` — without the
+ * breaks that leave too few letters beside an apostrophe (#669). hypher
+ * takes the apostrophe for a character of the word and counts it towards
+ * the least it leaves on each side of a break, so `m's` passes for three
+ * and the dictionary gives `ar-m's`, `is-n't`, `could-n't`, `o'-clock`.
+ * A break stays when `leftmin` letters stand before it and `rightmin` after
+ * it in its run of letters and apostrophes, the apostrophes not counted
+ * (`per-son's`, `moth-er's`). A soft hyphen `word` carries stays.
+ */
+function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: number, rightmin: number): string {
+  if (hyphenated.length === word.length) return hyphenated;
+  /** Letters of the run of letters and apostrophes from `from` on, walking
+   *  by `step`, and whether the run holds an apostrophe. */
+  const run = (from: number, step: 1 | -1): { letters: number; apostrophe: boolean } => {
+    let letters = 0;
+    let apostrophe = false;
+    for (let k = from; k >= 0 && k < word.length; k += step) {
+      const ch = word[k]!;
+      if (APOSTROPHE_RE.test(ch)) apostrophe = true;
+      else if (LETTER_RE.test(ch)) letters++;
+      else break;
+    }
+    return { letters, apostrophe };
+  };
+  let out = '';
+  let j = 0;
+  for (let i = 0; i < hyphenated.length; i++) {
+    const ch = hyphenated[i]!;
+    if (ch === SOFT_HYPHEN && word[j] !== SOFT_HYPHEN) {
+      // A break the dictionary added before `word[j]`.
+      const before = run(j - 1, -1);
+      const after = run(j, 1);
+      if ((before.apostrophe || after.apostrophe) && (before.letters < leftmin || after.letters < rightmin)) continue;
+      out += ch;
+      continue;
+    }
+    out += ch;
+    if (j < word.length && ch === word[j]) j++;
   }
   return out;
 }
