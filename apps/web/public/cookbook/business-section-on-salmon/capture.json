@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "business-section-on-salmon",
-  "sourceHash": "77df3a00111da2eb9fef384d331b78a55a7d81469551373a60712b0c4afd579b",
+  "sourceHash": "3d8878d44bdecd14f0d5fbf8bacf6ea8ed2578bf1d13408067c5ced3651d6d3a",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.210Z",
+  "capturedAt": "2026-10-10T20:36:37.140Z",
   "variants": {
     "en": {
-      "hash8": "6ed37707",
-      "vdtHash": "e77de348d34994369e423dfefb2a4d85a7f6a591",
+      "hash8": "7d760360",
+      "vdtHash": "ad670a8f52b1cbbf4c2d64c40dd46acd2e747752",
       "timings": {
-        "importMs": 142,
-        "fontsMs": 48,
-        "buildMs": 619,
-        "totalMs": 1409,
+        "importMs": 230,
+        "fontsMs": 61,
+        "buildMs": 617,
+        "totalMs": 1530,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Source Serif 4"
         ],
         "pages": 8,
-        "ownLines": 242
+        "ownLines": 243
       },
       "pages": [
         {
@@ -73,7 +73,7 @@
           "h": 1492,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 152352,
+          "bytes": 155690,
           "alt": "Opening page 3: Region. Where the money goes · Weather · Tides at Kingsquay · The Holm Maid leaves Skerra pier on her first crossing since May."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1492,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176688,
+          "bytes": 201616,
           "alt": "Opening page 4: Opinion. Holding the line, by Kit Carrow."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1492,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 178280,
+          "bytes": 181936,
           "alt": "Opening page 5: Business. The Outer Quay at dawn. The new berth would take ships three times the size of those the port handles now. · Containers through Marrowick, thousands of twenty-foot units a year."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1492,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 111122,
+          "bytes": 111148,
           "alt": "Opening page 6: Markets. The MX 40 over the past year, daily closes. · Sectors on the Marrowick Exchange, change on the day. · Indices · Currencies · Commodities · Most traded."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1492,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 133844,
+          "bytes": 133582,
           "alt": "Opening page 7: Companies. Results · Company diary · Halden’s Quayside plant bakes 1.1 million loaves a week."
         }
       ],
@@ -153,7 +153,7 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1216328,
+        "bytes": 1218527,
         "folio": "77d83e3b"
       },
       "detected": {
@@ -477,20 +477,20 @@
         "converged": true,
         "iterationCount": 8,
         "looseLines": {
-          "count": 22,
-          "share": 0.0445,
+          "count": 16,
+          "share": 0.0306,
           "worst": 2.98
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.27 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 1.31 MB (warning at 0.9 MB for 7 pages)"
           },
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "22 of 494 justified lines (4.5 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 1 2.86× “council had expected, and the”, p. 7 2.71× “The company estimated”"
+            "detail": "16 of 523 justified lines (3.1 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 1 2.86× “council had expected, and the”, p. 7 2.71× “The company estimated”"
           },
           {
             "check": "vdt",

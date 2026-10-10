@@ -172,7 +172,9 @@ The island’s 900 residents have relied on a smaller chartered boat since May, 
 
 “It has been a long summer,” said Morag Lusk, who keeps the shop at the pier. “We had cement on the mainland and builders on the island, and no way to get the one to the other.”
 
-The ferry’s first crossing, at 7.15am, was full. Skerra Lines says the winter timetable, with four sailings a day, starts on 26 October, and that the gales should ease by Wednesday.
+The first crossing, at 7.15am, was full. Skerra Lines says the winter timetable, with four sailings a day, starts on 26 October, and that the gales should ease by Wednesday.
+
+The new engines are quieter as well as cleaner, the company says, and on the wider deck the fuel tanker and the supermarket lorry can sail on the same day.
 
 The refit was done at Corran’s yard in Brackwater, the first time in twenty years that an island ferry has been repaired in the city rather than sent south. The yard finished a week before the date in its contract. Her crew of eleven spent the summer on the chartered boat, which Skerra Lines will keep on standby until the spring.
 
@@ -184,61 +186,3 @@ The refit was done at Corran’s yard in Brackwater, the first time in twenty ye
 
 Kingsquay 7.15, 10.30, 14.00, 17.45 · Skerra 8.40, 12.15, 15.30, 19.10
 :::
-
-# Opinion
-
-:::callout{type="banner" span="page" title="The Ledger’s view"}
-## The barrier worked. Now pay for the next one {style="wide"}
-:::
-
-:::paragraphs{style="flush"}
-On Monday night the Marrow Barrier did what its critics said it never would. It closed on time, it held, and the Lower Town woke to wet pavements rather than flooded kitchens :ref{id="cartoon" text="(cartoon)"}. The engineers who built it, and the crew who ran it through the storm, have earned the city’s thanks.
-:::
-
-They have also earned a hearing. The barrier was designed to protect Marrowick until about 2070. Every forecast since it was planned has raised the sea a little higher and brought that date a little closer. The authority already says it will need to raise the flood walls downstream of the gates within fifteen years, at a cost it puts at £120 million.
-
-That money is not in anybody’s budget. The city cannot ask the Lower Town to wait for the next 1986 before it starts saving. A small levy on the port’s cargo, which the barrier also protects, would raise £4 million a year. The harbour board should agree to it before the new terminal is built, not after.
-
-:::callout{type="story" span="page" title="Tom Ellery"}
-## Sixty-four reasons to be cheerful {style="second"}
-:::
-
-:::callout{type="quote" placement="top"}
-“A city that gives its young people a choice about staying will still be here when the next storm comes”
-:::
-
-:::paragraphs{style="flush"}
-I spent Monday morning in the fabrication hall at Brackwater, among sixty-four teenagers in new overalls, and it was the most hopeful room I have stood in for years.
-:::
-
-When I started on this paper the yard was a byword for decline. Every winter brought another round of lay-offs, and every spring another rumour that the cranes would be sold for scrap. My father welded there for thirty years; I was told, firmly and often, not to follow him.
-
-What changed was not luck. The yard stopped bidding for work it could not win and learned to build the ships nobody else wanted to build: small, complicated and clean. Those ships need people who can think as well as weld, and the yard started training them.
-
-The apprentices I met were careful to say they had other offers. That is the point. A city that gives its young people a choice about staying is a city that will still be here when the next storm comes.
-
-:::callout{type="story" span="page" title="Letters"}
-## Gates, parking and the libraries {style="second"}
-:::
-
-**Gates and gratitude.** I watched the barrier close from the north embankment on Monday. My street flooded in 1986 and I lost every photograph I owned. Thank you to everyone who built it. *June Pellow, Saltmarsh Road*
-
-**Parking.** Forty pence an hour more is the difference between my customers coming into town and driving to the retail park. *Arif Malik, Castle Wynd*
-
-**Libraries.** The petition worked. Next time the council should ask before it plans a closure, not after. *Elspeth Rae, Kelby Rise*
-
-:::callout{type="ad" span="page" placement="bottom" title="Advertisement"}
-## Marrowick Philharmonic {style="ad-big"}
-
-**The winter season opens on Saturday 17 October with Sibelius and Elgar**
-
-:::space{lines=4}
-
-Twelve concerts at the Corn Hall, from £9 · Under-26s £5 · Box office open daily from 10
-:::
-
-**Trams.** Two in the morning is welcome, but my shift at the Infirmary ends at three. *Daniel Okoro, Holmside*
-
-**The terminal.** Before the harbour board digs up the mudflats at the Outer Quay, someone should count the birds that winter there. I counted 2,400 knot on a single tide last January. *Neil Rennie, Fenner’s Green*
-
-**Bus 44.** The Sunday buses to Holm stop at six. Anyone who works a late shift in town still needs a car, trams or no trams. *Grace Fairlie, Holm*

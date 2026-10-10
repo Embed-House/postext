@@ -428,16 +428,16 @@ const SECTOR_MOVES = [['Shipping', 3.4], ['Insurance', 1.6], ['Engineering', 1.1
   ['Energy', 0.5], ['Food and drink', 0.3], ['Property', -0.1], ['Technology', -0.2],
   ['Health', -0.4], ['Retail', -2.1]];
 function sectorsSvg() { // the day's move of each sector, in per cent
-  const [W, H, Z, k] = [291, 82, 150, 30]; // mm; the zero line; mm per point
+  const [W, H, Z, k] = [291, 88, 150, 30]; // mm; the zero line; mm per point
   let out = '';
   SECTOR_MOVES.forEach(([name, move], i) => {
-    const y = 2 + i * 8;
+    const y = 2 + i * 8.6;
     const [x, w] = move >= 0 ? [Z, move * k] : [Z + move * k, -move * k];
-    out += `<rect x="${x.toFixed(2)}" y="${y}" width="${w.toFixed(2)}" height="5.6" `
+    out += `<rect x="${x.toFixed(2)}" y="${y.toFixed(1)}" width="${w.toFixed(2)}" height="6" `
       + `fill="${move >= 0 ? palette.petrol : palette.rule}"/>`
-      + label(move >= 0 ? Z - 2 : Z + 2, y + 4, 3.6, name,
+      + label(move >= 0 ? Z - 2 : Z + 2, y + 4.3, 3.6, name,
         `text-anchor="${move >= 0 ? 'end' : 'start'}"`)
-      + label(move >= 0 ? x + w + 1.5 : x - 1.5, y + 4, 3.6, `${sign(move)}%`,
+      + label(move >= 0 ? x + w + 1.5 : x - 1.5, y + 4.3, 3.6, `${sign(move)}%`,
         `font-weight="700" text-anchor="${move >= 0 ? 'start' : 'end'}"`);
   });
   return svg(W, H, `${out}<path d="M${Z} 0V${H}" stroke="${palette.ink}" stroke-width="0.35"/>`);
@@ -451,8 +451,9 @@ const resourceTypes = [unnumbered('picture', 'Picture'),
   unnumbered('panel', 'Panel', { position: 'above', fontSize: pt(9.5) })];
 const res = (id, typeId, kind, body, extra) => ({ id, typeId, kind, [kind]: body,
   createdAt: 0, updatedAt: 0, ...extra });
-const photo = (id, file, [w, h], placement) => res(id, 'picture', 'bitmap',
-  { fileId: file, format: 'jpeg', width: w, height: h }, { placement, ...CAPTIONS[id] });
+const photo = (id, file, [w, h], placement, resolution) => res(id, 'picture', 'bitmap',
+  { fileId: file, format: 'jpeg', width: w, height: h, ...(resolution && { resolution }) },
+  { placement, ...CAPTIONS[id] });
 const drawing = (id, [w, h], placement) => res(id, 'picture', 'svg',
   { fileId: `${id}.svg`, width: w, height: h }, { placement, ...CAPTIONS[id] });
 const data = (id, model, caption, note) => res(id, 'panel', 'table', { model },
@@ -464,10 +465,10 @@ const resources = [
   photo('welders', 'apprentices-1536.jpg', [1536, 1024], top(3)),
   drawing('gate', [1130, 500], top(3)),
   photo('ferry', 'ferry-1536.jpg', [1536, 1024], top(4)),
-  photo('cartoon', 'cartoon-1280.jpg', [1280, 853], top(4)),
+  photo('cartoon', 'cartoon-1280.jpg', [1280, 853], top(4), 140),
   photo('cranes', 'cranes-1800.jpg', [1800, 750], here),
   drawing('throughput', [1130, 700], top(2)),
-  drawing('mx40', [2910, 1000], here), drawing('sectors', [2910, 820], here),
+  drawing('mx40', [2910, 1000], here), drawing('sectors', [2910, 880], here),
   photo('loaves', 'bakery-1536.jpg', [1536, 1024], top(3)),
   // The tables sit where the text names them, in a column or a data box: no float.
   ...Object.entries(TABLES).map(([id, [model, caption, note]]) => data(id, model, caption, note)),
@@ -475,8 +476,8 @@ const resources = [
     { styleId: 'prices', model: pricesTable(i, 21) }, { placement: here })),
 ];
 // #endregion
-const markdown = /* @content */ ''; // content.en.md: pages 1–4
-const businessPages = /* @content:business */ ''; // content.business.en.md: pages 5–8
+const markdown = /* @content */ ''; // content.en.md: pages 1–3
+const businessPages = /* @content:business */ ''; // content.business.en.md: pages 4–8
 
 // ─── 3 · Fonts ──────────────────────────────────────────────────────────────
 const FONTS = { // text, display and label faces, loaded before the build
