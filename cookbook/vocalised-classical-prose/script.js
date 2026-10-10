@@ -82,6 +82,15 @@ const config = () => ({
   layout: { layoutType: 'single' }, // the default is two columns
   bodyText,
   headings,
+  // The note on the text and the colophon: small Latin in the muted ink, two lines of the
+  // note to one line of the text's pitch.
+  paragraphStyles: [
+    { id: 'note', fontFamily: NASKH, fontSize: pt(9.5), lineHeight: pt(LEAD / 2),
+      color: col('muted'), boldColor: col('ink'), italicColor: col('muted'), textAlign: 'justify',
+      firstLineIndent: pt(0), hyphenation: { enabled: true, locale: LANG } },
+    { id: 'colophon', fontFamily: NASKH, fontSize: pt(8), lineHeight: pt(11),
+      color: col('muted'), textAlign: 'left', firstLineIndent: pt(0), marginTop: pt(7) },
+  ],
   header: { elements: [] }, // a single maqāma: no running heads
   footer: { elements: [] },
 });
