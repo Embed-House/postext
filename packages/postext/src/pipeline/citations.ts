@@ -8,6 +8,9 @@
  */
 
 import type { ContentBlock, InlineSpan } from '../parse';
+import type { InlineDirection } from '../parse/types';
+import { isRtlScriptChar } from '../bidi';
+import { resolvedDirection } from './config';
 import { FOOTNOTE_PLACEHOLDER } from '../parse/inlineFormatting';
 import type { Dimension } from '../types';
 import type { ResolvedConfig } from '../vdt';
@@ -398,6 +401,43 @@ export function resolveCitationSpans(spans: InlineSpan[], formatted: readonly (I
   });
 }
 
+/** The ids of the isolates citations are set in ({@link isolated}): clear
+ *  of the ones a paragraph's own `:ltr[…]` and `:rtl[…]` count from 1. */
+const CITATION_ISOLATE_BASE = 2_000_000;
+
+/** The direction of the first strong letter of `spans` (UAX #9 P2),
+ *  undefined when they hold none: a numbered marker, a page number. */
+function firstStrong(spans: readonly InlineSpan[]): 'ltr' | 'rtl' | undefined {
+  for (const span of spans) {
+    for (const ch of span.text) {
+      const cp = ch.codePointAt(0)!;
+      if (isRtlScriptChar(cp)) return 'rtl';
+      if (/\p{L}/u.test(ch)) return 'ltr';
+    }
+  }
+  return undefined;
+}
+
+/**
+ * A formatted citation or bibliography entry as it joins text that runs
+ * `base` (#667): when its first strong letter runs the other way (a Latin
+ * work in an Arabic note, an Arabic one in an English paragraph) its spans
+ * become one bidi isolate of that direction (`InlineSpan.direction`, what
+ * `:ltr[…]` writes), so the reference's own neutral characters, the last
+ * solidus of a URL, a closing quotation mark, its full stop, resolve
+ * inside it and stay where it ends; left alone they would take the
+ * paragraph's direction and move to the far end of the line. A citation
+ * with no letter, or one that runs as the text does, is returned as it
+ * is. `id` tells the isolates of one paragraph apart; `outer` is the
+ * author's isolate the citation is written in.
+ */
+function isolated(spans: InlineSpan[], base: 'ltr' | 'rtl', id: number, outer?: InlineDirection): InlineSpan[] {
+  const own = firstStrong(spans);
+  if (own === undefined || own === (outer?.dir ?? base)) return spans;
+  const direction: InlineDirection = { dir: own, id: CITATION_ISOLATE_BASE + id, ...(outer ? { outer } : {}) };
+  return spans.map((s) => ({ ...s, direction }));
+}
+
 /** A Chinese mark that ends a clause or a sentence, at the start of a text. */
 const CLOSING_CJK = /^[，。、；：！？）」』】》〕]/u;
 
@@ -510,15 +550,18 @@ export function applyCitations(
   let bibliographySet = false;
   let labelChars = 0;
   let containerSeq = 0;
+  const documentDirection = resolvedDirection(resolved);
   const listedIds = new Set(processed?.entries.map((e) => e.id) ?? []);
   const itemsById = new Map(ctx.items.map((i) => [i.id, i]));
   const willList = (id: string | undefined): boolean => id !== undefined && listedIds.has(id) && (cfg.bibliography.auto || ctx.placed);
   /** The printed text of cluster `g` with the emphasis of `span` (the
    *  citation's span), linked to its entry; undefined when it prints as
    *  written. */
-  const formattedText = (g: number | undefined, span: InlineSpan): InlineSpan[] | undefined => {
-    const spans = g !== undefined ? processed?.formatted[g] : undefined;
-    if (g === undefined || !spans) return undefined;
+  const formattedText = (g: number | undefined, span: InlineSpan, base: 'ltr' | 'rtl' = documentDirection, at = 0): InlineSpan[] | undefined => {
+    const formatted = g !== undefined ? processed?.formatted[g] : undefined;
+    if (g === undefined || !formatted) return undefined;
+    // Set against the text it joins, the citation is an isolate (#667).
+    const spans = isolated(formatted, base, at, span.direction);
     const target = processed!.target[g];
     const href = cfg.link && willList(target) ? `#${BIBLIOGRAPHY_ANCHOR_PREFIX}${target}` : undefined;
     // The citation takes the emphasis of the text around it.
@@ -546,7 +589,7 @@ export function applyCitations(
       for (const g of [...at.caption, ...at.note]) {
         if (processed?.formatted[g]) counted(g);
       }
-      captions.set(id, { caption: at.caption.map((g) => formattedText(g, base)), note: at.note.map((g) => formattedText(g, base)) });
+      captions.set(id, { caption: at.caption.map((g, i) => formattedText(g, base, documentDirection, i)), note: at.note.map((g, i) => formattedText(g, base, documentDirection, i)) });
     }
   };
 
@@ -575,7 +618,8 @@ export function applyCitations(
       blocksOut.push({ ...base, type: 'paragraph', text: heading, spans: [{ text: heading, bold: true, italic: false }], sourceMap: new Array<number>(heading.length).fill(at) });
     }
     for (const entry of entries) {
-      const body = htmlToSpans(entry.html);
+      // An entry in the other direction keeps its punctuation (#667).
+      const body = isolated(htmlToSpans(entry.html), documentDirection, 0);
       const label = entry.label ? decodeEntities(entry.label.replace(/<[^>]*>/g, '')) : undefined;
       if (label) labelChars = Math.max(labelChars, [...label].length);
       // The label in a column of its own (#290): the en space after it is
@@ -628,7 +672,10 @@ export function applyCitations(
     block.spans.forEach((span, i) => {
       if (!span.citation) return;
       const g = ctx.local[k++];
-      const text = formattedText(g, span);
+      // A note style sets the citation in a note, which runs as the
+      // document does whatever the direction of the block that cites.
+      const toNote = note && block.footnoteDef === undefined && !warichu;
+      const text = formattedText(g, span, toNote ? documentDirection : block.direction ?? documentDirection, i);
       if (g === undefined || !text) {
         // No reference: the citation prints as it was written.
         replace.set(i, [plain(span.citation.raw, span)]);
