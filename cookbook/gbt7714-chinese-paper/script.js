@@ -109,6 +109,9 @@ const config = () => ({
     textAlign: 'justify', firstLineIndent: em(2), indentAfterHeading: true,
   },
   headings: { fontFamily: HEI, fontWeight: 700, color: col('ink'),
+    // Off by default on a character grid. On, a short column takes whole grid lines above
+    // its heads, and the two columns of the last page end level.
+    balancing: { enabled: true },
     levels: [
       { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // the next page, either side
       { level: 2, numberingTemplate: '{2}', numberSeparator: '　', fontSize: pt(10.5),

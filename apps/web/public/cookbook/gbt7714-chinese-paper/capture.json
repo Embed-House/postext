@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gbt7714-chinese-paper",
-  "sourceHash": "665224f19583cbfcddbd43bae49c9109086af2107894dd6dbffb62e0371be92f",
+  "sourceHash": "c42cdc3888634733f55f5493a71dfc7cb4e7d1d52cf22f1239f64e6330b1449e",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.146Z",
+  "capturedAt": "2026-10-10T20:18:39.352Z",
   "variants": {
     "en": {
-      "hash8": "11faa2dc",
-      "vdtHash": "5eccb97216841cb50e36367ff89089a4c33cf978",
+      "hash8": "bb52f876",
+      "vdtHash": "5c93e58faa6a038b76bdc016a2da2412aa258a8a",
       "timings": {
-        "importMs": 515,
-        "fontsMs": 836,
-        "buildMs": 435,
-        "totalMs": 3886,
+        "importMs": 513,
+        "fontsMs": 759,
+        "buildMs": 458,
+        "totalMs": 2282,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 144
+        "ownLines": 147
       },
       "pages": [
         {
@@ -51,7 +51,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 147920,
+          "bytes": 148332,
           "alt": "Opening page 41: 横排中文正文的行长与行 距： 一项纸本与屏幕的对 照阅读实验."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122526,
+          "bytes": 122406,
           "alt": "Page 42: 2 结果."
         }
       ],
@@ -90,12 +90,12 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 165464,
+        "bytes": 165395,
         "pages": 2
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21299,
+        "bytes": 21328,
         "folio": "1668ad62"
       },
       "detected": {
@@ -191,6 +191,8 @@
           "headingStyles[].numbered",
           "headingStyles[].span",
           "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -245,7 +247,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 253,
+        "configLeaves": 254,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -291,6 +293,7 @@
           "chips",
           "citation-styles",
           "cjk-line-breaking",
+          "column-balancing",
           "generated-bibliography",
           "heading-attributes",
           "heading-numbering",
@@ -308,7 +311,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 5,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -334,13 +337,13 @@
       }
     },
     "es": {
-      "hash8": "bff28e0f",
-      "vdtHash": "59f4a11075cbc37ac9cbced6295976d3606ae3a5",
+      "hash8": "2b2ca9ba",
+      "vdtHash": "4fe16dd7111f3b5b88e57b5ec705eabb31a37923",
       "timings": {
-        "importMs": 200,
-        "fontsMs": 259,
-        "buildMs": 94,
-        "totalMs": 1144,
+        "importMs": 218,
+        "fontsMs": 282,
+        "buildMs": 128,
+        "totalMs": 1216,
         "builds": 1
       },
       "specimen": {
@@ -363,7 +366,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 144
+        "ownLines": 147
       },
       "pages": [
         {
@@ -374,7 +377,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 147920,
+          "bytes": 148332,
           "alt": "Página de apertura 41: 横排中文正文的行长与行 距： 一项纸本与屏幕的对 照阅读实验."
         },
         {
@@ -385,7 +388,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122594,
+          "bytes": 122442,
           "alt": "Página 42: 2 结果."
         }
       ],
@@ -413,12 +416,12 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 165536,
+        "bytes": 165473,
         "pages": 2
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21348,
+        "bytes": 21378,
         "folio": "1668ad62"
       },
       "detected": {
@@ -514,6 +517,8 @@
           "headingStyles[].numbered",
           "headingStyles[].span",
           "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -568,7 +573,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 253,
+        "configLeaves": 254,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -614,6 +619,7 @@
           "chips",
           "citation-styles",
           "cjk-line-breaking",
+          "column-balancing",
           "generated-bibliography",
           "heading-attributes",
           "heading-numbering",
@@ -631,7 +637,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 5,
         "looseLines": {
           "count": 0,
           "share": 0,
