@@ -1938,6 +1938,12 @@ A propriedade `orderedLists` controla as listas numeradas (`1.`, `2)` etc.). Sã
       <td>A largura da coluna de números de um item, que define onde o seu texto começa; os números ficam alinhados à direita nela. <code>'run'</code>: o número mais largo da própria sequência do item, isto é, os itens de uma mesma profundidade sem nada além de itens mais profundos entre eles. Uma figura, um parágrafo ou um boxe entre dois itens inicia uma nova sequência, então <code>ii)</code> depois de uma tabela pode começar o texto um pouco mais à direita que <code>i)</code> antes dela, e uma lista de nove itens compõe o texto mais à esquerda que uma lista de doze. <code>'level'</code>: o número mais largo na profundidade do item em todo o documento (o capítulo, num livro), de modo que todas as listas, e todas as partes de uma lista interrompida, começam o texto no mesmo lugar, como já fazem os recuos dos níveis mais profundos.</td>
     </tr>
     <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>Como um número fica na sua coluna. <code>'end'</code>: junto ao texto, de modo que os números de uma sequência terminam na mesma posição e <code>9.</code> e <code>10.</code> alinham os pontos. <code>'start'</code>: no início da coluna (a esquerda numa página da esquerda para a direita, a direita numa da direita para a esquerda, o alto da linha em texto vertical), de modo que rótulos de comprimentos diferentes começam na mesma posição, como os artigos de uma lei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). A coluna mantém a largura que <code>numberWidth</code> lhe dá, então o texto dos itens começa no mesmo lugar nos dois casos; com um separador de estilo próprio, o separador segue o seu número. Desde o postext 1.26.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

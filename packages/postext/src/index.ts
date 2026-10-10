@@ -296,6 +296,7 @@ export type {
   OrderedListsConfig,
   ResolvedOrderedListsConfig,
   OrderedListNumberWidth,
+  OrderedListNumberAlign,
   OrderedListNumberFormat,
   SyncIndicatorConfig,
   DebugConfig,

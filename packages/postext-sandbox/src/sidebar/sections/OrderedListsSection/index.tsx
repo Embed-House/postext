@@ -12,6 +12,7 @@ import type {
   OrderedListsConfig,
   OrderedListLevelConfig,
   OrderedListNumberFormat,
+  OrderedListNumberAlign,
   OrderedListNumberWidth,
 } from 'postext';
 import {
@@ -322,6 +323,18 @@ export const OrderedListsSection = memo(function OrderedListsSection() {
         tooltip={labels.orderedListsNumberWidthTooltip}
         isDefault={lists.numberWidth === D.numberWidth}
         onReset={() => resetField('numberWidth')}
+      />
+      <SelectInput
+        label={labels.orderedListsNumberAlign}
+        value={lists.numberAlign}
+        options={[
+          { value: 'end', label: labels.orderedListsNumberAlignEnd },
+          { value: 'start', label: labels.orderedListsNumberAlignStart },
+        ]}
+        onChange={(v) => updateLists({ numberAlign: v as OrderedListNumberAlign })}
+        tooltip={labels.orderedListsNumberAlignTooltip}
+        isDefault={lists.numberAlign === D.numberAlign}
+        onReset={() => resetField('numberAlign')}
       />
       <ToggleSwitch
         label={labels.orderedListsHangingIndent}

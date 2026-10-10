@@ -4088,6 +4088,15 @@ export interface OrderedListsConfig {
    *    an interrupted one starts its text at the same place, as the
    *    indents of the deeper levels already do. */
   numberWidth?: OrderedListNumberWidth;
+  /** How a number sits in its column (#682):
+   *  - `'end'` (default): against the text, so `9.` and `10.` end
+   *    together;
+   *  - `'start'`: at the start of the column (the left on a left-to-right
+   *    page, the right on a right-to-left one, the head of the line in
+   *    vertical text), so 第九條 and 第十一條 begin together. The column
+   *    keeps its width ({@link numberWidth}): the text of the items still
+   *    starts at one place. */
+  numberAlign?: OrderedListNumberAlign;
   hangingIndent?: boolean;
   levels?: OrderedListLevelConfig[];
   /** Font family of the separator run. Inherits the number's `fontFamily`. */
@@ -4106,6 +4115,10 @@ export interface OrderedListsConfig {
  *  (`OrderedListsConfig.numberWidth`). */
 export type OrderedListNumberWidth = 'run' | 'level';
 
+/** Where a number stands in the number column of an ordered list
+ *  (`OrderedListsConfig.numberAlign`). */
+export type OrderedListNumberAlign = 'end' | 'start';
+
 export interface ResolvedOrderedListsConfig {
   fontFamily: string;
   color: ColorValue;
@@ -4123,6 +4136,7 @@ export interface ResolvedOrderedListsConfig {
   itemSpacing: Dimension;
   snapTopToGrid: boolean;
   numberWidth: OrderedListNumberWidth;
+  numberAlign: OrderedListNumberAlign;
   hangingIndent: boolean;
   levels: ResolvedOrderedListLevelConfig[];
   separatorFontFamily: string;

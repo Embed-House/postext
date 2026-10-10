@@ -503,7 +503,9 @@ export function resolveOrderedListItemStyle(
 
   // Right-align: reserve max width so text starts after `indent + maxWidth + gap`.
   // The individual number is drawn at `indent + (maxWidth - thisWidth)`.
-  const rightAlignOffsetPx = Math.max(0, metric.maxNumberWidthPx - metric.numberWidthPx);
+  // `numberAlign: 'start'` (#682) draws it at the start of the column
+  // instead: the column keeps its width, so the text starts where it did.
+  const rightAlignOffsetPx = lists.numberAlign === 'start' ? 0 : Math.max(0, metric.maxNumberWidthPx - metric.numberWidthPx);
   // A distinct separator run follows the (right-aligned) number column, so
   // it lands in the same column for every item of the run.
   const separatorGapPx = metric.separatorGapPx ?? 0;

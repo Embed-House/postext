@@ -1936,6 +1936,12 @@ La propiedad `orderedLists` controla las listas numeradas (`1.`, `2)`, etc.). Se
       <td>El ancho de la columna de números de un elemento, que fija dónde empieza su texto; los números se alinean a la derecha dentro de ella. <code>'run'</code>: el número más ancho del propio tramo del elemento, los elementos de una misma profundidad sin nada más que elementos más profundos entre ellos. Una figura, un párrafo o un recuadro entre dos elementos abre un tramo nuevo, así que <code>ii)</code> tras una tabla puede empezar su texto algo más a la derecha que <code>i)</code> antes de ella, y una lista de nueve elementos compone su texto a la izquierda de una de doce. <code>'level'</code>: el número más ancho de esa profundidad en todo el documento (el capítulo, en un libro), así que todas las listas, y cada parte de una lista interrumpida, empiezan su texto en el mismo sitio, como ya hacen las sangrías de los niveles más profundos.</td>
     </tr>
     <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>Cómo se coloca un número en su columna. <code>'end'</code>: junto al texto, así que los números de un tramo terminan a la misma altura y <code>9.</code> y <code>10.</code> alinean sus puntos. <code>'start'</code>: al principio de la columna (la izquierda en una página de izquierda a derecha, la derecha en una de derecha a izquierda, la cabeza de la línea en texto vertical), así que las etiquetas de distinta longitud empiezan a la misma altura, como los artículos de una ley (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). La columna conserva el ancho que le da <code>numberWidth</code>, de modo que el texto de los elementos empieza en el mismo sitio en los dos casos; con un separador de estilo propio, el separador sigue a su número. Desde postext 1.26.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

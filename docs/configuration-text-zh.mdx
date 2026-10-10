@@ -1936,6 +1936,12 @@ unorderedLists: {
       <td>列表项编号栏的宽度，它决定文字从哪里开始；编号在这一栏里右对齐。<code>'run'</code>：取该项所在连续段中最宽的编号。连续段指同一层级的若干项，它们之间只隔着更深层级的项。两项之间出现图、段落或框，就开始一个新的连续段，所以表后面的<code>ii)</code>的文字可能比表前面的<code>i)</code>稍微靠右，九项的列表的文字也比十二项的列表靠左。<code>'level'</code>：取整个文档（在书中是整章）里该层级最宽的编号，这样每个列表，以及被打断的列表的每一部分，文字都从同一位置开始，与更深层级的缩进已有的做法一致。</td>
     </tr>
     <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自 postext 1.26 起提供。</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

@@ -1319,6 +1319,10 @@ export interface SandboxLabels {
   orderedListsNumberWidthTooltip: string;
   orderedListsNumberWidthRun: string;
   orderedListsNumberWidthLevel: string;
+  orderedListsNumberAlign: string;
+  orderedListsNumberAlignTooltip: string;
+  orderedListsNumberAlignEnd: string;
+  orderedListsNumberAlignStart: string;
   orderedListsHangingIndent: string;
   orderedListsHangingIndentTooltip: string;
   orderedListLevel: string;

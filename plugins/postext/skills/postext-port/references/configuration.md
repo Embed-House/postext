@@ -893,6 +893,8 @@ separator = '.', numberFontSize = 1em, gap = 0.5em, indent = 0em, numberVertical
 marginTop/Bottom = 1.5em, itemSpacing = 0em, hangingIndent = true, snapTopToGrid = false
 numberWidth = 'run'  ('run' = text after the widest number of the item's own run, so a list broken by a figure or
                       a paragraph can shift its text; 'level' = widest number at that depth in the chapter)
+numberAlign = 'end'  (≥ 1.26; 'end' = numbers flush against the text, 9. and 10. end together; 'start' = numbers at
+                      the start of the column, so 第九條 and 第十一條 begin together; the text starts at the same place)
 separatorFontFamily / separatorFontWeight / separatorItalic / separatorColor  → inherit number style
 separatorGap = 0em  (a differing separator style draws the separator as its own run)
 levels[]: { level 1–5, numberFormat, prefix, separator, fontFamily, fontSize, color, fontWeight, italic,
@@ -906,7 +908,8 @@ GB/T 15834 list hierarchy for Chinese: levels 一、 / （一） / 1. / （1） 
 `japanese-informal`), horizontal books the official order 1. /（1）/ ア /（ア）/ ① (公用文作成の考え方):
 `[{level:1,numberFormat:'arabic',separator:'.'}, {level:2,numberFormat:'arabic',prefix:'（',separator:'）'},
 {level:3,numberFormat:'katakana',separator:''}, {level:4,numberFormat:'katakana',prefix:'（',separator:'）'}, {level:5,numberFormat:'circled-decimal',separator:''}]`.
-Numbers are right-aligned within a run (within the depth with `numberWidth: 'level'`). Around a list nested
+Numbers are right-aligned within a run (within the depth with `numberWidth: 'level'`); `numberAlign: 'start'` sets
+them at the start of the column instead (statute articles, any label of varying length). Around a list nested
 in another the outer list's `itemSpacing` applies on both sides. List margins of 1.5em are large — books usually want
 `{0.5,'em'}` or a pt value. Nested list depth in markdown = 2 spaces per level (max 5).
 
