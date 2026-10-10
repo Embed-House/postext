@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-cover-and-contents",
-  "sourceHash": "8143ba37f38c7fa6e400a117bc3918839d588f221072cb731b6a748590d054eb",
+  "sourceHash": "7cad0959be81af7ad7ba09e130a2b597fd1e6ac7ae4923a6ec5f6fa02802f62b",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.501Z",
+  "capturedAt": "2026-10-10T18:43:22.592Z",
   "variants": {
     "en": {
-      "hash8": "2afd3f00",
+      "hash8": "2cd33246",
       "vdtHash": "df0858ff3432514c448b2daceae76992cfffce7a",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 46,
-        "buildMs": 480,
-        "totalMs": 1324,
+        "importMs": 355,
+        "fontsMs": 67,
+        "buildMs": 1523,
+        "totalMs": 2639,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Spectral"
         ],
         "pages": 6,
-        "ownLines": 248
+        "ownLines": 249
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 242850,
+          "bytes": 242870,
           "alt": "Opening page 1: Fallow."
         },
         {
@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2084675,
+        "bytes": 2084678,
         "folio": "c6787b35"
       },
       "detected": {
@@ -428,7 +428,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 4,
         "looseLines": {
           "count": 1,
           "share": 0.0088,
@@ -444,13 +444,13 @@
       }
     },
     "es": {
-      "hash8": "54a4060c",
-      "vdtHash": "b04f7a030281c4a106cebe48cf11c285657299c9",
+      "hash8": "67970a67",
+      "vdtHash": "7cf855457f629268dafb733e24cbed20a4d00ef3",
       "timings": {
-        "importMs": 133,
+        "importMs": 135,
         "fontsMs": 44,
-        "buildMs": 129,
-        "totalMs": 922,
+        "buildMs": 132,
+        "totalMs": 940,
         "builds": 1
       },
       "specimen": {
@@ -473,7 +473,7 @@
           "Spectral"
         ],
         "pages": 6,
-        "ownLines": 248
+        "ownLines": 249
       },
       "pages": [
         {
@@ -528,7 +528,7 @@
           "h": 1304,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 201980,
+          "bytes": 200946,
           "alt": "Página 5. Viñas y cipreses junto a una casa de campo de Castellina in Chianti, en verano."
         },
         {
@@ -575,7 +575,7 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2085390,
+        "bytes": 2085385,
         "folio": "c6787b35"
       },
       "detected": {
@@ -865,7 +865,7 @@
         "iterationCount": 2,
         "looseLines": {
           "count": 1,
-          "share": 0.0082,
+          "share": 0.0083,
           "worst": 2.29
         },
         "findings": [
@@ -873,11 +873,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.35 MB (warning at 0.9 MB for 6 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

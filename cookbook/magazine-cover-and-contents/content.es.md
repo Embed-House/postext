@@ -96,7 +96,7 @@ Eso sí, un campo en barbecho parece descuidado, y en un paisaje que se vende en
 
 —Les digo que está de vacaciones —cuenta—. No se ríen.
 
-Una pareja joven que cultiva por debajo de Radda ha puesto en marcha su propia rotación de cinco hojas, y la biblioteca de semillas del Val d’Elsa envía ahora a sus socios una hoja sobre cómo dejar descansar una parcela. En junio, el campo en descanso fue el único de la ladera donde anidaron las alondras, y las lechuzas de la casa en ruinas de la colina lo cazan cada atardecer, porque los topillos se han mudado allí.
+Una pareja joven que cultiva por debajo de Radda ha empezado su rotación de cinco hojas, y la biblioteca de semillas del Val d’Elsa envía ahora a sus socios una hoja sobre cómo dejar descansar una parcela. En junio, el campo en descanso fue el único de la ladera donde anidaron las alondras, y las lechuzas de la ruina de la colina lo cazan cada atardecer, porque los topillos se han mudado allí.
 
 :::callout{type="quote"}
 *«Sobre el papel, pierdo un séptimo de la finca cada año. Sobre el papel».*
