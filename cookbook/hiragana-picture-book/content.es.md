@@ -62,5 +62,9 @@ author: "Postext Cookbook"
 :::
 
 :::paragraphs{style="colophon"}
-Cuento escrito para esta receta (CC BY 4.0) · Ilustraciones: pinturas · Compuesto en Klee One y Zen Maru Gothic (SIL OFL)
+Cuento escrito para esta receta (CC BY 4.0)
+
+Ilustraciones: pinturas
+
+Tipos: Klee One y Zen Maru Gothic (SIL OFL)
 :::

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "hiragana-picture-book",
-  "sourceHash": "ea2e3c991a042e131e6b37f32d16e8cb4dd5b540f93ee4ce41a83a97057b0f4f",
+  "sourceHash": "2370ba2008dee68e280039c179812f9cb902320fc9120e470e6dede61acd5ea1",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.211Z",
+  "capturedAt": "2026-10-10T19:08:38.816Z",
   "variants": {
     "en": {
-      "hash8": "e273fd3d",
-      "vdtHash": "fab1c640acf944c90bc939ff1c1d2a32f6913c3f",
+      "hash8": "43931a66",
+      "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 157,
-        "fontsMs": 169,
-        "buildMs": 51,
-        "totalMs": 963,
+        "importMs": 460,
+        "fontsMs": 337,
+        "buildMs": 164,
+        "totalMs": 1894,
         "builds": 1
       },
       "specimen": {
@@ -149,7 +149,7 @@
           "h": 769,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 74242,
+          "bytes": 74158,
           "alt": "Page 10."
         }
       ],
@@ -194,12 +194,12 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1737334,
+        "bytes": 1737041,
         "pages": 10
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737447,
+        "bytes": 1737442,
         "folio": "ada4348a"
       },
       "detected": {
@@ -366,17 +366,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "ebd163ec",
-      "vdtHash": "91d2d29c617f08ba4a220dce5adf8c0e49fd91f3",
+      "hash8": "ec530e98",
+      "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 155,
+        "importMs": 177,
+        "fontsMs": 166,
         "buildMs": 51,
-        "totalMs": 916,
+        "totalMs": 1029,
         "builds": 1
       },
       "specimen": {
@@ -508,7 +514,7 @@
           "h": 769,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 74532,
+          "bytes": 74332,
           "alt": "Página 10."
         }
       ],
@@ -553,12 +559,12 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736831,
+        "bytes": 1736575,
         "pages": 10
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737386,
+        "bytes": 1737382,
         "folio": "ada4348a"
       },
       "detected": {
@@ -725,7 +731,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
