@@ -111,6 +111,9 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     referenceBold: false, textAlign: 'justify', firstLineIndent: em(1), indentAfterHeading: true },
   headings: { fontFamily: GOTHIC, fontWeight: 700, color: col('ink'),
+    // Off by default on a character grid. On, a short column takes whole grid lines above
+    // its heads, and the two columns of the last page end level.
+    balancing: { enabled: true },
     levels: [
       { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // the next page, either side
       { level: 2, numberingTemplate: '{2}.', numberSeparator: '　', fontSize: pt(10),
