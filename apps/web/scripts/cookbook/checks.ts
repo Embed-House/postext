@@ -124,6 +124,9 @@ export interface ProbeFacts {
   /** `doc.configWarnings` of the builds, one per value: settings the engine
    *  could not use as written and what it used instead (C31). */
   configWarnings?: ProbeConfigWarning[];
+  /** Formulas the maths engine could not set, each painted as a small red
+   *  box: the TeX and MathJax's message (C32). */
+  mathErrors?: { page: number; tex: string; error: string }[];
   converged?: boolean;
   iterationCount?: number;
   loose?: {
@@ -573,6 +576,20 @@ function collect(input: CheckInput): Finding[] {
   for (const id of facts.duplicates ?? []) add("C10", "fail", `resource id "${id}" is declared more than once`);
   for (const u of facts.unregistered ?? []) {
     add("C11", "fail", `image "${u.fileId}" (page ${u.page}) is placed but never registered: a grey placeholder`);
+  }
+
+  // C32: formulas the maths engine could not set (#683). Each prints as a
+  // small red box and takes the room of one, so the pages after it are not
+  // the recipe's. One line per message: when the engine's MathJax is broken
+  // (not a formula's TeX), every formula of the document fails alike.
+  const mathErrors = new Map<string, { page: number; tex: string }[]>();
+  for (const m of facts.mathErrors ?? []) mathErrors.set(m.error, [...(mathErrors.get(m.error) ?? []), m]);
+  for (const [error, list] of mathErrors) {
+    const first = list[0];
+    const source = first.tex.replace(/\s+/g, " ").trim();
+    const tex = source.length > 60 ? `${source.slice(0, 59)}…` : source;
+    const more = list.length > 1 ? ` (and ${list.length - 1} more with the same message)` : "";
+    add("C32", "fail", `the formula $${tex}$ on page ${first.page} is set as a red box: ${firstLines(error, 1)}${more}`);
   }
 
   // C12: faces the pages use that no FontFace covers, and characters a CJK

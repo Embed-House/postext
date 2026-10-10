@@ -369,6 +369,33 @@ function collectKeys(root, keys, skip = /^(sourceMap|mathRender|attrSources)$/) 
   return found;
 }
 
+/** Every formula on the pages that the maths engine could not set (#683):
+ *  `renderMath` paints a small red box for it and keeps MathJax's message
+ *  in `mathRender.error`. A render sits on a line segment wherever its line
+ *  is (a paragraph, a box, a caption, a cell, a note), so the pages are
+ *  walked whole; one formula on several lines of a page counts once. */
+export function mathErrorsOf(pages) {
+  const found = [];
+  const seen = new WeakSet();
+  const walk = (node, n, onPage) => {
+    if (!node || typeof node !== 'object' || seen.has(node) || ArrayBuffer.isView(node)) return;
+    seen.add(node);
+    if (Array.isArray(node)) {
+      if (typeof node[0] !== 'number') for (const item of node) walk(item, n, onPage);
+      return;
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'mathRender') {
+        if (!value?.error || onPage.has(value.tex)) continue;
+        onPage.add(value.tex);
+        found.push({ page: n, tex: String(value.tex ?? ''), error: String(value.error) });
+      } else if (value && typeof value === 'object') walk(value, n, onPage);
+    }
+  };
+  for (const { page, n } of pages) walk(page, n, new Set());
+  return found;
+}
+
 // ─── Facts ──────────────────────────────────────────────────────────────────
 
 /** What the pen gave the engine: its markdown, resources and (user) config. */
@@ -718,6 +745,9 @@ export function facts({ select = 'last', hero = [] } = {}) {
     lists: all.filter(({ block }) => block.type === 'listItem' && hexOf(block.bulletColor) === MAIN_COLOR).length,
     palette: user ? !(user.colorPalette?.length > 0) : null,
   };
+
+  // C32: formulas set as an error box.
+  out.mathErrors = mathErrorsOf(pages);
 
   // C5, C6, C24: the engine's own diagnostics.
   // A document's page `pageIndex` is page `nOf(doc) + pageIndex`.

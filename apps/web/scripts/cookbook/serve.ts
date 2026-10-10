@@ -24,7 +24,7 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { composePen, pageHtml } from "../../src/lib/cookbook/compose.ts";
 import { REPO_DIR, WEB_DIR } from "../../src/lib/cookbook/paths.ts";
 import { readKit, readRecipeMeta, readRecipeSources, resetKitCache } from "../../src/lib/cookbook/sources.ts";
@@ -148,6 +148,42 @@ function localModule(rel: string): { file: string; path: string } | null {
   return null;
 }
 
+/** The engine's MathJax module in the local engine's `dist`. */
+const MATHJAX_MODULE = "postext/math/mathjax.js";
+
+let mathJaxBundle: { stamp: number; code: Promise<string> } | null = null;
+
+/**
+ * The local engine's MathJax module as one self-contained module (#683).
+ *
+ * `pnpm build` writes `dist/math/mathjax.js` as a bundle of MathJax
+ * (packages/postext/scripts/bundle-mathjax.mjs). Plain `tsc`, which is what
+ * a local-engine run is prepared with, writes it back as the module of
+ * `src`, with its `mathjax-full/js/…` imports. A page can only take those
+ * from a CDN that builds each subpath with a private copy of MathJax's
+ * core: the engine starts, every formula throws ("Right-hand side of
+ * 'instanceof' is not an object") and is set as a small red box, and the
+ * pages after the first formula are not the recipe's. So a `source` that
+ * still imports MathJax is answered with the bundle the package ships,
+ * made once per run; a bundled one is returned as it is.
+ */
+export async function localMathJaxModule(source: string): Promise<string> {
+  if (!/^\s*import\b[^;]*?["']mathjax-full\//m.test(source)) return source;
+  const dir = path.join(REPO_DIR, "packages", "postext");
+  const stamp = fs.statSync(path.join(dir, "src", "math", "mathjax.ts")).mtimeMs;
+  if (mathJaxBundle?.stamp !== stamp) {
+    const code = (async () => {
+      const script = pathToFileURL(path.join(dir, "scripts", "bundle-mathjax.mjs")).href;
+      const { bundleMathJax } = (await import(/* @vite-ignore */ script)) as { bundleMathJax(): Promise<string> };
+      return bundleMathJax();
+    })();
+    mathJaxBundle = { stamp, code };
+    // A failed bundle is tried again by the next request.
+    code.catch(() => { if (mathJaxBundle?.code === code) mathJaxBundle = null; });
+  }
+  return mathJaxBundle.code;
+}
+
 export async function startPenServer(opts: PenServerOptions): Promise<PenServer> {
   const engine = resolveEngine(opts.engine);
   const shims = shimModules(engine);
@@ -209,6 +245,13 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
           return res.end();
         }
         const type = found.file.endsWith(".wasm") ? "application/wasm" : "text/javascript; charset=utf-8";
+        if (found.path === MATHJAX_MODULE) {
+          localMathJaxModule(fs.readFileSync(found.file, "utf-8")).then(
+            (code) => send(res, 200, type, code),
+            (error) => send(res, 500, "text/plain", `the MathJax bundle of the local engine failed: ${String((error as Error).stack ?? error)}`),
+          );
+          return;
+        }
         return send(res, 200, type, fs.readFileSync(found.file));
       }
       if (route === "/favicon.ico") return send(res, 204, "text/plain", "");
