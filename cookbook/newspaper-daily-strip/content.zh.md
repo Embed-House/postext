@@ -28,19 +28,6 @@ otto: 嗯。还差不多是新的。
 
 # 浮冰上的十个冬天 {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: 早上好，奥托！来一个羊角面包。
-otto: 马上就好！
-::panel{art=po2}
-otto: 刚出炉的！
-::panel{art=po3}
-pip: 有没有小一点的？
-::panel{art=po4}
-sfx: 啊呜
-otto: 给。小一点了。
-:::
-
 :::paragraphs{style="byline"}
 本报文化记者 露丝·奥卡福
 :::
@@ -103,4 +90,17 @@ otto: 给。小一点了。
 
 :::paragraphs{style="imprint"}
 正文用思源宋体和思源黑体排版；对白用站酷快乐体和站酷庆科黄油体（SIL OFL）。画面由扩散模型生成。
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: 早上好，奥托！来一个羊角面包。
+otto: 马上就好！
+::panel{art=po2}
+otto: 刚出炉的！
+::panel{art=po3}
+pip: 有没有小一点的？
+::panel{art=po4}
+sfx: 啊呜
+otto: 给。小一点了。
 :::

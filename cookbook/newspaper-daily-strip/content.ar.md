@@ -28,19 +28,6 @@ otto: همم. ويكاد يكون جديدًا.
 
 # عشرة شتاءات على الجليد {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: صباح الخير يا أوتو! كرواسون واحد من فضلك.
-otto: حالًا!
-::panel{art=po2}
-otto: طازج من الفرن!
-::panel{art=po3}
-pip: أليس عندك واحد أصغر؟
-::panel{art=po4}
-sfx: قضمة
-otto: تفضّل. أصغر.
-:::
-
 :::paragraphs{style="byline"}
 بقلم روث أوكافور · محرّرة الثقافة
 :::
@@ -103,4 +90,17 @@ otto: تفضّل. أصغر.
 
 :::paragraphs{style="imprint"}
 نُضّد بخطَّي Noto Naskh Arabic و Noto Kufi Arabic، وكُتب الحوار بخطَّي Playpen Sans Arabic و Lalezar ‏(SIL OFL). الصور مولّدة بنماذج الانتشار.
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: صباح الخير يا أوتو! كرواسون واحد من فضلك.
+otto: حالًا!
+::panel{art=po2}
+otto: طازج من الفرن!
+::panel{art=po3}
+pip: أليس عندك واحد أصغر؟
+::panel{art=po4}
+sfx: قضمة
+otto: تفضّل. أصغر.
 :::

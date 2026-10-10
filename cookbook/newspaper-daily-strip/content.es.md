@@ -28,19 +28,6 @@ otto: Mmm. Y casi nueva.
 
 # Diez inviernos en el témpano {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: ¡Buenos días, Otto! Un cruasán, por favor.
-otto: ¡Marchando!
-::panel{art=po2}
-otto: ¡Recién salido del horno!
-::panel{art=po3}
-pip: ¿No tienes uno más pequeño?
-::panel{art=po4}
-sfx: ÑAM
-otto: Toma. Más pequeño.
-:::
-
 :::paragraphs{style="byline"}
 Por Ruth Okafor · Cultura
 :::
@@ -103,4 +90,17 @@ Escribid a Pip y Otto al Despacho, 12 Bridge Street, Corrington, o por correo el
 
 :::paragraphs{style="imprint"}
 Compuesto en Newsreader y Archivo Narrow; rotulado en Comic Neue y Bangers (SIL OFL). Imágenes generadas con modelos de difusión.
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: ¡Buenos días, Otto! Un cruasán, por favor.
+otto: ¡Marchando!
+::panel{art=po2}
+otto: ¡Recién salido del horno!
+::panel{art=po3}
+pip: ¿No tienes uno más pequeño?
+::panel{art=po4}
+sfx: ÑAM
+otto: Toma. Más pequeño.
 :::

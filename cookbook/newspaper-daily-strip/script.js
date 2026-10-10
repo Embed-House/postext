@@ -3,9 +3,9 @@
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
 // Fonts: Newsreader, Archivo Narrow, Comic Neue, Bangers and 12 more (OFL) · Needs postext ≥ 1.25.0
 //
-// Two pages of a newspaper's pull-out comics section: a four-panel daily strip across the head
-// of a four-column page, and a Sunday half page with its own panel grid. Both are :::strip blocks
-// in the text: the columns flow around them as they flow around a page-wide figure.
+// Two pages of a newspaper's pull-out comics section: a four-panel daily strip across a
+// four-column page, under its article, and a Sunday half page with its own panel grid. Both
+// are :::strip blocks in the text: the columns end level over one as over a page-wide figure.
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -55,10 +55,11 @@ const label = (size, look = {}) => ({ fontFamily: LABEL, fontSize: pt(size), fon
 // #region answer: a page-wide daily strip and a Sunday half page, set in the columns
 // In the Markdown each strip is a fenced block, where the paper wants it:
 //   :::strip{split="55 / * [40 | *]" height=210mm}   the Sunday half page, on the cover
-//   :::strip{split="* | * | * | *" span=page placement=bottom}   the daily: four square panels
+//   :::strip{split="* | * | * | *" span=page}   the daily: four square panels
 // On the one-column cover the Sunday strip is set in the text, 210 mm deep. Inside, the daily
-// floats to the foot of the page, as wide as its four columns, and the columns of the article
-// end level above it. A strip never splits; one that does not fit moves to the next page.
+// follows the article, as wide as its four columns, and the columns of the article end
+// level above it (placement=bottom would float it to the page's foot). A strip never
+// splits; one that does not fit moves to the next page.
 // The panels, gutters and balloons come from the comics settings, as on a comic page.
 const comics = {
   gutter: { horizontal: mm(3), vertical: mm(3) },

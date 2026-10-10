@@ -1,16 +1,16 @@
 ---
 title: "Uma tira diária e meia página de domingo no jornal"
-summary: "Suplemento de quadrinhos de um jornal: meia página de domingo no texto da capa e uma tira diária de quatro quadros no pé de uma página de quatro colunas."
+summary: "Suplemento de quadrinhos de um jornal: meia página de domingo no texto da capa e uma tira diária de quatro quadros na largura da página, abaixo da matéria."
 plain: "Duas páginas do caderno de quadrinhos de um jornal: uma história colorida grande na capa e, por dentro, uma entrevista com a cartunista em quatro colunas e a tira diária de quatro quadros embaixo."
 description: "Tiras de quadrinhos num jornal no Postext: blocos :::strip no texto ou flutuando sobre quatro colunas, meia página de domingo e tira diária em sete idiomas."
 question: "Como ponho uma tira de quadrinhos numa página de jornal, atravessando as colunas do texto?"
 aliases: ["tira de quadrinhos", "tirinha", "tira diária", "quadrinhos de domingo", "suplemento de quadrinhos", "caderno infantil", "quadrinhos de jornal", "HQ", "strip", "tira de 4 quadros", "comic strip", "tira cómica", "新聞漫画", "报纸漫画"]
-pageNotes: { "1": "A capa do caderno de quadrinhos: o título Quadrinhos em vermelho, a meia página de domingo (Pip e Otto pescando no gelo, o peixinho do Pip que pede “Me joga de volta.”, Otto fisgando uma bota com um TCHIBUM!) e três linhas de sumário: Nesta edição, Correio do gelo e No próximo domingo.", "2": "A página interna: o título Dez invernos no gelo sobre quatro colunas com uma entrevista, o boxe Pip e Otto em números, as cartas do Correio do gelo e um anúncio, e a tirinha diária do croissant no pé da página (“Bom dia, Otto! Um croissant, por favor.”, “Acabou de sair do forno!”, “Não tem um menorzinho?”, NHAC!, “Pronto. Menor.”)." }
+pageNotes: { "1": "A capa do caderno de quadrinhos: o título Quadrinhos em vermelho, a meia página de domingo (Pip e Otto pescando no gelo, o peixinho do Pip que pede “Me joga de volta.”, Otto fisgando uma bota com um TCHIBUM!) e três linhas de sumário: Nesta edição, Correio do gelo e No próximo domingo.", "2": "A página interna: o título Dez invernos no gelo sobre quatro colunas com uma entrevista, o boxe Pip e Otto em números, as cartas do Correio do gelo e um anúncio, e, abaixo, a tirinha diária do croissant na largura da página (“Bom dia, Otto! Um croissant, por favor.”, “Acabou de sair do forno!”, “Não tem um menorzinho?”, NHAC!, “Pronto. Menor.”)." }
 ---
 
 ## O que você vai compor
 
-O suplemento de quadrinhos de um jornal de fim de semana, *A Gazeta de Corrington*, dobrado em 230 × 310 mm. A capa traz a meia página de domingo de *Pip e Otto*, um pinguim e uma morsa que têm uma padaria num bloco de gelo, com o sumário embaixo. Por dentro, uma entrevista com a cartunista da tira ocupa quatro colunas, com cartas de leitores e um anúncio, e a tira diária da semana, quatro quadros quadrados, corre ao longo do pé da página. As duas histórias são blocos `:::strip` no texto do jornal, e o suplemento sai em sete idiomas.
+O suplemento de quadrinhos de um jornal de fim de semana, *A Gazeta de Corrington*, dobrado em 230 × 310 mm. A capa traz a meia página de domingo de *Pip e Otto*, um pinguim e uma morsa que têm uma padaria num bloco de gelo, com o sumário embaixo. Por dentro, uma entrevista com a cartunista da tira ocupa quatro colunas, com cartas de leitores e um anúncio, e a tira diária da semana, quatro quadros quadrados, corre na largura da página, abaixo dela. As duas histórias são blocos `:::strip` no texto do jornal, e o suplemento sai em sete idiomas.
 
 ## Preparo
 
@@ -22,7 +22,7 @@ O código é [a resposta curta](#a-resposta-curta) acima. Um `:::strip` tem o co
 
 ### 2 · Fazer a tira diária flutuar sobre as colunas
 
-A página de dentro abre com um H1 cujo estilo de título passa a seção para quatro colunas. A tira diária vem logo depois dele, com `span=page placement=bottom`: flutua até o pé da página na largura das quatro colunas, e as colunas da matéria terminam niveladas acima dela. Sem `height` nem `aspect`, uma tira assume a forma que deixa os quadros quadrados, aqui de quatro para um. Escrita com `placement=top`, ela abriria a página seguinte, porque um flutuante nunca sobe acima do ponto em que foi escrito.
+A página de dentro abre com um H1 cujo estilo de título passa a seção para quatro colunas. A tira diária é escrita depois da matéria, com `span=page`: é composta na largura das quatro colunas onde o texto termina, e as colunas da matéria terminam niveladas acima dela. Sem `height` nem `aspect`, uma tira assume a forma que deixa os quadros quadrados, aqui de quatro para um. Com `placement=bottom` ela flutuaria até o pé da página, o que convém a uma matéria que chegue até lá; com `placement=top`, abriria a página seguinte, porque um flutuante nunca sobe acima do ponto em que foi escrito.
 
 ### 3 · Ajustar cada imagem à sua célula
 
@@ -41,8 +41,8 @@ Cada edição compõe o jornal em fontes para a sua escrita e letreira as tiras 
 ### Dar uma altura fixa à tira diária
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
-+:::strip{split="* | * | * | *" span=page placement=bottom height=45mm}
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* | * | * | *" span=page height=45mm}
 ```
 
 ### Pôr uma tira de uma coluna no texto
@@ -50,7 +50,7 @@ Cada edição compõe o jornal em fontes para a sua escrita e letreira as tiras 
 Sem `span=page`, uma tira tem a largura da sua coluna e é composta onde está escrita, como uma figura no texto.
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
+-:::strip{split="* | * | * | *" span=page}
 +:::strip{split="* / * / * / *" aspect=0.25}
 ```
 

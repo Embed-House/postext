@@ -28,19 +28,6 @@ otto: Hum. E quase nova.
 
 # Dez invernos no gelo {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: Bom dia, Otto! Um croissant, por favor.
-otto: É pra já!
-::panel{art=po2}
-otto: Acabou de sair do forno!
-::panel{art=po3}
-pip: Não tem um menorzinho?
-::panel{art=po4}
-sfx: NHAC!
-otto: Pronto. Menor.
-:::
-
 :::paragraphs{style="byline"}
 Por Ruth Okafor · Cultura
 :::
@@ -103,4 +90,17 @@ Escreva para Pip e Otto na Gazeta, 12 Bridge Street, Corrington, ou por e-mail. 
 
 :::paragraphs{style="imprint"}
 Composto em Newsreader e Archivo Narrow; letreiramento em Comic Neue e Bangers (SIL OFL). Imagens geradas com modelos de difusão.
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: Bom dia, Otto! Um croissant, por favor.
+otto: É pra já!
+::panel{art=po2}
+otto: Acabou de sair do forno!
+::panel{art=po3}
+pip: Não tem um menorzinho?
+::panel{art=po4}
+sfx: NHAC!
+otto: Pronto. Menor.
 :::
