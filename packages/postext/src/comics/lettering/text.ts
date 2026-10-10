@@ -11,6 +11,8 @@ import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
 import { hasJoiningScript } from '../../bidi';
 import { isBreakingSpace } from '../../measure/spaces';
 import { languageOf } from '../../locale';
+import { buildFontString } from '../../measure';
+import { measureTextWidth } from '../../measure/canvas';
 import type { LetteringStyle, LetteringText } from './types';
 
 /** How one character of the prepared text is set. */
@@ -185,8 +187,10 @@ export function prepareText(read: PreparedText, style: LetteringStyle, opts: Pre
   p = replaceAll(p, /[^\S\n\u00A0\u202F\u3000]+/g, ' ');
   p = replaceAll(p, / ?\n ?/g, '\n');
   p = trimPrepared(p);
-  // Ellipsis.
-  p = replaceAll(p, /\.(?: ?\.){2,}/g, '…');
+  // Ellipsis: one `…`, in a face that has one. A face that draws it as a
+  // single dot (Lalezar: a glyph as wide as its full stop) keeps the dots
+  // as written, closed up (#676).
+  p = replaceAll(p, /\.(?: ?\.){2,}/g, faceHasEllipsis(style) ? '…' : '...');
   // Japanese and Chinese set no space between their characters, their
   // marks and a leader (a translator's "願う ？ …" is "願う？…"). An ASCII
   // `!` or `?` after one of their characters is their mark as well, so a
@@ -234,6 +238,21 @@ export function prepareText(read: PreparedText, style: LetteringStyle, opts: Pre
   }
   if (style.textTransform === 'uppercase') p = uppercasePrepared(p, opts.locale);
   return p;
+}
+
+/** Whether the face a line is set in has an ellipsis of its own: its `…`
+ *  is wider than a full stop and a half. (A face with no `…` at all is
+ *  measured, and painted, in the fallback's, which has one.) */
+function faceHasEllipsis(style: LetteringStyle): boolean {
+  const w = style.fontWeight ?? 400;
+  const font = buildFontString(style.fontFamily, style.fontSizePx, w === 400 ? 'normal' : String(w), style.italic ? 'italic' : 'normal');
+  try {
+    const stop = measureTextWidth('.', font);
+    return !(stop > 0) || measureTextWidth('…', font) >= 1.5 * stop;
+  } catch {
+    // (No measurer: the text is prepared as for a face with one.)
+    return true;
+  }
 }
 
 function trimPrepared(p: PreparedText): PreparedText {
