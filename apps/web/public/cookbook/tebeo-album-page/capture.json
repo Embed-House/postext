@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tebeo-album-page",
-  "sourceHash": "35bdaf77e4f89e5fcd5cb440b29839e00569cb379374878be1028eee7ec93321",
+  "sourceHash": "a5373512a56a2a428b308b3b7d45847b652716ec1c26605a050700e5fa6febf2",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:42:10.058Z",
+  "capturedAt": "2026-10-10T20:46:51.657Z",
   "variants": {
     "en": {
-      "hash8": "f3af63f7",
+      "hash8": "8f83866f",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 179,
-        "fontsMs": 102,
-        "buildMs": 499,
-        "totalMs": 1347,
+        "importMs": 548,
+        "fontsMs": 256,
+        "buildMs": 2267,
+        "totalMs": 3963,
         "builds": 1
       },
       "specimen": {
@@ -84,7 +84,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117123,
+        "bytes": 1117122,
         "pages": 2
       },
       "sandbox": {
@@ -283,6 +283,11 @@
             "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 2267 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -291,13 +296,13 @@
       }
     },
     "es": {
-      "hash8": "ed3ae538",
+      "hash8": "aef88e27",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 196,
-        "fontsMs": 90,
-        "buildMs": 367,
-        "totalMs": 1221,
+        "importMs": 548,
+        "fontsMs": 200,
+        "buildMs": 1662,
+        "totalMs": 9345,
         "builds": 1
       },
       "specimen": {
@@ -568,6 +573,11 @@
             "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 1662 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -576,13 +586,13 @@
       }
     },
     "ca": {
-      "hash8": "f804c712",
+      "hash8": "b4542942",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 84,
-        "buildMs": 376,
-        "totalMs": 1184,
+        "importMs": 186,
+        "fontsMs": 107,
+        "buildMs": 385,
+        "totalMs": 1313,
         "builds": 1
       },
       "specimen": {
@@ -861,13 +871,13 @@
       }
     },
     "zh": {
-      "hash8": "9155ac26",
+      "hash8": "7ea7bf3e",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 198,
-        "fontsMs": 290,
-        "buildMs": 464,
-        "totalMs": 1522,
+        "importMs": 167,
+        "fontsMs": 261,
+        "buildMs": 444,
+        "totalMs": 1443,
         "builds": 1
       },
       "specimen": {
@@ -934,7 +944,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157831,
+        "bytes": 1157833,
         "pages": 2
       },
       "sandbox": {
@@ -1142,13 +1152,13 @@
       }
     },
     "ar": {
-      "hash8": "5dee1097",
+      "hash8": "57157765",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 118,
-        "buildMs": 411,
-        "totalMs": 1251,
+        "importMs": 166,
+        "fontsMs": 123,
+        "buildMs": 398,
+        "totalMs": 1226,
         "builds": 1
       },
       "specimen": {
@@ -1216,7 +1226,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1135149,
+        "bytes": 1135151,
         "pages": 2
       },
       "sandbox": {
@@ -1426,13 +1436,13 @@
       }
     },
     "ja": {
-      "hash8": "c56aa33e",
+      "hash8": "be969b08",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 245,
-        "buildMs": 445,
-        "totalMs": 1463,
+        "importMs": 169,
+        "fontsMs": 227,
+        "buildMs": 322,
+        "totalMs": 1298,
         "builds": 1
       },
       "specimen": {
@@ -1475,7 +1485,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238392,
+          "bytes": 237866,
           "alt": "3ページ。"
         }
       ],
@@ -1500,12 +1510,12 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1154964,
+        "bytes": 1154855,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116216
+        "bytes": 1116268
       },
       "detected": {
         "apis": [
@@ -1698,7 +1708,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 98 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
           },
           {
             "check": "sandbox",
@@ -1709,13 +1719,13 @@
       }
     },
     "pt": {
-      "hash8": "0f11dc75",
+      "hash8": "82ca0582",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 101,
-        "buildMs": 403,
-        "totalMs": 1254,
+        "importMs": 167,
+        "fontsMs": 97,
+        "buildMs": 380,
+        "totalMs": 1205,
         "builds": 1
       },
       "specimen": {
