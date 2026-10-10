@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-feature-opener",
-  "sourceHash": "278c12487ee516fed6d0a0bf1de20a9edba29f00c679351e77d839615d8e86b8",
+  "sourceHash": "8acaaf1e601fffe8ecb13ee54b3ba018d7db217b3795befe07757615238f0975",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.520Z",
+  "capturedAt": "2026-10-10T18:54:24.887Z",
   "variants": {
     "en": {
-      "hash8": "bb62dbc9",
-      "vdtHash": "8ec19b83be518534c718c9ebf0cfe01191e476f8",
+      "hash8": "c865eade",
+      "vdtHash": "135791b269e24d278d0a78692b9df516fa183b28",
       "timings": {
-        "importMs": 151,
-        "fontsMs": 37,
-        "buildMs": 113,
-        "totalMs": 920,
+        "importMs": 335,
+        "fontsMs": 61,
+        "buildMs": 930,
+        "totalMs": 2026,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 171756,
+          "bytes": 171958,
           "alt": "Opening page 57: The Lake That Keeps Time."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237876,
+          "bytes": 237516,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 178630,
+          "bytes": 178872,
           "alt": "Page 59: 31. Early March in the pine wood above the shore: the snow goes first where the sun reaches the ground, weeks before the ice lets go of the lake."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 103896,
+          "bytes": 103828,
           "alt": "Opening page 60: Five Kinds of Ice."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768138,
+        "bytes": 768184,
         "folio": "da2eb3c6"
       },
       "detected": {
@@ -389,17 +389,23 @@
           "share": 0,
           "worst": 2
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "e48d34e9",
-      "vdtHash": "56bd2a999f90be001e267e01002006bc64369925",
+      "hash8": "131dfd3f",
+      "vdtHash": "2fba783e69d9830d15eabf9202d020f6be693509",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 64,
-        "buildMs": 133,
-        "totalMs": 1285,
+        "importMs": 134,
+        "fontsMs": 36,
+        "buildMs": 117,
+        "totalMs": 959,
         "builds": 1
       },
       "specimen": {
@@ -433,7 +439,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 172054,
+          "bytes": 172314,
           "alt": "Página de apertura 57: El lago que lleva la cuenta."
         },
         {
@@ -444,7 +450,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238490,
+          "bytes": 238110,
           "alt": "Página 58: Un termómetro con tapa."
         },
         {
@@ -455,7 +461,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181788,
+          "bytes": 182084,
           "alt": "Página 59: 31. Principios de marzo en el pinar sobre la orilla: la nieve se retira primero donde el sol llega al suelo, semanas antes de que el hielo suelte el lago."
         },
         {
@@ -466,7 +472,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105618,
+          "bytes": 105706,
           "alt": "Página de apertura 60: Cinco clases de hielo."
         }
       ],
@@ -498,7 +504,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768126,
+        "bytes": 768179,
         "folio": "da2eb3c6"
       },
       "detected": {
@@ -772,9 +778,15 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.9000000000000001
+          "worst": 1.9100000000000001
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

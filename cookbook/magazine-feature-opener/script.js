@@ -175,7 +175,7 @@ const config = () => ({
   bodyText: { fontFamily: 'Literata', fontSize: pt(9.6), lineHeight: pt(LEAD),
     color: col('ink'), boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: mm(3.5), indentAfterHeading: false,
-    minWordSpacing: 0.65, // a space never shrinks below 65 % (the default allows 60 %)
+    minWordSpacing: 0.78, // a space never shrinks below 78 % (the default allows 60 %)
     runtMinCharacters: 40 }, // 40 spaces' width, about 20 letters: no one-word last lines
   // Hyphenation, optimal line breaking and widow control are on by default.
   headings: {
