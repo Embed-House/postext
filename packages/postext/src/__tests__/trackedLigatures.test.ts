@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { renderPageToCanvas } from '../canvas-backend';
 import { renderBlock } from '../canvas-backend/blockRender';
-import { trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText';
+import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
+import { fillTrackedWord, trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText';
 import { renderToHtml } from '../html-backend';
 import { buildDocument } from '../pipeline';
-import type { PostextConfig } from '../types';
+import type { PostextConfig, Resource } from '../types';
 import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
 
 // #663: a tracked word is measured at its natural width, ligatures counted,
@@ -22,7 +24,13 @@ const ADVANCE = (ch: string): number => {
   if (/[A-Z]/.test(ch)) return 0.66;
   return 0.5;
 };
-const LIGATURES: [string, number][] = [['ffi', 0.75], ['ff', 0.5], ['fi', 0.5], ['fl', 0.5]];
+// An Arabic and a Hebrew word, and the ligature each holds in this face
+// (lam + alef, alef + lamed), which the letter-spacing turns off as well.
+const SALAM = '\u0633\u0644\u0627\u0645';
+const ISRAEL = '\u05D9\u05E9\u05E8\u05D0\u05DC';
+/** A Hebrew word with no ligature. */
+const SHALOM = '\u05E9\u05DC\u05D5\u05DD';
+const LIGATURES: [string, number][] = [['ffi', 0.75], ['ff', 0.5], ['fi', 0.5], ['fl', 0.5], ['\u0644\u0627', 0.5], ['\u05D0\u05DC', 0.5]];
 function naturalWidth(text: string, size: number, ligatures: boolean): number {
   let w = 0;
   for (let i = 0; i < text.length;) {
@@ -39,15 +47,17 @@ function naturalWidth(text: string, size: number, ligatures: boolean): number {
 }
 const sizeOf = (font: string): number => parseFloat(/(\d*\.?\d+)px/.exec(font)?.[1] ?? '10');
 
-/** The measuring half of a browser's 2D context. */
+/** The measuring half of a browser's 2D context. `keeps`: a browser that
+ *  keeps the ligatures under a letter-spacing, so no word is cut. */
 class BrowserCtx {
   font = '10px Body';
   letterSpacing = '0px';
   measured = 0;
+  constructor(readonly keeps = false) {}
   measureText(s: string): { width: number } {
     this.measured++;
     const spacing = parseFloat(this.letterSpacing) || 0;
-    return { width: naturalWidth(s, sizeOf(this.font), spacing === 0) + spacing * s.length };
+    return { width: naturalWidth(s, sizeOf(this.font), this.keeps || spacing === 0) + spacing * s.length };
   }
 }
 /** A painting context: every `fillText` with the letter-spacing it had. */
@@ -242,5 +252,366 @@ describe('a tracked line in HTML (#663)', () => {
   it('an untracked line carries no feature', () => {
     const html = renderToHtml(buildDocument({ markdown: 'The **first** of its offices.' }, CONFIG));
     expect(html).not.toContain("'liga'");
+  });
+});
+
+// #685: a right-to-left page paints its flow through a mirror and turns
+// every `fillText` back about its own box (`mirrorFrame.ts`). The pieces of
+// a tracked word are several `fillText`s: each was turned about itself and
+// stayed at its mirrored place, the first piece at the right end of the
+// word, so "five" came out "vefi". The word is one run: the frame turns it
+// once, about its box. And no word with a right-to-left or a joining letter
+// is ever cut.
+
+type M = [number, number, number, number, number, number];
+const mul = (m: M, n: M): M => [
+  m[0] * n[0] + m[2] * n[1], m[1] * n[0] + m[3] * n[1],
+  m[0] * n[2] + m[2] * n[3], m[1] * n[2] + m[3] * n[3],
+  m[0] * n[4] + m[2] * n[5] + m[4], m[1] * n[4] + m[3] * n[5] + m[5],
+];
+/** A run as it lands on the sheet: where its box starts (`x`, `y`), the
+ *  way its glyphs advance (`ux`, `uy`: (1, 0) on an upright page), whether
+ *  they read mirrored (`det` < 0), and the context it was painted with. */
+type Run = { text: string; x: number; y: number; ux: number; uy: number; det: number; width: number; baseline: number; spacing: number; direction: string; font: string };
+const leftOf = (r: Run): number => Math.min(r.x, r.x + r.ux * r.width);
+const rightOf = (r: Run): number => Math.max(r.x, r.x + r.ux * r.width);
+
+/** A browser's 2D context (the measurer above) that keeps its transform
+ *  and its state. `keeps`: see {@link BrowserCtx}; its fonts carry another
+ *  name, so what is known of a word in one browser is not taken for the
+ *  other. */
+function sheetCanvas(keeps = false): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; runs: Run[] } {
+  const runs: Run[] = [];
+  let m: M = [1, 0, 0, 1, 0, 0];
+  const stack: { m: M; state: Record<string, unknown> }[] = [];
+  const measure = new BrowserCtx(keeps);
+  const state: Record<string, unknown> = { font: '10px Body', textAlign: 'left', direction: 'ltr', textBaseline: 'alphabetic', letterSpacing: '0px', fillStyle: '' };
+  const measureText = (s: string): { width: number } => {
+    measure.font = state.font as string;
+    measure.letterSpacing = state.letterSpacing as string;
+    return measure.measureText(s);
+  };
+  const api: Record<string, unknown> = {
+    save() { stack.push({ m, state: { ...state } }); },
+    restore() {
+      const top = stack.pop();
+      if (!top) return;
+      m = top.m;
+      Object.assign(state, top.state);
+    },
+    transform(a: number, b: number, c: number, d: number, e: number, f: number) { m = mul(m, [a, b, c, d, e, f]); },
+    translate(x: number, y: number) { m = mul(m, [1, 0, 0, 1, x, y]); },
+    scale(x: number, y: number) { m = mul(m, [x, 0, 0, y, 0, 0]); },
+    rotate(t: number) { m = mul(m, [Math.cos(t), Math.sin(t), -Math.sin(t), Math.cos(t), 0, 0]); },
+    measureText,
+    fillText(text: string, x: number, y: number) {
+      const width = measureText(text).width;
+      // The run's box from its alignment, as a browser places it.
+      const rtl = state.direction === 'rtl';
+      const from = state.textAlign === 'right' || (state.textAlign === 'start' && rtl) || (state.textAlign === 'end' && !rtl) ? x - width : x;
+      runs.push({
+        text, x: m[0] * from + m[2] * y + m[4], y: m[1] * from + m[3] * y + m[5], ux: m[0], uy: m[1], det: m[0] * m[3] - m[1] * m[2],
+        width, baseline: y, spacing: parseFloat(state.letterSpacing as string) || 0, direction: state.direction as string, font: state.font as string,
+      });
+    },
+  };
+  const ctx = new Proxy(state, {
+    get(target, key) {
+      if (typeof key === 'string' && key in api) return api[key];
+      if (typeof key === 'string' && key in target) return target[key];
+      return () => undefined;
+    },
+    set(target, key, value) {
+      // The mirrored frame puts its own `fillText` on the context.
+      if (typeof key === 'string' && key in api) api[key] = value;
+      else target[key as string] = key === 'font' && keeps ? `${value}, Keeps` : value;
+      return true;
+    },
+    has(target, key) { return typeof key === 'string' && (key in api || key in target); },
+    deleteProperty() { return true; },
+    getOwnPropertyDescriptor() { return undefined; },
+  }) as unknown as CanvasRenderingContext2D;
+  const canvas = { width: 0, height: 0, getContext: () => ctx } as unknown as HTMLCanvasElement;
+  return { canvas, ctx, runs };
+}
+function runsOn(doc: VDTDocument, page = 0, keeps = false): Run[] {
+  const { canvas, runs } = sheetCanvas(keeps);
+  renderPageToCanvas(doc.pages[page]!, doc, canvas);
+  return runs;
+}
+/** The runs on each baseline of an upright page, from the sheet's left. */
+function rows(runs: Run[]): Run[][] {
+  const by = new Map<number, Run[]>();
+  for (const r of runs) by.set(r.baseline, [...(by.get(r.baseline) ?? []), r]);
+  return [...by.entries()].sort((a, b) => a[0] - b[0]).map(([, row]) => row.sort((a, b) => leftOf(a) - leftOf(b)));
+}
+
+/**
+ * The page painted by a browser that drops the ligatures of a tracked word
+ * against the same page painted by one that keeps them, which paints every
+ * word whole and so where the frame, the line's order and any turn of the
+ * block put it. A word in pieces must start where the whole word starts,
+ * read the same way, and hold its pieces at their places in the natural
+ * shaping. Returns the words painted in pieces. For pages whose tracked
+ * lines are painted word by word in either browser.
+ */
+function againstWholeWords(doc: VDTDocument, page = 0): Run[][] {
+  const cut = runsOn(doc, page);
+  const whole = runsOn(doc, page, true);
+  const words: Run[][] = [];
+  let j = 0;
+  for (const w of whole) {
+    const pieces: Run[] = [];
+    let text = '';
+    while (text.length < w.text.length && j < cut.length) {
+      pieces.push(cut[j]!);
+      text += cut[j++]!.text;
+    }
+    expect(text).toBe(w.text);
+    const first = pieces[0]!;
+    const known = pieces.length > 1 ? trackedPieces(Object.assign(paintingCtx().ctx, { font: first.font }), w.text)! : undefined;
+    pieces.forEach((p, k) => {
+      const at = known ? known[k]!.offset + w.spacing * known[k]!.glyphsBefore : 0;
+      expect(p.x).toBeCloseTo(w.x + w.ux * at, 6);
+      expect(p.y).toBeCloseTo(w.y + w.uy * at, 6);
+      expect(p.ux).toBeCloseTo(w.ux, 9);
+      expect(p.uy).toBeCloseTo(w.uy, 9);
+      // Read as written, never through the mirror.
+      expect(p.det).toBeGreaterThan(0);
+      expect(p.direction).toBe(w.direction);
+      expect(p.spacing).toBe(known?.[k]!.ligature ? 0 : w.spacing);
+    });
+    if (pieces.length > 1) words.push(pieces);
+  }
+  expect(j).toBe(cut.length);
+  return words;
+}
+
+const RTL: PostextConfig = { ...CONFIG, direction: 'rtl' };
+const RTL_LEFT: PostextConfig = { ...LEFT, direction: 'rtl' };
+const ltrBlock = (text: string): string => `:::paragraphs{dir=ltr}\n${text}\n:::`;
+
+describe('a word in pieces inside a mirrored frame (#685)', () => {
+  it('is turned once, about its box: the pieces in reading order from the box\'s left', () => {
+    const { ctx, runs } = sheetCanvas();
+    const t = -0.1;
+    ctx.letterSpacing = `${t}px`;
+    const end = beginMirroredFlow(ctx, 200);
+    const paint = (text: string, x: number, y: number): void => ctx.fillText(text, x, y);
+    fillTrackedWord(ctx, 'first', 40, 50, t, paint);
+    // A word with no ligature beside it: one `fillText`, turned by the frame.
+    fillTrackedWord(ctx, 'hands', 100, 50, t, paint);
+    expect(ctx.letterSpacing).toBe(`${t}px`);
+    end();
+    expect(runs.map((r) => r.text)).toEqual(['fi', 'rst', 'hands']);
+    const [fi, rst, hands] = runs as [Run, Run, Run];
+    // "first" was measured 20 px wide and five letters tracked: its box is
+    // [40, 59.5] in the flow, [140.5, 160] on the sheet.
+    expect(leftOf(fi)).toBeCloseTo(200 - 40 - (20 + 5 * t), 6);
+    expect(fi.spacing).toBe(0);
+    // The rest after the ligature and its one glyph of tracking.
+    expect(leftOf(rst)).toBeCloseTo(leftOf(fi) + 5 + t, 6);
+    expect(rst.spacing).toBe(t);
+    // It ends at the box's right, less the tracking the ligature's second
+    // letter does not take (one glyph, as on a left-to-right page).
+    expect(rightOf(rst)).toBeCloseTo(200 - 40 - t, 6);
+    expect(runs.every((r) => r.det > 0 && r.ux === 1)).toBe(true);
+    // The whole word stands as the frame always put it.
+    expect(leftOf(hands)).toBeCloseTo(200 - 100 - (25 + 5 * t), 6);
+    expect(rightOf(hands)).toBeCloseTo(100, 6);
+  });
+
+  it('outside a mirrored frame the pieces start at the word\'s left', () => {
+    const { ctx, runs } = sheetCanvas();
+    ctx.letterSpacing = '-0.1px';
+    fillTrackedWord(ctx, 'first', 40, 50, -0.1, (text, x, y) => ctx.fillText(text, x, y));
+    expect(runs.map((r) => [r.text, +leftOf(r).toFixed(6), r.spacing])).toEqual([['fi', 40, 0], ['rst', 44.9, -0.1]]);
+  });
+});
+
+describe('a tracked left-to-right paragraph on a right-to-left page (#685)', () => {
+  for (const [name, text, ltr, rtl] of [['justified', JUSTIFIED, CONFIG, RTL], ['ragged', RAGGED, LEFT, RTL_LEFT]] as const) {
+    it(`${name}: every piece lands where a left-to-right page puts it`, () => {
+      const plain = buildDocument({ markdown: text }, ltr);
+      const mirrored = buildDocument({ markdown: ltrBlock(text) }, rtl);
+      expect(mirrored.pages[0]!.flow?.writingMode).toBe('horizontal-tb');
+      const block = paragraph(mirrored);
+      const t = block.letterSpacing!;
+      expect(t).toBeCloseTo(-0.1, 5);
+      const a = rows(runsOn(plain));
+      const b = rows(runsOn(mirrored));
+      expect(b.length).toBe(block.lines.length);
+      expect(b.length).toBe(a.length);
+      b.forEach((row, i) => {
+        // From the sheet's left the pieces spell the line: "fi" before
+        // "rst", never after it.
+        expect(row.map((r) => r.text).join('')).toBe(block.lines[i]!.text.replace(/ /g, ''));
+        expect(row.every((r) => r.det > 0)).toBe(true);
+        // The margins are equal, so the line stands as on the left-to-right
+        // page; a ragged line of the mirrored page starts the tracking of
+        // one glyph further in (it is aligned by its other end), words in
+        // pieces and whole words alike.
+        const shift = leftOf(row[0]!) - leftOf(a[i]![0]!);
+        expect(Math.abs(shift)).toBeLessThanOrEqual(Math.abs(t) + 1e-9);
+        if (a[i]!.length === 1) {
+          // A line with no ligature: one text on the left-to-right page,
+          // word by word on the mirrored one, over the same stretch.
+          expect(rightOf(row[row.length - 1]!) - shift).toBeCloseTo(rightOf(a[i]![0]!), 6);
+          return;
+        }
+        expect(row.length).toBe(a[i]!.length);
+        row.forEach((r, k) => {
+          const q = a[i]![k]!;
+          expect(r.text).toBe(q.text);
+          expect(r.spacing).toBe(q.spacing);
+          expect(leftOf(r) - shift).toBeCloseTo(leftOf(q), 6);
+          expect(rightOf(r) - shift).toBeCloseTo(rightOf(q), 6);
+        });
+      });
+      expect(b.flat().filter((r) => r.text === 'fi' || r.text === 'ffi').length).toBeGreaterThan(3);
+    });
+  }
+});
+
+/** A page whose level-2 headings are tracked: half a point after each letter. */
+const tracked2 = (config: PostextConfig): PostextConfig => ({
+  ...config,
+  page: { ...config.page, width: pt(400) },
+  headings: { levels: [{ level: 2, letterSpacing: pt(0.5) }] },
+});
+const headingOf = (doc: VDTDocument): VDTBlock => doc.blocks.find((b) => b.type === 'heading')!;
+
+describe('right-to-left words on a tracked line (#685)', () => {
+  it('an Arabic or a Hebrew word is never cut, though its face has ligatures', () => {
+    const { ctx } = paintingCtx();
+    for (const word of [SALAM, ISRAEL, `first${SALAM}`, `${ISRAEL}first`]) {
+      // The browser shapes it otherwise under a letter-spacing…
+      expect(shapedOtherwise(ctx, word)).toBe(true);
+      // …and it is still painted whole, with one `fillText`.
+      expect(trackedPieces(ctx, word)).toBeNull();
+      const seen: [string, number, number][] = [];
+      ctx.letterSpacing = '0.5px';
+      fillTrackedWord(ctx, word, 10, 20, 0.5, (text, x, y) => seen.push([text, x, y]));
+      expect(seen).toEqual([[word, 10, 20]]);
+      expect(ctx.letterSpacing).toBe('0.5px');
+    }
+  });
+
+  for (const [name, config, dir] of [['a right-to-left line of a left-to-right page', CONFIG, ' {dir=rtl}'], ['a line of a right-to-left page', RTL, '']] as const) {
+    it(`${name}: the Arabic word untracked, the Hebrew ones whole, the Latin ones in reading order`, () => {
+      const doc = buildDocument({ markdown: `## ${SHALOM} first ${SALAM} office ${SHALOM}${dir}` }, tracked2(config));
+      const line = headingOf(doc).lines[0]!;
+      expect(line.segments!.filter((s) => s.rtl && s.kind !== 'space').map((s) => s.text)).toEqual([SHALOM, SALAM, SHALOM]);
+      const runs = runsOn(doc);
+      // Arabic: one `fillText`, no letter-spacing, right to left.
+      expect(runs.filter((r) => r.text.includes('\u0644\u0627')).map((r) => [r.text, r.spacing, r.direction])).toEqual([[SALAM, 0, 'rtl']]);
+      // Hebrew: one `fillText` a word, tracked as measured, right to left.
+      expect(runs.filter((r) => r.text.includes('\u05E9')).map((r) => [r.text, r.spacing, r.direction])).toEqual([[SHALOM, 0.5, 'rtl'], [SHALOM, 0.5, 'rtl']]);
+      // The Latin words: in pieces, where the whole words would stand.
+      const words = againstWholeWords(doc);
+      const first = words.find((w) => w[0]!.text === 'fi')!;
+      const office = words.find((w) => w[0]!.text === 'o')!;
+      expect(words).toHaveLength(2);
+      expect(first.map((r) => r.text)).toEqual(['fi', 'rst']);
+      expect(office.map((r) => r.text)).toEqual(['o', 'ffi', 'ce']);
+      for (const w of words) for (let k = 1; k < w.length; k++) expect(leftOf(w[k]!)).toBeGreaterThan(leftOf(w[k - 1]!));
+      // The line reads from the right: "first" stands right of "office",
+      // the Arabic word between them.
+      const salam = runs.find((r) => r.text === SALAM)!;
+      expect(leftOf(first[0]!)).toBeGreaterThanOrEqual(rightOf(salam) - 1e-6);
+      expect(leftOf(salam)).toBeGreaterThanOrEqual(rightOf(office[2]!) - 1);
+    });
+  }
+});
+
+const cell = (content: string) => ({ content });
+/** A table whose header cells are tracked (`headerLetterSpacing`). */
+const table = (extra: Partial<Resource> = {}, direction?: 'ltr' | 'rtl'): Resource => ({
+  id: 'tab', typeId: 'table', kind: 'table', caption: 'A table', createdAt: 0, updatedAt: 0,
+  table: {
+    model: { headerRowCount: 1, rows: [[cell('first office'), cell('fire lets')], [cell('stood'), cell('is')]] },
+    ...(direction ? { direction } : {}),
+  },
+  placement: { position: 'here' },
+  ...extra,
+});
+const withTable = (config: PostextConfig): PostextConfig => ({
+  ...config,
+  page: { ...config.page, width: pt(300), height: pt(400) },
+  tableStyle: { headerLetterSpacing: pt(0.5) },
+});
+const TABLE_MD = 'Text.\n\n::resource{id="tab"}\n\nMore.';
+/** The page that holds the table, in the flow or as a float. */
+const tablePage = (doc: VDTDocument): number =>
+  doc.pages.findIndex((p) => [...p.columns.flatMap((c) => c.blocks), ...(p.floats ?? [])].some((b) => b.resourceBlock?.resource.id === 'tab'));
+
+describe('tracked header cells in either direction (#685)', () => {
+  const header = [['fi', 'rst'], ['o', 'ffi', 'ce'], ['fi', 're']];
+  for (const [name, config, direction] of [
+    ['a table of a left-to-right page', CONFIG, undefined],
+    ['a table of a right-to-left page', RTL, undefined],
+    ['a left-to-right table of a right-to-left page', RTL, 'ltr'],
+    ['a right-to-left table of a left-to-right page', CONFIG, 'rtl'],
+  ] as const) {
+    it(`${name}: the words in pieces stand where the whole words would`, () => {
+      const doc = buildDocument({ markdown: TABLE_MD, resources: [table({}, direction)] }, withTable(config));
+      const words = againstWholeWords(doc, tablePage(doc));
+      expect(words.map((w) => w.map((r) => r.text)).sort()).toEqual([...header].sort());
+      // Upright: each word reads from the sheet's left.
+      for (const w of words) for (let k = 1; k < w.length; k++) expect(leftOf(w[k]!)).toBeGreaterThan(leftOf(w[k - 1]!));
+    });
+  }
+
+  for (const rotate of ['ccw', 'cw'] as const) {
+    for (const [name, config] of [['left-to-right', CONFIG], ['right-to-left', RTL]] as const) {
+      it(`a table turned ${rotate} on a ${name} page: the pieces follow the turn`, () => {
+        const doc = buildDocument({ markdown: TABLE_MD, resources: [table({ placement: { rotate } })] }, withTable(config));
+        const page = tablePage(doc);
+        expect(page).toBeGreaterThanOrEqual(0);
+        const words = againstWholeWords(doc, page);
+        expect(words.map((w) => w.map((r) => r.text)).sort()).toEqual([...header].sort());
+        for (const w of words) {
+          // Turned a quarter: the letters advance up or down the sheet,
+          // each piece further along than the one before.
+          expect(Math.abs(w[0]!.ux)).toBeLessThan(1e-9);
+          for (let k = 1; k < w.length; k++) expect((w[k]!.y - w[k - 1]!.y) * w[0]!.uy).toBeGreaterThan(0);
+        }
+      });
+    }
+  }
+});
+
+describe('lines that are never cut (#685)', () => {
+  it('a vertical line is painted the same whether the browser drops ligatures or not', () => {
+    const doc = buildDocument({ markdown: '## first office fire' }, tracked2({ ...CONFIG, layout: { writingMode: 'vertical-rl', layoutType: 'single' } }));
+    expect(headingOf(doc).letterSpacing ?? headingOf(doc).lines[0]!.letterSpacing).toBeCloseTo(0.5, 6);
+    // What was painted and where; the two browsers measure the run apart.
+    const put = (r: Run) => ({ ...r, font: r.font.replace(', Keeps', ''), width: 0 });
+    const cut = runsOn(doc).map(put);
+    expect(cut.length).toBeGreaterThan(0);
+    expect(cut).toEqual(runsOn(doc, 0, true).map(put));
+    // The words with their neighbours, tracked: no ligature set apart.
+    expect(cut.map((r) => r.text).join(' ')).toContain('first');
+    expect(cut.some((r) => r.text === 'fi' || r.text === 'ffi' || r.spacing === 0)).toBe(false);
+  });
+});
+
+describe('a tracked line in HTML, either direction (#685)', () => {
+  it('a left-to-right paragraph of a right-to-left page asks for its ligatures as on a left-to-right page', () => {
+    const plain = renderToHtml(buildDocument({ markdown: JUSTIFIED }, CONFIG));
+    const mirrored = renderToHtml(buildDocument({ markdown: ltrBlock(JUSTIFIED) }, RTL));
+    const asked = (html: string): number => html.split("font-feature-settings:'liga' 1,'clig' 1;").length - 1;
+    expect(asked(plain)).toBe(3);
+    expect(asked(mirrored)).toBe(3);
+    // The words are whole in the markup: nothing to put in order.
+    for (const word of ['first', 'offices', 'fire']) expect(mirrored).toContain(word);
+  });
+
+  it('an Arabic word of a tracked line takes no letter-spacing; a Hebrew one keeps the line\'s', () => {
+    const html = renderToHtml(buildDocument({ markdown: `## ${SHALOM} first ${SALAM} office ${SHALOM}` }, tracked2(RTL)));
+    expect(html).toContain("letter-spacing:0.5px;font-feature-settings:'liga' 1,'clig' 1;");
+    expect(html).toMatch(new RegExp(`<span[^>]*letter-spacing:0;[^>]*>${SALAM}</span>`));
+    expect(html).toContain(SHALOM);
+    expect(html).not.toMatch(new RegExp(`<span[^>]*letter-spacing:0;[^>]*>${SHALOM}</span>`));
   });
 });

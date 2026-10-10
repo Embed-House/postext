@@ -16,7 +16,10 @@
  * painter sets right to left (`ctx.direction = 'rtl'`) is turned about the
  * box its direction and alignment give it, and shapes as it would on a
  * left-to-right page. A formula drawn as paths rather than a bitmap asks
- * {@link counterFlipBox} itself.
+ * {@link counterFlipBox} itself, and a word painted with several
+ * `fillText`s (a tracked word in pieces, #663) asks {@link paintAsOneRun}:
+ * turned piece by piece, its pieces would stand in the mirror's order
+ * ("five" as "vefi", #685).
  *
  * The interception is an own property on the context instance, set for
  * the flow pass and removed after it: running heads, folios and crop marks
@@ -30,6 +33,11 @@ let active = 0;
 export function mirroredPaintActive(): boolean {
   return active > 0;
 }
+
+/** Whether a run painted in several calls is being painted (see
+ *  {@link paintAsOneRun}): the frame turned the whole of it back, so the
+ *  calls inside paint as on a left-to-right page. */
+let whole = 0;
 
 type Patched = 'fillText' | 'strokeText' | 'drawImage';
 const PATCHED: readonly Patched[] = ['fillText', 'strokeText', 'drawImage'];
@@ -65,6 +73,28 @@ export function counterFlipBox(ctx: CanvasRenderingContext2D, left: number, widt
   }
 }
 
+/**
+ * Paint, with `paint`, a run made of several `fillText`s (the pieces of a
+ * word) whose box is `[left, left + width]`: inside a mirrored frame the
+ * run is turned back once, about that box, and each call of `paint` lands
+ * as on a left-to-right page, so the pieces keep their reading order and
+ * their places in the run. Turned one by one, each about its own box, they
+ * would stand where the mirror puts them: the first at the right end.
+ * Outside a mirrored frame it just paints.
+ */
+export function paintAsOneRun(ctx: CanvasRenderingContext2D, left: number, width: number, paint: () => void): void {
+  if (!mirroredPaintActive() || whole > 0) {
+    paint();
+    return;
+  }
+  whole++;
+  try {
+    counterFlipBox(ctx, left, width, paint);
+  } finally {
+    whole--;
+  }
+}
+
 /** Width of an image source as `drawImage` with no size takes it. */
 function sourceWidth(image: CanvasImageSource): number {
   const s = image as { displayWidth?: number; naturalWidth?: number; width?: number | { baseVal?: { value: number } } };
@@ -90,20 +120,35 @@ export function beginMirroredFlow(ctx: CanvasRenderingContext2D, originX: number
   const drawImage = ctx.drawImage as (...args: unknown[]) => void;
   const target = ctx as unknown as Record<Patched, unknown>;
   target.fillText = function (this: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth?: number): void {
-    const { left, width } = runBox(ctx, text, x, maxWidth);
-    counterFlipBox(ctx, left, width, () => {
+    const put = (): void => {
       if (maxWidth === undefined) fillText.call(ctx, text, x, y);
       else fillText.call(ctx, text, x, y, maxWidth);
-    });
+    };
+    // A piece of a run already turned back (`paintAsOneRun`).
+    if (whole > 0) {
+      put();
+      return;
+    }
+    const { left, width } = runBox(ctx, text, x, maxWidth);
+    counterFlipBox(ctx, left, width, put);
   };
   target.strokeText = function (this: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth?: number): void {
-    const { left, width } = runBox(ctx, text, x, maxWidth);
-    counterFlipBox(ctx, left, width, () => {
+    const put = (): void => {
       if (maxWidth === undefined) strokeText.call(ctx, text, x, y);
       else strokeText.call(ctx, text, x, y, maxWidth);
-    });
+    };
+    if (whole > 0) {
+      put();
+      return;
+    }
+    const { left, width } = runBox(ctx, text, x, maxWidth);
+    counterFlipBox(ctx, left, width, put);
   };
   target.drawImage = function (this: CanvasRenderingContext2D, ...args: unknown[]): void {
+    if (whole > 0) {
+      drawImage.apply(ctx, args);
+      return;
+    }
     const image = args[0] as CanvasImageSource;
     // drawImage(image, dx, dy[, dw, dh]) or (image, sx, sy, sw, sh, dx, dy, dw, dh).
     const dx = (args.length >= 9 ? args[5] : args[1]) as number;
