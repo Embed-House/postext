@@ -93,7 +93,7 @@ subtitle: "الكلام وما يتألف منه"
 ويمتاز أيضا بياء افعلي، والمراد بها ياء الفاعلة، وتلحق فعل الأمر نحو: اضربي، والفعل المضارع نحو: تضربين، ولا تلحق الماضي. ومما يميز الفعل نون أقبلن، والمراد بها نون التوكيد، خفيفة كانت أو ثقيلة، فالخفيفة نحو قوله تعالى: ﴿لَنَسْفَعًا بِالنَّاصِيَةِ﴾، والثقيلة نحو قوله تعالى: ﴿لَنُخْرِجَنَّكَ يَا شُعَيْبُ﴾. فمعنى البيت: ينجلي الفعل بتاء الفاعل وتاء التأنيث الساكنة وياء الفاعلة ونون التوكيد.
 
 :::paragraphs{style="note" dir=ltr}
-**A note on the text.** Ibn ʿAqīl (d. 1367) on the opening of Ibn Mālik’s Alfiyya, from ar.wikisource, without the modern editor’s footnotes and two passages on the tanwīn of rhyme; punctuation added, a few typing slips corrected. The glosses in the margin are written for this page, each opening with the words it explains, as a Bulaq ḥāshiya does.
+**A note on the text.** Ibn ʿAqīl (d. 1367) on the opening of Ibn Mālik’s Alfiyya, from ar.wikisource, without the modern editor’s footnotes and two passages on the tanwīn of rhyme; punctuation added, a few typing slips corrected. The glosses in the margin are written for this page, each opening with the words it explains, as a Bulaq ḥāshiya does.
 :::
 
 :::paragraphs{style="colophon" dir=ltr}
