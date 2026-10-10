@@ -349,7 +349,7 @@ default.
 |---|---|---|
 | `position` | required | from the start edge of the paragraph's measure (after a paragraph style's `indent`): a Dimension (`em` = the paragraph's own size; a length as text such as `"120mm"` also reads), `'end'` = the line's end edge, or a share of the measure (`'50%'`). Anything else: the stop is left out (`unknownConfigValue`) |
 | `align` | `'start'` | `'start'` (the text after the tab starts at the stop), `'end'` (ends there: prices, page numbers, marks), `'center'`, `'decimal'` (the first decimal separator sits on the stop; a run with none ends on it). An unknown word reads `'start'` (`unknownConfigValue`) |
-| `leader` | none | repeated over the room before the stop: `'.'`, `'. '` (spaced dots), `'·'`, `'_'`, `'-'`, any short text in the paragraph's face, or `'rule'` (a line drawn a little under the baseline: a form's blank). Set flush with the END of its room, so the leaders of several lines line up; in the paragraph's face and colour |
+| `leader` | none | repeated over the room before the stop: `'.'`, `'. '` (spaced dots), `'·'`, `'_'`, `'-'`, any short text in the paragraph's face, or `'rule'` (a line drawn a little under the baseline: a form's blank). Set flush with the END of its room, so the leaders of several lines line up; in the paragraph's face and colour. Three repeats or more, or none (a room for one or two dots stays empty; `toc.leader` too) |
 | `leaderGap` | `0.5em` | room between the text and the leader and between the leader and the text at the stop (the contents' `leader.gap`); none before a leader that opens the line, none after one with nothing after it |
 | `decimalChar` | the document language's | `'decimal'` stops: `.` in en/zh/ja/ar, `,` in es/ca/pt/fr/de… |
 
