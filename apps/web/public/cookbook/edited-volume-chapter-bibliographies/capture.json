@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "edited-volume-chapter-bibliographies",
-  "sourceHash": "e2711f65fe26f1fba6edeec93654b57476f5fc790b0641f923f0020e13c4ad29",
+  "sourceHash": "fe472389c3e8b7203725a5d205d9c97ecdde92aa92e9e64271ff6674c8eeaffa",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:41:47.488Z",
+  "capturedAt": "2026-10-10T19:15:33.878Z",
   "variants": {
     "en": {
-      "hash8": "5e64b5f5",
+      "hash8": "d2d07556",
       "vdtHash": "304bc003428dc52b418d521a9e2e401f56507bcf",
       "timings": {
-        "importMs": 764,
-        "fontsMs": 1730,
-        "buildMs": 566,
-        "totalMs": 3598,
+        "importMs": 876,
+        "fontsMs": 181,
+        "buildMs": 1699,
+        "totalMs": 3331,
         "builds": 1
       },
       "specimen": {
@@ -482,18 +482,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 2424 ms (warning at 1.5 s)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "88cb7344",
-      "vdtHash": "ede375b516fe6097d1585685858f3b6043945a36",
+      "hash8": "25287e72",
+      "vdtHash": "c414648f2fec4171a4def82cd21d54f308573ef6",
       "timings": {
-        "importMs": 662,
-        "fontsMs": 100,
-        "buildMs": 568,
-        "totalMs": 1903,
+        "importMs": 237,
+        "fontsMs": 132,
+        "buildMs": 587,
+        "totalMs": 1549,
         "builds": 1
       },
       "specimen": {
@@ -581,7 +586,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 139528,
+          "bytes": 139582,
           "alt": "Página de apertura 6: 2 Lo que significaba la fijeza."
         },
         {
@@ -625,7 +630,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 147012,
+          "bytes": 147436,
           "alt": "Página 10: De quién son las letras."
         }
       ],
@@ -669,12 +674,12 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 158085,
+        "bytes": 158074,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17690,
+        "bytes": 17699,
         "folio": "3594c3d3"
       },
       "detected": {
