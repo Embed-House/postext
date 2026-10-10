@@ -10,7 +10,7 @@ import { buildBookChapters, type HeldChapterDoc } from '../book/buildBook';
 import { layoutCacheKey } from '../book/layoutKeys';
 import { chapterLayoutFromDoc, leadingBlankPageCount } from '../book/pagination';
 import { stitchDocuments, type StitchedBook } from '../book/stitch';
-import { ensureConfigFontsLoaded, missingConfigFontSpecs, loadVerticalTwins, verticalTwinsSettled } from '../controls/fontLoader';
+import { createFontGate, loadVerticalTwins, verticalTwinsSettled } from '../controls/fontLoader';
 import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
 import { getBlob } from '../storage/blobStore';
 import { previewFor, usePrintSetup } from '../print/printSetup';
@@ -192,6 +192,7 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   }, [rawDeferredConfig, locale]);
   const layoutWorker = useLayoutWorker('preview');
   const [rebuildKey, setRebuildKey] = useState(0);
+  const [fontGate] = useState(createFontGate);
   const [shownDoc, setDoc] = useState<ShownDoc | null>(null);
   const viewerDocRef = useRef<ShownDoc | null>(null);
   const [paintKey, setPaintKey] = useState(0);
@@ -260,11 +261,11 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
     const { onGeneratingChange: generating, onPageCountChange: counted } = callbacksRef.current;
     // The text decides some faces too (a comic page letters in its own).
     const fontText = deferredBookSource ? deferredBookSource.chapters.map((c) => c.markdown) : deferredSource.book.markdown;
+    // Each missing face holds the build once, as in the canvas (#659).
     if (typeof document !== 'undefined' && document.fonts) {
-      const missing = missingConfigFontSpecs(deferredConfig, fontText);
-      if (missing.length > 0) {
+      if (fontGate.pending(deferredConfig, fontText).length > 0) {
         generating?.(true);
-        ensureConfigFontsLoaded(deferredConfig, fontText).then(() => {
+        fontGate.wait(deferredConfig, fontText).then(() => {
           if (!cancelled) setRebuildKey((k) => k + 1);
         });
         return () => {
@@ -355,7 +356,7 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
     return () => {
       cancelled = true;
     };
-  }, [deferredSource, deferredBookSource, deferredResources, deferredConfig, rawDeferredConfig, deferredBookVersion, rebuildKey, dispatch, sharedDocRef, sharedDocSourceRef, chapterDocsRef, layoutWorker]);
+  }, [deferredSource, deferredBookSource, deferredResources, deferredConfig, rawDeferredConfig, deferredBookVersion, rebuildKey, fontGate, dispatch, sharedDocRef, sharedDocSourceRef, chapterDocsRef, layoutWorker]);
 
   // Resource images decoded after the pages were painted: paint them again.
   const diagramInkHex = useMemo((): string | null => {

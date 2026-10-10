@@ -217,6 +217,20 @@ export function missingConfigFontSpecs(config: PostextConfig, markdown?: FontCon
   return getConfigFontSpecs(config, markdown).filter((s) => !document.fonts.check(s, text));
 }
 
+/** `document.fonts.load` for each spec, given up after the timeout; a
+ *  face that fails to load counts as tried. */
+async function loadFontSpecs(specs: readonly string[], text: string): Promise<void> {
+  if (specs.length === 0) return;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([
+    Promise.all(specs.map((s) => document.fonts.load(s, text).catch(() => []))),
+    new Promise<void>((resolve) => {
+      timer = setTimeout(resolve, FONT_LOAD_TIMEOUT_MS);
+    }),
+  ]);
+  if (timer !== undefined) clearTimeout(timer);
+}
+
 /**
  * Ensure every face the given config will render is actually available to
  * `CanvasRenderingContext2D.measureText`. Resolves once all faces pass
@@ -237,7 +251,68 @@ export function ensureConfigFontsLoaded(config: PostextConfig, markdown?: FontCo
       await loadFont(family);
       return null;
     },
-  }).then(() => {});
+  }).then(() => {
+    // The preparation loads the faces the configuration sets; the callers
+    // hold their build for `missingConfigFontSpecs`, which asks more of
+    // each family (a heading face never set in italic is still checked in
+    // italic). `loadFont` loads all of them, once per family, and Chrome
+    // makes the faces of every style sheet anew, unloaded, when another
+    // font style sheet lands: a family loaded before the last sheet of the
+    // book landed is back to unloaded, and nothing asked for the faces
+    // only the check names again, so the previews waited for them without
+    // end (#659). What the check still misses is loaded here.
+    return loadFontSpecs(missingConfigFontSpecs(config, markdown), configFontSampleText(config));
+  });
+}
+
+/**
+ * A preview's hold on its build until the faces it paints with are loaded
+ * (#659). `pending` lists what to wait for, `wait` waits for it, and the
+ * preview looks again when the wait ends. A face is waited for once: what
+ * a wait ends without (a file that fails or outlasts the timeout) is given
+ * up on, and the build goes ahead with the fallback the engine reports; a
+ * face that lands later lays the pages out again through `watchFonts`.
+ * Looking again can therefore not hold the build twice for the same
+ * missing face, whatever the font set answers.
+ */
+export interface FontGate {
+  /** The specs of `missingConfigFontSpecs` to wait for before building:
+   *  empty, build. */
+  pending(config: PostextConfig, markdown?: FontContentText): string[];
+  /** Load them (`ensureConfigFontsLoaded`); the ones still missing when it
+   *  settles are not waited for again while they stay missing. */
+  wait(config: PostextConfig, markdown?: FontContentText): Promise<void>;
+}
+
+/** One per preview. */
+export function createFontGate(): FontGate {
+  // Sample text and spec of the faces a wait ended without.
+  const givenUp = new Set<string>();
+  const keyOf = (config: PostextConfig): ((spec: string) => string) => {
+    const text = configFontSampleText(config);
+    return (spec) => `${text}\n${spec}`;
+  };
+  return {
+    pending(config, markdown) {
+      const missing = missingConfigFontSpecs(config, markdown);
+      if (givenUp.size === 0) return missing;
+      const key = keyOf(config);
+      // A face that loaded after all is waited for again if it goes
+      // missing once more (its style sheet's faces made anew).
+      const still = new Set(missing.map(key));
+      for (const k of givenUp) if (!still.has(k)) givenUp.delete(k);
+      return missing.filter((s) => !givenUp.has(key(s)));
+    },
+    async wait(config, markdown) {
+      // A preparation that throws ends the wait as one that loaded nothing:
+      // the preview is told either way, or it would never look again.
+      await ensureConfigFontsLoaded(config, markdown).catch((err: unknown) => {
+        console.warn('[postext-sandbox] font preparation failed', err);
+      });
+      const key = keyOf(config);
+      for (const s of missingConfigFontSpecs(config, markdown)) givenUp.add(key(s));
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------
