@@ -3,20 +3,20 @@
   "slug": "reading-primer-syllables",
   "sourceHash": "7f6001d29f52cdd6999670e75c6cbb0f85c3f3fc0a43269d4f79816ba1efee5d",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:25:00.246Z",
+  "capturedAt": "2026-10-10T22:18:26.865Z",
   "variants": {
     "es": {
       "hash8": "45e9e6b8",
       "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 41,
-        "buildMs": 25,
-        "totalMs": 838,
+        "importMs": 155,
+        "fontsMs": 44,
+        "buildMs": 26,
+        "totalMs": 819,
         "builds": 1
       },
       "specimen": {
@@ -325,11 +325,6 @@
           "worst": 0
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

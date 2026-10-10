@@ -3,20 +3,20 @@
   "slug": "storybook-chapter-vignettes",
   "sourceHash": "20201aef39302db471deb5ce728eb4ea67fb0cdbded3259f508130a2eb88d789",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:41:27.967Z",
+  "capturedAt": "2026-10-10T22:19:22.729Z",
   "variants": {
     "en": {
       "hash8": "05b18071",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 359,
-        "fontsMs": 47,
-        "buildMs": 170,
-        "totalMs": 1415,
+        "importMs": 129,
+        "fontsMs": 31,
+        "buildMs": 39,
+        "totalMs": 810,
         "builds": 1
       },
       "specimen": {
@@ -312,21 +312,11 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0227,
+          "count": 0,
+          "share": 0,
           "worst": 1.45
         },
         "findings": [
-          {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "1 of 44 justified lines (2.3 %) stretch past 1.45× (worst 1.45×); loosest: p. 5 1.45× “Geppetto era bizzosissimo. Guai a chiamarlo Pol…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -339,10 +329,10 @@
       "hash8": "c2683f3b",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 137,
-        "fontsMs": 33,
-        "buildMs": 42,
-        "totalMs": 892,
+        "importMs": 126,
+        "fontsMs": 32,
+        "buildMs": 39,
+        "totalMs": 807,
         "builds": 1
       },
       "specimen": {
@@ -638,21 +628,11 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0227,
+          "count": 0,
+          "share": 0,
           "worst": 1.45
         },
         "findings": [
-          {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "1 of 44 justified lines (2.3 %) stretch past 1.45× (worst 1.45×); loosest: p. 5 1.45× “Geppetto era bizzosissimo. Guai a chiamarlo Pol…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,20 +3,20 @@
   "slug": "zotero-bibtex-nocite",
   "sourceHash": "6e2a96ca3618d76a90c4797088cd91653e1051e7a55b233dbe1ab9eba3df95f5",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.954Z",
+  "capturedAt": "2026-10-10T22:20:39.480Z",
   "variants": {
     "en": {
       "hash8": "87c1e58f",
       "vdtHash": "58b2adb558c4b1f4d991a09587851a71d25acbf0",
       "timings": {
-        "importMs": 158,
+        "importMs": 146,
         "fontsMs": 5,
-        "buildMs": 553,
-        "totalMs": 1324,
+        "buildMs": 529,
+        "totalMs": 1297,
         "builds": 1
       },
       "specimen": {
@@ -268,10 +268,10 @@
       "hash8": "9fcc60f6",
       "vdtHash": "655bcf601c1bf04052d6efffa40d159ce5cd7e18",
       "timings": {
-        "importMs": 148,
+        "importMs": 145,
         "fontsMs": 5,
-        "buildMs": 489,
-        "totalMs": 1235,
+        "buildMs": 491,
+        "totalMs": 1250,
         "builds": 1
       },
       "specimen": {

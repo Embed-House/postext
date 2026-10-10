@@ -3,21 +3,21 @@
   "slug": "vertical-newspaper-tiers",
   "sourceHash": "1c67201c6df7b382051db28df340952b09f0702ec91e847ce3160005b9df0fe5",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:25:27.230Z",
+  "capturedAt": "2026-10-10T22:20:08.965Z",
   "variants": {
     "en": {
-      "hash8": "c19dd2aa",
+      "hash8": "8cedb0a5",
       "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 589,
-        "fontsMs": 1132,
-        "buildMs": 192,
-        "totalMs": 2980,
+        "importMs": 161,
+        "fontsMs": 351,
+        "buildMs": 52,
+        "totalMs": 1111,
         "builds": 1
       },
       "specimen": {
@@ -91,7 +91,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379312,
+        "bytes": 379314,
         "pages": 2
       },
       "sandbox": {
@@ -337,23 +337,17 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "6910860d",
+      "hash8": "b88ead9f",
       "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 524,
-        "buildMs": 54,
-        "totalMs": 1404,
+        "importMs": 174,
+        "fontsMs": 332,
+        "buildMs": 50,
+        "totalMs": 1099,
         "builds": 1
       },
       "specimen": {
@@ -427,7 +421,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379449,
+        "bytes": 379454,
         "pages": 2
       },
       "sandbox": {
@@ -673,13 +667,7 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

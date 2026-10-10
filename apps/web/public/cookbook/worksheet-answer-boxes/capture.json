@@ -3,20 +3,20 @@
   "slug": "worksheet-answer-boxes",
   "sourceHash": "32d5a0ba226a97097d5855d182afdf81a9c4e89979e5e1e2185a599bbbacdec2",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.857Z",
+  "capturedAt": "2026-10-10T22:20:39.445Z",
   "variants": {
     "en": {
       "hash8": "5cc916ef",
       "vdtHash": "c720126e609fa8973f8b483b4a13138299964fa9",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 32,
+        "importMs": 129,
+        "fontsMs": 35,
         "buildMs": 29,
-        "totalMs": 779,
+        "totalMs": 770,
         "builds": 1
       },
       "specimen": {
@@ -375,23 +375,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "12f644c5",
       "vdtHash": "9fa9701a345dfed3d54118aca1373cc4e41fad61",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 32,
-        "buildMs": 29,
-        "totalMs": 780,
+        "importMs": 131,
+        "fontsMs": 37,
+        "buildMs": 33,
+        "totalMs": 797,
         "builds": 1
       },
       "specimen": {
@@ -750,13 +744,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -3,21 +3,21 @@
   "slug": "zhuyin-vertical-reader",
   "sourceHash": "7f7b8304966e37c0e95007d0995d136390f5650f065725713b9b2e1263436f20",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.945Z",
+  "capturedAt": "2026-10-10T22:20:39.474Z",
   "variants": {
     "en": {
-      "hash8": "7e51f8ec",
+      "hash8": "da7ef889",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 313,
-        "buildMs": 61,
-        "totalMs": 1108,
+        "importMs": 170,
+        "fontsMs": 321,
+        "buildMs": 62,
+        "totalMs": 1111,
         "builds": 1
       },
       "specimen": {
@@ -113,7 +113,7 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 741345,
+        "bytes": 741346,
         "pages": 4
       },
       "sandbox": {
@@ -372,11 +372,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -385,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "0d29bc54",
+      "hash8": "9a437bc8",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 305,
-        "buildMs": 61,
-        "totalMs": 1083,
+        "importMs": 169,
+        "fontsMs": 310,
+        "buildMs": 62,
+        "totalMs": 1100,
         "builds": 1
       },
       "specimen": {
@@ -487,7 +482,7 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 741513,
+        "bytes": 741511,
         "pages": 4
       },
       "sandbox": {
@@ -745,11 +740,6 @@
           "worst": 0.17
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

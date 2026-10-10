@@ -3,20 +3,20 @@
   "slug": "trade-paperback-novel",
   "sourceHash": "b7eaa8e1a23cd415d74af56595280c7c47b1a02a330c93c38e83b65b5c3fdbfc",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.954Z",
+  "capturedAt": "2026-10-10T22:20:08.946Z",
   "variants": {
     "en": {
-      "hash8": "20865bc3",
+      "hash8": "bf3bbf86",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 33,
-        "buildMs": 42,
-        "totalMs": 794,
+        "importMs": 132,
+        "fontsMs": 30,
+        "buildMs": 43,
+        "totalMs": 802,
         "builds": 1
       },
       "specimen": {
@@ -93,7 +93,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 136904,
+          "bytes": 136932,
           "alt": "Page 5."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 151606,
+          "bytes": 151610,
           "alt": "Page 8."
         }
       ],
@@ -351,23 +351,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "b6055ecd",
+      "hash8": "f40d229e",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 80,
-        "buildMs": 682,
-        "totalMs": 3056,
+        "importMs": 136,
+        "fontsMs": 31,
+        "buildMs": 155,
+        "totalMs": 911,
         "builds": 1
       },
       "specimen": {
@@ -422,7 +417,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67124,
+          "bytes": 67100,
           "alt": "Página de abertura 3: I."
         },
         {
@@ -444,7 +439,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 44648,
+          "bytes": 44700,
           "alt": "Página de abertura 5: II."
         },
         {
@@ -477,7 +472,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 126076,
+          "bytes": 126080,
           "alt": "Página 8."
         }
       ],
@@ -692,13 +687,7 @@
           "share": 0.0179,
           "worst": 2.23
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

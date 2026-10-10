@@ -3,20 +3,20 @@
   "slug": "stage-play",
   "sourceHash": "7f2690dce5790a7e47268e9428e5724f470383e93776d984f11e49c1bf1ffa6a",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.778Z",
+  "capturedAt": "2026-10-10T22:19:22.724Z",
   "variants": {
     "en": {
-      "hash8": "2c592f5e",
+      "hash8": "fe357264",
       "vdtHash": "7accaf882306030a989b52c0513e9a1e8c33a1bf",
       "timings": {
-        "importMs": 396,
-        "fontsMs": 20,
-        "buildMs": 339,
-        "totalMs": 3034,
+        "importMs": 130,
+        "fontsMs": 3,
+        "buildMs": 42,
+        "totalMs": 789,
         "builds": 1
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 147314,
+          "bytes": 147338,
           "alt": "Page 4."
         },
         {
@@ -324,23 +324,17 @@
           "share": 0,
           "worst": 1.51
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "e085f524",
       "vdtHash": "e5b1fe795f2a01b7037caf01111416ac60d66d8d",
       "timings": {
-        "importMs": 140,
+        "importMs": 131,
         "fontsMs": 3,
-        "buildMs": 40,
-        "totalMs": 816,
+        "buildMs": 36,
+        "totalMs": 777,
         "builds": 1
       },
       "specimen": {
@@ -648,13 +642,7 @@
           "share": 0,
           "worst": 1.59
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -3,20 +3,20 @@
   "slug": "running-heads-by-parity",
   "sourceHash": "5db63d1a9005aeda12f7cf3262948e87729fba59c05b30608beedd0549375458",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.599Z",
+  "capturedAt": "2026-10-10T22:18:26.896Z",
   "variants": {
     "en": {
-      "hash8": "5ed586f5",
+      "hash8": "0c64b54e",
       "vdtHash": "0fd2ce0f5bc9963d0e66b0da481d735d672036c2",
       "timings": {
-        "importMs": 182,
+        "importMs": 130,
         "fontsMs": 0,
-        "buildMs": 110,
-        "totalMs": 902,
+        "buildMs": 111,
+        "totalMs": 851,
         "builds": 1
       },
       "specimen": {
@@ -93,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 95736,
+          "bytes": 95692,
           "alt": "Opening page 33: Whether the governor of a place besieged ought himself to go out to parley."
         }
       ],
@@ -318,10 +318,10 @@
       "hash8": "4a2dc20e",
       "vdtHash": "03511421b5d1dfa2a26bebd282903dc09494abdc",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 1,
-        "buildMs": 45,
-        "totalMs": 787,
+        "importMs": 161,
+        "fontsMs": 0,
+        "buildMs": 51,
+        "totalMs": 815,
         "builds": 1
       },
       "specimen": {

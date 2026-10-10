@@ -3,21 +3,21 @@
   "slug": "woodblock-leaf",
   "sourceHash": "487e16162b16c67a624c6ace91bca5bb4fc921136ef5dd1e24c19d7bcc6bfa4b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.851Z",
+  "capturedAt": "2026-10-10T22:20:39.438Z",
   "variants": {
     "en": {
-      "hash8": "7d0f320b",
+      "hash8": "f9de1c65",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 166,
+        "importMs": 223,
         "fontsMs": 173,
         "buildMs": 50,
-        "totalMs": 919,
+        "totalMs": 988,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 32968,
+          "bytes": 32978,
           "alt": "Opening page 1: 論語集註."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1764,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 115940,
+          "bytes": 115908,
           "alt": "Opening page 2: 一 學而."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1764,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 139686,
+          "bytes": 139714,
           "alt": "Page 3."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1764,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 155624,
+          "bytes": 155642,
           "alt": "Opening page 6: 三 學而."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1764,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 126930,
+          "bytes": 126928,
           "alt": "Page 7."
         }
       ],
@@ -300,13 +300,13 @@
       }
     },
     "es": {
-      "hash8": "81dfc8a0",
+      "hash8": "696dce3b",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 170,
-        "buildMs": 50,
-        "totalMs": 927,
+        "importMs": 175,
+        "fontsMs": 173,
+        "buildMs": 51,
+        "totalMs": 926,
         "builds": 1
       },
       "specimen": {
@@ -338,7 +338,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33764,
+          "bytes": 33752,
           "alt": "Página de apertura 1: 論語集註."
         },
         {
@@ -349,7 +349,7 @@
           "h": 1764,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 115940,
+          "bytes": 115908,
           "alt": "Página de apertura 2: 一 學而."
         },
         {
@@ -360,7 +360,7 @@
           "h": 1764,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 139686,
+          "bytes": 139714,
           "alt": "Página 3."
         },
         {
@@ -371,7 +371,7 @@
           "h": 1764,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 155624,
+          "bytes": 155642,
           "alt": "Página de apertura 6: 三 學而."
         },
         {
@@ -382,7 +382,7 @@
           "h": 1764,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 126930,
+          "bytes": 126928,
           "alt": "Página 7."
         }
       ],

@@ -3,20 +3,20 @@
   "slug": "short-chapters-run-on",
   "sourceHash": "8116fbb598a7acf7620cb5582348dc354f58a3b58e31c419826df489e5fa5471",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.647Z",
+  "capturedAt": "2026-10-10T22:19:22.673Z",
   "variants": {
     "en": {
-      "hash8": "0cacd0ef",
+      "hash8": "8709492d",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 128,
+        "importMs": 153,
         "fontsMs": 32,
-        "buildMs": 55,
-        "totalMs": 804,
+        "buildMs": 57,
+        "totalMs": 847,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1618,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 20682,
+          "bytes": 21598,
           "alt": "Opening page 1: Dom Casmurro."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1618,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 52352,
+          "bytes": 52570,
           "alt": "Page 217."
         }
       ],
@@ -339,11 +339,6 @@
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.headings {\"h1\":118,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
@@ -352,13 +347,13 @@
       }
     },
     "es": {
-      "hash8": "79b48472",
+      "hash8": "2d3b2c3e",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 143,
-        "fontsMs": 48,
-        "buildMs": 255,
-        "totalMs": 1476,
+        "importMs": 141,
+        "fontsMs": 30,
+        "buildMs": 57,
+        "totalMs": 824,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +386,7 @@
           "h": 1618,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 20682,
+          "bytes": 21598,
           "alt": "Página de apertura 1: Dom Casmurro."
         },
         {
@@ -457,7 +452,7 @@
           "h": 1618,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 52352,
+          "bytes": 52570,
           "alt": "Página 217."
         }
       ],
@@ -679,11 +674,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",

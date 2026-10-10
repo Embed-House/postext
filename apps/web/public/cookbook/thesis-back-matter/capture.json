@@ -3,21 +3,21 @@
   "slug": "thesis-back-matter",
   "sourceHash": "7d7173e1e1791d3fb528dea5bf498019d11130f30df8792b176199c2b610b857",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.937Z",
+  "capturedAt": "2026-10-10T22:20:08.943Z",
   "variants": {
     "en": {
-      "hash8": "461ab32f",
+      "hash8": "1c755cea",
       "vdtHash": "d3fffdfe54cbd7bd276c78145c2b01458ea425c4",
       "timings": {
-        "importMs": 162,
+        "importMs": 177,
         "fontsMs": 26,
         "buildMs": 118,
-        "totalMs": 937,
+        "totalMs": 944,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95096,
+          "bytes": 95094,
           "alt": "Opening page 171: 6 Conclusion. Table 6.1. Main results by medium."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 81948,
+          "bytes": 81938,
           "alt": "Opening page 173: A Interview guide. Table A.1. Timing of an interview session."
         },
         {
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "thesis-back-matter.pdf",
-        "bytes": 116201,
+        "bytes": 116189,
         "pages": 7
       },
       "sandbox": {
@@ -422,11 +422,6 @@
           "worst": 1.56
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,20 +3,20 @@
   "slug": "saddle-stitched-card-cover",
   "sourceHash": "3f874f4dcef4b522ed2b49eeb33b433d38851f4fddb59637b0acd59f41079f8e",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:03:52.180Z",
+  "capturedAt": "2026-10-10T22:18:26.901Z",
   "variants": {
     "en": {
       "hash8": "8309153d",
       "vdtHash": "8a5df44b6af7d2917161122c80f77d5fbfd388c5",
       "timings": {
-        "importMs": 188,
+        "importMs": 145,
         "fontsMs": 3,
-        "buildMs": 39,
-        "totalMs": 857,
+        "buildMs": 38,
+        "totalMs": 754,
         "builds": 1
       },
       "specimen": {
@@ -364,11 +364,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 8.2 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

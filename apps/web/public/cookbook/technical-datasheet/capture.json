@@ -3,21 +3,21 @@
   "slug": "technical-datasheet",
   "sourceHash": "472c12ee2c20878985fd4b30f92097e59f1e4bbe877d2d0d9f8a08853711a034",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:03:23.775Z",
+  "capturedAt": "2026-10-10T22:19:22.805Z",
   "variants": {
     "en": {
-      "hash8": "bd5591f4",
+      "hash8": "9572352e",
       "vdtHash": "65c6298ecc4c86c5b28515d0871017f08686b5af",
       "timings": {
-        "importMs": 197,
+        "importMs": 167,
         "fontsMs": 73,
-        "buildMs": 68,
-        "totalMs": 932,
+        "buildMs": 69,
+        "totalMs": 910,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "technical-datasheet.pdf",
-        "bytes": 134547,
+        "bytes": 134548,
         "pages": 4
       },
       "sandbox": {
@@ -430,11 +430,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

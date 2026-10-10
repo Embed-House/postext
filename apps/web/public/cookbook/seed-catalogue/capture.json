@@ -3,20 +3,20 @@
   "slug": "seed-catalogue",
   "sourceHash": "1bf5d64fa3dc49988fedc126218960e403f10b7df044187b7cbbc2cad4641e52",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.630Z",
+  "capturedAt": "2026-10-10T22:18:26.916Z",
   "variants": {
     "en": {
       "hash8": "9ae3d693",
       "vdtHash": "3ccd93ebb4a4b6a4aa9815376b23d2df3d4bbc03",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 45,
+        "importMs": 128,
+        "fontsMs": 42,
         "buildMs": 40,
-        "totalMs": 2579,
+        "totalMs": 793,
         "builds": 1
       },
       "specimen": {
@@ -374,13 +374,7 @@
           "share": 0,
           "worst": 1.33
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }
