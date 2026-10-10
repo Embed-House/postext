@@ -139,7 +139,11 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: mm(4), indentAfterHeading: false,
     hyphenation: { enabled: true }, optimalLineBreaking: true,
-    avoidWidows: true, avoidOrphans: true, avoidRunts: true },
+    avoidWidows: true, avoidOrphans: true, avoidRunts: true,
+    // A column of Lora at this size holds about 50 characters, and the paper's long terms left
+    // lines at 0.6 of the word space beside others at 2.3. Word spaces stay between 0.75
+    // and 1.9, and a line that would pass either limit takes up to 12 ‰ of tracking.
+    minWordSpacing: 0.75, maxWordSpacing: 1.9, maxJustifyTracking: 12 },
   headings: { fontFamily: SANS, color: col('accent'), fontWeight: 800, levels: [
     { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // any page: no forced recto
     { level: 2, ...sans(11.5, 800), lineHeight: pt(LEAD), marginTop: pt(LEAD),
