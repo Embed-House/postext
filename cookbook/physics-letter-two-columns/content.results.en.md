@@ -44,6 +44,8 @@ The LIGO detectors have observed gravitational waves from the merger of two stel
 
 The authors gratefully acknowledge the support of the United States National Science Foundation (NSF) for the construction and operation of the LIGO Laboratory and Advanced LIGO as well as the Science and Technology Facilities Council (STFC) of the United Kingdom, the Max-Planck Society (MPS), and the State of Niedersachsen, Germany, for support of the construction of Advanced LIGO and construction and operation of the GEO600 detector.
 
+:::space{lines=1}
+
 :::bibliography{title=""}
 
 :::paragraphs{style="colophon"}
