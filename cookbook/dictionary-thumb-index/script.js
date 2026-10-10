@@ -93,6 +93,8 @@ const BODY = 8; // pt: a reference size, about 50 characters to the 60 mm column
 const bodyText = { fontFamily: TEXT, fontSize: pt(BODY), lineHeight: pt(LEAD), color: col('ink'),
   boldColor: col('ink'), italicColor: col('ink'), firstLineIndent: mm(0),
   minWordSpacing: 0.7, maxWordSpacing: 1.7,
+  maxJustifyTracking: 10, // up to 1 % of tracking before a line's spaces pass 1.7
+  hyphenateAcrossColumns: false, // no word is divided over a column or a page
   maxRuntTracking: 0 }; // a short last line stays: tracking it away crushes a 60 mm line
 const paragraphStyles = [
   { id: 'entry', hangingIndent: em(1), boldColor: col('navy') }, // :::paragraphs{style="entry"}
