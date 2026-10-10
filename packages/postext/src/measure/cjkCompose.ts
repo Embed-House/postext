@@ -98,6 +98,7 @@ import {
   jlreqShrinkStep,
   latinSpacingPx,
   lineEdgeCut,
+  joinsDashPairs,
   mayHang,
   punctuationBox,
   punctuationShrink,
@@ -163,6 +164,21 @@ export function isCjkParagraph(text: string): boolean {
  *  measuring paths ask this, so they agree. */
 export function composesAsCjk(text: string): boolean {
   return hasCJK(text) && isCjkParagraph(text);
+}
+
+/** A paragraph that is a row of dashes and nothing else. */
+const DASH_ROW_RE = /^\s*(?:\u2014{2,}|\u2015{2,})\s*$/;
+
+/**
+ * Whether the CJK composer sets a paragraph that is nothing but a row of
+ * dashes (――――――, a rule the author typed between two passages): in a
+ * Chinese or Japanese document it does (#680), so the row is drawn as one
+ * rule (`routeSharedMarks`) where the word-by-word path would paint each
+ * dash at its face's advance, a stroke per cell. The dashes alone say
+ * nothing about the language ({@link composesAsCjk}); the document does.
+ */
+export function composesDashRow(text: string, c: CjkComposition = getCjkComposition()): boolean {
+  return (c.language === 'ja' || c.language === 'zh') && DASH_ROW_RE.test(text);
 }
 
 /** The style a unit is painted in: every unit of a span shares it, and
@@ -731,7 +747,7 @@ function sizeRubies(units: Unit[]): void {
 /** The units of a paragraph's spans, the characters of each warichu note
  *  (#195) measured at the note's size and flagged with it, between the
  *  note's brackets (added text at the body size, in the note's colour). */
-function buildAllUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx: number, vertical: boolean, route: boolean): Unit[] {
+function buildAllUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx: number, vertical: boolean, route: MarkRouting): Unit[] {
   if (!spans.some((s) => s.warichu)) return buildUnits(spans, fonts, letterSpacingPx, vertical, route);
   const out: Unit[] = [];
   let i = 0;
@@ -800,7 +816,7 @@ function noteUnits(spans: readonly InlineSpan[], note: InlineWarichu, fonts: Fon
  * block's tracking) is measured into every width, per grapheme. In
  * `vertical` text a CJK character advances by its cell (`cellAdvance`).
  */
-function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx: number, vertical = false, route = false): Unit[] {
+function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx: number, vertical = false, route: MarkRouting = false): Unit[] {
   const units: Unit[] = [];
   const track = (n: number): number => (letterSpacingPx === 0 ? 0 : letterSpacingPx * n);
   let zwsp = false;
@@ -1036,7 +1052,7 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
     }
   }
   if (vertical && getMeasureRegion() === 'japan') combineMarkPairs(units, letterSpacingPx);
-  if (route) routeSharedMarks(units, letterSpacingPx, vertical);
+  if (route) routeSharedMarks(units, letterSpacingPx, vertical, route === 'dashes');
   return units;
 }
 
@@ -1166,6 +1182,12 @@ function combineMarkPairs(units: Unit[], letterSpacingPx: number): void {
   }
 }
 
+/** How the marks Latin text shares with Chinese are set in a paragraph
+ *  (see {@link routeSharedMarks}): in Chinese boxes (`true`, Chinese
+ *  text), only its dash pairs joined (`'dashes'`, Japanese text), or as
+ *  the font sets them (`false`). */
+type MarkRouting = boolean | 'dashes';
+
 /** The marks Latin text shares with Chinese (East Asian Width ambiguous):
  *  quotes, the ellipsis, the em dash and horizontal bar, interpuncts. */
 const SHARED_MARKS = new Set(['\u201C', '\u201D', '\u2018', '\u2019', '\u2026', '\u22EF', '\u2014', '\u2015', '\u00B7', '\u2027']);
@@ -1204,7 +1226,14 @@ function unitScript(v: Unit): 'cjk' | 'western' | undefined {
  * it does any mark's (`cjk.punctuationWidth`). A glyph one em wide already changes
  * nothing. Next to Western text on both sides (`He said “yes”`) they keep
  * their own advance, and so do they in Japanese and Korean text (the
- * composer calls this for Chinese text only, `routesSharedMarks`).
+ * composer routes them for Chinese text only, `routesSharedMarks`). In
+ * Japanese text (`dashesOnly`, #680) only a two-em dash is set here: its
+ * dashes keep the advance the face gives them and are stretched into one
+ * stroke, as JLReq's double dash is one mark.
+ *
+ * A row of dashes longer than two (a rule drawn with ――――) is cut into
+ * pairs, and an odd dash at its end: each runs on into the dashes it
+ * touches (`continuesDash`), so the row is one rule.
  *
  * Down a vertical line (`vertical`) every mark stands in a cell of its own
  * already; only the 破折号 is set here: the font's vertical form of a dash
@@ -1214,7 +1243,7 @@ function unitScript(v: Unit): 'cjk' | 'western' | undefined {
  * frame (sideways), the stretch running down the column
  * (`VDTLineSegment.inkScale`).
  */
-function routeSharedMarks(units: Unit[], letterSpacingPx: number, vertical = false): void {
+function routeSharedMarks(units: Unit[], letterSpacingPx: number, vertical = false, dashesOnly = false): void {
   if (!units.some(isSharedMarkUnit)) return;
   // The script of the nearest unit on each side that is not transparent
   // (`unitScript`), past runs of shared marks and inline boxes: two
@@ -1235,27 +1264,36 @@ function routeSharedMarks(units: Unit[], letterSpacingPx: number, vertical = fal
   for (let k = 0; k < n; k++) {
     const u = units[k]!;
     if (!isSharedMarkUnit(u)) continue;
-    const dash = u.graphemes === 2 && (u.text[0] === '\u2014' || u.text[0] === '\u2015');
-    // Vertical text: a 破折号 only, and not one whose orientation the
-    // author set (`:upright[…]`, `:sideways[…]`).
-    if (vertical && (!dash || u.orient)) continue;
+    // A row of dashes (――――) is one rule: a pair, or the odd dash of the
+    // row, runs on into the dashes that touch it (#680).
+    const joinsBefore = continuesDash(units[k - 1], u);
+    const joinsAfter = continuesDash(u, units[k + 1]);
+    const dashChar = !(vertical && u.orient) && (u.text[0] === '\u2014' || u.text[0] === '\u2015');
+    const dash = dashChar && (u.graphemes === 2 || joinsBefore || joinsAfter);
+    // Vertical text, and Japanese text in either direction: a dash pair
+    // only, and not one whose orientation the author set (`:upright[…]`,
+    // `:sideways[…]`).
+    if ((vertical || dashesOnly) && !dash) continue;
     const b = before[k];
     const a = after[k];
     if (b !== 'cjk' && a !== 'cjk' && (b !== undefined || a !== undefined)) continue;
     const em = emOfFont(u.style.font);
     const font = u.style.font;
     let place: number[];
-    const rule = dash ? dashRule(u.text[0]!, font, em, em + letterSpacingPx, vertical) : undefined;
+    // Japanese text keeps each dash the advance its face gives it, so no
+    // line moves; Chinese text gives it an em.
+    const cell = dashesOnly ? u.width / u.graphemes : em + letterSpacingPx;
+    const rule = dash ? dashRule(u.text[0]!, font, em, cell, vertical, u.graphemes, joinsBefore, joinsAfter) : undefined;
     if (rule) {
       place = rule.place;
       if (rule.scale !== undefined) u.scale = rule.scale;
       if (rule.shift !== undefined) u.shift = rule.shift;
-      if (vertical) {
-        // The cells keep their length down the line.
+      if (vertical || dashesOnly) {
+        // The cells keep their length along the line.
         u.place = place;
         continue;
       }
-    } else if (vertical) {
+    } else if (vertical || dashesOnly) {
       // No ink metrics: each dash in its vertical form, as it was.
       continue;
     } else if (u.graphemes === 2) {
@@ -1280,6 +1318,21 @@ function routeSharedMarks(units: Unit[], letterSpacingPx: number, vertical = fal
   }
 }
 
+/** The dash a unit is made of (— or ―): a pair, or a single dash; none for
+ *  a unit whose orientation the author set. */
+function dashOfUnit(u: Unit | undefined): string | undefined {
+  if (!u || u.orient || !isSharedMarkUnit(u)) return undefined;
+  const g = u.text[0]!;
+  return g === '\u2014' || g === '\u2015' ? g : undefined;
+}
+
+/** Whether the dashes of `b` go on the rule of `a`, the unit before it:
+ *  the same dash in the same face, with nothing between them. */
+function continuesDash(a: Unit | undefined, b: Unit | undefined): boolean {
+  const g = dashOfUnit(a);
+  return g !== undefined && g === dashOfUnit(b) && a!.style.font === b!.style.font && !b!.zwspBefore && a!.link === b!.link;
+}
+
 /** How far past the join each dash of a 破折号 runs, em: the two strokes
  *  overlap, so no seam shows between them at any resolution. */
 const DASH_JOIN_EM = 0.02;
@@ -1297,16 +1350,36 @@ const DASH_JOIN_EM = 0.02;
  * (`measureCentralBaseline`). Undefined when the measurer gives no ink
  * metrics, or when the dash already fills its em (a face whose two dashes
  * join by themselves). Down a vertical line (`vertical`) the scale is set
- * even when it is 1: it tells the renderers to paint the dash turned.
+ * even when it is 1: it tells the renderers to paint the dash turned. A
+ * unit of a longer row (#680) overlaps the dashes it touches on that side
+ * by the join instead of ending the side bearing short of its cells.
  */
-function dashRule(g: string, font: string, em: number, cell: number, vertical = false): { place: number[]; scale?: number; shift?: number } | undefined {
+function dashRule(
+  g: string,
+  font: string,
+  em: number,
+  cell: number,
+  vertical = false,
+  /** The dashes of the unit: a pair, or the odd dash of a longer row. */
+  count = 2,
+  /** The rule runs on from the dashes before the unit, and into those
+   *  after it: on that side it overlaps them instead of ending the face's
+   *  side bearing inside its cells. */
+  joinsBefore = false,
+  joinsAfter = false,
+): { place: number[]; scale?: number; shift?: number } | undefined {
   const ink = measureInkExtent(g, font);
   // No ink metrics, or a dash already drawn edge to edge across its em.
   if (!ink || (ink.start <= 0.01 * em && ink.end >= cell - 0.01 * em)) return undefined;
   const side = Math.min(Math.max(ink.start, 0), 0.1 * em);
   const join = DASH_JOIN_EM * em;
-  const scale = (cell - side + join) / (ink.end - ink.start);
-  const place = [side - ink.start * scale, -join - ink.start * scale];
+  // Where the unit's ink starts and ends in its cells, and the length of
+  // each stroke: two strokes overlap by twice the join.
+  const start = joinsBefore ? -join : side;
+  const end = count * cell + (joinsAfter ? join : -side);
+  const stroke = (end - start + (count - 1) * 2 * join) / count;
+  const scale = stroke / (ink.end - ink.start);
+  const place = count === 1 ? [start - ink.start * scale] : [start - ink.start * scale, end - stroke - cell - ink.start * scale];
   const box = measureInkBox(g, font);
   const shift = box ? (box.ascent - box.descent) / 2 - measureCentralBaseline(fontFamilyOf(font)) * em : 0;
   return {
@@ -2886,7 +2959,9 @@ export function composeCjkParagraph(
   const composition = compositionFor(options?.cjkComposition ?? getCjkComposition(), vertical);
   // The marks Latin text shares with Chinese take Chinese boxes in Chinese
   // text only (`routesSharedMarks`).
-  const route = routesSharedMarks(composition, spans.map((s) => s.text).join(''));
+  const plainText = spans.map((s) => s.text).join('');
+  // Japanese text: only its two-em dashes, drawn as one stroke (#680).
+  const route: MarkRouting = routesSharedMarks(composition, plainText) || (joinsDashPairs(composition, plainText) ? 'dashes' : false);
   const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength);
   // A bibliography label's column (#290).
   if (options?.labelColumnPx !== undefined) {

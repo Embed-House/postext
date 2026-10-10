@@ -458,9 +458,11 @@ describe('composition in the measurement cache', () => {
     expect(cjkCompositionOf(cjk, 96, 'ko').language).toBe('ko');
     expect(cjkCompositionOf(cjk, 96).language).toBeUndefined();
     const key = (locale?: string): string => cjkCompositionKey(cjkCompositionOf(cjk, 96, locale));
-    // Japanese and Korean route no shared marks; a Chinese document routes
-    // them in a paragraph with kana; other languages behave alike.
-    expect(key('ja')).toBe(key('ko'));
+    // Japanese and Korean route no shared marks, and Japanese joins its
+    // two-em dash (#680); a Chinese document routes them in a paragraph
+    // with kana; other languages behave alike.
+    expect(key('ja')).not.toBe(key('ko'));
+    expect(key('ko')).not.toBe(key('en'));
     expect(key('ja')).not.toBe(key('zh-Hant'));
     expect(key('zh-Hant')).not.toBe(key('en'));
     expect(key('en')).toBe(key('es'));

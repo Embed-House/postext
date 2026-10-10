@@ -21,7 +21,7 @@ import { quoteFamily } from './font';
 import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
-import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, spanMarks, type CjkWordBreaks } from './cjkCompose';
+import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose';
 import { graphemeCount, graphemesOf } from './graphemes';
 import { CENTRAL, sideMarkerRun } from './cjkAnnotate';
 import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, mayHoldVerticalCell, measuringVertically, verticalTextWidth, withMeasureWritingMode } from './vertical';
@@ -1650,7 +1650,10 @@ function measureRichText(
   const cjkText = hasCJK(plainText);
   const annotated = spans.some((s) => s.ruby || s.warichu || s.kunten);
   const hasTabs = spans.some((s) => s.tab);
-  if ((cjkText && composesAsCjk(plainText) && !hasTabs) || annotated) {
+  // A row of dashes alone in a Chinese or Japanese document is one rule
+  // (#680): the composer's too.
+  const dashRow = !cjkText && !hasTabs && plainText.length > 1 && composesDashRow(plainText, options?.cjkComposition);
+  if ((cjkText && composesAsCjk(plainText) && !hasTabs) || annotated || dashRow) {
     return composeCjkParagraph(hasTabs ? tabsAsSpaces(spans) : spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options);
   }
 

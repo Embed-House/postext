@@ -162,6 +162,23 @@ export function routesSharedMarks(c: CjkComposition, text: string): boolean {
   return c.language === 'zh' || !KANA_HANGUL_RE.test(text);
 }
 
+/** Kana: a paragraph holding them is Japanese. */
+const KANA_RE = /[぀-ゟ゠-ヿㇰ-ㇿｦ-ﾟ]/;
+
+/**
+ * Whether a two-em dash (―― or ——, 2倍ダッシュ) is drawn as one stroke in
+ * a paragraph of `text` whose shared marks are not routed
+ * (`routesSharedMarks`): in Japanese text (#680), a Japanese document or a
+ * paragraph with kana in a document of no CJK language. JLReq names the
+ * pair as one mark (the double dash of its line-breaking rules), and a
+ * face whose dash leaves blank at both ends of its em (Noto Serif JP's ―,
+ * 0.07 em) would print it as two. Not in Korean, whose dashes are Latin.
+ */
+export function joinsDashPairs(c: CjkComposition, text: string): boolean {
+  if (c.language === 'ja') return true;
+  return c.language !== 'ko' && c.language !== 'zh' && KANA_RE.test(text);
+}
+
 const verticalOf = new WeakMap<CjkComposition, CjkComposition>();
 
 /** `c` for text set in the writing mode `vertical` names: the same
@@ -188,7 +205,8 @@ export function cjkCompositionKey(c: CjkComposition): string {
   // The language counts where it changes a measurement: Japanese and
   // Korean route no shared marks, and only a Chinese document routes them
   // in a paragraph with kana.
-  const lang = japaneseOrKorean(c) ? ':jk' : c.language === 'zh' ? ':zh' : '';
+  // Japanese joins its dash pairs where Korean does not (#680).
+  const lang = c.language === 'ja' ? ':ja' : japaneseOrKorean(c) ? ':jk' : c.language === 'zh' ? ':zh' : '';
   // Japanese settings only where set, so other keys stay as they were.
   const ja = `${c.spaceAfterQuestion ? ':q' : ''}${c.paragraphStartBracket ? `:p${c.paragraphStartBracket}` : ''}${c.keepAll ? ':ka' : ''}`;
   // The title rule and the circled numbers (#637) only where they differ

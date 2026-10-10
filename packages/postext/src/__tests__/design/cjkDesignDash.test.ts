@@ -290,11 +290,14 @@ describe('a 破折号 in Chinese design text is one rule (#652)', () => {
     for (const b of bars) expect(b.inkScale).toBeGreaterThan(1);
   });
 
-  it('gives no run a stretch in Japanese text, in the plain wrapper, or without a 破折号', () => {
+  it('gives no run a stretch in Korean text, in the plain wrapper, or without a 破折号', () => {
     const stretched = (doc: VDTDocument): boolean => designBlocks(doc).some((b) => b.lines.some((l) => runsOf(l).some((r) => r.inkScale !== undefined)));
-    // Japanese keeps the font's own ―― and ——.
-    expect(stretched(build({ locale: 'ja', dash: '――' }))).toBe(false);
-    expect(stretched(build({ locale: 'ja' }))).toBe(false);
+    // Korean keeps the font's own ―― and ——; Japanese joins its two-em
+    // dash since #680.
+    expect(stretched(build({ locale: 'ko', dash: '――' }))).toBe(false);
+    expect(stretched(build({ locale: 'ko' }))).toBe(false);
+    expect(stretched(build({ locale: 'ja', dash: '――' }))).toBe(true);
+    expect(stretched(build({ locale: 'ja' }))).toBe(true);
     // The wrapper of 1.24 (`cjk.composeDesignText: false`): the pair as one
     // string at the font's advances.
     const legacy = build({ composeDesignText: false });
