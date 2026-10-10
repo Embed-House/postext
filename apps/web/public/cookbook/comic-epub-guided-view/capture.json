@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "71d7fe870a44d9eea1aa4c936f76604cc7a272c296634e5e1d40e12c2902ec57",
+  "sourceHash": "302a473599d828145ef4e2b9b2be86d3b737df85ec63dcb909270e15f0cbea38",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.216Z",
+  "capturedAt": "2026-10-10T20:46:03.275Z",
   "variants": {
     "en": {
-      "hash8": "1607e9af",
+      "hash8": "bbda9bb6",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 4020,
-        "fontsMs": 97,
-        "buildMs": 209,
-        "totalMs": 4862,
+        "importMs": 558,
+        "fontsMs": 207,
+        "buildMs": 949,
+        "totalMs": 8915,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 244504,
+          "bytes": 244648,
           "alt": "Page 2."
         },
         {
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806950
+        "bytes": 806951
       },
       "detected": {
         "apis": [
@@ -280,13 +280,13 @@
       }
     },
     "es": {
-      "hash8": "5d71e86e",
+      "hash8": "d14c0c83",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 75,
-        "buildMs": 179,
-        "totalMs": 962,
+        "importMs": 557,
+        "fontsMs": 212,
+        "buildMs": 820,
+        "totalMs": 4012,
         "builds": 1
       },
       "specimen": {
@@ -329,7 +329,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 240922,
+          "bytes": 238102,
           "alt": "Página 2."
         },
         {
@@ -368,12 +368,12 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 814370,
+        "bytes": 814278,
         "pages": 3
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806919
+        "bytes": 806909
       },
       "detected": {
         "apis": [
@@ -549,13 +549,13 @@
       }
     },
     "ca": {
-      "hash8": "bb0b28ef",
+      "hash8": "0d8bbb1a",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 85,
-        "buildMs": 193,
-        "totalMs": 1015,
+        "importMs": 185,
+        "fontsMs": 115,
+        "buildMs": 206,
+        "totalMs": 1119,
         "builds": 1
       },
       "specimen": {
@@ -598,7 +598,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 241490,
+          "bytes": 243254,
           "alt": "Pàgina 2."
         },
         {
@@ -637,12 +637,12 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 813543,
+        "bytes": 813623,
         "pages": 3
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806886
+        "bytes": 807000
       },
       "detected": {
         "apis": [
@@ -818,11 +818,11 @@
       }
     },
     "zh": {
-      "hash8": "fe08c6e6",
+      "hash8": "cc15f2c2",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 231,
+        "importMs": 186,
+        "fontsMs": 214,
         "buildMs": 204,
         "totalMs": 1439,
         "builds": 1
@@ -867,7 +867,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237128,
+          "bytes": 239862,
           "alt": "第 2 页。"
         },
         {
@@ -911,7 +911,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807230
+        "bytes": 807323
       },
       "detected": {
         "apis": [
@@ -1088,13 +1088,13 @@
       }
     },
     "ar": {
-      "hash8": "77cb4625",
+      "hash8": "4fb6a9a1",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 104,
-        "buildMs": 177,
-        "totalMs": 1042,
+        "importMs": 166,
+        "fontsMs": 102,
+        "buildMs": 172,
+        "totalMs": 976,
         "builds": 1
       },
       "specimen": {
@@ -1182,7 +1182,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807687
+        "bytes": 807702
       },
       "detected": {
         "apis": [
@@ -1361,13 +1361,13 @@
       }
     },
     "ja": {
-      "hash8": "10e77ef3",
+      "hash8": "439b38e8",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 429,
-        "fontsMs": 676,
-        "buildMs": 741,
-        "totalMs": 6292,
+        "importMs": 176,
+        "fontsMs": 243,
+        "buildMs": 171,
+        "totalMs": 1464,
         "builds": 1
       },
       "specimen": {
@@ -1410,7 +1410,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237842,
+          "bytes": 239064,
           "alt": "2ページ。"
         },
         {
@@ -1450,12 +1450,12 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 847513,
+        "bytes": 847464,
         "pages": 3
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807447
+        "bytes": 807638
       },
       "detected": {
         "apis": [
@@ -1633,13 +1633,13 @@
       }
     },
     "pt": {
-      "hash8": "a5c73d39",
+      "hash8": "9186b27d",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 85,
-        "buildMs": 188,
-        "totalMs": 1034,
+        "importMs": 179,
+        "fontsMs": 75,
+        "buildMs": 181,
+        "totalMs": 1011,
         "builds": 1
       },
       "specimen": {
@@ -1682,7 +1682,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 239828,
+          "bytes": 243612,
           "alt": "Página 2."
         },
         {
@@ -1721,12 +1721,12 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 813030,
+        "bytes": 813017,
         "pages": 3
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806858
+        "bytes": 806979
       },
       "detected": {
         "apis": [

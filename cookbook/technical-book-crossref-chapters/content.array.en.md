@@ -4,7 +4,7 @@
 
 ## Sun hours by month {#sec:sun-hours}
 
-The sunlight a site receives is given in peak sun hours: the number of hours at a standard intensity of 1,000 W/m² that would deliver the same energy as the whole day does. A panel rated at 300 W makes roughly 300 Wh for each peak sun hour, before losses. The figures come from a solar database for the site's coordinates and the panels' tilt; @fig:sun gives them for the example cabin, at 42° N with the panels tilted at 60°.
+The sunlight a site receives is given in peak sun hours: the number of hours at a standard intensity of 1,000 W/m² that would deliver the same energy as the whole day does. A panel rated at 300 W makes roughly 300 Wh for each peak sun hour, before losses. The figures come from a solar database for the site’s coordinates and the panels’ tilt; @fig:sun gives them for the example cabin, at 42° N with the panels tilted at 60°.
 
 A steep tilt trades some summer yield for the low winter sun. Even so, December gets half the yield of July: 2.8 peak sun hours against 5.6. December is therefore the design month, and every calculation in this chapter uses its figure.
 
@@ -12,7 +12,7 @@ A steep tilt trades some summer yield for the low winter sun. Even so, December 
 
 Not all of the energy a panel makes reaches the sockets. Each stage between them takes a share, and the shares multiply. @Tbl:losses lists them for the example system.
 
-The largest single loss is the inverter's, and it applies only to the loads that run on 230 V. In a cabin where the fridge, the pump and the lights all run on 24 V, the overall factor rises from 0.79 to about 0.85. The example keeps the inverter in the chain, because the laptop and the router need it and the calculation is safer that way. The battery's share is its round-trip loss, the energy that goes in and does not come out; it is small for lithium cells and larger for lead-acid, as @sec:chemistry explains on :ref{id="sec:chemistry" style=page}.
+The largest single loss is the inverter’s, and it applies only to the loads that run on 230 V. In a cabin where the fridge, the pump and the lights all run on 24 V, the overall factor rises from 0.79 to about 0.85. The example keeps the inverter in the chain, because the laptop and the router need it and the calculation is safer that way. The battery’s share is its round-trip loss, the energy that goes in and does not come out; it is small for lithium cells and larger for lead-acid, as @sec:chemistry explains on :ref{id="sec:chemistry" style=page}.
 
 ## Sizing the array {#sec:array-size}
 

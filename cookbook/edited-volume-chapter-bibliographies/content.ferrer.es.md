@@ -12,7 +12,7 @@ Los punzones eran el capital del fundidor: se prestaban, se heredaban o se vend�
 
 ## De quién son las letras
 
-Eso mismo complicaba las atribuciones. Una letra aparece en el libro de un impresor mucho después de haberse tallado, con el nombre del impresor y no con el del grabador. Harry Carter ordenó las pruebas disponibles: muestrarios, inventarios, contratos y los propios libros [@carter1969]. Hendrik Vervliet las aplicó durante décadas al Renacimiento francés, y sus catálogos devolvieron a otros grabadores de su tiempo, entre ellos Robert Granjon y Pierre Haultin, muchos tipos que se habían atribuido a Claude Garamont [@vervliet2008].
+Eso mismo complicaba las atribuciones. Una letra aparece en el libro de un impresor mucho después de haberse tallado, con el nombre del impresor y no con el del grabador. Harry Carter ordenó las pruebas disponibles: muestrarios, inventarios, contratos y hasta los propios libros [@carter1969]. Hendrik Vervliet las aplicó durante décadas al Renacimiento francés, y sus catálogos devolvieron a otros grabadores de su tiempo, entre ellos Robert Granjon y Pierre Haultin, muchos tipos que se habían atribuido a Claude Garamont [@vervliet2008].
 
 El nombre de Garamond tuvo además una historia moderna propia. Cuando las fundiciones de principios del siglo XX recuperaron la «Garamond» para la composición mecánica, varias tomaron como modelo unos tipos que no había tallado Garamont, sino Jean Jannon, impresor en Sedán, unos sesenta años después de la muerte de Garamont. Beatrice Warde lo demostró en 1926. El nombre se quedó.
 

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "fedecaf7b852fd87ae4c9631a4c348f747b76551d1a25282e81849dcd8498f21",
+  "sourceHash": "0788999a67cd9d03465cd298400eda8bf90f91cab84016dbf73464a920e5f66b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.166Z",
+  "capturedAt": "2026-10-10T18:58:59.521Z",
   "variants": {
     "en": {
-      "hash8": "88e03085",
-      "vdtHash": "1a2618d11698ead020024ad1a2162631052e37ba",
+      "hash8": "56a5ce4a",
+      "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 2210,
-        "buildMs": 444,
-        "totalMs": 3400,
+        "importMs": 542,
+        "fontsMs": 483,
+        "buildMs": 1463,
+        "totalMs": 3230,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 135808,
+          "bytes": 135814,
           "alt": "Opening page 1: Why Most Published Research Findings Are False."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182544,
+          "bytes": 182532,
           "alt": "Page 2: Bias. Table 1. Research Findings and True Relationships."
         },
         {
@@ -141,12 +141,12 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 395444,
+        "bytes": 395217,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 123951,
+        "bytes": 123957,
         "folio": "a418809e"
       },
       "detected": {
@@ -495,13 +495,13 @@
       }
     },
     "es": {
-      "hash8": "2a2ff1c7",
-      "vdtHash": "12998927793173f946a0c06b165ddf5435e27291",
+      "hash8": "5e10e4a8",
+      "vdtHash": "68eedabd901b2adccb0269a203765b2d78871792",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 128,
-        "buildMs": 408,
-        "totalMs": 1279,
+        "importMs": 192,
+        "fontsMs": 138,
+        "buildMs": 420,
+        "totalMs": 1414,
         "builds": 1
       },
       "specimen": {
@@ -534,7 +534,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156438,
+          "bytes": 156686,
           "alt": "Página de apertura 1: Por qué la mayoría de los resultados de investigación publicados son falsos."
         },
         {
@@ -545,7 +545,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 186152,
+          "bytes": 185720,
           "alt": "Página 2: El sesgo. Tabla 1. Resultados de la investigación y relaciones verdaderas."
         },
         {
@@ -625,12 +625,12 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 425215,
+        "bytes": 425017,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126638,
+        "bytes": 126642,
         "folio": "a418809e"
       },
       "detected": {

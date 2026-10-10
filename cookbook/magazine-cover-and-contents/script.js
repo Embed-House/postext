@@ -197,7 +197,8 @@ const config = () => ({
   ] },
   headingStyles: headingStyles(), parts, toc: contents,
   unorderedLists: { ...marker, bulletChar: '–' }, orderedLists: marker, // in the label face
-  calloutStyles: [{ id: 'quote', ...boxStyle, marginTop: pt(LEAD), // the floated box has none
+  // The quote keeps a line above and a line under it; the floated box has neither.
+  calloutStyles: [{ id: 'quote', ...boxStyle, marginTop: pt(LEAD), marginBottom: pt(LEAD),
     body: { fontFamily: 'Bodoni Moda', fontSize: pt(16), lineHeight: pt(1.5 * LEAD),
       italicColor: col('band'), ...boxText } },
   { id: 'facts', ...boxStyle, placement: 'top', // floats to the next column head

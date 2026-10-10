@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manual-see-page-references",
-  "sourceHash": "9df899a15dc12975e647bb116264f56e1a113ed207c0454fdec3031909705d4d",
+  "sourceHash": "aec678e445f65d4127e892599f32fc87cd171a05fedb866ce8014aaa9d5dae06",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.348Z",
+  "capturedAt": "2026-10-10T19:14:44.431Z",
   "variants": {
     "en": {
-      "hash8": "eda585aa",
-      "vdtHash": "3ba854082e4fdcb3e7d5c0d43282cdfbf5948622",
+      "hash8": "39b6517b",
+      "vdtHash": "2b45ae281967c7ac2990356fefe5d57b5c54f811",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 27,
-        "buildMs": 49,
-        "totalMs": 812,
+        "importMs": 541,
+        "fontsMs": 75,
+        "buildMs": 137,
+        "totalMs": 1532,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 46048,
+          "bytes": 46086,
           "alt": "Opening page 1: Ardena T3."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 99396,
+          "bytes": 96628,
           "alt": "Page 2: 1 Before your first ride."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 109926,
+          "bytes": 109950,
           "alt": "Page 3: 2.2 Removing and fitting the front wheel."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105110,
+          "bytes": 105070,
           "alt": "Page 4: 3.3 Adjusting the cable."
         }
       ],
@@ -114,12 +114,12 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36579,
+        "bytes": 36612,
         "pages": 4
       },
       "sandbox": {
         "file": "manual-see-page-references.postext",
-        "bytes": 12425,
+        "bytes": 12436,
         "folio": "4335096f"
       },
       "detected": {
@@ -318,17 +318,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "6d0f94d4",
-      "vdtHash": "db847e4158e9c364fdb1c2fbd1427e13f081f2a7",
+      "hash8": "3a2ca768",
+      "vdtHash": "44e220338e17bcf0994798a57ac7135552398785",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 27,
-        "buildMs": 45,
-        "totalMs": 817,
+        "importMs": 230,
+        "fontsMs": 29,
+        "buildMs": 50,
+        "totalMs": 945,
         "builds": 1
       },
       "specimen": {
@@ -371,7 +377,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 107168,
+          "bytes": 104006,
           "alt": "Página 2: 1 Antes de la primera salida."
         },
         {
@@ -425,12 +431,12 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36758,
+        "bytes": 36547,
         "pages": 4
       },
       "sandbox": {
         "file": "manual-see-page-references.postext",
-        "bytes": 12983,
+        "bytes": 12980,
         "folio": "4335096f"
       },
       "detected": {

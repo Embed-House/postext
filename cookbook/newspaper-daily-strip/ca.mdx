@@ -1,16 +1,16 @@
 ---
 title: "Una tira diària i mitja pàgina de diumenge al diari"
-summary: "El suplement de còmics d’un diari: mitja pàgina de diumenge composta al text de la portada i una tira diària flotada al peu d’una pàgina a quatre columnes."
+summary: "El suplement de còmics d’un diari: mitja pàgina de diumenge composta al text de la portada i una tira diària a tota l’amplada de la pàgina, sota l’article."
 plain: "Dues pàgines de la secció de còmics d’un diari: un còmic gran en color a la portada i, a dins, una entrevista amb la dibuixant a quatre columnes i la tira diària de quatre vinyetes a baix."
 description: "Tires còmiques en un diari amb Postext: blocs :::strip al text o flotats sobre quatre columnes, mitja pàgina de diumenge i tira diària en sis idiomes."
 question: "Com poso una tira còmica en una pàgina de diari, a l’amplada de les columnes del text?"
 aliases: ["tira còmica", "tira diària", "tira de premsa", "còmic de diumenge", "suplement de còmics", "historieta", "comic strip", "daily strip", "新聞漫画", "报纸漫画"]
-pageNotes: { "1": "La portada del suplement: la capçalera Còmics en vermell, la mitja pàgina de diumenge (en Pip i l’Otto pescant en un glaç, el peix minúscul d’en Pip, l’Otto traient una bota) i tres línies de sumari.", "2": "La pàgina interior: el titular Deu hiverns al glaç sobre quatre columnes amb una entrevista, un requadre de xifres, cartes de lectors i un anunci, i la tira diària del croissant al peu." }
+pageNotes: { "1": "La portada del suplement: la capçalera Còmics en vermell, la mitja pàgina de diumenge (en Pip i l’Otto pescant en un glaç, el peix minúscul d’en Pip, l’Otto traient una bota) i tres línies de sumari.", "2": "La pàgina interior: el titular Deu hiverns al glaç sobre quatre columnes amb una entrevista, un requadre de xifres, cartes de lectors i un anunci, i, a sota, la tira diària del croissant a tota l’amplada de la pàgina." }
 ---
 
 ## Què compondràs
 
-El suplement de còmics d’un diari de cap de setmana, *El Despatx de Corrington*, plegat a 230 × 310 mm. La portada porta la mitja pàgina de diumenge d’*En Pip i l’Otto*, un pingüí i una morsa que tenen una fleca sobre un glaç, amb el sumari a sota. A dins, una entrevista amb la dibuixant ocupa quatre columnes, amb cartes de lectors i un anunci, i la tira diària de la setmana, quatre vinyetes quadrades, corre al peu de la pàgina. Les dues historietes són blocs `:::strip` del text del diari, i el suplement surt en sis idiomes.
+El suplement de còmics d’un diari de cap de setmana, *El Despatx de Corrington*, plegat a 230 × 310 mm. La portada porta la mitja pàgina de diumenge d’*En Pip i l’Otto*, un pingüí i una morsa que tenen una fleca sobre un glaç, amb el sumari a sota. A dins, una entrevista amb la dibuixant ocupa quatre columnes, amb cartes de lectors i un anunci, i la tira diària de la setmana, quatre vinyetes quadrades, corre a tota l’amplada de la pàgina, a sota. Les dues historietes són blocs `:::strip` del text del diari, i el suplement surt en sis idiomes.
 
 ## Elaboració
 
@@ -22,7 +22,7 @@ El codi és [la resposta curta](#la-resposta-curta) de dalt. Un `:::strip` té e
 
 ### 2 · Fes flotar la tira diària sobre les columnes
 
-La pàgina interior s’obre amb un H1 l’estil de títol del qual passa la secció a quatre columnes. La tira diària va just després, amb `span=page placement=bottom`: flota al peu de la pàgina amb l’amplada de les quatre columnes, i les columnes de l’article acaben igualades a sobre. Sense `height` ni `aspect`, una tira pren la forma que fa quadrades les seves vinyetes, aquí quatre a un. Amb `placement=top` obriria la pàgina següent, perquè un flotant no puja mai per sobre del punt on s’escriu.
+La pàgina interior s’obre amb un H1 l’estil de títol del qual passa la secció a quatre columnes. La tira diària s’escriu després de l’article, amb `span=page`: es compon a l’amplada de les quatre columnes on acaba el text, i les columnes de l’article acaben igualades a sobre. Sense `height` ni `aspect`, una tira pren la forma que fa quadrades les seves vinyetes, aquí quatre a un. Amb `placement=bottom` flotaria al peu de la pàgina, cosa que convé a un article que hi arribi; amb `placement=top` obriria la pàgina següent, perquè un flotant no puja mai per sobre del punt on s’escriu.
 
 ### 3 · Ajusta cada imatge a la seva vinyeta
 
@@ -41,8 +41,8 @@ Cada edició compon el diari amb lletres per a la seva escriptura i retola les t
 ### Fixa l’alçada de la tira diària
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
-+:::strip{split="* | * | * | *" span=page placement=bottom height=45mm}
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* | * | * | *" span=page height=45mm}
 ```
 
 ### Posa una tira d’una columna al text
@@ -50,7 +50,7 @@ Cada edició compon el diari amb lletres per a la seva escriptura i retola les t
 Sense `span=page`, una tira té l’amplada de la seva columna i es compon on és escrita, com una figura en línia.
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
+-:::strip{split="* | * | * | *" span=page}
 +:::strip{split="* / * / * / *" aspect=0.25}
 ```
 

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "vocalised-classical-prose",
-  "sourceHash": "85ed9ca3ae1f9c050e85722813a0f9737594f7ade97cb5c992e546b8cb1ffd39",
+  "sourceHash": "02f9b982da81b9c26ec5cade8e3d6d0836fc4fd3080b0aaffb96734795c5e435",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.830Z",
+  "capturedAt": "2026-10-10T19:26:42.963Z",
   "variants": {
     "en": {
-      "hash8": "b2bcfe35",
-      "vdtHash": "19f1fc45f2f16b0bdbeb7e787694a9850d547d8e",
+      "hash8": "383e601e",
+      "vdtHash": "5e57bcf18aa19c420dd54d458fc7efe46defd3d3",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 32,
-        "buildMs": 79,
-        "totalMs": 774,
+        "importMs": 671,
+        "fontsMs": 82,
+        "buildMs": 234,
+        "totalMs": 1539,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Aref Ruqaa"
         ],
         "pages": 4,
-        "ownLines": 95
+        "ownLines": 104
       },
       "pages": [
         {
@@ -70,7 +70,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 93658,
+          "bytes": 92804,
           "alt": "Page ٣."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 68992,
+          "bytes": 38252,
           "alt": "Page ٤."
         }
       ],
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36125
+        "bytes": 36330
       },
       "detected": {
         "apis": [
@@ -175,7 +175,21 @@
           "page.margins.right",
           "page.margins.top",
           "page.sizePreset",
-          "page.width"
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].boldColor",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].hyphenation",
+          "paragraphStyles[].hyphenation.enabled",
+          "paragraphStyles[].hyphenation.locale",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italicColor",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign"
         ],
         "configSections": [
           "bodyText",
@@ -185,12 +199,14 @@
           "headings",
           "layout",
           "locale",
-          "page"
+          "page",
+          "paragraphStyles"
         ],
-        "configLeaves": 71,
+        "configLeaves": 90,
         "designElements": 0,
         "directives": [
           ":::verse",
+          ":::pagebreak",
           ":::paragraphs"
         ],
         "inline": [
@@ -225,6 +241,7 @@
           "heading-attributes",
           "kashida",
           "page-background",
+          "page-breaks",
           "paragraph-styles",
           "right-binding",
           "text-direction"
@@ -237,19 +254,25 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.58
+          "worst": 1.33
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c0726fbd",
-      "vdtHash": "63bdfc263bbdec2ad7bca8e8b6f3ef2e15d0a9ae",
+      "hash8": "d6faa351",
+      "vdtHash": "aa04683f48d081dcd52f29f099685703ec48f5be",
       "timings": {
-        "importMs": 125,
-        "fontsMs": 32,
-        "buildMs": 102,
-        "totalMs": 2213,
+        "importMs": 200,
+        "fontsMs": 50,
+        "buildMs": 88,
+        "totalMs": 971,
         "builds": 1
       },
       "specimen": {
@@ -270,7 +293,7 @@
           "Aref Ruqaa"
         ],
         "pages": 4,
-        "ownLines": 95
+        "ownLines": 104
       },
       "pages": [
         {
@@ -303,7 +326,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 93658,
+          "bytes": 92804,
           "alt": "Página ٣."
         },
         {
@@ -314,7 +337,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 72556,
+          "bytes": 39920,
           "alt": "Página ٤."
         }
       ],
@@ -347,7 +370,7 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36171
+        "bytes": 36382
       },
       "detected": {
         "apis": [
@@ -408,7 +431,21 @@
           "page.margins.right",
           "page.margins.top",
           "page.sizePreset",
-          "page.width"
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].boldColor",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].hyphenation",
+          "paragraphStyles[].hyphenation.enabled",
+          "paragraphStyles[].hyphenation.locale",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italicColor",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign"
         ],
         "configSections": [
           "bodyText",
@@ -418,12 +455,14 @@
           "headings",
           "layout",
           "locale",
-          "page"
+          "page",
+          "paragraphStyles"
         ],
-        "configLeaves": 71,
+        "configLeaves": 90,
         "designElements": 0,
         "directives": [
           ":::verse",
+          ":::pagebreak",
           ":::paragraphs"
         ],
         "inline": [
@@ -458,6 +497,7 @@
           "heading-attributes",
           "kashida",
           "page-background",
+          "page-breaks",
           "paragraph-styles",
           "right-binding",
           "text-direction"
@@ -470,9 +510,15 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.79
+          "worst": 1.42
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

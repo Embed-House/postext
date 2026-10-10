@@ -87,7 +87,7 @@ const ART = {
   'lh-arrive': { width: 1100, height: 733, safeArea: face(0.22, 0.08, 0.4, 0.64),
     anchors: [{ id: 'maya', x: 0.29, y: 0.52, face: face(0.22, 0.42, 0.12, 0.16) },
       { id: 'biscuit', x: 0.4, y: 0.68, face: face(0.37, 0.64, 0.07, 0.08) }],
-    avoid: [face(0.51, 0.09, 0.1, 0.43)] },
+    avoid: [face(0.51, 0.09, 0.1, 0.43), face(0.34, 0.33, 0.21, 0.2)] }, // lighthouse, cottage
   'lh-radio': { width: 1000, height: 1000, safeArea: face(0.11, 0.36, 0.36, 0.31),
     anchors: [{ id: 'tomas', x: 0.345, y: 0.52, face: face(0.29, 0.4, 0.16, 0.18) }],
     avoid: [face(0, 0.44, 0.22, 0.26)] },

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ml-paper-theorems-proofs",
-  "sourceHash": "98fb6265488b985a28d74863f52863790201e836886b1e9fb38e40aeb1aecd9a",
+  "sourceHash": "ddadcefee0eb2f10bffefff7ae830e1cc99b7cc93d3bfe659f13944f92757eae",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.371Z",
+  "capturedAt": "2026-10-10T18:39:07.018Z",
   "variants": {
     "en": {
-      "hash8": "44db0eae",
+      "hash8": "47fbd5a2",
       "vdtHash": "9d4b6e85431982908f2f84b7eeae0d8c04a74d46",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 118,
-        "buildMs": 302,
-        "totalMs": 1230,
+        "importMs": 3606,
+        "fontsMs": 3130,
+        "buildMs": 292,
+        "totalMs": 7665,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1427,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120250,
+          "bytes": 120584,
           "alt": "Page 3. Figure 1. DPO optimizes for human preferences while avoiding reinforcement learning. Existing methods for fine-tuning language models with human feedback first fit a reward model to a dataset of prompts and human preferences over pairs of responses, and then use RL to…"
         },
         {
@@ -193,12 +193,12 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 981338,
+        "bytes": 981344,
         "pages": 10
       },
       "sandbox": {
         "file": "ml-paper-theorems-proofs.postext",
-        "bytes": 86708,
+        "bytes": 86709,
         "folio": "70aa8698"
       },
       "detected": {

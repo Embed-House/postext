@@ -1,7 +1,7 @@
 // The PDF: postext-pdf with the book's fonts, its pictures, HarfBuzz for
 // complex scripts and, for print, the ICC output profile.
 
-import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { createCanvas } from '@napi-rs/canvas';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import { resolvePrintConfig, type PrintConfig } from 'postext';
@@ -14,14 +14,17 @@ import type { Book } from '../input';
 import { byteLength, writeOut } from '../io';
 import type { Layout } from '../layout';
 import type { Reporter } from '../log';
+import { loadSvgImage, sizeSvgImage } from '../svgImage';
 
 const PDFX = { none: 'none', x1a: 'pdfx1a', x4: 'pdfx4', pdfx1a: 'pdfx1a', pdfx4: 'pdfx4' } as const;
 
 /** SVG to PNG through Skia, for the pictures the PDF cannot draw as vectors. */
 async function rasterizeSvg(svgText: string, width: number, height: number): Promise<Uint8Array | null> {
   try {
-    const image = await loadImage(Buffer.from(svgText));
+    const image = await loadSvgImage(svgText);
     const canvas = createCanvas(Math.max(1, Math.round(width)), Math.max(1, Math.round(height)));
+    // Rasterised at the raster's size, not stretched from the SVG's own (#678).
+    sizeSvgImage(image, canvas.width, canvas.height);
     canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
     return new Uint8Array(await canvas.encode('png'));
   } catch {

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-right-to-left",
-  "sourceHash": "472b49f2de1268ba14a85ce4e47316b073abe38d7241b41c3ae67300aa3a071b",
+  "sourceHash": "662c5becc132dae6f2e9b087bc1be692be94d14cbf2867d502d468aa08025db6",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:40:16.152Z",
+  "capturedAt": "2026-10-10T20:50:33.277Z",
   "variants": {
     "en": {
-      "hash8": "7bbe108f",
+      "hash8": "14d792fb",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 237,
-        "buildMs": 970,
-        "totalMs": 2450,
+        "importMs": 619,
+        "fontsMs": 511,
+        "buildMs": 2837,
+        "totalMs": 13802,
         "builds": 2
       },
       "specimen": {
@@ -80,7 +80,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 171574,
+          "bytes": 172924,
           "alt": "Page 2."
         }
       ],
@@ -109,12 +109,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521455,
+        "bytes": 1521476,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411272,
+        "bytes": 1411284,
         "folio": "80b0969c"
       },
       "detected": {
@@ -242,6 +242,11 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 2837 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "build 2: its configuration differs from the first's, which the book keeps"
@@ -255,13 +260,13 @@
       }
     },
     "es": {
-      "hash8": "282cd2d5",
+      "hash8": "776d53a8",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 240,
-        "buildMs": 978,
-        "totalMs": 2395,
+        "importMs": 181,
+        "fontsMs": 291,
+        "buildMs": 1002,
+        "totalMs": 2531,
         "builds": 2
       },
       "specimen": {
@@ -324,7 +329,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 174958,
+          "bytes": 175844,
           "alt": "Página 2."
         }
       ],
@@ -353,12 +358,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522910,
+        "bytes": 1522840,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411421,
+        "bytes": 1411437,
         "folio": "80b0969c"
       },
       "detected": {
@@ -499,13 +504,13 @@
       }
     },
     "ca": {
-      "hash8": "0ecb16f9",
+      "hash8": "259d4e4e",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 233,
-        "buildMs": 965,
-        "totalMs": 2436,
+        "importMs": 163,
+        "fontsMs": 236,
+        "buildMs": 970,
+        "totalMs": 2405,
         "builds": 2
       },
       "specimen": {
@@ -568,7 +573,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 181644,
+          "bytes": 182514,
           "alt": "Pàgina 2."
         }
       ],
@@ -597,12 +602,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522224,
+        "bytes": 1522200,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411407,
+        "bytes": 1411420,
         "folio": "80b0969c"
       },
       "detected": {
@@ -743,13 +748,13 @@
       }
     },
     "zh": {
-      "hash8": "3995481a",
+      "hash8": "004d2e8d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
         "importMs": 167,
         "fontsMs": 234,
-        "buildMs": 964,
-        "totalMs": 2718,
+        "buildMs": 963,
+        "totalMs": 2623,
         "builds": 2
       },
       "specimen": {
@@ -812,7 +817,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 173650,
+          "bytes": 176848,
           "alt": "第 2 页。"
         }
       ],
@@ -841,12 +846,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1544630,
+        "bytes": 1544575,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411470,
+        "bytes": 1411477,
         "folio": "80b0969c"
       },
       "detected": {
@@ -987,13 +992,13 @@
       }
     },
     "ar": {
-      "hash8": "3acc6b2e",
+      "hash8": "a69bd293",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 240,
-        "buildMs": 966,
-        "totalMs": 2435,
+        "importMs": 190,
+        "fontsMs": 233,
+        "buildMs": 958,
+        "totalMs": 2407,
         "builds": 2
       },
       "specimen": {
@@ -1056,7 +1061,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 174270,
+          "bytes": 176400,
           "alt": "الصفحة ٢."
         }
       ],
@@ -1085,12 +1090,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1530290,
+        "bytes": 1530175,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411803,
+        "bytes": 1411817,
         "folio": "80b0969c"
       },
       "detected": {
@@ -1231,13 +1236,13 @@
       }
     },
     "ja": {
-      "hash8": "7dcfdb82",
+      "hash8": "01041423",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 258,
-        "buildMs": 962,
-        "totalMs": 2455,
+        "importMs": 631,
+        "fontsMs": 510,
+        "buildMs": 2853,
+        "totalMs": 17974,
         "builds": 2
       },
       "specimen": {
@@ -1300,7 +1305,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 171574,
+          "bytes": 172924,
           "alt": "2ページ。"
         }
       ],
@@ -1329,12 +1334,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521140,
+        "bytes": 1521163,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411471,
+        "bytes": 1411483,
         "folio": "80b0969c"
       },
       "detected": {
@@ -1462,6 +1467,11 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 2853 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "build 2: its configuration differs from the first's, which the book keeps"
@@ -1475,13 +1485,13 @@
       }
     },
     "pt": {
-      "hash8": "c25c0d6e",
+      "hash8": "8822083f",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 238,
-        "buildMs": 965,
-        "totalMs": 2454,
+        "importMs": 161,
+        "fontsMs": 245,
+        "buildMs": 977,
+        "totalMs": 2387,
         "builds": 2
       },
       "specimen": {
@@ -1544,7 +1554,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176228,
+          "bytes": 177066,
           "alt": "Página 2."
         }
       ],
@@ -1573,12 +1583,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522016,
+        "bytes": 1522049,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411403,
+        "bytes": 1411418,
         "folio": "80b0969c"
       },
       "detected": {

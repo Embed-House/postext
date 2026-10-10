@@ -30,7 +30,11 @@ export interface RenderPageOptions {
   /** Bitmap pixels per page pixel (1 = the page's own resolution, the
    *  document's dpi). A page shown smaller than its size is painted at the
    *  size it is shown, times the device pixel ratio: fewer pixels to fill
-   *  and to keep. The drawing itself stays in page pixels. */
+   *  and to keep. The drawing itself stays in page pixels. Above 1 the
+   *  page is painted larger than its resolution: text, rules and vector
+   *  pictures (a registered SVG `<img>`, a formula) are drawn at the
+   *  bitmap's resolution (#674); a bitmap picture has no more pixels to
+   *  give. */
   scale?: number;
   /** Told of what the render could not paint as asked: an image with
    *  nothing registered for its `fileId` (see `registerResourceImage`) is

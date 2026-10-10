@@ -104,6 +104,9 @@ const config = () => ({
     fontFamily: PEN, fontSize: pt(CELL), lineHeight: pt(PITCH), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'left', firstLineIndent: em(1), indentAfterHeading: true, // a blank square
+    // On manuscript paper a line gives up no character to keep the last one company: the
+    // runt rule would leave the twentieth square of a line empty in the middle of a paragraph.
+    avoidRunts: false,
   },
   headings: { fontFamily: PEN, color: col('ink'), levels: [title] },
   paragraphStyles,

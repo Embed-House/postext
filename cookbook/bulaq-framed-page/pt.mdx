@@ -5,7 +5,7 @@ plain: "Uma página feita como os livros árabes impressos no Cairo no século X
 description: "Página no estilo de Bulaq no Postext: coluna e meia com boxes laterais para a ḥāshiya, um fio de coluna e uma moldura de fios para cada lado da página dupla."
 question: "Como faço para diagramar uma página de Bulaq, com o comentário emoldurando o texto?"
 aliases: ["Bulaq", "Būlāq", "ḥāshiya", "hashiya", "hamish", "comentário na margem", "glosa marginal", "sharḥ", "página de comentário", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "gramática árabe", "moldura de fios", "jadwal", "شرح ابن عقيل", "حاشية", "هامش"]
-pageNotes: { "2": "A primeira página de texto dentro de uma moldura de fios duplos: um título de capítulo vermelho em ruqʿa, os versos iniciais da Alfiyya em vermelho, dois por linha, e o comentário de Ibn ʿAqīl em preto; numa coluna estreita junto à borda direita, atrás de um fio vertical, duas glosas cujas primeiras palavras estão em vermelho." }
+pageNotes: { "2": "A primeira página de texto dentro de uma moldura de fios duplos: um título de capítulo vermelho em ruqʿa, os versos iniciais da Alfiyya em vermelho, dois por linha, e o comentário de Ibn ʿAqīl em preto; numa coluna estreita junto à borda direita, atrás de um fio vertical, três glosas cujas primeiras palavras estão em vermelho." }
 ---
 
 ## O que você vai compor
@@ -16,9 +16,9 @@ Seis páginas compostas como a tipografia de Bulaq e as suas sucessoras do Cairo
 
 ### 1 · A ḥāshiya numa coluna lateral própria
 
-O código está [na resposta curta](#a-resposta-curta), mais acima. Uma diagramação em coluna e meia cuja coluna lateral só recebe flutuantes mantém o comentário fora do fluxo do texto: cada glosa é um `:::callout{type="hashiya" span="side"}` escrito depois do parágrafo que explica, e fica na altura desse parágrafo ([Diagramação](/pt/docs/configuration-page-layout#diagramação)). O boxe não tem fundo, borda nem preenchimento, então se lê como texto composto na margem, com o lema em negrito, que o `boldColor` deixa vermelho. `sideColumnSide: 'outer'` põe a coluna junto ao corte nas duas páginas: à direita da página par, que fica à direita num livro encadernado pela direita.
+O código está [na resposta curta](#a-resposta-curta), mais acima. Uma diagramação em coluna e meia cuja coluna lateral só recebe flutuantes mantém o comentário fora do fluxo do texto: cada glosa é um `:::callout{type="hashiya" span="side"}` escrito antes do trecho que explica, e começa na altura da primeira linha desse trecho; `sideAtColumnEnd: 'after'` o mantém ao lado do trecho quando este continua na página seguinte ([Diagramação](/pt/docs/configuration-page-layout#diagramação)). O boxe não tem fundo, borda nem preenchimento, então se lê como texto composto na margem, com o lema em negrito, que o `boldColor` deixa vermelho. `sideColumnSide: 'outer'` põe a coluna junto ao corte nas duas páginas: à direita da página par, que fica à direita num livro encadernado pela direita.
 
-<PageShot page={3} crop="0,0.08,1,0.4" caption="Página 3: a glosa sobre «كديز» fica ao lado do parágrafo que usa a palavra, na borda externa, atrás do fio de coluna." />
+<PageShot page={2} crop="0,0.58,1,0.34" caption="Página 2: a glosa sobre «كديز» começa na altura do parágrafo que usa a palavra, na borda externa, atrás do fio de coluna." />
 
 ### 2 · Uma moldura desenhada para cada lado da página dupla
 
@@ -30,7 +30,7 @@ A moldura são três elementos de design de página no cabeçalho: duas caixas c
 
 <Excerpt region="title" />
 
-A folha de rosto reaproveita a moldura sem a faixa. As linhas dela vêm de atributos do título, `on` e `margin`, então a folha de rosto inteira é uma linha de Markdown, e a linha em caracteres latinos abaixo delas muda conforme a edição.
+A folha de rosto reaproveita a moldura sem a faixa. O design de um título é composto no fluxo e espelhado com a página, então ali a moldura é construída com os lados trocados (`inFlow`): a esquerda dela é a direita da folha. As linhas dela vêm de atributos do título, `on` e `margin`, então a folha de rosto inteira é uma linha de Markdown, e a linha em caracteres latinos abaixo delas muda conforme a edição.
 
 ## Variações
 

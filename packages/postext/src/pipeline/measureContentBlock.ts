@@ -617,6 +617,9 @@ export function measureContentBlock(
     // A numbered bibliography entry (#290): its label in a column as wide
     // as the turnover lines' indent.
     ...(measureHangingIndent && !measureLineIndents && !capIndents && contentBlock.spans.some((s) => s.labelTab) ? { labelColumnPx: measureFirstLineIndent } : {}),
+    // A heading's number that ends in 、 or ・ (#679): the composer does
+    // not read it as half of a number with the title.
+    ...(kind.numberLabelLength ? { labelLength: kind.numberLabelLength } : {}),
     // Tab stops (#622): passed only to a block that holds a tab.
     ...(prepared.tabs ? { tabs: prepared.tabs } : {}),
     optimal: resolved.bodyText.optimalLineBreaking,

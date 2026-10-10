@@ -280,6 +280,22 @@ describe('brackets in a right-to-left run of a sliced face (#401)', () => {
     expect(runs('كتاب ١٤٤٥', true)).toEqual([['arabic', 'كتاب ١٤٤٥']]);
   });
 
+  it('sets an opening bracket of a left-to-right run in the file of what it opens (postext #670)', async () => {
+    const runs = await slices();
+    // The Arabic file, listed first, holds `(`: the bracket of a Latin
+    // word used to be cut into it, away from its letters and its partner.
+    expect(runs('(d.', false)).toEqual([['latin', '(d.']]);
+    expect(runs('(d.\u00a01367)', false)).toEqual([['latin', '(d.\u00a01367)']]);
+    expect(runs('كتاب (API)', false)).toEqual([['arabic', 'كتاب '], ['latin', '(API)']]);
+    expect(runs('((API))', false)).toEqual([['latin', '((API))']]);
+    // What opens Arabic stays in the Arabic file, as before.
+    expect(runs('(١)', false)).toEqual([['arabic', '(١'], ['latin', ')']]);
+    expect(runs('(كتاب', false)).toEqual([['arabic', '(كتاب']]);
+    // A bracket nothing follows, or followed by a space, is cut as before.
+    expect(runs('(', false)).toEqual([['arabic', '(']]);
+    expect(runs('( a', false)).toEqual([['arabic', '( '], ['latin', 'a']]);
+  });
+
   it('so the bracket is shaped mirrored', async () => {
     const mirrored = shapeRun(LATIN_SLICE, '(', { direction: 'rtl' })!.glyphs[0]!.gid;
     expect(mirrored).toBe(shapeRun(LATIN_SLICE, ')', { direction: 'ltr' })!.glyphs[0]!.gid);

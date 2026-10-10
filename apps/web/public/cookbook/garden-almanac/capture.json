@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "garden-almanac",
-  "sourceHash": "a8f9824bf71a217f08e0108d196abec8c668d9bd22eaa54cc5590610d13618ff",
+  "sourceHash": "df7dfb705bc04d519ec93db187f1ac2110e7fd22cd70274213a1572df743ebc9",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.515Z",
+  "capturedAt": "2026-10-10T20:26:17.251Z",
   "variants": {
     "en": {
-      "hash8": "5684a806",
-      "vdtHash": "a20d77284011ed50dcea8a967e12f1dd70557b55",
+      "hash8": "1e478df8",
+      "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 70,
-        "buildMs": 59,
-        "totalMs": 860,
+        "importMs": 190,
+        "fontsMs": 68,
+        "buildMs": 60,
+        "totalMs": 880,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80804,
+          "bytes": 81120,
           "alt": "Page 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190188,
+        "bytes": 190202,
         "folio": "49229ae8"
       },
       "detected": {
@@ -319,6 +319,7 @@
         "directives": [
           ":::callout",
           ":::columns",
+          ":::space",
           ":::paragraphs"
         ],
         "inline": [
@@ -376,7 +377,8 @@
           "roman-front-matter",
           "swatches",
           "table-model",
-          "table-styles"
+          "table-styles",
+          "vertical-space"
         ],
         "suggestedLevel": 3
       },
@@ -388,17 +390,23 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d47662ba",
-      "vdtHash": "a20d77284011ed50dcea8a967e12f1dd70557b55",
+      "hash8": "91e3fd2a",
+      "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 68,
-        "buildMs": 57,
-        "totalMs": 845,
+        "importMs": 184,
+        "fontsMs": 70,
+        "buildMs": 60,
+        "totalMs": 908,
         "builds": 1
       },
       "specimen": {
@@ -443,7 +451,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80804,
+          "bytes": 81120,
           "alt": "Página 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -497,7 +505,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190190,
+        "bytes": 190204,
         "folio": "49229ae8"
       },
       "detected": {
@@ -701,6 +709,7 @@
         "directives": [
           ":::callout",
           ":::columns",
+          ":::space",
           ":::paragraphs"
         ],
         "inline": [
@@ -758,7 +767,8 @@
           "roman-front-matter",
           "swatches",
           "table-model",
-          "table-styles"
+          "table-styles",
+          "vertical-space"
         ],
         "suggestedLevel": 3
       },
@@ -770,7 +780,13 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

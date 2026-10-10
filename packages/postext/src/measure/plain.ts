@@ -21,7 +21,7 @@ import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canva
 import { isRuntLastLine } from './runts';
 import { measureRichBlock } from './rich';
 import { hasCJK, hasCJKRun } from './cjk';
-import { composesAsCjk } from './cjkCompose';
+import { composesAsCjk, composesDashRow } from './cjkCompose';
 import { markCuts } from './markCuts';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measuringVertically, withMeasureWritingMode } from './vertical';
 import { holdsVerticalCell } from '../writingMode';
@@ -245,7 +245,9 @@ export function measureBlock(
   // that meet (`本）》录`): pretext would measure it with the browser's
   // trimming, where the renderers paint such marks apart (`markCuts`).
   // Each of the three CJK tests needs CJK text (`hasCJK`), looked for once.
-  if ((hasCJK(text) && (hasCJKRun(text) || composesAsCjk(text) || markCuts(text, 'words').length > 0)) || (measuringVertically() && holdsVerticalCell(text, getMeasureUprightDigits(), getMeasureRegion()))) {
+  // A row of dashes alone in a Chinese or Japanese document goes there
+  // too (#680): the composer draws it as one rule.
+  if ((hasCJK(text) && (hasCJKRun(text) || composesAsCjk(text) || markCuts(text, 'words').length > 0)) || (measuringVertically() && holdsVerticalCell(text, getMeasureUprightDigits(), getMeasureRegion())) || (text.length > 1 && composesDashRow(text, options?.cjkComposition))) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   // A paragraph set right to left, or holding right-to-left text: the

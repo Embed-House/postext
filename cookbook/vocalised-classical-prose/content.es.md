@@ -23,8 +23,12 @@ title: "مقامات بديع الزمان الهمذاني"
 أَغْتَدِي فِي الدَّيْرِ قِسِّيساً || وَفي المَسْجِدِ رَاهِبْ
 :::
 
-:::paragraphs{dir=ltr}
-**Nota sobre el texto.** Badīʿ al-Zamān al-Hamadhānī (968-1008) escribió las primeras maqāmāt, relatos en prosa rimada en los que el narrador ʿĪsā ibn Hishām se encuentra con el pícaro Abū al-Fatḥ al-Iskandarī bajo un disfraz distinto cada vez. Aquí, un loco del manicomio de Basora deja sin respuesta a un teólogo que sostiene que el hombre elige sus actos. El texto es el de ar.wikisource, con todas sus vocales; se corrigen veinte erratas y la división en párrafos es nuestra. Las tres citas del Corán (3:154, 15:39, 7:186) van entre paréntesis ornamentales; los dichos del Profeta, entre « ».
+:::pagebreak
 
+:::paragraphs{style="note" dir=ltr}
+**Nota sobre el texto.** Badīʿ al-Zamān al-Hamadhānī (968-1008) escribió las primeras maqāmāt, relatos en prosa rimada en los que el narrador ʿĪsā ibn Hishām se encuentra con el pícaro Abū al-Fatḥ al-Iskandarī bajo un disfraz distinto cada vez. Aquí, un loco del manicomio de Basora deja sin respuesta a un teólogo que sostiene que el hombre elige sus actos. El texto es el de ar.wikisource, con todas sus vocales; se corrigen veinte erratas y la división en párrafos es nuestra. Las tres citas del Corán (3:154, 15:39, 7:186) van entre paréntesis ornamentales; los dichos del Profeta, entre « ».
+:::
+
+:::paragraphs{style="colophon" dir=ltr}
 Compuesto en Amiri y Aref Ruqaa (SIL OFL) · Texto: al-Hamadhānī, dominio público, de ar.wikisource
 :::

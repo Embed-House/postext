@@ -122,7 +122,7 @@ const config = () => ({
   bodyText: { fontFamily: TEXT, fontSize: pt(9.5), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     referenceBold: false, firstLineIndent: mm(4), indentAfterHeading: false,
-    maxJustifyTracking: 10 }, // up to 1 % tracking for a line spaces alone would leave loose
+    minWordSpacing: 0.75, maxJustifyTracking: 10 }, // spaces from 0.75×, then 1 % of tracking
   headings: { fontFamily: LABEL, color: col('accent'), fontWeight: 600, levels: [
     { level: 1, breakBefore: { enabled: false } }, // a report runs on under the one before
     { level: 3, ...caps(8), lineHeight: pt(LEAD), marginTop: pt(LEAD / 2), marginBottom: pt(0) },

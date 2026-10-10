@@ -525,6 +525,7 @@ describe("package exports", () => {
       "visualOrder",
       "lineVisualOrder",
       "lineRuns",
+      "markerRuns",
       "BIDI_CLASS_NAMES",
       "computeColumnEdges",
       "findAnnotations",

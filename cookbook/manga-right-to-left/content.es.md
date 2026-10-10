@@ -24,7 +24,7 @@ sora: Llévatelo mañana.
 :::page{split="38 [44 | *] / 34 / *"}
 ::panel{art=coach}
 sfx: ¡CLAC!
-mori: Eh.
+mori{at="85% 19%"}: Eh.
 mori: El instituto cerró hace una hora.
 sora{tail=bottom}: M-Mori-sensei…
 ::panel{art=smile}

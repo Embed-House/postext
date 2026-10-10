@@ -21,7 +21,7 @@ import { quoteFamily } from './font';
 import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
-import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, spanMarks, type CjkWordBreaks } from './cjkCompose';
+import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose';
 import { graphemeCount, graphemesOf } from './graphemes';
 import { CENTRAL, sideMarkerRun } from './cjkAnnotate';
 import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, mayHoldVerticalCell, measuringVertically, verticalTextWidth, withMeasureWritingMode } from './vertical';
@@ -32,7 +32,7 @@ import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isB
 import { breaksAfterDash, breaksAfterHardHyphen, hasCompound, isDash, raggedStretchPx } from './breakRules';
 import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate';
 import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining';
-import { applyLineDirections, applySegmentLanguages, getMeasureDirection, spanLanguages } from './bidiLines';
+import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines';
 import { TATWEEL, justifyLinesWithKashida, kashidaCapacity } from './kashida';
 import { needsBidi, resolveParagraph, spanIsolates, type BidiParagraph } from '../bidi';
 
@@ -1650,7 +1650,10 @@ function measureRichText(
   const cjkText = hasCJK(plainText);
   const annotated = spans.some((s) => s.ruby || s.warichu || s.kunten);
   const hasTabs = spans.some((s) => s.tab);
-  if ((cjkText && composesAsCjk(plainText) && !hasTabs) || annotated) {
+  // A row of dashes alone in a Chinese or Japanese document is one rule
+  // (#680): the composer's too.
+  const dashRow = !cjkText && !hasTabs && plainText.length > 1 && composesDashRow(plainText, options?.cjkComposition);
+  if ((cjkText && composesAsCjk(plainText) && !hasTabs) || annotated || dashRow) {
     return composeCjkParagraph(hasTabs ? tabsAsSpaces(spans) : spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options);
   }
 
@@ -2205,7 +2208,7 @@ function paragraphBidi(spans: readonly InlineSpan[], plainText: string, options:
   const base = options?.direction ?? getMeasureDirection();
   const isolated = spans.some((s) => s.direction?.dir === 'rtl');
   if (base !== 'rtl' && !isolated && !needsBidi(plainText)) return undefined;
-  return resolveParagraph(plainText, base, spans.some((s) => s.direction) ? spanIsolates(spans) : undefined);
+  return resolveParagraph(plainText, base, spans.some((s) => s.direction) ? spanIsolates(spans) : undefined, getMeasureArabicNumbers() ? { arabicNumbers: true } : undefined);
 }
 
 /** The directions of a paragraph's lines (`measure/bidiLines.ts`). A piece

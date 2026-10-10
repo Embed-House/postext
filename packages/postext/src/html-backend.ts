@@ -33,6 +33,7 @@ import { lineInkExtent, lineTrailingTracking } from './lineInk';
 import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
 import { isJapaneseLanguage, renderLangOf } from './locale';
 import { hasCJK } from './measure/cjk';
+import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
@@ -71,6 +72,16 @@ const CJK_FEATURES_DECL = "font-feature-settings:'chws' 0,'halt' 0,'vchw' 0;";
 const DASH_FEATURES_DECL = "font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'locl' 0;";
 const inkScaleDecl = (scale: number): string =>
   `transform:scaleX(${scale.toFixed(4)});transform-origin:0 0;${DASH_FEATURES_DECL}`;
+
+/** The ligatures of a tracked line (#663). A tracked word was measured at
+ *  its natural width, ligatures counted, plus its tracking; under a
+ *  `letter-spacing` other than zero browsers turn the common ligatures off
+ *  and the word comes out wider than its place (fi in Newsreader: 4.5 px at
+ *  40 px). Asked for as features they stay (`font-variant-ligatures` does
+ *  not bring them back). After the `font` shorthand, which resets them: on
+ *  the line's box and on each run in another face. A box that takes
+ *  {@link CJK_TEXT_DECL} after it keeps that one. */
+const TRACKED_LIGATURES_DECL = "font-feature-settings:'liga' 1,'clig' 1;";
 
 /** Whether a line box carries {@link CJK_TEXT_DECL}: a line of the CJK
  *  composer, which it measured character by character, or a line with no
@@ -932,7 +943,7 @@ function renderSegments(
   const paintText = (seg: VDTLineSegment, at: number, inLink = false): string => {
     const font = quoteFontString(pickSegmentFont(seg, block));
     const color = pickSegmentColor(seg, block);
-    const fontDecl = font !== quoteFontString(block.fontString) ? `font:${font};` : '';
+    const fontDecl = font !== quoteFontString(block.fontString) ? `font:${font};${tracking !== 0 ? TRACKED_LIGATURES_DECL : ''}` : '';
     const colorDecl = color !== block.color ? `color:${color};` : '';
     const top = seg.baselineShift ? `${seg.baselineShift.toFixed(3)}px` : '0';
     return renderWordTextSegment(inLink ? { ...seg, refResourceId: undefined } : seg, at, top, fontDecl, colorDecl, color, cjk && hasCJK(seg.text), segmentBox(seg, rootDir, rootLang, tracking, font, color, (probe) => ({ font: quoteFontString(pickSegmentFont(probe, block)), color: pickSegmentColor(probe, block) })));
@@ -1237,6 +1248,15 @@ function renderChip(
   return parts.join('');
 }
 
+/** Whether a marker's order differs when its leading European digits read
+ *  as Arabic numbers (`BidiOptions.arabicNumbers`, #665). */
+function arabicMarkNeeded(text: string): boolean {
+  if (!/[0-9]/.test(text)) return false;
+  const plain = markerRuns(text, 'rtl');
+  const arabic = markerRuns(text, 'rtl-arabic');
+  return plain.length !== arabic.length || plain.some((r, i) => r.text !== arabic[i]!.text);
+}
+
 function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
   if (
     block.type !== 'listItem' ||
@@ -1265,6 +1285,13 @@ function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
   // A marker reads in its item's direction: `١.` with its full stop on the
   // left in an Arabic list (#379).
   const markerDir = dirAttr(block.direction ?? rootDir, rootDir);
+  // In an Arabic-script document European digits that open the marker read
+  // as Arabic numbers (`bulletDirection: 'rtl-arabic'`, #665): `3-1`, a
+  // contents number, with the 3 on the right. The browser resolves the
+  // marker's order itself, so where that reading changes it the text takes
+  // an Arabic letter mark (U+061C) before it, which rule W2 reads as the
+  // letter the number follows.
+  const markerText = (text: string): string => (block.bulletDirection === 'rtl-arabic' && arabicMarkNeeded(text) ? '&#x61C;' : '') + esc(text);
   const markerDiv = (cls: string, x: number, font: string, color: string, text: string): string =>
     `<div class="${cls}" aria-hidden="true"${markerDir} style="` +
     `position:absolute;` +
@@ -1276,8 +1303,8 @@ function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
     `white-space:pre;` +
     (hasCJK(text) ? CJK_TEXT_DECL : '') +
     (onBaseline
-      ? `"><span style="font:${font};${hasCJK(text) ? CJK_FEATURES_DECL : ''}line-height:0;">${esc(text)}</span></div>`
-      : `">${esc(text)}</div>`);
+      ? `"><span style="font:${font};${hasCJK(text) ? CJK_FEATURES_DECL : ''}line-height:0;">${markerText(text)}</span></div>`
+      : `">${markerText(text)}</div>`);
   let html = markerDiv('pt-bullet', block.bulletOffsetX, bulletFont, bulletColor, block.bulletText);
   // Ordered-list separator styled apart from the number (own font/colour).
   if (block.separatorText && block.separatorX !== undefined) {
@@ -1311,7 +1338,7 @@ function renderLine(
   // line's own (justification): measured into the segment widths, so the
   // glyphs must spread the same way.
   const tracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
-  const trackingDecl = tracking !== 0 ? `letter-spacing:${tracking}px;` : '';
+  const trackingDecl = tracking !== 0 ? `letter-spacing:${tracking}px;${TRACKED_LIGATURES_DECL}` : '';
   return (
     `<div class="pt-line" data-block="${esc(block.id)}" style="` +
     `position:absolute;` +
@@ -1724,7 +1751,7 @@ function renderResourceLine(
     const paintText = (seg: VDTLineSegment, at: number, inLink = false): string => {
       const font = quoteFontString(pickResourceFont(seg, fonts));
       const segColor = segColorOf(seg);
-      const fontDecl = font !== baseFont ? `font:${font};` : '';
+      const fontDecl = font !== baseFont ? `font:${font};${tracking !== 0 ? TRACKED_LIGATURES_DECL : ''}` : '';
       const colorDecl = segColor !== color ? `color:${segColor};` : '';
       const top = seg.baselineShift ? `${seg.baselineShift.toFixed(3)}px` : '0';
       // Its direction, untracked joining letters and styled runs (#379).
@@ -1805,7 +1832,7 @@ function renderResourceLine(
     `color:${color};` +
     // A tracked line (a table header set with `headerLetterSpacing`) was
     // measured with the tracking in its widths.
-    (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;` : '') +
+    (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;${TRACKED_LIGATURES_DECL}` : '') +
     (lineDecl ? CJK_TEXT_DECL : '') +
     `">${parts.join('')}</div>`
   );

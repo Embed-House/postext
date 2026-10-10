@@ -1,7 +1,7 @@
 /**
  * Canvas painting of a comic page (#563): per panel, its background, then
  * its picture clipped to its outline (flipped when mirrored), then its
- * border, then its pop-out cut-out over the border; then the lettering
+ * border; then the pop-out cut-outs, over every panel (#668); then the lettering
  * (SPEC D5): balloons and captions, each join group's outline stroked at
  * twice its width and then filled (so joined bodies, necks and the tail
  * merge into one outline), its text over it; sound effects last. Nothing
@@ -53,8 +53,10 @@ function drawArt(ctx: CanvasRenderingContext2D, art: VDTComicArt, inkHex: string
   return drawn;
 }
 
-/** Paint one panel. */
-export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicPanel, inkHex: string | null = null): void {
+/** Paint one panel: its background, picture and border, and its pop-out
+ *  cut-out over them unless `pop` is false (a page paints the cut-outs of
+ *  all its panels after the last one, {@link renderComicPanels}). */
+export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicPanel, inkHex: string | null = null, pop = true): void {
   ctx.save();
   comicPanelPath(ctx, panel);
   ctx.clip();
@@ -87,12 +89,15 @@ export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicP
     ctx.restore();
   }
   // The pop-out cut-out runs over the border, unclipped.
-  if (panel.pop) drawArt(ctx, panel.pop, inkHex);
+  if (pop && panel.pop) drawArt(ctx, panel.pop, inkHex);
 }
 
-/** Paint the panels of a comic page, in reading order. */
+/** Paint the panels of a comic page, in reading order, then their pop-out
+ *  cut-outs: one that breaks out of its cell into the next panel's is
+ *  drawn over that panel, not under it (#668). */
 export function renderComicPanels(ctx: CanvasRenderingContext2D, comic: VDTComicPage, inkHex: string | null = null): void {
-  for (const panel of comic.panels) renderComicPanel(ctx, panel, inkHex);
+  for (const panel of comic.panels) renderComicPanel(ctx, panel, inkHex, false);
+  for (const panel of comic.panels) if (panel.pop) drawArt(ctx, panel.pop, inkHex);
 }
 
 /** Trace an SVG path made of M, L, C and Z commands (absolute, as the

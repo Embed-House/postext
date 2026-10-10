@@ -503,7 +503,9 @@ export function resolveOrderedListItemStyle(
 
   // Right-align: reserve max width so text starts after `indent + maxWidth + gap`.
   // The individual number is drawn at `indent + (maxWidth - thisWidth)`.
-  const rightAlignOffsetPx = Math.max(0, metric.maxNumberWidthPx - metric.numberWidthPx);
+  // `numberAlign: 'start'` (#682) draws it at the start of the column
+  // instead: the column keeps its width, so the text starts where it did.
+  const rightAlignOffsetPx = lists.numberAlign === 'start' ? 0 : Math.max(0, metric.maxNumberWidthPx - metric.numberWidthPx);
   // A distinct separator run follows the (right-aligned) number column, so
   // it lands in the same column for every item of the run.
   const separatorGapPx = metric.separatorGapPx ?? 0;
@@ -566,6 +568,19 @@ export function resolveOrderedListItemStyle(
  * `(1)` keeps its brackets, and right-aligned numbers end up aligned on the
  * edge that faces the text. Call it once the marker positions are set.
  */
+/**
+ * Says how the marker of `blk` reads (`VDTBlock.bulletDirection`, #664)
+ * once it is set: at a right-to-left level when the block's text runs
+ * right to left (`direction`: the block's own, else its frame's), as an
+ * Arabic-script document reads its numbers when `arabicNumbers` (#665).
+ * A left-to-right block, and a marker of vertical text, say nothing.
+ */
+export function directListMarker(blk: VDTBlock, direction: 'ltr' | 'rtl', arabicNumbers: boolean, vertical = false): void {
+  if (!blk.bulletText || blk.bulletOffsetX === undefined) return;
+  if (direction === 'rtl' && !vertical) blk.bulletDirection = arabicNumbers ? 'rtl-arabic' : 'rtl';
+  else delete blk.bulletDirection;
+}
+
 export function mirrorListMarker(blk: VDTBlock): void {
   if (blk.bulletOffsetX === undefined || !blk.bulletText) return;
   const left = blk.bbox.x;

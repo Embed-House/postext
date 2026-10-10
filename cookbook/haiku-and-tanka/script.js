@@ -38,8 +38,10 @@ const paragraphStyles = [
   // A poem's style gives its indent and the space under the poem: one blank line.
   { id: 'tanka', indent: em(2), marginTop: pt(0), marginBottom: pt(LEAD) },
   { id: 'by', textAlign: 'end', endIndent: em(5), firstLineIndent: em(0) },
-  // The ornament between groups of poems, in the middle of its line.
-  { id: 'ornament', textAlign: 'center', firstLineIndent: em(0), color: col('persimmon') },
+  // The ornament between groups of poems, in the middle of its line, with a blank line after
+  // it to match the one the group before it leaves.
+  { id: 'ornament', textAlign: 'center', firstLineIndent: em(0), color: col('persimmon'),
+    marginBottom: pt(LEAD) },
 ];
 //   :::paragraphs{style="haiku"}       :::paragraphs{style="by"}
 //   夏草や兵どもが夢の跡                   曾良

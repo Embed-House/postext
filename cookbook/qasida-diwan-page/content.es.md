@@ -59,7 +59,7 @@ subtitle: "قافية الميم"
 :::
 
 :::paragraphs{style="note" dir=ltr}
-**Nota sobre el texto.** Abū al-Ṭayyib al-Mutanabbī (915-965) recitó esta casida ante Sayf al-Dawla, el príncipe hamdaní de Alepo, en el año 954, después de que el príncipe reconstruyera la fortaleza de al-Ḥadath, en la frontera bizantina, y rechazara al pie de sus murallas al ejército del doméstico Bardas Focas. Tiene cuarenta y seis versos (bayt) en el metro ṭawīl, todos con una misma rima, la letra mīm. El texto es el que da ar.wikisource, con sus vocales; se corrigen tres erratas de copia, en los versos 12, 16 y 46. Las dos líneas en prosa que preceden al poema son nuestras.
+**Nota sobre el texto.** Abū al-Ṭayyib al-Mutanabbī (915-965) recitó esta casida ante Sayf al-Dawla, el príncipe hamdaní de Alepo, en el año 954, después de que el príncipe reconstruyera la fortaleza de al-Ḥadath, en la frontera bizantina, y rechazara al pie de sus murallas al ejército del doméstico Bardas Focas. Tiene cuarenta y seis versos (bayt) en el metro ṭawīl, todos con una misma rima, la letra mīm. El texto es el que da ar.wikisource, con sus vocales; se corrigen tres erratas de copia, en los versos 12, 16 y 46. Las dos líneas en prosa que preceden al poema son nuestras.
 :::
 
 :::paragraphs{style="colophon" dir=ltr}

@@ -40,18 +40,18 @@ import { collectConfigWarnings } from '../configWarnings';
 import { initHyphenator } from '../measure';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
 import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
 import { stampCentralBaselines } from './verticalMetrics';
 import { orientLinesToFrames } from './mirrorFrame';
 import { verseMarginTopPx } from './buildBlockKind';
 import { verseLinesSettings, versesLineByLine } from './verseLines';
 import type { MeasurementCache } from '../measure';
-import { resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
+import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
 import { resolveDebugConfig } from '../defaults/debug';
 import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
-import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
+import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -81,6 +81,7 @@ import {
   computeLevelIndentsPx,
   computeOrderedLevelIndentsPx,
   computeOrderedListRunMetrics,
+  directListMarker,
   listBulletPosition,
   listItemGapPx,
   listItemSpacingPx,
@@ -543,9 +544,11 @@ export function buildDocumentPass(
   const region = getMeasureRegion();
   const uprightDigits = getMeasureUprightDigits();
   const direction = getMeasureDirection();
+  const arabicNumbers = getMeasureArabicNumbers();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
     setCjkComposition(composition);
     setMeasureWritingMode(writingMode, region);
@@ -614,6 +617,9 @@ function placeDocumentPass(
   // Paragraphs run in the document's direction unless they set their own
   // (`{dir=…}`): an Arabic book's captions, cells and notes too.
   setMeasureDirection(resolvedDirection(resolved));
+  // And, in an Arabic-script book, read a number that opens a paragraph as
+  // the numbers after its letters (#665).
+  setMeasureArabicNumbers(arabicNumbersOf(resolved));
 
   // Compute baseline grid
   const baselineGrid = computeBaselineGrid(resolved);
@@ -2012,6 +2018,20 @@ function placeDocumentPass(
       return 'placed';
     }
 
+    /** A column of a closing band cut level (a trailing cap) that a band
+     *  at its head takes to the cut, give or take a line: the cut was taken
+     *  under this float (`proposeTrailingCap`: a figure heading an
+     *  otherwise empty column keeps its slot), so no text comes under it
+     *  and the room kept for text between two float bands has nothing to
+     *  keep (#681). Asked for there, with another float at the page's
+     *  foot, the float found no slot above its own cut: the cap was
+     *  retried a line lower until three lines were left, which put that
+     *  much ruled, empty column under the picture, or was dropped when
+     *  the retries ran out. */
+    const fillsCappedColumn = (c: VDTColumn, bandNeed: number): boolean =>
+      position === 'top' && c.trailingCap === true && c.blocks.length === 0
+      && bandNeed <= c.availableHeight + 0.01 && c.availableHeight - bandNeed <= baselineGrid + 0.01;
+
     /** Gallery page (see below): the band takes the columns' whole room. */
     let galleryFill = false;
     if (mode === 'fresh') {
@@ -2092,6 +2112,7 @@ function placeDocumentPass(
         }
         const hasBand = columnHasFloatBand(page, c);
         if (fitsStrict(need + leadOf(c), c, hasBand, minTextPx)) continue;
+        if (fillsCappedColumn(c, need + leadOf(c))) continue;
         // The head of an empty column: a splittable table is cut to the
         // column and continues in the next slot — the compositor sets a
         // long table beside the text that cites it, not pages later. A
@@ -2944,7 +2965,15 @@ function placeDocumentPass(
     const ids: string[] = [...pendingNotes];
     let any = ids.length > 0 || waiting.length > 0;
     const even = opensSpread(page);
-    const costOf = (): number => notesCost(col, [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)]);
+    // In a column a band cap cut, the notes are set under the cut, at the
+    // column's true foot (`reserveNotes`): they cost the lines above the
+    // cut only what reaches over it (#673). Charged whole, a paragraph
+    // that cites a note and runs to the cut gave up the note's height
+    // there, and a closing band ended that many lines short in the column
+    // with the note.
+    const cappedBottom = uncappedBottoms.get(col);
+    const underCut = cappedBottom === undefined ? 0 : Math.max(0, cappedBottom - (col.bbox.y + col.bbox.height));
+    const costOf = (): number => Math.max(0, notesCost(col, [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)]) - underCut);
     const cost = [costOf()];
     for (const line of lines) {
       for (const seg of line.segments ?? []) {
@@ -3138,6 +3167,9 @@ function placeDocumentPass(
           if (!m) return;
           const blk = createVDTBlock(`fn-${id}`, 'paragraph', noteStyle.fontString, noteStyle.color, noteStyle.textAlign);
           applyStyleAttrs(blk, noteStyle);
+          // The tracking the note was measured with (a runt taken up by
+          // setting it one line shorter, #662): painted with it too.
+          if (m.letterSpacingPx !== undefined) blk.letterSpacing = m.letterSpacingPx;
           blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign), noteStyle.lineHeightPx).map((line) => ({
             ...line,
             bbox: createBoundingBox(line.bbox.x + x, line.bbox.y + y, line.bbox.width, line.bbox.height),
@@ -6483,6 +6515,8 @@ function placeDocumentPass(
       // A list set against the document's direction: its marker on the
       // other side, with its text (#371).
       if (rawBlock.direction !== undefined && rawBlock.direction !== resolvedDirection(resolved)) mirrorListMarker(blk);
+      // And reads in its item's direction (#664).
+      directListMarker(blk, rawBlock.direction ?? resolvedDirection(resolved), arabicNumbersOf(resolved), measuringVertically());
       if (strikethroughText) blk.strikethroughText = true;
       // Bullet Y = x-height midpoint of the item's first text line.
       // Pairs with `textBaseline='middle'` at render so the bullet stays

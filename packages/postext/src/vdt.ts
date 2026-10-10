@@ -1653,6 +1653,15 @@ export interface VDTBlock {
   /** Absolute page X coordinate where the prefix run starts (on the
    *  bullet's `bulletY` / `bulletBaselineY`, as the separator). */
   prefixX?: number;
+  /** How the marker reads when its block is set right to left (#664):
+   *  `bulletText`, and the prefix and separator runs with it, are resolved
+   *  at a right-to-left paragraph level (UAX #9) and painted run by run in
+   *  visual order from their x (`markerRuns`), so `١-` has its hyphen on
+   *  the number's left and a bracket is mirrored. `'rtl-arabic'`: the same
+   *  in an Arabic-script document, where European digits read as Arabic
+   *  numbers (`3-1` with the 3 on the right, as `٣-١`; #665). Absent for a
+   *  left-to-right marker, painted as one run. */
+  bulletDirection?: 'rtl' | 'rtl-arabic';
   /** A drop cap opening the paragraph (#623), on the fragment that holds
    *  its first line only: renderers paint it beside the lines, which were
    *  set short of it. */

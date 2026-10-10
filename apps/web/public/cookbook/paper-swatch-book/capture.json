@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "paper-swatch-book",
-  "sourceHash": "1365a41ea7765c3701ce15fe9837e7157eb0bd7c2dc2f542e998a40976503a80",
+  "sourceHash": "bb355a52de4a3d1fc92170476755368760b29c58a6f3f65db940bbdb07e01936",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.495Z",
+  "capturedAt": "2026-10-10T19:02:16.431Z",
   "variants": {
     "en": {
-      "hash8": "e5b40569",
-      "vdtHash": "ca5cf49b23a242d725eea9a31c91c29469b8f4c4",
+      "hash8": "b1471052",
+      "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 158,
+        "importMs": 160,
         "fontsMs": 3,
-        "buildMs": 49,
-        "totalMs": 886,
+        "buildMs": 42,
+        "totalMs": 986,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
           "h": 1467,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 68530,
+          "bytes": 68148,
           "alt": "Page 6: SPECIMEN."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1467,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 64690,
+          "bytes": 65776,
           "alt": "Opening page 7: Art Gloss, Bright White."
         },
         {
@@ -137,7 +137,7 @@
           "h": 1467,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 65482,
+          "bytes": 66398,
           "alt": "Opening page 9: India Bible, Opaque."
         },
         {
@@ -218,7 +218,7 @@
       },
       "sandbox": {
         "file": "paper-swatch-book.postext",
-        "bytes": 30844,
+        "bytes": 30856,
         "folio": "c0edc776"
       },
       "detected": {
@@ -426,11 +426,17 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0132,
-          "worst": 2.29
+          "count": 0,
+          "share": 0,
+          "worst": 1.8900000000000001
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

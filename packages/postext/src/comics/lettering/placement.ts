@@ -13,10 +13,10 @@
 
 import {
   boundsOf, clipToRect, dist, insetConvex, nearestOnPolygon, norm, pointInConvex, pointInRect, rayExit, rectsOverlap, segmentHitsRect,
-  segmentDistance, sub, add, scale,
+  segmentDistance, segmentsCross, sub, add, scale,
 } from './geom';
 import { tailLength, type Body } from './shapes';
-import type { LetteringDiagnostic, LetteringPanel, LetteringPosition, PanelSide, Point, Rect } from './types';
+import type { LetteringDiagnostic, LetteringForeignArt, LetteringPanel, LetteringPosition, PanelSide, Point, Rect } from './types';
 
 /** One way to lay out a unit (a balloon, or a group of joined balloons):
  *  its bodies relative to the unit's anchor (the first body's centre). */
@@ -120,6 +120,8 @@ interface Scene {
   fwd: 1 | -1;
   /** The other panels' boxes. */
   neighbours: Rect[];
+  /** The panels laid over this one (insets): theirs, not this panel's. */
+  over: (readonly Point[])[];
   /** The page's live area. */
   limit?: Rect;
   /** How far a balloon / a sound effect breaking its border on purpose
@@ -129,8 +131,11 @@ interface Scene {
   /** Whether the panel runs past the live area (it bleeds): a `break`
    *  balloon of a panel that does not keeps inside the live area. */
   bleeds: boolean;
-  /** Other panels' balloons. */
-  foreign: Rect[];
+  /** Other panels' balloons, their tails as drawn, and what the other
+   *  panels' pictures protect (#671). */
+  foreign: (Rect & { round?: boolean })[];
+  foreignTails: (readonly [Point, Point])[];
+  foreignArt: LetteringForeignArt[];
   /** Never covered (the fold of a spread). */
   keepOut: Rect[];
   /** The panel's polygon inside the live area (see {@link livePolygon}). */
@@ -173,10 +178,13 @@ function sceneOf(panel: LetteringPanel): Scene {
     fwd: panel.direction === 'rtl' ? -1 : 1,
     buttPoly: buttPolygon(panel),
     neighbours: [...(panel.neighbours ?? [])],
+    over: [...(panel.over ?? [])],
     ...(panel.limit ? { limit: panel.limit } : {}),
     ...(trim ? { edge: insetRect(trim, panel.insetPx), edgeSfx: panel.sheet ?? trim } : {}),
     bleeds: panel.limit !== undefined && panel.polygon.some((p) => !pointInRect(p, panel.limit!, 0.5)),
     foreign: [...(panel.foreign ?? [])],
+    foreignTails: [...(panel.foreignTails ?? [])],
+    foreignArt: [...(panel.foreignArt ?? [])],
     keepOut: [...(panel.keepOut ?? [])],
     live,
   };
@@ -223,6 +231,17 @@ function coveredArea(samples: readonly Point[], rect: Rect, area: number): numbe
   return (n / Math.max(1, samples.length)) * area;
 }
 
+/** Area of the ellipse `rect` holds the samples fall in. */
+function coveredEllipse(samples: readonly Point[], rect: Rect, area: number): number {
+  const cx = rect.x + rect.width / 2;
+  const cy = rect.y + rect.height / 2;
+  const rx = rect.width / 2;
+  const ry = rect.height / 2;
+  let n = 0;
+  for (const s of samples) if (((s.x - cx) / rx) ** 2 + ((s.y - cy) / ry) ** 2 <= 1) n++;
+  return (n / Math.max(1, samples.length)) * area;
+}
+
 /** Whether a face fills a good part of its panel (a close shot): its box
  *  then has corners of hair a balloon may cover (in a long shot they are a
  *  few pixels beside the face). */
@@ -242,6 +261,19 @@ function coveredOval(samples: readonly Point[], rect: Rect, area: number): numbe
   for (const s of samples) {
     if (!pointInRect(s, rect)) continue;
     if (s.y >= cy || ((s.x - cx) / rx) ** 2 + ((s.y - cy) / ry) ** 2 <= 1) n++;
+  }
+  return (n / Math.max(1, samples.length)) * area;
+}
+
+/** Area of a face or avoid zone of another panel the samples fall in:
+ *  only what the page shows of it counts (inside its own panel, under no
+ *  panel laid over that one). */
+function coveredForeign(samples: readonly Point[], art: LetteringForeignArt, area: number): number {
+  let n = 0;
+  for (const s of samples) {
+    if (!pointInRect(s, art.rect) || !pointInConvex(s, art.within)) continue;
+    if (art.under?.some((poly) => pointInConvex(s, poly))) continue;
+    n++;
   }
   return (n / Math.max(1, samples.length)) * area;
 }
@@ -354,6 +386,21 @@ function evaluate(
       }
     }
   }
+  // What the other panels' pictures protect, for a balloon that leaves
+  // its panel: their faces as its own, their avoid zones as its own (#671).
+  for (const art of scene.foreignArt) {
+    if (!rectsOverlap(box, art.rect)) continue;
+    const a = coveredForeign(samples, art, area);
+    if (a <= 0) continue;
+    if (art.kind === 'face') {
+      H('face', (W.face * a) / em2 + W.face);
+      reasons.add('face');
+    } else if (level.coverAvoid) S(art.guard ? 'coverAvoid' : 'coverArt', ((art.guard ? 2 : 6) * a) / em2);
+    else {
+      H('avoid', (W.avoid * a) / em2 + W.avoid);
+      reasons.add('avoid');
+    }
+  }
   for (const r of scene.soft) {
     if (!rectsOverlap(box, r)) continue;
     const other = r.owner !== undefined && (r.contact === true || r.owner !== unit.speaker);
@@ -392,6 +439,11 @@ function evaluate(
       out++;
       if (edge && !pointInRect(p, edge)) offPage++;
       else if (scene.neighbours.some((r) => pointInRect(p, r))) intrude++;
+    } else if (scene.over.some((poly) => pointInConvex(p, poly))) {
+      // Over an inset laid on this panel: out of the panel, in another's
+      // (#671).
+      out++;
+      intrude++;
     }
   }
   const mayIntrude = intended && (unit.kind === 'sfx' || unit.breakBorder === true);
@@ -414,7 +466,8 @@ function evaluate(
       // another panel's (drawn sound may; so may a balloon its author
       // pinned). A pinned balloon (no `break`) slides back in when it can.
       S('breakBorder', 3 * f + (unit.kind !== 'sfx' && !unit.breakBorder ? 6 : 0));
-      if (unit.kind !== 'sfx' && !unit.pin && !pointInConvex({ x: box.x + box.width / 2, y: box.y + box.height / 2 }, scene.live)) {
+      const middle = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+      if (unit.kind !== 'sfx' && !unit.pin && (!pointInConvex(middle, scene.live) || scene.over.some((poly) => pointInConvex(middle, poly)))) {
         H('outside', W.outside * f + 10);
         reasons.add('outside');
       }
@@ -433,7 +486,12 @@ function evaluate(
   // Balloons of the other panels (a balloon breaking into this one).
   for (const r of scene.foreign) {
     if (!rectsOverlap(box, r, 0.3 * em)) continue;
-    const a = coveredArea(samples, grow(r, 0.3 * em), area);
+    // (An oval, a cloud or a burst is taken as the oval its box holds: the
+    // corners of the box are no part of it. This unit's own outline, where
+    // it grows past its core, the spikes of a burst, counts by its points.)
+    const g = grow(r, 0.3 * em);
+    const a = (r.round ? coveredEllipse(samples, g, area) : coveredArea(samples, g, area))
+      || (r.round ? coveredEllipse(rim, r, em2) : coveredArea(rim, r, em2));
     if (a > 0) {
       H('balloon', (W.balloon * a) / em2 + W.balloon);
       reasons.add('balloon');
@@ -442,6 +500,24 @@ function evaluate(
   // Other balloons: overlap is a fault, a near miss (a tangent) a blemish.
   const centre = at;
   const target = tailTargetOf(unit, scene, centre);
+  // Where the tail leaves the body, and the tail as drawn: once for all
+  // the terms below (each is a ray cast against the body's outline).
+  const leave = target ? edgePoint(v, at, target) : undefined;
+  const mine = target && leave ? tailFrom(unit, leave, target) : undefined;
+  // The tails of the other panels' balloons are theirs too: no body over
+  // one, and no tail of this panel through a balloon of another (#671).
+  for (const [a, b] of scene.foreignTails) {
+    if (throughBody(a, b, v, at)) {
+      H('foreignTail', W.balloon);
+      reasons.add('balloon');
+    }
+  }
+  if (mine && scene.foreign.length > 0) {
+    if (scene.foreign.some((r) => segmentHitsRect(mine[0], mine[1], shrink(r, 0.12)))) {
+      H('tailThroughForeign', W.balloon);
+      reasons.add('balloon');
+    }
+  }
   for (const o of others) {
     const ov = o.unit.variants[o.variant]!;
     const obox = movedRect(ov.bbox, o.at);
@@ -469,9 +545,9 @@ function evaluate(
     }
     // Tails that cross (as drawn: from the wall to the tip), tails
     // through another balloon.
-    const otarget = tailTargetOf(o.unit, scene, o.at);
-    const mine = target ? tailSegment(unit, v, at, target) : undefined;
-    const theirs = otarget ? tailSegment(o.unit, ov, o.at, otarget) : undefined;
+    const other = tailOf(scene, o);
+    const otarget = other?.target;
+    const theirs = other?.drawn;
     if (mine && theirs) {
       // Crossing tails; tails that all but touch read as crossed too
       // (unless they run to one speaker).
@@ -479,20 +555,26 @@ function evaluate(
       if (gapTails === 0) S('cross', W.cross);
       else if (gapTails < 0.6 * em && dist(target!, otarget!) > em) S('cross', 0.4 * W.cross);
     }
-    if (mine && ov.bodies.some((b) => segmentHitsRect(mine[0], mine[1], shrink(movedRect(b.bbox, o.at), 0.12)))) S('tailThrough', W.tailThrough);
-    if (theirs && v.bodies.some((b) => segmentHitsRect(theirs[0], theirs[1], shrink(movedRect(b.bbox, at), 0.12)))) S('tailThrough', W.tailThrough);
+    // A tail through another body covers its lettering as a balloon over
+    // it would: a fault (#672). Through the corner of its box, clear of its
+    // outline, a cost.
+    for (const [tail, w, p] of [[mine, ov, o.at], [theirs, v, at]] as const) {
+      if (!tail) continue;
+      if (throughBody(tail[0], tail[1], w, p)) {
+        H('tailThrough', W.balloon);
+        reasons.add('balloon');
+      } else if (w.bodies.some((b) => segmentHitsRect(tail[0], tail[1], shrink(movedRect(b.bbox, p), 0.12)))) S('tailThrough', W.tailThrough);
+    }
   }
   // The tail leaves the first body clear of the group's other bodies, by
   // more than its own half width: a tail grazing another body of its group
   // leaves a notch between them that the doubled outline fills with ink.
-  if (target && v.bodies.length > 1) {
-    const edge = edgePoint(v, at, target);
-    for (const b of v.bodies.slice(1)) if (segmentHitsRect(edge, target, grow(movedRect(b.bbox, at), 0.8 * em))) S('ownTail', W.ownTail);
+  if (target && leave && v.bodies.length > 1) {
+    for (const b of v.bodies.slice(1)) if (segmentHitsRect(leave, target, grow(movedRect(b.bbox, at), 0.8 * em))) S('ownTail', W.ownTail);
   }
   // Near the speaker, a little above; tails not over faces.
-  if (target && unit.target.kind === 'point') {
-    const edge = edgePoint(v, at, target);
-    const gap = dist(edge, target);
+  if (target && leave && mine && unit.target.kind === 'point') {
+    const gap = dist(leave, target);
     const h = v.bodies[0]!.bbox.height;
     // Room for a tail of a few ems: too close is worse than too far.
     const ideal = Math.max(2 * em, 0.7 * h);
@@ -506,26 +588,26 @@ function evaluate(
     if (centre.y > target.y) S('below', (W.below * (centre.y - target.y)) / em);
     // A tail over another character's face (or the top of the head)
     // reads as theirs.
-    const tip = add(edge, scale(norm(sub(target, edge)), gap * 0.55));
+    const tip = add(leave, scale(norm(sub(target, leave)), gap * 0.55));
     for (const f of scene.faces) {
       const head = { x: f.x, y: f.y - 0.3 * f.height, width: f.width, height: 1.3 * f.height };
-      if (!segmentHitsRect(edge, tip, shrink(head, 0.1))) continue;
+      if (!segmentHitsRect(leave, tip, shrink(head, 0.1))) continue;
       S('otherFace', pointInRect(target, head) ? 1 : W.otherFace);
     }
     // A tail drawn across another figure (the body under a marked face):
     // the eye follows it through the wrong character.
-    const drawn = tailSegment(unit, v, at, target);
+    const drawn = mine;
     for (const a of scene.panel.anchors) {
       if (!a.face || a.mouth === target || a.head === target) continue;
       const f = a.face;
       const figure = { x: f.x - 0.2 * f.width, y: f.y + f.height, width: 1.4 * f.width, height: 1.6 * f.height };
       if (segmentHitsRect(drawn[0], drawn[1], figure)) S('tailOverFigure', W.tailOverFigure);
     }
-  } else if (unit.target.kind === 'offPanel' && target) {
+  } else if (unit.target.kind === 'offPanel' && target && leave) {
     // An off-panel speaker's balloon sits by the border its voice comes
     // from, with a short tail to it (the letterer's practice): a tail
     // across the panel reads as an arrow, so the balloon moves instead.
-    const reach = dist(edgePoint(v, at, target), target);
+    const reach = dist(leave, target);
     S('side', (W.side * Math.max(0, reach - 1.2 * em) + 3 * W.side * Math.max(0, reach - 3 * em)) / em);
   }
   if (unit.kind === 'sfx' && unit.near) S('sfxNear', (0.5 * dist(centre, unit.near)) / em);
@@ -543,6 +625,21 @@ function evaluate(
   return { hard, soft, reasons, order, cover, coverArt };
 }
 
+/** Whether the segment a–b runs through a body of `v` at `at`: across
+ *  its outline (the spikes of a burst and the bumps of a cloud are part of
+ *  it; a turned or leaned sound effect's is its turned box) or inside it. */
+function throughBody(a: Point, b: Point, v: UnitVariant, at: Point): boolean {
+  if (!segmentHitsRect(a, b, movedRect(v.bbox, at))) return false;
+  const turned = (v.rotate || v.skew) && v.bodies.length === 1;
+  return v.bodies.some((body) => {
+    const outline = moved(turned ? v.rim : body.hull, at);
+    for (let i = 0; i < outline.length; i++) {
+      if (segmentsCross(a, b, outline[i]!, outline[(i + 1) % outline.length]!)) return true;
+    }
+    return !turned && pointInConvex(a, moved(body.core, at));
+  });
+}
+
 /** A rectangle grown by `d` px on every side. */
 function grow(r: Rect, d: number): Rect {
   return { x: r.x - d, y: r.y - d, width: r.width + 2 * d, height: r.height + 2 * d };
@@ -552,10 +649,29 @@ function shrink(r: Rect, f: number): Rect {
   return { x: r.x + r.width * f, y: r.y + r.height * f, width: r.width * (1 - 2 * f), height: r.height * (1 - 2 * f) };
 }
 
+/** The tail of a placed unit, kept with it: a unit that stays where it is
+ *  is asked for its tail at every spot tried for the others. (A placed
+ *  unit is never changed in place; a move makes a new one.) */
+const tailsOf = new WeakMap<Placed, { target: Point; drawn: [Point, Point] } | null>();
+
+function tailOf(scene: Scene, o: Placed): { target: Point; drawn: [Point, Point] } | undefined {
+  let t = tailsOf.get(o);
+  if (t === undefined) {
+    const target = tailTargetOf(o.unit, scene, o.at);
+    t = target ? { target, drawn: tailSegment(o.unit, o.unit.variants[o.variant]!, o.at, target) } : null;
+    tailsOf.set(o, t);
+  }
+  return t ?? undefined;
+}
+
 /** A unit's tail as drawn, for the cost: from where it leaves the first
  *  body to its tip ({@link tailLength} of the gap). */
 function tailSegment(unit: PlaceUnit, v: UnitVariant, at: Point, target: Point): [Point, Point] {
-  const edge = edgePoint(v, at, target);
+  return tailFrom(unit, edgePoint(v, at, target), target);
+}
+
+/** The same from the point the tail leaves the body at. */
+function tailFrom(unit: PlaceUnit, edge: Point, target: Point): [Point, Point] {
   const gap = dist(edge, target);
   const len = Math.max(Math.min(gap, 0.8 * unit.em), tailLength(gap, unit.em, {}, unit.target.kind === 'offPanel'));
   return [edge, add(edge, scale(norm(sub(target, edge)), len))];
@@ -570,8 +686,20 @@ function edgePoint(v: UnitVariant, at: Point, target: Point): Point {
   return t === undefined ? c : add(c, scale(u, t));
 }
 
+/** The candidates of each unit's variants: they depend on the unit and
+ *  the panel alone, and the search asks for them at every step. */
+const candidatesOf = new WeakMap<PlaceUnit, Map<number, Point[]>>();
+
 /** Candidate anchor positions of a unit (deterministic order). */
 function candidates(scene: Scene, unit: PlaceUnit, vi: number): Point[] {
+  let byVariant = candidatesOf.get(unit);
+  if (!byVariant) candidatesOf.set(unit, (byVariant = new Map()));
+  let list = byVariant.get(vi);
+  if (!list) byVariant.set(vi, (list = candidatesFresh(scene, unit, vi)));
+  return list;
+}
+
+function candidatesFresh(scene: Scene, unit: PlaceUnit, vi: number): Point[] {
   const v = unit.variants[vi]!;
   const out: Point[] = [];
   const seen = new Set<string>();
@@ -729,8 +857,15 @@ function bestFor(scene: Scene, unit: PlaceUnit, others: readonly Placed[], first
   // its poorer shape, and is tried before covering an avoid zone (a
   // letterer reshapes the text before covering a hand).
   const penalty = (vi: number) => (unit.variants[vi]!.reshaped ? RESHAPE_COST : 0);
+  // Whether any spot tried at the level before met an avoid zone: when
+  // none did, a level that only adds covering them finds the same spots at
+  // the same costs, and is not searched again.
+  const breaks = (l: Level) => l.breakBorder && unit.breakBorder === true;
+  let before: { breaks: boolean; metAvoid: boolean } | undefined;
   for (const li of levels) {
     const level = LEVELS[li]!;
+    if (level.coverAvoid && before && !before.metAvoid && before.breaks === breaks(level)) continue;
+    let metAvoid = false;
     let best: (Choice & { score: number }) | undefined;
     for (const vi of variants) {
       const cands: { at: Point; extra: number }[] = unit.pin
@@ -741,10 +876,12 @@ function bestFor(scene: Scene, unit: PlaceUnit, others: readonly Placed[], first
           : candidates(scene, unit, vi).map((at) => ({ at, extra: 0 }));
       for (const { at, extra } of cands) {
         const ev = evaluate(scene, unit, vi, at, others, level, firstOrder);
+        if (ev.reasons.has('avoid')) metAvoid = true;
         const score = ev.hard * 1000 + ev.soft + penalty(vi) + extra;
         if (!best || score < best.score - 1e-9) best = { variant: vi, level: li, at, ev, score };
       }
     }
+    before = { breaks: breaks(level), metAvoid: metAvoid || level.coverAvoid };
     if (!best) continue;
     const choice: Choice = { variant: best.variant, level: best.level, at: best.at, ev: best.ev };
     if (choice.ev.hard === 0) return fixed || li !== 0 ? choice : orderBeforeAvoid(scene, unit, others, firstOrder, best, penalty);

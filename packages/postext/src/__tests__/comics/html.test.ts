@@ -83,9 +83,22 @@ describe('HTML output of comic pages', () => {
     // The border: stroked on panels 0 and 1, not on panel 2 (border=none).
     const strokes = [...html.matchAll(/<figure[\s\S]*?<\/figure>/g)].map((m) => /fill="none" stroke=/.test(m[0]));
     expect(strokes).toEqual([true, true, false]);
-    // The pop-out after the border, unclipped.
-    const fig0 = /<figure[\s\S]*?<\/figure>/.exec(html)![0];
-    expect(fig0.indexOf('pop-file')).toBeGreaterThan(fig0.indexOf('fill="none" stroke='));
+  });
+
+  it('draws the pop-out cut-outs in a layer over every panel, under the lettering (#668)', () => {
+    // No figure holds its pop-out: a later panel's figure would cover it.
+    for (const fig of html.matchAll(/<figure[\s\S]*?<\/figure>/g)) expect(fig[0]).not.toContain('pop-file');
+    const layer = /<svg class="pt-comic-pop"[^>]*>[\s\S]*?<\/svg>/.exec(html)![0];
+    expect(layer).toContain('pop-file');
+    expect(layer).toContain('z-index:1;');
+    expect(layer).toContain('aria-hidden="true"');
+    // Unclipped, at the picture's own box.
+    expect(layer).not.toContain('clip-path');
+    const box = page.comic!.panels[0]!.pop!.box;
+    expect(layer).toContain(`x="${Math.round(box.x * 1000) / 1000}" y="${Math.round(box.y * 1000) / 1000}"`);
+    // After the last figure in the markup, and below the balloons (z-index 2).
+    expect(html.indexOf('class="pt-comic-pop"')).toBeGreaterThan(html.lastIndexOf('<figure'));
+    expect(html).toMatch(/class="pt-comic-shape"[^>]*z-index:2;/);
   });
 
   it('puts each panel\'s lettering right after it, as paragraphs, the speaker named for assistive technology', () => {

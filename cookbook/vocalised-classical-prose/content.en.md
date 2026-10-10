@@ -23,8 +23,12 @@ title: "مقامات بديع الزمان الهمذاني"
 أَغْتَدِي فِي الدَّيْرِ قِسِّيساً || وَفي المَسْجِدِ رَاهِبْ
 :::
 
-:::paragraphs{dir=ltr}
-**A note on the text.** Badīʿ al-Zamān al-Hamadhānī (968–1008) wrote the first maqāmāt, tales in rhymed prose in which the narrator ʿĪsā ibn Hishām meets the rogue Abū al-Fatḥ al-Iskandarī in one disguise after another. Here a madman in the asylum of Basra routs a theologian who holds that men choose their own acts. The text is that of ar.wikisource, every letter vocalised; twenty typing slips are corrected and the paragraphs are ours. The three Qurʾān quotations (3:154, 15:39, 7:186) stand between ornate brackets, the Prophet’s sayings between « ».
+:::pagebreak
 
+:::paragraphs{style="note" dir=ltr}
+**A note on the text.** Badīʿ al-Zamān al-Hamadhānī (968–1008) wrote the first maqāmāt, tales in rhymed prose in which the narrator ʿĪsā ibn Hishām meets the rogue Abū al-Fatḥ al-Iskandarī in one disguise after another. Here a madman in the asylum of Basra routs a theologian who holds that men choose their own acts. The text is that of ar.wikisource, every letter vocalised; twenty typing slips are corrected and the paragraphs are ours. The three Qurʾān quotations (3:154, 15:39, 7:186) stand between ornate brackets, the Prophet’s sayings between « ».
+:::
+
+:::paragraphs{style="colophon" dir=ltr}
 Set in Amiri and Aref Ruqaa (SIL OFL) · Text: al-Hamadhānī, public domain, from ar.wikisource
 :::

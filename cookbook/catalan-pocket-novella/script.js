@@ -57,9 +57,10 @@ const bodyText = { // config().bodyText
   // in place of the dot. compounds: false keeps arrossegar-se whole but for its own hyphen,
   // the break the IEC prefers for a verb and its pronoun (Llibre d’estil, VI 2.5).
   hyphenation: { compounds: false },
-  // Spaces past 1.6× take up to 10‰ of tracking instead; a last line under 22 characters is
+  // Spaces from 0.7× to 1.6×, then up to 10‰ of tracking; a last line under 22 characters is
   // a runt. A line that must keep d’inaugurar-se whole still opens to 1.94× on page 7.
-  maxWordSpacing: 1.6, maxJustifyTracking: 10, runtMinCharacters: 22,
+  maxWordSpacing: 1.6, minWordSpacing: 0.7, maxJustifyTracking: 10, runtMinCharacters: 22,
+  hyphenateAcrossColumns: false, // no page ends on a divided word
 };
 // #endregion
 

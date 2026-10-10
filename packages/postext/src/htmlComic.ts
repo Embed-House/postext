@@ -186,7 +186,8 @@ function balloonHtml(b: VDTComicBalloon, paint: ComicHtmlPaint): string {
 /**
  * The markup of a comic page, laid over a page `width` × `height` px: a
  * container (`.pt-comic`, its own stacking context) holding, in reading
- * order, each panel's `<figure>` followed by its lettering.
+ * order, each panel's `<figure>` followed by its lettering, then the
+ * pop-out cut-outs of the panels in a layer over every figure.
  */
 export function renderComicHtml(comic: VDTComicPage, width: number, height: number, paint: ComicHtmlPaint): string {
   const groups = comicBalloonGroups(comic.balloons);
@@ -214,6 +215,8 @@ export function renderComicHtml(comic: VDTComicPage, width: number, height: numb
       clipId: `${paint.idBase}-${panel.index}`,
       ...(panel.art && panel.altText && !continued ? { label: panel.altText } : {}),
       className: 'pt-comic-art',
+      // Its pop-out goes over every panel, below.
+      pop: false,
     });
     parts.push(
       `<figure class="pt-comic-panel"${id} data-panel="${panel.index}"${continued ? ' data-continued="" aria-hidden="true"' : ''} style="position:absolute;left:${n3(x)}px;top:${n3(y)}px;width:${n3(w)}px;height:${n3(h)}px;margin:0;">${svg}</figure>`,
@@ -222,6 +225,18 @@ export function renderComicHtml(comic: VDTComicPage, width: number, height: numb
   }
   // Lettering of no panel laid out (none expected): after the panels.
   for (const [k, list] of byPanel) if (!known.has(k)) parts.push(lettering(list));
+  // The pop-out cut-outs, over every panel and under the lettering: one
+  // that breaks out of its cell into the next panel's is not covered by
+  // that panel's figure (#668).
+  const pops = comic.panels.flatMap((panel) => {
+    const url = panel.pop ? paint.artUrl(panel.pop) : undefined;
+    return panel.pop && url ? [artImage(panel.pop, url, false, paint.artStyle?.(panel.pop, url) ?? '')] : [];
+  });
+  if (pops.length > 0) {
+    parts.push(
+      `<svg class="pt-comic-pop" aria-hidden="true" focusable="false" style="position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1;">${pops.join('')}</svg>`,
+    );
+  }
   return (
     `<div class="pt-comic" data-direction="${comic.direction}"${comic.spread ? ` data-spread="${comic.spread}"` : ''} style="position:absolute;left:0;top:0;width:${n3(width)}px;height:${n3(height)}px;isolation:isolate;overflow:hidden;">` +
     parts.join('') +

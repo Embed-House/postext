@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "edited-volume-chapter-bibliographies",
-  "sourceHash": "e2711f65fe26f1fba6edeec93654b57476f5fc790b0641f923f0020e13c4ad29",
+  "sourceHash": "1736898f62c8e1da02d7db1d7f78d3f4803dfec5b2e7c52d0943fffe9fd26e2a",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:41:47.488Z",
+  "capturedAt": "2026-10-10T20:23:59.260Z",
   "variants": {
     "en": {
-      "hash8": "5e64b5f5",
-      "vdtHash": "304bc003428dc52b418d521a9e2e401f56507bcf",
+      "hash8": "4308b7e3",
+      "vdtHash": "cc5d470a3516705dcec91e00da4458329b705583",
       "timings": {
-        "importMs": 764,
-        "fontsMs": 1730,
-        "buildMs": 566,
-        "totalMs": 3598,
+        "importMs": 206,
+        "fontsMs": 580,
+        "buildMs": 554,
+        "totalMs": 1913,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Caslon Text"
         ],
         "pages": 10,
-        "ownLines": 183
+        "ownLines": 186
       },
       "pages": [
         {
@@ -138,7 +138,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 139014,
+          "bytes": 139162,
           "alt": "Opening page 9: 3 Punches, Matrices and the Name Garamond."
         },
         {
@@ -193,12 +193,12 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143845,
+        "bytes": 143855,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17575,
+        "bytes": 17583,
         "folio": "3594c3d3"
       },
       "detected": {
@@ -396,7 +396,7 @@
           "page",
           "toc"
         ],
-        "configLeaves": 369,
+        "configLeaves": 371,
         "designElements": 17,
         "directives": [
           ":::toc",
@@ -482,18 +482,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "88cb7344",
-      "vdtHash": "ede375b516fe6097d1585685858f3b6043945a36",
+      "hash8": "55e49bc6",
+      "vdtHash": "fb842f5a03bf85d3d8de00c8b88f6bcf28abcfc0",
       "timings": {
-        "importMs": 662,
-        "fontsMs": 100,
-        "buildMs": 568,
-        "totalMs": 1903,
+        "importMs": 189,
+        "fontsMs": 74,
+        "buildMs": 546,
+        "totalMs": 1373,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +520,7 @@
           "Libre Caslon Text"
         ],
         "pages": 10,
-        "ownLines": 183
+        "ownLines": 186
       },
       "pages": [
         {
@@ -581,7 +586,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 139528,
+          "bytes": 139582,
           "alt": "Página de apertura 6: 2 Lo que significaba la fijeza."
         },
         {
@@ -614,7 +619,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 135568,
+          "bytes": 136410,
           "alt": "Página de apertura 9: 3 Punzones, matrices y el nombre de Garamond."
         },
         {
@@ -625,7 +630,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 147012,
+          "bytes": 147436,
           "alt": "Página 10: De quién son las letras."
         }
       ],
@@ -669,12 +674,12 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 158085,
+        "bytes": 158078,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17690,
+        "bytes": 17708,
         "folio": "3594c3d3"
       },
       "detected": {
@@ -872,7 +877,7 @@
           "page",
           "toc"
         ],
-        "configLeaves": 369,
+        "configLeaves": 371,
         "designElements": 17,
         "directives": [
           ":::toc",
@@ -958,6 +963,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

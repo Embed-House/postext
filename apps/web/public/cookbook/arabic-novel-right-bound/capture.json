@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-novel-right-bound",
-  "sourceHash": "4b934a6d3b83813bed70e06e18d9fd033e03bc180341d70072f3ad23bd8cb1e5",
+  "sourceHash": "c002793ad979f115483a82331aac8dd64afafccc852a9aa4856cebebe8eb1abb",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.692Z",
+  "capturedAt": "2026-10-10T18:37:22.950Z",
   "variants": {
     "en": {
-      "hash8": "88acfb1d",
-      "vdtHash": "228ba9f283926971b507cfd33681a3d1e4d915c7",
+      "hash8": "608868a0",
+      "vdtHash": "c6a02a8a6f28959dd8ec0ac174534c5721eac10a",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 61,
-        "buildMs": 80,
-        "totalMs": 917,
+        "importMs": 440,
+        "fontsMs": 172,
+        "buildMs": 368,
+        "totalMs": 2243,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Reem Kufi"
         ],
         "pages": 7,
-        "ownLines": 159
+        "ownLines": 161
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 42782,
+          "bytes": 41876,
           "alt": "Opening page ١٠: الدرب."
         },
         {
@@ -153,12 +153,12 @@
       },
       "pdf": {
         "file": "arabic-novel-right-bound.pdf",
-        "bytes": 85133,
+        "bytes": 85146,
         "pages": 7
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34694,
+        "bytes": 34597,
         "folio": "217e1225"
       },
       "detected": {
@@ -280,7 +280,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 219,
+        "configLeaves": 221,
         "designElements": 12,
         "directives": [
           ":::paragraphs"
@@ -345,6 +345,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 9: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -353,13 +358,13 @@
       }
     },
     "es": {
-      "hash8": "088ac91c",
-      "vdtHash": "5b351374d59c99b443d9d730fcdda48da34370b8",
+      "hash8": "baffa008",
+      "vdtHash": "e562550e168ab8ad0da1e6d7ee8cc3b80226c331",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 59,
-        "buildMs": 81,
-        "totalMs": 843,
+        "importMs": 175,
+        "fontsMs": 72,
+        "buildMs": 87,
+        "totalMs": 927,
         "builds": 1
       },
       "specimen": {
@@ -381,7 +386,7 @@
           "Reem Kufi"
         ],
         "pages": 7,
-        "ownLines": 159
+        "ownLines": 161
       },
       "pages": [
         {
@@ -392,7 +397,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 42782,
+          "bytes": 41876,
           "alt": "Página de apertura ١٠: الدرب."
         },
         {
@@ -495,12 +500,12 @@
       },
       "pdf": {
         "file": "arabic-novel-right-bound.pdf",
-        "bytes": 85082,
+        "bytes": 85099,
         "pages": 7
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34752,
+        "bytes": 34658,
         "folio": "217e1225"
       },
       "detected": {
@@ -622,7 +627,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 219,
+        "configLeaves": 221,
         "designElements": 12,
         "directives": [
           ":::paragraphs"
@@ -686,6 +691,11 @@
           "worst": 1.35
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -155,7 +155,8 @@ function waveform() {
     x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
     return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
   };
-  const [x0, axis, n, width, gap] = [114, 84, 29, 2.1, 1.35]; // mm; axis: the waterline
+  const [axis, n, width, gap] = [84, 29, 1.6, 0.95]; // mm; axis: the waterline
+  const x0 = TRIM - OUTER - (n - 1) * (width + gap) - width; // the last bar ends at the margin
   return Array.from({ length: n }, (_, i) => {
     const envelope = Math.sin(((i + 0.5) / n) * Math.PI) ** 0.8;
     const up = 3 + 26 * envelope * (0.35 + 0.65 * random()); // mm above the waterline

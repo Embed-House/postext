@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "clinical-trial-consort-flow",
-  "sourceHash": "1b167bdda9bb933190acda65b80470b952a38da5a3978d046c52bf8bed2e3090",
+  "sourceHash": "b3cb0cd6f5bc44cb0b60a4cc9544d2c31e3dc686c06111c49d7b6204de01866a",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:41:18.184Z",
+  "capturedAt": "2026-10-10T20:43:22.359Z",
   "variants": {
     "en": {
-      "hash8": "619aa6cc",
-      "vdtHash": "66b11a839c07e8e426215b1a76cdc3646a75a866",
+      "hash8": "b4b7cfd2",
+      "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 685,
-        "fontsMs": 209,
-        "buildMs": 526,
-        "totalMs": 2058,
+        "importMs": 316,
+        "fontsMs": 120,
+        "buildMs": 520,
+        "totalMs": 1556,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Nunito Sans"
         ],
         "pages": 8,
-        "ownLines": 225
+        "ownLines": 231
       },
       "pages": [
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 200236,
+          "bytes": 199822,
           "alt": "Page 3: Woebot."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 114236,
+          "bytes": 114032,
           "alt": "Page 5: Completer Analysis. Figure 1. Participant flow through the trial (CONSORT diagram). · Table 1. Demographic and clinical variables of participants at baseline."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 142072,
+          "bytes": 147542,
           "alt": "Page 6: Qualitative Results. Table 2. Results of ITT analysis of entire sample on primary outcomes in the study at T2. · Figure 2. Best features of the Woebot experience: themes of the answers to “What was the best thing about your experience using Woebot?” · Figure 3. Least f…"
         },
         {
@@ -94,8 +94,8 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 211016,
-          "alt": "Page 7: Limitations."
+          "bytes": 210466,
+          "alt": "Page 7: Conclusions."
         }
       ],
       "spreads": [
@@ -130,12 +130,12 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 237924,
+        "bytes": 238879,
         "pages": 8
       },
       "sandbox": {
         "file": "clinical-trial-consort-flow.postext",
-        "bytes": 121950,
+        "bytes": 121986,
         "folio": "a7ebcb67"
       },
       "detected": {
@@ -169,6 +169,9 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
+          "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
@@ -369,7 +372,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 440,
+        "configLeaves": 443,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -473,9 +476,9 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 11,
-          "share": 0.0326,
-          "worst": 2.49
+          "count": 1,
+          "share": 0.003,
+          "worst": 2.15
         },
         "findings": [
           {
@@ -484,9 +487,9 @@
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages)"
           },
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "11 of 337 justified lines (3.3 %) stretch past 2× (worst 2.49×); loosest: p. 2 2.49× “Potential participants were recruited using a f…”, p. 7 2.36× “less demonstrates that a text-based conversatio…”, p. 5 2.25× “baseline and T2, regardless of the group to whi…”"
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -24,7 +24,7 @@ sora: Take it tomorrow.
 :::page{split="38 [44 | *] / 34 / *"}
 ::panel{art=coach}
 sfx: SLIDE
-mori: Hey.
+mori{at="85% 19%"}: Hey.
 mori: School closed an hour ago.
 sora{tail=bottom}: M-Mori-sensei…
 ::panel{art=smile}

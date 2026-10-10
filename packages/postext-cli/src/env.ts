@@ -5,11 +5,14 @@
 // creates its context the first time it measures, and must find these.
 
 import { createCanvas, DOMMatrix, ImageData, Path2D } from '@napi-rs/canvas';
+import { drawsSvgAtSize } from './svgImage';
 
 const g = globalThis as Record<string, unknown>;
+// The engine rasterises vector pictures on these: an SVG drawn on one is
+// rasterised by Skia at the size it is drawn at (#678).
 g.OffscreenCanvas = class OffscreenCanvas {
   constructor(width: number, height: number) {
-    return createCanvas(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height)));
+    return drawsSvgAtSize(createCanvas(Math.max(1, Math.ceil(width)), Math.max(1, Math.ceil(height))));
   }
 };
 g.Path2D ??= Path2D;

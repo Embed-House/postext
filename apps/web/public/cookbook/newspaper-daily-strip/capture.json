@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "ab42f57dfc531fa7a6fe733c1baf22f44d81cd60c77af2b3bbc4a7867bd05c50",
+  "sourceHash": "acd3c1784c92f9d30c4fe0598b082d5d6b6fca4cc8af55ba90a4be000474beb5",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.433Z",
+  "capturedAt": "2026-10-10T20:42:24.816Z",
   "variants": {
     "en": {
-      "hash8": "4b08e73e",
-      "vdtHash": "31cb2f637107d214f712397966266cb8bed62763",
+      "hash8": "f1393b1c",
+      "vdtHash": "7c58e6cfa88a77a6031e0925359cc20fe5564a87",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 128,
+        "importMs": 185,
+        "fontsMs": 122,
         "buildMs": 360,
-        "totalMs": 1223,
+        "totalMs": 1246,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -60,7 +60,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 163838,
+          "bytes": 163578,
           "alt": "Opening page 2: Ten winters on the floe."
         }
       ],
@@ -88,12 +88,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 880021,
+        "bytes": 879919,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 811767,
+        "bytes": 811768,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -317,7 +317,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 4,
         "looseLines": {
           "count": 3,
           "share": 0.0484,
@@ -328,18 +328,23 @@
             "check": "C24",
             "severity": "warn",
             "detail": "3 of 62 justified lines (4.8 %) stretch past 2× (worst 2.64×); loosest: p. 2 2.64× “explains the croissants. The pen-”, p. 2 2.18× “Barlow grew up above her par-”, p. 2 2.17× “balloons are drawn around them.””"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e2ad02eb",
-      "vdtHash": "380f1b656bfea56cea141d1803b083ed747eeafa",
+      "hash8": "2d88e461",
+      "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 135,
-        "buildMs": 504,
-        "totalMs": 1373,
+        "importMs": 171,
+        "fontsMs": 119,
+        "buildMs": 457,
+        "totalMs": 1317,
         "builds": 1
       },
       "specimen": {
@@ -360,7 +365,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -382,7 +387,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 178220,
+          "bytes": 177906,
           "alt": "Página de apertura 2: Diez inviernos en el témpano."
         }
       ],
@@ -410,12 +415,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884646,
+        "bytes": 884693,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812405,
+        "bytes": 812398,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -639,23 +644,29 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 3,
         "looseLines": {
           "count": 1,
           "share": 0.0139,
           "worst": 2.0100000000000002
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "096d2cd9",
-      "vdtHash": "25ff9a63866e2d66a07ae6710f834449062841f4",
+      "hash8": "a324d5c7",
+      "vdtHash": "a0da22d4b46aa5c414ed1a91b28e254f2ed7b140",
       "timings": {
-        "importMs": 423,
-        "fontsMs": 172,
-        "buildMs": 1240,
-        "totalMs": 4927,
+        "importMs": 168,
+        "fontsMs": 117,
+        "buildMs": 342,
+        "totalMs": 1200,
         "builds": 1
       },
       "specimen": {
@@ -676,7 +687,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -698,7 +709,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 170340,
+          "bytes": 169586,
           "alt": "Pàgina d'obertura 2: Deu hiverns al glaç."
         }
       ],
@@ -726,12 +737,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884098,
+        "bytes": 883895,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812394,
+        "bytes": 812386,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -955,23 +966,34 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 3,
         "looseLines": {
-          "count": 1,
-          "share": 0.0145,
+          "count": 2,
+          "share": 0.0294,
           "worst": 2.0300000000000002
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C24",
+            "severity": "warn",
+            "detail": "2 of 68 justified lines (2.9 %) stretch past 2× (worst 2.0300000000000002×); loosest: p. 2 2.0300000000000002× “Els dibuixos arriben al diari sense”, p. 2 2.0100000000000002× “Ines Barlow dibuixa un pingüí i”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "62af33f0",
-      "vdtHash": "a03d146f7d3d5bb2631e05a37aa78a4a7aadca93",
+      "hash8": "8dd94214",
+      "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 659,
-        "buildMs": 342,
-        "totalMs": 1726,
+        "importMs": 165,
+        "fontsMs": 610,
+        "buildMs": 338,
+        "totalMs": 1650,
         "builds": 1
       },
       "specimen": {
@@ -992,7 +1014,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1014,7 +1036,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149516,
+          "bytes": 149952,
           "alt": "章首页，第 2 页：浮冰上的十个冬天。"
         }
       ],
@@ -1042,12 +1064,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1016396,
+        "bytes": 1016344,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812325,
+        "bytes": 812327,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -1278,17 +1300,23 @@
           "share": 0,
           "worst": 0.13
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "38da2a8a",
-      "vdtHash": "16e5d19636e6ded15c13412a58aa4064ec9f9b54",
+      "hash8": "eb77df66",
+      "vdtHash": "aae0108a4aba55215abfdd0eff0f356ca90464d8",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 151,
-        "buildMs": 368,
-        "totalMs": 1240,
+        "importMs": 164,
+        "fontsMs": 143,
+        "buildMs": 362,
+        "totalMs": 1210,
         "builds": 1
       },
       "specimen": {
@@ -1309,7 +1337,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1331,7 +1359,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 142928,
+          "bytes": 143136,
           "alt": "صفحة الافتتاح ٢: عشرة شتاءات على الجليد."
         }
       ],
@@ -1360,12 +1388,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 896729,
+        "bytes": 896784,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813652,
+        "bytes": 813663,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -1571,6 +1599,7 @@
           "document-digits",
           "heading-attributes",
           "heading-styles",
+          "inline-direction",
           "multiple-columns",
           "opener-band",
           "page-background",
@@ -1587,23 +1616,29 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 4,
         "looseLines": {
           "count": 0,
           "share": 0,
           "worst": 1.8900000000000001
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "8d7356b9",
-      "vdtHash": "0d9bbf42ed71bcb33fb8b6b3ce17eb179920f94f",
+      "hash8": "fa0b3e7a",
+      "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 736,
-        "buildMs": 364,
-        "totalMs": 1815,
+        "importMs": 162,
+        "fontsMs": 689,
+        "buildMs": 334,
+        "totalMs": 1724,
         "builds": 1
       },
       "specimen": {
@@ -1624,7 +1659,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1646,7 +1681,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171368,
+          "bytes": 170642,
           "alt": "章扉、2ページ：流氷の上の十の冬。"
         }
       ],
@@ -1675,12 +1710,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1007863,
+        "bytes": 1006750,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813846,
+        "bytes": 813837,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -1901,7 +1936,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 2,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -1910,19 +1945,25 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.22
+          "worst": 0.16
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "5886da7a",
-      "vdtHash": "7d2a564803f9bbb2e13ddd69fc9c364047b27278",
+      "hash8": "a614c153",
+      "vdtHash": "67d2737420920f6703f7f93e2ede51cc8c46527d",
       "timings": {
-        "importMs": 179,
-        "fontsMs": 137,
-        "buildMs": 406,
-        "totalMs": 1289,
+        "importMs": 163,
+        "fontsMs": 117,
+        "buildMs": 411,
+        "totalMs": 1259,
         "builds": 1
       },
       "specimen": {
@@ -1943,7 +1984,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1965,7 +2006,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 174854,
+          "bytes": 174238,
           "alt": "Página de abertura 2: Dez invernos no gelo."
         }
       ],
@@ -1993,12 +2034,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882732,
+        "bytes": 882678,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812364,
+        "bytes": 812374,
         "folio": "bebc74ee"
       },
       "detected": {
@@ -2233,6 +2274,11 @@
             "check": "C24",
             "severity": "warn",
             "detail": "5 of 70 justified lines (7.1 %) stretch past 2× (worst 2.32×); loosest: p. 2 2.32× “O trabalho começa na segunda,”, p. 2 2.23× “jornais brasileiros recebem Acabou”, p. 2 2.07× “da época, Martin Fry, publicou as”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

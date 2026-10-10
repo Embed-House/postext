@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-three-column-feature",
-  "sourceHash": "222180575bcd2229e7b65684e4f66579929983e185868c6ce309d879516913d4",
+  "sourceHash": "b5b127435adfd8048036bc941d3f5b308577950c09aa6df282401833dd4e5332",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.543Z",
+  "capturedAt": "2026-10-10T19:03:51.075Z",
   "variants": {
     "en": {
-      "hash8": "462c711b",
-      "vdtHash": "a33c4aed1e14d88f2591d7721cdd5fcfad712fa9",
+      "hash8": "10e97129",
+      "vdtHash": "89fbc32ceeafe6419ee3e4b3399303688a6f3d86",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 45,
-        "buildMs": 77,
-        "totalMs": 824,
+        "importMs": 205,
+        "fontsMs": 50,
+        "buildMs": 80,
+        "totalMs": 917,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Source Serif 4"
         ],
         "pages": 6,
-        "ownLines": 208
+        "ownLines": 209
       },
       "pages": [
         {
@@ -62,7 +62,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 147090,
+          "bytes": 148020,
           "alt": "Opening page 85: On a flat island at the edge of the Atlantic, nine families still make salt by hand, with sun, wind and a wooden rake. Their season lasts eleven weeks, and every year it starts a little later."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176898,
+          "bytes": 177066,
           "alt": "Page 87: The flower of the salt. The Alvarra flats from the lighthouse hill. The pink basins are nearly ready: an alga colours the brine once it holds more than 200 grams of salt a litre."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1320,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 222862,
+          "bytes": 222346,
           "alt": "Page 88: The herons’ share. Skimming the flower: the sieve works the downwind edge of the pan, where the breeze has drifted the crust. · Amélia Sousa with an afternoon’s flor de sal, about four kilos from two pans."
         },
         {
@@ -138,7 +138,7 @@
       },
       "sandbox": {
         "file": "magazine-three-column-feature.postext",
-        "bytes": 1847587,
+        "bytes": 1847599,
         "folio": "579e6f1a"
       },
       "detected": {
@@ -154,6 +154,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -318,7 +319,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 334,
+        "configLeaves": 335,
         "designElements": 13,
         "directives": [
           "::resource",
@@ -398,15 +399,20 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 4,
-          "share": 0.0152,
-          "worst": 2.88
+          "count": 2,
+          "share": 0.0076,
+          "worst": 2
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.23 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",

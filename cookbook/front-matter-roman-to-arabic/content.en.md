@@ -20,7 +20,7 @@ publishDate: "1818"
 
 This edition follows that first text, transcribed by Project Gutenberg from a photographic reprint (eBook 41445), and keeps its spelling: phænomena, their’s, St. Petersburgh.
 
-Set in Fanwood Text, Playfair Display SC and Cinzel, all under the SIL Open Font License. Cover, frontispiece and publisher’s mark drawn in code; pages laid out in the browser by Postext.
+Set in Fanwood Text, Playfair Display SC and Cinzel (SIL Open Font License). Cover and paintings generated with diffusion models; publisher’s mark drawn in code; pages laid out by Postext.
 
 Text: public domain. Design and editorial matter: CC BY 4.0.
 

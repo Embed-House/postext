@@ -102,7 +102,10 @@ const config = () => ({
     textAlign: 'justify', firstLineIndent: em(1.5), indentAfterHeading: false,
     optimalLineBreaking: true, avoidWidows: true, avoidOrphans: true },
   headings: { fontFamily: LABEL, fontWeight: 700, color: col('ink'),
-    balancing: { enabled: false }, // no space added over the heads to fill a page
+    // No space is added over the heads to fill a page, and no paragraph runs a line long:
+    // what stays on is the level cut of a closing page, for the two columns of the index.
+    balancing: { maxLinesPerHeading: 0, stretchAfterLists: false, stretchAfterFloats: false,
+      looseParagraphs: false, closingBox: 'off' },
     levels: [
     // The article starts on the page it reaches, left or right, with no blank page before it.
     { level: 1, breakBefore: { enabled: true, parity: 'any' }, marginTop: pt(0),

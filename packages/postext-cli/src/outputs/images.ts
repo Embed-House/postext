@@ -25,6 +25,7 @@ import type { Book } from '../input';
 import { writeOut } from '../io';
 import type { Layout } from '../layout';
 import { formatBytes, type Reporter } from '../log';
+import { drawsSvgAtSize, loadSvgImage } from '../svgImage';
 
 export type ImageFormat = 'png' | 'jpeg' | 'webp';
 
@@ -114,7 +115,8 @@ async function registerImages(book: Book, reporter: Reporter): Promise<void> {
       if (r.kind === 'svg') {
         let text = new TextDecoder().decode(bytes);
         if (inkHex) text = applySingleInkToSvg(text, inkHex);
-        registerResourceImage(fileId, await loadImage(Buffer.from(text)) as unknown as CanvasImageSource, { vector: true, singleInk: false });
+        // Loaded as an SVG: Skia rasterises it at each size it is drawn at (#678).
+        registerResourceImage(fileId, await loadSvgImage(text) as unknown as CanvasImageSource, { vector: true, singleInk: false });
       } else {
         registerResourceImage(fileId, await loadImage(Buffer.from(bytes)) as unknown as CanvasImageSource, { singleInk: false });
       }
@@ -155,7 +157,8 @@ function printPreviewFor(book: Book, doc: VDTDocument) {
 
 export async function paintPage(book: Book, p: BookPage, options: PaintOptions, reporter: Reporter): Promise<Canvas> {
   await registerImages(book, reporter);
-  const canvas = createCanvas(1, 1);
+  // A picture too large for the engine's cache is drawn on the page itself.
+  const canvas = drawsSvgAtSize(createCanvas(1, 1));
   renderPageToCanvas(p.page, p.doc, canvas as unknown as HTMLCanvasElement, {
     scale: options.dpi / (p.doc.config.page.dpi || 300),
     ...(options.printPreview ? { printPreview: printPreviewFor(book, p.doc) } : {}),

@@ -115,7 +115,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture [slug…]` | Runs the pen in Chrome against the released engine, verifies it (§11) and writes the pages, card, social image, PDF and `capture.json`. With no slug: every recipe whose capture is missing or stale. |
 | `pnpm cookbook capture <slug> --check` | Runs and verifies, writes nothing (a regression run). |
 | `pnpm cookbook capture <slug> --preview-dir <dir>` | Also writes PNG copies of every page, the card and the social image, and the PDF the pen builds, to `<dir>/<slug>/<lang>/`, with the `capture.json` entry the edition would get. |
-| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
+| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships, whichever of the two wrote `dist`) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext` and its `sandbox` entry in `capture.json`, running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
@@ -831,7 +831,9 @@ that `readEpub` cannot read back in its own layout (C30; the writer's `missingFo
 not know (`unknownNumberFormat`, `unknownNumerals`), a value outside a setting's choices
 (`unknownConfigValue`) and a key no heading setting or paragraph style has (`unknownConfigKey`).
 Each sets a page other than the one the config claims; a recipe that shows one on purpose lists
-its kind in `expect.warnings`.
+its kind in `expect.warnings`. A formula the maths engine could not set fails too (C32): it prints as
+a small red box and takes the room of one, so the pages after it are not the recipe's. The line
+names the formula, its page and MathJax's message, one line per message.
 
 **Warnings** go into `capture.json` for the reviewer: blank-page cascades (C22), near-empty
 pages not listed in `expect.nearEmptyPages` (C23), loose lines over 2 % (C24; a Chinese,

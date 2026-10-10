@@ -29,17 +29,25 @@ When they lift, everybody notices. A flock of dunlin in the air turns as one bir
 
 They come from the Arctic: from the tundra of northern Russia and Scandinavia, where they breed in the short summer and leave as soon as the young can fly. A dunlin ringed on the mud below the church in 2019 was caught again the following summer on the Taymyr Peninsula, five thousand kilometres away, and back on the same stretch of mud the October after.
 
-Joan has counted them every Sunday morning for eleven winters. Her highest count was 4,200, in January 2021, after a week of frost on the moors drove birds down from the reservoirs. Her lowest was 380. She does not know why the numbers swing so much from year to year, and nor, she says, does anybody else.
+Joan has counted them every Sunday morning for eleven winters, from the hide, with a tally counter in her coat pocket. Her highest count was 4,200, in January 2021, after a week of frost on the moors drove birds down from the reservoirs. Her lowest was 380. She does not know why the numbers swing so much from year to year, and nor, she says, does anybody else.
+
+At dusk the flock goes to roost on the shingle spit below the old ferry steps, the last ground the tide leaves dry. From the path you hear them before you see them: a thin, purring trill passed along the flock like a rumour. By March the first of them show black on the belly again, and by the middle of April the mud is quiet.
 
 ## How to see them
 
 Come two hours before high water and stand on the slipway by the sailing club. As the tide pushes in, the birds are driven up the mud towards you, closer and closer, until they give up and fly. Bring binoculars, and keep dogs on a lead below the hide: a bird that is flushed off the mud in winter spends energy it cannot afford.
 
+The best days are the spring tides marked in bold in the tide table on page 6, when the water comes right up to the saltmarsh. On a neap tide the birds stay far out and you will want a telescope. If the wind is in the west, stand in the lee of the boat shed; the dunlin will be doing the same on the far side of the creek.
+
+## What else to look for
+
+Among the dunlin there are usually a few ringed plover, rounder and paler, that run and stop where the dunlin walk and probe. Curlew stand alone further out, and the redshank is the one that sees you first and tells the whole estuary. A peregrine has hunted the flock every winter since 2017: when the birds bunch tight and climb, look above them.
+
 # The last boatbuilder {style="feature" kicker="People"}
 
-Dennis Harcombe built his first boat at fourteen, in his father's shed on Marine Parade, and his last one at seventy-eight. He reckons there were forty in between, give or take, most of them clinker-built dinghies of larch on oak, the kind every family on the river once kept at the bottom of the garden.
+Dennis Harcombe built his first boat at fourteen, in his father’s shed on Marine Parade, and his last one at seventy-eight. He reckons there were forty in between, give or take, most of them clinker-built dinghies of larch on oak, the kind every family on the river once kept at the bottom of the garden.
 
-“The trick of it,” he says, “is that you never fight the wood. You look at a plank and you see which way it wants to bend, and you let it.” He still steams planks in a length of drainpipe over a camping stove, though these days only to repair other people's boats.
+“The trick of it,” he says, “is that you never fight the wood. You look at a plank and you see which way it wants to bend, and you let it.” He still steams planks in a length of drainpipe over a camping stove, though these days only to repair other people’s boats.
 
 His shed is the last on the river where you can buy a pair of oars made to measure. He makes them from ash, shaves the looms by hand and charges what he charged in 1990, because, he says, the price was fair then and the oars have not got any better.
 
@@ -63,7 +71,7 @@ Times are for a still day. A strong westerly holds the water up and brings high 
 
 # Join us {style="back-matter" kicker="The group"}
 
-We walk the river path on the first Sunday of every month, meeting at the sailing club at ten. Nobody needs to know anything about birds, boats or tides; most of us didn't when we started. Bring boots.
+We walk the river path on the first Sunday of every month, meeting at the sailing club at ten. Nobody needs to know anything about birds, boats or tides; most of us didn’t when we started. Bring boots.
 
 The next issue comes out in June. If you have something to say about the estuary, a drawing, a memory or a count of anything at all, leave it in the box behind the bar at the Duke of Cornwall, or write to us at the sailing club.
 

@@ -24,7 +24,7 @@ sora: خذيها معك غدًا.
 :::page{split="38 [44 | *] / 34 / *"}
 ::panel{art=coach}
 sfx: طاخ!
-mori: أنتما!
+mori{at="85% 19%"}: أنتما!
 mori: أُغلقت المدرسة منذ ساعة.
 sora{tail=bottom}: مو-موري سينسي…
 ::panel{art=smile}

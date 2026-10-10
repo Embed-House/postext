@@ -285,6 +285,10 @@ export interface LayoutContext {
    *  its x axis runs from the sheet's right edge, so the runs of a line go
    *  in the reverse of their visual order (see `design/bidiText.ts`). */
   mirrored?: boolean;
+  /** The document is set right to left in the Arabic script
+   *  (`arabicNumbersOf`): a number that opens a text reads as an Arabic
+   *  one (`BidiOptions.arabicNumbers`, #665). */
+  arabicNumbers?: boolean;
 }
 
 function pageMatchesParity(pageIndex: number, parity: PageParity): boolean {
@@ -1279,7 +1283,7 @@ function layoutTextElement(
   dpi: number,
   anchoredToElement: boolean,
   /** The document's direction and the slot's frame (`LayoutContext`). */
-  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean } = {},
+  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean } = {},
 ): ResolvedTextPrimitive[] {
   let text = resolvedText;
   const fontSizePx = dimPx(el.fontSize, dpi);
@@ -1484,7 +1488,7 @@ function layoutTextElement(
       if (wraps && contentMax !== undefined && line.width > contentMax - (line.xOffset ?? 0) + 0.5 && joiningScriptIn(line.text)) line.wordOverflow = true;
       const runs: DesignTextRun[] = line.runs ?? [{ text: line.text, fontString, width: line.width }];
       const spacing = line.wordSpacingPx ?? 0;
-      const directed = directRuns(runs, base, mirrored, (r, t) => measureIn(t, r.fontString) + spacing * stretchableSpaces(t));
+      const directed = directRuns(runs, base, mirrored, (r, t) => measureIn(t, r.fontString) + spacing * stretchableSpaces(t), frame.arabicNumbers === true);
       if (!directed) continue;
       line.runs = directed.runs;
       if (directed.order) line.order = directed.order;
@@ -1598,7 +1602,7 @@ export function layoutTextElementAt(
   x: number,
   y: number,
   dpi: number,
-  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean } = {},
+  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean } = {},
 ): ResolvedTextPrimitive {
   const room = 1e6;
   const pin: AnchorResult = { anchorX: x, anchorY: y, pinX: 'start', pinY: 'start' };

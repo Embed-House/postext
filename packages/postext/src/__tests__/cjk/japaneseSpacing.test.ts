@@ -447,7 +447,7 @@ describe('config', () => {
   it('keys measurements by the new settings, other keys unchanged', () => {
     const zh = comp({}, 'zh-Hans');
     expect(cjkCompositionKey(zh)).toBe('mainland:kaiming:1:1:none:0.25em:zh');
-    expect(cjkCompositionKey(comp())).toBe('japan:fullwidth:1:1:allow:0.25em:jk:q:phalf');
+    expect(cjkCompositionKey(comp())).toBe('japan:fullwidth:1:1:allow:0.25em:ja:q:phalf');
   });
 });
 

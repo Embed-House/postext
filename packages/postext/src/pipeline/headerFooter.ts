@@ -24,7 +24,7 @@ import {
 import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
 import { parsePartNumber, partMarkPages } from './parts';
 import { computePageMetrics, sheetRectToFlow } from './buildHelpers';
-import { resolvedLocale } from './config';
+import { arabicNumbersOf, resolvedLocale } from './config';
 import { classifyPages } from './pageRoles';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
 import { dimensionToPx } from '../units';
@@ -409,6 +409,8 @@ export interface SlotLayoutExtras {
    *  flow of a mirrored page (see `LayoutContext`). */
   direction?: 'ltr' | 'rtl';
   mirrored?: boolean;
+  /** See `LayoutContext.arabicNumbers` (#665). */
+  arabicNumbers?: boolean;
   pageRole?: PageRole;
   /** Resources by id, for `kind: 'image'` elements. */
   resourceById?: ReadonlyMap<string, Resource>;
@@ -520,6 +522,7 @@ export function layoutSlotToVdt(
       container, dpi, placeholders, frames: extras?.frames, pageRole: extras?.pageRole, resourceById: extras?.resourceById,
       ...(extras?.direction ? { direction: extras.direction } : {}),
       ...(extras?.mirrored ? { mirrored: true } : {}),
+      ...(extras?.arabicNumbers ? { arabicNumbers: true } : {}),
     },
     pageIndex,
   );
@@ -1152,6 +1155,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       // right-to-left page's flow, which the slots below are painted in.
       ...(resolved.direction === 'rtl' ? { direction: 'rtl' as const } : {}),
       ...(pageIsMirrored(page) ? { mirrored: true } : {}),
+      ...(arabicNumbersOf(resolved) ? { arabicNumbers: true } : {}),
     };
     // Running heads and folios stay on the sheet: the physical content
     // area and trim box. `anchor.to: 'outer'` is the outer margin, on the

@@ -296,6 +296,7 @@ export type {
   OrderedListsConfig,
   ResolvedOrderedListsConfig,
   OrderedListNumberWidth,
+  OrderedListNumberAlign,
   OrderedListNumberFormat,
   SyncIndicatorConfig,
   DebugConfig,
@@ -509,9 +510,9 @@ export { graphemesOf } from './measure/graphemes';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {
   bidiClassOf, isRtlScriptChar, needsBidi, mirroredChar, mirroredCodePoint, joiningTypeOf, hasJoiningScript, joinsWithNext,
-  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, BIDI_CLASS_NAMES,
+  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, markerRuns, BIDI_CLASS_NAMES,
 } from './bidi';
-export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiRun, JoiningType } from './bidi';
+export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions, BidiRun, JoiningType, MarkerRun } from './bidi';
 export { computeColumnEdges } from './pipeline/resourceLayout';
 export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';

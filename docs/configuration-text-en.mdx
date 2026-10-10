@@ -1936,6 +1936,12 @@ The `orderedLists` property controls numbered lists (`1.`, `2)`, etc.). Up to fi
       <td>How wide the number column of an item is, which sets where its text starts; the numbers are set flush right in it. <code>'run'</code>: the widest number of the item's own run, the items of one depth with nothing but deeper items between them. A figure, a paragraph or a box between two items starts a new run, so <code>ii)</code> after a table can start its text a little further right than <code>i)</code> before it, and a list of nine items sets its text left of a list of twelve. <code>'level'</code>: the widest number at the item's depth in the whole document (the chapter, in a book), so every list, and every part of an interrupted one, starts its text at the same place, as the indents of the deeper levels already do.</td>
     </tr>
     <tr>
+      <td><code>numberAlign</code></td>
+      <td><code>'end' | 'start'</code></td>
+      <td><code>'end'</code></td>
+      <td>How a number sits in its column. <code>'end'</code>: against the text, so the numbers of a run end together and <code>9.</code> and <code>10.</code> line up on their full stops. <code>'start'</code>: at the start of the column (the left on a left-to-right page, the right on a right-to-left one, the head of the line in vertical text), so labels of different lengths begin together, as the articles of a statute do (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). The column keeps the width <code>numberWidth</code> gives it, so the text of the items starts at the same place either way; with a separator in a style of its own, the separator follows its number. Since postext 1.26.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

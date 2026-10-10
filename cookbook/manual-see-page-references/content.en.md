@@ -1,9 +1,9 @@
 ---
-title: "Ardena T3 · Owner's manual"
+title: "Ardena T3 · Owner’s manual"
 author: "Ardena Cycles"
 ---
 
-# Ardena T3 {#manual kicker="Owner's manual" subtitle="Touring bicycle · frame sizes 50 to 60 cm" edition="Edition 2 · Read before the first ride"}
+# Ardena T3 {#manual kicker="Owner’s manual" subtitle="Touring bicycle · frame sizes 50 to 60 cm" edition="Edition 2 · Read before the first ride"}
 
 This manual covers the T3 as it leaves the shop: a steel touring frame, 700C wheels, cable disc brakes and a 2 × 10 drivetrain. Read :ref{id="sec-first-ride"} before you ride. The rest of the manual is arranged by part of the bicycle, and every reference to another section gives its page.
 
@@ -41,7 +41,7 @@ The tyres are 700 × 38 mm. Run them between 3.5 and 5 bar: the lower figure for
 2. Open the quick-release lever, no tools needed, and unscrew the nut on the other side by three turns.
 3. Lift the front of the bicycle and let the wheel drop out of the fork.
 
-To fit it, reverse the steps. Seat the axle fully in both fork ends, tighten the nut until the lever meets resistance halfway through its swing, then [close the lever so that it points backwards]{#step-close-lever}. With the wheel back, squeeze the front brake twice; if the lever feels soft, the pads may have moved, and :ref{id="sec-brake-cable"} on :ref{id="sec-brake-cable" style=page} explains how to set them again.
+To fit it, reverse the steps. Seat the axle fully in both fork ends, tighten the nut until the lever meets resistance halfway through its swing, then [close the lever]{#step-close-lever} so that it points backwards. With the wheel back, squeeze the front brake twice; if the lever feels soft, the pads may have moved, and :ref{id="sec-brake-cable"} on :ref{id="sec-brake-cable" style=page} explains how to set them again.
 
 ## Brakes {#sec-brakes}
 

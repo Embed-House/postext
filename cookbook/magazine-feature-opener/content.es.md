@@ -27,7 +27,7 @@ Eso explica que la helada llegue tarde y de golpe. Hanna recuerda ver de niña, 
 
 El primer hielo que se forma es el hielo negro, que crece hacia abajo desde el agua y es tan transparente que a través de un palmo de él se ven las piedras del fondo. Es el hielo más resistente que da un lago. Con la nieve se forma un segundo hielo. Una nevada fuerte hunde la lámina hasta que el agua sube por las grietas y empapa la nieve, que se congela en hielo blanco, turbio de aire atrapado y con la mitad de resistencia.
 
-Lind perfora los dos cada semana del invierno. Los testigos salen con bandas, como el tronco de un árbol, y ella los lee igual: una capa negra gruesa significa un diciembre frío y seco; un montón de bandas blancas, temporal tras temporal. Bajo el hielo el lago sigue vivo. El agua del fondo se mantiene cerca de 4 °C todo el invierno. Las truchas se vuelven lentas, pero siguen comiendo. La luz aún atraviesa el hielo claro, y bajo él crecen algas en la penumbra verde, algo que sorprendió a los primeros científicos que fueron a buscarlas.
+Lind perfora los dos cada semana del invierno. Los testigos salen con bandas, como el tronco de un árbol, y ella los lee igual: una capa negra gruesa significa un diciembre frío y seco; un montón de bandas blancas, temporal tras temporal. Bajo el hielo el lago sigue vivo. El agua del fondo se mantiene cerca de 4 °C todo el invierno. Las truchas se vuelven lentas, pero siguen comiendo. La luz aún atraviesa el hielo claro, y bajo él crecen algas en la penumbra verde, algo que sorprendió a los primeros científicos que las buscaron.
 
 :::callout{type="glance" title="De un vistazo"}
 **Altitud** 1540 m sobre el nivel del mar
@@ -95,7 +95,7 @@ El invierno pasado el lago se heló el 21 de diciembre y se abrió el 18 de marz
 
 **Hielo blanco.** Cuando la nieve carga la lámina, el agua sube por las grietas, empapa la nieve y se congela en una capa lechosa llena de aire. Resiste más o menos la mitad que el hielo negro, así que cuenta solo la mitad de su grosor cuando decidas si cruzar.
 
-**Nieve empapada.** Una nevada fuerte puede hundir el hielo por debajo del nivel del agua y dejar encima una capa de nieve mojada que sigue líquida bajo una costra aislante. Cuesta caminar por ella, es traicionera con esquís y es donde empieza casi todo el hielo blanco.
+**Nieve empapada.** Una nevada abundante puede hundir el hielo por debajo del nivel del agua y dejar encima una capa de nieve mojada que sigue líquida bajo una costra aislante. Cuesta caminar por ella, es traicionera con esquís y es donde empieza casi todo el hielo blanco.
 
 **Hielo de orilla.** El hielo del borde es el primero en formarse y el primero en irse. Los manantiales, los juncos y el calor del suelo lo debilitan, y en marzo una franja de agua abierta, el foso, suele separar la lámina de la tierra. Puedes salir por buen hielo y descubrir que no puedes volver.
 

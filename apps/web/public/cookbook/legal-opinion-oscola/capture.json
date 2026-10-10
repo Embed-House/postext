@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "5b846a6c2e6fad62e254314379c5989f6cc06735c13e137cda26a8ece82bb2ce",
+  "sourceHash": "46ffcbfb6ad1bac6e6f71b1749367a442b7edcfadd013d5554178a884f7daf02",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.441Z",
+  "capturedAt": "2026-10-10T20:16:49.039Z",
   "variants": {
     "en": {
-      "hash8": "00fecfc8",
+      "hash8": "7ce6bc0f",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 31,
-        "buildMs": 136,
-        "totalMs": 970,
+        "importMs": 496,
+        "fontsMs": 112,
+        "buildMs": 529,
+        "totalMs": 2165,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 157
+        "ownLines": 161
       },
       "pages": [
         {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 22985,
+        "bytes": 23006,
         "folio": "223edec1"
       },
       "detected": {
@@ -203,6 +203,8 @@
           "header.elements[].placement",
           "header.elements[].textTransform",
           "headings",
+          "headings.balancing",
+          "headings.balancing.maxLinesPerHeading",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -254,7 +256,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 279,
+        "configLeaves": 280,
         "designElements": 13,
         "directives": [
           ":::paragraphs",
@@ -302,6 +304,7 @@
         ],
         "features": [
           "citation-styles",
+          "column-balancing",
           "cross-references",
           "footnotes",
           "generated-bibliography",
@@ -328,13 +331,13 @@
       }
     },
     "es": {
-      "hash8": "47d487fd",
-      "vdtHash": "a98f2a9e46d9aa968d59092714341f6cb8924bbc",
+      "hash8": "83ea905f",
+      "vdtHash": "dec9e172bd3aae9c5ad71b37126eae508df9c274",
       "timings": {
-        "importMs": 193,
-        "fontsMs": 32,
-        "buildMs": 422,
-        "totalMs": 1271,
+        "importMs": 205,
+        "fontsMs": 33,
+        "buildMs": 552,
+        "totalMs": 1481,
         "builds": 1
       },
       "specimen": {
@@ -356,7 +359,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 157
+        "ownLines": 161
       },
       "pages": [
         {
@@ -378,7 +381,7 @@
           "h": 1481,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 154594,
+          "bytes": 155952,
           "alt": "Página 2: No existe un «test de Caparo»."
         },
         {
@@ -432,12 +435,12 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 93458,
+        "bytes": 93485,
         "pages": 4
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 22989,
+        "bytes": 23010,
         "folio": "223edec1"
       },
       "detected": {
@@ -520,6 +523,8 @@
           "header.elements[].placement",
           "header.elements[].textTransform",
           "headings",
+          "headings.balancing",
+          "headings.balancing.maxLinesPerHeading",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -571,7 +576,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 279,
+        "configLeaves": 280,
         "designElements": 13,
         "directives": [
           ":::paragraphs",
@@ -619,6 +624,7 @@
         ],
         "features": [
           "citation-styles",
+          "column-balancing",
           "cross-references",
           "footnotes",
           "generated-bibliography",
@@ -641,7 +647,13 @@
           "share": 0,
           "worst": 1.76
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "front-matter-roman-to-arabic",
-  "sourceHash": "ccec248245816826ae6d8167d1e15b3c8a308c9bcddd026b69a0e1519d817da7",
+  "sourceHash": "667ed24f49d997210a3d0d3f49f43578b20fe83d5bbeb00a48fb5c5b68599970",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.504Z",
+  "capturedAt": "2026-10-10T19:09:47.343Z",
   "variants": {
     "en": {
-      "hash8": "3478102c",
-      "vdtHash": "6b30688371fe69812e948b42fa8e0b1f27fae379",
+      "hash8": "e0a9b163",
+      "vdtHash": "b64a2effb7df23604c0ca0a5c95947db80d396fe",
       "timings": {
-        "importMs": 200,
-        "fontsMs": 62,
-        "buildMs": 130,
-        "totalMs": 986,
+        "importMs": 188,
+        "fontsMs": 61,
+        "buildMs": 129,
+        "totalMs": 980,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +94,7 @@
           "h": 1535,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 35920,
+          "bytes": 36256,
           "alt": "Opening page vi: Imprint."
         },
         {
@@ -223,12 +223,12 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815715,
+        "bytes": 815984,
         "pages": 14
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713658,
+        "bytes": 713669,
         "folio": "ba949066"
       },
       "detected": {

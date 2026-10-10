@@ -104,9 +104,11 @@ const plate = {
   breakBefore: { enabled: true, parity: 'any' }, // (gotcha: style-inherits-break)
   header: { elements: [] }, footer: { elements: [] },
   advancedDesign: { enabled: true, slot: { elements: [
+    // The drawing carries 3 mm of bleed a side: a box of the trim would fit it by its width
+    // and leave a strip of paper at the head and the foot.
     { kind: 'image', id: 'field', resourceId: 'lattice', placement: {
-      anchor: { to: 'bleed', edge: 'top-left' },
-      size: { width: mm(TRIM.width), height: mm(TRIM.height) } } },
+      anchor: { to: 'page', edge: 'top-left' }, offset: { x: mm(-3), y: mm(-3) },
+      size: { width: mm(TRIM.width + 6), height: mm(TRIM.height + 6) } } },
     { kind: 'text', id: 'part', content: '{attr.kicker}', fontFamily: LABEL, fontSize: pt(11),
       fontWeight: 600, color: col('brass'), align: 'center', placement: onPage(76) },
     { kind: 'text', id: 'name', content: '{titleText}', fontFamily: DISPLAY, fontSize: pt(64),

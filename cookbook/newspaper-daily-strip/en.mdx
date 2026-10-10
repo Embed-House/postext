@@ -1,16 +1,16 @@
 ---
 title: "A daily strip and a Sunday half page in the newspaper"
-summary: "A newspaper's comics pull-out: a Sunday half page set in the text of the cover and a four-panel daily strip floated to the foot of a four-column page."
-plain: "Two pages of a newspaper's comics section: a large colour comic on the cover, then an article about the cartoonist in four columns with the daily four-panel strip along the bottom."
+summary: "A newspaper's comics pull-out: a Sunday half page set in the text of the cover and a four-panel daily strip set across a four-column page, under its article."
+plain: "Two pages of a newspaper's comics section: a large colour comic on the cover, then an article about the cartoonist in four columns with the daily four-panel strip under it."
 description: "Comic strips in a Postext newspaper: :::strip blocks set in the text or floated across four columns, a Sunday half page and a daily strip in six languages."
 question: "How do I put a comic strip on a newspaper page, across the columns of the text?"
 aliases: ["comic strip", "daily strip", "Sunday comics", "funnies", "newspaper comic", "strip", "4-panel strip", "tira cómica", "tira de prensa", "新聞漫画", "报纸漫画"]
-pageNotes: { "1": "The cover of the comics pull-out: the red Funnies flag, the Sunday half page (Pip and Otto fishing on an ice floe, Pip's tiny fish, Otto landing a boot) and three lines of contents.", "2": "The inside page: the headline Ten winters on the floe across four columns of text with an interview, a numbers box, readers' letters and an advert, and the four-panel daily strip about a croissant along the foot." }
+pageNotes: { "1": "The cover of the comics pull-out: the red Funnies flag, the Sunday half page (Pip and Otto fishing on an ice floe, Pip's tiny fish, Otto landing a boot) and three lines of contents.", "2": "The inside page: the headline Ten winters on the floe across four columns of text with an interview, a numbers box, readers' letters and an advert, and under them, across the page, the four-panel daily strip about a croissant." }
 ---
 
 ## What you'll build
 
-The comics pull-out of a weekend newspaper, *The Corrington Despatch*, folded to 230 × 310 mm. The cover holds the Sunday half page of *Pip & Otto*, a penguin and a walrus who run a bakery on an ice floe, with the contents under it. Inside, an interview with the strip's cartoonist runs in four columns, with readers' letters and an advert, and the week's daily strip, four square panels, runs along the foot of the page. Both comics are `:::strip` blocks in the newspaper's text, and the pull-out comes in six languages.
+The comics pull-out of a weekend newspaper, *The Corrington Despatch*, folded to 230 × 310 mm. The cover holds the Sunday half page of *Pip & Otto*, a penguin and a walrus who run a bakery on an ice floe, with the contents under it. Inside, an interview with the strip's cartoonist runs in four columns, with readers' letters and an advert, and the week's daily strip, four square panels, runs across the page under it. Both comics are `:::strip` blocks in the newspaper's text, and the pull-out comes in six languages.
 
 ## Method
 
@@ -22,7 +22,7 @@ The code is [the short answer](#the-short-answer) above. A `:::strip` has the bo
 
 ### 2 · Float the daily across the columns
 
-The inside page opens with an H1 whose heading style switches the section to four columns. The daily strip is written right after it with `span=page placement=bottom`: it floats to the foot of the page as wide as the four columns, and the columns of the article end level above it. Without `height` or `aspect`, a strip takes the shape that makes its panels square, four to one here. Written with `placement=top` it would open the next page instead, because a float never goes above the point it is written at.
+The inside page opens with an H1 whose heading style switches the section to four columns. The daily strip is written after the article with `span=page`: it is set across the four columns where the text ends, and the columns of the article end level above it. Without `height` or `aspect`, a strip takes the shape that makes its panels square, four to one here. With `placement=bottom` it would float to the foot of the page, which suits an article long enough to reach it; with `placement=top` it would open the next page, because a float never goes above the point it is written at.
 
 ### 3 · Fit each picture to its cell
 
@@ -41,8 +41,8 @@ Each edition sets the newspaper in faces for its script and letters the strips i
 ### Give the daily strip a fixed height
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
-+:::strip{split="* | * | * | *" span=page placement=bottom height=45mm}
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* | * | * | *" span=page height=45mm}
 ```
 
 ### Run a one-column strip in the text
@@ -50,7 +50,7 @@ Each edition sets the newspaper in faces for its script and letters the strips i
 Without `span=page` a strip is as wide as its column and is set where it is written, like an inline figure.
 
 ```diff
--:::strip{split="* | * | * | *" span=page placement=bottom}
+-:::strip{split="* | * | * | *" span=page}
 +:::strip{split="* / * / * / *" aspect=0.25}
 ```
 

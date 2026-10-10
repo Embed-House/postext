@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument, renderPageToCanvas, registerResourceImage, clearResourceImages, pageComics } from '../../index';
+import { buildDocument, renderPageToCanvas, renderComicPanel, registerResourceImage, clearResourceImages, pageComics } from '../../index';
 import type { Resource } from '../../types';
 
 class StubCtx {
@@ -66,6 +66,45 @@ describe('canvas painting of comic panels', () => {
     expect(flip).toBeGreaterThan(firstDraw);
     expect(at('drawImage', flip)).toBeGreaterThan(flip);
     expect(calls.filter((c) => c === 'stroke()')).toHaveLength(1);
+  });
+
+  it('paints the pop-out cut-outs after every panel, so the next panel does not cover one (#668)', () => {
+    registerResourceImage('pic-file', { width: 1000, height: 1000 } as unknown as HTMLImageElement);
+    registerResourceImage('pop-file', { width: 1000, height: 1000 } as unknown as HTMLImageElement);
+    const withPop: Resource[] = [...resources,
+      { id: 'pop', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'pop-file', format: 'png', width: 1000, height: 1000 } }];
+    const md = ':::page{split="* | *"}\n::panel{art=pic pop=pop bg="#ff0000"}\n::panel{art=pic bg="#0000ff"}\n:::';
+    const doc = buildDocument({ markdown: md, resources: withPop }, {});
+    const page = doc.pages.find((p) => p.comic)!;
+    expect(page.comic!.panels[0]!.pop).toBeDefined();
+    const { canvas, calls } = recordingCanvas();
+    renderPageToCanvas(page, doc, canvas);
+    const draws = calls.map((c, i) => (c.startsWith('drawImage') ? i : -1)).filter((i) => i >= 0);
+    // Two pictures and one cut-out.
+    expect(draws).toHaveLength(3);
+    const blue = calls.indexOf('fillStyle=#0000ff');
+    const lastStroke = calls.lastIndexOf('stroke()');
+    // The cut-out is the last picture drawn: after the second panel's
+    // background, picture and border.
+    expect(draws[2]!).toBeGreaterThan(blue);
+    expect(draws[2]!).toBeGreaterThan(lastStroke);
+    expect(draws[1]!).toBeGreaterThan(blue);
+    expect(draws[1]!).toBeLessThan(lastStroke);
+  });
+
+  it('a panel painted alone carries its cut-out', () => {
+    registerResourceImage('pic-file', { width: 1000, height: 1000 } as unknown as HTMLImageElement);
+    registerResourceImage('pop-file', { width: 1000, height: 1000 } as unknown as HTMLImageElement);
+    const withPop: Resource[] = [...resources,
+      { id: 'pop', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'pop-file', format: 'png', width: 1000, height: 1000 } }];
+    const doc = buildDocument({ markdown: ':::page{split="* | *"}\n::panel{art=pic pop=pop}\n::panel{art=pic}\n:::', resources: withPop }, {});
+    const panel = doc.pages.find((p) => p.comic)!.comic!.panels[0]!;
+    const one = recordingCanvas();
+    renderComicPanel(one.canvas.getContext('2d') as unknown as CanvasRenderingContext2D, panel);
+    expect(one.calls.filter((c) => c.startsWith('drawImage'))).toHaveLength(2);
+    const bare = recordingCanvas();
+    renderComicPanel(bare.canvas.getContext('2d') as unknown as CanvasRenderingContext2D, panel, null, false);
+    expect(bare.calls.filter((c) => c.startsWith('drawImage'))).toHaveLength(1);
   });
 
   it('paints a strip set in the flow on the sheet, where its block sits', () => {

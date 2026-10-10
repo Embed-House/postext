@@ -234,7 +234,7 @@ const resources = [
     svg: { fileId: 'cover.svg', width: TRIM.w * 10, height: 110 * 10 } },
   figure('profile', [MEASURE, 50]), figure('sun', [MEASURE, 46]), figure('soc', [MEASURE, 50]),
   table('loads', [44, 18, 18, 18]), table('losses', [70, 20]),
-  table('chemistry', [26, 16, 15, 12, 26, 12]),
+  table('chemistry', [25, 15, 19, 12, 24, 12]),
 ];
 
 // #region art: the cover and three charts, drawn in code in the book's palette

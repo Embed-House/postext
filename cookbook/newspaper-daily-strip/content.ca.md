@@ -28,19 +28,6 @@ otto: Mmm. I gairebé nova.
 
 # Deu hiverns al glaç {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: Bon dia, Otto! Un croissant, si us plau.
-otto: Marxant!
-::panel{art=po2}
-otto: Acabat de sortir del forn!
-::panel{art=po3}
-pip: No en tens un de més petit?
-::panel{art=po4}
-sfx: NYAM
-otto: Té. Més petit.
-:::
-
 :::paragraphs{style="byline"}
 Per Ruth Okafor · Cultura
 :::
@@ -103,4 +90,17 @@ Escriviu a en Pip i l’Otto al Despatx, 12 Bridge Street, Corrington, o per cor
 
 :::paragraphs{style="imprint"}
 Compost en Newsreader i Archivo Narrow; retolat en Comic Neue i Bangers (SIL OFL). Imatges generades amb models de difusió.
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: Bon dia, Otto! Un croissant, si us plau.
+otto: Marxant!
+::panel{art=po2}
+otto: Acabat de sortir del forn!
+::panel{art=po3}
+pip: No en tens un de més petit?
+::panel{art=po4}
+sfx: NYAM
+otto: Té. Més petit.
 :::

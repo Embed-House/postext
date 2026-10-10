@@ -5,7 +5,7 @@ plain: "A short owner's manual for a touring bicycle. When the text sends you to
 description: "A product manual in Postext: numbered sections, anchors on paragraphs and steps, and cross-references by number, title and page that update and link."
 question: "How do I refer to a section and the page it is on, and keep both right as the book changes?"
 aliases: ["cross-reference", "see page", "page reference", "pageref", "anchor", "label", "see section", "manual", "owner's manual", "internal links", "pandoc-crossref"]
-pageNotes: { "1": "Page 1: a navy band over the top half with OWNER'S MANUAL, the model name Ardena T3 in large white condensed type, a subtitle and the edition line, then an orange stripe; below it an introduction and a contents list whose section numbers, titles and page numbers are all cross-references in orange.", "2": "Page 2: section 1 with references such as section 3.2 on page 3 and the phrase close the lever so that it points backwards, which links to a step in section 2.2; numbered steps for the saddle height; section 2.1 on tyre pressure.", "3": "Page 3: removing and fitting the front wheel, section 3 on the brakes with a Wet weather box with an orange side stripe, and the start of 3.2.", "4": "Page 4: adjusting the cable, section 4 on the chain with a reference back to Wet weather on page 3, and the maintenance schedule, a list of intervals each pointing to a section and a page." }
+pageNotes: { "1": "Page 1: a navy band over the top half with OWNER’S MANUAL, the model name Ardena T3 in large white condensed type, a subtitle and the edition line, then an orange stripe; below it an introduction and a contents list whose section numbers, titles and page numbers are all cross-references in orange.", "2": "Page 2: section 1 with references such as section 3.2 on page 3 and the phrase close the lever, which links to a step in section 2.2; numbered steps for the saddle height; section 2.1 on tyre pressure.", "3": "Page 3: removing and fitting the front wheel, section 3 on the brakes with a Wet weather box with an orange side stripe, and the start of 3.2.", "4": "Page 4: adjusting the cable, section 4 on the chain with a reference back to Wet weather on page 3, and the maintenance schedule, a list of intervals each pointing to a section and a page." }
 ---
 
 ## What you'll build
@@ -16,7 +16,7 @@ The owner's manual of a fictional touring bicycle, the Ardena T3: four A5 pages 
 
 ### 1 · Name what the text points to
 
-The code is [the short answer](#the-short-answer) above. Headings take a Pandoc identifier, `### Checking pad wear {#sec-pad-wear}`; the warning about tyre pressure starts with `:anchor{#warn-pressure}`, an invisible mark; the last step of fitting a wheel is `[close the lever so that it points backwards]{#step-close-lever}`, which keeps its words and names them; and the box opens with `:::callout{#box-wet type="note" title="Wet weather"}`. A reference to the step prints the step's words, a reference to the box its title.
+The code is [the short answer](#the-short-answer) above. Headings take a Pandoc identifier, `### Checking pad wear {#sec-pad-wear}`; the warning about tyre pressure starts with `:anchor{#warn-pressure}`, an invisible mark; the last step of fitting a wheel is `[close the lever]{#step-close-lever}`, which keeps its words and names them; and the box opens with `:::callout{#box-wet type="note" title="Wet weather"}`. A reference to the step prints the step's words, a reference to the box its title.
 
 ### 2 · One target, four ways to name it
 

@@ -84,9 +84,9 @@ It is a paper for letters and announcements more than for books: firm enough to 
 
 Dear Mrs Okafor,
 
-Thank you for your letter and for the proofs of the wedding stationery, which arrived this morning in perfect order. We agree that the laid sheet suits the invitation far better than the smooth one; the lines give the lettering something to rest on.
+Thank you for your letter and the proofs of the wedding stationery, which arrived this morning in perfect order. We agree that the laid sheet suits the invitation far better than the smooth one; the lines give the lettering something to rest on.
 
-We have set aside two reams from the same making, so that the reply cards and the order of service will match the invitations exactly. Papers from different makings can differ by a shade, and on a table set side by side the difference shows.
+We have set aside two reams from the same making, so that the reply cards and the order of service will match the invitation exactly. Papers from different makings can differ by a shade, and on a table set side by side the difference shows.
 
 The envelopes will follow on Thursday. If you would like the flaps lined, we keep a tissue in four colours and would be glad to send samples.
 
@@ -116,7 +116,7 @@ A heavy coated sheet, polished between steel rollers until it shines. The clay c
 
 Because the coating is calendered hard, the sheet is thinner for its weight than an uncoated one, and noticeably stiffer. It turns as a single flat plane and lands with a sound. Nothing shows through from the reverse.
 
-**Best for** art books, exhibition catalogues, plate sections, brochures.
+**Best for** art books, exhibition catalogues, posters, the plate section of a history.
 
 :::pagebreak
 
@@ -152,7 +152,7 @@ The thinnest sheet we stock that will still go through a book press. A thousand 
 
 It is strong for its weight, but it is not opaque. Hold this leaf up and you will read the type on its back through the sheet. Good setting on a thin paper prints the lines of both sides in register, so that the show-through falls between the lines and not across them.
 
-**Best for** dictionaries, scriptures, reference works, pocket editions.
+**Best for** dictionaries, scriptures, reference works, timetables, pocket editions.
 
 :::pagebreak
 

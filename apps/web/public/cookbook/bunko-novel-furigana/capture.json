@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bunko-novel-furigana",
-  "sourceHash": "3cb4d7e8efcfd0c4ed2db7216fe1ed512618fd6a008beb29d7809b71caf9137f",
+  "sourceHash": "a9fb2e403e0a34e8535ed4c888fb0a2ce3caf1a94b58b7da3ca06e8f9c7c3829",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.195Z",
+  "capturedAt": "2026-10-10T20:23:29.259Z",
   "variants": {
     "en": {
-      "hash8": "b771d77d",
-      "vdtHash": "ae497d72124770c9b1aea2745ff736b9d1e127b4",
+      "hash8": "cdbc49a2",
+      "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 318,
-        "buildMs": 53,
-        "totalMs": 1112,
+        "importMs": 604,
+        "fontsMs": 867,
+        "buildMs": 184,
+        "totalMs": 2955,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 9,
-        "ownLines": 145
+        "ownLines": 148
       },
       "pages": [
         {
@@ -60,7 +60,7 @@
           "h": 1410,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86022,
+          "bytes": 94532,
           "alt": "Page 二: 第一夜."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1410,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 85532,
+          "bytes": 84592,
           "alt": "Page 三."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 117536,
+          "bytes": 118546,
           "alt": "Page 四."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1410,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 99498,
+          "bytes": 92080,
           "alt": "Page 五."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1410,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 83206,
+          "bytes": 91948,
           "alt": "Page 六: 第二夜."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 108134,
+          "bytes": 111410,
           "alt": "Page 七."
         }
       ],
@@ -152,12 +152,12 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330804,
+        "bytes": 330743,
         "pages": 9
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 27563,
+        "bytes": 28189,
         "folio": "c397d9a7"
       },
       "detected": {
@@ -171,6 +171,8 @@
         ],
         "configKeys": [
           "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -270,7 +272,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 141,
+        "configLeaves": 143,
         "designElements": 6,
         "directives": [],
         "inline": [
@@ -338,17 +340,23 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "06443ef0",
-      "vdtHash": "72eb958384aeb0aaac00a9ffe41d7026da546383",
+      "hash8": "348ec3e5",
+      "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 292,
+        "importMs": 232,
+        "fontsMs": 326,
         "buildMs": 56,
-        "totalMs": 1077,
+        "totalMs": 1258,
         "builds": 1
       },
       "specimen": {
@@ -369,7 +377,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 9,
-        "ownLines": 145
+        "ownLines": 148
       },
       "pages": [
         {
@@ -391,7 +399,7 @@
           "h": 1410,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86022,
+          "bytes": 94532,
           "alt": "Página 二: 第一夜."
         },
         {
@@ -402,7 +410,7 @@
           "h": 1410,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 85532,
+          "bytes": 84592,
           "alt": "Página 三."
         },
         {
@@ -413,7 +421,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 117536,
+          "bytes": 118546,
           "alt": "Página 四."
         },
         {
@@ -424,7 +432,7 @@
           "h": 1410,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 99498,
+          "bytes": 92080,
           "alt": "Página 五."
         },
         {
@@ -435,7 +443,7 @@
           "h": 1410,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 83206,
+          "bytes": 91948,
           "alt": "Página 六: 第二夜."
         },
         {
@@ -446,7 +454,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 108134,
+          "bytes": 111410,
           "alt": "Página 七."
         }
       ],
@@ -483,12 +491,12 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330937,
+        "bytes": 330861,
         "pages": 9
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 27603,
+        "bytes": 28230,
         "folio": "c397d9a7"
       },
       "detected": {
@@ -502,6 +510,8 @@
         ],
         "configKeys": [
           "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -601,7 +611,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 141,
+        "configLeaves": 143,
         "designElements": 6,
         "directives": [],
         "inline": [
@@ -669,7 +679,13 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

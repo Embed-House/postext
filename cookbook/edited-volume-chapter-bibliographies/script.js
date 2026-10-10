@@ -65,8 +65,11 @@ const tocAuthor = { enabled: true, attr: 'author', fontFamily: TEXT, fontSize: p
   color: col('muted') }; // a line under each title in the contents (italic by default)
 // #endregion
 
-// #region opener: kicker, title and byline over a short red rule, sunk 48 mm
-const opener = { enabled: true, minHeight: mm(48), slot: { elements: [
+// #region opener: kicker, title and byline over a short red rule, sunk ten lines
+// Nine lines of reserve and a line of margin under them (the level's marginBottom): ten
+// lines, 48 mm, under a one-line title. A two-line title reaches past the reserve, and the
+// margin then carries the text a line lower, clear of the rule.
+const opener = { enabled: true, minHeight: pt(LEAD * 9), slot: { elements: [
   text('kicker', t({ en: 'Chapter {number}', es: 'Capítulo {number}' }), { ...label,
     fontSize: pt(8.5), letterSpacing: pt(1.7), color: col('accent') },
   at('container', 'top-left', 0, 4)),
@@ -147,14 +150,14 @@ const config = () => ({
     // A page that ends short may open at most one extra line above a subhead.
     balancing: { maxLinesPerHeading: 1 }, levels: [
     // 'any': an essay opens on the next page, recto or verso, as in most edited volumes.
-    { level: 1, numberingTemplate: '{1}', marginBottom: pt(0),
+    { level: 1, numberingTemplate: '{1}', marginBottom: pt(LEAD),
       breakBefore: { enabled: true, parity: 'any' }, advancedDesign: opener },
     { level: 2, fontFamily: TEXT, italic: true, fontSize: pt(11), lineHeight: pt(LEAD * 1.5),
       numberingTemplate: '', marginTop: pt(LEAD * 0.5), marginBottom: pt(0) },
   ] },
   headingStyles: [
-    { id: 'cover', ...bare, span: 'page', advancedDesign: cover },
-    { id: 'contents', ...bare, advancedDesign: contentsOpener },
+    { id: 'cover', ...bare, span: 'page', advancedDesign: cover, marginBottom: pt(0) },
+    { id: 'contents', ...bare, advancedDesign: contentsOpener, marginBottom: pt(0) },
     // The references heading: the label face in red, out of the contents.
     { id: 'references', toc: false, fontFamily: LABEL, fontWeight: 600, italic: false,
       fontSize: pt(8.5),

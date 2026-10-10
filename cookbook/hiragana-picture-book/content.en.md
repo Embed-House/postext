@@ -62,5 +62,9 @@ author: "Postext Cookbook"
 :::
 
 :::paragraphs{style="colophon"}
-Story written for this recipe (CC BY 4.0) · Pictures: paintings · Set in Klee One and Zen Maru Gothic (SIL OFL)
+Story written for this recipe (CC BY 4.0)
+
+Pictures: paintings
+
+Fonts: Klee One, Zen Maru Gothic (SIL OFL)
 :::

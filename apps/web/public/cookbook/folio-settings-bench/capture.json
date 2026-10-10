@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "folio-settings-bench",
-  "sourceHash": "2f520da7cd1821e0e7cde7af78150d46cfd09809e4b0b3d01a86928b502cba4d",
+  "sourceHash": "b2cd4c9f1be4dcf4fd5511e1f4d052aaa5dca69d90a9d955ab82e02e6530aeff",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.492Z",
+  "capturedAt": "2026-10-10T19:12:54.734Z",
   "variants": {
     "en": {
-      "hash8": "319872df",
-      "vdtHash": "e0d0995acaf71a69c392e90d62454fe6f558d7e3",
+      "hash8": "ece52d93",
+      "vdtHash": "4c8c48c11afac234e252f06dca38189173a92a9d",
       "timings": {
-        "importMs": 151,
+        "importMs": 251,
         "fontsMs": 4,
-        "buildMs": 53,
-        "totalMs": 781,
+        "buildMs": 57,
+        "totalMs": 940,
         "builds": 1
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1455,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90990,
+          "bytes": 90986,
           "alt": "Opening page 2: Before you tie."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1455,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 66044,
+          "bytes": 66074,
           "alt": "Opening page 4: The bowline."
         },
         {
@@ -191,7 +191,7 @@
       },
       "sandbox": {
         "file": "folio-settings-bench.postext",
-        "bytes": 17867,
+        "bytes": 17875,
         "folio": "1756b569"
       },
       "detected": {
@@ -382,7 +382,13 @@
           "share": 0.0149,
           "worst": 2.08
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

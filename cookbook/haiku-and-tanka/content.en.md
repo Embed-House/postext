@@ -3,7 +3,7 @@ title: "芭蕉と啄木"
 subtitle: "俳句と短歌"
 ---
 
-# おくのほそ道 {style="first" author="松尾芭蕉" colophon="Matsuo Bashō, おくのほそ道 (The Narrow Road to the Deep North, 1702), selections, after Sugiura Shōichirō’s 1957 edition; Ishikawa Takuboku, 一握の砂 (A Handful of Sand, 1910), twelve tanka. Text: Aozora Bunko 61619 and 816, public domain. Set in Shippori Mincho and Noto Sans JP (SIL OFL)."}
+# おくのほそ道 {style="first" author="松尾芭蕉" colophon="Matsuo Bashō, おくのほそ道 (The Narrow Road to the Deep North, 1702), selections, after Sugiura Shōichirō’s 1957 edition; Ishikawa Takuboku, 一握の砂 (A Handful of Sand, 1910), eleven tanka. Text: Aozora Bunko 61619 and 816, public domain. Set in Shippori Mincho and Noto Sans JP (SIL OFL)."}
 
 ## 冒頭
 

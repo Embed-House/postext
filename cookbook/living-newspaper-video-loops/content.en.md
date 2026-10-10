@@ -121,7 +121,7 @@ The Wexcombe lifeboat *Sarah Jolly* was launched twice on Tuesday night, the fir
 
 The *Petrel* was towed into harbour shortly after midnight. The fishing boat, the *Brothers’ Pride*, was found at anchor in the lee of the Stags, her crew asleep. “They had a good catch and saw no reason to hurry,” said the coxswain, Mr William Bassett. “I told them what I thought of that, and then I gave them a tow, because the tide was turning.”
 
-The crew of twelve were back in their beds by five. It was the boat’s fourteenth service this year.
+The crew of twelve were back in their beds by five. It was the boat’s fourteenth service this year. The collecting box at the Lifeboat House, the coxswain added, has been lighter this summer than the boat has been busy, and he would be glad to see it the other way about.
 
 ## Fire at the rope works {style="second"}
 

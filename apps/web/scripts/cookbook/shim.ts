@@ -82,14 +82,17 @@ function installedVersion(pkg: string, dep: string): string {
 }
 
 /** The local engine's bare imports: the workspace packages to the pen
- *  server, their dependencies to esm.sh at the installed versions. */
+ *  server, their dependencies to esm.sh at the installed versions. MathJax
+ *  is not among them: esm.sh builds each `mathjax-full/js/…` subpath with a
+ *  private copy of MathJax's core and no formula converts, so the pen
+ *  server answers the engine's MathJax module with the one-module bundle
+ *  the package ships (serve.ts `localMathJaxModule`, #683). */
 function localImports(): Record<string, string> {
   const esm = (pkg: string, dep: string) => `https://esm.sh/${dep}@${installedVersion(pkg, dep)}`;
   const imports: Record<string, string> = {
     postext: `${LOCAL_PREFIX}postext/index.js`,
     "postext/bundle": `${LOCAL_PREFIX}postext/bundle/index.js`,
     "postext/worker": `${LOCAL_PREFIX}postext/worker/client.js`,
-    "mathjax-full/": `${esm("postext", "mathjax-full")}/`,
   };
   for (const dep of ["@chenglou/pretext", "fflate", "gray-matter", "hypher", "react"]) imports[dep] = esm("postext", dep);
   for (const lang of ["ca", "de", "en-us", "es", "fr", "it", "nl", "pt"]) imports[`hyphenation.${lang}`] = esm("postext", `hyphenation.${lang}`);

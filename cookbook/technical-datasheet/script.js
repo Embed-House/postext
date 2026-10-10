@@ -156,7 +156,8 @@ const config = () => ({
   bodyText: { // ragged-right sans with space between paragraphs, as reports are set
     fontFamily: 'Fira Sans', fontSize: pt(9.3), lineHeight: pt(LEAD), color: col('ink'),
     boldFontWeight: 600, boldColor: col('ink'), italicColor: col('ink'), textAlign: 'left',
-    referenceColor: col('brand'), firstLineIndent: pt(0), paragraphSpacing: true },
+    referenceColor: col('brand'), firstLineIndent: pt(0), paragraphSpacing: true,
+    hyphenateAcrossColumns: false }, // no compound is divided over a column or a page
   headings: { fontFamily: COND, color: col('ink'),
     levels: [ // 'any': a loose sheet has no rectos, so the H1 asks for no blank page
       { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },

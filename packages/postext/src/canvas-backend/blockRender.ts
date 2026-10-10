@@ -8,12 +8,16 @@ import { paintSwatch } from './swatch';
 import { paintChip } from './chip';
 import { lineInkExtent, lineTrailingTracking } from '../lineInk';
 import { fillFlowText, verticalPaintActive } from './verticalText';
-import { counterFlipBox } from './mirrorFrame';
+import { counterFlipBox, mirroredPaintActive } from './mirrorFrame';
+import { rasterScaleOf } from './deviceScale';
+import { paintRunInDirection } from './runDirection';
+import { markerRuns } from '../bidi';
 import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
 import { fillSegmentWord, type WordRun } from './wordRuns';
+import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 
 function pickSegmentFont(
@@ -71,7 +75,8 @@ function renderMathRender(
     ctx.restore();
     return;
   }
-  const raster = getMathRaster(render, fallbackColor);
+  // The bitmap at the size the formula shows at on the device (#674).
+  const raster = getMathRaster(render, fallbackColor, rasterScaleOf(ctx));
   if (raster) {
     ctx.drawImage(raster, topLeftX, topLeftY, widthPx, heightPx);
     return;
@@ -447,6 +452,12 @@ function renderLine(
   ctx.fillStyle = style.color;
   const plainSlack = Math.max(0, effectiveWidth - (line.bbox.width - trailing));
   const plainX = lineX + (align === 'right' ? plainSlack : align === 'center' ? plainSlack / 2 : 0);
+  // A tracked line that would lose a ligature to the letter-spacing is
+  // painted word by word, each as it was measured (#663).
+  if (tracking !== 0 && segments && segments.length > 0 && shapedOtherwise(ctx, line.text)) {
+    renderSegments(ctx, segments, plainX, line.baseline, style, undefined, cjk, tracking, order);
+    return;
+  }
   if (cjk) fillWordsText(ctx, line.text, plainX, line.baseline);
   else ctx.fillText(line.text, plainX, line.baseline);
 }
@@ -527,16 +538,40 @@ function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
   ctx.textBaseline = onBaseline ? 'alphabetic' : 'middle';
   ctx.font = block.bulletFontString;
   const y = block.bulletBaselineY ?? block.bulletY ?? firstLine.baseline;
-  fillFlowText(ctx, block.bulletText, block.bulletOffsetX, y);
+  // A marker of a right-to-left item reads in its direction (#664).
+  const put = (text: string, x: number): void => {
+    if (block.bulletDirection) fillMarkerRuns(ctx, text, x, y, block.bulletDirection);
+    else fillFlowText(ctx, text, x, y);
+  };
+  put(block.bulletText, block.bulletOffsetX);
   // Ordered-list separator styled apart from the number (own font/colour).
   if (block.separatorText && block.separatorX !== undefined) {
     ctx.fillStyle = block.separatorColor ?? block.bulletColor ?? block.color;
     ctx.font = block.separatorFontString ?? block.bulletFontString;
-    fillFlowText(ctx, block.separatorText, block.separatorX, y);
+    put(block.separatorText, block.separatorX);
     // The prefix run before the number, in the separator's style.
-    if (block.prefixText && block.prefixX !== undefined) fillFlowText(ctx, block.prefixText, block.prefixX, y);
+    if (block.prefixText && block.prefixX !== undefined) put(block.prefixText, block.prefixX);
   }
   ctx.restore();
+}
+
+/**
+ * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
+ * `x`, its left edge in the flow: its runs (`markerRuns`, one bidi level
+ * each) painted one after the other along the flow's x axis, each
+ * advancing by its own width, a right-to-left one with the context set
+ * right to left so its brackets are mirrored. The runs come in visual
+ * order, from the sheet's left; a mirrored flow's x axis runs from the
+ * sheet's right, so there they are painted last to first.
+ */
+function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, direction: 'rtl' | 'rtl-arabic'): void {
+  const runs = markerRuns(text, direction);
+  if (mirroredPaintActive()) runs.reverse();
+  let at = x;
+  for (const run of runs) {
+    paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y));
+    if (runs.length > 1) at += ctx.measureText(run.text).width;
+  }
 }
 
 /** A paragraph's drop cap (#623) on its baseline, and an opening mark

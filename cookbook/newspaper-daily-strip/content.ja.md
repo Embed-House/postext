@@ -28,19 +28,6 @@ otto: ふむ。しかもほとんど新品だ。
 
 # 流氷の上の十の冬 {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: おはよう、オットー！　クロワッサンひとつください。
-otto: はいよ！
-::panel{art=po2}
-otto: 焼きたてだよ！
-::panel{art=po3}
-pip: もう少し小さいのある？
-::panel{art=po4}
-sfx: パクッ
-otto: ほら。小さくなった。
-:::
-
 :::paragraphs{style="byline"}
 文化部　ルース・オカフォー
 :::
@@ -61,7 +48,7 @@ otto: ほら。小さくなった。
 
 二人のこれからは？「オットーがスケートを習う」とバーロウ。「本人は楽しめないでしょうね」
 
-## 数字で見るピップとオットー
+## ピップとオットーの数字
 
 :::paragraphs{style="flush"}
 2016年10月からの毎日の漫画**2516**本。日曜版の半ページ**520**回。新聞**11**紙、言語**6**つ。蝶ネクタイ**1**本。
@@ -103,4 +90,17 @@ otto: ほら。小さくなった。
 
 :::paragraphs{style="imprint"}
 本文はNoto Serif JPとNoto Sans JP、写植はZen AntiqueとDela Gothic One（SIL OFL）。絵は拡散モデルで生成。
+:::
+
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: おはよう、オットー！　クロワッサンひとつください。
+otto: はいよ！
+::panel{art=po2}
+otto: 焼きたてだよ！
+::panel{art=po3}
+pip: もう少し小さいのある？
+::panel{art=po4}
+sfx: パクッ
+otto: ほら。小さくなった。
 :::

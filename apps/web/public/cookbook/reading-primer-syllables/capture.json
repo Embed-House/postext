@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "reading-primer-syllables",
-  "sourceHash": "f577d38699441e742fc12f873fa529d4a7291f67a42ba3b4cf6b447bff37ae50",
+  "sourceHash": "7f6001d29f52cdd6999670e75c6cbb0f85c3f3fc0a43269d4f79816ba1efee5d",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.844Z",
+  "capturedAt": "2026-10-10T20:25:00.246Z",
   "variants": {
     "es": {
-      "hash8": "fff1fa40",
-      "vdtHash": "71ff6a45cde360bb78bb139b6683d7c32e0461ae",
+      "hash8": "45e9e6b8",
+      "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
       "timings": {
-        "importMs": 125,
-        "fontsMs": 38,
+        "importMs": 180,
+        "fontsMs": 41,
         "buildMs": 25,
-        "totalMs": 766,
+        "totalMs": 838,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Playpen Sans"
         ],
         "pages": 3,
-        "ownLines": 176
+        "ownLines": 177
       },
       "pages": [
         {
@@ -49,7 +49,7 @@
           "h": 1238,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 55608,
+          "bytes": 55698,
           "alt": "Página de apertura 37: Mm."
         },
         {
@@ -99,7 +99,7 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 284595,
+        "bytes": 284649,
         "folio": "6010a127"
       },
       "detected": {
@@ -246,7 +246,7 @@
           "resourceTypes",
           "tableStyles"
         ],
-        "configLeaves": 623,
+        "configLeaves": 624,
         "designElements": 21,
         "directives": [
           ":::paragraphs",

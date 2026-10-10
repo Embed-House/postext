@@ -91,12 +91,15 @@ export function directRuns<R extends Run>(
   base: 'ltr' | 'rtl',
   mirrored: boolean,
   widthOf: (run: R, text: string) => number,
+  /** The text belongs to an Arabic-script document: a number that opens
+   *  it reads as an Arabic one (`BidiOptions.arabicNumbers`, #665). */
+  arabicNumbers = false,
 ): DirectedRuns<R> | undefined {
   let text = '';
   for (const r of runs) text += r.text;
   if (text.length === 0) return undefined;
   if (base === 'ltr' && !needsBidi(text)) return undefined;
-  const par = resolveParagraph(text, base);
+  const par = resolveParagraph(text, base, undefined, arabicNumbers ? { arabicNumbers: true } : undefined);
   const levels = lineLevels(par);
   let odd = false;
   let mixed = false;
@@ -152,11 +155,12 @@ export function directDesignTextBlock(
   base: 'ltr' | 'rtl',
   mirrored: boolean,
   trackingPx = 0,
+  arabicNumbers = false,
 ): void {
   if (base === 'rtl') block.direction = 'rtl';
   for (const line of block.lines) {
     const runs: VDTDesignTextRun[] = line.runs ?? [{ text: line.text, fontString: block.fontString, width: line.width }];
-    const directed = directRuns(runs, base, mirrored, (r, t) => Math.max(0, flowTextWidth(t, r.fontString) + trackingPx * graphemeCount(t)));
+    const directed = directRuns(runs, base, mirrored, (r, t) => Math.max(0, flowTextWidth(t, r.fontString) + trackingPx * graphemeCount(t)), arabicNumbers);
     if (!directed) continue;
     line.runs = directed.runs;
     if (directed.order) line.order = directed.order;

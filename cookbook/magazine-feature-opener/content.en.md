@@ -5,7 +5,7 @@ subtitle: "Winter 2026"
 
 # The Lake That Keeps Time {kicker="Climate · Field report" standfirst="For a hundred and fifteen winters, one family has written down the day their lake froze and the day it let go. Their notebooks are now one of the longest climate records in the mountains." byline="Words by Ingrid Solberg" credit="Late October, before the freeze · Photograph: Ales Krivec, CC0"}
 
-The notebook lives in a biscuit tin on the kitchen dresser, between the matches and the parish calendar. It is the fourth of its kind. The first three are in the regional archive now, wrapped in acid-free paper, but Hanna Brenner still prefers the tin. “The archive asked for this one as well,” she says, lifting the lid. “I told them we are still using it.”
+The notebook lives in a biscuit tin on the kitchen dresser, between the box of matches and the parish calendar. It is the fourth of its kind. The first three are in the regional archive now, wrapped in acid-free paper, but Hanna Brenner still prefers the tin. “The archive asked for this one as well,” she says, lifting the lid. “I told them we are still using it.”
 
 Her great-grandfather ran the ferry across the lake from 1906, and he began the record for a practical reason: a man who rows passengers over water needs to know when the water will carry a sledge instead. On the ninth of December 1911 he wrote, in pencil, *Frozen. All of it.* On the fourth of April he noted that the ice had gone out overnight, with a noise “like a door slammed somewhere in the mountains”. Every winter since, someone in the family has kept up the record, one line in pencil for every year.
 
@@ -47,11 +47,11 @@ Lind drills through both every week of the winter. The cores come up banded like
 
 For the first fifty years of the record, the lake stayed frozen for an average of 118 days a winter. Since 1991 the average has been 87. The freeze now comes about a fortnight later than it did in the ferryman’s time, and the ice goes out more than two weeks earlier. The change has not been smooth. Some winters of the 1960s, and again the winter of 2010, were as long as any in the notebooks. But the open winters are new. In 2007 and again in 2020 the lake never froze across at all, and the family wrote a single word for the year: *open*.
 
-The winter of 1944 nearly went unrecorded. The ferryman’s son was away at the war, and the dates for that year are in another hand, small and upright, with a note in the margin: *kept by his mother*. She had written them on the back of a ration card and copied them in when he came home. Lind has checked them against the weather station in the next valley. They are, she says, as good as any in the notebooks.
+The winter of 1944 nearly went unrecorded. The ferryman’s son was away at the war, and the dates for that year are in another hand, small and upright, with a note in the margin: *kept by his mother*. She had written them on the back of a ration card and copied them in when he came home. Lind has checked them against the weather station in the next valley. They are, she says, as good as the rest.
 
 ::resource{id="thaw"}
 
-Lind is careful about what one lake can say. A single record is a local story: the valley has its own winds, and the lake its own depth and shape. But the notebooks agree with hundreds of other lakes across the northern hemisphere, from Finland to Japan, where the ice seasons have shortened by weeks over the past century. “I trust it because the method never changed,” she says. “A person stood on the same jetty and looked at the same water.”
+Lind is careful about what one lake can tell us. A single record is a local story: the valley has its own winds, and the lake its own depth and shape. But the notebooks agree with hundreds of other lakes across the northern hemisphere, from Finland to Japan, where the ice seasons have shortened by weeks over the past century. “I trust it because the method never changed,” she says. “A person stood on the same jetty and looked at the same water.”
 
 She has added instruments of her own. A chain of temperature loggers hangs from a buoy over the deepest part of the lake, reading every fifteen minutes from the surface to the floor, and a camera on the church tower photographs the ice at noon each day. But when she sets them beside the notebooks, the dates hold up: the family has never been more than a day or two from what the loggers record.
 
@@ -59,7 +59,7 @@ She has added instruments of her own. A chain of temperature loggers hangs from 
 
 The ice rarely leaves quietly. Through March the sun works on it from above and warmer streams from below, and the black ice rots into long vertical crystals, candle ice, that chime against each other when the wind moves them. Then a warm rain or a south wind breaks the sheet, and within a day or two the surface is open. The old fishermen claimed they could hear it happen from the village.
 
-The date matters to more than the ferry. The spring bloom of algae, which feeds everything else in the lake, starts when the ice breaks up and sunlight pours into the water. Perch spawn in the shallows and midges hatch on a timetable that the ice sets. When ice-out moves earlier, those timetables can drift apart, and a young fish may hatch into water whose food has already come and gone.
+The date matters to far more than the ferry. The spring bloom of algae, which feeds all the other life in the lake, starts when the ice breaks up and sunlight pours into the water. Perch spawn in the shallows and midges hatch on a timetable that the ice sets. When ice-out moves earlier, those timetables can drift apart, and a young fish may hatch into water whose food has already come and gone.
 
 :::callout{type="numbers" title="In numbers"}
 :::columns{count=3 breaks="3,5"}
@@ -99,7 +99,7 @@ Last winter the lake froze on the twenty-first of December and opened again on t
 
 **Shore ice.** The ice along the edge is the first to form and the first to go. Springs, reeds and the warmth of the ground weaken it, and by March a strip of open water, the moat, often separates the sheet from the land. You can walk out on good ice and find that you cannot walk back.
 
-**Candle ice.** In spring the sun rots the black ice along the boundaries of its crystals. The sheet can still look solid while it has become a bundle of loose vertical rods that give way under a boot. When the surface turns grey and granular, and the rods chime in the wind, stay on the shore.
+**Candle ice.** In spring the sun rots the black ice along the seams of its crystals. The sheet can still look solid while it has become a bundle of loose vertical rods that give way under a boot. When the surface turns grey and granular, and the rods chime in the wind, stay on the shore.
 
 Never judge ice by its colour alone. Measure it every few steps, carry a pair of ice picks round your neck, and ask the people who live by the shore. :chip[ ]{style="end"}
 

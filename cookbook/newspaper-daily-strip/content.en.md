@@ -28,19 +28,6 @@ otto: Hm. Nearly new, too.
 
 # Ten winters on the floe {style="inside"}
 
-:::strip{split="* | * | * | *" span=page placement=bottom}
-::panel{art=po1}
-pip: Morning, Otto! One croissant, please.
-otto: Coming right up!
-::panel{art=po2}
-otto: Fresh out of the oven!
-::panel{art=po3}
-pip: Have you got a smaller one?
-::panel{art=po4}
-sfx: CHOMP
-otto: There. Smaller.
-:::
-
 :::paragraphs{style="byline"}
 By Ruth Okafor · Arts reporter
 :::
@@ -105,3 +92,15 @@ Write to Pip and Otto at the Despatch, 12 Bridge Street, Corrington, or by email
 Set in Newsreader and Archivo Narrow; lettered in Comic Neue and Bangers (SIL OFL). Pictures generated with diffusion models.
 :::
 
+:::strip{split="* | * | * | *" span=page}
+::panel{art=po1}
+pip: Morning, Otto! One croissant, please.
+otto: Coming right up!
+::panel{art=po2}
+otto: Fresh out of the oven!
+::panel{art=po3}
+pip: Have you got a smaller one?
+::panel{art=po4}
+sfx: CHOMP
+otto: There. Smaller.
+:::

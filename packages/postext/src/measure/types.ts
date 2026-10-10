@@ -178,6 +178,13 @@ export interface MeasureBlockOptions {
    *  the line's start: the spans' `labelTab` spaces are widened so the
    *  entry's text starts there. */
   labelColumnPx?: number;
+  /** The block's text opens with a number the layout wrote (a heading's
+   *  number and its separator, `一、`), this many UTF-16 units long (#679):
+   *  a rule that reads the characters on both sides of a mark (the 、 of
+   *  二、三日 set solid, JLReq §3.1.3) does not read across its end, so
+   *  二、八月の行事 keeps the space after its number. Joins the cache key
+   *  only when set. */
+  labelLength?: number;
   /** The paragraph's tab stops (#622, `measure/tabs.ts`): where its tabs
    *  (`InlineSpan.tab`) send the text after them. A paragraph that holds a
    *  tab is set line by line, whatever {@link optimal} says. Unset: a tab

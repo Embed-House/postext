@@ -144,7 +144,10 @@ const config = () => ({
     italicColor: col('ink'), // *ohi* in ink, not in the defaults' bark
     referenceColor: col('ink'), // the book cites nothing; a :ref added later prints in ink too
     firstLineIndent: mm(5), indentAfterHeading: false,
-    maxWordSpacing: 1.45, // the default 2 lets 14 lines stretch past 1.45×; 3 still do, to 1.58×
+    // Word spaces from 0.8 to 1.45 of the face's own, and up to 8 ‰ of tracking for a line
+    // that would pass either limit. The default maximum of 2 lets 14 lines stretch past
+    // 1.45×; 1.45 alone left three, to 1.58×, beside lines squeezed towards the default 0.6.
+    minWordSpacing: 0.8, maxWordSpacing: 1.45, maxJustifyTracking: 8,
   },
   headings: {
     fontFamily: DISPLAY, fontWeight: 400, // the designs paint the titles: no Open Sans to load

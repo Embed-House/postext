@@ -1,4 +1,4 @@
-import type { ResolvedBodyTextConfig, OrderedListsConfig, OrderedListLevelConfig, ResolvedOrderedListsConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, OrderedListNumberWidth, ColorValue, Dimension } from '../types';
+import type { ResolvedBodyTextConfig, OrderedListsConfig, OrderedListLevelConfig, ResolvedOrderedListsConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, OrderedListNumberAlign, OrderedListNumberWidth, ColorValue, Dimension } from '../types';
 import { dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
 import { parseNumberFormat, toOrderedListNumberFormat } from '../numbering';
 import {
@@ -20,6 +20,7 @@ const DEFAULT_ORDERED_LIST_FONT_WEIGHT = 700;
 const DEFAULT_ORDERED_LIST_COLOR: ColorValue = { ...DEFAULT_MAIN_COLOR };
 const DEFAULT_ORDERED_SEPARATOR_GAP: Dimension = { value: 0, unit: 'em' };
 const DEFAULT_ORDERED_NUMBER_WIDTH: OrderedListNumberWidth = 'run';
+const DEFAULT_ORDERED_NUMBER_ALIGN: OrderedListNumberAlign = 'end';
 
 /** A list `numberFormat` in the list vocabulary, whatever vocabulary it was
  *  written in (`decimal`, `roman-lower`, `i`… — see `parseNumberFormat`);
@@ -98,6 +99,7 @@ export function resolveOrderedListsConfig(
     itemSpacing: partial?.itemSpacing ?? DEFAULT_LIST_ITEM_SPACING,
     snapTopToGrid: partial?.snapTopToGrid ?? DEFAULT_LIST_SNAP_TOP_TO_GRID,
     numberWidth: partial?.numberWidth === 'level' ? 'level' : DEFAULT_ORDERED_NUMBER_WIDTH,
+    numberAlign: partial?.numberAlign === 'start' ? 'start' : DEFAULT_ORDERED_NUMBER_ALIGN,
     hangingIndent: partial?.hangingIndent ?? DEFAULT_LIST_HANGING_INDENT,
     levels,
     separatorFontFamily: partial?.separatorFontFamily ?? generalFont,
@@ -123,6 +125,7 @@ export const DEFAULT_ORDERED_LISTS_STATIC = {
   itemSpacing: DEFAULT_LIST_ITEM_SPACING,
   snapTopToGrid: DEFAULT_LIST_SNAP_TOP_TO_GRID,
   numberWidth: DEFAULT_ORDERED_NUMBER_WIDTH,
+  numberAlign: DEFAULT_ORDERED_NUMBER_ALIGN,
   hangingIndent: DEFAULT_LIST_HANGING_INDENT,
   separatorGap: DEFAULT_ORDERED_SEPARATOR_GAP,
 };
@@ -198,6 +201,10 @@ export function stripOrderedListsDefaults(
   }
   if (lists.numberWidth !== undefined && lists.numberWidth !== DEFAULT_ORDERED_NUMBER_WIDTH) {
     result.numberWidth = lists.numberWidth;
+    hasOverride = true;
+  }
+  if (lists.numberAlign !== undefined && lists.numberAlign !== DEFAULT_ORDERED_NUMBER_ALIGN) {
+    result.numberAlign = lists.numberAlign;
     hasOverride = true;
   }
   if (lists.hangingIndent !== undefined && lists.hangingIndent !== DEFAULT_LIST_HANGING_INDENT) {

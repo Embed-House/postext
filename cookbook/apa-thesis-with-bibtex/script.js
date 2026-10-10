@@ -89,6 +89,7 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('accent'),
     textAlign: 'justify', firstLineIndent: mm(6), indentAfterHeading: false,
     hyphenation: { enabled: true }, optimalLineBreaking: true,
+    minWordSpacing: 0.8, // no word space closes to less than four fifths
     avoidWidows: true, avoidOrphans: true, avoidRunts: true,
   },
   headings: {

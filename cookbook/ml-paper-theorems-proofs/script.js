@@ -272,9 +272,9 @@ function pipeline() { // 130 × 64 mm: RLHF on the left, DPO on the right
   const note = (x, y, lines, color, anchor) => lines.map((line, i) => words(x, y + i * 3, line,
     { size: 2.3, color, anchor })).join('');
   return svg(MEASURE, 64, title(0, 'RLHF', 'Reinforcement learning from human feedback', 'ochre')
-    + preferences(0, 14, 32)
-    + arrow([[33, 26.5], [48, 26.5]], 'ochre') + note(40.5, 22.4, ['maximum'], 'ochre', 'middle')
-    + note(40.5, 31.4, ['likelihood'], 'ochre', 'middle')
+    + preferences(0, 14, 35) // 35 mm: the prompt's first line ends 32.6 mm into the box
+    + arrow([[36, 26.5], [48, 26.5]], 'ochre') + note(42, 22.4, ['maximum'], 'ochre', 'middle')
+    + note(42, 31.4, ['likelihood'], 'ochre', 'middle')
     + model(49, 22, 25, 'reward model', 'ochre') + model(49, 50, 25, 'LM policy', 'ochre')
     + arrow([[55, 31.5], [55, 49]], 'ochre')
     + note(53.4, 41.6, ['label rewards,', 'reinforcement', 'learning'], 'ochre', 'end')

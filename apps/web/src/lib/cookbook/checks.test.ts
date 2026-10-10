@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cardProblems, sidesOf, spreadsOf } from "../../../scripts/cookbook/cards.ts";
 import { detect, detectFeatures, runChecks } from "../../../scripts/cookbook/checks.ts";
 import type { CheckInput, EpubRecord, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
+import { mathErrorsOf } from "../../../scripts/cookbook/lib/probe.js";
 import { loadRegistry } from "./registry.ts";
 import type { ComposedPen, RecipeMeta } from "./types.ts";
 
@@ -409,5 +410,52 @@ describe("C31: config values the engine replaced (#468)", () => {
   it("passes a capture without config warnings, or from an engine that records none", () => {
     expect(of("C31", runChecks(input({ facts: facts({ configWarnings: [] }) })))).toEqual([]);
     expect(of("C31", runChecks(input()))).toEqual([]);
+  });
+});
+
+describe("C32: a formula the maths engine could not set (#683)", () => {
+  // The line segments of a page carry each formula's render; a failed one
+  // keeps MathJax's message.
+  const seg = (tex: string, error?: string) => ({ kind: "math", text: "\uFFFC", width: 12, mathRender: { tex, widthPx: 12, heightPx: 15, paths: [{ d: "M0 0" }], ...(error ? { error } : {}) } });
+  const INSTANCEOF = "Right-hand side of 'instanceof' is not an object";
+
+  it("reads the failed formulas off the pages, wherever their line is, once per page", () => {
+    const pages = [
+      {
+        n: 4,
+        page: {
+          columns: [{ blocks: [
+            { type: "paragraph", lines: [{ segments: [{ kind: "text", text: "where " }, seg("\\beta", INSTANCEOF)] }, { segments: [seg("\\beta", INSTANCEOF), seg("x^2")] }] },
+            { type: "callout", children: [{ lines: [{ segments: [seg("\\frac{a}{b", "Missing close brace")] }] }] },
+          ] }],
+          floats: [{ resourceBlock: { captionLines: [{ segments: [seg("\\pi_r", INSTANCEOF)] }], bitmap: new Uint8Array(4) } }],
+        },
+      },
+      { n: 5, page: { columns: [{ blocks: [{ lines: [{ segments: [seg("\\beta", INSTANCEOF)] }] }] }] } },
+      { n: 6, page: { columns: [{ blocks: [{ lines: [{ segments: [seg("e^{i\\pi}")] }] }] }] } },
+    ];
+    expect(mathErrorsOf(pages)).toEqual([
+      { page: 4, tex: "\\beta", error: INSTANCEOF },
+      { page: 4, tex: "\\frac{a}{b", error: "Missing close brace" },
+      { page: 4, tex: "\\pi_r", error: INSTANCEOF },
+      { page: 5, tex: "\\beta", error: INSTANCEOF },
+    ]);
+  });
+
+  it("fails with the formula, its page and the message, one line per message", () => {
+    const mathErrors = [
+      { page: 2, tex: "\\pi^\\text{SFT}", error: INSTANCEOF },
+      { page: 4, tex: "\\beta", error: INSTANCEOF },
+      { page: 5, tex: "\\begin{aligned}\n\\nabla_\\theta \\mathcal{L}_\\text{DPO}(\\pi_\\theta; \\pi_\\text{ref}) &= 0\n\\end{aligned}", error: "Invalid LaTeX" },
+    ];
+    expect(of("C32", runChecks(input({ facts: facts({ mathErrors }) })))).toEqual([
+      { check: "C32", severity: "fail", detail: `the formula $\\pi^\\text{SFT}$ on page 2 is set as a red box: ${INSTANCEOF} (and 1 more with the same message)` },
+      { check: "C32", severity: "fail", detail: "the formula $\\begin{aligned} \\nabla_\\theta \\mathcal{L}_\\text{DPO}(\\pi_\\t…$ on page 5 is set as a red box: Invalid LaTeX" },
+    ]);
+  });
+
+  it("passes a capture whose formulas are all set, or from a probe that reports none", () => {
+    expect(of("C32", runChecks(input({ facts: facts({ mathErrors: [] }) })))).toEqual([]);
+    expect(of("C32", runChecks(input()))).toEqual([]);
   });
 });

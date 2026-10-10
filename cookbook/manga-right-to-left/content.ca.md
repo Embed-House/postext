@@ -24,7 +24,7 @@ sora: Porta'l demà.
 :::page{split="38 [44 | *] / 34 / *"}
 ::panel{art=coach}
 sfx: CLAC!
-mori: Ei.
+mori{at="85% 19%"}: Ei.
 mori: Fa una hora que l'institut és tancat.
 sora{tail=bottom}: M-Mori-sensei…
 ::panel{art=smile}

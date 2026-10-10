@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "sist02-research-paper",
-  "sourceHash": "c2b83eed84e5f56655cdcc9a55665db325bc1034525d4415ca2ff395bb1455f4",
+  "sourceHash": "225ff080633517e73479b74eed7f6ed0321b471e49112d26ac3b8c758d73febf",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.664Z",
+  "capturedAt": "2026-10-10T20:19:06.267Z",
   "variants": {
     "en": {
-      "hash8": "137b2b6f",
-      "vdtHash": "23ea1c15cac1ae9327a3b09ab42a449364380499",
+      "hash8": "28a03082",
+      "vdtHash": "b15599082b08ed020a8f607cba5431b870f80046",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 274,
-        "buildMs": 113,
-        "totalMs": 1111,
+        "importMs": 538,
+        "fontsMs": 811,
+        "buildMs": 728,
+        "totalMs": 2645,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 179
       },
       "pages": [
         {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106510,
+          "bytes": 106528,
           "alt": "Opening page 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89774,
+          "bytes": 90142,
           "alt": "Page 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -90,12 +90,12 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227174,
+        "bytes": 227101,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32356,
+        "bytes": 32432,
         "folio": "5f42a5f6"
       },
       "detected": {
@@ -211,6 +211,8 @@
           "headingStyles[].numbered",
           "headingStyles[].span",
           "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -288,7 +290,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 301,
+        "configLeaves": 302,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -335,6 +337,7 @@
           "chips",
           "citation-styles",
           "cjk-line-breaking",
+          "column-balancing",
           "cross-references",
           "footnotes",
           "generated-bibliography",
@@ -360,7 +363,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 5,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -381,13 +384,13 @@
       }
     },
     "es": {
-      "hash8": "6f684871",
-      "vdtHash": "827dea1eb5e6ae77c1555fe4790d8c0a09784129",
+      "hash8": "049126f5",
+      "vdtHash": "505453953d470b1cbd63be9b7d48fb7378d996a6",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 269,
-        "buildMs": 109,
-        "totalMs": 3655,
+        "importMs": 225,
+        "fontsMs": 285,
+        "buildMs": 149,
+        "totalMs": 1262,
         "builds": 1
       },
       "specimen": {
@@ -410,7 +413,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 2,
-        "ownLines": 176
+        "ownLines": 179
       },
       "pages": [
         {
@@ -421,7 +424,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106510,
+          "bytes": 106528,
           "alt": "Página de apertura 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -432,7 +435,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89654,
+          "bytes": 89650,
           "alt": "Página 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -460,12 +463,12 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227074,
+        "bytes": 226992,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32426,
+        "bytes": 32503,
         "folio": "5f42a5f6"
       },
       "detected": {
@@ -581,6 +584,8 @@
           "headingStyles[].numbered",
           "headingStyles[].span",
           "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -658,7 +663,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 301,
+        "configLeaves": 302,
         "designElements": 12,
         "directives": [
           ":::callout",
@@ -705,6 +710,7 @@
           "chips",
           "citation-styles",
           "cjk-line-breaking",
+          "column-balancing",
           "cross-references",
           "footnotes",
           "generated-bibliography",
@@ -730,7 +736,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 4,
         "looseLines": {
           "count": 0,
           "share": 0,

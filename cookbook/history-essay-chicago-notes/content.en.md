@@ -3,13 +3,13 @@ title: "Railway Time"
 author: "Clara Whitcombe"
 ---
 
-# Railway Time: How British Towns Came to Keep London's Hour {#essay kicker="Essays in the History of Technology · No. 14" years="1840–1880" byline="Clara Whitcombe"}
+# Railway Time: How British Towns Came to Keep London’s Hour {#essay kicker="Essays in the History of Technology · No. 14" years="1840–1880" byline="Clara Whitcombe"}
 
-In the autumn of 1840 a traveller who left Paddington on the Great Western Railway carried two times with him. The timetable in his pocket gave the hours of London; the church clock at Bath or Bristol, when he arrived, gave the hours of the place, a few minutes behind. Bristol stood a little over two and a half degrees west of Greenwich, and its noon, the moment the sun crossed the local meridian, came about ten minutes after London's. For centuries the difference had not mattered. A stagecoach that took a day to cover the distance lost more than ten minutes to a lame horse. A train that covered it in four hours could not.[^frame]
+In the autumn of 1840 a traveller who left Paddington on the Great Western Railway carried two times with him. The timetable in his pocket gave the hours of London; the church clock at Bath or Bristol, when he arrived, gave the hours of the place, a few minutes behind. Bristol stood a little over two and a half degrees west of Greenwich, and its noon, the moment the sun crossed the local meridian, came about ten minutes after London’s. For centuries the difference had not mattered. A stagecoach that took a day to cover the distance lost more than ten minutes to a lame horse. A train that covered it in four hours could not.[^frame]
 
-This essay follows the forty years in which that difference was settled, from the Great Western's first timetables to the act of Parliament that made Greenwich time the legal time of Great Britain in 1880. The story has usually been told as a triumph of engineering over custom. It reads better as a negotiation, in which railway companies, telegraph companies, town councils and courts each settled the question for their own purposes, and not always in the same direction.
+This essay follows the forty years in which that difference was settled, from the Great Western’s first timetables to the act of Parliament that made Greenwich time the legal time of Great Britain in 1880. The story has usually been told as a triumph of engineering over custom. It reads better as a negotiation, in which railway companies, telegraph companies, town councils and courts each settled the question for their own purposes, and not always in the same direction.
 
-[^frame]: For the railway's effect on the sense of time and distance, see [@schivelbusch1986, chap. 3]
+[^frame]: For the railway’s effect on the sense of time and distance, see [@schivelbusch1986, chap. 3]
 
 ## The companies decide
 
@@ -37,7 +37,7 @@ The holdouts were not cranks. Local mean time followed the sun, and the sun stil
 
 ## The courts decline
 
-The law was slower than the towns. Statutes that named a time meant the time of the place, and that time was local mean time. In 1858 a trial at Dorchester began at ten by the court's clock, which kept London time, and judgment was given against a defendant who arrived at ten by the time of the town, some minutes later. On appeal the judges held that the hour meant was the local one, and the judgment was set aside.[@howse1980, 113] For twenty more years a contract, a polling station or a public house could be bound by one time while the trains ran by another.
+The law was slower than the towns. Statutes that named a time meant the time of the place, and that time was local mean time. In 1858 a trial at Dorchester began at ten by the court’s clock, which kept London time, and judgment was given against a defendant who arrived at ten by the time of the town, some minutes later. On appeal the judges held that the hour meant was the local one, and the judgment was set aside.[@howse1980, 113] For twenty more years a contract, a polling station or a public house could be bound by one time while the trains ran by another.
 
 The Statutes (Definition of Time) Act of 1880 closed the gap. It declared that any expression of time in an act of Parliament, deed or other legal instrument meant, unless stated otherwise, Greenwich mean time in Great Britain and Dublin mean time in Ireland.[@howse1980, 114]
 

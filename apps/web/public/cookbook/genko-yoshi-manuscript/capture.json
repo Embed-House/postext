@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "genko-yoshi-manuscript",
-  "sourceHash": "27578505565c9ee593147090cc8745675926d7a923062169315210d623c9c75f",
+  "sourceHash": "4f3f2fb0dbb678fad6bf57d9970e8ff87a55ab2cf4d5e527f19d330f9971abca",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.151Z",
+  "capturedAt": "2026-10-10T20:24:01.293Z",
   "variants": {
     "en": {
-      "hash8": "9d52ccc8",
-      "vdtHash": "44dd11cb28f9b492aa1dad48f8afec383a5e7361",
+      "hash8": "a35f53a3",
+      "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 164,
-        "buildMs": 38,
-        "totalMs": 913,
+        "importMs": 599,
+        "fontsMs": 524,
+        "buildMs": 149,
+        "totalMs": 1975,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Noto Sans JP"
         ],
         "pages": 3,
-        "ownLines": 128
+        "ownLines": 131
       },
       "pages": [
         {
@@ -71,7 +71,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62236,
+          "bytes": 62164,
           "alt": "Page 3."
         }
       ],
@@ -100,12 +100,12 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155807,
+        "bytes": 155786,
         "pages": 3
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28480
+        "bytes": 28491
       },
       "detected": {
         "apis": [
@@ -118,6 +118,7 @@
         ],
         "configKeys": [
           "bodyText",
+          "bodyText.avoidRunts",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -211,7 +212,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 118,
+        "configLeaves": 119,
         "designElements": 5,
         "directives": [
           ":::paragraphs"
@@ -260,17 +261,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "132f42ff",
-      "vdtHash": "c15ee38025d9a9478cfe194b1993a3483a7a29c6",
+      "hash8": "3f8753f4",
+      "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 152,
-        "buildMs": 45,
-        "totalMs": 906,
+        "importMs": 202,
+        "fontsMs": 203,
+        "buildMs": 42,
+        "totalMs": 1066,
         "builds": 1
       },
       "specimen": {
@@ -291,7 +298,7 @@
           "Noto Sans JP"
         ],
         "pages": 3,
-        "ownLines": 128
+        "ownLines": 131
       },
       "pages": [
         {
@@ -324,7 +331,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62236,
+          "bytes": 62164,
           "alt": "Página 3."
         }
       ],
@@ -353,12 +360,12 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155806,
+        "bytes": 155780,
         "pages": 3
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28514
+        "bytes": 28524
       },
       "detected": {
         "apis": [
@@ -371,6 +378,7 @@
         ],
         "configKeys": [
           "bodyText",
+          "bodyText.avoidRunts",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -464,7 +472,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 118,
+        "configLeaves": 119,
         "designElements": 5,
         "directives": [
           ":::paragraphs"
@@ -513,7 +521,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

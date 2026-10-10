@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-book-crossref-chapters",
-  "sourceHash": "4465626bf373d262ac3edf2d95ffdd727cbcafe426dc9c6b01e84420ee20cd25",
+  "sourceHash": "edfa24fe38e4b1f68e557273f768256b950655924bca93026495c3bebdbeea85",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.903Z",
+  "capturedAt": "2026-10-10T18:44:48.813Z",
   "variants": {
     "en": {
-      "hash8": "89757f80",
-      "vdtHash": "e1f58045d77de2db248f5072a9578a5e8b54f424",
+      "hash8": "b1f2d412",
+      "vdtHash": "0543fdef4236a60e5542ae5f48b6012823cfabc9",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 64,
-        "buildMs": 96,
-        "totalMs": 893,
+        "importMs": 427,
+        "fontsMs": 213,
+        "buildMs": 447,
+        "totalMs": 2377,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1309,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 117824,
+          "bytes": 117798,
           "alt": "Opening page 3: 1 The daily load."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1309,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 83808,
+          "bytes": 83738,
           "alt": "Opening page 6: 2 The array. Figure 2.1. Peak sun hours a day by month at 42° N, panels tilted at 60°. December is the design month."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1309,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 87136,
+          "bytes": 87148,
           "alt": "Page 7: 2.2 Losses between panel and socket. Table 2.1. Losses between the panels and the sockets, multiplied."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1309,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 111444,
+          "bytes": 111342,
           "alt": "Opening page 8: 3 The battery bank."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1309,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 80486,
+          "bytes": 80346,
           "alt": "Page 9: 3.3 A week of cloud. Table 3.1. Three battery chemistries for 3,480 Wh of usable energy · Figure 3.1. State of charge of the 5.1 kWh bank over five December days: clear, three overcast, clear. Shaded: night. Dashed: the 20% floor."
         }
       ],
@@ -178,12 +178,12 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 445470,
+        "bytes": 445609,
         "pages": 9
       },
       "sandbox": {
         "file": "technical-book-crossref-chapters.postext",
-        "bytes": 66925,
+        "bytes": 66948,
         "folio": "e5e8575d"
       },
       "detected": {
@@ -467,21 +467,27 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 1,
-          "share": 0.0128,
-          "worst": 2.4
+          "count": 0,
+          "share": 0,
+          "worst": 1.76
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "1160f2fb",
-      "vdtHash": "b4b0b8a6a796295037cf26db3e4cb19c2f61731b",
+      "hash8": "cca6440d",
+      "vdtHash": "3496047902b17398d7ec2cc8e8bfc5df89f0ccbf",
       "timings": {
         "importMs": 167,
-        "fontsMs": 64,
-        "buildMs": 98,
-        "totalMs": 898,
+        "fontsMs": 75,
+        "buildMs": 101,
+        "totalMs": 977,
         "builds": 1
       },
       "specimen": {
@@ -602,7 +608,7 @@
           "h": 1309,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 85652,
+          "bytes": 85636,
           "alt": "Página 9: 3.3 Una semana de nubes. Tabla 3.1. Tres químicas de batería para 3480 Wh de energía útil · Figura 3.1. Estado de carga del banco de 5,1 kWh durante cinco días de diciembre: despejado, tres nublados, despejado. Sombreado: noche. Discontinua: el suelo del 20 %."
         }
       ],
@@ -642,12 +648,12 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 453799,
+        "bytes": 453829,
         "pages": 9
       },
       "sandbox": {
         "file": "technical-book-crossref-chapters.postext",
-        "bytes": 68239,
+        "bytes": 68241,
         "folio": "e5e8575d"
       },
       "detected": {
@@ -935,7 +941,13 @@
           "share": 0,
           "worst": 1.73
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "balloon-kinds",
-  "sourceHash": "806db0074c5ad20760f25b012e1f3e68491c251bdc36f0a616e41fbf40f4a525",
+  "sourceHash": "e0dcea5ca8a27f5dd6610abbccdbeb3ce4d7e18d9ce9c8752023624e76897640",
   "engine": {
-    "postext": "1.25.1",
-    "postextPdf": "1.25.1",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T15:13:10.676Z",
+  "capturedAt": "2026-10-10T19:19:11.289Z",
   "variants": {
     "en": {
-      "hash8": "497f2b00",
+      "hash8": "d421586e",
       "vdtHash": "aa6038474d3814b65b099c7673ca550da790f2ac",
       "timings": {
-        "importMs": 994,
-        "fontsMs": 188,
-        "buildMs": 3604,
-        "totalMs": 13015,
+        "importMs": 1060,
+        "fontsMs": 190,
+        "buildMs": 3178,
+        "totalMs": 13581,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 994234,
+        "bytes": 994232,
         "pages": 2
       },
       "sandbox": {
@@ -284,17 +284,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 3178 ms (warning at 1.5 s)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "88886a86",
+      "hash8": "52691b1a",
       "vdtHash": "d92725194a04f0c55e91328d6ba3e31a2b0605aa",
       "timings": {
-        "importMs": 974,
-        "fontsMs": 208,
-        "buildMs": 3420,
-        "totalMs": 5636,
+        "importMs": 998,
+        "fontsMs": 210,
+        "buildMs": 3058,
+        "totalMs": 6046,
         "builds": 1
       },
       "specimen": {
@@ -561,17 +567,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 3058 ms (warning at 1.5 s)"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "f812ef69",
+      "hash8": "7c28ab68",
       "vdtHash": "b6e9f48a51be5d712f6a516304ef8d349f628a67",
       "timings": {
-        "importMs": 277,
-        "fontsMs": 152,
-        "buildMs": 952,
-        "totalMs": 2045,
+        "importMs": 317,
+        "fontsMs": 188,
+        "buildMs": 947,
+        "totalMs": 2200,
         "builds": 1
       },
       "specimen": {
@@ -842,13 +854,13 @@
       }
     },
     "zh": {
-      "hash8": "df47389b",
+      "hash8": "b87553c2",
       "vdtHash": "e5d8d8201d02170f703ecfc8d5157acf8a7fc672",
       "timings": {
-        "importMs": 255,
-        "fontsMs": 341,
-        "buildMs": 1077,
-        "totalMs": 2207,
+        "importMs": 287,
+        "fontsMs": 428,
+        "buildMs": 1148,
+        "totalMs": 2437,
         "builds": 1
       },
       "specimen": {
@@ -1120,13 +1132,13 @@
       }
     },
     "ar": {
-      "hash8": "5aa1f282",
+      "hash8": "3f0895aa",
       "vdtHash": "5f6b4d44638e4ee94b5f0efa78ce82129df9bb4f",
       "timings": {
-        "importMs": 296,
-        "fontsMs": 159,
-        "buildMs": 934,
-        "totalMs": 1938,
+        "importMs": 416,
+        "fontsMs": 158,
+        "buildMs": 953,
+        "totalMs": 2081,
         "builds": 1
       },
       "specimen": {
@@ -1198,12 +1210,12 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1012844,
+        "bytes": 1012852,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955253
+        "bytes": 955256
       },
       "detected": {
         "apis": [
@@ -1401,13 +1413,13 @@
       }
     },
     "ja": {
-      "hash8": "0fc2b675",
+      "hash8": "38405b82",
       "vdtHash": "0e6ee466ff2c3d5c774c0f76df332dee818e9800",
       "timings": {
-        "importMs": 237,
-        "fontsMs": 392,
-        "buildMs": 661,
-        "totalMs": 3897,
+        "importMs": 283,
+        "fontsMs": 441,
+        "buildMs": 649,
+        "totalMs": 3880,
         "builds": 1
       },
       "specimen": {
@@ -1681,13 +1693,13 @@
       }
     },
     "pt": {
-      "hash8": "9c1d9758",
+      "hash8": "107aaa26",
       "vdtHash": "d590b47ec89fa4eea9cd847a57dabb02f06b39dc",
       "timings": {
-        "importMs": 196,
-        "fontsMs": 101,
-        "buildMs": 1029,
-        "totalMs": 1886,
+        "importMs": 311,
+        "fontsMs": 113,
+        "buildMs": 941,
+        "totalMs": 1924,
         "builds": 1
       },
       "specimen": {

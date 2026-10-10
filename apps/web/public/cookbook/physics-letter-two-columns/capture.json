@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "cc6f7cbecfbc50a250c10a4972adecf8b750fd2c174268c744f27313049da377",
+  "sourceHash": "aa997701def0fb6aadcc9149558bf806cc15cf578dd718ad92cb53bf4068d233",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.664Z",
+  "capturedAt": "2026-10-10T19:18:28.718Z",
   "variants": {
     "en": {
-      "hash8": "a88b5d15",
-      "vdtHash": "eb636f554eb51213b17f991f8a0eff5c817b50bc",
+      "hash8": "5226810d",
+      "vdtHash": "ccc61807386589cdec3b00574c62ed2acb3a74f6",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 137,
-        "buildMs": 154,
-        "totalMs": 1053,
+        "importMs": 533,
+        "fontsMs": 162,
+        "buildMs": 253,
+        "totalMs": 1568,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 250454,
+          "bytes": 250500,
           "alt": "Page 2: II. Observation."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1294,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 217740,
+          "bytes": 217464,
           "alt": "Page 5: VI. Conclusion. TABLE I. Source parameters for GW150914. We report median values with 90% credible intervals that include statistical errors, and systematic errors from averaging the results of different waveform models. Masses are given in the source frame; to convert…"
         }
       ],
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "physics-letter-two-columns.pdf",
-        "bytes": 573206,
+        "bytes": 573257,
         "pages": 5
       },
       "sandbox": {
         "file": "physics-letter-two-columns.postext",
-        "bytes": 150998,
+        "bytes": 151009,
         "folio": "72637274"
       },
       "detected": {
@@ -345,6 +345,7 @@
           ":::callout",
           ":::paragraphs",
           "$$",
+          ":::space",
           ":::bibliography",
           ":::references"
         ],
@@ -423,13 +424,14 @@
           "resources",
           "super-subscripts",
           "title-line-breaks",
-          "unnumbered-headings"
+          "unnumbered-headings",
+          "vertical-space"
         ],
         "suggestedLevel": 3
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 3,
         "looseLines": {
           "count": 2,
           "share": 0.0085,
@@ -440,6 +442,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.13 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

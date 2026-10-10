@@ -89,8 +89,8 @@ const entry = {
 // #region heads: the diary's name on the verso, the place on the recto, folios outside
 const head = (id, content, parity, edge) => ({ kind: 'text', id, content, parity,
   pages: 'body', fontFamily: SANS, fontSize: pt(7.5), letterSpacing: pt(1.5), color: col('muted'),
-  placement: { anchor: { to: 'page', edge }, offset: { x: mm(edge.endsWith('left') ? 16 : -16),
-    y: mm(13) } } });
+  placement: { anchor: { to: 'page', edge }, offset: { y: mm(13), // 'top' centres on the page
+    x: mm(edge.endsWith('left') ? 16 : edge.endsWith('right') ? -16 : 0) } } });
 const header = { elements: [
   head('folio-even', '{pageNumber}', 'even', 'top-left'),
   head('book', 'ROMAZI NIKKI · 1909', 'even', 'top'),

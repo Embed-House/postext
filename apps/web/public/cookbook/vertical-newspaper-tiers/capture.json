@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "a38d2b72950ce732b5a065f17f80082116280aba751a29bb4680f5f87623d21d",
+  "sourceHash": "1c67201c6df7b382051db28df340952b09f0702ec91e847ce3160005b9df0fe5",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:39:44.795Z",
+  "capturedAt": "2026-10-10T20:25:27.230Z",
   "variants": {
     "en": {
-      "hash8": "0db39a53",
-      "vdtHash": "4314e230195b458784bb410c7c41cdfa6b4d9cf0",
+      "hash8": "c19dd2aa",
+      "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 182,
-        "fontsMs": 344,
-        "buildMs": 51,
-        "totalMs": 1124,
+        "importMs": 589,
+        "fontsMs": 1132,
+        "buildMs": 192,
+        "totalMs": 2980,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171282,
+          "bytes": 171090,
           "alt": "Page 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -91,12 +91,12 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379485,
+        "bytes": 379312,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22405,
+        "bytes": 22400,
         "folio": "e5cb273f"
       },
       "detected": {
@@ -337,17 +337,23 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "4fd8bbfb",
-      "vdtHash": "b3f782d917419cebafda94a9a128694b3d931d07",
+      "hash8": "6910860d",
+      "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 329,
-        "buildMs": 52,
-        "totalMs": 1105,
+        "importMs": 209,
+        "fontsMs": 524,
+        "buildMs": 54,
+        "totalMs": 1404,
         "builds": 1
       },
       "specimen": {
@@ -392,7 +398,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171474,
+          "bytes": 171282,
           "alt": "Página 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -421,12 +427,12 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379618,
+        "bytes": 379449,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22433,
+        "bytes": 22428,
         "folio": "e5cb273f"
       },
       "detected": {
@@ -667,7 +673,13 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
