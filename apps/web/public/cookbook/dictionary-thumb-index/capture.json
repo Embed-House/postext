@@ -277,22 +277,11 @@
         "converged": true,
         "iterationCount": 4,
         "looseLines": {
-          "count": 8,
-          "share": 0.0369,
+          "count": 0,
+          "share": 0,
           "worst": 1.7
         },
-        "findings": [
-          {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "8 of 217 justified lines (3.7 %) stretch past 1.7× (worst 1.7×); loosest: p. 1 1.7× “bears against their front surfaces. They are la…”, p. 2 1.7× “ious form and size, anchors obtain the epithets”, p. 2 1.7× “Awning. A cover or canvas canopy suspended by a”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
@@ -563,17 +552,11 @@
         "converged": true,
         "iterationCount": 4,
         "looseLines": {
-          "count": 3,
-          "share": 0.0135,
+          "count": 0,
+          "share": 0,
           "worst": 1.7
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

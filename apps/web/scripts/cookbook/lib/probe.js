@@ -802,7 +802,9 @@ export function facts({ select = 'last', hero = [] } = {}) {
       const ratio = line.justifiedSpaceRatio;
       if (ratio === undefined || line.isLastLine || line.ragged) continue;
       justified++;
-      if (ratio > max) looseLines.push({ page: n, ratio: round(ratio, 0.01), text: (line.text ?? '').trim() });
+      // A line set at the limit (its tracking took the rest) is not past it:
+      // its ratio is the limit give or take the rounding of its widths.
+      if (ratio > max + 1e-6) looseLines.push({ page: n, ratio: round(ratio, 0.01), text: (line.text ?? '').trim() });
       worst = Math.max(worst, ratio);
     }
   }
