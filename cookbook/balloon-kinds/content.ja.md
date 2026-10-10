@@ -14,7 +14,7 @@
 - **心の声** :chip[maya{inner}:]{style="code"} 口に出さない言葉。しっぽなし、灰色の箱。
 - **編集部注** :chip[note:]{style="code"} 小さく、コマの下の隅に。
 - **描き文字** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} 吹き出しなし。白いふち取りの赤い大きな文字を、位置と角度を指定して置く。
-- **画面外** :chip[tomas{tail=end}:]{style="code"} 話者は絵の外にいて、しっぽがコマの端まで伸びる。
+- **画面外** :chip[tomas{tail=start}:]{style="code"} 話者は絵の外にいて、しっぽがコマの端まで伸びる。
 - **位置の固定** :chip[skipper{at="44% 22%"}:]{style="code"} 吹き出しの中心を絵のその点に固定する。トリミングが変わっても同じ。
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout}: ガネット号！　灯りに向かえ！　へさきから外す
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: ドドーン
 skipper{at="44% 22%"}: 見えた……灯りが見えた……
-tomas{tail=end}: ゆっくりだ。ゆっくり回せ。
+tomas{tail=start}: ゆっくりだ。ゆっくり回せ。
 ::panel{art=bk-window}
 maya{inner}: お願い。お願い。お願い。
 caption{at=bottom-start}: 二時間かかった。
