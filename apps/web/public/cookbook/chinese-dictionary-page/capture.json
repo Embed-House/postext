@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-dictionary-page",
-  "sourceHash": "3bfe01ea63647eb75432b409bdbf6eca2bb00eb1bf2bd0ca057877eea8fdb0f2",
+  "sourceHash": "d12830ee4b5e93167fe7b62c1cec9d13882f5676bc26a6ac8c121427ea4bafc2",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.309Z",
+  "capturedAt": "2026-10-10T20:20:13.921Z",
   "variants": {
     "en": {
-      "hash8": "4950c7f6",
-      "vdtHash": "cfa6149af9193b50741ee0960827cb37cf495f4a",
+      "hash8": "bed46f35",
+      "vdtHash": "aa8df14ab7811236ff82cae36dadad1437aa11bb",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 278,
-        "buildMs": 57,
-        "totalMs": 1047,
+        "importMs": 581,
+        "fontsMs": 787,
+        "buildMs": 203,
+        "totalMs": 2893,
         "builds": 1
       },
       "specimen": {
@@ -84,7 +84,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 127628,
+          "bytes": 127914,
           "alt": "Page 637: 餮."
         }
       ],
@@ -112,12 +112,12 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313188,
+        "bytes": 313198,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 25964,
+        "bytes": 25965,
         "folio": "662b056b"
       },
       "detected": {
@@ -229,6 +229,7 @@
         "configLeaves": 196,
         "designElements": 9,
         "directives": [
+          ":::space",
           ":::paragraphs"
         ],
         "inline": [],
@@ -273,7 +274,8 @@
           "paragraph-styles",
           "pdf-export",
           "pdf-fonts",
-          "ruby"
+          "ruby",
+          "vertical-space"
         ],
         "suggestedLevel": 2
       },
@@ -305,13 +307,13 @@
       }
     },
     "es": {
-      "hash8": "e242e6a4",
-      "vdtHash": "93a22ee2b7e98d49e22d96155531645f76fcea8e",
+      "hash8": "f33ef71e",
+      "vdtHash": "1aeac785e2d796b6da3f1c1e1584832851430942",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 265,
-        "buildMs": 59,
-        "totalMs": 1047,
+        "importMs": 212,
+        "fontsMs": 323,
+        "buildMs": 60,
+        "totalMs": 1215,
         "builds": 1
       },
       "specimen": {
@@ -378,7 +380,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128054,
+          "bytes": 128576,
           "alt": "Página 637: 餮."
         }
       ],
@@ -406,12 +408,12 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313168,
+        "bytes": 313172,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26037,
+        "bytes": 26036,
         "folio": "662b056b"
       },
       "detected": {
@@ -523,6 +525,7 @@
         "configLeaves": 196,
         "designElements": 9,
         "directives": [
+          ":::space",
           ":::paragraphs"
         ],
         "inline": [],
@@ -567,7 +570,8 @@
           "paragraph-styles",
           "pdf-export",
           "pdf-fonts",
-          "ruby"
+          "ruby",
+          "vertical-space"
         ],
         "suggestedLevel": 2
       },
