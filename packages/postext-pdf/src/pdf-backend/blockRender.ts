@@ -1,11 +1,12 @@
 import { popGraphicsState, pushGraphicsState } from 'pdf-lib';
-import { isJapaneseLanguage, leaderRuleGeometry, lineTextAlign, segmentOrientation } from 'postext';
+import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, segmentOrientation } from 'postext';
 import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, type LineTextState } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState } from './primitives';
 import { paintChip } from './chip';
+import { drawRightToLeftRun } from './rtlRun';
 import { pickSegmentColor, pickSegmentFont } from './fontHelpers';
 import { renderHeaderFooterSlot } from './headerFooter';
 import {
@@ -636,12 +637,42 @@ function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem:
   const sepSize = sepFontString !== undefined ? parseFontString(sepFontString)?.sizePx ?? size : size;
   const sepColor = colorFromHex(block.separatorColor ?? colorHex, ctx.colorSpace);
   const sepY = onBaseline ? baselineY : midY + sepSize * 0.3;
+  // A marker of a right-to-left item reads in its direction (#664).
+  const put = (text: string, x: number, y: number, f: PDFFont, s: number, c: Color): void => {
+    if (block.bulletDirection) drawMarkerRuns(ctx, text, x, y, f, s, c, block.bulletDirection);
+    else drawTextPx(ctx, text, x, y, f, s, c);
+  };
   if (sepFont && block.prefixText && block.prefixX !== undefined) {
-    drawTextPx(ctx, block.prefixText, block.prefixX, sepY, sepFont, sepSize, sepColor);
+    put(block.prefixText, block.prefixX, sepY, sepFont, sepSize, sepColor);
   }
-  drawTextPx(ctx, block.bulletText, block.bulletOffsetX, baselinePx, font, size, color);
+  put(block.bulletText, block.bulletOffsetX, baselinePx, font, size, color);
   if (sepFont && block.separatorText && block.separatorX !== undefined) {
-    drawTextPx(ctx, block.separatorText, block.separatorX, sepY, sepFont, sepSize, sepColor);
+    put(block.separatorText, block.separatorX, sepY, sepFont, sepSize, sepColor);
+  }
+}
+
+/**
+ * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
+ * `xPx`, its left edge in the flow: its runs (`markerRuns`, one bidi level
+ * each, in visual order from the sheet's left) stand one after the other
+ * along the flow's x axis, which on a mirrored page runs from the sheet's
+ * right, each as wide as the face sets it; a right-to-left run is shaped
+ * so and its brackets mirrored. They are drawn in reading order, so text
+ * extraction reads `1-` whatever side the hyphen stands on.
+ */
+function drawMarkerRuns(ctx: PageCtx, text: string, xPx: number, baselinePx: number, font: PDFFont, sizePx: number, color: Color, direction: 'rtl' | 'rtl-arabic'): void {
+  const runs = markerRuns(text, direction);
+  if (ctx.mirror) runs.reverse();
+  let at = xPx;
+  const placed = runs.map((run) => {
+    const x = at;
+    at += textAdvancePx(font, run.text, sizePx, joinsLetters(run.text) ? 0 : ctx.trackingPx ?? 0).advance;
+    return { run, x };
+  });
+  placed.sort((a, b) => a.run.start - b.run.start);
+  for (const { run, x } of placed) {
+    if (run.rtl) drawRightToLeftRun(ctx, run.text, x, baselinePx, font, sizePx, color);
+    else drawTextPx(ctx, run.text, x, baselinePx, font, sizePx, color);
   }
 }
 
