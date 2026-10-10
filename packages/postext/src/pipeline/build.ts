@@ -3138,6 +3138,9 @@ function placeDocumentPass(
           if (!m) return;
           const blk = createVDTBlock(`fn-${id}`, 'paragraph', noteStyle.fontString, noteStyle.color, noteStyle.textAlign);
           applyStyleAttrs(blk, noteStyle);
+          // The tracking the note was measured with (a runt taken up by
+          // setting it one line shorter, #662): painted with it too.
+          if (m.letterSpacingPx !== undefined) blk.letterSpacing = m.letterSpacingPx;
           blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign), noteStyle.lineHeightPx).map((line) => ({
             ...line,
             bbox: createBoundingBox(line.bbox.x + x, line.bbox.y + y, line.bbox.width, line.bbox.height),
