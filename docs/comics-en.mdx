@@ -173,7 +173,7 @@ The look of a panel comes from `comics.panel` (a 1 pt black border, a white grou
 
 ### Pop-out art
 
-A broken border, where a character or an object comes out of its panel, takes two pictures: the panel's art, clipped to the cell as usual, and a transparent cut-out of the part that breaks out, named with `pop`. The cut-out is cropped and placed exactly as the art (it should be the same size as the art picture) and drawn after the border, unclipped, so it covers the border and the gutter.
+A broken border, where a character or an object comes out of its panel, takes two pictures: the panel's art, clipped to the cell as usual, and a transparent cut-out of the part that breaks out, named with `pop`. The cut-out is cropped and placed exactly as the art (it should be the same size as the art picture) and drawn after the border, unclipped, so it covers the border and the gutter. The cut-outs of a page are drawn after all its panels, so one that reaches the panel beside it shows over that panel too, and under every balloon.
 
 ```md
 ::panel{art=gull-sky pop=gull-cutout bleed="top"}

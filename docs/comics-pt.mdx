@@ -173,7 +173,7 @@ A aparência de um quadro vem de `comics.panel` (uma borda preta de 1 pt, fundo 
 
 ### Arte que sai do quadro
 
-Uma borda rompida, quando um personagem ou um objeto sai do seu quadro, exige dois desenhos: a arte do quadro, recortada na célula como de costume, e um recorte transparente da parte que sai, indicado com `pop`. O recorte é cortado e posicionado exatamente como a arte (ele deve ter o mesmo tamanho do desenho da arte) e desenhado depois da borda, sem recorte, de modo que cobre a borda e a sarjeta.
+Uma borda rompida, quando um personagem ou um objeto sai do seu quadro, exige dois desenhos: a arte do quadro, recortada na célula como de costume, e um recorte transparente da parte que sai, indicado com `pop`. O recorte é cortado e posicionado exatamente como a arte (ele deve ter o mesmo tamanho do desenho da arte) e desenhado depois da borda, sem recorte, de modo que cobre a borda e a sarjeta. Os recortes de uma página são desenhados depois de todos os quadros, então o que alcança o quadro ao lado também aparece sobre ele, e sob todos os balões.
 
 ```md
 ::panel{art=gull-sky pop=gull-cutout bleed="top"}

@@ -173,7 +173,7 @@ El aspecto de una viñeta sale de `comics.panel` (un borde negro de 1 pt, fondo 
 
 ### Imágenes que rompen la viñeta
 
-Un borde roto, por el que un personaje o un objeto se sale de su viñeta, necesita dos imágenes: la de la viñeta, recortada a la celda como siempre, y un recorte transparente de la parte que se sale, nombrado con `pop`. El recorte se encuadra y se coloca exactamente como la imagen de la viñeta (debe tener su mismo tamaño) y se dibuja después del borde, sin recortar, de modo que tapa el borde y la calle.
+Un borde roto, por el que un personaje o un objeto se sale de su viñeta, necesita dos imágenes: la de la viñeta, recortada a la celda como siempre, y un recorte transparente de la parte que se sale, nombrado con `pop`. El recorte se encuadra y se coloca exactamente como la imagen de la viñeta (debe tener su mismo tamaño) y se dibuja después del borde, sin recortar, de modo que tapa el borde y la calle. Los recortes de una página se dibujan después de todas sus viñetas, así que el que llega a la viñeta de al lado se ve también sobre ella, y bajo todos los globos.
 
 ```md
 ::panel{art=gull-sky pop=gull-cutout bleed="top"}
