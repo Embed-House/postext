@@ -58,3 +58,4 @@ Anchor the rule to the heading's own box instead of the number, and it runs from
 ## Pitfalls
 
 - A side figure takes the head of the channel on the page that cites it, and a side head fenced after it stacks under the figure, below the start of its own section. Cite side figures after the section head of their page, as section 2 cites the plot plan.
+- `captionSide` acts on column floats only. The calendar is an inline embed (`position: 'here'`), so its caption stays under the table on page 5, while the programme's stands in the channel on page 3. Floated with a side caption, the calendar would leave section 6.3 for the foot of the page.
