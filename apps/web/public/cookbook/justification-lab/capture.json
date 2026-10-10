@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "justification-lab",
-  "sourceHash": "08e857a1341a8cb96f07fbf47be9c726f1e57c18fb17f43ab6ea9343aaa65c57",
+  "sourceHash": "9f820c89168a182ab12f5acea03a37a40434192e214105b09182c4d22fb5e98a",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.282Z",
+  "capturedAt": "2026-10-10T18:46:35.852Z",
   "variants": {
     "en": {
-      "hash8": "16c3aa40",
-      "vdtHash": "86805b7936d8e4593fcec8f689a39b305278b982",
+      "hash8": "645b7889",
+      "vdtHash": "b1b0668e1cb9db8d4a584e23f57f59744eeef0a7",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 1,
-        "buildMs": 262,
-        "totalMs": 1686,
+        "importMs": 350,
+        "fontsMs": 6,
+        "buildMs": 334,
+        "totalMs": 1687,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114804,
+          "bytes": 115092,
           "alt": "Opening page 1: The river problem."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 11699,
+        "bytes": 34596,
         "folio": "aab16fb5"
       },
       "detected": {
@@ -318,23 +318,18 @@
             "check": "C24",
             "severity": "warn",
             "detail": "3 of 115 justified lines (2.6 %) stretch past 1.6× (worst 2.02×); loosest: p. 3 2.02× “too, and the slack is shared out in”, p. 3 1.8× “shortfall to the few word spaces on”, p. 3 1.71× “the line. With hyphenation the line”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "47b2c6e7",
-      "vdtHash": "5269268c9402e7b68269500bb12156183c3d3d99",
+      "hash8": "1985b8b1",
+      "vdtHash": "1bd68fd4223c8c7a66961fbce9de0ec57fa92eec",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 1,
-        "buildMs": 124,
-        "totalMs": 915,
+        "importMs": 140,
+        "fontsMs": 2,
+        "buildMs": 123,
+        "totalMs": 1004,
         "builds": 2
       },
       "specimen": {
@@ -390,7 +385,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 133124,
+          "bytes": 133474,
           "alt": "Página 3: Lo que el ojo perdona."
         }
       ],
@@ -631,13 +626,7 @@
           "share": 0.0172,
           "worst": 2.3000000000000003
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

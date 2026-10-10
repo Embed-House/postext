@@ -8,7 +8,7 @@ author: "Galley"
 
 Hold a newspaper page at arm’s length and half close your eyes. In a good column the text turns into an even grey. In a bad one, pale channels wander down through it, from a gap in one line to the gap below it. Printers call them rivers. They form when the spaces open up on several lines at once and happen to fall in line, and nothing opens spaces faster than a narrow measure.
 
-A column of forty characters has five or six word spaces to a line. Carry one long word on to the next line and those few spaces must share its whole width between them: each may have to grow to twice its width, or more. In a column twice as wide, twice as many spaces take up the same width, and each grows half as much.
+A column of forty characters has five or six word spaces to a line. Carry one long word on to the next line and those few spaces must share its whole width between them: each may have to grow to twice its width, or more. In a column twice as wide, twice as many spaces take up the same width, and each grows only half as much.
 
 ## Boxes, glue and penalties
 
