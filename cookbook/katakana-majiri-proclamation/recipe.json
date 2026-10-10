@@ -26,7 +26,7 @@
   ],
   "explainsWarnings": [],
   "related": ["chinese-dates-upright", "chinese-official-document", "vertical-novel-right-bound"],
-  "engine": { "postext": "1.25.0", "postextPdf": "1.25.0" },
+  "engine": { "postext": "1.26.0", "postextPdf": "1.26.0" },
   "kit": ["core", "fonts", "viewer", "pdf", "cjk"],
   "sample": { "locales": ["en", "es"] },
   "capture": { "hero": 1, "card": "page", "expect": { "pages": [5, 8] } },
@@ -66,5 +66,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-10-05",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }
