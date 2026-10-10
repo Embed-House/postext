@@ -20,7 +20,7 @@ import { comicArtCrop, comicArtPointToPage, comicArtRectToPage } from './art';
 import { clipPolygon, comicGeometry, physicalSide, pointInPolygon, polygonBBox, type ComicCell, type ComicFrameSide } from './geometry';
 import { parseComicPoint } from './script';
 import { letterPanelDetailed } from './lettering/letter';
-import type { LetteringAnchor, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types';
+import type { LetteringAnchor, LetteringForeignArt, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types';
 import type { ComicPageSource, ComicPanelSource, ComicScriptItem } from './types';
 
 /** What the build hands the comic page layout. */
@@ -453,6 +453,26 @@ function buttedCaption(style: LetteringStyle, panel: VDTComicPanel, at: string |
   return { ...style, strokeWidth: panel.border.width };
 }
 
+/** Whether a balloon's outline is an oval or grows from one (a cloud, a
+ *  burst): its box's corners are no part of it. */
+function roundBalloon(comics: ResolvedComicsConfig, b: VDTComicBalloon): boolean {
+  if (b.kind !== 'balloon' || !b.shape) return false;
+  const shape = pickBalloonStyle(comics, b.style)?.shape;
+  return shape !== 'rectangle' && shape !== 'rounded' && shape !== 'none';
+}
+
+/** A balloon's tail as drawn, from its body to its tip (the body taken as
+ *  the oval its box holds); undefined for a balloon with none. */
+function drawnTail(b: VDTComicBalloon): [VDTPoint, VDTPoint] | undefined {
+  if (!b.tailTip) return undefined;
+  const c = { x: b.bbox.x + b.bbox.width / 2, y: b.bbox.y + b.bbox.height / 2 };
+  const dx = b.tailTip.x - c.x;
+  const dy = b.tailTip.y - c.y;
+  const k = Math.hypot(dx / (b.bbox.width / 2 || 1), dy / (b.bbox.height / 2 || 1));
+  if (!(k > 1)) return undefined;
+  return [{ x: c.x + dx / k, y: c.y + dy / k }, { x: b.tailTip.x, y: b.tailTip.y }];
+}
+
 /** What {@link letterPanels} needs. */
 export interface LetterPanelsInput {
   source: ComicPageSource;
@@ -514,10 +534,38 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
   const castById = new Map(comics.cast.map((c) => [c.id, c] as const));
   const balloons: VDTComicBalloon[] = [];
   const warnings: ContentWarning[] = [];
+  const em = dimensionToPx(L.fontSize, dpi);
+  // What each panel's picture protects, on the page (#671): a balloon that
+  // leaves its panel keeps off the faces and avoid zones of the others.
+  const insets = panels.map((_, i) => panelSources[i]?.attrs.inset !== undefined);
+  const protectedArt: LetteringForeignArt[][] = panels.map((panel, pi) => {
+    const resource = panel.art ? resources.get(panel.art.resourceId) : undefined;
+    if (!panel.art || !resource) return [];
+    const under = panels.filter((q, qi) => qi > pi && insets[qi] && overlaps(q.bbox, panel.bbox)).map((q) => q.polygon);
+    const shown = (rect: BoundingBox) => overlaps(rect, panel.bbox);
+    const entry = (rect: BoundingBox, kind: 'face' | 'avoid', guard = false): LetteringForeignArt =>
+      ({ rect, kind, ...(guard ? { guard } : {}), within: panel.polygon, ...(under.length > 0 ? { under } : {}) });
+    return [
+      ...(resource.anchors ?? []).filter((a) => a.id !== 'sfx' && a.face).map((a) => entry(comicArtRectToPage(panel.art!, a.face!), 'face')),
+      ...(resource.avoid ?? []).map((r) => entry(comicArtRectToPage(panel.art!, r), 'avoid')),
+      ...headGuards(panel, resource, em).map((g) => entry(g, 'avoid', true)),
+    ].filter((e) => shown(e.rect));
+  });
   panels.forEach((panel, pi) => {
     const src = panelSources[pi];
     if (!src || src.items.length === 0) return;
     const resource = panel.art ? resources.get(panel.art.resourceId) : undefined;
+    // A line that may leave the panel (`break`, a pin, drawn sound) can land
+    // on anything about it: it is told what the panels before it lettered
+    // and what the pictures around it protect, as far as it can reach (its
+    // middle stays in its panel). A panel with no such line is lettered
+    // from what pokes into it alone, whatever the rest of the page does.
+    const laidOver = panels.filter((q, qi) => qi > pi && insets[qi] && overlaps(q.bbox, panel.bbox)).map((q) => q.polygon);
+    const leaves = src.items.some((it) => it.break || it.at !== undefined || it.role === 'sfx');
+    const reach = leaves ? insetBox2(panel.bbox, -Math.max(panel.bbox.width, panel.bbox.height)) : panel.bbox;
+    const set = balloons.filter((b) => overlaps(b.bbox, reach));
+    const tails = set.map(drawnTail).filter((t): t is [VDTPoint, VDTPoint] => t !== undefined);
+    const around = leaves ? protectedArt.flatMap((list, qi) => (qi === pi ? [] : list.filter((e) => overlaps(e.rect, reach)))) : [];
     const lp: LetteringPanel = {
       index: panel.index,
       polygon: panel.polygon,
@@ -529,17 +577,20 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
       anchors: panelAnchors(panel, resource),
       avoid: [
         ...(panel.art ? (resource?.avoid ?? []).map((r) => comicArtRectToPage(panel.art!, r)) : []),
-        ...headGuards(panel, resource, dimensionToPx(L.fontSize, dpi)).map((g) => ({ ...g, guard: true })),
+        ...headGuards(panel, resource, em).map((g) => ({ ...g, guard: true })),
       ],
       keepOut: (input.avoid ?? []).filter((r) => overlaps(r, insetBox2(panel.bbox, -2 * insetPx))),
       softAvoid: [...softSafeArea(panel, resource), ...headZones(panel, resource), ...bodyZones(panel, resource)],
       ...(panel.border.style !== 'none' && panel.border.width > 0 ? { borderPx: panel.border.width } : {}),
       neighbours: panels.filter((q) => q !== panel).map((q) => q.bbox),
+      ...(laidOver.length > 0 ? { over: laidOver } : {}),
       ...(input.frame ? { limit: input.frame } : {}),
       ...(trim ? { trim, sheet: input.bleedBox ? intersect(input.bleedBox, union(trim, panel.bbox)) : trim } : {}),
       // What the panels before this one lettered: a balloon breaking out
       // of either panel never covers the other's.
-      foreign: balloons.filter((b) => overlaps(b.bbox, panel.bbox)).map((b) => b.bbox),
+      foreign: set.map((b) => (roundBalloon(comics, b) ? { ...b.bbox, round: true } : b.bbox)),
+      ...(tails.length > 0 ? { foreignTails: tails } : {}),
+      ...(around.length > 0 ? { foreignArt: around } : {}),
       dpi,
     };
     const items: LetteringItem[] = src.items.map((it, k) => {

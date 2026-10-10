@@ -195,6 +195,16 @@ export interface LetteringAnchor {
   visible: boolean;
 }
 
+/** A face or an avoid zone of another panel's picture (see
+ *  {@link LetteringPanel.foreignArt}). */
+export interface LetteringForeignArt {
+  rect: Rect;
+  kind: 'face' | 'avoid';
+  guard?: boolean;
+  within: readonly Point[];
+  under?: readonly (readonly Point[])[];
+}
+
 /** One panel as the lettering sees it. */
 export interface LetteringPanel {
   /** Index of the panel on its page; echoed as `ComicBalloonOut.panelIndex`. */
@@ -231,6 +241,10 @@ export interface LetteringPanel {
   /** The other panels of the page (their boxes, px): a balloon that runs
    *  out of its panel must never run into one of them. */
   neighbours?: readonly Rect[];
+  /** The panels laid over this one (insets), as polygons, px: what lies
+   *  under them is theirs, so a balloon of this panel over one has left
+   *  its panel and run into another (#671). */
+  over?: readonly (readonly Point[])[];
   /** The live area of the page (the comic's frame, px): lettering keeps
    *  inside it — a panel that bleeds is lettered in its part inside it —
    *  unless it breaks the border on purpose (`breakBorder`, a pin). */
@@ -245,8 +259,20 @@ export interface LetteringPanel {
    *  sound runs off the page with the art). Default: `trim`. */
   sheet?: Rect;
   /** The balloons other panels of the page set already (their boxes, px):
-   *  a balloon that leaves its panel never covers one. */
-  foreign?: readonly Rect[];
+   *  a balloon that leaves its panel never covers one. `round`: an oval, a
+   *  cloud or a burst, taken as the oval its box holds (#671). */
+  foreign?: readonly (Rect & { round?: boolean })[];
+  /** The tails of those balloons as drawn, from the body to the tip (px):
+   *  a balloon that leaves its panel never covers one either, and no tail
+   *  of this panel runs through a balloon of another (#671). */
+  foreignTails?: readonly (readonly [Point, Point])[];
+  /** What the pictures of the other panels protect (px): their faces and
+   *  avoid zones (`guard`: the hair over a face), each with the polygon of
+   *  its panel (`within`: what the panel shows of it) and those of the
+   *  panels laid over that one (`under`: an inset hides what lies below
+   *  it). A balloon that breaks into another panel keeps off them as it
+   *  keeps off its own (#671). */
+  foreignArt?: readonly LetteringForeignArt[];
   /** Width of the panel's border, px (centred on the polygon): a butted
    *  caption sits against its inner edge, its outline over the border. */
   borderPx?: number;
