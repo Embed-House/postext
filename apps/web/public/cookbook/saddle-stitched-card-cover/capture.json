@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "saddle-stitched-card-cover",
-  "sourceHash": "a818de223a5c6613d237f0f6116dd7ca81686e08abb531e4fbb4284ca3cbcd2b",
+  "sourceHash": "3f874f4dcef4b522ed2b49eeb33b433d38851f4fddb59637b0acd59f41079f8e",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.607Z",
+  "capturedAt": "2026-10-10T19:03:52.180Z",
   "variants": {
     "en": {
-      "hash8": "1625cfd8",
-      "vdtHash": "b81ea95ce3d428a6c883d46948d8fa5a9a059b5b",
+      "hash8": "8309153d",
+      "vdtHash": "8a5df44b6af7d2917161122c80f77d5fbfd388c5",
       "timings": {
-        "importMs": 202,
+        "importMs": 188,
         "fontsMs": 3,
-        "buildMs": 57,
-        "totalMs": 877,
+        "buildMs": 39,
+        "totalMs": 857,
         "builds": 1
       },
       "specimen": {
@@ -70,7 +70,7 @@
           "h": 1429,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116226,
+          "bytes": 120038,
           "alt": "Opening page 3: The dunlin come back."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1429,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 30692,
+          "bytes": 104098,
           "alt": "Page 4: How to see them."
         },
         {
@@ -92,7 +92,7 @@
           "h": 1429,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 88980,
+          "bytes": 88968,
           "alt": "Opening page 5: The last boatbuilder."
         },
         {
@@ -114,7 +114,7 @@
           "h": 1429,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 45432,
+          "bytes": 45400,
           "alt": "Opening page 7: Join us."
         },
         {
@@ -165,7 +165,7 @@
       },
       "sandbox": {
         "file": "saddle-stitched-card-cover.postext",
-        "bytes": 11072,
+        "bytes": 11540,
         "folio": "0753e69b"
       },
       "detected": {
@@ -353,17 +353,22 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 1,
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.84
+          "worst": 1.76
         },
         "findings": [
           {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 8.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
