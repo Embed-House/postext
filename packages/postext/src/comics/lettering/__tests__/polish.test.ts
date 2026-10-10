@@ -277,6 +277,14 @@ describe('house rules for CJK and Latin lines', () => {
   it('drops the spaces a translator left between CJK characters and marks', () => {
     expect(prep('我らに何の破壊を願う ？ …', 'ja').text).toBe('我らに何の破壊を願う？…');
     expect(prep('… さあできた', 'ja').text).toBe('…さあできた');
+    // The marks typed in ASCII, as in the transcript of a French original
+    // (#677): the leader stays with its mark, in rows and in columns.
+    expect(prep('我らに何の破壊を願う ? ...', 'ja').text).toBe('我らに何の破壊を願う?…');
+    expect(prep('我らに何の破壊を願う ? ...', 'ja', true).text).toBe('我らに何の破壊を願う？…');
+    expect(prep('向谁发起攻击 ! ...', 'zh', true).text).toBe('向谁发起攻击！……');
+    // (A mark before more text keeps the space it was written with.)
+    expect(prep('キャロット!? 本当!', 'ja', true).text).toBe('キャロット!? 本当！');
+    expect(prep('OK! ...', 'ja').text).toBe('OK! …');
     // Latin words keep theirs.
     expect(prep('エピソード 8 : Pepper', 'ja').text).toBe('エピソード 8 : Pepper');
   });

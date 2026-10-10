@@ -188,9 +188,12 @@ export function prepareText(read: PreparedText, style: LetteringStyle, opts: Pre
   // Ellipsis.
   p = replaceAll(p, /\.(?: ?\.){2,}/g, '…');
   // Japanese and Chinese set no space between their characters, their
-  // marks and a leader (a translator's "願う ？ …" is "願う？…").
+  // marks and a leader (a translator's "願う ？ …" is "願う？…"). An ASCII
+  // `!` or `?` after one of their characters is their mark as well, so a
+  // leader after it closes up too (#677: "願う ? …" is "願う?…").
   if (lang === 'ja' || lang === 'zh') {
     p = replaceAll(p, /(?<=[\u3000-\u30FF\u3400-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u2025\u2026]) (?=[\u3000-\u30FF\u3400-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u2025\u2026!?])/g, '');
+    p = replaceAll(p, /(?<=[\u3000-\u30FF\u3400-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF][!?]+) (?=[\u2025\u2026])/g, '');
     p = replaceAll(p, /(?<=[\u2025\u2026]) (?=\S)/g, '');
   }
   if (lang === 'zh') p = replaceAll(p, /…+/g, (m) => (m.length % 2 === 1 ? `${m}…` : m));
