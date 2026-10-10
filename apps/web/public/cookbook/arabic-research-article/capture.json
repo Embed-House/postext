@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "971e27dcb2c4eb371facd15e91158c125f778068e0e00ed8ff3ef489ba722fba",
+  "sourceHash": "c6c6e10164b5c2377b66d6babe8b134758a64890bb2246c02588ad8b9d7c533b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.709Z",
+  "capturedAt": "2026-10-10T20:21:52.458Z",
   "variants": {
     "en": {
-      "hash8": "a7a8efce",
-      "vdtHash": "16c436f40ba1b93d20fa56d7590bb222a7e9915a",
+      "hash8": "6bf5c781",
+      "vdtHash": "9b1795d90cb6af8051faa33b0ca907e872d27308",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 68,
-        "buildMs": 482,
-        "totalMs": 2924,
+        "importMs": 230,
+        "fontsMs": 70,
+        "buildMs": 539,
+        "totalMs": 1402,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Noto Kufi Arabic"
         ],
         "pages": 5,
-        "ownLines": 139
+        "ownLines": 142
       },
       "pages": [
         {
@@ -93,7 +93,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 27074,
+          "bytes": 27282,
           "alt": "Opening page ٩١: فهرس الأعلام والموضوعات."
         }
       ],
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99109,
+        "bytes": 99114,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14348,
+        "bytes": 14404,
         "folio": "baed3d35"
       },
       "detected": {
@@ -237,7 +237,11 @@
           "headingStyles[].span",
           "headings",
           "headings.balancing",
-          "headings.balancing.enabled",
+          "headings.balancing.closingBox",
+          "headings.balancing.looseParagraphs",
+          "headings.balancing.maxLinesPerHeading",
+          "headings.balancing.stretchAfterFloats",
+          "headings.balancing.stretchAfterLists",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -307,7 +311,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 254,
+        "configLeaves": 258,
         "designElements": 10,
         "directives": [
           ":::callout",
@@ -376,7 +380,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 2,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -386,13 +390,13 @@
       }
     },
     "es": {
-      "hash8": "1bb66211",
-      "vdtHash": "b5e797f89542a90d0f4e6f5f3964039b6598a078",
+      "hash8": "e5cf937e",
+      "vdtHash": "61f71c823633d0193bbd4ef8f8efd15763c1ec64",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 65,
-        "buildMs": 488,
-        "totalMs": 1278,
+        "importMs": 215,
+        "fontsMs": 70,
+        "buildMs": 536,
+        "totalMs": 1369,
         "builds": 1
       },
       "specimen": {
@@ -413,7 +417,7 @@
           "Noto Kufi Arabic"
         ],
         "pages": 5,
-        "ownLines": 139
+        "ownLines": 142
       },
       "pages": [
         {
@@ -468,7 +472,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 27074,
+          "bytes": 27282,
           "alt": "Página de apertura ٩١: فهرس الأعلام والموضوعات."
         }
       ],
@@ -501,12 +505,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98920,
+        "bytes": 98924,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14426,
+        "bytes": 14478,
         "folio": "baed3d35"
       },
       "detected": {
@@ -612,7 +616,11 @@
           "headingStyles[].span",
           "headings",
           "headings.balancing",
-          "headings.balancing.enabled",
+          "headings.balancing.closingBox",
+          "headings.balancing.looseParagraphs",
+          "headings.balancing.maxLinesPerHeading",
+          "headings.balancing.stretchAfterFloats",
+          "headings.balancing.stretchAfterLists",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -682,7 +690,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 254,
+        "configLeaves": 258,
         "designElements": 10,
         "directives": [
           ":::callout",
@@ -751,7 +759,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 2,
         "looseLines": {
           "count": 0,
           "share": 0,
