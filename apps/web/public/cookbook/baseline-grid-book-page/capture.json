@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "4da345377ee64256890044e00a06436b177ad6515bc68f3aab1583ba85ebbe73",
+  "sourceHash": "74d81c0189b4116004a51d31ffc76f5d052c42c1c741c7c07de10e7c712b37cf",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.123Z",
+  "capturedAt": "2026-10-10T18:53:09.157Z",
   "variants": {
     "en": {
       "hash8": "a4b99817",
       "vdtHash": "e34bb0c4f98af58e2a09050a71580f54f4aa2825",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 3,
-        "buildMs": 95,
-        "totalMs": 834,
+        "importMs": 463,
+        "fontsMs": 15,
+        "buildMs": 421,
+        "totalMs": 1798,
         "builds": 1
       },
       "specimen": {
@@ -310,10 +310,10 @@
       "hash8": "5ab86930",
       "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 3,
-        "buildMs": 55,
-        "totalMs": 768,
+        "importMs": 415,
+        "fontsMs": 13,
+        "buildMs": 271,
+        "totalMs": 1442,
         "builds": 1
       },
       "specimen": {
@@ -604,13 +604,13 @@
       }
     },
     "pt": {
-      "hash8": "7bee3e84",
-      "vdtHash": "7a03c9cb64a80ab94177512d466b3f26e345287f",
+      "hash8": "54b5451a",
+      "vdtHash": "f1a0564255a404acb4b0129639aefa3c0cc930c6",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 3,
-        "buildMs": 106,
-        "totalMs": 843,
+        "importMs": 161,
+        "fontsMs": 4,
+        "buildMs": 59,
+        "totalMs": 925,
         "builds": 1
       },
       "specimen": {
@@ -644,7 +644,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 149820,
+          "bytes": 149478,
           "alt": "Página de abertura 9: O cânone secreto. Figura 1.1. O cânone sobre uma página dupla aberta de páginas 2:3. As diagonais fixam os cantos das duas manchas; o círculo, da largura da página, tem exatamente a altura da mancha."
         },
         {
@@ -655,7 +655,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 187128,
+          "bytes": 187188,
           "alt": "Página 10: Linhas onde se apoiar."
         },
         {
@@ -666,7 +666,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50684,
+          "bytes": 50578,
           "alt": "Página 11. Figura 1.2. A página de 210 × 280 mm deste livro, duas vezes. À esquerda, dividida em nonos pelo cânone, com uma mancha de 140 × 187 mm. À direita, como o livro a compõe: margens de 16, 24, 32 e 48 mm e duas colunas de 44 linhas."
         }
       ],
@@ -694,7 +694,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42956,
+        "bytes": 42970,
         "folio": "e8c31713"
       },
       "detected": {
@@ -889,9 +889,14 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.97
+          "worst": 1.77
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
