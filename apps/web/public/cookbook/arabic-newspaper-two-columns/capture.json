@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-newspaper-two-columns",
-  "sourceHash": "a345797b95bbebfd74aada8c8b3e8dcd7285c17c8517b636179a66f5b8d8b9e7",
+  "sourceHash": "6d2055b0686b195bc44a1157083b147657291376262ad199592ff83ab08aaf9c",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.682Z",
+  "capturedAt": "2026-10-10T20:28:22.393Z",
   "variants": {
     "en": {
-      "hash8": "4bb4992c",
-      "vdtHash": "b4408fb2a212cedaa7ebff590129ba6bd5b921fb",
+      "hash8": "529c85d5",
+      "vdtHash": "635fc763c503116c0be52473b4b8f53ceac23047",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 70,
-        "buildMs": 123,
-        "totalMs": 906,
+        "importMs": 355,
+        "fontsMs": 88,
+        "buildMs": 145,
+        "totalMs": 1168,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85382,
+          "bytes": 87714,
           "alt": "Opening page ١: الساحل. مسار الخط الأول: ثماني عشرة محطة بين الميناء شرقًا والجامعة غربًا."
         },
         {
@@ -91,12 +91,12 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 94878,
+        "bytes": 95307,
         "pages": 2
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 21269,
+        "bytes": 22516,
         "folio": "7d33b710"
       },
       "detected": {
@@ -357,17 +357,23 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "e5a84c2d",
-      "vdtHash": "955c86cf643652b510c45e8a74bcc4551330732c",
+      "hash8": "a9487398",
+      "vdtHash": "f34d5fa84d31dc3c41e2140a9292b0d69c9c55cb",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 70,
-        "buildMs": 123,
-        "totalMs": 916,
+        "importMs": 256,
+        "fontsMs": 83,
+        "buildMs": 134,
+        "totalMs": 1019,
         "builds": 1
       },
       "specimen": {
@@ -401,7 +407,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85382,
+          "bytes": 87714,
           "alt": "Página de apertura ١: الساحل. مسار الخط الأول: ثماني عشرة محطة بين الميناء شرقًا والجامعة غربًا."
         },
         {
@@ -441,12 +447,12 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 95017,
+        "bytes": 95447,
         "pages": 2
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 21313,
+        "bytes": 22561,
         "folio": "7d33b710"
       },
       "detected": {
@@ -707,7 +713,13 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
