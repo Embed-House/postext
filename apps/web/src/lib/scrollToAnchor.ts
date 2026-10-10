@@ -13,15 +13,20 @@
  */
 const SMOOTH_SCREENS = 3;
 
-export function scrollToAnchor(el: Element): void {
-  // What a native jump leaves above the target: the page's scroll padding
-  // plus the target's own scroll margin.
-  const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-  const margin = Number.parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
-  const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - padding - margin);
+export function scrollToAnchor(el: Element, { instant = false }: { instant?: boolean } = {}): void {
+  const top = Math.max(0, window.scrollY + anchorOffset(el));
   const far = Math.abs(top - window.scrollY) > window.innerHeight * SMOOTH_SCREENS;
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  window.scrollTo({ top, behavior: far || still ? "instant" : "smooth" });
+  window.scrollTo({ top, behavior: instant || far || still ? "instant" : "smooth" });
+}
+
+/** How far the page is from showing `el` where a native jump would put it:
+ *  under the page's scroll padding plus the element's own scroll margin.
+ *  Zero when it is in place. */
+export function anchorOffset(el: Element): number {
+  const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  const margin = Number.parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+  return el.getBoundingClientRect().top - padding - margin;
 }
 
 /** Runs `done` once the page has stopped scrolling. `scrollend` where the

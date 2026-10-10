@@ -19,6 +19,7 @@ import { htmlLang } from "@/i18n/locales";
 import { PlainSummary } from "@/components/brand/PlainSummary";
 import { DocsPager, type PagerLink } from "@/components/docs/DocsPager";
 import { OldAnchorRedirect } from "@/components/docs/OldAnchorRedirect";
+import { AnchorOnLoad } from "@/components/docs/AnchorOnLoad";
 import { CONFIGURATION_SLUG, movedConfigurationAnchors } from "@/lib/configurationAnchors";
 
 const PART_LABEL_KEY = {
@@ -144,6 +145,7 @@ export default async function DocPage({
         // The reference was one page: its old `#anchors` go to their pages.
         <OldAnchorRedirect locale={locale} pages={movedConfigurationAnchors(locale)} />
       )}
+      <AnchorOnLoad key={slug} />
       <main
         id="main-content"
         tabIndex={-1}
