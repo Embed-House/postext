@@ -2950,7 +2950,15 @@ function placeDocumentPass(
     const ids: string[] = [...pendingNotes];
     let any = ids.length > 0 || waiting.length > 0;
     const even = opensSpread(page);
-    const costOf = (): number => notesCost(col, [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)]);
+    // In a column a band cap cut, the notes are set under the cut, at the
+    // column's true foot (`reserveNotes`): they cost the lines above the
+    // cut only what reaches over it (#673). Charged whole, a paragraph
+    // that cites a note and runs to the cut gave up the note's height
+    // there, and a closing band ended that many lines short in the column
+    // with the note.
+    const cappedBottom = uncappedBottoms.get(col);
+    const underCut = cappedBottom === undefined ? 0 : Math.max(0, cappedBottom - (col.bbox.y + col.bbox.height));
+    const costOf = (): number => Math.max(0, notesCost(col, [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)]) - underCut);
     const cost = [costOf()];
     for (const line of lines) {
       for (const seg of line.segments ?? []) {
