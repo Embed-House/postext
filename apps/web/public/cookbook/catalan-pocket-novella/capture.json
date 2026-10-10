@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "80209bc933915516f6a096939080d242e8991b59aba7d4e90d260edbafd52077",
+  "sourceHash": "6ee033bd6190ba2a5098b8407b622a361f8fabff192d8e405ae0f8a3db0d3cc8",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.223Z",
+  "capturedAt": "2026-10-10T19:06:48.329Z",
   "variants": {
     "en": {
-      "hash8": "db8c24fd",
-      "vdtHash": "9a0787796bccf4a16e970b26df816ca3e21a551f",
+      "hash8": "84f42562",
+      "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 78,
-        "buildMs": 892,
-        "totalMs": 4752,
+        "importMs": 3102,
+        "fontsMs": 935,
+        "buildMs": 1037,
+        "totalMs": 5745,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Crimson Pro"
         ],
         "pages": 32,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -72,7 +72,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38462,
+          "bytes": 38532,
           "alt": "Opening page 4: Nota a aquesta edició."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151468,
+          "bytes": 151794,
           "alt": "Opening page 5: I."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140930,
+          "bytes": 141036,
           "alt": "Page 6."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 168502,
+          "bytes": 169090,
           "alt": "Opening page 26: IV."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 146938,
+          "bytes": 148506,
           "alt": "Page 27."
         },
         {
@@ -167,12 +167,12 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777438,
+        "bytes": 1777290,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492584,
+        "bytes": 1492610,
         "folio": "8e6f438d"
       },
       "detected": {
@@ -190,6 +190,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.hyphenation",
           "bodyText.hyphenation.compounds",
           "bodyText.indentAfterHeading",
@@ -197,6 +198,7 @@
           "bodyText.lineHeight",
           "bodyText.maxJustifyTracking",
           "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
           "bodyText.referenceColor",
           "bodyText.runtMinCharacters",
           "colorPalette",
@@ -296,7 +298,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 330,
+        "configLeaves": 332,
         "designElements": 17,
         "directives": [
           ":::paragraphs"
@@ -360,27 +362,27 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 4,
-          "share": 0.0071,
+          "count": 6,
+          "share": 0.0105,
           "worst": 1.94
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.01 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b2e0544e",
-      "vdtHash": "9a0787796bccf4a16e970b26df816ca3e21a551f",
+      "hash8": "23c15f18",
+      "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 70,
-        "buildMs": 895,
-        "totalMs": 1774,
+        "importMs": 837,
+        "fontsMs": 98,
+        "buildMs": 985,
+        "totalMs": 2648,
         "builds": 1
       },
       "specimen": {
@@ -402,7 +404,7 @@
           "Crimson Pro"
         ],
         "pages": 32,
-        "ownLines": 179
+        "ownLines": 180
       },
       "pages": [
         {
@@ -435,7 +437,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38462,
+          "bytes": 38532,
           "alt": "Página de apertura 4: Nota a aquesta edició."
         },
         {
@@ -446,7 +448,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151468,
+          "bytes": 151794,
           "alt": "Página de apertura 5: I."
         },
         {
@@ -457,7 +459,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140930,
+          "bytes": 141036,
           "alt": "Página 6."
         },
         {
@@ -468,7 +470,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 168502,
+          "bytes": 169090,
           "alt": "Página de apertura 26: IV."
         },
         {
@@ -479,7 +481,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 146938,
+          "bytes": 148506,
           "alt": "Página 27."
         },
         {
@@ -530,12 +532,12 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777438,
+        "bytes": 1777290,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492599,
+        "bytes": 1492625,
         "folio": "8e6f438d"
       },
       "detected": {
@@ -553,6 +555,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.hyphenation",
           "bodyText.hyphenation.compounds",
           "bodyText.indentAfterHeading",
@@ -560,6 +563,7 @@
           "bodyText.lineHeight",
           "bodyText.maxJustifyTracking",
           "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
           "bodyText.referenceColor",
           "bodyText.runtMinCharacters",
           "colorPalette",
@@ -659,7 +663,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 330,
+        "configLeaves": 332,
         "designElements": 17,
         "directives": [
           ":::paragraphs"
@@ -723,15 +727,15 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 4,
-          "share": 0.0071,
+          "count": 6,
+          "share": 0.0105,
           "worst": 1.94
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.01 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
           }
         ]
       }
