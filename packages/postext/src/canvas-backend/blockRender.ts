@@ -9,6 +9,7 @@ import { paintChip } from './chip';
 import { lineInkExtent, lineTrailingTracking } from '../lineInk';
 import { fillFlowText, verticalPaintActive } from './verticalText';
 import { counterFlipBox, mirroredPaintActive } from './mirrorFrame';
+import { rasterScaleOf } from './deviceScale';
 import { paintRunInDirection } from './runDirection';
 import { markerRuns } from '../bidi';
 import { fillSegmentText, fillWordsText } from './segmentText';
@@ -74,7 +75,8 @@ function renderMathRender(
     ctx.restore();
     return;
   }
-  const raster = getMathRaster(render, fallbackColor);
+  // The bitmap at the size the formula shows at on the device (#674).
+  const raster = getMathRaster(render, fallbackColor, rasterScaleOf(ctx));
   if (raster) {
     ctx.drawImage(raster, topLeftX, topLeftY, widthPx, heightPx);
     return;

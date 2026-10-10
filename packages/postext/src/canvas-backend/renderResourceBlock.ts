@@ -28,6 +28,7 @@ import { fillSegmentWord, type WordRun } from './wordRuns';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
 import { mirroredPaintActive } from './mirrorFrame';
 import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
+import { rasterScaleOf } from './deviceScale';
 
 /** A decoded image the canvas backend can `drawImage`. */
 export type ResourceImageSource = CanvasImageSource;
@@ -35,7 +36,7 @@ export type ResourceImageSource = CanvasImageSource;
 export interface RegisterResourceImageOptions {
   /** The source is vector art (an SVG `<img>`): every `drawImage` of it
    *  re-rasterises the document, so the backend rasterises it once at each
-   *  placed pixel size and blits the bitmap thereafter (see
+   *  size it shows at in device pixels and blits the bitmap thereafter (see
    *  {@link drawResourceImage}). Defaults to true for an `HTMLImageElement`
    *  — the host decodes rasters through `createImageBitmap`. */
   vector?: boolean;
@@ -148,11 +149,18 @@ export function setTintUnflagged(on: boolean): boolean {
 // every call — text set in embedded fonts, embedded raster fills, filters —
 // at print resolution that is tens to hundreds of milliseconds per figure,
 // paid again on every repaint of the page (a rebuild, a view-mode switch).
-// A page's figures always draw at the same pixel size (the placed body rect
-// at the page DPI), so the first draw at a size rasterises into an offscreen
-// bitmap, keyed by fileId and size, and later draws blit that bitmap. The
-// cache is bounded by bytes, least recently used first, and a fileId's
-// entries are dropped when its image is (re)registered.
+// The first draw at a size rasterises into an offscreen bitmap, keyed by
+// fileId and size, and later draws blit that bitmap. The cache is bounded
+// by bytes, least recently used first, and a fileId's entries are dropped
+// when its image is (re)registered.
+//
+// The size is the one the figure shows at in device pixels (#674): the
+// placed box in page pixels on a page painted at its own resolution or
+// below it (every reduction of a page then shares one bitmap), and the box
+// times the context's scale on a page painted larger (`scale` above 1: a
+// small trim shown wide, a high-density canvas, page images above the
+// page's dpi), where a bitmap of the page pixels would be upsampled and
+// the figure would come out soft beside its caption.
 // ---------------------------------------------------------------------------
 
 type RasterCanvas = OffscreenCanvas | HTMLCanvasElement;
@@ -171,6 +179,10 @@ const RASTER_CACHE_MAX_BYTES = 256 * 1024 * 1024;
 /** Above this many device pixels on a side the draw stays direct — a bitmap
  *  that large would evict everything else for one figure. */
 const RASTER_MAX_SIDE = 8192;
+/** The most a bitmap larger than the figure's page pixels may take: a
+ *  quarter of the cache (a 4096 px square), so a deep zoom into a large
+ *  figure does not allocate hundreds of megabytes for it. */
+const RASTER_SCALED_MAX_BYTES = RASTER_CACHE_MAX_BYTES / 4;
 
 function dropRasters(fileId: string): void {
   for (const [key, entry] of rasterCache) {
@@ -240,6 +252,38 @@ export function resourceRasterCacheBytes(): number {
   return rasterBytes;
 }
 
+/**
+ * The bitmap size of a vector picture placed `w`×`h` page pixels on `ctx`:
+ * the box in device pixels under the context's transform, never smaller
+ * than the box in page pixels ({@link rasterScaleOf}). A bitmap above the
+ * page size that would pass the bound ({@link RASTER_MAX_SIDE},
+ * {@link RASTER_SCALED_MAX_BYTES}) is not made: null, and the caller draws
+ * the source, which the canvas rasterises at the device size on its own. A
+ * picture that needs its pixels (`pixels`: the single-ink tint) takes the
+ * largest bitmap the bound allows instead.
+ */
+function vectorRasterSize(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  pixels: boolean,
+): [number, number] | null {
+  const pw = Math.round(w);
+  const ph = Math.round(h);
+  const s = rasterScaleOf(ctx);
+  if (s.x === 1 && s.y === 1) return [pw, ph];
+  const dw = Math.round(w * s.x);
+  const dh = Math.round(h * s.y);
+  const fit = Math.min(
+    1,
+    RASTER_MAX_SIDE / Math.max(dw, dh, 1),
+    Math.sqrt(RASTER_SCALED_MAX_BYTES / (Math.max(dw, 1) * Math.max(dh, 1) * 4)),
+  );
+  if (fit >= 1) return [dw, dh];
+  if (!pixels) return null;
+  return [Math.max(pw, Math.floor(dw * fit)), Math.max(ph, Math.floor(dh * fit))];
+}
+
 /** How a picture is painted under `diagramStyle.singleInk`: the document's
  *  ink (null when single ink is off), and whether the picture is an SVG
  *  (`true`), a bitmap (`false`) or unknown — a design image of a VDT built
@@ -261,8 +305,10 @@ function takesInk(entry: RegistryEntry, ink: ImageInk | undefined): ink is { ink
 }
 
 /** Draw the registered image of `fileId` into the box, through the raster
- *  cache for vector sources — tinted to the document's ink for a raw SVG
- *  picture of a single-ink document (see {@link ImageInk}). Returns false
+ *  cache for vector sources — rasterised at the size the box has on the
+ *  device under the context's transform ({@link vectorRasterSize}), tinted
+ *  to the document's ink for a raw SVG picture of a single-ink document
+ *  (see {@link ImageInk}). Returns false
  *  when nothing is registered, so the caller can paint its placeholder (the
  *  miss goes to the render's {@link MissingImageSink}, with `resourceId`
  *  when the caller knows it). */
@@ -283,10 +329,11 @@ export function drawResourceImage(
   }
   const inkHex = takesInk(entry, ink) ? ink.inkHex : null;
   if (entry.vector || inkHex) {
-    // The page canvas is 1 device px per page px (no transform), so the
-    // placed box rounded to whole pixels is the bitmap size the figure
-    // shows at.
-    const raster = getVectorRaster(fileId, entry.image, Math.round(w), Math.round(h), inkHex);
+    // A vector source takes the size the box shows at on the device; a
+    // bitmap tinted here has no more pixels to give than its own, and keeps
+    // the box in page pixels.
+    const size = entry.vector ? vectorRasterSize(ctx, w, h, inkHex !== null) : [Math.round(w), Math.round(h)] as const;
+    const raster = size ? getVectorRaster(fileId, entry.image, size[0], size[1], inkHex) : null;
     if (raster) {
       ctx.drawImage(raster, x, y, w, h);
       return true;
