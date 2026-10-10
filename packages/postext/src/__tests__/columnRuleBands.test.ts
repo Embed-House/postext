@@ -112,6 +112,60 @@ describe('column rule under a page-span heading (EF-101)', () => {
   });
 });
 
+describe('column rule between a page-span opener and a page-span box (#675)', () => {
+  // A page-span box that opens with a headline follows the opener: a
+  // heading before a heading is not snapped to the grid, so the opener's
+  // band ends between two grid lines (minHeight 50 on a 12pt grid) and the
+  // box sits on the next one. The band of columns the opener heads closes
+  // with nothing in it but the hidden heading.
+  const cfg = base(
+    { layoutType: 'double', gutterWidth: pt(20), columnRule: { enabled: true } },
+    {
+      headings: {
+        balancing: { enabled: false },
+        levels: [{
+          level: 1, span: 'page', fontSize: pt(20), lineHeight: pt(30), marginBottom: pt(0), breakBefore: { enabled: true, parity: 'any' },
+          advancedDesign: { enabled: true, minHeight: pt(50), slot: { elements: [{
+            kind: 'text', id: 'name', content: '{titleText}', fontSize: pt(20),
+            placement: { anchor: { to: 'container', edge: 'top-left' } },
+          }] } },
+        }],
+      },
+    },
+  );
+  const md = `# The Daily Canon\n\n:::callout{span="page" title="Lead"}\n## The headline of the day\n\nIts standfirst.\n:::\n\n${BODY}`;
+
+  it('rules no gutter in the band that holds only the opener', () => {
+    const doc = build(md, cfg);
+    const page = doc.pages[0]!;
+    const box = page.columns.find((c) => c.kind === 'span')!;
+    const head = page.columns[0]!;
+    // The case: the opener's column ends under its band, on the box's top.
+    expect(head.blocks.every((b) => b.type === 'heading' && b.hidden)).toBe(true);
+    expect(head.bbox.y + head.bbox.height).toBeGreaterThan(page.openerBand!.bbox.y + page.openerBand!.bbox.height + 1);
+    const segs = columnRuleSegments(page.columns);
+    expect(segs).toHaveLength(1);
+    expect(segs[0]!.top).toBeGreaterThanOrEqual(box.bbox.y + box.bbox.height - 0.01);
+    // And the canvas draws what the segments say.
+    const rules = verticalStrokes(doc, page);
+    expect(rules).toHaveLength(1);
+    expect(rules[0]!.y0).toBeGreaterThanOrEqual(box.bbox.y + box.bbox.height - 0.01);
+  });
+
+  it('still rules the gutter under an opener that text follows', () => {
+    const doc = build(`# The Daily Canon\n\n${BODY}`, cfg);
+    const page = doc.pages[0]!;
+    const segs = columnRuleSegments(page.columns);
+    expect(segs).toHaveLength(1);
+    expect(segs[0]!.bottom).toBeCloseTo(page.contentArea.y + page.contentArea.height, 1);
+  });
+
+  it('keeps the rules of a page that holds an opener and nothing else', () => {
+    const doc = build('# The Daily Canon', cfg);
+    expect(columnRuleSegments(doc.pages[0]!.columns)).toHaveLength(1);
+  });
+});
+
 describe('column rule of a styled section (EF-112)', () => {
   const orange = hex('#e08a1e');
   const twoColumns = (columnRule?: LayoutConfig['columnRule']): PostextConfig['headingStyles'] => [{

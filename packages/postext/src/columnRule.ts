@@ -43,7 +43,8 @@ function ruleTop(col: VDTColumn): number {
  * — the ruling a compositor would draw. Under a page-span heading's opener
  * band it starts where the text does. A gutter between two columns that
  * hold nothing (a band closed before any text landed, the empty columns
- * left beside a closing page's text) is not ruled; a zero-height column
+ * left beside a closing page's text, the grid line a page-span opener
+ * leaves under its band before a page-span box) is not ruled; a zero-height column
  * (one a float filled) still bounds its gutters, which then run the length
  * of its neighbour — beside the float, never through it (#505). Bands are
  * visited in column order, which is band order because bands are always
@@ -71,9 +72,16 @@ export function columnRuleSegments(
     else byBand.set(band, [col]);
   }
   const tall = (col: VDTColumn): boolean => col.bbox.height > 0.5;
+  // A column that holds only the hidden heading of a page-span opener
+  // holds nothing the rule could stand beside: the opener band paints the
+  // heading, and the band closed under it before any text landed (a
+  // page-span box follows the opener, and the band ends on the grid line
+  // under the opener's foot). Ruled, that sliver printed a tick of rule
+  // between the opener and the box (#675).
+  const holdsNothing = (col: VDTColumn): boolean => col.blocks.every((b) => b.type === 'heading' && b.hidden === true);
   // A page with no text at all (a blank page) keeps its rules, as it did.
-  const anyText = columns.some((c) => c.kind !== 'span' && c.blocks.length > 0);
-  const empty = (col: VDTColumn): boolean => col.kind !== 'side' && col.blocks.length === 0;
+  const anyText = columns.some((c) => c.kind !== 'span' && !holdsNothing(c));
+  const empty = (col: VDTColumn): boolean => col.kind !== 'side' && holdsNothing(col);
   const segments: ColumnRuleSegment[] = [];
   for (const cols of byBand.values()) {
     // Reading order is not always geometric order (a side column at the
