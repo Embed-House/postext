@@ -120,6 +120,9 @@ const config = () => ({
     fontFamily: MINCHO, fontSize: pt(BODY), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: em(1), indentAfterHeading: true, // 一字下げ
+    // A bunko page carries its 15 lines whatever a paragraph does at the turn: the line
+    // counts of Western widow and orphan control are not part of Japanese book-making.
+    avoidWidows: false, avoidOrphans: false,
   },
   headings: { fontFamily: MINCHO, color: col('ink'), levels: [night] },
   headingStyles: [titlePage],
