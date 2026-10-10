@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "romaji-nikki",
-  "sourceHash": "53afc9adc57cba62119e4f80521aa1aec7d22c8610a179a603c4c34fee6ffc22",
+  "sourceHash": "32e68e6ec20019661f1579e397ef50da080c2e3987cf95083f55e78d275c4909",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:07.593Z",
+  "capturedAt": "2026-10-10T18:34:59.648Z",
   "variants": {
     "en": {
-      "hash8": "1ab96bee",
-      "vdtHash": "7bb93b9bbaa0b252c27068235e4fd8aabff1c60d",
+      "hash8": "8cb416ea",
+      "vdtHash": "82d693e9a6d7d3ffcdce158b9dfa43e9084eed21",
       "timings": {
-        "importMs": 509,
-        "fontsMs": 556,
-        "buildMs": 302,
-        "totalMs": 3418,
+        "importMs": 17953,
+        "fontsMs": 262,
+        "buildMs": 178,
+        "totalMs": 19639,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130590,
+          "bytes": 130624,
           "alt": "Page 3."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93326,
+          "bytes": 93266,
           "alt": "Page 4."
         }
       ],
@@ -115,12 +115,12 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 124443,
+        "bytes": 124445,
         "pages": 4
       },
       "sandbox": {
         "file": "romaji-nikki.postext",
-        "bytes": 10946,
+        "bytes": 10955,
         "folio": "fe908f7a"
       },
       "detected": {
@@ -304,17 +304,23 @@
           "share": 0,
           "worst": 0.04
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "6519e235",
-      "vdtHash": "d9d129e2a3e148050f130784d6cda2b64ffb58bf",
+      "hash8": "9aab7d07",
+      "vdtHash": "05ba8ba6c5d7b5df7fd90f8904b3f6f58bc75dad",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 121,
-        "buildMs": 55,
-        "totalMs": 987,
+        "importMs": 17891,
+        "fontsMs": 125,
+        "buildMs": 57,
+        "totalMs": 18688,
         "builds": 1
       },
       "specimen": {
@@ -369,7 +375,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130590,
+          "bytes": 130624,
           "alt": "Página 3."
         },
         {
@@ -380,7 +386,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 96036,
+          "bytes": 95980,
           "alt": "Página 4."
         }
       ],
@@ -417,7 +423,7 @@
       },
       "sandbox": {
         "file": "romaji-nikki.postext",
-        "bytes": 11030,
+        "bytes": 11038,
         "folio": "fe908f7a"
       },
       "detected": {
@@ -601,7 +607,13 @@
           "share": 0,
           "worst": 0.04
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
