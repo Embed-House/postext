@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "community-newsletter",
-  "sourceHash": "76e1c1da5b20ab2527b47788a706b3b2c010fe40ce4375af93e8ff0a6fd18d2d",
+  "sourceHash": "d08087602039159ecb5a640d3ab57c5f0fa692a30f1933a7c6e2ddaad85f0944",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.379Z",
+  "capturedAt": "2026-10-10T18:36:22.067Z",
   "variants": {
     "en": {
       "hash8": "385e42f3",
       "vdtHash": "d5f528c1898961589bbd0d00ab128b8154b465c0",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 28,
-        "buildMs": 44,
-        "totalMs": 798,
+        "importMs": 416,
+        "fontsMs": 58,
+        "buildMs": 161,
+        "totalMs": 1290,
         "builds": 1
       },
       "specimen": {
@@ -302,13 +302,13 @@
       }
     },
     "es": {
-      "hash8": "e28bf307",
-      "vdtHash": "2d63db2667b0a76991738b00efd6a90668e9169c",
+      "hash8": "c0a66468",
+      "vdtHash": "a62a7faa8305895a7ad2843b3dab7f88b31d12f8",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 28,
-        "buildMs": 34,
-        "totalMs": 785,
+        "importMs": 173,
+        "fontsMs": 32,
+        "buildMs": 36,
+        "totalMs": 908,
         "builds": 1
       },
       "specimen": {
@@ -353,7 +353,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 142058,
+          "bytes": 141514,
           "alt": "Página 2: Qué va en los cajones. El cajón uno en marzo. Temperatura en el centro, a las nueve. En la franja, de 55 a 65 °C, mueren casi todas las semillas de malas hierbas. · Cómo se planta el bancal. Una col por cuadro; cuatro lechugas, acelgas o caléndulas; nueve remolachas,…"
         }
       ],
@@ -381,7 +381,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81868,
+        "bytes": 81869,
         "folio": "0414c868"
       },
       "detected": {
@@ -590,7 +590,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

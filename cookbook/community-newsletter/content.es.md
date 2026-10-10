@@ -68,7 +68,7 @@ Llena un cajón cada vez, con verde y marrón en carretillas más o menos iguale
 
 Al voltearlo entra aire en el centro y la temperatura vuelve a subir: el cajón uno, volteado el 18 de marzo, pasaba de 60 °C dos días después. Cada semana, dos parcelas se encargan de la horca según el turno de la caseta. En septiembre cada parcela se llevará dos carretillas de compost, y el resto irá al bancal de la puerta.
 
-#### Dieciséis cuadros junto a la puerta {style="kicker"}
+#### 16 cuadros junto a la puerta {style="kicker"}
 
 ::resource{id="bed"}
 
