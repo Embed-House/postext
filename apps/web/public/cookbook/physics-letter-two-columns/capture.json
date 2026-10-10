@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "cc6f7cbecfbc50a250c10a4972adecf8b750fd2c174268c744f27313049da377",
+  "sourceHash": "985cc3fbb0dd1a931cbde3a808f173a155705dcf91e829c024c50d157a08d565",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.664Z",
+  "capturedAt": "2026-10-10T18:59:15.480Z",
   "variants": {
     "en": {
-      "hash8": "a88b5d15",
-      "vdtHash": "eb636f554eb51213b17f991f8a0eff5c817b50bc",
+      "hash8": "c72c7845",
+      "vdtHash": "a379e24ae0c63f57861374e3de8ce9283c0cdc9b",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 137,
-        "buildMs": 154,
-        "totalMs": 1053,
+        "importMs": 226,
+        "fontsMs": 138,
+        "buildMs": 187,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 250454,
+          "bytes": 250500,
           "alt": "Page 2: II. Observation."
         },
         {
@@ -126,7 +126,7 @@
       },
       "pdf": {
         "file": "physics-letter-two-columns.pdf",
-        "bytes": 573206,
+        "bytes": 573400,
         "pages": 5
       },
       "sandbox": {
@@ -429,7 +429,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 1,
+        "iterationCount": 2,
         "looseLines": {
           "count": 2,
           "share": 0.0085,
@@ -440,6 +440,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.13 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
