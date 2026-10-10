@@ -46,6 +46,22 @@ export function getMeasureDirection(): 'ltr' | 'rtl' {
   return measureDirection;
 }
 
+let measureArabicNumbers = false;
+
+/** Whether paragraphs are measured as those of a right-to-left document
+ *  written in the Arabic script (`arabicNumbersOf`), where European digits
+ *  that open a right-to-left run read as Arabic numbers
+ *  (`BidiOptions.arabicNumbers`, #665). The build sets it with the
+ *  direction and puts back what it found; off outside a build. */
+export function setMeasureArabicNumbers(on: boolean): void {
+  measureArabicNumbers = on === true;
+}
+
+/** See {@link setMeasureArabicNumbers}. */
+export function getMeasureArabicNumbers(): boolean {
+  return measureArabicNumbers;
+}
+
 /** Source characters a line may leave out of its segments: the space a
  *  break consumed, a soft hyphen or a zero-width space, the middle dot of a
  *  Catalan `l·l` broken as `l-` | `l`. */

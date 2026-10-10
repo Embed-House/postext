@@ -10,7 +10,7 @@ import { hasCJK } from '../../measure/cjk';
 import { onTextWidthCacheClear } from '../../measure/canvas';
 import { getCjkLineBreak } from '../../measure/cjkClasses';
 import { getCjkComposition } from '../../measure/cjkPunctuation';
-import { getMeasureDirection } from '../../measure/bidiLines';
+import { getMeasureArabicNumbers, getMeasureDirection } from '../../measure/bidiLines';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from '../../measure/vertical';
 import { isCjkLanguage } from '../../locale';
 import { buildBody, buildNeck, buildTail, dashOf, translateBody, type Body } from './shapes';
@@ -74,7 +74,7 @@ export function letterPanelDetailed(panel: LetteringPanel, items: readonly Lette
   }));
   const key = JSON.stringify([
     panel, local, env,
-    getMeasureWritingMode(), getMeasureRegion(), getMeasureDirection(), getMeasureUprightDigits(), getCjkLineBreak(), getCjkComposition(),
+    getMeasureWritingMode(), getMeasureRegion(), getMeasureDirection(), getMeasureArabicNumbers(), getMeasureUprightDigits(), getCjkLineBreak(), getCjkComposition(),
   ]);
   let out = lettered.get(key);
   if (out) {

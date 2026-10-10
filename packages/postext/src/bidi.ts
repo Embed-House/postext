@@ -303,6 +303,26 @@ function classesOf(text: string): Uint8Array {
   return out;
 }
 
+/** What the engine reads on top of UAX #9 when it resolves a paragraph. */
+export interface BidiOptions {
+  /**
+   * The paragraph belongs to a document written in the Arabic script
+   * (#665). Rule W2 reads European digits as an Arabic number when an
+   * Arabic letter comes before them, so `شكل 3-1` orders its two numbers
+   * from right to left, as `شكل ٣-١` does; the same number with no letter
+   * before it (`3-1 الأبواب`, a heading's number, or `3-1` alone in a
+   * contents column) would stay a left-to-right `3-1`, the 3 on the left,
+   * and one book would print one number two ways. With this option a
+   * European number that opens a right-to-left run (a paragraph, an
+   * isolate) is read as the numbers after the document's letters are, as
+   * an Arabic number: the start of the run counts as an Arabic letter for
+   * rule W2. The digits of a number never change order; only how a
+   * hyphen, a plus or a percent sign beside it joins it to the next
+   * number. Left-to-right runs are not touched.
+   */
+  arabicNumbers?: boolean;
+}
+
 const isIsolateInitiator = (c: number): boolean => c === LRI || c === RLI || c === FSI;
 /** Removed by rule X9 (kept in the text, given a neighbour's level). */
 const isRemoved = (c: number): boolean => c === BN || c === TAIL || (c >= LRE && c <= PDF);
@@ -315,13 +335,16 @@ const isRemoved = (c: number): boolean => c === BN || c === TAIL || (c >= LRE &&
  * held RLI/LRI and PDI controls (the inline `:rtl[…]` and `:ltr[…]`); the
  * text itself may also hold the Unicode controls. A paragraph separator
  * (`B`) ends the embeddings opened before it, as at the end of a paragraph;
- * callers split the text at paragraph breaks first (rule P1).
+ * callers split the text at paragraph breaks first (rule P1). `options`
+ * are the engine's own readings on top of the algorithm
+ * ({@link BidiOptions}); without them the result is UAX #9's.
  */
-export function resolveParagraph(text: string, base: BaseDirection = 'auto', isolates?: readonly BidiIsolate[]): BidiParagraph {
+export function resolveParagraph(text: string, base: BaseDirection = 'auto', isolates?: readonly BidiIsolate[], options?: BidiOptions): BidiParagraph {
   const classes = classesOf(text);
   const baseLevel = base === 'rtl' ? 1 : base === 'ltr' ? 0 : -1;
+  const arabicLead = options?.arabicNumbers === true;
   if (!isolates || isolates.length === 0) {
-    const { levels, paragraphLevel } = resolveClasses(classes, baseLevel, text, null);
+    const { levels, paragraphLevel } = resolveClasses(classes, baseLevel, text, null, arabicLead);
     return { text, paragraphLevel, levels, classes };
   }
   // Insert the isolate controls as virtual characters, resolve, and read
@@ -340,7 +363,7 @@ export function resolveParagraph(text: string, base: BaseDirection = 'auto', iso
     while (o < opens.length && opens[o]!.start === i) { ext[k] = opens[o]!.direction === 'rtl' ? RLI : LRI; map[k++] = -1; o++; }
     if (i < text.length) { ext[k] = classes[i]!; map[k++] = i; }
   }
-  const resolved = resolveClasses(ext, baseLevel, text, map);
+  const resolved = resolveClasses(ext, baseLevel, text, map, arabicLead);
   const levels = new Uint8Array(text.length);
   for (let j = 0; j < total; j++) if (map[j]! >= 0) levels[map[j]!] = resolved.levels[j]!;
   return { text, paragraphLevel: resolved.paragraphLevel, levels, classes };
@@ -406,6 +429,8 @@ export function resolveClasses(
   baseLevel: number,
   text: string | null,
   map: Int32Array | null,
+  /** {@link BidiOptions.arabicNumbers}. */
+  arabicLead = false,
 ): { levels: Uint8Array; paragraphLevel: number } {
   const n = cls.length;
   const types = new Uint8Array(cls);
@@ -560,7 +585,7 @@ export function resolveClasses(
     const sos = Math.max(before, level) & 1 ? R : L;
     const eos = Math.max(after, level) & 1 ? R : L;
     if (text !== null && !brackets) brackets = { open: new Int32Array(63), want: new Int32Array(63), pairs: [] };
-    resolveSequence(seq, len, level, sos, eos, cls, types, levels, text, map, brackets);
+    resolveSequence(seq, len, level, sos, eos, cls, types, levels, text, map, brackets, arabicLead);
   }
 
   // Removed characters take the level of the character before them.
@@ -614,6 +639,7 @@ function resolveSequence(
   text: string | null,
   map: Int32Array | null,
   brackets: BracketScratch | null,
+  arabicLead = false,
 ): void {
   // W1: marks take the type of what they follow.
   for (let k = 0; k < len; k++) {
@@ -627,6 +653,10 @@ function resolveSequence(
   }
   // W2–W3: European digits after Arabic letters are Arabic; AL is R.
   let strong = sos;
+  // In an Arabic-script document (`BidiOptions.arabicNumbers`, #665) the
+  // digits that open a right-to-left sequence are read as the ones after
+  // its letters: as if an Arabic letter came before them.
+  if (arabicLead && sos === R) strong = AL;
   for (let k = 0; k < len; k++) {
     const i = seq[k]!;
     const t = types[i]!;
@@ -855,4 +885,26 @@ export function lineRuns(par: BidiParagraph, start = 0, end = par.levels.length)
   }
   const runLevels = runs.map((r) => r.level);
   return visualOrder(runLevels).map((k) => runs[k]!);
+}
+
+/** One run of a marker read at a right-to-left level ({@link markerRuns}). */
+export interface MarkerRun {
+  text: string;
+  /** Where the run starts in the marker's text (its reading order). */
+  start: number;
+  /** At an odd level: painted right to left, its brackets mirrored. */
+  rtl?: true;
+}
+
+/**
+ * A marker that reads right to left (`VDTBlock.bulletDirection`) as the
+ * runs a renderer paints, in visual order (from the sheet's left to its
+ * right): `1-` gives the hyphen, then the number. Each run is one bidi
+ * level (UAX #9, rules L1 and L2, at a right-to-left paragraph level); in
+ * an Arabic-script document (`'rtl-arabic'`) European digits read as
+ * Arabic numbers (#665).
+ */
+export function markerRuns(text: string, direction: 'rtl' | 'rtl-arabic'): MarkerRun[] {
+  const par = resolveParagraph(text, 'rtl', undefined, direction === 'rtl-arabic' ? { arabicNumbers: true } : undefined);
+  return lineRuns(par).map((r) => ({ text: text.slice(r.start, r.end), start: r.start, ...(r.level & 1 ? { rtl: true as const } : {}) }));
 }

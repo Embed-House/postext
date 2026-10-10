@@ -39,7 +39,7 @@
  * children.
  */
 
-import { flowTextWidth, lineBaselineOffset } from '../measure/vertical';
+import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical';
 import { onTextWidthCacheClear } from '../measure/canvas';
 import type { ContentBlock, DirectiveAttrs } from '../parse';
 import { suffixJoiner } from '../parse/inlineFormatting';
@@ -69,14 +69,15 @@ import { applyStyleAttrs, isMarkerBlock, widthLessEndIndent } from './buildHelpe
 import { resetLinePositions } from './placement';
 import { raggedLooseLines } from './raggedLines';
 import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
-import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
+import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
 import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { headingIsHidden } from './headingStyles';
 import { directDesignTextBlock } from '../design/bidiText';
+import { arabicNumbersOf } from './config';
 import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
 import { joiningScriptIn } from '../measure/joining';
-import { getMeasureDirection, shiftLineX } from '../measure/bidiLines';
+import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import { resolvedCodeStyle } from '../defaults/codeStyle';
 import { parseLengthText } from '../defaults/tabStops';
 import { isFlowColumnsStyle } from './flowColumns';
@@ -572,7 +573,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const rtlDocument = input.resolved.direction === 'rtl';
   const mirroredFlow = rtlDocument && input.resolved.layout.writingMode !== 'vertical-rl';
   const directText = (block: VDTDesignTextBlock, trackingPx = 0): VDTDesignTextBlock => {
-    directDesignTextBlock(block, rtlDocument ? 'rtl' : 'ltr', mirroredFlow, trackingPx);
+    directDesignTextBlock(block, rtlDocument ? 'rtl' : 'ltr', mirroredFlow, trackingPx, arabicNumbersOf(input.resolved));
     return block;
   };
 
@@ -1052,6 +1053,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       }
       // A list set against the document's direction (#371).
       if (raw.direction !== undefined && raw.direction !== getMeasureDirection()) mirrorListMarker(blk);
+      // And reads in its item's direction (#664).
+      directListMarker(blk, raw.direction ?? getMeasureDirection(), getMeasureArabicNumbers(), measuringVertically());
       if (strikethroughText) blk.strikethroughText = true;
       const firstLine = blk.lines[0];
       if (firstLine) {
@@ -1201,7 +1204,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     delete tail.bulletText; delete tail.bulletFontString; delete tail.bulletColor;
     delete tail.bulletOffsetX; delete tail.bulletY; delete tail.bulletBaselineY;
     delete tail.separatorText; delete tail.separatorFontString; delete tail.separatorColor; delete tail.separatorX;
-    delete tail.prefixText; delete tail.prefixX;
+    delete tail.prefixText; delete tail.prefixX; delete tail.bulletDirection;
     tail.bbox = createBoundingBox(blk.bbox.x, 0, blk.bbox.width, tail.lines.length * lh);
     tail.sourceStart = tail.lines[0]?.sourceStart ?? blk.sourceStart;
     return tail;

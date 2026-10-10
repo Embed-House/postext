@@ -40,18 +40,18 @@ import { collectConfigWarnings } from '../configWarnings';
 import { initHyphenator } from '../measure';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
 import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
 import { stampCentralBaselines } from './verticalMetrics';
 import { orientLinesToFrames } from './mirrorFrame';
 import { verseMarginTopPx } from './buildBlockKind';
 import { verseLinesSettings, versesLineByLine } from './verseLines';
 import type { MeasurementCache } from '../measure';
-import { resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
+import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
 import { resolveDebugConfig } from '../defaults/debug';
 import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
-import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
+import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -81,6 +81,7 @@ import {
   computeLevelIndentsPx,
   computeOrderedLevelIndentsPx,
   computeOrderedListRunMetrics,
+  directListMarker,
   listBulletPosition,
   listItemGapPx,
   listItemSpacingPx,
@@ -543,9 +544,11 @@ export function buildDocumentPass(
   const region = getMeasureRegion();
   const uprightDigits = getMeasureUprightDigits();
   const direction = getMeasureDirection();
+  const arabicNumbers = getMeasureArabicNumbers();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
     setCjkComposition(composition);
     setMeasureWritingMode(writingMode, region);
@@ -614,6 +617,9 @@ function placeDocumentPass(
   // Paragraphs run in the document's direction unless they set their own
   // (`{dir=…}`): an Arabic book's captions, cells and notes too.
   setMeasureDirection(resolvedDirection(resolved));
+  // And, in an Arabic-script book, read a number that opens a paragraph as
+  // the numbers after its letters (#665).
+  setMeasureArabicNumbers(arabicNumbersOf(resolved));
 
   // Compute baseline grid
   const baselineGrid = computeBaselineGrid(resolved);
@@ -6486,6 +6492,8 @@ function placeDocumentPass(
       // A list set against the document's direction: its marker on the
       // other side, with its text (#371).
       if (rawBlock.direction !== undefined && rawBlock.direction !== resolvedDirection(resolved)) mirrorListMarker(blk);
+      // And reads in its item's direction (#664).
+      directListMarker(blk, rawBlock.direction ?? resolvedDirection(resolved), arabicNumbersOf(resolved), measuringVertically());
       if (strikethroughText) blk.strikethroughText = true;
       // Bullet Y = x-height midpoint of the item's first text line.
       // Pairs with `textBaseline='middle'` at render so the bullet stays

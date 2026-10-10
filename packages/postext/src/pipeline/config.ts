@@ -42,7 +42,7 @@ import {
 } from '../defaults';
 import { dimensionToPx } from '../units';
 import { applyCjkGrid } from './cjkGrid';
-import { directionOf, presentTag, resolveNumerals } from '../locale';
+import { directionOf, localeScript, presentTag, resolveNumerals } from '../locale';
 import { configFingerprint } from '../util/stableHash';
 import { forgetFlowColorValues } from './partPalette';
 import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt';
@@ -214,6 +214,17 @@ export function resolveDirection(direction: unknown, documentLocale: string): 'l
  *  `ResolvedConfig.direction`). */
 export function resolvedDirection(resolved: ResolvedConfig): 'ltr' | 'rtl' {
   return resolved.direction === 'rtl' ? 'rtl' : 'ltr';
+}
+
+/** Whether the document is set right to left in the Arabic script (Arabic,
+ *  Persian, Urdu…, `ar`, `fa`, `ur`, `ps`, `ug`, also in Nastaliq): there a
+ *  European number with no letter before it reads as an Arabic number
+ *  (`BidiOptions.arabicNumbers`, #665), so a Maghreb edition orders `3-1`
+ *  as a Mashriq one orders `٣-١`. A Hebrew document is not one. */
+export function arabicNumbersOf(resolved: ResolvedConfig): boolean {
+  if (resolved.direction !== 'rtl') return false;
+  const script = localeScript(resolvedLocale(resolved));
+  return script === 'Arab' || script === 'Aran';
 }
 
 /** The document language: `locale`, else the hyphenation locale as written
