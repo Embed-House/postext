@@ -125,6 +125,13 @@ export interface FileRun {
  * printed unmirrored in an Arabic line (#401). Such a character is set in
  * the first file with its mirror (the `latin` one), or by its own glyph
  * when no file has the mirror.
+ *
+ * In a left-to-right run a character that opens what follows it (an
+ * opening bracket, an initial quotation mark) goes to the file the next
+ * character is set in when that file has it (postext #670): the `(` of
+ * `(d. 1367)` in an Arabic book was cut into the `arabic` file, the first
+ * to hold it, and printed in that file's form, wider than the layout
+ * measured, against a closing bracket from the `latin` one.
  */
 export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   const list = faceFilesOf(font);
@@ -134,7 +141,9 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   // Joining controls waiting for the letter after them (see below).
   let pending = '';
   let previous = 0;
-  for (const ch of text) {
+  const chars = [...text];
+  for (let at = 0; at < chars.length; at++) {
+    const ch = chars[at]!;
     const cp = ch.codePointAt(0)!;
     // A zero width joiner or non-joiner shapes with the letters it sits
     // between (HarfBuzz reads it only inside one run): it stays with the
@@ -152,6 +161,11 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
     if (!file || (!list.covers(file, shown) && !isDefaultIgnorable(cp))) {
       file = list.fileFor(shown) ?? current?.font ?? font;
     }
+    // An opening mark goes with what it opens (#670).
+    if (!rtl && OPENING_RE.test(ch)) {
+      const opened = openedFile(list, chars, at + 1, current?.font);
+      if (opened && list.covers(opened, cp)) file = opened;
+    }
     if (current && current.font === file) {
       current.text += pending + ch;
     } else {
@@ -166,6 +180,24 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
     else runs.push({ font, text: pending });
   }
   return runs.length > 0 ? runs : [{ font, text }];
+}
+
+/** Opening brackets and initial quotation marks (`Ps`, `Pi`). */
+const OPENING_RE = /^[\p{Ps}\p{Pi}]$/u;
+
+/** The file the first character after a row of opening marks (from `from`)
+ *  is set in: the current run's when it covers it, else the first file
+ *  that does. Undefined when a space or nothing follows the marks, or no
+ *  file has the character. */
+function openedFile(list: FaceFiles, chars: readonly string[], from: number, current: PDFFont | undefined): PDFFont | undefined {
+  let at = from;
+  while (at < chars.length && OPENING_RE.test(chars[at]!)) at++;
+  const next = chars[at];
+  if (next === undefined || /\s/u.test(next)) return undefined;
+  const cp = next.codePointAt(0)!;
+  if (isJoiningControl(cp) || isDefaultIgnorable(cp)) return undefined;
+  if (current && list.covers(current, cp)) return current;
+  return list.fileFor(cp) ?? undefined;
 }
 
 /** ZWNJ (U+200C) and ZWJ (U+200D): they choose the joining form of the
