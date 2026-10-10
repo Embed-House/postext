@@ -1,6 +1,7 @@
 import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
+import { fillTrackedWord } from './trackedText';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -26,6 +27,10 @@ const MARK_RE = /\p{M}/u;
  * - a word set in several styles (`runs`, `كتا**ب**`) is painted whole in
  *   the segment's style, then once more in each other run's style, clipped
  *   to that run's stretch of the word ({@link paintWordRuns}).
+ *
+ * A left-to-right word of a tracked line that the browser would shape
+ * without its ligatures under letter-spacing is painted with them, as it
+ * was measured (`fillTrackedWord`, #663).
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,
@@ -45,7 +50,8 @@ export function fillSegmentWord(
     ctx.direction = 'rtl';
     ctx.textAlign = 'left';
   }
-  paint(seg.text, x, y);
+  if (tracking !== 0 && !untracked && !rtl && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
+  else paint(seg.text, x, y);
   if (seg.runs) paintWordRuns(ctx, seg, x, y, paint, runStyle);
   if (rtl) {
     ctx.direction = direction!;

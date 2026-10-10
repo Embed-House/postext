@@ -72,6 +72,16 @@ const DASH_FEATURES_DECL = "font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'lo
 const inkScaleDecl = (scale: number): string =>
   `transform:scaleX(${scale.toFixed(4)});transform-origin:0 0;${DASH_FEATURES_DECL}`;
 
+/** The ligatures of a tracked line (#663). A tracked word was measured at
+ *  its natural width, ligatures counted, plus its tracking; under a
+ *  `letter-spacing` other than zero browsers turn the common ligatures off
+ *  and the word comes out wider than its place (fi in Newsreader: 4.5 px at
+ *  40 px). Asked for as features they stay (`font-variant-ligatures` does
+ *  not bring them back). After the `font` shorthand, which resets them: on
+ *  the line's box and on each run in another face. A box that takes
+ *  {@link CJK_TEXT_DECL} after it keeps that one. */
+const TRACKED_LIGATURES_DECL = "font-feature-settings:'liga' 1,'clig' 1;";
+
 /** Whether a line box carries {@link CJK_TEXT_DECL}: a line of the CJK
  *  composer, which it measured character by character, or a line with no
  *  segments (one span) holding CJK text. A word-by-word line holding CJK
@@ -932,7 +942,7 @@ function renderSegments(
   const paintText = (seg: VDTLineSegment, at: number, inLink = false): string => {
     const font = quoteFontString(pickSegmentFont(seg, block));
     const color = pickSegmentColor(seg, block);
-    const fontDecl = font !== quoteFontString(block.fontString) ? `font:${font};` : '';
+    const fontDecl = font !== quoteFontString(block.fontString) ? `font:${font};${tracking !== 0 ? TRACKED_LIGATURES_DECL : ''}` : '';
     const colorDecl = color !== block.color ? `color:${color};` : '';
     const top = seg.baselineShift ? `${seg.baselineShift.toFixed(3)}px` : '0';
     return renderWordTextSegment(inLink ? { ...seg, refResourceId: undefined } : seg, at, top, fontDecl, colorDecl, color, cjk && hasCJK(seg.text), segmentBox(seg, rootDir, rootLang, tracking, font, color, (probe) => ({ font: quoteFontString(pickSegmentFont(probe, block)), color: pickSegmentColor(probe, block) })));
@@ -1311,7 +1321,7 @@ function renderLine(
   // line's own (justification): measured into the segment widths, so the
   // glyphs must spread the same way.
   const tracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
-  const trackingDecl = tracking !== 0 ? `letter-spacing:${tracking}px;` : '';
+  const trackingDecl = tracking !== 0 ? `letter-spacing:${tracking}px;${TRACKED_LIGATURES_DECL}` : '';
   return (
     `<div class="pt-line" data-block="${esc(block.id)}" style="` +
     `position:absolute;` +
@@ -1724,7 +1734,7 @@ function renderResourceLine(
     const paintText = (seg: VDTLineSegment, at: number, inLink = false): string => {
       const font = quoteFontString(pickResourceFont(seg, fonts));
       const segColor = segColorOf(seg);
-      const fontDecl = font !== baseFont ? `font:${font};` : '';
+      const fontDecl = font !== baseFont ? `font:${font};${tracking !== 0 ? TRACKED_LIGATURES_DECL : ''}` : '';
       const colorDecl = segColor !== color ? `color:${segColor};` : '';
       const top = seg.baselineShift ? `${seg.baselineShift.toFixed(3)}px` : '0';
       // Its direction, untracked joining letters and styled runs (#379).
@@ -1805,7 +1815,7 @@ function renderResourceLine(
     `color:${color};` +
     // A tracked line (a table header set with `headerLetterSpacing`) was
     // measured with the tracking in its widths.
-    (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;` : '') +
+    (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;${TRACKED_LIGATURES_DECL}` : '') +
     (lineDecl ? CJK_TEXT_DECL : '') +
     `">${parts.join('')}</div>`
   );

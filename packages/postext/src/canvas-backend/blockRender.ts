@@ -14,6 +14,7 @@ import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
 import { fillSegmentWord, type WordRun } from './wordRuns';
+import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 
 function pickSegmentFont(
@@ -447,6 +448,12 @@ function renderLine(
   ctx.fillStyle = style.color;
   const plainSlack = Math.max(0, effectiveWidth - (line.bbox.width - trailing));
   const plainX = lineX + (align === 'right' ? plainSlack : align === 'center' ? plainSlack / 2 : 0);
+  // A tracked line that would lose a ligature to the letter-spacing is
+  // painted word by word, each as it was measured (#663).
+  if (tracking !== 0 && segments && segments.length > 0 && shapedOtherwise(ctx, line.text)) {
+    renderSegments(ctx, segments, plainX, line.baseline, style, undefined, cjk, tracking, order);
+    return;
+  }
   if (cjk) fillWordsText(ctx, line.text, plainX, line.baseline);
   else ctx.fillText(line.text, plainX, line.baseline);
 }
