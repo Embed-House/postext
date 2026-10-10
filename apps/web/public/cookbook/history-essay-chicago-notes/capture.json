@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "history-essay-chicago-notes",
-  "sourceHash": "53dc71244108984246997bbf3b90cc43bf1395345c6315ebb8b2fd98f8ff2e5e",
+  "sourceHash": "00e938c6ee1b645217795b68660477294956957c95d1291cc1c46ef91abbc6c7",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.234Z",
+  "capturedAt": "2026-10-10T19:04:37.247Z",
   "variants": {
     "en": {
-      "hash8": "cae9c8f3",
-      "vdtHash": "898072464f8c5741c20e334b5d6a640a744ecd01",
+      "hash8": "539e6bda",
+      "vdtHash": "cb0831936c958c10f1fbb35d8bc01ddf2b94481e",
       "timings": {
-        "importMs": 179,
+        "importMs": 2157,
         "fontsMs": 32,
-        "buildMs": 426,
-        "totalMs": 1264,
+        "buildMs": 447,
+        "totalMs": 3285,
         "builds": 1
       },
       "specimen": {
@@ -49,8 +49,8 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90136,
-          "alt": "Opening page 1: Railway Time: How British Towns Came to Keep London's Hour."
+          "bytes": 90250,
+          "alt": "Opening page 1: Railway Time: How British Towns Came to Keep London’s Hour."
         },
         {
           "n": 2,
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 152314,
+          "bytes": 152298,
           "alt": "Page 3: THE TOWNS HESITATE."
         },
         {
@@ -114,12 +114,12 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 86071,
+        "bytes": 86054,
         "pages": 4
       },
       "sandbox": {
         "file": "history-essay-chicago-notes.postext",
-        "bytes": 17373,
+        "bytes": 17385,
         "folio": "d7c0312b"
       },
       "detected": {
@@ -322,13 +322,13 @@
       }
     },
     "es": {
-      "hash8": "95485edc",
+      "hash8": "a01c6ebe",
       "vdtHash": "bf4264bd051500f1780024e7d1f064ef0bde8c52",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 32,
-        "buildMs": 437,
-        "totalMs": 1302,
+        "importMs": 284,
+        "fontsMs": 34,
+        "buildMs": 487,
+        "totalMs": 1501,
         "builds": 1
       },
       "specimen": {
