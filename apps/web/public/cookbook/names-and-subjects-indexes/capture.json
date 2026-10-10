@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "names-and-subjects-indexes",
-  "sourceHash": "1efcdbe2bacf3419d4474cbea0d26026e4268a046fc1262359a22db9acf1ea71",
+  "sourceHash": "74b9b4b2bb938d7785012e57df1676a9277d340eb69912ebb1687b6429a5ff0f",
   "engine": {
     "postext": "1.25.4",
     "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:39:44.240Z",
+  "capturedAt": "2026-10-10T20:22:50.806Z",
   "variants": {
     "en": {
-      "hash8": "5fe5f6e3",
-      "vdtHash": "abc2b6e55e034adc2d9612c30c36cc1d0b6a5e84",
+      "hash8": "7787c3c0",
+      "vdtHash": "873133820c795bc0429f261f7a92f0666157b5ab",
       "timings": {
-        "importMs": 486,
-        "fontsMs": 89,
-        "buildMs": 537,
-        "totalMs": 1997,
+        "importMs": 222,
+        "fontsMs": 27,
+        "buildMs": 124,
+        "totalMs": 999,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Franklin"
         ],
         "pages": 7,
-        "ownLines": 141
+        "ownLines": 145
       },
       "pages": [
         {
@@ -105,7 +105,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 40404,
+          "bytes": 40262,
           "alt": "Opening page 6: Index of Names."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 41444,
+          "bytes": 41124,
           "alt": "Opening page 7: Index of Subjects."
         }
       ],
@@ -152,12 +152,12 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 116594,
+        "bytes": 116629,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17025,
+        "bytes": 16973,
         "folio": "581a62c9"
       },
       "detected": {
@@ -256,6 +256,7 @@
           "index.groups.fontFamily",
           "index.groups.fontSize",
           "index.groups.fontWeight",
+          "index.groups.marginTop",
           "index.indent",
           "index.lineHeight",
           "index.main",
@@ -302,7 +303,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 252,
+        "configLeaves": 253,
         "designElements": 11,
         "directives": [
           ":::paragraphs",
@@ -386,17 +387,23 @@
           "share": 0,
           "worst": 1.81
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "e296c579",
-      "vdtHash": "64eebc92a6b347d978678366769ff7cbc0fd56cc",
+      "hash8": "470229db",
+      "vdtHash": "05b1d598a1be4d6c76874f80bcc2b5fca0b3d1bc",
       "timings": {
-        "importMs": 168,
+        "importMs": 220,
         "fontsMs": 28,
-        "buildMs": 134,
-        "totalMs": 1014,
+        "buildMs": 142,
+        "totalMs": 1016,
         "builds": 1
       },
       "specimen": {
@@ -418,7 +425,7 @@
           "Libre Franklin"
         ],
         "pages": 7,
-        "ownLines": 141
+        "ownLines": 145
       },
       "pages": [
         {
@@ -484,7 +491,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 42884,
+          "bytes": 42710,
           "alt": "Página de apertura 6: Índice onomástico."
         },
         {
@@ -495,7 +502,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 45012,
+          "bytes": 44600,
           "alt": "Página de apertura 7: Índice de materias."
         }
       ],
@@ -531,12 +538,12 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 130380,
+        "bytes": 130363,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17478,
+        "bytes": 17385,
         "folio": "581a62c9"
       },
       "detected": {
@@ -635,6 +642,7 @@
           "index.groups.fontFamily",
           "index.groups.fontSize",
           "index.groups.fontWeight",
+          "index.groups.marginTop",
           "index.indent",
           "index.lineHeight",
           "index.main",
@@ -681,7 +689,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 252,
+        "configLeaves": 253,
         "designElements": 11,
         "directives": [
           ":::paragraphs",
@@ -759,7 +767,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 3,
         "looseLines": {
           "count": 0,
           "share": 0,

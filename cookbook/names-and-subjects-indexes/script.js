@@ -53,7 +53,10 @@ const index = {
   indent: em(1), turnoverIndent: em(2),
   rangeFormat: 'chicago', // 212–14, as a monograph prints it
   main: { bold: true }, // the page of the principal discussion
-  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },
+  // A shade over a line above each letter: with it the two columns of both indexes end
+  // within a line of each other in both editions (the level cut moves by body lines).
+  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick'),
+    marginTop: pt(12) },
 };
 // #endregion
 
@@ -116,8 +119,9 @@ const config = () => ({
     { level: 2, fontSize: pt(12), lineHeight: pt(LEAD), italic: true, fontWeight: 400,
       color: col('brick'), marginTop: pt(LEAD), marginBottom: pt(LEAD * 0.5) },
   ] },
-  // The index heading: a shallower opener over the two columns of entries.
-  headingStyles: [{ ...indexHeading, span: 'page', advancedDesign: opener(6, 20),
+  // The index heading: a shallower opener over the two columns of entries, seven lines deep
+  // so its rule stands a line clear of the first letter.
+  headingStyles: [{ ...indexHeading, span: 'page', advancedDesign: opener(7, 20),
     marginBottom: pt(0) }],
   index,
   paragraphStyles: [
