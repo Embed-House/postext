@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "japanese-technical-manual",
-  "sourceHash": "5b594bcf72fc46214eaa4d6a16a969bbca2d699f82b31c3b90e73d5688a87677",
+  "sourceHash": "77b94214451b9f854fb65941ea625b547caf3eec4ba929967f0c3861d280b3e3",
   "engine": {
     "postext": "1.25.4",
     "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:57:53.343Z",
+  "capturedAt": "2026-10-10T20:24:44.576Z",
   "variants": {
     "en": {
-      "hash8": "8cdd8cc2",
-      "vdtHash": "9537174c421fd30f14feab0ceea124b0701e418e",
+      "hash8": "f5716e43",
+      "vdtHash": "3146dc05d72f627e284ba24329951504ac8a5046",
       "timings": {
-        "importMs": 810,
-        "fontsMs": 595,
-        "buildMs": 270,
-        "totalMs": 2787,
+        "importMs": 534,
+        "fontsMs": 713,
+        "buildMs": 313,
+        "totalMs": 2452,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63306,
+          "bytes": 63362,
           "alt": "Page 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86078,
+          "bytes": 86290,
           "alt": "Page 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284154,
+        "bytes": 284243,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 40931,
+        "bytes": 40932,
         "folio": "90d2b4f0"
       },
       "detected": {
@@ -433,13 +433,13 @@
       }
     },
     "es": {
-      "hash8": "46d74f2c",
-      "vdtHash": "be678e00dd50f63ed187fc6a1ed113a585230243",
+      "hash8": "ed685a28",
+      "vdtHash": "db11b14cc2b64f39276ee9da6714f6c4ef25dcaf",
       "timings": {
-        "importMs": 314,
-        "fontsMs": 248,
-        "buildMs": 103,
-        "totalMs": 1332,
+        "importMs": 216,
+        "fontsMs": 257,
+        "buildMs": 91,
+        "totalMs": 1165,
         "builds": 1
       },
       "specimen": {
@@ -494,7 +494,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63306,
+          "bytes": 63362,
           "alt": "Página 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -505,7 +505,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86078,
+          "bytes": 86290,
           "alt": "Página 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -548,7 +548,7 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284234,
+        "bytes": 284323,
         "pages": 5
       },
       "sandbox": {
