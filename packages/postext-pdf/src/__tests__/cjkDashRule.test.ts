@@ -164,3 +164,47 @@ describe('a 破折号 in the PDF', () => {
     expect(xs[1]! - xs[0]!).toBeCloseTo(16 + dashes[1]!.inkOffset! - dashes[0]!.inkOffset!, 3);
   }, 60_000);
 });
+
+// #680: a Japanese two-em dash is one stroke too, each dash at the advance
+// its face gives it (0.8 em here), and a paragraph that is a row of dashes
+// is one rule.
+describe('a Japanese two-em dash in the PDF (#680)', () => {
+  const ja: PostextConfig = { ...config, locale: 'ja', cjk: {} };
+  for (const vertical of [false, true]) {
+    it(`shows each dash stretched, ${vertical ? 'down' : 'across'} the page`, async () => {
+      const doc = buildDocument({ markdown: 'そう——それから' }, { ...ja, layout: { layoutType: 'single', ...(vertical ? { writingMode: 'vertical-rl' as const } : {}) } });
+      const line = doc.blocks.find((b) => b.type === 'paragraph')!.lines[0]!;
+      const dashes = line.segments!.filter((s) => s.text === '—');
+      expect(dashes).toHaveLength(2);
+      // Across the page a dash keeps its 12.8 px; down it, its cell of 16.
+      const cell = vertical ? 16 : 12.8;
+      const scale = (cell - 0.8 + 0.32) / 11.2;
+      for (const d of dashes) {
+        expect(d.width).toBeCloseTo(cell);
+        expect(d.inkScale).toBeCloseTo(scale);
+      }
+      const content = await contentOf(doc);
+      const on = [...content.matchAll(/([\d.]+) Tz/g)].map((m) => Number(m[1]));
+      expect(on.filter((v) => Math.abs(v - scale * 100) < 0.01)).toHaveLength(2);
+      expect(on.filter((v) => v === 100)).toHaveLength(2);
+    }, 60_000);
+  }
+
+  it('shows a row of six dashes as six stretched strokes that overlap', async () => {
+    const doc = buildDocument({ markdown: 'まえ。\n\n——————\n\nあと。' }, ja);
+    const line = doc.blocks.filter((b) => b.type === 'paragraph')[1]!.lines[0]!;
+    const dashes = line.segments!.filter((s) => s.text === '—');
+    expect(dashes).toHaveLength(6);
+    let x = 0;
+    const spans = dashes.map((d) => {
+      const from = x + d.inkOffset! + 0.8 * d.inkScale!;
+      const to = x + d.inkOffset! + 12 * d.inkScale!;
+      x += d.width;
+      return [from, to];
+    });
+    for (let i = 1; i < spans.length; i++) expect(spans[i - 1]![1]!).toBeGreaterThan(spans[i]![0]!);
+    const content = await contentOf(doc);
+    const on = [...content.matchAll(/([\d.]+) Tz/g)].map((m) => Number(m[1]));
+    expect(on.filter((v) => v !== 100)).toHaveLength(6);
+  }, 60_000);
+});
