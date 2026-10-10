@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 103 · A bench for the Folio viewer's settings ═══════════════
 // https://postext.dev/en/cookbook/folio-settings-bench
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Source Serif 4, Outfit (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Source Serif 4, Outfit (SIL OFL 1.1) · Needs postext ≥ 1.26.0
 //
 // A pocket book of knots, laid out once and opened in postext-folio next to a form of every
 // folio setting: paper, binding, covers, desk, light and tilt. Each change goes to the viewer
@@ -97,6 +97,7 @@ const config = () => ({
     color: col('ink'), boldColor: col('ink'), italicColor: col('ink'),
     referenceColor: col('ink'), textAlign: 'justify', firstLineIndent: mm(3.5),
     indentAfterHeading: false, hyphenation: { enabled: true }, optimalLineBreaking: true,
+    minWordSpacing: 0.75, maxJustifyTracking: 10, // spaces from 0.75×; then 1 % of tracking
     avoidWidows: true, avoidOrphans: true, avoidRunts: true },
   headings: { fontFamily: SANS, color: col('ink'), fontWeight: 600, levels: [
     // A chapter opens on the next page, recto or verso.

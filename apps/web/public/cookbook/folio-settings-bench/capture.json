@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "folio-settings-bench",
-  "sourceHash": "b2cd4c9f1be4dcf4fd5511e1f4d052aaa5dca69d90a9d955ab82e02e6530aeff",
+  "sourceHash": "cc1b0f98fc2f1409e255902c7515e09826af8b9a16e3f06910cd919f17e38a51",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:12:54.734Z",
+  "capturedAt": "2026-10-10T22:10:30.020Z",
   "variants": {
     "en": {
-      "hash8": "ece52d93",
-      "vdtHash": "4c8c48c11afac234e252f06dca38189173a92a9d",
+      "hash8": "744b24f3",
+      "vdtHash": "0dd0208791389c884eb7adf699b0c3a5d75b7a5c",
       "timings": {
-        "importMs": 251,
-        "fontsMs": 4,
-        "buildMs": 57,
-        "totalMs": 940,
+        "importMs": 2252,
+        "fontsMs": 5,
+        "buildMs": 35,
+        "totalMs": 2862,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 10,
-        "ownLines": 143
+        "ownLines": 144
       },
       "pages": [
         {
@@ -59,7 +59,7 @@
           "h": 1455,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90986,
+          "bytes": 90822,
           "alt": "Opening page 2: Before you tie."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1455,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 56260,
+          "bytes": 55974,
           "alt": "Opening page 3: The reef knot."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1455,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 66074,
+          "bytes": 66060,
           "alt": "Opening page 4: The bowline."
         },
         {
@@ -136,7 +136,7 @@
           "h": 1455,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 72374,
+          "bytes": 72464,
           "alt": "Opening page 9: Looking after rope."
         },
         {
@@ -191,7 +191,7 @@
       },
       "sandbox": {
         "file": "folio-settings-bench.postext",
-        "bytes": 17875,
+        "bytes": 17901,
         "folio": "1756b569"
       },
       "detected": {
@@ -215,6 +215,8 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxJustifyTracking",
+          "bodyText.minWordSpacing",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
@@ -321,7 +323,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 218,
+        "configLeaves": 220,
         "designElements": 9,
         "directives": [
           ":::paragraphs"
@@ -378,17 +380,11 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0149,
-          "worst": 2.08
+          "count": 0,
+          "share": 0,
+          "worst": 2
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }
