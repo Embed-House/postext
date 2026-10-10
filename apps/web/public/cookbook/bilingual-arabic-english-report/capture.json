@@ -3,21 +3,21 @@
   "slug": "bilingual-arabic-english-report",
   "sourceHash": "5d4f29f62a9b8d6b664837de444336d333d68094d469b863dd1c2c5676d9445e",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.907Z",
+  "capturedAt": "2026-10-10T19:12:54.295Z",
   "variants": {
     "en": {
-      "hash8": "ce458a81",
+      "hash8": "4865b9c1",
       "vdtHash": "8590d9b59032e62092fd0ab1303d6d23b1fa59e2",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 61,
-        "buildMs": 64,
-        "totalMs": 872,
+        "importMs": 756,
+        "fontsMs": 119,
+        "buildMs": 178,
+        "totalMs": 1727,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 37154,
+          "bytes": 37160,
           "alt": "Page ٣."
         }
       ],
@@ -100,7 +100,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82785,
+        "bytes": 82790,
         "pages": 3
       },
       "sandbox": {
@@ -328,17 +328,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "747dfe68",
+      "hash8": "d67560d8",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 56,
-        "buildMs": 73,
-        "totalMs": 850,
+        "importMs": 252,
+        "fontsMs": 95,
+        "buildMs": 118,
+        "totalMs": 1076,
         "builds": 1
       },
       "specimen": {
@@ -421,7 +427,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 83718,
+        "bytes": 83716,
         "pages": 3
       },
       "sandbox": {
@@ -649,7 +655,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
