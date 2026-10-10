@@ -77,7 +77,7 @@ export function pieceOptions(
   last: boolean,
   looseness: number,
 ): MeasureBlockOptions {
-  const { firstLineIndentPx: _first, hangingIndent: _hanging, lineIndentsPx: _table, labelColumnPx, restWidths, lineInsets, avoidHyphenAtLines, keepBreaks, looseness: _loose, runtPenalty, ...rest } = options ?? {};
+  const { firstLineIndentPx: _first, hangingIndent: _hanging, lineIndentsPx: _table, labelColumnPx, labelLength, restWidths, lineInsets, avoidHyphenAtLines, keepBreaks, looseness: _loose, runtPenalty, ...rest } = options ?? {};
   void _first;
   void _hanging;
   void _table;
@@ -93,6 +93,8 @@ export function pieceOptions(
   }
   // A bibliography entry's label column: its first line's.
   if (labelColumnPx !== undefined && piece === 0) out.labelColumnPx = labelColumnPx;
+  // A heading's number (#679) opens its first piece.
+  if (labelLength && piece === 0) out.labelLength = labelLength;
   if (restWidths && restWidths.length > 0) {
     const steps: LineWidthStep[] = [];
     const at = lineMeasure(maxWidthPx, restWidths, n);

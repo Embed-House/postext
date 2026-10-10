@@ -1349,6 +1349,19 @@ function charUnitIn(u: Unit | undefined, set: ReadonlySet<string>): boolean {
   return !!u && u.kind === 'text' && !u.run && u.graphemes === 1 && !u.ruby && !u.kunten && !u.note && !u.orient && !u.style.script && set.has(u.text);
 }
 
+/** The unit that holds the last character of a block's opening label
+ *  (`MeasureBlockOptions.labelLength`, UTF-16 units of the text): the
+ *  units before it and itself are the label. -1 when the text is shorter
+ *  than the label. */
+function labelEndUnit(units: readonly Unit[], labelLength: number): number {
+  let seen = 0;
+  for (let k = 0; k < units.length; k++) {
+    seen += units[k]!.text.length;
+    if (seen >= labelLength) return k;
+  }
+  return -1;
+}
+
 /**
  * The punctuation widths and Han–Latin spaces of a paragraph's units, as
  * the composition sets them (see `cjkPunctuation.ts`): each full-width mark
@@ -1363,7 +1376,7 @@ function charUnitIn(u: Unit | undefined, set: ReadonlySet<string>): boolean {
  * ・ between kanji numerals is set solid (`Unit.solid`), and with
  * `spaceAfterQuestion` a ？ or ！ takes its one-em space (`Unit.aki`).
  */
-function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number): Unit[] {
+function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number, labelLength = 0): Unit[] {
   const plain = isPlainComposition(c);
   // Down the line the mainland interpunct's cell is half an em already.
   if (plain && (c.region !== 'mainland' || c.vertical)) return units;
@@ -1381,9 +1394,13 @@ function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number)
   if (c.region === 'japan') {
     // 二、三日, 三・一四: the mark between two kanji numerals is its glyph
     // alone (JLReq §3.1.3), and the number is not broken there.
+    // A heading's number is not half of a number with its title (#679):
+    // the unit that ends it is where the rule stops reading.
+    const labelEnd = labelLength > 0 ? labelEndUnit(units, labelLength) : -1;
     for (let k = 1; k + 1 < units.length; k++) {
       const u = units[k]!;
       if (!u.punct || (u.text !== '、' && u.text !== '・')) continue;
+      if (k === labelEnd || k - 1 === labelEnd) continue;
       if (!charUnitIn(units[k - 1], KANJI_DIGITS) || !charUnitIn(units[k + 1], KANJI_DIGITS) || units[k + 1]!.glueBefore) continue;
       shrinkPunctuation(u.punct, u.punct.blank);
       u.width = full.get(u)! - boxCut(u.punct);
@@ -2870,7 +2887,7 @@ export function composeCjkParagraph(
   // The marks Latin text shares with Chinese take Chinese boxes in Chinese
   // text only (`routesSharedMarks`).
   const route = routesSharedMarks(composition, spans.map((s) => s.text).join(''));
-  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx);
+  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength);
   // A bibliography label's column (#290).
   if (options?.labelColumnPx !== undefined) {
     setLabelTabs(units, (u) => u.token?.labelTab, options.labelColumnPx, (u, w) => {

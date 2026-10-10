@@ -30,6 +30,11 @@ export interface BlockKind {
   numberSeparator?: string;
   /** A numbered heading's counter value (see `VDTBlock.headingNumber`). */
   headingNumber?: number;
+  /** A numbered heading whose number and separator end in 、 or ・: how
+   *  many UTF-16 units of the text they take, so the composer does not
+   *  read the mark as part of a number with the title
+   *  (`MeasureBlockOptions.labelLength`, #679). */
+  numberLabelLength?: number;
   contentBlock: ContentBlock;
   listBullet?: ListBulletStyle;
   listDepth?: number;
@@ -224,6 +229,7 @@ export function resolveBlockKind(
         numberPrefix,
         ...(numberPrefix && numberSeparator !== ' ' ? { numberSeparator } : {}),
         ...(headingNumber !== undefined ? { headingNumber } : {}),
+        ...(numberPrefix && /[、・]$/.test(`${numberPrefix}${numberSeparator}`) ? { numberLabelLength: numberPrefix.length + numberSeparator.length } : {}),
         contentBlock,
         bulletXOffsetInColumn: 0,
         strikethroughText: false,
