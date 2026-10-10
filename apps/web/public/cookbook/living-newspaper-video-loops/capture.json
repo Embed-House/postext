@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "living-newspaper-video-loops",
-  "sourceHash": "f689f68a1185af8eb614dc73d497d694263d24c8b9b4cc242f78f6f86afc927c",
+  "sourceHash": "5c071aea7e5d5decd9856722d62f72cdc9d8aa49ffe73bbd708dc0f49d6dc812",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.475Z",
+  "capturedAt": "2026-10-10T20:38:32.158Z",
   "variants": {
     "en": {
-      "hash8": "7b01f90e",
-      "vdtHash": "7809539a24b7c8335b2d4fd79847d0a4220ccff3",
+      "hash8": "bf5ec373",
+      "vdtHash": "0e0fbf133da664e2c2921219bf54cbecd2d78fa3",
       "timings": {
-        "importMs": 145,
-        "fontsMs": 24,
-        "buildMs": 1181,
-        "totalMs": 5099,
+        "importMs": 311,
+        "fontsMs": 27,
+        "buildMs": 362,
+        "totalMs": 1365,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1536,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 256532,
+          "bytes": 261712,
           "alt": "Opening page 2: Town & Harbour. High water at Wexcombe Quay · Twelve o’clock on the Guildhall tower, for the first time since 1924. · Skipper Jacob Hosking and the 82-pound cod on the quay."
         },
         {
@@ -116,7 +116,7 @@
       },
       "sandbox": {
         "file": "living-newspaper-video-loops.postext",
-        "bytes": 294971,
+        "bytes": 295069,
         "folio": "0b15553b"
       },
       "detected": {
@@ -405,8 +405,8 @@
         "converged": true,
         "iterationCount": 5,
         "looseLines": {
-          "count": 43,
-          "share": 0.0845,
+          "count": 16,
+          "share": 0.0312,
           "worst": 2.3000000000000003
         },
         "findings": [
@@ -423,7 +423,12 @@
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "43 of 509 justified lines (8.4 %) stretch past 1.6× (worst 2.3000000000000003×); loosest: p. 2 2.3000000000000003× “The Petrel was towed into harbour”, p. 1 2.27× “good drying weather. Bathers are re-”, p. 2 1.8900000000000001× “net Point with three men aboard, and”"
+            "detail": "16 of 513 justified lines (3.1 %) stretch past 1.6× (worst 2.3000000000000003×); loosest: p. 2 2.3000000000000003× “The Petrel was towed into harbour”, p. 1 2.27× “good drying weather. Bathers are re-”, p. 2 1.8900000000000001× “net Point with three men aboard, and”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
