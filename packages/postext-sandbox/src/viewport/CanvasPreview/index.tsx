@@ -17,7 +17,7 @@ import { clearOverlay, drawOverlay } from './overlay';
 import { syncComicEditors } from '../comics/comicEditing';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
-import { ensureConfigFontsLoaded, missingConfigFontSpecs, loadVerticalTwins, verticalTwinsSettled } from '../../controls/fontLoader';
+import { createFontGate, loadVerticalTwins, verticalTwinsSettled } from '../../controls/fontLoader';
 import { ensureResourceImages } from '../../controls/resourceImages';
 import { useLayoutWorker } from '../../worker/useLayoutWorker';
 import { layoutCacheKey } from '../../book/layoutKeys';
@@ -206,6 +206,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // loaded, math engine ready). Container resize does NOT bump this — the
   // VDT is in PT units and is independent of the CSS display size.
   const [rebuildKey, setRebuildKey] = useState(0);
+  const [fontGate] = useState(createFontGate);
   const appliedRebuildKeyRef = useRef(0);
   // Container size lives in a ref, NOT state — resize must never trigger a
   // React re-render. The ResizeObserver below imperatively updates canvas /
@@ -441,11 +442,14 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     // of the same fonts separately (see `useLayoutWorker`).
     // The text decides some faces too (a comic page letters in its own).
     const fontText = deferredBookSource ? deferredBookSource.chapters.map((c) => c.markdown) : deferredSource.book.markdown;
+    // Each missing face holds the build once (#659): this effect runs
+    // again when the wait ends, and a face the wait ended without (a file
+    // that fails, or one the wait did not ask for) would hold it again,
+    // wait after wait, with no build ever started.
     if (typeof document !== 'undefined' && document.fonts) {
-      const missing = missingConfigFontSpecs(deferredConfig, fontText);
-      if (missing.length > 0) {
+      if (fontGate.pending(deferredConfig, fontText).length > 0) {
         onGeneratingChangeRef.current?.(true);
-        ensureConfigFontsLoaded(deferredConfig, fontText).then(() => {
+        fontGate.wait(deferredConfig, fontText).then(() => {
           if (!cancelled) setRebuildKey((k) => k + 1);
         });
         return () => {
@@ -626,7 +630,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     return () => {
       cancelled = true;
     };
-  }, [deferredSource, deferredBookSource, deferredResources, deferredConfig, rawDeferredConfig, rebuildKey, dispatch, sharedDocRef, sharedDocSourceRef, layoutWorker, chapterDocsRef]);
+  }, [deferredSource, deferredBookSource, deferredResources, deferredConfig, rawDeferredConfig, rebuildKey, fontGate, dispatch, sharedDocRef, sharedDocSourceRef, layoutWorker, chapterDocsRef]);
 
   // Single-ink diagram colour: when diagramStyle.singleInk is on, SVG resources
   // decode through a recolouring pass keyed on the resolved ink hex.
