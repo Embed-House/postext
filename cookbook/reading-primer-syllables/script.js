@@ -57,9 +57,10 @@ const tag = { textTransform: 'uppercase', letterSpacing: pt(1.5) };
 
 // #region opener: the letter's page: a cream band, a giant Mm and two things that start with m
 const BAND = 104; // mm: the depth of the band's drawing; its wave dips to 101.9 mm
-// The opener reserves down to the foot of the band's image, so the first activity title
-// starts under it: on the grid, 11.4 mm below the lowest point of the wave.
-const opener = { enabled: true,
+// The opener reserves seventeen grid lines, the first grid line past the foot of the band's
+// image, so the first activity title stands on the grid like the others: two lines under
+// the band, its instruction right under it.
+const opener = { enabled: true, minHeight: pt(17 * GRID),
   slot: { elements: [
     picture('band', 'banda', at(0, 0, { width: mm(210), height: mm(BAND) })),
     words('unit', '{attr.unit}', LABEL, 9, 700, 'paper', at(SIDE, 12.5), { ...tag,
