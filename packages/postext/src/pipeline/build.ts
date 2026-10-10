@@ -2018,6 +2018,20 @@ function placeDocumentPass(
       return 'placed';
     }
 
+    /** A column of a closing band cut level (a trailing cap) that a band
+     *  at its head takes to the cut, give or take a line: the cut was taken
+     *  under this float (`proposeTrailingCap`: a figure heading an
+     *  otherwise empty column keeps its slot), so no text comes under it
+     *  and the room kept for text between two float bands has nothing to
+     *  keep (#681). Asked for there, with another float at the page's
+     *  foot, the float found no slot above its own cut: the cap was
+     *  retried a line lower until three lines were left, which put that
+     *  much ruled, empty column under the picture, or was dropped when
+     *  the retries ran out. */
+    const fillsCappedColumn = (c: VDTColumn, bandNeed: number): boolean =>
+      position === 'top' && c.trailingCap === true && c.blocks.length === 0
+      && bandNeed <= c.availableHeight + 0.01 && c.availableHeight - bandNeed <= baselineGrid + 0.01;
+
     /** Gallery page (see below): the band takes the columns' whole room. */
     let galleryFill = false;
     if (mode === 'fresh') {
@@ -2098,6 +2112,7 @@ function placeDocumentPass(
         }
         const hasBand = columnHasFloatBand(page, c);
         if (fitsStrict(need + leadOf(c), c, hasBand, minTextPx)) continue;
+        if (fillsCappedColumn(c, need + leadOf(c))) continue;
         // The head of an empty column: a splittable table is cut to the
         // column and continues in the next slot — the compositor sets a
         // long table beside the text that cites it, not pages later. A
