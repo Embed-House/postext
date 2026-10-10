@@ -119,7 +119,7 @@ To open, the gates turn on past the vertical and back down into the sills, washi
 
 **The autumn sale starts on Saturday**
 
-:::space{lines=5}
+:::space{lines=7}
 
 Wool coats from £89 · Cashmere knitwear from £59 · Leather boots from £75
 
@@ -174,7 +174,7 @@ The island’s 900 residents have relied on a smaller chartered boat since May, 
 
 The first crossing, at 7.15am, was full. Skerra Lines says the winter timetable, with four sailings a day, starts on 26 October, and that the gales should ease by Wednesday.
 
-The new engines are quieter as well as cleaner, the company says, and on the wider deck the fuel tanker and the supermarket lorry can sail on the same day.
+The new engines are quieter as well as cleaner, and on the wider deck the fuel tanker and the supermarket lorry can sail on the same day.
 
 The refit was done at Corran’s yard in Brackwater, the first time in twenty years that an island ferry has been repaired in the city rather than sent south. The yard finished a week before the date in its contract. Her crew of eleven spent the summer on the chartered boat, which Skerra Lines will keep on standby until the spring.
 
@@ -183,6 +183,8 @@ The refit was done at Corran’s yard in Brackwater, the first time in twenty ye
 ## Skerra Lines {style="ad"}
 
 **Four sailings a day from 26 October · Car spaces on 01632 960 260**
+
+:::space{lines=1}
 
 Kingsquay 7.15, 10.30, 14.00, 17.45 · Skerra 8.40, 12.15, 15.30, 19.10
 :::

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "business-section-on-salmon",
-  "sourceHash": "3d8878d44bdecd14f0d5fbf8bacf6ea8ed2578bf1d13408067c5ced3651d6d3a",
+  "sourceHash": "b47726d857be43923a4a8b41a9f907b115e3258a2a196ea446c42ad45c5db4c4",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:36:37.140Z",
+  "capturedAt": "2026-10-10T22:10:30.207Z",
   "variants": {
     "en": {
-      "hash8": "7d760360",
-      "vdtHash": "ad670a8f52b1cbbf4c2d64c40dd46acd2e747752",
+      "hash8": "031f9c35",
+      "vdtHash": "3ca28e58f9c65df967c5dfaf1651338bd9ed3824",
       "timings": {
-        "importMs": 230,
-        "fontsMs": 61,
-        "buildMs": 617,
-        "totalMs": 1530,
+        "importMs": 132,
+        "fontsMs": 54,
+        "buildMs": 480,
+        "totalMs": 1256,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1492,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150834,
+          "bytes": 150696,
           "alt": "Opening page 2: City. First week: apprentices welding a hull section in the fabrication hall at Brackwater. · How a gate turns. Each segment turns on a pin in the pier, from its sill on the riverbed to stand against the sea."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1492,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155690,
+          "bytes": 155450,
           "alt": "Opening page 3: Region. Where the money goes · Weather · Tides at Kingsquay · The Holm Maid leaves Skerra pier on her first crossing since May."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1492,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 201616,
+          "bytes": 201574,
           "alt": "Opening page 4: Opinion. Holding the line, by Kit Carrow."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1492,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 181936,
+          "bytes": 181786,
           "alt": "Opening page 5: Business. The Outer Quay at dawn. The new berth would take ships three times the size of those the port handles now. · Containers through Marrowick, thousands of twenty-foot units a year."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1492,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 133582,
+          "bytes": 133550,
           "alt": "Opening page 7: Companies. Results · Company diary · Halden’s Quayside plant bakes 1.1 million loaves a week."
         }
       ],
@@ -153,7 +153,7 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218527,
+        "bytes": 1218553,
         "folio": "77d83e3b"
       },
       "detected": {
@@ -475,10 +475,10 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 8,
+        "iterationCount": 6,
         "looseLines": {
           "count": 16,
-          "share": 0.0306,
+          "share": 0.0307,
           "worst": 2.98
         },
         "findings": [
@@ -490,12 +490,7 @@
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "16 of 523 justified lines (3.1 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 1 2.86× “council had expected, and the”, p. 7 2.71× “The company estimated”"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "detail": "16 of 522 justified lines (3.1 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 1 2.86× “council had expected, and the”, p. 7 2.71× “The company estimated”"
           }
         ]
       }
