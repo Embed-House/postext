@@ -5,7 +5,7 @@ plain: "The opening of a classic Japanese book as a pocket paperback: the text r
 description: "Sōseki's Yume Jūya as a Japanese bunko in Postext: vertical lines bound on the right, Aozora furigana, 3-line headings, a fore-edge hashira, kanji folios."
 question: "How do I set a Japanese novel vertically, bound on the right, like a bunko paperback?"
 aliases: ["bunko", "文庫", "文庫本", "tategaki", "縦組", "縦書き", "vertical Japanese", "Japanese novel", "pocket paperback", "furigana", "ルビ", "振り仮名", "3行取り", "gyōdori", "hashira", "柱", "kanji folios", "漢数字", "Aozora Bunko", "青空文庫", "夢十夜", "Ten Nights of Dreams", "Natsume Sōseki", "夏目漱石"]
-pageNotes: { "1": "The title page, alone on the left of the spine: 夢十夜 in large heavy Mincho down the middle of a thin vermilion frame, 夏目漱石 lower and to its left, and a three-line colophon in English across the foot.", "2": "The first night opens on a right-hand page: the title 第一夜 stands five characters down in a band three lines wide, then こんな夢を見た。 and the text in columns of 38 characters, with small kana readings beside words such as 仰向 and 輪郭.", "3": "A left-hand page: dialogue paragraphs open with 「 inside the one-character indent, the hashira 夢十夜 runs down the outer margin and the folio 三 stands at its foot.", "6": "The second night's title 第二夜 takes three lines in the middle of a page, and the text after it continues on the same line grid." }
+pageNotes: { "1": "The title page, alone on the left of the spine: 夢十夜 in large heavy Mincho down the middle of a thin vermilion frame, 夏目漱石 lower and to its left, and a three-line colophon in English across the foot.", "2": "The first night opens on a right-hand page: the title 第一夜 stands five characters down in a band three lines wide, then こんな夢を見た。 and the text in columns of 38 characters, with small kana readings beside words such as 仰向 and 輪郭.", "3": "A left-hand page: dialogue paragraphs open with 「 inside the one-character indent, the hashira 夢十夜 runs down the outer margin and the folio 三 stands at its foot.", "6": "The second night's title 第二夜 takes the first three lines of the page, and the text after it continues on the same line grid." }
 ---
 
 ## What you'll build
@@ -24,7 +24,7 @@ The code is [the short answer](#the-short-answer) above. `layout.writingMode: 'v
 
 <Excerpt region="nights" />
 
-A Japanese heading takes a whole number of body lines, 行取り (gyōdori), so the lines after it stay on the same grid as the lines before. `lineSpan: 3` sets 第一夜 in a band of three 15.75 pt lines with its characters centred across them; the heading's 12.5 pt does not move the grid, and on page 6 第二夜 lands mid-page with the text after it on the same lines as the text before. `indent: em(5)` reads body characters (五字下げ), which is how the Aozora text marks a 中見出し and how JLReq counts heading indents ([Per-level overrides](/en/docs/configuration-text#per-level-overrides)).
+A Japanese heading takes a whole number of body lines, 行取り (gyōdori), so the lines after it stay on the same grid as the lines before. `lineSpan: 3` sets 第一夜 in a band of three 15.75 pt lines with its characters centred across them; the heading's 12.5 pt does not move the grid, and on page 6 第二夜 takes the first three lines of the page, so the text after it starts on the fourth line of the grid. `indent: em(5)` reads body characters (五字下げ), which is how the Aozora text marks a 中見出し and how JLReq counts heading indents ([Per-level overrides](/en/docs/configuration-text#per-level-overrides)).
 
 ### 3 · Bring the text and its readings from Aozora Bunko
 
