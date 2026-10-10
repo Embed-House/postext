@@ -3,7 +3,7 @@ title: "芭蕉と啄木"
 subtitle: "俳句と短歌"
 ---
 
-# おくのほそ道 {style="first" author="松尾芭蕉" colophon="Matsuo Bashō, おくのほそ道 (Sendas de Oku, 1702), selección, según la edición de Sugiura Shōichirō (1957); Ishikawa Takuboku, 一握の砂 (Un puñado de arena, 1910), doce tankas. Texto: Aozora Bunko 61619 y 816, dominio público. Compuesto en Shippori Mincho y Noto Sans JP (SIL OFL)."}
+# おくのほそ道 {style="first" author="松尾芭蕉" colophon="Matsuo Bashō, おくのほそ道 (Sendas de Oku, 1702), selección, según la edición de Sugiura Shōichirō (1957); Ishikawa Takuboku, 一握の砂 (Un puñado de arena, 1910), once tankas. Texto: Aozora Bunko 61619 y 816, dominio público. Compuesto en Shippori Mincho y Noto Sans JP (SIL OFL)."}
 
 ## 冒頭
 
