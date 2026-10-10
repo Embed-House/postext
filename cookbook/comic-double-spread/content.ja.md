@@ -1,7 +1,7 @@
 :::page{spread split="55 / * [25 | 25 | *]"}
 ::panel{art=ds1}
 caption: 十二月の土曜日、市場は人でいっぱいだった。
-lola: おじいちゃん？
+lola{at="2.8% 37%"}: おじいちゃん？
 paco{shout}: ローラ？ ローラーッ！
 ::panel{art=ds2}
 lola{whisper}: おじいちゃん……どこ？

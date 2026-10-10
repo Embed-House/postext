@@ -138,6 +138,7 @@ const ART = {
       who('lola', .065, .58, [.063, .55], [.045, .51, .04, .11]),
       who('paco', .925, .38, [.925, .34], [.9, .3, .05, .12]),
     ],
+    avoid: [box([.047, .28, .048, .2])], // the fishmonger behind Lola, a bystander
   },
   ds2: { width: 1152, height: 1152, safeArea: box([.31, .08, .35, .62]),
     alt: t({ en: "Lola, tearful, stands among grown-ups' legs and shopping bags.",
