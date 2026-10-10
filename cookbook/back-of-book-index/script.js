@@ -129,7 +129,8 @@ const config = {
     sideColumnSide: 'outer', gutterWidth: mm(7) }, // main column 119.7 mm, channel 49.3 mm
   bodyText: { fontFamily: SERIF, fontSize: pt(9.6), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
-    textAlign: 'justify', firstLineIndent: mm(4), indentAfterHeading: false },
+    textAlign: 'justify', firstLineIndent: mm(4), indentAfterHeading: false,
+    hyphenateAcrossColumns: false }, // no word is divided over a page turn
   headings: { fontFamily: SANS, color: col('ink'), fontWeight: 700, levels: [
     // parity 'odd': the next recto; the default 'always-odd' also leaves a blank page before it.
     { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' }, marginBottom: pt(0),

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "8cd68f70e5517b1b342781a6db7dcb207710d9f819d7d04bad9bed00e7a26580",
+  "sourceHash": "be0e8cd1520a96b85f626f810c456c361d6169d34ddc3d0bc55b11fdcdd971ab",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.606Z",
+  "capturedAt": "2026-10-10T19:03:31.181Z",
   "variants": {
     "en": {
-      "hash8": "8aeaef51",
-      "vdtHash": "4813f98bfd4fbd520eabf7f094830a42cf259800",
+      "hash8": "b09ee9f1",
+      "vdtHash": "da1caecf65036325992be1c5d543daa818ece3f3",
       "timings": {
-        "importMs": 5662,
-        "fontsMs": 70,
-        "buildMs": 856,
-        "totalMs": 7219,
+        "importMs": 200,
+        "fontsMs": 62,
+        "buildMs": 906,
+        "totalMs": 1804,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Newsreader"
         ],
         "pages": 7,
-        "ownLines": 238
+        "ownLines": 239
       },
       "pages": [
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 157806,
+          "bytes": 157716,
           "alt": "Page 4: 4 Commonsense Reasoning. Figure 4. Chain-of-thought prompting enables large language models to solve challenging math problems. Notably, chain-of-thought reasoning is an emergent ability of increasing model scale. Prior best numbers are from Cobbe et al. (2021) for GSM…"
         },
         {
@@ -95,7 +95,7 @@
           "h": 1294,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 146820,
+          "bytes": 146548,
           "alt": "Page 5: 5 Symbolic Reasoning. Table 2. Standard prompting versus chain of thought prompting on five arithmetic reasoning benchmarks. Note that chain of thought prompting is an emergent ability of model scale—it does not positively impact performance until used with a model of…"
         },
         {
@@ -153,12 +153,12 @@
       },
       "pdf": {
         "file": "ai-preprint-prompt-exemplars.pdf",
-        "bytes": 261234,
+        "bytes": 261218,
         "pages": 7
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153348,
+        "bytes": 153369,
         "folio": "055119a2"
       },
       "detected": {
@@ -184,6 +184,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.hyphenation",
           "bodyText.hyphenation.enabled",
           "bodyText.indentAfterHeading",
@@ -413,7 +414,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 482,
+        "configLeaves": 483,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -528,6 +529,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

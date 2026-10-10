@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "back-of-book-index",
-  "sourceHash": "84f1070a8304f9ea803e4421c58383a5fadb739a0b13f11b9ae413a8c233955e",
+  "sourceHash": "cdac974b520df2ae1088e9b4f716f02cef2e1bff97c449094264783c004e87ed",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.039Z",
+  "capturedAt": "2026-10-10T19:03:20.778Z",
   "variants": {
     "en": {
-      "hash8": "c72cff5c",
-      "vdtHash": "c7f1e624bf90550bed5b62f69b3d301932919a12",
+      "hash8": "b7552dc8",
+      "vdtHash": "5fd5551654417954c1262e4729660a251ad5143a",
       "timings": {
-        "importMs": 455,
-        "fontsMs": 93,
-        "buildMs": 173,
-        "totalMs": 2318,
+        "importMs": 430,
+        "fontsMs": 123,
+        "buildMs": 177,
+        "totalMs": 2331,
         "builds": 2
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Literata"
         ],
         "pages": 10,
-        "ownLines": 212
+        "ownLines": 213
       },
       "pages": [
         {
@@ -61,7 +61,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117926,
+          "bytes": 117870,
           "alt": "Page 298: 14.2 The pressure–volume loop. Figure 14.1. Pressure–volume loop of the left ventricle at rest: volume from 0 to 150 mL across, pressure from 0 to 140 mmHg up. The dots, anticlockwise from bottom right: mitral valve closes (120 mL), aortic valve opens (80 mmHg), aort…"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1319,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 153882,
+          "bytes": 154094,
           "alt": "Page 299: 14.4 The sinoatrial node and the conduction system."
         },
         {
@@ -193,12 +193,12 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 200794,
+        "bytes": 200750,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 29688,
+        "bytes": 29703,
         "folio": "8dec2b23"
       },
       "detected": {
@@ -219,6 +219,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -409,7 +410,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 429,
+        "configLeaves": 430,
         "designElements": 17,
         "directives": [
           ":::callout",
@@ -514,18 +515,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "47ea09cb",
-      "vdtHash": "9d1482384dc3a95e72c83b7edb688a3adeff615f",
+      "hash8": "1862adaf",
+      "vdtHash": "0c4bf05f48862bef9137429db9cc99031cff3941",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 61,
+        "importMs": 182,
+        "fontsMs": 57,
         "buildMs": 60,
-        "totalMs": 1044,
+        "totalMs": 1073,
         "builds": 2
       },
       "specimen": {
@@ -547,7 +553,7 @@
           "Literata"
         ],
         "pages": 10,
-        "ownLines": 212
+        "ownLines": 213
       },
       "pages": [
         {
@@ -613,7 +619,7 @@
           "h": 1319,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 145848,
+          "bytes": 145680,
           "alt": "Página 302: 15.2 Flujo, presión y resistencia."
         },
         {
@@ -624,7 +630,7 @@
           "h": 1319,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 165058,
+          "bytes": 165262,
           "alt": "Página 303: 15.4 El intercambio capilar."
         },
         {
@@ -701,12 +707,12 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 218674,
+        "bytes": 218681,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 30275,
+        "bytes": 30292,
         "folio": "8dec2b23"
       },
       "detected": {
@@ -727,6 +733,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -917,7 +924,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 429,
+        "configLeaves": 430,
         "designElements": 17,
         "directives": [
           ":::callout",
@@ -1022,6 +1029,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -146,6 +146,7 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     referenceBold: false, textAlign: 'justify', firstLineIndent: mm(3.5), maxJustifyTracking: 10,
     indentAfterHeading: false, hyphenation: { enabled: true }, optimalLineBreaking: true,
+    hyphenateAcrossColumns: false, // no word is divided over a column or a page
     avoidWidows: true, avoidOrphans: true, avoidRunts: true },
   headings: { fontFamily: SANS, color: col('ink'), fontWeight: 600, levels: [
     { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // a new page, either side

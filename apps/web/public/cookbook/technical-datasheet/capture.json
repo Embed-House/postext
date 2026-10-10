@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-datasheet",
-  "sourceHash": "d386d06ca0bae8b926c3fc704e1060e78621704b39d58145e9984c5caedcb4d0",
+  "sourceHash": "472c12ee2c20878985fd4b30f92097e59f1e4bbe877d2d0d9f8a08853711a034",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:38:51.911Z",
+  "capturedAt": "2026-10-10T19:03:23.775Z",
   "variants": {
     "en": {
-      "hash8": "1c29d353",
-      "vdtHash": "3a9b91ec355070ecf8c0d62f5a22ae56ce432a1a",
+      "hash8": "bd5591f4",
+      "vdtHash": "65c6298ecc4c86c5b28515d0871017f08686b5af",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 89,
-        "buildMs": 66,
-        "totalMs": 922,
+        "importMs": 197,
+        "fontsMs": 73,
+        "buildMs": 68,
+        "totalMs": 932,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Fira Sans Condensed"
         ],
         "pages": 4,
-        "ownLines": 255
+        "ownLines": 256
       },
       "pages": [
         {
@@ -73,7 +73,7 @@
           "h": 1292,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120788,
+          "bytes": 121202,
           "alt": "Page 3: 6 Detailed description. Table 2. Pin functions · Table 3. Register map."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1292,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 124994,
+          "bytes": 124546,
           "alt": "Page 4: 6.3 Alert output. Table 3. Register map (continued) · Figure 3. Package outline and land pattern, 8-pin DFN, in mm. · Table 4. Order codes."
         }
       ],
@@ -116,12 +116,12 @@
       },
       "pdf": {
         "file": "technical-datasheet.pdf",
-        "bytes": 134548,
+        "bytes": 134547,
         "pages": 4
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78005,
+        "bytes": 78023,
         "folio": "ca48c30e"
       },
       "detected": {
@@ -147,6 +147,7 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenateAcrossColumns",
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
@@ -325,7 +326,7 @@
           "tableStyles",
           "unorderedLists"
         ],
-        "configLeaves": 441,
+        "configLeaves": 442,
         "designElements": 21,
         "directives": [
           ":::columnbreak",
@@ -429,6 +430,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
