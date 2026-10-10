@@ -3,21 +3,21 @@
   "slug": "brand-fonts-identity-manual",
   "sourceHash": "0833e10e903fe8f2d301e763f8e9c774ffb2db8563d7ea20191ff3bca322df8b",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.209Z",
+  "capturedAt": "2026-10-10T22:12:14.946Z",
   "variants": {
     "en": {
-      "hash8": "99638ab8",
+      "hash8": "fedd769b",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 50,
-        "buildMs": 56,
-        "totalMs": 827,
+        "importMs": 163,
+        "fontsMs": 51,
+        "buildMs": 54,
+        "totalMs": 804,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 99490,
+          "bytes": 99506,
           "alt": "Opening page 3: 02 Type."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 108030,
+          "bytes": 108066,
           "alt": "Opening page 4: 03 Usage. Do 1. Lines at 0°, 45° and 90°, bent together at an even spacing; one capsule for the interchange. · Don’t 1. Free angles, mixed radii, uneven spacing and stations drawn in the line colour."
         }
       ],

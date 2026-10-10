@@ -3,21 +3,21 @@
   "slug": "chinese-novel-horizontal",
   "sourceHash": "ebd9c948d64d0b3825c41963346e1cd2e55f3d467167ed2bec8a9337f56804f4",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.346Z",
+  "capturedAt": "2026-10-10T22:13:20.070Z",
   "variants": {
     "en": {
-      "hash8": "1b4c1ad8",
+      "hash8": "4f037fdf",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 268,
-        "buildMs": 60,
-        "totalMs": 1054,
+        "importMs": 171,
+        "fontsMs": 247,
+        "buildMs": 56,
+        "totalMs": 1019,
         "builds": 1
       },
       "specimen": {
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651138,
+        "bytes": 651141,
         "pages": 7
       },
       "sandbox": {
@@ -362,13 +362,13 @@
       }
     },
     "es": {
-      "hash8": "8aef49db",
+      "hash8": "39fdf223",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 282,
-        "buildMs": 61,
-        "totalMs": 1068,
+        "importMs": 169,
+        "fontsMs": 234,
+        "buildMs": 57,
+        "totalMs": 1005,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +503,7 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651127,
+        "bytes": 651130,
         "pages": 7
       },
       "sandbox": {

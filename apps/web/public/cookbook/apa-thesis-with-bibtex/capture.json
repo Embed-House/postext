@@ -3,21 +3,21 @@
   "slug": "apa-thesis-with-bibtex",
   "sourceHash": "6102cbb21c7dcbf41e54b55a1212e65478ff34edfb8a0393331d4d56c6679432",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:08:20.843Z",
+  "capturedAt": "2026-10-10T22:11:34.460Z",
   "variants": {
     "en": {
-      "hash8": "44b7a708",
+      "hash8": "ad54d91f",
       "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
       "timings": {
-        "importMs": 464,
-        "fontsMs": 102,
-        "buildMs": 1027,
-        "totalMs": 2258,
+        "importMs": 183,
+        "fontsMs": 30,
+        "buildMs": 265,
+        "totalMs": 1074,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 60466,
+        "bytes": 60467,
         "pages": 3
       },
       "sandbox": {
@@ -288,13 +288,13 @@
       }
     },
     "es": {
-      "hash8": "2481d87e",
+      "hash8": "2e17abac",
       "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
       "timings": {
-        "importMs": 195,
-        "fontsMs": 33,
-        "buildMs": 269,
-        "totalMs": 1165,
+        "importMs": 184,
+        "fontsMs": 30,
+        "buildMs": 265,
+        "totalMs": 1089,
         "builds": 1
       },
       "specimen": {

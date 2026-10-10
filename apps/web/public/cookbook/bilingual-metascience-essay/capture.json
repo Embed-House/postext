@@ -3,21 +3,21 @@
   "slug": "bilingual-metascience-essay",
   "sourceHash": "0788999a67cd9d03465cd298400eda8bf90f91cab84016dbf73464a920e5f66b",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:58:59.521Z",
+  "capturedAt": "2026-10-10T22:12:14.916Z",
   "variants": {
     "en": {
-      "hash8": "56a5ce4a",
+      "hash8": "d7ed5eaa",
       "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 542,
-        "fontsMs": 483,
-        "buildMs": 1463,
-        "totalMs": 3230,
+        "importMs": 186,
+        "fontsMs": 2407,
+        "buildMs": 431,
+        "totalMs": 3595,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182532,
+          "bytes": 182538,
           "alt": "Page 2: Bias. Table 1. Research Findings and True Relationships."
         },
         {
@@ -495,13 +495,13 @@
       }
     },
     "es": {
-      "hash8": "5e10e4a8",
+      "hash8": "7d112895",
       "vdtHash": "68eedabd901b2adccb0269a203765b2d78871792",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 138,
-        "buildMs": 420,
-        "totalMs": 1414,
+        "importMs": 187,
+        "fontsMs": 123,
+        "buildMs": 396,
+        "totalMs": 1264,
         "builds": 1
       },
       "specimen": {
@@ -534,7 +534,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156686,
+          "bytes": 156684,
           "alt": "Página de apertura 1: Por qué la mayoría de los resultados de investigación publicados son falsos."
         },
         {
@@ -625,7 +625,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 425017,
+        "bytes": 425020,
         "pages": 7
       },
       "sandbox": {

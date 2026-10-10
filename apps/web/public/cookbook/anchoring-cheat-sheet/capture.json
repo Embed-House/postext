@@ -3,20 +3,20 @@
   "slug": "anchoring-cheat-sheet",
   "sourceHash": "f0ca36f0579d5153a3b66f4f34e8d7b9d88795340e38124b471c794bda53fac9",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.618Z",
+  "capturedAt": "2026-10-10T22:11:34.443Z",
   "variants": {
     "en": {
       "hash8": "7cd1c372",
       "vdtHash": "59ee6ae558f6f77c0458c9afbdb28a60d4f5c10c",
       "timings": {
-        "importMs": 145,
+        "importMs": 137,
         "fontsMs": 4,
-        "buildMs": 26,
-        "totalMs": 780,
+        "buildMs": 25,
+        "totalMs": 766,
         "builds": 1
       },
       "specimen": {
@@ -262,10 +262,10 @@
       "hash8": "021ba53c",
       "vdtHash": "179bf5efd21133b9f31e23d9b510a3cd99a11c00",
       "timings": {
-        "importMs": 134,
+        "importMs": 131,
         "fontsMs": 4,
         "buildMs": 26,
-        "totalMs": 773,
+        "totalMs": 760,
         "builds": 1
       },
       "specimen": {

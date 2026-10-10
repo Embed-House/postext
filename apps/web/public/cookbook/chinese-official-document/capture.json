@@ -3,21 +3,21 @@
   "slug": "chinese-official-document",
   "sourceHash": "d7982e5d52b3041846d8917c9ca9291941d09bd8a5d324aacfb60a2d897ebc66",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:32:12.353Z",
+  "capturedAt": "2026-10-10T22:13:20.080Z",
   "variants": {
     "en": {
-      "hash8": "3887671f",
+      "hash8": "44133dfd",
       "vdtHash": "80d8a526f7da634513bcf335a6e1537e7fa4f2f7",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 183,
+        "importMs": 176,
+        "fontsMs": 192,
         "buildMs": 51,
-        "totalMs": 1019,
+        "totalMs": 999,
         "builds": 1
       },
       "specimen": {
@@ -355,23 +355,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "dc9360b2",
+      "hash8": "5586877e",
       "vdtHash": "2dcc65ad799e08155e5c0b6dd70622f5e28c1808",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 184,
+        "importMs": 169,
+        "fontsMs": 176,
         "buildMs": 51,
-        "totalMs": 977,
+        "totalMs": 967,
         "builds": 1
       },
       "specimen": {
@@ -709,11 +704,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

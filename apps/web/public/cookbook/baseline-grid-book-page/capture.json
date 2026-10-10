@@ -3,20 +3,20 @@
   "slug": "baseline-grid-book-page",
   "sourceHash": "74d81c0189b4116004a51d31ffc76f5d052c42c1c741c7c07de10e7c712b37cf",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:53:09.157Z",
+  "capturedAt": "2026-10-10T22:11:34.506Z",
   "variants": {
     "en": {
-      "hash8": "a4b99817",
+      "hash8": "3d78c0ef",
       "vdtHash": "e34bb0c4f98af58e2a09050a71580f54f4aa2825",
       "timings": {
-        "importMs": 463,
-        "fontsMs": 15,
-        "buildMs": 421,
-        "totalMs": 1798,
+        "importMs": 129,
+        "fontsMs": 4,
+        "buildMs": 87,
+        "totalMs": 829,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182012,
+          "bytes": 181982,
           "alt": "Page 10: Lines to stand on."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43132,
+        "bytes": 43202,
         "folio": "e8c31713"
       },
       "detected": {
@@ -307,13 +307,13 @@
       }
     },
     "es": {
-      "hash8": "5ab86930",
+      "hash8": "054cb6f9",
       "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
       "timings": {
-        "importMs": 415,
-        "fontsMs": 13,
-        "buildMs": 271,
-        "totalMs": 1442,
+        "importMs": 130,
+        "fontsMs": 3,
+        "buildMs": 54,
+        "totalMs": 791,
         "builds": 1
       },
       "specimen": {
@@ -397,7 +397,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43881,
+        "bytes": 44049,
         "folio": "e8c31713"
       },
       "detected": {
@@ -604,13 +604,13 @@
       }
     },
     "pt": {
-      "hash8": "54b5451a",
+      "hash8": "0f2ad6d1",
       "vdtHash": "f1a0564255a404acb4b0129639aefa3c0cc930c6",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 4,
-        "buildMs": 59,
-        "totalMs": 925,
+        "importMs": 136,
+        "fontsMs": 3,
+        "buildMs": 53,
+        "totalMs": 794,
         "builds": 1
       },
       "specimen": {
@@ -694,7 +694,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42970,
+        "bytes": 42978,
         "folio": "e8c31713"
       },
       "detected": {
@@ -892,11 +892,6 @@
           "worst": 1.77
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

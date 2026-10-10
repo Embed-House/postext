@@ -3,20 +3,20 @@
   "slug": "atlas-map-sheet",
   "sourceHash": "2c209fcb70b5743805b80d415b3f5ada56eb90e02faae44d845c39762c6ca70e",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.720Z",
+  "capturedAt": "2026-10-10T22:11:34.489Z",
   "variants": {
     "en": {
-      "hash8": "835229aa",
+      "hash8": "882932d4",
       "vdtHash": "c0198ebf0d4818c7e03a23e60ccabae747e764d0",
       "timings": {
-        "importMs": 123,
-        "fontsMs": 913,
+        "importMs": 130,
+        "fontsMs": 898,
         "buildMs": 57,
-        "totalMs": 1706,
+        "totalMs": 1711,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512821,
+        "bytes": 512835,
         "folio": "415ce2a3"
       },
       "detected": {
@@ -351,13 +351,13 @@
       }
     },
     "es": {
-      "hash8": "8740adf1",
+      "hash8": "7136fe20",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 157,
-        "fontsMs": 920,
-        "buildMs": 48,
-        "totalMs": 1728,
+        "importMs": 130,
+        "fontsMs": 899,
+        "buildMs": 50,
+        "totalMs": 1661,
         "builds": 1
       },
       "specimen": {
@@ -456,7 +456,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513288,
+        "bytes": 513258,
         "folio": "415ce2a3"
       },
       "detected": {

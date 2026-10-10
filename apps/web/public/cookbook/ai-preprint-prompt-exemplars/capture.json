@@ -3,21 +3,21 @@
   "slug": "ai-preprint-prompt-exemplars",
   "sourceHash": "be0e8cd1520a96b85f626f810c456c361d6169d34ddc3d0bc55b11fdcdd971ab",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:03:31.181Z",
+  "capturedAt": "2026-10-10T22:11:34.434Z",
   "variants": {
     "en": {
-      "hash8": "b09ee9f1",
+      "hash8": "cf3d905a",
       "vdtHash": "da1caecf65036325992be1c5d543daa818ece3f3",
       "timings": {
-        "importMs": 200,
-        "fontsMs": 62,
-        "buildMs": 906,
-        "totalMs": 1804,
+        "importMs": 194,
+        "fontsMs": 61,
+        "buildMs": 885,
+        "totalMs": 1722,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
           "h": 1294,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208972,
+          "bytes": 208964,
           "alt": "Page 6: 6 Discussion."
         },
         {
@@ -153,7 +153,7 @@
       },
       "pdf": {
         "file": "ai-preprint-prompt-exemplars.pdf",
-        "bytes": 261218,
+        "bytes": 261221,
         "pages": 7
       },
       "sandbox": {
@@ -529,11 +529,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

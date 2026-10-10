@@ -3,21 +3,21 @@
   "slug": "book-from-chapters",
   "sourceHash": "15abc1f691990e3eef9cc63a639c7a57b661028cf9c21f2eb2e7287b8bf7bf9e",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.194Z",
+  "capturedAt": "2026-10-10T22:12:14.932Z",
   "variants": {
     "en": {
-      "hash8": "c2bb04c3",
+      "hash8": "6dcbfe04",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 166,
+        "importMs": 167,
         "fontsMs": 63,
-        "buildMs": 73,
-        "totalMs": 2441,
+        "buildMs": 72,
+        "totalMs": 862,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 39698,
+          "bytes": 42246,
           "alt": "Opening page 1: A Beekeeper’s Year."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 44440,
+          "bytes": 44712,
           "alt": "Opening page 2: Contents."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 109356,
+          "bytes": 109614,
           "alt": "Opening page 3: 1 Autumn."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 100622,
+          "bytes": 101294,
           "alt": "Page 4: Stores for winter. Figure 1.1. A frame in October: honey (gold) round the last brood (brown) and pollen (russet)."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 78780,
+          "bytes": 79604,
           "alt": "Opening page 5: 2 Winter. Figure 2.1. The same frame in January: the cluster (dark) eats its way up from empty comb (pale)."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 108712,
+          "bytes": 109054,
           "alt": "Opening page 7: 3 Spring."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 93070,
+          "bytes": 93920,
           "alt": "Page 8: Room to grow. Figure 3.1. The same frame in late April: brood across the middle, the winter honey nearly gone."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 83346,
+          "bytes": 83998,
           "alt": "Opening page 9: 4 Summer. Figure 4.1. The same frame in July: an arch of new honey presses down on the brood."
         },
         {
@@ -209,7 +209,7 @@
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 46717,
+        "bytes": 46825,
         "folio": "0459f0ab"
       },
       "detected": {
@@ -464,13 +464,13 @@
       }
     },
     "es": {
-      "hash8": "473a63be",
+      "hash8": "282c64b8",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 62,
-        "buildMs": 78,
-        "totalMs": 872,
+        "importMs": 161,
+        "fontsMs": 61,
+        "buildMs": 76,
+        "totalMs": 863,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +503,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 39210,
+          "bytes": 41796,
           "alt": "Página de apertura 1: Un año de colmenar."
         },
         {
@@ -514,7 +514,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 43614,
+          "bytes": 43894,
           "alt": "Página de apertura 2: Índice."
         },
         {
@@ -525,7 +525,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 107098,
+          "bytes": 107318,
           "alt": "Página de apertura 3: 1 Otoño."
         },
         {
@@ -536,7 +536,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 113902,
+          "bytes": 114946,
           "alt": "Página 4: Reservas para el invierno. Figura 1.1. Un cuadro en octubre: la miel (dorada) rodea la última cría (marrón) y el polen (rojizo)."
         },
         {
@@ -547,7 +547,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 84628,
+          "bytes": 86382,
           "alt": "Página de apertura 5: 2 Invierno. Figura 2.1. El mismo cuadro en enero: el racimo (oscuro) deja la cera vacía (clara) y sube."
         },
         {
@@ -569,7 +569,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109102,
+          "bytes": 109400,
           "alt": "Página de apertura 7: 3 Primavera."
         },
         {
@@ -580,7 +580,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 101876,
+          "bytes": 102768,
           "alt": "Página 8: Sitio para crecer. Figura 3.1. El mismo cuadro a finales de abril: cría en el centro; queda poca miel del invierno."
         },
         {
@@ -591,7 +591,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 90526,
+          "bytes": 91214,
           "alt": "Página de apertura 9: 4 Verano. Figura 4.1. El mismo cuadro en julio: un arco de miel nueva aprieta la cría hacia abajo."
         },
         {
@@ -657,12 +657,12 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 130549,
+        "bytes": 130547,
         "pages": 11
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 47169,
+        "bytes": 47099,
         "folio": "0459f0ab"
       },
       "detected": {

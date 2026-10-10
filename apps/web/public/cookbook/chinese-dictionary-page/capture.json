@@ -3,21 +3,21 @@
   "slug": "chinese-dictionary-page",
   "sourceHash": "d12830ee4b5e93167fe7b62c1cec9d13882f5676bc26a6ac8c121427ea4bafc2",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:20:13.921Z",
+  "capturedAt": "2026-10-10T22:13:20.051Z",
   "variants": {
     "en": {
-      "hash8": "bed46f35",
+      "hash8": "587ac7b4",
       "vdtHash": "aa8df14ab7811236ff82cae36dadad1437aa11bb",
       "timings": {
-        "importMs": 581,
-        "fontsMs": 787,
-        "buildMs": 203,
-        "totalMs": 2893,
+        "importMs": 167,
+        "fontsMs": 280,
+        "buildMs": 56,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -112,7 +112,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313198,
+        "bytes": 313204,
         "pages": 4
       },
       "sandbox": {
@@ -294,11 +294,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 633: page 1 is a verso in the recipe, a recto in the Sandbox"
@@ -307,13 +302,13 @@
       }
     },
     "es": {
-      "hash8": "f33ef71e",
+      "hash8": "3b780a3c",
       "vdtHash": "1aeac785e2d796b6da3f1c1e1584832851430942",
       "timings": {
-        "importMs": 212,
-        "fontsMs": 323,
-        "buildMs": 60,
-        "totalMs": 1215,
+        "importMs": 166,
+        "fontsMs": 261,
+        "buildMs": 56,
+        "totalMs": 1032,
         "builds": 1
       },
       "specimen": {
@@ -408,7 +403,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313172,
+        "bytes": 313183,
         "pages": 4
       },
       "sandbox": {
@@ -589,11 +584,6 @@
           "worst": 0.23
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",
