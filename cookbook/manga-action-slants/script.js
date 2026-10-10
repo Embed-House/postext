@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 150 · An action page with slanted gutters ═════════════════
 // https://postext.dev/en/cookbook/manga-action-slants
 // Code: MIT · Story: written for the recipe (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Zen Antique, Comic Neue and six more (SIL OFL 1.1) · Needs postext ≥ 1.25.1
+// Fonts: Zen Antique, Comic Neue and six more (SIL OFL 1.1) · Needs postext ≥ 1.26.0
 // The last page of a kendo final: slanted panels, a borderless strike, ドン kept in every edition.
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage, loadVerticalAlternates,
@@ -183,7 +183,8 @@ const ART = { // fractions of the picture: the same in every language
       ar: 'موري عاقد الذراعين مغمض العينين، وخلفه يرفع الحكّام راياتهم.',
       ja: '腕を組み目を閉じる森先生。後ろで審判が旗を上げる。' }),
   safeArea: { x: 0.16, y: 0.1, width: 0.76, height: 0.53 },
-  avoid: [{ x: 0.55, y: 0.18, width: 0.4, height: 0.17 }],
+  avoid: [{ x: 0.55, y: 0.18, width: 0.4, height: 0.17 }, // the referees' flags
+    { x: 0.22, y: 0.47, width: 0.25, height: 0.21 }], // Mori’s folded arms: his pose
   anchors: [{ id: 'mori', x: 0.29, y: 0.31, head: { x: 0.29, y: 0.2 },
     face: { x: 0.22, y: 0.1, width: 0.14, height: 0.24 } }] },
 };
