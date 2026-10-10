@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annotated-classic-glosses",
-  "sourceHash": "ff2a34173a5fc543bf6d3f9b42ecfb94e9a476fea35664498e7dad5a42b52120",
+  "sourceHash": "8686fda572d419bfb398dfbaffac13e039237309b6505b9688be0865df00c6ab",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.627Z",
+  "capturedAt": "2026-10-10T18:38:27.958Z",
   "variants": {
     "en": {
-      "hash8": "affbb3c8",
-      "vdtHash": "049a0a0d8b1d507eb126c2b88daebb95f4deb600",
+      "hash8": "987c0396",
+      "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 152,
-        "fontsMs": 26,
-        "buildMs": 82,
-        "totalMs": 864,
+        "importMs": 142,
+        "fontsMs": 27,
+        "buildMs": 81,
+        "totalMs": 848,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Unna"
         ],
         "pages": 3,
-        "ownLines": 202
+        "ownLines": 207
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 204192,
+          "bytes": 204208,
           "alt": "Opening page 81: A Mad Tea-Party."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319012,
+        "bytes": 319058,
         "folio": "923d57f4"
       },
       "detected": {
@@ -210,7 +210,10 @@
           "page.margins.mirror",
           "page.margins.right",
           "page.margins.top",
-          "page.width"
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].hyphenation",
+          "paragraphStyles[].id"
         ],
         "configSections": [
           "bodyText",
@@ -221,12 +224,14 @@
           "header",
           "headings",
           "layout",
-          "page"
+          "page",
+          "paragraphStyles"
         ],
-        "configLeaves": 252,
+        "configLeaves": 254,
         "designElements": 11,
         "directives": [
-          ":::callout"
+          ":::callout",
+          ":::paragraphs"
         ],
         "inline": [
           "{attrs}",
@@ -276,6 +281,7 @@
           "opener-design",
           "page-background",
           "page-role-filters",
+          "paragraph-styles",
           "resources",
           "side-boxes",
           "side-column-floats"
@@ -288,7 +294,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.82
+          "worst": 1.8800000000000001
         },
         "findings": [
           {
@@ -300,6 +306,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -99,6 +99,10 @@ const bodyText = { // justified and hyphenated (en-us) by default
   // Unna's space is narrow, 0.22 em. At the default 0.6 the line breaker set 'Alice felt
   // dreadfully puzzled. The Hatter’s remark seemed to have' with its spaces at 0.69.
   minWordSpacing: 0.75 };
+// The dictionary divides the heroine's name on page 81, 'said Al-' | 'ice indignantly'. The
+// paragraph that holds it is fenced in this style, which keeps every word whole; its one
+// break, in 'together', is a soft hyphen typed in the text.
+const paragraphStyles = [{ id: 'whole', hyphenation: false }];
 // #endregion
 
 // #region opener: a headpiece, the chapter's numeral and title, a headnote with a drop cap
@@ -179,7 +183,8 @@ const footer = { elements: [{ ...head('drop-folio', 'odd', '{pageNumber}', -OUTE
     offset: { x: mm(-OUTER), y: mm(-DROP) } } }] };
 
 const config = () => ({
-  colorPalette, page, layout, bodyText, calloutStyles, chipStyles, header, footer,
+  colorPalette, page, layout, bodyText, paragraphStyles, calloutStyles, chipStyles, header,
+  footer,
   headings: {
     fontFamily: DISPLAY, fontWeight: 400, color: col('ink'), // Rozha One has one weight
     levels: [
