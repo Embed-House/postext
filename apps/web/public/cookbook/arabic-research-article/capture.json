@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "c6c6e10164b5c2377b66d6babe8b134758a64890bb2246c02588ad8b9d7c533b",
+  "sourceHash": "002f9d6767bb5a449c9d445248b2502f695ca0c66a802bf647689eea103118cc",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:21:52.458Z",
+  "capturedAt": "2026-10-10T22:10:30.007Z",
   "variants": {
     "en": {
-      "hash8": "6bf5c781",
-      "vdtHash": "9b1795d90cb6af8051faa33b0ca907e872d27308",
+      "hash8": "c7defa0c",
+      "vdtHash": "fc9fff2030ed159f83b09b8c8392ab7ed7414e56",
       "timings": {
-        "importMs": 230,
-        "fontsMs": 70,
-        "buildMs": 539,
-        "totalMs": 1402,
+        "importMs": 6663,
+        "fontsMs": 87,
+        "buildMs": 529,
+        "totalMs": 7870,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95246,
+          "bytes": 95488,
           "alt": "Page ٨٨: ٢- الكشيدة في الطباعة العربية."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 92858,
+          "bytes": 92848,
           "alt": "Page ٨٩: ٣- منهج التجربة."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 53732,
+          "bytes": 53706,
           "alt": "Page ٩٠: المراجع."
         },
         {
@@ -126,7 +126,7 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99114,
+        "bytes": 98986,
         "pages": 5
       },
       "sandbox": {
@@ -390,13 +390,13 @@
       }
     },
     "es": {
-      "hash8": "e5cf937e",
-      "vdtHash": "61f71c823633d0193bbd4ef8f8efd15763c1ec64",
+      "hash8": "be720794",
+      "vdtHash": "9cc6272c9092553414ab10cd0d91fa12c5a80d8f",
       "timings": {
-        "importMs": 215,
-        "fontsMs": 70,
-        "buildMs": 536,
-        "totalMs": 1369,
+        "importMs": 186,
+        "fontsMs": 65,
+        "buildMs": 506,
+        "totalMs": 1302,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +439,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95246,
+          "bytes": 95488,
           "alt": "Página ٨٨: ٢- الكشيدة في الطباعة العربية."
         },
         {
@@ -450,7 +450,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 92858,
+          "bytes": 92848,
           "alt": "Página ٨٩: ٣- منهج التجربة."
         },
         {
@@ -461,7 +461,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 53366,
+          "bytes": 53338,
           "alt": "Página ٩٠: المراجع."
         },
         {
@@ -505,7 +505,7 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98924,
+        "bytes": 98809,
         "pages": 5
       },
       "sandbox": {
