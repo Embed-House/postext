@@ -5,7 +5,7 @@ plain: "Una página hecha como los libros árabes impresos en El Cairo en el sig
 description: "Una página al estilo de Bulaq con Postext: columna y media con recuadros laterales para la ḥāshiya, filete de columna y un marco para cada lado del pliego."
 question: "¿Cómo compongo una página de Bulaq, con el comentario enmarcado alrededor del texto?"
 aliases: ["Bulaq", "Būlāq", "ḥāshiya", "hamish", "comentario al margen", "sharḥ", "página de comentario", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "gramática árabe", "marco de filetes", "jadwal", "شرح ابن عقيل", "حاشية", "هامش"]
-pageNotes: { "2": "La primera página de texto dentro de un marco de filetes dobles: un título en ruqʿa rojo, los primeros versos de la Alfiyya en rojo, dos por línea, y el comentario de Ibn ʿAqīl en negro; en una columna estrecha junto al borde derecho, tras un filete vertical, dos glosas cuyas primeras palabras van en rojo." }
+pageNotes: { "2": "La primera página de texto dentro de un marco de filetes dobles: un título en ruqʿa rojo, los primeros versos de la Alfiyya en rojo, dos por línea, y el comentario de Ibn ʿAqīl en negro; en una columna estrecha junto al borde derecho, tras un filete vertical, tres glosas cuyas primeras palabras van en rojo." }
 ---
 
 ## Lo que vas a componer
@@ -16,9 +16,9 @@ Seis páginas compuestas como imprimían un comentario la imprenta de Bulaq y su
 
 ### 1 · La ḥāshiya en una columna lateral propia
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un diseño en columna y media cuya columna lateral solo admite flotantes deja el comentario fuera del flujo del texto: cada glosa es un `:::callout{type="hashiya" span="side"}` escrito después del párrafo que explica, y queda a su altura ([Disposición](/es/docs/configuration-page-layout#disposición)). El recuadro no tiene fondo, borde ni relleno, así que se lee como texto compuesto en el margen, con el lema en negrita, que `boldColor` pone en rojo. `sideColumnSide: 'outer'` lleva la columna al corte delantero de las dos páginas: a la derecha de la página par, que en un libro encuadernado por la derecha queda a la derecha del pliego.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. Un diseño en columna y media cuya columna lateral solo admite flotantes deja el comentario fuera del flujo del texto: cada glosa es un `:::callout{type="hashiya" span="side"}` escrito antes del pasaje que explica, y empieza a la altura de su primera línea; `sideAtColumnEnd: 'after'` lo mantiene junto al pasaje cuando este sigue en la página siguiente ([Disposición](/es/docs/configuration-page-layout#disposición)). El recuadro no tiene fondo, borde ni relleno, así que se lee como texto compuesto en el margen, con el lema en negrita, que `boldColor` pone en rojo. `sideColumnSide: 'outer'` lleva la columna al corte delantero de las dos páginas: a la derecha de la página par, que en un libro encuadernado por la derecha queda a la derecha del pliego.
 
-<PageShot page={3} crop="0,0.08,1,0.4" caption="Página 3: la glosa sobre «كديز» queda junto al párrafo que usa la palabra, en el borde exterior, tras el filete de columna." />
+<PageShot page={2} crop="0,0.58,1,0.34" caption="Página 2: la glosa sobre «كديز» empieza a la altura del párrafo que usa la palabra, en el borde exterior, tras el filete de columna." />
 
 ### 2 · Un marco dibujado para cada lado del pliego
 
@@ -30,7 +30,7 @@ El marco son tres elementos de diseño de página en la cabecera: dos cajas con 
 
 <Excerpt region="title" />
 
-La portada reutiliza el marco sin la banda. Sus líneas salen de atributos del título, `on` y `margin`, de modo que toda la portada es una línea de Markdown, y la línea latina de debajo cambia con la edición.
+La portada reutiliza el marco sin la banda. El diseño de un título se compone en el flujo y se refleja con la página, así que allí el marco se construye con los lados cambiados (`inFlow`): su izquierda es la derecha de la hoja. Sus líneas salen de atributos del título, `on` y `margin`, de modo que toda la portada es una línea de Markdown, y la línea latina de debajo cambia con la edición.
 
 ## Variantes
 

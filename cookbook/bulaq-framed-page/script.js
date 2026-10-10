@@ -29,13 +29,15 @@ const M = { top: 34, bottom: 24, inner: 20, outer: 15 }; // mm: the type area in
 
 // #region answer: the commentary's column beside the text, both inside one ruled frame
 // The text runs in the main column of a column-and-a-half layout; the side column, on the
-// outer side, takes only boxes with span 'side', so each gloss stands level with the
-// paragraph it comments on. A column rule parts the two, as the jadwal of a Bulaq page does.
+// outer side, takes only boxes with span 'side'. A gloss is written before the passage it
+// explains and starts level with its first line, on the page where that passage goes on
+// (sideAtColumnEnd: 'after'). A column rule parts the two, as the jadwal of a Bulaq page does.
 const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'outer',
   sideColumnPercent: 31, gutterWidth: mm(7),
   columnRule: { enabled: true, color: col('rule'), lineWidth: pt(0.6) } };
 // A gloss is a callout with no box: the margin's own face, its lemma bold in the rubric.
-const hashiya = { id: 'hashiya', span: 'side', backgroundEnabled: false, borderRadius: pt(0),
+const hashiya = { id: 'hashiya', span: 'side', sideAtColumnEnd: 'after',
+  backgroundEnabled: false, borderRadius: pt(0),
   padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) },
   stripe: { enabled: false }, border: { enabled: false },
   body: { fontFamily: NASKH, fontSize: pt(10), lineHeight: pt(16), color: col('ink'),
@@ -46,9 +48,10 @@ const hashiya = { id: 'hashiya', span: 'side', backgroundEnabled: false, borderR
 // #region frame: a double rule round the type area and a band for the running head
 // Page-level design elements are physical: the frame follows the margins of each side of
 // the spread. In a book bound on the right the even page is the right-hand one, its spine
-// on its left, so its inner margin is the left one.
-const frame = (parity, withBand = true) => {
-  const left = parity === 'even' ? M.inner : M.outer;
+// on its left, so its inner margin is the left one. A heading's design is set in the flow
+// and mirrored with the page (inFlow): there 'left' is the sheet's right.
+const frame = (parity, withBand = true, inFlow = false) => {
+  const left = (parity === 'even') !== inFlow ? M.inner : M.outer;
   const width = TRIM.width - M.inner - M.outer;
   const box = (id, inset, thickness) => ({ kind: 'box', id: `${id}-${parity}`, parity,
     style: { borderColor: col('rule'), borderWidth: pt(thickness) },
@@ -62,13 +65,16 @@ const frame = (parity, withBand = true) => {
         offset: { x: mm(left - 2.7), y: mm(M.top - 4) },
         size: { width: mm(width + 5.4) } } }] : [])];
 };
-// The chapter centred in the band, the folio at its outer end.
+// The chapter centred in the band, the folio at its outer end. The frame stands off the
+// sheet's centre by half the difference of the margins, towards the outer edge.
+const SHIFT = (M.inner - M.outer) / 2; // mm
 const band = (id, content, parity, edge, x, extra = {}) => ({ kind: 'text', id, content,
   parity, pages: 'body', fontFamily: NASKH, fontWeight: 700, fontSize: pt(10.5),
   color: col('ink'),
   placement: { anchor: { to: 'page', edge }, offset: { x: mm(x), y: mm(M.top - 11) } }, ...extra });
 const header = { elements: [...frame('even'), ...frame('odd'),
-  band('head', '{chapterTitle}', 'all', 'top', 0),
+  band('head-even', '{chapterTitle}', 'even', 'top', SHIFT),
+  band('head-odd', '{chapterTitle}', 'odd', 'top', -SHIFT),
   band('folio-even', '{pageNumber}', 'even', 'top-right', -(M.outer + 1), { pages: 'all' }),
   band('folio-odd', '{pageNumber}', 'odd', 'top-left', M.outer + 1, { pages: 'all' })] };
 // #endregion
@@ -76,17 +82,18 @@ const header = { elements: [...frame('even'), ...frame('odd'),
 // #region title: the title page, framed like the text pages
 const line = (id, content, y, style) => ({ kind: 'text', id, content, align: 'center',
   overflow: 'wrap', color: col('ink'),
-  placement: { anchor: { to: 'page', edge: 'top' }, offset: { y: mm(y) },
+  // Centred in the frame: the title page is an odd page set in the mirrored flow.
+  placement: { anchor: { to: 'page', edge: 'top' }, offset: { x: mm(SHIFT), y: mm(y) },
     size: { width: mm(110) } }, ...style });
 const titlePage = { id: 'title', span: 'page', runningChapter: false,
   breakBefore: { enabled: true, parity: 'any' }, header: { elements: [] },
   footer: { elements: [] },
-  advancedDesign: { enabled: true, slot: { elements: [...frame('odd', false),
+  advancedDesign: { enabled: true, slot: { elements: [...frame('odd', false, true),
     line('book', '{titleText}', 64, { fontFamily: RUQAA, fontWeight: 700, fontSize: pt(40),
       lineHeight: 1.3, color: col('rubric') }),
     line('on', '{attr.on}', 88, { fontFamily: NASKH, fontWeight: 700, fontSize: pt(17) }),
     { kind: 'rule', id: 'rule', direction: 'horizontal', thickness: pt(0.75), color: col('rubric'),
-      placement: { anchor: { to: 'page', edge: 'top' }, offset: { y: mm(104) },
+      placement: { anchor: { to: 'page', edge: 'top' }, offset: { x: mm(SHIFT), y: mm(104) },
         size: { width: mm(30) } } },
     line('margin', '{attr.margin}', 112, { fontFamily: NASKH, fontSize: pt(13) }),
     line('latin', '{attr.latin}', 196, { fontFamily: NASKH, fontSize: pt(9), italic: true,

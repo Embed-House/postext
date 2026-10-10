@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bulaq-framed-page",
-  "sourceHash": "42b6f289d369e82ee7b3c22301b797c4c6d937646afbc4d7bda3be30e588fde4",
+  "sourceHash": "caa98a527fc2725d6078286cbc45879e9e1a684b1fae83943dc73d54f17bc2f8",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.239Z",
+  "capturedAt": "2026-10-10T19:15:28.071Z",
   "variants": {
     "en": {
-      "hash8": "e2373776",
-      "vdtHash": "acddaade55c702ea22d1cfb43fd75ed936cfb706",
+      "hash8": "febf7aab",
+      "vdtHash": "f629b1094d2de593641ecbbab1a777b81135f0e8",
       "timings": {
-        "importMs": 158,
-        "fontsMs": 65,
-        "buildMs": 93,
-        "totalMs": 864,
+        "importMs": 416,
+        "fontsMs": 134,
+        "buildMs": 270,
+        "totalMs": 1798,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Aref Ruqaa"
         ],
         "pages": 6,
-        "ownLines": 132
+        "ownLines": 139
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 14172,
+          "bytes": 14186,
           "alt": "Opening page ١: شرح ابن عقيل."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80380,
+          "bytes": 84932,
           "alt": "Opening page ٢: الكلام وما يتألف منه."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77574,
+          "bytes": 73300,
           "alt": "Page ٣."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 77988,
+          "bytes": 83434,
           "alt": "Page ٤."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 81158,
+          "bytes": 85564,
           "alt": "Page ٥."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 44502,
+          "bytes": 34222,
           "alt": "Page ٦."
         }
       ],
@@ -142,12 +142,12 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110092,
+        "bytes": 109809,
         "pages": 6
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26084
+        "bytes": 26372
       },
       "detected": {
         "apis": [
@@ -192,6 +192,7 @@
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].sideAtColumnEnd",
           "calloutStyles[].span",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.enabled",
@@ -293,11 +294,11 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 302,
-        "designElements": 16,
+        "configLeaves": 321,
+        "designElements": 17,
         "directives": [
-          ":::verse",
           ":::callout",
+          ":::verse",
           ":::paragraphs"
         ],
         "inline": [
@@ -361,17 +362,23 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "55a8b915",
-      "vdtHash": "bc5305865b5f1064b0d873e4b2c8774cd596d796",
+      "hash8": "66d6e073",
+      "vdtHash": "957031a9d2de0554cd01f9fb62ec90a1ab183767",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 64,
-        "buildMs": 93,
-        "totalMs": 871,
+        "importMs": 176,
+        "fontsMs": 71,
+        "buildMs": 98,
+        "totalMs": 958,
         "builds": 1
       },
       "specimen": {
@@ -393,7 +400,7 @@
           "Aref Ruqaa"
         ],
         "pages": 6,
-        "ownLines": 132
+        "ownLines": 139
       },
       "pages": [
         {
@@ -404,7 +411,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 14148,
+          "bytes": 14092,
           "alt": "Página de apertura ١: شرح ابن عقيل."
         },
         {
@@ -415,7 +422,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80380,
+          "bytes": 84932,
           "alt": "Página de apertura ٢: الكلام وما يتألف منه."
         },
         {
@@ -426,7 +433,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77574,
+          "bytes": 73300,
           "alt": "Página ٣."
         },
         {
@@ -437,7 +444,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 77988,
+          "bytes": 83434,
           "alt": "Página ٤."
         },
         {
@@ -448,7 +455,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 81158,
+          "bytes": 85564,
           "alt": "Página ٥."
         },
         {
@@ -459,7 +466,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 44706,
+          "bytes": 34814,
           "alt": "Página ٦."
         }
       ],
@@ -496,12 +503,12 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110966,
+        "bytes": 110692,
         "pages": 6
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26110
+        "bytes": 26393
       },
       "detected": {
         "apis": [
@@ -546,6 +553,7 @@
           "calloutStyles[].padding.left",
           "calloutStyles[].padding.right",
           "calloutStyles[].padding.top",
+          "calloutStyles[].sideAtColumnEnd",
           "calloutStyles[].span",
           "calloutStyles[].stripe",
           "calloutStyles[].stripe.enabled",
@@ -647,11 +655,11 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 302,
-        "designElements": 16,
+        "configLeaves": 321,
+        "designElements": 17,
         "directives": [
-          ":::verse",
           ":::callout",
+          ":::verse",
           ":::paragraphs"
         ],
         "inline": [
@@ -715,7 +723,13 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
