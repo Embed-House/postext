@@ -3,21 +3,21 @@
   "slug": "maghreb-edition-european-digits",
   "sourceHash": "1aa30cb0f86e7dd27c1daad47d7a30c7b48c1b3636b5c82a1769457c4d67f86c",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.551Z",
+  "capturedAt": "2026-10-10T22:16:33.862Z",
   "variants": {
     "en": {
-      "hash8": "31f25a80",
+      "hash8": "e458865a",
       "vdtHash": "d116e84a017621b857a279bc9c5b1e9214c526f1",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 64,
+        "importMs": 176,
+        "fontsMs": 61,
         "buildMs": 74,
-        "totalMs": 2159,
+        "totalMs": 875,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1556,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 97616,
+          "bytes": 97854,
           "alt": "Opening page 41: الفصل 3: أبواب فاس. شكل 3-1: زليج من نجوم ثمانية الرؤوس، على طريقة الفسيفساء الفاسية."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1556,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89480,
+          "bytes": 89392,
           "alt": "Page 42: 3-1 الأبواب الكبرى."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1556,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 88502,
+          "bytes": 88498,
           "alt": "Page 43: 3-2 مدينة داخل السور."
         },
         {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 65706,
+        "bytes": 65844,
         "pages": 4
       },
       "sandbox": {
@@ -304,13 +304,13 @@
       }
     },
     "es": {
-      "hash8": "a5f8f56f",
+      "hash8": "f1c4a152",
       "vdtHash": "dd8a6a9b678ff7206181b1aa8411eb32d7a4079d",
       "timings": {
         "importMs": 168,
-        "fontsMs": 60,
-        "buildMs": 74,
-        "totalMs": 869,
+        "fontsMs": 58,
+        "buildMs": 73,
+        "totalMs": 864,
         "builds": 1
       },
       "specimen": {
@@ -342,7 +342,7 @@
           "h": 1556,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 97616,
+          "bytes": 97854,
           "alt": "Página de apertura 41: الفصل 3: أبواب فاس. شكل 3-1: زليج من نجوم ثمانية الرؤوس، على طريقة الفسيفساء الفاسية."
         },
         {
@@ -353,7 +353,7 @@
           "h": 1556,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89480,
+          "bytes": 89392,
           "alt": "Página 42: 3-1 الأبواب الكبرى."
         },
         {
@@ -364,7 +364,7 @@
           "h": 1556,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 88502,
+          "bytes": 88498,
           "alt": "Página 43: 3-2 مدينة داخل السور."
         },
         {
@@ -408,7 +408,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 66113,
+        "bytes": 66244,
         "pages": 4
       },
       "sandbox": {

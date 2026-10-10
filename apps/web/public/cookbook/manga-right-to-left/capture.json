@@ -3,21 +3,21 @@
   "slug": "manga-right-to-left",
   "sourceHash": "662c5becc132dae6f2e9b087bc1be692be94d14cbf2867d502d468aa08025db6",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:50:33.277Z",
+  "capturedAt": "2026-10-10T22:16:33.866Z",
   "variants": {
     "en": {
-      "hash8": "14d792fb",
+      "hash8": "c5f92f36",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 619,
-        "fontsMs": 511,
-        "buildMs": 2837,
-        "totalMs": 13802,
+        "importMs": 165,
+        "fontsMs": 242,
+        "buildMs": 859,
+        "totalMs": 2183,
         "builds": 2
       },
       "specimen": {
@@ -109,7 +109,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521476,
+        "bytes": 1521475,
         "pages": 4
       },
       "sandbox": {
@@ -242,11 +242,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 2837 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "build 2: its configuration differs from the first's, which the book keeps"
@@ -260,13 +255,13 @@
       }
     },
     "es": {
-      "hash8": "776d53a8",
+      "hash8": "ccf67f6c",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 291,
-        "buildMs": 1002,
-        "totalMs": 2531,
+        "importMs": 170,
+        "fontsMs": 235,
+        "buildMs": 852,
+        "totalMs": 2164,
         "builds": 2
       },
       "specimen": {
@@ -358,7 +353,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522840,
+        "bytes": 1522841,
         "pages": 4
       },
       "sandbox": {
@@ -504,13 +499,13 @@
       }
     },
     "ca": {
-      "hash8": "259d4e4e",
+      "hash8": "13c88803",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 236,
-        "buildMs": 970,
-        "totalMs": 2405,
+        "importMs": 189,
+        "fontsMs": 238,
+        "buildMs": 854,
+        "totalMs": 2306,
         "builds": 2
       },
       "specimen": {
@@ -602,7 +597,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522200,
+        "bytes": 1522199,
         "pages": 4
       },
       "sandbox": {
@@ -748,13 +743,13 @@
       }
     },
     "zh": {
-      "hash8": "004d2e8d",
+      "hash8": "9196874f",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 234,
-        "buildMs": 963,
-        "totalMs": 2623,
+        "importMs": 168,
+        "fontsMs": 238,
+        "buildMs": 855,
+        "totalMs": 2432,
         "builds": 2
       },
       "specimen": {
@@ -846,7 +841,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1544575,
+        "bytes": 1544572,
         "pages": 4
       },
       "sandbox": {
@@ -992,13 +987,13 @@
       }
     },
     "ar": {
-      "hash8": "a69bd293",
+      "hash8": "6aeec097",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 233,
-        "buildMs": 958,
-        "totalMs": 2407,
+        "importMs": 170,
+        "fontsMs": 237,
+        "buildMs": 850,
+        "totalMs": 2215,
         "builds": 2
       },
       "specimen": {
@@ -1090,7 +1085,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1530175,
+        "bytes": 1530172,
         "pages": 4
       },
       "sandbox": {
@@ -1236,13 +1231,13 @@
       }
     },
     "ja": {
-      "hash8": "01041423",
+      "hash8": "9e842760",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 631,
-        "fontsMs": 510,
-        "buildMs": 2853,
-        "totalMs": 17974,
+        "importMs": 177,
+        "fontsMs": 257,
+        "buildMs": 854,
+        "totalMs": 2251,
         "builds": 2
       },
       "specimen": {
@@ -1467,11 +1462,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 2853 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "build 2: its configuration differs from the first's, which the book keeps"
@@ -1485,13 +1475,13 @@
       }
     },
     "pt": {
-      "hash8": "8822083f",
+      "hash8": "313956ba",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 245,
-        "buildMs": 977,
-        "totalMs": 2387,
+        "importMs": 170,
+        "fontsMs": 240,
+        "buildMs": 855,
+        "totalMs": 2228,
         "builds": 2
       },
       "specimen": {

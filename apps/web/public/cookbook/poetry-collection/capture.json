@@ -3,18 +3,18 @@
   "slug": "poetry-collection",
   "sourceHash": "cb0f3b0c16717e75b0c0386bbbffccb0be68044b71440cbd1fcd83d34b9207ab",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.683Z",
+  "capturedAt": "2026-10-10T22:17:56.251Z",
   "variants": {
     "en": {
-      "hash8": "e8261824",
+      "hash8": "024144fc",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 120,
-        "fontsMs": 34,
+        "importMs": 128,
+        "fontsMs": 33,
         "buildMs": 39,
         "totalMs": 787,
         "builds": 1
@@ -71,7 +71,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 15932,
+          "bytes": 16238,
           "alt": "Opening page 3: Pied Beauty."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 62084,
+          "bytes": 62102,
           "alt": "Opening page 4: Contents."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 59624,
+          "bytes": 59638,
           "alt": "Opening page 8: IV Inversnaid."
         }
       ],

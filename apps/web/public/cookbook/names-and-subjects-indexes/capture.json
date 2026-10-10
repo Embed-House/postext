@@ -3,21 +3,21 @@
   "slug": "names-and-subjects-indexes",
   "sourceHash": "74b9b4b2bb938d7785012e57df1676a9277d340eb69912ebb1687b6429a5ff0f",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:22:50.806Z",
+  "capturedAt": "2026-10-10T22:16:33.943Z",
   "variants": {
     "en": {
-      "hash8": "7787c3c0",
+      "hash8": "e24991a2",
       "vdtHash": "873133820c795bc0429f261f7a92f0666157b5ab",
       "timings": {
-        "importMs": 222,
-        "fontsMs": 27,
+        "importMs": 172,
+        "fontsMs": 28,
         "buildMs": 124,
-        "totalMs": 999,
+        "totalMs": 939,
         "builds": 1
       },
       "specimen": {
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 116629,
+        "bytes": 116615,
         "pages": 7
       },
       "sandbox": {
@@ -387,23 +387,17 @@
           "share": 0,
           "worst": 1.81
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "470229db",
+      "hash8": "411a86b0",
       "vdtHash": "05b1d598a1be4d6c76874f80bcc2b5fca0b3d1bc",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 28,
-        "buildMs": 142,
-        "totalMs": 1016,
+        "importMs": 168,
+        "fontsMs": 26,
+        "buildMs": 136,
+        "totalMs": 944,
         "builds": 1
       },
       "specimen": {
@@ -538,7 +532,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 130363,
+        "bytes": 130368,
         "pages": 7
       },
       "sandbox": {
@@ -778,11 +772,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

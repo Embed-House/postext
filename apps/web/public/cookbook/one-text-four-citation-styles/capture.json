@@ -3,20 +3,20 @@
   "slug": "one-text-four-citation-styles",
   "sourceHash": "fb08610e8686f002dbf5b55bd4130c6ca41141d4f980e411c3311a460b4567aa",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:17:37.268Z",
+  "capturedAt": "2026-10-10T22:17:23.252Z",
   "variants": {
     "en": {
       "hash8": "a18d3b37",
       "vdtHash": "738c861917f1a894851698719dbc92df71bf120f",
       "timings": {
-        "importMs": 1020,
-        "fontsMs": 15,
-        "buildMs": 858,
-        "totalMs": 3401,
+        "importMs": 150,
+        "fontsMs": 6,
+        "buildMs": 243,
+        "totalMs": 1425,
         "builds": 4
       },
       "specimen": {
@@ -282,10 +282,10 @@
       "hash8": "7906adf3",
       "vdtHash": "bb9f4eff198220899f50a5f002a30a9ef849a5ae",
       "timings": {
-        "importMs": 382,
-        "fontsMs": 7,
-        "buildMs": 327,
-        "totalMs": 2002,
+        "importMs": 146,
+        "fontsMs": 5,
+        "buildMs": 244,
+        "totalMs": 1421,
         "builds": 4
       },
       "specimen": {
@@ -524,11 +524,6 @@
           "worst": 1.6600000000000001
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

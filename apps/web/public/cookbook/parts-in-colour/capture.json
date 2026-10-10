@@ -3,20 +3,20 @@
   "slug": "parts-in-colour",
   "sourceHash": "d405e490a74e6a702f0535d2dc695c1ba0d311cb584ab487efcacd972cd5d5cb",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.503Z",
+  "capturedAt": "2026-10-10T22:17:23.272Z",
   "variants": {
     "en": {
       "hash8": "ad0019e8",
       "vdtHash": "0e5889b3360077090ccfa5da2047c750f0b77848",
       "timings": {
-        "importMs": 131,
+        "importMs": 127,
         "fontsMs": 31,
-        "buildMs": 80,
-        "totalMs": 843,
+        "buildMs": 79,
+        "totalMs": 832,
         "builds": 1
       },
       "specimen": {
@@ -486,10 +486,10 @@
       "hash8": "2fffe7c0",
       "vdtHash": "31d347092a81c1b9efa5c01bdc022c9921779bf7",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 32,
-        "buildMs": 62,
-        "totalMs": 820,
+        "importMs": 131,
+        "fontsMs": 31,
+        "buildMs": 59,
+        "totalMs": 802,
         "builds": 1
       },
       "specimen": {

@@ -3,21 +3,21 @@
   "slug": "ml-paper-theorems-proofs",
   "sourceHash": "ddadcefee0eb2f10bffefff7ae830e1cc99b7cc93d3bfe659f13944f92757eae",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:39:07.018Z",
+  "capturedAt": "2026-10-10T22:16:33.928Z",
   "variants": {
     "en": {
-      "hash8": "47fbd5a2",
+      "hash8": "6e542e90",
       "vdtHash": "9d4b6e85431982908f2f84b7eeae0d8c04a74d46",
       "timings": {
-        "importMs": 3606,
-        "fontsMs": 3130,
-        "buildMs": 292,
-        "totalMs": 7665,
+        "importMs": 181,
+        "fontsMs": 114,
+        "buildMs": 285,
+        "totalMs": 1208,
         "builds": 1
       },
       "specimen": {
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 981344,
+        "bytes": 981341,
         "pages": 10
       },
       "sandbox": {

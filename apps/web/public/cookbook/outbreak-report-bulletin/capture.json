@@ -3,21 +3,21 @@
   "slug": "outbreak-report-bulletin",
   "sourceHash": "b2c43424b932cae6bc8b02cbada45f8ca6bca0bd485ced0e571d738feeb7739f",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:09:26.661Z",
+  "capturedAt": "2026-10-10T22:17:23.258Z",
   "variants": {
     "en": {
-      "hash8": "88274465",
+      "hash8": "cabbb781",
       "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 61,
-        "buildMs": 352,
-        "totalMs": 1235,
+        "importMs": 179,
+        "fontsMs": 60,
+        "buildMs": 346,
+        "totalMs": 1162,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 136456,
+          "bytes": 136454,
           "alt": "Opening page 1: Pneumocystis Pneumonia — Los Angeles. Figure 1. The five patients, September 1980 to May 1981, by month. The illness before the pneumonia is counted back from the month of diagnosis, as each report gives it."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 201764,
+          "bytes": 201778,
           "alt": "Page 2. Table 1. The five case reports at a glance."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174334,
+          "bytes": 174370,
           "alt": "Page 3: REFERENCES. Table 1. Presenting complaints in 20 patients with Kaposi’s sarcoma."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 243134,
+          "bytes": 243130,
           "alt": "Page 4."
         },
         {
@@ -142,12 +142,12 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 193056,
+        "bytes": 193039,
         "pages": 6
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95688,
+        "bytes": 95696,
         "folio": "0cf5d184"
       },
       "detected": {
@@ -443,7 +443,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.06 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
           }
         ]
       }

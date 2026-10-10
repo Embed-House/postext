@@ -3,20 +3,20 @@
   "slug": "product-manual-warnings",
   "sourceHash": "aaff816da0ff095bc68cedcce7d3bf347e967e8fde2543377fab50e68bf4c953",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:31.793Z",
+  "capturedAt": "2026-10-10T22:17:56.262Z",
   "variants": {
     "en": {
-      "hash8": "73093578",
+      "hash8": "3ffc61af",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
-        "importMs": 142,
-        "fontsMs": 39,
-        "buildMs": 92,
-        "totalMs": 876,
+        "importMs": 133,
+        "fontsMs": 32,
+        "buildMs": 81,
+        "totalMs": 819,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 26140,
+          "bytes": 26246,
           "alt": "Opening page 1: Verra W1."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121864,
+          "bytes": 121978,
           "alt": "Page 2: 1 Sicherheitshinweise."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60604,
+          "bytes": 61140,
           "alt": "Page 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91502,
+          "bytes": 91430,
           "alt": "Page 4: 3 Bedienung."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121306,
+          "bytes": 121314,
           "alt": "Page 5: 4 Reinigung und Entkalken."
         },
         {
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35984,
+        "bytes": 35996,
         "folio": "6d89ead9"
       },
       "detected": {
@@ -490,13 +490,13 @@
       }
     },
     "es": {
-      "hash8": "e3a4fdce",
+      "hash8": "fc932bbc",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
         "importMs": 131,
-        "fontsMs": 30,
-        "buildMs": 86,
-        "totalMs": 819,
+        "fontsMs": 31,
+        "buildMs": 80,
+        "totalMs": 822,
         "builds": 1
       },
       "specimen": {
@@ -529,7 +529,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 26140,
+          "bytes": 26246,
           "alt": "Página de apertura 1: Verra W1."
         },
         {
@@ -540,7 +540,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121864,
+          "bytes": 121978,
           "alt": "Página 2: 1 Sicherheitshinweise."
         },
         {
@@ -551,7 +551,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60604,
+          "bytes": 61140,
           "alt": "Página 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -562,7 +562,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91502,
+          "bytes": 91430,
           "alt": "Página 4: 3 Bedienung."
         },
         {
@@ -573,7 +573,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121306,
+          "bytes": 121314,
           "alt": "Página 5: 4 Reinigung und Entkalken."
         },
         {
@@ -631,7 +631,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 36007,
+        "bytes": 36019,
         "folio": "6d89ead9"
       },
       "detected": {

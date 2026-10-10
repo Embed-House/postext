@@ -3,21 +3,21 @@
   "slug": "mla-humanities-essay",
   "sourceHash": "9c0cf138dd756048ca94f944310c2fa1e3f79c59b8070ee241041d1ccb3777da",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:36:24.378Z",
+  "capturedAt": "2026-10-10T22:16:33.936Z",
   "variants": {
     "en": {
-      "hash8": "134f529a",
+      "hash8": "dc7a4f0e",
       "vdtHash": "aeeb7aaff771f2fadcc155673cfa79108d5db99d",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 31,
-        "buildMs": 83,
-        "totalMs": 911,
+        "importMs": 187,
+        "fontsMs": 32,
+        "buildMs": 82,
+        "totalMs": 917,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 86123,
+        "bytes": 86107,
         "pages": 4
       },
       "sandbox": {
@@ -334,13 +334,13 @@
       }
     },
     "es": {
-      "hash8": "da4baeab",
+      "hash8": "41ebd564",
       "vdtHash": "7e9d0444b1b469b4a6b5ab616769497245a62456",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 32,
-        "buildMs": 86,
-        "totalMs": 4436,
+        "importMs": 184,
+        "fontsMs": 31,
+        "buildMs": 84,
+        "totalMs": 913,
         "builds": 1
       },
       "specimen": {
@@ -437,7 +437,7 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 91217,
+        "bytes": 91218,
         "pages": 4
       },
       "sandbox": {

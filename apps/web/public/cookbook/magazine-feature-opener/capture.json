@@ -3,20 +3,20 @@
   "slug": "magazine-feature-opener",
   "sourceHash": "8acaaf1e601fffe8ecb13ee54b3ba018d7db217b3795befe07757615238f0975",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:54:24.887Z",
+  "capturedAt": "2026-10-10T22:16:33.848Z",
   "variants": {
     "en": {
-      "hash8": "c865eade",
+      "hash8": "22defb8e",
       "vdtHash": "135791b269e24d278d0a78692b9df516fa183b28",
       "timings": {
-        "importMs": 335,
-        "fontsMs": 61,
-        "buildMs": 930,
-        "totalMs": 2026,
+        "importMs": 129,
+        "fontsMs": 36,
+        "buildMs": 221,
+        "totalMs": 997,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 171958,
+          "bytes": 172178,
           "alt": "Opening page 57: The Lake That Keeps Time."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237516,
+          "bytes": 237428,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768184,
+        "bytes": 768188,
         "folio": "da2eb3c6"
       },
       "detected": {
@@ -389,23 +389,17 @@
           "share": 0,
           "worst": 2
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "131dfd3f",
       "vdtHash": "2fba783e69d9830d15eabf9202d020f6be693509",
       "timings": {
-        "importMs": 134,
-        "fontsMs": 36,
-        "buildMs": 117,
-        "totalMs": 959,
+        "importMs": 131,
+        "fontsMs": 37,
+        "buildMs": 116,
+        "totalMs": 881,
         "builds": 1
       },
       "specimen": {
@@ -780,13 +774,7 @@
           "share": 0,
           "worst": 1.9100000000000001
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

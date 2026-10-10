@@ -3,21 +3,21 @@
   "slug": "photos-fill-short-columns",
   "sourceHash": "00d328827569a793c561f41637e98d15bc62d973ca97c2ea3aa9e84f1491865f",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:56:14.881Z",
+  "capturedAt": "2026-10-10T22:17:56.226Z",
   "variants": {
     "en": {
-      "hash8": "c2060e17",
-      "vdtHash": "3db5f75e697f53d7c8744153186798518f46cdef",
+      "hash8": "fc1e08ff",
+      "vdtHash": "c5f6a5f7af08d3668f758f078fb27e030423f634",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 78,
-        "buildMs": 59,
-        "totalMs": 973,
+        "importMs": 179,
+        "fontsMs": 79,
+        "buildMs": 56,
+        "totalMs": 938,
         "builds": 2
       },
       "specimen": {
@@ -127,7 +127,7 @@
       },
       "pdf": {
         "file": "photos-fill-short-columns.pdf",
-        "bytes": 1972226,
+        "bytes": 1972230,
         "pages": 3
       },
       "sandbox": {
@@ -341,23 +341,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.17 MB (warning at 0.9 MB for 5 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "99175a0e",
+      "hash8": "04c952a0",
       "vdtHash": "e8aa75614373eb12e9b977db79d9f32a95a757d7",
       "timings": {
-        "importMs": 453,
-        "fontsMs": 223,
-        "buildMs": 270,
-        "totalMs": 1992,
+        "importMs": 192,
+        "fontsMs": 77,
+        "buildMs": 60,
+        "totalMs": 1010,
         "builds": 2
       },
       "specimen": {

@@ -3,21 +3,21 @@
   "slug": "pdf-with-embedded-fonts",
   "sourceHash": "5496f16ce0a9c27971ba363f124618f98da93b20bbb3c528a23dac4ee3f379d3",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:37:01.515Z",
+  "capturedAt": "2026-10-10T22:17:23.285Z",
   "variants": {
     "en": {
-      "hash8": "3dc68dc3",
+      "hash8": "b36f6bad",
       "vdtHash": "6614b01a37d0ff6a777bd67b097f1a4e32a7cf36",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 49,
+        "importMs": 164,
+        "fontsMs": 51,
         "buildMs": 33,
-        "totalMs": 812,
+        "totalMs": 805,
         "builds": 1
       },
       "specimen": {

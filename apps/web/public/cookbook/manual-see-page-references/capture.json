@@ -3,21 +3,21 @@
   "slug": "manual-see-page-references",
   "sourceHash": "aec678e445f65d4127e892599f32fc87cd171a05fedb866ce8014aaa9d5dae06",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:14:44.431Z",
+  "capturedAt": "2026-10-10T22:16:33.916Z",
   "variants": {
     "en": {
-      "hash8": "39b6517b",
+      "hash8": "cb142a5e",
       "vdtHash": "2b45ae281967c7ac2990356fefe5d57b5c54f811",
       "timings": {
-        "importMs": 541,
-        "fontsMs": 75,
-        "buildMs": 137,
-        "totalMs": 1532,
+        "importMs": 173,
+        "fontsMs": 27,
+        "buildMs": 48,
+        "totalMs": 865,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36612,
+        "bytes": 36615,
         "pages": 4
       },
       "sandbox": {
@@ -318,23 +318,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "3a2ca768",
+      "hash8": "fc858393",
       "vdtHash": "44e220338e17bcf0994798a57ac7135552398785",
       "timings": {
-        "importMs": 230,
-        "fontsMs": 29,
-        "buildMs": 50,
-        "totalMs": 945,
+        "importMs": 163,
+        "fontsMs": 26,
+        "buildMs": 44,
+        "totalMs": 808,
         "builds": 1
       },
       "specimen": {
@@ -431,7 +425,7 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36547,
+        "bytes": 36545,
         "pages": 4
       },
       "sandbox": {
