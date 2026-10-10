@@ -10,7 +10,7 @@ author: "Ellen Marsh"
 
 A knot is a way of making a rope hold onto something: another rope, a post, a ring, itself. There are thousands of them, and most of us need six. The six in this book will moor a boat, hang a hammock, tie down a load, join two lines and make a loop that will not slip, and every one of them can be untied again, which is half the point of a good knot.
 
-Learn them with a piece of soft rope about an arm's length long, and tie each one ten times before you move on. Then tie it with your eyes shut. A knot you have to think about will fail you on a cold, wet evening, when the boat is moving and the rope is stiff.
+Learn them with a piece of soft rope about an arm’s length long, and tie each one ten times before you move on. Then tie it with your eyes shut. A knot you have to think about will fail you on a cold, wet evening, when the boat is moving and the rope is stiff.
 
 Each knot has a standing part, the long end that takes the load, and a working end, the short end you tie with. When the instructions say *over* and *under*, they mean the working end passing over or under the standing part.
 
@@ -24,7 +24,7 @@ Never use a reef knot to join two different ropes that will take a load. It is a
 
 The bowline makes a loop at the end of a rope that will neither slip nor jam. Make a small loop in the standing part, with the working end on top. Bring the end up through the loop, round behind the standing part, and back down through the loop. The old way to remember it: the rabbit comes out of the hole, goes round the tree, and goes back down the hole.
 
-A bowline holds a mooring line on a post, a rope round a person's chest in a rescue, and the corner of a tarpaulin in a gale. However hard it has been pulled, you can break it open again by pushing the collar forward.
+A bowline holds a mooring line on a post, a rope round a person’s chest in a rescue, and the corner of a tarpaulin in a gale. However hard it has been pulled, you can break it open again by pushing the collar forward.
 
 # The clove hitch {kicker="Knot 3 · Hitches"}
 

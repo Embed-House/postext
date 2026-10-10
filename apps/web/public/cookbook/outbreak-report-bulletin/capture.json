@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "ec9e8886a9d16245ad269d66d8da5022327165ce8be3d078507ab33aa2ffa091",
+  "sourceHash": "b2c43424b932cae6bc8b02cbada45f8ca6bca0bd485ced0e571d738feeb7739f",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:41:56.004Z",
+  "capturedAt": "2026-10-10T19:09:26.661Z",
   "variants": {
     "en": {
-      "hash8": "b0018284",
-      "vdtHash": "09f36dea9457a56ffb6aa43e12e8a6ffe5bf4e4d",
+      "hash8": "88274465",
+      "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 216,
-        "fontsMs": 60,
-        "buildMs": 356,
-        "totalMs": 1222,
+        "importMs": 233,
+        "fontsMs": 61,
+        "buildMs": 352,
+        "totalMs": 1235,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 136546,
+          "bytes": 136456,
           "alt": "Opening page 1: Pneumocystis Pneumonia — Los Angeles. Figure 1. The five patients, September 1980 to May 1981, by month. The illness before the pneumonia is counted back from the month of diagnosis, as each report gives it."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 201776,
+          "bytes": 201764,
           "alt": "Page 2. Table 1. The five case reports at a glance."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174376,
+          "bytes": 174334,
           "alt": "Page 3: REFERENCES. Table 1. Presenting complaints in 20 patients with Kaposi’s sarcoma."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 242658,
+          "bytes": 243134,
           "alt": "Page 4."
         },
         {
@@ -142,12 +142,12 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 193006,
+        "bytes": 193056,
         "pages": 6
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95664,
+        "bytes": 95688,
         "folio": "0cf5d184"
       },
       "detected": {
@@ -177,6 +177,7 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.maxJustifyTracking",
+          "bodyText.minWordSpacing",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
           "captionStyle",
@@ -344,7 +345,7 @@
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 570,
+        "configLeaves": 571,
         "designElements": 26,
         "directives": [
           ":::paragraphs",

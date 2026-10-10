@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "4c78be393f0fb0eca4f0d9bec717930ba9f152b748145c8ccd7e4fd09d1cadad",
+  "sourceHash": "6102cbb21c7dcbf41e54b55a1212e65478ff34edfb8a0393331d4d56c6679432",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.25.4",
+    "postextPdf": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:30:00.665Z",
+  "capturedAt": "2026-10-10T19:08:20.843Z",
   "variants": {
     "en": {
-      "hash8": "ff8da26f",
-      "vdtHash": "064168bafa9f29102ffa317ff0a1cacd624073cc",
+      "hash8": "44b7a708",
+      "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 31,
-        "buildMs": 269,
-        "totalMs": 1112,
+        "importMs": 464,
+        "fontsMs": 102,
+        "buildMs": 1027,
+        "totalMs": 2258,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Public Sans"
         ],
         "pages": 3,
-        "ownLines": 117
+        "ownLines": 118
       },
       "pages": [
         {
@@ -49,7 +49,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 127842,
+          "bytes": 128106,
           "alt": "Opening page 1: 2 Reading on Paper and on Screens: The State of the Evidence."
         },
         {
@@ -99,12 +99,12 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 60464,
+        "bytes": 60466,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18557,
+        "bytes": 18637,
         "folio": "2af3feac"
       },
       "detected": {
@@ -133,6 +133,7 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.minWordSpacing",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
@@ -207,7 +208,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 146,
+        "configLeaves": 147,
         "designElements": 6,
         "directives": [
           ":::bibliography",
@@ -287,13 +288,13 @@
       }
     },
     "es": {
-      "hash8": "b86bbc97",
-      "vdtHash": "22875495bd6613d87ca6bb628d6be8c26b147d03",
+      "hash8": "2481d87e",
+      "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 50,
-        "buildMs": 1162,
-        "totalMs": 3737,
+        "importMs": 195,
+        "fontsMs": 33,
+        "buildMs": 269,
+        "totalMs": 1165,
         "builds": 1
       },
       "specimen": {
@@ -314,7 +315,7 @@
           "Public Sans"
         ],
         "pages": 3,
-        "ownLines": 117
+        "ownLines": 118
       },
       "pages": [
         {
@@ -325,7 +326,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 127216,
+          "bytes": 126882,
           "alt": "Página de apertura 1: 2 Leer en papel y en pantalla: el estado de la cuestión."
         },
         {
@@ -336,7 +337,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149296,
+          "bytes": 150060,
           "alt": "Página 2: 2.2 Velocidad y longitud de línea."
         },
         {
@@ -375,12 +376,12 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 66514,
+        "bytes": 66527,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18503,
+        "bytes": 18543,
         "folio": "2af3feac"
       },
       "detected": {
@@ -409,6 +410,7 @@
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.minWordSpacing",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
           "bodyText.textAlign",
@@ -483,7 +485,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 146,
+        "configLeaves": 147,
         "designElements": 6,
         "directives": [
           ":::bibliography",
@@ -553,7 +555,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 1,
         "looseLines": {
           "count": 0,
           "share": 0,
