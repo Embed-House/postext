@@ -3,20 +3,20 @@
   "slug": "fonts-before-layout",
   "sourceHash": "bcf02b75fc1a04ae685a3cb75231e80747c51bf4dde458c4b36bbf9897c9b4d9",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.498Z",
+  "capturedAt": "2026-10-10T22:14:44.233Z",
   "variants": {
     "en": {
-      "hash8": "c96d2244",
+      "hash8": "51c4aa60",
       "vdtHash": "0c1ef201c84c95cf7ac8d8dff7a325431f209674",
       "timings": {
-        "importMs": 130,
+        "importMs": 131,
         "fontsMs": 1,
         "buildMs": 7,
-        "totalMs": 4104,
+        "totalMs": 803,
         "builds": 3
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82754,
+          "bytes": 85708,
           "alt": "Page 4: What the early build got wrong. Figure 1. The first paragraph of page 1 as the early build set it, measured before the fonts had arrived (above), and as the last build set it (below). The early build broke 23 of its 45 lines of text elsewhere, and its own warnings name…"
         }
       ],
@@ -323,13 +323,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

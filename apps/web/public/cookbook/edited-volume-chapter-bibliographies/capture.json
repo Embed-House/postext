@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "1736898f62c8e1da02d7db1d7f78d3f4803dfec5b2e7c52d0943fffe9fd26e2a",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:23:59.260Z",
+  "capturedAt": "2026-10-10T22:14:05.102Z",
   "variants": {
     "en": {
-      "hash8": "4308b7e3",
+      "hash8": "2a7805f5",
       "vdtHash": "cc5d470a3516705dcec91e00da4458329b705583",
       "timings": {
-        "importMs": 206,
-        "fontsMs": 580,
-        "buildMs": 554,
-        "totalMs": 1913,
+        "importMs": 181,
+        "fontsMs": 232,
+        "buildMs": 534,
+        "totalMs": 1511,
         "builds": 1
       },
       "specimen": {
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143855,
+        "bytes": 143830,
         "pages": 10
       },
       "sandbox": {
@@ -482,23 +482,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "55e49bc6",
+      "hash8": "d838ec46",
       "vdtHash": "fb842f5a03bf85d3d8de00c8b88f6bcf28abcfc0",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 74,
-        "buildMs": 546,
-        "totalMs": 1373,
+        "importMs": 187,
+        "fontsMs": 78,
+        "buildMs": 529,
+        "totalMs": 1360,
         "builds": 1
       },
       "specimen": {
@@ -542,7 +537,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 28740,
+          "bytes": 28704,
           "alt": "Página de apertura 2: Índice."
         },
         {
@@ -674,7 +669,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 158078,
+        "bytes": 158049,
         "pages": 10
       },
       "sandbox": {
@@ -963,11 +958,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

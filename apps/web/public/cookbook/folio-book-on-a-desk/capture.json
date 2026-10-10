@@ -3,20 +3,20 @@
   "slug": "folio-book-on-a-desk",
   "sourceHash": "b808ddd65d810c66ecc12ef60cbeac8ac0a337df41e7cef632480f62a00b387f",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.488Z",
+  "capturedAt": "2026-10-10T22:14:44.229Z",
   "variants": {
     "en": {
-      "hash8": "747b9a2c",
-      "vdtHash": "2890142d818eab48c2a1bfe9536b661ee3937bb0",
+      "hash8": "28272a36",
+      "vdtHash": "c9d261ef6effccb705d8915af71348eab856bb11",
       "timings": {
-        "importMs": 2466,
+        "importMs": 145,
         "fontsMs": 3,
-        "buildMs": 35,
-        "totalMs": 3104,
+        "buildMs": 37,
+        "totalMs": 776,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1535,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151116,
+          "bytes": 151110,
           "alt": "Page 2: Six o’clock."
         },
         {

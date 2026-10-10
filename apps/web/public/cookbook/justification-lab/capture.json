@@ -3,20 +3,20 @@
   "slug": "justification-lab",
   "sourceHash": "9f820c89168a182ab12f5acea03a37a40434192e214105b09182c4d22fb5e98a",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:46:35.852Z",
+  "capturedAt": "2026-10-10T22:15:26.565Z",
   "variants": {
     "en": {
-      "hash8": "645b7889",
+      "hash8": "ac3034c3",
       "vdtHash": "b1b0668e1cb9db8d4a584e23f57f59744eeef0a7",
       "timings": {
-        "importMs": 350,
-        "fontsMs": 6,
-        "buildMs": 334,
-        "totalMs": 1687,
+        "importMs": 131,
+        "fontsMs": 2,
+        "buildMs": 69,
+        "totalMs": 871,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 115092,
+          "bytes": 115352,
           "alt": "Opening page 1: The river problem."
         },
         {
@@ -323,13 +323,13 @@
       }
     },
     "es": {
-      "hash8": "1985b8b1",
+      "hash8": "aed74ca4",
       "vdtHash": "1bd68fd4223c8c7a66961fbce9de0ec57fa92eec",
       "timings": {
-        "importMs": 140,
-        "fontsMs": 2,
-        "buildMs": 123,
-        "totalMs": 1004,
+        "importMs": 128,
+        "fontsMs": 1,
+        "buildMs": 121,
+        "totalMs": 912,
         "builds": 2
       },
       "specimen": {
@@ -363,7 +363,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 117090,
+          "bytes": 117328,
           "alt": "Página de apertura 1: El problema de los ríos."
         },
         {

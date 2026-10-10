@@ -3,21 +3,21 @@
   "slug": "haiku-and-tanka",
   "sourceHash": "2332cb97f1ac66cad2253ff4e2764ddb8db211c0b3db2232142228bb3be622b4",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:57:22.304Z",
+  "capturedAt": "2026-10-10T22:14:44.268Z",
   "variants": {
     "en": {
-      "hash8": "ca93c355",
+      "hash8": "24be8057",
       "vdtHash": "a0d3acc3bb77c15bc808e0a2c80aa455f33ea85c",
       "timings": {
-        "importMs": 4718,
-        "fontsMs": 427,
-        "buildMs": 74,
-        "totalMs": 5814,
+        "importMs": 162,
+        "fontsMs": 257,
+        "buildMs": 58,
+        "totalMs": 1028,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221332,
+        "bytes": 221330,
         "pages": 8
       },
       "sandbox": {
@@ -345,23 +345,17 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "4cefc76d",
+      "hash8": "4017e84a",
       "vdtHash": "8e70f2c90a81b954f68e1f61ac6b7a6fc3d654f1",
       "timings": {
-        "importMs": 960,
-        "fontsMs": 579,
-        "buildMs": 64,
-        "totalMs": 2265,
+        "importMs": 164,
+        "fontsMs": 217,
+        "buildMs": 58,
+        "totalMs": 996,
         "builds": 1
       },
       "specimen": {
@@ -689,13 +683,7 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

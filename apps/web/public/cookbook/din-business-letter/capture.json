@@ -3,21 +3,21 @@
   "slug": "din-business-letter",
   "sourceHash": "029f201bd78ce8e3754ca9bcc0361f3ec395576a6255ee9c918547275bc19acb",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:15.420Z",
+  "capturedAt": "2026-10-10T22:14:05.097Z",
   "variants": {
     "en": {
-      "hash8": "8b361dd8",
+      "hash8": "c903192c",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 172,
+        "importMs": 169,
         "fontsMs": 28,
-        "buildMs": 128,
-        "totalMs": 940,
+        "buildMs": 129,
+        "totalMs": 927,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +94,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23158,
+        "bytes": 23162,
         "folio": "2ea14ffd"
       },
       "detected": {
@@ -268,23 +268,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e2d1a7ec",
+      "hash8": "bc6df775",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 172,
+        "importMs": 165,
         "fontsMs": 28,
-        "buildMs": 129,
-        "totalMs": 927,
+        "buildMs": 125,
+        "totalMs": 914,
         "builds": 1
       },
       "specimen": {
@@ -361,7 +356,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23182,
+        "bytes": 23186,
         "folio": "2ea14ffd"
       },
       "detected": {
@@ -535,11 +530,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "hiragana-picture-book",
   "sourceHash": "2370ba2008dee68e280039c179812f9cb902320fc9120e470e6dede61acd5ea1",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:08:38.816Z",
+  "capturedAt": "2026-10-10T22:14:44.275Z",
   "variants": {
     "en": {
-      "hash8": "43931a66",
+      "hash8": "76f6cd5c",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 460,
-        "fontsMs": 337,
-        "buildMs": 164,
-        "totalMs": 1894,
+        "importMs": 166,
+        "fontsMs": 164,
+        "buildMs": 50,
+        "totalMs": 909,
         "builds": 1
       },
       "specimen": {
@@ -366,23 +366,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "ec530e98",
+      "hash8": "7997dccb",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 166,
+        "importMs": 164,
+        "fontsMs": 158,
         "buildMs": 51,
-        "totalMs": 1029,
+        "totalMs": 907,
         "builds": 1
       },
       "specimen": {
@@ -731,13 +725,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -3,21 +3,21 @@
   "slug": "lab-report-formulas",
   "sourceHash": "0bcc8867c4fc47dd7e46fde2d5c9f8e202a9228a6829de719facf5ac9cc5cae0",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.431Z",
+  "capturedAt": "2026-10-10T22:15:26.581Z",
   "variants": {
     "en": {
-      "hash8": "ac8fd05e",
+      "hash8": "61fddcb2",
       "vdtHash": "78a366fe1aa21b9c025482a889d0ae88a74aba07",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 110,
-        "buildMs": 63,
-        "totalMs": 950,
+        "importMs": 165,
+        "fontsMs": 106,
+        "buildMs": 62,
+        "totalMs": 934,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36467,
+        "bytes": 36559,
         "folio": "977c8d61"
       },
       "detected": {
@@ -427,23 +427,17 @@
           "share": 0.0164,
           "worst": 1.53
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "0e815132",
+      "hash8": "df73db9a",
       "vdtHash": "6be2b97b8c7d9bc8f5a005e8ce47c6f7c091c39b",
       "timings": {
-        "importMs": 197,
-        "fontsMs": 108,
-        "buildMs": 66,
-        "totalMs": 982,
+        "importMs": 167,
+        "fontsMs": 107,
+        "buildMs": 65,
+        "totalMs": 943,
         "builds": 1
       },
       "specimen": {
@@ -546,7 +540,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37839,
+        "bytes": 37865,
         "folio": "977c8d61"
       },
       "detected": {
@@ -853,13 +847,7 @@
           "share": 0.0154,
           "worst": 1.52
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

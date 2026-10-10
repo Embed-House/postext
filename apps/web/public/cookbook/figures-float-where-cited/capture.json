@@ -3,20 +3,20 @@
   "slug": "figures-float-where-cited",
   "sourceHash": "67b3a77283bd0f60b8c791a95b646c6a6da629faf53b93341b1435b08345d797",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.450Z",
+  "capturedAt": "2026-10-10T22:14:05.130Z",
   "variants": {
     "en": {
-      "hash8": "45d2926d",
+      "hash8": "40e9b717",
       "vdtHash": "08ca59610cbec5bcb94bf491bc1c3fdb643f5207",
       "timings": {
-        "importMs": 138,
-        "fontsMs": 133,
-        "buildMs": 297,
-        "totalMs": 1143,
+        "importMs": 127,
+        "fontsMs": 125,
+        "buildMs": 301,
+        "totalMs": 1134,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1250,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 159152,
+          "bytes": 159298,
           "alt": "Page 28: 2.2 Where glaciers are born. Figure 2.2. Profile of a valley glacier: ice fed above the equilibrium line flows down to melt below it. · Figure 2.3. A cirque in section. The ice rotates in the basin and deepens it below the rock lip."
         },
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "figures-float-where-cited.postext",
-        "bytes": 1458643,
+        "bytes": 1463315,
         "folio": "3d25f7bf"
       },
       "detected": {
@@ -318,11 +318,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.headings {\"h1\":1,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
@@ -331,13 +326,13 @@
       }
     },
     "es": {
-      "hash8": "cd6b41f5",
+      "hash8": "2eaa74a4",
       "vdtHash": "bc5ab5fc99c5c9b16276829c453ff4e984a0ab11",
       "timings": {
-        "importMs": 141,
-        "fontsMs": 216,
-        "buildMs": 1186,
-        "totalMs": 4136,
+        "importMs": 128,
+        "fontsMs": 128,
+        "buildMs": 226,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -436,7 +431,7 @@
       },
       "sandbox": {
         "file": "figures-float-where-cited.postext",
-        "bytes": 1458709,
+        "bytes": 1463353,
         "folio": "3d25f7bf"
       },
       "detected": {
@@ -638,11 +633,6 @@
           "worst": 1.98
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

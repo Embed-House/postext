@@ -3,20 +3,20 @@
   "slug": "live-palette-retint",
   "sourceHash": "1f4c8702fcc901a2a1a91ea692a4415338b7710cb886398c3ab7915ebbb08d61",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T18:38:11.585Z",
+  "capturedAt": "2026-10-10T22:15:26.598Z",
   "variants": {
     "en": {
       "hash8": "a113cf1a",
       "vdtHash": "e338e58d4a44c578f39e0a516a05fd3c498c3fc1",
       "timings": {
-        "importMs": 333,
-        "fontsMs": 3,
-        "buildMs": 23,
-        "totalMs": 1303,
+        "importMs": 127,
+        "fontsMs": 1,
+        "buildMs": 4,
+        "totalMs": 796,
         "builds": 4
       },
       "specimen": {
@@ -322,23 +322,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "6135e6b3",
       "vdtHash": "6eb696cdb53090fbb548c50ef2adad4645bec59b",
       "timings": {
-        "importMs": 134,
+        "importMs": 126,
         "fontsMs": 0,
         "buildMs": 4,
-        "totalMs": 819,
+        "totalMs": 795,
         "builds": 4
       },
       "specimen": {
@@ -644,13 +638,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

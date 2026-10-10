@@ -3,21 +3,21 @@
   "slug": "gbt7714-chinese-paper",
   "sourceHash": "c42cdc3888634733f55f5493a71dfc7cb4e7d1d52cf22f1239f64e6330b1449e",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:18:39.352Z",
+  "capturedAt": "2026-10-10T22:14:44.249Z",
   "variants": {
     "en": {
-      "hash8": "bb52f876",
+      "hash8": "e5929ee6",
       "vdtHash": "5c93e58faa6a038b76bdc016a2da2412aa258a8a",
       "timings": {
-        "importMs": 513,
-        "fontsMs": 759,
-        "buildMs": 458,
-        "totalMs": 2282,
+        "importMs": 178,
+        "fontsMs": 246,
+        "buildMs": 120,
+        "totalMs": 1077,
         "builds": 1
       },
       "specimen": {
@@ -327,23 +327,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2b2ca9ba",
+      "hash8": "e60f85f2",
       "vdtHash": "4fe16dd7111f3b5b88e57b5ec705eabb31a37923",
       "timings": {
-        "importMs": 218,
-        "fontsMs": 282,
-        "buildMs": 128,
-        "totalMs": 1216,
+        "importMs": 180,
+        "fontsMs": 237,
+        "buildMs": 121,
+        "totalMs": 1069,
         "builds": 1
       },
       "specimen": {
@@ -416,7 +411,7 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 165473,
+        "bytes": 165471,
         "pages": 2
       },
       "sandbox": {
@@ -653,11 +648,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

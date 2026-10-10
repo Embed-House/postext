@@ -3,20 +3,20 @@
   "slug": "dictionary-thumb-index",
   "sourceHash": "64b5d47b608b18357723eca2bf40a877e71f53271547553b3b48d6caad23779d",
   "engine": {
-    "postext": "1.25.4",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:02:03.866Z",
+  "capturedAt": "2026-10-10T22:14:05.092Z",
   "variants": {
     "en": {
-      "hash8": "ddbcb862",
+      "hash8": "0ef0661c",
       "vdtHash": "bddee317d6e61fcc97473b0c62f9c6ba9d53b62b",
       "timings": {
-        "importMs": 406,
-        "fontsMs": 6,
-        "buildMs": 832,
-        "totalMs": 2037,
+        "importMs": 130,
+        "fontsMs": 2,
+        "buildMs": 216,
+        "totalMs": 994,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 152236,
+          "bytes": 152290,
           "alt": "Opening page 1: The Sailor’s Word- Book."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 199518,
+          "bytes": 199512,
           "alt": "Page 2: B."
         },
         {
@@ -285,13 +285,13 @@
       }
     },
     "es": {
-      "hash8": "1737d2ee",
+      "hash8": "52d5b950",
       "vdtHash": "023dbe30f6640917d3b3833a72204c7852686692",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 3,
-        "buildMs": 310,
-        "totalMs": 1187,
+        "importMs": 132,
+        "fontsMs": 2,
+        "buildMs": 287,
+        "totalMs": 1072,
         "builds": 1
       },
       "specimen": {
@@ -325,7 +325,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156930,
+          "bytes": 156988,
           "alt": "Página de apertura 1: Vocabulario del marinero."
         },
         {

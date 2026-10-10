@@ -3,20 +3,20 @@
   "slug": "epub-fixed-and-reflowable",
   "sourceHash": "6ba77cdd6f7396b8171c685f9e59acb43c326191cff349346e767142b579baca",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.431Z",
+  "capturedAt": "2026-10-10T22:14:05.116Z",
   "variants": {
     "en": {
       "hash8": "2156bf3e",
       "vdtHash": "c96216bea05311b078948a2306d76538cec6bd71",
       "timings": {
-        "importMs": 146,
-        "fontsMs": 67,
-        "buildMs": 79,
-        "totalMs": 921,
+        "importMs": 133,
+        "fontsMs": 36,
+        "buildMs": 72,
+        "totalMs": 811,
         "builds": 1
       },
       "specimen": {
@@ -343,10 +343,10 @@
       "hash8": "d797508e",
       "vdtHash": "c8c457410ceb3f9647d1d1ca3698831678e7f732",
       "timings": {
-        "importMs": 149,
-        "fontsMs": 40,
-        "buildMs": 345,
-        "totalMs": 1075,
+        "importMs": 131,
+        "fontsMs": 35,
+        "buildMs": 341,
+        "totalMs": 1059,
         "builds": 1
       },
       "specimen": {

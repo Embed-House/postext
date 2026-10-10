@@ -3,21 +3,21 @@
   "slug": "legal-opinion-oscola",
   "sourceHash": "46ffcbfb6ad1bac6e6f71b1749367a442b7edcfadd013d5554178a884f7daf02",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:16:49.039Z",
+  "capturedAt": "2026-10-10T22:15:26.585Z",
   "variants": {
     "en": {
-      "hash8": "7ce6bc0f",
+      "hash8": "12401733",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 496,
-        "fontsMs": 112,
-        "buildMs": 529,
-        "totalMs": 2165,
+        "importMs": 180,
+        "fontsMs": 32,
+        "buildMs": 135,
+        "totalMs": 965,
         "builds": 1
       },
       "specimen": {
@@ -331,13 +331,13 @@
       }
     },
     "es": {
-      "hash8": "83ea905f",
+      "hash8": "cb854a1d",
       "vdtHash": "dec9e172bd3aae9c5ad71b37126eae508df9c274",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 33,
-        "buildMs": 552,
-        "totalMs": 1481,
+        "importMs": 176,
+        "fontsMs": 31,
+        "buildMs": 527,
+        "totalMs": 1356,
         "builds": 1
       },
       "specimen": {
@@ -381,7 +381,7 @@
           "h": 1481,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 155952,
+          "bytes": 155874,
           "alt": "Página 2: No existe un «test de Caparo»."
         },
         {
@@ -435,7 +435,7 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 93485,
+        "bytes": 93500,
         "pages": 4
       },
       "sandbox": {
@@ -647,13 +647,7 @@
           "share": 0,
           "worst": 1.76
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

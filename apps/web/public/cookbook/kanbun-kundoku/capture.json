@@ -3,21 +3,21 @@
   "slug": "kanbun-kundoku",
   "sourceHash": "7a883281e71b2ef32b5851a0d605b731a1024edef76787b4ee3965be185211df",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:34:26.289Z",
+  "capturedAt": "2026-10-10T22:15:26.571Z",
   "variants": {
     "en": {
-      "hash8": "342d87e6",
+      "hash8": "3687c0c8",
       "vdtHash": "cea294344d4ba3029b117bd33687c965b41d48c7",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 252,
-        "buildMs": 46,
-        "totalMs": 1020,
+        "importMs": 167,
+        "fontsMs": 257,
+        "buildMs": 45,
+        "totalMs": 1012,
         "builds": 1
       },
       "specimen": {
@@ -295,13 +295,13 @@
       }
     },
     "es": {
-      "hash8": "143c4139",
+      "hash8": "ffb2268a",
       "vdtHash": "eeffa96ae9ff865139c37006dc7fc4599bc7e1e1",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 237,
-        "buildMs": 48,
-        "totalMs": 997,
+        "importMs": 167,
+        "fontsMs": 236,
+        "buildMs": 46,
+        "totalMs": 996,
         "builds": 1
       },
       "specimen": {

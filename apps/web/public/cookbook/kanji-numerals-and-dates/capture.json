@@ -3,21 +3,21 @@
   "slug": "kanji-numerals-and-dates",
   "sourceHash": "d2450b05b54462670b15f2cfeb7eaba47ce36db8fc39029f755f5bf8b875e952",
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:35:13.404Z",
+  "capturedAt": "2026-10-10T22:15:26.576Z",
   "variants": {
     "en": {
-      "hash8": "4d002c00",
-      "vdtHash": "84f0c4fe9df4f6631c5282e24efa839e3392fd6a",
+      "hash8": "cea1d34f",
+      "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 509,
-        "fontsMs": 1578,
-        "buildMs": 361,
-        "totalMs": 5684,
+        "importMs": 168,
+        "fontsMs": 375,
+        "buildMs": 59,
+        "totalMs": 1145,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 57604,
+          "bytes": 57624,
           "alt": "Page 二: 二、八月の行事."
         },
         {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 174930,
+        "bytes": 174937,
         "pages": 4
       },
       "sandbox": {
@@ -385,13 +385,13 @@
       }
     },
     "es": {
-      "hash8": "07c05143",
-      "vdtHash": "2bfa7a26959cca47f13a2848b6e3f5aef29ba666",
+      "hash8": "a7585155",
+      "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 410,
-        "buildMs": 60,
-        "totalMs": 1273,
+        "importMs": 167,
+        "fontsMs": 360,
+        "buildMs": 57,
+        "totalMs": 1132,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +435,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 57604,
+          "bytes": 57624,
           "alt": "Página 二: 二、八月の行事."
         },
         {
@@ -490,7 +490,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 175043,
+        "bytes": 175045,
         "pages": 4
       },
       "sandbox": {

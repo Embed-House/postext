@@ -3,20 +3,20 @@
   "slug": "endnotes-instead-of-footnotes",
   "sourceHash": "5432046a1341e60d0b328f83221909471c1bc8fbf855687f414fd3d92e24a2d4",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:33:44.427Z",
+  "capturedAt": "2026-10-10T22:14:05.113Z",
   "variants": {
     "en": {
-      "hash8": "a18ccd23",
+      "hash8": "5bcab6e0",
       "vdtHash": "e4999498153329210326f1834fe8debf4c9f584d",
       "timings": {
-        "importMs": 387,
-        "fontsMs": 81,
-        "buildMs": 482,
-        "totalMs": 3264,
+        "importMs": 130,
+        "fontsMs": 37,
+        "buildMs": 66,
+        "totalMs": 810,
         "builds": 1
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 123248,
+          "bytes": 123564,
           "alt": "Page 18. Figure 1. A candle flame as it looks under a glass shade (left) and in section (right): the dark core of wax vapour round the wick, the blue foot where the air first meets it, the bright zone where soot glows, and the faint mantle, the hottest part. Heated air rises r…"
         },
         {
@@ -337,11 +337,6 @@
           "worst": 1.78
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,21 +3,21 @@
   "slug": "history-essay-chicago-notes",
   "sourceHash": "00e938c6ee1b645217795b68660477294956957c95d1291cc1c46ef91abbc6c7",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:04:37.247Z",
+  "capturedAt": "2026-10-10T22:15:26.536Z",
   "variants": {
     "en": {
-      "hash8": "539e6bda",
+      "hash8": "19f51488",
       "vdtHash": "cb0831936c958c10f1fbb35d8bc01ddf2b94481e",
       "timings": {
-        "importMs": 2157,
+        "importMs": 243,
         "fontsMs": 32,
-        "buildMs": 447,
-        "totalMs": 3285,
+        "buildMs": 435,
+        "totalMs": 1351,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 152298,
+          "bytes": 152578,
           "alt": "Page 3: THE TOWNS HESITATE."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 126812,
+          "bytes": 126762,
           "alt": "Page 4: A SETTLEMENT, NOT A CONQUEST."
         }
       ],
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 86054,
+        "bytes": 86088,
         "pages": 4
       },
       "sandbox": {
@@ -322,13 +322,13 @@
       }
     },
     "es": {
-      "hash8": "a01c6ebe",
+      "hash8": "f3c2b8cc",
       "vdtHash": "bf4264bd051500f1780024e7d1f064ef0bde8c52",
       "timings": {
-        "importMs": 284,
-        "fontsMs": 34,
-        "buildMs": 487,
-        "totalMs": 1501,
+        "importMs": 196,
+        "fontsMs": 32,
+        "buildMs": 447,
+        "totalMs": 1298,
         "builds": 1
       },
       "specimen": {
@@ -382,7 +382,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144334,
+          "bytes": 144308,
           "alt": "Página 3: LAS CIUDADES DUDAN."
         },
         {
@@ -393,7 +393,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 131650,
+          "bytes": 131588,
           "alt": "Página 4: UN ACUERDO, NO UNA CONQUISTA."
         }
       ],
@@ -425,7 +425,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 90724,
+        "bytes": 90761,
         "pages": 4
       },
       "sandbox": {

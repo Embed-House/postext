@@ -3,21 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "77b94214451b9f854fb65941ea625b547caf3eec4ba929967f0c3861d280b3e3",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:24:44.576Z",
+  "capturedAt": "2026-10-10T22:15:26.549Z",
   "variants": {
     "en": {
-      "hash8": "f5716e43",
+      "hash8": "0ede71fe",
       "vdtHash": "3146dc05d72f627e284ba24329951504ac8a5046",
       "timings": {
-        "importMs": 534,
-        "fontsMs": 713,
-        "buildMs": 313,
-        "totalMs": 2452,
+        "importMs": 163,
+        "fontsMs": 229,
+        "buildMs": 84,
+        "totalMs": 1007,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90942,
+          "bytes": 91182,
           "alt": "Page 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -415,11 +415,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation.pageIndexOffset 40 dropped (even: same page sides)"
@@ -433,13 +428,13 @@
       }
     },
     "es": {
-      "hash8": "ed685a28",
+      "hash8": "928d10e4",
       "vdtHash": "db11b14cc2b64f39276ee9da6714f6c4ef25dcaf",
       "timings": {
-        "importMs": 216,
-        "fontsMs": 257,
-        "buildMs": 91,
-        "totalMs": 1165,
+        "importMs": 172,
+        "fontsMs": 216,
+        "buildMs": 83,
+        "totalMs": 1005,
         "builds": 1
       },
       "specimen": {
@@ -483,7 +478,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90942,
+          "bytes": 91182,
           "alt": "Página 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -836,11 +831,6 @@
           "worst": 0.04
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

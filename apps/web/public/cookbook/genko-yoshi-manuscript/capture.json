@@ -3,21 +3,21 @@
   "slug": "genko-yoshi-manuscript",
   "sourceHash": "4f3f2fb0dbb678fad6bf57d9970e8ff87a55ab2cf4d5e527f19d330f9971abca",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.0",
+    "postextPdf": "1.26.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T20:24:01.293Z",
+  "capturedAt": "2026-10-10T22:14:44.256Z",
   "variants": {
     "en": {
-      "hash8": "a35f53a3",
+      "hash8": "05367263",
       "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 599,
-        "fontsMs": 524,
-        "buildMs": 149,
-        "totalMs": 1975,
+        "importMs": 168,
+        "fontsMs": 157,
+        "buildMs": 38,
+        "totalMs": 910,
         "builds": 1
       },
       "specimen": {
@@ -261,23 +261,17 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "3f8753f4",
+      "hash8": "3b4da910",
       "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 203,
-        "buildMs": 42,
-        "totalMs": 1066,
+        "importMs": 172,
+        "fontsMs": 149,
+        "buildMs": 38,
+        "totalMs": 912,
         "builds": 1
       },
       "specimen": {
@@ -521,13 +515,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }
