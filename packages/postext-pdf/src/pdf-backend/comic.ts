@@ -291,12 +291,15 @@ function drawArt(ctx: PageCtx, art: VDTComicArt, images: ResourceImageMap | unde
   return true;
 }
 
-/** Paint one panel: background, clipped picture, border, pop-out. */
+/** Paint one panel: background, clipped picture, border, and its pop-out
+ *  unless `pop` is false (a page paints the pop-outs of all its panels
+ *  after the last one, {@link renderComicPage}). */
 export function renderComicPanelPdf(
   ctx: PageCtx,
   panel: VDTComicPanel,
   images: ResourceImageMap | undefined,
   figure?: StructElem,
+  pop = true,
 ): void {
   const outline = comicPanelSegs(panel);
   const { x, y, width, height } = panel.bbox;
@@ -320,7 +323,13 @@ export function renderComicPanelPdf(
     strokeSegs(ctx, segs, colorFromHex(border.color, ctx.colorSpace), border.width);
   }
   // The pop-out cut-out runs over the border, unclipped.
-  if (panel.pop) drawArt(ctx, panel.pop, images, tag);
+  if (pop) renderComicPopPdf(ctx, panel, images, figure);
+}
+
+/** A panel's pop-out cut-out, part of its figure in a tagged render. */
+function renderComicPopPdf(ctx: PageCtx, panel: VDTComicPanel, images: ResourceImageMap | undefined, figure?: StructElem): void {
+  if (!panel.pop) return;
+  drawArt(ctx, panel.pop, images, () => (figure ? tagContent(ctx, figure) : tagArtifact(ctx, { type: 'Layout' })));
 }
 
 // ------------------------------------------------------------ balloons
@@ -412,7 +421,7 @@ export function comicBalloonGroups(balloons: readonly VDTComicBalloon[]): VDTCom
 }
 
 /** Paint a comic (a comic page, a half of a spread, a strip on the
- *  sheet): panels, then lettering. Tagged in `div` when given (a strip's,
+ *  sheet): panels, their pop-outs, then lettering. Tagged in `div` when given (a strip's,
  *  placed where the strip is read), else in a `Div` of its own at the end
  *  of the document read so far (a comic page). */
 export function renderComicPage(
@@ -424,6 +433,9 @@ export function renderComicPage(
   div?: StructElem,
 ): void {
   const tags = structure ? comicStructure(ctx, structure, comic, div) : undefined;
-  for (const panel of comic.panels) renderComicPanelPdf(ctx, panel, images, tags?.figures[panel.index]);
+  for (const panel of comic.panels) renderComicPanelPdf(ctx, panel, images, tags?.figures[panel.index], false);
+  // The pop-outs over every panel: one that breaks out into the next
+  // panel's cell is not covered by it (postext #668).
+  for (const panel of comic.panels) renderComicPopPdf(ctx, panel, images, tags?.figures[panel.index]);
   for (const group of comicBalloonGroups(comic.balloons)) renderBalloonGroup(ctx, group, fontCache, tags);
 }

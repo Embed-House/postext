@@ -440,6 +440,48 @@ function drawnAt(ops: string, w: number, h: number): number[][] {
     .map((m) => [n(Number(m[1])), n(H - Number(m[2]) - h)]);
 }
 
+describe('pop-out art in the PDF (postext #668)', () => {
+  // A stand-in for the cut-out, in a file of its own.
+  const cutout = png(300, 150, (x) => (x < 150 ? [250, 250, 250] : [10, 10, 10]));
+  const popResources: Resource[] = [...resources, picture('gull', 'gull.png', 300, 150)];
+  const popFiles: Record<string, Uint8Array> = { ...files, 'gull.png': cutout };
+  const md = ':::page{split="* | *"}\n::panel{art=land pop=gull alt="A gull flies out"}\n::panel{art=land bg="#102040"}\n:::\n';
+
+  it('draws the cut-outs after every panel, inside marked content of their figure', async () => {
+    const popDoc = buildDocument({ markdown: md, resources: popResources }, config);
+    const index = popDoc.pages.findIndex((p) => p.comic);
+    const comic = popDoc.pages[index]!.comic!;
+    expect(comic.panels[0]!.pop).toBeDefined();
+    const out = await PDFDocument.load(await renderToPdf(popDoc, { fontProvider, resourceBytes: (id) => popFiles[id] }));
+    const ops = contentOps(out, index).split('\n').map((l) => l.trim());
+    const draws = ops.map((l, i) => (/ Do$/.test(l) ? i : -1)).filter((i) => i >= 0);
+    // Two panel pictures (one image object) and the cut-out (another).
+    expect(draws).toHaveLength(3);
+    // The cut-out is the last one drawn: the second panel's clip (its
+    // background and picture) and its border come before it.
+    const clips = ops.map((l, i) => (l === 'W' ? i : -1)).filter((i) => i >= 0);
+    expect(clips.length).toBeGreaterThanOrEqual(2);
+    expect(draws[2]!).toBeGreaterThan(clips[1]!);
+    const strokes = ops.map((l, i) => (l === 'S' || l === 's' ? i : -1)).filter((i) => i >= 0);
+    expect(draws[2]!).toBeGreaterThan(strokes[strokes.length - 1]!);
+    // Tagged: no painting outside marked content, the cut-out with its figure.
+    let depth = 0;
+    let depthAtPop = -1;
+    ops.forEach((l, i) => {
+      const op = l.split(' ').pop() ?? '';
+      if (op === 'BDC' || op === 'BMC') depth++;
+      else if (op === 'EMC') depth--;
+      if (i === draws[2]) depthAtPop = depth;
+    });
+    expect(depthAtPop).toBeGreaterThan(0);
+    const figures = structRoot(out).kids.filter((k) => k.type === 'Div')[0]!.kids.filter((k) => k.type === 'Figure');
+    expect(figures).toHaveLength(2);
+    // The first figure owns its picture and its cut-out.
+    expect(figures[0]!.mcids).toBe(2);
+    expect(figures[1]!.mcids).toBe(1);
+  });
+});
+
 describe('strips and spreads in the PDF', () => {
   const figures = (e: Elem): Elem[] => [...(e.type === 'Figure' ? [e] : []), ...e.kids.flatMap(figures)];
 
