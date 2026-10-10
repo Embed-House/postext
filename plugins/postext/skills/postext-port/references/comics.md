@@ -247,7 +247,11 @@ ana{thought}: First line,\
 Without `at` the lettering places each balloon: high in the panel, near
 its speaker's mouth, in reading order (a later balloon does not sit above
 an earlier one unless it is further along the reading direction), off the
-faces and avoid zones, tails not crossing. A speaker with no anchor in
+faces and avoid zones, tails not crossing and never through another
+balloon (reported as `balloon` from 1.26). A balloon that leaves
+its panel (`break`, a pin) also keeps off the captions, balloons, tails,
+faces and avoid zones of the panels around it, and a balloon of a panel
+under an inset keeps off the inset. A speaker with no anchor in
 the panel (or one the crop leaves out) is an off-panel voice: its balloon
 sits by the border the tail runs to, with a short tail, rather than
 across the panel. Lettering never runs off the trim; in a bleeding panel
