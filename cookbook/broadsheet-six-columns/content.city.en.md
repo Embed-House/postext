@@ -81,7 +81,7 @@ Homes to let in Corrington since 1926. Every flat inspected by us, every deposit
 Open six days a week, from nine until half past five. Ask for Joanna or Kwame.
 :::
 
-:::space{lines=6}
+:::space{lines=10}
 
 :::paragraphs{style="ad-deck"}
 Thinking of letting your home? We will tell you what it would fetch, free, within a week.

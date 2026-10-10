@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "broadsheet-six-columns",
-  "sourceHash": "9bfa8fd571572b8b19d3cf79437ff61c77945bf8656876c962d5911be49774a2",
+  "sourceHash": "e4428123f174da59dec57f125bc437634864a81db1090a0d408fa86b14aa9886",
   "engine": {
-    "postext": "1.25.0",
+    "postext": "1.25.4",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T13:31:25.221Z",
+  "capturedAt": "2026-10-10T20:28:54.679Z",
   "variants": {
     "en": {
-      "hash8": "560ba2b0",
-      "vdtHash": "6ba0d9f1ae397abe97c836bdba853d2592ae5618",
+      "hash8": "fc6d322b",
+      "vdtHash": "f12abad8e5404532be9e4f736d7f35c778c3c2d9",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 44,
-        "buildMs": 106,
-        "totalMs": 1062,
+        "importMs": 260,
+        "fontsMs": 50,
+        "buildMs": 121,
+        "totalMs": 1309,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1592,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 203584,
+          "bytes": 203608,
           "alt": "Opening page 2: City. Moving day on Albion Terrace, where a two-bedroom flat now lets for £1,240."
         },
         {
@@ -116,7 +116,7 @@
       },
       "sandbox": {
         "file": "broadsheet-six-columns.postext",
-        "bytes": 1366179,
+        "bytes": 1366182,
         "folio": "ac94dacf"
       },
       "detected": {
@@ -423,8 +423,8 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 6,
-          "share": 0.0112,
+          "count": 1,
+          "share": 0.0019,
           "worst": 2.59
         },
         "findings": [
@@ -432,6 +432,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
