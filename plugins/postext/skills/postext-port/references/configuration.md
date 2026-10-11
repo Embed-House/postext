@@ -1653,7 +1653,10 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 `CustomFontFamily = { name, variants: [{ weight 100–900, style 'normal'|'italic', fileId, format 'woff2'|'woff'|'ttf'|'otf', fileName? }], redistributable?: boolean (default true) }`.
 - Any `fontFamily` string resolves against customFonts first, then Google Fonts.
 - Needed variants: at least 400/700 normal+italic (else "missing variant" warning); if the book
-  uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`.
+  uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`. The `postext` command
+  line (≥ 1.28.0) fetches the bold weight the configuration names, and `postext check` reports a
+  `fontFallback` when a weight the family ships is missing and another face stood in (lines then
+  break otherwise than in the Sandbox): add the file, or run once online so it is cached.
 - `.woff` is rejected by the PDF backend and skipped by the preset loader — use woff2/ttf/otf.
 - Chinese faces: one static file per weight (a variable font embeds its default instance), TrueType
   outlines (CFF files are embedded whole), subset to the book's characters with layout features and

@@ -349,6 +349,15 @@ próxima dela, como ela é, nas imagens de página e no PDF: uma família de
 letreiramento com um só peso mantém as próprias letras no negrito, e uma
 família sem itálico, as redondas.
 
+São baixados os pesos que a configuração nomeia: regular, negrito e seus
+itálicos para cada família, e qualquer outro peso que um ajuste indique,
+inclusive o do negrito (`bodyText.boldFontWeight: 600` pede a fonte de peso
+600). Quando um peso que a família traz não pôde ser carregado (offline e sem
+arquivo no cache, um download que falhou, uma pasta de fontes sem o arquivo),
+o texto é composto com a fonte mais próxima da família e `postext check` o
+lista como aviso `fontFallback`: as linhas podem quebrar de outro modo que no
+Sandbox.
+
 O cache fica em `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` no
 Windows); `POSTEXT_CACHE_DIR` ou `--cache-dir` o mudam de lugar. `--offline`
 pula o download. Uma família que não se encontra em lugar nenhum é composta em

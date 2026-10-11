@@ -267,5 +267,94 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
   for (const style of config.paragraphStyles ?? []) capUse(style.dropCap, style.fontFamily, style.fontWeight);
   for (const level of config.headings?.levels ?? []) capUse(level.dropCap, undefined, undefined);
   for (const style of config.headingStyles ?? []) capUse(style.dropCap, undefined, undefined);
+  addBoldWeights(config, doc, add);
   return usage;
+}
+
+/** The weight every host loads for bold runs without being asked
+ *  ({@link STANDARD_FONT_VARIANTS}): a bold of 700 adds nothing here. */
+const STANDARD_BOLD = 700;
+
+/**
+ * The bold weights the configuration decides (#741). Wherever the pipeline
+ * builds a bold font string from a `boldFontWeight`, the family and that
+ * weight are asked for: the body (`bodyText.boldFontWeight`), a paragraph
+ * style and a box body (their own `boldFontWeight`, else the body's, in
+ * their own family, else the body's), and the texts that set their bold
+ * runs with the body's weight in a family of their own (table cells,
+ * captions and chips; headings, contents and index entries, whose bold is
+ * the heavier of their own weight and the body's). A bold of 700 is one of the standard
+ * variants and adds nothing. Without this a book whose bold is 600 was
+ * measured with the 700 face standing in, wider, and wrapped otherwise than
+ * in a host that had the face.
+ */
+function addBoldWeights(
+  config: PostextConfig,
+  doc: FontUsageDocument | undefined,
+  add: (family: string, use: FontVariantUse) => void,
+): void {
+  const body = resolveBodyTextConfig(config.bodyText, config.locale);
+  const bodyFamily = primaryFontFamily(body.fontFamily);
+  const bodyBold = body.boldFontWeight;
+  const named = (family: unknown): string | undefined => (typeof family === 'string' && family.trim() ? primaryFontFamily(family) : undefined);
+  const weightOf = (value: unknown, fallback: number): number => (typeof value === 'number' ? value : fallback);
+  const bold = (family: string, weight: number, styles: readonly FontVariantUse['style'][]) => {
+    if (weight === STANDARD_BOLD) return;
+    for (const style of styles) add(family, { weight, style });
+  };
+
+  // The body: upright, and slanted under the rule its italics follow.
+  const emphasis = config.cjk?.emphasis ?? 'auto';
+  const dots = emphasis === 'dots' || (emphasis === 'auto' && defaultCjkEmphasis(config.locale) === 'dots');
+  const italics = body.emphasis === undefined && (!dots || doc?.latinEmphasis !== false);
+  bold(bodyFamily, bodyBold, italics ? ['normal', 'italic'] : ['normal']);
+
+  // A text set slanted has its bold runs slanted, and `*…*` upright.
+  const slant = (italic: unknown): FontVariantUse['style'][] => (italic === true ? ['italic', 'normal'] : ['normal', 'italic']);
+  for (const style of config.paragraphStyles ?? []) {
+    bold(named(style.fontFamily) ?? bodyFamily, weightOf(style.boldFontWeight, bodyBold), slant(style.italic));
+  }
+  for (const style of config.calloutStyles ?? []) {
+    const box = style.body;
+    if (box?.fontFamily === undefined && box?.boldFontWeight === undefined) continue;
+    bold(named(box.fontFamily) ?? bodyFamily, weightOf(box.boldFontWeight, bodyBold), slant(box.italic));
+  }
+
+  // Families of their own whose bold runs take the body's weight.
+  for (const style of [config.tableStyle, ...(config.tableStyles ?? [])]) {
+    for (const family of [named(style?.bodyFontFamily), named(style?.headerFontFamily)]) {
+      if (family) bold(family, bodyBold, ['normal', 'italic']);
+    }
+  }
+  const caption = named((config.captionStyle as { fontFamily?: unknown } | undefined)?.fontFamily);
+  if (caption) bold(caption, bodyBold, ['normal', 'italic']);
+  for (const type of config.resourceTypes ?? []) {
+    const own = named((type.captionStyle as { fontFamily?: unknown } | undefined)?.fontFamily);
+    if (own) bold(own, bodyBold, ['normal', 'italic']);
+  }
+
+  // A chip with a family of its own takes the weight of the text around
+  // it: inside a bold run, the body's bold.
+  for (const style of config.chipStyles ?? []) {
+    const family = named(style.fontFamily);
+    if (family && typeof (style as { fontWeight?: unknown }).fontWeight !== 'number') bold(family, bodyBold, ['normal', 'italic']);
+  }
+
+  // Headings, contents and index entries: the heavier of their own weight
+  // and the body's bold, in their own family.
+  const heavier = (family: string | undefined, own: unknown, italic: unknown) => {
+    if (!family) return;
+    const weight = Math.max(weightOf(own, 400), bodyBold);
+    if (weight !== weightOf(own, 400)) bold(family, weight, italic === true ? ['italic'] : ['normal']);
+  };
+  const headings = config.headings;
+  heavier(named(headings?.fontFamily), headings?.fontWeight, false);
+  for (const level of headings?.levels ?? []) heavier(named(level.fontFamily) ?? named(headings?.fontFamily), level.fontWeight ?? headings?.fontWeight, level.italic);
+  for (const style of config.headingStyles ?? []) heavier(named(style.fontFamily), style.fontWeight, style.italic);
+  const toc = config.toc as { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown; levels?: readonly { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown }[]; unnumbered?: { fontFamily?: unknown; fontWeight?: unknown; italic?: unknown } } | undefined;
+  for (const entry of [toc, ...(toc?.levels ?? []), toc?.unnumbered]) {
+    heavier(named(entry?.fontFamily) ?? named(toc?.fontFamily), entry?.fontWeight ?? toc?.fontWeight, entry?.italic);
+  }
+  const index = config.index as { fontFamily?: unknown; fontWeight?: unknown } | undefined;
+  heavier(named(index?.fontFamily), index?.fontWeight, false);
 }

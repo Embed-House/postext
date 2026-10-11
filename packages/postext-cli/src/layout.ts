@@ -13,6 +13,7 @@ import {
 } from 'postext';
 import { buildBundle } from 'postext/bundle';
 import type { Options } from './args';
+import { fontFallbackWarnings, type FontSet } from './fonts';
 import type { Book, BookChapter } from './input';
 import { parseChapterList } from './input';
 import type { Reporter } from './log';
@@ -44,7 +45,7 @@ export function selectChapters(book: Book, opts: Options): BookChapter[] {
   return parseChapterList(spec, book.chapters.length).map((i) => book.chapters[i]!);
 }
 
-export async function layOut(book: Book, opts: Options, reporter: Reporter, cache?: MeasurementCache): Promise<Layout> {
+export async function layOut(book: Book, opts: Options, reporter: Reporter, cache?: MeasurementCache, fonts?: FontSet): Promise<Layout> {
   const chapters = selectChapters(book, opts);
   const text = chapters.map((c) => c.markdown);
   if (text.some((t) => MATH_RE.test(t))) await reporter.time('math', () => initMathEngine());
@@ -69,6 +70,8 @@ export async function layOut(book: Book, opts: Options, reporter: Reporter, cach
     },
   ));
   docs.forEach((doc, i) => reportDocWarnings(doc, chapters[i]!, reporter));
+  // A weight the family ships, set in another face (#741).
+  if (fonts) for (const warning of fontFallbackWarnings(docs, fonts)) reporter.warn(warning);
   const pageCount = docs.reduce((n, d) => n + d.pages.length, 0);
   reporter.data.pages = pageCount;
   return { docs, chapters, pageCount };

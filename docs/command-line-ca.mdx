@@ -356,6 +356,15 @@ propera tal com és, a les imatges de pàgina igual que al PDF: una família de
 retolació amb un sol pes conserva les seves lletres a la negreta, i una
 família sense cursiva, les rodones.
 
+Es baixen els pesos que anomena la configuració: rodona, negreta i les seves
+cursives per a cada família, i qualsevol altre pes que doni un ajust, inclòs el
+de la negreta (`bodyText.boldFontWeight: 600` demana la font de pes 600). Si
+un pes que la família sí que porta no s'ha pogut carregar (sense connexió i
+sense fitxer a la memòria cau, una baixada fallida, una carpeta de fonts sense
+el fitxer), el text es compon amb la font més propera de la família i
+`postext check` el llista com a avís `fontFallback`: les seves línies poden
+partir d'una altra manera que al Sandbox.
+
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la canvien de lloc. `--offline`
 s'estalvia la baixada. Una família que no es troba enlloc es compon en EB

@@ -22,12 +22,12 @@ import { GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
-import { collectFontUsage, configFontFamilies, STANDARD_FONT_VARIANTS, type FontVariantUse } from 'postext';
+import { collectFontUsage, configFontFamilies, documentFontFaces, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
 import { ensureDir } from './io';
-import type { Reporter } from './log';
+import type { Reporter, Warning } from './log';
 
 export type FaceSource = 'book' | 'font-dir' | 'embedded' | 'cache' | 'download' | 'fallback';
 
@@ -51,8 +51,14 @@ export interface FontOptions {
 
 export class FontSet {
   /** `faces`: every face registered; `families`: those the book sets text
-   *  in (the rest is the PDF writer's fallback). */
-  constructor(readonly faces: Face[], readonly families: ReadonlySet<string>) {}
+   *  in (the rest is the PDF writer's fallback); `shipped`: by family in
+   *  lower case, the weights and slants the family is known to ship (the
+   *  download cache's record of it), whether or not the set holds them. */
+  constructor(
+    readonly faces: Face[],
+    readonly families: ReadonlySet<string>,
+    readonly shipped: ReadonlyMap<string, readonly FontVariantUse[]> = new Map(),
+  ) {}
 
   /** The faces of the families the book sets text in. */
   usedFaces(): Face[] {
@@ -386,8 +392,8 @@ async function download(family: string, variants: FontVariantUse[], dir: string,
 /** What each family of the book needs: regular, bold and their italics
  *  (what the Sandbox loads for every family: settings inherit weights the
  *  config does not spell out, such as the headings' bold), and any other
- *  weight its settings name. */
-function wantedVariants(book: Book): Map<string, FontVariantUse[]> {
+ *  weight its settings name, the bold's included (`boldFontWeight`, #741). */
+export function wantedVariants(book: Pick<Book, 'config' | 'chapters'>): Map<string, FontVariantUse[]> {
   const families = configFontFamilies(book.config, book.chapters.map((c) => c.markdown));
   const usage = collectFontUsage(book.config);
   const out = new Map<string, FontVariantUse[]>();
@@ -436,7 +442,20 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
   const has = (family: string) => faces.some((f) => f.family.toLowerCase() === family.toLowerCase());
 
   const wanted = wantedVariants(book);
+  // What each family ships, where the cache has its record (#741): a face
+  // the pages ask for that the family has and the set does not is reported
+  // after the layout (`fontFallbackWarnings`). Read from disk only: a
+  // family the book or a font folder supplies is never asked about online.
+  const shipped = new Map<string, FontVariantUse[]>();
+  const ships = (family: string, meta: FamilyMeta | undefined) => {
+    if (!meta?.available) return;
+    const styles = meta.styles.length > 0 ? meta.styles : ['normal' as const];
+    shipped.set(family.toLowerCase(), meta.weights.flatMap((weight) => styles.map((style) => ({ weight, style }))));
+  };
   for (const [family, variants] of wanted) {
+    if (has(family) || dirFaces.some((f) => f.family.toLowerCase() === family.toLowerCase())) {
+      ships(family, await familyMeta(family, join(cacheRoot, slug(family)), true));
+    }
     if (has(family)) continue;
     const key = family.toLowerCase();
     // 2. --font-dir.
@@ -451,6 +470,7 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
     if (missing.length > 0) {
       const dir = join(cacheRoot, slug(family));
       const meta = await familyMeta(family, dir, options.offline);
+      ships(family, meta);
       if (meta?.available) {
         const targets = nearestVariants(missing, meta)
           .filter((v) => !found.some((f) => f.weight === v.weight && f.style === v.style));
@@ -494,5 +514,36 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
     if (carried.has(family.toLowerCase())) continue;
     registerStandIns(family, faces.filter((f) => f.family.toLowerCase() === family.toLowerCase()), variants);
   }
-  return new FontSet(faces, new Set([...wanted.keys(), ...book.fonts.map((f) => f.family)]));
+  return new FontSet(faces, new Set([...wanted.keys(), ...book.fonts.map((f) => f.family)]), shipped);
+}
+
+/**
+ * The faces the pages were set in that the set does not hold although
+ * their family ships them (#741): offline with no cached file, a download
+ * that failed, a font folder without the file. The canvas measured the
+ * text with the nearest face of the family, so lines and pages may differ
+ * from a host that has the face. A weight or a slant the family does not
+ * ship stays silent: its nearest face stands in on purpose (#688).
+ */
+export function fontFallbackWarnings(docs: readonly VDTDocument[], fonts: FontSet): Warning[] {
+  const out: Warning[] = [];
+  const seen = new Set<string>();
+  for (const doc of docs) {
+    for (const face of documentFontFaces(doc)) {
+      const key = `${face.family.toLowerCase()}|${face.weight}|${face.style}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const ships = fonts.shipped.get(face.family.toLowerCase());
+      if (!ships?.some((v) => v.weight === face.weight && v.style === face.style)) continue;
+      const used = fonts.pick(face.family, face.weight, face.style);
+      if (!used || (used.weight === face.weight && used.style === face.style)) continue;
+      const name = (weight: number, style: string) => `${weight}${style === 'italic' ? ' italic' : ''}`;
+      out.push({
+        kind: 'fontFallback',
+        severity: 'warning',
+        message: `${face.family} ${name(face.weight, face.style)}: the family ships this face but it is not loaded (offline with no cached file, a failed download or a font folder without it); the text is set in its ${name(used.weight, used.style)} instead, and lines may break otherwise than where the face is there`,
+      });
+    }
+  }
+  return out;
 }

@@ -27,7 +27,7 @@ async function buildOnce(ctx: CommandContext, cache: ReturnType<typeof createMea
       offline: opts.flag('offline') === true,
       ...(opts.string('cache-dir') ? { cacheDir: opts.string('cache-dir')! } : {}),
     }, reporter));
-    const layout = await layOut(book, opts, reporter, cache);
+    const layout = await layOut(book, opts, reporter, cache, fonts);
     reporter.info(`${book.name}: ${layout.pageCount} pages (${Math.round(reporter.timings.layout ?? 0)} ms)`);
     // The writers share the layout; the PDF and the EPUB build in parallel
     // with the images (they wait on different things).
