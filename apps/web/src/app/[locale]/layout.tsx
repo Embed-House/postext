@@ -24,6 +24,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { CookieConsentProvider } from "@/components/gdpr/CookieConsentProvider";
 import { CookieBanner } from "@/components/gdpr/CookieBanner";
 import { ScrollRegions } from "@/components/ui/ScrollRegions";
+import { SiteWebMcp } from "@/components/webmcp/SiteWebMcp";
 import { Analytics } from "@vercel/analytics/next";
 import { cn } from "@/lib/utils";
 import { SITE_NAME, SITE_URL, buildMetadata, localizedUrl } from "@/lib/seo";
@@ -258,6 +259,7 @@ export default async function LocaleLayout({
               </a>
               {children}
               <ScrollRegions />
+              <SiteWebMcp />
               <CookieBanner />
             </CookieConsentProvider>
           </ThemeProvider>
