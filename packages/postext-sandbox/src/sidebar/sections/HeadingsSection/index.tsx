@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { resolveHeadingsConfig, balancingOnByDefault, DEFAULT_HEADINGS_CONFIG, DEFAULT_COLUMN_BALANCING, dimensionsEqual, colorsEqual } from 'postext';
-import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, GridLinesLever, KeepWithNextSplit } from 'postext';
+import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats } from 'postext';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -49,7 +49,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
 
   const resetBalancingField = (
     field: 'enabled' | 'maxLinesPerHeading' | 'maxLinesBeforeLoose' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterDisplays' | 'stretchAfterFloats'
-      | 'maxLinesAfterFloat' | 'looseParagraphs' | 'maxLooseParagraphs' | 'trackParagraphs' | 'maxTracking'
+      | 'maxLinesAfterFloat' | 'stretchAfterWideFloats' | 'looseParagraphs' | 'maxLooseParagraphs' | 'trackParagraphs' | 'maxTracking'
       | 'trailing' | 'beforeSpan' | 'closingBox' | 'gridLines',
   ) => {
     if (!raw?.balancing) return;
@@ -161,6 +161,11 @@ export const HeadingsSection = memo(function HeadingsSection() {
     { value: 'off', label: labels.balanceGridLinesOff },
   ];
 
+  const isBalWideFloatsDefault = headings.balancing.stretchAfterWideFloats === DEFAULT_COLUMN_BALANCING.stretchAfterWideFloats;
+  const WIDE_FLOATS_OPTIONS = [
+    { value: 'flush', label: labels.balanceAfterWideFloatsFlush },
+    { value: 'always', label: labels.balanceAfterWideFloatsAlways },
+  ];
   const CLOSING_BOX_OPTIONS = [
     { value: 'first', label: labels.balanceClosingBoxFirst },
     { value: 'last', label: labels.balanceClosingBoxLast },
@@ -432,6 +437,19 @@ export const HeadingsSection = memo(function HeadingsSection() {
               tooltip={labels.balanceMaxLinesAfterFloatTooltip}
               isDefault={isBalMaxAfterFloatDefault}
               onReset={() => resetBalancingField('maxLinesAfterFloat')}
+            />
+          )}
+          {headings.balancing.stretchAfterFloats && (
+            <SelectInput
+              label={labels.balanceAfterWideFloats}
+              value={headings.balancing.stretchAfterWideFloats}
+              options={WIDE_FLOATS_OPTIONS}
+              onChange={(value) =>
+                updateHeadings({ balancing: { ...raw?.balancing, stretchAfterWideFloats: value as StretchAfterWideFloats } })
+              }
+              tooltip={labels.balanceAfterWideFloatsTooltip}
+              isDefault={isBalWideFloatsDefault}
+              onReset={() => resetBalancingField('stretchAfterWideFloats')}
             />
           )}
           <SelectInput

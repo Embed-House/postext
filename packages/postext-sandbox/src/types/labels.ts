@@ -2811,6 +2811,10 @@ export interface SandboxLabels {
   balanceMaxLinesAfterListTooltip: string;
   balanceMaxLinesAfterFloat: string;
   balanceMaxLinesAfterFloatTooltip: string;
+  balanceAfterWideFloats: string;
+  balanceAfterWideFloatsTooltip: string;
+  balanceAfterWideFloatsFlush: string;
+  balanceAfterWideFloatsAlways: string;
   debugWarningsDesignIssues: string;
   debugWarningsDesignIssuesTooltip: string;
   documentLocale: string;

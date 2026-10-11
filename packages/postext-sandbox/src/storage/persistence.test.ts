@@ -132,8 +132,13 @@ describe('working configuration', () => {
     const book = (markdown: string) => JSON.stringify({ version: 2, activeChapterId: 'a', chapters: [{ id: 'a', title: 'A', markdown, createdAt: 1, updatedAt: 1 }] });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Text.\n\n::resource{id="fig"}\n\nMore.') });
     const { loadConfig } = await import('./persistence');
-    // (Its inline tables move whole, #634.)
-    expect(loadConfig()).toEqual({ ...saved, layout: { inlineResourceGap: 'above' }, tableStyle: { splitInline: false } });
+    // (Its inline tables move whole, #634, and a column under a figure
+    // across several columns stretches as under any figure, #708.)
+    expect(loadConfig()).toEqual({
+      headings: { fontFamily: 'Georgia', balancing: { stretchAfterWideFloats: 'always' } },
+      layout: { inlineResourceGap: 'above' },
+      tableStyle: { splitInline: false },
+    });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Prose only.') });
     expect(loadConfig()).toEqual(saved);
     // A book that only mentions the directive (the guide's chapter 9) embeds
@@ -175,7 +180,7 @@ describe('working configuration', () => {
     // every copy stamped before 8 keeps 1.4's split under a heading too.
     const v3 = configFromExport({ ...legacy, configVersion: 3 });
     // (and every copy stamped before 12 the order of its balancing levers, #707)
-    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
+    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } });
     expect(v3.math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     // One stamped 4 (a later 1.5 prerelease) gets the inline gap and the
     // version-6, version-7 and version-8 pins: an export carries no
@@ -188,7 +193,7 @@ describe('working configuration', () => {
     // It may hold a heading in balanced columns: the order of the balancing
     // levers is pinned too (#707).
     expect(configFromExport({ ...legacy, configVersion: 4 })).toEqual({
-      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } },
+      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } },
       layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
       bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
       codeStyle: { blocks: false },

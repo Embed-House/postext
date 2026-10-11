@@ -114,6 +114,15 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(map.get('postext-sandbox-config')).toBe('{}');
   });
 
+  it('keeps "Under a figure across columns" set to as under any figure (#708)', () => {
+    const map = installStorage();
+    const always: PostextConfig = { headings: { balancing: { stretchAfterWideFloats: 'always' } } };
+    saveConfig(always);
+    expect(loadConfig()).toEqual(always);
+    saveConfig({ headings: { balancing: { stretchAfterWideFloats: 'flush' } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('keeps "Lines per heading before other levers" when it is not 2 (#707)', () => {
     const map = installStorage();
     for (const maxLinesBeforeLoose of [0, 4]) {
@@ -196,8 +205,8 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
   it('in the working configuration', () => {
     const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '10' });
     const migrated = loadConfig()!;
-    // (with the order of its balancing levers, pinned for a copy stamped before 12, #707)
-    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4 } });
+    // (with the balancing pins of a copy stamped before 12, #707 and #708)
+    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } });
     saveConfig(migrated);
     expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
     // Stamped current, it is read as stored: the value has to be there.
