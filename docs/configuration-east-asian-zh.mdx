@@ -35,6 +35,7 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② 按汉字排（默认）或按西文字母排。
   composeDesignText?: boolean;              // 设计文字采用中日文规则；默认true。
   latinSpacing?: Dimension;                 // 汉字与拉丁字母之间；默认0.25 em。
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // 西文单词的哪一侧加这个间距。
   uprightDigits?: 0 | 2 | 3 | 4;            // 竖排：数字直立排进一个字格；默认2。
   grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // *…*对中日韩字符的效果。
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>汉字与相邻拉丁字母或数字之间的间距，以中日韩文字字号的em计，也可以用任何长度；<code>0</code>表示关闭（见<a href="#汉字与拉丁字母间距">汉字与拉丁字母间距</a>）。</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>西文单词的哪一侧加<code>latinSpacing</code>。<code>'letters'</code>：以字母或数字结尾的一侧（<code>abc関数</code>加，<code>normalize()関数</code>不加）。<code>'western'</code>：只要单词里有字母或数字，它的任何一侧都加，括号和符号也算在内。<code>'auto'</code>：日本地区取<code>'western'</code>，其他地区取<code>'letters'</code>。postext 1.28之前保存的日文配置按<code>'letters'</code>读取。自postext 1.28起（见<a href="#汉字与拉丁字母间距">汉字与拉丁字母间距</a>）。</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -295,6 +302,8 @@ interface CjkConfig {
 ### 汉字与拉丁字母间距
 
 `latinSpacing`（默认四分之一em）在汉字（或假名）与相邻的拉丁字母或欧洲数字之间加入间距：`用iPhone拍照`和`1999年`排成`用 iPhone 拍照`和`1999 年`。行首和行尾不加，拉丁字符与中文标点之间不加（`用iPhone，`在逗号前不加任何间距），中文括号内侧不加（`（iPhone）`），紧挨着非字母非数字的符号时也不加（`为¥5,999`）。作者在这种边界处输入的空格（`用 iPhone 拍照`，许多网络文本都这样写）会被汉字与拉丁字母间距取代，而不是叠加，因此两种写法排出来一样；不换行空格和全角空格保持原样。在两端对齐的行上，它先增大到最多半个em，然后才拉开字符；在要收进一个不能出现在下一行行首的字符的行上，它缩小到最少八分之一em。以em以外的单位给出的长度按页面的dpi换算。`0`表示关闭，这时在该处输入的空格仍是词间空格。
+
+西文单词的哪一侧加这个间距，由`latinSpacingEdge`决定。`'letters'`是clreq §6.3.3和CSS `text-autospace`的规则，也是中文各地区的默认值：只有以字母或数字结尾的一侧才加。`'western'`是日本地区的默认值（JLReq §3.2.6）：只要西文单词里有字母或数字，以括号或符号结尾的一侧也加，所以`normalize()関数`、`(abc)関数`、`A+関数`和`100%関数`都像`abc関数`那样在单词两侧各加四分之一个字宽，在那里输入的空格同样会被替换。有两种位置仍然不加，因为那里的标点是和另一侧连在一起的：单词以前括号或前置符号结尾时，其后不加（`abc(関数`）；单词以后括号、逗号、句号或后置符号开头时，其前不加（`関数)abc`）。所在单词里没有字母也没有数字的括号或符号，如`関数(かんすう)は`，属于日文语境，不加间距。postext 1.28之前保存的日文配置保持`'letters'`。
 
 这个间距是一个`kind: 'space'`的片段，标记为`autospace`，其`text`为空（或者是作者输入的空格）；它的`width`是最终值，渲染器自己的空格两端对齐不会改动它。它从不进入纯文本，因此搜索、复制粘贴和源文本范围读到的都是原文。PDF把每一个分段排出的行（拉开的字符、汉字与拉丁字母间距、让出空白或悬挂的标点）放进一个`/Span`，其`/ActualText`是该行的文字，因此文本提取读到的是`用iPhone拍照`，而不是`用 iPhone 拍 照`，含半宽标点的行也读成一行。
 

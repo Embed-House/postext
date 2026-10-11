@@ -35,6 +35,7 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② as Chinese characters (default) or Latin letters.
   composeDesignText?: boolean;              // CJK rules in design text; default true.
   latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
   uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
   grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>漢字とその隣のラテン文字または数字の間のアキです。CJKテキストの文字サイズを基準とするemか、任意の長さで指定します。<code>0</code>でオフになります（<a href="#和欧間のアキ">和欧間のアキ</a>を参照）。</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>欧文の語のどちら側に<code>latinSpacing</code>を入れるかを決めます。<code>'letters'</code>は文字か数字で終わる側（<code>abc関数</code>には入り、<code>normalize()関数</code>には入りません）。<code>'western'</code>は、文字か数字を含む語であれば、括弧や記号で終わる側にも入れます。<code>'auto'</code>は日本地域で<code>'western'</code>、それ以外で<code>'letters'</code>です。postext 1.28より前に保存された日本語の設定は<code>'letters'</code>として読み込まれます。postext 1.28以降（<a href="#和欧間のアキ">和欧間のアキ</a>を参照）。</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -295,6 +302,8 @@ VDTでは、アキを詰めた約物はそれだけで1つのセグメントに�
 ### 和欧間のアキ
 
 `latinSpacing`（既定値は四分）は、漢字（またはかな）とその隣のラテン文字・アラビア数字の間にアキを入れます。`用iPhone拍照`と`1999年`は`用 iPhone 拍照`と`1999 年`のように組まれます。行頭と行末、ラテン文字と中国語の約物の間（`用iPhone，`ではコンマの前に何も入れません）、中国語の括弧の内側（`（iPhone）`）、文字でも数字でもない記号の隣（`为¥5,999`）にはアキを入れません。著者がこうした境界に入力したスペース（多くのウェブのテキストにある`用 iPhone 拍照`のような書き方）は、和欧間のアキに置き換え、加算はしません。そのため2通りの書き方は同じように組まれます。ノーブレークスペースと和字間隔はそのまま残します。両端そろえの行では、文字の字間を広げる前にこのアキを二分まで広げます。行頭に置けない文字を追い込む行では八分まで詰めます。em以外の単位で指定した長さは、ページのdpiで換算します。`0`でオフになり、そこに入力したスペースは単語間のスペースのままです。
+
+欧文の語のどちら側にこのアキを入れるかは`latinSpacingEdge`で決まります。`'letters'`はclreq §6.3.3とCSSの`text-autospace`の規則で、中国語の各地域の既定値です。文字か数字で終わる側にだけ入れます。`'western'`は日本地域の既定値です（JLReq §3.2.6）。文字か数字を含む欧文の語は、括弧や記号で終わる側にもアキを取ります。`normalize()関数`、`(abc)関数`、`A+関数`、`100%関数`は、`abc関数`と同じく語の両側に四分アキが入り、そこに入力したスペースも置き換えられます。アキを入れない側が2つあります。約物が反対側の文字に付く場合です。語が始め括弧や前置記号で終わるときのその後ろ（`abc(関数`）と、語が終わり括弧、コンマ、ピリオド、後置記号で始まるときのその前（`関数)abc`）です。`関数(かんすう)は`のように、文字も数字も含まない括弧や記号だけの語は和文の文脈にあり、アキを取りません。postext 1.28より前に保存された日本語の設定は`'letters'`のままです。
 
 このアキは、`autospace`のフラグが付いた`kind: 'space'`のセグメントで、`text`は空（または著者が入力したスペース）です。`width`は確定値で、レンダラー独自のスペースによる両端そろえはこれを変えません。プレーンテキストには含まれないため、検索、コピー&ペースト、ソース範囲は書かれたとおりのテキストを読み取ります。PDFでは、分割して組んだ行（字間を広げた文字、和欧間のアキ、アキを詰めた約物、ぶら下げた約物を含む行）をすべて`/Span`に入れ、その`/ActualText`を行のテキストにします。そのためテキスト抽出では`用 iPhone 拍 照`ではなく`用iPhone拍照`と読み取られ、半角の約物を含む行も1行として読み取られます。
 

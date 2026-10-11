@@ -37,6 +37,7 @@ Postextは、1つのMarkdownソースと1つの設定から、日本語を縦組
     <tr><td>行分割（<code>lineBreak</code>）</td><td><code>ja-very-strict</code>：小書きの仮名、ー、々、〜は行頭に来ない</td><td><code>gb</code></td></tr>
     <tr><td>約物の幅（<code>punctuationWidth</code>）</td><td><code>fullwidth</code>。JLReqの約物の連続の詰めを伴う。行末の終わり括弧類は、行に必要になるまで二分のアキを保つ</td><td><code>kaiming</code></td></tr>
     <tr><td>段落中の？と！（<code>spaceAfterQuestion</code>）</td><td>後ろに全角アキ</td><td>アキなし</td></tr>
+    <tr><td>欧文の語の隣の四分アキ（<code>latinSpacingEdge</code>）</td><td><code>western</code>：括弧や記号で終わる側にも入れる（<code>normalize()関数</code>）</td><td><code>letters</code>：文字か数字の隣だけ</td></tr>
     <tr><td>段落を始める括弧（<code>paragraphStartBracket</code>）</td><td><code>half</code>：字下げの後半に置く</td><td>ほかの行頭と同じ</td></tr>
     <tr><td>ぶら下げ（<code>hangingPunctuation</code>）</td><td><code>allow</code>。、。，．のみ</td><td><code>none</code></td></tr>
     <tr><td><code>&#42;…&#42;</code>（<code>emphasis</code>、<code>emphasisMark</code>）</td><td>テキストの上にゴマ点（縦組みでは右）</td><td>テキストの下に点</td></tr>
@@ -58,7 +59,7 @@ Postextは、1つのMarkdownソースと1つの設定から、日本語を縦組
 
 ### 漢字・かな・ローマ字
 
-日本語の行には、漢字、ひらがな、カタカナ、そしてローマ字（ラテン文字と数字）が混在します。Postextでは、これらを区別するための指定は不要です。単語間のスペースよりCJKの文字（漢字とかなの両方を数えます）の多い段落はCJKの組版処理で1字ずつ組まれ、その中の欧文の語や数字は、行がその内部で分割されない1つの単位になります。和欧間には四分アキ（`cjk.latinSpacing`）を入れ、両端そろえの行ではこれを二分まで広げられます（JLReq §3.2.2）。著者がそこに入力したスペースはこのアキに置き換えられ、アキに加算はされません。日本語の文には語間のスペースがないため、2つの日本語の語の間に入力したスペースは、スペースのまま残ります。
+日本語の行には、漢字、ひらがな、カタカナ、そしてローマ字（ラテン文字と数字）が混在します。Postextでは、これらを区別するための指定は不要です。単語間のスペースよりCJKの文字（漢字とかなの両方を数えます）の多い段落はCJKの組版処理で1字ずつ組まれ、その中の欧文の語や数字は、行がその内部で分割されない1つの単位になります。和欧間には四分アキ（`cjk.latinSpacing`）を入れ、両端そろえの行ではこれを二分まで広げられます（JLReq §3.2.2）。著者がそこに入力したスペースはこのアキに置き換えられ、アキに加算はされません。欧文の語は、括弧や記号で終わる側にもこのアキを取ります（`normalize()関数`、`(abc)関数`、`100%関数`。`cjk.latinSpacingEdge: 'western'`、日本での既定値、JLReq §3.2.6）。和文の文字の間に単独で置かれた括弧や記号には入りません（`関数(かんすう)は`）。日本語の文には語間のスペースがないため、2つの日本語の語の間に入力したスペースは、スペースのまま残ります。
 
 修正ヘボン式のローマ字は長音符号（マクロン）を使うので（<span lang="ja" className="font-body">Tōkyō</span>、<span lang="ja" className="font-body">Sōseki</span>）、書体にその字形が必要です。Postextは、書体にない字形をほかのファミリーから借りません。ほかの言語の語は、`:ltr[the Meiji era]{lang=en}`のようにアイソレートでタグ付けできます。HTMLはそれを`lang="en"`とし、PDFは独自の`/Lang`を持つ`/Span`に入れて、その言語の字形でシェーピングします。全角の英数字（Ｋ、１２）は日本語の文字として扱われ、縦組みでは正立し、それぞれ全角1字分を占めます。
 

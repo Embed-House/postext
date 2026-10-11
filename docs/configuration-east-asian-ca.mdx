@@ -35,6 +35,7 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② com a caràcters xinesos (per defecte) o com a lletres llatines.
   composeDesignText?: boolean;              // Regles CJK al text de disseny; per defecte true.
   latinSpacing?: Dimension;                 // Entre xinès i llatí; per defecte 0,25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Quin costat d'una paraula occidental el porta.
   uprightDigits?: 0 | 2 | 3 | 4;            // Text vertical: nombres en una casella; per defecte 2.
   grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // Què fa *…* amb els caràcters CJK.
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>L'espai entre un caràcter xinès i la lletra llatina o la xifra que té al costat, en quadratins del cos del text CJK o en qualsevol mesura; <code>0</code> el treu (vegeu <a href="#espai-entre-xinès-i-llatí">Espai entre xinès i llatí</a>).</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Quin costat d'una paraula occidental porta <code>latinSpacing</code>. <code>'letters'</code>: el costat que acaba en lletra o xifra (<code>abc関数</code>, no <code>normalize()関数</code>). <code>'western'</code>: qualsevol costat d'una paraula que tingui una lletra o una xifra, amb els seus parèntesis i signes. <code>'auto'</code>: <code>'western'</code> a la regió del Japó, <code>'letters'</code> a les altres. Una configuració japonesa desada abans de postext 1.28 es llegeix amb <code>'letters'</code>. Des de postext 1.28 (vegeu <a href="#espai-entre-xinès-i-llatí">Espai entre xinès i llatí</a>).</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -295,6 +302,8 @@ Al VDT un signe que ha cedit blanc és un segment propi, el `width` del qual és
 ### Espai entre xinès i llatí
 
 `latinSpacing` (per defecte, un quart de quadratí) posa un espai entre un caràcter xinès (o kana) i la lletra llatina o la xifra europea que té al costat: `用iPhone拍照` i `1999年` es componen `用 iPhone 拍照` i `1999 年`. No es posa al començament ni al final d'una línia, ni entre un caràcter llatí i un signe xinès (`用iPhone，` no porta res abans de la coma), ni dins de parèntesis xinesos (`（iPhone）`), ni al costat d'un signe que no és lletra ni xifra (`为¥5,999`). Un espai que l'autor ha escrit en aquest punt (`用 iPhone 拍照`, com el porten molts textos del web) se substitueix per l'espai entre xinès i llatí, no s'hi suma, així que les dues grafies es componen igual; un espai de no separació o un espai ideogràfic es queden com estan. En una línia justificada creix fins a mig quadratí abans de repartir espai entre els caràcters; en una línia que admet un caràcter que no pot obrir la línia següent es redueix fins a un vuitè de quadratí. Una mesura en una unitat que no sigui em es converteix amb els ppp de la pàgina. `0` el treu, i un espai escrit allà continua sent un espai entre paraules.
+
+Quin costat d'una paraula occidental porta l'espai ho decideix `latinSpacingEdge`. Amb `'letters'`, la regla de clreq §6.3.3 i de `text-autospace` de CSS i el valor per defecte de les regions xineses, és el costat que acaba en lletra o xifra. Amb `'western'`, el valor per defecte de la regió del Japó (JLReq §3.2.6), una paraula occidental que tingui una lletra o una xifra el porta també al costat que acaba en un parèntesi o un signe: `normalize()関数`, `(abc)関数`, `A+関数` i `100%関数` es componen amb el quart de quadratí a tots dos costats de la paraula, igual que `abc関数`, i un espai escrit allà també se substitueix. Dos costats queden sense espai, allà on el signe s'uneix al que té a l'altra banda: després d'un parèntesi d'obertura o un signe anteposat que tanca la paraula (`abc(関数`), i davant d'un parèntesi de tancament, una coma, un punt o un signe posposat que l'obre (`関数)abc`). Un parèntesi o un signe sense cap lletra ni xifra a la seva paraula, com a `関数(かんすう)は`, és en context japonès i no en porta cap. Una configuració japonesa desada abans de postext 1.28 conserva `'letters'`.
 
 L'espai és un segment de `kind: 'space'` amb `autospace`, `text` buit (o l'espai que ha escrit l'autor); el seu `width` és definitiu, i la justificació d'espais dels renderitzadors el deixa com està. Mai no és al text pla, així que la cerca, el copiar i enganxar i els rangs d'origen llegeixen el text tal com es va escriure. El PDF posa cada línia composta en peces (caràcters espaiats, espais entre xinès i llatí, signes que han cedit blanc o que pengen) en un `/Span` el `/ActualText` del qual és el text de la línia, de manera que l'extracció de text llegeix `用iPhone拍照` i no `用 iPhone 拍 照`, i llegeix com una sola línia una que porta signes de mig quadratí.
 

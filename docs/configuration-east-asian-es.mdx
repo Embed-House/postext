@@ -35,6 +35,7 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② como caracteres chinos (por defecto) o como letras latinas.
   composeDesignText?: boolean;              // Reglas CJK en el texto de diseño; por defecto true.
   latinSpacing?: Dimension;                 // Entre chino y latín; por defecto 0,25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Qué lado de una palabra occidental lo lleva.
   uprightDigits?: 0 | 2 | 3 | 4;            // Texto vertical: números en una casilla; por defecto 2.
   grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // Qué hace *…* con los caracteres CJK.
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>El espacio entre un carácter chino y la letra latina o la cifra que tiene al lado, en cuadratines del cuerpo del texto CJK o en cualquier medida; <code>0</code> lo quita (ver <a href="#espacio-entre-chino-y-latín">Espacio entre chino y latín</a>).</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Qué lado de una palabra occidental lleva <code>latinSpacing</code>. <code>'letters'</code>: el lado que acaba en letra o cifra (<code>abc関数</code>, no <code>normalize()関数</code>). <code>'western'</code>: cualquier lado de una palabra que tenga una letra o una cifra, con sus paréntesis y signos. <code>'auto'</code>: <code>'western'</code> en la región de Japón, <code>'letters'</code> en las demás. Una configuración japonesa guardada antes de postext 1.28 se lee con <code>'letters'</code>. Desde postext 1.28 (ver <a href="#espacio-entre-chino-y-latín">Espacio entre chino y latín</a>).</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -295,6 +302,8 @@ En el VDT un signo que cedió blanco es un segmento propio, cuyo `width` es el a
 ### Espacio entre chino y latín
 
 `latinSpacing` (por defecto, un cuarto de cuadratín) pone un espacio entre un carácter chino (o kana) y la letra latina o la cifra europea que tiene al lado: `用iPhone拍照` y `1999年` se componen `用 iPhone 拍照` y `1999 年`. No se pone al principio ni al final de una línea, ni entre un carácter latino y un signo chino (`用iPhone，` no lleva nada antes de la coma), ni dentro de paréntesis chinos (`（iPhone）`), ni junto a un signo que no es letra ni cifra (`为¥5,999`). Un espacio que el autor escribió en ese punto (`用 iPhone 拍照`, como lo traen muchos textos de la web) se sustituye por el espacio entre chino y latín, no se suma, así que las dos grafías se componen igual; un espacio de no separación o un espacio ideográfico se quedan como están. En una línea justificada crece hasta medio cuadratín antes de repartir espacio entre los caracteres; en una línea que admite un carácter que no puede abrir la línea siguiente se reduce hasta un octavo de cuadratín. Una medida en una unidad que no sea em se convierte con los ppp de la página. `0` lo quita, y un espacio escrito ahí sigue siendo un espacio entre palabras.
+
+Qué lado de una palabra occidental lleva el espacio lo decide `latinSpacingEdge`. Con `'letters'`, la regla de clreq §6.3.3 y de `text-autospace` de CSS y el valor por defecto de las regiones chinas, es el lado que acaba en letra o cifra. Con `'western'`, el valor por defecto de la región de Japón (JLReq §3.2.6), una palabra occidental que tenga una letra o una cifra lo lleva también en el lado que acaba en un paréntesis o un signo: `normalize()関数`, `(abc)関数`, `A+関数` y `100%関数` se componen con el cuarto de cuadratín a los dos lados de la palabra, igual que `abc関数`, y un espacio escrito ahí también se sustituye. Dos lados quedan sin espacio, allí donde el signo se une a lo que tiene al otro lado: tras un paréntesis de apertura o un signo antepuesto que cierra la palabra (`abc(関数`), y ante un paréntesis de cierre, una coma, un punto o un signo pospuesto que la abre (`関数)abc`). Un paréntesis o un signo sin letra ni cifra en su palabra, como en `関数(かんすう)は`, está en contexto japonés y no lleva ninguno. Una configuración japonesa guardada antes de postext 1.28 conserva `'letters'`.
 
 El espacio es un segmento de `kind: 'space'` con `autospace`, `text` vacío (o el espacio que escribió el autor); su `width` es definitivo, y la justificación de espacios de los renderizadores lo deja como está. Nunca está en el texto plano, así que la búsqueda, el copiar y pegar y los rangos de origen leen el texto tal como se escribió. El PDF mete cada línea compuesta en piezas (caracteres espaciados, espacios entre chino y latín, signos que cedieron blanco o que cuelgan) en un `/Span` cuyo `/ActualText` es el texto de la línea, de modo que la extracción de texto lee `用iPhone拍照` y no `用 iPhone 拍 照`, y lee como una sola línea una que lleva signos de medio cuadratín.
 

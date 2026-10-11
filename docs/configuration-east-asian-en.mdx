@@ -35,6 +35,7 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② as Chinese characters (default) or Latin letters.
   composeDesignText?: boolean;              // CJK rules in design text; default true.
   latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
   uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
   grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>The space between a Han character and a Latin letter or digit next to it, in em of the CJK text's size or any length; <code>0</code> turns it off (see <a href="#space-between-han-and-latin">Space between Han and Latin</a>).</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Which side of a Western word takes <code>latinSpacing</code>. <code>'letters'</code>: a side that ends in a letter or a digit (<code>abc関数</code>, not <code>normalize()関数</code>). <code>'western'</code>: any side of a word that holds a letter or a digit, its brackets and signs included. <code>'auto'</code>: <code>'western'</code> in the Japan region, <code>'letters'</code> elsewhere. A Japanese configuration stored before postext 1.28 is read with <code>'letters'</code>. Since postext 1.28 (see <a href="#space-between-han-and-latin">Space between Han and Latin</a>).</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -295,6 +302,8 @@ In the VDT a mark that gave up blank is a segment of its own, its `width` the ad
 ### Space between Han and Latin
 
 `latinSpacing` (default a quarter em) sets a space between a Han character (or kana) and a Latin letter or European digit next to it: `用iPhone拍照` and `1999年` are set `用 iPhone 拍照` and `1999 年`. There is none at the start or end of a line, none between a Latin character and a Chinese mark (`用iPhone，` sets nothing before the comma), none inside Chinese brackets (`（iPhone）`), and none next to a sign that is no letter or digit (`为¥5,999`). A space the author typed at such a boundary (`用 iPhone 拍照`, as many web texts carry it) is replaced by the Han–Latin space, not added to, so the two spellings set alike; a no-break space or an ideographic space is left as it is. On a justified line it grows up to half an em before the characters are spread; on a line taking in a character that may not open the next line it shrinks down to an eighth of an em. A length in any unit other than em is converted at the page's dpi. `0` turns it off, and a space typed there stays a word space.
+
+Which side of a Western word takes the space follows `latinSpacingEdge`. Under `'letters'`, the rule of clreq §6.3.3 and of CSS `text-autospace` and the default of the Chinese regions, it is a side that ends in a letter or a digit. Under `'western'`, the default of the Japan region (JLReq §3.2.6), a Western word that holds a letter or a digit takes it on a side that ends in a bracket or a sign too: `normalize()関数`, `(abc)関数`, `A+関数` and `100%関数` are set with the quarter em on both sides of the word, as `abc関数` is, and a space typed there is replaced as well. Two sides stay solid, where the mark binds across the edge: after an opening bracket or a prefix sign that ends the word (`abc(関数`), and before a closing bracket, a comma, a stop or a postfix sign that opens it (`関数)abc`). A bracket or a sign with no letter or digit in its word, as in `関数(かんすう)は`, stands in Japanese context and takes none. A Japanese configuration stored before postext 1.28 keeps `'letters'`.
 
 The space is a segment of `kind: 'space'` flagged `autospace`, with empty `text` (or the space the author typed); its `width` is final, and the renderers' own space justification leaves it as it is. It is never in the plain text, so search, copy and paste and source ranges read the text as written. The PDF puts every line set in pieces (spread characters, Han–Latin spaces, marks that gave up blank or hang) in a `/Span` whose `/ActualText` is the line's text, so text extraction reads `用iPhone拍照`, not `用 iPhone 拍 照`, and reads a line with half-width marks as one line.
 
