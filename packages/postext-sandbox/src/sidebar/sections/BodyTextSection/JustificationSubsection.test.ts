@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveBodyTextConfig, type BodyTextConfig } from 'postext';
 import { SandboxStoreContext } from '../../../context/SandboxContext';
 import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { JustificationSubsection, RaggedBreakingSubsection } from './JustificationSubsection';
+import { JustificationSubsection, RaggedBreakingSubsection, acrossColumnsChoice, acrossColumnsValue } from './JustificationSubsection';
 
 const LABEL = DEFAULT_LABELS.bodyHyphenateAcrossColumns;
 
@@ -58,5 +58,18 @@ describe('Hyphenate across columns', () => {
     expect(one).toBeGreaterThan(0);
     expect(count(justified({ hyphenation: { enabled: true } }))).toBe(one);
     expect(justified({ hyphenation: { enabled: false } })).not.toContain(LABEL);
+  });
+
+  it('has three states and stores the default as no value (#701)', () => {
+    expect(acrossColumnsChoice(true)).toBe('always');
+    expect(acrossColumnsChoice('withinPage')).toBe('withinPage');
+    expect(acrossColumnsChoice(false)).toBe('never');
+    expect(acrossColumnsValue('always')).toBeUndefined();
+    expect(acrossColumnsValue('withinPage')).toBe('withinPage');
+    expect(acrossColumnsValue('never')).toBe(false);
+    // The control shows the state the document is in.
+    expect(ragged({})).toContain(DEFAULT_LABELS.bodyHyphenateAcrossColumnsAlways);
+    expect(ragged({ hyphenateAcrossColumns: 'withinPage' })).toContain(DEFAULT_LABELS.bodyHyphenateAcrossColumnsWithinPage);
+    expect(ragged({ hyphenateAcrossColumns: false })).toContain(DEFAULT_LABELS.bodyHyphenateAcrossColumnsNever);
   });
 });

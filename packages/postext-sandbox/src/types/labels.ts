@@ -1013,6 +1013,9 @@ export interface SandboxLabels {
   bodyOptimalLineBreakingTooltip: string;
   bodyHyphenateAcrossColumns: string;
   bodyHyphenateAcrossColumnsTooltip: string;
+  bodyHyphenateAcrossColumnsAlways: string;
+  bodyHyphenateAcrossColumnsWithinPage: string;
+  bodyHyphenateAcrossColumnsNever: string;
   bodyOptimalRagged: string;
   bodyOptimalRaggedTooltip: string;
   bodyBreakAfterDashes: string;
