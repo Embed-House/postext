@@ -120,7 +120,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>Where a line breaks between two characters. <code>'keep-all'</code> breaks only at a space (U+0020, U+3000) and next to punctuation where <code>lineBreak</code> allows it (after 、。」, before 「), never between two letters (kana, kanji, hangul, Latin): for kana written with a space between phrases (分かち書き), as in picture books and first readers, and for Korean. A phrase longer than the line is broken inside it as <code>'normal'</code> would break it. A paragraph style may set its own (<code>wordBreak</code>). Since postext 1.16.</td>
+      <td>Where a line breaks between two characters. <code>'keep-all'</code> breaks only at a space (U+0020, U+3000) and next to punctuation where <code>lineBreak</code> allows it (after 、。」, before 「), never between two letters (kana, kanji, hangul, Latin): for kana written with a space between phrases (分かち書き), as in picture books and first readers, and for Korean. A phrase longer than the line is broken inside it as <code>'normal'</code> would break it. The rule holds wherever such characters are set: in a paragraph of Chinese or Japanese, and for the few characters an English or Spanish paragraph quotes, which then stay together (since postext 1.28; before, a Latin paragraph broke a quotation between any two characters whatever this said). A paragraph style may set its own (<code>wordBreak</code>), and so may the notes (<code>footnotes.wordBreak</code>). Since postext 1.16.</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>

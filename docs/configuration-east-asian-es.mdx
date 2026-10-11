@@ -120,7 +120,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>Dónde se corta una línea entre dos caracteres. <code>'keep-all'</code> corta solo en un espacio (U+0020, U+3000) y junto a la puntuación donde <code>lineBreak</code> lo permite (tras 、。」, antes de 「), nunca entre dos letras (kana, kanji, hangul, latinas): para kana escrito con un espacio entre frases (分かち書き), como en los libros ilustrados y las cartillas, y para el coreano. Una frase más larga que la línea se corta por dentro como la cortaría <code>'normal'</code>. Un estilo de párrafo puede fijar el suyo (<code>wordBreak</code>). Desde postext 1.16.</td>
+      <td>Dónde se corta una línea entre dos caracteres. <code>'keep-all'</code> corta solo en un espacio (U+0020, U+3000) y junto a la puntuación donde <code>lineBreak</code> lo permite (tras 、。」, antes de 「), nunca entre dos letras (kana, kanji, hangul, latinas): para kana escrito con un espacio entre frases (分かち書き), como en los libros ilustrados y las cartillas, y para el coreano. Una frase más larga que la línea se corta por dentro como la cortaría <code>'normal'</code>. La regla vale allí donde se compongan esos caracteres: en un párrafo en chino o en japonés, y para los pocos caracteres que cita un párrafo en inglés o en español, que entonces quedan juntos (desde postext 1.28; antes, un párrafo en escritura latina cortaba una cita entre dos caracteres cualesquiera, dijera lo que dijera este valor). Un estilo de párrafo puede fijar el suyo (<code>wordBreak</code>), y también las notas (<code>footnotes.wordBreak</code>). Desde postext 1.16.</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>

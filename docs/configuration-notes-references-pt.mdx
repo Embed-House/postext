@@ -141,6 +141,12 @@ interface FootnotesConfig {
       <td>Alinhamento do texto das notas.</td>
     </tr>
     <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Onde as notas quebram entre caracteres chineses, japoneses e coreanos, à parte do corpo (veja <a href="/pt/docs/configuration-east-asian#tipografia-do-leste-asiático"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> mantém inteira uma sequência desses caracteres: as variantes que uma nota em inglês cita (<code>看月光</code>) deixam de precisar de um word joiner entre cada dois caracteres, enquanto os poemas da página continuam quebrando entre dois quaisquer. <code>'normal'</code> faz o contrário num documento que define <code>'keep-all'</code>. Vale para as notas no pé da coluna, no fim do capítulo e ao lado do texto de uma página dupla. Desde o postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>

@@ -141,6 +141,12 @@ interface FootnotesConfig {
       <td>محاذاة نص الحاشية.</td>
     </tr>
     <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>أين تنكسر الحواشي بين المحارف الصينية واليابانية والكورية، بمعزل عن المتن (انظر <a href="/ar/docs/configuration-east-asian#تنضيد-نصوص-شرق-آسيا"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> تُبقي سلسلة من هذه المحارف كاملة: فالقراءات التي تقتبسها حاشية إنجليزية (<code>看月光</code>) لم تعد تحتاج إلى رابط كلمات بين كل محرفين، بينما تظل قصائد الصفحة تنكسر بين أي محرفين. و<code>'normal'</code> تفعل العكس في مستند يضبط <code>'keep-all'</code>. وتأخذ به الحواشي في أسفل العمود وفي نهاية الفصل وبجوار نص الصفحتين المتقابلتين. منذ postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>

@@ -141,6 +141,12 @@ interface FootnotesConfig {
       <td>注の文字の行そろえです。</td>
     </tr>
     <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>注が、本文とは別に、中国語・日本語・韓国語の文字の間のどこで改行できるかです（<a href="/ja/docs/configuration-east-asian#東アジアの組版"><code>cjk.wordBreak</code></a>を参照）。<code>'keep-all'</code>は、こうした文字の連なりを分けずに保ちます。英語の注が引用する異文（<code>看月光</code>）は、2文字ごとに単語結合子をはさむ必要がなくなり、ページの詩はこれまでどおりどの2文字の間でも改行します。<code>'normal'</code>は、<code>'keep-all'</code>を設定した文書でその逆の働きをします。段の下端の注、章の後の注、見開きの本文の脇の注に適用されます。postext 1.28以降。</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>

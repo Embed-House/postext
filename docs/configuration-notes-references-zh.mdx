@@ -141,6 +141,12 @@ interface FootnotesConfig {
       <td>注释文字的对齐方式。</td>
     </tr>
     <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>注释在中日韩文字符之间的断开方式，与正文分开设置（见<a href="/zh/docs/configuration-east-asian#东亚排版"><code>cjk.wordBreak</code></a>）。<code>'keep-all'</code>让一串这样的字符保持完整：英文注释里引用的异文（<code>看月光</code>）不再需要在每两个字符之间加词连接符，而页面上的诗仍在任意两个字符之间断开。文档设置了<code>'keep-all'</code>时，<code>'normal'</code>的作用正相反。栏底的注释、章末的注释和跨页正文旁的注释都采用它。自postext 1.28起。</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>

@@ -120,7 +120,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>On es talla una línia entre dos caràcters. <code>'keep-all'</code> talla només en un espai (U+0020, U+3000) i al costat de la puntuació on <code>lineBreak</code> ho permet (després de 、。」, abans de 「), mai entre dues lletres (kana, kanji, hangul, llatines): per a kana escrit amb un espai entre frases (分かち書き), com als llibres il·lustrats i les cartilles, i per al coreà. Una frase més llarga que la línia es talla per dins com la tallaria <code>'normal'</code>. Un estil de paràgraf pot fixar el seu (<code>wordBreak</code>). Des de postext 1.16.</td>
+      <td>On es talla una línia entre dos caràcters. <code>'keep-all'</code> talla només en un espai (U+0020, U+3000) i al costat de la puntuació on <code>lineBreak</code> ho permet (després de 、。」, abans de 「), mai entre dues lletres (kana, kanji, hangul, llatines): per a kana escrit amb un espai entre frases (分かち書き), com als llibres il·lustrats i les cartilles, i per al coreà. Una frase més llarga que la línia es talla per dins com la tallaria <code>'normal'</code>. La regla val allà on es componguin aquests caràcters: en un paràgraf en xinès o en japonès, i per als pocs caràcters que cita un paràgraf en anglès o en castellà, que llavors queden junts (des de postext 1.28; abans, un paràgraf en escriptura llatina tallava una citació entre dos caràcters qualssevol, digués el que digués aquest valor). Un estil de paràgraf pot fixar el seu (<code>wordBreak</code>), i també les notes (<code>footnotes.wordBreak</code>). Des de postext 1.16.</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>

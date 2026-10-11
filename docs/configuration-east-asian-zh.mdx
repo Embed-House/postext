@@ -120,7 +120,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>行在两个字符之间的断开方式。<code>'keep-all'</code>只在空格（U+0020、U+3000）处，以及<code>lineBreak</code>允许时在标点旁（、。」之后，「之前）断开，两个文字（假名、汉字、韩文、拉丁字母）之间从不断开：用于词组之间加空格的假名文本（分かち書き，如绘本和识字课本）和韩文。比一行还长的词组仍按<code>'normal'</code>的方式在内部断开。段落样式可以单独设置（<code>wordBreak</code>）。自postext 1.16起。</td>
+      <td>行在两个字符之间的断开方式。<code>'keep-all'</code>只在空格（U+0020、U+3000）处，以及<code>lineBreak</code>允许时在标点旁（、。」之后，「之前）断开，两个文字（假名、汉字、韩文、拉丁字母）之间从不断开：用于词组之间加空格的假名文本（分かち書き，如绘本和识字课本）和韩文。比一行还长的词组仍按<code>'normal'</code>的方式在内部断开。凡排有这类字符的地方，这条规则都起作用：中文或日文的段落里如此，英文或西班牙文段落里引用的几个字符也如此，它们会连在一起不被拆开（自postext 1.28起；此前，拉丁文字的段落不管这里怎么设置，都会在引文的任意两个字符之间断开）。段落样式可以单独设置（<code>wordBreak</code>），注释也可以（<code>footnotes.wordBreak</code>）。自postext 1.16起。</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>

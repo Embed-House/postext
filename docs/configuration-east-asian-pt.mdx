@@ -120,7 +120,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>Onde uma linha quebra entre dois caracteres. <code>'keep-all'</code> quebra só num espaço (U+0020, U+3000) e junto à pontuação onde <code>lineBreak</code> permite (depois de 、。」, antes de 「), nunca entre duas letras (kana, kanji, hangul, latinas): serve para kana escrito com espaço entre as frases (分かち書き), como nos livros ilustrados e nas cartilhas, e para o coreano. Uma frase mais longa que a linha é quebrada por dentro, como <code>'normal'</code> a quebraria. Um estilo de parágrafo pode definir o seu (<code>wordBreak</code>). Desde o postext 1.16.</td>
+      <td>Onde uma linha quebra entre dois caracteres. <code>'keep-all'</code> quebra só num espaço (U+0020, U+3000) e junto à pontuação onde <code>lineBreak</code> permite (depois de 、。」, antes de 「), nunca entre duas letras (kana, kanji, hangul, latinas): serve para kana escrito com espaço entre as frases (分かち書き), como nos livros ilustrados e nas cartilhas, e para o coreano. Uma frase mais longa que a linha é quebrada por dentro, como <code>'normal'</code> a quebraria. A regra vale onde quer que esses caracteres sejam compostos: num parágrafo em chinês ou japonês, e para os poucos caracteres que um parágrafo em inglês ou espanhol cita, que então ficam juntos (desde o postext 1.28; antes, um parágrafo em escrita latina quebrava uma citação entre dois caracteres quaisquer, qualquer que fosse este valor). Um estilo de parágrafo pode definir o seu (<code>wordBreak</code>), e as notas também (<code>footnotes.wordBreak</code>). Desde o postext 1.16.</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>

@@ -141,6 +141,12 @@ interface FootnotesConfig {
       <td>Alignment of the note text.</td>
     </tr>
     <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Where the notes break between Chinese, Japanese and Korean characters, apart from the body (see <a href="/en/docs/configuration-east-asian#east-asian-typography"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> keeps a run of such characters whole: the readings an English note quotes (<code>看月光</code>) no longer need a word joiner between every two characters, while the poems of the page go on breaking between any two. <code>'normal'</code> does the reverse under a document that sets <code>'keep-all'</code>. Notes at the foot of the column, at the end of the chapter and beside a spread take it. Since postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>hangingIndent</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
