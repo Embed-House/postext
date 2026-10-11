@@ -598,3 +598,64 @@ describe('a word with no letter on a tracked line (#725)', () => {
     }
   });
 });
+
+describe('a right-to-left word with a mark at its edge (#725)', () => {
+  // The closing bracket of `(1367\u0645)` goes with the letter before it:
+  // one right-to-left word. Measured in a left-to-right context the bracket
+  // falls outside the word's run, and a current browser shapes it alone.
+  const MEEM = '\u0645';
+
+  it('is measured as it is painted, right to left: the same width on both browsers', () => {
+    const widths = (version: 131 | 154, cfg: PostextConfig): number[] => {
+      on(version);
+      return segmentsOf(build(`${AR} (1367${MEEM}) ${AR}`, cfg)).filter((s) => s.text === `${MEEM})`).map((s) => +s.width.toFixed(4));
+    };
+    // The letter and the Arabic bracket: 5 + 4.5 px.
+    expect(widths(131, RTL())).toEqual([9.5]);
+    expect(widths(154, RTL())).toEqual([9.5]);
+    // With the rule off a current browser measures the bracket in its
+    // Latin form, 2 px narrower than the canvas paints it.
+    const off = RTL({ bodyText: { scriptContext: false } });
+    expect(widths(131, off)).toEqual([9.5]);
+    expect(widths(154, off)).toEqual([7.5]);
+  });
+
+  it('carries no field: it is painted as any right-to-left word', () => {
+    const seg = segmentsOf(build(`${AR} (1367${MEEM}) ${AR}`, RTL())).find((s) => s.text === `${MEEM})`)!;
+    expect(seg.rtl).toBe(true);
+    expect('scriptContext' in seg).toBe(false);
+    expect('scriptRtl' in seg).toBe(false);
+  });
+});
+
+describe('the leader of a contents entry (#725)', () => {
+  const MD = '# Contents {style="front"}\n\n:::toc\n\n# First\n\nText.\n\n# Second\n\nText.';
+  const book = (cfg: PostextConfig): PostextConfig => ({ ...cfg, page: { ...cfg.page!, width: pt(300) }, headingStyles: [{ id: 'front', numbered: false, toc: false }], headings: { fontFamily: 'Amiri' }, toc: { pageNumber: { fontFamily: 'Amiri' } } });
+  const leaders = (doc: VDTDocument): VDTLineSegment[] => doc.blocks.filter((b) => b.tocEntry !== undefined).flatMap((b) => b.lines.flatMap((l) => l.segments ?? [])).filter((s) => s.leader === 'text');
+
+  it('is set in the script of the document\'s language: the same dots on both browsers', () => {
+    const dots = (version: 131 | 154, cfg: PostextConfig): [string | undefined, number, number][] => {
+      on(version);
+      return leaders(build(MD, book(cfg))).map((s) => [s.scriptContext, s.text.length, +s.width.toFixed(3)]);
+    };
+    const latin = dots(131, config('Amiri'));
+    expect(latin.length).toBeGreaterThan(0);
+    expect(latin.every(([script]) => script === 'Latn')).toBe(true);
+    expect(dots(154, config('Amiri'))).toEqual(latin);
+    // An Arabic book: the Arabic stop, half as wide again, so fewer dots.
+    const arabic = dots(131, RTL());
+    expect(arabic.every(([script]) => script === 'Arab')).toBe(true);
+    expect(dots(154, RTL())).toEqual(arabic);
+    expect(arabic[0]![1]).toBeLessThan(latin[0]![1]);
+    // With the rule off each browser counts its own.
+    const off = RTL({ bodyText: { scriptContext: false } });
+    expect(dots(131, off)[0]![1]).not.toBe(dots(154, off)[0]![1]);
+    expect(dots(131, off).every(([script]) => script === undefined)).toBe(true);
+  });
+
+  it('a face that draws its stop one way keeps its leader as it was', () => {
+    const doc = build(MD, { ...book(config('Plain')), headings: { fontFamily: 'Plain' }, toc: { pageNumber: { fontFamily: 'Plain' } } });
+    expect(leaders(doc).length).toBeGreaterThan(0);
+    expect(leaders(doc).some((s) => 'scriptContext' in s)).toBe(false);
+  });
+});

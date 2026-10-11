@@ -202,6 +202,19 @@ export function scriptTextWidth(text: string, font: string, script: ScriptContex
   return measureMarkedWidth(text, font, lead, trail, rtl);
 }
 
+/**
+ * The width of a right-to-left word (its bidi level is odd) measured as it
+ * is painted, in a context set right to left. Measured in the default
+ * left-to-right one, a bracket or a stop at its edge (`م)`, `(المخطوط`)
+ * falls at the paragraph's level, outside the word's run: Chrome 131 still
+ * gave it the word's script, Chrome 154 shapes that run alone and gives
+ * it Latin forms, so the word was measured narrower than every output
+ * paints it. For a face that draws punctuation by script.
+ */
+export function rtlTextWidth(text: string, font: string): number {
+  return measureMarkedWidth(text, font, '', '', true);
+}
+
 /** The script of a language tag when it is one the engine acts on
  *  (`ar`, `fa`, `ur` → `'Arab'`; `he` → `'Hebr'`; `el` → `'Grek'`; `ru` →
  *  `'Cyrl'`; `en`, `es`… → `'Latn'`), else undefined. */

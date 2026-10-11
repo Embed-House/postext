@@ -37,7 +37,7 @@ import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining
 import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines';
 import { TATWEEL, justifyLinesWithKashida, kashidaCapacity } from './kashida';
 import { needsBidi, resolveParagraph, spanIsolates, type BidiIsolate, type BidiParagraph } from '../bidi';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, resolveScriptContext, scriptContextUntracked, scriptTextWidth, type ScriptContext } from './script';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, resolveScriptContext, rtlTextWidth, scriptContextUntracked, scriptTextWidth, type ScriptContext } from './script';
 
 export interface RichBreakPoint {
   charIndex: number;
@@ -177,8 +177,10 @@ export interface RichToken {
   /** A word with no letter, in a face that draws punctuation by script
    *  (#725, `measure/script.ts`): the script it was measured in and is
    *  painted in (`VDTLineSegment.scriptContext`); `scriptRtl` when it was
-   *  measured as a right-to-left word (its bidi level is odd). Absent on
-   *  every other token. */
+   *  measured as a right-to-left word (its bidi level is odd). `scriptRtl`
+   *  alone: a right-to-left word with letters in such a face, measured in
+   *  a context set right to left, as it is painted (`rtlTextWidth`).
+   *  Absent on every other token. */
   scriptContext?: ScriptContext;
   scriptRtl?: true;
 }
@@ -297,17 +299,27 @@ function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShif
     ...(t.cjkMarks ? { cjkMarks: t.cjkMarks } : {}),
     ...(t.inserted ? { inserted: true } : {}),
     // The pieces of a word with no letter are shaped in its script (#725).
-    ...(t.scriptContext ? { scriptContext: t.scriptContext, ...(t.scriptRtl ? { scriptRtl: true as const } : {}) } : {}),
+    ...(t.scriptContext ? { scriptContext: t.scriptContext } : {}),
+    ...(t.scriptRtl ? { scriptRtl: true as const } : {}),
   };
+}
+
+/** The width of a word of a joining script (Arabic…), always painted
+ *  right to left: measured so too in a face that draws its punctuation by
+ *  script (#725, `rtlTextWidth`), so the bracket or the stop at its edge
+ *  takes the forms it is painted in; as any text otherwise. */
+function rtlWordWidth(text: string, font: string): number {
+  return getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) ? rtlTextWidth(text, font) : textWidth(text, font, false);
 }
 
 /** How a token's text is measured: in its script when it is a word with
  *  no letter given one (#725), else as any text (`textWidth`). */
 function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps'>, font: string): (text: string) => number {
   const script = token.scriptContext;
-  return script
-    ? (text) => (text === '' ? 0 : scriptTextWidth(text, font, script, token.scriptRtl === true))
-    : (text) => textWidth(text, font, token.smallCaps);
+  if (script) return (text) => (text === '' ? 0 : scriptTextWidth(text, font, script, token.scriptRtl === true));
+  // A right-to-left word of a face that draws punctuation by script.
+  if (token.scriptRtl) return (text) => (text === '' ? 0 : rtlTextWidth(text, font));
+  return (text) => textWidth(text, font, token.smallCaps);
 }
 
 /** Small capitals are synthesised, the same way on every backend: a
@@ -1255,15 +1267,18 @@ function tokenizeSpans(
   const scriptState = getMeasureScriptContext();
   let paragraphText: string | undefined;
   let isolates: BidiIsolate[] | undefined;
+  // `script` undefined: a right-to-left word with letters, measured as it
+  // is painted (`rtlTextWidth`).
   const contextOf = !scriptState.enabled || measuringVertically()
     ? undefined
-    : (word: string, at: number, length: number, font: string): { script: ScriptContext; rtl: boolean } | undefined => {
-        if (!faceReadsScript(font) || !isLetterless(word) || hasCJK(word)) return undefined;
+    : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean } | undefined => {
+        if (!faceReadsScript(font) || hasCJK(word)) return undefined;
+        const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
+        if (!isLetterless(word)) return rtl ? { script: undefined, rtl } : undefined;
         paragraphText ??= bidi?.text ?? spans.map((sp) => sp.text).join('');
         isolates ??= spans.some((sp) => sp.direction) ? spanIsolates(spans) : [];
-        const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
         const script = resolveScriptContext(paragraphText, at, at + length, rtl, isolates, scriptState.script);
-        return script ? { script, rtl } : undefined;
+        return script ? { script, rtl } : rtl ? { script: undefined, rtl } : undefined;
       };
 
   for (const span of spans) {
@@ -1361,8 +1376,11 @@ function tokenizeSpans(
       const context = contextOf && !isSpace && !cjk ? contextOf(clean, partAt, part.length, font) : undefined;
       const untracked = context !== undefined && scriptContextUntracked(context.script);
       const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
-      const inScript = context ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, context.script, context.rtl)) : undefined;
-      const contextFields = context ? { scriptContext: context.script, ...(context.rtl ? { scriptRtl: true as const } : {}) } : {};
+      const script = context?.script;
+      const inScript = !context ? undefined
+        : script ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, script, context.rtl))
+        : (text: string): number => (text === '' ? 0 : rtlTextWidth(text, font));
+      const contextFields = context ? { ...(script ? { scriptContext: script } : {}), ...(context.rtl ? { scriptRtl: true as const } : {}) } : {};
       const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, inScript);
       if (breakPoints.length > 0) {
         tokens.push({
@@ -1474,7 +1492,7 @@ function joinStyledRuns(
       italic: dominant.italic,
       ...(parts[0]!.captionLabel ? { captionLabel: true } : {}),
       kind: 'text',
-      width: textWidth(text, tokenFont(dominant, normalFont, boldFont, italicFont, boldItalicFont), false),
+      width: rtlWordWidth(text, tokenFont(dominant, normalFont, boldFont, italicFont, boldItalicFont)),
       ...(dominant.faceFont ? { faceFont: dominant.faceFont } : {}),
       ...(runs.length > 1 ? { runs } : {}),
       ...(parts[parts.length - 1]!.dashJoin ? { dashJoin: true } : {}),
@@ -1811,7 +1829,7 @@ function measureRichText(
     if (!kashida) return;
     justifyLinesWithKashida(lines, (li) => {
       return lineWidthAt(maxWidthPx, options, li);
-    }, normalSpaceWidth, kashida, (seg, text) => textWidth(text, fontOf(seg), false));
+    }, normalSpaceWidth, kashida, (seg, text) => rtlWordWidth(text, fontOf(seg)));
   };
 
   // Knuth-Plass optimal line breaking path. A Latin paragraph quoting CJK

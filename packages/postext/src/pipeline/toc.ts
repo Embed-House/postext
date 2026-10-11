@@ -13,6 +13,7 @@
 import { flowTextWidth } from '../measure/vertical';
 import { onTextWidthCacheClear } from '../measure/canvas';
 import { fitLeader } from '../measure/leader';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
 import type { ContentBlock, InlineSpan, TocBlockInfo } from '../parse';
 import type { OutlineEntry, ResolvedTocEntryStyleConfig } from '../types';
 import type { VDTLine, VDTLineSegment } from '../vdt';
@@ -27,6 +28,17 @@ import { stampSourceRanges } from './buildHelpers';
 /** The content blocks with every `:::toc` directive replaced by the blocks
  *  of the contents it prints. Without an outline (no directive) the input
  *  is returned as is. */
+/** The script a leader of `char` is set in (#725): the document's
+ *  language's, when the leader has no letter and `font` draws its marks by
+ *  script; undefined for every other leader, set as it always was. */
+function leaderScriptOf(char: string, font: string): ScriptContext | undefined {
+  const state = getMeasureScriptContext();
+  // A leader with spaces in it is several words to the browser, each
+  // shaped alone: left as it was.
+  if (!state.enabled || state.script === undefined || /\s/u.test(char) || !isLetterless(char)) return undefined;
+  return faceReadsScript(font) ? state.script : undefined;
+}
+
 export function expandTocDirectives(
   blocks: readonly ContentBlock[],
   outline: readonly OutlineEntry[] | undefined,
@@ -276,11 +288,16 @@ export function measureTocBlock(
     let x = contentW;
     const pushSpace = (w: number) => { if (w > 0) { segs.push({ kind: 'space', text: ' ', width: w }); x += w; } };
     if (toc.leader.enabled && toc.leader.char.length > 0 && leaderEnd - leaderStart > 0) {
-      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => flowTextWidth(run, labelFont));
+      // A leader of dots has no letter: in a face that draws its stop by
+      // script it is measured, and painted, in the script of the document's
+      // language (#725), where each browser shaped it its own way and one
+      // counted half as many dots again as another.
+      const leaderScript = leaderScriptOf(toc.leader.char, labelFont);
+      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => (leaderScript ? scriptTextWidth(run, labelFont, leaderScript, false) : flowTextWidth(run, labelFont)));
       if (leader) {
         const { text: dots, width: dotsW } = leader;
         pushSpace(leaderEnd - dotsW - x);
-        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: labelFont, color: labelColor, leader: 'text' });
+        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: labelFont, color: labelColor, leader: 'text', ...(leaderScript ? { scriptContext: leaderScript } : {}) });
         x += dotsW;
       }
     }
