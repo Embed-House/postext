@@ -3828,7 +3828,7 @@
     "resourceTypeNameTooltip": "キャプションや参照で、この種類の項目1つを指す語です（たとえば「図」）。",
     "resourceTypeNamePluralTooltip": "参照が複数の項目を挙げるときに使う、この種類の項目を複数指す語です（英語のFiguresなど）。",
     "resourceTypeShortLabelTooltip": "狭い箇所で使う短縮形です（たとえばFig.）。",
-    "resourceTypeNumberingTooltip": "番号の作り方です。章番号、カウンター、またはその両方を、ここに書いたとおりにつなぎます。",
+    "resourceTypeNumberingTooltip": "番号の作り方です。章番号、カウンター、またはその両方を、ここに書いたとおりにつなぎます。'{'h1'}'〜'{'h6'}'は見出しの番号、'{'n'}'はカウンターです。見出しのテンプレートと同じく、コロンの後に書式を書けます。'{'h1:A'}'.'{'n'}'は、Aと振られた付録でA.1になります。",
     "resourceTypeResetCounterTooltip": "カウンターを1から数え直すタイミングです。章ごとに戻すか、戻さないかを選びます。",
     "resourceTypeCounterFormatTooltip": "カウンターの表記です。アラビア数字、ローマ数字、アルファベットなどから選びます。",
     "resourceTypeCaptionPrefixTooltip": "各キャプションの先頭で、番号の前に置くテキストです。",

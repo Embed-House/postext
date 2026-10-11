@@ -3216,7 +3216,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   resourceTypeNameTooltip: 'The word for one item of this type in captions and references, such as Figure.',
   resourceTypeNamePluralTooltip: 'The word for several items of this type, used when a reference names more than one, such as Figures.',
   resourceTypeShortLabelTooltip: 'A short form for tight spots, such as Fig.',
-  resourceTypeNumberingTooltip: 'How the number is built: the chapter number, the counter or both, joined as written here.',
+  resourceTypeNumberingTooltip: 'How the number is built: the chapter number, the counter or both, joined as written here. {h1} to {h6} are the heading numbers and {n} the counter; each takes a style after a colon, as in a heading template: {h1:A}.{n} prints A.1 in an appendix lettered A.',
   resourceTypeResetCounterTooltip: 'When the counter starts again from 1: at every chapter, or never.',
   resourceTypeCounterFormatTooltip: 'How the counter is written: Arabic or Roman numerals, letters and so on.',
   resourceTypeCaptionPrefixTooltip: 'The text set before the number at the start of each caption.',

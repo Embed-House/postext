@@ -3828,7 +3828,7 @@
     "resourceTypeNameTooltip": "A palavra para um item deste tipo nas legendas e referências, como Figura.",
     "resourceTypeNamePluralTooltip": "A palavra para vários itens deste tipo, usada quando uma referência nomeia mais de um, como Figuras.",
     "resourceTypeShortLabelTooltip": "Uma forma curta para lugares apertados, como Fig.",
-    "resourceTypeNumberingTooltip": "Como o número é formado: o número do capítulo, o contador ou ambos, unidos como escrito aqui.",
+    "resourceTypeNumberingTooltip": "Como o número é formado: o número do capítulo, o contador ou ambos, unidos como escrito aqui. '{'h1'}' a '{'h6'}' são os números dos títulos e '{'n'}' o contador; cada um aceita um estilo depois de dois-pontos, como no modelo de um título: '{'h1:A'}'.'{'n'}' imprime A.1 num apêndice com a letra A.",
     "resourceTypeResetCounterTooltip": "Quando o contador recomeça em 1: a cada capítulo ou nunca.",
     "resourceTypeCounterFormatTooltip": "Como o contador é escrito: algarismos arábicos ou romanos, letras etc.",
     "resourceTypeCaptionPrefixTooltip": "O texto posto antes do número no início de cada legenda.",

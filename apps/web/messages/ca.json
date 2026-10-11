@@ -3828,7 +3828,7 @@
     "resourceTypeNameTooltip": "La paraula per a un element d'aquest tipus en peus i referències, com Figura.",
     "resourceTypeNamePluralTooltip": "La paraula per a diversos elements d'aquest tipus, que es fa servir quan una referència n'anomena més d'un, com Figures.",
     "resourceTypeShortLabelTooltip": "Una forma breu per a llocs estrets, com Fig.",
-    "resourceTypeNumberingTooltip": "Com es forma el número: el número de capítol, el comptador o tots dos, units tal com s'escriu aquí.",
+    "resourceTypeNumberingTooltip": "Com es forma el número: el número de capítol, el comptador o tots dos, units tal com s'escriu aquí. '{'h1'}' a '{'h6'}' són els números dels encapçalaments i '{'n'}' el comptador; cadascun admet un estil després de dos punts, com a la plantilla d'un encapçalament: '{'h1:A'}'.'{'n'}' imprimeix A.1 en un apèndix amb la lletra A.",
     "resourceTypeResetCounterTooltip": "Quan torna a començar el comptador des d'1: a cada capítol o mai.",
     "resourceTypeCounterFormatTooltip": "Com s'escriu el comptador: xifres aràbigues o romanes, lletres, etc.",
     "resourceTypeCaptionPrefixTooltip": "El text que va abans del número al principi de cada peu.",

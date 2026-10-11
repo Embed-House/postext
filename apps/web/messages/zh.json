@@ -3828,7 +3828,7 @@
     "resourceTypeNameTooltip": "图注和引用中此类单项的名称，例如“图”。",
     "resourceTypeNamePluralTooltip": "此类多项的名称，用于一次引用多项时，例如“图”。",
     "resourceTypeShortLabelTooltip": "空间紧张时使用的简称，例如“图”。",
-    "resourceTypeNumberingTooltip": "编号的构成方式：章号、计数器或两者，按此处写法连接。",
+    "resourceTypeNumberingTooltip": "编号的构成方式：章号、计数器或两者，按此处写法连接。'{'h1'}'到'{'h6'}'是各级标题的编号，'{'n'}'是计数器；每个都可以像标题模板那样在冒号后写样式：'{'h1:A'}'.'{'n'}'在字母编号为A的附录里印出A.1。",
     "resourceTypeResetCounterTooltip": "计数器何时从1重新开始：每章重新开始，或从不。",
     "resourceTypeCounterFormatTooltip": "计数器的写法：阿拉伯数字、罗马数字、字母等。",
     "resourceTypeCaptionPrefixTooltip": "每条图注开头、编号之前的文字。",

@@ -46,4 +46,13 @@ describe('resource type counter format in the panel', () => {
     // A format the author names is printed as named.
     expect(renderResourceTypePreview(plate('roman-lower'), 'arab')).toBe('Pl. ١.vii');
   });
+
+  it('formats a token that names its style, as the engine does (#730)', () => {
+    const appendix: ResourceType = { ...plate('decimal'), numberingTemplate: '{h1:A}.{n}' };
+    expect(renderResourceTypePreview(appendix)).toBe('Pl. A.7');
+    expect(renderResourceTypePreview({ ...appendix, numberingTemplate: '{h1:I}.{h2:a}.{n:i}' })).toBe('Pl. I.b.vii');
+    expect(renderResourceTypePreview(appendix, 'arab')).toBe('Pl. A.٧');
+    // Another group in braces stays as written.
+    expect(renderResourceTypePreview({ ...appendix, numberingTemplate: '{x}{n}' })).toBe('Pl. {x}7');
+  });
 });

@@ -3828,7 +3828,7 @@
     "resourceTypeNameTooltip": "La palabra para un elemento de este tipo en pies y referencias, como Figura.",
     "resourceTypeNamePluralTooltip": "La palabra para varios elementos de este tipo, usada cuando una referencia nombra más de uno, como Figuras.",
     "resourceTypeShortLabelTooltip": "Una forma breve para sitios estrechos, como Fig.",
-    "resourceTypeNumberingTooltip": "Cómo se forma el número: el número de capítulo, el contador o ambos, unidos tal como se escribe aquí.",
+    "resourceTypeNumberingTooltip": "Cómo se forma el número: el número de capítulo, el contador o ambos, unidos tal como se escribe aquí. '{'h1'}' a '{'h6'}' son los números de los encabezados y '{'n'}' el contador; cada uno admite un estilo tras dos puntos, como en la plantilla de un encabezado: '{'h1:A'}'.'{'n'}' imprime A.1 en un apéndice con la letra A.",
     "resourceTypeResetCounterTooltip": "Cuándo vuelve a empezar el contador desde 1: en cada capítulo o nunca.",
     "resourceTypeCounterFormatTooltip": "Cómo se escribe el contador: cifras arábigas o romanas, letras, etc.",
     "resourceTypeCaptionPrefixTooltip": "El texto que va antes del número al principio de cada pie.",

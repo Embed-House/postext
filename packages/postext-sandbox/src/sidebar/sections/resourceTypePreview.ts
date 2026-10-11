@@ -1,5 +1,5 @@
 import type { DigitSystem, NumberFormatStyle, ResourceCounterFormat, ResourceType } from 'postext';
-import { documentNumeralStyle, formatNumeral, parseNumberFormat } from 'postext';
+import { parseNumberFormat, renderTemplateNumber } from 'postext';
 
 /** The resource spelling of each numeral style: `counterFormat` says
  *  `roman-lower` where page labels say `lower-roman`; the East Asian and
@@ -44,7 +44,7 @@ export function resourceCounterFormat(format: unknown, locale?: string): Resourc
 }
 
 /** Sample heading numbers used solely to render the live preview. */
-const PREVIEW_HEADING: Record<string, number> = {
+const PREVIEW_HEADING = {
   h1: 1,
   h2: 2,
   h3: 3,
@@ -54,19 +54,12 @@ const PREVIEW_HEADING: Record<string, number> = {
 };
 
 /** Render a sample number for a type using a fixed sample counter (7) and the
- *  sample heading context above. Mirrors the runtime template syntax (`{n}`,
- *  `{h1}`..`{h6}`) but is intentionally lightweight for preview purposes.
- *  Decimal numbers take the document's `digits`, as the engine writes them
- *  (شكل ١-٧ in an Arabic book). */
+ *  sample heading context above, with the engine's own renderer: the
+ *  tokens `{n}` and `{h1}`..`{h6}`, the style a token names after a colon
+ *  (`{h1:A}.{n}`, #730) and the document's `digits` on the decimal ones
+ *  (شكل ١-٧ in an Arabic book) are read as a build reads them. */
 function renderPreviewNumber(type: ResourceType, digits: DigitSystem, locale?: string): string {
-  const style = documentNumeralStyle(parseNumberFormat(type.counterFormat, locale) ?? 'decimal', digits);
-  return type.numberingTemplate.replace(/\{([^}]+)\}/g, (_match, body: string) => {
-    const key = body.trim();
-    if (key === 'n') return formatNumeral(7, style);
-    const h = PREVIEW_HEADING[key];
-    if (h !== undefined) return formatNumeral(h, documentNumeralStyle('decimal', digits));
-    return _match;
-  });
+  return renderTemplateNumber(type.numberingTemplate, 7, type.counterFormat, PREVIEW_HEADING, digits, locale);
 }
 
 /** Builds the full preview string, e.g. "Fig. 1.7" or "Figure 1.7", in the
