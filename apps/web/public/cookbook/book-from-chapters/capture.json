@@ -214,23 +214,28 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "54fa19f380e728ab"
+            "hash": "54fa19f380e728ab",
+            "lines": "f16b2adb8024f5f9"
           },
           {
             "pages": 2,
-            "hash": "6a4e58e6c402ce68"
+            "hash": "6a4e58e6c402ce68",
+            "lines": "931235badc9ce328"
           },
           {
             "pages": 1,
-            "hash": "45a9f4a6fae72222"
+            "hash": "45a9f4a6fae72222",
+            "lines": "b4ddca13579c6759"
           },
           {
             "pages": 3,
-            "hash": "27290abe813451c2"
+            "hash": "27290abe813451c2",
+            "lines": "183cb1dcd4c9f6de"
           },
           {
             "pages": 3,
-            "hash": "f3440a4e233fb6fe"
+            "hash": "f3440a4e233fb6fe",
+            "lines": "0e814b858c4f7ca1"
           }
         ]
       },
@@ -692,23 +697,28 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "94f86b7a92d382aa"
+            "hash": "94f86b7a92d382aa",
+            "lines": "819990388d4d7c06"
           },
           {
             "pages": 2,
-            "hash": "e885bf42525f1b54"
+            "hash": "e885bf42525f1b54",
+            "lines": "005e3c7b3198c395"
           },
           {
             "pages": 1,
-            "hash": "d2ac6a65151e39df"
+            "hash": "d2ac6a65151e39df",
+            "lines": "828f3459e4bcc55b"
           },
           {
             "pages": 3,
-            "hash": "b712efcc7247a05a"
+            "hash": "b712efcc7247a05a",
+            "lines": "76e91d499d872953"
           },
           {
             "pages": 3,
-            "hash": "05b5cdc0de6a4b60"
+            "hash": "05b5cdc0de6a4b60",
+            "lines": "fd89ef56d37e1f98"
           }
         ]
       },

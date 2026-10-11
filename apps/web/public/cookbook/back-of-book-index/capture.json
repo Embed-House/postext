@@ -203,15 +203,18 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "ba9063b87fdc749c"
+            "hash": "ba9063b87fdc749c",
+            "lines": "e9f0ec38135e36ec"
           },
           {
             "pages": 4,
-            "hash": "1219ed9cb50162c0"
+            "hash": "1219ed9cb50162c0",
+            "lines": "686d702d4fed8a2f"
           },
           {
             "pages": 2,
-            "hash": "56ca775b522bf095"
+            "hash": "56ca775b522bf095",
+            "lines": "2e4b84d9b2be86ed"
           }
         ]
       },
@@ -734,15 +737,18 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "ce547cb623a86658"
+            "hash": "ce547cb623a86658",
+            "lines": "87614b94a5156a20"
           },
           {
             "pages": 4,
-            "hash": "73b99a6175227861"
+            "hash": "73b99a6175227861",
+            "lines": "47d7c14f29259c25"
           },
           {
             "pages": 2,
-            "hash": "b3b762e1b4252269"
+            "hash": "b3b762e1b4252269",
+            "lines": "79c2f35319889951"
           }
         ]
       },

@@ -97,7 +97,8 @@
         "chapters": [
           {
             "pages": 1,
-            "hash": "50a02f6e3dab76a2"
+            "hash": "50a02f6e3dab76a2",
+            "lines": "15d7f41bfb23246d"
           }
         ]
       },
@@ -330,7 +331,8 @@
         "chapters": [
           {
             "pages": 1,
-            "hash": "c675b4e698bf8858"
+            "hash": "c675b4e698bf8858",
+            "lines": "cbb8129c851c9832"
           }
         ]
       },
@@ -564,7 +566,8 @@
         "chapters": [
           {
             "pages": 1,
-            "hash": "61c99bc17e0a88d1"
+            "hash": "61c99bc17e0a88d1",
+            "lines": "b4635786ee3f8db0"
           }
         ]
       },
@@ -805,7 +808,8 @@
         "chapters": [
           {
             "pages": 1,
-            "hash": "80f0c24645930344"
+            "hash": "80f0c24645930344",
+            "lines": "4b57f967702f6e05"
           }
         ]
       },
@@ -1048,7 +1052,8 @@
         "chapters": [
           {
             "pages": 1,
-            "hash": "396ed94398d12cdd"
+            "hash": "396ed94398d12cdd",
+            "lines": "373c39c43daef8aa"
           }
         ]
       },

@@ -130,7 +130,8 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "d51bebc1d4935989"
+            "hash": "d51bebc1d4935989",
+            "lines": "ab58f2537d5ad96f"
           }
         ],
         "warnings": [
@@ -457,7 +458,8 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "80090b3765101087"
+            "hash": "80090b3765101087",
+            "lines": "d5b6ba4512c56439"
           }
         ],
         "warnings": [

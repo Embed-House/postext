@@ -124,7 +124,8 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "75b085005a919718"
+            "hash": "75b085005a919718",
+            "lines": "94341f898c0feed3"
           }
         ]
       },
@@ -450,7 +451,8 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "6027a6b3bd078b81"
+            "hash": "6027a6b3bd078b81",
+            "lines": "9a0912dc38f0e854"
           }
         ]
       },
