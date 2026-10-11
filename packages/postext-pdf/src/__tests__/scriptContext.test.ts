@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import fontkit from '@pdf-lib/fontkit';
-import { PDFDocument, type PDFFont } from 'pdf-lib';
+import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream, type PDFFont } from 'pdf-lib';
 import { buildDocument, resolveParagraph } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLineSegment } from 'postext';
 import { renderToPdf } from '../pdf-backend';
@@ -241,5 +241,44 @@ describe('an Arabic sentence (#725)', () => {
       expect(read(bytes)).toContain('1367');
       expect(read(bytes)).toBe(read(await renderToPdf(off, { fontProvider, accessible: false })));
     }
+  }, 60_000);
+});
+
+describe('a word with no letter on a tracked line (#725)', () => {
+  const AR = '\u062A\u0648\u0641\u064A';
+  const tracked = (overrides: Partial<PostextConfig> = {}): PostextConfig => config({ headings: { fontFamily: 'Amiri', levels: [{ level: 2, letterSpacing: pt(2), fontSize: pt(SIZE) }] }, ...overrides });
+  async function spacings(doc: VDTDocument): Promise<number[]> {
+    const pdf = await PDFDocument.load(await renderToPdf(doc, { fontProvider, accessible: false }));
+    const contents = pdf.getPage(0).node.Contents();
+    const refs = contents instanceof PDFArray ? contents.asArray() : [contents];
+    const content = refs.map((ref) => {
+      const stream = pdf.context.lookup(ref);
+      return stream instanceof PDFRawStream ? new TextDecoder('latin1').decode(decodePDFRawStream(stream).decode()) : '';
+    }).join('\n');
+    return [...content.matchAll(/(-?[\d.]+) Tc/g)].map((m) => Number(m[1]));
+  }
+
+  it('in a Latin context it is spaced with its line', async () => {
+    const doc = buildDocument({ markdown: '## It ends in 46.' }, tracked());
+    const seg = segmentsOf(doc).find((s) => s.text === '46.')!;
+    expect(seg.scriptContext).toBe('Latn');
+    expect(seg.width).toBeCloseTo(1266 * (SIZE / 1000) + 3 * 2, 3);
+    expect(await spacings(doc)).toEqual([2, 0]);
+  }, 60_000);
+
+  it('in the Arabic script it takes none: the spacing is lifted for it', async () => {
+    const doc = buildDocument({ markdown: `## ${AR} (1367) ${AR}` }, tracked({ locale: 'ar', direction: 'rtl' }));
+    const number = segmentsOf(doc).find((s) => s.text === '1367')!;
+    expect(number.scriptContext).toBe('Arab');
+    expect(number.width).toBeCloseTo(2128 * (SIZE / 1000), 3);
+    const all = await spacings(doc);
+    // The line's spacing, lifted and put back around the number (the
+    // brackets and the Arabic words are HarfBuzz's, which lifts it itself).
+    expect(all[0]).toBe(2);
+    expect(all[all.length - 1]).toBe(0);
+    expect(all.filter((v) => v === 0).length).toBeGreaterThan(1);
+    const at = all.indexOf(0);
+    expect(at).toBeGreaterThan(0);
+    expect(at).toBeLessThan(all.length - 1);
   }, 60_000);
 });

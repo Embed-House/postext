@@ -39,11 +39,11 @@ import {
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
-import { joinsLetters, type CjkRegion, type ForcedOrientation, type RoundedOutline, type VDTChip } from 'postext';
+import { joinsLetters, scriptContextUntracked, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging';
 import { fallbackPieces, type FallbackFace, type TextPiece } from './fallbackSpaces';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
-import { shapingKey } from '../shapingLanguage';
+import { shapingKey, withShapingScript } from '../shapingLanguage';
 
 export interface PageCtx {
   page: PDFPage;
@@ -103,6 +103,26 @@ export interface VerticalPaint {
 export function setTrackingPx(ctx: PageCtx, px: number): void {
   ctx.trackingPx = px;
   ctx.page.pushOperators(setCharacterSpacing(px * ctx.scale));
+}
+
+/**
+ * Paint, with `paint`, a word the layout measured in `script`
+ * (`VDTLineSegment.scriptContext`, #725): shaped in that script (the
+ * script in force, `withShapingScript`) and, in a script whose words take
+ * no tracking (`scriptContextUntracked`: the Arabic script), with no
+ * character spacing, as it was measured. Any other word (`script`
+ * undefined) is just painted.
+ */
+export function paintInScript<T>(ctx: PageCtx, script: ScriptContext | undefined, paint: () => T): T {
+  if (script === undefined) return paint();
+  const tracking = ctx.trackingPx ?? 0;
+  const lift = tracking !== 0 && scriptContextUntracked(script);
+  if (lift) setTrackingPx(ctx, 0);
+  try {
+    return withShapingScript(script, paint);
+  } finally {
+    if (lift) setTrackingPx(ctx, tracking);
+  }
 }
 
 /** A PDF transformation matrix `[a b c d e f]` (`x' = a·x + c·y + e`,

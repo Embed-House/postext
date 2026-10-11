@@ -35,7 +35,7 @@ import { isJapaneseLanguage, renderLangOf } from './locale';
 import { hasCJK } from './measure/cjk';
 import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
-import { scriptMark, type ScriptContext } from './measure/script';
+import { scriptContextUntracked, scriptMark, type ScriptContext } from './measure/script';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
@@ -282,7 +282,9 @@ type RunPaint = (probe: VDTLineSegment) => { font: string; color: string };
  */
 function segmentBox(seg: VDTLineSegment, inherited: TextDirection, rootLang: string | undefined, tracking: number, font: string, color: string, paint: RunPaint): SegmentBox {
   const attrs = dirAttr(seg.rtl ? 'rtl' : 'ltr', inherited) + (seg.lang !== undefined && seg.lang !== rootLang ? ` lang="${esc(seg.lang)}"` : '');
-  const decl = tracking !== 0 && joiningScriptIn(seg.text) ? 'letter-spacing:0;' : '';
+  // A word of a joining script takes no tracking, nor does a word with no
+  // letter shaped in the Arabic script (#725).
+  const decl = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext)) ? 'letter-spacing:0;' : '';
   const html = seg.runs && seg.runs.length > 0 ? wordRunsHtml(seg, font, color, paint)
     : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida)
     : seg.scriptContext !== undefined ? scriptTextHtml(seg.text, seg.scriptContext, seg.rtl === true) : undefined;

@@ -3,6 +3,7 @@ import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
 import { fillTrackedWord } from './trackedText';
 import { fillScriptWord } from './scriptText';
+import { scriptContextUntracked } from '../measure/script';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -41,7 +42,8 @@ const MARK_RE = /\p{M}/u;
  * (`VDTLineSegment.scriptContext`, #725) is painted in it, beside a mark
  * of the script that is clipped away (`fillScriptWord`), whole: where it
  * could also be painted in pieces (a face that ligates `!=`), the script
- * takes it.
+ * takes it. In the Arabic script it is painted with no letter-spacing, as
+ * it was measured (`scriptContextUntracked`).
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,
@@ -52,7 +54,7 @@ export function fillSegmentWord(
   paint: (text: string, x: number, y: number) => void,
   runStyle: (run: WordRun) => { font: string; fill: string },
 ): void {
-  const untracked = tracking !== 0 && joiningScriptIn(seg.text);
+  const untracked = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext));
   if (untracked) ctx.letterSpacing = '0px';
   const rtl = seg.rtl === true && 'direction' in ctx;
   const direction = rtl ? ctx.direction : undefined;

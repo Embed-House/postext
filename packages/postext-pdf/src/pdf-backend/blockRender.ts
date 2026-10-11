@@ -4,7 +4,7 @@ import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
 import { paintChip } from './chip';
 import { drawRightToLeftRun } from './rtlRun';
 import { pickSegmentColor, pickSegmentFont } from './fontHelpers';
@@ -21,7 +21,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
-import { openTypeLanguageOf, shapingLanguage, withShapingLanguage, withShapingScript } from '../shapingLanguage';
+import { openTypeLanguageOf, shapingLanguage, withShapingLanguage } from '../shapingLanguage';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
 export interface ResourceRenderContext {
@@ -352,7 +352,7 @@ function renderSegments(
     // A word with no letter is shaped in the script the layout measured it
     // in (`scriptContext`, #725), by HarfBuzz or by fontkit.
     const shaped = !seg.sideMarker && (seg.runs !== undefined || (directed && (seg.rtl || needsComplexShaping(seg.text))))
-      && withShapingScript(seg.scriptContext, () => paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line)));
+      && paintInScript(ctx, seg.scriptContext, () => paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line)));
     if (seg.sideMarker) {
       // Its run, not its text, with no character spacing.
       if (tracking !== 0) setTrackingPx(ctx, 0);
@@ -362,7 +362,7 @@ function renderSegments(
       // Painted by HarfBuzz.
     } else {
       withShapingLanguage(seg.lang === undefined ? shapingLanguage() : openTypeLanguageOf(seg.lang), () => {
-        if (!composed) withShapingScript(seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText));
+        if (!composed) paintInScript(ctx, seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText));
         else paintComposedText(ctx, seg, x, baseline, font, size, color, colorHex, actualText, tracking, fontCache, blockFont, rubyElem, holder);
       });
     }

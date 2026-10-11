@@ -68,6 +68,7 @@ import {
   popClip,
   strokeOutlinePx,
   counterFlipPx,
+  paintInScript,
 } from './primitives';
 import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
 import { paintChip } from './chip';
@@ -84,7 +85,6 @@ import {
 } from './svgVector';
 import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
-import { withShapingScript } from '../shapingLanguage';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
 import type { PrintColorMode } from '../print/colorMode';
@@ -714,11 +714,11 @@ function paintLineRuns(
       const direction = seg.rtl ? 'rtl' : 'ltr';
       if (seg.runs && drawStyledWordPx(ctx, seg.text, x, baseline, font, size, segColor, wordParts(seg, font, segColor, ctx, (bold, italic) => ({ font: fontCache.get(pickFont(bold, italic, fonts)) ?? undefined, color: segColor })), { direction })) {
         // A word set in several styles, shaped whole.
-      } else if (directed && (seg.rtl || needsComplexShaping(seg.text)) && withShapingScript(seg.scriptContext, () => drawShapedTextPx(ctx, seg.text, x, baseline, font, size, segColor, { direction }))) {
+      } else if (directed && (seg.rtl || needsComplexShaping(seg.text)) && paintInScript(ctx, seg.scriptContext, () => drawShapedTextPx(ctx, seg.text, x, baseline, font, size, segColor, { direction }))) {
         // One run in its direction, shaped by HarfBuzz; a word with no
         // letter in the script the layout measured it in (#725).
       } else if (!composed) {
-        withShapingScript(seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline, font, size, segColor));
+        paintInScript(ctx, seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline, font, size, segColor));
       } else {
         // A justified CJK line spreads its characters per segment.
         // A compressed CJK mark advances to its box's end (see blockRender).

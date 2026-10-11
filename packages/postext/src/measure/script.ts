@@ -140,6 +140,19 @@ function isRtlScript(script: ScriptContext): boolean {
   return script === 'Arab' || script === 'Hebr';
 }
 
+/**
+ * Whether a word shaped in `script` takes no tracking, as a word of a
+ * joining script takes none (`measure/joining.ts`): the Arabic script. The
+ * word belongs to the Arabic text it stands in, which is never spaced
+ * apart; and a current browser applies no letter-spacing to a run in a
+ * cursive script, where Chrome 131 did, so tracked the word was one width
+ * on one and another on the other. Measured and painted untracked it is
+ * the same on both.
+ */
+export function scriptContextUntracked(script: ScriptContext | undefined): boolean {
+  return script === 'Arab';
+}
+
 /** No-break space: between the word and its mark, so the two never kern,
  *  and the word and the mark stay one run for the shaper (a breaking space
  *  would make two words of them, each shaped alone). */

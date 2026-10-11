@@ -538,7 +538,7 @@ export { verticalOrientation, verticalRuns, uaxVerticalOrientation, isVerticalCe
 export { graphemesOf } from './measure/graphemes';
 // A word with no letter shaped in the script of its context (#725): the
 // mark a renderer sets it beside (`VDTLineSegment.scriptContext`).
-export { scriptMark, withScriptMark } from './measure/script';
+export { scriptContextUntracked, scriptMark, withScriptMark } from './measure/script';
 export type { ScriptContext } from './measure/script';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {

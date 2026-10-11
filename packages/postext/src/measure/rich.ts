@@ -37,7 +37,7 @@ import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining
 import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines';
 import { TATWEEL, justifyLinesWithKashida, kashidaCapacity } from './kashida';
 import { needsBidi, resolveParagraph, spanIsolates, type BidiIsolate, type BidiParagraph } from '../bidi';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, resolveScriptContext, scriptTextWidth, type ScriptContext } from './script';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, resolveScriptContext, scriptContextUntracked, scriptTextWidth, type ScriptContext } from './script';
 
 export interface RichBreakPoint {
   charIndex: number;
@@ -761,7 +761,8 @@ export function emergencySplit(
   if (token.runs) return null;
   const joining = joiningScriptIn(text);
   // The word was measured untracked (`wordLetterSpacing`): its pieces too.
-  const spacing = joining ? 0 : letterSpacingPx;
+  // So was a word with no letter shaped in the Arabic script (#725).
+  const spacing = joining || scriptContextUntracked(token.scriptContext) ? 0 : letterSpacingPx;
   const hyphenW = measureTextWidth('-', font) + spacing;
   const measure = tokenTextWidth(token, font);
   const widthBefore = (idx: number): number => measure(text.slice(0, idx)) + (spacing === 0 ? 0 : spacing * graphemeCount(text.slice(0, idx)));
@@ -1354,10 +1355,12 @@ function tokenizeSpans(
       const cjk = cjkText && !isSpace && hasCJK(clean) ? cjkWordBreaks(clean, font, sc, letterSpacingPx, undefined, keepAll) : undefined;
       // A word of a joining script is measured untracked, its break points
       // (after a hyphen or a dash it carries) too.
-      const wordSpacing = isSpace ? letterSpacingPx : wordLetterSpacing(clean, letterSpacingPx);
       // A word with no letter: measured in the script of its context, its
-      // pieces at a break too (#725).
+      // pieces at a break too (#725). In the Arabic script it takes no
+      // tracking, as the Arabic words around it take none.
       const context = contextOf && !isSpace && !cjk ? contextOf(clean, partAt, part.length, font) : undefined;
+      const untracked = context !== undefined && scriptContextUntracked(context.script);
+      const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
       const inScript = context ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, context.script, context.rtl)) : undefined;
       const contextFields = context ? { scriptContext: context.script, ...(context.rtl ? { scriptRtl: true as const } : {}) } : {};
       const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, inScript);
@@ -1371,7 +1374,7 @@ function tokenizeSpans(
           ...scFields,
           ...contextFields,
           kind: 'text',
-          width: cjk ? cjk.width : (inScript ? inScript(clean) : textWidth(clean, font, sc)) + track(clean),
+          width: cjk ? cjk.width : (inScript ? inScript(clean) : textWidth(clean, font, sc)) + (untracked ? 0 : track(clean)),
           breakPoints,
           hyphenWidth: measureTextWidth('-', font) + letterSpacingPx,
         });
@@ -1388,7 +1391,7 @@ function tokenizeSpans(
           ...(isSpace ? {} : scFields),
           ...contextFields,
           kind: isSpace ? 'space' : 'text',
-          width: (inScript ? inScript(word) : textWidth(word, font, sc && !isSpace)) + track(word),
+          width: (inScript ? inScript(word) : textWidth(word, font, sc && !isSpace)) + (untracked ? 0 : track(word)),
         });
       }
     }

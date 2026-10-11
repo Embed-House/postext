@@ -536,6 +536,7 @@ describe("package exports", () => {
       "segmentOrientation",
       "graphemesOf",
       // A word with no letter shaped in the script of its context (#725).
+      "scriptContextUntracked",
       "scriptMark",
       "withScriptMark",
       "bidiClassOf",

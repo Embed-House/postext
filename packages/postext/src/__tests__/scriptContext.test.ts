@@ -356,7 +356,7 @@ describe('an Arabic sentence (#725)', () => {
 });
 
 /** A context that records what is painted, and where its clip stands. */
-type Painted = { text: string; x: number; y: number; direction: string; align: string; clip?: [number, number]; flip: number };
+type Painted = { text: string; x: number; y: number; direction: string; align: string; spacing: number; clip?: [number, number]; flip: number };
 function paintingCtx(): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; seen: Painted[] } {
   const seen: Painted[] = [];
   const measure = new BrowserCtx();
@@ -391,7 +391,7 @@ function paintingCtx(): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext
       return measure.measureText(s);
     },
     fillText(text: string, x: number, y: number) {
-      seen.push({ text, x: a * x + e, y, direction: state.direction as string, align: state.textAlign as string, ...(clip ? { clip } : {}), flip: a });
+      seen.push({ text, x: a * x + e, y, direction: state.direction as string, align: state.textAlign as string, spacing: parseFloat(state.letterSpacing as string) || 0, ...(clip ? { clip } : {}), flip: a });
     },
   };
   const ctx = new Proxy(state, {
@@ -556,5 +556,45 @@ describe('a word with no letter in HTML (#725)', () => {
   it('a face that draws them one way, and a document with the rule off, carry no mark', () => {
     expect(renderToHtml(build(NOTE, config('Plain')))).not.toContain('font-size:0');
     expect(renderToHtml(build(NOTE, config('Amiri', { bodyText: { scriptContext: false } })))).not.toContain('font-size:0');
+  });
+});
+
+describe('a word with no letter on a tracked line (#725)', () => {
+  // Level-2 headings tracked half a point after each letter.
+  const tracked = (cfg: PostextConfig): PostextConfig => ({ ...cfg, page: { ...cfg.page!, width: pt(400) }, headings: { fontFamily: 'Amiri', levels: [{ level: 2, letterSpacing: pt(0.5), fontSize: pt(10) }] } });
+  const heading = (doc: VDTDocument): VDTBlock => doc.blocks.find((b) => b.type === 'heading')!;
+  const headingSegments = (doc: VDTDocument): VDTLineSegment[] => heading(doc).lines.flatMap((l) => l.segments ?? []);
+
+  it('in a Latin context it is tracked as any word, the same on both browsers', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const doc = build('## It ends in 46.', tracked(config('Amiri')));
+      const seg = headingSegments(doc).find((s) => s.text === '46.')!;
+      expect(seg.scriptContext).toBe('Latn');
+      // 12 px in its Latin forms and half a point after each character.
+      expect(seg.width).toBeCloseTo(12 + 3 * 0.5, 6);
+      const word = painted(doc).find((p) => p.text === `46.${NBSP}n`)!;
+      expect(word.spacing).toBe(0.5);
+    }
+  });
+
+  it('in the Arabic script it takes no tracking, as the Arabic words around it take none', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const doc = build(`## ${AR} (1367) ${AR}`, tracked(RTL()));
+      expect(heading(doc).letterSpacing ?? heading(doc).lines[0]!.letterSpacing).toBeCloseTo(0.5, 6);
+      const pieces = headingSegments(doc).filter((s) => s.scriptContext);
+      // Measured with no tracking: a current browser spaces no run of a
+      // cursive script, where Chrome 131 did.
+      expect(pieces.map((s) => [s.text, s.scriptContext, +s.width.toFixed(4)])).toEqual([['(', 'Arab', 4.5], ['1367', 'Arab', 20], [')', 'Arab', 4.5]]);
+      const seen = painted(doc);
+      for (const text of [`${BEH}${NBSP}(`, `1367${NBSP}${VERSE_SIGN}`, `${BEH}${NBSP})`]) {
+        expect(seen.find((p) => p.text === text)!.spacing, text).toBe(0);
+      }
+      // And the HTML says so on each of them.
+      const html = renderToHtml(doc);
+      expect(html.match(/letter-spacing:0;[^"]*"><span aria-hidden="true" style="font-size:0;/g) ?? []).toHaveLength(2);
+      expect(html).toMatch(/letter-spacing:0;[^"]*">1367<span aria-hidden="true"/);
+    }
   });
 });
