@@ -104,7 +104,7 @@ describe("orderedLists.numberWidth: 'item' (#722)", () => {
 
   it('a nested level keeps one indent, from the widest number of the level above', () => {
     const md = '9. 天皇ハ\n   1. 陸海軍ヲ統帥ス\n10. 天皇ハ\n11. 天皇ハ\n    1. 宣戰シ';
-    const cfg = (numberWidth: 'item' | 'run'): PostextConfig => gazette({ numberWidth, levels: [{ level: 2, numberFormat: 'decimal', prefix: '', separator: '.' }] });
+    const cfg = (numberWidth: 'item' | 'run'): PostextConfig => gazette({ numberWidth, levels: [{ level: 2, numberFormat: 'arabic', prefix: '', separator: '.' }] });
     const item = items(build(md, cfg('item')));
     const run = items(build(md, cfg('run')));
     const nested = (list: VDTBlock[]): VDTBlock[] => list.filter((b) => (b.listDepth ?? 1) === 2);
