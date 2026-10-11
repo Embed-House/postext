@@ -1336,7 +1336,7 @@ headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enab
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>标题每个字形之后的字距，包括空格和编号前缀，等同于CSS的<code>letter-spacing</code>。正值拉开字母（用<code>textTransform: 'uppercase'</code>排的大写字母通常需要一点：<code>&#123; value: 0.12, unit: 'em' &#125;</code>），负值收紧大字号标题。<code>em</code>值相对于该级别的<code>fontSize</code>。标题各行按加了字距的文字测量，所以在加字距后的文字结束处换行，Canvas、HTML和PDF的绘制结果相同。居中或齐右的行按字母定位：像设计文本一样不计最后一个字形后的字距，因此居中标题与<code>span: 'page'</code>标题的默认章首区段对齐。由<code>advancedDesign</code>绘制的级别会忽略它，与此处其他排版字段一样：每个设计文本元素有自己的<code>letterSpacing</code>。<a href="/zh/docs/configuration-styles#标题样式">标题样式</a>也可以设置它，作用于使用该样式的标题。postext 1.4及以前标题没有字距设置，这个键会被悄悄丢弃。</td>
+      <td>标题每个字形之后的字距，包括空格和编号前缀，等同于CSS的<code>letter-spacing</code>。正值拉开字母（用<code>textTransform: 'uppercase'</code>排的大写字母通常需要一点：<code>&#123; value: 0.12, unit: 'em' &#125;</code>），负值收紧大字号标题。<code>em</code>值相对于该级别的<code>fontSize</code>。标题各行按加了字距的文字测量，所以在加字距后的文字结束处换行，Canvas、HTML和PDF的绘制结果相同。字距从不改变字形：字体的合字（fi、fl）在所有输出中都保留。居中或齐右的行按字母定位：像设计文本一样不计最后一个字形后的字距，因此居中标题与<code>span: 'page'</code>标题的默认章首区段对齐。由<code>advancedDesign</code>绘制的级别会忽略它，与此处其他排版字段一样：每个设计文本元素有自己的<code>letterSpacing</code>。<a href="/zh/docs/configuration-styles#标题样式">标题样式</a>也可以设置它，作用于使用该样式的标题。postext 1.4及以前标题没有字距设置，这个键会被悄悄丢弃。</td>
     </tr>
     <tr>
       <td><code>lineSpan</code></td>

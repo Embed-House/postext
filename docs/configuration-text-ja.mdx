@@ -1336,7 +1336,7 @@ headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enab
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>見出しのすべてのグリフの後に入るトラッキングで、スペースと番号の接頭辞も含みます。CSSの<code>letter-spacing</code>と同じです。正の値は字間を広げ（<code>textTransform: 'uppercase'</code>で組んだ大文字には少し広げるのが普通です：<code>&#123; value: 0.12, unit: 'em' &#125;</code>）、負の値は大きな表示サイズを詰めます。<code>em</code>の値はそのレベルの<code>fontSize</code>に対する相対値です。見出しの行はこの値込みで測るので、字間を付けた文字列の終わりで折り返し、Canvas、HTML、PDFは同じように描画します。中央そろえや右そろえの行は文字の範囲で配置します。デザインのテキストと同様に最後のグリフの後のトラッキングは除くので、中央そろえの見出しは<code>span: 'page'</code>見出しの既定の章扉とそろいます。<code>advancedDesign</code>から描画するレベルは、ここにあるほかの文字組みのフィールドと同様にこの値を無視します。デザインの各テキスト要素がそれぞれ<code>letterSpacing</code>を持っているからです。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>でも、そのスタイルを使う見出しに対して設定できます。postext 1.4までは見出しにトラッキングがなく、このキーは何の通知もなく無視されていました。</td>
+      <td>見出しのすべてのグリフの後に入るトラッキングで、スペースと番号の接頭辞も含みます。CSSの<code>letter-spacing</code>と同じです。正の値は字間を広げ（<code>textTransform: 'uppercase'</code>で組んだ大文字には少し広げるのが普通です：<code>&#123; value: 0.12, unit: 'em' &#125;</code>）、負の値は大きな表示サイズを詰めます。<code>em</code>の値はそのレベルの<code>fontSize</code>に対する相対値です。見出しの行はこの値込みで測るので、字間を付けた文字列の終わりで折り返し、Canvas、HTML、PDFは同じように描画します。字間を付けてもグリフは変わりません。フォントの合字（fi、fl）はどの出力でも保たれます。中央そろえや右そろえの行は文字の範囲で配置します。デザインのテキストと同様に最後のグリフの後のトラッキングは除くので、中央そろえの見出しは<code>span: 'page'</code>見出しの既定の章扉とそろいます。<code>advancedDesign</code>から描画するレベルは、ここにあるほかの文字組みのフィールドと同様にこの値を無視します。デザインの各テキスト要素がそれぞれ<code>letterSpacing</code>を持っているからです。<a href="/ja/docs/configuration-styles#見出しスタイル">見出しスタイル</a>でも、そのスタイルを使う見出しに対して設定できます。postext 1.4までは見出しにトラッキングがなく、このキーは何の通知もなく無視されていました。</td>
     </tr>
     <tr>
       <td><code>lineSpan</code></td>

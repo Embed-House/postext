@@ -703,7 +703,7 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>字距：每个字符（包括空格）之后额外前进的距离，与CSS的<code>letter-spacing</code>完全相同。测得的宽度随之增大，所以自动宽度的方框仍然紧贴文本。一行最后一个字符之后的字距不计入对齐，也不计入自动宽度方框，因此加了字距的居中标题按字母居中，右对齐的标题恰好止于边缘，两端对齐行的最后一个字母也抵到边缘（postext 1.4及更早版本中，它们会向左偏半个或一个字距单位，锚定在加字距元素右侧的元素也会多隔开一个字距单位）。负值会收紧字母，36 pt的展示标题常用<code>&#123; value: -0.3, unit: 'pt' &#125;</code>，宽度也同样缩小；Canvas、HTML和PDF的绘制结果一致（postext 1.4及更早版本中，负值会被当作<code>0</code>，且不发出警告）。</td>
+      <td>字距：每个字符（包括空格）之后额外前进的距离，与CSS的<code>letter-spacing</code>完全相同。测得的宽度随之增大，所以自动宽度的方框仍然紧贴文本。字距从不改变字形：字体的合字在Canvas、HTML、EPUB和PDF中都保留（postext 1.27及更早版本中，Canvas和HTML会去掉加字距设计文本的合字，文本因此比测得的宽）。希伯来文与拉丁文一样加字距；只有含阿拉伯字母的文本不加。一行最后一个字符之后的字距不计入对齐，也不计入自动宽度方框，因此加了字距的居中标题按字母居中，右对齐的标题恰好止于边缘，两端对齐行的最后一个字母也抵到边缘（postext 1.4及更早版本中，它们会向左偏半个或一个字距单位，锚定在加字距元素右侧的元素也会多隔开一个字距单位）。负值会收紧字母，36 pt的展示标题常用<code>&#123; value: -0.3, unit: 'pt' &#125;</code>，宽度也同样缩小；Canvas、HTML和PDF的绘制结果一致（postext 1.4及更早版本中，负值会被当作<code>0</code>，且不发出警告）。</td>
     </tr>
     <tr>
       <td><code>textTransform</code></td>

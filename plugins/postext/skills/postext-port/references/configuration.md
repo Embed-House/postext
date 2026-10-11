@@ -766,7 +766,9 @@ bottom folio only there). Parity/pages are ignored inside heading slots.
     lineHeight=1.2 (number × fontSize),
   letterSpacing?: Dimension (negative tightens, em = font size; the tracking after a line's last glyph
     counts neither for centre/right alignment nor for an auto width, and a justified line's last glyph
-    ends on the edge), textTransform?: 'none'|'uppercase',
+    ends on the edge; it never changes the glyphs: ligatures stay on canvas, HTML, EPUB and PDF, so a
+    tracked running head or callout title is as wide as measured; a Hebrew run is tracked, only a
+    text with Arabic letters is not), textTransform?: 'none'|'uppercase',
   hyphenate?: boolean (wrap only), box?: ElementBoxStyle,
   dropCap?: { lines=2, fontFamily?, fontWeight?, fontSize?, color?, gap? }   (design text only; a chapter's
             first PARAGRAPH takes a body drop cap instead, §4b; capitals fixed at 0.72; the text wraps whatever its
