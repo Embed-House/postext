@@ -3996,6 +3996,48 @@
       }
     }
   },
+  "contrast": {
+    "source": "sandbox",
+    "label": {
+      "en": "Contrast",
+      "es": "Contraste",
+      "ca": "Contrast",
+      "zh": "对比度",
+      "ar": "التباين",
+      "ja": "コントラスト",
+      "pt": "Contraste"
+    },
+    "cause": {
+      "en": "A text colour is under the ratio its size and weight ask at the book's level (contrast.level: 4.5:1 for text and 3:1 for large text at AA, 7:1 and 4.5:1 at AAA) against the ground it is set on, on screen or, in a book set up for print, on the paper of its output profile. The group also lists reversed text too fine for the press: light text on an inked ground under 8 pt, or under 12 pt in italic or a light weight. A pair of colours is listed once, with the number of places set so.",
+      "es": "Un color de texto queda por debajo de la ratio que piden su cuerpo y su peso en el nivel del libro (contrast.level: 4,5:1 para el texto y 3:1 para el texto grande en AA, 7:1 y 4,5:1 en AAA) frente al fondo sobre el que se compone, en pantalla o, en un libro preparado para imprenta, sobre el papel de su perfil de salida. El grupo lista también el texto calado demasiado fino para imprenta: texto claro sobre un fondo de tinta por debajo de 8 pt, o de 12 pt en cursiva o en un peso fino. Un par de colores aparece una sola vez, con el número de lugares donde se compone así.",
+      "ca": "Un color de text queda per sota de la ràtio que demanen el seu cos i el seu pes al nivell del llibre (contrast.level: 4,5:1 per al text i 3:1 per al text gran a AA, 7:1 i 4,5:1 a AAA) davant del fons sobre el qual es compon, en pantalla o, en un llibre preparat per a impremta, sobre el paper del seu perfil de sortida. El grup també llista el text calat massa fi per a impremta: text clar sobre un fons de tinta per sota de 8 pt, o de 12 pt en cursiva o en un pes fi. Un parell de colors es llista una sola vegada, amb el nombre de llocs on es compon així.",
+      "zh": "某种文字颜色与它所在的底色相比，低于它的字号和字重在本书等级下要求的对比度（contrast.level：AA要求正文4.5:1、大字3:1，AAA要求7:1和4.5:1），可以是屏幕上的对比度，为印刷设置的书还包括在其输出特性文件的纸张上的对比度。这一组还列出过细、不宜印刷的反白字：有墨底色上的浅色文字小于8 pt，斜体或细体小于12 pt。一对颜色只列一次，并注明这样排的有多少处。",
+      "ar": "لون نص دون النسبة التي يطلبها حجمه ووزنه بمستوى الكتاب (contrast.level: نسبة 4.5:1 للنص و3:1 للنص الكبير في AA، و7:1 و4.5:1 في AAA) مقابل الخلفية التي يُصفّ عليها، على الشاشة أو، في الكتاب المُعَدّ للطباعة، على ورق ملف تعريف الإخراج. وتسرد المجموعة أيضًا النص المفرَّغ الأدقّ مما تحتمله الطباعة: نص فاتح على خلفية محبَّرة دون 8 pt، أو دون 12 pt بالمائل أو بوزن رفيع. ويُدرج زوج الألوان مرة واحدة، مع عدد المواضع المصفوفة هكذا.",
+      "ja": "文字色が、地の色に対して、本のレベルでサイズとウェイトに応じて求められる比（contrast.level：AAは本文4.5:1、大きな文字3:1、AAAは7:1と4.5:1）に届いていません。比は画面でのもので、印刷向けに設定した本では出力プロファイルの用紙でのものも調べます。このグループには、印刷には細すぎる白抜き文字も並びます。インキの地から抜いた明るい文字で、8 pt未満のもの、イタリックや細いウェイトでは12 pt未満のものです。色の組み合わせは1回だけ表示され、同じ設定の箇所の数が付きます。",
+      "pt": "Uma cor de texto fica abaixo da razão que o seu corpo e o seu peso pedem no nível do livro (contrast.level: 4,5:1 para o texto e 3:1 para o texto grande em AA, 7:1 e 4,5:1 em AAA) diante do fundo sobre o qual é composta, na tela ou, num livro preparado para impressão, no papel do seu perfil de saída. O grupo também lista o texto vazado fino demais para impressão: texto claro sobre um fundo de tinta abaixo de 8 pt, ou de 12 pt em itálico ou num peso fino. Um par de cores aparece uma só vez, com o número de lugares compostos assim."
+    },
+    "fix": {
+      "en": "Click the entry to open its page and select the text. Take the two colours further apart until the ratio beside the colour field shows a tick, or set the text larger or bolder so that it counts as large text (18 pt, or 14 pt bold). Set reversed text larger, upright or in a heavier weight. The level, what is checked (screen, print) and the reversed-text sizes are in contrast (Colours → Contrast).",
+      "es": "Pulsa la entrada para abrir su página y seleccionar el texto. Separa más los dos colores hasta que la ratio que hay junto al campo de color muestre una marca de verificación, o compón el texto más grande o en negrita para que cuente como texto grande (18 pt, o 14 pt en negrita). Compón el texto calado más grande, en redonda o con más peso. El nivel, lo que se comprueba (pantalla, imprenta) y los cuerpos del texto calado están en contrast (Colores → Contraste).",
+      "ca": "Fes clic a l'entrada per obrir-ne la pàgina i seleccionar el text. Separa més els dos colors fins que la ràtio que hi ha al costat del camp de color mostri una marca de verificació, o compon el text més gran o en negreta perquè compti com a text gran (18 pt, o 14 pt en negreta). Compon el text calat més gran, en rodona o amb més pes. El nivell, el que es comprova (pantalla, impremta) i els cossos del text calat són a contrast (Colors → Contrast).",
+      "zh": "点击条目打开对应页面并选中这段文字。拉开两种颜色的差距，直到颜色字段旁的对比度带上对勾；或者把文字排大、加粗，让它算作大字（18 pt，或14 pt粗体）。反白字要排大一些，改用正体或更粗的字重。等级、检查对象（屏幕、印刷）和反白字的字号都在contrast中（颜色→对比度）。",
+      "ar": "انقر الإدخال لفتح صفحته وتحديد النص. باعِد بين اللونين حتى تُظهر النسبة التي بجانب حقل اللون علامة صح، أو اجعل النص أكبر أو عريضًا ليُعدّ نصًّا كبيرًا (18 pt، أو 14 pt بخط عريض). واجعل النص المفرَّغ أكبر، أو غير مائل، أو بوزن أثقل. المستوى، وما يُفحص لأجله (الشاشة، الطباعة)، وأحجام النص المفرَّغ في contrast (الألوان › التباين).",
+      "ja": "項目をクリックしてそのページを開き、文字を選択します。色の項目の横に出る比にチェックマークが付くまで2つの色の差を広げるか、文字を大きく、または太くして、大きな文字（18 pt、または太字の14 pt）として扱われるようにします。白抜き文字は大きくするか、立体にするか、ウェイトを太くします。レベル、検査の対象（画面、印刷）、白抜き文字のサイズはcontrastにあります（色 → コントラスト）。",
+      "pt": "Clique na entrada para abrir a página e selecionar o texto. Afaste mais as duas cores até que a razão ao lado do campo de cor mostre uma marca de verificação, ou componha o texto maior ou em negrito para que conte como texto grande (18 pt, ou 14 pt em negrito). Componha o texto vazado maior, em redondo ou com mais peso. O nível, o que é verificado (tela, impressão) e os corpos do texto vazado estão em contrast (Cores → Contraste)."
+    },
+    "docs": {
+      "slug": "configuration-fonts-colors-viewers",
+      "heading": {
+        "en": "Contrast check (config)",
+        "es": "Comprobación del contraste (configuración)",
+        "ca": "Comprovació del contrast (configuració)",
+        "zh": "对比度检查（配置）",
+        "ar": "فحص التباين (الإعدادات)",
+        "ja": "コントラストの検査（設定）",
+        "pt": "Verificação de contraste (configuração)"
+      }
+    }
+  },
   "lineNumbersUnsupported": {
     "source": "engine",
     "label": {
@@ -4581,6 +4623,90 @@
         "ar": "الموضع",
         "ja": "配置",
         "pt": "Posicionamento"
+      }
+    }
+  },
+  "shortListSplit": {
+    "source": "engine",
+    "label": {
+      "en": "Short list cut between columns",
+      "es": "Lista corta partida entre columnas",
+      "ca": "Llista curta partida entre columnes",
+      "zh": "短列表跨栏拆分",
+      "ar": "قائمة قصيرة مقسومة بين عمودين",
+      "ja": "段をまたいで分かれた短いリスト",
+      "pt": "Lista curta dividida entre colunas"
+    },
+    "cause": {
+      "en": "A list of a few items (up to bodyText.shortListMaxItems, 3 by default, nested items counted) is set in two columns or pages, such as a list of three cut 1 + 2. With bodyText.shortListSplit on 'warn' every such list is reported; on 'avoid', only one taller than an empty column, which no column could hold whole. The engine lists it in doc.contentWarnings with the page of its first item.",
+      "es": "Una lista de pocos ítems (hasta bodyText.shortListMaxItems, 3 por defecto, contando los de sus listas anidadas) queda compuesta en dos columnas o páginas, como una de tres partida 1 + 2. Con bodyText.shortListSplit en 'warn' se informa de todas; en 'avoid', solo de la que es más alta que una columna vacía y ninguna columna podía acoger entera. El motor lo anota en doc.contentWarnings con la página de su primer ítem.",
+      "ca": "Una llista de pocs elements (fins a bodyText.shortListMaxItems, 3 per defecte, comptant els de les seves llistes niades) queda composta en dues columnes o pàgines, com una de tres partida 1 + 2. Amb bodyText.shortListSplit a 'warn' s'informa de totes; a 'avoid', només de la que és més alta que una columna buida i cap columna no podia acollir sencera. El motor ho anota a doc.contentWarnings amb la pàgina del seu primer element.",
+      "zh": "只有几项的列表（不超过bodyText.shortListMaxItems，默认3项，嵌套列表的项也计算在内）排在了两栏或两页中，例如三项的列表拆成1 + 2。bodyText.shortListSplit设为'warn'时，每个这样的列表都报告；设为'avoid'时，只报告比空栏还高、没有哪一栏放得下整个列表的那些。引擎把它连同第一项所在的页码记在doc.contentWarnings中。",
+      "ar": "قائمة قليلة البنود (لا تزيد على bodyText.shortListMaxItems، وهو 3 افتراضيًا، وتُحسب فيه بنود قوائمها المتداخلة) نُضّدت في عمودين أو صفحتين، كقائمة من ثلاثة بنود مقسومة 1 + 2. مع bodyText.shortListSplit على 'warn' يُبلَّغ عن كل قائمة كهذه؛ ومع 'avoid'، عن القائمة الأطول من عمود فارغ فقط، وهي التي لم يتسع لها أي عمود كاملةً. يسجّلها المحرّك في doc.contentWarnings مع صفحة بندها الأول.",
+      "ja": "項目の少ないリスト（bodyText.shortListMaxItems個以下。既定は3で、入れ子のリストの項目も数えます）が、2つの段またはページに分かれて組まれています。3項目のリストが1 + 2に分かれる場合などです。bodyText.shortListSplitが'warn'のときはそうしたリストをすべて報告し、'avoid'のときは、空の段より高く、どの段にも全体が収まらなかったリストだけを報告します。エンジンはこれを最初の項目のページとともにdoc.contentWarningsに記録します。",
+      "pt": "Uma lista de poucos itens (até bodyText.shortListMaxItems, 3 por padrão, contando os das suas listas aninhadas) ficou composta em duas colunas ou páginas, como uma de três dividida em 1 + 2. Com bodyText.shortListSplit em 'warn', toda lista assim é relatada; em 'avoid', só a que é mais alta que uma coluna vazia e nenhuma coluna podia receber inteira. O motor registra isso em doc.contentWarnings com a página do seu primeiro item."
+    },
+    "fix": {
+      "en": "Set bodyText.shortListSplit to 'avoid': the list is set whole and, when it does not fit under what its column holds, opens the next column with the headings right above it and the colon line that introduces it. The column it leaves ends short. If the warning stays under 'avoid', shorten the list or its items. Where a cut is acceptable, lower shortListMaxItems or set the rule back to 'allow'.",
+      "es": "Pon bodyText.shortListSplit en 'avoid': la lista se compone entera y, si no cabe bajo lo que ya tiene su columna, abre la siguiente con los encabezados que tenga justo encima y la línea de dos puntos que la introduce. La columna que deja queda más corta. Si el aviso sigue con 'avoid', acorta la lista o sus ítems. Donde el corte sea aceptable, baja shortListMaxItems o devuelve la regla a 'allow'.",
+      "ca": "Posa bodyText.shortListSplit a 'avoid': la llista es compon sencera i, si no hi cap sota el que ja té la seva columna, obre la següent amb els encapçalaments que tingui just a sobre i la línia de dos punts que la introdueix. La columna que deixa queda més curta. Si l'avís continua amb 'avoid', escurça la llista o els seus elements. On el tall sigui acceptable, abaixa shortListMaxItems o torna la regla a 'allow'.",
+      "zh": "把bodyText.shortListSplit设为'avoid'：列表整体排出，栏中已有内容的下方放不下时，它移到下一栏，紧挨在它上面的标题和引出它的冒号行随它一起移走。它离开的那一栏会短一截。设为'avoid'后仍有警告时，删减列表的项或缩短各项的文字。可以接受拆分的地方，调低shortListMaxItems，或把规则改回'allow'。",
+      "ar": "اجعل bodyText.shortListSplit على 'avoid': تُنضَّد القائمة كاملة، فإن لم تتسع تحت ما في عمودها انتقلت إلى العمود التالي ومعها العناوين التي فوقها مباشرة وسطر النقطتين الذي يقدّمها. والعمود الذي تتركه ينتهي أقصر. وإن بقي التحذير مع 'avoid' فقصّر القائمة أو بنودها. وحيث يُقبل القسم، اخفض shortListMaxItems أو أعد القاعدة إلى 'allow'.",
+      "ja": "bodyText.shortListSplitを'avoid'にします。リストは全体をまとめて組まれ、段にすでにある内容の下に収まらないときは、すぐ上の見出しと、リストを導入するコロンの行と一緒に次の段に送られます。リストが出ていった段はその分短く終わります。'avoid'でも警告が残るときは、リストか項目を短くしてください。分かれてもよい箇所では、shortListMaxItemsを下げるか、規則を'allow'に戻します。",
+      "pt": "Ponha bodyText.shortListSplit em 'avoid': a lista é composta inteira e, se não couber abaixo do que a sua coluna já tem, abre a coluna seguinte com os títulos logo acima dela e a linha dos dois-pontos que a introduz. A coluna que ela deixa fica mais curta. Se o aviso continuar com 'avoid', encurte a lista ou os seus itens. Onde a divisão for aceitável, diminua shortListMaxItems ou volte a regra para 'allow'."
+    },
+    "docs": {
+      "slug": "configuration-text",
+      "heading": {
+        "en": "Orphans, widows, runts, and keep-together rules",
+        "es": "Huérfanas, viudas, *runts* y reglas de cohesión",
+        "ca": "Òrfenes, vídues, *runts* i regles de cohesió",
+        "zh": "段首孤行、段末孤行、孤字与不拆分规则",
+        "ar": "الأسطر اليتيمة والأرامل والكلمات المعزولة وقواعد الإبقاء معًا",
+        "ja": "オーファン、ウィドウ、ラント、分割禁止の規則",
+        "pt": "Órfãs, viúvas, linhas curtas e regras de manter junto"
+      }
+    }
+  },
+  "openerFloat": {
+    "source": "engine",
+    "label": {
+      "en": "Float on an opener page",
+      "es": "Flotante en una página de apertura",
+      "ca": "Flotant en una pàgina d'obertura",
+      "zh": "章首页上有浮动体",
+      "ar": "عنصر عائم في صفحة افتتاح",
+      "ja": "章の開始ページにあるフロート",
+      "pt": "Flutuante em uma página de abertura"
+    },
+    "cause": {
+      "en": "A figure, a table, a comic strip or a floated box stands on an opener page while layout.openerFloats is 'warn': the page a part opens, the page a heading opens with its own break, or the first page of a document that starts with a heading. A resource embedded inline ('here'), a 'fixed' box and a span: 'side' box are not floats for this rule. The engine lists it in doc.contentWarnings with its page.",
+      "es": "Una figura, una tabla, una tira de cómic o un recuadro flotante está en una página de apertura con layout.openerFloats en 'warn': la página que abre una parte, la que abre un encabezado con su propio salto o la primera de un documento que empieza con un encabezado. Un recurso puesto en línea ('here'), un recuadro 'fixed' y un recuadro span: 'side' no cuentan como flotantes para esta regla. El motor lo anota en doc.contentWarnings con su página.",
+      "ca": "Una figura, una taula, una tira de còmic o un requadre flotant és en una pàgina d'obertura amb layout.openerFloats a 'warn': la pàgina que obre una part, la que obre un encapçalament amb el seu propi salt o la primera d'un document que comença amb un encapçalament. Un recurs posat en línia ('here'), un requadre 'fixed' i un requadre span: 'side' no compten com a flotants per a aquesta regla. El motor ho anota a doc.contentWarnings amb la seva pàgina.",
+      "zh": "layout.openerFloats设为'warn'时，有图、表、漫画条或浮动标注框排在章首页上。章首页指：篇页，标题以自身的分页开启的页面，以及以标题开头的文档的第一页。行内嵌入的资源（'here'）、'fixed'框和span: 'side'框不算这条规则的浮动体。引擎把它连同页码记在doc.contentWarnings中。",
+      "ar": "شكل أو جدول أو شريط قصص مصورة أو إطار عائم يقع في صفحة افتتاح حين يكون layout.openerFloats على 'warn': الصفحة التي يفتتحها جزء، أو التي يفتحها عنوان بفاصله هو، أو الصفحة الأولى من مستند يبدأ بعنوان. أما المورد المضمَّن في النص ('here') والإطار 'fixed' والإطار span: 'side' فلا تُعدّ عناصر عائمة في هذه القاعدة. يسجّله المحرّك في doc.contentWarnings مع صفحته.",
+      "ja": "layout.openerFloatsが'warn'のときに、図、表、帯漫画、またはフロートの囲みが開始ページに置かれています。開始ページとは、部が開くページ、見出しが自身の改ページで開くページ、見出しで始まる文書の最初のページです。インラインで埋め込んだリソース（'here'）、'fixed'の囲み、span: 'side'の囲みは、この規則ではフロートに数えません。エンジンはこれをページとともにdoc.contentWarningsに記録します。",
+      "pt": "Uma figura, uma tabela, uma tira de quadrinhos ou um boxe flutuante está em uma página de abertura com layout.openerFloats em 'warn': a página que uma parte abre, a que um título abre com a sua própria quebra ou a primeira de um documento que começa com um título. Um recurso incorporado em linha ('here'), um boxe 'fixed' e um boxe span: 'side' não contam como flutuantes para esta regra. O motor registra isso em doc.contentWarnings com a sua página."
+    },
+    "fix": {
+      "en": "Set layout.openerFloats to 'avoid': the opener page takes no float, and one that would land there takes the first free slot after it. To move one float only, cite its resource, or fence its box, in text that falls after that page. Leave the rule on 'allow' when the design wants floats on its opener pages.",
+      "es": "Pon layout.openerFloats en 'avoid': la página de apertura no admite flotantes, y el que fuera a caer en ella ocupa el primer hueco libre después. Para mover solo un flotante, cita su recurso, o pon la valla de su recuadro, en un texto que caiga después de esa página. Deja la regla en 'allow' cuando el diseño quiera flotantes en las páginas de apertura.",
+      "ca": "Posa layout.openerFloats a 'avoid': la pàgina d'obertura no admet flotants, i el que hi hagués de caure ocupa el primer buit lliure després. Per moure només un flotant, cita'n el recurs, o posa la tanca del seu requadre, en un text que caigui després d'aquesta pàgina. Deixa la regla a 'allow' quan el disseny vulgui flotants a les pàgines d'obertura.",
+      "zh": "把layout.openerFloats设为'avoid'：章首页不排浮动体，本应落在这一页的浮动体改排到其后的第一个空位。只想移走某一个浮动体时，把引用该资源的地方（或该框的围栏）移到落在这一页之后的正文里。版式本来就要在章首页上排浮动体时，把规则留在'allow'。",
+      "ar": "اجعل layout.openerFloats على 'avoid': لا تقبل صفحة الافتتاح عناصر عائمة، والعنصر الذي كان سيقع فيها يأخذ أول موضع شاغر بعدها. ولنقل عنصر عائم واحد فقط، أحِل إلى مورده، أو ضع سور إطاره، في نص يقع بعد تلك الصفحة. وأبقِ القاعدة على 'allow' حين يريد التصميم عناصر عائمة في صفحات الافتتاح.",
+      "ja": "layout.openerFloatsを'avoid'にします。開始ページにはフロートが置かれず、そこに入るはずのフロートはそのページより後の最初の空き位置に入ります。フロートを1つだけ動かすには、そのリソースの参照、または囲みのフェンスを、そのページより後に来る本文に置きます。開始ページにフロートを置くデザインなら、規則は'allow'のままにします。",
+      "pt": "Ponha layout.openerFloats em 'avoid': a página de abertura não recebe flutuantes, e o que cairia nela ocupa o primeiro espaço livre depois dela. Para mover só um flutuante, cite o recurso dele, ou coloque o delimitador do boxe dele, num texto que caia depois dessa página. Deixe a regra em 'allow' quando o projeto quiser flutuantes nas páginas de abertura."
+    },
+    "docs": {
+      "slug": "configuration-page-layout",
+      "heading": {
+        "en": "Layout",
+        "es": "Disposición",
+        "ca": "Disposició",
+        "zh": "版式",
+        "ar": "التخطيط",
+        "ja": "レイアウト",
+        "pt": "Diagramação"
       }
     }
   }
