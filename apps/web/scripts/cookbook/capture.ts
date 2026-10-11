@@ -17,7 +17,8 @@
  * diagnostics, alt text, spreads) always comes from the new run,
  * and capture.json alone is rewritten when only that changed. --check
  * verifies and writes nothing. --sandbox-only writes the `.postext` files
- * alone, with the engine each capture.json records (runSandboxOnly).
+ * alone, with the engine each capture.json records (runSandboxOnly). A
+ * bundle is read back against the pen's documents before it is kept (C33).
  *
  * Run by Node's type stripping: erasable TypeScript, relative `.ts` imports.
  */
@@ -35,9 +36,9 @@ import { listRecipeSlugs, readRecipeMeta, readRecipeSources } from "../../src/li
 import type { CaptureManifest, CaptureVariant, SampleLocale, RecipeMeta, Registry } from "../../src/lib/cookbook/types.ts";
 import { SAMPLE_LOCALES } from "../../src/lib/cookbook/types.ts";
 import { altText, sidesOf, spreadsOf } from "./cards.ts";
-import { detect, pdfPageCount, runChecks } from "./checks.ts";
+import { detect, pdfPageCount, readBackFindings, runChecks } from "./checks.ts";
 import type { Finding } from "./checks.ts";
-import type { HarnessBrowser, SandboxMeta, VariantRun } from "./harness.ts";
+import type { HarnessBrowser, SandboxBundle, SandboxMeta, VariantRun } from "./harness.ts";
 import { launchBrowser, runVariant } from "./harness.ts";
 import { writeSheet } from "./sheet.ts";
 import type { SheetEntry } from "./sheet.ts";
@@ -192,11 +193,36 @@ function sandboxMeta(slug: string, variant: SampleLocale, meta: RecipeMeta): San
     ...(folio ? { folio } : {}),
   };
 }
-/** capture.json's `sandbox` entry: the bundle, and the folio it carries. */
-function sandboxEntry(slug: string, bytes: number, meta: RecipeMeta) {
+/** capture.json's `sandbox` entry: the bundle, the folio it carries, and,
+ *  when it holds only some of the published builds, which one the recipe
+ *  kept (`capture.sandbox`) and how many pages it lays out to. */
+function sandboxEntry(slug: string, bundle: SandboxBundle & { bytes: Buffer }, meta: RecipeMeta) {
   const folio = folioHash(meta.folio);
-  return { file: sandboxFile(slug), bytes, ...(folio ? { folio } : {}) };
+  const keep = meta.capture.sandbox;
+  return {
+    file: sandboxFile(slug), bytes: bundle.bytes.length, ...(folio ? { folio } : {}),
+    ...(keep !== undefined ? { keep } : {}),
+    ...(bundle.pages && bundle.pages !== bundle.allPages ? { pages: bundle.pages } : {}),
+  };
 }
+
+/** What a bundle's run reports: C33 and a missing bundle as failures, the
+ *  builds left out unasked as a warning, what it cannot carry as notes. */
+function sandboxFindings(sandbox: SandboxBundle | null | undefined): Finding[] {
+  if (!sandbox) return [];
+  const say = (severity: Finding["severity"]) => (detail: string): Finding => ({ check: "sandbox", severity, detail });
+  return [
+    ...(sandbox.error || !sandbox.bytes ? [say("fail")(`no .postext bundle: ${sandbox.error ?? "not written"}`)] : []),
+    ...readBackFindings(sandbox.readBack),
+    ...sandbox.warns.map(say("warn")),
+    ...[...sandbox.notes, ...sandbox.warnings].map(say("info")),
+  ];
+}
+
+/** The findings that are not failures, as capture.json keeps them. */
+const kept = (findings: Finding[]) => findings
+  .filter((f): f is Finding & { severity: "warn" | "info" } => f.severity !== "fail")
+  .map(({ check, severity, detail }) => ({ check, severity, detail }));
 const sha1 = (text: string) => crypto.createHash("sha1").update(text).digest("hex");
 
 /** Turns a run into its checks and, when it passed, its outputs. */
@@ -276,11 +302,10 @@ function evaluate(
     vdtHash,
     sourceHash: task.sourceHash,
   });
-  const fails = findings.filter((f) => f.severity === "fail").map(({ check, detail }) => ({ check, detail }));
-  if (run.sandbox?.error) fails.push({ check: "sandbox", detail: `no .postext bundle: ${run.sandbox.error}` });
-  const warns = findings
-    .filter((f): f is Finding & { severity: "warn" | "info" } => f.severity !== "fail")
-    .map(({ check, severity, detail }) => ({ check, severity, detail }));
+  // The bundle: read back against the pen (C33), and what it leaves out.
+  const bundled = sandboxFindings(run.sandbox);
+  const fails = [...findings, ...bundled].filter((f) => f.severity === "fail").map(({ check, detail }) => ({ check, detail }));
+  const warns = kept(findings);
   const selected = facts && facts.selected >= 0 ? facts.builds[facts.selected] : null;
   const result: CaptureResult = {
     slug,
@@ -340,7 +365,7 @@ function evaluate(
     card: { file: "card.webp", file480: "card.480.webp", w: 960, h: 720, mode: meta.capture.card },
     og: { file: "og.jpg", w: 580, h: 622 },
     ...(pdfBytes ? { pdf: { file: `${slug}.pdf`, bytes: pdfBytes.length, pages: pdfPages ?? 0 } } : {}),
-    ...(bundle ? { sandbox: sandboxEntry(slug, bundle.length, meta) } : {}),
+    ...(bundle ? { sandbox: sandboxEntry(slug, { ...run.sandbox!, bytes: bundle }, meta) } : {}),
     detected: {
       apis: detected.apis,
       configKeys: detected.configKeys,
@@ -374,10 +399,8 @@ function evaluate(
       findings: warns,
     },
   };
-  // What the bundle cannot carry: reported, not kept in capture.json.
-  for (const detail of [...(run.sandbox?.notes ?? []), ...(run.sandbox?.warnings ?? [])]) {
-    result.warns.push({ check: "sandbox", severity: "info", detail });
-  }
+  // What the bundle leaves out or cannot carry, after the checks' findings.
+  result.warns.push(...kept(bundled));
   return { result, output: { variant: capture, files, previews, sheet } };
 }
 
@@ -627,8 +650,9 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
 /**
  * Writes the Sandbox bundles of recipes already captured, without touching
  * their pictures: each edition runs again on the engine its capture.json
- * records, and only `<variant>/<slug>.postext` and the edition's `sandbox`
- * entry in capture.json are written (capturedAt stays). A capture whose
+ * records, and only `<variant>/<slug>.postext`, the edition's `sandbox`
+ * entry in capture.json and the bundle's own findings there (`sandbox`,
+ * C33) are written (capturedAt stays). A capture whose
  * sources changed since is refused: capture it again instead. The run's
  * VDT hash is compared with the recorded one, so a bundle of another
  * layout than the published pages shows up as a warning.
@@ -675,6 +699,8 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
       process.stderr.write(dim(`  bundling ${task.slug} ${variant} · postext ${task.manifest.engine.postext}
 `));
       let bytes: Buffer | null = null;
+      let sandbox: SandboxBundle | null = null;
+      let findings: CaptureVariant["diagnostics"]["findings"] = [];
       try {
         const run = await runVariant({
           hb, slug: task.slug, variant, meta: task.meta, engine, refreshNet: opts.refreshNet, sandboxOnly: true,
@@ -684,21 +710,22 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         if (run.done !== "ok") result.fails.push({ check: "run", detail: run.done === "error" ? `the pen failed: ${run.err ?? ""}` : "the pen timed out" });
         if (run.pageErrors.length) result.fails.push({ check: "run", detail: `page errors: ${run.pageErrors.slice(0, 3).join(" · ")}` });
         if (!run.facts || run.facts.selected < 0) result.fails.push({ check: "run", detail: "no build recorded" });
-        if (run.sandbox?.error || !run.sandbox?.bytes) result.fails.push({ check: "sandbox", detail: `no .postext bundle: ${run.sandbox?.error ?? "not written"}` });
         const vdtHash = run.facts?.vdt ? sha1(run.facts.vdt) : "";
         if (vdtHash && vdtHash !== old.vdtHash) {
           result.warns.push({ check: "vdt", severity: "warn", detail: "the layout differs from the published pages (fonts or network?)" });
         }
-        for (const detail of [...(run.sandbox?.notes ?? []), ...(run.sandbox?.warnings ?? [])]) {
-          result.warns.push({ check: "sandbox", severity: "info", detail });
-        }
+        const bundled = sandboxFindings(run.sandbox ?? { bytes: null, error: "not written", warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null });
+        result.fails.push(...bundled.filter((f) => f.severity === "fail").map(({ check, detail }) => ({ check, detail })));
+        findings = kept(bundled);
+        result.warns.push(...findings);
+        sandbox = run.sandbox;
         bytes = run.sandbox?.bytes ?? null;
         result.bytes = bytes?.length;
       } catch (error) {
         result.fails.push({ check: "harness", detail: String((error as Error).stack ?? error).split("\n").slice(0, 3).join(" ⏎ ") });
       }
       result.ok = result.fails.length === 0;
-      return { task, variant, result, bytes };
+      return { task, variant, result, bytes, sandbox, findings };
     }));
     const done = await pool(jobs, opts.concurrency ?? 3);
 
@@ -713,14 +740,20 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         for (const d of mine) d.result.note = "check only";
         continue;
       }
-      // Re-read capture.json: only the `sandbox` entries change.
+      // Re-read capture.json: only the `sandbox` entries and the bundle's
+      // own findings change.
       const manifest = readManifest(task.slug)!;
       for (const d of mine) {
         const file = sandboxFile(task.slug);
         d.result.written = writeIfChanged(path.join(captureDir(task.slug), d.variant, file), d.bytes!);
-        // Where a fresh capture puts it: after the PDF, before `detected`.
+        // Where a fresh capture puts them: the entry after the PDF, before
+        // `detected`; the findings after the checks' own.
         const { detected, diagnostics, ...head } = manifest.variants[d.variant]!;
-        manifest.variants[d.variant] = { ...head, sandbox: sandboxEntry(task.slug, d.bytes!.length, task.meta), detected, diagnostics };
+        const others = diagnostics.findings.filter((f) => f.check !== "sandbox" && f.check !== "C33");
+        manifest.variants[d.variant] = {
+          ...head, sandbox: sandboxEntry(task.slug, { ...d.sandbox!, bytes: d.bytes! }, task.meta), detected,
+          diagnostics: { ...diagnostics, findings: [...others, ...d.findings] },
+        };
         if (!d.result.written) d.result.note = "unchanged";
       }
       const target = path.join(captureDir(task.slug), "capture.json");

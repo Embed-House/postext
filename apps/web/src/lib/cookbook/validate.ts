@@ -303,6 +303,7 @@ export const RECIPE_SCHEMA: JsonSchema = {
             },
           ],
         },
+        sandbox: { anyOf: [{ enum: ["last", "first"] }, { type: "integer", minimum: 0 }] },
         selector: { type: "string", minLength: 1 },
         viewport: {
           type: "object",
@@ -795,6 +796,15 @@ export function validateRecipeMeta(
   if (Array.isArray(capture.pages)) {
     for (const n of heroPages) {
       if (!capture.pages.includes(n)) errors.push(`capture.pages: must include the hero page ${n}`);
+    }
+  }
+  // `capture.sandbox` picks one of the builds a `capture.doc` list publishes.
+  if (capture.sandbox !== undefined) {
+    const builds = Array.isArray(capture.doc) ? capture.doc.length : 0;
+    if (builds < 2) {
+      errors.push(`capture.sandbox: chooses among the builds of a capture.doc list; capture.doc ${builds ? "lists one build" : "names one build"}`);
+    } else if (typeof capture.sandbox === "number" && capture.sandbox >= builds) {
+      errors.push(`capture.sandbox: no build ${capture.sandbox} in capture.doc, which lists ${builds} (0–${builds - 1})`);
     }
   }
   if (Array.isArray(expect.pages) && typeof expect.pages[0] === "number" && typeof expect.pages[1] === "number") {

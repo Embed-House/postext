@@ -974,7 +974,7 @@ function legibility(page, doc, blocks, resolved) {
 
 /** The text the VDT hash covers: pages → blocks → lines (text + bbox
  *  rounded to 0.5 px), plus the design slots' text. OS-independent. */
-function vdtText(docs) {
+function vdtText(docs, { own = false } = {}) {
   const r = (v) => round(Number(v) || 0, 0.5);
   const box = (b) => (b ? `${r(b.x)},${r(b.y)},${r(b.width)},${r(b.height)}` : '-');
   const out = [];
@@ -986,7 +986,8 @@ function vdtText(docs) {
   };
   for (const doc of docs) {
     for (const page of doc.pages) {
-      out.push(`P${(doc.pageIndexOffset ?? 0) + page.index}|${r(page.width)}x${r(page.height)}|${page.pageLabel}|${page.role ?? ''}`);
+      // `own`: pages counted from the document's first, wherever the book puts it.
+      out.push(`P${(own ? 0 : doc.pageIndexOffset ?? 0) + page.index}|${r(page.width)}x${r(page.height)}|${page.pageLabel}|${page.role ?? ''}`);
       for (const block of pageBlocks(page)) {
         out.push(`B${block.type}|${box(block.bbox)}${block.hidden ? '|h' : ''}`);
         lines(block.lines);
@@ -1392,45 +1393,282 @@ function headingTitle(markdown) {
   return '';
 }
 
+/** JSON with its keys sorted: two configurations written in another order
+ *  are the same one. */
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(',')}}`;
+  }
+  return JSON.stringify(value) ?? 'null';
+}
+
 /**
- * Builds chained into one publication (#540): `capture.doc` lists several
- * document builds and every one after the first continues the one before
- * it (`content.continuation`), as a pen that sets articles with numbering
- * of their own and renders one PDF from all of them. The bundle then holds
- * a book with one chapter per build — its markdown, titled after its first
- * heading — every build's resources (the first of an id wins) and files;
- * the configuration is the first build's (a build whose own differs is
- * reported in `notes`, as is what a later continuation sets: the Sandbox
- * chains the chapters itself). Null when the builds do not chain.
+ * A configuration as a bundle carries it, for telling two builds apart
+ * (#690): plain JSON (functions dropped), without the values that restate a
+ * default (the engine's own `stripConfigDefaults`, which `createBundle`
+ * applies), keys sorted. Two builds with the same key lay out under one
+ * bundle configuration.
+ * @param {unknown} config
+ * @param {{ stripConfigDefaults?: (config: any) => any } | null} [engine]
  */
-export function chainedBundleParts(picked, name = '') {
-  if (!Array.isArray(picked) || picked.length < 2) return null;
-  if (picked.some((b) => b?.kind !== 'document' && b?.kind !== 'worker')) return null;
-  if (!picked.slice(1).every((b) => b.content?.continuation && typeof b.content.continuation === 'object')) return null;
+export function configKeyOf(config, engine = null) {
+  let own = plain(config ?? {}) ?? {};
+  if (typeof engine?.stripConfigDefaults === 'function') {
+    try {
+      own = plain(engine.stripConfigDefaults(own)) ?? own;
+    } catch { /* compared as written */ }
+  }
+  return stableJson(own);
+}
+
+/** `capture.sandbox` ('first', 'last' or an index into the `capture.doc`
+ *  list) as a position in `picked`; 0 when unset, -1 when it names none. */
+function keptPosition(select, keep, picked) {
+  if (keep === null || keep === undefined) return 0;
+  if (!Array.isArray(select)) return -1;
+  const at = keep === 'first' ? 0 : keep === 'last' ? select.length - 1 : keep;
+  if (!Number.isInteger(at) || at < 0 || at >= select.length) return -1;
+  return picked.indexOf(pickOne(record().builds, select[at]));
+}
+
+/**
+ * What of several builds a bundle holds. `capture.doc` lists several
+ * document builds; a bundle has one configuration, so it holds the builds
+ * that share the kept one's (#690). `keep` is the position in `picked` of
+ * the build `capture.sandbox` names (the first when the recipe names none,
+ * `explicit` false).
+ *
+ * Builds chained into one publication (#540: every one after the first
+ * continues the one before it, `content.continuation`, as a pen that sets
+ * articles with numbering of their own and renders one PDF from all of
+ * them) make a book with one chapter per build of the kept configuration
+ * (`chain`: its markdown, titled after its first heading, with those
+ * builds' resources, the first of an id winning, and files). What a later
+ * continuation sets is reported in `notes`: the Sandbox chains the
+ * chapters itself. Builds that do not chain (two editions) leave the kept
+ * one alone in the bundle.
+ *
+ * `builds` are the positions in `picked` the bundle holds, `left` the ones
+ * it does not. Builds of another configuration are named in `warns` when
+ * the recipe did not choose (it gets the first build's), in `notes` when it
+ * did. Null for fewer than two builds or a position out of range.
+ */
+export function bundleGroup(picked, name = '', { keep = 0, explicit = false, keyOf = (b) => configKeyOf(b?.config) } = {}) {
+  if (!Array.isArray(picked) || picked.length < 2 || !picked[keep]) return null;
+  const all = picked.map((_, i) => i);
+  const sourced = (b) => b?.kind === 'document' || b?.kind === 'worker';
+  const titleOf = (i) => headingTitle(String(picked[i].content?.markdown ?? ''));
+  const named = (i) => `build ${i + 1}${titleOf(i) ? ` (${titleOf(i)})` : ''}`;
+  const list = (items) => (items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}` : items[0]);
+  const alone = () => ({
+    builds: [keep], left: all.filter((i) => i !== keep), chain: null, warns: [],
+    notes: explicit ? [`capture.sandbox keeps build ${keep + 1} of ${picked.length}: the bundle is that document alone`] : [],
+  });
+  const chained = picked.every(sourced)
+    && picked.slice(1).every((b) => b.content?.continuation && typeof b.content.continuation === 'object');
+  if (!chained) return alone();
+
+  const keys = picked.map((b) => keyOf(b));
+  const builds = all.filter((i) => keys[i] === keys[keep]);
+  const left = all.filter((i) => keys[i] !== keys[keep]);
   const notes = [];
+  const warns = [];
+  if (left.length) {
+    const holds = `${builds.length > 1 ? 'builds' : 'build'} ${list(builds.map((i) => String(i + 1)))}`;
+    if (explicit) {
+      notes.push(`capture.sandbox keeps ${holds} of ${picked.length}; ${list(left.map(named))} left out (another configuration)`);
+    } else {
+      warns.push(`${list(left.map(named))} left out of the bundle: ${left.length > 1 ? 'their configurations differ' : 'its configuration differs'} `
+        + `from the first build's, and a bundle carries one. It holds ${holds}; name the build to keep in capture.sandbox`);
+    }
+  }
+  if (builds.length < 2) return { builds, left, chain: null, notes, warns };
   const chapters = [];
   const resources = [];
   const seen = new Set();
   const files = [];
-  const firstConfig = JSON.stringify(plain(picked[0].config ?? {}) ?? {});
-  picked.forEach((b, i) => {
+  builds.forEach((i, n) => {
+    const b = picked[i];
     const markdown = String(b.content?.markdown ?? '');
-    chapters.push({ title: headingTitle(markdown) || `${name || 'Chapter'} ${i + 1}`, markdown });
+    chapters.push({ title: headingTitle(markdown) || `${name || 'Chapter'} ${n + 1}`, markdown });
     for (const r of b.content?.resources ?? []) {
       if (!r || seen.has(r.id)) continue;
       seen.add(r.id);
       resources.push(r);
     }
     if (b.content?.files instanceof Map) files.push(b.content.files);
-    if (i === 0) return;
-    if (JSON.stringify(plain(b.config ?? {}) ?? {}) !== firstConfig) {
-      notes.push(`build ${i + 1}: its configuration differs from the first's, which the book keeps`);
-    }
+    if (n === 0) return;
     for (const key of Object.keys(b.content.continuation)) {
       if (key !== 'pageIndexOffset') notes.push(`build ${i + 1}: continuation.${key} not carried (the Sandbox chains the chapters itself)`);
     }
   });
-  return { chapters, resources, files, notes };
+  return { builds, left, chain: { chapters, resources, files }, notes, warns };
+}
+
+// ─── The bundle, read back (C33) ────────────────────────────────────────────
+
+/** A short hash of a layout text (two rounds of FNV-1a), for the report. */
+function shortHash(text) {
+  let a = 0x811c9dc5;
+  let b = 0x01000193;
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    a = Math.imul(a ^ c, 0x01000193);
+    b = Math.imul(b ^ c, 0x811c9dc5) + (b << 7);
+  }
+  return ((a >>> 0).toString(16).padStart(8, '0') + (b >>> 0).toString(16).padStart(8, '0'));
+}
+
+/** Where two layout texts part: the page and the two lines. */
+function firstDifference(pen, bundle) {
+  const a = pen.split('\n');
+  const b = bundle.split('\n');
+  let page = 0;
+  const cut = (line) => (line === undefined ? 'nothing' : line.length > 90 ? `${line.slice(0, 90)}…` : line);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    if (a[i]?.startsWith('P')) page = Number(a[i].slice(1, a[i].indexOf('|'))) + 1;
+    if (a[i] !== b[i]) return `page ${page || 1}: the pen sets ${cut(a[i])}, the bundle ${cut(b[i])}`;
+  }
+  return null;
+}
+
+/** What a warning of a document names, positions aside. */
+function warningsOf(doc) {
+  const said = (w) => (/^comic[A-Z]/.test(w.kind) ? comicDetail(w)
+    : layoutDetail(w) ?? [w.resourceId, w.target, w.term, w.text, w.reason, w.value]
+      .filter((x) => typeof x === 'string' || typeof x === 'number').join(' '));
+  return [
+    ...(doc.contentWarnings ?? []).map((w) => `${w.kind} ${said(w)}`.trim()),
+    ...(doc.warnings ?? []).map((w) => `${w.kind} (layout)`),
+    ...(doc.configWarnings ?? []).map((w) => `${w.kind} ${w.path}`.trim()),
+  ];
+}
+
+/** The warnings in `bundle` beyond those in `pen`, each as often as it is over. */
+export function extraWarnings(pen, bundle) {
+  const left = new Map();
+  for (const w of pen) left.set(w, (left.get(w) ?? 0) + 1);
+  const out = [];
+  for (const w of bundle) {
+    const n = left.get(w) ?? 0;
+    if (n > 0) left.set(w, n - 1);
+    else out.push(w);
+  }
+  return out;
+}
+
+/**
+ * Why a chapter of the bundle is not the pen's document, found by laying
+ * the chapter out again with what the bundle did not take from the pen's
+ * build: `{ continuation: [keys] }` when the build's own continuation
+ * (a page offset, heading counters) gives the pen's pages back, since a
+ * bundle carries none; `{ configuration: [keys] }` when the configuration
+ * as the pen wrote it does, with the top-level keys that each do so alone
+ * or, when none does, the fewest that do so `together`: a key of the pen's
+ * that the bundle stores otherwise (a value `stripConfigDefaults` drops and
+ * that is not a default there), or one the pen leaves out and the bundle
+ * sets (`resourceTypes` in the bundle's language). Null when neither
+ * explains it, or for a build with no source.
+ */
+function causeOf(engine, opened, index, held, penText) {
+  const same = (doc) => !!doc && vdtText([doc], { own: true }) === penText;
+  // The bundle's configuration with some keys as the pen has them.
+  const keysThat = (own, lays) => {
+    const keys = [...new Set([...Object.keys(own), ...Object.keys(opened.config)])];
+    const withPen = (set) => {
+      const config = { ...opened.config };
+      for (const key of set) {
+        if (key in own) config[key] = own[key];
+        else delete config[key];
+      }
+      return config;
+    };
+    const alone = keys.filter((key) => lays(withPen([key])));
+    return alone.length ? { configuration: alone } : { configuration: needed(keys, (set) => lays(withPen(set))), together: true };
+  };
+  // Of `keys`, the ones the pen's pages do not come back without: each key
+  // they still come back without is dropped in turn.
+  const needed = (keys, lays) => {
+    let set = keys;
+    for (const key of keys) {
+      const rest = set.filter((k) => k !== key);
+      if (lays(rest)) set = rest;
+    }
+    return set;
+  };
+  try {
+    if (held.length === 1 && held[0]?.kind === 'bundle') {
+      const own = held[0].config;
+      const book = (config) => same(engine.buildBundle(opened, { config })[index]);
+      return own && book(own) ? keysThat(own, book) : null;
+    }
+    const build = held[index];
+    if ((build?.kind !== 'document' && build?.kind !== 'worker') || typeof engine.buildDocument !== 'function') return null;
+    const continuation = build.content?.continuation && typeof build.content.continuation === 'object' ? build.content.continuation : null;
+    const chapter = (config, cont) => same(engine.buildDocument(
+      { markdown: opened.chapters[index].markdown, resources: opened.resources, ...(cont ? { continuation: cont } : {}) }, config,
+    ));
+    // The keys of the continuation the pages need (its page numbering is in
+    // the bundle's configuration already).
+    const carried = (config) => needed(Object.keys(continuation), (set) => chapter(config, Object.fromEntries(set.map((key) => [key, continuation[key]]))));
+    if (continuation && chapter(opened.config, continuation)) return { continuation: carried(opened.config) };
+    const own = build.config;
+    if (!own || !chapter(own, continuation)) return null;
+    return {
+      ...keysThat(own, (config) => chapter(config, continuation)),
+      ...(continuation && !chapter(own, null) ? { continuation: carried(own).filter((key) => key !== 'pageNumbering') } : {}),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The bundle just written, opened again by the pen's engine (`openBundle`)
+ * and laid out as the Sandbox lays a book out (`buildBundle`: the bundle's
+ * own configuration, each chapter continuing the one before it), against
+ * the documents the pen built from the same source (#690, check 1 of
+ * #660). One entry per chapter: its pages and layout hash on both sides
+ * (a document's pages counted from its own first, so a chapter that opens
+ * elsewhere in the book compares by what its pages hold), where the two
+ * part and why ({@link causeOf}; `held` are the builds the bundle holds);
+ * plus the warnings the bundle raises and the pen's builds did not. The
+ * faces are the ones the pen loaded. `skipped` when the engine cannot read
+ * a bundle back, `error` when the bundle does not open or lay out.
+ */
+export async function readBundleBack(engine, bytes, penDocs, held = []) {
+  if (typeof engine?.openBundle !== 'function' || typeof engine?.buildBundle !== 'function') {
+    return { skipped: 'the engine has no openBundle / buildBundle', chapters: [], extraWarnings: [] };
+  }
+  let opened;
+  let docs;
+  try {
+    opened = await engine.openBundle(bytes);
+    docs = await engine.buildBundle(opened);
+  } catch (error) {
+    return { error: `${error?.message ?? error}`, chapters: [], extraWarnings: [] };
+  }
+  const chapters = [];
+  const extra = [];
+  for (let i = 0; i < Math.max(docs.length, penDocs.length); i++) {
+    const side = (doc) => {
+      if (!doc) return null;
+      const text = vdtText([doc], { own: true });
+      return { pages: doc.pages?.length ?? 0, hash: shortHash(text), text };
+    };
+    const pen = side(penDocs[i]);
+    const bundle = side(docs[i]);
+    const strip = (s) => (s ? { pages: s.pages, hash: s.hash } : null);
+    const differs = !!pen && !!bundle && pen.text !== bundle.text;
+    chapters.push({
+      chapter: i + 1, pen: strip(pen), bundle: strip(bundle),
+      difference: differs ? firstDifference(pen.text, bundle.text) : null,
+      cause: differs ? causeOf(engine, opened, i, held, pen.text) : null,
+    });
+    if (penDocs[i] && docs[i]) extra.push(...extraWarnings(warningsOf(penDocs[i]), warningsOf(docs[i])));
+  }
+  return { chapters, extraWarnings: extra };
 }
 
 /**
@@ -1439,15 +1677,30 @@ export function chainedBundleParts(picked, name = '') {
  * chapters, for a buildBundle book), its configuration as JSON, its
  * resources and every file they name, plus `thumbnail` (base64 WebP, the
  * card). A continuation cannot travel in a bundle: its page numbering goes
- * into `page.pageNumbering`, the rest is reported in `notes`. Several
- * builds chained with `continuation` make a book, a chapter each (see
- * {@link chainedBundleParts}). Returns the
- * bundle as base64, or `error` when a resource's file cannot be found.
+ * into `page.pageNumbering`, the rest is reported in `notes`. Of several
+ * builds the bundle holds the ones that share the configuration of the
+ * build `keep` names (`capture.sandbox`; the first by default), a chapter
+ * each when they are chained with `continuation` (see {@link bundleGroup});
+ * the builds left out are named in `warns` when the recipe did not choose.
+ * Returns the bundle as base64 with `readBack`, the same bytes opened and
+ * laid out again against the pen's documents ({@link readBundleBack}), or
+ * `error` when a resource's file cannot be found.
  */
-export async function sandboxBundle({ select = 'last', id, name, description, locale, thumbnail = null, folio = null } = {}) {
+export async function sandboxBundle({ select = 'last', keep = null, id, name, description, locale, thumbnail = null, folio = null } = {}) {
   const cb = record();
-  const build = pick(select);
-  if (!build) return { error: 'no recorded build' };
+  const whole = pick(select);
+  if (!whole) return { error: 'no recorded build' };
+  // Several builds: the ones of the kept configuration (#690).
+  let group = null;
+  if (whole.picked) {
+    const at = keptPosition(select, keep, whole.picked);
+    if (at < 0) return { error: `capture.sandbox ${JSON.stringify(keep)} names no build of capture.doc` };
+    group = bundleGroup(whole.picked, name, { keep: at, explicit: keep !== null && keep !== undefined, keyOf: (b) => configKeyOf(b?.config, engineOf(b)) });
+  } else if (keep !== null && keep !== undefined) {
+    return { error: 'capture.sandbox chooses among the builds of a capture.doc list, and capture.doc names one build' };
+  }
+  const held = group ? group.builds.map((i) => whole.picked[i]) : [whole.picked?.[0] ?? whole];
+  const build = held[0];
   const engine = engineOf(build);
   if (typeof engine?.createBundle !== 'function' || typeof engine?.zipBundle !== 'function') {
     return { error: 'the engine has no createBundle / zipBundle' };
@@ -1455,8 +1708,9 @@ export async function sandboxBundle({ select = 'last', id, name, description, lo
   const source = sourceOf(build);
   if (!source.known) return { error: `a ${build.kind} build records no source` };
   // Several builds chained with `continuation`: a book, one chapter each.
-  const chain = build.kind === 'bundle' ? null : chainedBundleParts(build.picked, name);
-  const notes = [...(chain?.notes ?? [])];
+  const chain = group?.chain ?? null;
+  const notes = [...(group?.notes ?? [])];
+  const warns = [...(group?.warns ?? [])];
   const content = build.content ?? {};
   const config = plain(source.config ?? {}) ?? {};
   // recipe.json `folio`: how the Sandbox's Folio view shows the publication.
@@ -1532,7 +1786,7 @@ export async function sandboxBundle({ select = 'last', id, name, description, lo
       else files.set(v.fileId, data);
     }
   }
-  if (missing.length) return { error: `no file for ${missing.join(', ')}`, notes };
+  if (missing.length) return { error: `no file for ${missing.join(', ')}`, notes, warns };
 
   const input = {
     id,
@@ -1571,8 +1825,17 @@ export async function sandboxBundle({ select = 'last', id, name, description, lo
     } finally {
       Date.now = now;
     }
-    return { base64: base64Of(bytes), warnings: created.warnings ?? [], notes, files: Object.keys(created.files).sort() };
+    // The documents the bundle stands for, one per chapter, and the pages
+    // of every build the capture publishes.
+    const penDocs = held.flatMap((b) => b.docs ?? []);
+    return {
+      base64: base64Of(bytes), warnings: created.warnings ?? [], notes, warns, files: Object.keys(created.files).sort(),
+      builds: group ? group.builds.map((i) => i + 1) : null,
+      pages: penDocs.reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
+      allPages: (whole.docs ?? []).reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
+      readBack: await readBundleBack(engine, bytes, penDocs, held),
+    };
   } catch (error) {
-    return { error: `createBundle: ${error?.message ?? error}`, notes };
+    return { error: `createBundle: ${error?.message ?? error}`, notes, warns };
   }
 }

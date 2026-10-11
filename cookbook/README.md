@@ -116,7 +116,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture <slug> --check` | Runs and verifies, writes nothing (a regression run). |
 | `pnpm cookbook capture <slug> --preview-dir <dir>` | Also writes PNG copies of every page, the card and the social image, and the PDF the pen builds, to `<dir>/<slug>/<lang>/`, with the `capture.json` entry the edition would get. |
 | `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships, whichever of the two wrote `dist`) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
-| `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext` and its `sandbox` entry in `capture.json`, running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe. |
+| `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
@@ -160,7 +160,7 @@ The TypeScript source of truth is `RecipeMeta` in `apps/web/src/lib/cookbook/typ
 | `engine` | `postext` minimum version (≤ the released one, or the next release in a preview draft, §3); `postextPdf` for PDF recipes; `math`, `worker` flags. |
 | `kit` | Blocks to inline: always `core`, `fonts`, `viewer`; plus `pdf`, `images`, `cjk`, `arabic`, `book` and `comics` when used (`book` or `cjk`, never both: each declares `showBook`). |
 | `sample.locales` | Languages with a `content.<lang>.md`; `[0]` is the fallback edition. Usually `en` and `es`; any site locale may have an edition of its own (a comic re-lettered per language writes all six), and a page shows its own edition, else the Spanish one for Catalan, else `[0]`. A value that changes with the edition is written `t({ en: 'en', ja: 'ja', … })`; the lint reads `config.locale` written so for each edition. |
-| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect`, and `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks, the detected features and the Sandbox bundle read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
+| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect`, `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079), and `sandbox`, which of the builds of such a list the Sandbox bundle is made from: `first` (the default), `last` or an index from 0 into the list (§11; the lint fails an index the list does not have, and the field without a list). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks and the detected features read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
 | `downloads.pdf` | Keep and serve the PDF the pen builds. |
 | `folio` | How the Sandbox's Folio view shows the publication in 3D: `paper` (stock `type`, `grammage`, `texture`, `shade`, `showThrough`…), `binding` (`type`, `cover`, `coverMaterial`, `coverColor`), `surface` and `lighting`, as `PostextConfig.folio` with colours written `#rrggbb`. Only the `.postext` bundle carries it (over the pen's own `config.folio`); it never changes the pages, so editing it needs `pnpm cookbook capture <slug> --sandbox-only`, not a recapture. Pick the object the recipe sets: a novel on book wove in a cloth case, a magazine saddle-stitched on gloss, a menu on card. Use `cover: "pages"` only when the document has an even page count, so the last page closes the book as its back; otherwise a `case` in a palette colour. When the page paints its own paper colour, give a light `shade` (about the page colour 60 % of the way to white) so the stock does not tint it twice. |
 | `credits` | Authors; text, image and font credits (§8). |
@@ -809,6 +809,36 @@ document without its controls. The run lists each of these as a `sandbox` note. 
 bundle carry a fixed date, so the same input always gives the same bytes. A bundle that
 cannot be written (a resource whose file the pen never registered) fails the edition.
 
+**A bundle carries one configuration.** A capture whose `capture.doc` lists several builds
+chained with `continuation` (the articles of one publication) makes a book of them, a chapter
+per build, and the Sandbox lays every chapter out with the book's configuration. Builds set
+with different configurations (the Japanese original of a manga beside this edition's
+lettering, one text in four citation styles) therefore do not share a bundle: it holds the
+builds whose configuration equals the kept build's, compared as a bundle stores it (the
+engine's `stripConfigDefaults`, keys in any order, functions aside). `capture.sandbox` names
+the kept build: `first`, `last` or an index from 0 into the `capture.doc` list. Left unset it
+is the first, and the run warns of every build it left out; set, the run only notes them.
+Pick the build the recipe is about (a re-lettered comic keeps its lettering, `"last"`), and
+set it too when the first is the right one, so the warning does not stay. The pages, the card
+and the PDF still show every build. The `sandbox` entry of `capture.json` records the choice
+(`keep`) and, when the bundle holds fewer pages than the capture counts, how many (`pages`);
+the field is not part of the source hash, so changing it takes `--sandbox-only`.
+
+**The bundle is read back (C33).** Once written, the same bytes are opened by the pen's
+engine (`openBundle`) and laid out as the Sandbox lays a book out (`buildBundle`: the
+bundle's own configuration, each chapter after the one before it, the faces the pen loaded).
+Each chapter is compared with the document the pen built from the same source: its page
+count, its layout (every block, line and running head with its place on the page, pages
+counted from the document's first) and its warnings. Any difference fails the edition and
+names the first line that differs, so what Open in Sandbox shows is what the recipe page
+shows. The failure also names its cause when laying the chapter out once more finds it:
+with the build's own `continuation`, which a bundle does not carry (a chapter number that
+restarts, a first page that changes side under mirrored margins, a blank page added before
+a spread), or with the configuration as the pen wrote it, and then the top-level keys the
+bundle stores otherwise (a value `stripConfigDefaults` drops where it is not a default, or
+`resourceTypes` in the bundle's language instead of the document's). Neither comes from the
+pen's own code: report the failure, and never edit a bundle by hand.
+
 After a tooling change, `--sandbox-only` rewrites the bundles without recapturing the pages:
 it runs each pen on the engine its `capture.json` records and warns when the layout no
 longer matches the published pages.
@@ -833,7 +863,9 @@ not know (`unknownNumberFormat`, `unknownNumerals`), a value outside a setting's
 Each sets a page other than the one the config claims; a recipe that shows one on purpose lists
 its kind in `expect.warnings`. A formula the maths engine could not set fails too (C32): it prints as
 a small red box and takes the room of one, so the pages after it are not the recipe's. The line
-names the formula, its page and MathJax's message, one line per message.
+names the formula, its page and MathJax's message, one line per message. A Sandbox bundle that
+does not lay out as the pen's documents fails as well (C33, above): another page count,
+another layout, or a warning the pen's builds did not raise.
 
 **Warnings** go into `capture.json` for the reviewer: blank-page cascades (C22), near-empty
 pages not listed in `expect.nearEmptyPages` (C23), loose lines over 2 % (C24; a Chinese,
@@ -844,8 +876,9 @@ Arabic face the `arabic` block completed, or the latin-ext or greek file the kit
 the face that sets them; or reported missing by postext-pdf), a hero with too little picture or display type (C26), a
 primary feature whose detect rule did not fire (C27), a level two steps from the suggested
 one (C28), a page count outside `expect.pages` (C29), a `fontFamily` written as a CSS font stack,
-which the engine sets in its first family (C31, `fontFamilyStack`), and a config warning of a
-kind the capture does not know yet (C31).
+which the engine sets in its first family (C31, `fontFamilyStack`), a config warning of a
+kind the capture does not know yet (C31), and builds of another configuration left out of the
+Sandbox bundle by a recipe that names none in `capture.sandbox` (`sandbox`).
 
 A right-bound book (`doc.binding: 'right'`: `page.binding: 'right'`, or a binding left to
 `'auto'` in a document whose text runs right to left or is vertical) records

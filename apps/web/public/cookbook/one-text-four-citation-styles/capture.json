@@ -109,8 +109,10 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 21300,
-        "folio": "973c2e27"
+        "bytes": 17076,
+        "folio": "973c2e27",
+        "keep": "first",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -258,17 +260,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "build 3: its configuration differs from the first's, which the book keeps"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "build 4: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 1 of 4; build 2 (The page that is not seen), build 3 (The page that is not seen) and build 4 (The page that is not seen) left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -378,8 +370,10 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 22430,
-        "folio": "973c2e27"
+        "bytes": 17880,
+        "folio": "973c2e27",
+        "keep": "first",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -527,17 +521,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "build 3: its configuration differs from the first's, which the book keeps"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "build 4: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 1 of 4; build 2 (La página que no se ve), build 3 (La página que no se ve) and build 4 (La página que no se ve) left out (another configuration)"
           },
           {
             "check": "sandbox",

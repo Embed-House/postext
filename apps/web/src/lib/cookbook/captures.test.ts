@@ -67,6 +67,17 @@ describe("captures (public/cookbook/<slug>/capture.json)", () => {
     expect(problems).toEqual([]);
   });
 
+  it("bundle the build capture.sandbox names", () => {
+    const problems = each(({ slug, meta }, out) => {
+      for (const [locale, variant] of Object.entries(getCapture(slug)!.variants)) {
+        if (variant?.sandbox && variant.sandbox.keep !== meta.capture.sandbox) {
+          out.push(`${slug} ${locale}: the bundle was made for capture.sandbox ${JSON.stringify(variant.sandbox.keep ?? "first")}: pnpm cookbook capture ${slug} --sandbox-only`);
+        }
+      }
+    });
+    expect(problems).toEqual([]);
+  });
+
   it("reference files that exist, within budget", () => {
     const problems = each(({ slug, meta }, out) => {
       const manifest = getCapture(slug)!;

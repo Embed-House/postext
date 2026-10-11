@@ -244,11 +244,20 @@ export interface RecipeMeta {
      *  publishes the pages of both. Their pages are numbered on from one
      *  build to the next (`hero`, `pages`, `focus` and `expect.pages` count
      *  them so), each build's first page opens a spread of its own, and the
-     *  checks, the detected features and the Sandbox bundle read the first
-     *  build's source. Builds chained with `continuation` (articles of one
-     *  publication) make one: the PDF may hold all their pages (C14), and
-     *  the Sandbox bundle is a book with a chapter per build (#540). */
+     *  checks and the detected features read the first build's source.
+     *  Builds chained with `continuation` (articles of one publication)
+     *  make one: the PDF may hold all their pages (C14), and the Sandbox
+     *  bundle is a book with a chapter per build (#540) of one
+     *  configuration (`sandbox`). */
     doc?: CaptureBuild | CaptureBuild[];
+    /** Of the builds a `doc` list publishes, the one the Sandbox bundle is
+     *  made from (#690): `first` (the default), `last`, or an index from 0
+     *  into that list. A bundle carries one configuration, so it holds that
+     *  build and the others of the list laid out with the same one; builds
+     *  that differ and that this field does not settle are a capture
+     *  warning. Not part of the source hash: changing it needs
+     *  `pnpm cookbook capture <slug> --sandbox-only`, not a recapture. */
+    sandbox?: CaptureBuild;
     /** "screenshot" mode: element to clip (default "#pages"). */
     selector?: string;
     /** "screenshot" mode viewport (default 1280×900 at DPR 2). */
@@ -524,7 +533,17 @@ export interface CaptureVariant {
   pdf?: { file: string; bytes: number; pages: number };
   /** The document as a `.postext` bundle, which the Sandbox opens
    *  (`/<locale>/sandbox#recipe=<slug>&lang=<variant>`). */
-  sandbox?: { file: string; bytes: number; /** folioHash of recipe.json `folio` the bundle carries. */ folio?: string };
+  sandbox?: {
+    file: string;
+    bytes: number;
+    /** folioHash of recipe.json `folio` the bundle carries. */
+    folio?: string;
+    /** recipe.json `capture.sandbox` the bundle was made with. */
+    keep?: CaptureBuild;
+    /** The pages the bundle lays out to, when it holds only some of the
+     *  builds whose pages the capture counts. */
+    pages?: number;
+  };
   detected: {
     apis: string[];
     configKeys: string[];
