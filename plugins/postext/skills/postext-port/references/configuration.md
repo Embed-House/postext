@@ -1443,6 +1443,7 @@ CJK keeps Knuth–Plass. The guide is docs/chinese-layout-en.mdx (postext.dev/en
 | `circledNumbers` | `'cjk'` | ≥ 1.25; ①–⑳, ⑴, ⒈, ⓐ, ❶, ➀ (U+2460–24FF, U+2776–2793) are CJK characters: one cell, no Han–Latin space, never at a line end (every level but `none` / `ja-loose`), so `**①**天也` needs no word joiner. `'western'` = pre-1.25 (Latin letters, ¼ em each side, may end a line). Vertical: upright either way |
 | `composeDesignText` | `true` | ≥ 1.25; design text (openers, heading designs, running heads, page designs, part pages) whose row has more CJK letters than word spaces takes the body's `lineBreak`, mark widths, `latinSpacing`, hanging and title rule (ragged; ruby/warichu/dots print plain). A note may be one sentence with `，；、`: no `\n` per clause to dodge full-width marks. `false` = pre-1.25 (wrapped at spaces, marks at the font's width) |
 | `latinSpacing` | `{0.25, em}` | Han ↔ Latin letter/digit; replaces a typed space; `0` off |
+| `latinSpacingEdge` | `'auto'` | ≥ 1.28; which side of a Western word takes `latinSpacing`. `'letters'` (Chinese regions): a side ending in a letter or a digit. `'western'` (Japan): any side of a word holding a letter or a digit, so `normalize()関数`, `(abc)関数`, `100%関数` get the quarter em with no typed space; solid after an opening bracket/prefix sign that ends the word and before a closing bracket/comma/stop/postfix sign that opens it; a lone `(` `!` `+` between kana takes none. Do not type spaces after inline code in Japanese text. A Japanese preset below configVersion 12 reads `'letters'` |
 | `uprightDigits` | `2` | vertical text: numbers of ≤ N digits in one upright cell (0, 2, 3, 4), but not inside a Latin sentence (a Latin word on both sides, past spaces, numbers and marks), where they run sideways with it; `:tcy[…]` / `:sideways[…]` by hand |
 | `grid` | off | `{enabled, charsPerLine, linesPerPage, show}`: rewrites margins so columns are whole ems and the type area whole lines; configured margins are minimums; warning `cjkGridClamped`. Column balancing is off on a grid unless `headings.balancing.enabled` (≥ 1.25, §5.2). On a grid `bodyText.avoidWidows` defaults to `false`, and `bodyText.avoidOrphans` too in the `japan` region (≥ 1.28, §4): a page holds every line its grid counts. A ragged paragraph on a grid keeps its full lines full under `avoidRunts` (≥ 1.28) |
 | `emphasis` | `'dots'` in a Chinese or Japanese document | what `*…*` does to CJK characters (`'italic'` fakes a slant) |
@@ -1494,6 +1495,7 @@ Guide: https://postext.dev/en/docs/japanese-layout. Everything below follows fro
 | `:book[…]` | `cjk.bookTitleMark`, `bookTitleBrackets` | 『』, a title inside one 「」 |
 | furigana | `cjk.ruby.overhang` / `align` / `smallKana` | `kana` (≤ 1 ruby character onto kana, never onto kanji) / `jis` (1:2:1) / `keep`; `{東京\|とう\|きょう}` is jukugo, `{東京\|とうきょう}` group |
 | warichu | `cjk.warichu.open/close` | （） |
+| Western words | `cjk.latinSpacingEdge` | `western` (≥ 1.28): the quarter em also next to a word's brackets and signs |
 | vertical text | `cjk.uprightDigits` | 2 digits and `!!` `!?` `?!` `??` upright in one cell; small kana, ー, 〝〟 (for “”), ：； take vertical forms |
 | headings | `headings.levels[].lineSpan` / `indent` / `jidori`, `headings.keepWithNextSpread` | not set: 3行取り = `lineSpan: 3`, 5字下げ = `indent: {value: 5, unit: 'em'}` (body ems), 序　章 = `jidori: 3` |
 | numbering | `第{1:一}章`, list `numberFormat` | 一 → japanese-informal (百一, 六千一); 壱 あ ア い イ tokens; `numberToWords` 二十一 / 第二十一 |
@@ -1720,7 +1722,8 @@ when a chapter embeds a resource, `layout.flowColumns: false` when a chapter ope
 `layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639); one stamped 11 (postext 1.25 to 1.27),
 those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
 too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
-`citations.notes: 'warichu'` (#720). The pins keep what those rules changed, not
+`citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
+kana or kanji (#721). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

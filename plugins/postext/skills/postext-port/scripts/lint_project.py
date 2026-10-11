@@ -2312,7 +2312,8 @@ def main() -> None:
                  "turned over instead of tightening its word spaces; below 11: a horizontal page on a character "
                  "grid balanced unless the config says otherwise; below 12: the widow rule on a character grid, and "
                  "the orphan rule too in the Japan region, on unless the config says otherwise, and a :warichu note "
-                 "broken where one of its characters is left alone on a line); "
+                 "broken where one of its characters is left alone on a line, and in Japanese text no quarter em next to "
+                 "the brackets and signs of a Western word); "
                  "set \"configVersion\": 12 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):

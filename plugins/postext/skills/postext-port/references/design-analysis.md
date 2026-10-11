@@ -67,7 +67,9 @@ lines per page, plus the line gap and, with two columns, the gutter in character
   half width with a straight right edge = Kaiming or `lineEndHalf`; two marks side by side taking two full
   cells = no compression. These set `cjk.region` / `punctuationWidth` / `compressAdjacent`.
 - **Space between Han and Latin**: a visible gap around Latin words and digits = `latinSpacing` (¼ em by
-  default); none = `0`.
+  default); none = `0`. In a Japanese book the gap also stands next to a Western word's brackets and signs
+  (`normalize() 関数`, `(abc) 関数`, `100% 増`): that is `latinSpacingEdge: 'western'`, Japan's default from 1.28.
+  A Chinese page with the gap next to letters and digits only is `'letters'`, its default.
 - Then set `cjk.grid: {enabled: true, charsPerLine, linesPerPage}` and give `page.margins` as minimums: the
   engine centres the type area in the room they leave.
 
