@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { resolveFootnotesConfig, DEFAULT_FOOTNOTES_CONFIG, dimensionsEqual } from 'postext';
+import { resolveFootnotesConfig, DEFAULT_CJK_CONFIG, DEFAULT_FOOTNOTES_CONFIG, dimensionsEqual, isCjkLanguage } from 'postext';
 import type { ColorValue, DimensionUnit, FootnotesConfig } from 'postext';
 import {
   CollapsibleSection,
@@ -16,6 +16,7 @@ import {
 } from '../../controls';
 import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat';
 import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
+import { defaultDocumentLocale } from '../../controls/hyphenation';
 
 const SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const MARKER_UNITS: DimensionUnit[] = ['em', 'pt'];
@@ -36,6 +37,11 @@ export const FootnotesSection = memo(function FootnotesSection() {
   const bodyAlign = useSandboxSelector((s) => s.config.bodyText?.textAlign);
   const locale = useSandboxSelector((s) => s.config.locale);
   const writingMode = useSandboxSelector((s) => s.config.layout?.writingMode);
+  // Line breaking between CJK characters in the notes (#705): shown in a
+  // Chinese, Japanese or Korean document, or when the notes set it, as for
+  // a paragraph style; unset, the notes follow the document's rule.
+  const cjkDocument = useSandboxSelector((s) => isCjkLanguage(s.config.locale ?? s.config.bodyText?.hyphenation?.locale ?? defaultDocumentLocale(s.locale)));
+  const documentWordBreak = useSandboxSelector((s) => s.config.cjk?.wordBreak ?? DEFAULT_CJK_CONFIG.wordBreak);
   const fn = resolveFootnotesConfig(raw, locale, writingMode);
   // What the unset fields come to in this document: a Japanese one sets its
   // notes after JLReq (endnotes with （1） markers in a vertical book), and
@@ -243,6 +249,20 @@ export const FootnotesSection = memo(function FootnotesSection() {
         isDefault={raw?.textAlign === undefined}
         onReset={() => resetField('textAlign')}
       />
+      {(cjkDocument || raw?.wordBreak !== undefined) && (
+        <SelectInput
+          label={labels.cjkWordBreak}
+          value={fn.wordBreak ?? documentWordBreak}
+          options={[
+            { value: 'normal', label: labels.cjkWordBreakNormal },
+            { value: 'keep-all', label: labels.cjkWordBreakKeepAll },
+          ]}
+          onChange={(v) => update({ wordBreak: v as FootnotesConfig['wordBreak'] })}
+          tooltip={labels.cjkWordBreakTooltip}
+          isDefault={raw?.wordBreak === undefined}
+          onReset={() => resetField('wordBreak')}
+        />
+      )}
       <DimensionInput
         label={labels.footnotesHangingIndent}
         value={fn.hangingIndent}
