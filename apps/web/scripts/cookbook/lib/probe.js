@@ -127,10 +127,47 @@ export async function settle(quietMs = 500, maxMs = 10000) {
   }
 }
 
-export function frames(count = 2) {
+/** `document.fonts.ready`, with a timer beside it (#743): a font request
+ *  that got no answer keeps the promise pending for ever. */
+export function fontsReady(maxMs = 10000) {
   return new Promise((resolve) => {
-    const step = (left) => (left ? requestAnimationFrame(() => step(left - 1)) : resolve(true));
-    step(count);
+    const timer = setTimeout(() => resolve({ timedOut: true }), maxMs);
+    document.fonts.ready.then(() => {
+      clearTimeout(timer);
+      resolve({});
+    });
+  });
+}
+
+/** Resolves after `count` animation frames, or `fallbackMs` after the last
+ *  one that came (#743): a page the browser is not presenting (a tab behind
+ *  the others of a browser that has just started) gets no frame at all, and
+ *  the capture waited out the protocol timeout on it. */
+export function frames(count = 2, fallbackMs = 500) {
+  return new Promise((resolve) => {
+    let got = 0;
+    let settled = false;
+    let timer;
+    const finish = (fellBack) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(fellBack ? { frames: got, fellBack: true } : { frames: got });
+    };
+    const arm = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => finish(true), fallbackMs);
+    };
+    const next = () => {
+      if (got >= count) return finish(false);
+      arm();
+      requestAnimationFrame(() => {
+        if (settled) return;
+        got++;
+        next();
+      });
+    };
+    next();
   });
 }
 

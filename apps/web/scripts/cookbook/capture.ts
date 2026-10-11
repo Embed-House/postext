@@ -44,6 +44,7 @@ import { writeSheet } from "./sheet.ts";
 import type { SheetEntry } from "./sheet.ts";
 import { resolveEngine } from "./shim.ts";
 import type { EngineSpec } from "./shim.ts";
+import { harnessDetail, protocolTimeoutFor } from "./steps.ts";
 
 export interface CaptureOptions {
   slugs: string[];
@@ -547,6 +548,12 @@ function writeRecipe(
   return { fresh, dropped, manifestOnly: false };
 }
 
+/** A wait of the harness that ended on its timer (#743), on stderr: the
+ *  capture goes on, and whoever reads the run sees which edition it was. */
+function sayFallbacks(run: VariantRun): void {
+  for (const what of run.fallbacks) process.stderr.write(dim(`  ${run.slug} ${run.variant}: ${what}\n`));
+}
+
 /** Runs `jobs` with at most `limit` in flight. */
 async function pool<T>(jobs: (() => Promise<T>)[], limit: number): Promise<T[]> {
   const results: T[] = new Array(jobs.length);
@@ -577,7 +584,7 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
     registry = null;   // C27 needs the feature registry; without it the check is skipped
   }
 
-  const hb = await launchBrowser({ headed: opts.headed });
+  const hb = await launchBrowser({ headed: opts.headed, protocolTimeout: protocolTimeoutFor(prepared.map((task) => task.meta.capture.timeoutMs)) });
   const sheetEntries: SheetEntry[] = [];
   try {
     const jobs = prepared.flatMap((task) =>
@@ -588,9 +595,10 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
             hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet, png: !!opts.previewDir,
             sandbox: sandboxMeta(task.slug, variant, task.meta),
           });
+          sayFallbacks(run);
           return { task, variant, ...evaluate(task, run, hb, engine, registry) };
         } catch (error) {
-          return { task, variant, result: failed(task.slug, variant, "harness", String((error as Error).stack ?? error).split("\n").slice(0, 3).join(" ⏎ ")), output: null };
+          return { task, variant, result: failed(task.slug, variant, "harness", harnessDetail(error)), output: null };
         }
       }),
     );
@@ -685,7 +693,7 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
   }
   if (!tasks.length) return results;
 
-  const hb = await launchBrowser({ headed: opts.headed });
+  const hb = await launchBrowser({ headed: opts.headed, protocolTimeout: protocolTimeoutFor(tasks.map((task) => task.meta.capture.timeoutMs)) });
   try {
     const jobs = tasks.flatMap((task) => task.variants.map((variant) => async () => {
       const old = task.manifest.variants[variant]!;
@@ -707,6 +715,7 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
           sandbox: { ...sandboxMeta(task.slug, variant, task.meta), thumbnail: fs.existsSync(card) ? fs.readFileSync(card) : null },
         });
         result.totalMs = run.timings.totalMs;
+        sayFallbacks(run);
         if (run.done !== "ok") result.fails.push({ check: "run", detail: run.done === "error" ? `the pen failed: ${run.err ?? ""}` : "the pen timed out" });
         if (run.pageErrors.length) result.fails.push({ check: "run", detail: `page errors: ${run.pageErrors.slice(0, 3).join(" · ")}` });
         if (!run.facts || run.facts.selected < 0) result.fails.push({ check: "run", detail: "no build recorded" });
@@ -722,7 +731,7 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         bytes = run.sandbox?.bytes ?? null;
         result.bytes = bytes?.length;
       } catch (error) {
-        result.fails.push({ check: "harness", detail: String((error as Error).stack ?? error).split("\n").slice(0, 3).join(" ⏎ ") });
+        result.fails.push({ check: "harness", detail: harnessDetail(error) });
       }
       result.ok = result.fails.length === 0;
       return { task, variant, result, bytes, sandbox, findings };
