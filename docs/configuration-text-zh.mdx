@@ -1172,7 +1172,7 @@ headings: {
       <td><code>trailingStep</code></td>
       <td><code>'lines' | 'grid'</code></td>
       <td><code>'lines'</code></td>
-      <td><code>trailing</code>截平收尾区段时所用的单位（<code>beforeSpan</code>在移到下一页的框后面截平时也用它）。<code>'lines'</code>：文字采用自身行距的区段（索引、参考文献表、小字号的容器）按该行距的整行截平和重试；这个行距取区段内多数行共有的行高，不计标题和框。这样各栏最多相差一行，与正文区段一样。正文区段，以及两种行距各占一半的区段，仍像以前一样截在基线网格上。<code>'grid'</code>：每次截平都是整数个基线网格行，与postext 1.27及之前相同；那时截在网格上会让不在网格上的区段某一栏多进一行，截平失败后下移的距离又超过该区段的一行（各栏最多相差三行）。其他取值都按<code>'lines'</code>处理。自postext 1.28起；此前保存的文档保持<code>'grid'</code>（<code>pinLegacyTrailingStep</code>）。</td>
+      <td><code>trailing</code>截平收尾区段时所用的单位（<code>beforeSpan</code>在移到下一页的框后面截平时也用它）。<code>'lines'</code>：文字采用自身行距的区段（索引、参考文献表、小字号的容器）按该行距的整行截平和重试；这个行距取区段内多数行共有的行高，不计标题和框。这样各栏最多相差一行，与正文区段一样。正文区段，以及两种行距各占一半的区段，仍像以前一样截在基线网格上。行高相同、行与行却相隔不足整行的区段（条目之间留空的参考文献、手工设了边距的索引分组）也是如此：每栏要有五分之四的行彼此相隔整数行。<code>'grid'</code>：每次截平都是整数个基线网格行，与postext 1.27及之前相同；那时截在网格上会让不在网格上的区段某一栏多进一行，截平失败后下移的距离又超过该区段的一行（各栏最多相差三行）。其他取值都按<code>'lines'</code>处理。自postext 1.28起；此前保存的文档保持<code>'grid'</code>（<code>pinLegacyTrailingStep</code>）。</td>
     </tr>
     <tr>
       <td><code>beforeSpan</code></td>

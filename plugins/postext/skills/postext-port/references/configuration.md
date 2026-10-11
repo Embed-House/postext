@@ -653,7 +653,9 @@ lines above the one heading of a page: do not lower `maxLinesPerHeading` against
 and set `maxLinesBeforeLoose` = `maxLinesPerHeading` only to reproduce a 1.27 layout).
 `trailing`: level the closing band of a chapter (short last page → equal-height columns).
 `trailingStep 'lines'` (≥ 1.28; `'grid'` = 1.27): the cut counts lines of the band's own text, so an
-index or a list of references set on a leading of its own ends its columns within a line. Do not add
+index or a list of references set on a leading of its own ends its columns within a line. Only when the
+band's lines stand whole lines apart (4 in 5 per column): entries with a fractional gap between them
+(`spaceBetween`, a hand-set group margin) keep the grid cut. Do not add
 space above index groups (`index.groups.marginTop`) to make an off-grid closing band end level.
 A closing band keeps its column heads level: no lever lowers the block that opens a column under a
 float, nor (≥ 1.28) the heading right under a `span:'page'` opener in the opener's own column; the
