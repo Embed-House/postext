@@ -243,7 +243,9 @@ postext build chapters/ --pdf book.pdf --watch
 1. `--font-dir`で指定したフォルダー。
 2. 実行ファイルに組み込まれた書体。エンジンの既定であるEB GaramondとOpen Sansです。
 3. ダウンロードのキャッシュ。
-4. [Google Fonts](https://fonts.google.com)。静的なTrueTypeファイルを丸ごと取得します。取得したファイルはキャッシュに残るので、1つのファミリーのダウンロードは1回で済みます。
+4. [Google Fonts](https://fonts.google.com)。静的なTrueTypeファイルを丸ごと取得します。Google Fontsにないファミリー（Commit Mono、FiraGO）は[Fontsource](https://fontsource.org)から取得します。取得したファイルはキャッシュに残るので、1つのファミリーのダウンロードは1回で済みます。
+
+ファミリーにないウェイトや斜体は、いちばん近いフォントをそのまま使って組みます。ページ画像でもPDFでも同じです。ウェイトが1つだけの見出し用書体はボールドでも自分の字形のまま、イタリックのないファミリーは立体のままです。
 
 キャッシュは`~/.cache/postext`（Windowsでは`%LOCALAPPDATA%\postext\cache`）です。`POSTEXT_CACHE_DIR`か`--cache-dir`で場所を変えられます。`--offline`はダウンロードを行いません。どこにも見つからないファミリーは、その名前のままEB Garamondで組まれるので、レイアウトとPDFは食い違いません。`missingFont`の警告がそのファミリーの名前を示します。各ファミリーの出どころは`postext info`で確かめられます。
 

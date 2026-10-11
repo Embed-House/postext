@@ -50,7 +50,7 @@ await preloadConfigFonts(config);
 
 ### `loadFont(family)`
 
-Loads a single font family from Google Fonts. Returns a promise that resolves when the font is usable.
+Loads a single font family from Google Fonts, or from Fontsource when Google Fonts does not have it (Commit Mono, FiraGO). Returns a promise that resolves when the font is usable.
 
 ```ts
 import { loadFont } from 'postext-sandbox';

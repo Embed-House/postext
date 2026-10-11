@@ -9,10 +9,14 @@
 //   2. the folders given with --font-dir;
 //   3. the faces compiled into the executable (EB Garamond, Open Sans);
 //   4. the download cache;
-//   5. Google Fonts, saved to the cache (not with --offline).
+//   5. Google Fonts, or Fontsource for a family Google Fonts does not have,
+//      saved to the cache (not with --offline).
 //
-// A family found nowhere is measured and drawn with the fallback face under
-// its own name, so the layout and the PDF agree, and a warning says so.
+// A weight or a slant a family does not ship is set in its nearest face, as
+// it is (the regular of a one-weight display face for its bold): the files
+// the Sandbox declares as stand-ins and the PDF embeds. A family found
+// nowhere is measured and drawn with the fallback face under its own name,
+// so the layout and the PDF agree, and a warning says so.
 
 import { GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -96,6 +100,69 @@ function register(face: Face): void {
   GlobalFonts.register(Buffer.from(face.bytes.buffer, face.bytes.byteOffset, face.bytes.byteLength), face.family);
 }
 
+/** How much heavier than the face it is drawn from a weight must be for
+ *  Skia to draw it bold itself. */
+const SKIA_FAKE_BOLD = 200;
+
+/**
+ * A copy of a TrueType / OpenType file that says it is of another weight
+ * and slant (`OS/2` weight class and selection bits, `head` style bits),
+ * the outlines untouched. Skia reads a face's weight and slant from its
+ * file, and asked for a bold or an italic a family lacks it draws the
+ * nearest face heavier or slanted: registered under the weight and slant
+ * asked, the copy makes it draw the family's own letters, the ones the PDF
+ * embeds (#688). Undefined for a collection, a variable font or a file
+ * with no `OS/2` table.
+ */
+export function restyleFace(bytes: Uint8Array, weight: number, style: 'normal' | 'italic'): Uint8Array | undefined {
+  if (bytes.byteLength < 12) return undefined;
+  const out = bytes.slice();
+  const view = new DataView(out.buffer, out.byteOffset, out.byteLength);
+  const tables = new Map<string, number>();
+  const count = view.getUint16(4);
+  if (12 + count * 16 > out.byteLength) return undefined;
+  for (let i = 0; i < count; i++) {
+    const record = 12 + i * 16;
+    tables.set(String.fromCharCode(out[record]!, out[record + 1]!, out[record + 2]!, out[record + 3]!), view.getUint32(record + 8));
+  }
+  const os2 = tables.get('OS/2');
+  if (os2 === undefined || tables.has('fvar') || os2 + 64 > out.byteLength) return undefined;
+  const bold = weight >= 600;
+  const italic = style === 'italic';
+  view.setUint16(os2 + 4, weight);
+  // fsSelection: italic (bit 0), bold (bit 5), regular (bit 6).
+  let selection = view.getUint16(os2 + 62) & ~0x61;
+  if (italic) selection |= 0x01;
+  if (bold) selection |= 0x20;
+  if (!italic && !bold) selection |= 0x40;
+  view.setUint16(os2 + 62, selection);
+  const head = tables.get('head');
+  if (head !== undefined && head + 46 <= out.byteLength) {
+    view.setUint16(head + 44, (view.getUint16(head + 44) & ~0x3) | (bold ? 1 : 0) | (italic ? 2 : 0));
+  }
+  return out;
+}
+
+/** Register with Skia, for each variant `family` is asked for that it
+ *  would draw heavier or slanted from another face, that face under the
+ *  weight and slant asked. The copies are Skia's alone: the PDF and the
+ *  EPUB embed the family's files. */
+function registerStandIns(family: string, faces: readonly Face[], variants: readonly FontVariantUse[]): void {
+  if (faces.length === 0) return;
+  for (const v of variants) {
+    const sameStyle = faces.filter((f) => f.style === v.style);
+    const pool = sameStyle.length > 0 ? sameStyle : faces;
+    const nearest = pool.reduce((best, f) => (Math.abs(f.weight - v.weight) < Math.abs(best.weight - v.weight) ? f : best), pool[0]!);
+    if (nearest.style === v.style && v.weight - nearest.weight < SKIA_FAKE_BOLD) continue;
+    const key = `${family}|${v.weight}|${v.style}|stand-in|${nearest.weight}|${nearest.style}|${nearest.bytes.byteLength}`;
+    if (registered.has(key)) continue;
+    const copy = restyleFace(nearest.bytes, v.weight, v.style);
+    if (!copy) continue;
+    registered.add(key);
+    GlobalFonts.register(Buffer.from(copy.buffer, copy.byteOffset, copy.byteLength), family);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Reading font files
 // ---------------------------------------------------------------------------
@@ -172,12 +239,44 @@ export function defaultCacheDir(): string {
 const slug = (family: string) => family.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const variantFile = (v: FontVariantUse) => `${v.weight}-${v.style}.ttf`;
 
-interface FamilyMeta {
-  /** False when Google Fonts does not have the family. */
+export interface FamilyMeta {
+  /** False when neither Google Fonts nor Fontsource has the family. */
   available: boolean;
   weights: number[];
   styles: ('normal' | 'italic')[];
   checkedAt: number;
+  /** The family's TrueType files by variant (`400-normal`), for a family
+   *  Fontsource carries that Google Fonts does not (Commit Mono, FiraGO):
+   *  downloaded from there (#689). */
+  files?: Record<string, string>;
+  /** The shape of this record: one written before Fontsource's own
+   *  families were read (no `v`) is asked again when it says unavailable. */
+  v?: number;
+}
+
+const META_VERSION = 2;
+
+/** What the Fontsource API says of a family, as far as it is read. */
+export interface FontsourceRecord {
+  weights?: number[];
+  styles?: string[];
+  type?: string;
+  defSubset?: string;
+  variants?: Record<string, Record<string, Record<string, { url?: { ttf?: string } }>>>;
+}
+
+/** The TrueType file of each weight and style of a Fontsource record, in
+ *  its default subset, by variant key (`400-normal`). */
+export function fontsourceFiles(data: FontsourceRecord): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [weight, styles] of Object.entries(data.variants ?? {})) {
+    for (const [style, subsets] of Object.entries(styles ?? {})) {
+      const subset = subsets?.[data.defSubset ?? 'latin'] ?? Object.values(subsets ?? {})[0];
+      const url = subset?.url?.ttf;
+      if (url && (style === 'normal' || style === 'italic')) out[`${weight}-${style}`] = url;
+    }
+  }
+  return out;
 }
 
 /** How long "Google Fonts does not have it" is believed before asking again. */
@@ -188,7 +287,7 @@ async function familyMeta(family: string, dir: string, offline: boolean): Promis
   if (existsSync(file)) {
     try {
       const meta = JSON.parse(readFileSync(file, 'utf8')) as FamilyMeta;
-      if (meta.available || offline || Date.now() - meta.checkedAt < UNAVAILABLE_TTL_MS) return meta;
+      if (meta.available || offline || (meta.v === META_VERSION && Date.now() - meta.checkedAt < UNAVAILABLE_TTL_MS)) return meta;
     } catch {
       // A broken file is fetched again.
     }
@@ -197,18 +296,22 @@ async function familyMeta(family: string, dir: string, offline: boolean): Promis
   let meta: FamilyMeta;
   try {
     const res = await fetch(`https://api.fontsource.org/v1/fonts/${slug(family)}`);
-    if (res.status === 404) meta = { available: false, weights: [], styles: [], checkedAt: Date.now() };
+    if (res.status === 404) meta = { available: false, weights: [], styles: [], checkedAt: Date.now(), v: META_VERSION };
     else if (!res.ok) return undefined;
     else {
-      const data = (await res.json()) as { weights?: number[]; styles?: string[]; category?: string; type?: string };
-      // Fontsource also lists families that are not on Google Fonts.
-      meta = data.type !== undefined && data.type !== 'google'
-        ? { available: false, weights: [], styles: [], checkedAt: Date.now() }
+      const data = (await res.json()) as FontsourceRecord;
+      // Fontsource also lists families that are not on Google Fonts:
+      // their files are its own.
+      const files = data.type !== undefined && data.type !== 'google' ? fontsourceFiles(data) : undefined;
+      meta = files && Object.keys(files).length === 0
+        ? { available: false, weights: [], styles: [], checkedAt: Date.now(), v: META_VERSION }
         : {
             available: true,
             weights: (data.weights ?? []).filter((w) => typeof w === 'number'),
             styles: (data.styles ?? ['normal']).filter((s): s is 'normal' | 'italic' => s === 'normal' || s === 'italic'),
             checkedAt: Date.now(),
+            ...(files ? { files } : {}),
+            v: META_VERSION,
           };
     }
   } catch {
@@ -226,10 +329,36 @@ function nearestAvailable(v: FontVariantUse, meta: FamilyMeta): FontVariantUse {
   return { weight, style };
 }
 
+/** The files that answer `variants` in a family: for each, the nearest
+ *  weight and style it ships, each file once (a one-weight family answers
+ *  its regular, its bold and their italics with one file). */
+export function nearestVariants(variants: readonly FontVariantUse[], meta: FamilyMeta): FontVariantUse[] {
+  const out = new Map<string, FontVariantUse>();
+  for (const v of variants) {
+    const nearest = nearestAvailable(v, meta);
+    const key = `${nearest.weight}|${nearest.style}`;
+    if (!out.has(key)) out.set(key, nearest);
+  }
+  return [...out.values()];
+}
+
 /** Download the variants of a Google family into `dir` (static TrueType
  *  files: the Google Fonts CSS API answers a client that is not a browser
  *  with whole `.ttf` instances, one per weight and style). */
-async function download(family: string, variants: FontVariantUse[], dir: string): Promise<void> {
+async function download(family: string, variants: FontVariantUse[], dir: string, files?: Record<string, string>): Promise<void> {
+  // A family Google Fonts does not have: Fontsource's own files.
+  if (files) {
+    ensureDir(dir);
+    await Promise.all(variants.map(async (v) => {
+      const src = files[`${v.weight}-${v.style}`];
+      const file = join(dir, variantFile(v));
+      if (!src || existsSync(file)) return;
+      const font = await fetch(src);
+      if (!font.ok) throw new Error(`Could not download ${src}: ${font.status}`);
+      writeFileSync(file, new Uint8Array(await font.arrayBuffer()));
+    }));
+    return;
+  }
   const tuples = [...new Set(variants.map((v) => `${v.style === 'italic' ? 1 : 0},${v.weight}`))].sort((a, b) => {
     const [ia, wa] = a.split(',').map(Number);
     const [ib, wb] = b.split(',').map(Number);
@@ -323,13 +452,13 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
       const dir = join(cacheRoot, slug(family));
       const meta = await familyMeta(family, dir, options.offline);
       if (meta?.available) {
-        const targets = missing.map((v) => nearestAvailable(v, meta))
+        const targets = nearestVariants(missing, meta)
           .filter((v) => !found.some((f) => f.weight === v.weight && f.style === v.style));
         const absent = targets.filter((v) => !existsSync(join(dir, variantFile(v))));
         if (absent.length > 0 && !options.offline) {
-          reporter.info(`downloading ${family} (${absent.map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''}`).join(', ')}) from Google Fonts`);
+          reporter.info(`downloading ${family} (${absent.map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''}`).join(', ')}) from ${meta.files ? 'Fontsource' : 'Google Fonts'}`);
           try {
-            await download(family, absent, dir);
+            await download(family, absent, dir, meta.files);
           } catch (err) {
             reporter.warn({ kind: 'fontDownload', severity: 'warning', message: `${family}: ${(err as Error).message}` });
           }
@@ -350,12 +479,20 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
     reporter.warn({
       kind: 'missingFont',
       severity: 'warning',
-      message: `font family "${family}" is not in the book${options.offline ? ' (offline)' : ' nor on Google Fonts'}; set in ${FALLBACK_FAMILY} instead (add it with --font-dir)`,
+      message: `font family "${family}" is not in the book${options.offline ? ' (offline)' : ' nor on Google Fonts or Fontsource'}; set in ${FALLBACK_FAMILY} instead (add it with --font-dir)`,
     });
     faces.push(...embedded().filter((f) => f.family === FALLBACK_FAMILY).map((f) => ({ ...f, family, source: 'fallback' as const, standsInFor: FALLBACK_FAMILY })));
   }
   // The fallback family is always there for the PDF writer.
   if (!has(FALLBACK_FAMILY)) faces.push(...embedded().filter((f) => f.family === FALLBACK_FAMILY));
   for (const face of faces) register(face);
+  // A bold or an italic a family does not ship is drawn from its own
+  // nearest face, as the PDF embeds it (#688). A family the book carries
+  // is left as its author made it.
+  const carried = new Set(book.fonts.map((f) => f.family.toLowerCase()));
+  for (const [family, variants] of wanted) {
+    if (carried.has(family.toLowerCase())) continue;
+    registerStandIns(family, faces.filter((f) => f.family.toLowerCase() === family.toLowerCase()), variants);
+  }
   return new FontSet(faces, new Set([...wanted.keys(), ...book.fonts.map((f) => f.family)]));
 }

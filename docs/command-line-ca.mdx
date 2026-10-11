@@ -347,8 +347,14 @@ configuració i que el llibre no porta, `postext` busca, per aquest ordre:
    les del motor per defecte;
 3. a la memòria cau de baixades;
 4. a [Google Fonts](https://fonts.google.com), que dona fitxers TrueType
-   estàtics complets; es guarden a la memòria cau, així que cada família es
-   baixa una sola vegada.
+   estàtics complets, o a [Fontsource](https://fontsource.org) si Google
+   Fonts no té la família (Commit Mono, FiraGO); es guarden a la memòria cau,
+   així que cada família es baixa una sola vegada.
+
+Un pes o una inclinació que la família no porta es compon amb la seva font més
+propera tal com és, a les imatges de pàgina igual que al PDF: una família de
+retolació amb un sol pes conserva les seves lletres a la negreta, i una
+família sense cursiva, les rodones.
 
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la canvien de lloc. `--offline`
