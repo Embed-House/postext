@@ -16,13 +16,16 @@ import { buildFontString } from '../../measure';
 import { joiningScriptIn } from '../../measure/joining';
 import { hasJoiningScript } from '../../bidi';
 import { hasCJK } from '../../measure/cjk';
-import { parseRichDesignText, RichMeasurer } from '../../design/richText';
+import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from '../../design/richText';
+import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText';
+import { cjkCompositionKey, getCjkComposition } from '../../measure/cjkPunctuation';
 import { layoutTextElementAt } from '../../design/layout';
 import { designBaseDirection } from '../../design/bidiText';
 import { primitiveToBlock } from '../../pipeline/headerFooter';
 import { cjkRegionOf, directionOf, isJapaneseLanguage, languageOf } from '../../locale';
 import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
 import type { CjkRegion, ResolvedDesignTextElement } from '../../types';
+import type { InlineSpan } from '../../parse/types';
 import type { VDTDesignTextBlock } from '../../vdt';
 import { breakPoints, hasMarks, isIsolateControl, markupOf, type BreakPoint, type PreparedText } from './text';
 import { boundsOf } from './geom';
@@ -127,39 +130,69 @@ function trackingOf(p: PreparedText, style: LetteringStyle): number {
   return Number.isFinite(t) && !joiningScriptIn(p.text) ? t : 0;
 }
 
+/**
+ * The width the layout sets `text` at when it is a line of its own that
+ * the CJK composer sets (#723), undefined when the layout sets it at the
+ * font's advances. `setLines` hands each chosen line to the design-text
+ * layout as a row, and a row that composes as CJK (`composesDesignAsCjk`,
+ * the layout's own test) goes through `composeCjkDesignParagraph`: a
+ * 破折号 takes two cells of one em there whatever the face's dash
+ * advances (#652), and a mark takes the width `cjk.punctuationWidth` and
+ * `compressAdjacent` give it. Composed here the same way, on one
+ * unbounded line, so the line that is scored is the line that is printed.
+ */
+function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesignFonts, pitch: number, tracking: number): number | undefined {
+  if (text.includes('\n') || !composesDesignAsCjk(text)) return undefined;
+  const measureIn = (t: string, font: string): number => Math.max(0, flowTextWidth(t, font) + tracking * graphemeCount(t));
+  const lines = composeCjkDesignParagraph(spans(), fonts, undefined, pitch, tracking, measureIn);
+  return lines.length === 1 ? lines[0]!.width : undefined;
+}
+
 /** A measurer of line widths over the prepared text, in the writing mode
  *  in force (call inside `withMeasureWritingMode`). Rich text is measured
  *  through the design-text measurer of its own markup, so that what is
  *  measured is what the layout sets; a markup that does not read back to
- *  the same text falls back to plain. */
-function measurerFor(p: PreparedText, style: LetteringStyle): Measurer {
+ *  the same text falls back to plain. With `composed`, a range the layout
+ *  sets with the CJK composer is measured by composing it (#723): the
+ *  shaping asks for it, the ruby does not (it places a reading along a
+ *  line, and the start of a line is no line of its own). */
+function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): Measurer {
   const tracking = trackingOf(p, style);
+  const pitch = style.fontSizePx * style.lineHeight;
   const memo = new Map<number, number>();
   const key = (a: number, b: number) => a * 100003 + b;
   if (hasMarks(p)) {
     const rt = parseRichDesignText(wholeMarkup(p), fontSpec(style));
     if (rt.text === p.text) {
       const m = new RichMeasurer(rt, tracking);
+      const fonts = composed ? richFontSet(fontSpec(style)) : undefined;
       return {
         rich: true,
         width(a, b) {
           const k = key(a, b);
           let w = memo.get(k);
-          if (w === undefined) memo.set(k, (w = a >= b ? 0 : m.measure(a, b)));
+          if (w === undefined) {
+            w = a >= b ? 0 : (fonts && composedWidth(p.text.slice(a, b), () => richDesignSpans(rt, a, b), fonts, pitch, tracking)) ?? m.measure(a, b);
+            memo.set(k, w);
+          }
           return w;
         },
       };
     }
   }
   const font = fontString(style);
+  const fonts: CjkDesignFonts | undefined = composed ? { normal: font, bold: font, italic: font, boldItalic: font } : undefined;
   return {
     rich: false,
     width(a, b) {
       const k = key(a, b);
       let w = memo.get(k);
       if (w === undefined) {
-        const s = p.text.slice(a, b).replace(/[\u2066-\u2069]/g, '');
-        memo.set(k, (w = a >= b ? 0 : Math.max(0, flowTextWidth(s, font) + tracking * graphemeCount(s))));
+        const row = p.text.slice(a, b);
+        const s = row.replace(/[\u2066-\u2069]/g, '');
+        w = a >= b ? 0 : (fonts && composedWidth(row, () => [{ text: row, bold: false, italic: false }], fonts, pitch, tracking))
+          ?? Math.max(0, flowTextWidth(s, font) + tracking * graphemeCount(s));
+        memo.set(k, w);
       }
       return w;
     },
@@ -469,9 +502,11 @@ export function shapeTextCandidates(p: PreparedText, style: LetteringStyle, opts
   const { cands, rich } = withMeasureWritingMode(mode, () => {
     let byKey = breakings.get(p);
     if (!byKey) breakings.set(p, (byKey = new Map()));
-    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0].join('|');
+    // The composition is part of the key: a line the CJK composer sets is
+    // measured by composing it (#723).
+    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0, style.lineHeight, cjkCompositionKey(getCjkComposition())].join('|');
     let b = byKey.get(key);
-    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style))));
+    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style, true))));
     // Japanese phrase breaks weigh more than a perfect profile: columns
     // move by whole characters.
     const penaltyWeight = lang === 'ja' ? 1 : 0.5;
