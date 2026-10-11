@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "japanese-technical-manual",
-  "sourceHash": "77b94214451b9f854fb65941ea625b547caf3eec4ba929967f0c3861d280b3e3",
+  "sourceHash": "aaeb1edf09d822bc0df21d2a502322290b30496b90caf4e3ef7d1d922f350dcf",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.775Z",
+  "capturedAt": "2026-10-11T20:22:30.290Z",
   "variants": {
     "en": {
-      "hash8": "76f399aa",
-      "vdtHash": "3146dc05d72f627e284ba24329951504ac8a5046",
+      "hash8": "73aa991b",
+      "vdtHash": "b7b5dc7f120a7d13553747a319a21f2b83ed3e59",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 216,
-        "buildMs": 82,
-        "totalMs": 1040,
+        "importMs": 1141,
+        "fontsMs": 876,
+        "buildMs": 119,
+        "totalMs": 3065,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Noto Serif JP"
         ],
         "pages": 5,
-        "ownLines": 197
+        "ownLines": 199
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 73620,
+          "bytes": 78542,
           "alt": "Opening page 41: 第3章 文字列の正規化."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91182,
+          "bytes": 86096,
           "alt": "Page 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86290,
+          "bytes": 86298,
           "alt": "Page 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -126,13 +126,20 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284243,
+        "bytes": 284618,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 40977,
-        "folio": "90d2b4f0"
+        "bytes": 41312,
+        "folio": "90d2b4f0",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "ff84c2570d875925",
+            "lines": "f4b2018eaaeb5ae6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -161,6 +168,8 @@
           "bodyText.lineHeight",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
+          "bodyText.shortListMaxItems",
+          "bodyText.shortListSplit",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].backgroundEnabled",
@@ -339,7 +348,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 260,
+        "configLeaves": 262,
         "designElements": 9,
         "directives": [
           ":::paragraphs",
@@ -413,7 +422,15 @@
           "share": 0,
           "worst": 0.04
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -423,13 +440,13 @@
       }
     },
     "es": {
-      "hash8": "2ca9c06c",
-      "vdtHash": "db11b14cc2b64f39276ee9da6714f6c4ef25dcaf",
+      "hash8": "aa02cbca",
+      "vdtHash": "3bc83a4ba4754acfeffd1ded46a83195eefde69f",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 212,
-        "buildMs": 82,
-        "totalMs": 1000,
+        "importMs": 510,
+        "fontsMs": 1191,
+        "buildMs": 118,
+        "totalMs": 2710,
         "builds": 1
       },
       "specimen": {
@@ -451,7 +468,7 @@
           "Noto Serif JP"
         ],
         "pages": 5,
-        "ownLines": 197
+        "ownLines": 199
       },
       "pages": [
         {
@@ -462,7 +479,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 73620,
+          "bytes": 78542,
           "alt": "Página de apertura 41: 第3章 文字列の正規化."
         },
         {
@@ -473,7 +490,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91182,
+          "bytes": 86096,
           "alt": "Página 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -495,7 +512,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86290,
+          "bytes": 86298,
           "alt": "Página 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -506,7 +523,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 32846,
+          "bytes": 32848,
           "alt": "Página 45."
         }
       ],
@@ -538,13 +555,20 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284323,
+        "bytes": 284742,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41033,
-        "folio": "90d2b4f0"
+        "bytes": 41371,
+        "folio": "90d2b4f0",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "8aa91ee89a17ebb6",
+            "lines": "4226654fb0e51b4d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -573,6 +597,8 @@
           "bodyText.lineHeight",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
+          "bodyText.shortListMaxItems",
+          "bodyText.shortListSplit",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].backgroundEnabled",
@@ -751,7 +777,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 260,
+        "configLeaves": 262,
         "designElements": 9,
         "directives": [
           ":::paragraphs",
@@ -825,7 +851,15 @@
           "share": 0,
           "worst": 0.04
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

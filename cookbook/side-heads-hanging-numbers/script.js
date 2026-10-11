@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 045 · Side heads, hanging numbers and run-in heads ═══════
 // https://postext.dev/en/cookbook/side-heads-hanging-numbers
 // Code: MIT · Text: original (CC BY 4.0) · Drawings: made in code (MIT)
-// Fonts: Mona Sans, Noto Serif Display, DM Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Mona Sans, Noto Serif Display, DM Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, defaultResourceTypes,
 } from 'https://esm.sh/postext';
@@ -97,7 +97,7 @@ const h3 = { level: 3, numberingTemplate: '{2}.{3}', fontSize: pt(H3.size),
       align: 'right', placement: { ...at('#title', 'left-of', mm(-2)),
         size: { width: mm(12) } } },
   ] } } };
-// Level 4 is not a heading: '**Accesibilidad.** Todo el edificio…' opens its paragraph.
+// Level 4 is not a heading: '**Accessibility.** A wheelchair user…' opens its paragraph.
 // No other paragraph has bold; table cells keep tableStyle's ink, so Total stays black.
 const runIn = { boldColor: col('signal') }; // spread into bodyText
 // #endregion
@@ -155,7 +155,8 @@ const footer = { elements: [
 // #endregion
 
 const config = () => ({
-  // Figura / Tabla, counted through the whole brief: 1, 2…
+  locale: t({ en: 'en-gb', es: 'es' }), // each edition is hyphenated in its own language
+  // Figure / Table, Figura / Tabla, counted through the whole brief: 1, 2…
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}' })),
   colorPalette,
   page: { sizePreset: 'custom', width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
@@ -193,53 +194,67 @@ const config = () => ({
 const markdown = /* @content */ ''; // content.<lang>.md, inlined by the Cookbook
 
 // The two tables: every column after the first is right-aligned, its header too.
-const row = (cells, header = false) => cells.map((content, i) => ({ content,
-  isHeader: header, align: i > 0 ? 'right' : 'left' }));
-const programme = { model: { headerRowCount: 1, columnWidths: [3, 1], rows: [
-  row(['Zona', 'm²'], true), row(['Acogida y préstamo', '120']), row(['Sala general', '560']),
-  row(['Sala infantil', '240']), row(['Espacio joven', '140']),
-  row(['Hemeroteca y fondo local', '150']), row(['Sala polivalente', '160']),
-  row(['Aulas de formación (2)', '100']), row(['Proceso técnico y dirección', '140']),
-  row(['Depósito cerrado', '120']), row(['Aseos, almacenes e instalaciones', '270']),
-  row(['**Total**', '**2.000**']),
-] } };
-const calendar = { model: { headerRowCount: 1, columnWidths: [3, 2], rows: [
-  row(['Hito', 'Fecha'], true),
-  row(['Publicación del anuncio', '15 de octubre de 2026']),
-  row(['Fin del plazo de consultas', '13 de noviembre de 2026']),
-  row(['Entrega de la primera fase', '11 de enero de 2027, 14.00 h']),
-  row(['Selección de cinco equipos', '5 de febrero de 2027']),
-  row(['Entrega de la segunda fase', '22 de abril de 2027, 14.00 h']),
-  row(['Fallo del jurado', '20 de mayo de 2027']),
-] } };
+const table = (columnWidths, rows) => ({ model: { headerRowCount: 1, columnWidths,
+  rows: rows.map((cells, r) => cells.map((content, i) => ({ content, isHeader: r === 0,
+    align: i > 0 ? 'right' : 'left' }))) } });
+const AREAS = [120, 560, 240, 140, 150, 160, 100, 140, 120, 270]; // m²: 2,000 in all
+const programme = table([3, 1], [[t({ en: 'Area', es: 'Zona' }), 'm²'], ...t({
+  en: ['Reception and lending desk', 'Main reading room', 'Children’s library',
+    'Young people’s room', 'Periodicals and local history', 'Multi-purpose hall',
+    'Training rooms (2)', 'Cataloguing and offices', 'Closed stack', 'Toilets, stores and plant'],
+  es: ['Acogida y préstamo', 'Sala general', 'Sala infantil', 'Espacio joven',
+    'Hemeroteca y fondo local', 'Sala polivalente', 'Aulas de formación (2)',
+    'Proceso técnico y dirección', 'Depósito cerrado', 'Aseos, almacenes e instalaciones'],
+}).map((zone, i) => [zone, `${AREAS[i]}`]),
+['**Total**', t({ en: '**2,000**', es: '**2.000**' })]]);
+const calendar = table([3, 2], t({
+  en: [['Milestone', 'Date'], ['Notice published', '15 October 2026'],
+    ['Questions close', '13 November 2026'], ['Stage one submission', '11 January 2027, 14:00'],
+    ['Five teams shortlisted', '5 February 2027'], ['Stage two submission', '22 April 2027, 14:00'],
+    ['Jury’s decision', '20 May 2027']],
+  es: [['Hito', 'Fecha'], ['Publicación del anuncio', '15 de octubre de 2026'],
+    ['Fin del plazo de consultas', '13 de noviembre de 2026'],
+    ['Entrega de la primera fase', '11 de enero de 2027, 14.00 h'],
+    ['Selección de cinco equipos', '5 de febrero de 2027'],
+    ['Entrega de la segunda fase', '22 de abril de 2027, 14.00 h'],
+    ['Fallo del jurado', '20 de mayo de 2027']],
+}));
 
 // #region resources: four placements: the channel, across the page, a column top, here
 // The plot plan stands in the channel; the elevation crosses channel and column at the
-// head of the next page; the programme floats to the head of the text column, with its
-// caption beside it in the channel; the calendar sits where ::resource puts it.
+// head of the next page; the table of areas floats to the head of the text column, with
+// its caption beside it in the channel; the timetable sits where ::resource puts it, and
+// its caption takes the channel too (captionSide serves an inline embed from 1.28).
 const PLAN_W = 44; // mm: the plot plan, 88 m wide at 1:2000
+const resource = (id, typeId, rest) => ({ id, typeId, createdAt: 0, updatedAt: 0, ...rest });
+const drawing = (id, width, height, rest) => resource(id, 'figure', { kind: 'svg',
+  svg: { fileId: `${id}.svg`, width, height }, ...rest });
 const resources = [
-  { id: 'parcela', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
-    svg: { fileId: 'parcela.svg', width: PLAN_W * 10, height: 400 },
+  drawing('parcela', PLAN_W * 10, 400, {
     placement: { span: 'side', width: PLAN_W / SIDE }, // 44 mm of the channel's 50
-    caption: 'La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el '
-      + 'borde norte. Flechas rojas: accesos posibles; flecha gris: servicio.',
-    altText: 'Planta de la parcela con la lonja, la caseta, seis árboles y tres accesos.' },
-  { id: 'fachada', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
-    svg: { fileId: 'fachada.svg', width: 1780, height: 300 },
-    placement: { position: 'top', span: 'page' },
-    caption: 'Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con '
-      + 'las armaduras corroídas.',
-    altText: 'Alzado de la lonja: trece bóvedas, once arcos y cuatro pórticos en rojo.' },
-  { id: 'programa', typeId: 'table', kind: 'table', createdAt: 0, updatedAt: 0,
-    placement: { position: 'top', captionSide: true },
-    caption: 'Programa de superficies útiles por zonas.', table: programme },
-  { id: 'calendario', typeId: 'table', kind: 'table', createdAt: 0, updatedAt: 0,
-    placement: { position: 'here' }, caption: 'Calendario del concurso.', table: calendar },
+    caption: t({ en: 'The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks '
+      + 'along the north edge. Red arrows: possible entrances; grey arrow: service.',
+    es: 'La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el '
+      + 'borde norte. Flechas rojas: accesos posibles; flecha gris: servicio.' }),
+    altText: t({ en: 'Plan of the plot with the hall, the hut, six trees and three entrances.',
+      es: 'Planta de la parcela con la lonja, la caseta, seis árboles y tres accesos.' }) }),
+  drawing('fachada', 1780, 300, { placement: { position: 'top', span: 'page' },
+    caption: t({ en: 'Quay front, 1:300. In red, the four frames at the east end, where the '
+      + 'reinforcement has corroded.',
+    es: 'Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con '
+      + 'las armaduras corroídas.' }),
+    altText: t({ en: 'Elevation of the hall: thirteen vaults, eleven arches, four frames in red.',
+      es: 'Alzado de la lonja: trece bóvedas, once arcos y cuatro pórticos en rojo.' }) }),
+  resource('programa', 'table', { kind: 'table', table: programme,
+    placement: { position: 'top', captionSide: true }, caption: t({
+      en: 'Schedule of net floor areas.', es: 'Programa de superficies útiles por zonas.' }) }),
+  resource('calendario', 'table', { kind: 'table', table: calendar,
+    placement: { position: 'here', captionSide: true },
+    caption: t({ en: 'Competition timetable.', es: 'Calendario del concurso.' }) }),
   // No :ref cites the site plan: only the opener's image element draws it.
-  { id: 'situacion', typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0,
-    svg: { fileId: 'situacion.svg', width: MAP.w * 10, height: MAP.h * 10 },
-    altText: 'Plano de situación del muelle de Poniente con la parcela de la lonja en rojo.' },
+  drawing('situacion', MAP.w * 10, MAP.h * 10, { altText: t({
+    en: 'Site plan of the Poniente quay with the market hall’s plot in red.',
+    es: 'Plano de situación del muelle de Poniente con la parcela de la lonja en rojo.' }) }),
 ];
 // #endregion
 

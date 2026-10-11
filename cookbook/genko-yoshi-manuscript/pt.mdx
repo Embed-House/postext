@@ -22,6 +22,8 @@ O código está na [resposta curta](#a-resposta-curta), mais acima. A [grade de 
 
 O papel de manuscrito tem o seu próprio kinsoku. Um kana pequeno ou um ー pode começar uma linha, cada um no seu quadrado; `ja-loose` permite isso. Um 、 ou 。 que abriria uma linha é escrito no último quadrado da linha anterior, junto com o caractere que está ali, ou logo abaixo dele; `hangingPunctuation: 'force'` o pendura embaixo do vigésimo quadrado, e nenhuma linha é apertada. Com `'allow'`, o padrão para japonês, o motor primeiro recolhe o sinal na linha apertando a meio quadrado um 、 de dentro dela, o que um livro impresso faz e um manuscrito nunca faz: o resto dessa linha ficaria meio quadrado acima, atravessando as linhas da grade.
 
+A última linha de um parágrafo pede mais um ajuste. O Postext evita que um parágrafo termine em um só caractere: a linha anterior lhe cede o seu último, e como aqui o texto não é justificado, essa linha ficaria com um quadrado vazio. No papel de manuscrito se escreve em todos os quadrados de uma linha completa, então a grade leva `fullLines: true`: na <PageRef page={3}>folha 3</PageRef> a linha que termina em 来 mantém os seus vinte quadrados e o parágrafo fecha com た。 sozinho ([grade de caracteres](/pt/docs/configuration-east-asian#grade-de-caracteres)).
+
 ### 3 · Escreva o título e o nome onde as regras mandam
 
 <Excerpt region="heading" />

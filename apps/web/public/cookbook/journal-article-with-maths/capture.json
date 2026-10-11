@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "journal-article-with-maths",
-  "sourceHash": "8f2684c4d9e02c552b9aee803528a78a99b6458b24aac3f705d875ca2fd08e3b",
+  "sourceHash": "994d2c27a50c2f51285127bc3763338a5e4f47e5947bd6d56e8a565a8c7ed8f5",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.556Z",
+  "capturedAt": "2026-10-11T20:22:30.296Z",
   "variants": {
     "en": {
-      "hash8": "2e7028b7",
+      "hash8": "139b9f92",
       "vdtHash": "5983265a2aefc88ff1af9b6a409f96fc03e06dce",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 109,
-        "buildMs": 128,
-        "totalMs": 1023,
+        "importMs": 1794,
+        "fontsMs": 175,
+        "buildMs": 201,
+        "totalMs": 3504,
         "builds": 1
       },
       "specimen": {
@@ -121,8 +121,15 @@
       },
       "sandbox": {
         "file": "journal-article-with-maths.postext",
-        "bytes": 45006,
-        "folio": "ba291173"
+        "bytes": 45002,
+        "folio": "ba291173",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "53701847f1ca3a67",
+            "lines": "a27e2df178270d01"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -255,6 +262,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "math",
           "math.fontSizeScale",
           "math.marginBottom",
@@ -315,13 +323,14 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "math",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 455,
+        "configLeaves": 456,
         "designElements": 21,
         "directives": [
           ":::callout",
@@ -430,13 +439,10 @@
           "share": 0,
           "worst": 1.93
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

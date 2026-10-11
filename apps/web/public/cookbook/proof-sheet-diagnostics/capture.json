@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "proof-sheet-diagnostics",
-  "sourceHash": "781a0605ebe761998567fb447da84f5af4fbb510443b733fd54b850f9d0b8a54",
+  "sourceHash": "41ffccd53792ff708e287d1dbcfebca91b461917767a2d26c89a77183e2df493",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.267Z",
+  "capturedAt": "2026-10-11T20:22:30.734Z",
   "variants": {
     "en": {
-      "hash8": "a36b9813",
+      "hash8": "854beff9",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 33,
-        "buildMs": 11,
-        "totalMs": 895,
+        "importMs": 1765,
+        "fontsMs": 68,
+        "buildMs": 13,
+        "totalMs": 4798,
         "builds": 2
       },
       "specimen": {
@@ -89,14 +89,22 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 102742,
-        "folio": "3db66766"
+        "bytes": 103198,
+        "folio": "3db66766",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "6735ac7fc75a9c23",
+            "lines": "34992217a234e76d"
+          }
+        ]
       },
       "detected": {
         "apis": [
           "KNOWN_CONTAINERS",
           "KNOWN_DIRECTIVES",
           "buildDocumentWithFonts",
+          "lineWordSpacing",
           "parseMarkdownWithIssues",
           "prepareFonts",
           "registerResourceImage",
@@ -338,17 +346,20 @@
           "share": 0,
           "worst": 1.5
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "2f771c49",
+      "hash8": "50f5f9d6",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 24,
-        "buildMs": 11,
-        "totalMs": 916,
+        "importMs": 1448,
+        "fontsMs": 89,
+        "buildMs": 23,
+        "totalMs": 3438,
         "builds": 2
       },
       "specimen": {
@@ -421,14 +432,22 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 103917,
-        "folio": "3db66766"
+        "bytes": 104054,
+        "folio": "3db66766",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "5bf519be8d56e0d2",
+            "lines": "36b7a32d735b476f"
+          }
+        ]
       },
       "detected": {
         "apis": [
           "KNOWN_CONTAINERS",
           "KNOWN_DIRECTIVES",
           "buildDocumentWithFonts",
+          "lineWordSpacing",
           "parseMarkdownWithIssues",
           "prepareFonts",
           "registerResourceImage",
@@ -669,6 +688,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.45
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

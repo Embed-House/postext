@@ -85,7 +85,7 @@ const header = () => ({ elements: [
 const footer = () => ({ elements: [
   head('drop-folio', '{pageNumber}', 'all', 'bottom-right', -MARGIN.outer, 'opener')] });
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   // "Table 1", not "Table 1.1": the booklet has one chapter. Table captions sit above.
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}',
     ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),

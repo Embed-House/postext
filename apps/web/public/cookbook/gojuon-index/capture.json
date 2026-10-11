@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gojuon-index",
-  "sourceHash": "c863e5d95ad746d701c8a5dad8cb41d69810b0d4c2d32dd6e87b5700468160cc",
+  "sourceHash": "7ab6edb64dbcd97300de76d1e1d579ca74e37f2614636b1525d8b133a5c306a2",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.261Z",
+  "capturedAt": "2026-10-11T20:22:30.244Z",
   "variants": {
     "en": {
-      "hash8": "4c65d233",
-      "vdtHash": "eb2b64521167f50315cf593d726c23a0c81ed164",
+      "hash8": "ef2e0a1a",
+      "vdtHash": "a84ccc3847b8caa93f3369c2562cc78b96bdc2b2",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 261,
-        "buildMs": 68,
-        "totalMs": 1068,
+        "importMs": 1175,
+        "fontsMs": 1227,
+        "buildMs": 111,
+        "totalMs": 3714,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35240,
+          "bytes": 35652,
           "alt": "Opening page 11: 索引."
         }
       ],
@@ -99,13 +99,20 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137022,
+        "bytes": 137175,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15335,
-        "folio": "3266640a"
+        "bytes": 15513,
+        "folio": "3266640a",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "17d0c6e3637a356f",
+            "lines": "2a320ea87652fd86"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -316,23 +323,31 @@
           "share": 0,
           "worst": 0.03
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e89bb85a",
-      "vdtHash": "a49f02abb3e8fe18ccafa2fcf863e4235bcb9071",
+      "hash8": "5216f18c",
+      "vdtHash": "a4df38ce9f4b8fd2359d25ea27fe586fcfb220af",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 233,
-        "buildMs": 66,
-        "totalMs": 1050,
+        "importMs": 862,
+        "fontsMs": 1312,
+        "buildMs": 108,
+        "totalMs": 3664,
         "builds": 1
       },
       "specimen": {
@@ -386,7 +401,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35772,
+          "bytes": 35890,
           "alt": "Página de apertura 11: 索引."
         }
       ],
@@ -414,13 +429,20 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 136981,
+        "bytes": 137119,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15408,
-        "folio": "3266640a"
+        "bytes": 15568,
+        "folio": "3266640a",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "c8cbdab3dbb676bb",
+            "lines": "98430d466934de42"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -631,11 +653,19 @@
           "share": 0,
           "worst": 0.03
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

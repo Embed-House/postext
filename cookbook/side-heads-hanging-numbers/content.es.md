@@ -18,7 +18,7 @@ El equipo ganador redactará el proyecto básico y el de ejecución, el estudio 
 
 ### Presupuesto y plazo
 
-El presupuesto máximo de ejecución material, que incluye la urbanización de la parcela, es de 4.850.000 € sin IVA. Quedan fuera del concurso las propuestas que lo superen en más de un 10 %. La obra durará unos veinte meses, y la biblioteca debería abrir en 2030.
+El presupuesto máximo de ejecución material, que incluye la urbanización de la parcela, es de 4.850.000 € sin IVA. Quedan fuera del concurso las propuestas que lo superen en más de un 10 %. La obra durará unos veinte meses, y la biblioteca debería abrir en 2030.
 
 ## El emplazamiento
 
@@ -42,7 +42,7 @@ La entrada principal puede plantearse desde la plaza o desde el paseo, pero la c
 
 ## Programa de necesidades
 
-Las superficies de la tabla son útiles (:ref{id="programa" case="lower"}). Cada zona admite un 10 % de más o de menos, siempre que el total no cambie. La nave alojará las salas de lectura y de encuentro; lo que necesite cerramientos, instalaciones o control del ruido puede ir en la edificación nueva.
+Las superficies de la tabla son útiles (:ref{id="programa" case="lower"}). Cada zona admite un 10 % de más o de menos, siempre que el total no cambie. La nave alojará las salas de lectura y de encuentro; lo que necesite cerramientos, instalaciones o control del ruido puede ir en la edificación nueva.
 
 ### Áreas públicas
 
@@ -62,7 +62,7 @@ El jurado valorará las propuestas con los criterios siguientes, ordenados de ma
 
 **Relación con la lonja.** Las intervenciones sobre la nave serán reconocibles y reversibles. No se admiten forjados que corten las bóvedas; sí altillos exentos que dejen ver los pórticos completos.
 
-**Accesibilidad.** Todo el edificio será accesible sin ayuda en silla de ruedas, patio y altillos incluidos. Ninguna rampa superará el 6 % de pendiente.
+**Accesibilidad.** Todo el edificio será accesible sin ayuda en silla de ruedas, patio y altillos incluidos. Ninguna rampa superará el 6 % de pendiente.
 
 **Energía y confort.** La propuesta dirá cómo se ventila la nave y cómo se protege del sol, porque sus bóvedas no admiten aislamiento por el interior. Se valorará que la climatización pueda regularse sala por sala.
 

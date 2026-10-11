@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "chapter-opener-bleed-band",
-  "sourceHash": "a2ddeef213e710b29a94719d87094f5b8b9e14c39744e61a11e25cbb79a8ef43",
+  "sourceHash": "345c0b1f3a264c0da44e62a02e35cea53602059efd3aaa44fb3bebbd3ceb6312",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:49:50.706Z",
+  "capturedAt": "2026-10-11T20:22:29.896Z",
   "variants": {
     "en": {
-      "hash8": "5d11d6ad",
-      "vdtHash": "09940d9699e7702a8cda351e3491448efa48de26",
+      "hash8": "ef3fa9d8",
+      "vdtHash": "c60ad9d9a5a91a06fd908e446ccf480f2cdd8ee8",
       "timings": {
-        "importMs": 146,
-        "fontsMs": 2,
-        "buildMs": 210,
-        "totalMs": 998,
+        "importMs": 667,
+        "fontsMs": 3,
+        "buildMs": 182,
+        "totalMs": 1511,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 150986,
+          "bytes": 150910,
           "alt": "Page 44: 4.3 Living with volcanoes. Figure 4.1. Two volcanoes in cross-section: a broad shield built of runny basalt flows (left) and a steep stratovolcano of lava and ash layers (right)."
         }
       ],
@@ -115,8 +115,15 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34417,
-        "folio": "43da5799"
+        "bytes": 34413,
+        "folio": "43da5799",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "34d8b2e727fbad43",
+            "lines": "c79f5c38618795fa"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -316,11 +323,19 @@
         "converged": true,
         "iterationCount": 4,
         "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 1.98
+          "count": 1,
+          "share": 0.0049,
+          "worst": 2.0100000000000002
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -330,13 +345,13 @@
       }
     },
     "es": {
-      "hash8": "f78cb554",
+      "hash8": "9768b2c9",
       "vdtHash": "256f874234a5d86a1ea1a8b1319f24f1128a52f6",
       "timings": {
-        "importMs": 137,
+        "importMs": 1438,
         "fontsMs": 2,
-        "buildMs": 71,
-        "totalMs": 822,
+        "buildMs": 103,
+        "totalMs": 3500,
         "builds": 1
       },
       "specimen": {
@@ -435,8 +450,15 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34633,
-        "folio": "43da5799"
+        "bytes": 34632,
+        "folio": "43da5799",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "cc9456155d9bbdff",
+            "lines": "81c77cceecd6a076"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -639,6 +661,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.99
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 092 · A manual whose references point to pages ══════════
 // https://postext.dev/en/cookbook/manual-see-page-references
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Archivo, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Archivo, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocumentWithFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 

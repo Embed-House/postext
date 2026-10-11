@@ -1,34 +1,36 @@
 ---
 title: "Early reader with syllable chips"
-summary: "A Spanish primer unit for the letter M: syllables as chips in the colour of their vowel, and a grid of picture words with a watercolour in each cell."
-plain: "Three pages of a Spanish reading book for young children, on the letter M. Each syllable sits in a small coloured label, and each word in a grid has its own picture."
-description: "A reading-primer unit set with Postext: one chip style per vowel, words written as touching syllable chips, a rounded picture grid and tracing rows."
+summary: "A primer unit on the letter M: the sounds of each word as chips in the colour of its vowel, and a grid of picture words with a watercolour in each cell."
+plain: "Three pages of a reading book for young children, on the letter M. Each sound of a word sits in a small coloured label, and each word in a grid has its own picture."
+description: "A reading-primer unit set with Postext: one chip style per vowel, words written as touching sound chips, a rounded picture grid and tracing rows."
 question: "How do I set syllables as coloured inline chips, one colour per vowel, in an early-reading primer?"
-aliases: ["early reader", "phonics", "syllables", "reading primer", "children's workbook", "cartilla"]
-pageNotes: { "1": "A cream band with a giant Mm, a butterfly and an apple; below it the syllables ma, me, mi, mo, mu and am, em, im, om, um as chips coloured by vowel, then eight words split into syllable chips.", "2": "Six picture words, mano, mapa, mesa, mimosa, mono and muñeca, in a rounded grid of cream tiles, each picture above its syllables; below it, tracing rows for m, M and the five syllables.", "3": "Four sentences at 24 pt with the new words in syllable chips, a cream box of outlined syllables to colour in, a note for the family and the colophon." }
+aliases: ["early reader", "phonics", "syllables", "word families", "sound buttons", "reading primer", "children's workbook", "cartilla"]
+pageNotes: { "1": "A cream band with a giant Mm, a monkey and a moon; below it six words split into their sounds, map, men, mop and Sam, dim, gum, each sound a chip in the colour of the word's vowel with the m filled, then four rhyming pairs of words: mat and sat, man and pan, mug and tug, mop and top.", "2": "Six picture words, map, mat, man, mug, mop and mud, in a rounded grid of cream tiles, each picture above its sounds; below it, tracing rows for m, M and the words man, mat and men.", "3": "Four sentences at 24 pt with the new words, Tom and Mum, in sound chips, a cream box of outlined words to colour in, a note for parents and carers and the colophon." }
 ---
 
 ## What you'll build
 
-Unit 7 of *Letra a letra*, an invented Spanish reading primer: three pages on the letter M. Spanish primers teach reading syllable by syllable, so the sample is in Spanish only. The opener sets a 190 pt DynaPuff Mm on a cream band beside two things whose Spanish names start with m, a butterfly (*mariposa*) and an apple (*manzana*). The unit's syllables are chips in the colour of their vowel: red a, orange e, teal i, blue o, purple u. Syllables with an m are filled and the rest are outlined, so a child sees which half of *mesa* belongs to this unit. Page 38 sets six picture words in a rounded grid, a watercolour in each cell, then three rows of letters to trace. The watercolours were generated with diffusion models; the band, the icons and the tracing rows are drawn in code. Page 39 has four sentences at 24 pt, a box of syllables to colour in and a note for the family.
+Unit 12 of *Letter by Letter*, an invented English phonics primer: three pages on the sound m. The opener sets a 190 pt DynaPuff Mm on a cream band beside two things whose names start with m, a monkey and a moon. Each word is split into its sounds, and every sound is a chip in the colour of the word's vowel: red a, orange e, teal i, blue o, purple u. The m is filled and the other sounds are outlined, so a child sees where this unit's sound falls in *map* and in *gum*. Page 38 sets six picture words in a rounded grid, a watercolour in each cell, then three rows to trace. The watercolours were generated with diffusion models; the band, the icons and the tracing rows are drawn in code. Page 39 has four sentences at 24 pt, a box of words to colour in and a note for parents and carers.
+
+The Spanish edition is another unit, not a translation: unit 7 of *Letra a letra*, on the same letter. Spanish is taught by open syllables (ma, me, mi, mo, mu), so its chips hold syllables, `{mi·mo·sa}`. Those syllables are not English words, and English primers work sound by sound, so the English unit blends the sounds of short words, `{m·a·p}`, and groups them in rhyming families (-at, -an, -ug, -op). Both units come out of the same pen: the same chip styles, the same `syllables()` function, the same grid, tracing rows and boxes.
 
 ## Method
 
 ### 1 · A chip style per vowel and a function that writes the chips
 
-[The short answer](#the-short-answer) builds 21 chip styles by spreading one `syllable` object. There is a filled style per vowel for syllables with an m, an outlined one per vowel for the rest, a `-frase` twin of each of those ten, and `pinta`, the ink outline a child colours in. `syllables()` turns `{mi·mo·sa}` into three `:chip[…]` with nothing between them, so the syllables of a word touch and the white border draws the seam. Across a word space a chip keeps at least its `gap`, and 0.5 em sets the words of a 24 pt row 4.2 mm apart, where the space alone leaves 2.3 mm. Inside a sentence that gap would nearly double the space before the new word, so a word that follows another word gets the `-frase` twins, whose `gap` of 0 leaves the 2.3 mm space as it is.
+[The short answer](#the-short-answer) builds 21 chip styles by spreading one `syllable` object. There is a filled style per vowel for the m, an outlined one per vowel for the other sounds, a `-frase` twin of each of those ten, and `pinta`, the ink outline a child colours in. `syllables()` turns `{m·a·p}` into three `:chip[…]` with nothing between them, so the sounds of a word touch and the white border draws the seam. A chip takes the colour of its vowel, and a piece with no vowel, the m and the p here, takes the vowel of its word, so *map* is red from end to end. Across a word space a chip keeps at least its `gap`, and 0.5 em sets the words of a 24 pt row 4.2 mm apart, where the space alone leaves 2.3 mm. Inside a sentence that gap would nearly double the space before the new word, so a word that follows another word gets the `-frase` twins, whose `gap` of 0 leaves the 2.3 mm space as it is. In the Spanish edition the pieces are syllables, `{mi·mo·sa}`, and each has a vowel of its own.
 
 ### 2 · Leading that clears the chips
 
 <Excerpt region="reading" />
 
-A chip's vertical padding and border paint outside its line and add no leading, so a chip taller than the line pitch runs into the chips of the line below. A 24 pt syllable chip is 10.4 mm tall; at 30 pt leading (10.6 mm), the chips of two sentences would stand 0.1 mm apart. The lines a child reads get 45 pt and the rows of syllables 60 pt, three and four lines of the instructions' 15 pt grid.
+A chip's vertical padding and border paint outside its line and add no leading, so a chip taller than the line pitch runs into the chips of the line below. A 24 pt chip is 10.4 mm tall; at 30 pt leading (10.6 mm), the chips of two sentences would stand 0.1 mm apart. The lines a child reads get 45 pt and the 34 pt rows of the first activity 60 pt, three and four lines of the instructions' 15 pt grid.
 
 ### 3 · A picture in every cell
 
 <Excerpt region="pictures" />
 
-`setCellImage` sets a picture above a cell's text at a fraction of the cell's inner width, 0.72 here (36.5 mm), and the row grows to hold it. Each picture is a JPEG painted on white and multiplied by the tiles' cream, so it sits on the tile without a box. Under each picture is the word in syllable chips. A table cell takes chip markup like any paragraph. The `dibujos` table style rounds the frame and its fills at 5 mm and parts the cream tiles with 4 pt white rules.
+`setCellImage` sets a picture above a cell's text at a fraction of the cell's inner width, 0.72 here (36.5 mm), and the row grows to hold it. Each picture is a JPEG painted on white and multiplied by the tiles' cream, so it sits on the tile without a box. Under each picture is the word in sound chips. A table cell takes chip markup like any paragraph. The `dibujos` table style rounds the frame and its fills at 5 mm and parts the cream tiles with 4 pt white rules.
 
 ### 4 · One line of space before the box
 
@@ -40,19 +42,19 @@ The Markdown puts `:::space{lines=1}` between the last sentence and the colourin
 
 <Excerpt region="opener" />
 
-The Mm is the heading's text (`{titleText}`); the unit number, the series and the letter's name are attributes on the same heading line. The band, the butterfly and the apple are images. The band is 104 mm deep, and the opener reserves the page down to the first grid line under its foot, so the first activity title starts at 118.5 mm, on the grid and 16.6 mm below the lowest point of the wave (101.9 mm).
+The Mm is the heading's text (`{titleText}`); the unit number, the series and the name under the letter are attributes on the same heading line. The band, the monkey and the moon are images. The band is 104 mm deep, and the opener reserves the page down to the first grid line under its foot, so the first activity title starts at 118.5 mm, on the grid and 16.6 mm below the lowest point of the wave (101.9 mm).
 
 ### 6 · Icons beside the activity titles
 
 <Excerpt region="activities" />
 
-Each activity title names its heading style, as in `## Lee las frases {style="lee"}`, and the style draws an icon with the title centred beside it. The titles are still level-2 headings, so the `H2` level spaces them: two grid lines of `lineHeight` for the title and two more of `marginTop` above it.
+Each activity title names its heading style, as in `## Read the sentences {style="lee"}`, and the style draws an icon with the title centred beside it. The titles are still level-2 headings, so the `H2` level spaces them: two grid lines of `lineHeight` for the title and two more of `marginTop` above it.
 
 ## Variations
 
-### Round the syllables into pills
+### Round the chips into pills
 
-A radius over half the chip's height is clamped to that half, so a large value draws round ends. A one-letter syllable comes out nearly a circle, and the seams inside a word become notches.
+A radius over half the chip's height is clamped to that half, so a large value draws round ends. A one-letter chip comes out nearly a circle, and the seams inside a word become notches.
 
 ```diff
 -  paddingX: em(0.26), paddingY: em(0.05), gap: em(0.5) };

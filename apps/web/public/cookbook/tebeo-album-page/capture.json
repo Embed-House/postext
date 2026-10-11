@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tebeo-album-page",
-  "sourceHash": "a5373512a56a2a428b308b3b7d45847b652716ec1c26605a050700e5fa6febf2",
+  "sourceHash": "d7b8eeec2ac705b235d1fd72050ed88cc9663ceb10a7e00c38d2ebb2986780e1",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:38.329Z",
+  "capturedAt": "2026-10-11T20:22:30.935Z",
   "variants": {
     "en": {
-      "hash8": "389ba0cb",
+      "hash8": "25315a36",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 131,
-        "buildMs": 420,
-        "totalMs": 1301,
+        "importMs": 366,
+        "fontsMs": 177,
+        "buildMs": 517,
+        "totalMs": 1647,
         "builds": 1
       },
       "specimen": {
@@ -84,12 +84,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117121,
+        "bytes": 1117118,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115586
+        "bytes": 1115586,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e7e42902ebfaa4cc",
+            "lines": "cffc700f2614d1b1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -276,6 +283,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -291,13 +301,13 @@
       }
     },
     "es": {
-      "hash8": "9a617185",
+      "hash8": "1f81ec8c",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 81,
-        "buildMs": 327,
-        "totalMs": 1136,
+        "importMs": 421,
+        "fontsMs": 145,
+        "buildMs": 377,
+        "totalMs": 1650,
         "builds": 1
       },
       "specimen": {
@@ -364,12 +374,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117720,
+        "bytes": 1117718,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116186
+        "bytes": 1116186,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "28b6a004aef121da",
+            "lines": "b5c0ca5f705fc521"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -556,6 +573,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -576,13 +596,13 @@
       }
     },
     "ca": {
-      "hash8": "f7cceecf",
+      "hash8": "117eecf7",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 83,
-        "buildMs": 326,
-        "totalMs": 1133,
+        "importMs": 369,
+        "fontsMs": 105,
+        "buildMs": 394,
+        "totalMs": 1661,
         "builds": 1
       },
       "specimen": {
@@ -649,12 +669,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117588,
+        "bytes": 1117584,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116318
+        "bytes": 1116318,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "fe3aca20d1e26234",
+            "lines": "d6d7e962edeacbe6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -841,6 +868,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -861,13 +891,13 @@
       }
     },
     "zh": {
-      "hash8": "d28203cb",
+      "hash8": "b4af3496",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 254,
-        "buildMs": 398,
-        "totalMs": 1384,
+        "importMs": 443,
+        "fontsMs": 541,
+        "buildMs": 490,
+        "totalMs": 2029,
         "builds": 1
       },
       "specimen": {
@@ -899,7 +929,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 96508,
+          "bytes": 96504,
           "alt": "章首页，第 2 页：卡门的橙子。"
         },
         {
@@ -934,12 +964,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157831,
+        "bytes": 1157822,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115412
+        "bytes": 1115411,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e6dd159094e188f6",
+            "lines": "bfdfa23711ac48b5"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1127,6 +1164,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1142,13 +1182,13 @@
       }
     },
     "ar": {
-      "hash8": "fe87b09f",
+      "hash8": "640d74e6",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 108,
-        "buildMs": 350,
-        "totalMs": 1175,
+        "importMs": 595,
+        "fontsMs": 136,
+        "buildMs": 403,
+        "totalMs": 1700,
         "builds": 1
       },
       "specimen": {
@@ -1216,12 +1256,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1135149,
+        "bytes": 1135148,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115464
+        "bytes": 1115464,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "7d12c6f69c2a9b44",
+            "lines": "0af747572aff2247"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1411,6 +1458,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1426,13 +1476,13 @@
       }
     },
     "ja": {
-      "hash8": "0885e88f",
+      "hash8": "1d3544cf",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 223,
-        "buildMs": 298,
-        "totalMs": 1266,
+        "importMs": 408,
+        "fontsMs": 609,
+        "buildMs": 407,
+        "totalMs": 2049,
         "builds": 1
       },
       "specimen": {
@@ -1500,12 +1550,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1154855,
+        "bytes": 1154853,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116283
+        "bytes": 1116283,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "b82f33a2a871972e",
+            "lines": "6a3ea34f3d27cdf1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1694,6 +1751,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1709,13 +1769,13 @@
       }
     },
     "pt": {
-      "hash8": "ef040997",
+      "hash8": "7da6df2e",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 94,
-        "buildMs": 336,
-        "totalMs": 1156,
+        "importMs": 339,
+        "fontsMs": 193,
+        "buildMs": 408,
+        "totalMs": 1529,
         "builds": 1
       },
       "specimen": {
@@ -1782,12 +1842,19 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117155,
+        "bytes": 1117152,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115989
+        "bytes": 1115989,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "d1ea287e8befc63a",
+            "lines": "a065b359555fbabf"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1973,6 +2040,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

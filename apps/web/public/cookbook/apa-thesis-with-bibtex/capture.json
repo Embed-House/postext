@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "6102cbb21c7dcbf41e54b55a1212e65478ff34edfb8a0393331d4d56c6679432",
+  "sourceHash": "f9fbed5656212f904178224c030e4d8be819a2c1ddf7583a805c50d6248db912",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.460Z",
+  "capturedAt": "2026-10-11T20:22:29.673Z",
   "variants": {
     "en": {
-      "hash8": "ad54d91f",
+      "hash8": "f44cab15",
       "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 30,
-        "buildMs": 265,
-        "totalMs": 1074,
+        "importMs": 1230,
+        "fontsMs": 35,
+        "buildMs": 347,
+        "totalMs": 3203,
         "builds": 1
       },
       "specimen": {
@@ -104,8 +104,15 @@
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18637,
-        "folio": "2af3feac"
+        "bytes": 18635,
+        "folio": "2af3feac",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "7cc03c7582f64c97",
+            "lines": "5966a69fbcf378ff"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -284,17 +291,20 @@
           "share": 0,
           "worst": 1.98
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "2e17abac",
+      "hash8": "36ab50c8",
       "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 30,
-        "buildMs": 265,
-        "totalMs": 1089,
+        "importMs": 1336,
+        "fontsMs": 38,
+        "buildMs": 323,
+        "totalMs": 3082,
         "builds": 1
       },
       "specimen": {
@@ -376,13 +386,20 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 66527,
+        "bytes": 66525,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18543,
-        "folio": "2af3feac"
+        "bytes": 18541,
+        "folio": "2af3feac",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "559b36ffe8eef5b9",
+            "lines": "d3c927b74d044925"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -560,6 +577,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.8
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

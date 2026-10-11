@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "research-poster",
-  "sourceHash": "661b074ad9461f6b7b744c9909275e78b04b6cf78a52ee47a4449707628ae026",
+  "sourceHash": "a611d3b868da21506ef9cab64df0e92ac1c192775b6b1f92e38f69a42f623e73",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.882Z",
+  "capturedAt": "2026-10-11T20:22:30.781Z",
   "variants": {
     "en": {
-      "hash8": "776b921d",
+      "hash8": "398d111a",
       "vdtHash": "152bbae97cbf2ff3c7d0228699c51b639930e246",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 29,
-        "buildMs": 44,
-        "totalMs": 772,
+        "importMs": 916,
+        "fontsMs": 75,
+        "buildMs": 93,
+        "totalMs": 2571,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Saira Condensed"
         ],
         "pages": 1,
-        "ownLines": 204
+        "ownLines": 203
       },
       "pages": [
         {
@@ -74,8 +74,15 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94070,
-        "folio": "7c6d9248"
+        "bytes": 94059,
+        "folio": "7c6d9248",
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "3454c1ee0144e228",
+            "lines": "bd6bfe10c8a55110"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -95,7 +102,6 @@
           "bodyText.fontSize",
           "bodyText.italicColor",
           "bodyText.lineHeight",
-          "bodyText.paragraphContainerSpacing",
           "bodyText.paragraphSpacing",
           "bodyText.textAlign",
           "calloutStyles",
@@ -162,6 +168,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -174,6 +181,7 @@
           "page.width",
           "paragraphStyles",
           "paragraphStyles[].boldColor",
+          "paragraphStyles[].containerSpacing",
           "paragraphStyles[].fontFamily",
           "paragraphStyles[].fontSize",
           "paragraphStyles[].hangingIndent",
@@ -200,15 +208,16 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 252,
+        "configLeaves": 247,
         "designElements": 7,
         "directives": [
-          ":::callout",
           ":::columns",
+          ":::callout",
           "::resource",
           ":::paragraphs",
           ":::space"
@@ -271,7 +280,6 @@
           "heading-attributes",
           "inline-embeds",
           "localised-labels",
-          "nested-callouts",
           "opener-band",
           "opener-design",
           "page-background",
@@ -292,23 +300,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d0f7cdb2",
+      "hash8": "b647ecb6",
       "vdtHash": "565a8c265171499f754da27b53b2f58943f172da",
       "timings": {
-        "importMs": 134,
-        "fontsMs": 27,
-        "buildMs": 43,
-        "totalMs": 771,
+        "importMs": 1084,
+        "fontsMs": 119,
+        "buildMs": 93,
+        "totalMs": 3140,
         "builds": 1
       },
       "specimen": {
@@ -331,7 +336,7 @@
           "Saira Condensed"
         ],
         "pages": 1,
-        "ownLines": 204
+        "ownLines": 203
       },
       "pages": [
         {
@@ -366,8 +371,15 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94810,
-        "folio": "7c6d9248"
+        "bytes": 94800,
+        "folio": "7c6d9248",
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "04e868a177eea0d5",
+            "lines": "01ec626821ea6ed8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -387,7 +399,6 @@
           "bodyText.fontSize",
           "bodyText.italicColor",
           "bodyText.lineHeight",
-          "bodyText.paragraphContainerSpacing",
           "bodyText.paragraphSpacing",
           "bodyText.textAlign",
           "calloutStyles",
@@ -454,6 +465,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -466,6 +478,7 @@
           "page.width",
           "paragraphStyles",
           "paragraphStyles[].boldColor",
+          "paragraphStyles[].containerSpacing",
           "paragraphStyles[].fontFamily",
           "paragraphStyles[].fontSize",
           "paragraphStyles[].hangingIndent",
@@ -492,15 +505,16 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 252,
+        "configLeaves": 247,
         "designElements": 7,
         "directives": [
-          ":::callout",
           ":::columns",
+          ":::callout",
           "::resource",
           ":::paragraphs",
           ":::space"
@@ -563,7 +577,6 @@
           "heading-attributes",
           "inline-embeds",
           "localised-labels",
-          "nested-callouts",
           "opener-band",
           "opener-design",
           "page-background",
@@ -584,13 +597,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

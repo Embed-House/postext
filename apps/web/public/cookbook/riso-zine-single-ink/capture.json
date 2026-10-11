@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "riso-zine-single-ink",
-  "sourceHash": "10dc3931ca8b556190ac1b3ddfe9163a4d05bbcd38f3f47a39b136ad0565fc02",
+  "sourceHash": "55316c1b546366e5912d9d52b1a59fcd794c92d6b8bd2820b88737192dfe37f7",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.579Z",
+  "capturedAt": "2026-10-11T20:22:30.784Z",
   "variants": {
     "en": {
-      "hash8": "24ec8718",
+      "hash8": "d2fb9126",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 50,
-        "buildMs": 27,
-        "totalMs": 812,
+        "importMs": 1335,
+        "fontsMs": 67,
+        "buildMs": 67,
+        "totalMs": 3684,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Space Mono"
         ],
         "pages": 4,
-        "ownLines": 208
+        "ownLines": 204
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58460,
+          "bytes": 58462,
           "alt": "Opening page 1: Night Buses."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84338,
+          "bytes": 83396,
           "alt": "Page 3: As drawn. The network from the pink drum.  loops round the rest. Terminals and changes only."
         },
         {
@@ -115,17 +115,25 @@
       },
       "pdf": {
         "file": "riso-zine-single-ink.pdf",
-        "bytes": 198846,
+        "bytes": 198869,
         "pages": 4
       },
       "sandbox": {
         "file": "riso-zine-single-ink.postext",
-        "bytes": 69142,
-        "folio": "ead0b06f"
+        "bytes": 69144,
+        "folio": "ead0b06f",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "18513ae74a7e9a5f",
+            "lines": "1e493e887bee3ae0"
+          }
+        ]
       },
       "detected": {
         "apis": [
           "buildDocumentWithFonts",
+          "decodeSvgImage",
           "decompressWoff2",
           "registerResourceImage",
           "renderPageToCanvas",
@@ -240,6 +248,7 @@
           "headings.levels[].marginTop",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -285,12 +294,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "unorderedLists"
         ],
-        "configLeaves": 394,
+        "configLeaves": 395,
         "designElements": 22,
         "directives": [
           ":::callout",
@@ -359,13 +369,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

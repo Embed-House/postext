@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "walking-guide-thumb-tabs",
-  "sourceHash": "d1571a7ba53f07983d28a33b237f519c03bc20fb7d59bb9965282b64883951c7",
+  "sourceHash": "d74dc4b993bedb9b5f6aab9474e42e0bf56dafdb3e0be6bdd9f8f15615e45f4b",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.598Z",
+  "capturedAt": "2026-10-11T20:22:31.121Z",
   "variants": {
     "en": {
-      "hash8": "0b9ad182",
+      "hash8": "91d848a9",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 27,
-        "buildMs": 33,
-        "totalMs": 800,
+        "importMs": 133,
+        "fontsMs": 26,
+        "buildMs": 56,
+        "totalMs": 864,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "DM Serif Display"
         ],
         "pages": 7,
-        "ownLines": 244
+        "ownLines": 245
       },
       "pages": [
         {
@@ -151,8 +151,15 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52350,
-        "folio": "98b88fc8"
+        "bytes": 52342,
+        "folio": "98b88fc8",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "94f20e7f13ffa06b",
+            "lines": "a565593afd3feba6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -295,6 +302,7 @@
           "headings.levels[].numberingTemplate",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -335,11 +343,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 651,
+        "configLeaves": 652,
         "designElements": 33,
         "directives": [
           ":::pagebreak",
@@ -420,23 +429,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "a69dca84",
+      "hash8": "d29f6fc5",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 26,
-        "buildMs": 30,
-        "totalMs": 795,
+        "importMs": 147,
+        "fontsMs": 29,
+        "buildMs": 55,
+        "totalMs": 878,
         "builds": 1
       },
       "specimen": {
@@ -458,7 +464,7 @@
           "DM Serif Display"
         ],
         "pages": 7,
-        "ownLines": 244
+        "ownLines": 245
       },
       "pages": [
         {
@@ -571,8 +577,15 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52597,
-        "folio": "98b88fc8"
+        "bytes": 52584,
+        "folio": "98b88fc8",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "9753dde53a87a815",
+            "lines": "b67f761dac58c8b5"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -715,6 +728,7 @@
           "headings.levels[].numberingTemplate",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -755,11 +769,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 651,
+        "configLeaves": 652,
         "designElements": 33,
         "directives": [
           ":::pagebreak",
@@ -840,16 +855,14 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

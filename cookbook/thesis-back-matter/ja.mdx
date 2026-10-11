@@ -28,7 +28,7 @@ pageNotes: { "1": "171ページで第6章Conclusionが始まります。深さ62
 
 <Excerpt region="appendix" />
 
-付録のスタイルは`numberingTemplate: '{1:A}'`を指定し、レベルのカウンターを文字で印刷します。`# Interview guide {style="appendix" startAt=1}`がそのカウンターを振り直すので、最初の付録はGではなくAになります（[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)）。帯は`{number}`で、柱は`{chapterNumber}`でこの文字を読みます。リソースタイプの`{h1}`はカウンターを数字で印刷するので、専用のリソースタイプが付録の表をA.1、A.2…と番号付けします。既定のタイプでは、この表は表1.1になります。章自身の見出しはレベルのテンプレートで数えます。`'{1}.{2}'`は6.1を印刷し、`continuation.headings.h1: 5`がこの章を第6章にします。
+付録のスタイルは`numberingTemplate: '{1:A}'`を指定し、レベルのカウンターを文字で印刷します。`# Interview guide {style="appendix" startAt=1}`がそのカウンターを振り直すので、最初の付録はGではなくAになります（[見出しスタイル](/ja/docs/configuration-styles#見出しスタイル)）。帯は`{number}`で、柱は`{chapterNumber}`でこの文字を読みます。リソースタイプの`{h1}`は、書式を指定しないかぎりカウンターを数字で印刷するので、付録の表にはテンプレートが`'{h1:A}.{n}'`のタイプを使います。A.1、A.2…となり、2つ目の付録ではB.1になります。既定のタイプでは、この表は表1.1になります。章自身の見出しはレベルのテンプレートで数えます。`'{1}.{2}'`は6.1を印刷し、`continuation.headings.h1: 5`がこの章を第6章にします。
 
 ### 4 · 柱を小口側に置く
 

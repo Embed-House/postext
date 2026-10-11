@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "splash-inset-broken-border",
-  "sourceHash": "e6ad00038ef9c6b129939b3f0414df655fa1db576da34ea1d0a1e647def8c11c",
+  "sourceHash": "d3be56c679f4f8836b2dd12dcd48a6c6f7acaec6e79fc53ddab9e22505674eeb",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.692Z",
+  "capturedAt": "2026-10-11T20:22:30.876Z",
   "variants": {
     "en": {
-      "hash8": "73a0c15c",
+      "hash8": "f779b161",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 81,
-        "buildMs": 106,
-        "totalMs": 906,
+        "importMs": 646,
+        "fontsMs": 190,
+        "buildMs": 122,
+        "totalMs": 2011,
         "builds": 1
       },
       "specimen": {
@@ -87,12 +87,19 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 770583,
+        "bytes": 770581,
         "pages": 2
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766538
+        "bytes": 766536,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3231e7c155760927",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -228,17 +235,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "8ed47a26",
+      "hash8": "c7f2d5b4",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 71,
-        "buildMs": 101,
-        "totalMs": 894,
+        "importMs": 698,
+        "fontsMs": 356,
+        "buildMs": 143,
+        "totalMs": 2184,
         "builds": 1
       },
       "specimen": {
@@ -308,12 +318,19 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 770839,
+        "bytes": 770837,
         "pages": 2
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766683
+        "bytes": 766680,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3231e7c155760927",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -449,17 +466,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ca": {
-      "hash8": "58b5ad24",
+      "hash8": "e5e34651",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 83,
-        "buildMs": 105,
-        "totalMs": 915,
+        "importMs": 581,
+        "fontsMs": 247,
+        "buildMs": 119,
+        "totalMs": 1809,
         "builds": 1
       },
       "specimen": {
@@ -529,12 +549,19 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 770164,
+        "bytes": 770161,
         "pages": 2
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766696
+        "bytes": 766694,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3231e7c155760927",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -670,17 +697,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "zh": {
-      "hash8": "7a43d1bf",
+      "hash8": "f2b471f8",
       "vdtHash": "69a714d811223c07ee4617800fe1b6c4129a8924",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 222,
-        "buildMs": 122,
-        "totalMs": 1074,
+        "importMs": 503,
+        "fontsMs": 587,
+        "buildMs": 158,
+        "totalMs": 1901,
         "builds": 1
       },
       "specimen": {
@@ -755,7 +785,14 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766606
+        "bytes": 766603,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "ff62a6a3257ed075",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -892,17 +929,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ar": {
-      "hash8": "c9351c94",
+      "hash8": "93b46354",
       "vdtHash": "7a907b581ba76903673d89d9523d7dd4926f3c7c",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 99,
-        "buildMs": 102,
-        "totalMs": 902,
+        "importMs": 538,
+        "fontsMs": 310,
+        "buildMs": 132,
+        "totalMs": 1688,
         "builds": 1
       },
       "specimen": {
@@ -973,12 +1013,19 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 769406,
+        "bytes": 769403,
         "pages": 2
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766735
+        "bytes": 766733,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "1f5b5c778c709545",
+            "lines": "e18ee0a44c0c4294"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1117,17 +1164,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ja": {
-      "hash8": "a7c23e02",
+      "hash8": "e6a5d4e9",
       "vdtHash": "a6e280cef897624f349f209d33e1f87e3bbbca57",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 224,
-        "buildMs": 89,
-        "totalMs": 1050,
+        "importMs": 381,
+        "fontsMs": 606,
+        "buildMs": 130,
+        "totalMs": 1713,
         "builds": 1
       },
       "specimen": {
@@ -1203,7 +1253,14 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766838
+        "bytes": 766835,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "561f60d98f5d6ccd",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1341,17 +1398,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "pt": {
-      "hash8": "9d270a80",
+      "hash8": "029a0619",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 179,
-        "fontsMs": 74,
-        "buildMs": 98,
-        "totalMs": 913,
+        "importMs": 470,
+        "fontsMs": 134,
+        "buildMs": 112,
+        "totalMs": 1339,
         "builds": 1
       },
       "specimen": {
@@ -1421,12 +1481,19 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 770779,
+        "bytes": 770777,
         "pages": 2
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766623
+        "bytes": 766620,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3231e7c155760927",
+            "lines": "061318c49236a5d4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1561,6 +1628,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

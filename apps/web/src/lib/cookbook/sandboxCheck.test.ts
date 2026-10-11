@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { sandboxEntry } from "../../../scripts/cookbook/capture.ts";
 import { routeFor } from "../../../scripts/cookbook/net.ts";
-import { compareEdition, extraWarnings } from "../../../scripts/cookbook/sandbox.ts";
+import { compareEdition, extraWarnings, variableFamilies } from "../../../scripts/cookbook/sandbox.ts";
 import type { SandboxExpected, SandboxRun } from "../../../scripts/cookbook/sandbox.ts";
 import type { RecipeMeta } from "./types.ts";
 
@@ -64,20 +64,74 @@ describe("compareEdition (#736)", () => {
     expect(compareEdition(expected(), got, { ...options, strict: true })).toEqual([{ severity: "fail", detail }]);
   });
 
-  it("reads the layout hash on the recorded engine only", () => {
-    const got = run({ chapters: [{ pages: 2, hash: "bbbb", warnings: [] }] });
-    const [finding] = compareEdition(expected(), got, { strict: true, sameEngine: true });
-    expect(finding).toMatchObject({ severity: "fail" });
-    expect(finding!.detail).toContain("layout hash bbbb against aaaa");
-    expect(compareEdition(expected(), got, { strict: false, sameEngine: true })[0]).toMatchObject({ severity: "warn" });
-    // Another release moves lines on purpose: its hash is its own.
+  // The Sandbox measures with Google's variable files, a pen with the static
+  // cuts of Fontsource: on 1.28.1, 134 of 334 editions came out with another
+  // layout hash, 127 of them with every line the same.
+  const withLines = expected({ chapters: [{ pages: 2, hash: "aaaa", lines: "1111" }] });
+  const fonts = {
+    "Nunito Sans": { page: ["200 900 italic (unloaded) ×4", "200 900 italic", "200 900 normal (unloaded) ×4", "200 900 normal"], worker: ["200 900 italic ×5", "200 900 normal ×5"] },
+    Bangers: { page: ["400 normal ×3", "600 900 normal ×3"], worker: ["400 normal ×3"] },
+    Amiri: { page: ["400 normal", "700 normal"], worker: ["400 normal", "700 normal"] },
+  };
+
+  it("reads the lines, not the layout hash: the same lines set to other widths are a note", () => {
+    const got = run({ chapters: [{ pages: 2, hash: "bbbb", lines: "1111", warnings: [] }], fonts });
+    for (const strict of [false, true]) {
+      expect(compareEdition(withLines, got, { strict, sameEngine: true })).toEqual([{
+        severity: "info",
+        detail: "the Sandbox sets the bundle in the lines the capture records, some of them to another width (layout hash bbbb against aaaa): the Sandbox measures Nunito Sans from a variable file, a pen from the static cuts",
+      }]);
+    }
+  });
+
+  it("warns of a line that breaks elsewhere, and fails on it with --strict", () => {
+    const got = run({ chapters: [{ pages: 2, hash: "bbbb", lines: "2222", warnings: [] }], fonts });
+    const [finding] = compareEdition(withLines, got, { strict: true, sameEngine: true });
+    expect(finding).toEqual({
+      severity: "fail",
+      detail: "the Sandbox breaks the lines of the bundle otherwise than the capture records (2 pages on both sides, lines hash 2222 against 1111); the Sandbox measures Nunito Sans from a variable file, a pen from the static cuts, and a line a fraction of a pixel from its measure breaks on either side of it",
+    });
+    expect(compareEdition(withLines, got, { strict: false, sameEngine: true })[0]).toMatchObject({ severity: "warn" });
+    // `--site` reports no faces: the lines, and no more.
+    expect(compareEdition(withLines, { ...got, fonts: {} }, { strict: true, sameEngine: true })[0]!.detail)
+      .toBe("the Sandbox breaks the lines of the bundle otherwise than the capture records (2 pages on both sides, lines hash 2222 against 1111)");
+  });
+
+  it("reads the lines on the recorded engine only", () => {
+    const got = run({ chapters: [{ pages: 2, hash: "bbbb", lines: "2222", warnings: [] }] });
+    // Another release moves lines on purpose: they are its own.
+    expect(compareEdition(withLines, got, { strict: true, sameEngine: false })).toEqual([]);
+  });
+
+  it("warns, strict or not, of another layout hash with no lines recorded to read it by", () => {
+    const got = run({ chapters: [{ pages: 2, hash: "bbbb", lines: "2222", warnings: [] }] });
+    for (const strict of [false, true]) {
+      const findings = compareEdition(expected(), got, { strict, sameEngine: true });
+      expect(findings).toHaveLength(1);
+      expect(findings[0]).toMatchObject({ severity: "warn" });
+      expect(findings[0]!.detail).toContain("layout hash bbbb against aaaa");
+      expect(findings[0]!.detail).toContain("capture with --sandbox-only");
+    }
+    // A run that brings no lines (an older page entry) is read the same way.
+    expect(compareEdition(withLines, run({ chapters: [{ pages: 2, hash: "bbbb", warnings: [] }] }), { strict: true, sameEngine: true })[0]).toMatchObject({ severity: "warn" });
     expect(compareEdition(expected(), got, { strict: true, sameEngine: false })).toEqual([]);
+  });
+
+  it("names the families set from a variable file: every loaded face a range of weights", () => {
+    expect(variableFamilies(fonts)).toEqual(["Nunito Sans"]);
+    // One cut and its stand-in for the bold (#688) is a static family.
+    expect(variableFamilies({ Bangers: fonts.Bangers })).toEqual([]);
+    expect(variableFamilies({ Lora: { page: ["400 700 normal (unloaded) ×3"], worker: [] } })).toEqual([]);
+    expect(variableFamilies({})).toEqual([]);
   });
 
   it("names the chapter of a book", () => {
     const book = expected({ chapters: [{ pages: 4, hash: "a" }, { pages: 6, hash: "b" }] });
     const got = run({ chapters: [{ pages: 4, hash: "a", warnings: [] }, { pages: 7, hash: "c", warnings: [] }] });
     expect(compareEdition(book, got, options).map((f) => f.detail)).toEqual(["the Sandbox lays chapter 2 out to 7 pages, the capture records 6"]);
+    const lined = expected({ chapters: [{ pages: 4, hash: "a", lines: "x" }, { pages: 6, hash: "b", lines: "y" }] });
+    const moved = run({ chapters: [{ pages: 4, hash: "a", lines: "x", warnings: [] }, { pages: 6, hash: "c", lines: "z", warnings: [] }] });
+    expect(compareEdition(lined, moved, options).map((f) => f.detail)).toEqual(["the Sandbox breaks the lines of chapter 2 otherwise than the capture records (6 pages on both sides, lines hash z against y)"]);
   });
 
   it("compares an edition recorded before sandbox.chapters on its pages, its warnings as notes", () => {
@@ -140,6 +194,12 @@ describe("capture.json's sandbox entry (#736)", () => {
 
   it("records each chapter's pages and layout hash as the bundle reads back", () => {
     expect(sandboxEntry("a-recipe", bundle, meta)).toEqual({ file: "a-recipe.postext", bytes: 3, chapters: [{ pages: 4, hash: "aa" }, { pages: 2, hash: "bb" }] });
+  });
+
+  it("records each chapter's lines hash beside it, when the read-back brings one", () => {
+    const lined = (pages: number, hash: string, lines: string) => ({ chapter: 1, pen: { pages, hash, lines }, bundle: { pages, hash, lines }, difference: null });
+    const entry = sandboxEntry("a-recipe", { ...bundle, readBack: { chapters: [lined(4, "aa", "l1"), lined(2, "bb", "l2")], extraWarnings: [] } }, meta);
+    expect(entry.chapters).toEqual([{ pages: 4, hash: "aa", lines: "l1" }, { pages: 2, hash: "bb", lines: "l2" }]);
   });
 
   it("records the warnings of the pen's builds, and leaves the field out when there are none", () => {

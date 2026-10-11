@@ -76,7 +76,7 @@ The repair cost £1.9 million, most of it from the county council’s flood reco
 
 ::resource{id="bridge"}
 
-It reopened five days before the first storm of the autumn. Heavy rain is forecast for Saturday :ref{id="forecast" text="(Weather, right)"}, and the county’s engineers will be on the bridge to watch the river rise.
+It reopened just five days before the first storm of the autumn is due. Heavy rain is forecast for Saturday :ref{id="forecast" text="(Weather, right)"}, and the county’s engineers will be on the bridge to watch the river rise.
 
 The first vehicle across was Keith Barlow’s dairy van, which has spent more than a year on the eleven-mile detour through Kirkby. “Forty minutes each way, six days a week,” he said. “I’d rather not add it up.”
 

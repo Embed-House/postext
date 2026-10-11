@@ -1,7 +1,7 @@
-// ─── Kit · viewer v1 ── the same in every recipe · postext.dev/cookbook
+// ─── Kit · viewer v2 ── the same in every recipe · postext.dev/cookbook
 /** The pages as spreads on a dark desk, page 1 alone, then verso | recto,
- *  each painted when it scrolls near. */
-function showPages(docs, { title, width = 460 } = {}) {
+ *  each painted when it scrolls near. Other options go to renderPageToCanvas. */
+function showPages(docs, { title, width = 460, ...render } = {}) {
   const root = viewer(title);
   const pages = [docs].flat().flatMap((doc) =>
     doc.pages.map((page) => ({ doc, page, n: (doc.pageIndexOffset ?? 0) + page.index })));
@@ -19,7 +19,7 @@ function showPages(docs, { title, width = 460 } = {}) {
       if (!isIntersecting) continue;
       painter.unobserve(target);
       const { doc, page } = target.postext;
-      renderPageToCanvas(page, doc, target, { scale: (width * density) / page.width });
+      renderPageToCanvas(page, doc, target, { ...render, scale: (width * density) / page.width });
     }
   }, { rootMargin: '800px' });
   showPages.painter = painter;

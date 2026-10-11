@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "haiku-and-tanka",
-  "sourceHash": "2332cb97f1ac66cad2253ff4e2764ddb8db211c0b3db2232142228bb3be622b4",
+  "sourceHash": "82fac3399997aa95293ae14593b6dc2b782b163cd48d1ff8d5de3d90d3b62e63",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.268Z",
+  "capturedAt": "2026-10-11T20:22:30.249Z",
   "variants": {
     "en": {
-      "hash8": "24be8057",
-      "vdtHash": "a0d3acc3bb77c15bc808e0a2c80aa455f33ea85c",
+      "hash8": "c196201c",
+      "vdtHash": "351aa50ad42f719591ada45f71b4b1a8ff2d4369",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 257,
-        "buildMs": 58,
-        "totalMs": 1028,
+        "importMs": 1071,
+        "fontsMs": 1267,
+        "buildMs": 78,
+        "totalMs": 2970,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58286,
+          "bytes": 65800,
           "alt": "Opening page 一: おくのほそ道."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62542,
+          "bytes": 65648,
           "alt": "Page 二: 旅立."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63012,
+          "bytes": 55592,
           "alt": "Page 三: 立石寺."
         },
         {
@@ -82,8 +82,8 @@
           "h": 1480,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 17820,
-          "alt": "Page 四: 最上川."
+          "bytes": 14550,
+          "alt": "Page 四: 越後路."
         },
         {
           "n": 5,
@@ -167,13 +167,20 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221330,
+        "bytes": 221312,
         "pages": 8
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17722,
-        "folio": "7e0edbf5"
+        "bytes": 17536,
+        "folio": "7e0edbf5",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "bfde3b2cf8c32b2e",
+            "lines": "6d7724e49ca5dee0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -345,17 +352,26 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "4017e84a",
-      "vdtHash": "8e70f2c90a81b954f68e1f61ac6b7a6fc3d654f1",
+      "hash8": "edf4a314",
+      "vdtHash": "a5d3308460805ad0d7f0cc310898046450ac8fc0",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 217,
-        "buildMs": 58,
-        "totalMs": 996,
+        "importMs": 1166,
+        "fontsMs": 1683,
+        "buildMs": 75,
+        "totalMs": 3672,
         "builds": 1
       },
       "specimen": {
@@ -387,7 +403,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58216,
+          "bytes": 65718,
           "alt": "Página de apertura 一: おくのほそ道."
         },
         {
@@ -398,7 +414,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 62542,
+          "bytes": 65648,
           "alt": "Página 二: 旅立."
         },
         {
@@ -409,7 +425,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63012,
+          "bytes": 55592,
           "alt": "Página 三: 立石寺."
         },
         {
@@ -420,8 +436,8 @@
           "h": 1480,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 17820,
-          "alt": "Página 四: 最上川."
+          "bytes": 14550,
+          "alt": "Página 四: 越後路."
         },
         {
           "n": 5,
@@ -505,13 +521,20 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221350,
+        "bytes": 221331,
         "pages": 8
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17717,
-        "folio": "7e0edbf5"
+        "bytes": 17531,
+        "folio": "7e0edbf5",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "cd51100d520e2fbd",
+            "lines": "83d15c273e46aec7"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -683,7 +706,16 @@
           "share": 0,
           "worst": 0.25
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

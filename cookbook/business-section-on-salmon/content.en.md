@@ -53,14 +53,18 @@ How the gates turn: **page 2** · Opinion: **page 4**
 :::
 
 :::paragraphs{style="flush"}
-Trams on the Harbour and University lines will run until two in the morning on Fridays and Saturdays from 8 January, the transport committee agreed last night.
+Trams on the Harbour and University lines will run until two in the morning on Fridays and Saturdays from 8 January, the transport committee agreed last night by eleven votes to three.
 :::
 
-A trial last winter carried 41,000 passengers over twelve weekends, more than twice the number the council had expected, and the busiest tram of the night was usually the last. The later service will cost £1.1 million a year, paid from the city centre parking levy.
+A trial last winter carried 41,000 passengers over twelve weekends, more than twice what the council had expected, and the busiest tram of the night was usually the last. The later service will cost £1.1 million a year, paid from the city centre parking levy.
 
-“People will leave the car at home if they can be sure of getting back,” said Councillor Imran Haddow, who chairs the committee. Night buses will go on serving the outer estates, where the trams do not reach, and a review of the bus routes is due in the spring.
+Police told the committee that assaults in the city centre fell by a tenth on the trial’s weekends. Taxi drivers opposed the plan: their association said its members take a fifth of the week’s fares in those four hours, and asked for the rank at Market Cross to be moved nearer the tram stop.
 
-The first night trams will leave Market Cross at half past midnight and run every twenty minutes. Drivers will work the late turns on a voluntary rota, paid at time and a half, and their union said yesterday that enough had already signed up to cover the winter. Two conductors will ride on the last tram of the night, as they did in the trial.
+“People will leave the car at home if they can be sure of getting back,” said Councillor Imran Haddow, who chairs the committee and proposed the trial. Night buses will go on serving the outer estates, where the trams do not reach, and a review of the bus routes that feed the tram stops is due in the spring.
+
+The first night trams will leave Market Cross at half past midnight and run every twenty minutes. Drivers will work the late turns on a voluntary rota, paid at time and a half, and their union said yesterday that enough had signed up to cover the winter. Two conductors will ride on the last tram, as they did in the trial.
+
+Fares will be the same as by day, and passes will be valid. The last trams will wait for the 1.40 train from the south. The committee will look at Thursday nights once it has three months of figures; the University line may come first.
 
 # City
 
@@ -174,7 +178,7 @@ The island’s 900 residents have relied on a smaller chartered boat since May, 
 
 The first crossing, at 7.15am, was full. Skerra Lines says the winter timetable, with four sailings a day, starts on 26 October, and that the gales should ease by Wednesday.
 
-The new engines are quieter as well as cleaner, and on the wider deck the fuel tanker and the supermarket lorry can sail on the same day.
+The new engines are quieter as well as cleaner, the company says, and on the wider deck the fuel tanker and the supermarket lorry can sail on the same day.
 
 The refit was done at Corran’s yard in Brackwater, the first time in twenty years that an island ferry has been repaired in the city rather than sent south. The yard finished a week before the date in its contract. Her crew of eleven spent the summer on the chartered boat, which Skerra Lines will keep on standby until the spring.
 

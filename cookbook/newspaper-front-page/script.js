@@ -140,7 +140,7 @@ const header = { elements: [...folio('even', 'left', 1), ...folio('odd', 'right'
 
 const label = { fontFamily: 'Libre Franklin', fontSize: pt(8), firstLineIndent: pt(0) };
 const config = () => ({
-  colorPalette, resourceTypes,
+  locale: 'en-us', colorPalette, resourceTypes, // locale: the edition's language
   page: { width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'), margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom),
       left: mm(MARGIN.side), right: mm(MARGIN.side) } },

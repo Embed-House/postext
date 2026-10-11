@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "yonkoma",
-  "sourceHash": "b646d2c05e52659f973306ab62dd126a8281cdb8392940422b599cd0cd650ff0",
+  "sourceHash": "3355e9c774e880f93be6e5d802d95e39bc5efa316cce34afc0c39ad945d49f36",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:39.448Z",
+  "capturedAt": "2026-10-11T20:22:31.144Z",
   "variants": {
     "en": {
-      "hash8": "3df9e4c4",
+      "hash8": "2b96bb61",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 213,
-        "buildMs": 316,
-        "totalMs": 1441,
+        "importMs": 262,
+        "fontsMs": 263,
+        "buildMs": 337,
+        "totalMs": 1632,
         "builds": 2
       },
       "specimen": {
@@ -83,15 +83,22 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1323052,
+        "bytes": 1323050,
         "pages": 2
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263384,
+        "bytes": 1263406,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -221,6 +228,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -230,19 +240,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "es": {
-      "hash8": "0d361583",
+      "hash8": "23875d5f",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 213,
-        "buildMs": 317,
-        "totalMs": 1468,
+        "importMs": 223,
+        "fontsMs": 260,
+        "buildMs": 353,
+        "totalMs": 1702,
         "builds": 2
       },
       "specimen": {
@@ -308,15 +318,22 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1323954,
+        "bytes": 1323952,
         "pages": 2
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263491,
+        "bytes": 1263516,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -446,6 +463,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -455,19 +475,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "27ad3757",
+      "hash8": "eabde5fc",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 216,
-        "buildMs": 317,
-        "totalMs": 1482,
+        "importMs": 263,
+        "fontsMs": 272,
+        "buildMs": 331,
+        "totalMs": 1674,
         "builds": 2
       },
       "specimen": {
@@ -538,10 +558,17 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263543,
+        "bytes": 1263567,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -671,6 +698,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -680,19 +710,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "becc27a5",
+      "hash8": "e7cb388e",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 219,
-        "buildMs": 318,
-        "totalMs": 1620,
+        "importMs": 233,
+        "fontsMs": 268,
+        "buildMs": 357,
+        "totalMs": 1910,
         "builds": 2
       },
       "specimen": {
@@ -733,7 +763,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 160454,
+          "bytes": 160412,
           "alt": "第 1 页。"
         }
       ],
@@ -758,15 +788,22 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1338563,
+        "bytes": 1338524,
         "pages": 2
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263627,
+        "bytes": 1263653,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -896,6 +933,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -905,19 +945,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "52d319e6",
+      "hash8": "5d68346e",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 235,
-        "buildMs": 317,
-        "totalMs": 1490,
+        "importMs": 259,
+        "fontsMs": 325,
+        "buildMs": 340,
+        "totalMs": 1706,
         "builds": 2
       },
       "specimen": {
@@ -988,10 +1028,17 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263688,
+        "bytes": 1263710,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "7f86b5a759acc441",
+            "lines": "7f86b5a759acc441"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1121,6 +1168,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1130,19 +1180,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "85ccc8e5",
+      "hash8": "33ae1112",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 222,
-        "buildMs": 316,
-        "totalMs": 1454,
+        "importMs": 265,
+        "fontsMs": 271,
+        "buildMs": 366,
+        "totalMs": 1704,
         "builds": 2
       },
       "specimen": {
@@ -1208,15 +1258,22 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1322846,
+        "bytes": 1322843,
         "pages": 2
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263607,
+        "bytes": 1263629,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1346,6 +1403,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1360,19 +1420,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "80e403e9",
+      "hash8": "bcc748b5",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 221,
-        "buildMs": 319,
-        "totalMs": 1478,
+        "importMs": 209,
+        "fontsMs": 440,
+        "buildMs": 354,
+        "totalMs": 1804,
         "builds": 2
       },
       "specimen": {
@@ -1443,10 +1503,17 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263894,
+        "bytes": 1263914,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1576,6 +1643,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1585,7 +1655,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }

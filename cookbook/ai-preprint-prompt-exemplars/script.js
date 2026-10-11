@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 137 · An AI preprint with prompt exemplars in boxes ═══════
 // https://postext.dev/en/cookbook/ai-preprint-prompt-exemplars
 // Code: MIT · Text: Wei et al. 2022, arXiv:2201.11903 (CC BY 4.0) · Charts: drawn in code
-// Fonts: Newsreader, IBM Plex Sans, IBM Plex Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Newsreader, IBM Plex Sans, IBM Plex Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine, registerResourceImage,
   inlineSvgFonts,
@@ -146,8 +146,9 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     referenceBold: false, textAlign: 'justify', firstLineIndent: mm(3.5), maxJustifyTracking: 10,
     indentAfterHeading: false, hyphenation: { enabled: true }, optimalLineBreaking: true,
-    hyphenateAcrossColumns: false, // no word is divided over a column or a page
-    avoidWidows: true, avoidOrphans: true, avoidRunts: true },
+    hyphenateAcrossColumns: 'withinPage', // no word is divided over a page
+    avoidWidows: true, avoidOrphans: true, avoidRunts: true,
+    maxRuntTracking: 5 }, // a runt fix tightens by 5/1000 em at most (default 10): no dark lines
   headings: { fontFamily: SANS, color: col('ink'), fontWeight: 600, levels: [
     { level: 1, breakBefore: { enabled: true, parity: 'any' } }, // a new page, either side
     { level: 2, ...sans(11), numberingTemplate: '{2}', numberSeparator: ' ',

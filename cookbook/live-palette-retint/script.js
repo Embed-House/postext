@@ -95,6 +95,7 @@ const footer = furniture('folio', '{pageNumber}', 'bottom-left', -12, { fontFami
 // #endregion
 
 const config = { // one object for every edition: retint() changes its palette in place
+  locale: t({ en: 'en-us', es: 'es' }), // the programme's language, and its bundle's
   // The built-in types in the edition's language, renumbered: "Table 1", not "1.1"
   resourceTypes: defaultResourceTypes(LANG).map((r) => ({ ...r, numberingTemplate: '{n}' })),
   colorPalette: entries(HOUSE), // the red edition; retint() replaces it

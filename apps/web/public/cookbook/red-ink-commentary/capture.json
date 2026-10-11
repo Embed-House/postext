@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "red-ink-commentary",
-  "sourceHash": "4ba9384339fee275d61dbd51102ead27a11517597de61917fc2415d5c525b9d3",
+  "sourceHash": "5f2c353d0ccd6bc9e9403edb73764006532d48d6113a0348a36288de455b759e",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.874Z",
+  "capturedAt": "2026-10-11T20:22:30.769Z",
   "variants": {
     "en": {
-      "hash8": "168d9aa4",
-      "vdtHash": "6bcc10bf0972de587731689d1de8bfd218e14f53",
+      "hash8": "826d1e89",
+      "vdtHash": "7def34376af266dd12ad436268b0a41daca7ad39",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 365,
-        "buildMs": 54,
-        "totalMs": 1162,
+        "importMs": 844,
+        "fontsMs": 1971,
+        "buildMs": 64,
+        "totalMs": 4180,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Noto Serif TC"
         ],
         "pages": 6,
-        "ownLines": 160
+        "ownLines": 156
       },
       "pages": [
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124706,
+          "bytes": 124978,
           "alt": "Page 二."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128636,
+          "bytes": 128570,
           "alt": "Page 五."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45608,
+          "bytes": 45722,
           "alt": "Page 六."
         }
       ],
@@ -143,13 +143,20 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513415,
+        "bytes": 513215,
         "pages": 6
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 38185,
-        "folio": "941f3254"
+        "bytes": 38167,
+        "folio": "941f3254",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "65932b531a82e7cb",
+            "lines": "f0a8864b2b5b6e73"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -162,7 +169,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -282,7 +288,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 190,
+        "configLeaves": 189,
         "designElements": 7,
         "directives": [
           ":::callout",
@@ -352,19 +358,28 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.06
+          "worst": 0.1
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "30e10fe9",
-      "vdtHash": "bbefe167e001047624420ad7be7dadd865d92a05",
+      "hash8": "2c43f7d8",
+      "vdtHash": "cfe780efe70a07358783d8838a77a783afac2a11",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 345,
-        "buildMs": 53,
-        "totalMs": 1140,
+        "importMs": 1064,
+        "fontsMs": 2258,
+        "buildMs": 91,
+        "totalMs": 4380,
         "builds": 1
       },
       "specimen": {
@@ -387,7 +402,7 @@
           "Noto Serif TC"
         ],
         "pages": 6,
-        "ownLines": 160
+        "ownLines": 156
       },
       "pages": [
         {
@@ -409,7 +424,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124706,
+          "bytes": 124978,
           "alt": "Página 二."
         },
         {
@@ -442,7 +457,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128636,
+          "bytes": 128570,
           "alt": "Página 五."
         },
         {
@@ -453,7 +468,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45882,
+          "bytes": 45988,
           "alt": "Página 六."
         }
       ],
@@ -490,13 +505,20 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513498,
+        "bytes": 513307,
         "pages": 6
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 38214,
-        "folio": "941f3254"
+        "bytes": 38196,
+        "folio": "941f3254",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "7c4532f93663630d",
+            "lines": "6e4d3f6b4eb55759"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -509,7 +531,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -629,7 +650,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 190,
+        "configLeaves": 189,
         "designElements": 7,
         "directives": [
           ":::callout",
@@ -699,9 +720,18 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.06
+          "worst": 0.1
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

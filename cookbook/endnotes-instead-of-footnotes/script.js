@@ -144,7 +144,7 @@ const header = { elements: [ // the book on the verso, the lecture on the recto,
 const dropFolio = text('drop', '{pageNumber}', DISPLAY, 8.6, 'ink', at('page', 'bottom', 0, -12),
   { fontWeight: 700, align: 'center', pages: 'opener' }); // the lecture's and the notes' openers
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette, header, footer: { elements: [dropFolio] },
   page: { width: mm(156), height: mm(234), dpi: 150, // a trade octavo
     backgroundColor: col('paper'), margins: { top: mm(TOP), bottom: mm(23), left: mm(INNER),

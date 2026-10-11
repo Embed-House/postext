@@ -156,6 +156,7 @@ function gazetteer() {
 
 const config = () => ({
   colorPalette, header, footer, captionStyle,
+  locale: t({ en: 'en-us', es: 'es' }), // the sheet's language; the text is ragged, unhyphenated
   // The maps' own type, then the built-in table type in the sheet's language, counting 1, 2…
   resourceTypes: [mapType, { ...defaultResourceTypes(LANG)[1], numberingTemplate: '{n}' }],
   page: { width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150, backgroundColor: col('paper'),

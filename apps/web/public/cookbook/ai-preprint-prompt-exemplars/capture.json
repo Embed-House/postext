@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "be0e8cd1520a96b85f626f810c456c361d6169d34ddc3d0bc55b11fdcdd971ab",
+  "sourceHash": "02b1c6dbd2c1f44be4b3fd9bf910ed69ff427e82613bcc3bd9dcffe72f171069",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.434Z",
+  "capturedAt": "2026-10-11T20:22:29.641Z",
   "variants": {
     "en": {
-      "hash8": "cf3d905a",
-      "vdtHash": "da1caecf65036325992be1c5d543daa818ece3f3",
+      "hash8": "3b4657d0",
+      "vdtHash": "4d00faa8c19033ddf8a92f4baef745aee3e0b696",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 61,
-        "buildMs": 885,
-        "totalMs": 1722,
+        "importMs": 28106,
+        "fontsMs": 115,
+        "buildMs": 1123,
+        "totalMs": 30411,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Newsreader"
         ],
         "pages": 7,
-        "ownLines": 239
+        "ownLines": 240
       },
       "pages": [
         {
@@ -62,7 +62,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 230844,
+          "bytes": 233662,
           "alt": "Page 2: 1 Introduction."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1294,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 146548,
+          "bytes": 147020,
           "alt": "Page 5: 5 Symbolic Reasoning. Table 2. Standard prompting versus chain of thought prompting on five arithmetic reasoning benchmarks. Note that chain of thought prompting is an emergent ability of model scale—it does not positively impact performance until used with a model of…"
         },
         {
@@ -153,13 +153,20 @@
       },
       "pdf": {
         "file": "ai-preprint-prompt-exemplars.pdf",
-        "bytes": 261221,
+        "bytes": 261232,
         "pages": 7
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153369,
-        "folio": "055119a2"
+        "bytes": 153378,
+        "folio": "055119a2",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "ca3d4420dd18a6ba",
+            "lines": "b49b5757b5042fe7"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -191,6 +198,7 @@
           "bodyText.italicColor",
           "bodyText.lineHeight",
           "bodyText.maxJustifyTracking",
+          "bodyText.maxRuntTracking",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceBold",
           "bodyText.referenceColor",
@@ -414,7 +422,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 483,
+        "configLeaves": 484,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -524,11 +532,24 @@
           "share": 0.006,
           "worst": 2.14
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 30.4 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

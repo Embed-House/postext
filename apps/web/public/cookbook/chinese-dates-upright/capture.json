@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-dates-upright",
-  "sourceHash": "fd5afe7caeb18b38054a99b6f95eab0b2faf09ce5559387620411a40e5f591a7",
+  "sourceHash": "39fa2a2123cbbeeff04c695ff6cc702cfe57fa23ca545cb8604f6c2baee8eacd",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.039Z",
+  "capturedAt": "2026-10-11T20:22:29.905Z",
   "variants": {
     "en": {
-      "hash8": "d3217533",
+      "hash8": "ebb2d5cf",
       "vdtHash": "ec36a99bb1848c89d578e641ede8f72b6d77ab73",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 358,
-        "buildMs": 50,
-        "totalMs": 1150,
+        "importMs": 2020,
+        "fontsMs": 2680,
+        "buildMs": 64,
+        "totalMs": 6824,
         "builds": 1
       },
       "specimen": {
@@ -153,13 +153,20 @@
       },
       "pdf": {
         "file": "chinese-dates-upright.pdf",
-        "bytes": 311163,
+        "bytes": 311160,
         "pages": 7
       },
       "sandbox": {
         "file": "chinese-dates-upright.postext",
-        "bytes": 13107,
-        "folio": "90be425d"
+        "bytes": 13125,
+        "folio": "90be425d",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "082de4860ff5a57a",
+            "lines": "d3d2773063908636"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -350,17 +357,20 @@
           "share": 0,
           "worst": 0.03
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "6ee6ebb2",
+      "hash8": "bbfdd02c",
       "vdtHash": "a7ee20363f99c4ac3349d778e006dd3f48f0873f",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 331,
-        "buildMs": 50,
-        "totalMs": 1132,
+        "importMs": 1884,
+        "fontsMs": 2295,
+        "buildMs": 66,
+        "totalMs": 4852,
         "builds": 1
       },
       "specimen": {
@@ -501,8 +511,15 @@
       },
       "sandbox": {
         "file": "chinese-dates-upright.postext",
-        "bytes": 13186,
-        "folio": "90be425d"
+        "bytes": 13203,
+        "folio": "90be425d",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "ee82a7f83b8a3cec",
+            "lines": "b11ea994b3d001d6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -692,6 +709,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.03
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

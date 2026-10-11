@@ -118,7 +118,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships and HarfBuzz as the binary it copies, whichever of the two wrote `dist`; a worker recipe starts its layout worker on the same files) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
 | `pnpm cookbook capture [slug…] --verify` | For after a release: runs as a capture does and writes only the record that this release left the capture unchanged (`verified` in `capture.json`, §11), which the recipe page, its Markdown page and the gallery print as "tested with". A recipe whose files would change is listed as needing a recapture, with the reason (layout hash, pixels, PDF, bundle), and the command exits 1. The round after a release is `pnpm cookbook capture --all --verify`, a look at what it lists, and `pnpm cookbook capture <those>`. |
-| `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Google Fonts and Fontsource, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11). With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
+| `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Google Fonts and Fontsource, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11): pages, lines and warnings. With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
 | `pnpm cookbook sandbox [slug…] --site https://postext.dev` | The same comparison on a deployed site: the Sandbox route a recipe page links to, one browser context per edition, the layout worker's documents read from the page. It also fails when the page fetched another edition's bundle. Page differences fail here (`--no-strict` makes them warnings). |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
@@ -260,7 +260,9 @@ are all linted. Regions: exactly one `answer`, at most six others, never nested.
   files in `assets/` (see the limits in §5.6), load them before the build and declare bitmaps
   at print size: `await loadImage('lagoon.jpg', asset('lagoon-2400.jpg'))`, then a resource
   `{ id, typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'lagoon.jpg', format: 'jpeg', width: 2400, height: 1520 }, caption, note, altText }`.
-  Draw generated SVG with `loadSvg(fileId, markup)`.
+  Draw generated SVG with `loadSvg(fileId, markup)`. A drawing printed in the document's one
+  ink (`diagramStyle.singleInk`) is loaded with `loadSvg(fileId, markup, { singleInk: true })`:
+  the canvas tints it as it paints and the PDF recolours the bytes `imageBytes` hands it.
 - **Books.** `await prepareFonts(text, config, kitFonts(FONTS))`, then
   `await withLoadedFonts(() => buildBundle({ chapters: [{ markdown }, { markdown: chapter2 }], config, resources }), { ...kitFonts(FONTS), text })`
   with `const chapter2 = /* @content:chapter-2 */ '';` and `content.chapter-2.en.md`.
@@ -313,10 +315,10 @@ Its functions are hoisted declarations you can call from anywhere in the script:
 | `kitFonts(FONTS)` | fonts | The options of the engine's `buildDocumentWithFonts`, `prepareFonts` and `withLoadedFonts` (import them from postext): the Fontsource resolver and the faces of `FONTS`. The engine loads every face the config and `FONTS` ask for before the first build, then any face the pages used that was missing, and builds again; a face it could not load is a `fontFallback` content warning. List the exact weights and slants the pages set, the bold of a label and the italic of a note too: a weight another face of the family answers without synthesis (a 600 italic set from the 700 italic) is not fetched, the PDF embeds the exact file, and C12 fails the difference. |
 | `fontsourceResolver` | fonts | The resolver itself: a face's latin file, plus latin-ext when the text has letters such as č ł †, and greek when it has Greek letters, for the families that ship those files (`kitSubsetsFor`; Lora and Gelasio have no greek file: set Greek in them as maths, `$\chi^2$`), always in that order; null for a weight or slant Fontsource does not ship. |
 | `loadFonts(FONTS, text)` | fonts | For the cjk, arabic and comics blocks, which add files of their own after it: the latin (and latin-ext, greek) files of `FONTS` added to `document.fonts` by hand, in that order once all have loaded. Such a pen builds with `withLoadedFonts(() => buildDocument(…), { ...kitFonts(FONTS), text })`. |
-| `showPages(doc \| docs, { title })` | viewer | The dark desk with facing spreads; sets `data-postext="ready"`. |
+| `showPages(doc \| docs, { title, width, ...render })` | viewer | The dark desk with facing spreads; sets `data-postext="ready"`. `width` is a page's width on the desk in CSS pixels (460); every other option goes to `renderPageToCanvas` (`singleInk: true` tints every SVG picture registered without a flag, `trim`, `onWarning`, `printPreview`), and the scale stays the viewer's. `showBook` hands them on. |
 | `offerPdf(makePdf, filename)` | pdf | A "Build the PDF" button, then open and download links. |
 | `fontsourceProvider` | pdf | The PDF font provider: snaps to shipped weights, falls back from missing italics, and embeds the latin file, then the latin-ext and greek files a face's letters need, as `loadFonts` loads them on screen. |
-| `loadImage(id, url)`, `loadSvg(id, svg)` | images | Register pictures for the canvas and keep their bytes. |
+| `loadImage(id, url)`, `loadSvg(id, svg, options)` | images | Register pictures for the canvas and keep their bytes. `loadSvg` inlines the fonts the drawing names (when the pen imports `inlineSvgFonts`) and hands `options` to `registerResourceImage` as it is: `{ singleInk: true }` tints that drawing to the document's ink on the canvas, `{ singleInk: false }` keeps its colours when the render tints the rest. Nº 051 is the model. |
 | `imageBytes`, `imageUrl` | images | The `resourceBytes` of `renderToPdf` and the `resourceImageUrl` of `renderToHtml`. |
 | `loadCjkFonts(faces, text, { vertical })` | cjk | Chinese, Japanese and Korean faces (the other families of `faces` are left to `loadFonts`): one `FontFace` per Fontsource unicode-range file, loading the files `text` touches; fails on a character no file has, or when api.fontsource.org does not answer. One face: `loadCjkFonts(FONTS, markdown)`. Several voices: one call per voice with the text it sets, `loadCjkFonts({ 'LXGW WenKai TC': ['400'] }, quotes)`, so the Kai and Hei faces do not fetch a file for every character of the book (C12 fails a character set from a file that was not loaded). `vertical: true` also loads each family's vertical punctuation for the canvas (import `loadVerticalAlternates`). |
 | `cjkPdfProvider` | cjk | The PDF font provider for such faces: the files that hold each face's characters. Other families get `fontsourceProvider`'s latin file (so list `pdf` too), and their latin-ext file as well when the face sets letters only that file has: ō ū in rōmaji, ǎ in pinyin. |
@@ -325,7 +327,7 @@ Its functions are hoisted declarations you can call from anywhere in the script:
 | `showBook(doc \| docs, { title, binding })` | book | `showPages` for a book bound on either edge: a right-bound document (`doc.binding`, `'right'` for `page.binding: 'right'` and, with the binding left to `'auto'`, for right-to-left text and vertical text) lies mirrored, page 1 alone on the left of the spine, then `[3 \| 2]`. The `cjk` block carries the same function for the Chinese recipes captured with it; a recipe lists one of the two. |
 | `loadComicFonts(faces, text)` | comics | After `loadFonts` (and `loadCjkFonts` or `loadArabicFonts` for those scripts): for each family, the regular, bold, italic and bold italic Fontsource does not ship are declared with its nearest file, so the bold of a shout or a sound effect and the italic of an inner voice measure and paint the letters the PDF embeds, not a bold or a slant the browser makes up. The comic faces of `defaultComicFont` and `defaultComicSfxFont` (Comic Neue, Zen Antique, Noto Sans SC, LXGW WenKai TC, Playpen Sans Arabic; Bangers, Dela Gothic One, ZCOOL KuaiLe, Lalezar) mostly ship one weight: list in `FONTS` only what Fontsource ships (`Bangers: ['400']`) and let this block add the rest. A CJK face needs the `cjk` block, an Arabic face setting Arabic the `arabic` block. |
 | `comicPdfProvider` | comics | The PDF font provider of a comic in any script: CJK faces to `cjkPdfProvider`, Arabic faces to `arabicPdfProvider` (when those blocks are listed), the rest to `fontsourceProvider`; each embeds the shipped file `loadComicFonts` declared. Needs the `pdf` block. |
-| `comicPanel(id, asset('x.jpg'), meta)` | comics | Loads a panel picture and returns its resource for `art=` and `pop=`, with the `safeArea`, `anchors` and `avoid` of `meta`, its entry in the art manifest (`{ width, height, alt, safeArea, anchors, avoid }`). Write `asset('…')` in the call, so the lint checks the file. Needs the `images` block. |
+| `comicPanel(id, asset('x.jpg'), meta)` | comics | Loads a panel picture and returns its resource for `art=` and `pop=`, with the `safeArea`, `anchors`, `avoid` and `faces` of `meta`, its entry in the art manifest (`{ width, height, alt, safeArea, anchors, avoid, faces }`; `faces` are the faces of the people who do not speak, which no balloon covers). Write `asset('…')` in the call, so the lint checks the file. Needs the `images` block. |
 
 A change to the kit changes every recipe's source hash, so every capture goes stale and the
 whole Cookbook is verified again.
@@ -834,10 +836,26 @@ defects lived on that path with every capture check green (a bold drawn by the b
 family's failed request costing every family its faces, a bundle keeping one configuration
 of several, a configuration that changed when stripped), and each showed as a warning the
 Sandbox raised and the pen did not. So the `sandbox` entry of `capture.json` also records
-what the Sandbox may give back: `chapters`, each chapter's pages and layout hash as the
-bundle reads back (the hash C33 compares), and `warnings`, the warnings of the pen's builds
-the bundle holds, kind and what each names, left out when there are none. `--sandbox-only`
-writes both without touching a picture.
+what the Sandbox may give back: `chapters`, each chapter's pages, layout hash (`hash`, the
+one C33 compares: every line with its box, to half a pixel) and lines hash (`lines`: the
+pages, the blocks and the text of every line in their order, with no box) as the bundle
+reads back, and `warnings`, the warnings of the pen's builds the bundle holds, kind and what
+each names, left out when there are none. `--sandbox-only` writes them without touching a
+picture.
+
+The two hashes are there because the Sandbox does not measure with the files a pen measures
+with. The kit loads the static cuts Fontsource serves (`<family>-latin-400-normal.woff2`);
+the Sandbox's loader asks Google Fonts for the whole weight axis and gets the variable file.
+At a master of the family the two give the same advances; between masters the static cut has
+them rounded to the font's units and the variable file does not (Nunito Sans 400: 64 of 74
+glyphs up to half a unit apart; Source Serif 4 at 600: up to 1.2). A line of body text comes
+out a few hundredths to a few tenths of a pixel wider or narrower (an edition's widest
+difference is 0.11 px in the median one and 2.3 px in the worst, Latin set in Noto Serif JP),
+the layout hash rounds every box to half a pixel, and a width near the half falls on either
+side. On the 334
+editions captured on 1.28.1 the Sandbox gave another layout hash for 134: 127 with every
+line the same, 7 (five recipes) with two to eight lines broken at another word, a line that
+was within that fraction of its measure. The lines hash tells the two apart.
 
 `pnpm cookbook sandbox` lays the bundle out with the Sandbox package's own functions
 (`packages/postext-sandbox/src/headless/layOutBundle.ts`: the bundle read as a project
@@ -849,9 +867,16 @@ its worker, each continuing the one before) and compares:
   `sandbox.warnings`. For a `fontFallback` the line names the family's faces on the page and
   in the worker, which is where the four defects were read.
 - **Warnings, failures with `--strict`**: another chapter count, another page count, or, on
-  the release `capture.json` records, another layout hash than `sandbox.chapters`. A pull
-  request that moves lines on purpose cannot capture the recipe again before its release, so
-  on the working tree these only warn; on a site (`--site`) they fail.
+  the release `capture.json` records, other lines than `sandbox.chapters` (`lines`): a line
+  broken at another word, a line more or fewer, a block on another page. A pull request that
+  moves lines on purpose cannot capture the recipe again before its release, so on the
+  working tree these only warn; on a site (`--site`) they fail.
+- **Notes**: the recorded lines under another layout hash, which is the same page set with
+  another build of its faces. The line names the families the Sandbox took from a variable
+  file.
+- A chapter recorded with no `lines` (a capture from before them) and another layout hash
+  warns, strict or not, and says to capture with `--sandbox-only`: the layout hash alone
+  cannot tell a line that moved from one set to another width.
 - An edition whose `capture.json` has no `sandbox.chapters` yet is compared on its page
   total, and its warnings are printed as notes.
 

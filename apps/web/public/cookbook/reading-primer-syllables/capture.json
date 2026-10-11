@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "reading-primer-syllables",
-  "sourceHash": "7f6001d29f52cdd6999670e75c6cbb0f85c3f3fc0a43269d4f79816ba1efee5d",
+  "sourceHash": "36927e0523da33d4301b561dbf9628dab9937acc2d16696a6288223126a0a14d",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.865Z",
+  "capturedAt": "2026-10-11T20:22:30.760Z",
   "variants": {
-    "es": {
-      "hash8": "45e9e6b8",
-      "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
+    "en": {
+      "hash8": "5ae4daf0",
+      "vdtHash": "d64ad253cc972508a2cda095bea75275aa5e933e",
       "timings": {
-        "importMs": 155,
-        "fontsMs": 44,
-        "buildMs": 26,
-        "totalMs": 819,
+        "importMs": 730,
+        "fontsMs": 346,
+        "buildMs": 56,
+        "totalMs": 2291,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Playpen Sans"
         ],
         "pages": 3,
-        "ownLines": 177
+        "ownLines": 180
       },
       "pages": [
         {
@@ -49,8 +49,8 @@
           "h": 1238,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 55698,
-          "alt": "Página de apertura 37: Mm."
+          "bytes": 58412,
+          "alt": "Opening page 37: Mm."
         },
         {
           "n": 2,
@@ -60,8 +60,8 @@
           "h": 1238,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 58076,
-          "alt": "Página 38: Mira y lee."
+          "bytes": 56222,
+          "alt": "Page 38: Look and read."
         },
         {
           "n": 3,
@@ -71,8 +71,8 @@
           "h": 1238,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 57134,
-          "alt": "Página 39: Lee las frases."
+          "bytes": 62874,
+          "alt": "Page 39: Read the sentences."
         }
       ],
       "spreads": [
@@ -99,8 +99,15 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 284658,
-        "folio": "6010a127"
+        "bytes": 311490,
+        "folio": "6010a127",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "f4d44bd0a6b3cbe4",
+            "lines": "969288bff5b64449"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -194,6 +201,7 @@
           "headings.levels[].marginTop",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -241,12 +249,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyles"
         ],
-        "configLeaves": 624,
+        "configLeaves": 625,
         "designElements": 21,
         "directives": [
           ":::paragraphs",
@@ -324,16 +333,350 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "9f1b49d8",
+      "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
+      "timings": {
+        "importMs": 800,
+        "fontsMs": 272,
+        "buildMs": 81,
+        "totalMs": 2659,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          260
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": false,
+        "body": {
+          "family": "Andika",
+          "sizePt": 11,
+          "leadingPt": 15
+        },
+        "families": [
+          "Andika",
+          "DynaPuff",
+          "Playpen Sans"
+        ],
+        "pages": 3,
+        "ownLines": 180
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "37",
+          "role": "opener",
+          "w": 1000,
+          "h": 1238,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 55662,
+          "alt": "Página de apertura 37: Mm."
+        },
+        {
+          "n": 2,
+          "label": "38",
+          "role": "body",
+          "w": 1000,
+          "h": 1238,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 58076,
+          "alt": "Página 38: Mira y lee."
+        },
+        {
+          "n": 3,
+          "label": "39",
+          "role": "body",
+          "w": 1000,
+          "h": 1238,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 57118,
+          "alt": "Página 39: Lee las frases."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "reading-primer-syllables.postext",
+        "bytes": 284663,
+        "folio": "6010a127",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "c1e0b85acec798c0",
+            "lines": "21dd4a16b5510f02"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "prepareFonts",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "setCellImage"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.lineHeight",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].marginTop",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "chipStyles",
+          "chipStyles[].background",
+          "chipStyles[].bold",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderWidth",
+          "chipStyles[].color",
+          "chipStyles[].fontFamily",
+          "chipStyles[].gap",
+          "chipStyles[].id",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].overflow",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].verticalAlign",
+          "header",
+          "header.elements",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].id",
+          "headings",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.right",
+          "page.margins.top",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel",
+          "tableStyles",
+          "tableStyles[].bodyBackground",
+          "tableStyles[].bodyBackgroundEnabled",
+          "tableStyles[].bodyFontSize",
+          "tableStyles[].borderColor",
+          "tableStyles[].borderRadius",
+          "tableStyles[].borderWidth",
+          "tableStyles[].cellPadding",
+          "tableStyles[].headerBackgroundEnabled",
+          "tableStyles[].id",
+          "tableStyles[].rules"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "resourceTypes",
+          "tableStyles"
+        ],
+        "configLeaves": 625,
+        "designElements": 21,
+        "directives": [
+          ":::paragraphs",
+          "::resource",
+          ":::space",
+          ":::callout"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 6,
+          "bitmap": 8,
+          "table": 1
+        },
+        "fonts": [
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "italic"
           },
+          {
+            "family": "Andika",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Andika",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "DynaPuff",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playpen Sans",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Playpen Sans",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Playpen Sans",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "cell-images",
+          "chips",
+          "heading-attributes",
+          "heading-styles",
+          "inline-embeds",
+          "opener-design",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "table-styles",
+          "vertical-space"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 36 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

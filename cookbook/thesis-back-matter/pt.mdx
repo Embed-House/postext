@@ -28,7 +28,7 @@ A marca é `{number}`: 6 no capítulo, A no apêndice e nada num título sem nú
 
 <Excerpt region="appendix" />
 
-O estilo do apêndice define `numberingTemplate: '{1:A}'`, que imprime o contador do nível como letra, e `# Interview guide {style="appendix" startAt=1}` reinicia esse contador, então o primeiro apêndice é o A e não o G ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). A faixa lê a letra com `{number}` e o cabeço com `{chapterNumber}`. O `{h1}` de um tipo de recurso imprime o contador como número, por isso um tipo próprio numera as tabelas do apêndice como A.1, A.2 e assim por diante; com o tipo padrão, a tabela seria a Tabela 1.1. Os títulos do próprio capítulo contam a partir dos modelos de cada nível: `'{1}.{2}'` imprime 6.1, e `continuation.headings.h1: 5` faz deste o sexto capítulo.
+O estilo do apêndice define `numberingTemplate: '{1:A}'`, que imprime o contador do nível como letra, e `# Interview guide {style="appendix" startAt=1}` reinicia esse contador, então o primeiro apêndice é o A e não o G ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). A faixa lê a letra com `{number}` e o cabeço com `{chapterNumber}`. O `{h1}` de um tipo de recurso imprime o contador como número, a menos que indique um estilo, por isso as tabelas do apêndice usam um tipo com o modelo `'{h1:A}.{n}'`: A.1, A.2 e assim por diante, e B.1 num segundo apêndice; com o tipo padrão, a tabela seria a Tabela 1.1. Os títulos do próprio capítulo contam a partir dos modelos de cada nível: `'{1}.{2}'` imprime 6.1, e `continuation.headings.h1: 5` faz deste o sexto capítulo.
 
 ### 4 · Pôr os cabeços na borda externa
 

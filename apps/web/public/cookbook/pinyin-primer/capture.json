@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "pinyin-primer",
-  "sourceHash": "528743554c9a4265f4f1033c6b5aefc9e8922fa4ea1ee877795a2c0dd910e067",
+  "sourceHash": "f1490c1fd787970633ff3b8aea5d56d653b0bfbd6fd540875edd7663d978c544",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.553Z",
+  "capturedAt": "2026-10-11T20:22:30.707Z",
   "variants": {
     "en": {
-      "hash8": "1c546715",
+      "hash8": "62f95bc6",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 145,
-        "fontsMs": 128,
-        "buildMs": 51,
-        "totalMs": 891,
+        "importMs": 1386,
+        "fontsMs": 272,
+        "buildMs": 74,
+        "totalMs": 2672,
         "builds": 1
       },
       "specimen": {
@@ -110,8 +110,15 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 205880,
-        "folio": "4f4bf2f0"
+        "bytes": 205877,
+        "folio": "4f4bf2f0",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "449a3b769e1a0044",
+            "lines": "262ec84c6a25e2b6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -300,6 +307,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -315,13 +325,13 @@
       }
     },
     "es": {
-      "hash8": "0335880a",
+      "hash8": "d33621e3",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 131,
-        "buildMs": 51,
-        "totalMs": 886,
+        "importMs": 1800,
+        "fontsMs": 645,
+        "buildMs": 91,
+        "totalMs": 3749,
         "builds": 1
       },
       "specimen": {
@@ -416,7 +426,14 @@
       "sandbox": {
         "file": "pinyin-primer.postext",
         "bytes": 206341,
-        "folio": "4f4bf2f0"
+        "folio": "4f4bf2f0",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "68b4671a2b258754",
+            "lines": "5149b5c9c12e2b4f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -604,6 +621,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

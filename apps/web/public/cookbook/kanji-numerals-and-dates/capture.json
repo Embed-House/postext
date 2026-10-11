@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "kanji-numerals-and-dates",
-  "sourceHash": "d2450b05b54462670b15f2cfeb7eaba47ce36db8fc39029f755f5bf8b875e952",
+  "sourceHash": "246e8223eaf36c54973ee44cdd6072fc0fc1c66853eae38f3bab75ae9a09ec40",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.576Z",
+  "capturedAt": "2026-10-11T20:22:30.314Z",
   "variants": {
     "en": {
-      "hash8": "cea1d34f",
+      "hash8": "afd64b0f",
       "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 375,
-        "buildMs": 59,
-        "totalMs": 1145,
+        "importMs": 728,
+        "fontsMs": 1644,
+        "buildMs": 89,
+        "totalMs": 3252,
         "builds": 1
       },
       "specimen": {
@@ -121,8 +121,15 @@
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14706,
-        "folio": "5113964e"
+        "bytes": 14704,
+        "folio": "5113964e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "1a1e4e8c24ec9908",
+            "lines": "718fcfb8cf145398"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -381,17 +388,31 @@
           "share": 0,
           "worst": 0.02
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 3 −5‰ “Set in Noto Serif JP, Noto Sans JP and Zen Maru …”"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "a7585155",
+      "hash8": "d7b5f9a2",
       "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 360,
-        "buildMs": 57,
-        "totalMs": 1132,
+        "importMs": 1822,
+        "fontsMs": 2117,
+        "buildMs": 86,
+        "totalMs": 5793,
         "builds": 1
       },
       "specimen": {
@@ -495,8 +516,15 @@
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14700,
-        "folio": "5113964e"
+        "bytes": 14697,
+        "folio": "5113964e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "c7a9892ad2809ba8",
+            "lines": "eb93139fffdeea49"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -754,6 +782,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.02
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

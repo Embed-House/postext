@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "hiragana-picture-book",
-  "sourceHash": "2370ba2008dee68e280039c179812f9cb902320fc9120e470e6dede61acd5ea1",
+  "sourceHash": "af9e63f5fa68c2fa9e03c09e7614fbf0cab2553e11abf6911c314b8bcebe9337",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.275Z",
+  "capturedAt": "2026-10-11T20:22:30.258Z",
   "variants": {
     "en": {
-      "hash8": "76f6cd5c",
+      "hash8": "b7ada409",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 164,
-        "buildMs": 50,
-        "totalMs": 909,
+        "importMs": 1795,
+        "fontsMs": 470,
+        "buildMs": 66,
+        "totalMs": 3995,
         "builds": 1
       },
       "specimen": {
@@ -194,13 +194,20 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1737041,
+        "bytes": 1737038,
         "pages": 10
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737442,
-        "folio": "ada4348a"
+        "bytes": 1737448,
+        "folio": "ada4348a",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "3b670d52cbd82a0a",
+            "lines": "b0fdad66eb3f4d88"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -366,17 +373,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "7997dccb",
+      "hash8": "ecc4b4dc",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 158,
-        "buildMs": 51,
-        "totalMs": 907,
+        "importMs": 945,
+        "fontsMs": 1102,
+        "buildMs": 67,
+        "totalMs": 2778,
         "builds": 1
       },
       "specimen": {
@@ -553,13 +563,20 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736575,
+        "bytes": 1736574,
         "pages": 10
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737382,
-        "folio": "ada4348a"
+        "bytes": 1737388,
+        "folio": "ada4348a",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "01c5b43222484168",
+            "lines": "b7e07140bcc837be"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -724,6 +741,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

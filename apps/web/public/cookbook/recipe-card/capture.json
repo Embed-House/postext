@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "recipe-card",
-  "sourceHash": "ecdf1a86b83bbae61e1aaee191455994fe87bc289028d2ebc9a91650d87bf830",
+  "sourceHash": "6f6a17eaae5093a7f62cafe83612585e152f2b8e895944d84e604ff8128ba63b",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.573Z",
+  "capturedAt": "2026-10-11T20:22:30.763Z",
   "variants": {
     "en": {
-      "hash8": "eb51cfb5",
+      "hash8": "655e296c",
       "vdtHash": "d9244626546dce03f38e887964c7962bf560c7f9",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 29,
-        "buildMs": 37,
-        "totalMs": 789,
+        "importMs": 956,
+        "fontsMs": 36,
+        "buildMs": 48,
+        "totalMs": 2436,
         "builds": 1
       },
       "specimen": {
@@ -84,8 +84,15 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416861,
-        "folio": "3a99731f"
+        "bytes": 416863,
+        "folio": "3a99731f",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "c977dbdf44165e0d",
+            "lines": "1f5eef90507e160c"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -186,6 +193,7 @@
           "headings.levels[].level",
           "layout",
           "layout.layoutType",
+          "locale",
           "orderedLists",
           "orderedLists.color",
           "orderedLists.fontFamily",
@@ -227,12 +235,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "orderedLists",
           "page",
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 314,
+        "configLeaves": 315,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -306,12 +315,10 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -321,13 +328,13 @@
       }
     },
     "es": {
-      "hash8": "1f6192c6",
+      "hash8": "9187856f",
       "vdtHash": "9f33fe5a8572ed57cd8bdc43156f67c1776702d7",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 25,
-        "buildMs": 37,
-        "totalMs": 782,
+        "importMs": 1027,
+        "fontsMs": 55,
+        "buildMs": 60,
+        "totalMs": 2105,
         "builds": 1
       },
       "specimen": {
@@ -395,8 +402,15 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417169,
-        "folio": "3a99731f"
+        "bytes": 417164,
+        "folio": "3a99731f",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "107f48aef1c7e3f2",
+            "lines": "2970bb4158ee9e7d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -497,6 +511,7 @@
           "headings.levels[].level",
           "layout",
           "layout.layoutType",
+          "locale",
           "orderedLists",
           "orderedLists.color",
           "orderedLists.fontFamily",
@@ -538,12 +553,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "orderedLists",
           "page",
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 314,
+        "configLeaves": 315,
         "designElements": 13,
         "directives": [
           ":::callout",
@@ -617,12 +633,10 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          },
           {
             "check": "sandbox",
             "severity": "info",

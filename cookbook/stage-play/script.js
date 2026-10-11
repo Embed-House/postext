@@ -43,6 +43,9 @@ const dialogue = {
   boldColor: col('plum'), // **ALGERNON.**
   italicColor: col('muted'), // *[Languidly.]*, in a speech or a paragraph of its own
   minWordSpacing: 0.65, maxWordSpacing: 1.8, // justified (the default); limits inside 0.6–2
+  // A runt fix tracks by 5/1000 em at most (default 10). At 10, “that?” went up beside “as”
+  // and the speech stood darker than the ones around it; at 5 the word turns over.
+  maxRuntTracking: 5,
   firstLineIndent: mm(5), hangingIndent: true, // the name at the margin, the turnovers hung
 };
 // Directions: smaller and centred, on the same grid. They are written *…* like the ones

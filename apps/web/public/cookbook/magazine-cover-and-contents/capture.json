@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-cover-and-contents",
-  "sourceHash": "7cad0959be81af7ad7ba09e130a2b597fd1e6ac7ae4923a6ec5f6fa02802f62b",
+  "sourceHash": "8dfead2e64eb95c90a5361291522d1811ca7678a2df7f8eec05ecbe7d2ed4465",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:53:22.473Z",
+  "capturedAt": "2026-10-11T20:22:30.358Z",
   "variants": {
     "en": {
-      "hash8": "8c46919c",
+      "hash8": "2a9e54ee",
       "vdtHash": "df0858ff3432514c448b2daceae76992cfffce7a",
       "timings": {
-        "importMs": 152,
-        "fontsMs": 42,
-        "buildMs": 425,
-        "totalMs": 1243,
+        "importMs": 1619,
+        "fontsMs": 138,
+        "buildMs": 579,
+        "totalMs": 3631,
         "builds": 1
       },
       "specimen": {
@@ -141,8 +141,15 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2084684,
-        "folio": "c6787b35"
+        "bytes": 2084683,
+        "folio": "c6787b35",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "af067cfa438b7830",
+            "lines": "45fd06e8d8cefa12"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -434,6 +441,9 @@
           "share": 0.0088,
           "worst": 2.44
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -444,13 +454,13 @@
       }
     },
     "es": {
-      "hash8": "c27c4f12",
+      "hash8": "73b2036f",
       "vdtHash": "7cf855457f629268dafb733e24cbed20a4d00ef3",
       "timings": {
-        "importMs": 140,
-        "fontsMs": 41,
-        "buildMs": 121,
-        "totalMs": 911,
+        "importMs": 1436,
+        "fontsMs": 411,
+        "buildMs": 186,
+        "totalMs": 2797,
         "builds": 1
       },
       "specimen": {
@@ -575,8 +585,15 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2085391,
-        "folio": "c6787b35"
+        "bytes": 2085390,
+        "folio": "c6787b35",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "0f9e8f365c59356c",
+            "lines": "3d5072d321b7c1fd"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -868,11 +885,24 @@
           "share": 0.0083,
           "worst": 2.29
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.35 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Si no encuentras trigo antiguo, sirve cualquier …”"
           }
         ]
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "first-page-from-markdown",
-  "sourceHash": "44b0b50daec0c12d2116a4229a1e18806071e0c1549480b6dab91776d22ec409",
+  "sourceHash": "01eddc5b03977fabb2c7206045801748724ada22a8446f2064c663a9350e298f",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.218Z",
+  "capturedAt": "2026-10-11T20:22:30.169Z",
   "variants": {
     "en": {
-      "hash8": "9a4e640f",
+      "hash8": "6be66540",
       "vdtHash": "07c56b8d23023596323db7886c283256ac133054",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 26,
-        "buildMs": 120,
-        "totalMs": 872,
+        "importMs": 831,
+        "fontsMs": 209,
+        "buildMs": 181,
+        "totalMs": 2343,
         "builds": 1
       },
       "specimen": {
@@ -89,8 +89,15 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193161,
-        "folio": "579e6f1a"
+        "bytes": 193160,
+        "folio": "579e6f1a",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "192ce29c8c2728f0",
+            "lines": "831758c4d3c7a910"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -275,17 +282,31 @@
           "share": 0,
           "worst": 1.79
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 3,
+          "tracked": 3,
+          "worst": 4
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "3 paragraphs set a line short with tracking (worst −4‰, the cap): p. 2 −4‰ “We slept that night in a hollow of the dunes tha…”, p. 2 −4‰ “The ledger is written in three hands. The first …”, p. 2 −4‰ “The last entry in the ledger, halfway down a pag…”"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "362f52cc",
+      "hash8": "7ed3a7e3",
       "vdtHash": "1e26a3350d2d18641aafd17b9408bbe5a95fba4b",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 23,
-        "buildMs": 48,
-        "totalMs": 787,
+        "importMs": 1573,
+        "fontsMs": 30,
+        "buildMs": 74,
+        "totalMs": 3109,
         "builds": 1
       },
       "specimen": {
@@ -358,8 +379,15 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193512,
-        "folio": "579e6f1a"
+        "bytes": 193511,
+        "folio": "579e6f1a",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "88802f8aeac5bf66",
+            "lines": "a57c5d244a9a7358"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -542,19 +570,22 @@
         "looseLines": {
           "count": 1,
           "share": 0.0147,
-          "worst": 1.98
+          "worst": 2.05
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }
     },
     "pt": {
-      "hash8": "1201e0c7",
+      "hash8": "bea018b5",
       "vdtHash": "e0adb9fecd13a0fc4c60faa93b63baaf7b57aed8",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 27,
-        "buildMs": 88,
-        "totalMs": 830,
+        "importMs": 1176,
+        "fontsMs": 178,
+        "buildMs": 145,
+        "totalMs": 4442,
         "builds": 1
       },
       "specimen": {
@@ -627,8 +658,15 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193575,
-        "folio": "579e6f1a"
+        "bytes": 193578,
+        "folio": "579e6f1a",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "657b9a244b90c92a",
+            "lines": "686988f1035b9711"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -813,7 +851,21 @@
           "share": 0,
           "worst": 1.73
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 4
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −4‰, the cap): p. 1 −4‰ “Durante seis séculos, o sal de Arvela saiu do li…”"
+          }
+        ]
       }
     }
   }

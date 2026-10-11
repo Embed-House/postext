@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "boxes-split-float-pin",
-  "sourceHash": "6a3c63f788ab2b1d6b0db5fa054d3cbbb8011691195c1309da4f1f6213e8e833",
+  "sourceHash": "6f98efad4370cdba6d12890f97506fc3bb8a7ca9eacba61b6d5e16a3ae0a3cd8",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.615Z",
+  "capturedAt": "2026-10-11T20:22:29.817Z",
   "variants": {
     "es": {
-      "hash8": "0c736515",
+      "hash8": "dd85a1ce",
       "vdtHash": "731766a34e54522c0cbf634b2c7f9ff4a2b60ec3",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 29,
-        "buildMs": 86,
-        "totalMs": 882,
+        "importMs": 1026,
+        "fontsMs": 57,
+        "buildMs": 151,
+        "totalMs": 2639,
         "builds": 1
       },
       "specimen": {
@@ -114,8 +114,15 @@
       },
       "sandbox": {
         "file": "boxes-split-float-pin.postext",
-        "bytes": 34671,
-        "folio": "bcf271e0"
+        "bytes": 34670,
+        "folio": "bcf271e0",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "02878e1d96b3b551",
+            "lines": "5a5494a0220693be"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -373,6 +380,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

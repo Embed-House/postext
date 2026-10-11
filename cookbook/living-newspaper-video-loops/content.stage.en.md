@@ -18,27 +18,27 @@ Mr Frank Polglase is a fine, glowering butler, who conveys more with one raised 
 
 The second act is another matter. It is set in a solicitor’s office, it lasts fifty minutes, and it consists almost entirely of people reading a will aloud to one another. Miss Avery does her best with a scene in which she must faint on to a filing cabinet, but the audience on Monday was plainly waiting for the garden to come back, and when it did, so did the play.
 
-The Pavilion itself has been painted for the season, cream and green, and the management has kept its promise of last summer: the seats in the back six rows have been raised on a new floor, so that the shilling public can see the stage over the hats in front. The orchestra of five, under Mr Leonard Jewell, plays a selection from *Bitter Sweet* in the intervals and plays it well.
+The Pavilion itself has been painted for the season, cream and green, and the management has kept its promise of last summer: the seats in the back six rows have been raised on a new floor, so that the shilling public can see the stage over the hats in front. The orchestra of five, under Mr Leonard Jewell, plays a selection from *Bitter Sweet* in the intervals and plays it well. Ices are sold in the second interval, when they are most needed.
 
 *A Lady of the Garden* runs nightly at eight until the 24th, with a matinée on Wednesdays at half past two. Seats from sixpence to three shillings; the box office at the Pavilion is open from ten. The Players follow it on the 26th with a thriller, *The Lamp in the Lighthouse*, for which the management promises a real storm.
 
 ## Band concert on the Parade {style="third"}
 
-The Wexcombe Silver Band gives the first of its Sunday concerts on the Parade bandstand tomorrow at three, under its new conductor, Mr Alfred Penna, late of the Royal Marines. The programme includes a selection from *The Gondoliers*, the overture to *Poet and Peasant* and a march of Mr Penna’s own, *The Harbour Line*, written for the opening of the trams and played for the first time in public. Deck chairs twopence; the collection is for the hospital.
+The Wexcombe Silver Band gives the first of its Sunday concerts on the Parade bandstand tomorrow at three, under its new conductor, Mr Alfred Penna, late of the Royal Marines. The programme includes a selection from *The Gondoliers*, the overture to *Poet and Peasant* and a march of Mr Penna’s own, *The Harbour Line*, written for the opening of the trams and played for the first time in public. Deck chairs twopence; the collection is for the hospital. If wet, in the Assembly Rooms.
 
 ## Roses and sweet peas at the Drill Hall {style="third"}
 
-The Horticultural Society’s summer show filled the Drill Hall on Thursday with three hundred and forty exhibits, sixty more than last year, and with the scent of sweet peas, which took the whole of the north wall. The challenge cup for roses went to Mr George Nance of Trevenna Lane for six blooms of *Ophelia* that the judges called the best seen in the town since the war, and the cup for vegetables to Mrs Annie Pascoe, whose onions weighed two pounds each. The prize for the best-kept allotment, judged in May, went to the Saltings Row allotments for the second year. In the children’s class for a wild flower collection, every entry received a prize, by order of the President.
+The Horticultural Society’s summer show filled the Drill Hall on Thursday with three hundred and forty exhibits, sixty more than last year, and with the scent of sweet peas, which took the whole of the north wall. The challenge cup for roses went to Mr George Nance of Trevenna Lane for six blooms of *Ophelia* that the judges called the best seen in the town since the war, his third cup in four years, and the cup for vegetables to Mrs Annie Pascoe, whose onions weighed two pounds each. The prize for the best-kept allotment, judged in May, went to the Saltings Row allotments for the second year. In the children’s class for a wild flower collection, every entry received a prize, by order of the President. Teas were served by the ladies of the committee, and four hundred were taken.
 
 ## Harbour paintings at the Institute {style="third"}
 
-The Wexcombe Art Society’s summer exhibition opened at the Literary Institute on Wednesday, with a hundred and twelve pictures by forty-one members, the largest show in the society’s history. The harbour, as ever, is the favourite subject: there are nineteen views of it, at every hour and in every weather, and one, by Miss Phyllis Body, painted from the top of the Guildhall tower while the clockmakers were at work. The prize for the best picture in oils went to Mr Ernest Lugg for *Pilchard Boats, Evening*, and the prize for water-colours to Mrs Jane Treloar, whose *Quay Hill in Rain* shows the new tram lines glistening, two days before they were finished. The exhibition is open daily from ten until six, until the 1st of July. Admission threepence; members free.
+The Wexcombe Art Society’s summer exhibition opened at the Literary Institute on Wednesday, with a hundred and twelve pictures by forty-one members, the largest show in the society’s history. The harbour, as ever, is the favourite subject: there are nineteen views of it, at every hour and in every weather, and one, by Miss Phyllis Body, painted from the top of the Guildhall tower while the clockmakers were at work. The prize for the best picture in oils went to Mr Ernest Lugg, a retired pilot, for *Pilchard Boats, Evening*, and the prize for water-colours to Mrs Jane Treloar, whose *Quay Hill in Rain* shows the new tram lines glistening, two days before they were finished. Eleven pictures were sold on the first day, nine of them of the harbour. The exhibition is open daily from ten until six, until the 1st of July. Admission threepence; members free.
 
 ## On the screen this week {style="second"}
 
 ::resource{id="pictures"}
 
-At the **Regal**, the picture of the week is a musical comedy of shipboard life, with the news and a coloured cartoon. At the **Electric**, a western in the old style, and a serial whose heroine has now been tied to a railway line for three weeks running. Children’s matinée on Saturday mornings at both houses, price twopence.
+At the **Regal**, the picture of the week is a musical comedy of life aboard ship, with the news and a coloured cartoon. At the **Electric**, a western in the old style, and a serial whose heroine has been tied to the same railway line for three weeks running. Children’s matinée on Saturday mornings at both houses, price twopence. The Regal’s organ, silent since Easter, has been mended and plays before the second house. Prices at both houses are as before.
 
 ## Wireless this evening {style="third"}
 
@@ -52,17 +52,21 @@ At the **Regal**, the picture of the week is a musical comedy of shipboard life,
 
 **Sir,** — I see the Guildhall clock is going again. Might the Council now turn its attention to the one at the station, which has been five minutes fast since the Coronation and has caused me to miss nothing, but has caused my wife to wait for a great many trains? — *Yours, &c.,* **H. B. Clemo**, The Parade.
 
-**Sir,** — May I, through your columns, thank the young man who carried my shopping basket from Market Cross to the top of Chapel Street on Tuesday and refused to give his name? I hope he reads the *Lantern*. — *Yours, &c.,* **Mary Tonkin**, Chapel Street.
+**Sir,** — May I, through your columns, thank the young man who carried my basket of shopping from Market Cross to the top of Chapel Street on Tuesday and refused to give his name? I hope he reads the *Lantern*. — *Yours, &c.,* **Mary Tonkin**, Chapel Street.
+
+**Sir,** — As the batsman who was forty-six not out when Miss Lacey came over the pavilion on Wednesday, may I say that I bear the lady no grudge, and that the lifeboat is welcome to my half-century? — *Yours, &c.,* **Not Out**, Chapel Street.
 
 **Sir,** — I have read in your paper that the new trams are painted green and cream. Mine, I see, is painted green and cream also: the colour came through the hedge from the Corporation’s works in Fennick Lane, where they paint the cars with the windows open. Who pays for my washing? — *Yours, &c.,* **E. J. Hosken**, Fennick Lane.
+
+**Sir,** — The Guildhall clock struck twelve at noon yesterday. Last night, at midnight, it struck twelve again. Is this to go on? — *Yours, &c.,* **Light Sleeper**, Guildhall Square.
 
 **Sir,** — Your report of the Harbour line says the cars will run until half past eleven at night. Will somebody tell the Regal, whose second house does not come out until twenty to twelve? — *Yours, &c.,* **A Picturegoer**, Fennick Lane.
 
 :::callout{type="ads" span="page" placement="bottom" title="Small advertisements"}
 :::columns{count=4 breaks="4,7,10"}
-**TO LET.** Furnished rooms, sea view, use of piano. Suit quiet gentleman. Apply Mrs Jose, 3 Marine Terrace.
+**TO LET.** Furnished rooms, sea view, use of piano. Suit quiet couple. Apply Mrs Jose, 3 Marine Terrace.
 
-**BICYCLE** for sale, lady’s, three-speed, little used, £2 10s. or near offer. Box 112, Lantern Office.
+**BICYCLE** for sale, lady’s, three-speed, little used, £2 10s. or offer. Box 112, Lantern Office.
 
 **WANTED,** a smart boy to deliver groceries, must be able to ride. Apply Hicks & Son, Market Street.
 

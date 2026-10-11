@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 136 · A living newspaper of video loops ══════════════
 // https://postext.dev/en/cookbook/living-newspaper-video-loops
 // Code: MIT · Text: original (CC BY 4.0) · Clips: generated with diffusion models (CC BY 4.0)
-// Fonts: Oswald, Libre Caslon Text, Courier Prime (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Oswald, Libre Caslon Text, Courier Prime (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -190,7 +190,7 @@ const ads = { ...briefs, id: 'ads', background: col('paper'),
 const label = { fontFamily: 'Courier Prime', fontSize: pt(8), firstLineIndent: pt(0) };
 
 const config = () => ({
-  colorPalette, resourceTypes, videoStyle,
+  locale: 'en-us', colorPalette, resourceTypes, videoStyle, // locale: the paper's language
   page: { sizePreset: 'tabloid', dpi: 150, backgroundColor: col('paper'), // 280 × 430 mm
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.side),
       right: mm(MARGIN.side) } },

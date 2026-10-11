@@ -36,13 +36,13 @@ Ines Barlow draws a penguin and a walrus every weekday morning at a kitchen tabl
 
 “The rule is that the joke has to land in the fourth panel and not before,” Barlow says. “If Otto is funny in panel two, I’ve wasted the strip.” Pip is small, polite and always hungry. Otto runs a bakery on an ice floe, wears a bow tie to work and has never once given a straight answer. Readers write to both of them. Most of the letters are addressed to Otto.
 
-Barlow grew up above her parents’ bakery in Harrow Road, which explains the croissants. The penguin came later, from a postcard her grandmother sent from Cape Town. “I drew Pip on the back of an order book when I was nine. He had the scarf already. Otto took me another twenty years.”
+Barlow grew up over her parents’ bakery in Harrow Road, which accounts for the croissants. The penguin came later, from a postcard her grandmother sent from Cape Town. “I drew Pip on the back of an order book when I was nine. He had the scarf already. Otto took me another twenty years.”
 
 She sent the first six strips to the Despatch in the summer of 2016, with a covering letter of one line. The comics editor at the time, Martin Fry, ran them as a trial for a month. The trial has not ended. Fry, now retired, still gets the strip a day early by post. “He tells me when a joke is weak,” Barlow says. “He is usually right.”
 
 The work starts on Monday with five pencil roughs on sheets of A4, four boxes to a sheet. By Wednesday they are inked and coloured. The pictures go to the paper with no words in them; the words go separately, as a short script: who speaks, in which panel, and what they say. A sound effect gets a line of its own.
 
-That habit started with the French edition in 2019. “Lettering a strip twice by hand was a week’s work,” she says. “Now each paper sets the words in its own language, and the balloons are drawn around them.” The Spanish papers get *¡Recién salido del horno!*; the Japanese edition sets its balloons in vertical columns and, like the Arabic one, reads the panels from right to left. The pictures never change.
+That habit started with the French edition in 2019. “Lettering a strip twice by hand was a week’s work,” she says. “Now each paper sets the words in its own language, and the balloons are drawn round them.” The Spanish papers get *¡Recién salido del horno!*; the Japanese edition stands its balloons in vertical columns and reads the panels from right to left, as the Arabic one does. The pictures never change.
 
 The Sunday strip is the exception to the four-panel rule. It takes half a page, in colour, and Barlow treats it as a short story: three panels, a slower joke, and usually a fish. This week’s is on the cover.
 
@@ -72,13 +72,13 @@ What is next for the pair? “Otto is going to learn to skate,” Barlow says. �
 **Dear Otto,** is the bakery on the floe a real place? I would like to visit. — *Mrs D. Keane, Harrow*
 :::
 
-**Otto replies:** It moves about. Bring a coat.
+**Otto replies:** Yes. It moves about. Bring a coat.
 
 :::paragraphs{style="flush"}
 **Dear Ines Barlow,** will Pip ever grow? — *Sam, Brook Lane*
 :::
 
-**Ines Barlow replies:** He grows a little every winter. He does not notice.
+**Ines Barlow replies:** He grows a little each winter. He does not notice.
 
 :::paragraphs{style="flush"}
 Write to Pip and Otto at the Despatch, 12 Bridge Street, Corrington, or by email. Letters may be shortened.

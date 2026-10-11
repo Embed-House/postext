@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 110 · A qasida on a diwan page, in two hemistichs ═══════════
 // https://postext.dev/en/cookbook/qasida-diwan-page
 // Code: MIT · Text: al-Mutanabbī, Dīwān, ar.wikisource (PD) · Pictures: none
-// Fonts: Amiri, Aref Ruqaa, Noto Kufi Arabic (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Amiri, Aref Ruqaa, Noto Kufi Arabic (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 

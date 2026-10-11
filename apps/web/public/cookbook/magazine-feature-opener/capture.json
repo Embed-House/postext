@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-feature-opener",
-  "sourceHash": "8acaaf1e601fffe8ecb13ee54b3ba018d7db217b3795befe07757615238f0975",
+  "sourceHash": "3074f4ca5158b820987d781595b3d6e322b901b6178671960e0c4f435c6d5ea3",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.848Z",
+  "capturedAt": "2026-10-11T20:22:30.379Z",
   "variants": {
     "en": {
-      "hash8": "22defb8e",
+      "hash8": "41888195",
       "vdtHash": "135791b269e24d278d0a78692b9df516fa183b28",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 36,
-        "buildMs": 221,
-        "totalMs": 997,
+        "importMs": 755,
+        "fontsMs": 49,
+        "buildMs": 311,
+        "totalMs": 2385,
         "builds": 1
       },
       "specimen": {
@@ -115,8 +115,15 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768188,
-        "folio": "da2eb3c6"
+        "bytes": 768189,
+        "folio": "da2eb3c6",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "23895e8eb79e049a",
+            "lines": "b00fb613ae59ce83"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -389,17 +396,36 @@
           "share": 0,
           "worst": 2
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 3,
+          "tracked": 3,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "3 paragraphs set a line short with tracking (worst −5‰): p. 1 −5‰ “The notebook lives in a biscuit tin on the kitch…”, p. 2 −5‰ “The reason lies in an odd habit of water. Most l…”, p. 2 −5‰ “For the first fifty years of the record, the lak…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageNumbering"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "131dfd3f",
+      "hash8": "c53dd690",
       "vdtHash": "2fba783e69d9830d15eabf9202d020f6be693509",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 37,
-        "buildMs": 116,
-        "totalMs": 881,
+        "importMs": 800,
+        "fontsMs": 51,
+        "buildMs": 163,
+        "totalMs": 2277,
         "builds": 1
       },
       "specimen": {
@@ -498,8 +524,15 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768179,
-        "folio": "da2eb3c6"
+        "bytes": 768176,
+        "folio": "da2eb3c6",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "5bded8f5cdd72ad7",
+            "lines": "df5d3aaf12ae6c17"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -774,7 +807,16 @@
           "share": 0,
           "worst": 1.9100000000000001
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageNumbering"
+          }
+        ]
       }
     }
   }

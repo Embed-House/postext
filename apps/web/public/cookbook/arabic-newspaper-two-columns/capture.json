@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-newspaper-two-columns",
-  "sourceHash": "6d2055b0686b195bc44a1157083b147657291376262ad199592ff83ab08aaf9c",
+  "sourceHash": "c87b7911be4dfba8e45feb21ccb3f40bd1330fc0f1da5f735f173adaba8bf455",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.012Z",
+  "capturedAt": "2026-10-11T20:22:29.681Z",
   "variants": {
     "en": {
-      "hash8": "aaf0dc16",
-      "vdtHash": "635fc763c503116c0be52473b4b8f53ceac23047",
+      "hash8": "909f6dba",
+      "vdtHash": "57eda6054abf963604d9e51db5f63121091bb9a6",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 69,
-        "buildMs": 122,
-        "totalMs": 891,
+        "importMs": 877,
+        "fontsMs": 664,
+        "buildMs": 167,
+        "totalMs": 2422,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 87686,
+          "bytes": 87656,
           "alt": "Opening page ١: الساحل. مسار الخط الأول: ثماني عشرة محطة بين الميناء شرقًا والجامعة غربًا."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 123790,
+          "bytes": 123956,
           "alt": "Opening page ٢: محليات. مواقيت الصلاة في رأس المرجان، الخميس ١ أكتوبر."
         }
       ],
@@ -91,13 +91,20 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 95264,
+        "bytes": 95267,
         "pages": 2
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22511,
-        "folio": "7d33b710"
+        "bytes": 22510,
+        "folio": "7d33b710",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a96987b871607088",
+            "lines": "0880e7205c1fb8ea"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -357,17 +364,26 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "68e314e9",
-      "vdtHash": "f34d5fa84d31dc3c41e2140a9292b0d69c9c55cb",
+      "hash8": "cccb1813",
+      "vdtHash": "bfed373063ca5969801b5259a8f0279afb332901",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 69,
-        "buildMs": 131,
-        "totalMs": 912,
+        "importMs": 1559,
+        "fontsMs": 716,
+        "buildMs": 185,
+        "totalMs": 3159,
         "builds": 1
       },
       "specimen": {
@@ -401,7 +417,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 87686,
+          "bytes": 87656,
           "alt": "Página de apertura ١: الساحل. مسار الخط الأول: ثماني عشرة محطة بين الميناء شرقًا والجامعة غربًا."
         },
         {
@@ -412,7 +428,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124114,
+          "bytes": 124276,
           "alt": "Página de apertura ٢: محليات. مواقيت الصلاة في رأس المرجان، الخميس ١ أكتوبر."
         }
       ],
@@ -441,13 +457,20 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 95404,
+        "bytes": 95398,
         "pages": 2
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22555,
-        "folio": "7d33b710"
+        "bytes": 22554,
+        "folio": "7d33b710",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "1affc6663ff0940a",
+            "lines": "9079b11b7a35a53d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -707,7 +730,16 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ieee-conference-paper",
-  "sourceHash": "124db60bb34be3fe50d044a8af44956d6ecba3f446717d00f1e04cf28585ccee",
+  "sourceHash": "e3447c69bef3edf1aa1fe76b9ed5fd15c167bac23f4b118aa4c02d09b7429246",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.542Z",
+  "capturedAt": "2026-10-11T20:22:30.283Z",
   "variants": {
     "en": {
-      "hash8": "4b5cb85e",
-      "vdtHash": "a7deaa0f1a97485124d6bd47275305a161055c6b",
+      "hash8": "65604a0d",
+      "vdtHash": "f224c4793cbb2f7b7f59ac740d7c75a0374c2cee",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 32,
-        "buildMs": 284,
-        "totalMs": 1127,
+        "importMs": 1612,
+        "fontsMs": 35,
+        "buildMs": 387,
+        "totalMs": 2790,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 202498,
+          "bytes": 201894,
           "alt": "Page 2: III. METHOD."
         }
       ],
@@ -89,13 +89,20 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 82277,
+        "bytes": 82214,
         "pages": 2
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29450,
-        "folio": "9f7fbdf3"
+        "bytes": 29446,
+        "folio": "9f7fbdf3",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "4c3effcb76032151",
+            "lines": "5a712e2d16a688d3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -307,17 +314,26 @@
           "share": 0,
           "worst": 1.97
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "6de6e32d",
-      "vdtHash": "d4da76d880d1b66ac924fa5412e02479ed910d3d",
+      "hash8": "2a6de9b9",
+      "vdtHash": "0990b340cfe5ee060e6246e86fe2cc4abfa70908",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 31,
-        "buildMs": 138,
-        "totalMs": 969,
+        "importMs": 1603,
+        "fontsMs": 38,
+        "buildMs": 184,
+        "totalMs": 2489,
         "builds": 1
       },
       "specimen": {
@@ -361,7 +377,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 232208,
+          "bytes": 231928,
           "alt": "Página 2: III. MÉTODO."
         }
       ],
@@ -389,13 +405,20 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 94291,
+        "bytes": 94211,
         "pages": 2
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29964,
-        "folio": "9f7fbdf3"
+        "bytes": 29961,
+        "folio": "9f7fbdf3",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3c80b4b3633f98f5",
+            "lines": "216d300171f8e187"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -607,7 +630,16 @@
           "share": 0,
           "worst": 1.77
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

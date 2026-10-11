@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "bistro-menu",
-  "sourceHash": "9fa2874a1629c15927b13e37366072a6894b3f63bf33659c0bbf7fee73f28aca",
+  "sourceHash": "862f559d4a6f2c24a15886809ffaa47d48eb31d1376bbed30792333de4a3dc02",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.929Z",
+  "capturedAt": "2026-10-11T20:22:29.803Z",
   "variants": {
     "en": {
-      "hash8": "90293a2e",
+      "hash8": "c623151b",
       "vdtHash": "006ad9e905a6d78d3dea4d05c500815703794116",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 32,
-        "buildMs": 25,
-        "totalMs": 758,
+        "importMs": 2382,
+        "fontsMs": 333,
+        "buildMs": 68,
+        "totalMs": 3679,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Noticia Text"
         ],
         "pages": 2,
-        "ownLines": 152
+        "ownLines": 154
       },
       "pages": [
         {
@@ -88,8 +88,15 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 25532,
-        "folio": "bda6e41d"
+        "bytes": 25536,
+        "folio": "bda6e41d",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "04f22c55db3626bd",
+            "lines": "e43797bcdf66c5b0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -148,6 +155,7 @@
           "headings.textAlign",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -201,12 +209,13 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 150,
+        "configLeaves": 151,
         "designElements": 3,
         "directives": [
           "::resource",
@@ -271,23 +280,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "df080ac5",
+      "hash8": "3e288efa",
       "vdtHash": "d5f60de0e53f5cd6ee29178611c26a9a557f506b",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 29,
-        "buildMs": 23,
-        "totalMs": 762,
+        "importMs": 2387,
+        "fontsMs": 350,
+        "buildMs": 58,
+        "totalMs": 3384,
         "builds": 1
       },
       "specimen": {
@@ -309,7 +315,7 @@
           "Noticia Text"
         ],
         "pages": 2,
-        "ownLines": 152
+        "ownLines": 154
       },
       "pages": [
         {
@@ -359,8 +365,15 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 26047,
-        "folio": "bda6e41d"
+        "bytes": 26046,
+        "folio": "bda6e41d",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "efd8d66348a7a441",
+            "lines": "45b58724d70680e6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -419,6 +432,7 @@
           "headings.textAlign",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -472,12 +486,13 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 150,
+        "configLeaves": 151,
         "designElements": 3,
         "directives": [
           "::resource",
@@ -542,13 +557,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

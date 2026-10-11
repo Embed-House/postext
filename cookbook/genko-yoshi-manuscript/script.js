@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 120 · A story on genkō yōshi, one character to a square ═══
 // https://postext.dev/en/cookbook/genko-yoshi-manuscript
 // Code: MIT · Text: 夏目漱石『坊っちゃん』, Aozora Bunko 752 (public domain) · Pictures: none
-// Fonts: Klee One, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Klee One, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, loadVerticalAlternates,
 } from 'https://esm.sh/postext';
@@ -39,7 +39,10 @@ const SLACK = 0.5; // mm
 // show draws its squares. The marks are set full width with nothing squeezed, so each
 // character, mark or bracket fills its own square, as on manuscript paper (原稿用紙).
 const cjk = {
-  grid: { enabled: true, charsPerLine: N, linesPerPage: N, show: true },
+  // fullLines: on manuscript paper every square of a full line is written in, so a line
+  // gives up no character to keep a lone last one company (the runt rule would leave the
+  // twentieth square empty in the middle of a paragraph).
+  grid: { enabled: true, charsPerLine: N, linesPerPage: N, show: true, fullLines: true },
   compressAdjacent: false, // 。」 take two squares, not one and a half
   trimLineStart: false, // a bracket at the head of a line keeps its square
   // The manuscript rule: a small kana or ー may head a line (each has its own square), but
@@ -104,9 +107,6 @@ const config = () => ({
     fontFamily: PEN, fontSize: pt(CELL), lineHeight: pt(PITCH), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'left', firstLineIndent: em(1), indentAfterHeading: true, // a blank square
-    // On manuscript paper a line gives up no character to keep the last one company: the
-    // runt rule would leave the twentieth square of a line empty in the middle of a paragraph.
-    avoidRunts: false,
   },
   headings: { fontFamily: PEN, color: col('ink'), levels: [title] },
   paragraphStyles,

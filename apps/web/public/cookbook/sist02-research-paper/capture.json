@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "sist02-research-paper",
-  "sourceHash": "225ff080633517e73479b74eed7f6ed0321b471e49112d26ac3b8c758d73febf",
+  "sourceHash": "ed05dddfb00f0b3890c1554c60e0c9d2f69b7d38bc7fe21e9cd32268327d4a4d",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.683Z",
+  "capturedAt": "2026-10-11T20:22:30.867Z",
   "variants": {
     "en": {
-      "hash8": "1b23469e",
-      "vdtHash": "b15599082b08ed020a8f607cba5431b870f80046",
+      "hash8": "7f597344",
+      "vdtHash": "5952d7e7ba5a11716c051c1d1a377a700c5a5059",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 279,
-        "buildMs": 156,
-        "totalMs": 1156,
+        "importMs": 2141,
+        "fontsMs": 703,
+        "buildMs": 324,
+        "totalMs": 4805,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106528,
+          "bytes": 106430,
           "alt": "Opening page 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90142,
+          "bytes": 89770,
           "alt": "Page 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -90,13 +90,20 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227101,
+        "bytes": 227408,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32432,
-        "folio": "5f42a5f6"
+        "bytes": 32396,
+        "folio": "5f42a5f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "7fc3b37746649ac1",
+            "lines": "f186d43aec4849e0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -374,17 +381,36 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “A specimen article written for the Postext Cookb…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "21934af3",
-      "vdtHash": "505453953d470b1cbd63be9b7d48fb7378d996a6",
+      "hash8": "e3764657",
+      "vdtHash": "f3218b0fa5e1bb8f0cb8f16daf7a4c60af76d94d",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 263,
-        "buildMs": 135,
-        "totalMs": 1113,
+        "importMs": 1272,
+        "fontsMs": 806,
+        "buildMs": 165,
+        "totalMs": 2808,
         "builds": 1
       },
       "specimen": {
@@ -418,7 +444,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106528,
+          "bytes": 106430,
           "alt": "Página de apertura 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -429,7 +455,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89650,
+          "bytes": 89644,
           "alt": "Página 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -457,13 +483,20 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226997,
+        "bytes": 227043,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32503,
-        "folio": "5f42a5f6"
+        "bytes": 32466,
+        "folio": "5f42a5f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e3448c63ed580383",
+            "lines": "675759caeaed5916"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -741,7 +774,16 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

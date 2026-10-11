@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-official-document",
-  "sourceHash": "d7982e5d52b3041846d8917c9ca9291941d09bd8a5d324aacfb60a2d897ebc66",
+  "sourceHash": "d8a314f7bcf92caf7f07a7fe0c014834fefb3661adb0a06732255c7bfa6866af",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.080Z",
+  "capturedAt": "2026-10-11T20:22:29.959Z",
   "variants": {
     "en": {
-      "hash8": "44133dfd",
+      "hash8": "a400e4c3",
       "vdtHash": "80d8a526f7da634513bcf335a6e1537e7fa4f2f7",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 192,
-        "buildMs": 51,
-        "totalMs": 999,
+        "importMs": 1757,
+        "fontsMs": 1658,
+        "buildMs": 59,
+        "totalMs": 4035,
         "builds": 1
       },
       "specimen": {
@@ -115,13 +115,20 @@
       },
       "pdf": {
         "file": "chinese-official-document.pdf",
-        "bytes": 130052,
+        "bytes": 130049,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20519,
-        "folio": "f2e4b92d"
+        "bytes": 20517,
+        "folio": "f2e4b92d",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "8b1569b162b4e0bf",
+            "lines": "d961d53bdeef3869"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -350,6 +357,9 @@
           "share": 0,
           "worst": 0.09
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C26",
@@ -360,13 +370,13 @@
       }
     },
     "es": {
-      "hash8": "5586877e",
+      "hash8": "9095c632",
       "vdtHash": "2dcc65ad799e08155e5c0b6dd70622f5e28c1808",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 176,
-        "buildMs": 51,
-        "totalMs": 967,
+        "importMs": 2183,
+        "fontsMs": 2062,
+        "buildMs": 59,
+        "totalMs": 4919,
         "builds": 1
       },
       "specimen": {
@@ -469,8 +479,15 @@
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20569,
-        "folio": "f2e4b92d"
+        "bytes": 20568,
+        "folio": "f2e4b92d",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "194d28551d46a651",
+            "lines": "a1e32e15f2bbd2bb"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -698,6 +715,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.09
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

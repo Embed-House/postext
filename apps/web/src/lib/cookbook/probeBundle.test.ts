@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { defaultResourceTypes, effectiveResourceTypes, resolveBodyTextConfig, stripConfigDefaults } from "postext";
 import type { PostextConfig } from "postext";
 import {
-  bundleGroup, bundleLanguage, bundleLocale, configKeyOf, extraWarnings, languageBack, namedLanguage, readBundleBack, startLossNotes, startOf,
+  bundleGroup, bundleLanguage, bundleLocale, configKeyOf, extraWarnings, languageBack, layoutHash, linesHash, namedLanguage, readBundleBack, startLossNotes, startOf,
 } from "../../../scripts/cookbook/lib/probe.js";
 
 // The Sandbox bundle of a capture whose `capture.doc` lists several builds:
@@ -366,6 +366,13 @@ describe("readBundleBack (#690)", () => {
     expect((await readBundleBack(toy({ headings: "bold" }), new Uint8Array(), build.docs, [build])).chapters[0].difference).toBeNull();
   });
 
+  it("gives each side its lines hash beside its layout hash (#736)", async () => {
+    const one = doc([{ label: "1", lines: ["One", "two"] }]);
+    const back = await readBundleBack(engineFor([one]), new Uint8Array(), [one]);
+    expect(back.chapters[0].bundle).toEqual({ pages: 1, hash: layoutHash(one), lines: linesHash(one) });
+    expect(back.chapters[0].pen).toEqual(back.chapters[0].bundle);
+  });
+
   it("reports a chapter with no document, a bundle that does not open, and an engine that cannot read one", async () => {
     const one = doc([{ label: "1", lines: ["One"] }]);
     const more = await readBundleBack(engineFor([one, one]), new Uint8Array(), [one]);
@@ -373,5 +380,57 @@ describe("readBundleBack (#690)", () => {
     const broken = { openBundle: async () => { throw new Error("Invalid bundle manifest (preset.json)"); }, buildBundle: () => [] };
     expect(await readBundleBack(broken, new Uint8Array(), [one])).toMatchObject({ error: "Invalid bundle manifest (preset.json)", chapters: [] });
     expect(await readBundleBack({}, new Uint8Array(), [one])).toMatchObject({ skipped: "the engine has no openBundle / buildBundle" });
+  });
+});
+
+// ─── The lines of a layout, whatever their boxes measure (#736) ──────────────
+
+describe("linesHash (#736)", () => {
+  /** `doc` with every line and block `by` px wider and further right: the
+   *  same lines measured with another build of the family. */
+  const widened = (pages: { label: string; lines: string[] }[], by: number) => {
+    const base = doc(pages);
+    return {
+      ...base,
+      pages: base.pages.map((page) => ({
+        ...page,
+        columns: page.columns.map((column) => ({
+          blocks: column.blocks.map((block) => ({
+            ...block,
+            bbox: { ...block.bbox, width: block.bbox.width + by },
+            lines: block.lines.map((l) => ({ ...l, bbox: { ...l.bbox, x: l.bbox.x + by, width: l.bbox.width + by } })),
+          })),
+        })),
+      })),
+    };
+  };
+  const pages = [{ label: "1", lines: ["One line", "and another"] }, { label: "2", lines: ["over"] }];
+
+  it("holds when a width differs and the lines do not, where the layout hash does not", () => {
+    expect(layoutHash(widened(pages, 0.3))).not.toBe(layoutHash(doc(pages)));
+    expect(linesHash(widened(pages, 0.3))).toBe(linesHash(doc(pages)));
+    expect(linesHash(widened(pages, 40))).toBe(linesHash(doc(pages)));
+  });
+
+  it("changes with a line that breaks at another word, a line more and a block on another page", () => {
+    const base = linesHash(doc(pages));
+    expect(linesHash(doc([{ label: "1", lines: ["One line and", "another"] }, { label: "2", lines: ["over"] }]))).not.toBe(base);
+    expect(linesHash(doc([{ label: "1", lines: ["One line", "and another", "over"] }]))).not.toBe(base);
+    expect(linesHash(doc([{ label: "1", lines: ["One line"] }, { label: "2", lines: ["and another", "over"] }]))).not.toBe(base);
+    expect(linesHash(doc([{ label: "i", lines: ["One line", "and another"] }, { label: "2", lines: ["over"] }]))).not.toBe(base);
+  });
+
+  it("counts a document's pages from its own first, as the layout hash does", () => {
+    expect(linesHash({ ...doc(pages), pageIndexOffset: 6 })).toBe(linesHash(doc(pages)));
+  });
+
+  it("reads the running heads, a table's cells and what is hidden", () => {
+    const head = (text: string) => ({ blocks: [{ kind: "text", bbox: { x: 0, y: 0, width: 80, height: 10 }, lines: [{ text }] }] });
+    const withHead = (text: string) => ({ ...doc(pages), pages: doc(pages).pages.map((page) => ({ ...page, header: head(text) })) });
+    expect(linesHash(withHead("Chapter one"))).not.toBe(linesHash(withHead("Chapter o…")));
+    const block = (extra: object) => ({ pageIndexOffset: 0, pages: [{ index: 0, width: 500, height: 700, pageLabel: "1", role: "body", columns: [{ blocks: [{ type: "resource", bbox: { x: 0, y: 0, width: 10, height: 10 }, lines: [], ...extra }] }] }] });
+    const table = (text: string) => block({ resourceBlock: { table: { cells: [{ row: 0, col: 1, lines: [line(text)] }] } } });
+    expect(linesHash(table("12 mm"))).not.toBe(linesHash(table("12")));
+    expect(linesHash(block({ hidden: true }))).not.toBe(linesHash(block({})));
   });
 });

@@ -59,11 +59,11 @@ A short list of names reads well with a blank line between groups and no head ov
 
 ```diff
 -  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
--    marginTop: pt(7) },
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
 +  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
 ```
 
 ## Pitfalls
 
 - The `index` configuration belongs to the document, so one document prints one order. A book that wants both a pinyin index and a stroke finding list builds twice, as this pen does.
-- On a character grid column balancing is off by default, and the last page of each index would fill its first column to the foot: the Simplified edition's colophon would start under Z and finish at the head of the second column. `headings.balancing: { enabled: true }` levels the two columns of that page and keeps the colophon whole under the second ([Column balancing](/en/docs/configuration-text#column-balancing)).
+- On a character grid column balancing is off by default, and the last page of each index would fill its first column to the foot: the Simplified edition's colophon would start under Z and finish at the head of the second column. `headings.balancing: { enabled: true }` cuts the first column of that page short, so the names run on into the second and the colophon stays whole under them ([Column balancing](/en/docs/configuration-text#column-balancing)). The cut falls between entries and never leaves one name of a group alone at the foot or the head of a column (`index.groups.splitMinEntries`, 2 by default), so the two columns end level only where the lengths allow it. Here each colophon carries a sentence on the order of its index, and the columns of both closing pages end within a third of a line.

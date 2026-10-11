@@ -149,6 +149,7 @@ const TAGS = { // where each tag sits against its element: [edge, x, y, text]
 const LEAD = 16; // body leading in pt
 const config = () => ({
   colorPalette,
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { width: mm(A3.width), height: mm(A3.height), dpi: 150, // 150 dpi is for the screen
     cutLines: { enabled: BLEED > 0, bleed: mm(BLEED) },
     margins: { top: mm(MARGIN), bottom: mm(FOOT), left: mm(MARGIN), right: mm(MARGIN) } },

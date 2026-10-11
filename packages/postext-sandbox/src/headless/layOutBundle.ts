@@ -41,6 +41,10 @@ export interface LayOutBundleOptions {
   handle?: LayoutWorkerHandle;
   /** What identifies a chapter's layout, by the host's own measure. */
   layoutHash?: (doc: VDTDocument) => string;
+  /** What identifies a chapter's lines whatever their boxes measure: the
+   *  host compares it where the faces are another build of the family than
+   *  the ones its own hash was taken with (#736). */
+  linesHash?: (doc: VDTDocument) => string;
   /** A document's warnings as the host keys them; without it, their kinds. */
   warningsOf?: (doc: VDTDocument) => string[];
 }
@@ -49,6 +53,7 @@ export interface LaidOutChapter {
   title: string;
   pages: number;
   hash?: string;
+  lines?: string;
   warnings: string[];
 }
 
@@ -215,6 +220,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
         title: c.title,
         pages: doc.pages.length,
         ...(options.layoutHash ? { hash: options.layoutHash(doc) } : {}),
+        ...(options.linesHash ? { lines: options.linesHash(doc) } : {}),
         warnings: options.warningsOf ? options.warningsOf(doc) : kinds(doc),
       };
     }),

@@ -16,7 +16,7 @@ Tidewell Community Energyの2025年次報告書です。風車2基、太陽光�
 
 ### 1 · すべての行をグリッドに乗せ、すき間は調整手段に埋めさせる
 
-コードは上の[手短な答え](#手短な答え)にあります。版面はちょうど13.4 ptの行が50行分の深さで、地の余白（21.6 mm）はその深さから導きます。小見出しは上に1行、自身に1行のグリッド線を使うので、段が短く終わるときの不足は行単位になり、<Feature id="column-balancing">段末そろえ</Feature>が足すのも行単位です。<PageRef page={3}>3ページ目</PageRef>では、3行のひょうの段落が`avoidOrphans`によってまるごと4ページ目へ送られます。これは段落の最終行が段の頭にひとりで立つのを防ぐ、Postextでの規則の名前です。その結果、右段は2行短く終わります。`maxLinesPerHeading: 1`はそのうち1行を*The Saltings and the roofs*の上の空きに回し、残る1行を次の調整手段に任せます。次の手段はそれを屋根のリストの後に加えます。初期値の4のままなら、2行とも見出しの上に入ります。
+コードは上の[手短な答え](#手短な答え)にあります。版面はちょうど13.4 ptの行が50行分の深さで、地の余白（21.6 mm）はその深さから導きます。小見出しは上に1行、自身に1行のグリッド線を使うので、段が短く終わるときの不足は行単位になり、<Feature id="column-balancing">段末そろえ</Feature>が足すのも行単位です。<PageRef page={3}>3ページ目</PageRef>では、3行のひょうの段落が`avoidOrphans`によってまるごと4ページ目へ送られます。これは段落の最終行が段の頭にひとりで立つのを防ぐ、Postextでの規則の名前です。その結果、右段は2行短く終わります。`maxLinesPerHeading: 1`はそのうち1行を*The Saltings and the roofs*の上の空きに回し、残る1行を次の調整手段に任せます。次の手段はそれを屋根のリストの後に加えます。初期値では、見出しはまず2行まで受け取り、そのあとで後続の調整手段が試されます（`maxLinesBeforeLoose`）。それらに余地がなくなって初めて4行まで受け取るので、2行とも見出しの上に入ります。
 
 ### 2 · ページ幅の囲みの上で本文の高さをそろえて切る
 
@@ -50,7 +50,7 @@ Markdownの中で、計量についての注記はHarrow Downについての最�
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
-+const balancing = {}; // the default: up to 4 lines above each heading
++const balancing = {}; // the default: two lines above a heading, then the other levers
 ```
 
 ### 段末そろえを切る

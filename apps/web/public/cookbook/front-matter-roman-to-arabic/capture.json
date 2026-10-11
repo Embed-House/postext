@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "front-matter-roman-to-arabic",
-  "sourceHash": "667ed24f49d997210a3d0d3f49f43578b20fe83d5bbeb00a48fb5c5b68599970",
+  "sourceHash": "9c067e73827793d6ffdc4b3231bd60d19c54b9b9fc579f8ef747ad7ae1ee290b",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:19.306Z",
+  "capturedAt": "2026-10-11T20:22:30.205Z",
   "variants": {
     "en": {
-      "hash8": "cdda2a13",
-      "vdtHash": "b64a2effb7df23604c0ca0a5c95947db80d396fe",
+      "hash8": "f1668108",
+      "vdtHash": "b08f2e14b353da55f033eeb01d81d2a0de1bca33",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 59,
-        "buildMs": 138,
-        "totalMs": 954,
+        "importMs": 1344,
+        "fontsMs": 246,
+        "buildMs": 189,
+        "totalMs": 2789,
         "builds": 1
       },
       "specimen": {
@@ -223,13 +223,20 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815984,
+        "bytes": 815988,
         "pages": 14
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713685,
-        "folio": "ba949066"
+        "bytes": 713684,
+        "folio": "ba949066",
+        "chapters": [
+          {
+            "pages": 14,
+            "hash": "d33e2ef746dd06e5",
+            "lines": "0b3a5080e38fafa2"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -461,7 +468,26 @@
           "share": 0,
           "worst": 1.71
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 14 −5‰ “This is the most favourable period for travellin…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

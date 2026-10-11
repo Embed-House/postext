@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "atlas-map-sheet",
-  "sourceHash": "2c209fcb70b5743805b80d415b3f5ada56eb90e02faae44d845c39762c6ca70e",
+  "sourceHash": "578c226df063358fe41e16d56d2681ac4a9244caf8a4ba658a698e85a93985eb",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.489Z",
+  "capturedAt": "2026-10-11T20:22:29.702Z",
   "variants": {
     "en": {
-      "hash8": "882932d4",
+      "hash8": "9803d1d7",
       "vdtHash": "c0198ebf0d4818c7e03a23e60ccabae747e764d0",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 898,
-        "buildMs": 57,
-        "totalMs": 1711,
+        "importMs": 805,
+        "fontsMs": 1012,
+        "buildMs": 99,
+        "totalMs": 2767,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Marcellus"
         ],
         "pages": 4,
-        "ownLines": 243
+        "ownLines": 244
       },
       "pages": [
         {
@@ -115,8 +115,15 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512842,
-        "folio": "415ce2a3"
+        "bytes": 512841,
+        "folio": "415ce2a3",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "4f76330ef9982774",
+            "lines": "378b45c8c0a1dff0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -211,6 +218,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -265,12 +273,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 292,
+        "configLeaves": 293,
         "designElements": 12,
         "directives": [
           ":::paragraphs"
@@ -347,23 +356,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "7136fe20",
+      "hash8": "3ad4b4c7",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 899,
-        "buildMs": 50,
-        "totalMs": 1661,
+        "importMs": 1470,
+        "fontsMs": 998,
+        "buildMs": 87,
+        "totalMs": 4165,
         "builds": 1
       },
       "specimen": {
@@ -386,7 +392,7 @@
           "Marcellus"
         ],
         "pages": 4,
-        "ownLines": 243
+        "ownLines": 244
       },
       "pages": [
         {
@@ -462,8 +468,15 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513264,
-        "folio": "415ce2a3"
+        "bytes": 513262,
+        "folio": "415ce2a3",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "2a183586f3b112c2",
+            "lines": "5a243edd9eb6dad1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -558,6 +571,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -612,12 +626,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 292,
+        "configLeaves": 293,
         "designElements": 12,
         "directives": [
           ":::paragraphs"
@@ -694,13 +709,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

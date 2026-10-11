@@ -5,7 +5,7 @@
 :::
 
 :::paragraphs{style="flush"}
-On Monday night the Marrow Barrier did what its critics said it never would. It closed on time, it held, and the Lower Town woke to wet pavements rather than flooded kitchens :ref{id="cartoon" text="(cartoon)"}. The engineers who built it, and the crew who ran it through the storm, have earned the city’s thanks.
+On Monday night the Marrow Barrier did what its critics said it never would. It closed on time, it held, and the Lower Town woke to wet pavements rather than flooded kitchens :ref{id="cartoon" text="(cartoon)"}. The engineers who built it, and the crew who ran it through the storm, have the city’s thanks.
 :::
 
 They have also earned a hearing. The barrier was designed to protect Marrowick until about 2070. Every forecast since it was planned has raised the sea a little higher and brought that date a little closer. The authority already says it will need to raise the flood walls downstream of the gates within fifteen years, at a cost it puts at £120 million.
@@ -164,7 +164,7 @@ Not every sector shared the gains. Retailers slipped after the September sales f
 
 In the currency market the pound fell 0.2% against the dollar to \$1.3218, after a speech by a central bank official was read as a hint that interest rates could be cut before Christmas. Gold slipped and crude oil rose 1.1% to \$71.40 a barrel.
 
-Turnover on the Marrowick Exchange was 412 million shares, about a fifth above the average for the past month. The busiest stock was Corvane, with 31 million shares traded.
+Turnover on the Marrowick Exchange was 412 million shares, about a fifth above the average for the past month. Corvane was the busiest stock, with 31 million traded.
 
 :::callout{type="story" span="page" title="Sectors"}
 ## Ports and insurers led, the shops lagged {style="second"}
@@ -258,7 +258,7 @@ Savers who want a fixed rate should not wait long. The best one-year bonds have 
 
 Easy-access accounts still pay almost as much, and leave the money free if rates rise again. Marrow Mutual pays 3.85% on balances from £1, and the rate is guaranteed until March.
 
-Anyone with more than the £85,000 the deposit scheme protects should spread it between banks that hold separate licences. Several of the best buys belong to the same group.
+Anyone with more than the £85,000 the deposit scheme protects should spread it between banks that hold separate licences. Several of the best buys belong to one group.
 
 ::resource{id="savings"}
 

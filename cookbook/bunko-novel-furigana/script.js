@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 117 · A bunko novel set vertically, with furigana ════════
 // https://postext.dev/en/cookbook/bunko-novel-furigana
 // Code: MIT · Text: 夏目漱石『夢十夜』, Aozora Bunko 799 (public domain) · Pictures: none
-// Fonts: Shippori Mincho B1, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Shippori Mincho B1, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, loadVerticalAlternates,
 } from 'https://esm.sh/postext';
@@ -120,9 +120,6 @@ const config = () => ({
     fontFamily: MINCHO, fontSize: pt(BODY), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: em(1), indentAfterHeading: true, // 一字下げ
-    // A bunko page carries its 15 lines whatever a paragraph does at the turn: the line
-    // counts of Western widow and orphan control are not part of Japanese book-making.
-    avoidWidows: false, avoidOrphans: false,
   },
   headings: { fontFamily: MINCHO, color: col('ink'), levels: [night] },
   headingStyles: [titlePage],

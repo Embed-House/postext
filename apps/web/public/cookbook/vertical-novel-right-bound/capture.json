@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-novel-right-bound",
-  "sourceHash": "4256cbaf87fdfc9ffd95d8398c9406472fc3104902d79e1f4f007f2982d30380",
+  "sourceHash": "539f6b2391b5d2255db0dc1a15a005347f801a60d6f07ee13acf4ef5b8524bb1",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.590Z",
+  "capturedAt": "2026-10-11T20:22:31.106Z",
   "variants": {
     "en": {
-      "hash8": "03509d7b",
-      "vdtHash": "58000b5255810f22acfb16d4f41cad6543f075f1",
+      "hash8": "42a906b0",
+      "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 346,
-        "buildMs": 48,
-        "totalMs": 1137,
+        "importMs": 228,
+        "fontsMs": 433,
+        "buildMs": 54,
+        "totalMs": 1273,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 58962,
+          "bytes": 66966,
           "alt": "Opening page 一: 第一回 宴桃園豪傑三結義 斬黃巾英雄首立功."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 123910,
+          "bytes": 121628,
           "alt": "Page 二."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128130,
+          "bytes": 130402,
           "alt": "Page 三."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 128326,
+          "bytes": 127826,
           "alt": "Page 八."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1419,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 63470,
+          "bytes": 56234,
           "alt": "Page 九."
         }
       ],
@@ -154,13 +154,20 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 755311,
+        "bytes": 755428,
         "pages": 11
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279308,
-        "folio": "02ddac55"
+        "bytes": 279929,
+        "folio": "02ddac55",
+        "chapters": [
+          {
+            "pages": 11,
+            "hash": "a5df49cd83b31a9b",
+            "lines": "c67c472d8d7ddc65"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -352,7 +359,15 @@
           "share": 0,
           "worst": 0.05
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -362,13 +377,13 @@
       }
     },
     "es": {
-      "hash8": "777bd2a6",
-      "vdtHash": "bcdcb37b970cfa95fdc05fce7542f1935663495b",
+      "hash8": "da9b58af",
+      "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 346,
-        "buildMs": 51,
-        "totalMs": 1102,
+        "importMs": 176,
+        "fontsMs": 383,
+        "buildMs": 52,
+        "totalMs": 1213,
         "builds": 1
       },
       "specimen": {
@@ -424,7 +439,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 58962,
+          "bytes": 66966,
           "alt": "Página de apertura 一: 第一回 宴桃園豪傑三結義 斬黃巾英雄首立功."
         },
         {
@@ -435,7 +450,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 123910,
+          "bytes": 121628,
           "alt": "Página 二."
         },
         {
@@ -446,7 +461,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128130,
+          "bytes": 130402,
           "alt": "Página 三."
         },
         {
@@ -457,7 +472,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 128326,
+          "bytes": 127826,
           "alt": "Página 八."
         },
         {
@@ -468,7 +483,7 @@
           "h": 1419,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 63470,
+          "bytes": 56234,
           "alt": "Página 九."
         }
       ],
@@ -505,13 +520,20 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754706,
+        "bytes": 754823,
         "pages": 11
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279330,
-        "folio": "02ddac55"
+        "bytes": 279951,
+        "folio": "02ddac55",
+        "chapters": [
+          {
+            "pages": 11,
+            "hash": "616eb095af9e2d59",
+            "lines": "f407074d05cf58ff"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -703,7 +725,15 @@
           "share": 0,
           "worst": 0.05
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-three-column-feature",
-  "sourceHash": "b5b127435adfd8048036bc941d3f5b308577950c09aa6df282401833dd4e5332",
+  "sourceHash": "b24cf5171c2741b53d79d139a38bdafb0ac6e61f8454c13ee2b68ccc30a805d0",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.809Z",
+  "capturedAt": "2026-10-11T20:22:30.389Z",
   "variants": {
     "en": {
-      "hash8": "677f6064",
+      "hash8": "31081f31",
       "vdtHash": "89fbc32ceeafe6419ee3e4b3399303688a6f3d86",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 45,
-        "buildMs": 76,
-        "totalMs": 814,
+        "importMs": 740,
+        "fontsMs": 277,
+        "buildMs": 130,
+        "totalMs": 2269,
         "builds": 1
       },
       "specimen": {
@@ -138,8 +138,15 @@
       },
       "sandbox": {
         "file": "magazine-three-column-feature.postext",
-        "bytes": 1847623,
-        "folio": "579e6f1a"
+        "bytes": 1847632,
+        "folio": "579e6f1a",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "93c8ac8a03b0eea6",
+            "lines": "e41a1ed6612808dc"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -402,6 +409,9 @@
           "count": 0,
           "share": 0,
           "worst": 2
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

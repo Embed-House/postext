@@ -25,7 +25,7 @@ The decision was commercial before it was scientific. A company that kept one ti
 
 A time that every station is meant to keep has to reach every station. At first it travelled by hand: a guard on the morning down train carried a watch set at Paddington, and the stationmasters along the line set their clocks from it.
 
-The electric telegraph changed the means. From 1852 the Royal Observatory sent a signal each day along the wires of the Electric Telegraph Company, and the company passed it on to the railway stations and post offices on its network.[@standage1998, 59] A clock in Manchester or Edinburgh could now be checked against Greenwich within a second or two of the event. The signal made Greenwich time available everywhere the wires went; it did not oblige anyone to keep it.[@schivelbusch1986, 43–44]
+The electric telegraph changed the means. From 1852 the Royal Observatory sent a signal each day along the wires of the Electric Telegraph Company, and the company passed it on to the railway stations and post offices on its network.[@standage1998, 59] A clock in Manchester or Edinburgh could now be checked against Greenwich within a second or two of the event. The signal made Greenwich time available everywhere the wires went; it did not oblige anyone to keep it.[@schivelbusch1986, 43]
 
 ## The towns hesitate
 
@@ -43,7 +43,7 @@ The Statutes (Definition of Time) Act of 1880 closed the gap. It declared that a
 
 ## A settlement, not a conquest
 
-Seen from 1840, railway time was one of several possible arrangements. The companies might have kept local times and printed tables of corrections, as some American railroads did until 1883,[@bartky2000, 140–45] and the international system of zones that followed the Washington conference of 1884 took half a century to reach most of the world.[@ogle2015, chap. 1] In Britain the distances were short, the companies were few enough to agree through a single clearing house, and the telegraph reached the stations as the trains did. Those conditions, more than any principle, account for the speed with which a country of local noons came to keep one hour.[@ogle2015, 25; see also @schivelbusch1986, chap. 3]
+Seen from 1840, railway time was one of several possible arrangements. The companies might have kept local times and printed tables of corrections, as some American railroads did until 1883,[@bartky2000, 140–45] and the international system of zones that followed the Washington conference of 1884 took half a century to reach most of the world.[@ogle2015] In Britain the distances were short, the companies were few enough to agree through a single clearing house, and the telegraph reached the stations as the trains did. Those conditions, more than any principle, account for the speed with which a country of local noons came to keep one hour.[@ogle2015, 25; see also @schivelbusch1986, chap. 3]
 
 ## Bibliography
 

@@ -32,7 +32,7 @@ otto: Mmm. I gairebé nova.
 Per Ruth Okafor · Cultura
 :::
 
-Ines Barlow dibuixa un pingüí i una morsa cada matí de dilluns a divendres a la taula de la cuina de casa seva, a Saltmarsh Lane, i ja fa deu anys que ho fa. *En Pip i l’Otto* va sortir per primer cop al Despatx el 17 d’octubre de 2016, encaixada sota els mots encreuats. Avui es publica en onze diaris i en sis idiomes, i encara cap en quatre vinyetes quadrades.
+Ines Barlow dibuixa cada matí un pingüí i una morsa, de dilluns a divendres, a la taula de la cuina de casa seva, a Saltmarsh Lane, i ja fa deu anys que ho fa. *En Pip i l’Otto* va sortir per primer cop al Despatx el 17 d’octubre de 2016, encaixada sota els mots encreuats. Avui es publica en onze diaris i en sis idiomes, i encara cap en quatre vinyetes quadrades.
 
 «La regla és que l’acudit ha de caure a la quarta vinyeta, ni una abans», diu Barlow. «Si l’Otto fa gràcia a la segona, he llençat la tira». En Pip és petit, educat i sempre té gana. L’Otto porta una fleca sobre un glaç, va a treballar amb corbatí i mai no ha donat una resposta directa. Els lectors escriuen a tots dos, tot i que la majoria de les cartes són per a l’Otto.
 
@@ -40,7 +40,7 @@ Barlow va créixer a sobre de la fleca dels seus pares a Harrow Road, i d’aqu�
 
 Va enviar les sis primeres tires al Despatx l’estiu del 2016, amb una carta de presentació d’una sola línia. El responsable de còmics d’aleshores, Martin Fry, les va publicar a prova durant un mes. La prova no s’ha acabat. Fry, ja jubilat, encara rep la tira per correu un dia abans. «M’avisa quan un acudit fluixeja», diu Barlow. «Gairebé sempre té raó».
 
-La feina comença el dilluns amb cinc esbossos a llapis en fulls DIN A4, quatre requadres per full. El dimecres ja estan entintats i acolorits. Els dibuixos arriben al diari sense cap paraula; el text va a part, en un guió breu: qui parla, a quina vinyeta i què diu. Cada onomatopeia té la seva pròpia línia.
+La feina comença el dilluns amb cinc esbossos a llapis en fulls DIN A4, quatre requadres per full. El dimecres ja estan entintats i acolorits. Els dibuixos s’envien al diari sense cap paraula; el text va a part, en un guió breu: qui parla, a quina vinyeta i què diu. Cada onomatopeia té la seva pròpia línia.
 
 El costum va començar amb l’edició francesa, el 2019. «Retolar una tira dues vegades a mà era una setmana de feina», explica. «Ara cada diari compon el text en el seu idioma i les bafarades es dibuixen al voltant». Els diaris catalans reben «Acabat de sortir del forn!»; l’edició japonesa compon les bafarades en columnes verticals i, com l’àrab, llegeix les vinyetes de dreta a esquerra. Els dibuixos no canvien mai.
 

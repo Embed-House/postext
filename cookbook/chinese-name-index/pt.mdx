@@ -59,11 +59,11 @@ Uma lista curta de nomes fica boa de ler com uma linha em branco entre os grupos
 
 ```diff
 -  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
--    marginTop: pt(7) },
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
 +  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
 ```
 
 ## Erros comuns
 
 - A configuração `index` pertence ao documento, então um documento imprime uma única ordem. Um livro que queira um índice por pinyin e uma lista por traços é composto duas vezes, como este pen faz.
-- Numa grade de caracteres o balanceamento de colunas vem desligado por padrão, e a última página de cada índice encheria a primeira coluna até o pé: o colofão da edição simplificada começaria embaixo do Z e terminaria no alto da segunda coluna. `headings.balancing: { enabled: true }` iguala as duas colunas dessa página e deixa o colofão inteiro embaixo da segunda ([Equilíbrio de colunas](/pt/docs/configuration-text#equilíbrio-de-colunas)).
+- Numa grade de caracteres o balanceamento de colunas vem desligado por padrão, e a última página de cada índice encheria a primeira coluna até o pé: o colofão da edição simplificada começaria embaixo do Z e terminaria no alto da segunda coluna. `headings.balancing: { enabled: true }` corta antes a primeira coluna dessa página, de modo que os nomes continuam na segunda e o colofão fica inteiro embaixo deles ([Equilíbrio de colunas](/pt/docs/configuration-text#equilíbrio-de-colunas)). O corte cai entre entradas e nunca deixa um nome de um grupo sozinho no pé ou no alto de uma coluna (`index.groups.splitMinEntries`, 2 por padrão), então as duas colunas só terminam niveladas quando os comprimentos permitem. Aqui cada colofão traz uma frase sobre a ordem do seu índice, e as colunas das duas páginas de fecho terminam a menos de um terço de linha uma da outra.

@@ -80,7 +80,7 @@ maxRuntTracking: 10
 
 Una palabra larga aún puede hacer que una línea de una columna estrecha quede algo más floja que sus vecinas, y un párrafo que ha de acabar en algún sitio a veces acaba en una línea corta. El algoritmo puede pasar de una línea a otra el espacio que sobra, pero no quitarlo. Junto a una palabra larga, lo reparte entre cinco líneas en vez de dejarlo entero en un solo hueco, que se vería incluso con el brazo extendido.
 
-Una línea que aún se abre más de la cuenta queda para el corrector, que casi siempre la cierra con cambiar una palabra de la frase por otra algo más corta o más larga.
+Una línea que aún se abre más de la cuenta queda para el corrector, que casi siempre la cierra con cambiar una palabra de la frase por otra un poco más corta o un poco más larga.
 
 :::paragraphs{style="colophon"}
 Galerada se compone en Petrona, Bricolage Grotesque y Source Code Pro (SIL Open Font License). Texto y diagrama: originales, CC BY 4.0.

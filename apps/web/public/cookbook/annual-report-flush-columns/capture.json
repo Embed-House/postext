@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annual-report-flush-columns",
-  "sourceHash": "e824117977d2d9a872cac13e9bdaa7831589250800454f90be83d95c8fee6cba",
+  "sourceHash": "f3741fa3f2a99759424143c16a9e685f32904d14edd2e09d1161ba07d87c99fe",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.002Z",
+  "capturedAt": "2026-10-11T20:22:29.662Z",
   "variants": {
     "en": {
-      "hash8": "fc0c9158",
+      "hash8": "8a929ffb",
       "vdtHash": "b585cd45d2e8e8119620237d6fc4b106362d869b",
       "timings": {
-        "importMs": 137,
-        "fontsMs": 27,
-        "buildMs": 111,
-        "totalMs": 889,
+        "importMs": 325,
+        "fontsMs": 60,
+        "buildMs": 171,
+        "totalMs": 1213,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Spline Sans Mono"
         ],
         "pages": 5,
-        "ownLines": 248
+        "ownLines": 250
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 46910,
+          "bytes": 46928,
           "alt": "Opening page 1: Tidewell Community Energy."
         },
         {
@@ -126,8 +126,15 @@
       },
       "sandbox": {
         "file": "annual-report-flush-columns.postext",
-        "bytes": 88692,
-        "folio": "8ef7de69"
+        "bytes": 88691,
+        "folio": "8ef7de69",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "fc9fa31ba8964ac3",
+            "lines": "e23a7f6d0eb8966b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -237,6 +244,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.inlineResourceGap",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -298,6 +306,7 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "parts",
@@ -306,7 +315,7 @@
           "tableStyles",
           "unorderedLists"
         ],
-        "configLeaves": 384,
+        "configLeaves": 385,
         "designElements": 16,
         "directives": [
           ":::part",
@@ -409,13 +418,10 @@
           "share": 0,
           "worst": 1.78
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

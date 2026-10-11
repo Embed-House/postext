@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "edited-volume-chapter-bibliographies",
-  "sourceHash": "1736898f62c8e1da02d7db1d7f78d3f4803dfec5b2e7c52d0943fffe9fd26e2a",
+  "sourceHash": "63956d6bf5ebabe10485ca84c20d6a64c9384bb39a689bb4e84ad3162cfb5736",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:19.259Z",
+  "capturedAt": "2026-10-11T20:22:30.121Z",
   "variants": {
     "en": {
-      "hash8": "572e9943",
-      "vdtHash": "cc5d470a3516705dcec91e00da4458329b705583",
+      "hash8": "297b9371",
+      "vdtHash": "f76ebbccc75171d40285ea21317c748dbb0ca5a5",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 1968,
-        "buildMs": 580,
-        "totalMs": 3300,
+        "importMs": 1494,
+        "fontsMs": 1507,
+        "buildMs": 640,
+        "totalMs": 4211,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Caslon Text"
         ],
         "pages": 10,
-        "ownLines": 186
+        "ownLines": 187
       },
       "pages": [
         {
@@ -149,7 +149,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 148292,
+          "bytes": 148406,
           "alt": "Page 10: Whose letters."
         }
       ],
@@ -193,13 +193,35 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143830,
+        "bytes": 143835,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17599,
-        "folio": "3594c3d3"
+        "bytes": 17598,
+        "folio": "3594c3d3",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "c071e65970694777",
+            "lines": "cd1d8b46084768b2"
+          },
+          {
+            "pages": 3,
+            "hash": "c6cff502fb9aabbc",
+            "lines": "67233e6beb0bdca1"
+          },
+          {
+            "pages": 3,
+            "hash": "4770441117e6b9e5",
+            "lines": "adf506e8a639835c"
+          },
+          {
+            "pages": 2,
+            "hash": "eb9f22eee4896426",
+            "lines": "9454feb324240c6f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -322,9 +344,8 @@
           "headingStyles[].textTransform",
           "headingStyles[].toc",
           "headings",
-          "headings.balancing",
-          "headings.balancing.maxLinesPerHeading",
           "headings.color",
+          "headings.columnHeadSpace",
           "headings.fontFamily",
           "headings.fontWeight",
           "headings.levels",
@@ -447,7 +468,6 @@
         "features": [
           "callout-styles",
           "citation-styles",
-          "column-balancing",
           "generated-bibliography",
           "heading-attributes",
           "heading-numbering",
@@ -472,6 +492,9 @@
           "share": 0.0064,
           "worst": 1.99
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C3",
@@ -482,18 +505,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "859f102b",
-      "vdtHash": "fb842f5a03bf85d3d8de00c8b88f6bcf28abcfc0",
+      "hash8": "fd781c7d",
+      "vdtHash": "854c6589be9fe12d338381a53c07814a5e2893d7",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 64,
-        "buildMs": 531,
-        "totalMs": 1358,
+        "importMs": 1860,
+        "fontsMs": 175,
+        "buildMs": 685,
+        "totalMs": 3329,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +543,7 @@
           "Libre Caslon Text"
         ],
         "pages": 10,
-        "ownLines": 186
+        "ownLines": 187
       },
       "pages": [
         {
@@ -625,7 +653,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 147436,
+          "bytes": 147612,
           "alt": "Página 10: De quién son las letras."
         }
       ],
@@ -669,13 +697,35 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 158049,
+        "bytes": 158048,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
         "bytes": 17724,
-        "folio": "3594c3d3"
+        "folio": "3594c3d3",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "04486a8689ef637a",
+            "lines": "5ccd9cc112e63b1d"
+          },
+          {
+            "pages": 3,
+            "hash": "06a11c7afbd29e64",
+            "lines": "c0c0432f5e8d23bf"
+          },
+          {
+            "pages": 3,
+            "hash": "381593adcf544377",
+            "lines": "3e3c74947d6c148a"
+          },
+          {
+            "pages": 2,
+            "hash": "51e58e891170a1eb",
+            "lines": "06bcc8c543c14001"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -798,9 +848,8 @@
           "headingStyles[].textTransform",
           "headingStyles[].toc",
           "headings",
-          "headings.balancing",
-          "headings.balancing.maxLinesPerHeading",
           "headings.color",
+          "headings.columnHeadSpace",
           "headings.fontFamily",
           "headings.fontWeight",
           "headings.levels",
@@ -923,7 +972,6 @@
         "features": [
           "callout-styles",
           "citation-styles",
-          "column-balancing",
           "generated-bibliography",
           "heading-attributes",
           "heading-numbering",
@@ -948,6 +996,9 @@
           "share": 0,
           "worst": 1.68
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C3",
@@ -958,6 +1009,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

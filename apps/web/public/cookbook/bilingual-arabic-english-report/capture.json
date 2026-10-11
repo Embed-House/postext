@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-arabic-english-report",
-  "sourceHash": "9484999c69afb4a58046f3cf7ad4521867ab37fa3f291cbe1a3d0ab43eca61e7",
+  "sourceHash": "3647a7db92fb2f0d548068db39ab6fcba3721277507d1fe85081ab3f8f5f0c67",
   "engine": {
-    "postext": "1.26.1",
-    "postextPdf": "1.26.1",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T23:51:48.815Z",
+  "capturedAt": "2026-10-11T20:22:29.773Z",
   "variants": {
     "en": {
-      "hash8": "eed67144",
+      "hash8": "02db692f",
       "vdtHash": "a88cf196bdbbc73cf272c1914c1d26bb1359c054",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 59,
-        "buildMs": 62,
-        "totalMs": 842,
+        "importMs": 1363,
+        "fontsMs": 362,
+        "buildMs": 101,
+        "totalMs": 3311,
         "builds": 1
       },
       "specimen": {
@@ -100,13 +100,20 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82826,
+        "bytes": 82824,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
         "bytes": 16242,
-        "folio": "3c25eba8"
+        "folio": "3c25eba8",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "bf5af613ff19f979",
+            "lines": "8752328bd90fa51f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -328,23 +335,31 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
         "findings": [
           {
-            "check": "vdt",
+            "check": "C35",
             "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 3 −10‰ “Training. Each workshop runs for five days, and …”"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b0aef9d2",
+      "hash8": "709f05e0",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 56,
-        "buildMs": 70,
-        "totalMs": 832,
+        "importMs": 1321,
+        "fontsMs": 219,
+        "buildMs": 108,
+        "totalMs": 2228,
         "builds": 1
       },
       "specimen": {
@@ -427,13 +442,20 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 83716,
+        "bytes": 83714,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
         "bytes": 16575,
-        "folio": "3c25eba8"
+        "folio": "3c25eba8",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "a4878217d45adaf1",
+            "lines": "a4b0aec5ce72c66b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -655,7 +677,21 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Lo que más nos alegra de estas cifras es que la …”"
+          }
+        ]
       }
     }
   }

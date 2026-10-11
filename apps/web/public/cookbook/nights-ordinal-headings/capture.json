@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "nights-ordinal-headings",
-  "sourceHash": "b653346cb92154669a6c76fac8c2daedc8ccc2d74586dd475c0d639a47b3ce96",
+  "sourceHash": "5bdb8079592d3737f4958f9655eb081c5f520af70a1f1f312cd516cec1919af9",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.824Z",
+  "capturedAt": "2026-10-11T20:22:30.539Z",
   "variants": {
     "en": {
-      "hash8": "46000eb4",
-      "vdtHash": "1263d254e9c26061a2984eef19642b79c11d18e7",
+      "hash8": "01b5c096",
+      "vdtHash": "fe5e674ff0e9a96395add1ca76fc84dc9cad8c6a",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 67,
-        "buildMs": 102,
-        "totalMs": 871,
+        "importMs": 1207,
+        "fontsMs": 161,
+        "buildMs": 130,
+        "totalMs": 3145,
         "builds": 1
       },
       "specimen": {
@@ -149,7 +149,7 @@
           "h": 1412,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 87614,
+          "bytes": 87026,
           "alt": "Page ١٠."
         }
       ],
@@ -194,12 +194,19 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 158065,
+        "bytes": 157729,
         "pages": 10
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32634
+        "bytes": 32633,
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "24e8fa0a708643ec",
+            "lines": "e32f6509743b30ab"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -378,25 +385,33 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.33
+          "worst": 1.3
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "887a206f",
-      "vdtHash": "a866cc528ab650667eb2c6765f54e9df295c4b66",
+      "hash8": "de622090",
+      "vdtHash": "82db57898ac3341cba6efde729976c7ed9423b12",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 68,
-        "buildMs": 100,
-        "totalMs": 869,
+        "importMs": 1157,
+        "fontsMs": 253,
+        "buildMs": 121,
+        "totalMs": 2515,
         "builds": 1
       },
       "specimen": {
@@ -528,7 +543,7 @@
           "h": 1412,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 88598,
+          "bytes": 88550,
           "alt": "Página ١٠."
         }
       ],
@@ -573,12 +588,19 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 158641,
+        "bytes": 158459,
         "pages": 10
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32684
+        "bytes": 32688,
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "ddf5915cb87c87ae",
+            "lines": "886931f9763e2a71"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -759,11 +781,19 @@
           "share": 0,
           "worst": 1.43
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

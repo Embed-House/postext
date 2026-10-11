@@ -112,7 +112,7 @@ const colophon = { id: 'colophon', fontSize: pt(7.5), lineHeight: pt(10.5), colo
   textAlign: 'center', firstLineIndent: pt(0) };
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette,
   page,
   layout: { layoutType: 'single' }, // one column: the default is two

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bundle-round-trip",
-  "sourceHash": "a56e21724307e6ffb002643478468aea0dd8d314194148910776900f08c593f1",
+  "sourceHash": "f00c9a219c3109cf0d76d9e018e7a5f23b4e512fa570a95580c1a9054ad58183",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.961Z",
+  "capturedAt": "2026-10-11T20:22:29.842Z",
   "variants": {
     "en": {
-      "hash8": "676276fa",
+      "hash8": "e1dd38ee",
       "vdtHash": "9d78aec63b8001efc6fe8ab9462147635d9429b5",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 62,
-        "buildMs": 41,
-        "totalMs": 819,
+        "importMs": 1656,
+        "fontsMs": 98,
+        "buildMs": 70,
+        "totalMs": 3483,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 2121,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 75216,
+          "bytes": 75182,
           "alt": "Opening page 1: The Tide Mill."
         },
         {
@@ -89,13 +89,20 @@
       },
       "pdf": {
         "file": "bundle-round-trip.pdf",
-        "bytes": 39054,
+        "bytes": 39052,
         "pages": 2
       },
       "sandbox": {
         "file": "bundle-round-trip.postext",
-        "bytes": 147970,
-        "folio": "c651b1f6"
+        "bytes": 147968,
+        "folio": "c651b1f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "d95f4b731e166363",
+            "lines": "9b03f7c4ec45727a"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -313,17 +320,20 @@
           "share": 0,
           "worst": 1.31
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "61abc0e0",
+      "hash8": "6bd02c9e",
       "vdtHash": "671bbcedbc544bcd4c4314863a203f82da3b2c79",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 61,
-        "buildMs": 38,
-        "totalMs": 806,
+        "importMs": 1469,
+        "fontsMs": 164,
+        "buildMs": 62,
+        "totalMs": 2491,
         "builds": 1
       },
       "specimen": {
@@ -356,7 +366,7 @@
           "h": 2121,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85462,
+          "bytes": 85446,
           "alt": "Página de apertura 1: El molino de mareas."
         },
         {
@@ -395,13 +405,20 @@
       },
       "pdf": {
         "file": "bundle-round-trip.pdf",
-        "bytes": 41384,
+        "bytes": 41380,
         "pages": 2
       },
       "sandbox": {
         "file": "bundle-round-trip.postext",
-        "bytes": 149817,
-        "folio": "c651b1f6"
+        "bytes": 149816,
+        "folio": "c651b1f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a11e015ddf11bfad",
+            "lines": "fee1d40d78579c4b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -618,6 +635,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.29
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

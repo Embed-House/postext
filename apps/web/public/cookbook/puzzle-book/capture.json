@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "puzzle-book",
-  "sourceHash": "1401e476f0fc021b6f818157489acffb04c3e828d0d15205cab7d51182610e7f",
+  "sourceHash": "ac824315b21a4866557eea414cbcb26d7e83060f39d821466c85c93a8accf33c",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.563Z",
+  "capturedAt": "2026-10-11T20:22:30.749Z",
   "variants": {
     "en": {
-      "hash8": "875899d5",
+      "hash8": "6226534f",
       "vdtHash": "7fc9d6b0d819dec89885d5ae89ec48f5a6537d79",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 33,
-        "buildMs": 32,
-        "totalMs": 770,
+        "importMs": 1221,
+        "fontsMs": 47,
+        "buildMs": 64,
+        "totalMs": 3753,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Lilita One"
         ],
         "pages": 5,
-        "ownLines": 248
+        "ownLines": 249
       },
       "pages": [
         {
@@ -125,8 +125,15 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23192,
-        "folio": "c8e0f46e"
+        "bytes": 23184,
+        "folio": "c8e0f46e",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "b501af6661f4e18a",
+            "lines": "a1b420a360fabef9"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -229,6 +236,7 @@
           "headings.levels[].textTransform",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -273,13 +281,14 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 459,
+        "configLeaves": 460,
         "designElements": 21,
         "directives": [
           "::resource",
@@ -359,23 +368,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "eed9bc3e",
+      "hash8": "c152a298",
       "vdtHash": "a641d94188496fe2b5955581bc4ed838524e62c1",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 32,
-        "buildMs": 32,
-        "totalMs": 778,
+        "importMs": 1485,
+        "fontsMs": 81,
+        "buildMs": 99,
+        "totalMs": 2629,
         "builds": 1
       },
       "specimen": {
@@ -397,7 +403,7 @@
           "Lilita One"
         ],
         "pages": 5,
-        "ownLines": 248
+        "ownLines": 249
       },
       "pages": [
         {
@@ -484,8 +490,15 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 24003,
-        "folio": "c8e0f46e"
+        "bytes": 23995,
+        "folio": "c8e0f46e",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "6dbe737799be1017",
+            "lines": "66d5c23cd2c4e3d8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -588,6 +601,7 @@
           "headings.levels[].textTransform",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -632,13 +646,14 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 459,
+        "configLeaves": 460,
         "designElements": 21,
         "directives": [
           "::resource",
@@ -718,13 +733,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

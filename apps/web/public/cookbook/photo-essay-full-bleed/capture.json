@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "photo-essay-full-bleed",
-  "sourceHash": "45920d2a0bc9d8899ca53671a2f963ac1b34aad9476dfd467d0ecaad1b91538a",
+  "sourceHash": "added8690c4e989ef056deb38faa29591e6a12568fe94ede3392fd3b116d09b7",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.319Z",
+  "capturedAt": "2026-10-11T20:22:30.670Z",
   "variants": {
     "en": {
-      "hash8": "55cc9f2c",
+      "hash8": "d417e4e3",
       "vdtHash": "1d00ac2f07809ef1dbc262a94650a7453d3692ce",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 49,
-        "buildMs": 31,
-        "totalMs": 803,
+        "importMs": 1145,
+        "fontsMs": 315,
+        "buildMs": 66,
+        "totalMs": 3260,
         "builds": 1
       },
       "specimen": {
@@ -177,8 +177,15 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718468,
-        "folio": "fb4fa41a"
+        "bytes": 1718467,
+        "folio": "fb4fa41a",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "38f49456c8c53be4",
+            "lines": "fb4c8f4fbed2e6ab"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -327,17 +334,20 @@
           "share": 0,
           "worst": 1.51
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "0b55d623",
+      "hash8": "dd1c9cb5",
       "vdtHash": "70b8dc3093c70fc1c90d4908e864abcdaa8aacec",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 46,
-        "buildMs": 32,
-        "totalMs": 805,
+        "importMs": 1225,
+        "fontsMs": 173,
+        "buildMs": 56,
+        "totalMs": 2982,
         "builds": 1
       },
       "specimen": {
@@ -499,7 +509,14 @@
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
         "bytes": 1718618,
-        "folio": "fb4fa41a"
+        "folio": "fb4fa41a",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "376a045e2d8a9452",
+            "lines": "15497ea63ace3600"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -647,6 +664,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.45
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

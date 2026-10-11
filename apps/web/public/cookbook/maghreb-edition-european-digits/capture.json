@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "maghreb-edition-european-digits",
-  "sourceHash": "1aa30cb0f86e7dd27c1daad47d7a30c7b48c1b3636b5c82a1769457c4d67f86c",
+  "sourceHash": "68911d482326951b25d523dbb34fc54766114c77d7e887d8648a275776863e43",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.817Z",
+  "capturedAt": "2026-10-11T20:22:30.397Z",
   "variants": {
     "en": {
-      "hash8": "1988ec20",
-      "vdtHash": "d116e84a017621b857a279bc9c5b1e9214c526f1",
+      "hash8": "8140d75b",
+      "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 60,
-        "buildMs": 72,
-        "totalMs": 867,
+        "importMs": 971,
+        "fontsMs": 140,
+        "buildMs": 102,
+        "totalMs": 1811,
         "builds": 1
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1556,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91542,
+          "bytes": 91656,
           "alt": "Page 44: 3-3 الباب والكتاب."
         }
       ],
@@ -115,13 +115,20 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 65844,
+        "bytes": 65864,
         "pages": 4
       },
       "sandbox": {
         "file": "maghreb-edition-european-digits.postext",
         "bytes": 25822,
-        "folio": "5362c1cb"
+        "folio": "5362c1cb",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "9c34a3ed37bcbd37",
+            "lines": "0950146587e744b3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -300,7 +307,15 @@
           "share": 0,
           "worst": 1.35
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -310,13 +325,13 @@
       }
     },
     "es": {
-      "hash8": "2d6d4513",
-      "vdtHash": "dd8a6a9b678ff7206181b1aa8411eb32d7a4079d",
+      "hash8": "295b91b3",
+      "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 59,
-        "buildMs": 74,
-        "totalMs": 863,
+        "importMs": 1123,
+        "fontsMs": 246,
+        "buildMs": 109,
+        "totalMs": 2971,
         "builds": 1
       },
       "specimen": {
@@ -381,7 +396,7 @@
           "h": 1556,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93064,
+          "bytes": 93070,
           "alt": "Página 44: 3-3 الباب والكتاب."
         }
       ],
@@ -414,13 +429,20 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 66244,
+        "bytes": 66272,
         "pages": 4
       },
       "sandbox": {
         "file": "maghreb-edition-european-digits.postext",
-        "bytes": 25885,
-        "folio": "5362c1cb"
+        "bytes": 25886,
+        "folio": "5362c1cb",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "cd2abc1bb15d57af",
+            "lines": "d42f4235af2ba0ff"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -599,7 +621,15 @@
           "share": 0,
           "worst": 1.35
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

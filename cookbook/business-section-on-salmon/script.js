@@ -1,10 +1,9 @@
 // ═══ Postext Cookbook · Nº 134 · A business section on salmon newsprint ═══════════════
 // https://postext.dev/en/cookbook/business-section-on-salmon
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated (CC BY 4.0)
-// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.26.0
+// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 //
-// An eight-page Berliner daily: four news pages on grey-white newsprint in five columns, then
-// the Business section on salmon paper in six, with its own flag and accent.
+// Eight pages: four of news in five columns, then Business on salmon paper in six.
 // One heading style carries the change; a :::paper run gives Folio the salmon stock.
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, inlineSvgFonts,
@@ -13,7 +12,7 @@ import {
 const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es')
 const RECIPE = 'business-section-on-salmon';
 
-// ─── 1 · Design ─────────────────────────────────────────────────────────────
+// ─── 1 · Design ───
 // #region palette: newsprint, ink and a news red; the Business section swaps three of them
 const palette = {
   ink: '#16181b', // text and heavy rules
@@ -204,7 +203,7 @@ const config = () => ({
     lighting: { environment: 'overcast' } },
 });
 
-// ─── 2 · Content ────────────────────────────────────────────────────────────
+// ─── 2 · Content ───
 // #region art: the market data and the drawings, every figure from one source
 function mulberry32(seed) { // a seeded PRNG: the same prices on every run
   return () => {
@@ -265,8 +264,8 @@ const SECTORS = [['Banks', ['Bank', 'Cap', 'Svgs', 'Trust', 'Fin']],
   ['Retail', ['Stores', 'Home', 'Outfit', 'Retail']], ['Engineering', ['Eng', 'Pumps', 'Cables',
     'Castings', 'Marine']], ['Energy', ['Energy', 'Power', 'Wind', 'Water']],
   ['Property', ['Ests', 'Homes', 'Land', 'Props']], ['Technology', ['Soft', 'Data', 'Sys',
-    'Digital']], ['Health', ['Pharma', 'Care', 'Diag', 'Med']]]; // listing abbreviations
-function pricesTable(i, rows) { // one sector of the share prices, seeded
+    'Digital']], ['Health', ['Pharma', 'Care', 'Diag', 'Med']]];
+function pricesTable(i, rows) { // one sector's share prices, seeded
   const rand = mulberry32(2026 + i);
   const names = new Set();
   while (names.size < rows) {
@@ -281,7 +280,7 @@ function pricesTable(i, rows) { // one sector of the share prices, seeded
         fmt(price * (1.05 + rand() * 0.3)), fmt(price * (0.7 + rand() * 0.25))];
     }));
 }
-// Every table on pages 3, 6, 7 and 8: [model, caption, credit note].
+// The tables of pages 3, 6, 7 and 8: [model, caption, note].
 const TABLES = {
   budget: [table([3, 1.2, 1.2, 1], ['Service, £m', '2026/27', '2027/28', 'Change'],
     [['Adult social care', '412.3', '426.9', '+14.6'], ['Children’s services', '236.8', '241.0',
@@ -327,42 +326,40 @@ const TABLES = {
     ['90-day notice, Kelby Savings', '3.90%'], ['Cash ISA, Fairlie Bank', '3.70%']]),
   '**Best buys**', 'Gross annual rates on £10,000.'],
 };
-// The pictures' captions, descriptions and credits.
 const GENERATED = 'Picture: Generated With Diffusion Models';
 const LEDGER = 'Source: Ledger Data';
 const CAPTIONS = Object.fromEntries(Object.entries({
   barrier: ['**The Marrow Barrier at 9.30pm on Monday,** its gates closed against the surge. The '
-    + 'river behind them rose by 30 centimetres.', 'A row of curved steel flood gates closed '
-    + 'across a river in a storm, waves breaking against them, two engineers on a walkway.'],
+    + 'river behind them rose by 30 centimetres.', 'Curved steel flood gates closed across a '
+    + 'river in a storm, waves breaking on them, two engineers on a walkway.'],
   welders: ['**First week:** apprentices welding a hull section in the fabrication hall at '
-    + 'Brackwater.', 'Two young welders in masks at a steel hull, sparks flying, an instructor '
-    + 'watching.'],
+    + 'Brackwater.', 'Two young welders in masks at a steel hull, an instructor watching.'],
   gate: ['**How a gate turns.** Each segment turns on a pin in the pier, from its sill on the '
     + 'riverbed to stand against the sea.', 'Diagram of two barrier gates in section, one lying '
     + 'in its sill, one turned up.', 'Drawing: The Ledger'],
-  ferry: ['**The Holm Maid** leaves Skerra pier on her first crossing since May.', 'A blue and '
-    + 'white car ferry leaving a stone harbour on a grey day, gulls overhead.'],
-  cartoon: ['**Holding the line,** by Kit Carrow.', 'Cartoon: a steel flood gate drawn as a '
-    + 'castle wall holds back a huge wave while townspeople drink tea behind it; on top, an '
-    + 'official with an empty piggy bank.'],
+  ferry: ['**The Holm Maid** leaves Skerra pier on her first crossing since May.',
+    'A blue and white car ferry leaving a stone harbour on a grey day.'],
+  cartoon: ['**Holding the line,** by Kit Carrow.', 'Cartoon: a flood gate drawn as a castle '
+    + 'wall holds back a wave while the town drinks tea behind it; on top, an official with an '
+    + 'empty piggy bank.'],
   cranes: ['**The Outer Quay at dawn.** The new berth would take ships three times the size of '
-    + 'those the port handles now.', 'Container cranes unloading a ship at dawn, a tug in front.'],
+    + 'those the port handles now.', 'Container cranes unloading a ship at dawn.'],
   throughput: ['**Containers through Marrowick,** thousands of twenty-foot units a year.',
-    'Bar chart of container traffic, 2016 to 2026, rising from 982,000 to 1,185,000 units, close '
-    + 'to capacity.', 'Source: Marrowick Harbour Board'],
-  mx40: ['**The MX 40 over the past year,** daily closes.', 'Line chart of the MX 40 index, '
-    + 'rising from 7,370 to 8,412.6 over twelve months.', LEDGER],
-  sectors: ['**Sectors on the Marrowick Exchange,** change on the day.', 'Bar chart of ten '
-    + 'sectors, from shipping, up 3.4%, to retail, down 2.1%.', LEDGER],
-  loaves: ['**Halden’s Quayside plant** bakes 1.1 million loaves a week.', 'Bakery workers in '
-    + 'white coats checking loaves on a conveyor leaving an oven.'],
+    'Bar chart of container traffic, 982,000 units in 2016 to 1,185,000 in 2026, near capacity.',
+    'Source: Marrowick Harbour Board'],
+  mx40: ['**The MX 40 over the past year,** daily closes.',
+    'Line chart of the MX 40, from 7,370 to 8,412.6 in twelve months.', LEDGER],
+  sectors: ['**Sectors on the Marrowick Exchange,** change on the day.',
+    'Bar chart of ten sectors, from shipping, up 3.4%, to retail, down 2.1%.', LEDGER],
+  loaves: ['**Halden’s Quayside plant** bakes 1.1 million loaves a week.',
+    'Bakery workers in white coats checking loaves on a conveyor.'],
 }).map(([id, [caption, altText, note = GENERATED]]) => [id, { caption, altText, note }]));
 // The labels are set in Archivo Narrow: loadSvg embeds the face the root names.
 const svg = (W, H, body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${W * 10}" `
   + `height="${H * 10}" viewBox="0 0 ${W} ${H}" font-family="Archivo Narrow">${body}</svg>`;
 const label = (x, y, s, content, look = '', fill = palette.ink) => `<text x="${x.toFixed(2)}" `
   + `y="${y.toFixed(2)}" font-size="${s}" fill="${fill}" ${look}>${content}</text>`;
-function mx40Svg() { // the MX 40 over a year: a seeded walk, scaled to end on the close
+function mx40Svg() { // a year of the MX 40: a seeded walk that ends on the close
   const rand = mulberry32(40);
   const walk = [0];
   for (let i = 1; i < 253; i++) walk.push(walk[i - 1] + rand() - 0.46);
@@ -387,8 +384,8 @@ function mx40Svg() { // the MX 40 over a year: a seeded walk, scaled to end on t
     + `stroke="${palette.ink}" stroke-width="0.35"/>`
     + label(x(252) + 1.5, y(level[252]) + 1, 3.4, '8,412.6', 'font-weight="700"'));
 }
-function throughputSvg() { // container traffic, thousands of TEU a year
-  const DATA = [982, 1004, 1031, 1047, 918, 996, 1072, 1108, 1139, 1164, 1185]; // 2016–2026
+function throughputSvg() { // container traffic, thousands of TEU a year, 2016–2026
+  const DATA = [982, 1004, 1031, 1047, 918, 996, 1072, 1108, 1139, 1164, 1185];
   const [W, H, B] = [113, 70, 8];
   const y = (v) => H - B - (v * (H - B - 8)) / 1300;
   let out = '';
@@ -403,7 +400,7 @@ function throughputSvg() { // container traffic, thousands of TEU a year
     + label(109.5, y(1185) + 4, 2.8, '1,185', 'text-anchor="end" font-weight="700"',
       palette.salmon));
 }
-function gateSvg() { // a gate in section, lying in its sill and turned up against the sea
+function gateSvg() { // a gate in section, in its sill and turned up
   const [r, bed] = [14, 38];
   const py = bed - r * Math.SQRT1_2; // the pivot: the arc's ends sit on the riverbed
   const p = (cx, a) => `${(cx + r * Math.cos((a * Math.PI) / 180)).toFixed(2)} `
@@ -427,7 +424,7 @@ function gateSvg() { // a gate in section, lying in its sill and turned up again
 const SECTOR_MOVES = [['Shipping', 3.4], ['Insurance', 1.6], ['Engineering', 1.1], ['Banks', 0.7],
   ['Energy', 0.5], ['Food and drink', 0.3], ['Property', -0.1], ['Technology', -0.2],
   ['Health', -0.4], ['Retail', -2.1]];
-function sectorsSvg() { // the day's move of each sector, in per cent
+function sectorsSvg() { // each sector's move on the day
   const [W, H, Z, k] = [291, 88, 150, 30]; // mm; the zero line; mm per point
   let out = '';
   SECTOR_MOVES.forEach(([name, move], i) => {
@@ -470,7 +467,7 @@ const resources = [
   drawing('throughput', [1130, 700], top(2)),
   drawing('mx40', [2910, 1000], here), drawing('sectors', [2910, 880], here),
   photo('loaves', 'bakery-1536.jpg', [1536, 1024], top(3)),
-  // The tables sit where the text names them, in a column or a data box: no float.
+  // The tables sit where the text names them: no float.
   ...Object.entries(TABLES).map(([id, [model, caption, note]]) => data(id, model, caption, note)),
   ...SECTORS.map((_, i) => res(`prices-${i + 1}`, 'panel', 'table',
     { styleId: 'prices', model: pricesTable(i, 21) }, { placement: here })),
@@ -479,12 +476,12 @@ const resources = [
 const markdown = /* @content */ ''; // content.en.md: pages 1–3
 const businessPages = /* @content:business */ ''; // content.business.en.md: pages 4–8
 
-// ─── 3 · Fonts ──────────────────────────────────────────────────────────────
-const FONTS = { // text, display and label faces, loaded before the build
+// ─── 3 · Fonts ───
+const FONTS = {
   'Source Serif 4': ['400', '400i', '700'], 'Playfair Display': ['400i', '700', '900'],
   'Archivo Narrow': ['400', '400i', '600', '700'] };
 
-// ─── 4 · Build & show ───────────────────────────────────────────────────────
+// ─── 4 · Build & show ───
 const all = `${markdown}\n\n${businessPages}`;
 await Promise.all([...resources.filter((r) => r.bitmap)
   .map((r) => loadImage(r.bitmap.fileId, asset(r.bitmap.fileId))),

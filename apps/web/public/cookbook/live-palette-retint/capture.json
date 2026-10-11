@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "live-palette-retint",
-  "sourceHash": "1f4c8702fcc901a2a1a91ea692a4415338b7710cb886398c3ab7915ebbb08d61",
+  "sourceHash": "a226ba0f3371854844ece74675cfee6a5f5af1eaf84e357516c5be8bb3b84c9d",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.598Z",
+  "capturedAt": "2026-10-11T20:22:30.349Z",
   "variants": {
     "en": {
-      "hash8": "a113cf1a",
+      "hash8": "d694d19d",
       "vdtHash": "e338e58d4a44c578f39e0a516a05fd3c498c3fc1",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 1,
+        "importMs": 1329,
+        "fontsMs": 0,
         "buildMs": 4,
-        "totalMs": 796,
+        "totalMs": 2021,
         "builds": 4
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Syne"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 178
       },
       "pages": [
         {
@@ -88,8 +88,15 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31020,
-        "folio": "de4718c0"
+        "bytes": 31015,
+        "folio": "de4718c0",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "2a832caecd62e71a",
+            "lines": "3421993879d0a1de"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -199,6 +206,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -249,13 +257,14 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 522,
+        "configLeaves": 523,
         "designElements": 35,
         "directives": [
           ":::callout",
@@ -322,23 +331,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "6135e6b3",
+      "hash8": "84c50d69",
       "vdtHash": "6eb696cdb53090fbb548c50ef2adad4645bec59b",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 0,
-        "buildMs": 4,
-        "totalMs": 795,
+        "importMs": 793,
+        "fontsMs": 1,
+        "buildMs": 5,
+        "totalMs": 1632,
         "builds": 4
       },
       "specimen": {
@@ -360,7 +366,7 @@
           "Syne"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 178
       },
       "pages": [
         {
@@ -410,8 +416,15 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31436,
-        "folio": "de4718c0"
+        "bytes": 31425,
+        "folio": "de4718c0",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "ed08780a4f45ab28",
+            "lines": "45b475518a01b639"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -521,6 +534,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -571,13 +585,14 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 522,
+        "configLeaves": 523,
         "designElements": 35,
         "directives": [
           ":::callout",
@@ -644,13 +659,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

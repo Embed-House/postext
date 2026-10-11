@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gbt7714-chinese-paper",
-  "sourceHash": "c42cdc3888634733f55f5493a71dfc7cb4e7d1d52cf22f1239f64e6330b1449e",
+  "sourceHash": "e810d0f1833a2cae7a8c3f1a3a1c18e3e95b6f4bebd1d8a692e143157bc4494b",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.249Z",
+  "capturedAt": "2026-10-11T20:22:30.225Z",
   "variants": {
     "en": {
-      "hash8": "e5929ee6",
-      "vdtHash": "5c93e58faa6a038b76bdc016a2da2412aa258a8a",
+      "hash8": "58a533aa",
+      "vdtHash": "47a45a66c43f0d908a5ce8574070b12f9fbad3e4",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 246,
-        "buildMs": 120,
-        "totalMs": 1077,
+        "importMs": 2168,
+        "fontsMs": 639,
+        "buildMs": 151,
+        "totalMs": 4587,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122406,
+          "bytes": 122320,
           "alt": "Page 42: 2 结果."
         }
       ],
@@ -90,13 +90,20 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 165395,
+        "bytes": 166515,
         "pages": 2
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21328,
-        "folio": "1668ad62"
+        "bytes": 21327,
+        "folio": "1668ad62",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "6c6fa2dc0cd28768",
+            "lines": "677b101f57b4d259"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -322,23 +329,31 @@
           "share": 0,
           "worst": 0.13
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e60f85f2",
-      "vdtHash": "4fe16dd7111f3b5b88e57b5ec705eabb31a37923",
+      "hash8": "ad8f700b",
+      "vdtHash": "ab38f85f9656586e81e9ac39f91396683c07f241",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 237,
-        "buildMs": 121,
-        "totalMs": 1069,
+        "importMs": 1060,
+        "fontsMs": 1201,
+        "buildMs": 184,
+        "totalMs": 3283,
         "builds": 1
       },
       "specimen": {
@@ -383,7 +398,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122442,
+          "bytes": 122126,
           "alt": "Página 42: 2 结果."
         }
       ],
@@ -411,13 +426,20 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 165471,
+        "bytes": 166815,
         "pages": 2
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21378,
-        "folio": "1668ad62"
+        "bytes": 21377,
+        "folio": "1668ad62",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "82f656be18fafd04",
+            "lines": "750c8018c6e9cb22"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -643,11 +665,19 @@
           "share": 0,
           "worst": 0.13
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

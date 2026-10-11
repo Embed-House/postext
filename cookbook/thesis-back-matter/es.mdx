@@ -28,7 +28,7 @@ La marca es `{number}`: un 6 en el capítulo, una A en el apéndice y nada en un
 
 <Excerpt region="appendix" />
 
-El estilo del apéndice lleva `numberingTemplate: '{1:A}'`, que imprime el contador del nivel como letra, y `# Interview guide {style="appendix" startAt=1}` reinicia ese contador, así que el primer apéndice es el A y no el G ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). La banda lee la letra con `{number}` y la cabecera con `{chapterNumber}`. El `{h1}` de un tipo de recurso imprime el contador como número, y por eso un tipo propio numera las tablas del apéndice A.1, A.2, etc.; con el tipo por defecto, la tabla sería la 1.1. Los títulos del capítulo se numeran con las plantillas de cada nivel: `'{1}.{2}'` imprime 6.1, y `continuation.headings.h1: 5` hace de este el sexto capítulo.
+El estilo del apéndice lleva `numberingTemplate: '{1:A}'`, que imprime el contador del nivel como letra, y `# Interview guide {style="appendix" startAt=1}` reinicia ese contador, así que el primer apéndice es el A y no el G ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). La banda lee la letra con `{number}` y la cabecera con `{chapterNumber}`. El `{h1}` de un tipo de recurso imprime el contador como número salvo que nombre un estilo, y por eso las tablas del apéndice llevan un tipo con la plantilla `'{h1:A}.{n}'`: A.1, A.2, etc., y B.1 en un segundo apéndice; con el tipo por defecto, la tabla sería la 1.1. Los títulos del capítulo se numeran con las plantillas de cada nivel: `'{1}.{2}'` imprime 6.1, y `continuation.headings.h1: 5` hace de este el sexto capítulo.
 
 ### 4 · Las cabeceras, hacia el margen exterior
 

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "catalogue-facing-plates",
-  "sourceHash": "0d08daea7029d41bb2f0658db4e854d670a32dbebebb2002e9d994e347f64e23",
+  "sourceHash": "f5b8ed39636bc6993dfcb64d25582dda3de4499b1cef7b64fddf9fb74a4b93a7",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.665Z",
+  "capturedAt": "2026-10-11T20:22:29.878Z",
   "variants": {
     "en": {
-      "hash8": "4c614104",
+      "hash8": "d42d1515",
       "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 48,
-        "buildMs": 43,
-        "totalMs": 799,
+        "importMs": 1418,
+        "fontsMs": 437,
+        "buildMs": 108,
+        "totalMs": 3401,
         "builds": 1
       },
       "specimen": {
@@ -167,8 +167,20 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603567,
-        "folio": "2f38e47f"
+        "bytes": 1603568,
+        "folio": "2f38e47f",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "69be6b26300b9292",
+            "lines": "d3d507604329fa96"
+          }
+        ],
+        "warnings": [
+          "floatShrunk library",
+          "floatShrunk vigil",
+          "floatShrunk windmills"
+        ]
       },
       "detected": {
         "apis": [
@@ -250,6 +262,7 @@
           "layout.sideColumnPercent",
           "layout.sideColumnRole",
           "layout.sideColumnSide",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -306,12 +319,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 401,
+        "configLeaves": 402,
         "designElements": 20,
         "directives": [
           ":::paragraphs",
@@ -395,16 +409,14 @@
           "share": 0,
           "worst": 1.46
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

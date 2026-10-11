@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 126 · A Japanese index in gojūon order, read from its readings ═══
 // https://postext.dev/en/cookbook/gojuon-index
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -38,7 +38,7 @@ const index = {
   separator: '　', locatorSeparator: '、', // 版面　3、5: an ideographic space, then 、
   see: { italic: false }, // → ルビ, → 柱も見よ: upright, no italic in Japanese
   groups: { fontFamily: GOTHIC, fontSize: pt(9), fontWeight: 700, color: col('vermilion'),
-    marginTop: pt(8) },
+    marginTop: pt(7) },
 };
 // #endregion
 

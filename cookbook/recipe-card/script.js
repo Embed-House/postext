@@ -137,7 +137,7 @@ const config = () => ({
   page: { width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150, backgroundColor: col('paper'),
     margins: { top: mm(PAGE.top), bottom: mm(20), left: mm(PAGE.inner),
       right: mm(PAGE.outer), mirror: true } }, // left is the inner margin
-  layout: { layoutType: 'single' },
+  layout: { layoutType: 'single' }, locale: t({ en: 'en-us', es: 'es' }), // the edition's language
   bodyText: { fontFamily: TEXT, fontSize: pt(BODY), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'left', firstLineIndent: mm(0) }, // ragged and flush: the notes under the cards

@@ -63,7 +63,7 @@ Volcanologists compare eruptions on the Volcanic Explosivity Index, a scale from
 
 ## Living with volcanoes
 
-Some 800 million people live within a hundred kilometres of an active volcano, drawn by fertile soils and geothermal heat, or because their families have always lived there. Most volcanoes give warning before they erupt: swarms of small earthquakes as magma forces its way upwards, a swelling of the ground that satellites can measure to the centimetre, and changes in the gases that seep from the summit. Observatories that watch for these signs have given many towns time to evacuate.
+Some 800 million people live within a hundred kilometres of an active volcano, drawn by fertile soils and geothermal heat, or because their families have always lived there. Most volcanoes give warning before they erupt: swarms of small earthquakes as magma forces its way upwards, a swelling of the ground that satellites can measure to the centimetre, and changes in the gases that seep from the summit. Observatories that watch for these signs have given towns time to evacuate.
 
 In Iceland, geothermal heat from young volcanic rock warms about nine homes in every ten and generates nearly a third of the country’s electricity, and the richest farmland of Java and southern Italy lies on weathered volcanic ash.
 

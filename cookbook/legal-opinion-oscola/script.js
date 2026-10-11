@@ -124,9 +124,10 @@ const config = () => ({
   },
   headings: {
     fontFamily: TEXT, fontWeight: 400, color: col('ink'),
-    // A page that ends short takes up to four lines over each heading by default. With one
-    // heading on the page that is a hole; two lines are the most here, and the rest of a
-    // short page stays over the notes.
+    // A page that ends short gives each heading two lines, tries the other levers, and
+    // then lets a heading take up to four. With one heading on the page and nothing else
+    // to stretch, that is a hole; two lines are the most here, and the rest of a short
+    // page stays over the notes.
     balancing: { maxLinesPerHeading: 2 },
     levels: [
       // A new page on either side: the default would wait for a recto.

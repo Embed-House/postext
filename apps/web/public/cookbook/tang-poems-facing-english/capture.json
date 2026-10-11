@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tang-poems-facing-english",
-  "sourceHash": "a6c48ab9a379dfdccff45f0c96c93d15e5b1577d4c06bbb3c34a15bc2e4a9a25",
+  "sourceHash": "6c27c6a59f50c07f53e1409ca4a3f9e3614cb006883eab8f63829a27238ead25",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:38.323Z",
+  "capturedAt": "2026-10-11T20:22:30.929Z",
   "variants": {
     "en": {
-      "hash8": "def00c94",
-      "vdtHash": "30b924a160302ddcb74d766509cb1835ed0590eb",
+      "hash8": "adf5cf40",
+      "vdtHash": "f73afc1191d0f48ff501d0738d67cd53a7e8676f",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 235,
-        "buildMs": 67,
-        "totalMs": 1046,
+        "importMs": 824,
+        "fontsMs": 505,
+        "buildMs": 136,
+        "totalMs": 2357,
         "builds": 1
       },
       "specimen": {
@@ -74,7 +74,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50794,
+          "bytes": 50686,
           "alt": "Opening page 3: 靜夜思."
         },
         {
@@ -118,7 +118,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35186,
+          "bytes": 35208,
           "alt": "Opening page 7: 絕句."
         },
         {
@@ -195,13 +195,20 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 153205,
+        "bytes": 153786,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 14896,
-        "folio": "e5860b68"
+        "bytes": 14902,
+        "folio": "e5860b68",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "5b5478115ca79515",
+            "lines": "9fa575e72e8103d3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -255,6 +262,7 @@
           "footnotes.spaceBelowRule",
           "footnotes.spaceBetween",
           "footnotes.textAlign",
+          "footnotes.wordBreak",
           "header",
           "header.elements",
           "header.elements[].color",
@@ -332,7 +340,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 313,
+        "configLeaves": 314,
         "designElements": 16,
         "directives": [
           ":::verse",
@@ -425,17 +433,26 @@
           "share": 0,
           "worst": 1.81
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "78980a01",
-      "vdtHash": "2c81fc2df165fa4f1c0987f2b966255d50d5b9a1",
+      "hash8": "5a217e23",
+      "vdtHash": "3c48fce898712cf9a04abcdc3db2d3035fcefcf8",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 241,
-        "buildMs": 72,
-        "totalMs": 1055,
+        "importMs": 762,
+        "fontsMs": 666,
+        "buildMs": 111,
+        "totalMs": 2310,
         "builds": 1
       },
       "specimen": {
@@ -492,7 +509,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 51514,
+          "bytes": 51448,
           "alt": "Página de apertura 3: 靜夜思."
         },
         {
@@ -536,7 +553,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35604,
+          "bytes": 35590,
           "alt": "Página de apertura 7: 絕句."
         },
         {
@@ -613,13 +630,20 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 155459,
+        "bytes": 156291,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15150,
-        "folio": "e5860b68"
+        "bytes": 15189,
+        "folio": "e5860b68",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "46ad8745ef7cb007",
+            "lines": "8bb84554261eef08"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -673,6 +697,7 @@
           "footnotes.spaceBelowRule",
           "footnotes.spaceBetween",
           "footnotes.textAlign",
+          "footnotes.wordBreak",
           "header",
           "header.elements",
           "header.elements[].color",
@@ -750,7 +775,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 313,
+        "configLeaves": 314,
         "designElements": 16,
         "directives": [
           ":::verse",
@@ -843,7 +868,16 @@
           "share": 0,
           "worst": 1.79
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

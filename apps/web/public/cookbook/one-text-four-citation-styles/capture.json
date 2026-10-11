@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "one-text-four-citation-styles",
-  "sourceHash": "fb08610e8686f002dbf5b55bd4130c6ca41141d4f980e411c3311a460b4567aa",
+  "sourceHash": "7c38b51c4592008d39830d4967f242265a13df757cc2aac32b4806df7452bd93",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.252Z",
+  "capturedAt": "2026-10-11T20:22:30.578Z",
   "variants": {
     "en": {
-      "hash8": "a18d3b37",
-      "vdtHash": "738c861917f1a894851698719dbc92df71bf120f",
+      "hash8": "ece1faaf",
+      "vdtHash": "e2ab5f1e45d7e85e8394662fa4a051927baf5b89",
       "timings": {
-        "importMs": 150,
-        "fontsMs": 6,
-        "buildMs": 243,
-        "totalMs": 1425,
+        "importMs": 1241,
+        "fontsMs": 8,
+        "buildMs": 298,
+        "totalMs": 3103,
         "builds": 4
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 112
+        "ownLines": 115
       },
       "pages": [
         {
@@ -109,10 +109,17 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17076,
+        "bytes": 17110,
         "folio": "973c2e27",
         "keep": "first",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "95b2b4ffe2f8a747",
+            "lines": "338bdb6d6ba35125"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -149,6 +156,7 @@
           "citations.bibliography.hangingIndent",
           "citations.bibliography.labelWidth",
           "citations.bibliography.lineHeight",
+          "citations.hyphenateNames",
           "citations.link",
           "citations.style",
           "colorPalette",
@@ -198,7 +206,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 131,
+        "configLeaves": 132,
         "designElements": 5,
         "directives": [
           ":::references"
@@ -256,7 +264,25 @@
           "share": 0,
           "worst": 1.67
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -265,19 +291,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "es": {
-      "hash8": "7906adf3",
-      "vdtHash": "bb9f4eff198220899f50a5f002a30a9ef849a5ae",
+      "hash8": "d8d1e37a",
+      "vdtHash": "ebef93da2548d5e1f314a5886ee23b7c4ba14867",
       "timings": {
-        "importMs": 146,
-        "fontsMs": 5,
-        "buildMs": 244,
-        "totalMs": 1421,
+        "importMs": 1477,
+        "fontsMs": 6,
+        "buildMs": 289,
+        "totalMs": 4148,
         "builds": 4
       },
       "specimen": {
@@ -298,7 +324,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 112
+        "ownLines": 115
       },
       "pages": [
         {
@@ -309,7 +335,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 146428,
+          "bytes": 146410,
           "alt": "Página de apertura 1: La página que no se ve."
         },
         {
@@ -320,7 +346,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150952,
+          "bytes": 150936,
           "alt": "Página de apertura 1: La página que no se ve."
         },
         {
@@ -331,7 +357,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144980,
+          "bytes": 144988,
           "alt": "Página de apertura 1: La página que no se ve."
         },
         {
@@ -342,7 +368,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 150210,
+          "bytes": 150142,
           "alt": "Página de apertura 1: La página que no se ve."
         }
       ],
@@ -370,10 +396,17 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17880,
+        "bytes": 17906,
         "folio": "973c2e27",
         "keep": "first",
-        "pages": 1
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "f035ffd70cfecedd",
+            "lines": "b58c2616975113ac"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -410,6 +443,7 @@
           "citations.bibliography.hangingIndent",
           "citations.bibliography.labelWidth",
           "citations.bibliography.lineHeight",
+          "citations.hyphenateNames",
           "citations.link",
           "citations.style",
           "colorPalette",
@@ -459,7 +493,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 131,
+        "configLeaves": 132,
         "designElements": 5,
         "directives": [
           ":::references"
@@ -517,7 +551,15 @@
           "share": 0,
           "worst": 1.6600000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -526,7 +568,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }

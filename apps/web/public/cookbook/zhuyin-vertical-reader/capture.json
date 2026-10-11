@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "zhuyin-vertical-reader",
-  "sourceHash": "7f7b8304966e37c0e95007d0995d136390f5650f065725713b9b2e1263436f20",
+  "sourceHash": "7b5cd66ac5cfc40a85a823f00cbe526becbfbc830e2000403eb3b611db91a7cc",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:11.332Z",
+  "capturedAt": "2026-10-11T20:22:31.175Z",
   "variants": {
     "en": {
-      "hash8": "3650a91f",
+      "hash8": "98d03bfe",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 310,
-        "buildMs": 61,
-        "totalMs": 1128,
+        "importMs": 203,
+        "fontsMs": 430,
+        "buildMs": 70,
+        "totalMs": 1287,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +119,14 @@
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
         "bytes": 507862,
-        "folio": "351449da"
+        "folio": "351449da",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "4b931ee3a7797b3d",
+            "lines": "3c4a80d53899dbb1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -370,6 +377,9 @@
           "share": 0,
           "worst": 0.17
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -380,13 +390,13 @@
       }
     },
     "es": {
-      "hash8": "1f60798a",
+      "hash8": "ed5f6e73",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 303,
-        "buildMs": 60,
-        "totalMs": 1090,
+        "importMs": 278,
+        "fontsMs": 587,
+        "buildMs": 76,
+        "totalMs": 1522,
         "builds": 1
       },
       "specimen": {
@@ -488,7 +498,14 @@
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
         "bytes": 507897,
-        "folio": "351449da"
+        "folio": "351449da",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "7c053ebe10a9da9a",
+            "lines": "f15769a2c9313924"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -738,6 +755,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.17
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

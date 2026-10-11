@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-datasheet",
-  "sourceHash": "472c12ee2c20878985fd4b30f92097e59f1e4bbe877d2d0d9f8a08853711a034",
+  "sourceHash": "f65e5df0582f6f9e9278b2d43d8037444ee6ea72685310a65b7dce6e99b347ff",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.805Z",
+  "capturedAt": "2026-10-11T20:22:30.981Z",
   "variants": {
     "en": {
-      "hash8": "9572352e",
+      "hash8": "27961bf3",
       "vdtHash": "65c6298ecc4c86c5b28515d0871017f08686b5af",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 73,
-        "buildMs": 69,
-        "totalMs": 910,
+        "importMs": 208,
+        "fontsMs": 79,
+        "buildMs": 104,
+        "totalMs": 976,
         "builds": 1
       },
       "specimen": {
@@ -116,13 +116,20 @@
       },
       "pdf": {
         "file": "technical-datasheet.pdf",
-        "bytes": 134548,
+        "bytes": 134527,
         "pages": 4
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78033,
-        "folio": "ca48c30e"
+        "bytes": 78036,
+        "folio": "ca48c30e",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "bc11e4e137c3e561",
+            "lines": "7679bf24b5d23574"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -252,6 +259,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -319,6 +327,7 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
@@ -326,7 +335,7 @@
           "tableStyles",
           "unorderedLists"
         ],
-        "configLeaves": 442,
+        "configLeaves": 443,
         "designElements": 21,
         "directives": [
           ":::columnbreak",
@@ -425,16 +434,14 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

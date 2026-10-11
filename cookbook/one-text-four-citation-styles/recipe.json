@@ -29,7 +29,7 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.25.0"
+    "postext": "1.28.0"
   },
   "kit": [
     "core",

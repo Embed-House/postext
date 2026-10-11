@@ -202,6 +202,7 @@ const flyleaf = { id: 'flyleaf', span: 'page', // the inside of the cover, facin
 
 const config = () => ({
   colorPalette,
+  locale: t({ en: 'en-us', es: 'es' }), // the script's language, and its bundle's
   page,
   layout: { layoutType: 'single' },
   bodyText,

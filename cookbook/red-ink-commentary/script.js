@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 078 · Red-ink commentary in the line and the head margin ═══
 // https://postext.dev/en/cookbook/red-ink-commentary
 // Code: MIT · Text: 脂硯齋重評石頭記, Jiaxu manuscript, Wikisource (CC BY-SA 4.0) · Pictures: none
-// Fonts: Noto Serif TC, LXGW WenKai TC, Noto Sans TC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif TC, LXGW WenKai TC, Noto Sans TC (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // The first chapter of the Stone as a commentary edition: the text set vertically, the
 // comments the manuscript writes beside the columns folded into two small red rows inside
 // the line, the head-margin comments in red Kai above the columns they gloss.
@@ -112,10 +112,6 @@ const config = () => ({
     fontFamily: SONG, fontSize: pt(BODY), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: em(2), indentAfterHeading: true,
-    // A paragraph may open in a page's last column, so every page sets its 18. The
-    // orphan rule stays on: a paragraph's last column never stands alone at the head of
-    // a page (孤行不成頁).
-    avoidWidows: false,
   },
   headings: {
     fontFamily: SONG, color: col('ink'),

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "paper-swatch-book",
-  "sourceHash": "bb355a52de4a3d1fc92170476755368760b29c58a6f3f65db940bbdb07e01936",
+  "sourceHash": "ce3ccc7ebd9a7dc2c36b89e3fd05bc660a4002993c944fd8038c7eeef75f7035",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.265Z",
+  "capturedAt": "2026-10-11T20:22:30.590Z",
   "variants": {
     "en": {
-      "hash8": "b1471052",
+      "hash8": "d5f5221f",
       "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 144,
-        "fontsMs": 2,
-        "buildMs": 42,
-        "totalMs": 776,
+        "importMs": 1613,
+        "fontsMs": 3,
+        "buildMs": 101,
+        "totalMs": 3246,
         "builds": 1
       },
       "specimen": {
@@ -219,7 +219,14 @@
       "sandbox": {
         "file": "paper-swatch-book.postext",
         "bytes": 30856,
-        "folio": "c0edc776"
+        "folio": "c0edc776",
+        "chapters": [
+          {
+            "pages": 12,
+            "hash": "f0e622e75c4c9b3d",
+            "lines": "f85c14f8c3fbfc98"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -429,6 +436,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.8900000000000001
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

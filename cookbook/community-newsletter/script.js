@@ -127,6 +127,7 @@ const folio = { elements: [ // page 2's head: title and date over a hairline, th
 const label = (size, look = {}) => ({ fontFamily: LABEL, fontSize: pt(size), ...look });
 const config = () => ({
   colorPalette, resourceTypes, chipStyles, layout,
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { width: mm(210), height: mm(297), dpi: 150, backgroundColor: col('paper'),
     margins: { top: mm(20), bottom: mm(18), left: mm(SIDE), right: mm(SIDE) } },
   bodyText: { fontFamily: TEXT, fontSize: pt(9.4), lineHeight: pt(LEAD), color: col('ink'),

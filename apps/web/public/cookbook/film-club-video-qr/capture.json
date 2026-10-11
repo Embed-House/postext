@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "film-club-video-qr",
-  "sourceHash": "fcb07ddf34fa39c21b852ed8ef260568730a1a9d167778fd12b2296e66358a00",
+  "sourceHash": "c1315fa36ee751b035c8fb6e6ee7c2743008b2ef59b6a4b47a9fcd9fdd1731a7",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:19.284Z",
+  "capturedAt": "2026-10-11T20:22:30.159Z",
   "variants": {
     "en": {
-      "hash8": "be70f33b",
+      "hash8": "1c79f8ec",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 107,
-        "buildMs": 43,
-        "totalMs": 901,
+        "importMs": 1135,
+        "fontsMs": 147,
+        "buildMs": 90,
+        "totalMs": 2106,
         "builds": 1
       },
       "specimen": {
@@ -146,8 +146,15 @@
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 410384,
-        "folio": "edbbafa0"
+        "bytes": 410425,
+        "folio": "edbbafa0",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "9062d7af4aafef9f",
+            "lines": "d3e347673fac29b9"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -173,6 +180,7 @@
           "bodyText.fontSize",
           "bodyText.hyphenation",
           "bodyText.hyphenation.enabled",
+          "bodyText.hyphenation.exceptions",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -307,7 +315,7 @@
           "resourceTypes",
           "videoStyle"
         ],
-        "configLeaves": 432,
+        "configLeaves": 433,
         "designElements": 20,
         "directives": [
           "::resource",
@@ -398,17 +406,20 @@
           "share": 0,
           "worst": 1.78
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "215964e6",
-      "vdtHash": "524112d7bf7c2be7058945f34b56f0b081943cdc",
+      "hash8": "f836cde1",
+      "vdtHash": "b1fafd63237b7c42fe8f1d8da62eaa38276b128e",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 100,
-        "buildMs": 48,
-        "totalMs": 906,
+        "importMs": 1886,
+        "fontsMs": 270,
+        "buildMs": 81,
+        "totalMs": 2971,
         "builds": 1
       },
       "specimen": {
@@ -441,7 +452,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95462,
+          "bytes": 95436,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {
@@ -452,7 +463,7 @@
           "h": 1424,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 101942,
+          "bytes": 102010,
           "alt": "Página de apertura 2: Elephants Dream. Película 1. Elephants Dream. Proyecto Orange, Blender Foundation."
         },
         {
@@ -463,7 +474,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 90602,
+          "bytes": 90256,
           "alt": "Página de apertura 3: Big Buck Bunny. Película 2. Big Buck Bunny. Proyecto Peach, Blender Institute."
         },
         {
@@ -474,7 +485,7 @@
           "h": 1424,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 92062,
+          "bytes": 92048,
           "alt": "Página de apertura 4: Tears of Steel. Película 3. Tears of Steel. Proyecto Mango, Blender Institute."
         },
         {
@@ -485,7 +496,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 82402,
+          "bytes": 82382,
           "alt": "Página de apertura 5: Spring. Película 4. Spring. Blender Studio."
         },
         {
@@ -496,7 +507,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 95560,
+          "bytes": 95544,
           "alt": "Página de apertura 6: En el cineclub."
         }
       ],
@@ -532,13 +543,20 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 311584,
+        "bytes": 311270,
         "pages": 6
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 419170,
-        "folio": "edbbafa0"
+        "bytes": 419218,
+        "folio": "edbbafa0",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "4b2ffe83d7e88819",
+            "lines": "713f9984dbac5724"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -564,6 +582,7 @@
           "bodyText.fontSize",
           "bodyText.hyphenation",
           "bodyText.hyphenation.enabled",
+          "bodyText.hyphenation.exceptions",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -698,7 +717,7 @@
           "resourceTypes",
           "videoStyle"
         ],
-        "configLeaves": 432,
+        "configLeaves": 433,
         "designElements": 20,
         "directives": [
           "::resource",
@@ -789,7 +808,16 @@
           "share": 0,
           "worst": 1.83
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

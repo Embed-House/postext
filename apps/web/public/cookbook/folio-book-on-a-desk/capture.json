@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "folio-book-on-a-desk",
-  "sourceHash": "b808ddd65d810c66ecc12ef60cbeac8ac0a337df41e7cef632480f62a00b387f",
+  "sourceHash": "892102fe4b3b754f54ab1f9deedb677bf4ddaac62bdea14c17dfb1419fcb9bf0",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.229Z",
+  "capturedAt": "2026-10-11T20:22:30.193Z",
   "variants": {
     "en": {
-      "hash8": "28272a36",
+      "hash8": "9054ec36",
       "vdtHash": "c9d261ef6effccb705d8915af71348eab856bb11",
       "timings": {
-        "importMs": 145,
+        "importMs": 2791,
         "fontsMs": 3,
-        "buildMs": 37,
-        "totalMs": 776,
+        "buildMs": 89,
+        "totalMs": 4483,
         "builds": 1
       },
       "specimen": {
@@ -114,8 +114,15 @@
       },
       "sandbox": {
         "file": "folio-book-on-a-desk.postext",
-        "bytes": 24179,
-        "folio": "ae4134af"
+        "bytes": 24177,
+        "folio": "ae4134af",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "30d4443f12c836dd",
+            "lines": "b6036bf6de93dcbe"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -313,6 +320,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.97
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

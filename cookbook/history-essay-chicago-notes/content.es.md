@@ -23,7 +23,7 @@ La decisión fue comercial antes que científica. Una compañía que mantenía u
 
 ## El hilo lleva la hora
 
-Al principio la hora viajaba en el reloj de un guarda del primer tren, puesto en Paddington, y los jefes de estación ajustaban los suyos por él. El telégrafo eléctrico cambió el medio. Desde 1852 el Observatorio Real enviaba cada día una señal por los hilos de la Electric Telegraph Company, que la transmitía a las estaciones y oficinas de correos de su red.[@standage1998, 59] La señal ponía la hora de Greenwich al alcance de cualquier lugar al que llegaran los hilos; no obligaba a nadie a seguirla.[@schivelbusch1986, 43–44]
+Al principio la hora viajaba en el reloj de un guarda del primer tren, puesto en Paddington, y los jefes de estación ajustaban los suyos por él. El telégrafo eléctrico cambió el medio. Desde 1852 el Observatorio Real enviaba cada día una señal por los hilos de la Electric Telegraph Company, que la transmitía a las estaciones y oficinas de correos de su red.[@standage1998, 59] La señal ponía la hora de Greenwich al alcance de cualquier lugar al que llegaran los hilos; no obligaba a nadie a seguirla.[@schivelbusch1986, 43]
 
 ## Las ciudades dudan
 
@@ -41,7 +41,7 @@ La Statutes (Definition of Time) Act de 1880 cerró la brecha. Declaraba que tod
 
 ## Un acuerdo, no una conquista
 
-Vista desde 1840, la hora del ferrocarril era uno de varios arreglos posibles. Las compañías podrían haber mantenido las horas locales e impreso tablas de correcciones, como hicieron algunos ferrocarriles estadounidenses hasta 1883,[@bartky2000, 140–45] y el sistema internacional de husos que siguió a la conferencia de Washington de 1884 tardó medio siglo en llegar a la mayor parte del mundo.[@ogle2015, cap. 1] En Gran Bretaña las distancias eran cortas, las compañías eran pocas y podían ponerse de acuerdo en una sola cámara de compensación, y el telégrafo llegó a las estaciones al mismo tiempo que los trenes. Esas condiciones, más que ningún principio, explican la rapidez con que un país de mediodías locales pasó a guardar una sola hora.[@ogle2015, 25; véase también @schivelbusch1986, cap. 3]
+Vista desde 1840, la hora del ferrocarril era uno de varios arreglos posibles. Las compañías podrían haber mantenido las horas locales e impreso tablas de correcciones, como hicieron algunos ferrocarriles estadounidenses hasta 1883,[@bartky2000, 140–45] y el sistema internacional de husos que siguió a la conferencia de Washington de 1884 tardó medio siglo en llegar a la mayor parte del mundo.[@ogle2015] En Gran Bretaña las distancias eran cortas, las compañías eran pocas y podían ponerse de acuerdo en una sola cámara de compensación, y el telégrafo llegó a las estaciones al mismo tiempo que los trenes. Esas condiciones, más que ningún principio, explican la rapidez con que un país de mediodías locales pasó a guardar una sola hora.[@ogle2015, 25; véase también @schivelbusch1986, cap. 3]
 
 ## Bibliografía
 

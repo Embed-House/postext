@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "broadsheet-six-columns",
-  "sourceHash": "e4428123f174da59dec57f125bc437634864a81db1090a0d408fa86b14aa9886",
+  "sourceHash": "59e60b3a5e10fcfe061c5a958871edbc38b039b19706dc346556a8023b23bf7c",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.621Z",
+  "capturedAt": "2026-10-11T20:22:29.827Z",
   "variants": {
     "en": {
-      "hash8": "13e5a13b",
-      "vdtHash": "e720c45bd4a2a3dff00c834916dc12e819c31362",
+      "hash8": "3840c7af",
+      "vdtHash": "9cf816b28bc50b05713d4c2abf7575343718d0c4",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 45,
-        "buildMs": 114,
-        "totalMs": 1079,
+        "importMs": 1115,
+        "fontsMs": 103,
+        "buildMs": 123,
+        "totalMs": 2573,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1592,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 259312,
+          "bytes": 259284,
           "alt": "Opening page 1: The Corrington Despatch. The end of the line. The Eastern Quays at sunrise. The trams will run on the old dock railway’s route past the bonded warehouses. · Paying for the line · Holding. Engineers watch the gate at 6.40 yesterday morning."
         },
         {
@@ -116,8 +116,15 @@
       },
       "sandbox": {
         "file": "broadsheet-six-columns.postext",
-        "bytes": 1366194,
-        "folio": "ac94dacf"
+        "bytes": 1366192,
+        "folio": "ac94dacf",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "da2e8ba850e60724",
+            "lines": "c4464fa9318043b3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -254,6 +261,7 @@
           "layout.columnRule.lineWidth",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -311,12 +319,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 704,
+        "configLeaves": 705,
         "designElements": 27,
         "directives": [
           ":::callout",
@@ -427,6 +436,14 @@
           "share": 0.0019,
           "worst": 2.59
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C20",
@@ -434,9 +451,14 @@
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 4 pages)"
           },
           {
-            "check": "sandbox",
+            "check": "C35",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “40 closures a year by 2070, as the sea rises”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -59,7 +59,7 @@ subtitle: "قافية الميم"
 :::
 
 :::paragraphs{style="note" dir=ltr}
-**A note on the text.** Abū al-Ṭayyib al-Mutanabbī (915–965) recited this qaṣīda before Sayf al-Dawla, the Ḥamdānid prince of Aleppo, in 954, after the prince had rebuilt the fortress of al-Ḥadath on the Byzantine frontier and driven off the army of the Domestikos Bardas Phokas beneath its walls. It runs to forty-six bayts in the ṭawīl metre, all on one rhyme, the letter mīm. The text is the one ar.wikisource gives, with its vowels; three typing slips are corrected, in bayts 12, 16 and 46. The two lines in prose above the poem are ours.
+**A note on the text.** Abū al-Ṭayyib al-Mutanabbī (915–965) recited this qaṣīda before Sayf al-Dawla, the Ḥamdānid prince of Aleppo, in 954, after the prince had rebuilt the fortress of al-Ḥadath on the Byzantine frontier and driven off the army of the Domestikos Bardas Phokas beneath its walls. It runs to forty-six bayts in the ṭawīl metre, all on one rhyme, the letter mīm. The text is the one ar.wikisource gives, with its vowels; three typing slips are corrected, in bayts 12, 16 and 46. The two lines in prose above the poem are ours.
 :::
 
 :::paragraphs{style="colophon" dir=ltr}

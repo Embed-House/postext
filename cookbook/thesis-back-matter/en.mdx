@@ -28,7 +28,7 @@ The mark is `{number}`: 6 on the chapter, A on the appendix and nothing on an un
 
 <Excerpt region="appendix" />
 
-The appendix style sets `numberingTemplate: '{1:A}'`, which prints the level's counter as a letter, and `# Interview guide {style="appendix" startAt=1}` restarts that counter, so the first appendix is A and not G ([heading styles](/en/docs/configuration-styles#heading-styles)). The band reads the letter through `{number}` and the running head through `{chapterNumber}`. A resource type's `{h1}` prints the counter as a number, so a type of its own numbers the appendix's tables A.1, A.2 and so on; with the default type the table would be Table 1.1. The chapter's own headings count from the level templates: `'{1}.{2}'` prints 6.1, and `continuation.headings.h1: 5` makes this the sixth chapter.
+The appendix style sets `numberingTemplate: '{1:A}'`, which prints the level's counter as a letter, and `# Interview guide {style="appendix" startAt=1}` restarts that counter, so the first appendix is A and not G ([heading styles](/en/docs/configuration-styles#heading-styles)). The band reads the letter through `{number}` and the running head through `{chapterNumber}`. A resource type's `{h1}` prints the counter as a number unless it names a style, so the appendix's tables take a type whose template is `'{h1:A}.{n}'`: A.1, A.2 and so on, and B.1 in a second appendix; with the default type the table would be Table 1.1. The chapter's own headings count from the level templates: `'{1}.{2}'` prints 6.1, and `continuation.headings.h1: 5` makes this the sixth chapter.
 
 ### 4 · Put the running heads on the outer edge
 

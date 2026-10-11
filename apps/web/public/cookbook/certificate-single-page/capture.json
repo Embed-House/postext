@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "certificate-single-page",
-  "sourceHash": "0a22726777fb01f66aa2b326a256684648e957924c72ff14c754ba3292687d05",
+  "sourceHash": "93e9bd7531c0be64f3ca0049e51f0e5c7a1f92bbdad6d464fef8d5d4138ad4ce",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.026Z",
+  "capturedAt": "2026-10-11T20:22:29.889Z",
   "variants": {
     "en": {
-      "hash8": "3755a3c5",
+      "hash8": "0c24109c",
       "vdtHash": "9e7f834a65281cc1f4bc902a08b908f9f13a1e9b",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 33,
-        "buildMs": 16,
-        "totalMs": 823,
+        "importMs": 1035,
+        "fontsMs": 38,
+        "buildMs": 33,
+        "totalMs": 1746,
         "builds": 1
       },
       "specimen": {
@@ -100,13 +100,20 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 259522,
+        "bytes": 259520,
         "pages": 3
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 30209,
-        "folio": "a05bb7c0"
+        "bytes": 30206,
+        "folio": "a05bb7c0",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "922a15aa0752e44e",
+            "lines": "6a7f4811b369573b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -235,17 +242,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "fb4a75c7",
+      "hash8": "5fc42b48",
       "vdtHash": "f89d7783c5c82acb318507363bd71fa7dfc00a82",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 33,
-        "buildMs": 17,
-        "totalMs": 812,
+        "importMs": 1415,
+        "fontsMs": 38,
+        "buildMs": 55,
+        "totalMs": 2653,
         "builds": 1
       },
       "specimen": {
@@ -328,13 +338,20 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 251274,
+        "bytes": 251273,
         "pages": 3
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
         "bytes": 28712,
-        "folio": "a05bb7c0"
+        "folio": "a05bb7c0",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "98ce9d47fda2e587",
+            "lines": "d1b82089d218cd05"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -462,6 +479,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

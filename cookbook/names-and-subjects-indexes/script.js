@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 073 · An index of names and an index of subjects ═══════
 // https://postext.dev/en/cookbook/names-and-subjects-indexes
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Crimson Pro, Bodoni Moda, Libre Franklin (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Crimson Pro, Bodoni Moda, Libre Franklin (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocumentWithFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -53,10 +53,7 @@ const index = {
   indent: em(1), turnoverIndent: em(2),
   rangeFormat: 'chicago', // 212–14, as a monograph prints it
   main: { bold: true }, // the page of the principal discussion
-  // A shade over a line above each letter: with it the two columns of both indexes end
-  // within a line of each other in both editions (the level cut moves by body lines).
-  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick'),
-    marginTop: pt(12) },
+  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },
 };
 // #endregion
 

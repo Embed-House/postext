@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 083 · Tang poems facing their English verse ═══════════════
 // https://postext.dev/en/cookbook/tang-poems-facing-english
 // Code: MIT · Text: Tang poems, zh.wikisource; H. A. Giles, 1901, Project Gutenberg (PD)
-// Fonts: Noto Serif TC, LXGW WenKai TC, Noto Sans TC, Source Serif 4 (OFL) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif TC, LXGW WenKai TC, Noto Sans TC, Source Serif 4 (OFL) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -80,7 +80,8 @@ const shi = { id: 'shi', fontFamily: KAI, fontSize: pt(SHI), lineHeight: pt(2 * 
 const footnotes = { placement: 'column', numbering: 'page', // the page foot; ① again on each page
   numberFormat: 'circled-decimal', markerSize: em(0.6), fontSize: pt(8), lineHeight: pt(11),
   color: col('ink'), textAlign: 'left', spaceAbove: pt(LEAD), spaceBelowRule: pt(5),
-  spaceBetween: pt(3), separator: { width: 0.12, lineWidth: pt(0.6), color: col('seal') } };
+  spaceBetween: pt(3), separator: { width: 0.12, lineWidth: pt(0.6), color: col('seal') },
+  wordBreak: 'keep-all' }; // a reading a note quotes (山月, 看月光) is never broken
 // #endregion
 
 // #region title: 唐詩 on a pale moon, with a seal
@@ -90,8 +91,7 @@ const [MOON_Y, MOON, HAN] = [36, 78, 60]; // mm: the moon's top and width; pt: t
 const UNDER = MOON_Y + MOON; // mm: the English lines start under the moon
 const line = (id, content, y, style) => ({ kind: 'text', id, content, align: 'center',
   overflow: 'wrap', color: col('ink'), placement: onPage(y), ...style });
-const titlePage = {
-  id: 'title', span: 'page', runningChapter: false,
+const titlePage = { id: 'title', span: 'page', runningChapter: false,
   header: { elements: [] }, footer: { elements: [] },
   advancedDesign: { enabled: true, slot: { elements: [
     { kind: 'box', id: 'moon', placement: onPage(MOON_Y, MOON),

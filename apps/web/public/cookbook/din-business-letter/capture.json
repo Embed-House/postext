@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "din-business-letter",
-  "sourceHash": "029f201bd78ce8e3754ca9bcc0361f3ec395576a6255ee9c918547275bc19acb",
+  "sourceHash": "a18efdeb67588474a0f4eea9d0503446d909237781f88151df2118a6bf4ba577",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.097Z",
+  "capturedAt": "2026-10-11T20:22:30.117Z",
   "variants": {
     "en": {
-      "hash8": "c903192c",
+      "hash8": "0636c0af",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 28,
-        "buildMs": 129,
-        "totalMs": 927,
+        "importMs": 1800,
+        "fontsMs": 35,
+        "buildMs": 207,
+        "totalMs": 3758,
         "builds": 1
       },
       "specimen": {
@@ -89,13 +89,20 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40906,
+        "bytes": 40904,
         "pages": 2
       },
       "sandbox": {
         "file": "din-business-letter.postext",
         "bytes": 23162,
-        "folio": "2ea14ffd"
+        "folio": "2ea14ffd",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "1c369a44c9d38146",
+            "lines": "a2cb17d2042dac80"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -263,6 +270,9 @@
           "share": 0,
           "worst": 1.6
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C26",
@@ -273,13 +283,13 @@
       }
     },
     "es": {
-      "hash8": "bc6df775",
+      "hash8": "95af5b33",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 28,
-        "buildMs": 125,
-        "totalMs": 914,
+        "importMs": 1778,
+        "fontsMs": 33,
+        "buildMs": 218,
+        "totalMs": 2693,
         "builds": 1
       },
       "specimen": {
@@ -351,13 +361,20 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40906,
+        "bytes": 40904,
         "pages": 2
       },
       "sandbox": {
         "file": "din-business-letter.postext",
         "bytes": 23186,
-        "folio": "2ea14ffd"
+        "folio": "2ea14ffd",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "1c369a44c9d38146",
+            "lines": "a2cb17d2042dac80"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -524,6 +541,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.6
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

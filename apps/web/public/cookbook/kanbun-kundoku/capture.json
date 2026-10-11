@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "kanbun-kundoku",
-  "sourceHash": "7a883281e71b2ef32b5851a0d605b731a1024edef76787b4ee3965be185211df",
+  "sourceHash": "1cdc5f8e0be51bb4796e4a5f34cfbb5b9b98ea378bcdb22d0f25e45874431c3a",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.571Z",
+  "capturedAt": "2026-10-11T20:22:30.310Z",
   "variants": {
     "en": {
-      "hash8": "3687c0c8",
+      "hash8": "0edceba0",
       "vdtHash": "cea294344d4ba3029b117bd33687c965b41d48c7",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 257,
-        "buildMs": 45,
-        "totalMs": 1012,
+        "importMs": 1315,
+        "fontsMs": 1355,
+        "buildMs": 55,
+        "totalMs": 3607,
         "builds": 1
       },
       "specimen": {
@@ -106,8 +106,15 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15709,
-        "folio": "bdf12d3d"
+        "bytes": 15708,
+        "folio": "bdf12d3d",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "39c44a88d76310ac",
+            "lines": "11cd5855341fc16f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -291,17 +298,20 @@
           "share": 0,
           "worst": 0.1
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "ffb2268a",
+      "hash8": "6376658a",
       "vdtHash": "eeffa96ae9ff865139c37006dc7fc4599bc7e1e1",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 236,
-        "buildMs": 46,
-        "totalMs": 996,
+        "importMs": 966,
+        "fontsMs": 1672,
+        "buildMs": 55,
+        "totalMs": 3892,
         "builds": 1
       },
       "specimen": {
@@ -390,8 +400,15 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15756,
-        "folio": "bdf12d3d"
+        "bytes": 15755,
+        "folio": "bdf12d3d",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "2e8e8e62760e21f2",
+            "lines": "ab2671efb7901a41"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -574,6 +591,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.1
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

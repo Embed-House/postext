@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "acd3c1784c92f9d30c4fe0598b082d5d6b6fca4cc8af55ba90a4be000474beb5",
+  "sourceHash": "78a49ee8b19e11b5d46fe5232bafedb88d9e06ac6ec1685a27f5cdeb29e62262",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.951Z",
+  "capturedAt": "2026-10-11T20:22:30.505Z",
   "variants": {
     "en": {
-      "hash8": "1bf89c18",
-      "vdtHash": "7c58e6cfa88a77a6031e0925359cc20fe5564a87",
+      "hash8": "b7bc6768",
+      "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 124,
-        "buildMs": 320,
-        "totalMs": 1177,
+        "importMs": 1389,
+        "fontsMs": 419,
+        "buildMs": 410,
+        "totalMs": 3003,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 163578,
+          "bytes": 163900,
           "alt": "Opening page 2: Ten winters on the floe."
         }
       ],
@@ -88,13 +88,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 879919,
+        "bytes": 880020,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 811768,
-        "folio": "bebc74ee"
+        "bytes": 811773,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "92ecb70b8ed7739f",
+            "lines": "933cea0d09ff2e5f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -319,27 +326,30 @@
         "converged": true,
         "iterationCount": 4,
         "looseLines": {
-          "count": 3,
-          "share": 0.0484,
-          "worst": 2.64
+          "count": 0,
+          "share": 0,
+          "worst": 1.99
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "3 of 62 justified lines (4.8 %) stretch past 2× (worst 2.64×); loosest: p. 2 2.64× “explains the croissants. The pen-”, p. 2 2.18× “Barlow grew up above her par-”, p. 2 2.17× “balloons are drawn around them.””"
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "790f93eb",
+      "hash8": "cb80701f",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 121,
-        "buildMs": 418,
-        "totalMs": 1275,
+        "importMs": 1482,
+        "fontsMs": 1049,
+        "buildMs": 532,
+        "totalMs": 4430,
         "builds": 1
       },
       "specimen": {
@@ -410,13 +420,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884694,
+        "bytes": 884692,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812398,
-        "folio": "bebc74ee"
+        "bytes": 812397,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "44d1b5cf13f9f621",
+            "lines": "60b54e3e22c0f496"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -645,17 +662,20 @@
           "share": 0.0139,
           "worst": 2.0100000000000002
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ca": {
-      "hash8": "6b92a4bf",
-      "vdtHash": "a0da22d4b46aa5c414ed1a91b28e254f2ed7b140",
+      "hash8": "5897a158",
+      "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 119,
-        "buildMs": 317,
-        "totalMs": 1191,
+        "importMs": 1746,
+        "fontsMs": 530,
+        "buildMs": 410,
+        "totalMs": 3808,
         "builds": 1
       },
       "specimen": {
@@ -698,7 +718,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 169586,
+          "bytes": 169496,
           "alt": "Pàgina d'obertura 2: Deu hiverns al glaç."
         }
       ],
@@ -726,13 +746,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883895,
+        "bytes": 883903,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812386,
-        "folio": "bebc74ee"
+        "bytes": 812385,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "72a30d89ae9ad64f",
+            "lines": "34ab206ad0669aba"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -957,27 +984,30 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 2,
-          "share": 0.0294,
-          "worst": 2.0300000000000002
+          "count": 0,
+          "share": 0,
+          "worst": 2
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "2 of 68 justified lines (2.9 %) stretch past 2× (worst 2.0300000000000002×); loosest: p. 2 2.0300000000000002× “Els dibuixos arriben al diari sense”, p. 2 2.0100000000000002× “Ines Barlow dibuixa un pingüí i”"
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "595377b2",
+      "hash8": "605ec622",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 639,
-        "buildMs": 310,
-        "totalMs": 1648,
+        "importMs": 1357,
+        "fontsMs": 4957,
+        "buildMs": 369,
+        "totalMs": 7488,
         "builds": 1
       },
       "specimen": {
@@ -1048,13 +1078,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1016344,
+        "bytes": 1016341,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812327,
-        "folio": "bebc74ee"
+        "bytes": 812325,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "c6d8f8e793bcf4a7",
+            "lines": "2d51b6d063afa93c"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1284,17 +1321,20 @@
           "share": 0,
           "worst": 0.13
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ar": {
-      "hash8": "f5f8d428",
-      "vdtHash": "aae0108a4aba55215abfdd0eff0f356ca90464d8",
+      "hash8": "e5d9faba",
+      "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 144,
-        "buildMs": 334,
-        "totalMs": 1191,
+        "importMs": 2390,
+        "fontsMs": 1646,
+        "buildMs": 398,
+        "totalMs": 5281,
         "builds": 1
       },
       "specimen": {
@@ -1337,7 +1377,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 143136,
+          "bytes": 143566,
           "alt": "صفحة الافتتاح ٢: عشرة شتاءات على الجليد."
         }
       ],
@@ -1366,13 +1406,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 896784,
+        "bytes": 896817,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813663,
-        "folio": "bebc74ee"
+        "bytes": 813660,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "33a67d0017522b4a",
+            "lines": "24dfd0f9488d77ff"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1600,17 +1647,26 @@
           "share": 0,
           "worst": 1.8900000000000001
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "3a578902",
+      "hash8": "cf546a69",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 716,
-        "buildMs": 314,
-        "totalMs": 1739,
+        "importMs": 1890,
+        "fontsMs": 5174,
+        "buildMs": 378,
+        "totalMs": 8247,
         "builds": 1
       },
       "specimen": {
@@ -1682,13 +1738,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1006750,
+        "bytes": 1006746,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813837,
-        "folio": "bebc74ee"
+        "bytes": 813835,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "dffb7bba577d197e",
+            "lines": "2745efbca182e070"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1919,17 +1982,20 @@
           "share": 0,
           "worst": 0.16
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "pt": {
-      "hash8": "62ad896d",
-      "vdtHash": "67d2737420920f6703f7f93e2ede51cc8c46527d",
+      "hash8": "3a53b62e",
+      "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 120,
-        "buildMs": 366,
-        "totalMs": 1224,
+        "importMs": 2205,
+        "fontsMs": 774,
+        "buildMs": 414,
+        "totalMs": 6028,
         "builds": 1
       },
       "specimen": {
@@ -1972,7 +2038,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 174238,
+          "bytes": 176150,
           "alt": "Página de abertura 2: Dez invernos no gelo."
         }
       ],
@@ -2000,13 +2066,20 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882677,
+        "bytes": 882937,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812374,
-        "folio": "bebc74ee"
+        "bytes": 812394,
+        "folio": "bebc74ee",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "3a9bad57505db3c5",
+            "lines": "413a2f9715920d99"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -2231,15 +2304,28 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 5,
-          "share": 0.0714,
-          "worst": 2.32
+          "count": 0,
+          "share": 0,
+          "worst": 1.93
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 5
         },
         "findings": [
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "5 of 70 justified lines (7.1 %) stretch past 2× (worst 2.32×); loosest: p. 2 2.32× “O trabalho começa na segunda,”, p. 2 2.23× “jornais brasileiros recebem Acabou”, p. 2 2.07× “da época, Martin Fry, publicou as”"
+            "check": "C35",
+            "severity": "info",
+            "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

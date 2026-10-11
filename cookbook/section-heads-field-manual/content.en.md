@@ -98,7 +98,7 @@ The crew leader checks every tool at the trailhead, and these four rules hold al
 :::paragraphs{style="rules"}
 **Carry.** Edged tools travel by your side, blade down and in its guard, on the downhill side of the trail, and never on a shoulder.
 
-**Spacing.** Keep two tool lengths between workers, and call out before every swing.
+**Spacing.** Keep two tool lengths from the next worker, and call out before every swing.
 
 **Rock work.** Move rocks with a bar and gravity, not with your back. Nobody stands downhill of a rock that is moving.
 

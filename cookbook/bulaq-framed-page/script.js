@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 114 · A Bulaq page: the text framed by its commentary ════════
 // https://postext.dev/en/cookbook/bulaq-framed-page
 // Code: MIT · Text: Ibn ʿAqīl, Sharḥ; Ibn Mālik, Alfiyya, ar.wikisource (PD) · Pictures: none
-// Fonts: Amiri, Aref Ruqaa (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Amiri, Aref Ruqaa (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 

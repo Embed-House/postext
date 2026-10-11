@@ -14,7 +14,7 @@ Cada línea del guion es un bocadillo: quién habla, el tipo entre llaves si no 
 - **Voz interior.** :chip[maya{inner}:]{style="code"} Lo que no dice en voz alta: sin rabillo, caja gris, cursiva.
 - **Nota del editor.** :chip[note:]{style="code"} Pequeña, en la esquina inferior de la viñeta.
 - **Onomatopeya.** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} Sin bocadillo: letras de cartel en rojo con contorno blanco, colocadas y giradas a mano.
-- **Fuera de campo.** :chip[tomas{tail=end}:]{style="code"} Quien habla está fuera de la imagen; el rabillo llega al borde de la viñeta.
+- **Fuera de campo.** :chip[tomas{tail=right}:]{style="code"} Quien habla está fuera de la imagen; el rabillo llega al borde de la viñeta.
 - **Fijado.** :chip[skipper{at="44% 22%"}:]{style="code"} El bocadillo se centra en ese punto de la imagen, sea cual sea el recorte.
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout}: ¡*Gannet*! ¡Proa a la luz! ¡No la pierdas!
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: ¡BRRROOM!
 skipper{at="44% 22%"}: La vemos… vemos la luz…
-tomas{tail=end}: Despacio. Vira despacio.
+tomas{tail=right}: Despacio. Vira despacio.
 ::panel{art=bk-window}
 maya{inner}: Venga. Venga. Venga.
 caption{at=bottom-start}: Tardaron dos horas.

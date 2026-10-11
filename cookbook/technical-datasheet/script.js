@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 010 · Datasheet: tables from data, merged headers ════════
 // https://postext.dev/en/cookbook/technical-datasheet
 // Code: MIT · Text: original (CC BY 4.0) · Drawings: generated in code (CC BY 4.0)
-// Fonts: Fira Sans, Fira Sans Condensed, Fira Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Fira Sans, Fira Sans Condensed, Fira Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // The datasheet of a fictional sensor. Postext reads no pipe tables, so the tables are data:
 // TSV pasted from a spreadsheet, parsed into table models, then merged, aligned and filled.
 import {
@@ -146,7 +146,7 @@ const footer = { elements: [ // every page: an image element works in a running 
 ] };
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the datasheet is written in English
   // Tables and figures count 1, 2, 3 through the document; table captions sit above.
   resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}',
     ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),
@@ -157,7 +157,7 @@ const config = () => ({
     fontFamily: 'Fira Sans', fontSize: pt(9.3), lineHeight: pt(LEAD), color: col('ink'),
     boldFontWeight: 600, boldColor: col('ink'), italicColor: col('ink'), textAlign: 'left',
     referenceColor: col('brand'), firstLineIndent: pt(0), paragraphSpacing: true,
-    hyphenateAcrossColumns: false }, // no compound is divided over a column or a page
+    hyphenateAcrossColumns: 'withinPage' }, // no compound is divided over a page
   headings: { fontFamily: COND, color: col('ink'),
     levels: [ // 'any': a loose sheet has no rectos, so the H1 asks for no blank page
       { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },

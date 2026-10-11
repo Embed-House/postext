@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "poetry-collection",
-  "sourceHash": "cb0f3b0c16717e75b0c0386bbbffccb0be68044b71440cbd1fcd83d34b9207ab",
+  "sourceHash": "5c744070920191ccbf768009e1ab1b64cd4380d3f77f1bf64fdff59603886b7e",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.557Z",
+  "capturedAt": "2026-10-11T20:22:30.712Z",
   "variants": {
     "en": {
-      "hash8": "34b48315",
+      "hash8": "11c65b79",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 34,
-        "buildMs": 39,
-        "totalMs": 771,
+        "importMs": 1813,
+        "fontsMs": 207,
+        "buildMs": 76,
+        "totalMs": 3394,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,14 @@
       "sandbox": {
         "file": "poetry-collection.postext",
         "bytes": 370783,
-        "folio": "6d3a2b7c"
+        "folio": "6d3a2b7c",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "215b63737e261963",
+            "lines": "5bd95b977aad1c47"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -238,6 +245,7 @@
           "headings.levels[].numberingTemplate",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -301,12 +309,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "toc"
         ],
-        "configLeaves": 261,
+        "configLeaves": 262,
         "designElements": 12,
         "directives": [
           ":::toc",
@@ -373,13 +382,10 @@
           "share": 0,
           "worst": 1.51
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

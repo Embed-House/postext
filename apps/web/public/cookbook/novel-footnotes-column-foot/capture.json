@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "novel-footnotes-column-foot",
-  "sourceHash": "a14c861225b1b8b687ff573f03cd0ba8c0e3ac6e9a71f64072784e1f36982887",
+  "sourceHash": "3800e63bcdb617cbfdbc358fe6841a55f0da6f92d3c06d1b76269aae823a130c",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.223Z",
+  "capturedAt": "2026-10-11T20:22:30.550Z",
   "variants": {
     "en": {
-      "hash8": "d394cc5c",
+      "hash8": "5be8fa80",
       "vdtHash": "5e2f78d12d75f69073655b3d404ccb6b754adca5",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 27,
-        "buildMs": 83,
-        "totalMs": 1059,
+        "importMs": 1511,
+        "fontsMs": 33,
+        "buildMs": 103,
+        "totalMs": 3239,
         "builds": 1
       },
       "specimen": {
@@ -101,13 +101,20 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 105459,
+        "bytes": 105457,
         "pages": 3
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
         "bytes": 40181,
-        "folio": "5dc5724f"
+        "folio": "5dc5724f",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "bbdb2b19d7e50a4f",
+            "lines": "daab6bdc7a5ffe88"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -299,17 +306,20 @@
           "share": 0,
           "worst": 1.99
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "613763e9",
+      "hash8": "5f5d14e6",
       "vdtHash": "7b765a6fa54d1b01d92ef9092ae0b3f291a372dd",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 27,
-        "buildMs": 268,
-        "totalMs": 1447,
+        "importMs": 1043,
+        "fontsMs": 32,
+        "buildMs": 323,
+        "totalMs": 2759,
         "builds": 1
       },
       "specimen": {
@@ -393,13 +403,20 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 103545,
+        "bytes": 103542,
         "pages": 3
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
         "bytes": 38339,
-        "folio": "5dc5724f"
+        "folio": "5dc5724f",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "96b6fbf10f8e4aff",
+            "lines": "3deb2117efcabe61"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -590,6 +607,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.97
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

@@ -394,13 +394,13 @@ export interface BundleReadBack {
   skipped?: string;
   /** The bundle did not open, or its layout threw. */
   error?: string;
-  /** One entry per chapter of the bundle or document of the pen: pages and
-   *  layout hash on each side (null where a side has none), and where the
-   *  two layouts part. */
+  /** One entry per chapter of the bundle or document of the pen: pages,
+   *  layout hash and lines hash on each side (null where a side has none),
+   *  and where the two layouts part. */
   chapters: {
     chapter: number;
-    pen: { pages: number; hash: string } | null;
-    bundle: { pages: number; hash: string } | null;
+    pen: { pages: number; hash: string; lines?: string } | null;
+    bundle: { pages: number; hash: string; lines?: string } | null;
     difference: string | null;
     /** What gives the pen's pages back when the chapter is laid out again
      *  with it: the build's own `continuation` (its keys), which a bundle

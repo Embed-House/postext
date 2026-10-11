@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pendulum-lab-video-players",
-  "sourceHash": "7535c6df5c6766b366a162bd3a713974f490b5346c2cb0adffb41410dd9e9e2b",
+  "sourceHash": "ad30876d77a8b73034ae1be0a2b34b307405142d16318885fc9fd50c5e552ebb",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.287Z",
+  "capturedAt": "2026-10-11T20:22:30.642Z",
   "variants": {
     "en": {
-      "hash8": "5d45b151",
+      "hash8": "ab1b88b4",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 65,
-        "buildMs": 128,
-        "totalMs": 1018,
+        "importMs": 1824,
+        "fontsMs": 135,
+        "buildMs": 203,
+        "totalMs": 3135,
         "builds": 2
       },
       "specimen": {
@@ -90,12 +90,19 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 84028,
+        "bytes": 84027,
         "pages": 2
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 29823
+        "bytes": 29822,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "4f6b61711b89fe55",
+            "lines": "ca12bc33da4974e1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -425,6 +432,9 @@
           "share": 0,
           "worst": 1.72
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -440,13 +450,13 @@
       }
     },
     "es": {
-      "hash8": "fe7ac5d2",
+      "hash8": "68cce5ab",
       "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 57,
-        "buildMs": 112,
-        "totalMs": 1040,
+        "importMs": 1121,
+        "fontsMs": 262,
+        "buildMs": 172,
+        "totalMs": 4095,
         "builds": 2
       },
       "specimen": {
@@ -519,12 +529,19 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 86784,
+        "bytes": 86781,
         "pages": 2
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 30261
+        "bytes": 30260,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "523988ddbaddf88f",
+            "lines": "1f37529a69049fd0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -854,7 +871,20 @@
           "share": 0,
           "worst": 1.8
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La primera corrección a la fórmula de las oscila…”"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-novel-right-bound",
-  "sourceHash": "c002793ad979f115483a82331aac8dd64afafccc852a9aa4856cebebe8eb1abb",
+  "sourceHash": "5eba454be083f6ded3867bb9a98af6f0f88f77706fde07cf970f2407592229e9",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.015Z",
+  "capturedAt": "2026-10-11T20:22:29.686Z",
   "variants": {
     "en": {
-      "hash8": "848ec812",
+      "hash8": "3e14c79a",
       "vdtHash": "c6a02a8a6f28959dd8ec0ac174534c5721eac10a",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 56,
-        "buildMs": 77,
-        "totalMs": 829,
+        "importMs": 2025,
+        "fontsMs": 258,
+        "buildMs": 107,
+        "totalMs": 3936,
         "builds": 1
       },
       "specimen": {
@@ -153,13 +153,20 @@
       },
       "pdf": {
         "file": "arabic-novel-right-bound.pdf",
-        "bytes": 85144,
+        "bytes": 85142,
         "pages": 7
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
         "bytes": 34622,
-        "folio": "217e1225"
+        "folio": "217e1225",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "c1c7843afdb7adc4",
+            "lines": "1129e77589922571"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -343,6 +350,9 @@
           "share": 0,
           "worst": 1.35
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -358,13 +368,13 @@
       }
     },
     "es": {
-      "hash8": "dc8a19ec",
+      "hash8": "551f63ac",
       "vdtHash": "e562550e168ab8ad0da1e6d7ee8cc3b80226c331",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 57,
-        "buildMs": 78,
-        "totalMs": 834,
+        "importMs": 1665,
+        "fontsMs": 311,
+        "buildMs": 128,
+        "totalMs": 2737,
         "builds": 1
       },
       "specimen": {
@@ -506,7 +516,14 @@
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
         "bytes": 34681,
-        "folio": "217e1225"
+        "folio": "217e1225",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "744402caa0169d74",
+            "lines": "9865e5c23adbd7a2"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -689,6 +706,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.35
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

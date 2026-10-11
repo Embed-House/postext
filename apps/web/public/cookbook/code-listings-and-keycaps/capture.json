@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "code-listings-and-keycaps",
-  "sourceHash": "fef937359c580eda8e67714031d33588e6b39afc8466042a93b332ccce4e83eb",
+  "sourceHash": "465ab92efe8cbf4b60dd416ffe1888268cfb41e4e4fbb2f559d755bb469d8444",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.087Z",
+  "capturedAt": "2026-10-11T20:22:29.972Z",
   "variants": {
     "en": {
-      "hash8": "f5b3d481",
+      "hash8": "4e653282",
       "vdtHash": "8b3311fe4bda801d997d19193889d8a025dee896",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 30,
-        "buildMs": 55,
-        "totalMs": 777,
+        "importMs": 1435,
+        "fontsMs": 403,
+        "buildMs": 90,
+        "totalMs": 2930,
         "builds": 1
       },
       "specimen": {
@@ -100,8 +100,15 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24507,
-        "folio": "e7298095"
+        "bytes": 24526,
+        "folio": "e7298095",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "b4df1abdfe4ac4c5",
+            "lines": "6c0ce5f898bc0bec"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -385,23 +392,26 @@
           "share": 0,
           "worst": 1.32
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 48 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "483c90bb",
+      "hash8": "815897ec",
       "vdtHash": "f61d6e1ac7d69bfb6a85cc1f21905dd10cfc0c68",
       "timings": {
-        "importMs": 133,
-        "fontsMs": 26,
-        "buildMs": 57,
-        "totalMs": 780,
+        "importMs": 803,
+        "fontsMs": 321,
+        "buildMs": 104,
+        "totalMs": 1830,
         "builds": 1
       },
       "specimen": {
@@ -485,8 +495,15 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24848,
-        "folio": "e7298095"
+        "bytes": 24866,
+        "folio": "e7298095",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "176e775587cbd3f5",
+            "lines": "40d0e559648a7eab"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -770,11 +787,14 @@
           "share": 0,
           "worst": 1.3800000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 48 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "dictionary-thumb-index",
-  "sourceHash": "64b5d47b608b18357723eca2bf40a877e71f53271547553b3b48d6caad23779d",
+  "sourceHash": "61e8b48b06efe1ab7bb94597dc2e5e1c993dec974648454dca709175cb2b62fb",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.092Z",
+  "capturedAt": "2026-10-11T20:22:30.112Z",
   "variants": {
     "en": {
-      "hash8": "0ef0661c",
+      "hash8": "6247da5b",
       "vdtHash": "bddee317d6e61fcc97473b0c62f9c6ba9d53b62b",
       "timings": {
-        "importMs": 130,
+        "importMs": 1353,
         "fontsMs": 2,
-        "buildMs": 216,
-        "totalMs": 994,
+        "buildMs": 308,
+        "totalMs": 3414,
         "builds": 1
       },
       "specimen": {
@@ -115,8 +115,15 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 82522,
-        "folio": "444e4865"
+        "bytes": 82521,
+        "folio": "444e4865",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "7c7c7ceae366165a",
+            "lines": "b5a16a060876de1c"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -281,17 +288,20 @@
           "share": 0,
           "worst": 1.7
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "52d5b950",
+      "hash8": "9f485775",
       "vdtHash": "023dbe30f6640917d3b3833a72204c7852686692",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 2,
-        "buildMs": 287,
-        "totalMs": 1072,
+        "importMs": 1629,
+        "fontsMs": 3,
+        "buildMs": 374,
+        "totalMs": 2847,
         "builds": 1
       },
       "specimen": {
@@ -390,8 +400,15 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 83473,
-        "folio": "444e4865"
+        "bytes": 83472,
+        "folio": "444e4865",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "03136defc8f1d6e1",
+            "lines": "fda7738cb1b19b38"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -555,6 +572,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.7
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

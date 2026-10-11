@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "genko-yoshi-manuscript",
-  "sourceHash": "4f3f2fb0dbb678fad6bf57d9970e8ff87a55ab2cf4d5e527f19d330f9971abca",
+  "sourceHash": "5a1c973404225250a3a1b776e968b0af2b3b4cd28e25051509304df437ef6c29",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.256Z",
+  "capturedAt": "2026-10-11T20:22:30.236Z",
   "variants": {
     "en": {
-      "hash8": "05367263",
+      "hash8": "fd6d9f89",
       "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 157,
-        "buildMs": 38,
-        "totalMs": 910,
+        "importMs": 1702,
+        "fontsMs": 868,
+        "buildMs": 45,
+        "totalMs": 3306,
         "builds": 1
       },
       "specimen": {
@@ -100,12 +100,19 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155786,
+        "bytes": 155783,
         "pages": 3
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28491
+        "bytes": 28485,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "c6663a1b406ed5eb",
+            "lines": "429280d2ab70b7ce"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -118,7 +125,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidRunts",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -134,6 +140,7 @@
           "cjk.grid",
           "cjk.grid.charsPerLine",
           "cjk.grid.enabled",
+          "cjk.grid.fullLines",
           "cjk.grid.linesPerPage",
           "cjk.grid.show",
           "cjk.hangingPunctuation",
@@ -261,17 +268,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "3b4da910",
+      "hash8": "f8673bbb",
       "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 149,
-        "buildMs": 38,
-        "totalMs": 912,
+        "importMs": 1309,
+        "fontsMs": 1172,
+        "buildMs": 45,
+        "totalMs": 3662,
         "builds": 1
       },
       "specimen": {
@@ -359,7 +369,14 @@
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28524
+        "bytes": 28519,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "b4f8c276ee7031c4",
+            "lines": "b4f1b3c7cf6b9101"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -372,7 +389,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidRunts",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -388,6 +404,7 @@
           "cjk.grid",
           "cjk.grid.charsPerLine",
           "cjk.grid.enabled",
+          "cjk.grid.fullLines",
           "cjk.grid.linesPerPage",
           "cjk.grid.show",
           "cjk.hangingPunctuation",
@@ -514,6 +531,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

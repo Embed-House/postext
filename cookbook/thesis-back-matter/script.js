@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 031 · Thesis back matter: appendix, glossary and index ═══
 // https://postext.dev/en/cookbook/thesis-back-matter
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Libertinus Serif, Serif Display and Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Libertinus Serif, Serif Display and Sans (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, defaultResourceTypes,
 } from 'https://esm.sh/postext';
@@ -108,10 +108,11 @@ const footer = { elements: [{ kind: 'text', id: 'drop-folio', content: '{pageNum
 // #region appendix: lettered by its style, '# Interview guide {style="appendix" startAt=1}'
 // The style's '{1:A}' (see answer) prints the level's counter as a letter, and startAt=1 on the
 // first appendix restarts it after chapter 6. The band and the running head read that letter.
-// A resource template's {h1} is always a number, so the tables get a type that counts A.1.
+// A resource template's {h1} is a number unless it names a style: '{h1:A}.{n}' counts the
+// tables A.1, A.2… and B.1 in a second appendix, with one type for all of them.
 const appendixHeads = heads('Appendix {chapterNumber}. {chapterTitle}');
 const appendixTables = { ...defaultResourceTypes(LANG).find((type) => type.id === 'table'),
-  id: 'table-a', numberingTemplate: 'A.{n}' }; // a copy of 'table'
+  id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }; // a copy of 'table'
 // #endregion
 
 // #region index: the pages of the :index marks, sorted under letters in the display face
@@ -125,6 +126,7 @@ const index = { fontFamily: TEXT, fontSize: pt(9), lineHeight: pt(11.6), color: 
 // #endregion
 
 const config = () => ({
+  locale: 'en-us', // the thesis is written in English
   colorPalette, header: chapterHeads, footer, layout: { layoutType: 'single' },
   page: { sizePreset: 'custom', width: mm(176), height: mm(250), dpi: 150, // B5
     margins: { top: mm(TOP), bottom: mm(24), left: mm(INNER), right: mm(OUTER), mirror: true } },

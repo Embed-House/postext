@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "textbook-box-family",
-  "sourceHash": "35771ad903193a6d15944e74d42c30aee1f677b8913b31faebe4c3953104b064",
+  "sourceHash": "b31f77b10c7b26e436c277adfe511aef3a77d9f79a9a3894084dfc3967bde6c6",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.568Z",
+  "capturedAt": "2026-10-11T20:22:30.984Z",
   "variants": {
     "en": {
-      "hash8": "de2a45ac",
+      "hash8": "79470210",
       "vdtHash": "dc28595e779ffca5d21fcfb164e4e34256c3f5e4",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 33,
-        "buildMs": 59,
-        "totalMs": 786,
+        "importMs": 145,
+        "fontsMs": 42,
+        "buildMs": 83,
+        "totalMs": 868,
         "builds": 1
       },
       "specimen": {
@@ -100,8 +100,15 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 45514,
-        "folio": "4d63ba9f"
+        "bytes": 45512,
+        "folio": "4d63ba9f",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "715b76acc1149fe2",
+            "lines": "6893de22e7cc097e"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -377,6 +384,9 @@
           "share": 0,
           "worst": 1.99
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -387,13 +397,13 @@
       }
     },
     "es": {
-      "hash8": "64be2100",
+      "hash8": "0617f980",
       "vdtHash": "b95d9fed920cda47bd315548b4bf324147383d0b",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 33,
-        "buildMs": 51,
-        "totalMs": 804,
+        "importMs": 236,
+        "fontsMs": 96,
+        "buildMs": 80,
+        "totalMs": 1057,
         "builds": 1
       },
       "specimen": {
@@ -427,7 +437,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 166874,
+          "bytes": 166886,
           "alt": "Página de apertura 27: Células y membranas."
         },
         {
@@ -477,8 +487,15 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 44274,
-        "folio": "4d63ba9f"
+        "bytes": 44273,
+        "folio": "4d63ba9f",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "5fdaed15330ba4b1",
+            "lines": "5e40ad5c31b3078a"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -753,6 +770,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.95
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

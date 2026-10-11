@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-page-splitters",
-  "sourceHash": "bee641d51a0d78d0c322afb111ee2c30a3083b4852fc50c674bf708d65799149",
+  "sourceHash": "03589a31d87e28788ade1efa8fe53944a5278b36e087db7d7b07606337b62d71",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:49:50.774Z",
+  "capturedAt": "2026-10-11T20:22:30.053Z",
   "variants": {
     "en": {
-      "hash8": "bd670490",
+      "hash8": "360b523c",
       "vdtHash": "f727ec43ba9b71a50f56e00a9d9b89f53d4870b9",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 84,
-        "buildMs": 405,
-        "totalMs": 1230,
+        "importMs": 1597,
+        "fontsMs": 620,
+        "buildMs": 484,
+        "totalMs": 4776,
         "builds": 1
       },
       "specimen": {
@@ -114,12 +114,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 849258,
+        "bytes": 849253,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808784
+        "bytes": 808783,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "883717ea052adf46",
+            "lines": "bbc0107dead32e27"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -286,6 +293,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -296,13 +306,13 @@
       }
     },
     "es": {
-      "hash8": "281e7bf9",
+      "hash8": "80d75ba4",
       "vdtHash": "c75d0046fad73ee2c97d9da83f36f3c826b29f60",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 85,
-        "buildMs": 447,
-        "totalMs": 1262,
+        "importMs": 2131,
+        "fontsMs": 745,
+        "buildMs": 546,
+        "totalMs": 5047,
         "builds": 1
       },
       "specimen": {
@@ -399,12 +409,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 850612,
+        "bytes": 850609,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808951
+        "bytes": 808952,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "8dca96529b36d56a",
+            "lines": "d5a506aacbef7f0c"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -571,6 +588,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -581,13 +601,13 @@
       }
     },
     "ca": {
-      "hash8": "84f790aa",
+      "hash8": "e17845c3",
       "vdtHash": "cc02701ee828ad1613e20a5959288ae02326c3f9",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 83,
-        "buildMs": 425,
-        "totalMs": 1243,
+        "importMs": 1442,
+        "fontsMs": 417,
+        "buildMs": 559,
+        "totalMs": 4302,
         "builds": 1
       },
       "specimen": {
@@ -684,12 +704,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 849660,
+        "bytes": 849654,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808784
+        "bytes": 808783,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "4a9a18e0cfc13b10",
+            "lines": "f52627f79a95923d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -856,6 +883,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -866,13 +896,13 @@
       }
     },
     "zh": {
-      "hash8": "8217f5ed",
+      "hash8": "a89bfaba",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 253,
-        "buildMs": 364,
-        "totalMs": 1353,
+        "importMs": 1979,
+        "fontsMs": 1067,
+        "buildMs": 431,
+        "totalMs": 5236,
         "builds": 1
       },
       "specimen": {
@@ -969,12 +999,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 876075,
+        "bytes": 876074,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809296
+        "bytes": 809296,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "4decc5d9289b7ae1",
+            "lines": "88fbf279b7dcf473"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1142,6 +1179,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1152,13 +1192,13 @@
       }
     },
     "ar": {
-      "hash8": "1a715861",
+      "hash8": "986557d7",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 100,
-        "buildMs": 424,
-        "totalMs": 1234,
+        "importMs": 1489,
+        "fontsMs": 1037,
+        "buildMs": 539,
+        "totalMs": 5175,
         "builds": 1
       },
       "specimen": {
@@ -1256,12 +1296,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 864084,
+        "bytes": 864081,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809488
+        "bytes": 809488,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "55c9ad31b467433f",
+            "lines": "eb11bf932d8a9ee1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1431,6 +1478,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1441,13 +1491,13 @@
       }
     },
     "ja": {
-      "hash8": "6ae367f3",
-      "vdtHash": "79aba5b632486c865d1351beba981e97a98636a0",
+      "hash8": "73d98417",
+      "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 278,
-        "buildMs": 377,
-        "totalMs": 1400,
+        "importMs": 1641,
+        "fontsMs": 1770,
+        "buildMs": 482,
+        "totalMs": 5570,
         "builds": 1
       },
       "specimen": {
@@ -1479,7 +1529,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 53176,
+          "bytes": 53110,
           "alt": "章扉、1ページ：一ページ、三つのコマ割り。"
         },
         {
@@ -1545,12 +1595,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 888509,
+        "bytes": 888507,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809607
+        "bytes": 809606,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "d6b941bd36a6d9ef",
+            "lines": "7ae79f91a4daf76b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1719,23 +1776,31 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "d16ca415",
+      "hash8": "a7c57236",
       "vdtHash": "7a7072cfd5e293567615cce8aac85d5b262ce8b5",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 84,
-        "buildMs": 418,
-        "totalMs": 1237,
+        "importMs": 1580,
+        "fontsMs": 474,
+        "buildMs": 504,
+        "totalMs": 3224,
         "builds": 1
       },
       "specimen": {
@@ -1832,12 +1897,19 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 850697,
+        "bytes": 850694,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808929
+        "bytes": 808929,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "6f9fb45b6ca7995b",
+            "lines": "96be89e9dcc044f9"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -2003,6 +2075,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

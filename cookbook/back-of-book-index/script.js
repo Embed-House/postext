@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 072 · A textbook index that follows the text ═══════════════
 // https://postext.dev/en/cookbook/back-of-book-index
 // Code: MIT · Text: original (CC BY 4.0) · Drawing: generated in code (CC BY 4.0)
-// Fonts: Literata, Libre Franklin (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Literata, Libre Franklin (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // Two chapters of a physiology textbook and the index that closes them, laid out by
 // buildBundle as one book: the terms are marked where the text discusses them, and the
 // index chapter prints them with the pages they land on.
