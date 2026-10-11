@@ -628,6 +628,10 @@ Levers in order: box closing a short column pushed to the foot → extra grid li
 (favouring lower level numbers) → after list ends → under top floats → loose paragraphs
 (TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking).
 `trailing`: level the closing band of a chapter (short last page → equal-height columns).
+A closing band keeps its column heads level: no lever lowers the block that opens a column under a
+float, nor (≥ 1.28) the heading right under a `span:'page'` opener in the opener's own column; the
+lines go to a heading further down or the column ends short. Its columns, and the column rule, end
+on the grid line under its text, also when the band was level and took no cut (≥ 1.28).
 `beforeSpan`: level the columns a `span:'page'` callout interrupts. `closingBox: 'last'` runs the
 box lever after the spacing levers (the box takes only the fraction of a line they leave, so a
 box annotating the paragraph above it stays close to it); `'off'` never moves the box. Disable
