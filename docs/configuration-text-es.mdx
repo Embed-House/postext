@@ -770,7 +770,7 @@ Más allá de la separación silábica y los límites de espaciado, la configura
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que un párrafo termine con menos de <code>orphanMinLines</code> líneas al principio de la siguiente columna.</td>
+      <td>Desaconsejar que un párrafo termine con menos de <code>orphanMinLines</code> líneas al principio de la siguiente columna. En una retícula de caracteres (<code>cjk.grid</code>) de la región <code>japan</code> el valor por defecto es <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +794,7 @@ Más allá de la separación silábica y los límites de espaciado, la configura
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que un párrafo empiece con menos de <code>widowMinLines</code> líneas al final de la columna actual.</td>
+      <td>Desaconsejar que un párrafo empiece con menos de <code>widowMinLines</code> líneas al final de la columna actual. En una retícula de caracteres (<code>cjk.grid</code>) el valor por defecto es <code>false</code>: la página contiene las líneas que su retícula cuenta.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -818,7 +818,7 @@ Más allá de la separación silábica y los límites de espaciado, la configura
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsejar que los párrafos terminen con una línea corta: una última línea muy breve, p. ej. una única palabra corta aislada. También en el texto en bandera, con <code>optimalRagged</code>. Un párrafo chino, japonés o coreano no termina en una línea de un solo carácter, solo o con los signos que lo cierran (孤字): la línea anterior le cede su último carácter si aún puede justificarse dentro del tope de espaciado.</td>
+      <td>Desaconsejar que los párrafos terminen con una línea corta: una última línea muy breve, p. ej. una única palabra corta aislada. También en el texto en bandera, con <code>optimalRagged</code>. Un párrafo chino, japonés o coreano no termina en una línea de un solo carácter, solo o con los signos que lo cierran (孤字): la línea anterior le cede su último carácter si aún puede justificarse dentro del tope de espaciado. En una retícula de caracteres solo cede el carácter una línea justificada: una alineada a la izquierda, a la derecha o centrada no puede repartirse, y su última casilla quedaría vacía.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

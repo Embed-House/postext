@@ -329,6 +329,8 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 `enabled`时，配置在被读取之前就会改写：每栏宽为`charsPerLine`个`bodyText.fontSize`的em，版心高为`linesPerPage`行`bodyText.lineHeight`；`layoutType: 'double'`时，栏间距为`layout.gutterWidth`取整到整数个em，至少一个。`page.margins`中的页边距作为最小值：版心放在它们留出区域的正中，每个页边距在其方向上增加剩余空间的一半（镜像页边距的书保留内外页边距的差别，二者增加相同的量）。未设置时，`charsPerLine`和`linesPerPage`取能排下的最大值。超出能排下的数值会减小到能排下的值，并报告一条`cjkGridClamped`配置警告。字号和行距保持原值。在`oneAndHalf`版式中，`charsPerLine`指主栏；侧栏取最接近`sideColumnPercent`在所配置页边距内给出宽度的整数个em（至少一个），栏间距按双栏的方式取整，并改写`sideColumnPercent`，使两栏都按整数个em切分。竖排时（`layout.writingMode: 'vertical-rl'`），一行的字符沿页面向下排，各行横向排列，因此`charsPerLine`量的是页面高度，`double`版式得到上下叠放的两栏，叠加显示的字格立在字符居中的轴线上。
 
+网格上的页面要排满网格所数的行数，所以会让一栏少排一行的两条规则也随网格而定。`bodyText.avoidWidows`在栏底只容得下段落的一行时把整段移到下一栏，在网格上默认关闭。`bodyText.avoidOrphans`从上一栏让出一行，免得段落只剩一行落在下一栏的栏首；中文文档保留这条规则（孤行，clreq §7.1.2），`japan`地区则默认关闭：JLReq §3.5.4计的是段落末行的字数，而不是换页处的行数。配置里写明的值照旧生效；postext 1.28之前保存的文档两条规则都保持开启（`configVersion` 12）。
+
 中文出版实践中的两种版式，五号字（10.5 pt），行间距6 pt（`lineHeight: 16.5pt`）：
 
 - 大32开，140 × 203 mm，28 × 28：行长294 pt（103.7 mm），版心高462 pt（163 mm）；内外页边距16/20 mm、上下页边距18/20 mm的`page.margins`能容纳它。

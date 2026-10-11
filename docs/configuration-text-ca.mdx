@@ -768,7 +768,7 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que un paràgraf acabi amb menys de <code>orphanMinLines</code> línies al principi de la columna següent.</td>
+      <td>Desaconsellar que un paràgraf acabi amb menys de <code>orphanMinLines</code> línies al principi de la columna següent. En una retícula de caràcters (<code>cjk.grid</code>) de la regió <code>japan</code> el valor per defecte és <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -792,7 +792,7 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que un paràgraf comenci amb menys de <code>widowMinLines</code> línies al final de la columna actual.</td>
+      <td>Desaconsellar que un paràgraf comenci amb menys de <code>widowMinLines</code> línies al final de la columna actual. En una retícula de caràcters (<code>cjk.grid</code>) el valor per defecte és <code>false</code>: la pàgina conté les línies que la retícula compta.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -816,7 +816,7 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que els paràgrafs acabin amb una línia curta: una última línia molt breu, p. ex. una única paraula curta aïllada. També en el text en bandera, amb <code>optimalRagged</code>. Un paràgraf xinès, japonès o coreà no acaba en una línia d'un sol caràcter, sol o amb els signes que el tanquen (孤字): la línia anterior li cedeix el seu últim caràcter si encara es pot justificar dins del límit d'espaiat.</td>
+      <td>Desaconsellar que els paràgrafs acabin amb una línia curta: una última línia molt breu, p. ex. una única paraula curta aïllada. També en el text en bandera, amb <code>optimalRagged</code>. Un paràgraf xinès, japonès o coreà no acaba en una línia d'un sol caràcter, sol o amb els signes que el tanquen (孤字): la línia anterior li cedeix el seu últim caràcter si encara es pot justificar dins del límit d'espaiat. En una retícula de caràcters només cedeix el caràcter una línia justificada: una d'alineada a l'esquerra, a la dreta o centrada no es pot repartir, i la seva última casella quedaria buida.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

@@ -770,7 +770,7 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>اثنِ الفقرة عن أن تنتهي بأقل من <code>orphanMinLines</code> سطرًا في أعلى العمود التالي.</td>
+      <td>اثنِ الفقرة عن أن تنتهي بأقل من <code>orphanMinLines</code> سطرًا في أعلى العمود التالي. وعلى شبكة المحارف (<code>cjk.grid</code>) في المنطقة <code>japan</code> تكون القيمة الافتراضية <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +794,7 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>اثنِ الفقرة عن أن تبدأ بأقل من <code>widowMinLines</code> سطرًا في أسفل العمود الحالي.</td>
+      <td>اثنِ الفقرة عن أن تبدأ بأقل من <code>widowMinLines</code> سطرًا في أسفل العمود الحالي. وعلى شبكة المحارف (<code>cjk.grid</code>) تكون القيمة الافتراضية <code>false</code>: فالصفحة تحمل الأسطر التي تعدّها شبكتها.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -818,7 +818,7 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>اثنِ الفقرات عن الانتهاء بسطر أخير قصير جدًا — <em>كلمة معزولة</em> (runt)، كأن تقف كلمة قصيرة واحدة وحدها. والنص غير المضبوط أيضًا، مع <code>optimalRagged</code>. والفقرة الصينية أو اليابانية أو الكورية لا تنتهي بسطر يحوي محرفًا واحدًا، وحده أو مع علامات إغلاقه (孤字): يعطيه السطر الذي فوقه محرفه الأخير حين يظل ممكنًا ضبط ذلك السطر ضمن سقف التتبّع.</td>
+      <td>اثنِ الفقرات عن الانتهاء بسطر أخير قصير جدًا — <em>كلمة معزولة</em> (runt)، كأن تقف كلمة قصيرة واحدة وحدها. والنص غير المضبوط أيضًا، مع <code>optimalRagged</code>. والفقرة الصينية أو اليابانية أو الكورية لا تنتهي بسطر يحوي محرفًا واحدًا، وحده أو مع علامات إغلاقه (孤字): يعطيه السطر الذي فوقه محرفه الأخير حين يظل ممكنًا ضبط ذلك السطر ضمن سقف التتبّع. وعلى شبكة المحارف لا يتخلى عن المحرف إلا السطر المضبوط: فالسطر المحاذى إلى اليسار أو اليمين أو الموسَّط لا يمكن توزيعه، وتبقى خانته الأخيرة فارغة.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

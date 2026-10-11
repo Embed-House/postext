@@ -770,7 +770,7 @@ Além da hifenização e dos limites de espaçamento, a configuração do texto 
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desestimula que um parágrafo termine com menos de <code>orphanMinLines</code> linhas no alto da coluna seguinte.</td>
+      <td>Desestimula que um parágrafo termine com menos de <code>orphanMinLines</code> linhas no alto da coluna seguinte. Numa grade de caracteres (<code>cjk.grid</code>) da região <code>japan</code> o padrão é <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +794,7 @@ Além da hifenização e dos limites de espaçamento, a configuração do texto 
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desestimula que um parágrafo comece com menos de <code>widowMinLines</code> linhas no pé da coluna atual.</td>
+      <td>Desestimula que um parágrafo comece com menos de <code>widowMinLines</code> linhas no pé da coluna atual. Numa grade de caracteres (<code>cjk.grid</code>) o padrão é <code>false</code>: a página contém as linhas que a grade conta.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -818,7 +818,7 @@ Além da hifenização e dos limites de espaçamento, a configuração do texto 
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desestimula parágrafos que terminam com uma última linha muito curta, uma <em>linha curta</em> (runt), por exemplo uma única palavra curta sozinha. Vale também para texto alinhado à esquerda, com <code>optimalRagged</code>. Um parágrafo em chinês, japonês ou coreano não termina numa linha com um só caractere, sozinho ou com os sinais de fechamento (孤字): a linha de cima lhe cede o último caractere quando ainda pode ser justificada dentro do limite de tracking.</td>
+      <td>Desestimula parágrafos que terminam com uma última linha muito curta, uma <em>linha curta</em> (runt), por exemplo uma única palavra curta sozinha. Vale também para texto alinhado à esquerda, com <code>optimalRagged</code>. Um parágrafo em chinês, japonês ou coreano não termina numa linha com um só caractere, sozinho ou com os sinais de fechamento (孤字): a linha de cima lhe cede o último caractere quando ainda pode ser justificada dentro do limite de tracking. Numa grade de caracteres só uma linha justificada cede o caractere: uma alinhada à esquerda, à direita ou centralizada não pode ser distribuída, e a sua última casa ficaria vazia.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

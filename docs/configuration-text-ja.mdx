@@ -770,7 +770,7 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>段落が、次の段の頭で<code>orphanMinLines</code>行未満で終わるのを避けます。</td>
+      <td>段落が、次の段の頭で<code>orphanMinLines</code>行未満で終わるのを避けます。<code>japan</code>地域の文字グリッド（<code>cjk.grid</code>）では、既定値は<code>false</code>です。</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +794,7 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>段落が、現在の段の末尾で<code>widowMinLines</code>行未満で始まるのを避けます。</td>
+      <td>段落が、現在の段の末尾で<code>widowMinLines</code>行未満で始まるのを避けます。文字グリッド（<code>cjk.grid</code>）では既定値は<code>false</code>で、ページはグリッドが数える行数を収めます。</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -818,7 +818,7 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>段落が非常に短い最終行、つまり<em>ラント</em>（たとえば短い1語だけの行）で終わるのを避けます。<code>optimalRagged</code>を使うと、行末不ぞろいのテキストにも適用されます。中国語・日本語・韓国語の段落は、1文字だけ（単独または閉じ記号を伴うもの）の行（孤字）で終わりません。上の行が字間の上限内で引き続き両端そろえにできる場合、その行から最後の1文字を送ります。</td>
+      <td>段落が非常に短い最終行、つまり<em>ラント</em>（たとえば短い1語だけの行）で終わるのを避けます。<code>optimalRagged</code>を使うと、行末不ぞろいのテキストにも適用されます。中国語・日本語・韓国語の段落は、1文字だけ（単独または閉じ記号を伴うもの）の行（孤字）で終わりません。上の行が字間の上限内で引き続き両端そろえにできる場合、その行から最後の1文字を送ります。文字グリッド上では、両端そろえの行だけが1文字を送ります。左そろえ、右そろえ、中央そろえの行は行長まで広げられず、最後のマスが空いてしまうためです。</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

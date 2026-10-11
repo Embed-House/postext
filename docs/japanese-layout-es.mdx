@@ -136,7 +136,7 @@ Solo se aplica a un párrafo con sangría de primera línea; uno con sangría fr
 
 ### Justificación y última línea
 
-El texto japonés va justificado, con la última línea del párrafo sin espaciar. Una línea que necesitaría más de medio cuadratín entre sus caracteres se queda corta y la composición avisa con `cjkLooseLine` (véase [Separación silábica y justificación](/es/docs/justification#chino-japonés-y-coreano)). Un párrafo no termina en una línea de un solo carácter (泣き別れ) cuando `bodyText.avoidRunts` está activado, como lo está por defecto: la línea anterior intenta primero meterlo cediendo blanco de la puntuación, siempre que ninguna línea quede floja, y solo después le cede un carácter.
+El texto japonés va justificado, con la última línea del párrafo sin espaciar. Una línea que necesitaría más de medio cuadratín entre sus caracteres se queda corta y la composición avisa con `cjkLooseLine` (véase [Separación silábica y justificación](/es/docs/justification#chino-japonés-y-coreano)). Un párrafo no termina en una línea de un solo carácter (泣き別れ) cuando `bodyText.avoidRunts` está activado, como lo está por defecto: la línea anterior intenta primero meterlo cediendo blanco de la puntuación, siempre que ninguna línea quede floja, y solo después le cede un carácter. En una retícula de caracteres (`cjk.grid`), un párrafo sin justificar, como en el papel de manuscrito, no cede ningún carácter: la línea anterior no podría repartirse y su última casilla quedaría vacía. Sigue metiendo el carácter cuando la puntuación tiene blanco que ceder.
 
 ## Escritura vertical
 
@@ -161,6 +161,8 @@ Los números de hasta dos cifras van de pie en una casilla (`cjk.uprightDigits`,
 ### Páginas, pisos y folios
 
 Un libro japonés vertical suele imprimir el folio en cifras arábigas al pie, y un folio vertical en kanji a lo largo del corte cuando el diseño lo pone: `page.pageNumbering.format: 'cjk-decimal'` escribe 一〇五 en la página 105, la forma posicional de los folios (JLReq §2.6). Los capítulos empiezan en un recto, que en un libro encuadernado por la derecha es una página izquierda: `breakBefore: { enabled: true, parity: 'odd' }`. Las cabeceras a lo largo del corte de [Elementos de texto verticales](/es/docs/configuration-page-layout#elementos-de-texto-verticales) sirven sin cambios para los libros japoneses.
+
+En una retícula de caracteres (`cjk.grid`), una página japonesa contiene todas las líneas que su retícula cuenta: `bodyText.avoidWidows` y `bodyText.avoidOrphans` están desactivadas ahí por defecto. JLReq §3.5.4 cuenta los caracteres de la última línea de un párrafo y no fija ningún número de líneas en un salto de página, de modo que un párrafo puede dejar una línea al pie de una página o llevar una a la siguiente. Con `true` en cualquiera de las dos claves la regla vuelve. Un documento sin retícula mantiene las dos activas.
 
 ## Furigana
 

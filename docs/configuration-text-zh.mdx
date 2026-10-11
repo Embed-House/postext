@@ -770,7 +770,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落在下一栏顶部只剩不足<code>orphanMinLines</code>行就结束。</td>
+      <td>避免段落在下一栏顶部只剩不足<code>orphanMinLines</code>行就结束。在<code>japan</code>地区的字符网格（<code>cjk.grid</code>）上默认为<code>false</code>。</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +794,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落在当前栏底部只有不足<code>widowMinLines</code>行就开始。</td>
+      <td>避免段落在当前栏底部只有不足<code>widowMinLines</code>行就开始。在字符网格（<code>cjk.grid</code>）上默认为<code>false</code>：页面排满网格所数的行数。</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -818,7 +818,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落以很短的末行结束，即<em>孤字</em>，例如单独一个短词。配合<code>optimalRagged</code>，不齐行文字也适用。中文、日文或韩文段落不会以只有一个字符（单独或连同其后的收尾标点）的行结束（孤字）：只要上一行在字距上限之内仍能两端对齐，就把最后一个字符让给这一行。</td>
+      <td>避免段落以很短的末行结束，即<em>孤字</em>，例如单独一个短词。配合<code>optimalRagged</code>，不齐行文字也适用。中文、日文或韩文段落不会以只有一个字符（单独或连同其后的收尾标点）的行结束（孤字）：只要上一行在字距上限之内仍能两端对齐，就把最后一个字符让给这一行。在字符网格上，只有两端对齐的行才让出这个字符：左对齐、右对齐或居中的行无法撑满，最后一格会空着。</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>
