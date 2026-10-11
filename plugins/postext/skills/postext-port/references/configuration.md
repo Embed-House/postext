@@ -1129,6 +1129,8 @@ Inline `:chip[text]{style="id"}` (word banks, keys, tags). Chip without style �
 { id: string (REQUIRED; resource.typeId), name: string, namePlural?: string,
   shortLabel: string          used by :ref default style ("Fig. 1.7")
   numberingTemplate: string   tokens {n} (counter, per counterFormat), {h1}…{h6} (heading counters, decimal); '' = unnumbered
+                              ≥ 1.28 a token takes a heading template's style suffix: '{h1:A}.{n}' = A.1 in a lettered appendix,
+                              '{h1:I}.{n}' = II.3, '{n:i}' over counterFormat; unknown style = decimal; ≤ 1.27 printed '{h1:A}' as text
                               (≥ 1.5: caption "<prefix>. <caption>", no second stop after a prefix ending in . : ! ? …,
                               :ref prints the label alone; 1.4 printed "Do .Caption" / "Do ")
   resetOn: 'never'|'h1'|…|'h6'
@@ -1185,6 +1187,10 @@ Gotchas
   `localized.<lang>.config.resourceTypes` in preset.json).
 - Numbering follows first `:ref` in reading order; `{h1}` is the chapter number (continues across chapters in book mode).
 - Pair `{h1}.{n}` with `resetOn:'h1'`.
+- Lettered appendices (heading style `numberingTemplate: 'Appendix {1:A}'`, `startAt=1` on the first): ONE extra type for all of them,
+  `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }` (≥ 1.28). Do not write the letter into the template
+  (`'A.{n}'`, one type per appendix): that was the ≤ 1.27 workaround. Numbered boxes (`calloutStyles[].numbering.numberingTemplate`) and
+  `equationNumbering.numberingTemplate` take the same suffix.
 
 ---------------------------------------------------------------------------------
 
