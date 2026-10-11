@@ -3,21 +3,21 @@
   "slug": "tebeo-album-page",
   "sourceHash": "a5373512a56a2a428b308b3b7d45847b652716ec1c26605a050700e5fa6febf2",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.757Z",
+  "capturedAt": "2026-10-11T03:51:38.329Z",
   "variants": {
     "en": {
-      "hash8": "d0bb169d",
+      "hash8": "389ba0cb",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 94,
+        "importMs": 183,
+        "fontsMs": 131,
         "buildMs": 420,
-        "totalMs": 1243,
+        "totalMs": 1301,
         "builds": 1
       },
       "specimen": {
@@ -84,12 +84,12 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117122,
+        "bytes": 1117121,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115571
+        "bytes": 1115586
       },
       "detected": {
         "apis": [
@@ -285,19 +285,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b975bb10",
+      "hash8": "9a617185",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 83,
-        "buildMs": 321,
-        "totalMs": 1133,
+        "importMs": 164,
+        "fontsMs": 81,
+        "buildMs": 327,
+        "totalMs": 1136,
         "builds": 1
       },
       "specimen": {
@@ -364,12 +364,12 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117721,
+        "bytes": 1117720,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116171
+        "bytes": 1116186
       },
       "detected": {
         "apis": [
@@ -570,19 +570,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "87c36319",
+      "hash8": "f7cceecf",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 81,
-        "buildMs": 330,
-        "totalMs": 1138,
+        "importMs": 166,
+        "fontsMs": 83,
+        "buildMs": 326,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -654,7 +654,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116302
+        "bytes": 1116318
       },
       "detected": {
         "apis": [
@@ -855,19 +855,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "23c896ec",
+      "hash8": "d28203cb",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
         "importMs": 166,
-        "fontsMs": 257,
-        "buildMs": 392,
-        "totalMs": 1390,
+        "fontsMs": 254,
+        "buildMs": 398,
+        "totalMs": 1384,
         "builds": 1
       },
       "specimen": {
@@ -939,7 +939,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115398
+        "bytes": 1115412
       },
       "detected": {
         "apis": [
@@ -1136,19 +1136,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "4e867bd2",
+      "hash8": "fe87b09f",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 110,
-        "buildMs": 353,
-        "totalMs": 1157,
+        "importMs": 178,
+        "fontsMs": 108,
+        "buildMs": 350,
+        "totalMs": 1175,
         "builds": 1
       },
       "specimen": {
@@ -1221,7 +1221,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115448
+        "bytes": 1115464
       },
       "detected": {
         "apis": [
@@ -1420,19 +1420,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "a2239c5d",
+      "hash8": "0885e88f",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 237,
-        "fontsMs": 332,
-        "buildMs": 332,
-        "totalMs": 1476,
+        "importMs": 166,
+        "fontsMs": 223,
+        "buildMs": 298,
+        "totalMs": 1266,
         "builds": 1
       },
       "specimen": {
@@ -1505,7 +1505,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116268
+        "bytes": 1116283
       },
       "detected": {
         "apis": [
@@ -1703,19 +1703,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "a894a99a",
+      "hash8": "ef040997",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 96,
-        "buildMs": 337,
-        "totalMs": 1166,
+        "importMs": 169,
+        "fontsMs": 94,
+        "buildMs": 336,
+        "totalMs": 1156,
         "builds": 1
       },
       "specimen": {
@@ -1782,12 +1782,12 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1117156,
+        "bytes": 1117155,
         "pages": 2
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115976
+        "bytes": 1115989
       },
       "detected": {
         "apis": [
@@ -1983,7 +1983,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

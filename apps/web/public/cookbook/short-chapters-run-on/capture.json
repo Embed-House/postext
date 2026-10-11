@@ -3,20 +3,20 @@
   "slug": "short-chapters-run-on",
   "sourceHash": "8116fbb598a7acf7620cb5582348dc354f58a3b58e31c419826df489e5fa5471",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.673Z",
+  "capturedAt": "2026-10-11T03:51:38.284Z",
   "variants": {
     "en": {
-      "hash8": "8709492d",
+      "hash8": "801ebc6c",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 153,
-        "fontsMs": 32,
-        "buildMs": 57,
-        "totalMs": 847,
+        "importMs": 138,
+        "fontsMs": 31,
+        "buildMs": 55,
+        "totalMs": 819,
         "builds": 1
       },
       "specimen": {
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322275,
+        "bytes": 322310,
         "folio": "badc8643"
       },
       "detected": {
@@ -341,19 +341,24 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.headings {\"h1\":118,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
+            "detail": "bundle locale pt, the document's language: en names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: headings"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2d3b2c3e",
+      "hash8": "0e2148ed",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 141,
-        "fontsMs": 30,
-        "buildMs": 57,
-        "totalMs": 824,
+        "importMs": 133,
+        "fontsMs": 31,
+        "buildMs": 55,
+        "totalMs": 811,
         "builds": 1
       },
       "specimen": {
@@ -488,7 +493,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322288,
+        "bytes": 322323,
         "folio": "badc8643"
       },
       "detected": {
@@ -678,7 +683,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.headings {\"h1\":118,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
+            "detail": "bundle locale pt, the document's language: es names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: headings"
           }
         ]
       }

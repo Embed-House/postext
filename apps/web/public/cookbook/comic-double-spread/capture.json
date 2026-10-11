@@ -3,21 +3,21 @@
   "slug": "comic-double-spread",
   "sourceHash": "2b992b1ccc3fe0fd33ff2caac9ac76e645b38468dde0cff3b8fb94af850046bd",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.092Z",
+  "capturedAt": "2026-10-11T03:49:50.734Z",
   "variants": {
     "en": {
-      "hash8": "eab5f358",
+      "hash8": "ae2a10f4",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 94,
-        "buildMs": 251,
-        "totalMs": 1080,
+        "importMs": 169,
+        "fontsMs": 92,
+        "buildMs": 249,
+        "totalMs": 1067,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893362
+        "bytes": 893376
       },
       "detected": {
         "apis": [
@@ -249,19 +249,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "307db3c0",
+      "hash8": "d2933a6a",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 171,
+        "importMs": 175,
         "fontsMs": 95,
-        "buildMs": 244,
-        "totalMs": 1068,
+        "buildMs": 240,
+        "totalMs": 1067,
         "builds": 1
       },
       "specimen": {
@@ -332,7 +332,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893531
+        "bytes": 893541
       },
       "detected": {
         "apis": [
@@ -493,19 +493,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "057c7837",
+      "hash8": "7f68169c",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
         "importMs": 167,
         "fontsMs": 92,
-        "buildMs": 246,
-        "totalMs": 1060,
+        "buildMs": 242,
+        "totalMs": 1062,
         "builds": 1
       },
       "specimen": {
@@ -571,12 +571,12 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873472,
+        "bytes": 873473,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893417
+        "bytes": 893434
       },
       "detected": {
         "apis": [
@@ -737,19 +737,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "12a75538",
+      "hash8": "d3b90b85",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
         "importMs": 167,
-        "fontsMs": 220,
-        "buildMs": 262,
-        "totalMs": 1221,
+        "fontsMs": 211,
+        "buildMs": 266,
+        "totalMs": 1213,
         "builds": 1
       },
       "specimen": {
@@ -815,12 +815,12 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895778,
+        "bytes": 895777,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893765
+        "bytes": 893778
       },
       "detected": {
         "apis": [
@@ -982,19 +982,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "86b38946",
+      "hash8": "eab092af",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 174,
+        "importMs": 172,
         "fontsMs": 104,
-        "buildMs": 254,
-        "totalMs": 1069,
+        "buildMs": 257,
+        "totalMs": 1064,
         "builds": 1
       },
       "specimen": {
@@ -1066,7 +1066,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893815
+        "bytes": 893825
       },
       "detected": {
         "apis": [
@@ -1230,19 +1230,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "b6a541ef",
+      "hash8": "89cf27c5",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 193,
-        "buildMs": 207,
-        "totalMs": 1128,
+        "importMs": 165,
+        "fontsMs": 200,
+        "buildMs": 206,
+        "totalMs": 1135,
         "builds": 1
       },
       "specimen": {
@@ -1314,7 +1314,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893818
+        "bytes": 893834
       },
       "detected": {
         "apis": [
@@ -1477,19 +1477,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "e74e9271",
+      "hash8": "ccae580c",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 169,
+        "importMs": 170,
         "fontsMs": 91,
-        "buildMs": 288,
-        "totalMs": 1109,
+        "buildMs": 281,
+        "totalMs": 1106,
         "builds": 1
       },
       "specimen": {
@@ -1555,12 +1555,12 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873622,
+        "bytes": 873620,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893492
+        "bytes": 893506
       },
       "detected": {
         "apis": [
@@ -1721,7 +1721,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
