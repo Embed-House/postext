@@ -160,6 +160,7 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
     ? false
     : partial?.enabled ?? (isUnhyphenatedLanguage(documentLocale) ? false : D.enabled);
   const locale = hyphenationLocaleFor(requested, enabled);
+  const exceptions = normalizeHyphenationExceptions(partial?.exceptions);
   return {
     enabled,
     locale,
@@ -167,8 +168,9 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
     ragged: partial?.ragged ?? D.ragged,
     zone: partial?.zone ?? D.zone,
     compounds: partial?.compounds ?? D.compounds,
+    ...(exceptions ? { exceptions } : {}),
+    capitalized: partial?.capitalized ?? D.capitalized,
   };
-  const exceptions = normalizeHyphenationExceptions(partial?.exceptions);
 }
 
 /** Whether a document in `locale` is written in Arabic script (`ar`,
@@ -176,8 +178,6 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
 function arabicScript(locale: unknown): boolean {
   return localeScript(locale) === 'Arab';
 }
-    ...(exceptions ? { exceptions } : {}),
-    capitalized: partial?.capitalized ?? D.capitalized,
 
 const EMPHASES: readonly EmphasisStyle[] = ['italic', 'bold', 'color', 'overline'];
 const TASHKIL_MODES: readonly TashkilMode[] = ['keep', 'strip', 'strip-vowels'];

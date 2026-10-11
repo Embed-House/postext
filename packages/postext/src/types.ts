@@ -1254,21 +1254,6 @@ export interface HyphenationConfig {
    *  and boxes; captions, notes, table cells and the contents keep dividing
    *  compounds. */
   compounds?: boolean;
-}
-
-export interface ResolvedHyphenationConfig {
-  enabled: boolean;
-  /** The bundled patterns actually used (see {@link LocaleTag}). */
-  locale: HyphenationLocale;
-  /** The BCP 47 tag {@link locale} was resolved from, when it is not itself
-   *  a bundled id (`'es-ES'` → `'es'`, `'sv'` → `'en-us'`). The PDF backend
-   *  declares it as the document language. */
-  tag?: string;
-  ragged: boolean;
-  zone: Dimension;
-  compounds: boolean;
-}
-
   /** Words the dictionary must not divide, or may divide only where the
    *  entry says (#699), as in TeX's `\hyphenation{…}`. An entry is one word:
    *  written without a hyphen (`'Alice'`) it is never divided; written with
@@ -1294,6 +1279,25 @@ export interface ResolvedHyphenationConfig {
    *  `citations.hyphenateNames`. An entry of `exceptions` with points still
    *  divides its word there. */
   capitalized?: boolean;
+}
+
+export interface ResolvedHyphenationConfig {
+  enabled: boolean;
+  /** The bundled patterns actually used (see {@link LocaleTag}). */
+  locale: HyphenationLocale;
+  /** The BCP 47 tag {@link locale} was resolved from, when it is not itself
+   *  a bundled id (`'es-ES'` → `'es'`, `'sv'` → `'en-us'`). The PDF backend
+   *  declares it as the document language. */
+  tag?: string;
+  ragged: boolean;
+  zone: Dimension;
+  compounds: boolean;
+  /** The words of `HyphenationConfig.exceptions`, trimmed, checked, without
+   *  duplicates and sorted; absent when the document names none. */
+  exceptions?: string[];
+  capitalized: boolean;
+}
+
 /** `BodyTextConfig.kashida`. */
 export type KashidaSetting = 'auto' | 'none';
 /** `BodyTextConfig.kashidaPatterns`. */
@@ -1307,10 +1311,6 @@ export interface ResolvedKashidaConfig {
   maxLength: number;
 }
 
-  /** The words of `HyphenationConfig.exceptions`, trimmed, checked, without
-   *  duplicates and sorted; absent when the document names none. */
-  exceptions?: string[];
-  capitalized: boolean;
 export interface BodyTextConfig {
   /** One family, as every `fontFamily` field: a CSS font stack is set in
    *  its first family (see `primaryFontFamily`) and reported by
@@ -4610,6 +4610,16 @@ export interface CitationsConfig {
    *  (`bibliography.scope: 'chapter'`): the proceedings, the bulletin, the
    *  edited volume. */
   numbering?: 'book' | 'chapter';
+  /** Let the dictionary divide the names of the authors the document cites.
+   *  Default `true`. `false` (#699): the family names and the `literal`
+   *  names of every work of the references are never divided where they
+   *  start with a capital, in a citation, in the running text and in the
+   *  bibliography, so no line ends on `(Lup-`. Each name is read run of
+   *  letters by run of letters (`García-Márquez` gives two), and an author
+   *  called Baker does not keep `baker` whole. A bibliography cannot be
+   *  typed into `bodyText.hyphenation.exceptions`, and a German book cannot
+   *  use `hyphenation.capitalized: false`. */
+  hyphenateNames?: boolean;
   /** The list of works cited. */
   bibliography?: {
     /** Title printed above the list (a bold paragraph). Unset: the
@@ -4651,16 +4661,6 @@ export interface CitationsConfig {
   };
 }
 
-  /** Let the dictionary divide the names of the authors the document cites.
-   *  Default `true`. `false` (#699): the family names and the `literal`
-   *  names of every work of the references are never divided where they
-   *  start with a capital, in a citation, in the running text and in the
-   *  bibliography, so no line ends on `(Lup-`. Each name is read run of
-   *  letters by run of letters (`García-Márquez` gives two), and an author
-   *  called Baker does not keep `baker` whole. A bibliography cannot be
-   *  typed into `bodyText.hyphenation.exceptions`, and a German book cannot
-   *  use `hyphenation.capitalized: false`. */
-  hyphenateNames?: boolean;
 /** {@link CitationsConfig} with every value resolved. */
 export interface ResolvedCitationsConfig {
   style: string;
@@ -4671,6 +4671,7 @@ export interface ResolvedCitationsConfig {
   collapseRanges: boolean;
   notes: 'footnote' | 'warichu';
   numbering: 'book' | 'chapter';
+  hyphenateNames: boolean;
   bibliography: {
     title?: string;
     scope: 'book' | 'chapter';
@@ -4712,7 +4713,6 @@ export interface ResolvedCrossRefsConfig {
   page: string;
   defaultStyle: 'default' | 'number' | 'title' | 'page';
 }
-  hyphenateNames: boolean;
 
 /** Footnotes. A Japanese document (`locale: 'ja'`) resolves the fields it
  *  leaves unset after JLReq §4.2: a vertical one sets endnotes after each
