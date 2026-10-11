@@ -45,6 +45,7 @@ function iconFor(kind: WarningPayload['kind']) {
       return Type;
     case 'looseLine':
     case 'cjkLooseLine':
+    case 'raggedLine':
     case 'unbreakableWordOverflow':
     case 'joiningScriptLetterSpacing':
     case 'cjkMarksExceedLeading':
@@ -191,6 +192,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsLooseLineTitle;
     case 'cjkLooseLine':
       return labels.warningsCjkLooseLineTitle;
+    case 'raggedLine':
+      return labels.warningsRaggedLineTitle;
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowTitle;
     case 'joiningScriptLetterSpacing':
@@ -454,6 +457,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels): strin
       return `${payload.ratio.toFixed(2)}× · ${labels.warningsThresholdLabel} ${payload.threshold.toFixed(2)}×`;
     case 'cjkLooseLine':
       return labels.warningsCjkLooseLineDetail.replace('__text__', payload.text);
+    case 'raggedLine':
+      return labels.warningsRaggedLineDetail.replace('__text__', payload.text.trim()).replace('__ratio__', payload.ratio.toFixed(1));
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowDetail.replace('__text__', payload.text);
     case 'joiningScriptLetterSpacing':

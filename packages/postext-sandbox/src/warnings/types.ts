@@ -13,6 +13,7 @@ export type WarningKind =
   | 'duplicateFontVariant'
   | 'looseLine'
   | 'cjkLooseLine'
+  | 'raggedLine'
   | 'unbreakableWordOverflow'
   | 'joiningScriptLetterSpacing'
   | 'cjkMarksExceedLeading'
@@ -142,6 +143,9 @@ export type WarningPayload =
     }
   | { kind: 'looseLine'; ratio: number; threshold: number }
   | { kind: 'cjkLooseLine'; text: string }
+  /** A justified line set ragged: its word spaces would have stretched to
+   *  `ratio` times their width (#732). */
+  | { kind: 'raggedLine'; text: string; ratio: number }
   | { kind: 'unbreakableWordOverflow'; text: string }
   | { kind: 'joiningScriptLetterSpacing'; text: string }
   | { kind: 'cjkMarksExceedLeading'; text: string; gapEm: number; neededEm: number }

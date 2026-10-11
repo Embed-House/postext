@@ -111,7 +111,7 @@ function collectLooseLineWarnings(
 /** The kinds of `doc.contentWarnings` only the layout finds (the others
  *  are read from the source by {@link collectEngineContentWarnings}). */
 const LAYOUT_CONTENT_KINDS: ReadonlySet<string> = new Set([
-  'indexSeeUnknown', 'indexRangeUnclosed', 'indexReadingMissing', 'cjkLooseLine',
+  'indexSeeUnknown', 'indexRangeUnclosed', 'indexReadingMissing', 'cjkLooseLine', 'raggedLine',
   'cjkMarksExceedLeading', 'rubyExceedsLeading', 'kuntenExceedsLeading', 'arabicMarksExceedLeading',
   'unbreakableWordOverflow', 'joiningScriptLetterSpacing',
   'comicPanelLetterbox', 'comicBalloonOverflow', 'lineNumberOverlap', 'dropCap', 'codeOverflow', 'textWrap',

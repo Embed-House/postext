@@ -294,6 +294,48 @@
       }
     }
   },
+  "raggedLine": {
+    "source": "engine",
+    "label": {
+      "en": "Justified line set ragged",
+      "es": "Línea justificada en bandera",
+      "ca": "Línia justificada en bandera",
+      "zh": "两端对齐的行未撑满",
+      "ar": "سطر مضبوط تُرك بلا ضبط",
+      "ja": "行末をそろえなかった行",
+      "pt": "Linha justificada composta sem justificar"
+    },
+    "cause": {
+      "en": "A line of a justified paragraph would need its word spaces at more than 3× their width to reach the measure, so the engine sets it ragged: the line that cannot take the next word has too few spaces to share the slack (the first line of a story in a narrow column, the line before a web address or a long word that does not hyphenate).",
+      "es": "Una línea de un párrafo justificado necesitaría abrir sus espacios a más de 3× su ancho para llegar a la medida, así que el motor la compone en bandera: la línea que no admite la palabra siguiente tiene muy pocos espacios entre los que repartir el hueco (la primera línea de una noticia en una columna estrecha, la línea anterior a una dirección web o a una palabra larga que no se divide).",
+      "ca": "Una línia d'un paràgraf justificat necessitaria obrir els espais a més de 3× la seva amplada per arribar a la mesura, de manera que el motor la compon en bandera: la línia que no admet la paraula següent té massa pocs espais per repartir-hi el buit (la primera línia d'una notícia en una columna estreta, la línia anterior a una adreça web o a una paraula llarga que no es divideix).",
+      "zh": "两端对齐段落里的某一行要撑满行长，词间空格得拉到正常宽度的3倍以上，引擎于是把它按齐左排出：容不下下一个词的那一行，空格太少，分摊不了剩下的空（窄栏里一则报道的第一行，网址或无法断开的长单词前面的那一行）。",
+      "ar": "سطر من فقرة مضبوطة كان سيحتاج إلى مدّ فراغات كلماته أكثر من 3× عرضها ليبلغ عرض السطر، فنضّده المحرّك بلا ضبط: السطر الذي لا يتسع للكلمة التالية فيه فراغات أقل من أن تتقاسم الفائض (السطر الأول من خبر في عمود ضيق، أو السطر الذي يسبق عنوان ويب أو كلمة طويلة لا تُقسم).",
+      "ja": "両端そろえの段落の行が、行長に達するには語間を通常の3倍より広げる必要があるため、エンジンはその行を行末不ぞろいで組みます。次の語が入らない行は、余りを分け合う語間が少なすぎます（狭い段の記事の最初の行、Webアドレスや分割できない長い語の直前の行など）。",
+      "pt": "Uma linha de um parágrafo justificado precisaria abrir os espaços entre as palavras a mais de 3× a largura normal para chegar à medida, então o motor a compõe sem justificar: a linha que não aceita a palavra seguinte tem poucos espaços para dividir a sobra (a primeira linha de uma notícia em uma coluna estreita, a linha antes de um endereço web ou de uma palavra longa que não se divide)."
+    },
+    "fix": {
+      "en": "Reword the copy so the line takes another word, or give the long word or address a place to break (a soft hyphen, or a zero-width space, U+200B). A recipe that means the line accepts it with `capture.expect.raggedLines`.",
+      "es": "Cambia la redacción para que la línea admita otra palabra, o dale a la palabra o a la dirección larga un punto donde partir (un guion opcional, o un espacio de anchura cero, U+200B). Una receta que quiere esa línea la acepta con `capture.expect.raggedLines`.",
+      "ca": "Canvia la redacció perquè la línia admeti una altra paraula, o dona a la paraula o a l'adreça llarga un punt on partir (un guionet opcional, o un espai d'amplada zero, U+200B). Una recepta que vol aquesta línia l'accepta amb `capture.expect.raggedLines`.",
+      "zh": "改一改措辞，让这一行再容下一个词，或者给那个长单词或网址一个可以断开的位置（软连字符，或零宽空格U+200B）。有意保留这一行的配方用`capture.expect.raggedLines`接受它。",
+      "ar": "غيّر الصياغة ليتسع السطر لكلمة أخرى، أو أعطِ الكلمة الطويلة أو العنوان موضعًا ينكسر عنده (واصلة اختيارية، أو مسافة صفرية العرض، U+200B). والوصفة التي تقصد هذا السطر تقبله بالمفتاح `capture.expect.raggedLines`.",
+      "ja": "その行にもう1語入るように文言を変えるか、長い語やアドレスに分割できる位置を与えてください（ソフトハイフン、またはゼロ幅スペースU+200B）。その行を意図しているレシピは、`capture.expect.raggedLines`で受け入れます。",
+      "pt": "Mude a redação para a linha aceitar mais uma palavra, ou dê à palavra ou ao endereço longo um ponto de quebra (um hífen opcional, ou um espaço de largura zero, U+200B). Uma receita que quer essa linha a aceita com `capture.expect.raggedLines`."
+    },
+    "docs": {
+      "slug": "justification",
+      "heading": {
+        "en": "Lines the Breaker Cannot Fill",
+        "es": "Líneas que el algoritmo no puede llenar",
+        "ca": "Línies que l'algorisme no pot omplir",
+        "zh": "断行算法填不满的行",
+        "ar": "أسطر يعجز مقسِّم الأسطر عن ملئها",
+        "ja": "行分割で埋めきれない行",
+        "pt": "Linhas que o algoritmo não consegue preencher"
+      }
+    }
+  },
   "unbreakableWordOverflow": {
     "source": "engine",
     "label": {
