@@ -815,6 +815,18 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
       <td>When <code>true</code>, list items also receive widow protection. Only effective when <code>avoidWidows</code> is <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>A short list cut between two columns or pages: a list of up to <code>shortListMaxItems</code> items in the running text, such as one of three items set 1 + 2. <code>avoidOrphansInLists</code> and <code>avoidWidowsInLists</code> keep the lines of one item together; this rule keeps the items of one list together. <code>'allow'</code> cuts such a list where the column ends, as any other. <code>'warn'</code> lays it out the same and reports each list cut (a <code>shortListSplit</code> warning, see <a href="/en/docs/configuration-programmatic-usage#warnings-in-the-document">Warnings in the document</a>). <code>'avoid'</code> sets the list whole: when it does not fit under what the column holds it opens the next column, and the headings right above it and the colon line that introduces it (<code>keepColonWithList</code>) go with it. A list taller than an empty column is cut as any other, and reported. Lists inside a <code>:::callout</code> follow the box's own cut rules, and the entries of <code>:::toc</code> and <code>:::index</code> are not lists. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>The most items a list has to count as short for <code>shortListSplit</code>, the items of its nested lists included. A whole number, at least 1. Since postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

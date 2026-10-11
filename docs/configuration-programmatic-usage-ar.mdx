@@ -190,6 +190,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>ليس في أي صفحة. حتى postext 1.24 كان يسقط بلا تنبيه.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td>قائمة عدد بنودها <code>items</code>، قصيرة بحسب <code>bodyText.shortListMaxItems</code>، مقسومة بين عمودين أو صفحتين. مع <code>bodyText.shortListSplit: 'warn'</code> يُبلَّغ عن كل قائمة كهذه؛ ومع <code>'avoid'</code>، عن القائمة التي لم يتسع لها أي عمود كاملةً فقط. تنبيه لكل قائمة؛ يشير إلى القائمة، مع صفحة بندها الأول. منذ postext 1.28.</td>
+      <td>تُقسم القائمة حيث ينتهي العمود.</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td>عنصر عائم وُضع في صفحة افتتاح مع <code>layout.openerFloats: 'warn'</code>: شكل أو جدول أو شريط قصص مصورة (<code>resourceId</code>)، أو صندوق عائم. تنبيه لكل عنصر عائم؛ يشير إلى الكتلة التي تحيل إليه (أو إلى الصندوق)، مع صفحته. منذ postext 1.28.</td>
+      <td>يقف العنصر العائم في صفحة الافتتاح؛ و<code>'avoid'</code> تنقله إلى أول موضع بعدها.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>وجهٌ نُضّد به النص (<code>family</code>، <code>weight</code>، <code>style</code>) ولم تستطع مجموعة الخطوط توفيره حين جرى البناء: <code>reason: 'missing'</code>، لم يكن أي وجه من العائلة محمَّلًا ولا مثبّتًا، أو لم يكن الوجه الموافق لهذا الوزن والميل قد اكتمل تحميله؛ و<code>'synthesized'</code>، ليس في العائلة وجه بهذا الوزن أو الميل فيأخذه المتصفح من وجه آخر فيها، كما هو أو مغلَّظًا أو مُمالًا (وزن 600 يُنضَّد بوجه 700، أو وزن 700 مائل يُطلب من عائلة ليس فيها إلا 400 عادي). يُفحص حيث توجد مجموعة خطوط (<code>document.fonts</code>، أو <code>self.fonts</code> في عامل، أو <code>BuildDocumentOptions.fontSet</code>)، ويخضع لـ<code>debug.warnings.missingFont</code>. بلا صفحة ولا نطاق في المصدر.</td>
       <td>يُقاس النص ويُرسم بالخط البديل، أو بوجه آخر من العائلة، كما هو أو مغلَّظًا أو مُمالًا؛ وتتغيّر مواضع تقسيم أسطره حين يصل الوجه. انظر <a href="#تحميل-الخطوط-قبل-الإخراج">تحميل الخطوط قبل الإخراج</a>.</td>

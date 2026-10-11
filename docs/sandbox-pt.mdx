@@ -455,6 +455,8 @@ Diagnósticos ao vivo, recalculados a partir do texto, do design, das figuras e 
   - *Colunas estreitas demais*: um grupo `:::columns` cujas colunas são mais estreitas que seis emes do seu texto (`columnsTooNarrow`);
   - *Boxe ou figura lateral depois do fim do texto*: um boxe lateral, ou uma figura da coluna lateral, composto em uma página sem texto porque o texto do seu capítulo terminou enquanto ele esperava lugar na coluna lateral; a entrada indica a página (`afterText`);
   - *Não está em nenhuma página*: um boxe ou um flutuante que ainda esperava um espaço quando a diagramação terminou e não está em nenhuma página (`unplaced`);
+  - *Lista curta dividida entre colunas*: uma lista de poucos itens composta em duas colunas ou páginas; aparece quando **Texto do corpo → Listas curtas divididas entre colunas** está em *Aviso*, e em *Evitar* para a lista que nenhuma coluna podia receber inteira (`shortListSplit`);
+  - *Flutuante em uma página de abertura*: uma figura, uma tabela ou um boxe flutuante na página que abre um capítulo ou uma parte; aparece quando **Colunas → Flutuantes em páginas de abertura** está em *Aviso* (`openerFloat`);
   - *Sem padrões de hifenização para este idioma*: o idioma do documento (o idioma de hifenização dele ou, se não houver, o `locale`) não tem padrões incluídos, então o texto é hifenizado com os do inglês americano. O aviso some quando a hifenização é desativada.
 - **Preflight**, num livro preparado para impressão (um padrão PDF/X, um PDF em CMYK ou marcas de corte), com os problemas críticos primeiro:
   - *Resolução de imagem baixa*: uma imagem abaixo da resolução mínima no tamanho impresso (crítica abaixo da resolução crítica), calculada a partir dos pixels que o arquivo realmente tem;

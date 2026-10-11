@@ -472,6 +472,12 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td>2段以上の本文の上に組んだページ幅の章扉（<code>span: 'page'</code>の見出しレベルまたは見出しスタイル）の下では、章扉のある段の先頭、つまり章扉の帯のすぐ下が、<code>'top'</code>または<code>'auto'</code>のフロートの空き位置になり、ほかの段の先頭とそろいます。章扉の直後に置いたフロートの囲みや、そこに埋め込んだリソースは、第1段の章扉の下に入り（<code>columns</code>があれば第1段から数段にまたがり）、その段の本文はその下から始まります。本文中で参照されるフロートは、これまでどおり参照する行の後に置かれます。<code>false</code>にするとこの位置は使われず、postext 1.24までと同じくフロートは第2段から置かれます。以前のバージョンで保存された設定のうち、ページ幅の見出しを設定しているものは<code>false</code>として読み込まれます。コードでは、<code>postext/bundle</code>の<code>pinLegacyOpenerHeadFloats</code>で同じことができます。スタイル付きセクションはドキュメントの値を引き継ぎます。postext 1.25から。</td>
     </tr>
     <tr>
+      <td><code>openerFloats</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>開始ページに置かれるフロートの扱いです。開始ページとは、部が開くページ、見出しが自身の改ページで開くページ（<code>breakBefore</code>、またはページを開く<code>span: 'page'</code>の見出し）、見出しで始まるドキュメントの最初のページです。フロートとは、フロートとして配置した図、表、帯漫画と、ページの上または下にフロートさせた<code>:::callout</code>で、段の幅、ページ幅、サイド段のどれに入るものも対象です。インラインで埋め込んだリソース（<code>'here'</code>）、<code>'fixed'</code>の囲み、<code>span: 'side'</code>の囲みはフロートに数えません。<code>'allow'</code>は、ほかのページと同じようにフロートを置きます。<code>'warn'</code>は組版を変えずに、そのページのフロートを1件ずつ報告します（<code>openerFloat</code>の警告。<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>'avoid'</code>は開始ページにフロートを置きません。そこに入るはずのフロートはそのページより後の最初の空き位置に入り、開始ページには章扉や部扉と本文だけが残ります。スタイル付きセクションはドキュメントの値を引き継ぎます。postext 1.28から。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>

@@ -454,6 +454,8 @@ Diagnòstics en viu, recalculats a partir del text, el disseny, les figures i l'
   - *Columnes massa estretes*: un grup `:::columns` les columnes del qual són més estretes que sis emes del seu text (`columnsTooNarrow`);
   - *Requadre o figura lateral després del final del text*: un requadre lateral, o una figura de la columna lateral, compost en una pàgina sense text perquè el text del seu capítol es va acabar mentre esperava lloc a la columna lateral; l'entrada indica la pàgina (`afterText`);
   - *No és a cap pàgina*: un requadre o un flotant que encara esperava un buit quan es va acabar la composició i no és a cap pàgina (`unplaced`);
+  - *Llista curta partida entre columnes*: una llista de pocs elements composta en dues columnes o pàgines; apareix quan **Text base → Llistes curtes partides entre columnes** és a *Avís*, i a *Evitar* per a la llista que cap columna no podia acollir sencera (`shortListSplit`);
+  - *Flotant en una pàgina d’obertura*: una figura, una taula o un requadre flotant a la pàgina que obre un capítol o una part; apareix quan **Columnes → Flotants en pàgines d’obertura** és a *Avís* (`openerFloat`);
   - *Llengua sense patrons de partició de mots*: la llengua del document (la seva llengua de partició de mots o, si no, `locale`) no té patrons inclosos, de manera que el seu text es divideix amb els de l'anglès dels EUA. Desapareix en desactivar la partició de mots.
 - **Preflight**, per a un llibre preparat per a impremta (una norma PDF/X, un PDF en CMYK o marques de tall), amb les incidències crítiques primer:
   - *Resolució d’imatge baixa*: una imatge per sota de la resolució mínima a la seva mida impresa (crítica per sota de la resolució crítica), calculada amb els píxels que té realment el seu fitxer;

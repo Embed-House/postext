@@ -190,6 +190,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Não está em nenhuma página. Até o postext 1.24 sumia sem aviso.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td>Uma lista de <code>items</code> itens, curta segundo <code>bodyText.shortListMaxItems</code>, dividida entre duas colunas ou páginas. Com <code>bodyText.shortListSplit: 'warn'</code>, toda lista assim é relatada; com <code>'avoid'</code>, só a que nenhuma coluna podia receber inteira. Um por lista; aponta para a lista, com a página do seu primeiro item. Desde o postext 1.28.</td>
+      <td>A lista é dividida onde a coluna termina.</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td>Um flutuante composto em uma página de abertura com <code>layout.openerFloats: 'warn'</code>: uma figura, uma tabela ou uma tira (<code>resourceId</code>), ou um boxe flutuante. Um por flutuante; aponta para o bloco que o cita (ou para o boxe), com a sua página. Desde o postext 1.28.</td>
+      <td>O flutuante fica na página de abertura; <code>'avoid'</code> o leva para o primeiro espaço depois dela.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>Uma face em que o texto foi composto (<code>family</code>, <code>weight</code>, <code>style</code>) e que o conjunto de fontes não pôde fornecer quando a compilação rodou: <code>reason: 'missing'</code>, nenhuma face da família estava carregada nem instalada, ou a que responde por esse peso e essa inclinação ainda não tinha carregado; <code>'synthesized'</code>, a família não tem face desse peso ou dessa inclinação e o navegador a tira de outra, como ela é ou engrossada ou inclinada (um 600 composto com o 700, um itálico 700 pedido a uma família que só tem o regular 400). É verificado onde há um conjunto de fontes (<code>document.fonts</code>, o <code>self.fonts</code> de um worker ou <code>BuildDocumentOptions.fontSet</code>), sob <code>debug.warnings.missingFont</code>. Sem página e sem trecho do código-fonte.</td>
       <td>O texto é medido e desenhado com a fonte alternativa, ou com outra face da família, como ela é ou engrossada ou inclinada; suas quebras de linha mudam quando a face chega. Veja <a href="#carregar-as-fontes-antes-do-layout">Carregar as fontes antes do layout</a>.</td>

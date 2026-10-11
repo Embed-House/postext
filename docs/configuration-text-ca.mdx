@@ -813,6 +813,18 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td>Quan és <code>true</code>, els elements de llista també reben protecció contra vídues. Només té efecte si <code>avoidWidows</code> és <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Una llista curta partida entre dues columnes o pàgines: una llista de fins a <code>shortListMaxItems</code> elements al text corregut, com una de tres elements composta 1 + 2. <code>avoidOrphansInLists</code> i <code>avoidWidowsInLists</code> mantenen juntes les línies d'un element; aquesta regla manté junts els elements d'una llista. <code>'allow'</code> parteix la llista on s'acaba la columna, com qualsevol altra. <code>'warn'</code> la compon igual i informa de cada llista partida (un avís <code>shortListSplit</code>, vegeu <a href="/ca/docs/configuration-programmatic-usage#avisos-del-document">Avisos del document</a>). <code>'avoid'</code> compon la llista sencera: si no hi cap sota el que ja té la columna, obre la següent, i els encapçalaments que tingui just a sobre i la línia de dos punts que la introdueix (<code>keepColonWithList</code>) l'acompanyen. Una llista més alta que una columna buida es parteix com qualsevol altra, i se n'avisa. Les llistes de dins d'un <code>:::callout</code> segueixen les regles de tall de la caixa, i les entrades de <code>:::toc</code> i de <code>:::index</code> no són llistes. Des de postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Quants elements pot tenir com a màxim una llista per comptar com a curta a <code>shortListSplit</code>, inclosos els de les seves llistes niades. Un nombre enter, 1 com a mínim. Des de postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

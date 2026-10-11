@@ -455,6 +455,8 @@ Diagnósticos en vivo, recalculados a partir del texto, el diseño, las figuras 
   - *Columnas demasiado estrechas*: un grupo `:::columns` cuyas columnas son más estrechas que seis emes de su texto (`columnsTooNarrow`);
   - *Recuadro o figura lateral tras el final del texto*: un recuadro lateral, o una figura de la columna lateral, compuesto en una página sin texto porque el texto de su capítulo terminó mientras esperaba sitio en la columna lateral; la entrada indica la página (`afterText`);
   - *No está en ninguna página*: un recuadro o un flotante que seguía esperando un hueco cuando terminó la composición y no está en ninguna página (`unplaced`);
+  - *Lista corta partida entre columnas*: una lista de pocos ítems compuesta en dos columnas o páginas; aparece cuando **Texto base → Listas cortas partidas entre columnas** está en *Aviso*, y en *Evitar* para la lista que ninguna columna podía acoger entera (`shortListSplit`);
+  - *Flotante en una página de apertura*: una figura, una tabla o un recuadro flotante en la página que abre un capítulo o una parte; aparece cuando **Columnas → Flotantes en páginas de apertura** está en *Aviso* (`openerFloat`);
   - *Idioma sin patrones de separación silábica*: el idioma del documento (su idioma de separación silábica o, si no, `locale`) no tiene patrones incluidos, así que su texto se divide con los del inglés de EE. UU. Desaparece al desactivar la separación silábica.
 - **Preflight**, en un libro preparado para imprenta (una norma PDF/X, un PDF en CMYK o marcas de corte), primero lo crítico:
   - *Resolución de imagen baja*: una imagen por debajo de la resolución mínima a su tamaño impreso (crítica por debajo de la resolución crítica), calculada con los píxeles que tiene de verdad su archivo;

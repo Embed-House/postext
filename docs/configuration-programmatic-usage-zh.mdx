@@ -190,6 +190,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>它不在任何页面上。在postext 1.24及以前，它会无声无息地消失。</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td>共<code>items</code>项的列表，按<code>bodyText.shortListMaxItems</code>算短列表，被拆在两栏或两页之间。设为<code>bodyText.shortListSplit: 'warn'</code>时，每个这样的列表都报告；设为<code>'avoid'</code>时，只报告没有哪一栏放得下整个列表的那些。每个列表一条；指向该列表，并带其第一项所在的页码。postext 1.28起。</td>
+      <td>列表在栏结束处拆开。</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td>设为<code>layout.openerFloats: 'warn'</code>时排在章首页上的浮动体：图、表或漫画条（<code>resourceId</code>），或浮动框。每个浮动体一条；指向引用它的块（或该框），并带页码。postext 1.28起。</td>
+      <td>浮动体留在章首页上；<code>'avoid'</code>会把它移到该页之后的第一个空位。</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>文字排版所用的某个字体（<code>family</code>、<code>weight</code>、<code>style</code>），在构建时字体集给不出来：<code>reason: 'missing'</code>表示该字体族没有任何字体已加载，系统中也没有安装，或者对应这个字重和倾斜的字体当时还没有加载完；<code>'synthesized'</code>表示该字体族没有这个字重或倾斜的字体，浏览器取用族内的另一个字体，原样使用，或加粗、倾斜（用700的字体排600；向只有400常规体的字体族要700斜体）。在有字体集的地方检查（<code>document.fonts</code>、工作线程的<code>self.fonts</code>，或<code>BuildDocumentOptions.fontSet</code>），由<code>debug.warnings.missingFont</code>控制。没有页码，也没有源文本范围。</td>
       <td>文字用回退字体测量和绘制，或用族内的另一个字体（原样使用，或经浏览器加粗、倾斜）；该字体到达后，断行会随之改变。见<a href="#排版前加载字体">排版前加载字体</a>。</td>

@@ -815,6 +815,18 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td>حين تكون <code>true</code>، تنال بنود القوائم أيضًا الحماية من الأسطر الأرامل. لا يكون فعّالًا إلا حين تكون <code>avoidWidows</code> هي <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>قائمة قصيرة مقسومة بين عمودين أو صفحتين: قائمة في النص الجاري لا تزيد بنودها على <code>shortListMaxItems</code>، كقائمة من ثلاثة بنود تُنضَّد 1 + 2. يُبقي <code>avoidOrphansInLists</code> و<code>avoidWidowsInLists</code> أسطر البند الواحد معًا؛ أما هذه القاعدة فتُبقي بنود القائمة الواحدة معًا. تقسم <code>'allow'</code> مثل هذه القائمة حيث ينتهي العمود، كأي قائمة أخرى. وتنضّدها <code>'warn'</code> بالطريقة نفسها وتبلّغ عن كل قائمة مقسومة (تحذير <code>shortListSplit</code>، انظر <a href="/ar/docs/configuration-programmatic-usage#التحذيرات-في-المستند">التحذيرات في المستند</a>). وتنضّد <code>'avoid'</code> القائمة كاملة: فإن لم تتسع تحت ما في العمود انتقلت إلى العمود التالي، ومعها العناوين التي فوقها مباشرة وسطر النقطتين الذي يقدّمها (<code>keepColonWithList</code>). والقائمة الأطول من عمود فارغ تُقسم كأي قائمة أخرى، ويُبلَّغ عنها. والقوائم داخل <code>:::callout</code> تتبع قواعد القطع الخاصة بالإطار، وصفوف <code>:::toc</code> ومداخل <code>:::index</code> ليست قوائم. منذ postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>أقصى عدد من البنود تُعدّ معه القائمة قصيرة في <code>shortListSplit</code>، وتُحسب فيه بنود قوائمها المتداخلة. عدد صحيح، 1 على الأقل. منذ postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

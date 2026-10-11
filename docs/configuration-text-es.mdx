@@ -815,6 +815,18 @@ Más allá de la separación silábica y los límites de espaciado, la configura
       <td>Cuando es <code>true</code>, los elementos de lista también reciben protección contra viudas. Solo efectivo si <code>avoidWidows</code> es <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Una lista corta partida entre dos columnas o páginas: una lista de hasta <code>shortListMaxItems</code> ítems en el texto corrido, como una de tres ítems compuesta 1 + 2. <code>avoidOrphansInLists</code> y <code>avoidWidowsInLists</code> mantienen juntas las líneas de un ítem; esta regla mantiene juntos los ítems de una lista. <code>'allow'</code> parte la lista donde acaba la columna, como cualquier otra. <code>'warn'</code> la compone igual e informa de cada lista partida (un aviso <code>shortListSplit</code>, véase <a href="/es/docs/configuration-programmatic-usage#avisos-del-documento">Avisos del documento</a>). <code>'avoid'</code> compone la lista entera: si no cabe bajo lo que ya tiene la columna, abre la siguiente, y los encabezados que tenga justo encima y la línea de dos puntos que la introduce (<code>keepColonWithList</code>) van con ella. Una lista más alta que una columna vacía se parte como cualquier otra, y se avisa. Las listas de dentro de un <code>:::callout</code> siguen las reglas de corte de la caja, y las entradas de <code>:::toc</code> y de <code>:::index</code> no son listas. Desde postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Cuántos ítems puede tener como máximo una lista para contar como corta en <code>shortListSplit</code>, incluidos los de sus listas anidadas. Un número entero, 1 como mínimo. Desde postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

@@ -815,6 +815,18 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>true</code>にすると、リスト項目もウィドウから保護します。<code>avoidWidows</code>が<code>true</code>のときだけ効果があります。</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>2つの段またはページに分かれる短いリストの扱いです。対象は、本文の流れの中にあって項目が<code>shortListMaxItems</code>個以下のリストです。3項目のリストが1 + 2に分かれる場合などが当たります。<code>avoidOrphansInLists</code>と<code>avoidWidowsInLists</code>は1つの項目の行を離さず、この規則は1つのリストの項目を離しません。<code>'allow'</code>は、ほかのリストと同じく、段の終わりでリストを切ります。<code>'warn'</code>は組版を変えずに、切られたリストを1件ずつ報告します（<code>shortListSplit</code>の警告。<a href="/ja/docs/configuration-programmatic-usage#文書の中の警告">文書の中の警告</a>を参照）。<code>'avoid'</code>はリスト全体をまとめて組みます。段にすでにある内容の下に収まらないときはリストを次の段に送り、すぐ上の見出しと、リストを導入するコロンの行（<code>keepColonWithList</code>）も一緒に送ります。空の段より高いリストは、ほかのリストと同じく切られ、報告されます。<code>:::callout</code>の中のリストは囲み自身の分割の規則に従います。<code>:::toc</code>と<code>:::index</code>の項目はリストではありません。postext 1.28から。</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td><code>shortListSplit</code>がリストを短いとみなす項目数の上限です。入れ子のリストの項目も数えます。1以上の整数。postext 1.28から。</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

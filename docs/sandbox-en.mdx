@@ -455,6 +455,8 @@ Live diagnostics, recomputed from the text, the design, the figures and the last
   - *Columns too narrow*: a `:::columns` group whose columns are narrower than six ems of their text (`columnsTooNarrow`);
   - *Side box or figure after the end of the text*: a side box, or a figure of the side column, set on a page with no text because its chapter's text ended while it waited for room in the side column; the entry names the page (`afterText`);
   - *Not on any page*: a box or a float still waiting for a slot when the layout ended, which is on no page (`unplaced`);
+  - *Short list cut between columns*: a list of a few items set in two columns or pages; listed when **Body text → Short lists cut between columns** is on *Warn*, and on *Avoid* for a list no column could hold whole (`shortListSplit`);
+  - *Float on an opener page*: a figure, a table or a floated box on the page a chapter or a part opens; listed when **Columns → Floats on opener pages** is on *Warn* (`openerFloat`);
   - *No hyphenation patterns for this language*: the document language (its hyphenation locale, else `locale`) has no bundled patterns, so its text is hyphenated with the US English ones. It goes away when hyphenation is switched off.
 - **Preflight**, for a book set up for print (a PDF/X standard, a CMYK PDF or crop marks), critical findings first:
   - *Low image resolution*: a picture under the minimum resolution at its printed size (critical under the critical one), worked out from the pixels its file really has;

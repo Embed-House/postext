@@ -190,6 +190,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>どのページにもありません。postext 1.24までは、警告なしに消えていました。</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>bodyText.shortListMaxItems</code>の基準で短いリスト（<code>items</code>項目）が、2つの段またはページに分かれた。<code>bodyText.shortListSplit: 'warn'</code>ではそうしたリストをすべて報告し、<code>'avoid'</code>では、どの段にも全体が収まらなかったリストだけを報告します。リストごとに1件。リストを指し、最初の項目のページが付きます。postext 1.28から。</td>
+      <td>リストは段の終わりで切られます。</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td><code>layout.openerFloats: 'warn'</code>のときに開始ページに置かれたフロート。図、表、帯漫画（<code>resourceId</code>）、またはフロートのボックス。フロートごとに1件。フロートを参照するブロック（ボックスならそのボックス）を指し、ページが付きます。postext 1.28から。</td>
+      <td>フロートは開始ページに置かれたままです。<code>'avoid'</code>にすると、そのページより後の最初の空き位置に移ります。</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>テキストを組んだフェイス（<code>family</code>、<code>weight</code>、<code>style</code>）を、ビルドの時点でフォントセットが用意できなかったこと。<code>reason: 'missing'</code>は、そのファミリーのフェイスが1つも読み込まれておらず、インストールもされていない場合、またはそのウェイトと傾きに対応するフェイスがまだ読み込まれていなかった場合。<code>'synthesized'</code>は、ファミリーにそのウェイトや傾きのフェイスがなく、ブラウザーが別のフェイスをそのまま、あるいは太くしたり傾けたりして使っている場合です（600を700のフェイスで組んだとき、400のレギュラーしかないファミリーに700のイタリックを求めたときなど）。フォントセットがある環境（<code>document.fonts</code>、ワーカーの<code>self.fonts</code>、<code>BuildDocumentOptions.fontSet</code>）で検査し、<code>debug.warnings.missingFont</code>で切り替えます。ページもソースの範囲も持ちません。</td>
       <td>テキストは代替フォントで、またはファミリーの別のフェイス（そのまま、あるいはブラウザーが太くしたり傾けたりしたもの）で計測・描画されます。そのフェイスが届くと改行が変わります。<a href="#レイアウトの前にフォントを読み込む">レイアウトの前にフォントを読み込む</a>を参照してください。</td>

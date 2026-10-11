@@ -815,6 +815,18 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td>为<code>true</code>时，列表项也受段首孤行保护。仅在<code>avoidWidows</code>为<code>true</code>时有效。</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>短列表被拆在两栏或两页之间：正文中不超过<code>shortListMaxItems</code>项的列表，例如三项的列表排成1 + 2。<code>avoidOrphansInLists</code>和<code>avoidWidowsInLists</code>让同一列表项的各行保持在一起，这条规则让同一列表的各项保持在一起。<code>'allow'</code>：这类列表和其他列表一样，在栏结束处拆开。<code>'warn'</code>：排法相同，并报告每个被拆开的列表（一条<code>shortListSplit</code>警告，见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>'avoid'</code>：列表整体排出；栏中已有内容的下方放不下时，它移到下一栏，紧挨在它上面的标题和引出它的冒号行（<code>keepColonWithList</code>）随它一起移走。比空栏还高的列表和其他列表一样拆开，并报告。<code>:::callout</code>内的列表遵循框自己的拆分规则，<code>:::toc</code>和<code>:::index</code>的条目不算列表。postext 1.28起。</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>对<code>shortListSplit</code>而言，列表最多有多少项才算短列表，嵌套列表的项也计算在内。取整数，至少为1。postext 1.28起。</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

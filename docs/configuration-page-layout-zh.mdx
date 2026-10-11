@@ -472,6 +472,12 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td>通栏的章首标题（<code>span: 'page'</code>的标题级别或标题样式）排在两栏或更多正文栏之上时，标题所在那一栏的栏首，也就是标题横带正下方的位置，是<code>'top'</code>或<code>'auto'</code>浮动体的一个空位，与其他各栏的栏首齐平：紧跟在标题后面的浮动框，或在那里嵌入的资源，排在第一栏的标题下方（带<code>columns</code>时从第一栏起跨多栏），该栏的正文从它下面开始。在正文中被引用的浮动体仍排在引用它的那一行之后。<code>false</code>不提供这个空位，这类浮动体从第二栏起排，与postext 1.24及以前相同；早期版本存储的配置，如果设有通栏标题，读入时按<code>false</code>处理；在代码中，<code>postext/bundle</code>的<code>pinLegacyOpenerHeadFloats</code>起同样作用。带样式的章节沿用文档的值。postext 1.25起。</td>
     </tr>
     <tr>
+      <td><code>openerFloats</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>章首页上的浮动体。章首页指：篇页，标题以自身的分页开启的页面（<code>breakBefore</code>，或另起一页的<code>span: 'page'</code>标题），以及以标题开头的文档的第一页。浮动体指浮动的图、表或漫画条，以及浮动到页首或页脚的<code>:::callout</code>，无论它占一栏、横跨整页还是排在侧栏；行内嵌入的资源（<code>'here'</code>）、<code>'fixed'</code>框和<code>span: 'side'</code>框不算。<code>'allow'</code>：浮动体在章首页上的排法与其他页面相同。<code>'warn'</code>：页面排法相同，并报告页上的每个浮动体（一条<code>openerFloat</code>警告，见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>'avoid'</code>：章首页不排浮动体，本应落在这一页的浮动体改排到其后的第一个空位，页上只有章首和正文。带样式的章节沿用文档的值。postext 1.28起。</td>
+    </tr>
+    <tr>
       <td><code>writingMode</code></td>
       <td><code>'horizontal-tb' | 'vertical-rl'</code></td>
       <td><code>'horizontal-tb'</code></td>

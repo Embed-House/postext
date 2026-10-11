@@ -815,6 +815,18 @@ Além da hifenização e dos limites de espaçamento, a configuração do texto 
       <td>Com <code>true</code>, os itens de lista também recebem proteção contra viúvas. Só tem efeito quando <code>avoidWidows</code> é <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Uma lista curta dividida entre duas colunas ou páginas: uma lista de até <code>shortListMaxItems</code> itens no texto corrido, como uma de três itens composta em 1 + 2. <code>avoidOrphansInLists</code> e <code>avoidWidowsInLists</code> mantêm juntas as linhas de um item; esta regra mantém juntos os itens de uma lista. <code>'allow'</code> divide a lista onde a coluna termina, como qualquer outra. <code>'warn'</code> não muda a diagramação e relata cada lista dividida (um aviso <code>shortListSplit</code>, veja <a href="/pt/docs/configuration-programmatic-usage#avisos-no-documento">Avisos no documento</a>). <code>'avoid'</code> compõe a lista inteira: se ela não couber abaixo do que a coluna já tem, abre a coluna seguinte, e os títulos logo acima dela e a linha dos dois-pontos que a introduz (<code>keepColonWithList</code>) vão junto. Uma lista mais alta que uma coluna vazia é dividida como qualquer outra, e relatada. As listas dentro de um <code>:::callout</code> seguem as regras de corte do próprio boxe, e as entradas de <code>:::toc</code> e de <code>:::index</code> não são listas. Desde o postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Quantos itens uma lista pode ter, no máximo, para contar como curta em <code>shortListSplit</code>, incluídos os das suas listas aninhadas. Um número inteiro, no mínimo 1. Desde o postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>

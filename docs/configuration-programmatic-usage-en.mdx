@@ -190,6 +190,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>It is on no page. Up to postext 1.24 it dropped out without a warning.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td>A list of <code>items</code> items, short by <code>bodyText.shortListMaxItems</code>, cut between two columns or pages. Under <code>bodyText.shortListSplit: 'warn'</code> every such list is reported; under <code>'avoid'</code>, only one no column could hold whole. One per list; points at the list, with the page of its first item. Since postext 1.28.</td>
+      <td>The list is cut where the column ends.</td>
+    </tr>
+    <tr>
+      <td><code>openerFloat</code></td>
+      <td>A float set on an opener page under <code>layout.openerFloats: 'warn'</code>: a figure, a table or a strip (<code>resourceId</code>), or a floated box. One per float; points at the block citing it (at the box), with its page. Since postext 1.28.</td>
+      <td>The float stands on the opener page; <code>'avoid'</code> moves it to the first slot after it.</td>
+    </tr>
+    <tr>
       <td><code>fontFallback</code></td>
       <td>A face the text was set in (<code>family</code>, <code>weight</code>, <code>style</code>) that the font set could not give when the build ran: <code>reason: 'missing'</code>, no face of the family was loaded nor installed, or the one that answers for that weight and slant had not loaded yet; <code>'synthesized'</code>, the family has no face of that weight or slant and the browser takes it from another one, as it is or drawn bolder or slanted (a 600 set from the 700, a 700 italic asked of a family with only a 400 regular). Checked where there is a font set (<code>document.fonts</code>, a worker's <code>self.fonts</code>, or <code>BuildDocumentOptions.fontSet</code>), behind <code>debug.warnings.missingFont</code>. No page and no source range.</td>
       <td>The text is measured and drawn with the fallback face, or with another face of the family, as it is or made bolder or slanted; its line breaks change once the face arrives. See <a href="#loading-fonts-before-layout">Loading fonts before layout</a>.</td>
