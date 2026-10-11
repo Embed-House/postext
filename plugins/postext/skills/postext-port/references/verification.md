@@ -154,6 +154,12 @@ writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
   for room in the side column. Fence it earlier or shorten it.
   `WARN unplaced`: a box or float is on no page (a side box in a section
   whose layout has no side column): change its span or the section's layout.
+- `WARN shortListSplit` / `WARN openerFloat` (postext ≥ 1.28): the two
+  composition rules set to report. A short list is cut between columns
+  (`bodyText.shortListSplit`), or a float stands on a chapter or part
+  opener page (`layout.openerFloats`). Set the rule to `"avoid"` to have
+  the engine keep the list whole or move the float past the opener page;
+  a `shortListSplit` left under `"avoid"` is a list taller than a column.
 - `WARN unknownResourceId|unknownDirective|malformedEmbed|unknown…Style|raggedTableGrid`
   (releases with engine content warnings): a reference, `:::` line, `::resource`
   line or style id the engine could not resolve, or a table whose merged cells

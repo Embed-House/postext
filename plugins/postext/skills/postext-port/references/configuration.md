@@ -197,6 +197,7 @@ layout
 ├─ maxTopFraction     number                                 default 0.7    ≥ 1.25 largest share of the column a float heading its citing page takes (with the floats already there)
 ├─ hugClosingFloats   boolean                                default true   closing page: page-wide floats below the last text move up under it
 ├─ floatsUnderOpener  boolean                                default true   ≥ 1.25 under a span:'page' opener over 2+ text columns, the head of column 1 is a top slot; false = floats land from column 2, as ≤ 1.24 (a preset below configVersion 11 that sets a page-span heading reads false)
+├─ openerFloats       'allow' | 'warn' | 'avoid'             default 'allow'  ≥ 1.28 floats on an opener page (a part's page, the page a heading opens with breakBefore or span:'page', the first page of a document that starts with a heading): 'warn' = same layout + one `openerFloat` warning per float; 'avoid' = the page takes no float, each goes to the first slot after it (inline 'here' resources, 'fixed' and span:'side' boxes stay)
 ├─ inlineResourceGap  'around' | 'above'                     default 'around'  (a preset without configVersion ≥ 5 reads 'above')
 ├─ inlineResourceGapInBoxes boolean                          default true  (a preset below configVersion 6 reads false)
 ├─ boxChildSplitMinLines number                              default 2  lines of a paragraph/item a box cut leaves per side (a preset below configVersion 6 with a :::callout reads 1)
@@ -320,6 +321,8 @@ H&J / Knuth–Plass
 │                        japan region: the page holds the lines its grid counts (a Chinese grid keeps avoidOrphans, 孤行). Set a key
 │                        to choose otherwise; a preset below configVersion 12 on a grid reads avoidWidows true (and avoidOrphans true in Japan).
 │                        avoidWidows = first lines at a column's foot, avoidOrphans = last lines at the next one's head (CSS names them the other way)
+├─ shortListSplit       'allow'  ≥ 1.28 a list of ≤ shortListMaxItems items cut between columns: 'warn' = same layout + a `shortListSplit` warning per list cut; 'avoid' = the list moves whole to the next column (headings right above it and its colon line go with it; one taller than an empty column is cut and reported). The list orphan/widow flags only keep the LINES of one item together
+├─ shortListMaxItems    3        most items (nested ones included) a list has to count as short
 ├─ slackWeight          10     pressure to fill columns (0 = off)
 ├─ keepColonWithList    true   paragraph ending in ':' stays with the list it introduces
 ├─ colonListRoom        'item' room kept under the colon line: 'item' = what the first item needs by the list orphan/widow rules
