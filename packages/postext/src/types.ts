@@ -6845,6 +6845,15 @@ export interface LetteringConfig {
   joinSameSpeaker?: 'butt' | 'connector' | 'none';
   /** Vertical lettering: the most characters in a column. Default `8`. */
   maxColumnChars?: number;
+  /** A balloon reshaped to fit its panel does not part a Chinese word to
+   *  do so (#728): each word its new lines cut, which its preferred shape
+   *  leaves whole, costs more than a balloon read out of order, so the
+   *  placement moves or reorders before it cuts 其|实. Japanese lettering
+   *  is not touched (its breaks go by phrases). Default `true`; `false`
+   *  letters as postext 1.27 did, which a configuration stored under
+   *  `configVersion` 11 or lower is read with when its text may hold a
+   *  comic (see `pinLegacyBalloonPlacement` in `postext/bundle`). */
+  strictPlacement?: boolean;
 }
 
 export interface ResolvedLetteringConfig {
@@ -6862,6 +6871,7 @@ export interface ResolvedLetteringConfig {
   inset: Dimension;
   joinSameSpeaker: 'butt' | 'connector' | 'none';
   maxColumnChars: number;
+  strictPlacement: boolean;
 }
 
 /** The outline of a balloon body. */

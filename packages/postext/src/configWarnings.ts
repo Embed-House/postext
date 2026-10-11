@@ -490,7 +490,7 @@ const NAMED_PANEL_STYLE_KEYS = { ...PANEL_STYLE_KEYS, id: true, name: true } sat
 const LETTERING_KEYS = {
   fontFamily: true, fontSize: true, lineHeight: true, color: true, bold: true, italic: true, letterSpacing: true,
   writingMode: true, textTransform: true, dropFinalStop: true, doubleDash: true, inset: true, joinSameSpeaker: true,
-  maxColumnChars: true,
+  maxColumnChars: true, strictPlacement: true,
 } satisfies Record<keyof LetteringConfig, true>;
 const BALLOON_STYLE_KEYS = {
   id: true, name: true, shape: true, fill: true, stroke: true, strokeWidth: true, dash: true, double: true, wobble: true,

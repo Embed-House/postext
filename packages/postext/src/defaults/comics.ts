@@ -132,6 +132,7 @@ export const DEFAULT_LETTERING_STATIC: Omit<ResolvedLetteringConfig, 'fontFamily
   inset: MM(1.5),
   joinSameSpeaker: 'butt',
   maxColumnChars: 8,
+  strictPlacement: true,
 };
 
 /** What every balloon style starts from: a speech balloon. */
@@ -206,6 +207,7 @@ function resolveLettering(partial: LetteringConfig | undefined, locale: string |
     inset: partial?.inset ?? d.inset,
     joinSameSpeaker: choice(COMIC_CHOICES.joinSameSpeaker, partial?.joinSameSpeaker) ?? d.joinSameSpeaker,
     maxColumnChars: typeof partial?.maxColumnChars === 'number' && partial.maxColumnChars >= 1 ? Math.round(partial.maxColumnChars) : d.maxColumnChars,
+    strictPlacement: typeof partial?.strictPlacement === 'boolean' ? partial.strictPlacement : d.strictPlacement,
   };
 }
 

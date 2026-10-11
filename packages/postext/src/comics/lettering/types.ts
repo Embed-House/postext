@@ -304,6 +304,10 @@ export interface LetteringEnv {
   /** Mirror flag of the frame the text is painted in (balloons are painted
    *  on the sheet: false). */
   mirrored?: boolean;
+  /** `comics.lettering.strictPlacement` (#728): a balloon reshaped to fit
+   *  its panel pays for every Chinese word its new lines part, more than a
+   *  balloon read out of order does. Unset: the placement of 1.27. */
+  strictPlacement?: boolean;
 }
 
 /** Why a balloon could not be placed cleanly (warning

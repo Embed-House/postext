@@ -650,7 +650,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
         ...(it.writingMode ? { writingMode: it.writingMode } : {}),
       };
     });
-    const r = letterPanelDetailed(lp, items, { joinSameSpeaker: L.joinSameSpeaker, groupBase: pi * 1000 });
+    const r = letterPanelDetailed(lp, items, { joinSameSpeaker: L.joinSameSpeaker, groupBase: pi * 1000, ...(L.strictPlacement ? { strictPlacement: true } : {}) });
     balloons.push(...r.balloons);
     for (const d of r.diagnostics) {
       warnings.push({

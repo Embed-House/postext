@@ -67,6 +67,9 @@ export interface ShapedText {
   /** What its breaks cost (their penalties and orphan lines, weighted as
    *  in the score): how well it parts the text, whatever its shape. */
   breakCost: number;
+  /** How many of its breaks part a Chinese word (`BreakPoint.inWord`,
+   *  #728). */
+  wordCuts: number;
 }
 
 /** Default target aspects of a text block. */
@@ -230,6 +233,7 @@ interface Candidate {
   score: number;
   aspect: number;
   breakCost: number;
+  wordCuts: number;
 }
 
 /** Widths and lone-line penalties of the lines between two break points
@@ -412,10 +416,11 @@ interface LineSet {
   breaks: number[];
   lines: { start: number; end: number; width: number }[];
   breakCost: number;
+  wordCuts: number;
 }
 
 function breakingOf(p: PreparedText, pts: readonly BreakPoint[], m: Measurer): Breaking {
-  const all = [{ end: 0, next: 0, penalty: 0, forced: false }, ...pts];
+  const all: BreakPoint[] = [{ end: 0, next: 0, penalty: 0, forced: false }, ...pts];
   const lone = loneLinePenalty(p, all);
   return { length: p.text.length, all, m, table: lineTable(all, m, lone), lone, sets: new Map() };
 }
@@ -451,7 +456,7 @@ function lineSetsFor(b: Breaking, em: number, maxLen: number, penaltyWeight: num
       });
       const breakCost = penaltyWeight * br.slice(0, -1).reduce((sum, k) => sum + all[k]!.penalty, 0)
         + lines.reduce((sum, l) => sum + lone(l.start, l.end), 0);
-      out.push({ breaks: br, lines, breakCost });
+      out.push({ breaks: br, lines, breakCost, wordCuts: br.slice(0, -1).filter((k) => all[k]!.inWord).length });
     }
   }
   b.sets.set(key, out);
@@ -470,9 +475,9 @@ function candidatesFor(
   penaltyWeight: number,
 ): Candidate[] {
   const cjk = hasCJK(p.text);
-  const out: Candidate[] = lineSetsFor(b, em, maxLen, penaltyWeight).map(({ breaks, lines, breakCost }) => {
+  const out: Candidate[] = lineSetsFor(b, em, maxLen, penaltyWeight).map(({ breaks, lines, breakCost, wordCuts }) => {
     const { score, aspect } = scoreLines(lines, b.all, breaks, em, pitch, vertical, target, maxLen, penaltyWeight, b.lone, cjk);
-    return { breaks, lines, score, aspect, breakCost };
+    return { breaks, lines, score, aspect, breakCost, wordCuts };
   });
   out.sort((a, b) => a.score - b.score || a.lines.length - b.lines.length);
   return out;
@@ -595,6 +600,7 @@ function setLines(
     aspect: c.aspect,
     score: c.score,
     breakCost: c.breakCost,
+    wordCuts: c.wordCuts,
   };
 }
 

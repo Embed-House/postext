@@ -117,13 +117,22 @@ function shiftedSource(r: LetteringResult, by: number): LetteringResult {
   return r;
 }
 
+/** What a reshaped balloon pays, under `strictPlacement`, for each Chinese
+ *  word its lines part that its preferred shape does not (#728): more
+ *  than the 10 a pair of balloons read out of order counts in a layout's
+ *  cost (`W.orderBase` on each of the two), so the search no longer cuts a
+ *  word to keep the order. Tried at 5, 8 and 12 on the published comics,
+ *  with the same pages each time. */
+const WORD_CUT_COST = 12;
+
 function letterPanelFresh(panel: LetteringPanel, items: readonly LetteringItem[], env: LetteringEnv): LetteringResult {
+  const wordCut = env.strictPlacement ? WORD_CUT_COST : 0;
   const sorted = [...items].sort((a, b) => a.order - b.order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const pieces = sorted.map((item) => pieceOf(panel, item, env)).filter((p): p is Piece => p !== undefined);
   const groups = groupPieces(pieces, env);
   const metas = new Map<string, VariantMeta[]>();
   const units: PlaceUnit[] = groups.map((group) => {
-    const { variants, meta } = unitVariants(group, panel);
+    const { variants, meta } = unitVariants(group, panel, wordCut);
     const first = group[0]!;
     metas.set(first.item.id, meta);
     return {
@@ -152,7 +161,7 @@ function letterPanelFresh(panel: LetteringPanel, items: readonly LetteringItem[]
   const extend = (): boolean => {
     let added = false;
     groups.forEach((group, gi) => {
-      const extra = spareVariants(group, panel);
+      const extra = spareVariants(group, panel, wordCut);
       if (extra.variants.length === 0) return;
       units[gi]!.variants.push(...extra.variants);
       metas.get(group[0]!.item.id)!.push(...extra.meta);
@@ -270,7 +279,7 @@ function spareShape(p: Piece, maxLength: number): number | undefined {
  *  a single balloon in shorter lines; a joined group with every balloon
  *  fitted to the same share of the room, stacked straight (columns side by
  *  side). Empty for sound effects and units that have them already. */
-function spareVariants(group: Piece[], panel: LetteringPanel): { variants: UnitVariant[]; meta: VariantMeta[] } {
+function spareVariants(group: Piece[], panel: LetteringPanel, wordCut: number): { variants: UnitVariant[]; meta: VariantMeta[] } {
   const first = group[0]!;
   if (first.item.kind === 'sfx' || group.some((p) => p.shapes.length > p.main)) return { variants: [], meta: [] };
   const vertical = first.vertical;
@@ -301,7 +310,7 @@ function spareVariants(group: Piece[], panel: LetteringPanel): { variants: UnitV
   const meta: VariantMeta[] = [];
   for (const set of sets) {
     for (const arr of arrangements) {
-      const built = buildVariant(group, panel, set, arr, true);
+      const built = buildVariant(group, panel, set, arr, true, wordCut);
       variants.push(built.variant);
       meta.push(built.meta);
     }
@@ -371,7 +380,7 @@ type Arrangement = { side: boolean; lean: number };
 
 /** The variants a unit can be placed as: each shape of its pieces, and
  *  for a joined group each arrangement of its bodies. */
-function unitVariants(group: readonly Piece[], panel: LetteringPanel): { variants: UnitVariant[]; meta: VariantMeta[] } {
+function unitVariants(group: readonly Piece[], panel: LetteringPanel, wordCut: number): { variants: UnitVariant[]; meta: VariantMeta[] } {
   const variants: UnitVariant[] = [];
   const meta: VariantMeta[] = [];
   const shapeCount = Math.max(...group.map((p) => p.main));
@@ -389,7 +398,7 @@ function unitVariants(group: readonly Piece[], panel: LetteringPanel): { variant
       : [{ side: false, lean: 0.28 }, { side: false, lean: 0 }, { side: false, lean: -0.28 }, { side: true, lean: 1 }];
   for (let k = 0; k < shapeCount; k++) {
     for (const arr of arrangements) {
-      const built = buildVariant(group, panel, group.map((p) => Math.min(k, p.main - 1)), arr, k > 0);
+      const built = buildVariant(group, panel, group.map((p) => Math.min(k, p.main - 1)), arr, k > 0, wordCut);
       variants.push(built.variant);
       meta.push(built.meta);
     }
@@ -399,7 +408,7 @@ function unitVariants(group: readonly Piece[], panel: LetteringPanel): { variant
 
 /** One variant of a unit: each piece in its shape `shapeIndex[i]`, the
  *  bodies arranged as `arr`. */
-function buildVariant(group: readonly Piece[], panel: LetteringPanel, shapeIndex: number[], arr: Arrangement, reshaped: boolean): { variant: UnitVariant; meta: VariantMeta } {
+function buildVariant(group: readonly Piece[], panel: LetteringPanel, shapeIndex: number[], arr: Arrangement, reshaped: boolean, wordCut = 0): { variant: UnitVariant; meta: VariantMeta } {
   const fwd = panel.direction === 'rtl' ? -1 : 1;
   const vertical = group[0]!.vertical;
   const bodies: Body[] = [];
@@ -459,7 +468,12 @@ function buildVariant(group: readonly Piece[], panel: LetteringPanel, shapeIndex
   // A reshaped text block that parts its text worse than the preferred
   // one (a phrase or a word cut: 猫ちゃ|んに) pays for it.
   const worse = group.reduce((sum, p, i) => sum + Math.max(0, p.shapes[shapeIndex[i]!]!.shaped.breakCost - p.shapes[0]!.shaped.breakCost), 0);
-  const cost = back + 0.8 * worse;
+  // With `strictPlacement` (#728), each Chinese word a shape parts that
+  // the preferred shape leaves whole costs `WORD_CUT_COST` on top: the
+  // break penalties alone priced a cut word (其|实) under a balloon read
+  // out of order, so a narrow spare shape that cut one won.
+  const cuts = wordCut > 0 ? group.reduce((sum, p, i) => sum + Math.max(0, p.shapes[shapeIndex[i]!]!.shaped.wordCuts - p.shapes[0]!.shaped.wordCuts), 0) : 0;
+  const cost = back + 0.8 * worse + wordCut * cuts;
   return {
     variant: { bodies, reshaped, bbox, samples: inside, rim, ...(rot ? { rotate: rot } : {}), ...(skew ? { skew } : {}), ...(cost ? { cost } : {}) },
     meta: { pieces: [...group], shapeIndex, shifts },

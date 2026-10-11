@@ -20,6 +20,7 @@ export { pinLegacyNoteBreaks } from './configVersion';
 export { pinLegacyLatinSpacingEdge } from './configVersion';
 export { pinLegacyInlineCaptionSide } from './configVersion';
 export { pinLegacyRefLabelBreaks } from './configVersion';
+export { pinLegacyBalloonPlacement } from './configVersion';
 export type { MigrateConfigOptions } from './configVersion';
 export {
   isBundleManifest,

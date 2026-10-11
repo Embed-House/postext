@@ -149,6 +149,10 @@ import { hasCJK } from '../measure/cjk';
  *     `text="…"` override) breaks at the spaces of its label
  *     (`crossRefs.breakLabels`, #702), where up to 1.27 every label was
  *     one unbreakable word ({@link pinLegacyRefLabelBreaks});
+ *   - a comic balloon reshaped to fit its panel does not part a Chinese
+ *     word to do so (`comics.lettering.strictPlacement`, #728), where up
+ *     to 1.27 a narrow shape that cut one could win over a balloon read
+ *     out of order ({@link pinLegacyBalloonPlacement});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -251,6 +255,9 @@ const INLINE_CAPTION_SIDE_RULES = 12;
 /** The rules that break a reference's label of words at its spaces
  *  (#702). */
 const REF_LABEL_BREAK_RULES = 12;
+/** The rules that keep a reshaped comic balloon from parting a Chinese
+ *  word (#728). */
+const BALLOON_PLACEMENT_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1374,6 +1381,31 @@ function mayHaveRefs(content: string | readonly string[] | undefined): boolean {
   return typeof content === 'string' ? REF_RE.test(content) : content.some((text) => REF_RE.test(text));
 }
 
+/**
+ * A configuration written before #728 (postext 1.27 or earlier), pinned to
+ * the way it placed its comic balloons: `comics.lettering.strictPlacement:
+ * false`, so a balloon reshaped to fit its panel may part a Chinese word
+ * as it did, where today such a shape pays for the cut and the placement
+ * looks elsewhere first. A configuration that names the setting already is
+ * returned as it is (the same object).
+ */
+export function pinLegacyBalloonPlacement<T extends Partial<PostextConfig>>(config: T): T {
+  const comics: NonNullable<PostextConfig['comics']> = isRecord(config.comics) ? config.comics : {};
+  const lettering: NonNullable<NonNullable<PostextConfig['comics']>['lettering']> = isRecord(comics.lettering) ? comics.lettering : {};
+  if (lettering.strictPlacement !== undefined) return config;
+  return { ...config, comics: { ...comics, lettering: { ...lettering, strictPlacement: false } } };
+}
+
+/** A line that opens a comic: a `:::page` or a `:::strip` fence. */
+const COMIC_FENCE_LINE_RE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;
+
+/** Whether markdown may hold a comic page or strip. Unknown content
+ *  (undefined) may. */
+function mayHaveComics(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? COMIC_FENCE_LINE_RE.test(content) : content.some((text) => COMIC_FENCE_LINE_RE.test(text));
+}
+
 /** Whether markdown may hold kana or kanji. Unknown content (undefined)
  *  may. */
 function mayHaveCjkText(content: string | readonly string[] | undefined): boolean {
@@ -1541,7 +1573,10 @@ export interface MigrateConfigOptions {
  * kanji, and the caption of a resource set in the text of a `oneAndHalf`
  * layout by {@link pinLegacyInlineCaptionSide}, unless `options.content`
  * shows it embeds no resource, and the labels of its cross-references kept whole by {@link
- * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference.
+ * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference,
+ * and its comic balloons placed as 1.27 placed them by {@link
+ * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
+ * or strip.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1587,6 +1622,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
   if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) out = pinLegacyInlineCaptionSide(out);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
+  if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) out = pinLegacyBalloonPlacement(out);
   return out;
 }
 
@@ -1667,5 +1703,6 @@ export function migrateBundleConfig(
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);
   if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) merged = pinLegacyInlineCaptionSide(merged);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
+  if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) merged = pinLegacyBalloonPlacement(merged);
   return merged;
 }
