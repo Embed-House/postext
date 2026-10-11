@@ -208,6 +208,8 @@ describe('working configuration', () => {
       index: { groups: { splitMinEntries: 1 } },
       cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
       crossRefs: { breakLabels: false },
+      // (it may hold a comic: its balloons are placed as before 1.28, #728)
+      comics: { lettering: { strictPlacement: false } },
     });
     // (Every copy stamped before 12 also gets the pins of rules 12 that read
     // no content: the order of the balancing levers, #707, the line under a

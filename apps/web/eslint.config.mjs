@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // What `pnpm cookbook sandbox` bundles for its harness (#736):
+    ".cache/**",
   ]),
 ]);
 
