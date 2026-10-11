@@ -4,7 +4,7 @@ import { DEFAULT_BODY_TEXT_CONFIG } from 'postext';
 import type { BodyTextConfig, HyphenationConfig, KashidaPatterns, ResolvedBodyTextConfig } from 'postext';
 import { NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
 import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { HyphenateCompoundsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields';
+import { HyphenateCapitalizedField, HyphenateCompoundsField, HyphenationExceptionsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields';
 
 interface Props {
   bodyText: ResolvedBodyTextConfig;
@@ -130,6 +130,20 @@ export function JustificationSubsection({
             isHyphenationLocaleDefault={isHyphenationLocaleDefault}
           />
           <HyphenateCompoundsField
+            bodyText={bodyText}
+            raw={raw}
+            updateBodyText={updateBodyText}
+            updateHyphenation={updateHyphenation}
+            labels={labels}
+          />
+          <HyphenateCapitalizedField
+            bodyText={bodyText}
+            raw={raw}
+            updateBodyText={updateBodyText}
+            updateHyphenation={updateHyphenation}
+            labels={labels}
+          />
+          <HyphenationExceptionsField
             bodyText={bodyText}
             raw={raw}
             updateBodyText={updateBodyText}

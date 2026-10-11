@@ -991,6 +991,10 @@ export interface SandboxLabels {
   bodyHyphenationZoneTooltip: string;
   bodyHyphenateCompounds: string;
   bodyHyphenateCompoundsTooltip: string;
+  bodyHyphenateCapitalized: string;
+  bodyHyphenateCapitalizedTooltip: string;
+  bodyHyphenationExceptions: string;
+  bodyHyphenationExceptionsTooltip: string;
   bodyFirstLineIndent: string;
   bodyFirstLineIndentTooltip: string;
   bodyHangingIndent: string;
@@ -2916,6 +2920,8 @@ export interface SandboxLabels {
   citationsMarkerTooltip: string;
   citationsCollapseRanges: string;
   citationsCollapseRangesTooltip: string;
+  citationsHyphenateNames: string;
+  citationsHyphenateNamesTooltip: string;
   citationsNotes: string;
   citationsNotesFootnote: string;
   citationsNotesWarichu: string;
