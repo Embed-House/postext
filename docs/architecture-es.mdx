@@ -333,7 +333,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // empieza con ese guion repetido («léxico-» | «-semántico»), que no está en la fuente
   segments?: VDTLineSegment[];  // tramos palabra/espacio/matemática para justificar
   isLastLine?: boolean;         // última línea de su párrafo
-  justifiedSpaceRatio?: number; // ancho de espacio aplicado ÷ ancho de espacio normal
+  justifiedSpaceRatio?: number; // ancho al que se pinta cada espacio ÷ espacio de la redonda
+  justifiedSpaceLimitRatio?: number; // el espaciado que acotan los límites, cuando los espacios de la línea no son de redonda (lineWordSpacing lee los dos)
   sourceStart?: number;         // mapa al markdown original (offsets de carácter; una línea que empieza por `\$` empieza en la barra)
   sourceEnd?: number;
   plainStart?: number;          // mapa al texto plano del bloque

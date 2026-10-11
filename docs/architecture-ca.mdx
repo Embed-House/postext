@@ -333,7 +333,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // comença amb aquest guionet repetit («léxico-» | «-semántico»), que no és a la font
   segments?: VDTLineSegment[];  // trams paraula/espai/matemàtica per justificar
   isLastLine?: boolean;         // última línia del seu paràgraf
-  justifiedSpaceRatio?: number; // amplada d'espai aplicada ÷ amplada d'espai normal
+  justifiedSpaceRatio?: number; // amplada a què es pinta cada espai ÷ espai de la rodona
+  justifiedSpaceLimitRatio?: number; // l'espaiat que fiten els límits, quan els espais de la línia no són de rodona (lineWordSpacing llegeix tots dos)
   sourceStart?: number;         // mapa al markdown original (offsets de caràcter; una línia que comença per `\$` comença a la barra)
   sourceEnd?: number;
   plainStart?: number;          // mapa al text pla del bloc

@@ -157,7 +157,7 @@ export const metadata = {
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>両端そろえのテキストの語間の下限。通常のスペース幅に対する倍率で表します。</td>
+      <td>両端そろえのテキストの語間の下限。通常のスペース幅に対する倍率で表します。上限と下限はどちらも、それぞれのスペースが自分の幅からどれだけ変わるかを、正体のスペースを単位に数えて縛ります。イタリックや太字のスペースは正体のスペースより狭かったり広かったりするので、それを含む行は、分割のときに守った限度をスペース幅の100分のいくつかだけ下回るか上回る幅で描かれます。<code>lineWordSpacing(line)</code>は上限と下限が縛る値を返します。<a href="/ja/docs/justification#postextの実装">ハイフネーションと両端そろえ</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>

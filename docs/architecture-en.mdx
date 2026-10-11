@@ -333,7 +333,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // opens with that hyphen repeated ("vencer-" | "-se"), not in the source
   segments?: VDTLineSegment[];  // word/space/math runs for justified rendering
   isLastLine?: boolean;         // last line of its paragraph
-  justifiedSpaceRatio?: number; // applied space width ÷ normal space width
+  justifiedSpaceRatio?: number; // width every space is painted at ÷ the regular face's space
+  justifiedSpaceLimitRatio?: number; // the spacing the limits bound, when the line's own spaces are not regular (lineWordSpacing reads both)
   sourceStart?: number;         // markdown source map (char offsets; a line opening with `\$` starts at the backslash)
   sourceEnd?: number;
   plainStart?: number;          // plain-text source map

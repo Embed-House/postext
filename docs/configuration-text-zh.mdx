@@ -157,7 +157,7 @@ export const metadata = {
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>两端对齐文字中词间距的下限，以正常空格宽度的倍数表示。</td>
+      <td>两端对齐文字中词间距的下限，以正常空格宽度的倍数表示。上下限约束的都是每个空格相对于自身宽度的变化，以正体空格为单位计算：含有斜体或粗体空格的行，这种空格比正体的窄一些或宽一些，绘制出来会比断行时守住的那个限值低或高百分之几个空格宽度。<code>lineWordSpacing(line)</code>给出上下限所约束的那个数；见<a href="/zh/docs/justification#postext的实现">断词与两端对齐</a>。</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>

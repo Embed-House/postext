@@ -157,7 +157,7 @@ A propriedade `bodyText` controla a tipografia de todo o texto dos parágrafos.
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Limite inferior do espaçamento entre palavras no texto justificado, como multiplicador da largura normal do espaço.</td>
+      <td>Limite inferior do espaçamento entre palavras no texto justificado, como multiplicador da largura normal do espaço. Os dois limites restringem a variação de cada espaço em relação à sua própria largura, contada em espaços do redondo: uma linha que contém um espaço em itálico ou em negrito, mais estreito ou mais largo que o do redondo, é pintada alguns centésimos de espaço abaixo ou acima do limite dentro do qual foi quebrada. <code>lineWordSpacing(line)</code> dá o número que os limites restringem; veja <a href="/pt/docs/justification#a-implementação-no-postext">Hifenização e justificação</a>.</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>

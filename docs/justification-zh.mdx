@@ -134,7 +134,7 @@ Postext在核心包的`knuthPlass/`模块中完整实现了Knuth-Plass算法：�
 - **纯文本路径**：用`@chenglou/pretext`做不依赖DOM的文本测量。Pretext提供片段宽度和自选连字符宽度，Postext把它们转换成KP元素。
 - **富文本路径**：用基于Canvas的测量处理粗体和斜体片段。每个带样式的记号变成一个或多个盒子，断词位置作为惩罚值插入。
 
-两条路径都会为每一行计算`justifiedSpaceRatio`，即实际空格宽度除以自然空格宽度，供下文介绍的松散行调试功能使用。这个比值只对非末行计算；末行怎样排见[末行](#末行)。
+两条路径都会为每一行计算`justifiedSpaceRatio`：该行每个空格绘制的宽度除以正体的空格宽度。一行里的空格都绘制得一样宽，不管它来自正体、斜体还是粗体。上下限约束的东西略有不同，是每个空格相对于自身宽度的变化，以正体空格为单位计算，而斜体或粗体的空格比正体的窄一些或宽一些。所以含有这种空格的行，虽然断行时守住了上下限，绘制出来却略低于`minWordSpacing`或略高于`maxWordSpacing`；这样的行还带有`justifiedSpaceLimitRatio`，即上下限所约束的那个数：1加上该行的空余量除以它的各个空格（各按自身宽度计）。`lineWordSpacing(line)`返回这个数；如果一行的空格全是正体，两者是同一个数，它就返回`justifiedSpaceRatio`。这个值供下文介绍的松散行调试功能使用；排版本身（改排齐左、孤字修正、放松段落这一手段）仍然读取绘制的比值。这些比值只对非末行计算；末行怎样排见[末行](#末行)。
 
 断行算法之外，文本测量位于`measure/`模块：纯文本和富文本测量路径、Canvas字形度量、字体字符串处理，都在一个显式的测量缓存之后。某个字体族的字体到达或离开时，引擎丢弃它在该字体族中测得的结果，包括它的宽度缓存和宿主持有的测量缓存中的内容，所以网络字体加载完成后测量结果依然准确，宿主无须清除任何缓存（见[排版前加载字体](/zh/docs/configuration-programmatic-usage#排版前加载字体)）。解析，即把源文本变成块和行内片段的阶段，位于`parse/`模块。这些模块的文件级结构见[架构](/zh/docs/architecture)页面。
 
@@ -398,9 +398,9 @@ CJK字符多于词间空格的段落由CJK排版器排，不用Knuth-Plass。两
 
 ### 工作原理
 
-虚拟文档树中的每一行都带有`justifiedSpaceRatio`，即两端对齐后的实际空格宽度与字体自然空格宽度之比。值为1.0表示空格为自然宽度；值为2.5表示空格是正常宽度的2.5倍。
+虚拟文档树中每个两端对齐的行都带有`justifiedSpaceRatio`：空格绘制的宽度与正体空格宽度之比。值为1.0表示正体空格的宽度；值为2.5表示空格是它的2.5倍宽。含有其他字体空格的行（一个斜体短语、一个粗体词）还带有第二个数`justifiedSpaceLimitRatio`，即`minWordSpacing`和`maxWordSpacing`所约束的词间距。`lineWordSpacing(line)`给出用来和上下限比较的数：行上有第二个数就取第二个，否则取第一个。
 
-`debug.looseLineHighlight.enabled`为`true`时，沙盒在其Canvas预览上为每个`justifiedSpaceRatio`超过所设`threshold`的行绘制一层半透明覆盖层。默认阈值为3.0，即只高亮空格比正常宽三倍的行。这条线有意定得很高；松到这个程度的行是真正的排版问题。这也是引擎不再拉伸、而把两端对齐的行改排为齐左的宽度（见[断行算法填不满的行](#断行算法填不满的行)），所以取默认值时，高亮和`looseLines`警告在正文里几乎找不到什么：这样的行改按齐左排出，并作为`raggedLine`警告报告。把阈值降到1.5或2，可以找出松散但仍两端对齐的行。
+`debug.looseLineHighlight.enabled`为`true`时，沙盒在其Canvas预览上为每个词间距（`lineWordSpacing`）超过所设`threshold`的行绘制一层半透明覆盖层。正好排在`maxWordSpacing`上、又含有粗体空格的行，绘制出来会超出百分之几个空格宽度，但不计入：断行算法守住了上限。默认阈值为3.0，即只高亮空格比正常宽三倍的行。这条线有意定得很高；松到这个程度的行是真正的排版问题。这也是引擎不再拉伸、而把两端对齐的行改排为齐左的宽度（见[断行算法填不满的行](#断行算法填不满的行)），所以取默认值时，高亮和`looseLines`警告在正文里几乎找不到什么：这样的行改按齐左排出，并作为`raggedLine`警告报告。把阈值降到1.5或2，可以找出松散但仍两端对齐的行。
 
 覆盖层不属于页面，所以导出的页面上从不出现。要在你自己的Canvas上绘制它，在`renderPageToCanvas`之后紧接着调用`drawLooseLines(ctx, page, doc, { threshold })`；`findLooseLines(doc, { threshold })`以数据形式返回同样的行（见[在自己的Canvas中显示松散行](/zh/docs/configuration-fonts-colors-viewers#在你自己的canvas中标出稀松行)）。
 

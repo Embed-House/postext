@@ -333,7 +333,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // abre com esse hífen repetido ("vencer-" | "-se"), que não está na fonte
   segments?: VDTLineSegment[];  // trechos de palavra/espaço/fórmula para a renderização justificada
   isLastLine?: boolean;         // última linha do parágrafo
-  justifiedSpaceRatio?: number; // largura do espaço aplicado ÷ largura do espaço normal
+  justifiedSpaceRatio?: number; // largura com que cada espaço é pintado ÷ espaço do redondo
+  justifiedSpaceLimitRatio?: number; // o espaçamento que os limites restringem, quando os espaços da linha não são do redondo (lineWordSpacing lê os dois)
   sourceStart?: number;         // mapa de origem do markdown (deslocamentos em caracteres; uma linha que abre com `\$` começa na barra invertida)
   sourceEnd?: number;
   plainStart?: number;          // mapa de origem do texto simples

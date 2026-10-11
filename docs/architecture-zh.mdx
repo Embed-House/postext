@@ -332,7 +332,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // 以重复的那个连字符开头（"vencer-" | "-se"），源文本中没有它
   segments?: VDTLineSegment[];  // 供两端对齐渲染使用的词/空格/公式片段
   isLastLine?: boolean;         // 所在段落的最后一行
-  justifiedSpaceRatio?: number; // 实际空格宽度 ÷ 正常空格宽度
+  justifiedSpaceRatio?: number; // 每个空格绘制的宽度 ÷ 正体的空格宽度
+  justifiedSpaceLimitRatio?: number; // 上下限所约束的间距，行内空格不全是正体时才有（lineWordSpacing两个都读）
   sourceStart?: number;         // 到markdown源文件的映射（字符偏移；以`\$`开头的行从反斜杠算起）
   sourceEnd?: number;
   plainStart?: number;          // 到纯文本的映射

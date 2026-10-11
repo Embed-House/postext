@@ -157,7 +157,7 @@ The `bodyText` property controls the typography of all paragraph text.
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Lower bound for word spacing in justified text, as a multiplier of the normal space width.</td>
+      <td>Lower bound for word spacing in justified text, as a multiplier of the normal space width. Both limits bound the change of each space from its own width, counted in spaces of the regular face: a line that holds an italic or a bold space, narrower or wider than the regular one, is painted a few hundredths of a space under or over the limit it was broken within. <code>lineWordSpacing(line)</code> gives the number the limits bound; see <a href="/en/docs/justification#postexts-implementation">Justification</a>.</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>

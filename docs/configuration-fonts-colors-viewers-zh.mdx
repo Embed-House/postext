@@ -1187,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- <strong>`findLooseLines(doc, { threshold?, pageIndex? })`</strong>按阅读顺序返回每一个`justifiedSpaceRatio`超过`threshold`的两端对齐行：`{ block, line, ratio, x, y, width, height }`。这个矩形以页面像素计，就是高亮覆盖的横条：在该行的高度上横跨整个块宽。沙盒高亮的、并在检查面板中报告为`looseLine`的正是这些行。
+- <strong>`findLooseLines(doc, { threshold?, pageIndex? })`</strong>按阅读顺序返回每一个词间距超过`threshold`的两端对齐行：`{ block, line, ratio, x, y, width, height }`。`ratio`就是`lineWordSpacing(line)`：`minWordSpacing`和`maxWordSpacing`所约束的词间距（行内含有其他字体的空格时取`justifiedSpaceLimitRatio`，否则取`justifiedSpaceRatio`），所以排在上限上、又含有粗体空格的行，在阈值等于`maxWordSpacing`时不会被报告。这个矩形以页面像素计，就是高亮覆盖的横条：在该行的高度上横跨整个块宽。沙盒高亮的、并在检查面板中报告为`looseLine`的正是这些行。
 - <strong>`drawLooseLines(ctx, page, doc, { threshold?, color? })`</strong>在一页上填充这些横条，并返回它绘制的行。它在上下文当前的变换下以页面像素绘制，所以要在同一个canvas上紧接着`renderPage`或`renderPageToCanvas`调用它：这两个函数都会让上下文保持按页面缩放。`color`可以是任何canvas填充样式。
 - **默认值**。两个辅助函数都使用默认阈值（3）和默认颜色（`#ff000040`），而不是文档的`debug.looseLineHighlight`：那项设置属于沙盒。要遵循某个配置，传入`resolveDebugConfig(config.debug).looseLineHighlight.threshold`和`.color.hex`。
 

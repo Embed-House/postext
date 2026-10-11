@@ -1187,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`**：`justifiedSpaceRatio`が`threshold`を超えるすべての両端そろえの行を、読む順に返します（`{ block, line, ratio, x, y, width, height }`）。矩形はページのピクセル単位で、強調が覆う帯、つまりその行の位置でブロックの全幅にわたる帯です。これらは、Sandboxが強調し、検査パネルで`looseLine`として報告する行と同じです。
+- **`findLooseLines(doc, { threshold?, pageIndex? })`**：語間が`threshold`を超えるすべての両端そろえの行を、読む順に返します（`{ block, line, ratio, x, y, width, height }`）。`ratio`は`lineWordSpacing(line)`の値、つまり`minWordSpacing`と`maxWordSpacing`が縛る語間です（行が別の書体のスペースを含むときは`justifiedSpaceLimitRatio`、そうでなければ`justifiedSpaceRatio`）。そのため、上限ちょうどで組まれて太字のスペースを含む行は、しきい値が`maxWordSpacing`と同じでも報告されません。矩形はページのピクセル単位で、強調が覆う帯、つまりその行の位置でブロックの全幅にわたる帯です。これらは、Sandboxが強調し、検査パネルで`looseLine`として報告する行と同じです。
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`**：1ページについてその帯を塗り、塗った行を返します。コンテキストの現在の変換のもとでページのピクセル単位で描くため、同じcanvasで`renderPage`または`renderPageToCanvas`を呼んだ直後に呼び出してください。どちらもコンテキストをページに合わせてスケールした状態のままにします。`color`には任意のcanvasの塗りスタイルを指定できます。
 - **既定値**：どちらのヘルパーも、文書の`debug.looseLineHighlight`ではなく、既定のしきい値（3）と色（`#ff000040`）を使います。この設定はSandboxのためのものです。設定に従わせるには、`resolveDebugConfig(config.debug).looseLineHighlight.threshold`と`.color.hex`を渡します。
 

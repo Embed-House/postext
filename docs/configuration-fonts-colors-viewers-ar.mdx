@@ -1187,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`** يعيد كل سطر مضبوط تتجاوز قيمة `justifiedSpaceRatio` فيه `threshold`، بترتيب القراءة: `{ block, line, ratio, x, y, width, height }`. المستطيل، ببكسلات الصفحة، هو الشريط الذي يغطيه الإبراز: عرض الكتلة كاملًا على امتداد السطر. وهذه هي الأسطر التي يُبرزها Sandbox ويُبلغ عنها بوصفها `looseLine` في لوحة الفحوص.
+- **`findLooseLines(doc, { threshold?, pageIndex? })`** يعيد كل سطر مضبوط يتجاوز تباعد كلماته `threshold`، بترتيب القراءة: `{ block, line, ratio, x, y, width, height }`. و`ratio` هو `lineWordSpacing(line)`: التباعد كما يقيّده `minWordSpacing` و`maxWordSpacing` (`justifiedSpaceLimitRatio` حين يكون في السطر مسافات من وجه آخر، وإلا `justifiedSpaceRatio`)، فالسطر المنضود عند الحدّ وفيه مسافة عريضة لا يُبلَّغ عنه بعتبة تساوي `maxWordSpacing`. المستطيل، ببكسلات الصفحة، هو الشريط الذي يغطيه الإبراز: عرض الكتلة كاملًا على امتداد السطر. وهذه هي الأسطر التي يُبرزها Sandbox ويُبلغ عنها بوصفها `looseLine` في لوحة الفحوص.
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`** يملأ تلك الأشرطة في صفحة واحدة ويعيد الأسطر التي رسمها. يرسم ببكسلات الصفحة تحت التحويل الحالي للسياق، فاستدعه مباشرة بعد `renderPage` أو `renderPageToCanvas` على اللوحة نفسها: كلاهما يترك السياق مُحجَّمًا على مقاس الصفحة. و`color` أي نمط تعبئة يقبله canvas.
 - **القيم الافتراضية.** تستعمل الدالتان العتبة الافتراضية (3) واللون الافتراضي (`#ff000040`)، لا `debug.looseLineHighlight` الخاص بالمستند: فذلك الإعداد يخص Sandbox. ولتتبع الإعدادات، مرّر `resolveDebugConfig(config.debug).looseLineHighlight.threshold` و`.color.hex`.
 
