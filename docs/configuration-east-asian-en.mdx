@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
   uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
   emphasisMark?: {                          // The mark *…* and :dots[…] draw when they do not say.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -347,6 +347,8 @@ Two layouts from Chinese practice, at 五号 (10.5 pt) with a 6 pt line gap (`li
 
 `show` draws the grid (稿纸) over the type area, one light grey square per character position on each line (the character's em box around its baseline), on each column of the page (a `oneAndHalf` side column on the side the page's parity puts it), on the canvas and in the HTML. The PDF draws it only when `renderToPdf` is given `characterGrid: true`: it is a screen aid. `cjkGridGeometry(config)` returns the grid a config sets (numbers in use, margins, type area) and `applyCjkGrid(config)` the rewritten config.
 
+`fullLines` is for manuscript paper (原稿用紙), where every square of a full line is written in. A paragraph does not end on a single character (see `bodyText.avoidRunts`): the line above gives it its last character, and when that line is not justified it stands one square short. With `fullLines: true` a line that is not justified keeps every square and the paragraph may end on one character; a justified line still gives its character up and is spread to the measure. Off by default. Since postext 1.28.
+
 ### Marks, ruby and warichu
 
 The markup of [Chinese marks, ruby and warichu](/en/docs/document-format#chinese-marks-ruby-and-warichu) keeps its text in the paragraph: search, the contents, index anchors and copied text read the characters as written, and only what is drawn around them depends on these settings.
@@ -370,7 +372,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },

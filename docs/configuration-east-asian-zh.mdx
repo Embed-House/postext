@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // 汉字与拉丁字母之间；默认0.25 em。
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // 西文单词的哪一侧加这个间距。
   uprightDigits?: 0 | 2 | 3 | 4;            // 竖排：数字直立排进一个字格；默认2。
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // *…*对中日韩字符的效果。
   emphasisMark?: {                          // *…*和:dots[…]未指定时所画的记号。
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -347,6 +347,8 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 `show`在版心上绘制字格（稿纸）：在页面的每一栏（`oneAndHalf`的侧栏位于页面奇偶所决定的一侧）的每一行上，每个字位画一个浅灰色方格（即字符围绕基线的字身框），在Canvas和HTML中都显示。PDF只在`renderToPdf`收到`characterGrid: true`时才绘制它：它只是屏幕上的辅助工具。`cjkGridGeometry(config)`返回一份配置设定的字格（实际使用的数值、页边距、版心），`applyCjkGrid(config)`返回改写后的配置。
 
+`fullLines`用于原稿用纸（原稿用紙），整行的每个格子都要写满。段落不以孤字结尾（见`bodyText.avoidRunts`）：上一行让出最后一个字，这一行不两端对齐时就会空出一格。设置`fullLines: true`后，不两端对齐的行每个格子都填满，段落可以以一个字结尾；两端对齐的行仍然让出一个字，并拉开到行长。默认关闭。自postext 1.28起。
+
 ### 着重号、注音与夹注
 
 [中文标记、注音与夹注](/zh/docs/document-format#中文标记注音和双行夹注)的标记把文字留在段落中：搜索、目录、索引锚点和复制的文字读到的都是原文字符，只有字符周围绘制的内容取决于这些设置。
@@ -370,7 +372,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },

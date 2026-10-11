@@ -863,7 +863,7 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Discourage paragraphs from ending with a very short last line — a <em>runt</em>, e.g. a single short word alone. Ragged text too, with <code>optimalRagged</code>. A Chinese, Japanese or Korean paragraph does not end on a line holding one character, alone or with its closing marks (孤字): the line above gives it its last character when that line can still be justified within the tracking cap. On a character grid only a justified line gives the character up: one set left, right or centred cannot be spread, and its last cell would stay empty.</td>
+      <td>Discourage paragraphs from ending with a very short last line — a <em>runt</em>, e.g. a single short word alone. Ragged text too, with <code>optimalRagged</code>. A Chinese, Japanese or Korean paragraph does not end on a line holding one character, alone or with its closing marks (孤字): the line above gives it its last character when that line can still be justified within the tracking cap. A line set left, right or centred gives the character up too and stands one character short; with <code>cjk.grid.fullLines</code> (manuscript paper) it keeps every square, and the paragraph may end on one character.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

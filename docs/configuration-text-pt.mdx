@@ -863,7 +863,7 @@ Além da hifenização e dos limites de espaçamento, a configuração do texto 
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desestimula parágrafos que terminam com uma última linha muito curta, uma <em>linha curta</em> (runt), por exemplo uma única palavra curta sozinha. Vale também para texto alinhado à esquerda, com <code>optimalRagged</code>. Um parágrafo em chinês, japonês ou coreano não termina numa linha com um só caractere, sozinho ou com os sinais de fechamento (孤字): a linha de cima lhe cede o último caractere quando ainda pode ser justificada dentro do limite de tracking. Numa grade de caracteres só uma linha justificada cede o caractere: uma alinhada à esquerda, à direita ou centralizada não pode ser distribuída, e a sua última casa ficaria vazia.</td>
+      <td>Desestimula parágrafos que terminam com uma última linha muito curta, uma <em>linha curta</em> (runt), por exemplo uma única palavra curta sozinha. Vale também para texto alinhado à esquerda, com <code>optimalRagged</code>. Um parágrafo em chinês, japonês ou coreano não termina numa linha com um só caractere, sozinho ou com os sinais de fechamento (孤字): a linha de cima lhe cede o último caractere quando ainda pode ser justificada dentro do limite de tracking. Uma linha alinhada à esquerda, à direita ou centralizada também o cede e fica um caractere mais curta; com <code>cjk.grid.fullLines</code> (papel de manuscrito) mantém todas as casas, e o parágrafo pode terminar em um só caractere.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>

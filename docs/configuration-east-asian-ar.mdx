@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
   uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
   emphasisMark?: {                          // The mark *…* and :dots[…] draw when they do not say.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -347,6 +347,8 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 يرسم `show` الشبكة (稿纸) فوق منطقة النص، مربعًا رماديًا فاتحًا لكل موضع حرف في كل سطر (مربع em للحرف حول خط أساسه)، في كل عمود من الصفحة (والعمود الجانبي في `oneAndHalf` على الجانب الذي تضعه فيه زوجية الصفحة أو فرديتها)، على Canvas وفي HTML. ولا يرسمها PDF إلا حين يُعطى `renderToPdf` الخيار `characterGrid: true`: فهي أداة مساعدة على الشاشة. تُعيد `cjkGridGeometry(config)` الشبكة التي تضبطها الإعدادات (الأعداد المستخدمة، والهوامش، ومنطقة النص)، وتُعيد `applyCjkGrid(config)` الإعدادات بعد إعادة كتابتها.
 
+`fullLines` لورق المخطوطات (原稿用紙)، حيث تُملأ كل خانات السطر الكامل. لا تنتهي الفقرة بحرف منفرد (انظر `bodyText.avoidRunts`): يتنازل لها السطر السابق عن حرفه الأخير، وحين لا يكون ذلك السطر مضبوطًا تبقى فيه خانة فارغة. مع `fullLines: true` يحتفظ السطر غير المضبوط بكل خاناته وقد تنتهي الفقرة بحرف واحد؛ أما السطر المضبوط فيظل يتنازل عن حرفه ويُوزَّع على طول السطر. معطّل افتراضيًا. منذ postext 1.28.
+
 ### العلامات والروبي والواريتشو
 
 ترميز [العلامات الصينية والروبي والواريتشو](/ar/docs/document-format#العلامات-الصينية-والقراءات-ruby-والتعليقات-السطرية-warichu) يُبقي نصه في الفقرة: فالبحث وجدول المحتويات ومراسي الفهرس الأبجدي والنص المنسوخ تقرأ الحروف كما كُتبت، ولا يتوقف على هذه الإعدادات إلا ما يُرسم حولها.
@@ -370,7 +372,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },

@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // Entre xinès i llatí; per defecte 0,25 em.
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Quin costat d'una paraula occidental el porta.
   uprightDigits?: 0 | 2 | 3 | 4;            // Text vertical: nombres en una casella; per defecte 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // Què fa *…* amb els caràcters CJK.
   emphasisMark?: {                          // La marca que dibuixen *…* i :dots[…] quan no la indiquen.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -346,6 +346,8 @@ Dues caixes de la pràctica xinesa, en 五号 (10,5 pt) amb 6 pt d'interlineat (
 - 16开, 184 × 260 mm, dues columnes de 23 caràcters en 小五 (9 pt, línies de 13,5 pt) amb un espai entre columnes de dos caràcters: 2 × 207 pt + 18 pt.
 
 `show` dibuixa la retícula (稿纸) sobre la caixa de text, un quadrat gris clar per posició de caràcter a cada línia (la caixa de quadratí del caràcter al voltant de la seva línia de base), a cada columna de la pàgina (la lateral d'una disposició `oneAndHalf`, al costat que li toca segons la paritat de la pàgina), al canvas i a l'HTML. El PDF només la dibuixa quan `renderToPdf` rep `characterGrid: true`: és una ajuda de pantalla. `cjkGridGeometry(config)` retorna la retícula que fixa una configuració (els nombres en ús, els marges, la caixa de text) i `applyCjkGrid(config)` la configuració reescrita.
+
+`fullLines` és per al paper de manuscrit (原稿用紙), on s'escriu a totes les caselles d'una línia completa. Un paràgraf no acaba en un sol caràcter (vegeu `bodyText.avoidRunts`): la línia anterior li cedeix el seu últim caràcter, i quan aquesta línia no està justificada queda amb una casella buida. Amb `fullLines: true` una línia sense justificar conserva totes les caselles i el paràgraf pot acabar en un sol caràcter; una línia justificada continua cedint el seu caràcter i es reparteix fins a la mesura. Desactivat per defecte. Des de postext 1.28.
 ### Marques, ruby i warichu
 
 El marcatge de [marques xineses, ruby i warichu](/ca/docs/document-format#marques-xineses-ruby-i-warichu) conserva el seu text al paràgraf: la cerca, l'índex general, les àncores de l'índex analític i el text copiat llegeixen els caràcters tal com es van escriure, i d'aquesta configuració només depèn el que es dibuixa al voltant.
@@ -369,7 +371,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },

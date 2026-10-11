@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // Between Han and Latin; default 0.25 em.
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Which side of a Western word takes it.
   uprightDigits?: 0 | 2 | 3 | 4;            // Vertical text: numbers in one upright cell; default 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // What *…* does to CJK characters.
   emphasisMark?: {                          // The mark *…* and :dots[…] draw when they do not say.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -347,6 +347,8 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 `show`は版面にグリッド（稿纸、原稿用紙）を重ねて描きます。各行の文字位置ごとに薄い灰色の正方形を1つ描き（ベースラインを基準にした文字の全角ボックス）、ページの各段に描きます（`oneAndHalf`のサイド段は、ページの奇数・偶数で決まる側に描きます）。CanvasとHTMLに描画されます。PDFに描くのは`renderToPdf`に`characterGrid: true`を渡したときだけです。画面上の補助として使うものです。`cjkGridGeometry(config)`は設定が決めるグリッド（使われる数値、余白、版面）を返し、`applyCjkGrid(config)`は書き換えた設定を返します。
 
+`fullLines`は原稿用紙のための設定です。原稿用紙では、いっぱいの行のマスをすべて埋めます。段落は1字だけの行で終わりません（`bodyText.avoidRunts`を参照）。前の行が最後の1字を送り、その行が両端ぞろえでなければマスが一つ空きます。`fullLines: true`では、両端をそろえない行はすべてのマスを埋め、段落は1字で終わることがあります。両端ぞろえの行はこれまでどおり1字を送り、行長いっぱいに広げられます。既定ではオフです。postext 1.28以降。
+
 ### 圏点と傍線、ルビ、割注
 
 [中国語の記号、ルビ、割注](/ja/docs/document-format#中国語の記号ルビ割注)のマークアップは、テキストを段落の中に残します。検索、目次、索引のアンカー、コピーしたテキストは書かれたとおりの文字を読み取り、これらの設定で変わるのは文字の周りに描くものだけです。
@@ -370,7 +372,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },

@@ -37,7 +37,7 @@ interface CjkConfig {
   latinSpacing?: Dimension;                 // Entre han e latim; padrão 0.25 em.
   latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Qual lado de uma palavra ocidental o recebe.
   uprightDigits?: 0 | 2 | 3 | 4;            // Texto vertical: números numa célula em pé; padrão 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // O que *…* faz com os caracteres CJK.
   emphasisMark?: {                          // A marca que *…* e :dots[…] desenham quando não a indicam.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -347,6 +347,8 @@ Duas diagramações da prática chinesa, em 五号 (10,5 pt) com 6 pt de espaço
 
 `show` desenha a grade (稿纸) sobre a mancha, um quadrado cinza-claro por posição de caractere em cada linha (a caixa de eme do caractere em torno da sua linha de base), em cada coluna da página (uma coluna lateral `oneAndHalf` do lado em que a paridade da página a põe), no canvas e no HTML. O PDF só a desenha quando `renderToPdf` recebe `characterGrid: true`: é uma ajuda para a tela. `cjkGridGeometry(config)` devolve a grade que uma configuração define (números em uso, margens, mancha) e `applyCjkGrid(config)` a configuração reescrita.
 
+`fullLines` serve ao papel de manuscrito (原稿用紙), em que se escreve em todas as casas de uma linha completa. Um parágrafo não termina em um só caractere (veja `bodyText.avoidRunts`): a linha anterior lhe cede o seu último caractere, e quando essa linha não está justificada fica com uma casa vazia. Com `fullLines: true` uma linha não justificada mantém todas as casas e o parágrafo pode terminar em um só caractere; uma linha justificada continua cedendo o seu caractere e é distribuída até a medida. Desativado por padrão. Desde o postext 1.28.
+
 ### Marcas, rubi e warichu
 
 A marcação de [marcas chinesas, rubi e warichu](/pt/docs/document-format#marcas-chinesas-rubi-e-warichu) mantém o texto no parágrafo: a busca, o sumário, as âncoras do índice remissivo e o texto copiado leem os caracteres como foram escritos, e só o que se desenha em volta deles depende destes ajustes.
@@ -370,7 +372,7 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },
