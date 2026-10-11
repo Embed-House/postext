@@ -5,32 +5,39 @@ import { Dialog } from '@base-ui/react/dialog';
 import { AlertTriangle, CheckCircle2, ChevronRight, Download, Info, Save, Trash2, Upload, X } from 'lucide-react';
 import { defaultResourceTypes } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { newChapter } from '../book/chapterOps';
-import { generateId } from '../storage/ids';
 import { downloadBytes } from '../storage/persistence';
 import { Button, Collapsible, ConfirmPopover, IconButton, Select, Switch, announce, usePortalContainer, type SelectOption } from '../ui';
 import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface';
-import { importedResources, loadLastTemplateId, saveLastTemplateId, useWordTemplates } from './sandboxImport';
+import {
+  FINDING_LABEL,
+  convertWordDocument,
+  counted,
+  defaultWordDestination,
+  importedResources,
+  loadLastTemplateId,
+  materializedTemplate,
+  paragraphTargetByName,
+  saveLastTemplateId,
+  useWordTemplates,
+  wordImportActions,
+  type WordDestination,
+} from './sandboxImport';
 import {
   analyzeDocx,
   calloutStylesOf,
   chipStylesOf,
   displayStyleName,
   emptyTemplate,
-  lookup,
   newTemplateId,
   parseTemplate,
   templateFile,
   characterTargetOf,
-  paragraphTargetOf,
-  wordToPostext,
   type CharacterTarget,
   type CharacterTargetKind,
   type ParagraphTarget,
   type ParagraphTargetKind,
   type WordImportOptions,
   type WordTemplate,
-  type FindingId,
   type QualityReport,
   type WordDocument,
 } from 'postext/word';
@@ -41,34 +48,12 @@ export interface WordImportFile {
   doc: WordDocument;
 }
 
-type Destination = 'chapter' | 'append' | 'book';
+type Destination = WordDestination;
 
 const AUTO = '__auto__';
 const EMBEDDED = '__embedded__';
 
-/** A count in words: the `…One` label for 1, the other one otherwise. */
-export function counted(labels: SandboxLabels, key: keyof SandboxLabels, count: number): string {
-  const one = `${String(key)}One` as keyof SandboxLabels;
-  const text = (count === 1 && typeof labels[one] === 'string' ? labels[one] : labels[key]) as string;
-  return text.replace('__count__', String(count));
-}
-
-const FINDING_LABEL: Record<FindingId, keyof SandboxLabels> = {
-  allNormal: 'wordFindingAllNormal',
-  directFormatting: 'wordFindingDirectFormatting',
-  manualHeadings: 'wordFindingManualHeadings',
-  lineBreaks: 'wordFindingLineBreaks',
-  pageBreaks: 'wordFindingPageBreaks',
-  emptyParagraphs: 'wordFindingEmptyParagraphs',
-  typedNumbering: 'wordFindingTypedNumbering',
-  spacing: 'wordFindingSpacing',
-  trackedChanges: 'wordFindingTrackedChanges',
-  comments: 'wordFindingComments',
-  textBoxes: 'wordFindingTextBoxes',
-  unsupportedPictures: 'wordFindingUnsupportedPictures',
-  equations: 'wordFindingEquations',
-  hiddenText: 'wordFindingHiddenText',
-};
+export { counted };
 
 const fileBase = (name: string): string => name.replace(/\.[^.]+$/, '');
 
@@ -193,8 +178,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
   const [dirty, setDirty] = useState(false);
   // A whole book exported from the Sandbox (chapter markers) comes back as
   // a book; anything else goes into the open chapter unless asked.
-  const [destination, setDestination] = useState<Destination>(() =>
-    doc.blocks.some((b) => b.type === 'paragraph' && paragraphTargetOf(doc, b.styleId, working, config).kind === 'chapter') ? 'book' : 'chapter');
+  const [destination, setDestination] = useState<Destination>(() => defaultWordDestination(doc, working, config));
   const [saveAsName, setSaveAsName] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
@@ -210,13 +194,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
   const activeChapter = chapters.find((c) => c.id === activeChapterId);
   const existingIds = useMemo(() => new Set(resources.map((r) => r.id)), [resources]);
   const result = useMemo(
-    () => wordToPostext(doc, {
-      template: working,
-      config,
-      chapters: destination === 'chapter' ? 'single' : 'split',
-      existingIds,
-      untitledChapter: doc.title || labels.wordUntitledChapter,
-    }),
+    () => convertWordDocument(doc, { template: working, config, destination, existingIds, untitledChapter: labels.wordUntitledChapter }),
     [doc, working, config, destination, existingIds, labels.wordUntitledChapter],
   );
 
@@ -240,9 +218,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
     setDirty(true);
   };
 
-  const styleIdOf = (name: string): string => [...doc.styles.values()].find((s) => s.type === 'paragraph' && s.name === name)?.id ?? '';
-  const paragraphTarget = (name: string): ParagraphTarget =>
-    lookup(working.paragraphs, name) ?? paragraphTargetOf(doc, styleIdOf(name), working, config);
+  const paragraphTarget = (name: string): ParagraphTarget => paragraphTargetByName(doc, name, working, config);
 
   const named = (list: readonly { id: string; name?: string }[], current?: string): SelectOption[] => {
     const opts = list.map((s) => ({ value: s.id, label: s.name ?? s.id }));
@@ -364,13 +340,7 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
 
   /** The working mapping with every style of this document written out, so
    *  a saved template says what each one became. */
-  const materialized = (): WordTemplate => {
-    const paragraphs = { ...working.paragraphs };
-    const characters = { ...working.characters };
-    for (const s of report.paragraphStyles) paragraphs[s.name] = paragraphTarget(s.name);
-    for (const s of report.characterStyles) characters[s.name] = characterTargetOf(doc, s.name, working, config);
-    return { ...working, paragraphs, characters };
-  };
+  const materialized = (): WordTemplate => materializedTemplate(doc, working, report, config);
 
   const saved = templates.find((t) => t.id === baseId);
   const saveChanges = () => {
@@ -451,19 +421,9 @@ function WordImportPopup({ file, onClose }: { file: WordImportFile; onClose: () 
       const types = config.resourceTypes ?? defaultResourceTypes(locale);
       const created = await importedResources(result, types);
       for (const r of created) dispatch({ type: 'UPSERT_RESOURCE', payload: r });
-      if (destination === 'chapter') {
-        dispatch({ type: 'SET_MARKDOWN', payload: result.chapters[0]?.markdown ?? '' });
-        announce(labels.wordImportDoneChapter.replace('__file__', isolate(file.name)));
-      } else {
-        const made = result.chapters.map((c) => newChapter(generateId('chapter'), c.title, c.markdown));
-        if (destination === 'book') {
-          dispatch({ type: 'SET_BOOK', payload: { chapters: made, activeChapterId: made[0]!.id } });
-        } else {
-          const at = Math.max(0, chapters.findIndex((c) => c.id === activeChapterId)) + 1;
-          made.forEach((chapter, k) => dispatch({ type: 'ADD_CHAPTER', payload: { chapter, index: at + k, activate: k === 0 } }));
-        }
-        announce(counted(labels, 'wordImportDoneChapters', made.length).replace('__file__', isolate(file.name)));
-      }
+      for (const action of wordImportActions(result, destination, { chapters, activeChapterId })) dispatch(action);
+      if (destination === 'chapter') announce(labels.wordImportDoneChapter.replace('__file__', isolate(file.name)));
+      else announce(counted(labels, 'wordImportDoneChapters', result.chapters.length).replace('__file__', isolate(file.name)));
       if (created.length) announce(counted(labels, 'wordImportResources', created.length));
       if (baseId !== AUTO && baseId !== EMBEDDED) saveLastTemplateId(baseId);
       onClose();
