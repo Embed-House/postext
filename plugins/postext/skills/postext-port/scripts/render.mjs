@@ -282,6 +282,7 @@ if (typeof bundleApi?.migrateConfig === 'function') {
     [(c) => c.bodyText?.hardLineBreaks, 'printed line-end backslashes'],
     [(c) => c.codeStyle?.blocks, 'code fences read as Markdown'],
     [(c) => c.bodyText?.verse?.tighten, 'verse turnovers at natural word spacing'],
+    [(c) => `${c.bodyText?.avoidWidows}|${c.bodyText?.avoidOrphans}`, 'widow and orphan rules of a character grid'],
   ].filter(([of]) => of(read) !== of(config)).map(([, what]) => what);
   if (kept.length) {
     const v = manifest.configVersion;

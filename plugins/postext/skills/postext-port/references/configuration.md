@@ -303,6 +303,9 @@ H&J / Knuth–Plass
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
 │                        runtMinCharacters counts word spaces, not letters (a space ≈ ½ letter): 2 × N for a last line of N letters
+│                        CJK: a paragraph does not end on one character (孤字, 泣き別れ): the line above gives one up and is spread to the measure.
+│                        On a character grid (cjk.grid, ≥ 1.28) only a justified paragraph does: one set left/right/center keeps every
+│                        full line full (manuscript paper needs no avoidRunts: false) and may end on one character
 ├─ gradedRuntPenalty    false  true = a runt costs runtPenalty × (1 − width/threshold): a two-word ending costs less than one word
 ├─ tightenRunts         true   re-set a runt paragraph one line shorter (tighter spaces, ≤ maxRuntTracking; refused if a justified line passes max(maxWordSpacing, the paragraph's loosest justified line) or more lines go ragged)
 ├─ maxRuntTracking      10     thousandths of an em (10 = 0.01em), applied negatively
@@ -313,6 +316,10 @@ H&J / Knuth–Plass
 ├─ maxJustifyTracking   0      thousandths of an em, either way: a justified line past maxWordSpacing (or under minWordSpacing) takes letter spacing instead (0 = off; 10 is plenty; needs optimalLineBreaking)
 ├─ avoidOrphans         true;  orphanMinLines 2;  orphanPenalty 1000;  avoidOrphansInLists true
 ├─ avoidWidows          true;  widowMinLines 2;   widowPenalty 1000;   avoidWidowsInLists true
+│                        on a character grid (cjk.grid.enabled, ≥ 1.28) avoidWidows defaults to false, and avoidOrphans too in the
+│                        japan region: the page holds the lines its grid counts (a Chinese grid keeps avoidOrphans, 孤行). Set a key
+│                        to choose otherwise; a preset below configVersion 12 on a grid reads avoidWidows true (and avoidOrphans true in Japan).
+│                        avoidWidows = first lines at a column's foot, avoidOrphans = last lines at the next one's head (CSS names them the other way)
 ├─ slackWeight          10     pressure to fill columns (0 = off)
 ├─ keepColonWithList    true   paragraph ending in ':' stays with the list it introduces
 ├─ colonListRoom        'item' room kept under the colon line: 'item' = what the first item needs by the list orphan/widow rules
@@ -1423,7 +1430,7 @@ CJK keeps Knuth–Plass. The guide is docs/chinese-layout-en.mdx (postext.dev/en
 | `composeDesignText` | `true` | ≥ 1.25; design text (openers, heading designs, running heads, page designs, part pages) whose row has more CJK letters than word spaces takes the body's `lineBreak`, mark widths, `latinSpacing`, hanging and title rule (ragged; ruby/warichu/dots print plain). A note may be one sentence with `，；、`: no `\n` per clause to dodge full-width marks. `false` = pre-1.25 (wrapped at spaces, marks at the font's width) |
 | `latinSpacing` | `{0.25, em}` | Han ↔ Latin letter/digit; replaces a typed space; `0` off |
 | `uprightDigits` | `2` | vertical text: numbers of ≤ N digits in one upright cell (0, 2, 3, 4), but not inside a Latin sentence (a Latin word on both sides, past spaces, numbers and marks), where they run sideways with it; `:tcy[…]` / `:sideways[…]` by hand |
-| `grid` | off | `{enabled, charsPerLine, linesPerPage, show}`: rewrites margins so columns are whole ems and the type area whole lines; configured margins are minimums; warning `cjkGridClamped`. Column balancing is off on a grid unless `headings.balancing.enabled` (≥ 1.25, §5.2) |
+| `grid` | off | `{enabled, charsPerLine, linesPerPage, show}`: rewrites margins so columns are whole ems and the type area whole lines; configured margins are minimums; warning `cjkGridClamped`. Column balancing is off on a grid unless `headings.balancing.enabled` (≥ 1.25, §5.2). On a grid `bodyText.avoidWidows` defaults to `false`, and `bodyText.avoidOrphans` too in the `japan` region (≥ 1.28, §4): a page holds every line its grid counts. A ragged paragraph on a grid keeps its full lines full under `avoidRunts` (≥ 1.28) |
 | `emphasis` | `'dots'` in a Chinese or Japanese document | what `*…*` does to CJK characters (`'italic'` fakes a slant) |
 | `emphasisMark` | `{style: 'auto', fill: 'auto', position: 'auto'}` | ≥ 1.16; the shape of `*…*` dots and of `:dots` without attributes: `style` `'dot'\|'circle'\|'sesame'`, `fill` `'filled'\|'open'`, `position` `'over'\|'under'` (over = right in vertical text). Auto: Chinese dot under (right in vertical); Japan sesame ﹅ over / right in both directions. Dots go outside a ruby reading on the same side |
 | `bookTitleMark` | brackets / wavy / wavy / brackets | `:book[…]` prints its brackets, a wavy line under it, or `'none'` |
@@ -1486,7 +1493,8 @@ Guide: https://postext.dev/en/docs/japanese-layout. Everything below follows fro
 | kanbun | `:kunten[字]{kaeri="レ" okuri="ヲ"}`, `cjk.kunten` | 返り点 small at the lower left, 送り仮名 at the right (vertical) |
 
 Vertical multi-tier pages run on at a chapter end (nariyuki) by default: balancing is off in vertical
-text (and on a character grid, ≥ 1.25) unless `headings.balancing.enabled: true`. Fonts: Noto Serif JP (body), Noto Sans JP (headings, gothic emphasis), or Shippori
+text (and on a character grid, ≥ 1.25) unless `headings.balancing.enabled: true`. On a character grid a Japanese page
+runs both break rules off (`bodyText.avoidWidows`, `bodyText.avoidOrphans`, ≥ 1.28): do not write them `false` by hand. Fonts: Noto Serif JP (body), Noto Sans JP (headings, gothic emphasis), or Shippori
 Mincho / B1 for a bunko look (it has no ō ū: rōmaji with macrons needs another face for that text).
 
 ```json
@@ -1654,7 +1662,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 
 **preset.json** — `version: 2` manifest (full reference: project-format.md):
 ```
-{ version: 2, configVersion: 11, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
+{ version: 2, configVersion: 12, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
   default?, view?: { canvasScope?: 'book'|'chapter' },
   start?: { pageIndexOffset?, pageNumbering?: { startAt?, format? }, headings?: { h1..h6 }, part?: { number, title, palette? },
             resourceCounters?, resourceNumbers?, statementCounters?, footnoteNumber?, lineNumber?, afterPartPage? },
@@ -1669,7 +1677,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 11` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
+`configVersion: 12` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
 the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`
 when one is embedded inside a `:::callout`, `headings.inlineMarks: false` when a heading carries `*`, `_`, `^`,
@@ -1690,7 +1698,9 @@ on every text element of a heading design or a part page (`parts.design`, `parts
 (in `htmlViewer.overrides` too); one stamped 10 (postext 1.24), that of rules 11:
 `headings.balancing.enabled: true` on a horizontal `cjk.grid` config that does not set it, `tableStyle.splitInline: false`
 when a chapter embeds a resource, `layout.flowColumns: false` when a chapter opens a `:::columns` fence (#634) and
-`layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639). The pins keep what those rules changed, not
+`layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639); one stamped 11 (postext 1.25 to 1.27),
+those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
+too in the `japan` region (#717). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

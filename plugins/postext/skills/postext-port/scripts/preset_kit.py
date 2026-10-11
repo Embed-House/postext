@@ -61,9 +61,12 @@ from typing import Any
 # the rules-10 pin: a line of verse a little too wide turns over instead of
 # tightening its word spaces. A manifest stamped 10 (postext 1.24) gets the
 # rules-11 pin: a horizontal page on a character grid stays balanced. An
+# manifest stamped 11 (postext 1.25 to 1.27) gets the rules-12 pin: on a
+# character grid the widow rule stays on, and the orphan rule too in the
+# Japan region. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
-# one older than 1.25 reads 11 as 10.
-CONFIG_VERSION = 11
+# one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11.
+CONFIG_VERSION = 12
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -547,7 +550,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 11, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 12, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),

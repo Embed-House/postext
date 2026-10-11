@@ -883,6 +883,7 @@ Decimal comma vs point in data and captions; `{,}` in LaTeX.
 - Check `cjkLooseLine` in the render (a line that could not be spread, usually a long Latin word or URL). A
   single-character last line (孤字) is avoided by the composer under `bodyText.avoidRunts` (default on): the line
   above gives up its last character; one left over means that line could not be spread: reword or accept.
+  On a character grid (≥ 1.28) a paragraph that is not justified keeps the lone character: its lines stay full.
 
 ### F6. Chinese, vertical and bound on the right (Taiwan novel, classic, poetry)
 - `locale: 'zh-Hant-TW'` (or `zh-Hant-HK`, or `zh-Hans` for a mainland classic set vertically: the region,
