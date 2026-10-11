@@ -264,6 +264,9 @@ export function footnoteParagraphStyle(resolved: ResolvedConfig): ResolvedParagr
     marginBottom: { value: 0, unit: 'em' },
     snapToGrid: true,
     textTransform: 'none',
+    // The notes' own rule between CJK characters (#705); unset, the
+    // document's, as for any paragraph style.
+    ...(f.wordBreak ? { wordBreak: f.wordBreak } : {}),
   };
 }
 

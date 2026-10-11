@@ -22,6 +22,7 @@ import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
 import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose';
+import { getCjkComposition } from './cjkPunctuation';
 import { graphemeCount, graphemesOf } from './graphemes';
 import { CENTRAL, sideMarkerRun } from './cjkAnnotate';
 import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, mayHoldVerticalCell, measuringVertically, verticalTextWidth, withMeasureWritingMode } from './vertical';
@@ -1150,6 +1151,10 @@ function tokenizeSpans(
    *  `و١٤٤٥`, `(API)` in Arabic) is cut there into words that touch, each
    *  measured as it is painted, as a run of its own direction. */
   bidi?: BidiParagraph,
+  /** `keep-all` is in force for the block (its own `cjkWordBreak`, else
+   *  the document's `cjk.wordBreak`): a word that holds CJK characters does
+   *  not break between two letters (#705). */
+  keepAll = false,
 ): RichToken[] {
   const tokens: RichToken[] = [];
   // Which characters of the joined text sit in a compound, a word (across
@@ -1255,7 +1260,7 @@ function tokenizeSpans(
         ? before.text.slice(-2)
         : undefined;
       // A word that holds CJK characters: measured unit by unit, once each.
-      const cjk = cjkText && !isSpace && hasCJK(clean) ? cjkWordBreaks(clean, font, sc, letterSpacingPx) : undefined;
+      const cjk = cjkText && !isSpace && hasCJK(clean) ? cjkWordBreaks(clean, font, sc, letterSpacingPx, undefined, keepAll) : undefined;
       // A word of a joining script is measured untracked, its break points
       // (after a hyphen or a dash it carries) too.
       const wordSpacing = isSpace ? letterSpacingPx : wordLetterSpacing(clean, letterSpacingPx);
@@ -1684,7 +1689,10 @@ function measureRichText(
   // The languages the paragraph's isolates name (`:ltr[…]{lang=en}`), set
   // on the segments of their text (`VDTLineSegment.lang`).
   const languages = spans.some((sp) => sp.direction?.lang !== undefined || sp.direction?.outer !== undefined) ? spanLanguages(spans) : [];
-  const tokens = tokenizeSpans(spans, normalFont, boldFont, italicFont, boldItalicFont, shouldHyphenate, letterSpacingPx, options?.breakAfterDashes === true, options?.hyphenateCompounds === false, cjkText, bidi);
+  // `keep-all` holds in a Latin paragraph that quotes CJK characters as it
+  // does in one the composer sets (#705).
+  const keepAll = cjkText && (options?.cjkWordBreak !== undefined ? options.cjkWordBreak === 'keep-all' : (options?.cjkComposition ?? getCjkComposition()).keepAll === true);
+  const tokens = tokenizeSpans(spans, normalFont, boldFont, italicFont, boldItalicFont, shouldHyphenate, letterSpacingPx, options?.breakAfterDashes === true, options?.hyphenateCompounds === false, cjkText, bidi, keepAll);
   if (options?.labelColumnPx !== undefined) setLabelTabs(tokens, (t) => t.labelTab, options.labelColumnPx, (t, w) => { t.width = w; });
   const repeatHyphen = options?.repeatHyphen === true;
   const hasSmallCaps = tokens.some((t) => t.smallCaps);

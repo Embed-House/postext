@@ -4845,6 +4845,15 @@ export interface FootnotesConfig {
   color?: ColorValue;
   /** Alignment of the note text. Defaults to the body alignment. */
   textAlign?: TextAlignKeyword;
+  /** How the notes break their lines between Chinese, Japanese and Korean
+   *  characters (#705). Unset: the document's `cjk.wordBreak`, as on a
+   *  paragraph style. `'keep-all'` keeps a run of such characters whole, so
+   *  a book whose body breaks between any two characters can keep the
+   *  short quotations of its Latin notes whole without word joiners;
+   *  `'normal'` breaks the notes of a `keep-all` document between
+   *  characters. Notes at the foot of the column, at the end of the
+   *  chapter and beside a spread take it. */
+  wordBreak?: CjkWordBreak;
   /** Indent of the turnover lines of a note, so they align past its
    *  number. Default `0` (the lines run flush under the number). */
   hangingIndent?: Dimension;
@@ -4884,6 +4893,8 @@ export interface ResolvedFootnotesConfig {
   lineHeight: Dimension;
   color?: ColorValue;
   textAlign?: TextAlign;
+  /** Set only when the notes take a rule of their own. */
+  wordBreak?: CjkWordBreak;
   hangingIndent: Dimension;
   /** Set when it is `'em'`. */
   numberGap?: 'em';

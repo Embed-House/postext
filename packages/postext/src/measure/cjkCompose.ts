@@ -3174,12 +3174,17 @@ export interface CjkWordBreaks {
  * paragraph quoting CJK): next to its CJK characters, under the document's
  * line-break rules. Each unit is measured once and the widths before a
  * break come from their running sums, so a long run of ideographs costs
- * linear time.
+ * linear time. With `keepAll` (`cjk.wordBreak: 'keep-all'`, or the block's
+ * own rule) no break is left between two letters, as in a paragraph the
+ * composer sets ({@link keepAllBreaks}): a quotation of a few characters
+ * stays whole, and a break next to its punctuation stays where the level
+ * allows it (#705).
  */
-export function cjkWordBreaks(word: string, font: string, smallCaps: boolean | undefined, letterSpacingPx: number, level: CjkLineBreakLevel = getCjkLineBreak()): CjkWordBreaks {
+export function cjkWordBreaks(word: string, font: string, smallCaps: boolean | undefined, letterSpacingPx: number, level: CjkLineBreakLevel = getCjkLineBreak(), keepAll = false): CjkWordBreaks {
   const span: InlineSpan = { text: word, bold: false, italic: false, ...(smallCaps ? { smallCaps: true } : {}) };
   const units = buildUnits([span], { normal: font, bold: font, italic: font, boldItalic: font }, letterSpacingPx, getMeasureWritingMode() === 'vertical-rl');
-  const opportunities = breakOpportunities(units, level);
+  const levelBreaks = breakOpportunities(units, level);
+  const opportunities = keepAll ? keepAllBreaks(units, levelBreaks) : levelBreaks;
   const starts: number[] = [];
   const sums: number[] = [0];
   const breaks: number[] = [];

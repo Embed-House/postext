@@ -265,7 +265,7 @@ const RICH: PostextConfig = {
   orderedLists: { color: hex('#0000aa'), indent: pt(22), fontWeight: 700 },
   toc: { title: 'Contents', leader: '·', levels: [{ level: 1, fontWeight: 700 }, { level: 2, italic: true }] },
   index: { columns: 3, separator: ' · ', see: { italic: false } },
-  footnotes: { numbering: 'chapter', fontSize: pt(7.5), rule: { enabled: false } },
+  footnotes: { numbering: 'chapter', fontSize: pt(7.5), rule: { enabled: false }, wordBreak: 'normal' },
   crossRefs: { color: hex('#0044aa') },
   citations: { style: 'apa', hyphenateNames: false },
   math: { enabled: true, fontSize: pt(11) },
@@ -286,7 +286,7 @@ const GRID = { enabled: true, charsPerLine: 26, linesPerPage: 24 };
 const CONTEXTS: Record<string, PostextConfig> = {
   plain: {},
   rich: RICH,
-  grid: { locale: 'zh-Hans', cjk: { grid: GRID } },
+  grid: { locale: 'zh-Hans', cjk: { grid: GRID }, footnotes: { wordBreak: 'keep-all' } },
   japaneseVertical: { locale: 'ja', layout: { writingMode: 'vertical-rl' } },
   arabic: { locale: 'ar' },
   richArabic: { ...RICH, locale: 'ar-MA', direction: 'rtl' },
