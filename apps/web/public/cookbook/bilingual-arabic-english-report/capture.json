@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-arabic-english-report",
-  "sourceHash": "5d4f29f62a9b8d6b664837de444336d333d68094d469b863dd1c2c5676d9445e",
+  "sourceHash": "9484999c69afb4a58046f3cf7ad4521867ab37fa3f291cbe1a3d0ab43eca61e7",
   "engine": {
-    "postext": "1.25.4",
-    "postextPdf": "1.25.4",
+    "postext": "1.26.1",
+    "postextPdf": "1.26.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T19:12:54.295Z",
+  "capturedAt": "2026-10-10T23:51:48.815Z",
   "variants": {
     "en": {
-      "hash8": "4865b9c1",
-      "vdtHash": "8590d9b59032e62092fd0ab1303d6d23b1fa59e2",
+      "hash8": "eed67144",
+      "vdtHash": "a88cf196bdbbc73cf272c1914c1d26bb1359c054",
       "timings": {
-        "importMs": 756,
-        "fontsMs": 119,
-        "buildMs": 178,
-        "totalMs": 1727,
+        "importMs": 185,
+        "fontsMs": 59,
+        "buildMs": 62,
+        "totalMs": 842,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 75292,
+          "bytes": 75286,
           "alt": "Opening page ١: التقرير السنوي ٢٠٢٥."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 59180,
+          "bytes": 59174,
           "alt": "Page ٢: البرامج. جدول ١-١: أرقام البرامج في عامي ٢٠٢٤ و٢٠٢٥."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 37160,
+          "bytes": 37128,
           "alt": "Page ٣."
         }
       ],
@@ -100,12 +100,12 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82790,
+        "bytes": 82826,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16248,
+        "bytes": 16242,
         "folio": "3c25eba8"
       },
       "detected": {
@@ -338,13 +338,13 @@
       }
     },
     "es": {
-      "hash8": "d67560d8",
+      "hash8": "b0aef9d2",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 252,
-        "fontsMs": 95,
-        "buildMs": 118,
-        "totalMs": 1076,
+        "importMs": 171,
+        "fontsMs": 56,
+        "buildMs": 70,
+        "totalMs": 832,
         "builds": 1
       },
       "specimen": {
@@ -655,13 +655,7 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

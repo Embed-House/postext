@@ -6,12 +6,12 @@ title: "التقرير السنوي ٢٠٢٥"
 
 ## كلمة المديرة
 
-### Director's note {style="second-head" dir=ltr}
+### Director’s note {style="second-head" dir=ltr}
 
 كان عام ٢٠٢٥ أكثر أعوام المؤسسة نشاطًا منذ تأسيسها. فقد صدر في هذا العام ٣٤ كتابًا مترجمًا إلى العربية و١٤ كتابًا مترجمًا منها، ومنحنا ٥٢ منحة لمترجمين من تسعة بلدان، وأقمنا ١٨ ورشة تدريب حضرها ٤٦٦ مشاركًا ومشاركة.
 
 :::paragraphs{style="second" dir=ltr}
-2025 was the busiest year in the Foundation's history. We published 34 books translated into Arabic and 14 translated from it, awarded 52 grants to translators from nine countries, and ran 18 training workshops attended by 466 people.
+2025 was the busiest year in the Foundation’s history. We published 34 books translated into Arabic and 14 translated from it, awarded 52 grants to translators from nine countries, and ran 18 training workshops attended by 466 people.
 :::
 
 وأكثر ما يسعدنا في هذه الأرقام أن الترجمة من العربية بدأت تلحق بالترجمة إليها. فقد كان الكتاب المترجم من العربية قبل خمس سنوات يقابله أكثر من ستة كتب مترجمة إليها، وصار اليوم يقابله كتابان ونصف. وقد صدرت روايتان من الكتب التي دعمناها في سلسلة :ltr[Harbour Modern Classics]{lang=en}، وهي المرة الأولى التي تدخل فيها روايات عربية معاصرة هذه السلسلة بدعم منا.
@@ -41,19 +41,19 @@ The table below gives the same figures in English. Grants are counted in the yea
 **الترجمة إلى العربية.** نختار الكتب بالتشاور مع لجنة من الناشرين والمترجمين تجتمع مرتين في السنة. ومن أبرز ما صدر هذا العام ترجمة جديدة لرواية :ltr[Middlemarch]{lang=en} لجورج إليوت، ومختارات من مقالات :ltr[Michel de Montaigne]{lang=fr} في الصداقة والسفر والقراءة.
 
 :::paragraphs{style="second" dir=ltr}
-**Translation into Arabic.** Titles are chosen with a committee of publishers and translators that meets twice a year. This year's list includes a new translation of George Eliot's *Middlemarch* and a selection of Montaigne's essays on friendship, travel and reading.
+**Translation into Arabic.** Titles are chosen with a committee of publishers and translators that meets twice a year. This year’s list includes a new translation of George Eliot’s *Middlemarch* and a selection of Montaigne’s essays on friendship, travel and reading.
 :::
 
 **الترجمة من العربية.** نموّل نصف تكاليف الترجمة للناشر الأجنبي الذي يشتري حقوق كتاب عربي، ونرافق المترجم بمحرر يقرأ ترجمته مع النص الأصلي. وصدرت هذا العام كتب مترجمة إلى الإنجليزية والإسبانية والتركية والإندونيسية.
 
 :::paragraphs{style="second" dir=ltr}
-**Translation from Arabic.** We pay half the translation costs of a foreign publisher who buys the rights to an Arabic book, and pair the translator with an editor who reads the translation against the original. This year's books appeared in English, Spanish, Turkish and Indonesian.
+**Translation from Arabic.** We pay half the translation costs of a foreign publisher who buys the rights to an Arabic book, and pair the translator with an editor who reads the translation against the original. This year’s books appeared in English, Spanish, Turkish and Indonesian.
 :::
 
 **التدريب.** تستمر الورشة الواحدة خمسة أيام، ويعمل فيها المشاركون على نص واحد بإشراف مترجمَين اثنين، أحدهما ينقل إلى العربية والآخر ينقل منها. وقد أضفنا هذا العام ورشة للترجمة الأدبية للأطفال، وأخرى لترجمة الشعر.
 
 :::paragraphs{style="second" dir=ltr}
-**Training.** Each workshop runs for five days, and its participants work on a single text with two tutors, one translating into Arabic and one out of it. This year we added a workshop on children's literature and another on poetry.
+**Training.** Each workshop runs for five days, and its participants work on a single text with two tutors, one translating into Arabic and one out of it. This year we added a workshop on children’s literature and another on poetry.
 :::
 
 :::paragraphs{style="colophon" dir=ltr}
