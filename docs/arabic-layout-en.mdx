@@ -94,7 +94,7 @@ Postext decides instead (`bodyText.scriptContext`, on by default). Such a word t
 
 The layout measures the word in that script, and the canvas, the HTML, the fixed-layout EPUB and the PDF paint those forms at that width, the same in every browser. A Latin note, a citation or a bibliography entry in an Arabic book needs no no-break space to keep `46.` or `(d. 1367)` in their Latin forms: write them with ordinary spaces. A word shaped in the Arabic script takes no letter-spacing, like the Arabic words around it.
 
-The rule acts in Latin, Greek, Cyrillic, Arabic and Hebrew contexts, and only in a face whose punctuation or digits change with the script; every other face is laid out as before. It covers the running text, headings, lists, captions, notes and table cells. A configuration stored by postext 1.27 or earlier is read with `scriptContext: false` and keeps the forms its browser gave it. See [`bodyText.scriptContext`](/en/docs/configuration-text#body-text).
+The rule acts in Latin, Greek, Cyrillic, Arabic and Hebrew contexts, and only in a face whose punctuation or digits change with the script; every other face is laid out as before. It covers the running text, headings, lists, captions, notes, table cells and the line of dots of a contents entry. A right-to-left word is measured as it is painted, so a bracket or a stop at its edge takes its width in every browser. A configuration stored by postext 1.27 or earlier is read with `scriptContext: false` and keeps the forms its browser gave it. See [`bodyText.scriptContext`](/en/docs/configuration-text#body-text).
 
 ## Page order and right binding
 

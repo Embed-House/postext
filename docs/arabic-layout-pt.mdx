@@ -94,7 +94,7 @@ O Postext decide isso (`bodyText.scriptContext`, ligado por padrão). Uma palavr
 
 O layout mede a palavra nessa escrita, e o canvas, o HTML, o EPUB de layout fixo e o PDF pintam essas formas com essa largura, igual em todos os navegadores. Uma nota em alfabeto latino, uma citação ou uma entrada de bibliografia num livro árabe não precisam de um espaço não separável para que `46.` ou `(m. 1367)` mantenham as formas latinas: escreva com espaços comuns. Uma palavra composta na escrita árabe não leva espaçamento entre letras, como as palavras árabes ao redor.
 
-A regra atua em contextos latino, grego, cirílico, árabe e hebraico, e só numa fonte cuja pontuação ou cujos algarismos mudam com a escrita; qualquer outra é diagramada como antes. Ela cobre o texto corrido, os títulos, as listas, as legendas, as notas e as células de tabela. Uma configuração salva pelo postext 1.27 ou anterior é lida com `scriptContext: false` e mantém as formas que o navegador lhe deu. Veja [`bodyText.scriptContext`](/pt/docs/configuration-text#texto-do-corpo).
+A regra atua em contextos latino, grego, cirílico, árabe e hebraico, e só numa fonte cuja pontuação ou cujos algarismos mudam com a escrita; qualquer outra é diagramada como antes. Ela cobre o texto corrido, os títulos, as listas, as legendas, as notas, as células de tabela e a linha de pontos de uma entrada do sumário. Uma palavra da direita para a esquerda é medida como é pintada, então um parêntese ou um ponto na sua borda ocupa o mesmo em todos os navegadores. Uma configuração salva pelo postext 1.27 ou anterior é lida com `scriptContext: false` e mantém as formas que o navegador lhe deu. Veja [`bodyText.scriptContext`](/pt/docs/configuration-text#texto-do-corpo).
 
 ## Ordem das páginas e encadernação à direita
 

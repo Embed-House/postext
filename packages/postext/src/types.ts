@@ -1522,9 +1522,12 @@ export interface BodyTextConfig {
    *  Hebrew contexts, and only in a face whose punctuation or digits
    *  change with the script (asked once a face): every other face is laid
    *  out and painted as before. It governs the running text, headings,
-   *  lists, captions, notes and table cells; design text (running heads,
-   *  openers), comic lettering and paragraphs set by the CJK composer are
-   *  not touched. Default `true`. `false` shapes such a word alone, as up
+   *  lists, captions, notes and table cells, and the leader of dots of a
+   *  contents entry (in the script of the document's language); in such a
+   *  face a right-to-left word is also measured as it is painted, right to
+   *  left, so a bracket or a stop at its edge takes one width in every
+   *  browser. Design text (running heads, openers), list markers, comic
+   *  lettering and paragraphs set by the CJK composer are not touched. Default `true`. `false` shapes such a word alone, as up
    *  to postext 1.27 (configurations stored before `configVersion` 12
    *  read with it, see `pinLegacyScriptContext` in `postext/bundle`). */
   scriptContext?: boolean;
