@@ -1446,7 +1446,7 @@ CJK keeps Knuth–Plass. The guide is docs/chinese-layout-en.mdx (postext.dev/en
 | `bookTitleBrackets` | `'auto'`: 《》〈〉 (Chinese) / 『』「」 (Japan) | ≥ 1.16; `[{open, close}, …]` outermost first, a deeper title takes the last pair |
 | `annotationColor` | text colour | dots and name/title lines |
 | `ruby` | `{fontSize: 0.5em, position: 'auto', overhang: 'auto', align: 'auto', smallKana: 'keep'}` | `fontFamily`, `fontSize`, `color`, `position`: zhuyin right of each character, pinyin over (right in vertical); `overhang` `'none'\|'kana'\|'any'` (auto: `kana` in Japan = ≤ 1 ruby character onto kana and mark blanks, ½ onto 「, never onto kanji; elsewhere ¼ ruby em onto any neighbour); `align` `'center'\|'jis'\|'start'` (auto: `jis` 1:2:1 in Japan, centred elsewhere); `smallKana: 'full'` paints ゃっ full size (≥ 1.16) |
-| `warichu` | `{fontSize: 0.5em}` | `fontSize`, `color`, `open`, `close` (brackets around each note; none in Chinese, （） in Japan, `''` = none) |
+| `warichu` | `{fontSize: 0.5em, minChars: 2}` | `fontSize`, `color`, `open`, `close` (brackets around each note; none in Chinese, （） in Japan, `''` = none), `minChars` (≥ 1.28: characters of a note a line break leaves on each side, marks not counted, so no line or page opens on `異。`; a note of ≤ 3 characters never divides; `1` = 1.27, and a preset below configVersion 12 with a `:warichu[` or `citations.notes: 'warichu'` reads `1`). From 1.28 a part whose last characters may not open the lower row folds at the nearest fold (`本名。` = `本` over `名。`, not one row) |
 | `kunten` | `{fontSize: 0.5em, placement: 'inline'}` | ≥ 1.16, `:kunten[…]` kanbun marks: `fontSize`, `color` (else `annotationColor`), `placement` `'inline'` (JIS X 4051: 返り点 take half an em after the character) \| `'interlinear'` (in the line gap, no advance) |
 
 Content warnings to expect: `cjkLooseLine` (a justified line needing more than ½ em between characters, set
@@ -1714,7 +1714,8 @@ on every text element of a heading design or a part page (`parts.design`, `parts
 when a chapter embeds a resource, `layout.flowColumns: false` when a chapter opens a `:::columns` fence (#634) and
 `layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639); one stamped 11 (postext 1.25 to 1.27),
 those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
-too in the `japan` region (#717). The pins keep what those rules changed, not
+too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
+`citations.notes: 'warichu'` (#720). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

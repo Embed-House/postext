@@ -2300,7 +2300,8 @@ def main() -> None:
                  "breaking it, a ``` fence's lines read as Markdown; below 10: a line of verse a little too wide "
                  "turned over instead of tightening its word spaces; below 11: a horizontal page on a character "
                  "grid balanced unless the config says otherwise; below 12: the widow rule on a character grid, and "
-                 "the orphan rule too in the Japan region, on unless the config says otherwise); "
+                 "the orphan rule too in the Japan region, on unless the config says otherwise, and a :warichu note "
+                 "broken where one of its characters is left alone on a line); "
                  "set \"configVersion\": 12 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
