@@ -108,8 +108,9 @@ describe('heading marks in configurations stored before they printed (EF-122 pin
 
   it('pins marks off for an older configuration whose headings carry marks', () => {
     const old: PostextConfig = { headings: { fontFamily: 'Georgia' } };
-    // (with the version-8 split pin: the text has headings)
-    expect(migrateConfig(old, 5, { content: MARKED }).headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' });
+    // (with the version-8 split pin and the version-12 pin of the order of
+    // the balancing levers, #707: the text has headings)
+    expect(migrateConfig(old, 5, { content: MARKED }).headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
     expect(migrateConfig(old, undefined, { content: [PLAIN, MARKED] }).headings?.inlineMarks).toBe(false);
     // Unknown content may carry marks.
     expect(migrateConfig(old, 5).headings?.inlineMarks).toBe(false);
@@ -128,8 +129,9 @@ describe('heading marks in configurations stored before they printed (EF-122 pin
 
   it('leaves a configuration whose headings carry none as it was', () => {
     const old: PostextConfig = { headings: { fontFamily: 'Georgia' } };
-    // Only the version-8 split pin applies: the text has headings.
-    expect(migrateConfig(old, 5, { content: PLAIN }).headings).toEqual({ ...old.headings, keepWithNextSplit: 'fill' });
+    // Only the version-8 split pin and the version-12 pin of the order of
+    // the balancing levers (#707) apply: the text has headings.
+    expect(migrateConfig(old, 5, { content: PLAIN }).headings).toEqual({ ...old.headings, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
     expect(migrateConfig(old, 7, { content: PLAIN }).headings?.inlineMarks).toBeUndefined();
   });
 

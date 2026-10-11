@@ -36,7 +36,8 @@ describe('pinLegacyOpenerHeadFloats (#639)', () => {
     // A heading style that spans the page counts too.
     const styled: PostextConfig = { headingStyles: [{ id: 'cover', span: 'page' }] };
     expect(migrateConfig(styled, 10, { content: TEXT }).layout?.floatsUnderOpener).toBe(false);
-    expect(migrateConfig(opener, 11, { content: TEXT })).toBe(opener);
+    // (one stamped 11 gets the pins of rules 12 alone, on its headings)
+    expect(migrateConfig(opener, 11, { content: TEXT }).layout).toBe(opener.layout);
   });
 
   it('leaves a configuration with no page-span heading, or text with no heading, alone', () => {

@@ -14,16 +14,20 @@ const grid = (extra: PostextConfig = {}): PostextConfig => ({
   ...extra,
 });
 
+/** A configuration that balances its columns and is stored under 11 or
+ *  lower also keeps the order of its levers (#707, `pinLegacyLooseOrder`). */
+const LEGACY_ORDER = { maxLinesBeforeLoose: 4 };
+
 describe('pinLegacyGridBalancing (#632)', () => {
   it('turns balancing on for a horizontal grid that does not set it', () => {
     const config = grid({ headings: { fontFamily: 'Noto Serif SC', balancing: { maxTracking: 20 } } });
     const out = migrateConfig(config, 10);
-    expect(out.headings!.balancing).toEqual({ maxTracking: 20, enabled: true });
+    expect(out.headings!.balancing).toEqual({ maxTracking: 20, enabled: true, ...LEGACY_ORDER });
     expect(out.headings!.fontFamily).toBe('Noto Serif SC');
     expect(resolveAllConfig(out).headings.balancing.enabled).toBe(true);
     expect(resolveAllConfig(config).headings.balancing.enabled).toBe(false);
     // No headings section at all.
-    expect(migrateConfig(grid(), 8).headings).toEqual({ balancing: { enabled: true } });
+    expect(migrateConfig(grid(), 8).headings).toEqual({ balancing: { enabled: true, ...LEGACY_ORDER } });
     // The stored configuration is not touched.
     expect(config.headings!.balancing).toEqual({ maxTracking: 20 });
   });
@@ -68,13 +72,13 @@ describe('pinLegacyGridBalancing (#632)', () => {
     }
     // Saved again and again, it stays.
     const twice = stripConfigDefaults(stripConfigDefaults(migrateConfig(grid(), 10)));
-    expect(twice.headings).toEqual({ balancing: { enabled: true } });
+    expect(twice.headings).toEqual({ balancing: { enabled: true, ...LEGACY_ORDER } });
   });
 
   it('pins a bundle on its merged layers', () => {
     const base: PostextConfig = { headings: { fontFamily: 'Noto Serif SC' } };
     const merged = migrateBundleConfig(base, [grid(), { layout: { layoutType: 'double' } }], 10);
-    expect(merged.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true } });
+    expect(merged.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, ...LEGACY_ORDER } });
     const vertical = migrateBundleConfig(base, [grid(), { layout: { writingMode: 'vertical-rl' } }], 9);
     expect(vertical.headings).toBe(base.headings);
     expect(migrateBundleConfig(base, [grid()], 11).headings).toBe(base.headings);

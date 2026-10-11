@@ -19,7 +19,9 @@
  * lines are distributed round-robin in importance order (lowest heading
  * level first), so the most important heading always receives the largest
  * share — e.g. 3 lines over an h2 and an h3 become +2 above the h2 and +1
- * above the h3.
+ * above the h3. A heading takes at most `maxLinesBeforeLoose` lines (two)
+ * that way before the levers below are tried, and its further lines, up to
+ * `maxLinesPerHeading`, only when they have nothing left to give (#707).
  *
  * When the column's headings cannot absorb the whole gap, further levers
  * apply in editorial priority order:
@@ -648,6 +650,10 @@ export interface BalanceState {
 
 export interface BalanceProposalOptions {
   maxLinesPerHeading: number;
+  /** `headings.balancing.maxLinesBeforeLoose` (#707): lines a heading may
+   *  take before the levers after it are tried. Omitted, the headings take
+   *  all their lines first. */
+  maxLinesBeforeLoose?: number;
   stretchAfterLists: boolean;
   maxLinesAfterList: number;
   /** `headings.balancing.stretchAfterDisplays` (#710); on when omitted. */
@@ -748,7 +754,8 @@ export interface BalanceProposal {
  *     'last'` moves this step after step 3, where it takes the room the
  *     whole lines before it left; `'off'` drops it);
  *  1. headings — round-robin in importance order (level asc, then reading
- *     order), capped at `maxLinesPerHeading`;
+ *     order), capped at `maxLinesBeforeLoose` lines each at this point and
+ *     at `maxLinesPerHeading` in step 5;
  *  2. list ends — round-robin in reading order, capped at
  *     `maxLinesAfterList`;
  *  2b. after-display points — the block after a display formula or a
@@ -760,7 +767,9 @@ export interface BalanceProposal {
  *     longest first (most glue = least visible loosening), with a shared
  *     budget: the pass stops loosening once the column has gained what it
  *     needs, capped at `maxLooseParagraphs` (cumulative across passes).
- *     Candidates that already failed to gain a line are skipped.
+ *     Candidates that already failed to gain a line are skipped;
+ *  5. headings again, up to `maxLinesPerHeading` (#707), only when a gap is
+ *     left and step 4 has nothing more to offer this column.
  */
 export function proposeBalanceLines(
   doc: VDTDocument,
@@ -836,7 +845,12 @@ export function proposeBalanceLines(
     const headings = gap.candidates
       .filter((c) => rows && c.kind === 'heading')
       .sort((a, b) => a.level - b.level || a.order - b.order);
-    remaining = distribute(headings, remaining, options.maxLinesPerHeading);
+    // A heading takes its first lines here and the rest only once the
+    // levers after it have nothing left to give (#707): four lines above
+    // the one heading of a page are a hole, while its paragraphs could run
+    // a line long.
+    const linesFirst = Math.min(options.maxLinesBeforeLoose ?? options.maxLinesPerHeading, options.maxLinesPerHeading);
+    remaining = distribute(headings, remaining, linesFirst);
 
     if (remaining > 0 && rows && options.stretchAfterLists) {
       const listEnds = gap.candidates
@@ -861,6 +875,9 @@ export function proposeBalanceLines(
 
     if (boxOrder === 'last') takeBoxRoom(gap.gapLines - remaining);
 
+    /** Whether this proposal offers the column a loose paragraph it has
+     *  not tried yet. */
+    let looseOffered = false;
     if (
       remaining > 0
       && options.looseParagraphs
@@ -882,8 +899,18 @@ export function proposeBalanceLines(
           loose.set(pick.contentIndex, 1);
           looseBudget.set(pick.contentIndex, budget);
           changed = true;
+          looseOffered = true;
         }
       }
+    }
+
+    // The headings' further lines, when the loose lever has nothing left
+    // for this column: it is off, the column holds its `maxLooseParagraphs`
+    // already, or every candidate is loose or has failed. Not in the
+    // proposal that offers a paragraph: the pass must show what the
+    // paragraphs gain first, and the next proposal sees the smaller gap.
+    if (remaining > 0 && !looseOffered && linesFirst < options.maxLinesPerHeading) {
+      remaining = distribute(headings, remaining, options.maxLinesPerHeading);
     }
   }
   return { lines, loose, looseBudget, changed };

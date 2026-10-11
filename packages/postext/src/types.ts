@@ -3877,6 +3877,16 @@ export interface ColumnBalancingConfig {
   enabled?: boolean;
   /** Maximum extra grid lines that may be added above a single heading. */
   maxLinesPerHeading?: number;
+  /** Grid lines a heading may take before the levers after it are tried
+   *  (#707): each heading of a short column takes up to this many, then the
+   *  list ends, the displays, the float bands and the loose paragraphs take
+   *  what they can, and a heading gets its further lines, up to
+   *  `maxLinesPerHeading`, only when those have nothing left to give. A
+   *  value at or above `maxLinesPerHeading` gives the headings all their
+   *  lines first, as up to postext 1.27; `0` tries the other levers before
+   *  any line goes above a heading. Default 2; configurations stored
+   *  earlier keep the old order (see `migrateConfig` in `postext/bundle`). */
+  maxLinesBeforeLoose?: number;
   /** Allow extra grid lines where a list/enumeration ends, when the column's
    *  headings cannot absorb the whole gap. Default true. */
   stretchAfterLists?: boolean;
@@ -3995,6 +4005,7 @@ export interface ResolvedHeadingsConfig {
   balancing: {
     enabled: boolean;
     maxLinesPerHeading: number;
+    maxLinesBeforeLoose: number;
     stretchAfterLists: boolean;
     maxLinesAfterList: number;
     stretchAfterDisplays: boolean;

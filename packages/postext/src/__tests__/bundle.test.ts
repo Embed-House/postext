@@ -693,8 +693,9 @@ describe('bundles written by postext 1.4 or earlier', () => {
     // so does one stamped 3 (a 1.5 prerelease, heading rules already
     // today's). The lantern sets no maths: its config gains no maths size.
     const v3 = await openBundle(zipManifest({ ...lantern14, configVersion: 3 }));
-    // (a version-8 pin keeps its split under a heading as it was)
-    expect(v3.config.headings).toEqual({ ...lantern14.config.headings, keepWithNextSplit: 'fill' });
+    // (a version-8 pin keeps its split under a heading as it was, and a
+    // version-12 one the order of its balancing levers, #707)
+    expect(v3.config.headings).toEqual({ ...lantern14.config.headings, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
     expect(v3.config.math).toBeUndefined();
     const today = await openBundle(zipManifest({ ...lantern14, configVersion: CONFIG_VERSION }));
     expect(today.config.headings).toEqual(lantern14.config.headings);

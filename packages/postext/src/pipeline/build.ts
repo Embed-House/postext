@@ -8774,10 +8774,18 @@ function* buildDocumentBalanced(
     const div = firstDivergentColumn(best.doc, next.doc, s.range);
     if (!div) return false;
     if (newLines.length === 0 && newLoose.length === 0) return false;
+    // Where the headings hold lines back for the loose paragraphs (#707),
+    // a pass that tried both in the columns at fault blames the paragraphs
+    // first: run a line long, they are what moves text across a column
+    // break, and a heading blacklisted with them could never take the lines
+    // it took alone up to 1.27. The spacing levers are tried again without
+    // them, and blacklisted in their turn if the cascade is theirs.
+    const looseFirst = balancing.maxLinesBeforeLoose < balancing.maxLinesPerHeading;
     const blacklist = (cands: ReadonlySet<number> | null): boolean => {
       let hit = false;
-      for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       for (const k of newLoose) if (!cands || cands.has(k)) { s.failedLoose.add(k); hit = true; }
+      if (hit && looseFirst) return true;
+      for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       return hit;
     };
     const keysOf = (pick: (g: ColumnGap) => boolean): Set<number> =>
@@ -8802,6 +8810,7 @@ function* buildDocumentBalanced(
       }
       const proposal = proposeBalanceLines(best.doc, best.forcedBreakPages, applied, {
         maxLinesPerHeading: balancing.maxLinesPerHeading,
+        maxLinesBeforeLoose: balancing.maxLinesBeforeLoose,
         stretchAfterLists: balancing.stretchAfterLists,
         maxLinesAfterList: balancing.maxLinesAfterList,
         stretchAfterDisplays: balancing.stretchAfterDisplays,

@@ -56,6 +56,14 @@ describe('stripConfigDefaults and the balancing default of the document (#651)',
       .toEqual({ balancing: { enabled: true, maxTracking: 40 } });
   });
 
+  it('keeps maxLinesBeforeLoose when it is not 2, in every context (#707)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { maxLinesBeforeLoose: 4 })).headings, name).toEqual({ balancing: { maxLinesBeforeLoose: 4 } });
+      expect(stripConfigDefaults(withBalancing(context, { maxLinesBeforeLoose: 2 })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { maxLinesBeforeLoose: 0 }))).headings.balancing.maxLinesBeforeLoose).toBe(0);
+  });
+
   it('keeps stretchAfterDisplays off and drops it on, in every context (#710)', () => {
     for (const [name, context] of Object.entries(CONTEXTS)) {
       expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: false })).headings, name)

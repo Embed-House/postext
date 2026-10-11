@@ -6,6 +6,7 @@
 import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
 import { avoidOrphansByDefault } from '../defaults/bodyText';
+import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
 import { cjkRegionOfConfig } from '../defaults/cjk';
 import { dimensionsEqual } from '../defaults/shared';
 import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
@@ -121,6 +122,10 @@ import { hasCJK } from '../measure/cjk';
  *     (`layout.floatsUnderOpener`, #639), where up to 1.24 such a float
  *     landed from the second column on ({@link pinLegacyOpenerHeadFloats}).
  * - 12 (#747), the rules of postext 1.28, each listed with its pin below.
+ *   - column balancing tries the list ends, the displays, the float bands
+ *     and the loose paragraphs before a heading takes a third line
+ *     (`headings.balancing.maxLinesBeforeLoose: 2`, #707), where up to 1.27
+ *     a heading took all its lines first ({@link pinLegacyLooseOrder});
  *   - a page on a character grid (`cjk.grid.enabled`) holds its lines:
  *     `bodyText.avoidWidows` is off by default there, and
  *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
@@ -212,6 +217,10 @@ const FLOW_COLUMNS_RULES = 11;
 /** The rules that offer a float the head of a page-span opener's own
  *  column. */
 const OPENER_HEAD_FLOAT_RULES = 11;
+
+/** The rules that try the other balancing levers before a heading takes a
+ *  third line (#707). */
+const LOOSE_ORDER_RULES = 12;
 
 /** The rules that turn the widow rule off on a character grid, and the
  *  orphan rule too in the Japan region (#717). */
@@ -656,6 +665,34 @@ export function pinLegacyGridBalancing<T extends Partial<PostextConfig>>(config:
   const balancing = isRecord(headings.balancing) ? headings.balancing : {};
   if (balancing.enabled !== undefined) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, enabled: true } } };
+}
+
+/** Whether `config` balances its columns: what it says, else the default
+ *  of its document ({@link balancingOnByDefault}). */
+function balancesColumns(config: Partial<PostextConfig>): boolean {
+  const balancing = isRecord(config.headings) && isRecord(config.headings.balancing) ? config.headings.balancing : {};
+  if (balancing.enabled !== undefined) return balancing.enabled === true;
+  return balancingOnByDefault(config as PostextConfig);
+}
+
+/**
+ * A configuration written before #707 (postext 1.27 or earlier), pinned to
+ * the order its columns were balanced in: `headings.balancing.
+ * maxLinesBeforeLoose` gets the configuration's own `maxLinesPerHeading`
+ * (4 when it sets none), so a heading takes all its lines before the list
+ * ends, the displays, the float bands and the loose paragraphs are tried,
+ * where today it takes two. A configuration that does not balance its
+ * columns, that sets the key, or whose headings take two lines or fewer
+ * (the order then changes nothing) is returned as it is (the same object).
+ */
+export function pinLegacyLooseOrder<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.maxLinesBeforeLoose !== undefined) return config;
+  const cap = typeof balancing.maxLinesPerHeading === 'number' ? balancing.maxLinesPerHeading : DEFAULT_COLUMN_BALANCING.maxLinesPerHeading;
+  if (cap <= DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, maxLinesBeforeLoose: cap } } };
 }
 
 /**
@@ -1401,7 +1438,10 @@ export interface MigrateConfigOptions {
  * `options.content` nor the configuration holds CJK text, and the slots
  * under its page-span openers by {@link pinLegacyOpenerHeadFloats}, when
  * it sets a heading level or style with `span: 'page'`, unless
- * `options.content` shows no heading; one older than 12 has the widow and
+ * `options.content` shows no heading; one older than 12 has the order of
+ * its balancing levers pinned by {@link pinLegacyLooseOrder}, when it
+ * balances its columns and lets a heading take more than two lines, unless
+ * `options.content` shows no heading; it also has the widow and
  * orphan rules of a page on a character grid pinned by {@link
  * pinLegacyGridBreakRules}, the breaks inside its two-row notes by
  * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
@@ -1446,6 +1486,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) out = pinLegacyInlineTableSplit(out);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) out = pinLegacyFlowColumns(out);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
+  if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) out = pinLegacyLooseOrder(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
@@ -1474,6 +1515,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * the slots under a page-span opener on the `layout` in force (the slots
  * when the merged configuration sets a page-span heading), and the book
  * titles, the circled numbers and the design text on the `cjk` in force,
+ * the order of the balancing levers on the `headings` in force (when the
+ * merged configuration balances its columns),
  * and the widow and orphan rules of a character grid on the merged `cjk`
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
  * Western word that take the Han–Latin space (in the Japan region, read
@@ -1518,6 +1561,7 @@ export function migrateBundleConfig(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) merged = pinLegacyInlineTableSplit(merged);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) merged = pinLegacyFlowColumns(merged);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
+  if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) merged = pinLegacyLooseOrder(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);

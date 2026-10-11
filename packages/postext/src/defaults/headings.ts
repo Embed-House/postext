@@ -44,6 +44,7 @@ const KEEP_WITH_NEXT_SPLITS: readonly KeepWithNextSplit[] = ['rules', 'fill'];
 export const DEFAULT_COLUMN_BALANCING = {
   enabled: true,
   maxLinesPerHeading: 4,
+  maxLinesBeforeLoose: 2,
   stretchAfterLists: true,
   maxLinesAfterList: 1,
   stretchAfterDisplays: true,
@@ -135,6 +136,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
         enabled: partial.balancing.enabled ?? DEFAULT_COLUMN_BALANCING.enabled,
         maxLinesPerHeading:
           partial.balancing.maxLinesPerHeading ?? DEFAULT_COLUMN_BALANCING.maxLinesPerHeading,
+        maxLinesBeforeLoose:
+          partial.balancing.maxLinesBeforeLoose ?? DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose,
         stretchAfterLists:
           partial.balancing.stretchAfterLists ?? DEFAULT_COLUMN_BALANCING.stretchAfterLists,
         maxLinesAfterList:
@@ -336,6 +339,13 @@ export function stripHeadingsDefaults(
       && headings.balancing.maxLinesPerHeading !== DEFAULT_COLUMN_BALANCING.maxLinesPerHeading
     ) {
       b.maxLinesPerHeading = headings.balancing.maxLinesPerHeading;
+      hasBOverride = true;
+    }
+    if (
+      headings.balancing.maxLinesBeforeLoose !== undefined
+      && headings.balancing.maxLinesBeforeLoose !== DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose
+    ) {
+      b.maxLinesBeforeLoose = headings.balancing.maxLinesBeforeLoose;
       hasBOverride = true;
     }
     if (
