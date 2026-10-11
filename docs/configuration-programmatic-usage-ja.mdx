@@ -1511,6 +1511,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>fonts</code></td><td>フェイスごとに1項目：<code>&#123; family, weight, style, format, file, bytes &#125;</code>。</td></tr>
     <tr><td><code>files</code></td><td>アーカイブ内のすべてのファイル。キーはそのパスです。</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>表紙画像のパスと、バンドルが求める表示方法。マニフェストの<code>view</code>の上に、読み込んだ言語の<code>localized[…].view</code>を重ねたものです。</td></tr>
+    <tr><td><code>start</code></td><td>バンドルがもっと長い本の一部だけを収めているときの、本の始まりの位置。マニフェストの<code>start</code>、または読み込んだ言語の<code>localized[…].start</code>です。最初から始まる本にはありません。</td></tr>
     <tr><td><code>warnings</code></td><td>致命的でない問題。対応していないフォントファイル、印刷用マスターの欠落など。</td></tr>
   </tbody>
 </table>
@@ -1602,6 +1603,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
 docs[3].metadata.title;   // the first chapter's `title:`
 ```
 
+**本の始まりの位置**。バンドルは、もっと長い出版物の一部だけを収めることができます。ある号の58〜61ページや、教科書の第4章などです。`start`は、その前に何があるかを、`buildDocument`の`continuation`と同じ項目で示します。最初のページより前のページ数（`pageIndexOffset`。1ページ目が左右どちらの面になるかを決め、それに応じて左右対称のマージンと奇数・偶数ページの柱も決まります）、その時点のページ番号の付け方（`pageNumbering`）、見出しのカウンター（`headings`）、開いたままの部（`part`）、そしてリソース、番号付きの項目、脚注、行番号のカウンターです。`createBundle`はこれを`preset.json`の`start`に書き込み、`openBundle`は`bundle.start`として返します。`buildBundle`は最初の章をこれでレイアウトし（`buildDocument({ markdown, continuation: start }, config)`と同じ結果になります）、続く章をそこからつなげます。`{bookTotalPages}`は本より前のページも数えます。`start`のないマニフェストはこれまでどおりに読まれ、この項目を知らない読み取り側は無視します。`bookPageCount`は含まれません。ページ数は読み取り側が数えます。複数の言語を収めたバンドルでは、`localized[…].start`でその版だけの始まりを指定できます。
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Page 58, an even page, in chapter 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### ライブサンプル：バンドルを開く
 
 このCodePenのサンプルは、リポジトリーから2章の見本の本（独自の書体、SVGの図、表を持つ`lantern.postext`）を読み込みます。バンドルのフォントと画像を登録し、`buildBundle`で本を組んで、全ページを描画します。「Make the PDF」ボタンは、同じ文書を`postext-pdf`で描画し、バンドルのフォントを埋め込みます。Sandboxから書き出したものなど、自分の`.postext`ファイルを選べば、同じように表示されます。
@@ -1644,6 +1661,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td><code>fileId</code>ごとのデータ本体（オブジェクトまたは<code>Map</code>）。リソースが参照する画像と、<code>config.customFonts</code>のバリアントが参照するフォントファイルです。値は<code>Uint8Array</code>、<code>ArrayBuffer</code>、<code>Blob</code>、文字列（SVGのマークアップ）のいずれかです。</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>：表紙画像（PNG、JPEG、WebP、GIF、SVG）。</td></tr>
     <tr><td><code>canvasScope</code></td><td><code>'book'</code>にすると、本全体を1つのキャンバスとして組むようビューアーに求めます。</td></tr>
+    <tr><td><code>start</code></td><td>バンドルがもっと長い本の一部だけを収めているときの、本の始まりの位置。単独の文書をビルドするときに渡す<code>continuation</code>と同じものです。マニフェストの<code>start</code>として書き込まれます。</td></tr>
     <tr><td><code>mtime</code></td><td>アーカイブのすべてのファイルに書き込む更新日時（<code>Date</code>、タイムスタンプ、日付文字列のいずれか）。省略すると呼び出した時刻になるので、同じ入力でも2回の呼び出しで異なるバイト列になります。固定の日付を渡せば同じ入力から同じバイト列が得られ、ハッシュを取ったり比較したりできます。zipが保持する日時はタイムゾーンを持たず、2秒刻みで、1980年から2099年までです。日付はマシンのローカル時刻で書き込まれます。どのマシンでも一致するバイト列を得るには、<code>new Date(1980, 0, 1)</code>のようにローカル時刻の各フィールドから日付を作ります。タイムスタンプや<code>Z</code>で終わる文字列は特定の瞬間を指すので、タイムゾーンごとに異なるローカル時刻になります（<code>'1980-01-01T00:00:00Z'</code>はUTCより西では1979年のままです）。ローカル時刻でこの範囲の外にある日付は例外になります。</td></tr>
     <tr><td><code>localized</code></td><td>同じ本の別の言語。ロケールタグごとに<code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>の形で指定します。この場合、上の入力は、必須の<code>locale</code>の内容になります。<a href="#多言語のバンドル">多言語のバンドル</a>を参照してください。</td></tr>
   </tbody>

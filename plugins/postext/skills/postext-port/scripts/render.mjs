@@ -318,8 +318,17 @@ function where(offset) {
 
 if (/\$[^$\n]+\$|\$\$/.test(markdown) && postext.initMathEngine) await postext.initMathEngine();
 
+// Where the book starts (`start` in preset.json, or the language's own): the
+// continuation of its first chapter (page side, folio, chapter number). A
+// selection that leaves the first chapter out starts at page 1.
+const startSpec = overrides?.start ?? manifest.start;
+const start = picked[0] === chapterSpecs[0] && startSpec && typeof startSpec === 'object' && Object.keys(startSpec).length
+  ? { ...startSpec, ...(startSpec.headings ? { headings: { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, ...startSpec.headings } } : {}) }
+  : undefined;
+if (start) delete start.bookPageCount;
+
 const t0 = Date.now();
-const doc = postext.buildDocument({ markdown, resources }, config);
+const doc = postext.buildDocument({ markdown, resources, ...(start ? { continuation: start } : {}) }, config);
 console.log(`layout: ${doc.pages.length} pages, converged=${doc.converged}, passes=${doc.iterationCount}, ${Date.now() - t0} ms (${lang}, ${picked.length} chapter file(s))`);
 
 // ---- diagnostics ----------------------------------------------------------------

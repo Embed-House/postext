@@ -1511,6 +1511,7 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
     <tr><td><code>fonts</code></td><td>每个字面一项：<code>&#123; family, weight, style, format, file, bytes &#125;</code>。</td></tr>
     <tr><td><code>files</code></td><td>压缩包中的所有文件，以路径为键。</td></tr>
     <tr><td><code>thumbnail</code>、<code>canvasScope</code></td><td>封面图片的路径，以及文件包希望的查看方式：清单的<code>view</code>，再以所提供语言的<code>localized[…].view</code>覆盖。</td></tr>
+    <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：清单的<code>start</code>，或所提供语言的<code>localized[…].start</code>。从头开始的书没有这一项。</td></tr>
     <tr><td><code>warnings</code></td><td>不致命的问题：不支持的字体文件、缺失的印刷母版等。</td></tr>
   </tbody>
 </table>
@@ -1602,6 +1603,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
 docs[3].metadata.title;   // 第一章的`title:`
 ```
 
+**书从哪里开始**。一个文件包可以只含一部更长出版物的一部分：某期刊物的第58到61页，某本教材的第4章。它的`start`说明前面有什么，用的是`buildDocument`的`continuation`的字段：第一页之前的页数（`pageIndexOffset`，它决定第1页落在哪一面，镜像的页边距和奇偶页的页眉也随之而定）、当前生效的页码编排（`pageNumbering`）、标题计数器（`headings`）、尚未结束的部分（`part`），以及资源、编号条目、脚注和行号的计数器。`createBundle`把它写成`preset.json`的`start`，`openBundle`通过`bundle.start`返回它，`buildBundle`用它排第一章，结果与`buildDocument({ markdown, continuation: start }, config)`相同，后面的各章从这里接着排；`{bookTotalPages}`也把书之前的页数算在内。没有`start`的清单照旧读取，不认识这个字段的读取程序会忽略它。`bookPageCount`不在其中：页数由读取方来数。在多语言的文件包里，`localized[…].start`可以给某个版本单独指定起点。
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // 第58页（偶数页），第4章。
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### 在线示例：打开文件包
 
 这个pen从仓库加载一本两章的示例书（`lantern.postext`，带有自己的字体、一幅SVG图和一张表）。它注册文件包的字体和图片，用`buildBundle`排版全书并绘制每一页。*Make the PDF*用`postext-pdf`渲染同样的文档，并嵌入文件包中的字体。选择一个你自己的`.postext`文件（比如从沙盒导出的），也能以同样的方式查看。
@@ -1644,6 +1661,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td>按<code>fileId</code>给出的数据文件（对象或<code>Map</code>）：资源引用的图片，以及<code>config.customFonts</code>各变体引用的字体文件。值可以是<code>Uint8Array</code>、<code>ArrayBuffer</code>、<code>Blob</code>或字符串（SVG标记）。</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>：封面图片（PNG、JPEG、WebP、GIF或SVG）。</td></tr>
     <tr><td><code>canvasScope</code></td><td><code>'book'</code>要求查看器把整本书排成一张画布。</td></tr>
+    <tr><td><code>start</code></td><td>文件包只含一本更长的书的一部分时，这本书从哪里开始：也就是单独构建一份文档时会传入的<code>continuation</code>。写入清单的<code>start</code>。</td></tr>
     <tr><td><code>mtime</code></td><td>写在压缩包每个文件上的修改日期（<code>Date</code>、时间戳或日期字符串）。省略时取调用时刻，因此相同输入的两次调用会得到不同的字节。传入固定日期，相同输入就得到相同字节，可以用来计算哈希或比较。zip记录的日期和时间不带时区，以两秒为步长，范围是1980年到2099年，并按本机的本地时间写入。要在所有机器上得到相同的字节，请用本地字段构造日期，例如<code>new Date(1980, 0, 1)</code>：时间戳或以<code>Z</code>结尾的字符串表示一个绝对时刻，在不同时区对应不同的本地时间（<code>'1980-01-01T00:00:00Z'</code>在UTC以西仍是1979年）。按本地时间落在这些年份之外的日期会抛出异常。</td></tr>
     <tr><td><code>localized</code></td><td>同一本书的其他语言，以语言标签为键：<code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>。此时上面的输入就是<code>locale</code>语言的内容，而<code>locale</code>变为必填。见<a href="#双语文件包">双语文件包</a>。</td></tr>
   </tbody>

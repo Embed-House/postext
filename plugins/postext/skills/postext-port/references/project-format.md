@@ -45,6 +45,9 @@ my-book/
   "thumbnail": "thumbnail.jpg", "license": "CC BY 4.0", "credits": "…", "tags": ["book"],
   "view": { "canvasScope": "book" },   // "book": the canvas lays out the whole book; default "chapter".
                                        // Books over 200 chapters open a chapter at a time whatever they ask
+  "start": { "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } },
+                                       // optional (postext after 1.26.3): where the book starts when the bundle
+                                       // holds part of a longer one (page 58, an even page, in chapter 4); §2
 
   "chapters": {                        // or a plain array when there is one language
     "es": [ { "title": "Luz", "file": "chapters/es/01-luz.md" }, { "title": "Color", "file": "chapters/es/02-color.md" } ],
@@ -60,7 +63,8 @@ my-book/
     "en": {
       "config": { "locale": "en-us", "resourceTypes": [ … ], "headings": { …whole object… } },
       "resources": [ { "id": "sky", "caption": "A clear evening sky.", "altText": "…" } ],
-      "view": { "canvasScope": "chapter" }   // optional: how this edition opens, over the shared `view`
+      "view": { "canvasScope": "chapter" },  // optional: how this edition opens, over the shared `view`
+      "start": { "pageIndexOffset": 58 }     // optional: where this edition starts, in place of the shared `start`
     }
   }
 }
@@ -112,6 +116,28 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   paints whole too slowly while the original opens on the whole book).
   `pickBundleView(manifest, locale)` resolves it; `openBundle` returns it as
   `canvasScope`.
+- `start` (postext after 1.26.3): where the book starts, for a bundle that
+  holds part of a longer publication (an article that runs on pages 58 to 61
+  of an issue, one chapter of a textbook ported on its own). It is the
+  `continuation` of the first chapter, as `buildDocument` takes it:
+  `pageIndexOffset` (the pages before the first: an odd count opens the book
+  on an even page, with the mirrored margins and running heads of that side),
+  `pageNumbering: { startAt, format }` (the folio of the first page),
+  `headings: { h1, … }` (`{ "h1": 3 }` makes the first `#` chapter 4, in the
+  opener and in every "Fig. 4.1"), `part: { number, title, palette? }` (the
+  part left open before it) and the counters `resourceCounters`,
+  `resourceNumbers`, `statementCounters`, `footnoteNumber`, `lineNumber`,
+  `afterPartPage`. Not `bookPageCount`: the reader counts the pages.
+  `buildBundle`, the CLI (`postext info` prints it) and the Sandbox lay the
+  book out from there and chain the chapters after the first from it; the
+  Sandbox keeps it with the book and writes it back on export. Leave it out
+  for a book that starts at its beginning, and prefer it to faking the start
+  in the content (a `:::numbering{startAt=58}` moves the folio but not the
+  page side). `localized.<lang>.start` gives
+  one edition its own (a right-bound edition that opens on the other side),
+  `{}` an edition that starts at its beginning; `pickBundleStart(manifest,
+  locale)` resolves it and `openBundle` returns it as `start`. An older
+  reader ignores the field.
 - Two *different* books per language (not a translation): give resources
   language-prefixed ids, keep them all in the shared list, and leave
   `localized.resources` empty.

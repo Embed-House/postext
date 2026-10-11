@@ -1511,6 +1511,7 @@ bundle.files;      // Map<path, Uint8Array>: todos os arquivos do pacote
     <tr><td><code>fonts</code></td><td>Uma entrada por variante: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
     <tr><td><code>files</code></td><td>Todos os arquivos do zip, indexados pelo caminho.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>O caminho da imagem de capa e o modo como o pacote pede para ser visto: o <code>view</code> do manifesto, com o <code>localized[…].view</code> do idioma servido por cima.</td></tr>
+    <tr><td><code>start</code></td><td>Onde o livro começa, para um pacote que contém parte de um mais longo: o <code>start</code> do manifesto, ou o <code>localized[…].start</code> do idioma servido. Ausente num livro que começa pelo início.</td></tr>
     <tr><td><code>warnings</code></td><td>Problemas não fatais: um arquivo de fonte sem suporte, uma matriz de impressão faltando.</td></tr>
   </tbody>
 </table>
@@ -1602,6 +1603,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
 docs[3].metadata.title;   // o `title:` do primeiro capítulo
 ```
 
+**Onde o livro começa.** Um pacote pode conter parte de uma publicação mais longa: as páginas 58 a 61 de uma edição, o capítulo 4 de um livro didático. Seu `start` diz o que vem antes, nos termos da `continuation` de `buildDocument`: as páginas anteriores à primeira (`pageIndexOffset`, que decide de que lado cai a página 1 e, com ele, as margens espelhadas e os cabeçalhos de páginas pares e ímpares), a numeração de página em vigor (`pageNumbering`), os contadores de títulos (`headings`), a parte aberta (`part`) e os contadores de recursos, enunciados, notas de rodapé e linhas. `createBundle` o grava como `start` em `preset.json`, `openBundle` o devolve em `bundle.start`, e `buildBundle` compõe com ele o primeiro capítulo, como faria `buildDocument({ markdown, continuation: start }, config)`, e encadeia os seguintes a partir daí; `{bookTotalPages}` conta também as páginas anteriores ao livro. Um manifesto sem `start` é lido como antes, e um leitor que não conhece o campo o ignora. `bookPageCount` não faz parte dele: quem lê conta as páginas. Num pacote com vários idiomas, `localized[…].start` dá a uma edição um começo próprio.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Página 58, par, no capítulo 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### Exemplo ao vivo: abrir um pacote
 
 O pen carrega do repositório um livro de exemplo de dois capítulos (`lantern.postext`, com tipo próprio, uma figura SVG e uma tabela). Ele registra as fontes e as imagens do pacote, diagrama o livro com `buildBundle` e pinta todas as páginas. *Make the PDF* renderiza os mesmos documentos com o `postext-pdf`, incorporando as fontes do pacote. Escolha um arquivo `.postext` seu, exportado do Sandbox, por exemplo, para vê-lo do mesmo jeito.
@@ -1644,6 +1661,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td>Os conteúdos por <code>fileId</code> (um objeto ou um <code>Map</code>): as imagens a que os recursos fazem referência e os arquivos de fonte a que as variantes de <code>config.customFonts</code> fazem referência. Os valores podem ser um <code>Uint8Array</code>, um <code>ArrayBuffer</code>, um <code>Blob</code> ou uma string (marcação SVG).</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: uma imagem de capa (PNG, JPEG, WebP, GIF ou SVG).</td></tr>
     <tr><td><code>canvasScope</code></td><td><code>'book'</code> pede aos visualizadores que diagramem o livro inteiro como um único canvas.</td></tr>
+    <tr><td><code>start</code></td><td>Onde o livro começa, para um pacote que contém parte de um mais longo: a <code>continuation</code> com que um documento avulso seria composto. É gravado como <code>start</code> do manifesto.</td></tr>
     <tr><td><code>mtime</code></td><td>A data de modificação gravada em todos os arquivos do zip (um <code>Date</code>, um timestamp ou uma string de data). Se omitida, é o momento da chamada, então duas chamadas com a mesma entrada geram bytes diferentes. Passe uma data fixa e a mesma entrada gera os mesmos bytes, que você pode comparar ou calcular o hash. Um zip guarda data e hora sem fuso horário, em passos de dois segundos, de 1980 a 2099, e a data é gravada no horário local da máquina. Para bytes que coincidam em qualquer máquina, construa a data a partir de campos locais, como <code>new Date(1980, 0, 1)</code>: um timestamp ou uma string terminada em <code>Z</code> designa um instante, que cai em um horário local diferente em cada fuso (<code>'1980-01-01T00:00:00Z'</code> ainda é 1979 a oeste de UTC). Uma data fora desses anos, em horário local, lança um erro.</td></tr>
     <tr><td><code>localized</code></td><td>Mais idiomas do mesmo livro, por tag de idioma: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. As entradas acima passam então a ser o conteúdo de <code>locale</code>, que se torna obrigatório. Veja <a href="#pacotes-bilíngues">Pacotes bilíngues</a>.</td></tr>
   </tbody>

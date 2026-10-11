@@ -1511,6 +1511,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>fonts</code></td><td>One entry per face: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
     <tr><td><code>files</code></td><td>Every file in the archive, keyed by its path.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>The cover picture's path, and how the bundle asks to be viewed: the manifest's <code>view</code>, with the served language's <code>localized[…].view</code> over it.</td></tr>
+    <tr><td><code>start</code></td><td>Where the book starts, for a bundle that holds part of a longer one: the manifest's <code>start</code>, or the <code>localized[…].start</code> of the served language. Absent for a book that starts at its beginning.</td></tr>
     <tr><td><code>warnings</code></td><td>Non-fatal problems: an unsupported font file, a missing print master.</td></tr>
   </tbody>
 </table>
@@ -1602,6 +1603,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
 docs[3].metadata.title;   // the first chapter's `title:`
 ```
 
+**Where the book starts.** A bundle may hold part of a longer publication: pages 58 to 61 of an issue, chapter 4 of a textbook. Its `start` says what comes before it, in the terms of `buildDocument`'s `continuation`: the pages before the first one (`pageIndexOffset`, which decides the side page 1 falls on, and with it the mirrored margins and the odd and even running heads), the page numbering in effect (`pageNumbering`), the heading counters (`headings`), the open part (`part`) and the resource, statement, footnote and line counters. `createBundle` writes it as `preset.json`'s `start`, `openBundle` returns it as `bundle.start`, and `buildBundle` lays the first chapter out with it, as `buildDocument({ markdown, continuation: start }, config)` would, and chains the chapters after it from there; `{bookTotalPages}` counts the pages before the book too. A manifest without `start` reads as before, and a reader that does not know the field ignores it. `bookPageCount` is not part of it: the reader counts the pages. In a bundle with several languages, `localized[…].start` gives one edition a start of its own.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Page 58, an even page, in chapter 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### Live example: open a bundle
 
 The pen loads a two-chapter sample book (`lantern.postext`, with its own typeface, an SVG figure and a table) from the repository. It registers the bundle's fonts and pictures, lays the book out with `buildBundle` and paints every page. *Make the PDF* renders the same documents with `postext-pdf`, embedding the bundle's fonts. Choose a `.postext` file of your own, exported from the Sandbox for example, to see it the same way.
@@ -1644,6 +1661,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td>The payloads by <code>fileId</code> (an object or a <code>Map</code>): the pictures the resources reference and the font files the <code>config.customFonts</code> variants reference. Values may be a <code>Uint8Array</code>, an <code>ArrayBuffer</code>, a <code>Blob</code> or a string (SVG markup).</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: a cover picture (PNG, JPEG, WebP, GIF or SVG).</td></tr>
     <tr><td><code>canvasScope</code></td><td><code>'book'</code> asks viewers to lay the whole book out as one canvas.</td></tr>
+    <tr><td><code>start</code></td><td>Where the book starts, for a bundle that holds part of a longer one: the <code>continuation</code> a single document would be built with. Written as the manifest's <code>start</code>.</td></tr>
     <tr><td><code>mtime</code></td><td>The modification date written on every file of the archive (a <code>Date</code>, a timestamp or a date string). Left out, it is the time of the call, so two calls with the same input give different bytes. Pass a fixed date and the same input gives the same bytes, which you can hash or compare. A zip keeps a date and time with no time zone, in two-second steps, from 1980 to 2099, and the date is written in the machine's local time. For bytes that match on every machine, build the date from local fields, such as <code>new Date(1980, 0, 1)</code>: a timestamp or a string ending in <code>Z</code> names an instant, which falls on a different local time in each time zone (<code>'1980-01-01T00:00:00Z'</code> is still 1979 west of UTC). A date outside those years, in local time, throws.</td></tr>
     <tr><td><code>localized</code></td><td>More languages of the same book, by locale tag: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. The inputs above are then the content of <code>locale</code>, which is required. See <a href="#bilingual-bundles">Bilingual bundles</a>.</td></tr>
   </tbody>
