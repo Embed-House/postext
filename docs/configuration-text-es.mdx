@@ -593,6 +593,18 @@ Cuando la alineación del texto está configurada como `'justify'`, la separaci�
       <td><code>true</code></td>
       <td>Permite que el diccionario divida las palabras de un compuesto, una palabra con un guion entre dos letras (<code>teó-rico-práctico</code>). <code>false</code> deja la palabra entera salvo por su propio guion, donde la línea sí puede terminar (<code>teórico-</code> · <code>práctico</code>), como hace TeX. Un guion blando escrito en la palabra sigue permitiendo el corte, y un compuesto más ancho que toda la línea se sigue dividiendo. Se aplica al texto corrido, los títulos, las listas, las citas y los recuadros; los pies, las notas, las celdas de tabla y el índice de contenidos siguen dividiendo los compuestos. Ver <a href="/es/docs/justification#palabras-compuestas">Palabras compuestas</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>ninguna</td>
+      <td>Palabras que el diccionario no debe dividir, o que solo puede dividir por donde dice la entrada: <code>'Alice'</code> no se divide nunca, <code>'You-Tube'</code> solo por su guion. Ver <a href="#palabras-que-no-se-dividen">Palabras que no se dividen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide las palabras con mayúscula inicial como cualquier otra. <code>false</code> deja entera toda palabra que empieza por mayúscula (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), incluida la primera de cada frase. Ver <a href="#palabras-que-no-se-dividen">Palabras que no se dividen</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +621,27 @@ matchHyphenationLocale('sv');    // undefined: se divide con 'en-us', con un avi
 ```
 
 Las palabras de menos de 5 caracteres nunca se separan. El motor requiere al menos 2 caracteres antes y 3 caracteres después de un punto de ruptura.
+
+#### Palabras que no se dividen
+
+Un diccionario divide un nombre como divide cualquier palabra: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Tres ajustes dejan enteras las palabras, y los tres tienen por defecto lo que hace el diccionario.
+
+`hyphenation.exceptions` es una lista de palabras, como el `\hyphenation{…}` de TeX. Una entrada escrita sin guion no se divide nunca; una escrita con guiones solo se divide por ellos, de modo que `'You-Tube'` da `You-` · `Tube` y nada más. Una entrada coincide con una serie de letras, la rodee lo que la rodee: `'Alice'` vale para `(Alice,` y `Alice’s`, y un compuesto se compara parte por parte (`Blender-based` coincide con `'Blender'`). Una forma flexionada es otra palabra y necesita su propia entrada. Una entrada en minúsculas vale para la palabra la escriban como la escriban (`'blender'` cubre `Blender` y `BLENDER`); una entrada con mayúscula inicial solo vale para las apariciones que empiezan por mayúscula, de modo que `'Rose'` deja entero el nombre y deja `rose` al diccionario. Las entradas solo llevan letras y guiones; lo demás se descarta.
+
+`hyphenation.capitalized: false` deja entera toda palabra que empieza por mayúscula: los nombres, las siglas y también la primera palabra de cada frase. Es la opción «Hyphenate Capitalized Words» de InDesign desactivada, y el `\uchyph=0` de TeX. Una entrada de `exceptions` con guiones sigue dividiendo su palabra por ellos. El alemán escribe con mayúscula todos los sustantivos, así que el ajuste dejaría un texto alemán casi sin palabras que dividir: nombra allí las palabras en `exceptions`, o usa `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` deja enteros los apellidos de los autores que el documento cita, estén donde estén: en una cita, en el texto corrido y en la lista de referencias. Ver [Citas](/es/docs/configuration-notes-references#citas).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+Los tres alcanzan a todo texto que el diccionario divide: cuerpo, títulos, listas, recuadros, pies, celdas de tabla, notas, cabeceras y el resto del texto de diseño. Es más de lo que alcanza `compounds`, que los pies, las notas, las celdas y el índice de contenidos ignoran. Dos cosas siguen como estaban. Un guion blando escrito en una aparición de una palabra sigue decidiendo esa aparición, y un guion blando ante la primera letra deja entera una aparición sin necesidad de lista (ver [Dónde nunca se corta una línea](/es/docs/justification#dónde-nunca-se-corta-una-línea)). Y una palabra más ancha que la medida entera se sigue dividiendo: por los puntos de su entrada si los tiene y, si no, por las sílabas del diccionario. Con menos palabras divididas, una columna justificada estrecha tiene menos maneras de llenar sus líneas, así que revisa el espaciado entre palabras después de desactivar `capitalized` en una página a tres columnas. El EPUB de maquetación fluida deja la separación silábica al sistema de lectura, que no sabe nada de estas reglas.
 
 #### Texto en bandera
 

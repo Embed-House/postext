@@ -456,6 +456,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +531,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>Citations through the book, or each chapter on its own (each document, and each level-1 heading after a citation): a numbered style numbers each chapter from 1 and a work cited in two chapters takes each chapter's number; a note style writes a work in full at its first citation in each chapter. Meant with <code>bibliography.scope: 'chapter'</code>, whose lists then take the chapter's numbers.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let the dictionary divide the names of the cited authors. <code>false</code> keeps whole the family name of every person in the references (authors, editors, translators) and every name given as one string, wherever it stands with its capital: in a citation, in the running text and in the list, so no line ends on <code>(Lup-</code>. A double name is read part by part, and an author called Baker does not keep the word <code>baker</code> whole. See <a href="/en/docs/configuration-text#words-kept-whole">Words kept whole</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>

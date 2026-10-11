@@ -456,6 +456,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +531,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>Las citas a lo largo del libro, o cada capítulo por su cuenta (cada documento, y cada encabezado de nivel 1 tras una cita): un estilo numérico numera cada capítulo desde 1 y una obra citada en dos capítulos toma el número de cada uno; un estilo de notas escribe completa la obra en su primera cita de cada capítulo. Pensado para <code>bibliography.scope: 'chapter'</code>, cuyas listas toman entonces los números del capítulo.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permite que el diccionario divida los nombres de los autores citados. <code>false</code> deja entero el apellido de cada persona de las referencias (autores, editores, traductores) y todo nombre dado como una sola cadena, allí donde aparezca con su mayúscula: en una cita, en el texto corrido y en la lista, de modo que ninguna línea termina en <code>(Lup-</code>. Un apellido doble se lee parte por parte, y un autor llamado Baker no deja entera la palabra <code>baker</code>. Ver <a href="/es/docs/configuration-text#palabras-que-no-se-dividen">Palabras que no se dividen</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>

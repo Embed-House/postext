@@ -592,6 +592,18 @@ Quan l'alineació del text està configurada com a `'justify'`, la partició de 
       <td><code>true</code></td>
       <td>Permet que el diccionari divideixi les paraules d'un compost, una paraula amb un guionet entre dues lletres (<code>teó-rico-práctico</code>). <code>false</code> deixa la paraula sencera excepte pel seu propi guionet, on la línia sí que pot acabar (<code>teórico-</code> · <code>práctico</code>), com fa TeX. Un guionet tou escrit a la paraula continua permetent el tall, i un compost més ample que tota la línia es continua dividint. S'aplica al text corregut, els títols, les llistes, les cites i els requadres; els peus, les notes, les cel·les de taula i l'índex de continguts continuen dividint els compostos. Vegeu <a href="/ca/docs/justification#paraules-compostes">Paraules compostes</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>cap</td>
+      <td>Paraules que el diccionari no ha de dividir, o que només pot dividir per on diu l'entrada: <code>'Alice'</code> no es divideix mai, <code>'You-Tube'</code> només pel seu guionet. Vegeu <a href="#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divideix les paraules amb majúscula inicial com qualsevol altra. <code>false</code> deixa sencera tota paraula que comença amb majúscula (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), inclosa la primera de cada frase. Vegeu <a href="#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -608,6 +620,27 @@ matchHyphenationLocale('sv');    // undefined: es divideix amb 'en-us', amb un a
 ```
 
 Les paraules de menys de 5 caràcters no es parteixen mai. El motor requereix com a mínim 2 caràcters abans i 3 caràcters després d'un punt de ruptura.
+
+#### Mots que no es divideixen
+
+Un diccionari divideix un nom com divideix qualsevol paraula: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Tres ajustos deixen senceres les paraules, i tots tres tenen per defecte el que fa el diccionari.
+
+`hyphenation.exceptions` és una llista de paraules, com el `\hyphenation{…}` de TeX. Una entrada escrita sense guionet no es divideix mai; una d'escrita amb guionets només es divideix per aquests, de manera que `'You-Tube'` dona `You-` · `Tube` i res més. Una entrada coincideix amb una sèrie de lletres, l'envolti el que l'envolti: `'Alice'` val per a `(Alice,` i `Alice’s`, i un compost es compara part per part (`Blender-based` coincideix amb `'Blender'`). Una forma flexionada és una altra paraula i necessita la seva pròpia entrada. Una entrada en minúscules val per a la paraula s'escrigui com s'escrigui (`'blender'` cobreix `Blender` i `BLENDER`); una entrada amb majúscula inicial només val per a les aparicions que comencen amb majúscula, de manera que `'Rose'` deixa sencer el nom i deixa `rose` al diccionari. Les entrades només porten lletres i guionets; la resta es descarta.
+
+`hyphenation.capitalized: false` deixa sencera tota paraula que comença amb majúscula: els noms, les sigles i també la primera paraula de cada frase. És l'opció «Hyphenate Capitalized Words» d'InDesign desactivada, i el `\uchyph=0` de TeX. Una entrada d'`exceptions` amb guionets continua dividint la seva paraula per aquests. L'alemany escriu amb majúscula tots els substantius, de manera que l'ajust deixaria un text alemany gairebé sense paraules per dividir: anomena-hi les paraules a `exceptions`, o fes servir `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` deixa sencers els cognoms dels autors que el document cita, siguin on siguin: en una citació, en el text corregut i a la llista de referències. Vegeu [Cites](/ca/docs/configuration-notes-references#cites).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+Tots tres arriben a tot text que el diccionari divideix: cos, títols, llistes, requadres, peus, cel·les de taula, notes, capçaleres i la resta del text de disseny. És més del que abasta `compounds`, que els peus, les notes, les cel·les i l'índex de continguts ignoren. Dues coses continuen com estaven. Un guionet tou escrit en una aparició d'una paraula continua decidint aquella aparició, i un guionet tou davant de la primera lletra deixa sencera una aparició sense necessitat de llista (vegeu [On no es talla mai una línia](/ca/docs/justification#on-no-es-talla-mai-una-línia)). I una paraula més ampla que la mesura sencera es continua dividint: pels punts de la seva entrada si en té i, si no, per les síl·labes del diccionari. Amb menys paraules dividides, una columna justificada estreta té menys maneres d'omplir les seves línies, així que revisa l'espaiat entre paraules després de desactivar `capitalized` en una pàgina a tres columnes. L'EPUB de maquetació fluida deixa la partició de mots al sistema de lectura, que no sap res d'aquestes regles.
 
 #### Text en bandera
 

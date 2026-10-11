@@ -593,6 +593,18 @@ bodyText: { fontFamily: "'EB Garamond', Georgia, serif" } // set in EB Garamond
       <td><code>true</code></td>
       <td>複合語、つまり2文字の間にハイフンを含む語（<code>af-ter-dinner</code>）を辞書で分割できるようにします。<code>false</code>にすると、TeXと同様に、そうした語は自身のハイフン以外では分割しません。ハイフンの位置では引き続き行を終えられます（<code>after-</code> · <code>dinner</code>）。語の中に入力したソフトハイフンでは引き続き改行し、行全体より広い複合語は引き続き分割します。本文テキスト、見出し、リスト、引用ブロック、囲みに適用されます。キャプション、注、表のセル、目次では複合語を引き続き分割します。<a href="/ja/docs/justification#複合語">複合語</a>を参照してください。</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>なし</td>
+      <td>辞書で分割しない語、または項目に書いた位置でだけ分割する語。<code>'Alice'</code>は決して分割せず、<code>'You-Tube'</code>はそのハイフンの位置でだけ分割します。<a href="#分割しない語">分割しない語</a>を参照してください。</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>大文字で始まる語も、ほかの語と同じように分割します。<code>false</code>にすると、大文字で始まる語（<code>Alice</code>、<code>Ámsterdam</code>、<code>UNESCO</code>）はすべて分割しません。文頭の語も同じです。<a href="#分割しない語">分割しない語</a>を参照してください。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +621,27 @@ matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a c
 ```
 
 5文字未満の語はハイフネーションしません。分割位置の前に2文字以上、後に3文字以上が必要です。
+
+#### 分割しない語
+
+辞書は、名前もほかの語と同じように分割します（`Al-ice`、`Áms-ter-dam`、`You-Tu-be`）。語を分割せずに保つ設定は3つあり、どれも既定値は辞書どおりの動作です。
+
+`hyphenation.exceptions`は語のリストで、TeXの`\hyphenation{…}`にあたります。ハイフンなしで書いた項目は決して分割しません。ハイフンを入れて書いた項目はその位置でだけ分割するので、`'You-Tube'`は`You-` · `Tube`となり、ほかの位置では分かれません。項目は、前後に何があっても、ひと続きの文字に一致します。`'Alice'`は`(Alice,`にも`Alice’s`にも当てはまり、複合語は部分ごとに照合します（`Blender-based`は`'Blender'`に一致します）。活用形は別の語なので、それぞれ項目が必要です。小文字で書いた項目は、大文字・小文字の違いを問わずその語に一致します（`'blender'`は`Blender`にも`BLENDER`にも当てはまります）。大文字で始めた項目は、大文字で始まる箇所にだけ一致するので、`'Rose'`は名前を分割せずに保ち、`rose`は辞書に任せます。項目に使えるのは文字とハイフンだけで、それ以外は取り除かれます。
+
+`hyphenation.capitalized: false`にすると、大文字で始まる語はすべて分割しません。名前、頭字語、そして各文の最初の語も含みます。InDesignの「Hyphenate Capitalized Words」スイッチをオフにした状態で、TeXの`\uchyph=0`にあたります。ハイフンを入れた`exceptions`の項目は、引き続きその位置で語を分割します。ドイツ語は名詞をすべて大文字で始めるので、この設定ではドイツ語のテキストに分割できる語がほとんど残りません。その場合は`exceptions`に語を挙げるか、`citations.hyphenateNames`を使ってください。
+
+`citations.hyphenateNames: false`にすると、文書が引用する著者の姓を、どこにあっても分割しません。引用の中でも、本文でも、参考文献の一覧でも同じです。[引用](/ja/docs/configuration-notes-references#引用)を参照してください。
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+この3つは、辞書で分割するすべてのテキストに効きます。本文、見出し、リスト、囲み、キャプション、表のセル、注、柱、そのほかのデザインのテキストです。`compounds`より範囲が広く、`compounds`はキャプション、注、セル、目次には効きません。変わらない点が2つあります。語のある箇所に入力したソフトハイフンは、引き続きその箇所の分割位置を決めます。最初の文字の前に入力したソフトハイフンは、リストを使わなくても、その箇所の語を分割せずに保ちます（[行を分割しない箇所](/ja/docs/justification#行を分割しない箇所)を参照）。また、行長全体より広い語は引き続き分割します。項目に分割位置があればその位置で、なければ辞書の音節で分けます。分割する語が減ると、両端そろえの狭い段では行を埋める手段が減ります。3段組のページで`capitalized`をオフにしたあとは、語間を確かめてください。リフロー型のEPUBはハイフネーションを閲覧システムに任せますが、閲覧システムはこれらの規則を知りません。
 
 #### 行末不ぞろいのテキスト
 

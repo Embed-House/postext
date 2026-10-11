@@ -254,6 +254,10 @@ Um composto unido por hífen (`after-dinner`, `teórico-práctico`) pode quebrar
 
 A ortografia portuguesa pede que o hífen de um composto quebrado no fim da linha seja repetido no começo da linha seguinte (`vencer-` · `-se`), e as normas da Real Academia Espanhola pedem o mesmo desde 2010 (`léxico-` · `-semántico`), para que o leitor saiba que o hífen pertence à palavra. `bodyText.repeatHyphen: true` faz isso. O hífen repetido é medido com a sua linha, para que o algoritmo reserve espaço para ele, e é pintado como o resto do texto; no PDF ele leva um texto de substituição que o omite, de modo que o texto copiado ou extraído do PDF traz a palavra uma única vez (`vencer-se`). A linha o registra como `repeatedHyphen`, e os seus `plainStart` e `sourceStart` apontam para depois dele, de modo que o mapeamento para o texto-fonte, os links e os cabeços leem a palavra como foi escrita. Um endereço web nunca recebe esse hífen. Vale para o texto corrido, títulos, listas, citações em bloco e boxes; um parágrafo sem formatação que contém um composto passa então a ser quebrado pelo algoritmo que compõe o texto formatado.
 
+### Palavras que não se dividem
+
+É possível pedir ao dicionário que deixe certas palavras em paz. `bodyText.hyphenation.exceptions` as indica uma a uma: `'Alice'` nunca é dividida, `'You-Tube'` só no hífen da sua entrada, como no `\hyphenation{…}` do TeX. `bodyText.hyphenation.capitalized: false` mantém inteira toda palavra que começa com maiúscula, e `citations.hyphenateNames: false`, os sobrenomes dos autores que o documento cita. O algoritmo tem então menos lugares onde terminar uma linha: onde um nome ficava dividido, a linha anterior passa a ter mais ou menos espaço entre as palavras, dentro de `minWordSpacing` e `maxWordSpacing`. Uma palavra mais larga que a medida inteira continua sendo dividida. Veja [Palavras que não se dividem](/pt/docs/configuration-text#palavras-que-não-se-dividem) para saber como uma entrada é comparada com o texto.
+
 ### Onde uma linha nunca quebra
 
 Alguns lugares nunca são oportunidades de quebra, em nenhum dos dois algoritmos:

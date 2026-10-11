@@ -593,6 +593,18 @@ Quando o alinhamento do texto é `'justify'`, a hifenização evita o espaçamen
       <td><code>true</code></td>
       <td>Permite que o dicionário divida as palavras de um composto, uma palavra com um hífen entre duas letras (<code>af-ter-dinner</code>). <code>false</code> mantém essa palavra inteira, exceto no seu próprio hífen, onde a linha ainda pode terminar (<code>after-</code> · <code>dinner</code>), como faz o TeX. Um hífen condicional digitado na palavra continua quebrando, e um composto mais largo que a linha inteira continua sendo dividido. Vale para o texto corrido, títulos, listas, citações e boxes; legendas, notas, células de tabela e o sumário continuam dividindo os compostos. Veja <a href="/pt/docs/justification#palavras-compostas">Palavras compostas</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>nenhuma</td>
+      <td>Palavras que o dicionário não deve dividir, ou só pode dividir onde a entrada indica: <code>'Alice'</code> nunca é dividida, <code>'You-Tube'</code> só no seu hífen. Veja <a href="#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide as palavras com inicial maiúscula como qualquer outra. <code>false</code> mantém inteira toda palavra que começa com maiúscula (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), inclusive a primeira palavra de uma frase. Veja <a href="#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +621,27 @@ matchHyphenationLocale('sv');    // undefined: hifenizado com 'en-us', com um av
 ```
 
 Palavras com menos de 5 caracteres nunca são hifenizadas. O motor exige pelo menos 2 caracteres antes e 3 caracteres depois de um ponto de quebra.
+
+#### Palavras que não se dividem
+
+Um dicionário divide um nome como divide qualquer palavra: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Três opções mantêm palavras inteiras, e as três têm como padrão o que o dicionário faz.
+
+`hyphenation.exceptions` é uma lista de palavras, como no `\hyphenation{…}` do TeX. Uma entrada escrita sem hífen nunca é dividida; uma entrada escrita com hifens só é dividida neles, de modo que `'You-Tube'` dá `You-` · `Tube` e nada mais. Uma entrada corresponde a uma sequência de letras, seja o que for que a cerque: `'Alice'` cobre `(Alice,` e `Alice’s`, e um composto é comparado parte por parte (`Blender-based` corresponde a `'Blender'`). Uma forma flexionada é outra palavra e precisa da sua própria entrada. Uma entrada em minúsculas vale para a palavra em qualquer caixa (`'blender'` cobre `Blender` e `BLENDER`); uma entrada com inicial maiúscula só vale para as ocorrências que começam com maiúscula, de modo que `'Rose'` mantém o nome inteiro e deixa `rose` para o dicionário. As entradas só contêm letras e hifens; todo o resto é descartado.
+
+`hyphenation.capitalized: false` mantém inteira toda palavra que começa com maiúscula: nomes, siglas e também a primeira palavra de cada frase. É a opção "Hyphenate Capitalized Words" do InDesign desativada, e o `\uchyph=0` do TeX. Uma entrada de `exceptions` com hifens continua dividindo a sua palavra neles. O alemão escreve todo substantivo com maiúscula, de modo que a opção deixaria um texto alemão quase sem palavras para dividir: nesse caso, indique as palavras em `exceptions`, ou use `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` mantém inteiros os sobrenomes dos autores que o documento cita, onde quer que estejam: numa citação, no texto corrido e na lista de referências. Veja [Citações](/pt/docs/configuration-notes-references#citações).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+As três alcançam todo texto que o dicionário divide: corpo, títulos, listas, boxes, legendas, células de tabela, notas, cabeços e o restante do texto de design. É mais do que `compounds` alcança, que legendas, notas, células e o sumário ignoram. Duas coisas ficam como estão. Um hífen condicional digitado numa ocorrência de uma palavra continua decidindo essa ocorrência, e um hífen condicional antes da primeira letra mantém uma ocorrência inteira sem lista (veja [Onde uma linha nunca quebra](/pt/docs/justification#onde-uma-linha-nunca-quebra)). E uma palavra mais larga que a medida inteira continua sendo dividida: nos pontos da sua entrada, quando ela os tem; senão, nas sílabas do dicionário. Menos palavras divididas deixam a uma coluna justificada estreita menos maneiras de preencher as linhas, então confira o espaçamento entre palavras depois de desativar `capitalized` numa página de três colunas. O EPUB refluível deixa a hifenização para o sistema de leitura, que não conhece essas regras.
 
 #### Texto em bandeira
 

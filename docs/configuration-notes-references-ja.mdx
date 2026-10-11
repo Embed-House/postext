@@ -456,6 +456,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +531,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>引用を本全体で通して扱うか、章ごとに扱うか（各文書、および引用のあとの各レベル1見出し）。章ごとでは、番号方式のスタイルは各章を 1 から数え、二つの章で引用された文献はそれぞれの章の番号を取ります。注のスタイルは各章の最初の引用で文献を完全な形で書きます。<code>bibliography.scope: 'chapter'</code>と組み合わせて使い、章の一覧はその章の番号になります。</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>引用した著者の名前を辞書で分割できるようにします。<code>false</code>にすると、参考文献に現れるすべての人物（著者、編者、訳者）の姓と、1つの文字列で指定した名前を、大文字で始まる形で現れるかぎり、どこでも分割しません。引用の中でも、本文でも、一覧でも同じなので、行が<code>(Lup-</code>で終わることはありません。二重姓は部分ごとに扱います。著者の姓がBakerでも、<code>baker</code>という語が分割されなくなることはありません。<a href="/ja/docs/configuration-text#分割しない語">分割しない語</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>

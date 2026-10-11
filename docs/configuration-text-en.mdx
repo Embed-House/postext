@@ -593,6 +593,18 @@ When text alignment is set to `'justify'`, hyphenation prevents excessive word s
       <td><code>true</code></td>
       <td>Let the dictionary divide the words of a compound, a word with a hyphen between two letters (<code>af-ter-dinner</code>). <code>false</code> keeps such a word whole but for its own hyphen, where the line may still end (<code>after-</code> · <code>dinner</code>), as TeX does. A soft hyphen typed in the word still breaks, and a compound wider than the whole line is still divided. It applies to the running text, headings, lists, blockquotes and boxes; captions, notes, table cells and the contents keep dividing compounds. See <a href="/en/docs/justification#compound-words">Compound words</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>none</td>
+      <td>Words the dictionary must not divide, or may divide only where the entry says: <code>'Alice'</code> is never divided, <code>'You-Tube'</code> only at its hyphen. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide capitalised words like any other. <code>false</code> keeps every word that starts with a capital whole (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), the first word of a sentence included. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +621,27 @@ matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a c
 ```
 
 Words shorter than 5 characters are never hyphenated. The engine requires at least 2 characters before and 3 characters after a break point.
+
+#### Words kept whole
+
+A dictionary divides a name as it divides any word: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Three settings keep words whole, and all three default to what the dictionary does.
+
+`hyphenation.exceptions` is a list of words, as in TeX's `\hyphenation{…}`. An entry written without a hyphen is never divided; an entry written with hyphens is divided only there, so `'You-Tube'` gives `You-` · `Tube` and nothing else. An entry matches a run of letters, whatever stands around it: `'Alice'` covers `(Alice,` and `Alice’s`, and a compound is matched part by part (`Blender-based` matches `'Blender'`). An inflected form is another word and needs its own entry. An entry in lower case matches the word in any case (`'blender'` covers `Blender` and `BLENDER`); an entry with an initial capital matches only the occurrences that start with a capital, so `'Rose'` keeps the name whole and leaves `rose` to the dictionary. Entries hold letters and hyphens only; anything else is dropped.
+
+`hyphenation.capitalized: false` keeps every word that starts with a capital whole: names, acronyms, and the first word of each sentence too. It is the "Hyphenate Capitalized Words" switch of InDesign turned off, and TeX's `\uchyph=0`. An entry of `exceptions` with hyphens still divides its word at them. German capitalises every noun, so the switch would leave a German text with hardly a word to divide: name the words in `exceptions` there, or use `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` keeps the family names of the authors the document cites whole, wherever they stand: in a citation, in the running text and in the list of references. See [Citations](/en/docs/configuration-notes-references#citations).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+The three reach every text the dictionary divides: body, headings, lists, boxes, captions, table cells, notes, running heads and the other design text. That is wider than `compounds`, which the captions, notes, cells and contents ignore. Two things stay as they are. A soft hyphen typed in an occurrence of a word still decides that occurrence, and a soft hyphen before the first letter keeps one occurrence whole without a list (see [Where a line never breaks](/en/docs/justification#where-a-line-never-breaks)). And a word wider than its whole measure is still divided: at the points of its entry when it has some, else at the dictionary's syllables. Fewer divided words leave a narrow justified column fewer ways to fill its lines, so look at the word spacing after switching `capitalized` off in a three-column page. The reflowable EPUB leaves hyphenation to the reading system, which knows nothing of these rules.
 
 #### Ragged text
 

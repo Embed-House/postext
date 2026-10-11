@@ -254,6 +254,10 @@ A compound joined by a hyphen (`after-dinner`, `teórico-práctico`) can break i
 
 Portuguese spelling asks for the hyphen of a compound broken at the end of a line to be repeated at the start of the next one (`vencer-` · `-se`), and so do the Spanish Academy's rules since 2010 (`léxico-` · `-semántico`), so the reader knows the hyphen belongs to the word. `bodyText.repeatHyphen: true` does it. The repeated hyphen is measured with its line, so the breaker leaves room for it, and it is painted like the rest of the text; in the PDF it carries a replacement text that leaves it out, so text copied or extracted from the PDF reads the word once (`vencer-se`). The line records it as `repeatedHyphen`, and its `plainStart` and `sourceStart` point past it, so the source mapping, links and running heads read the word as written. A web address never gets one. It applies to the running text, headings, lists, blockquotes and boxes; a paragraph without formatting that holds a compound is then broken by the breaker that sets formatted text.
 
+### Words kept whole
+
+The dictionary can be told to leave words alone. `bodyText.hyphenation.exceptions` names them one by one: `'Alice'` is never divided, `'You-Tube'` only at the hyphen of its entry, as in TeX's `\hyphenation{…}`. `bodyText.hyphenation.capitalized: false` keeps every word that starts with a capital whole, and `citations.hyphenateNames: false` the family names of the authors the document cites. The breaker then has fewer places to end a line: where a name stood divided, the line before takes more or less space between its words instead, within `minWordSpacing` and `maxWordSpacing`. A word wider than its whole measure is still divided. See [Words kept whole](/en/docs/configuration-text#words-kept-whole) for how an entry is matched.
+
 ### Where a Line Never Breaks
 
 Some places are never break opportunities, on either breaker:

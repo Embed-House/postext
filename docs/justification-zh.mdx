@@ -254,6 +254,10 @@ Postext最初的断词系统用的是一种**基于元音的自定义启发式�
 
 葡萄牙语正字法要求，复合词在行末断开时，连字符要在下一行开头重复（`vencer-` · `-se`）；西班牙皇家学院自2010年起的规则也这样要求（`léxico-` · `-semántico`），好让读者知道连字符属于这个词。`bodyText.repeatHyphen: true`实现这一点。重复的连字符与所在行一起测量，所以断行算法会为它留出位置，它也与其余文本一样绘制；在PDF中，它带有一段略去它的替代文本，所以从PDF复制或提取的文本中这个词只出现一次（`vencer-se`）。该行把它记录为`repeatedHyphen`，其`plainStart`和`sourceStart`指向它之后，所以源映射、链接和书眉读到的是这个词的原样写法。网址从不重复连字符。它适用于正文、标题、列表、引文块和标注框；含有复合词的无格式段落此时改由排带格式文本的断行算法断行。
 
+### 不拆分的词
+
+可以让词典不去处理某些词。`bodyText.hyphenation.exceptions`逐个列出这些词：`'Alice'`绝不划分，`'You-Tube'`只在条目中的连字符处划分，相当于TeX的`\hyphenation{…}`。`bodyText.hyphenation.capitalized: false`让所有以大写字母开头的词保持完整，`citations.hyphenateNames: false`则让文档所引作者的姓氏保持完整。这样一来，断行算法可以结束一行的位置就少了：原先某个名字被划分的地方，前一行改为增大或缩小词间距，范围不超出`minWordSpacing`和`maxWordSpacing`。比整个行长还宽的词照样划分。条目如何匹配，见[不拆分的词](/zh/docs/configuration-text#不拆分的词)。
+
 ### 行从不断开的地方
 
 有些位置在两种断行算法中都不能断开：

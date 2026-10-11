@@ -254,6 +254,10 @@ Un compuesto unido por guion (`teórico-práctico`, `físico-química`) puede co
 
 La ortografía portuguesa pide repetir al comienzo de la línea siguiente el guion de un compuesto cortado a final de línea (`vencer-` · `-se`), y también las normas de la Real Academia Española desde 2010 (`léxico-` · `-semántico`), para que quien lee sepa que el guion es de la palabra. `bodyText.repeatHyphen: true` lo hace. El guion repetido se mide con su línea, así que el divisor le deja sitio, y se pinta como el resto del texto; en el PDF lleva un texto de sustitución que lo omite, de modo que el texto que se copia o se extrae del PDF lee la palabra una sola vez (`vencer-se`). La línea lo anota como `repeatedHyphen`, y su `plainStart` y su `sourceStart` apuntan detrás de él, de modo que el mapa al texto fuente, los enlaces y los titulillos leen la palabra tal como está escrita. Una dirección web nunca lo lleva. Se aplica al texto corrido, los títulos, las listas, las citas y los recuadros; un párrafo sin formato que contiene un compuesto se corta entonces con el divisor del texto con formato.
 
+### Palabras que no se dividen
+
+Al diccionario se le puede pedir que deje en paz ciertas palabras. `bodyText.hyphenation.exceptions` las nombra una a una: `'Alice'` no se divide nunca, `'You-Tube'` solo por el guion de su entrada, como en el `\hyphenation{…}` de TeX. `bodyText.hyphenation.capitalized: false` deja entera toda palabra que empieza por mayúscula, y `citations.hyphenateNames: false`, los apellidos de los autores que el documento cita. El divisor tiene entonces menos sitios donde terminar una línea: donde un nombre quedaba dividido, la línea anterior toma a cambio más o menos espacio entre sus palabras, dentro de `minWordSpacing` y `maxWordSpacing`. Una palabra más ancha que la medida entera se sigue dividiendo. Ver [Palabras que no se dividen](/es/docs/configuration-text#palabras-que-no-se-dividen) para saber cómo se compara una entrada con el texto.
+
 ### Dónde nunca se corta una línea
 
 Hay sitios que nunca son un punto de corte, con ninguno de los dos algoritmos:

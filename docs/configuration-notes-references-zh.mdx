@@ -456,6 +456,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +531,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>引用在全书连续处理，或每章单独处理（每个文档，以及引用之后的每个一级标题）：顺序编码制每章从 1 编号，两章都引用的文献在各章取各自的编号；注释样式在每章第一次引用时写出完整著录。与<code>bibliography.scope: 'chapter'</code>配合使用，章内列表随之采用本章的编号。</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>允许词典拆分所引作者的姓名。设为<code>false</code>时，参考文献中每个人（作者、编者、译者）的姓氏，以及以单个字符串给出的每个名称，只要以大写字母开头出现，都保持完整：在引用中、正文中和文献表中都一样，所以不会有哪一行以<code>(Lup-</code>结束。复姓逐个部分处理；作者姓Baker，并不会让<code>baker</code>这个词保持完整。见<a href="/zh/docs/configuration-text#不拆分的词">不拆分的词</a>。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
