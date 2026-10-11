@@ -1096,7 +1096,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const pc = input.paragraphContainers?.byId.get(raw.containerId);
     if (!pc || st.first) return;
     if (raw.type === 'containerEnd' && children[k - 1]?.type === 'paragraph') {
-      if (input.resolved.bodyText.paragraphContainerSpacing === 'collapse' && !st.pull && bodyStyle.marginBottomPx > st.prevMarginBottom) {
+      // (The container's style may set the rule itself, #715.)
+      if ((pc.spacing ?? input.resolved.bodyText.paragraphContainerSpacing) === 'collapse' && !st.pull && bodyStyle.marginBottomPx > st.prevMarginBottom) {
         st.prevMarginBottom = bodyStyle.marginBottomPx;
       }
       return;

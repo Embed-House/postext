@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
-import { resolveBodyTextConfig, stripBodyTextDefaults, resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../../defaults';
+import { resolveBodyTextConfig, stripBodyTextDefaults, resolveParagraphStylesConfig, stripParagraphStylesDefaults, stripConfigDefaults } from '../../defaults';
+import { resolveAllConfig } from '../../pipeline/config';
+import { collectConfigWarnings } from '../../configWarnings';
 import type { BodyTextConfig, ParagraphStyleConfig, PostextConfig } from '../../types';
 import type { VDTBlock, VDTDocument } from '../../vdt';
 import { CONFIG_VERSION, migrateConfig, pinLegacyParagraphContainerSpacing } from '../../bundle';
@@ -172,6 +174,68 @@ describe('the space under a :::paragraphs container (EF-159, EF-181)', () => {
     expect(resolveBodyTextConfig({ paragraphContainerSpacing: 'add' }).paragraphContainerSpacing).toBe('add');
     expect(stripBodyTextDefaults(resolveBodyTextConfig())).toBeUndefined();
     expect(stripBodyTextDefaults(resolveBodyTextConfig({ paragraphContainerSpacing: 'add' }))).toEqual({ paragraphContainerSpacing: 'add' });
+  });
+});
+
+describe('paragraphStyles[].containerSpacing (#715)', () => {
+  const step = (d: VDTDocument, a: string, b: string) => baseline(byText(d, b), 'first') - baseline(byText(d, a), 'last');
+
+  it('\'add\' on a style in a \'collapse\' document: the style\'s own space under its groups', () => {
+    // In the text: 1.4's rule for this container (Two ends at 60; 4 pt of
+    // the style, snapped: the text after it starts at 70).
+    const text = build(GROUP_THEN_TEXT, config({ spaceBetween: pt(4), containerSpacing: 'add' }));
+    expect(top(text, byText(text, 'After'))).toBeCloseTo(70, 5);
+    expect(JSON.stringify(text.pages)).toBe(JSON.stringify(build(GROUP_THEN_TEXT, config({ spaceBetween: pt(4) }, { paragraphContainerSpacing: 'add' })).pages));
+    // Under a heading: the style gap baked in, the heading's margin added.
+    const head = build(GROUP_THEN_HEADING, config({ spaceBetween: pt(14), containerSpacing: 'add' }));
+    expect(top(head, byText(head, 'Next'))).toBeCloseTo(84 + 22.5, 5);
+    // In a box: no floor of the box's paragraph spacing.
+    const boxed = build(BOXED, config({ spaceBetween: pt(4), containerSpacing: 'add' }));
+    expect(step(boxed, 'Two', 'After')).toBeCloseTo(GRID + 4, 5);
+    // A style that does not set it keeps the document's rule: a line of space.
+    expect(step(build(BOXED, config({ spaceBetween: pt(4) })), 'Two', 'After')).toBeCloseTo(2 * GRID, 5);
+  });
+
+  it('\'collapse\' on a style in an \'add\' document: the merged space with its floor', () => {
+    const add = { paragraphContainerSpacing: 'add' as const };
+    const text = build(GROUP_THEN_TEXT, config({ spaceBetween: pt(4), containerSpacing: 'collapse' }, add));
+    expect(top(text, byText(text, 'After'))).toBeCloseTo(84, 5);
+    expect(JSON.stringify(text.pages)).toBe(JSON.stringify(build(GROUP_THEN_TEXT, config({ spaceBetween: pt(4) })).pages));
+    const boxed = build(BOXED, config({ spaceBetween: pt(4), containerSpacing: 'collapse' }, add));
+    expect(step(boxed, 'Two', 'After')).toBeCloseTo(2 * GRID, 5);
+  });
+
+  it('two containers of different styles in one document each follow their own rule', () => {
+    const md = ':::callout\nIntro.\n\n:::paragraphs{style="s"}\nOne.\n:::\n\nMiddle.\n\n:::paragraphs{style="t"}\nTwo.\n:::\n\nAfter.\n:::';
+    const cfg = config({ spaceBetween: pt(4), containerSpacing: 'add' });
+    cfg.paragraphStyles!.push({ id: 't', spaceBetween: pt(4) });
+    const doc = build(md, cfg);
+    expect(step(doc, 'One', 'Middle')).toBeCloseTo(GRID + 4, 5);
+    expect(step(doc, 'Two', 'After')).toBeCloseTo(2 * GRID, 5);
+  });
+
+  it('an unset style follows the document, also under the 1.4 pin', () => {
+    const stored: PostextConfig = { paragraphStyles: [{ id: 's', spaceBetween: pt(4) }] };
+    const pinned = migrateConfig(stored, 7, { content: GROUP_THEN_TEXT });
+    expect(pinned.bodyText?.paragraphContainerSpacing).toBe('add');
+    expect(resolveAllConfig(pinned).paragraphStyles[0]!.containerSpacing).toBeUndefined();
+    // A style that sets `'collapse'` keeps it in a pinned document.
+    const own: PostextConfig = { paragraphStyles: [{ id: 's', spaceBetween: pt(4), containerSpacing: 'collapse' }] };
+    expect(resolveAllConfig(migrateConfig(own, 7, { content: GROUP_THEN_TEXT })).paragraphStyles[0]!.containerSpacing).toBe('collapse');
+  });
+
+  it('resolves a written value, drops any other, and survives the strip either way', () => {
+    for (const containerSpacing of ['add', 'collapse'] as const) {
+      for (const paragraphContainerSpacing of ['add', 'collapse'] as const) {
+        const c: PostextConfig = { bodyText: { paragraphContainerSpacing }, paragraphStyles: [{ id: 's', containerSpacing }] };
+        expect(resolveAllConfig(c).paragraphStyles[0]!.containerSpacing).toBe(containerSpacing);
+        // Kept even where it equals the document's, which can change.
+        expect(stripConfigDefaults(c).paragraphStyles).toEqual([{ id: 's', containerSpacing }]);
+        expect(resolveAllConfig(stripConfigDefaults(c))).toEqual(resolveAllConfig(c));
+      }
+    }
+    expect(resolveAllConfig({ paragraphStyles: [{ id: 's', containerSpacing: 'merge' as never }] }).paragraphStyles[0]!.containerSpacing).toBeUndefined();
+    expect(collectConfigWarnings({ paragraphStyles: [{ id: 's', containerSpacing: 'add' }] })).toEqual([]);
   });
 });
 

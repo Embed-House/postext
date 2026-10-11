@@ -6,7 +6,7 @@
  */
 
 import type { ContentBlock, DirectiveAttrs } from '../parse';
-import type { TextAlign } from '../types';
+import type { ParagraphContainerSpacing, TextAlign } from '../types';
 import { dimensionToPx } from '../units';
 import type { ResolvedConfig } from '../vdt';
 import { resolveBodyStyle, resolveParagraphStyle, type BlockStyle } from './styles';
@@ -36,6 +36,9 @@ export interface ParagraphContainer {
   /** The style's `snapToGrid`: whether the flow snaps back onto the
    *  baseline grid under the container's last paragraph (EF-184). */
   snapToGrid: boolean;
+  /** The style's `containerSpacing` (#715): the rule the space under this
+   *  container follows. Absent: `bodyText.paragraphContainerSpacing`. */
+  spacing?: ParagraphContainerSpacing;
   /** A container that names no style and sits in none (#424): its
    *  attributes apply over the text style of wherever it is set — the
    *  body's, a part's or a styled section's, a box's — which
@@ -92,6 +95,7 @@ export function planParagraphContainers(
           marginTopPx: 0,
           marginBottomPx: 0,
           snapToGrid: outer?.snapToGrid ?? true,
+          ...(outer?.spacing !== undefined ? { spacing: outer.spacing } : {}),
           ...(outer ? {} : { overBody: layout }),
         };
         byId.set(b.containerId, entry);
@@ -115,6 +119,7 @@ export function planParagraphContainers(
               marginTopPx: dimensionToPx(cfg.marginTop, dpi, style.fontSizePx),
               marginBottomPx,
               snapToGrid: cfg.snapToGrid,
+              ...(cfg.containerSpacing !== undefined ? { spacing: cfg.containerSpacing } : {}),
             };
             cache.set(styleId, base);
           }

@@ -6666,8 +6666,9 @@ function placeDocumentPass(
      *  block keeps its own space in its snap, and the container's
      *  `marginBottom` follows as pending spacing from the closing marker. */
     const containerTail = isContainerTail && rawBlock.type === 'paragraph' ? paragraphContainer : undefined;
+    // (A paragraph style may set the rule for its own containers, #715.)
     const collapseTail = containerTail !== undefined
-      && resolved.bodyText.paragraphContainerSpacing === 'collapse'
+      && (containerTail.spacing ?? resolved.bodyText.paragraphContainerSpacing) === 'collapse'
       && containerTail.tailStyle.marginBottomPx >= 0;
     const tailStyle = collapseTail && blockMeasureCtx.bodyStyle.marginBottomPx > containerTail.tailStyle.marginBottomPx
       ? { ...containerTail.tailStyle, marginBottomPx: blockMeasureCtx.bodyStyle.marginBottomPx }

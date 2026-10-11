@@ -2815,6 +2815,13 @@ export interface ParagraphStyleConfig {
    *  that runs off the grid, or a group whose leading is its own. Inside a
    *  callout, which has no grid, it changes nothing. Default `true`. */
   snapToGrid?: boolean;
+  /** How the space under the `:::paragraphs` containers that name this
+   *  style is worked out (#715): `'collapse'` or `'add'`, with the meaning
+   *  of `bodyText.paragraphContainerSpacing`, in the running text and
+   *  inside a box. Unset, the document's. `'add'` on a style ends its
+   *  groups on the style's own space, with no line of paragraph spacing
+   *  under them, while the rest of the document keeps the default. */
+  containerSpacing?: ParagraphContainerSpacing;
   /** Letter case of the paragraphs: `'uppercase'` sets them in capitals,
    *  the words of a chip and the label of a `:ref` included.
    *  Length-preserving, so source maps stay 1:1: a character whose capital
@@ -2912,6 +2919,9 @@ export interface ResolvedParagraphStyleConfig {
   marginTop: Dimension;
   marginBottom: Dimension;
   snapToGrid: boolean;
+  /** Absent when the style sets none: its containers follow
+   *  `bodyText.paragraphContainerSpacing`. */
+  containerSpacing?: ParagraphContainerSpacing;
   textTransform: ParagraphTextTransform;
   /** Absent when the style sets none (the document's `cjk.wordBreak`). */
   wordBreak?: CjkWordBreak;
