@@ -452,7 +452,7 @@ The simplest isolation is a realm per document: an iframe per live example (a Co
 
 **This is the recommended way to use Postext in the browser.** If you are building anything interactive — a live preview, an editor, a resize-aware viewer, or a sandbox-style playground — drive the pipeline through `createLayoutWorker()` from `postext/worker`. Do not call `buildDocument` directly on the main thread for UI code.
 
-Calling `buildDocument` on the main thread runs the full pipeline — parse, measure, seven passes, up to five convergence iterations — on whichever thread invoked it. For a one-shot export that is fine. For an interactive UI it is the wrong thread: a 150 ms layout blocks input events, keystrokes queue up, and scroll stutters. The worker moves every one of those milliseconds to a background thread.
+Calling `buildDocument` on the main thread runs the full pipeline — parse, measure, place, and every re-run of the placement pass the layout needs — on whichever thread invoked it. For a one-shot export that is fine. For an interactive UI it is the wrong thread: a 150 ms layout blocks input events, keystrokes queue up, and scroll stutters. The worker moves every one of those milliseconds to a background thread.
 
 Postext ships a dedicated Web Worker entry point — `postext/worker` — that takes the pipeline off the main thread. It is the path we expect the majority of integrations to use: the sandbox's Canvas, HTML and PDF viewports all share the same `createLayoutWorker()` handle through a single `useLayoutWorker` hook (`packages/postext-sandbox/src/worker/useLayoutWorker.ts`) and drive it with last-wins cancellation — a new keystroke aborts the in-flight build before it even finishes.
 
@@ -468,7 +468,7 @@ The same `VDTDocument` that comes back from `build(...)` feeds every downstream 
 
 ### What the worker gives you
 
-- **Main thread stays free.** Parsing, measurement, and the seven-pass convergence loop all run inside the worker. The main thread is only touched when the finished `VDTDocument` is posted back.
+- **Main thread stays free.** Parsing, measurement, and every placement pass all run inside the worker. The main thread is only touched when the finished `VDTDocument` is posted back.
 - **Last-wins cancellation.** `build(content, config, { signal })` threads an `AbortSignal` into the worker. Aborting before completion raises an `AbortError` on the main side; inside the worker the pipeline throws a `BuildCancelledError` at the next per-block cancellation checkpoint and stops immediately.
 - **Per-worker measurement cache.** The worker keeps a single `MeasurementCache` for its lifetime. Subsequent builds that share font, text, and width reuse the cached line measurements — typing a single character into a long document only re-measures blocks whose input actually changed.
 - **Identical metrics to the main thread.** Fonts are shipped into the worker as transferable `ArrayBuffer`s and registered via `new FontFace(...)` on the worker's own `FontFaceSet`. The worker measures with the same canvas font metrics the main thread would use, so line breaks and column heights are byte-for-byte identical.
