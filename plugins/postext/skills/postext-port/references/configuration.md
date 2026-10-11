@@ -328,7 +328,7 @@ H&J / Knuth–Plass
 ├─ colonListRoom        'item' room kept under the colon line: 'item' = what the first item needs by the list orphan/widow rules
 │                        (a 2-line item kept whole needs 2 lines); 'line' = one line (1.4; a preset without configVersion 6 reads 'line'
 │                        when a chapter has a list after a line ending in ':')
-├─ hyphenateAcrossColumns true false = re-break a paragraph so the last line of a column (or page) ends on a whole word, within the word-spacing limits (InDesign's Hyphenate Across Column); ragged text set with optimalRagged too (only its line ends move)
+├─ hyphenateAcrossColumns true false = re-break a paragraph so the last line of a column (or page) ends on a whole word, within the word-spacing limits (InDesign's Hyphenate Across Column); ragged text set with optimalRagged too (only its line ends move). 'withinPage' (≥ 1.28) = guard the page ends only: a word may be divided between two columns of one page, never (where the limits allow) at the foot of a page; fewer lines move than with false, the value to prefer in 2+ columns when the source only avoids hyphens at page ends; same lines as false in one column
 └─ paragraphContainerSpacing 'collapse'  space under a :::paragraphs container: 'collapse' = max(spaceBetween, marginBottom,
                          the text's paragraph spacing) merged with the next block's own space above (a heading's marginTop);
                          'add' = 1.4 (style space baked into the grid snap, next block's space added under it; a preset

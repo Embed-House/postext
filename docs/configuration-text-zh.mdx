@@ -921,9 +921,9 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
     </tr>
     <tr>
       <td><code>hyphenateAcrossColumns</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
       <td><code>true</code></td>
-      <td>允许一栏或一页以断词结束（InDesign的<em>Hyphenate Across Column</em>）。设为<code>false</code>时，跨越分栏处的段落会重新断行，使它在本栏的最后一行以完整的词结束；差额由上面各行的词间距在<code>maxWordSpacing</code>和<code>minWordSpacing</code>范围内吸收。这是一种偏好：如果在这些范围内找不到能避免断词的断点，连字符就保留。它会尝试段落的每一个分栏点：第一个分栏点，以及之后落在整栏结束处的分栏点，在一次重新断行中处理；之后落在其他位置的分栏点（遵守段首孤行规则、在截齐的分栏带处）则从那一栏开始另做一次重新断行，前面各栏已排好的行保持原有断点，只重排其余部分。框的正文不受影响。开启<code>optimalRagged</code>时，不齐行段落也同样重新断行：它的词间距保持原宽，所以只有行尾移动。每次重新断行都要再测量一遍段落，因此栏尾断词很多的书排版会稍慢一些。需要开启<code>optimalLineBreaking</code>，不齐行文字还需要<code>optimalRagged</code>。</td>
+      <td>允许一栏或一页以断词结束（InDesign的<em>Hyphenate Across Column</em>）。设为<code>false</code>时，跨越分栏处的段落会重新断行，使它在本栏的最后一行以完整的词结束；差额由上面各行的词间距在<code>maxWordSpacing</code>和<code>minWordSpacing</code>范围内吸收。这是一种偏好：如果在这些范围内找不到能避免断词的断点，连字符就保留。它会尝试段落的每一个分栏点：第一个分栏点，以及之后落在整栏结束处的分栏点，在一次重新断行中处理；之后落在其他位置的分栏点（遵守段首孤行规则、在截齐的分栏带处）则从那一栏开始另做一次重新断行，前面各栏已排好的行保持原有断点，只重排其余部分。<code>'withinPage'</code>只守护结束一页的那些行，别的行不管：一个词可以断在同一页的两栏之间，而一页的最后一行只要范围允许就以完整的词结束。它改动的行比<code>false</code>少，这在三栏及以上的版式里有分量，因为每三个栏尾中有两个在页内；单栏时两个值排出的行相同。如果一页中某栏之后再没有接收文字的栏，这一栏就算结束它所在的页：专放浮动体的边栏不接收文字，被表格或图片占满的栏也不接收。框的正文不受影响。开启<code>optimalRagged</code>时，不齐行段落也同样重新断行：它的词间距保持原宽，所以只有行尾移动。每次重新断行都要再测量一遍段落，因此栏尾断词很多的书排版会稍慢一些。需要开启<code>optimalLineBreaking</code>，不齐行文字还需要<code>optimalRagged</code>。</td>
     </tr>
     <tr>
       <td><code>paragraphContainerSpacing</code></td>
