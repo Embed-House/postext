@@ -181,7 +181,8 @@ export function pageTools(host: SandboxToolHost): WebMcpTool[] {
       required: ['x', 'y'],
       additionalProperties: false,
     },
-    annotations: { readOnlyHint: true, untrustedContentHint: true },
+    // Not marked read-only: `select` opens a panel and moves the caret.
+    annotations: { untrustedContentHint: true },
     execute: async (args, { signal }) => {
       if ((args.word !== undefined || args.to !== undefined) && args.select !== true) throw new ToolError('word and to say what to select: set select to true with them.');
       if (args.word === true && args.to !== undefined) throw new ToolError('word selects the word at the point and to selects up to a second point: give one of them.');

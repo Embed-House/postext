@@ -689,12 +689,12 @@ EPUB 3有两种版式，由包文件的`rendition:layout`属性声明：
 
 这些工具为设计者凭眼睛反复进行的那个循环而设：改一点，看看页面，再改。
 
-- **看** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_get_warnings`：这本书及其章节和页码范围；任意一页按指定宽度输出的JPEG、PNG或WebP，或其中一块的放大图，需要时带印刷预览；同一页的数据（各个块和行、每栏排了多满、哪些行过松或以断词结尾）；以及“检查”面板列出的内容。
-- **改** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`：按路径修改任何设置（`bodyText.fontSize`、`page.margins.top`），用精确的查找替换修改文字，以及章节、图片、SVG图、表格和字体。每次修改都会回报各项的前后取值和每一章排成的页数。
-- **显示** — `sandbox_set_view`, `sandbox_go_to_page`：查看器标签页、侧面板、单章或整本书、缩放、适应方式和对页、阅读字号、印刷预览、画在页面上的参考线，以及屏幕上的那一页。
-- **保存** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`：示例和你的项目、导入的`.postext`文件，以及把书导出为PDF、EPUB、`.postext`、Word、Markdown或JSON格式的设置。
+- **看** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_inspect_point`, `sandbox_inspect_comic`, `sandbox_get_warnings`：这本书及其章节和页码范围，以及界面上的情况（选区、提示、等待回答的询问）；任意一页按指定宽度输出的JPEG、PNG或WebP，或其中一块的放大图，需要时带印刷预览；同一页的数据（各个块和行、每栏排了多满、哪些行过松或以断词结尾）；页面上某一点是什么（源文本的行、链接及其去向、表格的单元格）；漫画页的分格和对话框；以及检查在任意一章或整本书里发现的问题，不论屏幕上是哪一章、哪个查看器。
+- **改** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_select_text`, `sandbox_undo_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`, `sandbox_edit_comic`, `sandbox_import_word`：按路径修改任何设置（`bodyText.fontSize`、`page.margins.top`、`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`），用精确的查找替换修改文字并可撤销，以及章节、图片、SVG图、视频、带格式的表格、字体、漫画的分格和对话框，还能导入Word文档并对应其样式。每次修改都会回报各项的前后取值和每一章排成的页数；设置还会回报引擎解析出的值和随之变化的其他设置，引擎无法解析的值会被拒绝，什么都不改。
+- **显示** — `sandbox_set_view`, `sandbox_go_to_page`, `sandbox_run_viewer`：查看器标签页、侧面板、单章或整本书、缩放、适应方式和对页、阅读字号、印刷预览、画在页面上的参考线、Folio的放大镜，以及屏幕上的那一页（按页码、按一段文字、按锚点或按EPUB目录的条目）；重新生成PDF或EPUB、打印、播放页面上的视频。
+- **保存** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`, `sandbox_word_templates`, `sandbox_answer`：示例和你的项目及其封面、导入的`.postext`文件，把这本书（或一本没有打开的书）导出为PDF、EPUB、`.postext`、Word、Markdown或JSON格式的设置，Word导入的模板，以及对沙盒所提询问的回答。
 
-修改书的工具会等排版完成，所以下一张图总是新的页面；无论屏幕上是哪个标签页，页面都会为工具单独排版并绘制。无法撤回的操作（删除章节、资源或项目，恢复原稿）标记为有后果的操作，浏览器可以先征求你的同意。和使用界面时一样，一切都留在你的浏览器里：工具触及不到沙盒本身触及不到的东西。
+修改书的工具会等排版完成，所以下一张图总是新的页面；无论屏幕上是哪个标签页，页面都会为工具单独排版并绘制。无法撤回的操作（删除章节、资源或项目，恢复原稿，用Word文档覆盖文字，替换你手里的一本书）标记为有后果的操作，浏览器可以先征求你的同意。和使用界面时一样，一切都留在你的浏览器里：工具触及不到沙盒本身触及不到的东西。
 
 WebMCP还是草案：Chrome以来源试用的方式提供，也可通过`chrome://flags/#enable-webmcp-testing`开启。在没有WebMCP的浏览器里，同样的工具放在`window.postextWebMcp`上（`listTools()`、`executeTool(name, args)`），供能在页面里运行脚本的智能体使用。嵌入沙盒时，`webmcp={false}`可不注册这些工具（见[属性](#属性)）。
 
