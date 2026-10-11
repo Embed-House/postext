@@ -3,20 +3,20 @@
   "slug": "spanish-pocket-novel",
   "sourceHash": "04bec2544813ba9accb06d879bdb7a28aee65121947c598453f439c5ce3cdbb8",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.690Z",
+  "capturedAt": "2026-10-11T03:51:38.292Z",
   "variants": {
     "es": {
-      "hash8": "a42f6b1f",
+      "hash8": "b2933687",
       "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
       "timings": {
-        "importMs": 133,
+        "importMs": 128,
         "fontsMs": 21,
-        "buildMs": 45,
-        "totalMs": 796,
+        "buildMs": 42,
+        "totalMs": 787,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "spanish-pocket-novel.postext",
-        "bytes": 43106,
+        "bytes": 43134,
         "folio": "bb7ddf9c"
       },
       "detected": {
@@ -330,7 +330,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 7: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

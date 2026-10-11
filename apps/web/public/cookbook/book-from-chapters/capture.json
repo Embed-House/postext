@@ -3,21 +3,21 @@
   "slug": "book-from-chapters",
   "sourceHash": "15abc1f691990e3eef9cc63a639c7a57b661028cf9c21f2eb2e7287b8bf7bf9e",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.932Z",
+  "capturedAt": "2026-10-11T03:48:28.063Z",
   "variants": {
     "en": {
-      "hash8": "6dcbfe04",
+      "hash8": "5cf3724e",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 63,
-        "buildMs": 72,
-        "totalMs": 862,
+        "importMs": 164,
+        "fontsMs": 60,
+        "buildMs": 71,
+        "totalMs": 858,
         "builds": 1
       },
       "specimen": {
@@ -204,12 +204,12 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 121305,
+        "bytes": 121306,
         "pages": 11
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 46825,
+        "bytes": 46849,
         "folio": "0459f0ab"
       },
       "detected": {
@@ -464,13 +464,13 @@
       }
     },
     "es": {
-      "hash8": "282c64b8",
+      "hash8": "926e020c",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 61,
+        "importMs": 167,
+        "fontsMs": 59,
         "buildMs": 76,
-        "totalMs": 863,
+        "totalMs": 861,
         "builds": 1
       },
       "specimen": {
@@ -662,7 +662,7 @@
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 47099,
+        "bytes": 47123,
         "folio": "0459f0ab"
       },
       "detected": {

@@ -3,21 +3,21 @@
   "slug": "arabic-newspaper-two-columns",
   "sourceHash": "6d2055b0686b195bc44a1157083b147657291376262ad199592ff83ab08aaf9c",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.468Z",
+  "capturedAt": "2026-10-11T03:48:28.012Z",
   "variants": {
     "en": {
-      "hash8": "59a4e199",
+      "hash8": "aaf0dc16",
       "vdtHash": "635fc763c503116c0be52473b4b8f53ceac23047",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 72,
-        "buildMs": 125,
-        "totalMs": 902,
+        "importMs": 162,
+        "fontsMs": 69,
+        "buildMs": 122,
+        "totalMs": 891,
         "builds": 1
       },
       "specimen": {
@@ -91,12 +91,12 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 95266,
+        "bytes": 95264,
         "pages": 2
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22502,
+        "bytes": 22511,
         "folio": "7d33b710"
       },
       "detected": {
@@ -361,13 +361,13 @@
       }
     },
     "es": {
-      "hash8": "188829f9",
+      "hash8": "68e314e9",
       "vdtHash": "f34d5fa84d31dc3c41e2140a9292b0d69c9c55cb",
       "timings": {
-        "importMs": 165,
+        "importMs": 162,
         "fontsMs": 69,
-        "buildMs": 127,
-        "totalMs": 897,
+        "buildMs": 131,
+        "totalMs": 912,
         "builds": 1
       },
       "specimen": {
@@ -446,7 +446,7 @@
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22547,
+        "bytes": 22555,
         "folio": "7d33b710"
       },
       "detected": {

@@ -3,20 +3,20 @@
   "slug": "storybook-chapter-vignettes",
   "sourceHash": "20201aef39302db471deb5ce728eb4ea67fb0cdbded3259f508130a2eb88d789",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.729Z",
+  "capturedAt": "2026-10-11T03:51:38.303Z",
   "variants": {
     "en": {
-      "hash8": "05b18071",
+      "hash8": "a940c659",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
         "importMs": 129,
-        "fontsMs": 31,
-        "buildMs": 39,
-        "totalMs": 810,
+        "fontsMs": 32,
+        "buildMs": 40,
+        "totalMs": 805,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820939,
+        "bytes": 820962,
         "folio": "ebfafef3"
       },
       "detected": {
@@ -320,19 +320,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 5: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c2683f3b",
+      "hash8": "d1fec682",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 126,
+        "importMs": 129,
         "fontsMs": 32,
         "buildMs": 39,
-        "totalMs": 807,
+        "totalMs": 811,
         "builds": 1
       },
       "specimen": {
@@ -441,7 +441,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820987,
+        "bytes": 821012,
         "folio": "ebfafef3"
       },
       "detected": {
@@ -636,7 +636,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 5: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

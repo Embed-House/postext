@@ -3,21 +3,21 @@
   "slug": "chinese-novel-horizontal",
   "sourceHash": "ebd9c948d64d0b3825c41963346e1cd2e55f3d467167ed2bec8a9337f56804f4",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.070Z",
+  "capturedAt": "2026-10-11T03:49:50.717Z",
   "variants": {
     "en": {
-      "hash8": "4f037fdf",
+      "hash8": "de93989e",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 247,
-        "buildMs": 56,
-        "totalMs": 1019,
+        "importMs": 164,
+        "fontsMs": 239,
+        "buildMs": 57,
+        "totalMs": 1007,
         "builds": 1
       },
       "specimen": {
@@ -152,12 +152,12 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651141,
+        "bytes": 651145,
         "pages": 7
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391354,
+        "bytes": 391386,
         "folio": "77b45883"
       },
       "detected": {
@@ -356,19 +356,24 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 69: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "bundle locale zh-Hans, the document's language: en names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "39fdf223",
+      "hash8": "107568aa",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 234,
+        "importMs": 168,
+        "fontsMs": 245,
         "buildMs": 57,
-        "totalMs": 1005,
+        "totalMs": 1017,
         "builds": 1
       },
       "specimen": {
@@ -503,12 +508,12 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651130,
+        "bytes": 651133,
         "pages": 7
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391419,
+        "bytes": 391455,
         "folio": "77b45883"
       },
       "detected": {
@@ -707,7 +712,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 69: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "bundle locale zh-Hans, the document's language: es names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
