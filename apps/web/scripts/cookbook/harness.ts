@@ -20,7 +20,7 @@ import puppeteer from "puppeteer-core";
 import type { Browser, Page } from "puppeteer-core";
 import type { CaptureBuild, SampleLocale, RecipeMeta } from "../../src/lib/cookbook/types.ts";
 import { cardProblems, heroPages, publishedPages } from "./cards.ts";
-import type { EpubRecord, ProbeFacts } from "./checks.ts";
+import type { BundleReadBack, EpubRecord, ProbeFacts } from "./checks.ts";
 import type { NetIssue } from "./net.ts";
 import { interceptor, routeFor } from "./net.ts";
 import type { PenServer } from "./serve.ts";
@@ -155,6 +155,15 @@ export interface SandboxBundle {
   warnings: string[];
   /** What the bundle cannot carry (a continuation's page sides, counters). */
   notes: string[];
+  /** Builds left out because their configuration is another and the recipe
+   *  did not say which to keep (`capture.sandbox`). */
+  warns: string[];
+  /** The pages of the builds the bundle holds, and of every build the
+   *  capture publishes. */
+  pages: number;
+  allPages: number;
+  /** The bundle opened and laid out again against the pen's documents (C33). */
+  readBack: BundleReadBack | null;
 }
 
 /** What the bundle is called: `recipe-<slug>`, the write-up's title. */
@@ -334,8 +343,9 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     run.facts = await probe<ProbeFacts>(page, "facts", { select, hero });
     const all = (run.facts.pages ?? []).map((p) => p.n);
     if (run.facts.selected < 0 || all.length === 0) return run;
+    const keep = meta.capture.sandbox ?? null;
     if (opts.sandboxOnly) {
-      if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, opts.variant, opts.sandbox, opts.sandbox.thumbnail ?? null);
+      if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, keep, opts.variant, opts.sandbox, opts.sandbox.thumbnail ?? null);
       return run;
     }
 
@@ -378,7 +388,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
         };
       }
     }
-    if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, opts.variant, opts.sandbox, run.card?.card480 ?? null);
+    if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, keep, opts.variant, opts.sandbox, run.card?.card480 ?? null);
     return run;
   } finally {
     run.timings.totalMs = Date.now() - t0;
@@ -391,17 +401,25 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
 }
 
 /** The selected document as a `.postext` file, written in the page by the
- *  pen's engine (lib/probe.js `sandboxBundle`). */
+ *  pen's engine and read back by it (lib/probe.js `sandboxBundle`). `keep`
+ *  is `capture.sandbox`: of several builds, the one whose configuration the
+ *  bundle takes. */
 async function sandboxBundle(
   page: Page,
   select: CaptureBuild | CaptureBuild[],
+  keep: CaptureBuild | null,
   locale: SampleLocale,
   meta: SandboxMeta,
   thumbnail: Buffer | null,
 ): Promise<SandboxBundle> {
+  const none = { warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null };
   try {
-    const out = await probe<{ base64?: string; error?: string; warnings?: string[]; notes?: string[] }>(page, "sandboxBundle", {
+    const out = await probe<{
+      base64?: string; error?: string; warnings?: string[]; notes?: string[]; warns?: string[];
+      pages?: number; allPages?: number; readBack?: BundleReadBack;
+    }>(page, "sandboxBundle", {
       select,
+      keep,
       id: meta.id,
       name: meta.name,
       description: meta.description,
@@ -414,9 +432,13 @@ async function sandboxBundle(
       error: out.error ?? (out.base64 ? null : "no bundle"),
       warnings: out.warnings ?? [],
       notes: out.notes ?? [],
+      warns: out.warns ?? [],
+      pages: out.pages ?? 0,
+      allPages: out.allPages ?? 0,
+      readBack: out.readBack ?? null,
     };
   } catch (error) {
-    return { bytes: null, error: String((error as Error).message ?? error), warnings: [], notes: [] };
+    return { ...none, bytes: null, error: String((error as Error).message ?? error) };
   }
 }
 

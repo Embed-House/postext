@@ -375,6 +375,78 @@ export interface EpubRecord {
   error: string | null;
 }
 
+/** A Sandbox bundle opened again by the pen's engine and laid out as the
+ *  Sandbox lays a book out, beside the documents the pen built from the
+ *  same source (lib/probe.js `readBundleBack`, check C33). */
+export interface BundleReadBack {
+  /** Why the engine could not read the bundle back (no `openBundle`). */
+  skipped?: string;
+  /** The bundle did not open, or its layout threw. */
+  error?: string;
+  /** One entry per chapter of the bundle or document of the pen: pages and
+   *  layout hash on each side (null where a side has none), and where the
+   *  two layouts part. */
+  chapters: {
+    chapter: number;
+    pen: { pages: number; hash: string } | null;
+    bundle: { pages: number; hash: string } | null;
+    difference: string | null;
+    /** What gives the pen's pages back when the chapter is laid out again
+     *  with it: the build's own `continuation` (its keys), which a bundle
+     *  does not carry, or the configuration as the pen wrote it (the
+     *  top-level keys that each do so alone, or only `together`). */
+    cause?: { continuation?: string[]; configuration?: string[]; together?: boolean } | null;
+  }[];
+  /** Warnings the bundle's layout raises beyond the pen's (kind and what
+   *  it names, positions aside). */
+  extraWarnings: string[];
+}
+
+/**
+ * C33: the bundle against the pen (#690, check 1 of #660). The Sandbox
+ * opens `<slug>.postext` and lays it out with the one configuration it
+ * carries; the capture does the same with the pen's engine and fails when
+ * a chapter comes out with another page count or another layout than the
+ * pen's document, or raises a warning the pen's builds did not.
+ */
+export function readBackFindings(readBack: BundleReadBack | null | undefined): Finding[] {
+  if (!readBack) return [];
+  const out: Finding[] = [];
+  const add = (severity: Severity, detail: string) => out.push({ check: "C33", severity, detail });
+  if (readBack.skipped) {
+    add("info", `the bundle was not read back: ${readBack.skipped}`);
+    return out;
+  }
+  if (readBack.error) {
+    add("fail", `the bundle does not open and lay out again: ${firstLines(readBack.error, 1)}`);
+    return out;
+  }
+  const one = readBack.chapters.length === 1;
+  const s = (n: number) => `${n} page${n === 1 ? "" : "s"}`;
+  const keys = (list: string[], prefix = "") => list.map((key) => `${prefix}${key}`).join(", ");
+  for (const c of readBack.chapters) {
+    const chapter = one ? "the bundle" : `chapter ${c.chapter} of the bundle`;
+    const built = one ? "the pen's document" : `the pen's document ${c.chapter}`;
+    // Why, when laying the chapter out again found it.
+    const why: string[] = [];
+    if (c.cause?.configuration) {
+      const named = c.cause.configuration.length ? ` in ${keys(c.cause.configuration)}${c.cause.together ? " (together)" : ""}` : "";
+      why.push(`the configuration the bundle stores is not the pen's${named}`);
+    }
+    if (c.cause?.continuation?.length) why.push(`a bundle does not carry ${keys(c.cause.continuation, "continuation.")}`);
+    const cause = why.length ? `. Cause: ${why.join(", and ")}` : "";
+    if (!c.pen && c.bundle) add("fail", `${chapter} (${s(c.bundle.pages)}) has no document of the pen to compare with`);
+    else if (c.pen && !c.bundle) add("fail", `${built} (${s(c.pen.pages)}) is no chapter of the bundle`);
+    else if (c.pen && c.bundle && c.pen.pages !== c.bundle.pages) {
+      add("fail", `${chapter} lays out to ${s(c.bundle.pages)}, ${built} to ${s(c.pen.pages)}${c.difference ? ` (${c.difference})` : ""}${cause}`);
+    } else if (c.pen && c.bundle && c.pen.hash !== c.bundle.hash) {
+      add("fail", `${chapter} is not laid out as ${built} (layout ${c.bundle.hash}, the pen's ${c.pen.hash})${c.difference ? `: ${c.difference}` : ""}${cause}`);
+    }
+  }
+  for (const warning of readBack.extraWarnings) add("fail", `the bundle raises ${warning}, which the pen's builds do not`);
+  return dedupe(out);
+}
+
 export interface CheckInput {
   meta: RecipeMeta;
   facts: ProbeFacts | null;

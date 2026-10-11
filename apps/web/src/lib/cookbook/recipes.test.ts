@@ -131,6 +131,28 @@ describe("validateRecipeMeta (fixture)", () => {
     }
   });
 
+  it("takes one of the capture.doc builds for capture.sandbox (#690)", () => {
+    for (const sandbox of ["first", "last", 0, 1] as const) {
+      const meta = fixtureMeta();
+      meta.capture.doc = ["first", "last"];
+      meta.capture.sandbox = sandbox;
+      expect(validate(meta), JSON.stringify(sandbox)).toEqual([]);
+    }
+    const past = fixtureMeta();
+    past.capture.doc = [0, 1, 2];
+    past.capture.sandbox = 3;
+    expect(validate(past)).toContain("capture.sandbox: no build 3 in capture.doc, which lists 3 (0–2)");
+    const single = fixtureMeta();
+    single.capture.sandbox = "last";
+    expect(validate(single)).toContain("capture.sandbox: chooses among the builds of a capture.doc list; capture.doc names one build");
+    single.capture.doc = ["last"];
+    expect(validate(single)).toContain("capture.sandbox: chooses among the builds of a capture.doc list; capture.doc lists one build");
+    const wrong = fixtureMeta() as unknown as { capture: { doc: unknown; sandbox: unknown } };
+    wrong.capture.doc = ["first", "last"];
+    wrong.capture.sandbox = "middle";
+    expect(validate(wrong).some((e) => e.startsWith("capture.sandbox"))).toBe(true);
+  });
+
   it("checks slugs", () => {
     expect(validateSlug("a-z")).toEqual(['slug "a-z" is reserved']);
     expect(validateSlug("ab")).toEqual(['slug "ab" must have 3–48 characters']);

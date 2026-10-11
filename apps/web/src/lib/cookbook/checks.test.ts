@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cardProblems, sidesOf, spreadsOf } from "../../../scripts/cookbook/cards.ts";
-import { detect, detectFeatures, runChecks } from "../../../scripts/cookbook/checks.ts";
-import type { CheckInput, EpubRecord, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
+import { detect, detectFeatures, readBackFindings, runChecks } from "../../../scripts/cookbook/checks.ts";
+import type { BundleReadBack, CheckInput, EpubRecord, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
 import { mathErrorsOf } from "../../../scripts/cookbook/lib/probe.js";
 import { loadRegistry } from "./registry.ts";
 import type { ComposedPen, RecipeMeta } from "./types.ts";
@@ -457,5 +457,78 @@ describe("C32: a formula the maths engine could not set (#683)", () => {
   it("passes a capture whose formulas are all set, or from a probe that reports none", () => {
     expect(of("C32", runChecks(input({ facts: facts({ mathErrors: [] }) })))).toEqual([]);
     expect(of("C32", runChecks(input()))).toEqual([]);
+  });
+});
+
+describe("C33: the Sandbox bundle read back (#690)", () => {
+  const same = { pages: 2, hash: "0a1b2c3d4e5f6071" };
+  const back = (extra: Partial<BundleReadBack> = {}): BundleReadBack => ({
+    chapters: [{ chapter: 1, pen: same, bundle: same, difference: null }], extraWarnings: [], ...extra,
+  });
+
+  it("passes a bundle that lays out as the pen's documents, and one that was not written", () => {
+    expect(readBackFindings(back())).toEqual([]);
+    expect(readBackFindings(null)).toEqual([]);
+  });
+
+  it("fails a chapter with another page count or another layout", () => {
+    const findings = readBackFindings(back({
+      chapters: [
+        { chapter: 1, pen: same, bundle: same, difference: null },
+        { chapter: 2, pen: { pages: 1, hash: "aa" }, bundle: { pages: 2, hash: "bb" }, difference: "page 1: the pen sets Lx, the bundle Ly" },
+        { chapter: 3, pen: { pages: 1, hash: "cc" }, bundle: { pages: 1, hash: "dd" }, difference: "page 1: the pen sets Lx, the bundle Ly" },
+      ],
+    }));
+    expect(findings).toEqual([
+      { check: "C33", severity: "fail", detail: "chapter 2 of the bundle lays out to 2 pages, the pen's document 2 to 1 page (page 1: the pen sets Lx, the bundle Ly)" },
+      { check: "C33", severity: "fail", detail: "chapter 3 of the bundle is not laid out as the pen's document 3 (layout dd, the pen's cc): page 1: the pen sets Lx, the bundle Ly" },
+    ]);
+    expect(readBackFindings(back({ chapters: [{ chapter: 1, pen: { pages: 1, hash: "cc" }, bundle: { pages: 1, hash: "dd" }, difference: null }] }))[0].detail)
+      .toBe("the bundle is not laid out as the pen's document (layout dd, the pen's cc)");
+  });
+
+  it("names the cause the read-back found", () => {
+    const differs = { chapter: 1, pen: { pages: 1, hash: "cc" }, bundle: { pages: 1, hash: "dd" }, difference: "page 1: the pen sets Lx, the bundle Ly" };
+    const said = (cause: BundleReadBack["chapters"][number]["cause"]) => readBackFindings(back({ chapters: [{ ...differs, cause }] }))[0].detail.split(". Cause: ")[1];
+    expect(said({ continuation: ["headings"] })).toBe("a bundle does not carry continuation.headings");
+    expect(said({ configuration: ["headingStyles"] })).toBe("the configuration the bundle stores is not the pen's in headingStyles");
+    expect(said({ configuration: ["headings", "headingStyles"], together: true }))
+      .toBe("the configuration the bundle stores is not the pen's in headings, headingStyles (together)");
+    expect(said({ configuration: ["headingStyles"], continuation: ["pageIndexOffset"] }))
+      .toBe("the configuration the bundle stores is not the pen's in headingStyles, and a bundle does not carry continuation.pageIndexOffset");
+    expect(said({ configuration: [] })).toBe("the configuration the bundle stores is not the pen's");
+    expect(said(null)).toBeUndefined();
+  });
+
+  it("fails a chapter or a document with nothing on the other side", () => {
+    const findings = readBackFindings(back({
+      chapters: [
+        { chapter: 1, pen: same, bundle: same, difference: null },
+        { chapter: 2, pen: null, bundle: { pages: 3, hash: "bb" }, difference: null },
+        { chapter: 3, pen: { pages: 1, hash: "cc" }, bundle: null, difference: null },
+      ],
+    }));
+    expect(findings.map((f) => f.detail)).toEqual([
+      "chapter 2 of the bundle (3 pages) has no document of the pen to compare with",
+      "the pen's document 3 (1 page) is no chapter of the bundle",
+    ]);
+    expect(findings.every((f) => f.check === "C33" && f.severity === "fail")).toBe(true);
+  });
+
+  it("fails every warning the bundle raises and the pen's builds did not", () => {
+    const findings = readBackFindings(back({ extraWarnings: ["comicBalloonOverflow panel 3", "comicBalloonOverflow panel 3", "fontFallback Bangers 700 (missing)"] }));
+    expect(findings).toEqual([
+      { check: "C33", severity: "fail", detail: "the bundle raises comicBalloonOverflow panel 3, which the pen's builds do not (×2)" },
+      { check: "C33", severity: "fail", detail: "the bundle raises fontFallback Bangers 700 (missing), which the pen's builds do not" },
+    ]);
+  });
+
+  it("fails a bundle that does not open, and notes an engine that cannot read one back", () => {
+    expect(readBackFindings({ error: "Invalid bundle manifest (preset.json)\n  at openBundle", chapters: [], extraWarnings: [] })).toEqual([
+      { check: "C33", severity: "fail", detail: "the bundle does not open and lay out again: Invalid bundle manifest (preset.json)" },
+    ]);
+    expect(readBackFindings({ skipped: "the engine has no openBundle / buildBundle", chapters: [], extraWarnings: [] })).toEqual([
+      { check: "C33", severity: "info", detail: "the bundle was not read back: the engine has no openBundle / buildBundle" },
+    ]);
   });
 });

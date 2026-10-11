@@ -46,9 +46,10 @@ const CAPTURE_USAGE = `pnpm cookbook capture [slug…] [options]
                          (the workspace packages' dist; checks only, writes no capture)
   --preview-dir <dir>    Also write every page image, the card and the edition's capture.json here for inspection
   --sandbox-only         Write only each edition's <slug>.postext (and its entry
-                         in capture.json), with the engine capture.json records;
-                         pages, card, OG image and PDF stay as they are. With no
-                         slugs: every captured recipe`;
+                         and findings in capture.json), with the engine capture.json
+                         records; pages, card, OG image and PDF stay as they are.
+                         With no slugs: every captured recipe; with --check, the
+                         bundles are read back against the pens and nothing is written`;
 
 type CaptureState = "fresh" | "missing" | "stale" | "incomplete" | "unreadable";
 

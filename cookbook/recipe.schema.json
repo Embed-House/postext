@@ -403,6 +403,20 @@
             }
           ]
         },
+        "sandbox": {
+          "anyOf": [
+            {
+              "enum": [
+                "last",
+                "first"
+              ]
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
         "selector": {
           "type": "string",
           "minLength": 1

@@ -58,6 +58,11 @@ export function sourceHash(slug: string, meta: RecipeMeta): string {
   }
   const picked: Record<string, unknown> = {};
   for (const key of CAPTURE_KEYS) picked[key] = meta[key];
+  // `capture.sandbox` chooses what the bundle holds and never changes a
+  // page: like `folio`, it is tracked in capture.json's `sandbox` entry.
+  const capture: Record<string, unknown> = { ...meta.capture };
+  delete capture.sandbox;
+  picked.capture = capture;
   add("recipe.json", stable(picked));
   return hash.digest("hex");
 }
