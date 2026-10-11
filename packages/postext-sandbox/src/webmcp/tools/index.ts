@@ -8,6 +8,7 @@ import { answerTools, libraryTools } from './library';
 import { pageTools } from './pages';
 import { resourceTools } from './resources';
 import { viewTools } from './view';
+import { viewerCommandTools } from './viewerCommands';
 import { wordTools } from './word';
 
 /** Every tool the Sandbox hands an agent, in the order an agent meets
@@ -21,6 +22,7 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...text,
     ...configTools(host),
     ...viewTools(host),
+    ...viewerCommandTools(host),
     ...resourceTools(host),
     ...comicTools(host),
     ...libraryTools(host),
