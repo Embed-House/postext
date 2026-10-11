@@ -7,8 +7,15 @@
  * reach the renderer without a recorded build (a layout worker's, harness
  * need H6), the PDF bytes and the font-provider failures.
  *
- * Workers ignore import maps, so a worker recipe runs the published engine
- * inside its worker; its documents are recorded on the main thread.
+ * A worker has no import map. On the npm engine the worker client starts
+ * esm.sh's own worker entry of the pinned release, so a worker recipe runs
+ * the published engine inside its worker. On the local engine the client is
+ * a file of `packages/postext/dist` on the pen server's origin and starts
+ * `layout.worker.js` beside it: the server writes the bare imports of every
+ * module of `dist` it serves as the URLs `localImports()` gives them
+ * (`rewriteBareImports`, #742), so the worker resolves the same files as
+ * the page and runs the working tree's engine. Either way the worker's
+ * documents are recorded on the main thread.
  *
  * Run by Node's type stripping: erasable TypeScript, relative `.ts` imports.
  */
@@ -81,36 +88,85 @@ function installedVersion(pkg: string, dep: string): string {
   return (JSON.parse(fs.readFileSync(file, "utf-8")) as { version: string }).version;
 }
 
+let localImportsMemo: Record<string, string> | null = null;
+
 /** The local engine's bare imports: the workspace packages to the pen
- *  server, their dependencies to esm.sh at the installed versions. MathJax
- *  is not among them: esm.sh builds each `mathjax-full/js/…` subpath with a
- *  private copy of MathJax's core and no formula converts, so the pen
- *  server answers the engine's MathJax module with the one-module bundle
- *  the package ships (serve.ts `localMathJaxModule`, #683). */
-function localImports(): Record<string, string> {
+ *  server, their dependencies to esm.sh at the installed versions. The
+ *  server writes them into each module of `dist` it serves
+ *  (`rewriteBareImports`), so a page and a worker resolve the same URLs and
+ *  the import map carries none of them (#742). MathJax is not among them:
+ *  esm.sh builds each `mathjax-full/js/…` subpath with a private copy of
+ *  MathJax's core and no formula converts, so the pen server answers the
+ *  engine's MathJax module with the one-module bundle the package ships
+ *  (serve.ts `localMathJaxModule`, #683). Nor is HarfBuzz: postext-pdf loads
+ *  `harfbuzz.wasm` with its own binding (#380), from beside its module. */
+export function localImports(): Record<string, string> {
+  if (localImportsMemo) return localImportsMemo;
   const esm = (pkg: string, dep: string) => `https://esm.sh/${dep}@${installedVersion(pkg, dep)}`;
   const imports: Record<string, string> = {
     postext: `${LOCAL_PREFIX}postext/index.js`,
     "postext/bundle": `${LOCAL_PREFIX}postext/bundle/index.js`,
     "postext/worker": `${LOCAL_PREFIX}postext/worker/client.js`,
+    "postext-pdf": `${LOCAL_PREFIX}postext-pdf/index.js`,
+    "postext-citeproc": `${LOCAL_PREFIX}postext-citeproc/index.js`,
+    "postext-citeproc/register": `${LOCAL_PREFIX}postext-citeproc/register.js`,
+    "postext-epub": `${LOCAL_PREFIX}postext-epub/index.js`,
+    "postext-epub/worker": `${LOCAL_PREFIX}postext-epub/worker/client.js`,
+    "postext-folio": `${LOCAL_PREFIX}postext-folio/index.js`,
   };
   for (const dep of ["@chenglou/pretext", "fflate", "gray-matter", "hypher", "react"]) imports[dep] = esm("postext", dep);
   for (const lang of ["ca", "de", "en-us", "es", "fr", "it", "nl", "pt"]) imports[`hyphenation.${lang}`] = esm("postext", `hyphenation.${lang}`);
   for (const dep of ["@pdf-lib/fontkit", "@pdf-lib/upng", "jpeg-js", "pdf-lib", "wawoff2"]) imports[dep] = esm("postext-pdf", dep);
-  // HarfBuzz (the PDF's Arabic shaping) from the workspace's own files, as a
-  // bundler ships it: esm.sh's build gives it a Node `process`, and its
-  // Emscripten loader then takes the Node path and fails in the browser.
-  imports.harfbuzzjs = `${LOCAL_PREFIX}harfbuzzjs/index.mjs`;
   imports.citeproc = esm("postext-citeproc", "citeproc");
   imports.three = esm("postext-folio", "three");
   // Its post-processing passes (SMAA): three's own example modules.
   imports["three/"] = `${esm("postext-folio", "three")}/`;
+  // The viewer's HLS player, imported when a page holds a stream.
+  imports["hls.js"] = esm("postext-folio", "hls.js");
+  localImportsMemo = imports;
   return imports;
 }
 
-export function importMapTag(engine?: EngineSpec): string {
-  const imports = engine?.source === "local" ? { ...localImports(), ...SHIM_PATHS } : SHIM_PATHS;
-  return `<script type="importmap">${JSON.stringify({ imports })}</script>`;
+/** What a bare specifier resolves to in `imports`, as an import map would:
+ *  its own entry, else the longest prefix entry ending in `/`. Null for a
+ *  relative or absolute specifier, a URL, and a bare one with no entry. */
+export function resolveBare(specifier: string, imports: Record<string, string>): string | null {
+  if (/^[./]/.test(specifier) || /^[a-z][a-z0-9+.-]*:/i.test(specifier)) return null;
+  if (Object.hasOwn(imports, specifier)) return imports[specifier]!;
+  let best: string | null = null;
+  for (const prefix of Object.keys(imports)) {
+    if (prefix.endsWith("/") && specifier.startsWith(prefix) && (!best || prefix.length > best.length)) best = prefix;
+  }
+  return best ? imports[best] + specifier.slice(best.length) : null;
+}
+
+// `import … from 'x'` and `export … from 'x'` (the clause holds no quote
+// and no semicolon), `import 'x'`, and `import('x')` with a literal.
+const FROM_CLAUSE = /(\b(?:import|export)\b[^'"`;]*?\bfrom\s*)(['"])([^'"\n]+)\2/g;
+const SIDE_EFFECT = /(^|[;\n}])(\s*import\s*)(['"])([^'"\n]+)\3/g;
+const DYNAMIC = /(\bimport\s*\(\s*)(['"])([^'"\n]+)\2(\s*[,)])/g;
+
+/**
+ * A module of the local engine with its bare imports written as the URLs
+ * `imports` gives them (#742). `tsc` keeps the specifiers of the source:
+ * the page used to resolve them through its import map, which a module
+ * worker does not have, so a worker recipe's `layout.worker.js` failed on
+ * its first bare import ("Worker error"). A relative import, a URL and a
+ * specifier with no entry are left as they are.
+ */
+export function rewriteBareImports(source: string, imports: Record<string, string> = localImports()): string {
+  const to = (specifier: string) => resolveBare(specifier, imports) ?? specifier;
+  return source
+    .replace(FROM_CLAUSE, (_, head: string, quote: string, specifier: string) => `${head}${quote}${to(specifier)}${quote}`)
+    .replace(SIDE_EFFECT, (_, before: string, head: string, quote: string, specifier: string) => `${before}${head}${quote}${to(specifier)}${quote}`)
+    .replace(DYNAMIC, (_, head: string, quote: string, specifier: string, tail: string) => `${head}${quote}${to(specifier)}${quote}${tail}`);
+}
+
+/** The page's import map: the pen's own `https://esm.sh/…` imports to the
+ *  shims, on either engine. The local engine's bare imports are resolved by
+ *  the server instead (`rewriteBareImports`). */
+export function importMapTag(): string {
+  return `<script type="importmap">${JSON.stringify({ imports: SHIM_PATHS })}</script>`;
 }
 
 /** Shared by every shim: the record in `window.__cb`. */

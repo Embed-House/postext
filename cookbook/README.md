@@ -115,7 +115,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture [slug…]` | Runs the pen in Chrome against the released engine, verifies it (§11) and writes the pages, card, social image, PDF and `capture.json`. With no slug: every recipe whose capture is missing or stale. |
 | `pnpm cookbook capture <slug> --check` | Runs and verifies, writes nothing (a regression run). |
 | `pnpm cookbook capture <slug> --preview-dir <dir>` | Also writes PNG copies of every page, the card and the social image, and the PDF the pen builds, to `<dir>/<slug>/<lang>/`, with the `capture.json` entry the edition would get. |
-| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships, whichever of the two wrote `dist`) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
+| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships and HarfBuzz as the binary it copies, whichever of the two wrote `dist`; a worker recipe starts its layout worker on the same files) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
@@ -797,7 +797,10 @@ engine's own renderer and writes the files atomically. A failure writes nothing 
 (`--preview-dir` still gets its PNGs, so you can see what failed).
 
 The capture also writes the document it pictured as a `.postext` bundle, `<slug>.postext`
-in each edition's folder, which the recipe page's Open in Sandbox button loads. The pen's
+in each edition's folder, which the recipe page's Open in Sandbox button loads. The button
+opens the page's own edition (the Chinese page reads `zh/<slug>.postext`); from a language the
+recipe has no edition in, the Sandbox falls back on English and Spanish, Spanish first for
+Catalan. The pen's
 own engine writes it with `createBundle`: the markdown (or the chapters of a `buildBundle`
 book), the configuration, the resources and the files they name, and the card as its
 thumbnail. Drawings go in as SVG; photos keep the bytes they were decoded from; font files
