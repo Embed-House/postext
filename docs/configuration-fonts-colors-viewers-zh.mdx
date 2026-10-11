@@ -79,7 +79,7 @@ Postext把每个`fontFamily`字符串**同时**与Google Fonts字体目录和文
 以下情况适合使用自定义字体：
 
 - 文档需要品牌字体或授权字体，而Google Fonts上没有。
-- 运行环境无法访问Google Fonts CDN（离线、内网、对隐私敏感）。
+- 运行环境无法访问字体CDN，即jsDelivr（沙盒从这里获取Fontsource的文件）或Google Fonts（离线、内网、对隐私敏感）。
 - 字体文件必须保密，不能上传给第三方。
 
 ### 配置结构
@@ -125,7 +125,7 @@ interface PostextConfig {
 内部机制如下：
 
 - `customFonts`变化时，每个已声明的字体家族都会自动以`FontFace`条目注册到`document.fonts`上。这样HTML查看器、Canvas视口（它通过`document.fonts`测量）以及任何直接引用它的CSS都能用上自定义字体，用户无需先打开字体选择器。
-- 排版工作线程通过现有的字体数据传输通道接收同样的ArrayBuffer，因此测量（`buildFontString`、pretext）得到的度量与Google Fonts完全一致。
+- 排版工作线程通过现有的字体数据传输通道接收同样的ArrayBuffer，因此测量（`buildFontString`、pretext）的方式与字体目录中的字族相同。
 - 修改或删除某个变体时，工作线程会丢弃该字体家族的缓存字体，并在下次构建时重新注册，使预览与当前的变体集合保持同步。
 - **PDF导出**：上传的二进制文件走同一条`PdfFontProvider`流程。`.woff2`文件会被解压；`.ttf`和`.otf`直接传入。`.woff`会被拒绝并给出明确的错误（pdf-lib无法嵌入原始WOFF，请改为上传`.woff2`/`.ttf`/`.otf`）。CFF风格的OpenType（带`OTTO`标识的`.otf`）**不做子集化**直接嵌入，因为pdf-lib的CFF子集化程序在`save()`时会遍历每个字形，对实际字体可能卡住好几分钟；跳过子集化，PDF会稍大一些，换来稳定的渲染时间。
 

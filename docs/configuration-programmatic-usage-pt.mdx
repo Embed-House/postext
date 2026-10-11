@@ -615,16 +615,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)` executa [`prepareFonts`](#carregar-as-fontes-antes-do-layout) na página e depois envia ao worker os arquivos de cada face encontrada que o registro de fontes guarda (os arquivos do resolvedor, as faces de um pacote, as regras `@font-face` legíveis da página), só das fatias que contêm os caracteres do documento. Quando as faces chegam ao worker, ele descarta as medidas apenas dessas famílias e o seu cache de documentos prontos.
 
+Envie cada face antes do primeiro layout que a use. No Chrome, o canvas de um worker resolve uma fonte na primeira vez que mede com ela, e um arquivo registrado depois para a mesma família, peso, estilo e tamanho não é aproveitado: o texto fica com as larguras da face que respondeu primeiro. Um worker que já mediu com essa fonte precisa ser substituído por um novo.
+
 ### Coleta de fontes (Fontsource / Google Fonts)
 
-`registerFonts` recebe os bytes brutos das fontes. A thread principal é o lugar certo para buscá-los, porque o Google Fonts só devolve WOFF2 para strings de User-Agent de navegador, e porque um cache central permite que várias instâncias de worker compartilhem os mesmos bytes.
+`registerFonts` recebe os bytes brutos das fontes. A thread principal é o lugar certo para buscá-los, porque um cache central permite que várias instâncias de worker compartilhem os mesmos bytes.
 
-O `collectFontPayloadsForFamilies` do Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) é uma implementação de referência pronta para usar. Ele:
+O `collectFontPayloadsForFamilies` do Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) é uma implementação de referência. Ele:
 
-1. Consulta `https://api.fontsource.org/v1/fonts/{family-id}` para descobrir os pesos disponíveis e se a família traz um eixo variável.
-2. Monta uma URL CSS2 do Google Fonts que cobre todos os pesos e estilos que a família anuncia.
-3. Baixa a folha de estilo `@font-face` gerada, extrai cada declaração `src: url(...) format('woff2')` e baixa os bytes brutos.
+1. Consulta `https://api.fontsource.org/v1/fonts/{family-id}` para saber quais pesos e estilos a família tem.
+2. Lê os subconjuntos da família e o `unicode-range` de cada um no pacote dela no jsDelivr (`@fontsource/{family-id}@5/400.css`), uma vez por família.
+3. Baixa todos os arquivos do regular, do negrito e dos itálicos de cada família (`files/{family-id}-{subset}-{weight}-{style}.woff2`); já `collectFontPayloadsForConfig(config, markdown)` toma os pesos e estilos que uma configuração pede. São arquivos estáticos, os que o PDF incorpora, de modo que o worker mede com o que o PDF desenha. Um arquivo variável dá outros avanços entre dois dos seus masters, e uma linha a uma fração de pixel da sua medida quebra em outro ponto.
 4. Devolve um `FontPayload[]` em que `buffer` é um `ArrayBuffer` novo a cada chamada, o que importa porque `registerFonts` transfere o buffer e deixa a cópia de quem envia desanexada.
+
+Os arquivos de um corte vão na ordem em que um pen os declara, `latin` primeiro e os da própria escrita por último (`arabic`, as fatias numeradas de uma família chinesa ou japonesa), porque o arquivo adicionado por último responde por um caractere que dois arquivos têm. Uma família para a qual a Fontsource não tem arquivos é lida da folha de estilo CSS2 do Google, que só devolve WOFF2 para strings de User-Agent de navegador.
 
 Combine-o com `getConfigFontFamilies(config)` para obter a lista de famílias que uma `PostextConfig` vai de fato renderizar (corpo, títulos, marcadores de lista, números de lista numerada).
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

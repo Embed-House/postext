@@ -614,16 +614,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)` executa [`prepareFonts`](#carregar-les-fonts-abans-de-compondre) a la pàgina i després envia al worker els fitxers de cada cara trobada que guarda el registre de fonts (els fitxers del resolutor, les cares d'un paquet, les regles `@font-face` llegibles de la pàgina), i d'aquests només els trams que contenen caràcters del document. Quan arriben cares al worker, aquest descarta només les mesures d'aquelles famílies, a més de la seva memòria cau de documents acabats.
 
+Envia cada cara abans de la primera composició que la faci servir. A Chrome, el canvas d'un worker resol una font la primera vegada que hi mesura, i un fitxer registrat després per a la mateixa família, pes, estil i cos no es recull: el text conserva les amplades de la cara que va respondre primer. Un worker que ja ha mesurat amb aquesta font s'ha de substituir per un de nou.
+
 ### Recol·lecció de payloads de font (Fontsource / Google Fonts)
 
-`registerFonts` pren bytes de font en brut. El fil principal és el lloc adequat per obtenir-los, perquè Google Fonts només retorna WOFF2 a User-Agents amb aspecte de navegador, i perquè una memòria cau centralitzada permet que diverses instàncies del worker comparteixin els mateixos bytes.
+`registerFonts` pren bytes de font en brut. El fil principal és el lloc adequat per obtenir-los, perquè una memòria cau centralitzada permet que diverses instàncies del worker comparteixin els mateixos bytes.
 
-`collectFontPayloadsForFamilies` del sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) és una implementació de referència directa. El que fa:
+`collectFontPayloadsForFamilies` del sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) és una implementació de referència. El que fa:
 
-1. Consulta `https://api.fontsource.org/v1/fonts/{id-de-familia}` per descobrir els pesos disponibles i si la família inclou un eix variable.
-2. Construeix una URL CSS2 de Google Fonts que cobreix tots els pesos i estils que declara la família.
-3. Baixa el full d'estils `@font-face` generat, n'extreu cada declaració `src: url(...) format('woff2')` i baixa els bytes en brut.
+1. Consulta `https://api.fontsource.org/v1/fonts/{id-de-familia}` per saber quins pesos i estils té la família.
+2. Llegeix els subconjunts de la família i el seu `unicode-range` al seu paquet de jsDelivr (`@fontsource/{id-de-familia}@5/400.css`), una vegada per família.
+3. Baixa tots els fitxers de la rodona, la negreta i les seves cursives de cada família (`files/{id-de-familia}-{subconjunt}-{pes}-{estil}.woff2`); `collectFontPayloadsForConfig(config, markdown)` pren, en canvi, els pesos i estils que demana una configuració. Són fitxers estàtics, els que incrusta el PDF, de manera que el worker mesura amb allò que el PDF dibuixa. Un fitxer variable dona altres avanços entre dos dels seus màsters, i una línia a una fracció de píxel de la seva mida parteix en un altre lloc.
 4. Retorna un `FontPayload[]` on `buffer` és un `ArrayBuffer` nou per crida — important, perquè `registerFonts` transfereix el buffer i deixa la còpia del remitent desvinculada.
+
+Els fitxers d'un tall van en l'ordre en què els declara un pen, `latin` primer i els propis de l'escriptura al final (`arabic`, els trams numerats d'una família xinesa o japonesa), perquè el fitxer afegit en darrer lloc respon per un caràcter que tenen dos fitxers. Una família de la qual Fontsource no té fitxers es llegeix del full d'estils CSS2 de Google, que només retorna WOFF2 a User-Agents amb aspecte de navegador.
 
 Combina-ho amb `getConfigFontFamilies(config)` per obtenir la llista de famílies que una `PostextConfig` concreta renderitzarà (cos, encapçalaments, pics de llistes, números de llistes ordenades).
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

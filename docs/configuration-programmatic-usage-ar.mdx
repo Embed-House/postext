@@ -615,16 +615,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 تشغّل `handle.prepareFonts(content, config, options)` الدالة [`prepareFonts`](#تحميل-الخطوط-قبل-الإخراج) في الصفحة، ثم ترسل إلى العامل ملفات كل وجه وجدته يحفظه سجل الخطوط (ملفات المحلِّل، وأوجه الحزمة، وقواعد `@font-face` المقروءة في الصفحة)، ولا ترسل من الشرائح إلا ما يحوي محارف المستند. وحين تصل الأوجه إلى العامل، يطرح قياسات تلك العائلات وحدها وذاكرته المؤقتة للمستندات المنجزة.
 
+أرسل كل وجه قبل أول إخراج يُصفّ به نص. ففي Chrome يحلّ canvas العامل الخط أول مرة يقيس به، والملف الذي يُسجَّل بعد ذلك للعائلة والوزن والنمط والحجم نفسها لا يؤخذ به: يبقى النص بعروض الوجه الذي أجاب أولًا. والعامل الذي سبق أن قاس بذلك الخط لا بد من استبدال عامل جديد به.
+
 ### جمع بيانات الخطوط (Fontsource / Google Fonts)
 
-تأخذ `registerFonts` بايتات الخطوط الخام. والخيط الرئيسي هو المكان المناسب لجلبها، لأن Google Fonts لا تُعيد WOFF2 إلا لسلاسل User-Agent الشبيهة بالمتصفحات، ولأن ذاكرة مؤقتة مركزية تتيح لعدة نُسخ من العامل أن تتشارك البايتات نفسها.
+تأخذ `registerFonts` بايتات الخطوط الخام. والخيط الرئيسي هو المكان المناسب لجلبها، لأن ذاكرة مؤقتة مركزية تتيح لعدة نُسخ من العامل أن تتشارك البايتات نفسها.
 
-ودالة `collectFontPayloadsForFamilies` في Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) تطبيق مرجعي جاهز للاستخدام المباشر. وهي:
+ودالة `collectFontPayloadsForFamilies` في Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) تطبيق مرجعي. وهي:
 
-1. تستعلم `https://api.fontsource.org/v1/fonts/{family-id}` لمعرفة الأوزان المتاحة وما إذا كانت العائلة تأتي بمحور متغيّر.
-2. تبني عنوان URL من نوع Google Fonts CSS2 يغطي كل وزن ونمط تعلنه العائلة.
-3. تجلب ورقة أنماط `@font-face` المولَّدة، وتستخرج كل تصريح `src: url(...) format('woff2')`، وتنزّل البايتات الخام.
+1. تستعلم `https://api.fontsource.org/v1/fonts/{family-id}` لمعرفة الأوزان والأنماط التي تملكها العائلة.
+2. تقرأ المجموعات الفرعية للعائلة ونطاق `unicode-range` لكل منها من حزمتها على jsDelivr (`@fontsource/{family-id}@5/400.css`)، مرة لكل عائلة.
+3. تنزّل كل ملفات الوجه العادي والعريض ومائليهما لكل عائلة (`files/{family-id}-{subset}-{weight}-{style}.woff2`)؛ أما `collectFontPayloadsForConfig(config, markdown)` فتأخذ الأوزان والأنماط التي تطلبها الإعدادات. وهي ملفات ثابتة، هي التي يضمّنها ملف PDF، فيقيس العامل بما يرسم به PDF. والملف المتغيّر يعطي عروض تقدّم أخرى بين اثنين من أصوله (masters)، فينقطع في موضع آخر السطرُ الذي لا يفصله عن طول السطر إلا جزء من البكسل.
 4. تُعيد `FontPayload[]` يكون فيها `buffer` كائن `ArrayBuffer` جديدًا في كل استدعاء، وهذا مهم لأن `registerFonts` تنقل المخزن وتترك النسخة في جانب المُرسِل منفصلة (detached).
+
+تُرتَّب ملفات الوزن والنمط الواحد كما يعلنها مثال CodePen: `latin` أولًا وملفات الكتابة نفسها آخرًا (`arabic`، والشرائح المرقّمة لعائلة صينية أو يابانية)، لأن الملف المضاف أخيرًا هو الذي يجيب عن محرف يحمله ملفان. والعائلة التي لا ملفات لها في Fontsource تُقرأ من ورقة أنماط Google CSS2، وهي لا تُعيد WOFF2 إلا لسلاسل User-Agent الشبيهة بالمتصفحات.
 
 واقرنها بـ`getConfigFontFamilies(config)` للحصول على قائمة العائلات التي سيرسمها إعداد `PostextConfig` معيّن فعلًا (النص الأساسي، والعناوين، ورموز القوائم النقطية، وأرقام القوائم المرقّمة).
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

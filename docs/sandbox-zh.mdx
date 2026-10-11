@@ -225,6 +225,7 @@ export const metadata = {
 显示书中使用的字体，并在内置的Google Fonts目录之外管理你自己的字体文件：
 
 - **本书使用的字体**列出版面设计用到的每个字族。每个字族名都用该字体本身排出，并注明其用途（*正文*、*标题*或*其他元素*）和来源：*Google Fonts*、*Fontsource*（Google Fonts没有的字族）、*你的文件*，哪里都没有的字族则标为*未找到*。加载器查明来源之后，来源才会显示。字体本身在**版面设计 → 字体排印**和**标题与目录**中更改。
+- **测量一本书所用的文件**：Google Fonts或Fontsource的字族，用jsDelivr上Fontsource的静态文件（`@fontsource/<字族>@5`）排字，每个字重、样式和子集各一个文件。排版食谱的CodePen加载的、PDF嵌入的也是这些文件，所以一本书在预览、PDF、CodePen和命令行里都在同样的字词处断行。预览声明版面设计和页面用到的字重与样式，浏览器在文字需要时才加载各个文件。可变字族两个字重之间的字重（如450）没有静态文件：预览用Google的可变文件按该字重排出，PDF则嵌入最接近的那个字重；两者必须一致时，请选用字族本身具备的字重。Fontsource没有文件的字族，从Google的样式表加载。
 - **字族没有的字重或倾斜**：预览和PDF都用字族自己的文件排字。字族没有粗体（Bangers、Zen Antique和多数标题字体只有一个字重）或没有斜体时，粗体和斜体用它最接近的字体原样排出，不带浏览器会画出的加粗或倾斜，也不为它们列出`fontFallback`。由字族中另一个真实字体应答的字重（用700排出的600）仍会列出。Fontsource收录而Google Fonts没有的字族（如Commit Mono）从Fontsource加载。
 - **你的字体文件**用来添加、重命名和删除自定义字族。
   - 按字重（100–900）和样式（常规 / 斜体）**上传字体文件**。接受的格式为WOFF2、WOFF、TTF和OTF，按文件扩展名识别。文件保存在浏览器的IndexedDB中。
@@ -503,7 +504,7 @@ Canvas视口顶部的工具栏提供：
 - **打印**（`Printer`图标）——针对内嵌的PDF查看器打开浏览器的打印对话框，大多数浏览器在这里既可以打印，也可以再次另存为PDF。
 - **当前章 / 整本书**（标签栏左侧的选择器，只在多于一章的书中出现）——把所有章渲染为一个连续的PDF，而不是默认的当前章（接续其前各章）。更改它会重新生成PDF。Canvas有自己的选择器（见[书与章](#书与章)）。
 
-在底层，沙盒使用一个`createPdfFontProvider()`辅助函数：它从Fontsource的jsdelivr CDN获取按字重区分的静态WOFF2文件，在浏览器中解压为TTF，再通过`renderToPdf`把字节交给`pdf-lib`。之所以需要按字重区分的静态字体（而不是一个可变字体），是为了让粗体文字真正以粗体字重嵌入。在沙盒之外使用同样做法的方式，见[生成PDF](/zh/docs/configuration-programmatic-usage#生成pdf)。
+在底层，沙盒使用一个`createPdfFontProvider()`辅助函数：它从Fontsource的jsdelivr CDN获取按字重区分的静态WOFF2文件（也就是预览测量时所用的文件），在浏览器中解压为TTF，再通过`renderToPdf`把字节交给`pdf-lib`。之所以需要按字重区分的静态字体（而不是一个可变字体），是为了让粗体文字真正以粗体字重嵌入。在沙盒之外使用同样做法的方式，见[生成PDF](/zh/docs/configuration-programmatic-usage#生成pdf)。
 
 #### 书页标签页
 
