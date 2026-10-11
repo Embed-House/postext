@@ -720,11 +720,14 @@ export interface VDTLine {
   plainStart?: number;
   /** Plain-text end offset within the block's plain text (exclusive) */
   plainEnd?: number;
-  /** For justified (non-last) lines: ratio of the applied justified space width
-   *  to the normal space width of the block's font. 1.0 means natural spacing.
-   *  The line's `bbox.width` stays its natural width; painted, each space
-   *  grows by the slack shared among them, and the line ends on the right
-   *  edge of the measure. */
+  /** For justified (non-last) lines: the width every space of the line is
+   *  painted at, over the space of the block's regular face (with the
+   *  block's tracking). 1.0 means the regular space. The line's
+   *  `bbox.width` stays its natural width; painted, the measure the words
+   *  leave is shared among the spaces, all set alike whatever face they
+   *  come from, and the line ends on the right edge of the measure. The
+   *  layout reads this number (the ragged fallback, the runt fix, the
+   *  loose-paragraph lever). */
   justifiedSpaceRatio?: number;
   /** The word spacing of the line as the breaker bounds it (#704): 1 plus
    *  the line's slack over its spaces, each counted at its own width, in
