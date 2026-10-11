@@ -617,7 +617,7 @@ headings
 ### 5.2 `headings.balancing` — ColumnBalancingConfig (vertical justification)
 Defaults:
 ```
-enabled true | maxLinesPerHeading 4 | stretchAfterLists true | maxLinesAfterList 1
+enabled true | maxLinesPerHeading 4 | maxLinesBeforeLoose 2 (≥ 1.28) | stretchAfterLists true | maxLinesAfterList 1
 stretchAfterDisplays true (≥ 1.28) | stretchAfterFloats true | maxLinesAfterFloat 1
 looseParagraphs true | maxLooseParagraphs 2
 trackParagraphs true | maxTracking 10 (‰ em) | trailing true | beforeSpan true
@@ -626,10 +626,14 @@ closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'o
 `enabled` is off by default in vertical text and on a character grid (`cjk.grid.enabled`, ≥ 1.25);
 `true` turns it on there.
 Levers in order: box closing a short column pushed to the foot → extra grid lines above headings
-(favouring lower level numbers) → after list ends → under display formulas and boxes (one line;
+(favouring lower level numbers; at most `maxLinesBeforeLoose` each at this point, ≥ 1.28) → after list ends → under display formulas and boxes (one line;
 `stretchAfterDisplays: false` skips it, ≥ 1.28, for a paper whose formulas should keep their own
 margins) → under top floats → loose paragraphs
-(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking).
+(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking)
+→ the headings' further lines up to `maxLinesPerHeading`, only when the loose paragraphs have
+nothing left to give (≥ 1.28; up to 1.27 a heading took all its lines first, which opened four
+lines above the one heading of a page: do not lower `maxLinesPerHeading` against that any more,
+and set `maxLinesBeforeLoose` = `maxLinesPerHeading` only to reproduce a 1.27 layout).
 `trailing`: level the closing band of a chapter (short last page → equal-height columns).
 A closing band keeps its column heads level: no lever lowers the block that opens a column under a
 float, nor (≥ 1.28) the heading right under a `span:'page'` opener in the opener's own column; the
