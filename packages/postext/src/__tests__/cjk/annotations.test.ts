@@ -4,6 +4,7 @@ import type { PostextConfig } from '../../types';
 import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
 import { installSizedStub } from '../vertical/stub';
 import { createMeasurementCache } from '../../measure';
+import { splitNote } from '../../measure/cjkAnnotate';
 
 // Emphasis dots and the proper-name and book-title marks (#193), ruby
 // (#194) and warichu notes (#195), laid out with passages of 红楼梦. The stub
@@ -333,6 +334,89 @@ describe('warichu (:warichu)', () => {
     expect(seg.warichu!.color).toBe('#b22222');
     const brackets = segments(doc).filter((s) => s.inserted);
     expect(brackets.map((b) => [b.text, b.color])).toEqual([['（', '#b22222'], ['）', '#b22222']]);
+  });
+});
+
+// #719: a part of two characters or more closed by a mark came out as one
+// row, since the only fold with the upper row at least half the part would
+// open the lower row with the mark. The nearest fold before the half point
+// is taken, the lower row the longer.
+describe('warichu: the nearest fold wins over a single row (#719)', () => {
+  it('splitNote chooses among the folds that keep both rules', () => {
+    // 本 名 。 and the same with a half-width stop.
+    expect(splitNote([10, 10, 10], [false, false, true])).toBe(1);
+    expect(splitNote([10, 10, 5], [false, false, true])).toBe(1);
+    // 甲 乙 丙 。 」
+    expect(splitNote([10, 10, 10, 10, 10], [false, false, false, true, true])).toBe(2);
+    // 廢 。: one character with its mark has no fold.
+    expect(splitNote([10, 10], [false, true])).toBe(2);
+    expect(splitNote([10], [false])).toBe(1);
+    expect(splitNote([], [])).toBe(0);
+    // An opening bracket may not end the upper row: 「 甲 。
+    expect(splitNote([10, 10, 10], [false, false, true], [true, false, false])).toBe(3);
+    // 甲 「 乙 。: the fold before the bracket.
+    expect(splitNote([10, 10, 10, 10], [false, false, false, true], [false, true, false, false])).toBe(1);
+  });
+
+  it('folds as before whenever a fold at or after the half point keeps the rules', () => {
+    // 要 緊 句 。, 甲 戌 側 批 。, and twenty equal units.
+    expect(splitNote([10, 10, 10, 10], [false, false, false, true])).toBe(2);
+    expect(splitNote([10, 10, 10, 10, 10], [false, false, false, false, true])).toBe(3);
+    expect(splitNote(Array(20).fill(10), Array(20).fill(false))).toBe(10);
+    expect(splitNote(Array(21).fill(10), Array(21).fill(false))).toBe(11);
+    // The half point falls before a mark: the upper row takes it.
+    expect(splitNote([10, 10, 10, 10], [false, true, false, false])).toBe(2);
+    expect(splitNote([10, 10, 10, 10, 10, 10], [false, false, false, true, false, false])).toBe(4);
+  });
+
+  const rows = (doc: VDTDocument): string[] => segments(doc).filter((s) => s.warichu).map((s) => `${s.warichu!.upper}/${s.warichu!.lower}`);
+  const vertical = { layout: { layoutType: 'single' as const, writingMode: 'vertical-rl' as const } };
+  for (const locale of ['zh-Hant', 'ja']) {
+    for (const [mode, extra] of [['horizontal', {}], ['vertical', vertical]] as const) {
+      it(`${locale}, ${mode}: a note closed by a mark folds with the mark in the lower row`, () => {
+        const set = (note: string): VDTDocument => buildDocument({ markdown: `寶玉:warichu[${note}]道` }, config({}, { locale, ...extra }), createMeasurementCache());
+        expect(rows(set('本名。'))).toEqual(['本/名。']);
+        expect(rows(set('豈敢。'))).toEqual(['豈/敢。']);
+        expect(rows(set('甲乙丙。」'))).toEqual(['甲乙/丙。」']);
+        // Two note characters wide: the lower row, 名 and its stop.
+        const seg = segments(set('本名。')).find((s) => s.warichu)!;
+        expect(seg.width - (seg.tracking ?? 0)).toBeCloseTo(20, 9);
+        expect(seg.text).toBe('本名。');
+        // One character with its mark is one row; the folds of before stay.
+        expect(rows(set('廢。'))).toEqual(['廢。/']);
+        expect(rows(set('要緊句。'))).toEqual(['要緊/句。']);
+        expect(rows(set('甲戌側批。'))).toEqual(['甲戌側/批。']);
+        expect(rows(set('本名'))).toEqual(['本/名']);
+      });
+    }
+
+    it(`${locale}: the remainder of a note at the head of a line folds too`, () => {
+      // Ten characters to the line, the note pushed along it one character
+      // at a time: wherever it is cut, no part of two characters or more
+      // is left in one row.
+      const tails = new Set<string>();
+      for (let lead = 3; lead <= 10; lead++) {
+        const md = `${'一二三四五六七八九十'.slice(0, lead)}:warichu[豈敢豈敢豈敢。]道一二三四五六七八九十`;
+        const doc = buildDocument({ markdown: md }, config({}, { locale }, 10), createMeasurementCache());
+        const parts = rows(doc);
+        expect(parts.map((p) => p.replace('/', '')).join(''), String(lead)).toBe('豈敢豈敢豈敢。');
+        for (const part of parts) {
+          const [upper, lower] = part.split('/') as [string, string];
+          if ([...upper].filter((c) => c !== '。').length > 1) expect(lower, `${lead}: ${parts.join(' | ')}`).not.toBe('');
+          expect(lower.startsWith('。'), part).toBe(false);
+        }
+        if (parts.length > 1) tails.add(parts.at(-1)!);
+      }
+      // The two-character remainder, which was `豈敢。` in one row.
+      expect([...tails]).toContain('豈/敢。');
+    });
+  }
+
+  it('a Latin note of two words folds between them', () => {
+    const doc = buildDocument({ markdown: 'The text :warichu[see Encyclopaedia] goes on.' }, config({}, { locale: 'en' }, 30), createMeasurementCache());
+    const w = segments(doc).find((s) => s.warichu)!.warichu!;
+    expect(w.upper.trim()).toBe('see');
+    expect(w.lower).toBe('Encyclopaedia');
   });
 });
 

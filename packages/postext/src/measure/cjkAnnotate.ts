@@ -27,11 +27,15 @@
  *   Tone marks and the dot are placed by their ink (the measurer's ink
  *   box): fonts set these modifier letters high in their em box.
  * - A warichu note's part on a line folds into two rows of the note size,
- *   centred on the line's axis with no gap between them: the upper row
- *   takes characters until it is at least half the part (the second row is
- *   never the longer), and one more while the lower row would open with a
- *   mark that may not start a line or the upper row would end with one
- *   that may not end a line (an opening bracket).
+ *   centred on the line's axis with no gap between them. A fold is valid
+ *   when the lower row does not open with a mark that may not start a line
+ *   and the upper row does not end with one that may not end a line (an
+ *   opening bracket). The fold taken is the first valid one whose upper
+ *   row is at least half the part, so the second row is not the longer.
+ *   When every such fold would open the lower row with a mark (`本名。`),
+ *   the last valid fold before the half point is taken and the lower row
+ *   is the longer (#719); a part with no valid fold (one character with
+ *   its marks) stays one row.
  * - Kanbun marks (訓点, JIS X 4051 §5) go with the last character of
  *   their base, at half its size: the 返り点 right after it with its box
  *   against the line's foot side (the left half of a vertical line, the
@@ -364,16 +368,26 @@ export function kuntenGeometry(input: KuntenInput): { extra: number; kunten: VDT
 /** Where the upper row of a warichu part ends (units `[0, at)`): see the
  *  module comment. `startProhibited[i]`: unit `i` may not open a row;
  *  `endProhibited[i]`: unit `i` may not close one (an opening bracket), so
- *  the upper row takes the unit after it too. */
+ *  the upper row takes the unit after it too. `n` (every unit in the upper
+ *  row) when no fold keeps both rules. */
 export function splitNote(widths: readonly number[], startProhibited: readonly boolean[], endProhibited?: readonly boolean[]): number {
   const n = widths.length;
   let total = 0;
   for (const w of widths) total += w;
   let prefix = 0;
-  let at = 0;
-  while (at < n && prefix < total / 2 - 1e-9) prefix += widths[at++]!;
-  while (at < n && (startProhibited[at] || (at > 0 && endProhibited?.[at - 1]))) prefix += widths[at++]!;
-  return at;
+  let half = 0;
+  while (half < n && prefix < total / 2 - 1e-9) prefix += widths[half++]!;
+  // The first fold from the half point on that keeps both rules.
+  let at = half;
+  while (at < n && (startProhibited[at] || (at > 0 && endProhibited?.[at - 1]))) at++;
+  if (at < n) return at;
+  // None: the units after the half point are held together by the
+  // line-start rule. The nearest fold before it, the lower row the longer
+  // (#719), rather than one row.
+  for (let k = half - 1; k > 0; k--) {
+    if (!startProhibited[k] && !endProhibited?.[k - 1]) return k;
+  }
+  return n;
 }
 
 /** The advance of a warichu part folded at `at`: the wider row. */
