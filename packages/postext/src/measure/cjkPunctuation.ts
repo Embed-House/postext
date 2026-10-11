@@ -84,6 +84,10 @@ export interface CjkComposition {
    *  (`cjk.composeDesignText: false`, #637); unset: a design text that
    *  composes as CJK is set by the CJK composer. */
   plainDesignText?: true;
+  /** The document is on a character grid (`cjk.grid.enabled`, #718): a
+   *  paragraph that is not justified keeps every full line full, so the
+   *  runt rule carries no character down from a line it cannot spread. */
+  grid?: true;
 }
 
 /** Characters of a book title a line break leaves on either side of it by
@@ -138,6 +142,7 @@ export function cjkCompositionOf(cjk: ResolvedCjkConfig, dpi: number, locale?: s
     ...(cjk.titleMinChars !== DEFAULT_TITLE_MIN_CHARS ? { titleMinChars: cjk.titleMinChars } : {}),
     ...(cjk.circledNumbers === 'western' ? { circledNumbers: 'western' as const } : {}),
     ...(cjk.composeDesignText === false ? { plainDesignText: true as const } : {}),
+    ...(cjk.grid.enabled ? { grid: true as const } : {}),
   };
 }
 
@@ -213,7 +218,10 @@ export function cjkCompositionKey(c: CjkComposition): string {
   // from the default.
   const titles = c.titleMinChars !== undefined && c.titleMinChars !== DEFAULT_TITLE_MIN_CHARS ? `:t${c.titleMinChars}` : '';
   const circled = c.circledNumbers === 'western' ? ':cw' : '';
-  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}`;
+  // The grid (#718) only where set: it changes how a ragged paragraph
+  // that ends on one character is broken.
+  const grid = c.grid ? ':g' : '';
+  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}${grid}`;
 }
 
 /** Whether a composition changes nothing: the text is set as without it. */
