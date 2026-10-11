@@ -3362,6 +3362,69 @@ function placeDocumentPass(
   let inlineGapOwed: { afterIdx: number; pending: number; exact: number; container?: boolean } | null = null;
   /** The pending spacing a heading, a display formula or a box at `idx`
    *  collapses its top margin with (see `inlineGapOwed`). */
+  /**
+   * What a heading that opens a column keeps of its space above (#706),
+   * 0 when it keeps none. `s0` is the space it takes above it after a
+   * paragraph of body text, `S` its height plus its bottom margin as the
+   * snap reads them, `u` the column's used height:
+   *
+   *     kept = s0 − (snap(u + s0 + S) − snap(u + S))
+   *
+   * the whole grid lines the column head saves are dropped and the rest
+   * stays. `kept` is less than a grid line and `u + kept + S` never passes
+   * `snap(u + S)`, so the box's foot stays on its grid line. A run of
+   * headings (the first does not snap because a heading follows it) reads
+   * as one block: `S` runs from the first heading's top to the last one's
+   * foot plus its bottom margin, the margins between them collapsed as the
+   * placement loop collapses them, and `kept` goes above the first. A run
+   * with a designed, page-span, hidden or `lineSpan` heading in it, or one
+   * whose last heading does not snap, keeps today's placement; so does a
+   * heading whose snapped box does not fit the column.
+   */
+  const columnHeadKept = (
+    blockIdx: number,
+    rawBlock: ContentBlock,
+    usedHeight: number,
+    height: number,
+    style: { marginTopPx: number; marginBottomPx: number },
+    snaps: boolean,
+    col: VDTColumn,
+    ctx: BlockMeasureContext,
+  ): number => {
+    let S: number;
+    if (snaps) {
+      S = height + style.marginBottomPx;
+    } else {
+      const own = headingLevels.forBlock(rawBlock);
+      const ownSnaps = own?.snapToGrid ?? resolved.headings.snapToGrid;
+      if (!own || !ownSnaps || own.advancedDesign.enabled || nextNonMarkerBlock(contentBlocks, blockIdx)?.type !== 'heading') return 0;
+      let run = height;
+      let pending = style.marginBottomPx;
+      let closed: number | undefined;
+      for (let j = blockIdx + 1; j < contentBlocks.length; j++) {
+        const b = contentBlocks[j]!;
+        if (isMarkerBlock(b)) continue;
+        const lvl = b.type === 'heading' ? headingLevels.forBlock(b) : undefined;
+        if (!lvl || lvl.span === 'page' || lvl.advancedDesign.enabled || headingIsHidden(b, lvl)) return 0;
+        const m = measureContentBlock(b, j, col.bbox.width, ctx);
+        if (!m || m.kind.vdtType !== 'heading' || m.kind.style.lineSpan !== undefined) return 0;
+        const st = m.kind.style;
+        run += Math.max(pending, st.marginTopPx) + m.measured.lines.length * st.lineHeightPx;
+        if (nextNonMarkerBlock(contentBlocks, j)?.type === 'heading') { pending = st.marginBottomPx; continue; }
+        if (lvl.snapToGrid ?? resolved.headings.snapToGrid) closed = run + st.marginBottomPx;
+        break;
+      }
+      if (closed === undefined) return 0;
+      S = closed;
+    }
+    const snap = (x: number): number => Math.ceil((x - 0.01) / baselineGrid) * baselineGrid;
+    const s0 = Math.max(ctx.bodyStyle.marginBottomPx, style.marginTopPx);
+    const foot = snap(usedHeight + S);
+    if (foot > col.bbox.height + FIT_EPS) return 0;
+    const kept = s0 - (snap(usedHeight + s0 + S) - foot);
+    return kept > 0.01 ? kept : 0;
+  };
+
   const pendingBeforeSelfSnapping = (idx: number): number =>
     inlineGapOwed && inlineGapOwed.afterIdx === idx - 1 && pendingSpacing === inlineGapOwed.pending
       ? inlineGapOwed.exact
@@ -7281,7 +7344,7 @@ function placeDocumentPass(
       // block fits when its lines and all their notes do, and a split
       // keeps the lines whose notes fit under them.
       const noteCosts = vdtType === 'mathDisplay' ? undefined : notesPrefixCost(curCol, remainingLines);
-      const effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
+      let effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
       // A hair of tolerance: room of exactly N lines (grid arithmetic in
       // floats — a column cut by a band cap, a balancing extra line) must
       // hold N lines, not N - 1.
@@ -7377,6 +7440,31 @@ function placeDocumentPass(
             if (painted > effectiveRemainHeight) effectiveRemainHeight = painted;
           }
           headingDesign = { lvl, info };
+        }
+      }
+
+      // With `headings.columnHeadSpace: 'remainder'` (#706) a heading that
+      // opens a column drops its space above in whole grid lines only: what is
+      // left of a line stays above it, so its text starts as far under it
+      // as under the same heading set after a paragraph. The foot of its
+      // box stays on the grid line the snap puts it on, and no line of body
+      // text moves. A heading the grid does not snap, a hidden one, a
+      // `lineSpan` band, a page-span opener and a heading painted from its
+      // own design (its band is the design's, drawn from the column's head)
+      // keep the head of the column; so does the first block of a column
+      // under an opener band, which is set level with the first block
+      // under the opener (`openerHead`).
+      if (
+        vdtType === 'heading' && partIndex === 0 && !hiddenHeading && lineSpan === undefined
+        && resolved.headings.columnHeadSpace === 'remainder'
+        && (isFirstInColumn || underOpenerHeadFloat(curCol)) && openerHead === undefined
+        && !headingSetsOwnBand(headingLevels.forBlock(rawBlock))
+      ) {
+        const usedHeight = curCol.bbox.height - curCol.availableHeight;
+        const kept = columnHeadKept(blockIdx, rawBlock, usedHeight, effectiveRemainHeight, style, shouldSnapToGrid, curCol, blockMeasureCtx);
+        if (kept > 0) {
+          spacingBefore += kept;
+          effectiveAvailable -= kept;
         }
       }
 

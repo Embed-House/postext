@@ -1,4 +1,4 @@
-import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, KeepWithNextSplit, ColorValue, Dimension } from '../types';
+import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { resolveDesignSlot } from './headerFooter';
 import { isDropCap } from './dropCap';
@@ -103,6 +103,7 @@ export const DEFAULT_HEADINGS_CONFIG: ResolvedHeadingsConfig = {
   keepWithNext: true,
   keepWithNextSplit: 'rules',
   snapToGrid: true,
+  columnHeadSpace: 'none',
   inlineMarks: true,
   balancing: { ...DEFAULT_COLUMN_BALANCING },
   levels: DEFAULT_HEADING_LEVELS,
@@ -131,6 +132,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
     ? partial.keepWithNextSplit!
     : DEFAULT_HEADINGS_CONFIG.keepWithNextSplit;
   const generalSnapToGrid = partial.snapToGrid ?? DEFAULT_HEADINGS_CONFIG.snapToGrid;
+  // Any other value reads as the default.
+  const columnHeadSpace: ColumnHeadSpace = partial.columnHeadSpace === 'remainder' ? 'remainder' : DEFAULT_HEADINGS_CONFIG.columnHeadSpace;
   const inlineMarks = partial.inlineMarks ?? DEFAULT_HEADINGS_CONFIG.inlineMarks;
   const balancing = partial.balancing
     ? {
@@ -206,7 +209,7 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
     };
   });
 
-  return { fontFamily: generalFont, lineHeight: generalLineHeight, color: generalColor, textAlign: generalTextAlign, fontWeight: generalFontWeight, marginTop: generalMarginTop, marginBottom: generalMarginBottom, keepWithNext: generalKeepWithNext, ...(keepWithNextSpread ? { keepWithNextSpread } : {}), keepWithNextSplit, snapToGrid: generalSnapToGrid, inlineMarks, balancing, levels };
+  return { fontFamily: generalFont, lineHeight: generalLineHeight, color: generalColor, textAlign: generalTextAlign, fontWeight: generalFontWeight, marginTop: generalMarginTop, marginBottom: generalMarginBottom, keepWithNext: generalKeepWithNext, ...(keepWithNextSpread ? { keepWithNextSpread } : {}), keepWithNextSplit, snapToGrid: generalSnapToGrid, columnHeadSpace, inlineMarks, balancing, levels };
 }
 
 /** A level's `lineSpan`, `indent` and `jidori` (#424) and its
@@ -326,6 +329,11 @@ export function stripHeadingsDefaults(
   }
   if (headings.snapToGrid !== undefined && headings.snapToGrid !== DEFAULT_HEADINGS_CONFIG.snapToGrid) {
     result.snapToGrid = headings.snapToGrid;
+    hasOverride = true;
+  }
+  // `'none'` is the default; any other value resolves like it.
+  if (headings.columnHeadSpace === 'remainder') {
+    result.columnHeadSpace = 'remainder';
     hasOverride = true;
   }
   if (headings.inlineMarks !== undefined && headings.inlineMarks !== DEFAULT_HEADINGS_CONFIG.inlineMarks) {

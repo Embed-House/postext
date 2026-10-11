@@ -196,6 +196,7 @@ export type {
   ColumnBalancingConfig,
   ClosingBoxLever,
   StretchAfterWideFloats,
+  ColumnHeadSpace,
   GridLinesLever,
   KeepWithNextSplit,
   ColonListRoom,

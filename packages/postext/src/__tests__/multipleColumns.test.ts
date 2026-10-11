@@ -261,6 +261,26 @@ describe('floats under a page-span opener (#639)', () => {
     expect(textTop(doc, 0)).toBeCloseTo(frame.bbox.y + band(frame.bbox.height), 3);
   });
 
+  it('with columnHeadSpace \'remainder\', a heading right under the float keeps the part of a line of its space above (#706)', () => {
+    // A line and a half above on an 11 pt grid, a line of a line and a
+    // half: after a paragraph the heading's foot is on a grid line and its
+    // text follows it; under the float one line of the space is dropped
+    // and the half line is kept.
+    const levels = [{ level: 1 as const, span: 'page' as const, breakBefore: { enabled: false } }, { level: 2 as const, lineHeight: pt(16.5), marginTop: pt(16.5), marginBottom: pt(0) }];
+    const md = `# Opener\n\n${box()}\n\n## Sub\n\n${BODY}\n\n${BODY}`;
+    const sub = (doc: VDTDocument) => textColumns(doc.pages[0]!)[0]!.blocks[1]!;
+    const kept = build(md, config(4, { headings: { levels, columnHeadSpace: 'remainder' }, calloutStyles: [{ id: 'note' }] }));
+    const none = build(md, config(4, { headings: { levels }, calloutStyles: [{ id: 'note' }] }));
+    const foot = frameOf(none).bbox.y + band(frameOf(none).bbox.height);
+    expect(sub(none).headingLevel).toBe(2);
+    expect(sub(none).bbox.y).toBeCloseTo(foot, 3);
+    expect(sub(kept).bbox.y).toBeCloseTo(foot + LINE / 2, 3);
+    // The text after it is on the same line either way.
+    const textAfter = (doc: VDTDocument) => textColumns(doc.pages[0]!)[0]!.blocks[2]!.lines[0]!.bbox.y;
+    expect(textAfter(kept)).toBeCloseTo(textAfter(none), 3);
+    expect(textAfter(kept)).toBeCloseTo(sub(kept).bbox.y + 1.5 * LINE, 3);
+  });
+
   it('a heading with no room left under the float moves on alone: the opener stays', () => {
     // The box takes all but a line or two of column 1: the heading and
     // the lines kept with it open column 2, and the opener is not taken

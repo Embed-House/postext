@@ -3865,6 +3865,25 @@ export interface HeadingsConfig {
    *  tail, display math). A level overrides it with
    *  {@link HeadingLevelConfig.snapToGrid}. */
   snapToGrid?: boolean;
+  /** What a heading that snaps to the grid keeps of its space above when
+   *  it opens a column (at the page's head, or under a float that heads
+   *  the column), where its `marginTop` is dropped (#706):
+   *  - `'none'` (default): the whole space is dropped, the heading stands
+   *    on the column's first line, level with the head of the column
+   *    beside it, and the grid snap gives the part of a line it needs back
+   *    under the heading, so its text can stand further from it than
+   *    after a paragraph.
+   *  - `'remainder'`: the space is dropped in whole grid lines only. The
+   *    part of a line that is left stays above the heading, so the text
+   *    under it starts at the distance it starts at under the same heading
+   *    set after a paragraph. The heading no longer stands on the column's
+   *    first line; no line of body text moves. For a book in one column,
+   *    where no column head beside it shows the difference.
+   *  Any other value reads as `'none'`. `'remainder'` does not apply under
+   *  a page-span opener band, nor to a `span: 'page'`, `lineSpan` or hidden
+   *  heading, nor to one painted from its `advancedDesign` (its band is
+   *  the design's). */
+  columnHeadSpace?: ColumnHeadSpace;
   /** Vertical column balancing — editorial bottom alignment. When a column
    *  ends short of its bottom, extra baseline-grid lines are added above the
    *  column's headings so every column ends flush with the page bottom.
@@ -4024,6 +4043,10 @@ export type GridLinesLever = 'allow' | 'off';
  *  (`HeadingsConfig.keepWithNextSplit`). */
 export type KeepWithNextSplit = 'rules' | 'fill';
 
+/** What a snapping heading keeps of its space above at a column's head
+ *  (`HeadingsConfig.columnHeadSpace`, #706). */
+export type ColumnHeadSpace = 'remainder' | 'none';
+
 export interface ResolvedHeadingsConfig {
   fontFamily: string;
   lineHeight: Dimension;
@@ -4037,6 +4060,7 @@ export interface ResolvedHeadingsConfig {
   keepWithNextSpread?: boolean;
   keepWithNextSplit: KeepWithNextSplit;
   snapToGrid: boolean;
+  columnHeadSpace: ColumnHeadSpace;
   inlineMarks: boolean;
   balancing: {
     enabled: boolean;

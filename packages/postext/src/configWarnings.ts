@@ -413,7 +413,7 @@ function collectNumeralsWarnings(config: PostextConfig): ConfigWarning[] {
 // here, so the check never flags a setting the engine reads.
 const HEADINGS_KEYS = {
   fontFamily: true, lineHeight: true, color: true, textAlign: true, fontWeight: true,
-  marginTop: true, marginBottom: true, keepWithNext: true, keepWithNextSpread: true, keepWithNextSplit: true, snapToGrid: true, inlineMarks: true, balancing: true, levels: true,
+  marginTop: true, marginBottom: true, keepWithNext: true, keepWithNextSpread: true, keepWithNextSplit: true, snapToGrid: true, columnHeadSpace: true, inlineMarks: true, balancing: true, levels: true,
 } satisfies Record<keyof HeadingsConfig, true>;
 const BALANCING_KEYS = {
   enabled: true, maxLinesPerHeading: true, maxLinesBeforeLoose: true, stretchAfterLists: true, maxLinesAfterList: true, stretchAfterDisplays: true,
