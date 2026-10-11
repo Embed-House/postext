@@ -192,6 +192,7 @@ describe('working configuration', () => {
     // a backslash, which printed up to 1.22 (#620).
     // It may hold a heading in balanced columns: the order of the balancing
     // levers is pinned too (#707).
+    // It may hold a cross-reference: its labels stay one word (#702).
     expect(configFromExport({ ...legacy, configVersion: 4 })).toEqual({
       headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } },
       layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
@@ -199,6 +200,7 @@ describe('working configuration', () => {
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
       cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
+      crossRefs: { breakLabels: false },
     });
     // One stamped 5 gets the version-6, version-7 and version-8 pins only
     // (EF-110, EF-115, EF-117, EF-122; EF-141; EF-186).
