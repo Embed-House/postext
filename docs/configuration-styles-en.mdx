@@ -189,6 +189,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>Snap the flow back onto the baseline grid under the container, the space below being a minimum. <code>false</code> keeps the exact space: the text after the container stays off the grid until the next block that snaps (a heading, the end of a list, display maths), for a document that runs off the grid or a group whose leading is its own. Inside a callout, which has no grid, it changes nothing.</td>
     </tr>
     <tr>
+      <td><code>containerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td>unset</td>
+      <td>The rule for the space under the containers of this style, in the running text and inside a box: one of the two values of <code>bodyText.paragraphContainerSpacing</code>, for the containers that name the style. Unset: they follow the document. With <code>'add'</code> the style's groups end on its own space, with no line of paragraph spacing added, while the rest of the document keeps <code>'collapse'</code>. Since postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
@@ -287,6 +293,8 @@ The fence also takes `align` (`start`, `end`, `left`, `right`, `center`, `justif
 Inside the container the flow leaves the baseline grid — a 7pt entry with 1.2em leading cannot sit on an 8pt/1.5em grid — and the last paragraph snaps the flow back onto it (the grid wins; the space below is a minimum, the same convention headings follow). Entries split across columns and pages like body paragraphs, with the same orphan and widow protection; a heading immediately before the container keeps with its first paragraph.
 
 The space under the container is the larger of the style's `spaceBetween` and `marginBottom` and the paragraph spacing of the text around it (a line when `bodyText.paragraphSpacing` is on), and it merges with the space the next block keeps above itself, as the space between two body paragraphs does: a heading after a bibliography sits its own `marginTop` below the last entry (or the style's space, when that is larger), and a paragraph after a group of tighter entries keeps the text's paragraph spacing. The flow snaps back to the grid under the text first, and what the snap did not cover is carried on in whole grid lines, so the text after the container lands on the grid. Up to postext 1.4 the style's space was set under the last line before the snap and the next block's space above was added under it, and the paragraph spacing was left out; `bodyText.paragraphContainerSpacing: 'add'` keeps that rule, and configurations stored before it read with it. A style with `snapToGrid: false` does not snap: the text after the container sits the exact space below it, off the grid until the next block that snaps. A container that closes on a list is set as in 1.4 under either rule: the list keeps its own space below it, and `marginBottom` follows that space, merging with the next block's.
+
+A style can set the rule for its own containers with `containerSpacing`: `'add'` on the style of a large figure or of a list of references ends its groups on the style's own space, in the text and inside a box, while every other container of the document keeps `'collapse'`; `'collapse'` on a style does the reverse in a document that reads with `'add'`. A container that names no style follows the document.
 
 Inside a `:::callout` the container takes its style's margins the same way: `marginTop` and `marginBottom` collapse with the spacing of the blocks around it (a negative one pulls them closer), and a container that opens the box takes no top margin, as at the top of a column. A box has no baseline grid to snap back to, so the space below the last paragraph is the larger of `marginBottom`, `spaceBetween` and the box's own paragraph spacing (its `body.paragraphSpacing`, a line of its text; left out with `paragraphContainerSpacing: 'add'`), or the next block's own top margin, when that is larger still; a negative `marginBottom` pulls the next block up instead. (Up to postext 1.4 a container inside a callout ignored both margins.)
 

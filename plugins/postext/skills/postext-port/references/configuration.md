@@ -975,6 +975,10 @@ in another the outer list's `itemSpacing` applies on both sides. List margins of
                                  indent + hangingIndent); an inherited one gives way and line 1 starts at indent)
   spaceBetween = 0, marginTop = 0, marginBottom = 0 (minimum; flow snaps back to grid after)
   snapToGrid = true              (false = exact space under the container, flow stays off the grid)
+  containerSpacing?: 'collapse'|'add' (≥ 1.28; unset = bodyText.paragraphContainerSpacing; the rule under THIS
+                                 style's containers, in the text and in a box: 'add' on a big figure or a
+                                 reference list ends its groups on the style's own space, no paragraph-spacing
+                                 line added, while the document stays on 'collapse')
   textTransform = 'none'         ('uppercase' = capitals, chip words and :ref labels too, length-preserving; maths untouched)
   wordBreak?: 'normal'|'keep-all' (≥ 1.16; unset = cjk.wordBreak; between CJK characters; ≥ 1.28 also holds
                                  for the characters a Latin paragraph quotes)
@@ -988,7 +992,7 @@ in another the outer list's `itemSpacing` applies on both sides. List margins of
 ```
 Inside the container the flow leaves the baseline grid. When it closes on a paragraph, the space under it merges
 with the next block's own (a heading's `marginTop`) and is at least the text's paragraph spacing
-(`bodyText.paragraphContainerSpacing`); when it closes on a list, the list keeps its own space and `marginBottom` follows. Unknown keys in a style raise `unknownConfigKey`. The style applies inside callouts too,
+(`bodyText.paragraphContainerSpacing`, or the style's own `containerSpacing`); when it closes on a list, the list keeps its own space and `marginBottom` follows. Unknown keys in a style raise `unknownConfigKey`. The style applies inside callouts too,
 margins included (they collapse with the neighbours' spacing; none at the top of the box); its
 unset fields inherit the document body text, not the box's `body`.
 

@@ -189,6 +189,12 @@ Bringhurst, R. (2004). *The Elements of Typographic Style*. Hartley & Marks.
       <td>在容器下方让文字流重新对齐基线网格，下方空白作为最小值。<code>false</code>保留精确的空白：容器之后的文字偏离网格，直到下一个会对齐网格的块（标题、列表结尾、行间公式），适用于不按网格排的文档，或自有行距的一组段落。在没有网格的标注框内，它不起作用。</td>
     </tr>
     <tr>
+      <td><code>containerSpacing</code></td>
+      <td><code>'collapse' | 'add'</code></td>
+      <td>未设置</td>
+      <td>本样式的容器下方间距所用的规则，正文和框内都适用：取<code>bodyText.paragraphContainerSpacing</code>的两个值之一，只管用到本样式的容器。未设置时跟随文档。设为<code>'add'</code>时，本样式的段落组以样式自身的间距收尾，不再加一行段间距，文档其余部分仍用<code>'collapse'</code>。自postext 1.28起提供。</td>
+    </tr>
+    <tr>
       <td><code>textTransform</code></td>
       <td><code>'none' | 'uppercase'</code></td>
       <td><code>'none'</code></td>
@@ -287,6 +293,8 @@ paragraphStyles: [
 在容器内，文字流离开基线网格（7pt、行距1.2em的条目无法落在8pt/1.5em的网格上），最后一段让文字流重新对齐网格（以网格为准；下方空白是最小值，与标题遵循的约定相同）。条目像正文段落一样跨栏、跨页拆分，并有同样的段首孤行和段末孤行保护；紧接在容器之前的标题与容器的第一段保持在一起。
 
 容器下方的空白取样式的`spaceBetween`和`marginBottom`与周围文字段落间距（开启`bodyText.paragraphSpacing`时为一行）中的较大者，并与下一个块在自身上方保留的空白合并，就像两个正文段落之间的空白那样：参考文献之后的标题位于最后一个条目下方自身`marginTop`处（若样式的空白更大，则取样式的空白）；一组较紧的条目之后的段落保留正文的段落间距。文字流先在文字下方重新对齐网格，对齐未覆盖的部分以整行网格顺延，因此容器之后的文字落在网格上。在postext 1.4及以前，样式的空白设在对齐之前的最后一行下方，下一个块上方的空白再加在其下，且不计段落间距；`bodyText.paragraphContainerSpacing: 'add'`保留这一规则，在它出现之前保存的配置也按它读取。设置了`snapToGrid: false`的样式不对齐网格：容器之后的文字恰好位于其下方指定空白处，偏离网格，直到下一个会对齐网格的块。以列表结尾的容器，在两种规则下都按1.4的方式排：列表保留自身下方的空白，`marginBottom`跟在这段空白之后，与下一个块的空白合并。
+
+样式可以用`containerSpacing`为自己的容器定规则：给大号数字或参考文献表的样式设`'add'`，它的段落组在正文和框内都以样式自身的间距收尾，文档里其他容器仍用`'collapse'`；在按`'add'`读取的文档里，给样式设`'collapse'`则相反。没有指定样式的容器跟随文档。
 
 在`:::callout`内，容器以同样的方式采用其样式的外边距：`marginTop`和`marginBottom`与周围块的间距合并（负值会让它们靠得更近），位于框开头的容器不取上外边距，与栏顶相同。框内没有可重新对齐的基线网格，所以最后一段下方的空白取`marginBottom`、`spaceBetween`和框自身段落间距（其`body.paragraphSpacing`，即框内文字的一行；使用`paragraphContainerSpacing: 'add'`时不计）中的较大者，若下一个块自身的上外边距更大，则取后者；负的`marginBottom`则把下一个块往上拉。（在postext 1.4及以前，标注框内的容器忽略这两个外边距。）
 
