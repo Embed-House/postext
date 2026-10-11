@@ -26,12 +26,23 @@ vi.mock('../controls/fontLoader', async (importOriginal) => {
     ensureConfigFontsLoaded: note('ensureConfigFontsLoaded'),
     loadVerticalTwins: note('loadVerticalTwins'),
     declareStandIns: note('declareStandIns'),
-    // What the layout service sends the worker: one face per family, and a
-    // second file of the house family.
+    // What the layout service sends the worker: the three files of the
+    // house family (its own, as the bundle carries them), and one file per
+    // weight and slant asked of a family of the catalogue (#757).
+    getCustomFontFamily: (family: string) => (family === 'House Serif' ? { name: family, variants: [] } : undefined),
     collectFontPayloadsForFamilies: async (families: string[]) => families.flatMap((family) => [
       { family, weight: '400', style: 'normal', buffer: new ArrayBuffer(1) },
-      ...(family === 'House Serif' ? [{ family, weight: '400', style: 'normal', buffer: new ArrayBuffer(1) }, { family, weight: '700', style: 'normal', buffer: new ArrayBuffer(1) }] : []),
+      { family, weight: '400', style: 'normal', buffer: new ArrayBuffer(1) },
+      { family, weight: '700', style: 'normal', buffer: new ArrayBuffer(1) },
     ]),
+    familyCutFaces: async (family: string, uses: { weight: number; style: string }[], options?: { standard?: boolean }) => {
+      const standard = options?.standard ? [400, 700].flatMap((weight) => ['normal', 'italic'].map((style) => ({ weight, style }))) : [];
+      return [...new Map([...uses, ...standard].map((u) => [`${u.weight}|${u.style}`, u])).values()]
+        .map((u) => ({ family, weight: String(u.weight), style: u.style, url: `${family}-${u.weight}-${u.style}` }));
+    },
+    fetchFacePayloads: async (faces: { family: string; weight: string; style: string }[]) =>
+      faces.map((f) => ({ family: f.family, weight: f.weight, style: f.style, buffer: new ArrayBuffer(1) })),
+    loadFont: async () => {},
     collectStandInPayloads: async () => [],
     onCustomFontsChanged: () => () => {},
   };
@@ -132,10 +143,12 @@ describe('layOutBundle (#736)', () => {
       'ensureConfigFontsLoaded (es)',
       'loadVerticalTwins (es)',
       'declareStandIns (es)',
-      // The layout service: the worker gets its faces before it builds
-      // (the house family's three files and the running heads' face).
-      `registerFonts ${registered.length}`,
+      // The layout service: the worker gets its faces before it builds,
+      // the house family's three files, then the catalogue's.
+      'registerFonts 3',
+      `registerFonts ${registered.length - 3}`,
     ]);
+    expect(registered.length).toBeGreaterThan(3);
     expect(calls.at(-1)).toBe('dispose');
     expect(registered.filter((face) => face.startsWith('House Serif'))).toEqual(['House Serif 400', 'House Serif 400', 'House Serif 700']);
     expect(out.fonts['House Serif']).toEqual({ page: [], worker: ['400 normal ×2', '700 normal'] });

@@ -42,20 +42,21 @@ interface BalloonPreviewProps {
  *  the interface theme). A sketch, not the lettering engine. */
 export function BalloonPreview({ style, lettering, palette, text, label }: BalloonPreviewProps) {
   const family = style.fontFamily ?? lettering.fontFamily;
-  // Measure again once the face has loaded.
+  const bold = style.bold ?? lettering.bold;
+  const italic = style.italic ?? lettering.italic;
+  // Measure again once the face has loaded: the cut the sample is set in
+  // (a family is a file per weight and slant, #757).
   const [fontEpoch, setFontEpoch] = useState(0);
   useEffect(() => {
     let live = true;
-    loadFont(family)
+    loadFont(family, [{ weight: bold ? 700 : 400, style: italic ? 'italic' : 'normal' }])
       .then(() => (typeof document !== 'undefined' && document.fonts ? document.fonts.ready : undefined))
       .then(() => { if (live) setFontEpoch((n) => n + 1); })
       .catch(() => {});
     return () => { live = false; };
-  }, [family]);
+  }, [family, bold, italic]);
 
   const fontPx = dimensionToPx(lettering.fontSize, PX_PER_PT, 12) * style.fontScale;
-  const bold = style.bold ?? lettering.bold;
-  const italic = style.italic ?? lettering.italic;
   const upper = (style.textTransform ?? lettering.textTransform) === 'uppercase';
   const lines = (upper ? text.toLocaleUpperCase() : text).split('\n');
   const lineHeight = fontPx * lettering.lineHeight;

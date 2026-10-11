@@ -3,17 +3,18 @@
 // pictures and a cover. Gathered in the browser from the Sandbox's own
 // stores.
 
-import type { PostextConfig, VDTDocument } from 'postext';
+import { documentFontFaces, type PostextConfig, type VDTDocument } from 'postext';
 import type { EpubCover, EpubFontFile, EpubResourceBytes, EpubSvgFontOptions } from 'postext-epub';
-import { collectFontPayloadsForFamilies, getConfigFontFamilies, getCustomFontFamily } from '../controls/fontLoader';
+import { collectFontPayloadsForFaces, configFontUses, getConfigFontFamilies, getCustomFontFamily } from '../controls/fontLoader';
 import { sandboxSvgFontProvider, withholdNonRedistributable } from '../controls/svgFontProvider';
 import { getBlob } from '../storage/blobStore';
 import { documentCodePoints, facesForText, fontFormatOf } from './fontSubsets';
 
-/** The fonts the EPUB embeds: every face of every family the
- *  configuration names (Google slices only where the text needs them),
- *  except custom families that may not be handed on — named in
- *  `withheld`. */
+/** The fonts the EPUB embeds: for every family the configuration names,
+ *  the weights and slants it asks for and the ones the pages are set in,
+ *  each in the files that hold the text's characters (a catalogue family
+ *  is a file per weight, style and subset, #757); every file of a custom
+ *  family, except those that may not be handed on — named in `withheld`. */
 export async function collectEpubFonts(
   config: PostextConfig,
   docs: readonly VDTDocument[],
@@ -23,8 +24,13 @@ export async function collectEpubFonts(
 ): Promise<{ fonts: EpubFontFile[]; withheld: string[] }> {
   const families = getConfigFontFamilies(config, markdown);
   const withheld = families.filter((f) => getCustomFontFamily(f)?.redistributable === false);
-  const payloads = await collectFontPayloadsForFamilies(families.filter((f) => !withheld.includes(f)));
-  const faces = facesForText(payloads, documentCodePoints(docs));
+  const codePoints = documentCodePoints(docs);
+  const asked = [
+    ...[...configFontUses(config, markdown)].flatMap(([family, uses]) => uses.map((use) => ({ family, ...use }))),
+    ...docs.flatMap((doc) => documentFontFaces(doc)),
+  ].filter((face) => !withheld.includes(face.family));
+  const payloads = await collectFontPayloadsForFaces(asked, codePoints);
+  const faces = facesForText(payloads, codePoints);
   const fonts = faces
     .filter((p) => p.buffer.byteLength > 0)
     .map((p): EpubFontFile => {

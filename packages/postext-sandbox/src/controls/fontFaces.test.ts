@@ -6,6 +6,11 @@ import { fontFallbacks, type FontFaceLike, type PostextConfig } from 'postext';
 // the families of the recipes the defects were found on: a comic face with
 // one weight (Bangers, #688), a family Google Fonts does not serve next to
 // one it does (Commit Mono and Host Grotesk, #689).
+//
+// The network of these tests has no Fontsource package for Bangers or Host
+// Grotesk (its style sheet answers 404), so the loader takes them from
+// Google's style sheet, as it did for every family before #757; the static
+// cuts of a family whose package is there are in fontCuts.test.ts.
 
 type Loader = typeof import('./fontLoader');
 
@@ -303,8 +308,11 @@ describe('a family Google Fonts does not serve (#689)', () => {
 
   it('is declared on the page as faces of its own, with no style sheet', async () => {
     routes[fontsource('commit-mono')] = COMMIT_MONO;
+    // The regular face alone when no other is asked: what a specimen is set in (#757).
     await loader.loadFont('Commit Mono');
-    expect(fonts.declared('Commit Mono')).toEqual(['400 normal', '400 italic', '700 normal', '700 italic']);
+    expect(fonts.declared('Commit Mono')).toEqual(['400 normal']);
+    await loader.loadFont('Commit Mono', [{ weight: 400, style: 'italic' }, { weight: 700, style: 'normal' }, { weight: 700, style: 'italic' }]);
+    expect(fonts.declared('Commit Mono').sort()).toEqual(['400 italic', '400 normal', '700 italic', '700 normal']);
     expect(fonts.faces.every((f) => f.status === 'loaded')).toBe(true);
     expect(requests.some((u) => u.includes('fonts.googleapis.com'))).toBe(false);
   });
@@ -398,7 +406,7 @@ describe('the system fonts of a font stack (#753)', () => {
   const STACK = ['-apple-system', 'Segoe UI', 'Helvetica Neue', 'Arial'];
   const GENERIC = ['sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont'];
   const FACES: [number, 'normal' | 'italic'][] = [[400, 'normal'], [400, 'italic'], [600, 'normal'], [700, 'normal'], [700, 'italic']];
-  const fontsourceCss = (id: string, weight: number) => `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/${weight}`;
+  const fontsourceCss = (id: string, weight: number) => `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}`;
   const LORA_CSS = `@font-face{font-family:'Lora';font-style:normal;font-weight:400;src:url(./files/lora-latin-400-normal.woff2) format('woff2');unicode-range:${LATIN};}`;
   const GEORGIA_CSS = googleCss('Georgia', [{ weight: '400', range: LATIN, file: 'l/georgia' }]);
 
@@ -509,7 +517,7 @@ describe('the system fonts of a font stack (#753)', () => {
     const ask = await provider();
     const files = await ask('Lora', 400, 'normal', { codePoints: new Set([0x41]) });
     expect([files].flat().map((f) => new TextDecoder().decode(f))).toEqual([
-      'https://cdn.jsdelivr.net/npm/@fontsource/lora@latest/files/lora-latin-400-normal.woff2',
+      'https://cdn.jsdelivr.net/npm/@fontsource/lora@5/files/lora-latin-400-normal.woff2',
     ]);
     expect(requests.filter((u) => u.startsWith(fontsource('lora')))).toHaveLength(1);
     expect(loader.isUncataloguedFontFamily('Lora')).toBe(false);
