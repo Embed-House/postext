@@ -625,7 +625,7 @@ Defaults:
 ```
 enabled true | maxLinesPerHeading 4 | maxLinesBeforeLoose 2 (≥ 1.28) | stretchAfterLists true | maxLinesAfterList 1
 stretchAfterDisplays true (≥ 1.28) | stretchAfterFloats true | maxLinesAfterFloat 1
-stretchAfterWideFloats 'flush' ('flush' | 'always', ≥ 1.28)
+stretchAfterWideFloats 'flush' ('flush' | 'always', ≥ 1.28) | trailingStep 'lines' ('lines' | 'grid', ≥ 1.28)
 looseParagraphs true | maxLooseParagraphs 2
 trackParagraphs true | maxTracking 10 (‰ em) | trailing true | beforeSpan true
 closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'off', ≥ 1.25)
@@ -644,6 +644,9 @@ nothing left to give (≥ 1.28; up to 1.27 a heading took all its lines first, w
 lines above the one heading of a page: do not lower `maxLinesPerHeading` against that any more,
 and set `maxLinesBeforeLoose` = `maxLinesPerHeading` only to reproduce a 1.27 layout).
 `trailing`: level the closing band of a chapter (short last page → equal-height columns).
+`trailingStep 'lines'` (≥ 1.28; `'grid'` = 1.27): the cut counts lines of the band's own text, so an
+index or a list of references set on a leading of its own ends its columns within a line. Do not add
+space above index groups (`index.groups.marginTop`) to make an off-grid closing band end level.
 A closing band keeps its column heads level: no lever lowers the block that opens a column under a
 float, nor (≥ 1.28) the heading right under a `span:'page'` opener in the opener's own column; the
 lines go to a heading further down or the column ends short. Its columns, and the column rule, end
