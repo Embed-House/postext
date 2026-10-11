@@ -18,6 +18,7 @@ import {
   defaultCjkRubyAlign,
   defaultCjkRubyOverhang,
   defaultCjkSpaceAfterQuestion,
+  defaultCjkLatinSpacingEdge,
   dimensionsEqual,
   isCjkLanguage,
   resolveBodyTextConfig,
@@ -125,6 +126,8 @@ export const CjkSection = memo(function CjkSection() {
   const circledNumbers = raw?.circledNumbers ?? DEFAULT_CJK_CONFIG.circledNumbers;
   const composeDesignText = raw?.composeDesignText ?? DEFAULT_CJK_CONFIG.composeDesignText;
   const latinSpacing = raw?.latinSpacing ?? DEFAULT_CJK_CONFIG.latinSpacing;
+  // As the engine reads it: an unknown value is Auto.
+  const latinSpacingEdge = raw?.latinSpacingEdge === 'letters' || raw?.latinSpacingEdge === 'western' ? raw.latinSpacingEdge : 'auto';
   const uprightDigits = raw?.uprightDigits ?? DEFAULT_CJK_CONFIG.uprightDigits;
   const autoRegion = cjkRegionOf(locale) ?? 'mainland';
   const resolvedRegion = region === 'auto' ? autoRegion : region;
@@ -134,6 +137,8 @@ export const CjkSection = memo(function CjkSection() {
   const hangingNames = { none: labels.cjkHangingNone, allow: labels.cjkHangingAllow, force: labels.cjkHangingForce };
   const autoHanging = defaultCjkHangingPunctuation(resolvedRegion);
   const autoSpaceAfterQuestion = defaultCjkSpaceAfterQuestion(resolvedRegion);
+  const edgeNames = { letters: labels.cjkLatinSpacingEdgeLetters, western: labels.cjkLatinSpacingEdgeWestern };
+  const autoLatinSpacingEdge = defaultCjkLatinSpacingEdge(resolvedRegion);
   const bracketNames = {
     half: labels.cjkParagraphStartBracketHalf,
     indent: labels.cjkParagraphStartBracketIndent,
@@ -376,6 +381,19 @@ export const CjkSection = memo(function CjkSection() {
               tooltip={labels.cjkLatinSpacingTooltip}
               isDefault={dimensionsEqual(latinSpacing, DEFAULT_CJK_CONFIG.latinSpacing)}
               onReset={() => resetField('latinSpacing')}
+            />
+            <SelectInput
+              label={labels.cjkLatinSpacingEdge}
+              value={latinSpacingEdge}
+              options={[
+                { value: 'auto', label: auto(edgeNames[autoLatinSpacingEdge]) },
+                { value: 'letters', label: labels.cjkLatinSpacingEdgeLetters },
+                { value: 'western', label: labels.cjkLatinSpacingEdgeWestern },
+              ]}
+              onChange={(v) => write({ ...raw, latinSpacingEdge: v as CjkConfig['latinSpacingEdge'] })}
+              tooltip={labels.cjkLatinSpacingEdgeTooltip}
+              isDefault={latinSpacingEdge === DEFAULT_CJK_CONFIG.latinSpacingEdge}
+              onReset={() => resetField('latinSpacingEdge')}
             />
             <SelectInput
               label={labels.cjkSpaceAfterQuestion}

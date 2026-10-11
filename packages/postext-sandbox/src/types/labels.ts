@@ -765,6 +765,10 @@ export interface SandboxLabels {
   cjkSpaceAfterQuestionTooltip: string;
   cjkLatinSpacing: string;
   cjkLatinSpacingTooltip: string;
+  cjkLatinSpacingEdge: string;
+  cjkLatinSpacingEdgeTooltip: string;
+  cjkLatinSpacingEdgeLetters: string;
+  cjkLatinSpacingEdgeWestern: string;
   cjkUprightDigits: string;
   cjkUprightDigitsTooltip: string;
   cjkUprightDigitsCount: string;

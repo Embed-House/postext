@@ -59,6 +59,7 @@ const RULE_LABELS: Record<JapaneseRuleField, keyof SandboxLabels> = {
   trimLineStart: 'cjkTrimLineStart',
   hangingPunctuation: 'cjkHanging',
   paragraphStartBracket: 'cjkParagraphStartBracket',
+  latinSpacingEdge: 'cjkLatinSpacingEdge',
   spaceAfterQuestion: 'cjkSpaceAfterQuestion',
   emphasis: 'cjkEmphasis',
   emphasisMark: 'cjkEmphasisMark',
