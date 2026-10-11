@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
+import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, avoidOrphansByDefault, avoidWidowsByDefault, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
 import type { BodyTextConfig, ColonListRoom, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
 import { ChevronRight } from 'lucide-react';
 import {
@@ -18,7 +18,7 @@ import {
   useFieldIds,
 } from '../../../controls';
 import { documentLocaleLabel, TEXT_SIZE_UNITS, LINE_HEIGHT_UNITS, INDENT_UNITS } from './constants';
-import { defaultDocumentLocale } from '../../../controls/hyphenation';
+import { defaultDocumentLocale, withHyphenationLocale } from '../../../controls/hyphenation';
 import { useOpenSettingsGroup } from '../../../context/settingsNavigation';
 import { JustificationSubsection, KashidaFields, RaggedBreakingSubsection } from './JustificationSubsection';
 import { BlockquoteSubsection } from './BlockquoteSubsection';
@@ -48,7 +48,17 @@ export const BodyTextSection = memo(function BodyTextSection() {
   // A Chinese interface reads an unnamed document as Chinese, which sets
   // it without hyphenation: the switch shows what the previews do.
   const resolvingLocale = documentLocale ?? (isCjkLanguage(defaultLocale) ? defaultLocale : undefined);
-  const bodyText = resolveBodyTextConfig(raw, resolvingLocale);
+  // The widow and orphan rules are off by default on a character grid
+  // (#717): the switches show what the layout does, and Reset returns to
+  // the default of this document, read with the language the previews
+  // give a document that names none.
+  const avoidWidowsDefault = useSandboxSelector((s) => avoidWidowsByDefault(s.config));
+  const avoidOrphansDefault = useSandboxSelector((s) => avoidOrphansByDefault(withHyphenationLocale(s.config, s.locale)));
+  const bodyText = {
+    ...resolveBodyTextConfig(raw, resolvingLocale),
+    avoidWidows: raw?.avoidWidows ?? avoidWidowsDefault,
+    avoidOrphans: raw?.avoidOrphans ?? avoidOrphansDefault,
+  };
 
   const updateBodyText = (partial: Partial<BodyTextConfig>) => {
     dispatch({
@@ -128,11 +138,11 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const isMaxWordSpacingDefault = bodyText.maxWordSpacing === D.maxWordSpacing;
   const isMinWordSpacingDefault = bodyText.minWordSpacing === D.minWordSpacing;
   const isOptimalLineBreakingDefault = bodyText.optimalLineBreaking === D.optimalLineBreaking;
-  const isAvoidOrphansDefault = bodyText.avoidOrphans === D.avoidOrphans;
+  const isAvoidOrphansDefault = bodyText.avoidOrphans === avoidOrphansDefault;
   const isOrphanMinLinesDefault = bodyText.orphanMinLines === D.orphanMinLines;
   const isOrphanPenaltyDefault = bodyText.orphanPenalty === D.orphanPenalty;
   const isAvoidOrphansInListsDefault = bodyText.avoidOrphansInLists === D.avoidOrphansInLists;
-  const isAvoidWidowsDefault = bodyText.avoidWidows === D.avoidWidows;
+  const isAvoidWidowsDefault = bodyText.avoidWidows === avoidWidowsDefault;
   const isWidowMinLinesDefault = bodyText.widowMinLines === D.widowMinLines;
   const isWidowPenaltyDefault = bodyText.widowPenalty === D.widowPenalty;
   const isAvoidWidowsInListsDefault = bodyText.avoidWidowsInLists === D.avoidWidowsInLists;

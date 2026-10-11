@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { balancingOnByDefault, type PostextConfig } from 'postext';
+import { avoidOrphansByDefault, avoidWidowsByDefault, balancingOnByDefault, type PostextConfig } from 'postext';
 import { configKeyOf } from '../book/layoutKeys';
 import { hashConfig, isDocumentUntouched } from '../presets/hash';
 import { snapshotForApply } from '../presets/apply';
@@ -199,5 +199,78 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
   it('in an exported configuration read back', () => {
     const migrated = configFromExport({ type: 'postext-config', version: 1, configVersion: 10, config: stored });
     expect(balanced(migrated)).toBe(true);
+  });
+});
+
+// #717: the widow and orphan rules are off by default on a character
+// grid. A grid document stored by 1.27 or earlier is pinned to the rules
+// it laid out with, and the pin has to survive the strip of the first
+// save; a switch turned on in a new grid document has to survive it too.
+describe('the break rules of a character grid survive a save (#717)', () => {
+  const japanese = (extra: PostextConfig = {}): PostextConfig => ({ locale: 'ja', cjk: { grid: GRID }, ...extra });
+  /** The two rules as the layout applies them and the Body text panel
+   *  shows them: what the configuration says, else the default of the
+   *  document. */
+  const laidOut = (config: PostextConfig) => ({
+    avoidWidows: config.bodyText?.avoidWidows ?? avoidWidowsByDefault(config),
+    avoidOrphans: config.bodyText?.avoidOrphans ?? avoidOrphansByDefault(config),
+  });
+  const ON = { avoidWidows: true, avoidOrphans: true };
+  const OFF = { avoidWidows: false, avoidOrphans: false };
+
+  it('a new Japanese grid document reads both switches off', () => {
+    expect(laidOut(japanese())).toEqual(OFF);
+    expect(laidOut(grid())).toEqual({ avoidWidows: false, avoidOrphans: true });
+    expect(laidOut({ locale: 'ja' })).toEqual(ON);
+  });
+
+  it('a switch turned on there survives a reload of the working configuration', () => {
+    installStorage();
+    saveConfig(japanese({ bodyText: ON }));
+    const reloaded = loadConfig()!;
+    expect(reloaded.bodyText).toEqual(ON);
+    expect(laidOut(reloaded)).toEqual(ON);
+    // Turned off again it restates the default and is not stored.
+    saveConfig(japanese({ bodyText: OFF }));
+    expect(loadConfig()!.bodyText).toBeUndefined();
+    expect(laidOut(loadConfig()!)).toEqual(OFF);
+  });
+
+  it('the working configuration of a grid document stored by 1.27 keeps both rules', () => {
+    for (const stored of [japanese(), grid()]) {
+      const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '11' });
+      const migrated = loadConfig()!;
+      expect(laidOut(migrated), stored.locale).toEqual(ON);
+      saveConfig(migrated);
+      expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
+      const reloaded = loadConfig()!;
+      expect(reloaded, stored.locale).toEqual(migrated);
+      expect(laidOut(reloaded), stored.locale).toEqual(ON);
+    }
+  });
+
+  it('a project record stored by 1.27 keeps both rules', async () => {
+    rows.set(PROJECTS_STORE, new Map([['old', { version: 11, id: 'old', name: 'Old', createdAt: 1, updatedAt: 1, chapters, activeChapterId: 'c1', config: japanese(), resources: [] }]]));
+    const migrated = (await getProject('old'))!;
+    expect(laidOut(migrated.config)).toEqual(ON);
+    await putProject(migrated);
+    const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
+    expect(raw.version).toBe(PROJECT_RECORD_VERSION);
+    expect(raw.config.bodyText).toEqual(ON);
+    expect(laidOut((await getProject('old'))!.config)).toEqual(ON);
+  });
+
+  it('an exported configuration stamped 11 is read back with both rules', () => {
+    const migrated = configFromExport({ type: 'postext-config', version: 1, configVersion: 11, config: japanese() });
+    expect(laidOut(migrated)).toEqual(ON);
+    // One exported today is read as it is.
+    const current = configFromExport({ type: 'postext-config', version: 1, configVersion: 12, config: japanese() });
+    expect(laidOut(current)).toEqual(OFF);
+  });
+
+  it('the layout key sees a rule turned on where it is off by default', () => {
+    expect(configKeyOf(japanese({ bodyText: ON }))).not.toBe(configKeyOf(japanese()));
+    expect(configKeyOf(japanese({ bodyText: OFF }))).toBe(configKeyOf(japanese()));
+    expect(configKeyOf({ bodyText: ON })).toBe(configKeyOf({}));
   });
 });
