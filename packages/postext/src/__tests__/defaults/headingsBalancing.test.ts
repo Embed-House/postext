@@ -30,6 +30,15 @@ describe('headings.balancing defaults', () => {
     expect(stripHeadingsDefaults({ balancing: { maxLinesBeforeLoose: 0 } })).toEqual({ balancing: { maxLinesBeforeLoose: 0 } });
   });
 
+  it('stretchAfterWideFloats is \'flush\' by default, and any other value reads as it (#708)', () => {
+    expect(DEFAULT_COLUMN_BALANCING.stretchAfterWideFloats).toBe('flush');
+    expect(resolveHeadingsConfig().balancing.stretchAfterWideFloats).toBe('flush');
+    expect(resolveHeadingsConfig({ balancing: { stretchAfterWideFloats: 'always' } }).balancing.stretchAfterWideFloats).toBe('always');
+    expect(resolveHeadingsConfig({ balancing: { stretchAfterWideFloats: 'sometimes' as never } }).balancing.stretchAfterWideFloats).toBe('flush');
+    expect(stripHeadingsDefaults({ balancing: { stretchAfterWideFloats: 'flush' } })).toBeUndefined();
+    expect(stripHeadingsDefaults({ balancing: { stretchAfterWideFloats: 'always' } })).toEqual({ balancing: { stretchAfterWideFloats: 'always' } });
+  });
+
   it('stretchAfterDisplays (a line under a formula or a box) is on by default (#710)', () => {
     expect(DEFAULT_COLUMN_BALANCING.stretchAfterDisplays).toBe(true);
     expect(resolveHeadingsConfig().balancing.stretchAfterDisplays).toBe(true);

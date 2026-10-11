@@ -126,6 +126,11 @@ import { hasCJK } from '../measure/cjk';
  *     and the loose paragraphs before a heading takes a third line
  *     (`headings.balancing.maxLinesBeforeLoose: 2`, #707), where up to 1.27
  *     a heading took all its lines first ({@link pinLegacyLooseOrder});
+ *   - under a float that stands over several text columns, column
+ *     balancing lowers a column only with the others under it or to end it
+ *     flush (`headings.balancing.stretchAfterWideFloats: 'flush'`, #708),
+ *     where up to 1.27 a column took its after-float line as under any
+ *     float ({@link pinLegacyWideFloatStretch});
  *   - a page on a character grid (`cjk.grid.enabled`) holds its lines:
  *     `bodyText.avoidWidows` is off by default there, and
  *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
@@ -225,6 +230,9 @@ const OPENER_HEAD_FLOAT_RULES = 11;
 /** The rules that try the other balancing levers before a heading takes a
  *  third line (#707). */
 const LOOSE_ORDER_RULES = 12;
+/** The rules that keep the heads level under a float over several columns
+ *  (#708). */
+const WIDE_FLOAT_STRETCH_RULES = 12;
 
 /** The rules that turn the widow rule off on a character grid, and the
  *  orphan rule too in the Japan region (#717). */
@@ -700,6 +708,34 @@ export function pinLegacyLooseOrder<T extends Partial<PostextConfig>>(config: T)
   const cap = typeof balancing.maxLinesPerHeading === 'number' ? balancing.maxLinesPerHeading : DEFAULT_COLUMN_BALANCING.maxLinesPerHeading;
   if (cap <= DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, maxLinesBeforeLoose: cap } } };
+}
+
+/**
+ * A configuration written before #708 (postext 1.27 or earlier), pinned to
+ * the way 1.27 stretched a column under a float that stands over several
+ * columns: `headings.balancing.stretchAfterWideFloats: 'always'`, so the
+ * column takes its after-float line as under any float, where today it
+ * moves only with the others under the float or to end flush. A
+ * configuration that does not balance its columns, that turns
+ * `stretchAfterFloats` off or that sets the key is returned as it is (the
+ * same object).
+ */
+export function pinLegacyWideFloatStretch<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.stretchAfterWideFloats !== undefined || balancing.stretchAfterFloats === false) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, stretchAfterWideFloats: 'always' } } };
+}
+
+/** Whether markdown may set a float: a resource embedded on its own line
+ *  (as {@link mayEmbedResources} reads one) or cited (`:ref`, LaTeX's
+ *  `\ref`), or a box floated by its fence (`placement=`). Unknown content
+ *  (undefined) may. */
+function mayHaveFloats(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined || mayEmbedResources(content)) return true;
+  const test = (text: string): boolean => /:ref\s*[[{]|\\(?:eq)?ref\{|placement\s*=/.test(text);
+  return typeof content === 'string' ? test(content) : content.some(test);
 }
 
 /**
@@ -1473,7 +1509,10 @@ export interface MigrateConfigOptions {
  * `options.content` shows no heading; one older than 12 has the order of
  * its balancing levers pinned by {@link pinLegacyLooseOrder}, when it
  * balances its columns and lets a heading take more than two lines, unless
- * `options.content` shows no heading; it also has the widow and
+ * `options.content` shows no heading, and the after-float lever under a
+ * float over several columns by {@link pinLegacyWideFloatStretch}, when it
+ * balances its columns, unless `options.content` shows no float; it also
+ * has the widow and
  * orphan rules of a page on a character grid pinned by {@link
  * pinLegacyGridBreakRules}, the breaks inside its two-row notes by
  * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
@@ -1521,6 +1560,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) out = pinLegacyFlowColumns(out);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) out = pinLegacyLooseOrder(out);
+  if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) out = pinLegacyWideFloatStretch(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
@@ -1550,7 +1590,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * the slots under a page-span opener on the `layout` in force (the slots
  * when the merged configuration sets a page-span heading), and the book
  * titles, the circled numbers and the design text on the `cjk` in force,
- * the order of the balancing levers on the `headings` in force (when the
+ * the order of the balancing levers and the after-float lever under a
+ * float over several columns on the `headings` in force (when the
  * merged configuration balances its columns),
  * and the widow and orphan rules of a character grid on the merged `cjk`
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
@@ -1597,6 +1638,7 @@ export function migrateBundleConfig(
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) merged = pinLegacyFlowColumns(merged);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) merged = pinLegacyLooseOrder(merged);
+  if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) merged = pinLegacyWideFloatStretch(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);

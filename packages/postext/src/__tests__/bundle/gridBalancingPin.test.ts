@@ -15,8 +15,10 @@ const grid = (extra: PostextConfig = {}): PostextConfig => ({
 });
 
 /** A configuration that balances its columns and is stored under 11 or
- *  lower also keeps the order of its levers (#707, `pinLegacyLooseOrder`). */
-const LEGACY_ORDER = { maxLinesBeforeLoose: 4 };
+ *  lower also keeps the order of its levers (#707, `pinLegacyLooseOrder`)
+ *  and its after-float lever under a float over several columns (#708,
+ *  `pinLegacyWideFloatStretch`). */
+const LEGACY_ORDER = { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' };
 
 describe('pinLegacyGridBalancing (#632)', () => {
   it('turns balancing on for a horizontal grid that does not set it', () => {

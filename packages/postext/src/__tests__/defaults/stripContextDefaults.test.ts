@@ -64,6 +64,14 @@ describe('stripConfigDefaults and the balancing default of the document (#651)',
     expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { maxLinesBeforeLoose: 0 }))).headings.balancing.maxLinesBeforeLoose).toBe(0);
   });
 
+  it('keeps stretchAfterWideFloats \'always\' and drops \'flush\', in every context (#708)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterWideFloats: 'always' })).headings, name).toEqual({ balancing: { stretchAfterWideFloats: 'always' } });
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterWideFloats: 'flush' })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { stretchAfterWideFloats: 'always' }))).headings.balancing.stretchAfterWideFloats).toBe('always');
+  });
+
   it('keeps stretchAfterDisplays off and drops it on, in every context (#710)', () => {
     for (const [name, context] of Object.entries(CONTEXTS)) {
       expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: false })).headings, name)

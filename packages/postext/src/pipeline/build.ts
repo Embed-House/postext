@@ -8816,6 +8816,7 @@ function* buildDocumentBalanced(
         stretchAfterDisplays: balancing.stretchAfterDisplays,
         stretchAfterFloats: balancing.stretchAfterFloats,
         maxLinesAfterFloat: balancing.maxLinesAfterFloat,
+        stretchAfterWideFloats: balancing.stretchAfterWideFloats,
         looseParagraphs: balancing.looseParagraphs,
         maxLooseParagraphs: balancing.maxLooseParagraphs,
         optimalLineBreaking: best.doc.config.bodyText.optimalLineBreaking,

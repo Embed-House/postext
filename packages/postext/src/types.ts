@@ -3919,6 +3919,16 @@ export interface ColumnBalancingConfig {
   stretchAfterFloats?: boolean;
   /** Maximum extra grid lines under a single float band. Default 1. */
   maxLinesAfterFloat?: number;
+  /** Under a float that stands over two or more text columns (#708):
+   *  `'flush'` (default) moves a column down under it only when every text
+   *  column under the float takes the same lines, so their heads stay
+   *  level, or when the lines end that column flush; a line that would
+   *  lower one head and still leave its column short is not added.
+   *  `'always'` treats such a float as any other, as up to postext 1.27.
+   *  Any other value reads as `'flush'`. `stretchAfterFloats: false` turns
+   *  the lever off under every float. Configurations stored earlier keep
+   *  `'always'` (see `migrateConfig` in `postext/bundle`). */
+  stretchAfterWideFloats?: StretchAfterWideFloats;
   /** Last resort: re-break one paragraph per short column one line looser
    *  (TeX \looseness=+1), within the configured `bodyText.maxWordSpacing`.
    *  Requires `bodyText.optimalLineBreaking`. Default true. */
@@ -3985,6 +3995,11 @@ export interface ColumnBalancingConfig {
  *  (`ColumnBalancingConfig.closingBox`). */
 export type ClosingBoxLever = 'first' | 'last' | 'off';
 
+/** How the after-float lever of column balancing treats a float that stands
+ *  over several text columns (`headings.balancing.stretchAfterWideFloats`,
+ *  #708). */
+export type StretchAfterWideFloats = 'flush' | 'always';
+
 /** Whether the whole-line balancing levers run on a character grid
  *  (`ColumnBalancingConfig.gridLines`). */
 export type GridLinesLever = 'allow' | 'off';
@@ -4016,6 +4031,7 @@ export interface ResolvedHeadingsConfig {
     stretchAfterDisplays: boolean;
     stretchAfterFloats: boolean;
     maxLinesAfterFloat: number;
+    stretchAfterWideFloats: StretchAfterWideFloats;
     looseParagraphs: boolean;
     maxLooseParagraphs: number;
     trackParagraphs: boolean;

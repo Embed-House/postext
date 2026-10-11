@@ -74,7 +74,7 @@ describe('pinLegacyLooseOrder (#707)', () => {
 
   it('pins a bundle on its merged layers', () => {
     const base: PostextConfig = { headings: { fontFamily: 'Georgia' } };
-    const merged = migrateBundleConfig(base, [{ layout: { layoutType: 'double' } }], 8);
+    const merged = migrateBundleConfig(base, [{ layout: { layoutType: 'double' } }], 8, { content: '# One\n\nText.' });
     expect(merged.headings).toEqual({ fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4 } });
     const layer = migrateBundleConfig(base, [{ headings: { balancing: { maxLinesPerHeading: 1 } } }], 8);
     expect(before(layer)).toBeUndefined();

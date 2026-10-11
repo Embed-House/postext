@@ -1,4 +1,4 @@
-import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, KeepWithNextSplit, ColorValue, Dimension } from '../types';
+import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, KeepWithNextSplit, ColorValue, Dimension } from '../types';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { resolveDesignSlot } from './headerFooter';
 import { isDropCap } from './dropCap';
@@ -50,6 +50,7 @@ export const DEFAULT_COLUMN_BALANCING = {
   stretchAfterDisplays: true,
   stretchAfterFloats: true,
   maxLinesAfterFloat: 1,
+  stretchAfterWideFloats: 'flush' as StretchAfterWideFloats,
   looseParagraphs: true,
   maxLooseParagraphs: 2,
   trackParagraphs: true,
@@ -148,6 +149,10 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
           partial.balancing.stretchAfterFloats ?? DEFAULT_COLUMN_BALANCING.stretchAfterFloats,
         maxLinesAfterFloat:
           partial.balancing.maxLinesAfterFloat ?? DEFAULT_COLUMN_BALANCING.maxLinesAfterFloat,
+        // Any other value reads as the default.
+        stretchAfterWideFloats: partial.balancing.stretchAfterWideFloats === 'always'
+          ? 'always' as StretchAfterWideFloats
+          : DEFAULT_COLUMN_BALANCING.stretchAfterWideFloats,
         looseParagraphs:
           partial.balancing.looseParagraphs ?? DEFAULT_COLUMN_BALANCING.looseParagraphs,
         maxLooseParagraphs:
@@ -381,6 +386,11 @@ export function stripHeadingsDefaults(
       && headings.balancing.maxLinesAfterFloat !== DEFAULT_COLUMN_BALANCING.maxLinesAfterFloat
     ) {
       b.maxLinesAfterFloat = headings.balancing.maxLinesAfterFloat;
+      hasBOverride = true;
+    }
+    // `'flush'` is the default; any other value resolves like it.
+    if (headings.balancing.stretchAfterWideFloats === 'always') {
+      b.stretchAfterWideFloats = 'always';
       hasBOverride = true;
     }
     if (
