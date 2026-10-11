@@ -426,6 +426,18 @@ export function stripHeadingsDefaults(
     // A level's `snapToGrid` inherits the headings-wide value, so it is
     // only an override where it differs from that one.
     const generalSnapToGrid = headings.snapToGrid ?? DEFAULT_HEADINGS_CONFIG.snapToGrid;
+    // So do its face, colour, leading, weight and margins (#691): a level
+    // set back to the level default under headings that say otherwise (a
+    // 700 under 800 headings) is an override, and dropping it left the
+    // level reading the headings' value. A value is dropped only when it
+    // restates both, so every configuration stripped before strips (and
+    // hashes) as it did.
+    const generalFontFamily = headings.fontFamily ?? DEFAULT_HEADINGS_CONFIG.fontFamily;
+    const generalLineHeight = headings.lineHeight ?? DEFAULT_HEADINGS_CONFIG.lineHeight;
+    const generalColor = headings.color ?? DEFAULT_HEADINGS_CONFIG.color;
+    const generalFontWeight = headings.fontWeight ?? DEFAULT_HEADINGS_CONFIG.fontWeight;
+    const generalMarginTop = headings.marginTop ?? DEFAULT_HEADINGS_CONFIG.marginTop;
+    const generalMarginBottom = headings.marginBottom ?? DEFAULT_HEADINGS_CONFIG.marginBottom;
     const strippedLevels: HeadingLevelConfig[] = [];
     for (const level of headings.levels) {
       const def = DEFAULT_HEADING_LEVELS.find((d) => d.level === level.level);
@@ -436,27 +448,27 @@ export function stripHeadingsDefaults(
         entry.fontSize = level.fontSize;
         levelHasOverride = true;
       }
-      if (level.lineHeight !== undefined && !dimensionsEqual(level.lineHeight, def.lineHeight)) {
+      if (level.lineHeight !== undefined && !(dimensionsEqual(level.lineHeight, def.lineHeight) && dimensionsEqual(level.lineHeight, generalLineHeight))) {
         entry.lineHeight = level.lineHeight;
         levelHasOverride = true;
       }
-      if (level.fontFamily !== undefined && level.fontFamily !== def.fontFamily) {
+      if (level.fontFamily !== undefined && !(level.fontFamily === def.fontFamily && level.fontFamily === generalFontFamily)) {
         entry.fontFamily = level.fontFamily;
         levelHasOverride = true;
       }
-      if (level.color !== undefined && !colorsEqual(level.color, def.color)) {
+      if (level.color !== undefined && !(colorsEqual(level.color, def.color) && colorsEqual(level.color, generalColor))) {
         entry.color = level.color;
         levelHasOverride = true;
       }
-      if (level.fontWeight !== undefined && level.fontWeight !== def.fontWeight) {
+      if (level.fontWeight !== undefined && !(level.fontWeight === def.fontWeight && level.fontWeight === generalFontWeight)) {
         entry.fontWeight = level.fontWeight;
         levelHasOverride = true;
       }
-      if (level.marginTop !== undefined && !dimensionsEqual(level.marginTop, def.marginTop)) {
+      if (level.marginTop !== undefined && !(dimensionsEqual(level.marginTop, def.marginTop) && dimensionsEqual(level.marginTop, generalMarginTop))) {
         entry.marginTop = level.marginTop;
         levelHasOverride = true;
       }
-      if (level.marginBottom !== undefined && !dimensionsEqual(level.marginBottom, def.marginBottom)) {
+      if (level.marginBottom !== undefined && !(dimensionsEqual(level.marginBottom, def.marginBottom) && dimensionsEqual(level.marginBottom, generalMarginBottom))) {
         entry.marginBottom = level.marginBottom;
         levelHasOverride = true;
       }
