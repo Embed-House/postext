@@ -46,6 +46,8 @@ import {
 import { buildHtmlConfigOverride, hasComicPages, measureColumnWidthPx, partTitlesOf } from './configOverride';
 import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry';
 import { cssEscape, measureBodyBaselineOffset } from './baseline';
+import { htmlVideoPlayers, htmlVideoState, playHtmlVideo } from './videos';
+import { pickVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from '../viewerVideos';
 
 interface HtmlPreviewProps {
   fontScale: number;
@@ -73,6 +75,13 @@ export interface HtmlPreviewHandle {
   scrollColumn: (delta: number) => void;
   /** Scroll so the given page starts at the viewer's leading edge. */
   jumpToPage: (pageIndex: number) => void;
+  /** The video players of the pages. */
+  videos: () => PreviewVideo[];
+  /** Brings a video's page into view and plays it; one already playing
+   *  is left to play. */
+  playVideo: (pick: VideoPick) => Promise<PreviewVideoResult>;
+  /** Pauses the videos playing on the pages. */
+  stopVideo: () => void;
 }
 
 export const HtmlPreview = forwardRef<HtmlPreviewHandle, HtmlPreviewProps>(
@@ -737,9 +746,9 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   // - scrollColumn(delta): shift the scroll container by ±1 column step. In
   //   multi-column mode that's horizontal (column width + gap). In single
   //   mode we fall back to a viewport-height vertical scroll (one "screen").
-  useImperativeHandle(ref, () => ({
-    regenerate: () => scheduleRelayout(0),
-    jumpToPage: (pageIndex: number) => {
+  useImperativeHandle(ref, () => {
+    const players = () => (scrollHostRef.current && docRef.current ? htmlVideoPlayers(scrollHostRef.current, docRef.current) : []);
+    const jumpToPage = (pageIndex: number) => {
       const scroll = scrollHostRef.current;
       if (!scroll) return;
       const pageEl = scroll.querySelector<HTMLElement>(`.pt-page[data-page="${pageIndex}"]`);
@@ -752,21 +761,35 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       } else {
         scroll.scrollTop += pageRect.top - scrollRect.top - PADDING_PX;
       }
-    },
-    scrollColumn: (delta: number) => {
-      const scroll = scrollHostRef.current;
-      if (!scroll) return;
-      if (columnModeRef.current === 'multi') {
-        const { pageWidthPx, columnGapPx } = columnGeomRef.current;
-        if (pageWidthPx <= 0) return;
-        const step = pageWidthPx + columnGapPx;
-        // Right to left, the next page is to the left.
-        scroll.scrollBy({ left: (rtlRef.current ? -delta : delta) * step, behavior: 'smooth' });
-      } else {
-        scroll.scrollBy({ top: delta * scroll.clientHeight, behavior: 'smooth' });
-      }
-    },
-  }), [scheduleRelayout]);
+    };
+    return {
+      regenerate: () => scheduleRelayout(0),
+      jumpToPage,
+      videos: () => players().map((v) => ({ resource: v.resource, pageIndex: v.pageIndex, state: htmlVideoState(v.item) })),
+      playVideo: async (pick) => {
+        const picked = pickVideo(players(), pick);
+        if (!picked) return { played: false, reason: 'none' };
+        jumpToPage(picked.pageIndex);
+        return { ...(await playHtmlVideo(picked.item)), resource: picked.resource, pageIndex: picked.pageIndex };
+      },
+      stopVideo: () => {
+        for (const v of players()) if (htmlVideoState(v.item) === 'playing') v.item.pause();
+      },
+      scrollColumn: (delta: number) => {
+        const scroll = scrollHostRef.current;
+        if (!scroll) return;
+        if (columnModeRef.current === 'multi') {
+          const { pageWidthPx, columnGapPx } = columnGeomRef.current;
+          if (pageWidthPx <= 0) return;
+          const step = pageWidthPx + columnGapPx;
+          // Right to left, the next page is to the left.
+          scroll.scrollBy({ left: (rtlRef.current ? -delta : delta) * step, behavior: 'smooth' });
+        } else {
+          scroll.scrollBy({ top: delta * scroll.clientHeight, behavior: 'smooth' });
+        }
+      },
+    };
+  }, [scheduleRelayout]);
 
   // Scroll-bounds emitter. Rather than computing column indices (which is
   // ambiguous when several columns are visible per page and pages snap

@@ -30,6 +30,8 @@ export interface EpubReaderHandle {
   goToPosition(position: number): void;
   /** Go to a zip path with an optional `#fragment` (a TOC entry). */
   goTo(href: string): void;
+  /** The book's first page, or its last (the Home and End keys). */
+  goToEdge(edge: 'first' | 'last'): void;
 }
 
 interface EpubReaderProps {
@@ -213,12 +215,15 @@ function FixedReader({ book, reserve, handleRef, onPosition }: { book: ViewerBoo
     if (i >= 0) setIndex(i);
   }, [epub]);
 
+  const goToEdge = useCallback((edge: 'first' | 'last') => goToScreen(edge === 'first' ? 0 : screens.length - 1), [goToScreen, screens.length]);
+
   useImperativeHandle(handleRef, () => ({
     previous,
     next,
     goToPosition: (n) => setIndex(Math.max(0, Math.min(epub.spine.length - 1, n - 1))),
     goTo: (href) => goToPath(href.split('#')[0]!),
-  }), [previous, next, goToPath, epub]);
+    goToEdge,
+  }), [previous, next, goToPath, goToEdge, epub]);
 
   useEffect(() => {
     onPosition({
@@ -238,8 +243,8 @@ function FixedReader({ book, reserve, handleRef, onPosition }: { book: ViewerBoo
     keepReaderFocus(e.target as Node | null, areaRef.current);
     if (action === 'previous') previous();
     else if (action === 'next') next();
-    else goToScreen(action === 'first' ? 0 : screens.length - 1);
-  }, [rtl, previous, next, goToScreen, screens.length]);
+    else goToEdge(action);
+  }, [rtl, previous, next, goToEdge]);
   const onKeyRef = useRef(onKey);
   onKeyRef.current = onKey;
   const swipe = useSwipePaging(rtl, (action) => (action === 'next' ? next() : previous()));
@@ -444,12 +449,17 @@ function ReflowReader({ book, fontScale, reserve, handleRef, onPosition }: { boo
     openDocument(i, fragment ? { fragment } : { page: 0 });
   }, [epub, openDocument]);
 
+  const goToEdge = useCallback((edge: 'first' | 'last') => {
+    openDocument(edge === 'first' ? 0 : epub.spine.length - 1, { page: edge === 'first' ? 0 : 'last' });
+  }, [openDocument, epub]);
+
   useImperativeHandle(handleRef, () => ({
     previous,
     next,
     goToPosition: (n) => openDocument(Math.max(0, Math.min(epub.spine.length - 1, n - 1)), { page: 0 }),
     goTo,
-  }), [previous, next, goTo, openDocument, epub]);
+    goToEdge,
+  }), [previous, next, goTo, goToEdge, openDocument, epub]);
 
   useEffect(() => {
     onPosition({
@@ -471,8 +481,8 @@ function ReflowReader({ book, fontScale, reserve, handleRef, onPosition }: { boo
     keepReaderFocus(e.target as Node | null, areaRef.current);
     if (action === 'previous') previous();
     else if (action === 'next') next();
-    else openDocument(action === 'first' ? 0 : epub.spine.length - 1, { page: action === 'first' ? 0 : 'last' });
-  }, [rtl, previous, next, openDocument, epub]);
+    else goToEdge(action);
+  }, [rtl, previous, next, goToEdge]);
   const onKeyRef = useRef(onKey);
   onKeyRef.current = onKey;
   const goToRef = useRef(goTo);

@@ -126,6 +126,8 @@ export function CanvasViewport() {
       pageCount,
       pageIndex: currentPage,
       pageNumber: pageNumberAt(layout, currentPage),
+      canPrevious: currentPage > 0,
+      canNext: currentPage < pageCount - 1,
     }),
     set: (settings) => {
       if (settings.zoom !== undefined) {
@@ -143,6 +145,7 @@ export function CanvasViewport() {
       const next = currentPage + delta * (viewMode === 'spread' ? 2 : 1);
       handleJumpToPage(Math.max(0, Math.min(pageCount - 1, next)));
     },
+    goToEdge: (edge) => handleJumpToPage(edge === 'first' ? 0 : Math.max(0, pageCount - 1)),
   });
 
   // A finished layout is said through the live region (WCAG 4.1.3) when

@@ -7,7 +7,7 @@ import { HtmlPreview, type HtmlPreviewHandle } from './HtmlPreview';
 import { HtmlToolbar } from './HtmlToolbar';
 import { useFloatingToolbarShell } from './useFloatingToolbarShell';
 import { useViewerControls } from './viewerControls';
-import { usePageHashSync, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
+import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import {
   loadHtmlFontScale,
   saveHtmlFontScale,
@@ -113,6 +113,9 @@ export function HtmlViewport() {
       pageCount: layout.pageCount,
       pageIndex: currentPage,
       pageNumber: pageNumberAt(layout, currentPage),
+      ...(effectiveColumnMode === 'multi' ? { canPrevious: scrollBounds.canPrev, canNext: scrollBounds.canNext } : {}),
+      ...(verticalBook && columnMode === 'single' ? { columnsForced: true } : {}),
+      videos: (previewRef.current?.videos() ?? []).map((v) => ({ resource: v.resource, pageNumber: pageNumberAt(layout, v.pageIndex), state: v.state })),
     }),
     set: (settings) => {
       if (settings.fontScale !== undefined) setFontScale(clampFontScale(settings.fontScale));
@@ -122,6 +125,14 @@ export function HtmlViewport() {
     regenerate: handleRegenerate,
     goToPage: handleJumpToPage,
     step: handleScrollColumn,
+    goToEdge: (edge) => handleJumpToPage(edge === 'first' ? 0 : Math.max(0, layout.pageCount - 1)),
+    playVideo: async ({ pageNumber, ...pick }) => {
+      const pageIndex = pageNumber === undefined ? undefined : pageIndexOf(layout, pageNumber);
+      if (pageIndex !== undefined && pageIndex < 0) return { played: false, reason: 'none' };
+      const { pageIndex: at, ...result } = (await previewRef.current?.playVideo({ ...pick, ...(pageIndex !== undefined ? { pageIndex } : {}) })) ?? { played: false, reason: 'none' as const };
+      return { ...result, ...(at !== undefined ? { pageNumber: pageNumberAt(layout, at) } : {}) };
+    },
+    stopVideo: () => previewRef.current?.stopVideo(),
   });
 
   return (

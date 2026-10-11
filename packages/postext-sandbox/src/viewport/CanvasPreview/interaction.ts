@@ -1,9 +1,9 @@
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
 import { pageToFlow } from 'postext';
-import type { PendingEditorFocus, ResourceFocusTarget, SandboxAction } from '../../context/SandboxContext';
+import type { ResourceFocusTarget, SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
-import { fromBookOffset, segmentForChapter } from '../../book/compose';
+import { toChapterFocus } from './chapterFocus';
 import type { PanelId } from '../../types';
 import { getSvgTextIndex } from '../../controls/svgTextIndex';
 import {
@@ -78,25 +78,7 @@ function scrollToResourceLocation(
   container.scrollBy({ top, left, behavior: 'smooth' });
 }
 
-/** Map a document-offset selection to a chapter-local focus request. A
- *  drag whose head lands in another chapter is clamped to the anchor's
- *  chapter (one editor shows one chapter). */
-export function toChapterFocus(
-  source: ComposedBook | null,
-  anchor: number,
-  head: number,
-  selectWord: boolean,
-): PendingEditorFocus {
-  if (!source || source.segments.length === 0) return { anchor, head, selectWord };
-  const a = fromBookOffset(source, anchor);
-  const h = fromBookOffset(source, head);
-  let headLocal = h.offset;
-  if (h.chapterId !== a.chapterId) {
-    const seg = segmentForChapter(source, a.chapterId)!;
-    headLocal = head > anchor ? seg.end - seg.start : 0;
-  }
-  return { chapterId: a.chapterId, anchor: a.offset, head: headLocal, selectWord };
-}
+export { toChapterFocus };
 
 /** Where a click on a row of the contents goes: the book page index the
  *  row lists, with the document it was clicked in (whose own pages need

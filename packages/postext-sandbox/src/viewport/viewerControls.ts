@@ -28,13 +28,72 @@ export interface ViewerSettings {
   toolbarPinned?: boolean;
 }
 
+/** An entry of the EPUB's table of contents: where it goes (`href`, a
+ *  path inside the file with an optional `#fragment`) and how deep it is
+ *  nested (0 at the top). */
+export interface ViewerContentsEntry {
+  title: string;
+  href: string;
+  depth: number;
+}
+
+/** A warning of the last EPUB written: its kind as the writer names it
+ *  (`missingFont`, `missingImage`, `fontWithheld`, `unsupported`…) and
+ *  what it is about. */
+export type ViewerNotice = { kind: string } & Record<string, unknown>;
+
+/** A video a viewer can play on its pages. */
+export interface ViewerVideo {
+  /** The id of the video resource. */
+  resource: string;
+  /** The number its page carries in the book. */
+  pageNumber: number;
+  state: 'playing' | 'paused' | 'stopped';
+}
+
+/** The video a caller means: the one of a resource, the one on a page,
+ *  the one under a point of a page (`x`, `y` as fractions of the page's
+ *  width and height from its top left corner); the first one on show when
+ *  nothing is named. */
+export interface ViewerVideoTarget {
+  resource?: string;
+  pageNumber?: number;
+  x?: number;
+  y?: number;
+}
+
+/** What came of asking a viewer to play a video. */
+export interface ViewerVideoResult {
+  /** The video plays (it started, went on, or was playing already). */
+  played: boolean;
+  resource?: string;
+  pageNumber?: number;
+  /** It was playing before the call. */
+  already?: boolean;
+  /** The browser let it start only without sound. */
+  muted?: boolean;
+  /** It was asked to play and is still fetching what it plays. */
+  loading?: boolean;
+  /** Why nothing plays: no playable video matches (`none`), the video is
+   *  on pages the viewer does not show now (`elsewhere`, with
+   *  `pageNumbers`), or the browser refused to play it (`refused`). */
+  reason?: 'none' | 'elsewhere' | 'refused';
+  pageNumbers?: number[];
+}
+
 export interface ViewerStatus extends ViewerSettings {
   /** A layout or a file is being made. */
   generating: boolean;
   /** PDF and EPUB: the book changed since the file on screen was made. */
   stale?: boolean;
   error?: string | null;
-  /** Pages of the document on screen. */
+  /** PDF and EPUB, while the file is written: the share done (0 to 1, as
+   *  the progress bar shows it) and what is being done — `layout` or
+   *  `render` for the PDF; `layout`, `inputs`, `documents`, `resources` or
+   *  `package` for the EPUB. Null when nothing is being written. */
+  progress?: number | null;
+  phase?: string | null;
+  /** Pages of the document on screen (PDF: of the file last written). */
   pageCount?: number;
   /** The page on screen: its position in that document (0-based) and the
    *  number it carries in the book. */
@@ -45,6 +104,30 @@ export interface ViewerStatus extends ViewerSettings {
   /** EPUB: the document on screen in the reading order (1-based). */
   position?: number;
   positionCount?: number;
+  /** EPUB (reflowable): the page on screen within that document (1-based)
+   *  and the pages the document takes at this size. */
+  documentPage?: number;
+  documentPages?: number;
+  /** Whether a page lies after or before the one on screen. */
+  canNext?: boolean;
+  canPrevious?: boolean;
+  /** EPUB: the table of contents of the file on screen. */
+  contents?: ViewerContentsEntry[];
+  /** EPUB: what the last file was written with warnings about. */
+  notices?: ViewerNotice[];
+  /** Folio: the view as it is seen now, in degrees, as `folio.tilt` and
+   *  `folio.yaw` name it; null without the 3D book. */
+  view?: { tilt: number; yaw: number } | null;
+  /** Folio: how many times the magnifying glass magnifies while it is
+   *  held over the book; null while it is put away. */
+  magnification?: number | null;
+  /** HTML: the reader asked for one column and the book, set vertically,
+   *  is only read in columns paged sideways. */
+  columnsForced?: boolean;
+  /** Folio: the videos of the spread on show; HTML: those of the document
+   *  on screen. Only videos the viewer plays itself (a file or a stream
+   *  address, not a YouTube or Vimeo frame). */
+  videos?: ViewerVideo[];
 }
 
 export interface ViewerControls {
@@ -57,6 +140,11 @@ export interface ViewerControls {
   goToPage?: (pageIndex: number) => void;
   /** The next page, spread, column or document (1), or the one before (-1). */
   step?: (delta: 1 | -1) => void;
+  /** The first page of the document on screen, or its last. */
+  goToEdge?: (edge: 'first' | 'last') => void;
+  /** EPUB: go where an entry of the contents points (a path inside the
+   *  file, with an optional `#fragment`). */
+  goTo?: (href: string) => void;
   /** PDF and EPUB: the file on screen. */
   file?: () => { bytes: Uint8Array; name: string; mime: string } | null;
   download?: () => void;
@@ -65,6 +153,14 @@ export interface ViewerControls {
    *  the book's (`folio.tilt`, `folio.yaw`). */
   resetView?: () => void;
   saveView?: () => void;
+  /** Folio: hold the magnifying glass over the middle of the open spread
+   *  at this magnification (the pointer mode becomes `magnify`, which the
+   *  glass belongs to), or put it away with null. */
+  setMagnification?: (zoom: number | null) => void;
+  /** Folio and HTML: play a video of the pages, as a click on it does. */
+  playVideo?: (target: ViewerVideoTarget) => ViewerVideoResult | Promise<ViewerVideoResult>;
+  /** Folio and HTML: stop the videos playing on the pages. */
+  stopVideo?: () => void;
 }
 
 const registered = new Map<ViewportTab, ViewerControls>();
@@ -74,27 +170,54 @@ export function viewerControls(tab: ViewportTab): ViewerControls | null {
   return registered.get(tab) ?? null;
 }
 
+/** Registers `controls` for `tab` until the function it returns is
+ *  called (the viewer unmounting). */
+export function registerViewerControls(tab: ViewportTab, controls: ViewerControls): () => void {
+  registered.set(tab, controls);
+  return () => {
+    if (registered.get(tab) === controls) registered.delete(tab);
+  };
+}
+
+/** The members a viewer may leave out, each named once: a member added to
+ *  {@link ViewerControls} must be listed here to reach a viewer. */
+const OPTIONAL: Record<Exclude<keyof ViewerControls, 'status' | 'set' | 'regenerate'>, true> = {
+  goToPage: true,
+  step: true,
+  goToEdge: true,
+  goTo: true,
+  file: true,
+  download: true,
+  print: true,
+  resetView: true,
+  saveView: true,
+  setMagnification: true,
+  playVideo: true,
+  stopVideo: true,
+};
+
+/** Controls that always call the ones `read` gives at that moment. A
+ *  member the viewer leaves out reads as undefined here too, so a caller
+ *  can tell what a viewer does not do. */
+export function latestControls(read: () => ViewerControls): ViewerControls {
+  const proxy: ViewerControls = {
+    status: () => read().status(),
+    set: (settings) => read().set(settings),
+    regenerate: () => read().regenerate(),
+  };
+  for (const name of Object.keys(OPTIONAL) as (keyof typeof OPTIONAL)[]) {
+    Object.defineProperty(proxy, name, {
+      enumerable: true,
+      get: () => (read()[name] ? (...args: unknown[]) => (read()[name] as (...a: unknown[]) => unknown)(...args) : undefined),
+    });
+  }
+  return proxy;
+}
+
 /** Registers `controls` for `tab` while the calling viewer is mounted.
  *  The object may be new on every render: calls reach the latest one. */
 export function useViewerControls(tab: ViewportTab, controls: ViewerControls): void {
   const latest = useRef(controls);
   latest.current = controls;
-  useEffect(() => {
-    const proxy: ViewerControls = {
-      status: () => latest.current.status(),
-      set: (settings) => latest.current.set(settings),
-      regenerate: () => latest.current.regenerate(),
-      goToPage: (pageIndex) => latest.current.goToPage?.(pageIndex),
-      step: (delta) => latest.current.step?.(delta),
-      file: () => latest.current.file?.() ?? null,
-      download: () => latest.current.download?.(),
-      print: () => latest.current.print?.(),
-      resetView: () => latest.current.resetView?.(),
-      saveView: () => latest.current.saveView?.(),
-    };
-    registered.set(tab, proxy);
-    return () => {
-      if (registered.get(tab) === proxy) registered.delete(tab);
-    };
-  }, [tab]);
+  useEffect(() => registerViewerControls(tab, latestControls(() => latest.current)), [tab]);
 }

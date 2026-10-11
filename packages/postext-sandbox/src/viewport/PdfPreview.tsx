@@ -145,19 +145,24 @@ export const PdfPreview = memo(function PdfPreview({ bytesUrl, openPage, generat
   );
 });
 
+/** The share of the running step done, as the bar shows it: of the
+ *  document's blocks placed in the running layout pass, then of the pages
+ *  rendered while the PDF is written — full for the parts of the writing
+ *  that report nothing (fonts, the file itself). */
+export function generationFraction(progress: BuildProgress | null, renderProgress: RenderProgress | null, phase: 'layout' | 'render' | null): number {
+  if (phase === 'render') {
+    return renderProgress && renderProgress.phase === 'pages' && renderProgress.totalPages > 0
+      ? Math.min(1, renderProgress.pages / renderProgress.totalPages)
+      : 1;
+  }
+  return progress && progress.totalBlocks > 0 ? Math.min(1, progress.blocks / progress.totalBlocks) : 0;
+}
+
 /** A bar for the generation: the share of the document's blocks placed in
  *  the running pass (the engine re-places the document a few times, so the
  *  bar refills per pass), then full and pulsing while the PDF is written. */
 function GenerationBar({ progress, renderProgress, phase, label }: { progress: BuildProgress | null; renderProgress: RenderProgress | null; phase: 'layout' | 'render' | null; label: string }) {
-  // While the PDF is written the bar follows the pages rendered; it fills
-  // and pulses for the parts that report nothing (fonts, the file itself).
-  const fraction = phase === 'render'
-    ? renderProgress && renderProgress.phase === 'pages' && renderProgress.totalPages > 0
-      ? Math.min(1, renderProgress.pages / renderProgress.totalPages)
-      : 1
-    : progress && progress.totalBlocks > 0
-      ? Math.min(1, progress.blocks / progress.totalBlocks)
-      : 0;
+  const fraction = generationFraction(progress, renderProgress, phase);
   const pulse = phase === 'render' && !(renderProgress && renderProgress.phase === 'pages');
   return (
     <div

@@ -75,11 +75,12 @@ const boxOf = (bbox: BoundingBox, page: VDTPage): [number, number, number, numbe
   round(bbox.height / page.height),
 ];
 
-function summariseBlock(block: VDTBlock, page: VDTPage, maxText: number): PageBlockSummary {
+/** A block of a page in words. `maxText` clips its text. */
+export function summariseBlock(block: VDTBlock, page: VDTPage, maxText: number): PageBlockSummary {
   const justified = block.lines.filter((l) => l.justifiedSpaceRatio !== undefined);
   const loose = justified.filter((l) => l.justifiedSpaceRatio! >= LOOSE_SPACE_RATIO);
   const hyphenated = block.lines.filter((l) => l.hyphenated).length;
-  const resource = block.resourceBlock as { resourceId?: string } | undefined;
+  const resource = block.resourceBlock?.resource.id;
   return {
     type: block.type,
     ...(block.headingLevel !== undefined ? { level: block.headingLevel } : {}),
@@ -88,7 +89,7 @@ function summariseBlock(block: VDTBlock, page: VDTPage, maxText: number): PageBl
     lines: block.lines.length,
     ...(hyphenated > 0 ? { hyphenated } : {}),
     ...(loose.length > 0 ? { loose: loose.length, widestSpaces: round(Math.max(...loose.map((l) => l.justifiedSpaceRatio!)), 2) } : {}),
-    ...(resource?.resourceId ? { resource: resource.resourceId } : {}),
+    ...(resource ? { resource } : {}),
     box: boxOf(block.bbox, page),
     ...(block.sourceStart !== undefined ? { sourceOffset: block.sourceStart } : {}),
   };

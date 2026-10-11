@@ -102,6 +102,11 @@ export function FolioViewport() {
       pageCount,
       pageIndex: shown,
       pageNumber: pageNumberAt(layout, shown),
+      canPrevious: first > 0,
+      canNext: shown < pageCount - 1,
+      view: previewRef.current?.getView() ?? null,
+      magnification: previewRef.current?.getMagnification() ?? null,
+      videos: (previewRef.current?.videos() ?? []).map((v) => ({ resource: v.resource, pageNumber: pageNumberAt(layout, v.pageIndex), state: v.state })),
     }),
     set: (settings) => {
       if (settings.interaction !== undefined) handleSetInteraction(settings.interaction);
@@ -110,8 +115,25 @@ export function FolioViewport() {
     regenerate: handleRegenerate,
     goToPage: (pageIndex) => previewRef.current?.turnToPage(pageIndex),
     step: (delta) => (delta > 0 ? handleNext() : handlePrev()),
+    goToEdge: (edge) => previewRef.current?.turnToPage(edge === 'first' ? 0 : Math.max(0, pageCount - 1)),
     resetView: handleResetView,
     saveView: handleSaveView,
+    setMagnification: (zoom) => {
+      // The glass belongs to the magnify mode: the bar shows it picked.
+      if (zoom !== null) handleSetInteraction('magnify');
+      previewRef.current?.setMagnification(zoom);
+    },
+    playVideo: ({ pageNumber, ...pick }) => {
+      const pageIndex = pageNumber === undefined ? undefined : pageIndexOf(layout, pageNumber);
+      if (pageIndex !== undefined && pageIndex < 0) return { played: false, reason: 'none' };
+      const { pageIndexes, pageIndex: at, ...result } = previewRef.current?.playVideo({ ...pick, ...(pageIndex !== undefined ? { pageIndex } : {}) }) ?? { played: false, reason: 'none' as const };
+      return {
+        ...result,
+        ...(at !== undefined ? { pageNumber: pageNumberAt(layout, at) } : {}),
+        ...(pageIndexes ? { pageNumbers: pageIndexes.map((i) => pageNumberAt(layout, i)) } : {}),
+      };
+    },
+    stopVideo: () => previewRef.current?.stopVideo(),
   });
   // The phone layout docks the bar along the bottom: the book is laid out
   // above it (button + padding + border, the bar's offset and a gap).

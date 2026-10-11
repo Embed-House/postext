@@ -1,9 +1,13 @@
 // The laid-out pages: as pictures, and in words.
 
-import { chapterOf, layOutChapter, layoutConfig, pageIndexOf, type SandboxToolHost } from '../host';
+import { composeBookMemo } from '../../book/compose';
+import type { SandboxAction } from '../../context/SandboxContext';
+import { toChapterFocus } from '../../viewport/CanvasPreview/chapterFocus';
+import { chapterOf, dispatchAndWait, layOutChapter, layoutConfig, pageIndexOf, type SandboxToolHost } from '../host';
 import { ToolError, imageResult, type WebMcpTool } from '../modelContext';
 import { pageImage, preparePainting, printPreviewFor } from '../pageImage';
-import { outlinePages, summarisePage } from '../pageText';
+import { balloonSummary, hitTestPage, linkDestination, sourcePlace } from '../pagePoint';
+import { outlinePages, summariseBlock, summarisePage } from '../pageText';
 import { screenPosition } from './view';
 
 const CHAPTER_PARAM = {
@@ -148,5 +152,149 @@ export function pageTools(host: SandboxToolHost): WebMcpTool[] {
     },
   };
 
-  return [renderPage, inspectPages];
+  const inspectPoint: WebMcpTool = {
+    name: 'sandbox_inspect_point',
+    title: 'Sandbox: what is at a point of a page',
+    description: 'What lies at a point of a page and what a click there does in the Canvas: the block, the place in the chapter\'s Markdown source (line, column, offset and the word there), a link and the page it leads to (a :ref, a footnote marker, an index page number, a row of the contents) or its URL, the resource (a table cell, a caption, a note, a text of an SVG figure, a picture a design draws, a comic panel\'s art) and the part of a comic. x and y are fractions of the page from its top left corner, the space of sandbox_render_page\'s crop, so a spot seen in a picture can be asked about (pass trimmed as it was passed there). select also does what the click does short of following a link: it opens the Manuscript panel with the caret there (word: the word there selected, as a double click; to: a selection dragged to a second point), or the Resources panel on the resource, with the caret in its text. sandbox_inspect_pages lists every block of a page; sandbox_go_to_page with anchor goes where a link leads.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        chapter: CHAPTER_PARAM,
+        page: { type: 'integer', description: 'The page number as printed on the page.' },
+        position: { type: 'integer', minimum: 1, description: 'The page by its position among the chapter\'s pages (from 1). The page on screen when neither is given.' },
+        x: { type: 'number', minimum: 0, maximum: 1, description: 'Across the page, from its left edge (0) to its right edge (1).' },
+        y: { type: 'number', minimum: 0, maximum: 1, description: 'Down the page, from its top edge (0) to its bottom edge (1).' },
+        trimmed: { type: 'boolean', description: 'x and y are fractions of the page without its margin of bleed and crop marks, as in a picture rendered with trimmed.' },
+        select: { type: 'boolean', description: 'Also put the caret (or the selection) there in the Manuscript panel, or open the resource in the Resources panel.' },
+        word: { type: 'boolean', description: 'With select: select the word at the point, as a double click does.' },
+        to: {
+          type: 'object',
+          description: 'With select: a second point of the same page; the text from the first point to this one is selected, as a drag does.',
+          properties: {
+            x: { type: 'number', minimum: 0, maximum: 1 },
+            y: { type: 'number', minimum: 0, maximum: 1 },
+          },
+          required: ['x', 'y'],
+          additionalProperties: false,
+        },
+      },
+      required: ['x', 'y'],
+      additionalProperties: false,
+    },
+    annotations: { readOnlyHint: true, untrustedContentHint: true },
+    execute: async (args, { signal }) => {
+      if ((args.word !== undefined || args.to !== undefined) && args.select !== true) throw new ToolError('word and to say what to select: set select to true with them.');
+      if (args.word === true && args.to !== undefined) throw new ToolError('word selects the word at the point and to selects up to a second point: give one of them.');
+      const { chapter, index } = chapterOf(store.getSnapshot(), args.chapter ?? screenPosition(host).chapterIndex + 1);
+      const { doc, state, plan, settled } = await layOutChapter(host, chapter.id, signal);
+      const pageIndex = args.position === undefined && args.page === undefined
+        ? pageOnScreen(index, doc)
+        : pageIndexOf(doc, { position: args.position as number | undefined, number: args.page as number | undefined });
+      const page = doc.pages[pageIndex]!;
+      const inset = args.trimmed && doc.trimOffset > 0 ? doc.trimOffset : 0;
+      const onSheet = (p: { x: number; y: number }) => ({ x: inset + p.x * (page.width - 2 * inset), y: inset + p.y * (page.height - 2 * inset) });
+      const point = onSheet({ x: args.x as number, y: args.y as number });
+      const hit = hitTestPage(doc, pageIndex, point.x, point.y, state.resources);
+
+      // The document is the chapter's own: its offsets are the chapter's.
+      const book = composeBookMemo(state.chapters, chapter.id);
+      const source = chapter.id === state.activeChapterId ? state.markdown : chapter.markdown;
+      const caretOffset = hit.click.action === 'place_caret' ? hit.click.offset : hit.offset;
+      const place = caretOffset === null ? null : sourcePlace(source, toChapterFocus(book, caretOffset, caretOffset, false).anchor);
+
+      const link = hit.link;
+      const leadsTo = link ? linkDestination(doc, index, link, state.chapters, plan) : null;
+      const comic = hit.comic;
+      const resource = hit.resourceText
+        ? {
+            id: hit.resourceText.resourceId,
+            part: hit.resourceText.target.kind,
+            ...(hit.resourceText.target.kind === 'cell' ? { row: hit.resourceText.target.row + 1, column: hit.resourceText.target.col + 1 } : {}),
+            offset: hit.resourceText.offset,
+          }
+        : comic?.kind === 'art'
+          ? { id: comic.art.resourceId, part: 'comicArt' }
+          : hit.designImageResourceId !== null
+            ? { id: hit.designImageResourceId, part: 'designImage' }
+            : hit.block?.resourceBlock
+              ? { id: hit.block.resourceBlock.resource.id, part: 'body' }
+              : null;
+
+      let selected: Record<string, unknown> | undefined;
+      if (args.select === true) {
+        const word = args.word === true;
+        const to = args.to as { x: number; y: number } | undefined;
+        const end = to ? hitTestPage(doc, pageIndex, onSheet(to).x, onSheet(to).y, state.resources) : null;
+        const openPanel = (panel: 'markdown' | 'resources'): SandboxAction[] => (store.getSnapshot().activePanel === panel ? [] : [{ type: 'SET_PANEL', payload: panel }]);
+        const click = hit.click;
+        // A link is not followed: the caret goes to its text.
+        const caret = click.action === 'place_caret' ? click.offset : click.action === 'follow_link' ? hit.offset : null;
+        if (click.action === 'open_resource') {
+          await dispatchAndWait(host, [...openPanel('resources'), { type: 'SET_ACTIVE_RESOURCE', payload: click.resourceId }]);
+          selected = { panel: 'resources', resource: click.resourceId };
+        } else if (click.action === 'edit_resource_text') {
+          const { resourceId, target, offset } = click.hit;
+          let head = offset;
+          if (end) {
+            const other = end.resourceText;
+            const same = other && other.resourceId === resourceId && other.target.kind === target.kind
+              && (target.kind !== 'cell' || (other.target.kind === 'cell' && other.target.row === target.row && other.target.col === target.col));
+            if (!same) throw new ToolError('The second point is not in the same text of the resource (the same cell, caption, note or SVG): a selection stays inside one.');
+            head = other.offset;
+          }
+          await dispatchAndWait(host, [
+            ...openPanel('resources'),
+            { type: 'SET_ACTIVE_RESOURCE', payload: resourceId },
+            { type: 'SET_PENDING_RESOURCE_FOCUS', payload: { resourceId, target, anchor: offset, head, selectWord: word } },
+          ]);
+          selected = { panel: 'resources', resource: resourceId, part: target.kind, anchor: offset, head, ...(word ? { word: true } : {}) };
+        } else if (caret !== null) {
+          let head = caret;
+          if (end) {
+            if (end.offset === null) throw new ToolError('The second point is not on text of the page: nothing to select up to.');
+            head = end.offset;
+          }
+          const focus = toChapterFocus(book, caret, head, word);
+          await dispatchAndWait(host, [...openPanel('markdown'), { type: 'SET_PENDING_EDITOR_FOCUS', payload: { ...focus, fromViewer: true } }]);
+          selected = { panel: 'markdown', chapter: index + 1, anchor: focus.anchor, head: focus.head, ...(word ? { word: true } : {}) };
+        } else {
+          selected = { panel: null, note: 'Nothing to select at that point: it is off the text and the pictures of the page.' };
+        }
+      }
+
+      return {
+        chapter: index + 1,
+        title: chapter.title,
+        position: pageIndex + 1,
+        page: page.pageLabel,
+        chapterPages: doc.pages.length,
+        ...(settled ? {} : { note: 'The chapters before this one were still being laid out: page numbers may change.' }),
+        ...(hit.block ? { block: summariseBlock(hit.block, page, 120) } : {}),
+        ...(place ? { source: place } : {}),
+        ...(link
+          ? {
+              link: {
+                kind: link.kind,
+                ...('id' in link ? { id: link.id } : {}),
+                ...(link.kind === 'url' ? { href: link.href, followed: 'with Cmd or Ctrl held' } : leadsTo ? { leadsTo } : { leadsTo: null, note: 'Its target is not on a page this layout knows (another chapter sets it and is not paginated yet, or nothing does). sandbox_go_to_page with anchor looks for it in every chapter.' }),
+              },
+            }
+          : {}),
+        ...(resource ? { resource } : {}),
+        ...(comic
+          ? {
+              comic: {
+                part: comic.kind === 'text' ? 'balloon text' : comic.kind,
+                ...('balloon' in comic ? { balloon: balloonSummary(comic.balloon) } : {}),
+                ...('panel' in comic ? { panel: comic.panel.index + 1 } : {}),
+              },
+            }
+          : {}),
+        click: hit.click.action,
+        ...(selected ? { selected } : {}),
+      };
+    },
+  };
+
+  return [renderPage, inspectPages, inspectPoint];
 }

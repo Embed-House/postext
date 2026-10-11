@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { createFolioFromDocument, type FolioDocumentViewer, type FolioInteraction, type FolioLabels } from 'postext-folio';
+import { createFolioFromDocument, pageVideoSpots, spotContains, type FolioDocumentViewer, type FolioInteraction, type FolioLabels, type PageVideoSpot } from 'postext-folio';
 import { resolveColorValue, resolveDebugConfig, resolveDiagramStyleConfig, watchFonts, onFontsChanged, type PostextConfig, type VDTDocument } from 'postext';
 import { useBookPlan, useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector, useLayoutSource } from '../context/SandboxContext';
 import { composeBookMemo } from '../book/compose';
@@ -21,6 +21,7 @@ import { defaultDocumentLocale } from './CanvasPreview/layoutUtils';
 import type { BookPageMap } from './usePageHashSync';
 import { FolioLoading } from './FolioLoading';
 import { useFolioSelection } from './useFolioSelection';
+import { pickVideo, type PlayableVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from './viewerVideos';
 
 interface FolioPreviewProps {
   /** What the left button does on the book. */
@@ -50,7 +51,32 @@ export interface FolioPreviewHandle {
   /** The view as it is seen now, in degrees; null without the 3D book. */
   getView: () => { tilt: number; yaw: number } | null;
   regenerate: () => void;
+  /** Holds the magnifying glass over the middle of the open spread at
+   *  `zoom` times (the viewer goes to its magnify mode, which the glass
+   *  belongs to), or puts it away with null. */
+  setMagnification: (zoom: number | null) => void;
+  /** How many times the glass magnifies while it is held over the book;
+   *  null while it is put away. */
+  getMagnification: () => number | null;
+  /** The self-hosted videos of the spread on show. */
+  videos: () => PreviewVideo[];
+  /** Plays a video of the spread on show, as a click on it does; one
+   *  already playing is left to play. */
+  playVideo: (pick: VideoPick) => PreviewVideoResult;
+  stopVideo: () => void;
 }
+
+/** The videos of a page that Folio plays itself (a file or its address;
+ *  a YouTube or Vimeo poster turns the page as any other). */
+function playableVideos(doc: VDTDocument, pageIndex: number): PlayableVideo<PageVideoSpot>[] {
+  const page = doc.pages[pageIndex];
+  if (!page) return [];
+  return pageVideoSpots(page, doc)
+    .filter((spot) => spot.video.source === 'file')
+    .map((spot) => ({ resource: spot.resourceId, pageIndex, contains: (x, y) => spotContains(spot, x, y), item: spot }));
+}
+
+const videoKey = (pageIndex: number, resource: string): string => `${pageIndex}|${resource}`;
 
 /** A laid-out document with what tells its pages apart across layouts:
  *  the chapter (position in the book) of every page of a whole-book
@@ -219,6 +245,8 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   });
   const selectionRef = useRef(selection);
   selectionRef.current = selection;
+  // The videos playing or paused on the pages, as the viewer reports them.
+  const videoStatesRef = useRef(new Map<string, 'playing' | 'paused'>());
   const callbacksRef = useRef({ onGeneratingChange, onPageCountChange, onCurrentPageChange, onSpreadChange, onBindingChange });
   callbacksRef.current = { onGeneratingChange, onPageCountChange, onCurrentPageChange, onSpreadChange, onBindingChange };
 
@@ -241,6 +269,55 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
     resetView: () => viewerRef.current?.resetView(),
     getView: () => viewerRef.current?.getView() ?? null,
     regenerate: () => setRebuildKey((k) => k + 1),
+    setMagnification: (zoom) => {
+      const viewer = viewerRef.current;
+      if (!viewer) return;
+      if (zoom === null) {
+        viewer.holdMagnifier(false);
+        return;
+      }
+      // The tab's own mode follows (its effect then finds the viewer there).
+      viewer.setInteraction('magnify');
+      viewer.setMagnification(zoom);
+      viewer.holdMagnifier(true);
+    },
+    getMagnification: () => {
+      const glass = viewerRef.current?.getMagnifier();
+      return glass?.held ? glass.zoom : null;
+    },
+    videos: () => {
+      const viewer = viewerRef.current;
+      const doc = viewerVdtRef.current;
+      if (!viewer || !doc) return [];
+      return viewer.state.pages.flatMap((i) => playableVideos(doc, i)).map((v) => ({
+        resource: v.resource,
+        pageIndex: v.pageIndex,
+        state: videoStatesRef.current.get(videoKey(v.pageIndex, v.resource)) ?? 'stopped',
+      }));
+    },
+    playVideo: (pick) => {
+      const viewer = viewerRef.current;
+      const doc = viewerVdtRef.current;
+      if (!viewer || !doc) return { played: false, reason: 'none' };
+      const onShow = viewer.state.pages;
+      const picked = pickVideo(onShow.flatMap((i) => playableVideos(doc, i)), pick);
+      if (!picked) {
+        // A video plays only on the spread the book is open at.
+        const elsewhere = pick.resource === undefined && pick.pageIndex === undefined
+          ? []
+          : doc.pages.map((_, i) => i).filter((i) => !onShow.includes(i) && pickVideo(playableVideos(doc, i), pick) !== null);
+        return elsewhere.length > 0 ? { played: false, reason: 'elsewhere', pageIndexes: elsewhere } : { played: false, reason: 'none' };
+      }
+      const found = { resource: picked.resource, pageIndex: picked.pageIndex };
+      // A click on a video that plays pauses it.
+      if (videoStatesRef.current.get(videoKey(picked.pageIndex, picked.resource)) === 'playing') return { played: true, already: true, ...found };
+      const spot = picked.item;
+      const point = pick.x !== undefined && pick.y !== undefined
+        ? { x: pick.x, y: pick.y }
+        : { x: spot.origin.x + (spot.across.x + spot.down.x) / 2, y: spot.origin.y + (spot.across.y + spot.down.y) / 2 };
+      return viewer.toggleVideoAt({ page: picked.pageIndex, ...point }) ? { played: true, ...found } : { played: false, reason: 'refused', ...found };
+    },
+    stopVideo: () => viewerRef.current?.stopVideo(),
   }), []);
 
   // A face that lands after the first measurement: the engine's watch
@@ -473,6 +550,10 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
         // Videos play on the pages (#477): an uploaded file from its object
         // URL, else from its address.
         videoUrl: getResourceVideoUrl,
+        onVideo: ({ resourceId, page, state }) => {
+          if (state === 'playing' || state === 'paused') videoStatesRef.current.set(videoKey(page, resourceId), state);
+          else videoStatesRef.current.delete(videoKey(page, resourceId));
+        },
         onTarget: (state) => {
           callbacksRef.current.onSpreadChange?.(state.pages);
           selectionRef.current.onSpread();
