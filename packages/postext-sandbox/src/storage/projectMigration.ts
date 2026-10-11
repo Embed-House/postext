@@ -50,7 +50,8 @@ import type { ProjectThumbnail } from './projects';
  *  prereleases: 3 before the maths size changed, 4 before the inline gap
  *  did, 5 before the five version-6 rules did, 6 before the two version-7
  *  rules did, 7 before the three version-8 rules did; records 8 by postext
- *  1.5 to 1.22, records 9 by 1.23, records 10 by 1.24. */
+ *  1.5 to 1.22, records 9 by 1.23, records 10 by 1.24, records 11 by
+ *  1.25 to 1.27. */
 export const PROJECT_RECORD_VERSION: number = CONFIG_VERSION;
 
 export interface MigrationDeps {

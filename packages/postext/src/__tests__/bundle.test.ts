@@ -672,7 +672,7 @@ describe('bundles written by postext 1.4 or earlier', () => {
 
   it('stamps every manifest it writes with the configuration rules', async () => {
     const { manifest } = await sample();
-    expect(CONFIG_VERSION).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
     expect(manifest.configVersion).toBe(CONFIG_VERSION);
   });
 

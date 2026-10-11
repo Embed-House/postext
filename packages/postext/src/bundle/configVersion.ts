@@ -14,8 +14,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 11 since #632 (10 from
- * postext 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 12 since #747 (11 from
+ * postext 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -118,6 +118,7 @@ import { hasCJK } from '../measure/cjk';
  *     the opener's own column is a slot for a top float
  *     (`layout.floatsUnderOpener`, #639), where up to 1.24 such a float
  *     landed from the second column on ({@link pinLegacyOpenerHeadFloats}).
+ * - 12 (#747), the rules of postext 1.28, each listed with its pin below.
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -130,9 +131,11 @@ import { hasCJK } from '../measure/cjk';
  * older one gets too); one stored under 9 was written by postext 1.23 and
  * gets the version-10 pins (which every older one gets too); one stored
  * under 10 was written by postext 1.24 and gets the version-11 pins (which
- * every older one gets too).
+ * every older one gets too); one stored under 11 was written by postext
+ * 1.25 to 1.27 and gets the version-12 pins (which every older one gets
+ * too).
  */
-export const CONFIG_VERSION = 11;
+export const CONFIG_VERSION = 12;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
