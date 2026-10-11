@@ -529,6 +529,45 @@ describe('list-end and loose-paragraph levers', () => {
     expect(headingLever(capped, NO_FORCED)).toBeUndefined();
   });
 
+  it('keeps the heading right under a page-span opener at its column\'s head in a closing band (#709)', () => {
+    // The opener stays in its own column as a hidden block, so the headline
+    // under it is block 1: on a page that flows on it is a heading lever
+    // like any other; in a closing band it is the column's head, and only
+    // the heading further down is offered.
+    const build = (): VDTDocument => {
+      const opener = fakeBlock({ type: 'heading', headingLevel: 1, contentIndex: 80, hidden: true });
+      const full = fakeBlock({ type: 'paragraph', bbox: { x: 500, y: 0, width: 480, height: 900 } });
+      return fakeDoc([
+        [
+          { blocks: [opener, heading(81, 2), para(), heading(82, 2), para()], availableHeight: 2 * 24 },
+          { blocks: [full], availableHeight: 0 },
+        ],
+        [{ blocks: [para()], availableHeight: 0 }],
+      ]);
+    };
+    const headingLevers = (doc: VDTDocument, forced: ReadonlySet<number>) =>
+      collectColumnGaps(doc, forced).flatMap((g) => g.candidates).filter((c) => c.kind === 'heading').map((c) => c.contentIndex);
+
+    expect(headingLevers(build(), NO_FORCED)).toEqual([81, 82]);
+    expect(headingLevers(build(), new Set([0]))).toEqual([82]);
+    const capped = build();
+    for (const c of capped.pages[0]!.columns) c.trailingCap = true;
+    expect(headingLevers(capped, NO_FORCED)).toEqual([82]);
+    // The lines the column needs go to the heading that is left.
+    const proposal = proposeBalanceLines(build(), new Set([0]), emptyState(), baseOptions());
+    expect(proposal.lines.get(81)).toBeUndefined();
+    expect(proposal.lines.get(82)).toBe(2);
+
+    // A structural hidden heading before it counts the same way, and a
+    // visible block before it makes it a mid-column heading again.
+    const structural = build();
+    structural.pages[0]!.columns[0]!.blocks.unshift(fakeBlock({ type: 'heading', headingLevel: 1, contentIndex: 79, hidden: true }));
+    expect(headingLevers(structural, new Set([0]))).toEqual([82]);
+    const mid = build();
+    mid.pages[0]!.columns[0]!.blocks.splice(1, 0, para());
+    expect(headingLevers(mid, new Set([0]))).toEqual([81, 82]);
+  });
+
   it('exhausts heading capacity before touching list ends', () => {
     const doc = fakeDoc([
       [

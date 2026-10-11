@@ -257,7 +257,11 @@ function isTextColumn(col: VDTColumn): boolean {
  * starting at the page top) nor the last (space above a trailing heading
  * would strand it at the column bottom); a heading that opens a column
  * under a float band is eligible too (it is a heading lever, not an
- * after-float point). List-end points are the first
+ * after-float point). In a closing band (a page that does not flow on, a
+ * band cut level by a trailing cap) the heading at its column's head keeps
+ * its place, under a float band and under a page-span opener alike: the
+ * hidden block the opener leaves in its own column does not make the
+ * heading after it a mid-column one (#709). List-end points are the first
  * non-list block after a run of list items — they may be last in column
  * (pushing a trailing paragraph down by at most the gap is local: the
  * element that opened the next column still does not fit). After-float
@@ -529,10 +533,16 @@ export function collectColumnGaps(
         // under the float does there (EF-79): room above it would only drop
         // its column's head below the one beside it.
         const underFloat = i === 0 && columnUnderTopFloat(page, col);
+        // So does the heading right under a page-span opener in the opener's
+        // own column (#709): the opener stays there as a hidden block, so
+        // the heading is the first thing its column shows, and the columns
+        // beside it start level with it (`openerHeadSpacing`). A line above
+        // it would lower this column's head alone.
+        const opensColumn = i >= 1 && col.blocks.slice(0, i).every((k) => k.hidden);
         if (
           b.type === 'heading'
           && b.headingLevel !== undefined
-          && (i >= 1 || (underFloat && !closingBand))
+          && ((i >= 1 && !(opensColumn && closingBand)) || (underFloat && !closingBand))
           && i < col.blocks.length - 1
         ) {
           candidates.push({
