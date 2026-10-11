@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 25527,
+        "bytes": 25532,
         "folio": "bda6e41d"
       },
       "detected": {
@@ -271,7 +271,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -353,7 +359,7 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 26040,
+        "bytes": 26047,
         "folio": "bda6e41d"
       },
       "detected": {
@@ -536,7 +542,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

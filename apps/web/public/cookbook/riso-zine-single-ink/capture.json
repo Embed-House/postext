@@ -3,21 +3,21 @@
   "slug": "riso-zine-single-ink",
   "sourceHash": "10dc3931ca8b556190ac1b3ddfe9163a4d05bbcd38f3f47a39b136ad0565fc02",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.884Z",
+  "capturedAt": "2026-10-11T03:51:04.579Z",
   "variants": {
     "en": {
-      "hash8": "41a7faa9",
+      "hash8": "24ec8718",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 167,
+        "importMs": 169,
         "fontsMs": 50,
         "buildMs": 27,
-        "totalMs": 810,
+        "totalMs": 812,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58454,
+          "bytes": 58460,
           "alt": "Opening page 1: Night Buses."
         },
         {
@@ -115,12 +115,12 @@
       },
       "pdf": {
         "file": "riso-zine-single-ink.pdf",
-        "bytes": 198845,
+        "bytes": 198846,
         "pages": 4
       },
       "sandbox": {
         "file": "riso-zine-single-ink.postext",
-        "bytes": 69121,
+        "bytes": 69142,
         "folio": "ead0b06f"
       },
       "detected": {
@@ -359,7 +359,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

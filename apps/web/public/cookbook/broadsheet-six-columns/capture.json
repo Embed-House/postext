@@ -3,20 +3,20 @@
   "slug": "broadsheet-six-columns",
   "sourceHash": "e4428123f174da59dec57f125bc437634864a81db1090a0d408fa86b14aa9886",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.950Z",
+  "capturedAt": "2026-10-11T03:48:53.621Z",
   "variants": {
     "en": {
-      "hash8": "7a6ca05a",
+      "hash8": "13e5a13b",
       "vdtHash": "e720c45bd4a2a3dff00c834916dc12e819c31362",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 44,
-        "buildMs": 101,
-        "totalMs": 1054,
+        "importMs": 136,
+        "fontsMs": 45,
+        "buildMs": 114,
+        "totalMs": 1079,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "sandbox": {
         "file": "broadsheet-six-columns.postext",
-        "bytes": 1366178,
+        "bytes": 1366194,
         "folio": "ac94dacf"
       },
       "detected": {
@@ -432,6 +432,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

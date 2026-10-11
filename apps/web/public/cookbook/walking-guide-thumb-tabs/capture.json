@@ -3,20 +3,20 @@
   "slug": "walking-guide-thumb-tabs",
   "sourceHash": "d1571a7ba53f07983d28a33b237f519c03bc20fb7d59bb9965282b64883951c7",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.990Z",
+  "capturedAt": "2026-10-11T03:52:05.598Z",
   "variants": {
     "en": {
-      "hash8": "2492c8da",
+      "hash8": "0b9ad182",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 131,
+        "importMs": 130,
         "fontsMs": 27,
-        "buildMs": 32,
-        "totalMs": 797,
+        "buildMs": 33,
+        "totalMs": 800,
         "builds": 1
       },
       "specimen": {
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52318,
+        "bytes": 52350,
         "folio": "98b88fc8"
       },
       "detected": {
@@ -420,17 +420,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "8128bb4d",
+      "hash8": "a69dca84",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 127,
+        "importMs": 129,
         "fontsMs": 26,
-        "buildMs": 31,
-        "totalMs": 790,
+        "buildMs": 30,
+        "totalMs": 795,
         "builds": 1
       },
       "specimen": {
@@ -565,7 +571,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52564,
+        "bytes": 52597,
         "folio": "98b88fc8"
       },
       "detected": {
@@ -839,6 +845,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "catalan-pocket-novella",
   "sourceHash": "6ee033bd6190ba2a5098b8407b622a361f8fabff192d8e405ae0f8a3db0d3cc8",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.976Z",
+  "capturedAt": "2026-10-11T03:48:53.649Z",
   "variants": {
     "en": {
-      "hash8": "40565cbb",
+      "hash8": "6c72cb91",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 70,
-        "buildMs": 886,
-        "totalMs": 1751,
+        "importMs": 164,
+        "fontsMs": 67,
+        "buildMs": 856,
+        "totalMs": 1688,
         "builds": 1
       },
       "specimen": {
@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492610,
+        "bytes": 1492632,
         "folio": "8e6f438d"
       },
       "detected": {
@@ -376,13 +376,13 @@
       }
     },
     "es": {
-      "hash8": "ff0d9f90",
+      "hash8": "cd299b9a",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 70,
-        "buildMs": 878,
-        "totalMs": 1718,
+        "importMs": 168,
+        "fontsMs": 66,
+        "buildMs": 885,
+        "totalMs": 1726,
         "builds": 1
       },
       "specimen": {
@@ -537,7 +537,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492625,
+        "bytes": 1492646,
         "folio": "8e6f438d"
       },
       "detected": {

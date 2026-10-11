@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512835,
+        "bytes": 512842,
         "folio": "415ce2a3"
       },
       "detected": {
@@ -347,7 +347,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -456,7 +462,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513258,
+        "bytes": 513264,
         "folio": "415ce2a3"
       },
       "detected": {
@@ -688,7 +694,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

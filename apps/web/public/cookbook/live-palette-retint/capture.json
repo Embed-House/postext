@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31008,
+        "bytes": 31020,
         "folio": "de4718c0"
       },
       "detected": {
@@ -322,7 +322,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -404,7 +410,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31425,
+        "bytes": 31436,
         "folio": "de4718c0"
       },
       "detected": {
@@ -638,7 +644,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

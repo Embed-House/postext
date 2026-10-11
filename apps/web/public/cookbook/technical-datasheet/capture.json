@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78023,
+        "bytes": 78033,
         "folio": "ca48c30e"
       },
       "detected": {
@@ -430,6 +430,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

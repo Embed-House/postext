@@ -3,20 +3,20 @@
   "slug": "magazine-three-column-feature",
   "sourceHash": "b5b127435adfd8048036bc941d3f5b308577950c09aa6df282401833dd4e5332",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.854Z",
+  "capturedAt": "2026-10-11T03:50:46.809Z",
   "variants": {
     "en": {
-      "hash8": "a1c2533a",
+      "hash8": "677f6064",
       "vdtHash": "89fbc32ceeafe6419ee3e4b3399303688a6f3d86",
       "timings": {
-        "importMs": 129,
+        "importMs": 131,
         "fontsMs": 45,
         "buildMs": 76,
-        "totalMs": 818,
+        "totalMs": 814,
         "builds": 1
       },
       "specimen": {
@@ -138,7 +138,7 @@
       },
       "sandbox": {
         "file": "magazine-three-column-feature.postext",
-        "bytes": 1847601,
+        "bytes": 1847623,
         "folio": "579e6f1a"
       },
       "detected": {
@@ -412,7 +412,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 83: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

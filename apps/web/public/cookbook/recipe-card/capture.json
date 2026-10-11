@@ -3,20 +3,20 @@
   "slug": "recipe-card",
   "sourceHash": "ecdf1a86b83bbae61e1aaee191455994fe87bc289028d2ebc9a91650d87bf830",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.868Z",
+  "capturedAt": "2026-10-11T03:51:04.573Z",
   "variants": {
     "en": {
-      "hash8": "f4348bf3",
+      "hash8": "eb51cfb5",
       "vdtHash": "d9244626546dce03f38e887964c7962bf560c7f9",
       "timings": {
-        "importMs": 139,
+        "importMs": 129,
         "fontsMs": 29,
-        "buildMs": 36,
-        "totalMs": 798,
+        "buildMs": 37,
+        "totalMs": 789,
         "builds": 1
       },
       "specimen": {
@@ -84,7 +84,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416841,
+        "bytes": 416861,
         "folio": "3a99731f"
       },
       "detected": {
@@ -310,19 +310,24 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 57: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "32950e94",
+      "hash8": "1f6192c6",
       "vdtHash": "9f33fe5a8572ed57cd8bdc43156f67c1776702d7",
       "timings": {
-        "importMs": 140,
-        "fontsMs": 27,
-        "buildMs": 36,
-        "totalMs": 793,
+        "importMs": 128,
+        "fontsMs": 25,
+        "buildMs": 37,
+        "totalMs": 782,
         "builds": 1
       },
       "specimen": {
@@ -390,7 +395,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417146,
+        "bytes": 417169,
         "folio": "3a99731f"
       },
       "detected": {
@@ -616,7 +621,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 57: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

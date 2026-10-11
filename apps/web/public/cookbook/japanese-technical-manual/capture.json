@@ -3,21 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "77b94214451b9f854fb65941ea625b547caf3eec4ba929967f0c3861d280b3e3",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.549Z",
+  "capturedAt": "2026-10-11T03:50:46.775Z",
   "variants": {
     "en": {
-      "hash8": "0ede71fe",
+      "hash8": "76f399aa",
       "vdtHash": "3146dc05d72f627e284ba24329951504ac8a5046",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 229,
-        "buildMs": 84,
-        "totalMs": 1007,
+        "importMs": 188,
+        "fontsMs": 216,
+        "buildMs": 82,
+        "totalMs": 1040,
         "builds": 1
       },
       "specimen": {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 40932,
+        "bytes": 40977,
         "folio": "90d2b4f0"
       },
       "detected": {
@@ -417,24 +417,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 40 dropped (even: same page sides)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "continuation.headings {\"h1\":2} dropped (chapter numbers restart)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
           }
         ]
       }
     },
     "es": {
-      "hash8": "928d10e4",
+      "hash8": "2ca9c06c",
       "vdtHash": "db11b14cc2b64f39276ee9da6714f6c4ef25dcaf",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 216,
-        "buildMs": 83,
-        "totalMs": 1005,
+        "importMs": 171,
+        "fontsMs": 212,
+        "buildMs": 82,
+        "totalMs": 1000,
         "builds": 1
       },
       "specimen": {
@@ -548,7 +543,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 40986,
+        "bytes": 41033,
         "folio": "90d2b4f0"
       },
       "detected": {
@@ -834,12 +829,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 40 dropped (even: same page sides)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "continuation.headings {\"h1\":2} dropped (chapter numbers restart)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
           }
         ]
       }

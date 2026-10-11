@@ -3,21 +3,21 @@
   "slug": "pdf-with-embedded-fonts",
   "sourceHash": "5496f16ce0a9c27971ba363f124618f98da93b20bbb3c528a23dac4ee3f379d3",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.285Z",
+  "capturedAt": "2026-10-11T03:51:04.550Z",
   "variants": {
     "en": {
-      "hash8": "b36f6bad",
+      "hash8": "122eda5d",
       "vdtHash": "6614b01a37d0ff6a777bd67b097f1a4e32a7cf36",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 51,
-        "buildMs": 33,
-        "totalMs": 805,
+        "importMs": 197,
+        "fontsMs": 50,
+        "buildMs": 34,
+        "totalMs": 890,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "pdf-with-embedded-fonts.postext",
-        "bytes": 30426,
+        "bytes": 30448,
         "folio": "885e614d"
       },
       "detected": {
@@ -316,7 +316,13 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

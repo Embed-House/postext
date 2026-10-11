@@ -523,6 +523,27 @@ describe("C33: the Sandbox bundle read back (#690)", () => {
     ]);
   });
 
+  it("fails a bundle that names no language, or divides its words otherwise than the pen (#660)", () => {
+    const english = { locale: "en-us", enabled: true };
+    expect(readBackFindings(back({ language: { pen: english, bundle: english, named: "en-us" } }))).toEqual([]);
+    expect(readBackFindings(back({ language: null }))).toEqual([]);
+    expect(readBackFindings(back({ language: { pen: english, bundle: english, named: null } }))).toEqual([
+      {
+        check: "C33", severity: "fail",
+        detail: "the bundle's configuration names no language, and the pen hyphenates in en-us: "
+          + "the Sandbox reads such a document in the interface language and breaks its lines otherwise",
+      },
+    ]);
+    expect(readBackFindings(back({ language: { pen: english, bundle: { locale: "es", enabled: true }, named: "es" } }))).toEqual([
+      { check: "C33", severity: "fail", detail: "the bundle hyphenates in es, the pen hyphenates in en-us" },
+    ]);
+    const off = { locale: "en-us", enabled: false };
+    expect(readBackFindings(back({ language: { pen: off, bundle: english, named: "en-us" } }))[0].detail)
+      .toBe("the bundle hyphenates in en-us, the pen sets its text without hyphenation (en-us)");
+    expect(readBackFindings(back({ language: { pen: off, bundle: off, named: null } }))[0].detail)
+      .toContain("names no language, and the pen sets its text without hyphenation (en-us)");
+  });
+
   it("fails a bundle that does not open, and notes an engine that cannot read one back", () => {
     expect(readBackFindings({ error: "Invalid bundle manifest (preset.json)\n  at openBundle", chapters: [], extraWarnings: [] })).toEqual([
       { check: "C33", severity: "fail", detail: "the bundle does not open and lay out again: Invalid bundle manifest (preset.json)" },

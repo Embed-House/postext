@@ -3,20 +3,20 @@
   "slug": "magazine-cover-and-contents",
   "sourceHash": "7cad0959be81af7ad7ba09e130a2b597fd1e6ac7ae4923a6ec5f6fa02802f62b",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.835Z",
+  "capturedAt": "2026-10-11T03:53:22.473Z",
   "variants": {
     "en": {
-      "hash8": "de655c8d",
+      "hash8": "8c46919c",
       "vdtHash": "df0858ff3432514c448b2daceae76992cfffce7a",
       "timings": {
-        "importMs": 145,
-        "fontsMs": 44,
-        "buildMs": 436,
-        "totalMs": 1247,
+        "importMs": 152,
+        "fontsMs": 42,
+        "buildMs": 425,
+        "totalMs": 1243,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 242826,
+          "bytes": 242850,
           "alt": "Opening page 1: Fallow."
         },
         {
@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2084678,
+        "bytes": 2084684,
         "folio": "c6787b35"
       },
       "detected": {
@@ -444,13 +444,13 @@
       }
     },
     "es": {
-      "hash8": "1acccd3a",
+      "hash8": "c27c4f12",
       "vdtHash": "7cf855457f629268dafb733e24cbed20a4d00ef3",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 42,
-        "buildMs": 124,
-        "totalMs": 904,
+        "importMs": 140,
+        "fontsMs": 41,
+        "buildMs": 121,
+        "totalMs": 911,
         "builds": 1
       },
       "specimen": {
@@ -575,7 +575,7 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2085385,
+        "bytes": 2085391,
         "folio": "c6787b35"
       },
       "detected": {

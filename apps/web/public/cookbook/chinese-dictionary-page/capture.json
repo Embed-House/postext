@@ -3,21 +3,21 @@
   "slug": "chinese-dictionary-page",
   "sourceHash": "d12830ee4b5e93167fe7b62c1cec9d13882f5676bc26a6ac8c121427ea4bafc2",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.051Z",
+  "capturedAt": "2026-10-11T03:49:50.711Z",
   "variants": {
     "en": {
-      "hash8": "587ac7b4",
+      "hash8": "0f02544f",
       "vdtHash": "aa8df14ab7811236ff82cae36dadad1437aa11bb",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 280,
-        "buildMs": 56,
-        "totalMs": 1050,
+        "importMs": 171,
+        "fontsMs": 265,
+        "buildMs": 55,
+        "totalMs": 1041,
         "builds": 1
       },
       "specimen": {
@@ -117,7 +117,7 @@
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 25965,
+        "bytes": 25984,
         "folio": "662b056b"
       },
       "detected": {
@@ -296,19 +296,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 633: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "3b780a3c",
+      "hash8": "cc4d7690",
       "vdtHash": "1aeac785e2d796b6da3f1c1e1584832851430942",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 261,
-        "buildMs": 56,
-        "totalMs": 1032,
+        "importMs": 162,
+        "fontsMs": 262,
+        "buildMs": 55,
+        "totalMs": 1024,
         "builds": 1
       },
       "specimen": {
@@ -408,7 +408,7 @@
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26036,
+        "bytes": 26056,
         "folio": "662b056b"
       },
       "detected": {
@@ -587,7 +587,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 633: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

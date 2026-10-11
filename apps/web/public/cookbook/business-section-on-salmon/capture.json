@@ -3,20 +3,20 @@
   "slug": "business-section-on-salmon",
   "sourceHash": "b47726d857be43923a4a8b41a9f907b115e3258a2a196ea446c42ad45c5db4c4",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:10:30.207Z",
+  "capturedAt": "2026-10-11T03:48:53.642Z",
   "variants": {
     "en": {
-      "hash8": "031f9c35",
+      "hash8": "fb4386e2",
       "vdtHash": "3ca28e58f9c65df967c5dfaf1651338bd9ed3824",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 54,
-        "buildMs": 480,
-        "totalMs": 1256,
+        "importMs": 126,
+        "fontsMs": 49,
+        "buildMs": 509,
+        "totalMs": 1278,
         "builds": 1
       },
       "specimen": {
@@ -153,7 +153,7 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218553,
+        "bytes": 1218561,
         "folio": "77d83e3b"
       },
       "detected": {

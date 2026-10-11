@@ -3,20 +3,20 @@
   "slug": "chapter-opener-bleed-band",
   "sourceHash": "a2ddeef213e710b29a94719d87094f5b8b9e14c39744e61a11e25cbb79a8ef43",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.034Z",
+  "capturedAt": "2026-10-11T03:49:50.706Z",
   "variants": {
     "en": {
-      "hash8": "376d0413",
+      "hash8": "5d11d6ad",
       "vdtHash": "09940d9699e7702a8cda351e3491448efa48de26",
       "timings": {
-        "importMs": 134,
+        "importMs": 146,
         "fontsMs": 2,
         "buildMs": 210,
-        "totalMs": 969,
+        "totalMs": 998,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34386,
+        "bytes": 34417,
         "folio": "43da5799"
       },
       "detected": {
@@ -324,19 +324,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.headings {\"h1\":2,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
+            "detail": "continuation carried as the bundle's start: pageNumbering, headings"
           }
         ]
       }
     },
     "es": {
-      "hash8": "fb0ded86",
+      "hash8": "f78cb554",
       "vdtHash": "256f874234a5d86a1ea1a8b1319f24f1128a52f6",
       "timings": {
-        "importMs": 136,
+        "importMs": 137,
         "fontsMs": 2,
-        "buildMs": 66,
-        "totalMs": 815,
+        "buildMs": 71,
+        "totalMs": 822,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +435,7 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34602,
+        "bytes": 34633,
         "folio": "43da5799"
       },
       "detected": {
@@ -644,7 +644,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.headings {\"h1\":2,\"h2\":0,\"h3\":0,\"h4\":0,\"h5\":0,\"h6\":0} dropped (chapter numbers restart)"
+            "detail": "continuation carried as the bundle's start: pageNumbering, headings"
           }
         ]
       }

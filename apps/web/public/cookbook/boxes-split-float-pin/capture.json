@@ -3,20 +3,20 @@
   "slug": "boxes-split-float-pin",
   "sourceHash": "6a3c63f788ab2b1d6b0db5fa054d3cbbb8011691195c1309da4f1f6213e8e833",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.943Z",
+  "capturedAt": "2026-10-11T03:48:53.615Z",
   "variants": {
     "es": {
-      "hash8": "ce829ccc",
+      "hash8": "0c736515",
       "vdtHash": "731766a34e54522c0cbf634b2c7f9ff4a2b60ec3",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 31,
-        "buildMs": 84,
-        "totalMs": 833,
+        "importMs": 174,
+        "fontsMs": 29,
+        "buildMs": 86,
+        "totalMs": 882,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "boxes-split-float-pin.postext",
-        "bytes": 34641,
+        "bytes": 34671,
         "folio": "bcf271e0"
       },
       "detected": {
@@ -378,7 +378,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.headings {\"h1\":3} dropped (chapter numbers restart)"
+            "detail": "continuation carried as the bundle's start: pageNumbering, headings"
           }
         ]
       }

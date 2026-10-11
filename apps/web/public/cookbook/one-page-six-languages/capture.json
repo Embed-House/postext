@@ -92,7 +92,8 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794298
+        "bytes": 794298,
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -315,7 +316,8 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794466
+        "bytes": 794466,
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -539,7 +541,8 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794590
+        "bytes": 794590,
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -770,7 +773,8 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794922
+        "bytes": 794922,
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1003,7 +1007,8 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794913
+        "bytes": 794913,
+        "pages": 1
       },
       "detected": {
         "apis": [

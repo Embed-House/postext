@@ -3,20 +3,20 @@
   "slug": "trade-paperback-novel",
   "sourceHash": "b7eaa8e1a23cd415d74af56595280c7c47b1a02a330c93c38e83b65b5c3fdbfc",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.946Z",
+  "capturedAt": "2026-10-11T03:52:05.584Z",
   "variants": {
     "en": {
-      "hash8": "bf3bbf86",
+      "hash8": "466b9586",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 30,
-        "buildMs": 43,
-        "totalMs": 802,
+        "importMs": 129,
+        "fontsMs": 32,
+        "buildMs": 42,
+        "totalMs": 792,
         "builds": 1
       },
       "specimen": {
@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 374165,
+        "bytes": 374182,
         "folio": "846eba29"
       },
       "detected": {
@@ -356,13 +356,13 @@
       }
     },
     "pt": {
-      "hash8": "f40d229e",
+      "hash8": "052998fb",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 31,
-        "buildMs": 155,
-        "totalMs": 911,
+        "importMs": 131,
+        "fontsMs": 30,
+        "buildMs": 171,
+        "totalMs": 915,
         "builds": 1
       },
       "specimen": {
@@ -512,7 +512,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 372815,
+        "bytes": 372833,
         "folio": "846eba29"
       },
       "detected": {

@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "woodblock-leaf.postext",
-        "bytes": 25761,
+        "bytes": 25757,
         "folio": "64761808"
       },
       "detected": {
@@ -296,7 +296,13 @@
           "share": 0,
           "worst": 0.17
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
+          }
+        ]
       }
     },
     "es": {
@@ -420,7 +426,7 @@
       },
       "sandbox": {
         "file": "woodblock-leaf.postext",
-        "bytes": 25798,
+        "bytes": 25794,
         "folio": "64761808"
       },
       "detected": {
@@ -585,7 +591,13 @@
           "share": 0,
           "worst": 0.17
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale zh-Hant, the document's language: es names its resource types otherwise"
+          }
+        ]
       }
     }
   }

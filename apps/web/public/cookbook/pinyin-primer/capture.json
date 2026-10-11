@@ -3,19 +3,19 @@
   "slug": "pinyin-primer",
   "sourceHash": "528743554c9a4265f4f1033c6b5aefc9e8922fa4ea1ee877795a2c0dd910e067",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.247Z",
+  "capturedAt": "2026-10-11T03:51:04.553Z",
   "variants": {
     "en": {
-      "hash8": "3d3afa33",
+      "hash8": "1c546715",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 133,
-        "fontsMs": 137,
-        "buildMs": 50,
+        "importMs": 145,
+        "fontsMs": 128,
+        "buildMs": 51,
         "totalMs": 891,
         "builds": 1
       },
@@ -110,7 +110,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 205866,
+        "bytes": 205880,
         "folio": "4f4bf2f0"
       },
       "detected": {
@@ -304,19 +304,24 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 35: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "bundle locale zh-HK, the document's language: en names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c19c4706",
+      "hash8": "0335880a",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 138,
-        "fontsMs": 127,
-        "buildMs": 50,
-        "totalMs": 888,
+        "importMs": 135,
+        "fontsMs": 131,
+        "buildMs": 51,
+        "totalMs": 886,
         "builds": 1
       },
       "specimen": {
@@ -410,7 +415,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 206328,
+        "bytes": 206341,
         "folio": "4f4bf2f0"
       },
       "detected": {
@@ -604,7 +609,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 35: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "bundle locale zh-HK, the document's language: es names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

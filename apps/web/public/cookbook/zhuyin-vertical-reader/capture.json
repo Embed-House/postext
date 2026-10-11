@@ -3,21 +3,21 @@
   "slug": "zhuyin-vertical-reader",
   "sourceHash": "7f7b8304966e37c0e95007d0995d136390f5650f065725713b9b2e1263436f20",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:39.474Z",
+  "capturedAt": "2026-10-11T03:52:11.332Z",
   "variants": {
     "en": {
-      "hash8": "da7ef889",
+      "hash8": "3650a91f",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 321,
-        "buildMs": 62,
-        "totalMs": 1111,
+        "importMs": 192,
+        "fontsMs": 310,
+        "buildMs": 61,
+        "totalMs": 1128,
         "builds": 1
       },
       "specimen": {
@@ -113,12 +113,12 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 741346,
+        "bytes": 741345,
         "pages": 4
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507842,
+        "bytes": 507862,
         "folio": "351449da"
       },
       "detected": {
@@ -374,19 +374,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9a437bc8",
+      "hash8": "1f60798a",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 310,
-        "buildMs": 62,
-        "totalMs": 1100,
+        "importMs": 170,
+        "fontsMs": 303,
+        "buildMs": 60,
+        "totalMs": 1090,
         "builds": 1
       },
       "specimen": {
@@ -487,7 +487,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507878,
+        "bytes": 507897,
         "folio": "351449da"
       },
       "detected": {
@@ -743,7 +743,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

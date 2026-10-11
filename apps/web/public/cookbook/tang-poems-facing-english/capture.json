@@ -3,21 +3,21 @@
   "slug": "tang-poems-facing-english",
   "sourceHash": "a6c48ab9a379dfdccff45f0c96c93d15e5b1577d4c06bbb3c34a15bc2e4a9a25",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.749Z",
+  "capturedAt": "2026-10-11T03:51:38.323Z",
   "variants": {
     "en": {
-      "hash8": "e1ba448e",
+      "hash8": "def00c94",
       "vdtHash": "30b924a160302ddcb74d766509cb1835ed0590eb",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 248,
+        "importMs": 174,
+        "fontsMs": 235,
         "buildMs": 67,
-        "totalMs": 1052,
+        "totalMs": 1046,
         "builds": 1
       },
       "specimen": {
@@ -195,12 +195,12 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 153202,
+        "bytes": 153205,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 14880,
+        "bytes": 14896,
         "folio": "e5860b68"
       },
       "detected": {
@@ -429,13 +429,13 @@
       }
     },
     "es": {
-      "hash8": "ec46b863",
+      "hash8": "78980a01",
       "vdtHash": "2c81fc2df165fa4f1c0987f2b966255d50d5b9a1",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 238,
-        "buildMs": 73,
-        "totalMs": 1050,
+        "importMs": 170,
+        "fontsMs": 241,
+        "buildMs": 72,
+        "totalMs": 1055,
         "builds": 1
       },
       "specimen": {
@@ -613,12 +613,12 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 155460,
+        "bytes": 155459,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15137,
+        "bytes": 15150,
         "folio": "e5860b68"
       },
       "detected": {

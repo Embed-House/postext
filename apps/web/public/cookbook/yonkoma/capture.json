@@ -1213,7 +1213,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263611,
+        "bytes": 1263607,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1
@@ -1351,6 +1351,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale en-us, the document's language: ja names its resource types otherwise"
           },
           {
             "check": "sandbox",

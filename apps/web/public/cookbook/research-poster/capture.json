@@ -74,7 +74,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94065,
+        "bytes": 94070,
         "folio": "7c6d9248"
       },
       "detected": {
@@ -292,7 +292,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -360,7 +366,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94804,
+        "bytes": 94810,
         "folio": "7c6d9248"
       },
       "detected": {
@@ -578,7 +584,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

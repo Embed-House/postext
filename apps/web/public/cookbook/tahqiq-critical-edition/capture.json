@@ -3,21 +3,21 @@
   "slug": "tahqiq-critical-edition",
   "sourceHash": "7c1674a6f12d4e1c5da184128c21f7d04bbdb5c179b4f4285f847f25d9935253",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.740Z",
+  "capturedAt": "2026-10-11T03:51:38.310Z",
   "variants": {
     "en": {
-      "hash8": "4d93966a",
+      "hash8": "2e4a4858",
       "vdtHash": "450e833fb8a7df45805cb108debda8aee3d87a64",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 63,
-        "buildMs": 301,
-        "totalMs": 1068,
+        "importMs": 159,
+        "fontsMs": 62,
+        "buildMs": 300,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -204,12 +204,12 @@
       },
       "pdf": {
         "file": "tahqiq-critical-edition.pdf",
-        "bytes": 153154,
+        "bytes": 153156,
         "pages": 11
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26930
+        "bytes": 26945
       },
       "detected": {
         "apis": [
@@ -433,13 +433,13 @@
       }
     },
     "es": {
-      "hash8": "b45a7610",
+      "hash8": "1532130c",
       "vdtHash": "67748458f8413e649340d042e072eef7e43cf3de",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 60,
-        "buildMs": 303,
-        "totalMs": 1069,
+        "importMs": 171,
+        "fontsMs": 62,
+        "buildMs": 300,
+        "totalMs": 1079,
         "builds": 1
       },
       "specimen": {
@@ -631,7 +631,7 @@
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26967
+        "bytes": 26981
       },
       "detected": {
         "apis": [

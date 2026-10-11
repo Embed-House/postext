@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "1736898f62c8e1da02d7db1d7f78d3f4803dfec5b2e7c52d0943fffe9fd26e2a",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.102Z",
+  "capturedAt": "2026-10-11T03:50:19.259Z",
   "variants": {
     "en": {
-      "hash8": "2a7805f5",
+      "hash8": "572e9943",
       "vdtHash": "cc5d470a3516705dcec91e00da4458329b705583",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 232,
-        "buildMs": 534,
-        "totalMs": 1511,
+        "importMs": 190,
+        "fontsMs": 1968,
+        "buildMs": 580,
+        "totalMs": 3300,
         "builds": 1
       },
       "specimen": {
@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17583,
+        "bytes": 17599,
         "folio": "3594c3d3"
       },
       "detected": {
@@ -487,13 +487,13 @@
       }
     },
     "es": {
-      "hash8": "d838ec46",
+      "hash8": "859f102b",
       "vdtHash": "fb842f5a03bf85d3d8de00c8b88f6bcf28abcfc0",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 78,
-        "buildMs": 529,
-        "totalMs": 1360,
+        "importMs": 194,
+        "fontsMs": 64,
+        "buildMs": 531,
+        "totalMs": 1358,
         "builds": 1
       },
       "specimen": {
@@ -674,7 +674,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17708,
+        "bytes": 17724,
         "folio": "3594c3d3"
       },
       "detected": {

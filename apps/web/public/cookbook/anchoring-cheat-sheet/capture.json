@@ -85,7 +85,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42853,
+        "bytes": 42866,
         "folio": "061973f6"
       },
       "detected": {
@@ -253,6 +253,11 @@
           {
             "check": "sandbox",
             "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
             "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
           }
         ]
@@ -334,7 +339,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42389,
+        "bytes": 42402,
         "folio": "061973f6"
       },
       "detected": {
@@ -499,6 +504,11 @@
           "worst": 0
         },
         "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
           {
             "check": "sandbox",
             "severity": "info",

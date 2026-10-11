@@ -99,7 +99,7 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 284649,
+        "bytes": 284658,
         "folio": "6010a127"
       },
       "detected": {
@@ -325,6 +325,11 @@
           "worst": 0
         },
         "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
           {
             "check": "sandbox",
             "severity": "info",

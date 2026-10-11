@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319058,
+        "bytes": 319065,
         "folio": "923d57f4"
       },
       "detected": {
@@ -306,6 +306,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

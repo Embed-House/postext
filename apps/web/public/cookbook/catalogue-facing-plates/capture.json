@@ -3,20 +3,20 @@
   "slug": "catalogue-facing-plates",
   "sourceHash": "0d08daea7029d41bb2f0658db4e854d670a32dbebebb2002e9d994e347f64e23",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.019Z",
+  "capturedAt": "2026-10-11T03:48:53.665Z",
   "variants": {
     "en": {
-      "hash8": "12444f46",
+      "hash8": "4c614104",
       "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
       "timings": {
-        "importMs": 207,
-        "fontsMs": 53,
-        "buildMs": 44,
-        "totalMs": 896,
+        "importMs": 128,
+        "fontsMs": 48,
+        "buildMs": 43,
+        "totalMs": 799,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,7 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603544,
+        "bytes": 1603567,
         "folio": "2f38e47f"
       },
       "detected": {
@@ -400,6 +400,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

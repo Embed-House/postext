@@ -3,20 +3,20 @@
   "slug": "living-newspaper-video-loops",
   "sourceHash": "5c071aea7e5d5decd9856722d62f72cdc9d8aa49ffe73bbd708dc0f49d6dc812",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.829Z",
+  "capturedAt": "2026-10-11T03:50:46.787Z",
   "variants": {
     "en": {
-      "hash8": "08795c0a",
+      "hash8": "c2508b1c",
       "vdtHash": "c39cccc09bc92ed08e28efa59b2a634b15b69935",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 23,
-        "buildMs": 362,
-        "totalMs": 1662,
+        "importMs": 148,
+        "fontsMs": 22,
+        "buildMs": 358,
+        "totalMs": 2701,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "sandbox": {
         "file": "living-newspaper-video-loops.postext",
-        "bytes": 295041,
+        "bytes": 295057,
         "folio": "0b15553b"
       },
       "detected": {
@@ -454,6 +454,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "keeper: video file keeper-loop.mp4 left out (it plays from video.url)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

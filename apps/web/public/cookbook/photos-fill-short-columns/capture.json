@@ -133,7 +133,8 @@
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
         "bytes": 1919844,
-        "folio": "111a3296"
+        "folio": "111a3296",
+        "pages": 3
       },
       "detected": {
         "apis": [
@@ -468,7 +469,8 @@
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
         "bytes": 1919576,
-        "folio": "111a3296"
+        "folio": "111a3296",
+        "pages": 3
       },
       "detected": {
         "apis": [

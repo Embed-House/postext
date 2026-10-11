@@ -232,7 +232,8 @@
       "sandbox": {
         "file": "chinese-name-index.postext",
         "bytes": 21507,
-        "folio": "8948df8d"
+        "folio": "8948df8d",
+        "pages": 8
       },
       "detected": {
         "apis": [
@@ -687,7 +688,8 @@
       "sandbox": {
         "file": "chinese-name-index.postext",
         "bytes": 21551,
-        "folio": "8948df8d"
+        "folio": "8948df8d",
+        "pages": 8
       },
       "detected": {
         "apis": [

@@ -3,21 +3,21 @@
   "slug": "front-matter-roman-to-arabic",
   "sourceHash": "667ed24f49d997210a3d0d3f49f43578b20fe83d5bbeb00a48fb5c5b68599970",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.236Z",
+  "capturedAt": "2026-10-11T03:50:19.306Z",
   "variants": {
     "en": {
-      "hash8": "77cf3f3b",
+      "hash8": "cdda2a13",
       "vdtHash": "b64a2effb7df23604c0ca0a5c95947db80d396fe",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 63,
-        "buildMs": 130,
-        "totalMs": 960,
+        "importMs": 163,
+        "fontsMs": 59,
+        "buildMs": 138,
+        "totalMs": 954,
         "builds": 1
       },
       "specimen": {
@@ -223,12 +223,12 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815988,
+        "bytes": 815984,
         "pages": 14
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713669,
+        "bytes": 713685,
         "folio": "ba949066"
       },
       "detected": {
