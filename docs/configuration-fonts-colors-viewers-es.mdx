@@ -708,6 +708,116 @@ La gestión de color que usa postext se exporta para tus propias herramientas. L
 El resolver y el stripper siguen el modelo de las demás secciones: `resolvePrintConfig`, `stripPrintDefaults` y `profileInkLimit(config)` (el límite del perfil que nombra una configuración, antes de aplicar `inkLimit`), con `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` y `DEFAULT_RICH_BLACK`.
 
 
+## Comprobación del contraste (configuración)
+
+La propiedad `contrast` ajusta la comprobación que dice si el texto de un libro se puede leer: cada color de texto frente al fondo sobre el que se compone. La composición la ignora, así que cambiarla nunca mueve una línea. La lee `contrastDocument` cuando revisa un documento ya maquetado, el Sandbox enumera las incidencias en Revisión y muestra la ratio junto a cada campo de color, y `postext check` las imprime.
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Propiedad</th>
+      <th style={{ width: '110px' }}>Tipo</th>
+      <th style={{ width: '100px' }}>Por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Ejecuta la comprobación.</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>El nivel de WCAG 2 que se exige a las ratios. Ver [Umbrales](#umbrales).</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>El medio que se comprueba: `'screen'`, `'print'`, `'both'`, o `'auto'`, que comprueba siempre la pantalla y también la imprenta en un libro preparado para imprenta (una norma PDF/X en `print.standard`, un PDF en CMYK en `pdfGeneration` o marcas de corte en `page.cutLines`).</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Avisa del texto calado en la comprobación para imprenta.</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Se avisa del texto calado por debajo de este cuerpo.</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Lo mismo para cursivas y pesos finos, de trazo más delgado.</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un peso igual o menor que este cuenta como fino.</td></tr>
+  </tbody>
+</table>
+
+Un `level` o un `mode` escrito de cualquier otra forma se lee como el valor por defecto y se señala como valor de ajuste desconocido (ver [Avisos de configuración](#avisos-de-configuración)).
+
+### Umbrales
+
+La ratio que debe alcanzar un texto depende de su cuerpo y de su peso, como en WCAG 2.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Nivel</th>
+      <th style={{ width: '120px' }}>Texto</th>
+      <th>Texto grande</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4,5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4,5:1</td></tr>
+  </tbody>
+</table>
+
+Texto grande es el de 18 pt o más, o el de 14 pt o más con un peso de 700 o superior. Los cuerpos son los impresos, en puntos. Un superíndice o un subíndice se juzga con el cuerpo del texto al que pertenece.
+
+### Pantalla e imprenta
+
+Postext compone las mismas páginas para una pantalla y para una máquina de imprimir, y un color no se lee igual en las dos.
+
+- **Pantalla** es la ratio de contraste de WCAG 2 de los colores sRGB, `(L1 + 0.05) / (L2 + 0.05)` sobre sus luminancias relativas: lo que muestran el canvas, el visor HTML, un EPUB y un PDF en RGB.
+- **Imprenta** es la misma fórmula con la luminancia que cada color tiene sobre el papel. El color se separa con el perfil de salida del trabajo (uno definido en CMYK conserva sus valores), la separación se vuelve a leer a través del perfil y su luminancia se toma respecto al papel sin imprimir, que es el blanco de una página impresa como el blanco del monitor lo es de una pantalla. La tinta nunca da un negro perfecto: un negro al 100 % sobre blanco queda en unos 14:1 en papel estucado (FOGRA39, FOGRA51), 8:1 en papel sin estucar (FOGRA47, FOGRA52) y 5:1 en papel prensa (IFRA26, SNAP), donde una pantalla da 21:1. Un gris que pasa en pantalla puede no pasar en papel: `#767676` sobre blanco da 4,54:1 en pantalla y unos 3,3:1 en papel estucado.
+
+La ratio de imprenta necesita el `transform` del perfil de salida (`options.transform`, creado con `outputTransform`). Sin él, para imprenta solo se comprueba el texto calado.
+
+### Texto calado
+
+El texto claro calado sobre un fondo de tinta se empasta en máquina cuando es pequeño o de trazo fino: la tinta del fondo invade las letras, y un fondo formado por varias tintas depende además de que las planchas mantengan el registro. La ratio no lo muestra, porque un blanco sobre azul oscuro supera 10:1. La comprobación para imprenta señala ese texto aparte (`reversedText`) cuando queda por debajo de `minSize`, o por debajo de `minFineSize` si va en cursiva o con un peso de `lightWeight` o menos. Cada incidencia dice con cuántas de las cuatro tintas se forma el fondo.
+
+### Qué se lee
+
+La comprobación lee las líneas de cada bloque con sus colores en línea (negrita, cursiva, referencias, chips), los marcadores de lista, las capitulares, los pies, las notas y las celdas de tabla, y el texto de las ranuras de diseño: cabeceras y pies, aperturas, diseños de encabezado, títulos de recuadro. El fondo es el relleno más alto que hay bajo el texto: una caja de diseño, un recuadro, una barra de pie, una celda de tabla, un chip o, si no hay ninguno, el color de la página (`page.backgroundColor`, o el papel que la paleta de una parte da a sus páginas). Un color translúcido se funde con lo que tiene debajo. El texto sobre una imagen se omite, porque su fondo no es un solo color, y también la rotulación de cómic, las lecturas ruby y las fórmulas.
+
+### Ejecutar la comprobación
+
+`contrastDocument(doc, options)` devuelve las incidencias de un documento maquetado, de la ratio más baja a la más alta. Cada una lleva el `pageIndex` absoluto en el libro, el `rect` en la hoja (px de página) y el rango en el texto fuente de su primera aparición, los dos colores tal como se pintan (`color`, `background`), el menor `sizePt` con que se compone, con su `weight` y su `italic`, un `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` o `'marker'`), el `text` del primer tramo y el `count` de tramos compuestos así. Un par se señala una vez por umbral, sean cuantas sean las líneas que lo usan.
+
+- `lowContrast` añade `level`, `large`, `required`, la ratio en cada medio comprobado (`screen`, `print`) y `failing`, los medios que quedan por debajo de `required`.
+- `reversedText` añade `reasons` (`'small'`, `'italic'`, `'light'`), `minimumPt` e `inks`.
+
+Las opciones son `contrast` (los ajustes resueltos, cuando no son los del documento), `media` (los medios, diga lo que diga `mode`) y `transform`.
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)` devuelve todos los pares de texto y fondo que compone el documento, pasen o no, con su ratio `screen`, su ratio `print` cuando se da el `transform`, la ratio `required` y los colores tal como los escribe la configuración (`textColor`, `groundColor`): lo que una herramienta de diseño muestra junto a un campo de color. Se ejecuta diga lo que diga `enabled`.
+
+Las medidas se exportan para tus propias herramientas:
+
+- `contrastRatio(a, b)` y `relativeLuminance(color)` dan la ratio y la luminancia de WCAG 2 de colores sRGB.
+- `isLargeText(sizePt, weight)` y `contrastThreshold(level, large)` dan el umbral de un cuerpo y un peso.
+- `blendColors(top, under)` da un color translúcido sobre otro, como `#rrggbb`.
+- `printContrastRatio(a, b, context)`, `printLuminance(color, context)` y `printSeparation(color, context)` dan lo mismo sobre el papel. El contexto lleva el `transform` y, como `authored`, el resultado de `authoredCmykColors(config)`.
+- `contrastMedia(doc.config, contrast)` da los medios en que se resuelve `mode` para un documento.
+
+El resolver y el stripper siguen el modelo de las demás secciones: `resolveContrastConfig` y `stripContrastDefaults`, con `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` y `CONTRAST_MODES`.
+
+
 ## Visor Folio (configuración)
 
 La propiedad `folio` decide cómo presenta el visor Folio (`postext-folio`) el libro impreso en 3D: el ángulo de la vista, el papel, la encuadernación, la superficie sobre la que descansa el libro y la luz. La composición la ignora, igual que la salida canvas, HTML y PDF. `buildDocument` lleva los ajustes resueltos en el VDT, como `doc.config.folio`, cuando la configuración fija alguno, así que un documento sin ellos conserva el hash de su composición.
@@ -1172,7 +1282,7 @@ Ocho errores de la propia configuración nunca pasan en silencio, y ningún inte
 - **Número de columnas fuera de rango**: un `columnCount` de una disposición `'multiple'` (la del documento, o el `layout` propio de un estilo de encabezado) que no es un número entero de 3 a 8. La página se divide en el número válido más cercano (3 si el valor no es un número), y `used` lo indica (`columnCountClamped`; véase la [disposición `'multiple'`](/es/docs/configuration-page-layout#tipos-de-disposición)).
 - **Retícula de caracteres demasiado grande**: un `cjk.grid` con más caracteres por línea o más líneas por página de los que caben entre los márgenes. La retícula se compone con los que caben, y `used` indica el número (`cjkGridClamped`; ver [Retícula de caracteres](/es/docs/configuration-east-asian#retícula-de-caracteres)).
 - **Ajuste de encabezado desconocido**: una clave que no existe en `headings`, `headings.balancing`, un nivel de encabezado, un estilo de encabezado o un estilo de párrafo: un `letterSpacng` mal escrito, un `tracking` tomado de otra herramienta, un `level` en un estilo de encabezado, un `fontStyle: 'italic'` en un estilo de párrafo (que lleva `italic: true`). Una tabulación se comprueba igual (un `leaders` por `leader`). El motor la ignora (hasta postext 1.4 lo hacía sin decir nada). `value` es la clave, `used` va vacío y `suggestion` nombra el ajuste al que más se parece, cuando dista una o dos letras o solo cambia en mayúsculas (`unknownConfigKey`).
-- **Valor de ajuste desconocido**: un ajuste que admite unas pocas palabras lleva otra, como `direction: 'right'` (admite `auto`, `ltr` o `rtl`). El motor lee en su lugar el valor por defecto, y `used` dice en qué quedó: para `direction`, la dirección del idioma del documento (`unknownConfigValue`). Un `align` de tabulación que no es ninguna de sus cuatro palabras se lee como `'start'`, y una `position` que no es una longitud, `'end'` ni un porcentaje descarta la tabulación (`used` es `'none'`). También se comprueban las palabras de los ajustes de cómic ([Cómics › Avisos de cómic](/es/docs/comics#avisos-de-cómic)): `used` es el valor en que quedó el ajuste (el valor por defecto del propio estilo de bocadillo, en un estilo integrado), y `suggestion` nombra la palabra a la que más se parece el valor, cuando hay una cercana.
+- **Valor de ajuste desconocido**: un ajuste que admite unas pocas palabras lleva otra, como `direction: 'right'` (admite `auto`, `ltr` o `rtl`). El motor lee en su lugar el valor por defecto, y `used` dice en qué quedó: para `direction`, la dirección del idioma del documento (`unknownConfigValue`). Un `align` de tabulación que no es ninguna de sus cuatro palabras se lee como `'start'`, y una `position` que no es una longitud, `'end'` ni un porcentaje descarta la tabulación (`used` es `'none'`). También se comprueban las palabras de los ajustes de cómic ([Cómics › Avisos de cómic](/es/docs/comics#avisos-de-cómic)): `used` es el valor en que quedó el ajuste (el valor por defecto del propio estilo de bocadillo, en un estilo integrado), y `suggestion` nombra la palabra a la que más se parece el valor, cuando hay una cercana. El `level` y el `mode` de la comprobación del contraste se comprueban igual: `used` es `'AA'` o `'auto'`.
 - **Números de línea en texto vertical**: `lineNumbers.enabled: true` en un documento compuesto en vertical (`layout.writingMode: 'vertical-rl'`). Las páginas verticales no llevan números de línea, y `used` es `false` (`lineNumbersUnsupported`; véase [Numeración de líneas](/es/docs/configuration-notes-references#numeración-de-líneas)).
 - **Ajuste del texto en escritura vertical** — el `defaultPlacement.wrap` de un tipo de recurso en un documento compuesto en vertical. Las páginas verticales no componen texto al lado de una figura, y `used` es `none` (`wrapUnsupported`; véase [Formato del documento › Ajuste del texto](/es/docs/document-format#ajuste-del-texto)). Un `wrap` que no nombra ningún lado es un valor de ajuste desconocido.
 

@@ -708,6 +708,116 @@ postext使用的色彩管理也已导出，可供你自己的工具使用。它�
 解析函数和精简函数与其他部分一致：`resolvePrintConfig`、`stripPrintDefaults`和`profileInkLimit(config)`（配置所指特性文件的上限，不计`inkLimit`覆盖），以及`DEFAULT_PRINT_CONFIG`、`DEFAULT_PRINT_BLACK_CONFIG`、`DEFAULT_PRINT_PREFLIGHT_CONFIG`和`DEFAULT_RICH_BLACK`。
 
 
+## 对比度检查（配置）
+
+`contrast`属性设置一项检查，判断书中的文字能否看清：每种文字颜色都与它所在的底色相比。排版不读取它，所以改动它不会让任何一行移动。`contrastDocument`检查排好的文档时读取它，沙盒把查出的问题列在**检查**面板中，并在每个颜色字段旁显示对比度，`postext check`则把它们打印出来。
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>属性</th>
+      <th style={{ width: '110px' }}>类型</th>
+      <th style={{ width: '100px' }}>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>运行检查。</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>对比度须达到的WCAG 2等级。见[阈值](#阈值)。</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>检查哪种介质：`'screen'`、`'print'`、`'both'`或`'auto'`。`'auto'`始终检查屏幕，为印刷设置的书（`print.standard`中设了PDF/X标准，`pdfGeneration`中设了CMYK PDF，或`page.cutLines`中设了裁切标记）也检查印刷。</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>在印刷检查中报告反白字。</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>小于此字号的反白字会被报告。</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>斜体和细体笔画更细，改用此字号。</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>不大于此值的字重视为细体。</td></tr>
+  </tbody>
+</table>
+
+`level`或`mode`写成其他值时按默认值读取，并报告为未知设置值（见[配置警告](#配置警告)）。
+
+### 阈值
+
+文字须达到的对比度取决于它的字号和字重，与WCAG 2相同。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>等级</th>
+      <th style={{ width: '120px' }}>文字</th>
+      <th>大字</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4.5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4.5:1</td></tr>
+  </tbody>
+</table>
+
+大字指18 pt及以上的文字，或者14 pt及以上、字重不低于700的文字。字号是印出来的字号，以点计。上标或下标按它所属文字的字号判定。
+
+### 屏幕和印刷
+
+Postext排出的同一批页面既供屏幕显示，也供印刷机印刷，而同一种颜色在两者上看起来并不一样。
+
+- **屏幕**是sRGB颜色的WCAG 2对比度，即对两者的相对亮度计算`(L1 + 0.05) / (L2 + 0.05)`：Canvas、HTML查看器、EPUB和RGB PDF显示的就是这个结果。
+- **印刷**用同一个公式，但取每种颜色在纸上的亮度。颜色先经印刷所用的输出特性文件分色（以CMYK定义的颜色保留其数值），再经特性文件把分色结果读回，亮度相对于白纸计算：白纸是印刷页面上的白，正如显示器的白是屏幕上的白。油墨从来不是纯黑：白底上的实地黑，在涂布纸上约为14:1（FOGRA39、FOGRA51），在非涂布纸上约为8:1（FOGRA47、FOGRA52），在新闻纸上约为5:1（IFRA26、SNAP），而屏幕上是21:1。在屏幕上合格的灰色到了纸上可能不合格：白底上的`#767676`在屏幕上是4.54:1，在涂布纸上约为3.3:1。
+
+计算印刷对比度需要输出特性文件的转换（`options.transform`，用`outputTransform`构建）。没有它时，印刷方面只检查反白字。
+
+### 反白字
+
+反白在有墨底色上的浅色文字，字小或笔画细时印刷会糊版：底色的油墨向字内扩散，由几种油墨叠成的底色还要靠各块印版套准。对比度反映不出这一点，因为深蓝底上的白字超过10:1。印刷检查把这类文字单独报告（`reversedText`）：字号小于`minSize`的，或者是斜体、字重不大于`lightWeight`而字号小于`minFineSize`的。每个问题都写明底色由四色油墨中的几种叠成。
+
+### 检查哪些内容
+
+检查读取每个块的各行及其行内颜色（粗体、斜体、引用、行内标签）、列表标记、首字下沉、题注、注释和表格单元格，以及版面设计槽位中的文字：书眉、篇首页和章首页、标题的版面设计、框标题。底色是文字下方最上面的一层填充：版面设计的方框、标注框、题注的底条、表格单元格、行内标签，否则就是页面颜色（`page.backgroundColor`，或篇的调色板为该篇页面指定的纸色）。半透明的颜色先与它下面的颜色混合。压在图片上的文字不检查，因为它的底色不是单一颜色；漫画嵌字、注音和公式也不检查。
+
+### 运行检查
+
+`contrastDocument(doc, options)`返回排好的文档中查出的问题，对比度最低的排在最前。每个问题带有全书范围的页序`pageIndex`、在纸面上的`rect`（页面px）和首次出现处的源码范围，实际绘出的两种颜色（`color`、`background`），这样排的文字所用的最小字号`sizePt`及其`weight`和`italic`，一个`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`或`'marker'`），第一个文本片段的`text`，以及这样排的文本片段数`count`。同一对颜色在每个阈值下只报告一次，不论有多少行用到它。
+
+- `lowContrast`另有`level`、`large`、`required`，所检查的每种介质下的对比度（`screen`、`print`），以及`failing`，即低于`required`的那些介质。
+- `reversedText`另有`reasons`（`'small'`、`'italic'`、`'light'`）、`minimumPt`和`inks`。
+
+选项有`contrast`（解析后的设置，不用文档自己的设置时给出）、`media`（要检查的介质，不管`mode`怎么设）和`transform`。
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)`返回文档中出现的每一对文字与底色，不论合格与否，带有`screen`对比度、给出转换时的`print`对比度、要求的对比度`required`，以及配置中所写的颜色（`textColor`、`groundColor`）：设计工具在颜色字段旁显示的就是这些。不管`enabled`怎么设，它都会运行。
+
+这些度量也已导出，可供你自己的工具使用：
+
+- `contrastRatio(a, b)`和`relativeLuminance(color)`给出sRGB颜色的WCAG 2对比度和相对亮度。
+- `isLargeText(sizePt, weight)`和`contrastThreshold(level, large)`给出某一字号和字重的阈值。
+- `blendColors(top, under)`给出一种半透明颜色叠在另一种颜色上的结果，格式为`#rrggbb`。
+- `printContrastRatio(a, b, context)`、`printLuminance(color, context)`和`printSeparation(color, context)`给出纸上的相应结果。上下文中有`transform`，以及作为`authored`传入的`authoredCmykColors(config)`的结果。
+- `contrastMedia(doc.config, contrast)`给出`mode`对某个文档解析出的介质。
+
+解析函数和精简函数与其他部分一致：`resolveContrastConfig`和`stripContrastDefaults`，以及`DEFAULT_CONTRAST_CONFIG`、`DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`、`CONTRAST_LEVELS`和`CONTRAST_MODES`。
+
+
 ## 书页视图（配置）
 
 `folio`属性决定书页视图（`postext-folio`）怎样以3D呈现印好的书：视角、纸张、装订、书下面的台面和光照。排版不读取它，Canvas、HTML和PDF输出也不读取。配置设置了其中任何一项时，`buildDocument`把解析后的设置放进VDT，即`doc.config.folio`；不设置的文档，其排版哈希保持不变。
@@ -1172,7 +1282,7 @@ debug: {
 - **栏数超出范围**：`'multiple'`版式的`columnCount`（文档的，或标题样式自己的`layout`中的）不是3到8之间的整数。页面按最接近的有效栏数分栏（不是数字时为3），`used`给出这个数（`columnCountClamped`；见[`'multiple'`版式](/zh/docs/configuration-page-layout#版式类型)）。
 - **字符网格过大**：`cjk.grid`的每行字数或每页行数超出了页边距内能容纳的数量。网格按能容纳的最大数量排，`used`给出这个数（`cjkGridClamped`；见[字符网格](/zh/docs/configuration-east-asian#字格)）。
 - **未知标题设置**：`headings`、`headings.balancing`、某个标题级别、标题样式或段落样式中没有的键：拼错的`letterSpacng`、从其他工具借来的`tracking`、标题样式上的`level`、段落样式上的`fontStyle: 'italic'`（段落样式要用`italic: true`）。制表位也同样检查（用`leaders`代替`leader`）。引擎会忽略它（postext 1.4及以前是悄无声息地忽略）。`value`是这个键，`used`为空，如果某个设置与它只差一两个字母或只有大小写不同，`suggestion`会给出最接近的那个设置（`unknownConfigKey`）。
-- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。
+- **未知设置值**：只能取几个固定词的设置写了别的值，例如`direction: 'right'`（可取`auto`、`ltr`或`rtl`）。引擎改用默认值，`used`给出实际结果：对`direction`而言，是文档语言的书写方向（`unknownConfigValue`）。制表位的`align`不是它的四个取值之一时，按`'start'`读取；`position`既不是长度、`'end'`也不是百分比时，略去该制表位（`used`为`'none'`）。漫画设置中的词同样会检查（[漫画 › 漫画警告](/zh/docs/comics#漫画警告)）：`used`是该设置最终解析出的值（对内置样式而言，是该对白框样式自己的默认值），值与某个词接近时，`suggestion`给出最接近的那个词。对比度检查的`level`和`mode`同样会检查：`used`为`'AA'`或`'auto'`。
 - **竖排文字中的行号**：竖排文档（`layout.writingMode: 'vertical-rl'`）中写了`lineNumbers.enabled: true`。竖排页面不标行号，`used`为`false`（`lineNumbersUnsupported`；见[行号](/zh/docs/configuration-notes-references#行号)）。
 - **竖排中的文字绕排** — 竖排文档中资源类型的`defaultPlacement.wrap`。竖排页面不在图旁排正文，`used`为`none`（`wrapUnsupported`；见[文档格式 › 文字绕排](/zh/docs/document-format#文字绕排)）。不指明一侧的`wrap`是未知的设置值。
 

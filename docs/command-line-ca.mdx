@@ -296,8 +296,10 @@ desconeguts, requadres que la maquetació ha hagut de forçar, fonts que falten,
 ajustos que el motor ha hagut de substituir i, en un llibre preparat per a
 impremta (o amb `--preflight`), el preflight: imatges de baixa resolució,
 filets fins, text petit en diverses tintes, tinta per sobre del límit, text a
-prop del tall. Cada problema indica el fitxer del capítol, la línia i la
-pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
+prop del tall. També llista el text que no es llegeix sobre el seu fons
+(`contrast`), un cop per parell de colors, amb la ràtio en pantalla i, per a
+impremta, sobre el paper del perfil de sortida. Cada problema indica el fitxer
+del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
 `--strict`.
 
 ### build i --watch

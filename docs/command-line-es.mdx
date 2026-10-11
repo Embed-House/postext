@@ -295,8 +295,10 @@ desconocidos, cajas que la maquetación tuvo que forzar, fuentes que faltan,
 ajustes que el motor tuvo que sustituir y, en un libro preparado para imprenta
 (o con `--preflight`), el preflight: imágenes de baja resolución, filetes
 finos, texto pequeño en varias tintas, tinta por encima del límite, texto
-cerca del corte. Cada problema indica el archivo del capítulo, la línea y la
-página. El código de salida es 3 cuando se encuentra un error, o cualquier
+cerca del corte. También enumera el texto que no se lee sobre su fondo
+(`contrast`), una vez por par de colores, con la ratio en pantalla y, para
+imprenta, sobre el papel del perfil de salida. Cada problema indica el archivo
+del capítulo, la línea y la página. El código de salida es 3 cuando se encuentra un error, o cualquier
 aviso con `--strict`.
 
 ### build y --watch
