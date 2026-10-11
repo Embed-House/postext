@@ -88,8 +88,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264104,
-        "folio": "80b0969c"
+        "bytes": 1263384,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -223,12 +225,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -311,8 +313,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264224,
-        "folio": "80b0969c"
+        "bytes": 1263491,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -446,12 +450,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -534,8 +538,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264276,
-        "folio": "80b0969c"
+        "bytes": 1263543,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -669,12 +675,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -757,8 +763,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264329,
-        "folio": "80b0969c"
+        "bytes": 1263627,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -892,12 +900,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -980,8 +988,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264455,
-        "folio": "80b0969c"
+        "bytes": 1263688,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1115,12 +1125,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -1203,8 +1213,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264346,
-        "folio": "80b0969c"
+        "bytes": 1263611,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1338,12 +1350,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -1426,8 +1438,10 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1264623,
-        "folio": "80b0969c"
+        "bytes": 1263894,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1561,12 +1575,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }

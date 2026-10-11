@@ -88,8 +88,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958748,
-        "folio": "80b0969c"
+        "bytes": 958114,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -219,12 +221,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -307,8 +309,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958837,
-        "folio": "80b0969c"
+        "bytes": 958183,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -438,12 +442,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -526,8 +530,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958546,
-        "folio": "80b0969c"
+        "bytes": 957898,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -657,12 +663,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -745,8 +751,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958421,
-        "folio": "80b0969c"
+        "bytes": 957831,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -876,12 +884,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -964,8 +972,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958681,
-        "folio": "80b0969c"
+        "bytes": 957980,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1095,12 +1105,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -1183,8 +1193,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 959007,
-        "folio": "80b0969c"
+        "bytes": 958331,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1314,12 +1326,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }
@@ -1402,8 +1414,10 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958608,
-        "folio": "80b0969c"
+        "bytes": 957959,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1
       },
       "detected": {
         "apis": [
@@ -1533,12 +1547,12 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation.pageIndexOffset 2 dropped (even: same page sides)"
           }
         ]
       }

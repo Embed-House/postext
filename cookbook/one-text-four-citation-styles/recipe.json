@@ -51,7 +51,8 @@
       1,
       2,
       3
-    ]
+    ],
+    "sandbox": "first"
   },
   "folio": {
     "paper": {"type": "uncoated", "grammage": 80},
@@ -84,5 +85,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-01",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }

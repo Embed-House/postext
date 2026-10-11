@@ -114,8 +114,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411284,
-        "folio": "80b0969c"
+        "bytes": 1410310,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -244,7 +246,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -358,8 +360,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411437,
-        "folio": "80b0969c"
+        "bytes": 1410443,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -488,7 +492,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -602,8 +606,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411420,
-        "folio": "80b0969c"
+        "bytes": 1410433,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -732,7 +738,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -846,8 +852,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411477,
-        "folio": "80b0969c"
+        "bytes": 1410544,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -976,7 +984,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -1090,8 +1098,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411817,
-        "folio": "80b0969c"
+        "bytes": 1410760,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -1220,7 +1230,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -1334,8 +1344,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411483,
-        "folio": "80b0969c"
+        "bytes": 1410512,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -1464,7 +1476,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
@@ -1578,8 +1590,10 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1411418,
-        "folio": "80b0969c"
+        "bytes": 1410421,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 2
       },
       "detected": {
         "apis": [
@@ -1708,7 +1722,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "build 2: its configuration differs from the first's, which the book keeps"
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
           },
           {
             "check": "sandbox",
