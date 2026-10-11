@@ -4186,7 +4186,14 @@ export interface OrderedListsConfig {
    *  - `'level'`: the widest number at the item's depth in the whole
    *    document (the chapter, in a book), so every list and every part of
    *    an interrupted one starts its text at the same place, as the
-   *    indents of the deeper levels already do. */
+   *    indents of the deeper levels already do;
+   *  - `'item'` (#722): the item's own number, so the text of each item
+   *    starts one `gap` after its own label and 第九條 and 第十一條 are
+   *    each followed by the same space, their texts starting at different
+   *    places (the articles of a law in the Japanese Official Gazette).
+   *    Turnover lines follow `hangingIndent`: `false` returns them to the
+   *    list's indent, `true` hangs them under the item's own text. The
+   *    indent of a deeper level stays one value per level. */
   numberWidth?: OrderedListNumberWidth;
   /** How a number sits in its column (#682):
    *  - `'end'` (default): against the text, so `9.` and `10.` end
@@ -4195,7 +4202,10 @@ export interface OrderedListsConfig {
    *    page, the right on a right-to-left one, the head of the line in
    *    vertical text), so 第九條 and 第十一條 begin together. The column
    *    keeps its width ({@link numberWidth}): the text of the items still
-   *    starts at one place. */
+   *    starts at one place.
+   *
+   *  Under `numberWidth: 'item'` the column is the number itself, so the
+   *  two values set the same list. */
   numberAlign?: OrderedListNumberAlign;
   hangingIndent?: boolean;
   levels?: OrderedListLevelConfig[];
@@ -4213,7 +4223,7 @@ export interface OrderedListsConfig {
 
 /** The number column of an ordered list item
  *  (`OrderedListsConfig.numberWidth`). */
-export type OrderedListNumberWidth = 'run' | 'level';
+export type OrderedListNumberWidth = 'run' | 'level' | 'item';
 
 /** Where a number stands in the number column of an ordered list
  *  (`OrderedListsConfig.numberAlign`). */
