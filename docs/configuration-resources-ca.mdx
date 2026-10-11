@@ -139,7 +139,8 @@ interface ResourceType {
 `numberingTemplate` es renderitza amb el mateix motor que la numeració d'encapçalaments (vegeu [Encapçalaments](/ca/docs/configuration-text#encapçalaments)). Reconeix dues classes de token:
 
 - `{n}` — el comptador per tipus, formatat segons `counterFormat`. És el valor que s'incrementa per recurs i es reinicia segons `resetOn`.
-- `{h1}` … `{h6}` — els números d'encapçalament vigents al punt de la primera referència, renderitzats sempre com a decimals. `{h1}` és el número de l'encapçalament de nivell 1 actual, `{h2}` el de nivell 2, i així successivament.
+- `{h1}` … `{h6}` — els números d'encapçalament vigents al punt de la primera referència, en decimal llevat que el token anomeni un estil. `{h1}` és el número de l'encapçalament de nivell 1 actual, `{h2}` el de nivell 2, i així successivament.
+- `{h1:A}`, `{h2:i}`, `{n:i}` — un token seguit de dos punts i un estil s'escriu en aquell estil, qualsevol dels que admet la plantilla d'un encapçalament: `1`, `01`, `A`, `a`, `I`, `i`, el nom d'un format de numeració com `upper-roman`, un token d'un caràcter com `一` o `①`, o un estil en paraules com `Words`. A `{n}` l'estil té prioritat sobre `counterFormat` per a aquell token. Un estil desconegut compta en decimal. Des de postext 1.28.
 
 Qualsevol altre text és literal. Una barra inversa escapa un `{`, `}` o `\` literal. Quan un token d'encapçalament no té valor en el seu àmbit (p. ex. `{h1}` abans de qualsevol encapçalament de nivell 1), col·lapsa juntament amb el separador adjacent — així `{h1}.{n}` es redueix sense problemes al comptador sol.
 
@@ -169,8 +170,15 @@ Una plantilla buida (`''`) no imprimeix número, encara que el tipus continuï c
       <td><code>2.0.3</code></td>
       <td>Àmbit de secció. Combina'l amb <code>resetOn: 'h2'</code>.</td>
     </tr>
+    <tr>
+      <td><code>{'{h1:A}.{n}'}</code></td>
+      <td><code>B.3</code></td>
+      <td>Amb lletra, per als apèndixs. Combina'l amb <code>resetOn: 'h1'</code>.</td>
+    </tr>
   </tbody>
 </table>
+
+**Apèndixs.** Un llibre els apèndixs del qual porten lletra per un estil d'encapçalament (`numberingTemplate: 'Apèndix {1:A}'`, amb `startAt=1` al primer) dona a les seves figures i taules un tipus propi, `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }`. Un sol tipus serveix per a tots els apèndixs: imprimeix *Taula A.1*, *A.2* i *B.1*, al peu i a `:ref`. Un `{h1}` sense estil hi imprimeix el número de l'encapçalament en decimal (*Taula 1.1*).
 
 ### Numeració i referències
 

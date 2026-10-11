@@ -1070,7 +1070,7 @@ Un estilo con `numbering` cuenta sus cajas, como el paquete `amsthm` de LaTeX cu
       <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
       <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
       <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
-      <td>Como los de un tipo de recurso: <code>'&#123;h1&#125;.&#123;n&#125;'</code> con <code>resetOn: 'h1'</code> numera Teorema 2.1, 2.2… por capítulo, y <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> con <code>'h2'</code>, por sección. Un contador que comparten varios estilos sigue la cuenta impriman lo que impriman sus plantillas.</td>
+      <td>Como los de un tipo de recurso: <code>'&#123;h1&#125;.&#123;n&#125;'</code> con <code>resetOn: 'h1'</code> numera Teorema 2.1, 2.2… por capítulo, y <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> con <code>'h2'</code>, por sección. Un contador que comparten varios estilos sigue la cuenta impriman lo que impriman sus plantillas. Un token admite un estilo tras dos puntos, como el de un tipo de recurso: <code>'&#123;h1:A&#125;.&#123;n&#125;'</code> imprime <em>Teorema A.1</em> en un apéndice con letra.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

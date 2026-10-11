@@ -139,7 +139,8 @@ interface ResourceType {
 `numberingTemplate` is rendered with the same engine as heading numbering (see [Headings](/en/docs/configuration-text#headings)). It recognises two kinds of token:
 
 - `{n}` — the per-type counter, formatted per `counterFormat`. This is the value that increments per resource and resets according to `resetOn`.
-- `{h1}` … `{h6}` — the heading numbers in effect at the point of first reference, always rendered as decimals. `{h1}` is the current level-1 heading number, `{h2}` the level-2, and so on.
+- `{h1}` … `{h6}` — the heading numbers in effect at the point of first reference, in decimal unless the token names a style. `{h1}` is the current level-1 heading number, `{h2}` the level-2, and so on.
+- `{h1:A}`, `{h2:i}`, `{n:i}` — a token followed by a colon and a style is written in that style, any a heading template takes: `1`, `01`, `A`, `a`, `I`, `i`, a numbering-format name such as `upper-roman`, a one-character token such as `一` or `①`, or a spelled style such as `Words`. On `{n}` the style wins over `counterFormat` for that token. An unknown style counts in decimal. Since postext 1.28.
 
 Any other text is literal. A backslash escapes a literal `{`, `}`, or `\`. When a heading token has no value in scope (e.g. `{h1}` before any level-1 heading), it collapses together with its adjacent separator — so `{h1}.{n}` degrades gracefully to the bare counter.
 
@@ -169,8 +170,15 @@ An empty template (`''`) prints no number, though the type still counts its reso
       <td><code>2.0.3</code></td>
       <td>Section-scoped. Pair with <code>resetOn: 'h2'</code>.</td>
     </tr>
+    <tr>
+      <td><code>{'{h1:A}.{n}'}</code></td>
+      <td><code>B.3</code></td>
+      <td>Lettered, for the appendices. Pair with <code>resetOn: 'h1'</code>.</td>
+    </tr>
   </tbody>
 </table>
+
+**Appendices.** A book whose appendices are lettered by a heading style (`numberingTemplate: 'Appendix {1:A}'`, with `startAt=1` on the first one) gives their figures and tables a type of their own, `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }`. One type serves every appendix: it prints *Table A.1*, *A.2* and *B.1*, in the caption and in `:ref`. A plain `{h1}` there prints the heading's number in decimal (*Table 1.1*).
 
 ### Numbering and references
 

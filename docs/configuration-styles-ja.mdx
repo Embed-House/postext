@@ -1070,7 +1070,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
       <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
       <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
       <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
-      <td>リソースの種類のものと同じです。<code>'&#123;h1&#125;.&#123;n&#125;'</code>と<code>resetOn: 'h1'</code>で章ごとに定理2.1、2.2…と、<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>と<code>'h2'</code>で節ごとに番号を付けます。複数のスタイルが共有するカウンターは、それぞれのテンプレートが何を印字するかにかかわらず数え続けます。</td>
+      <td>リソースの種類のものと同じです。<code>'&#123;h1&#125;.&#123;n&#125;'</code>と<code>resetOn: 'h1'</code>で章ごとに定理2.1、2.2…と、<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>と<code>'h2'</code>で節ごとに番号を付けます。複数のスタイルが共有するカウンターは、それぞれのテンプレートが何を印字するかにかかわらず数え続けます。トークンは、リソースタイプのテンプレートと同じく、コロンの後に書式を取れます。<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>は、アルファベットを振った付録で<em>定理 A.1</em>になります。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

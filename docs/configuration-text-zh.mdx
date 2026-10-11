@@ -2135,7 +2135,7 @@ interface MathConfig {
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>、<code>'&#123;n&#125;'</code>、<code>'never'</code>、<code>'decimal'</code>、<code>'(&#123;n&#125;)'</code></td>
-      <td>带<code>\label</code>的独立公式如何编号（见下文的<em>带编号的公式</em>）。<code>numberingTemplate</code>、<code>resetOn</code>和<code>counterFormat</code>与资源类型中的同名字段作用相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为(2.1)、(2.2)……，<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。<code>format</code>是公式和<code>\eqref</code>印出编号的形式，其中<code>&#123;n&#125;</code>代表编号：<code>'[&#123;n&#125;]'</code>排出[3]。<code>enabled: false</code>时不为任何公式编号：<code>\label</code>被舍弃，对它的引用印出它所在的页码。</td>
+      <td>带<code>\label</code>的独立公式如何编号（见下文的<em>带编号的公式</em>）。<code>numberingTemplate</code>、<code>resetOn</code>和<code>counterFormat</code>与资源类型中的同名字段作用相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为(2.1)、(2.2)……，<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。<code>format</code>是公式和<code>\eqref</code>印出编号的形式，其中<code>&#123;n&#125;</code>代表编号：<code>'[&#123;n&#125;]'</code>排出[3]。<code>enabled: false</code>时不为任何公式编号：<code>\label</code>被舍弃，对它的引用印出它所在的页码。标记同样可以在冒号后写样式（<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>：在字母编号的附录里是(A.1)）。</td>
     </tr>
   </tbody>
 </table>

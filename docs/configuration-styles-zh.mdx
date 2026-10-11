@@ -1069,7 +1069,7 @@ const minimal  = stripCalloutStylesDefaults(config.calloutStyles);
       <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
       <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
       <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
-      <td>与资源类型中的相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为定理2.1、2.2……；<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。几种样式共用的计数器照常递增，不论各样式的模板印出什么。</td>
+      <td>与资源类型中的相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为定理2.1、2.2……；<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。几种样式共用的计数器照常递增，不论各样式的模板印出什么。标记可以像资源类型的模板那样在冒号后写样式：<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>在字母编号的附录里印出<em>定理 A.1</em>。</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

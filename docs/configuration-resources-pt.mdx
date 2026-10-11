@@ -139,7 +139,8 @@ interface ResourceType {
 `numberingTemplate` é processado pelo mesmo mecanismo da numeração de títulos (veja [Títulos](/pt/docs/configuration-text#títulos)). Ele reconhece dois tipos de token:
 
 - `{n}`: o contador do tipo, formatado conforme `counterFormat`. É o valor que aumenta a cada recurso e reinicia de acordo com `resetOn`.
-- `{h1}` … `{h6}`: os números de título vigentes no ponto da primeira referência, sempre em decimal. `{h1}` é o número do título de nível 1 atual, `{h2}` o de nível 2, e assim por diante.
+- `{h1}` … `{h6}`: os números de título vigentes no ponto da primeira referência, em decimal, a menos que o token indique um estilo. `{h1}` é o número do título de nível 1 atual, `{h2}` o de nível 2, e assim por diante.
+- `{h1:A}`, `{h2:i}`, `{n:i}`: um token seguido de dois-pontos e um estilo é escrito nesse estilo, qualquer um dos que o modelo de um título aceita: `1`, `01`, `A`, `a`, `I`, `i`, o nome de um formato de numeração como `upper-roman`, um token de um caractere como `一` ou `①`, ou um estilo por extenso como `Words`. Em `{n}` o estilo prevalece sobre `counterFormat` para esse token. Um estilo desconhecido conta em decimal. Desde o postext 1.28.
 
 Qualquer outro texto é literal. Uma barra invertida escapa um `{`, `}` ou `\` literal. Quando um token de título não tem valor naquele ponto (ex.: `{h1}` antes de qualquer título de nível 1), ele desaparece junto com o separador vizinho; assim, `{h1}.{n}` se reduz ao contador sozinho.
 
@@ -169,8 +170,15 @@ Um modelo vazio (`''`) não imprime número, embora o tipo continue contando os 
       <td><code>2.0.3</code></td>
       <td>Por seção. Combine com <code>resetOn: 'h2'</code>.</td>
     </tr>
+    <tr>
+      <td><code>{'{h1:A}.{n}'}</code></td>
+      <td><code>B.3</code></td>
+      <td>Com letra, para os apêndices. Combine com <code>resetOn: 'h1'</code>.</td>
+    </tr>
   </tbody>
 </table>
+
+**Apêndices.** Um livro cujos apêndices recebem letra por um estilo de título (`numberingTemplate: 'Apêndice {1:A}'`, com `startAt=1` no primeiro) dá às suas figuras e tabelas um tipo próprio, `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }`. Um só tipo serve a todos os apêndices: imprime *Tabela A.1*, *A.2* e *B.1*, na legenda e em `:ref`. Um `{h1}` sem estilo imprime ali o número do título em decimal (*Tabela 1.1*).
 
 ### Numeração e referências
 

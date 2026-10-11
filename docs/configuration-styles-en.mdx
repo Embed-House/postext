@@ -1070,7 +1070,7 @@ A style with `numbering` counts its boxes, as LaTeX's `amsthm` counts theorem en
       <td><code>numberingTemplate</code> / <code>resetOn</code> / <code>counterFormat</code></td>
       <td><code>string</code> / <code>ResourceCounterReset</code> / <code>ResourceCounterFormat</code></td>
       <td><code>'&#123;n&#125;'</code> / <code>'never'</code> / <code>'decimal'</code></td>
-      <td>As a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers Theorem 2.1, 2.2… by chapter; <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. A counter shared by several styles counts on whatever their templates print.</td>
+      <td>As a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers Theorem 2.1, 2.2… by chapter; <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. A counter shared by several styles counts on whatever their templates print. A token takes a style after a colon, as a resource type's does: <code>'&#123;h1:A&#125;.&#123;n&#125;'</code> prints <em>Theorem A.1</em> in a lettered appendix.</td>
     </tr>
     <tr>
       <td><code>placement</code></td>

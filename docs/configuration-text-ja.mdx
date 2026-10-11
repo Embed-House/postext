@@ -2135,7 +2135,7 @@ interface MathConfig {
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>、<code>'&#123;n&#125;'</code>、<code>'never'</code>、<code>'decimal'</code>、<code>'(&#123;n&#125;)'</code></td>
-      <td><code>\label</code>を持つ別行立て数式の番号の付け方です（後述の<em>番号付きの数式</em>を参照）。<code>numberingTemplate</code>、<code>resetOn</code>、<code>counterFormat</code>はリソースの種類のものと同じ働きをします。<code>'&#123;h1&#125;.&#123;n&#125;'</code>と<code>resetOn: 'h1'</code>で章ごとに(2.1)、(2.2)…と、<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>と<code>'h2'</code>で節ごとに番号を付けます。<code>format</code>は数式と<code>\eqref</code>が印字する番号の形で、<code>&#123;n&#125;</code>が番号を表します。<code>'[&#123;n&#125;]'</code>なら[3]と組まれます。<code>enabled: false</code>ではどの数式にも番号を付けません。<code>\label</code>は捨てられ、それへの参照はページを印字します。</td>
+      <td><code>\label</code>を持つ別行立て数式の番号の付け方です（後述の<em>番号付きの数式</em>を参照）。<code>numberingTemplate</code>、<code>resetOn</code>、<code>counterFormat</code>はリソースの種類のものと同じ働きをします。<code>'&#123;h1&#125;.&#123;n&#125;'</code>と<code>resetOn: 'h1'</code>で章ごとに(2.1)、(2.2)…と、<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>と<code>'h2'</code>で節ごとに番号を付けます。<code>format</code>は数式と<code>\eqref</code>が印字する番号の形で、<code>&#123;n&#125;</code>が番号を表します。<code>'[&#123;n&#125;]'</code>なら[3]と組まれます。<code>enabled: false</code>ではどの数式にも番号を付けません。<code>\label</code>は捨てられ、それへの参照はページを印字します。トークンにはコロンの後に書式も書けます（<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>：アルファベットを振った付録では(A.1)）。</td>
     </tr>
   </tbody>
 </table>
