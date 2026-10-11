@@ -34,7 +34,7 @@ describe('pinLegacyGridBreakRules (#717)', () => {
       expect(config.bodyText).toEqual({ fontFamily: 'Noto Serif JP' });
     }
     // The region the configuration names decides, as it does the default.
-    expect(migrateConfig({ cjk: { region: 'japan', grid: GRID } }, 11).bodyText).toEqual(ON);
+    expect(migrateConfig<PostextConfig>({ cjk: { region: 'japan', grid: GRID } }, 11).bodyText).toEqual(ON);
     expect(migrateConfig(grid('ja', { cjk: { region: 'mainland', grid: GRID } }), 11).bodyText).toEqual({ avoidWidows: true });
     // Under today's rules the same configuration lays out with them off.
     expect(rules(grid('ja'))).toEqual({ avoidWidows: false, avoidOrphans: false });
