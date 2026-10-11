@@ -481,8 +481,10 @@ describe('bodyText.verse and the configurations stored before #620', () => {
     }
     // Unknown content: the verse layout and the 1.23 turnovers.
     expect(migrateConfig(stored, 8).bodyText?.verse).toEqual({ layout: 'bayt', tighten: false });
+    // (A text with a fence gets the pin of the level cut's unit, #711, on
+    // its headings; the body text is what this pin would touch.)
     for (const content of [BAYT, 'No poem.', [BAYT, 'Text.']]) {
-      expect(migrateConfig(stored, 8, { content }), JSON.stringify(content)).toBe(stored);
+      expect(migrateConfig(stored, 8, { content }).bodyText, JSON.stringify(content)).toBe(stored.bodyText);
     }
     expect(migrateConfig(stored, CONFIG_VERSION, { content: PLAIN })).toBe(stored);
     const named: PostextConfig = { bodyText: { verse: { layout: 'auto' } } };
@@ -499,14 +501,14 @@ describe('bodyText.verse and the configurations stored before #620', () => {
     }
     expect(migrateConfig(stored, 9).bodyText?.verse).toEqual({ tighten: false });
     for (const content of [BAYT, 'No poem.', ':::verse{layout=bayt}\nA line\n:::', [BAYT, 'Text.']]) {
-      expect(migrateConfig(stored, 9, { content }), JSON.stringify(content)).toBe(stored);
+      expect(migrateConfig(stored, 9, { content }).bodyText, JSON.stringify(content)).toBe(stored.bodyText);
     }
     // Before 1.23 a plain poem is pinned to the bayt layout, which never
     // turned over; a poem that names the line layout is set line by line.
     expect(migrateConfig(stored, 8, { content: LINES }).bodyText?.verse).toEqual({ tighten: false });
     expect(migrateConfig(stored, 8, { content: [PLAIN, LINES] }).bodyText?.verse).toEqual({ layout: 'bayt', tighten: false });
     const bayts: PostextConfig = { bodyText: { verse: { layout: 'bayt' } } };
-    expect(migrateConfig(bayts, 9, { content: PLAIN })).toBe(bayts);
+    expect(migrateConfig(bayts, 9, { content: PLAIN }).bodyText).toBe(bayts.bodyText);
     expect(migrateConfig(stored, CONFIG_VERSION, { content: PLAIN })).toBe(stored);
     const named: PostextConfig = { bodyText: { verse: { tighten: true } } };
     expect(pinLegacyVerseTightening(named)).toBe(named);

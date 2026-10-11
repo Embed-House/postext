@@ -34,7 +34,9 @@ describe('pinLegacyFlowColumns (#634)', () => {
     expect(migrateConfig({} as PostextConfig, 10, { content: ':::callout\n:::columns\nA.\n:::\n:::' }).layout?.flowColumns).toBe(false);
     expect(migrateConfig({} as PostextConfig, 10, { content: 'Columns are mentioned, `:::columns` inline.' }).layout).toBeUndefined();
     const current: PostextConfig = {};
-    expect(migrateConfig(current, 11, { content: GROUP })).toBe(current);
+    // (one stamped 11 gets the pins of rules 12 alone, none on its layout)
+    expect(migrateConfig(current, 11, { content: GROUP }).layout).toBeUndefined();
+    expect(migrateConfig(current, 12, { content: GROUP })).toBe(current);
   });
 
   it('pins a bundle on its merged layers', () => {

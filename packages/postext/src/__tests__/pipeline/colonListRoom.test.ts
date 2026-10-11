@@ -143,7 +143,8 @@ describe('configurations stored before rules 6 keep the 1.4 colon-list room', ()
 
   it('reads a lead-in as the parser does: a colon closing its line, a list item next', () => {
     const stored: PostextConfig = {};
-    const pinned = (content: string) => migrateConfig(stored, 5, { content }) !== stored;
+    // (A list alone brings a pin of rules 12 on the headings, #711: this one is read on the body text.)
+    const pinned = (content: string) => migrateConfig(stored, 5, { content }).bodyText?.colonListRoom !== undefined;
     expect(pinned(LIST)).toBe(true);
     expect(pinned('**Note:**\n1. first')).toBe(true);
     expect(pinned('Steps:\n\n\n  + indented')).toBe(true);

@@ -3992,6 +3992,20 @@ export interface ColumnBalancingConfig {
    *  grid line or less are left as they are: a last column a line short is
    *  the usual finish of a closing band. Default true. */
   trailing?: boolean;
+  /** The unit of the level cut of a closing band (`trailing`, and the cut
+   *  `beforeSpan` takes behind a box that moves on), #711:
+   *  - `'lines'` (default): a band whose text is set on a leading of its
+   *    own (an index, a list of references, a container of small type) is
+   *    cut, and retried, by whole lines of that leading: the height most
+   *    lines of the band share. A band of body text has the baseline
+   *    grid for its leading and is cut as before.
+   *  - `'grid'`: every cut is a whole number of baseline-grid lines, as up
+   *    to postext 1.27, which let a line more into one column of an
+   *    off-grid band and lowered a failed cut by more than one of its
+   *    lines.
+   *  Any other value reads as `'lines'`. Configurations stored earlier
+   *  keep `'grid'` (see `migrateConfig` in `postext/bundle`). */
+  trailingStep?: TrailingStep;
   /** Balance the band a page-span block leaves behind: when a `span: 'page'`
    *  callout does not fit under the current columns and has to move to the
    *  next page (or split, see `CalloutStyleConfig.keepTogether`), the
@@ -4035,6 +4049,10 @@ export type ClosingBoxLever = 'first' | 'last' | 'off';
  *  #708). */
 export type StretchAfterWideFloats = 'flush' | 'always';
 
+/** The unit of the level cut of a closing band
+ *  (`headings.balancing.trailingStep`, #711). */
+export type TrailingStep = 'lines' | 'grid';
+
 /** Whether the whole-line balancing levers run on a character grid
  *  (`ColumnBalancingConfig.gridLines`). */
 export type GridLinesLever = 'allow' | 'off';
@@ -4077,6 +4095,7 @@ export interface ResolvedHeadingsConfig {
     trackParagraphs: boolean;
     maxTracking: number;
     trailing: boolean;
+    trailingStep: TrailingStep;
     beforeSpan: boolean;
     closingBox: ClosingBoxLever;
     /** Present only when `'off'` (#632): every other configuration

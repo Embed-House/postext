@@ -74,6 +74,15 @@ describe('stripConfigDefaults and the balancing default of the document (#651)',
     expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { maxLinesBeforeLoose: 0 }))).headings.balancing.maxLinesBeforeLoose).toBe(0);
   });
 
+  it('keeps trailingStep \'grid\' and drops \'lines\', in every context (#711)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { trailingStep: 'grid' })).headings, name).toEqual({ balancing: { trailingStep: 'grid' } });
+      expect(stripConfigDefaults(withBalancing(context, { trailingStep: 'lines' })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { trailingStep: 'grid' }))).headings.balancing.trailingStep).toBe('grid');
+    expect(resolveAllConfig({}).headings.balancing.trailingStep).toBe('lines');
+  });
+
   it('keeps stretchAfterWideFloats \'always\' and drops \'flush\', in every context (#708)', () => {
     for (const [name, context] of Object.entries(CONTEXTS)) {
       expect(stripConfigDefaults(withBalancing(context, { stretchAfterWideFloats: 'always' })).headings, name).toEqual({ balancing: { stretchAfterWideFloats: 'always' } });

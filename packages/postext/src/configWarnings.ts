@@ -418,7 +418,7 @@ const HEADINGS_KEYS = {
 const BALANCING_KEYS = {
   enabled: true, maxLinesPerHeading: true, maxLinesBeforeLoose: true, stretchAfterLists: true, maxLinesAfterList: true, stretchAfterDisplays: true,
   stretchAfterFloats: true, maxLinesAfterFloat: true, stretchAfterWideFloats: true, looseParagraphs: true, maxLooseParagraphs: true,
-  trackParagraphs: true, maxTracking: true, trailing: true, beforeSpan: true, closingBox: true, gridLines: true,
+  trackParagraphs: true, maxTracking: true, trailing: true, trailingStep: true, beforeSpan: true, closingBox: true, gridLines: true,
 } satisfies Record<keyof ColumnBalancingConfig, true>;
 const HEADING_LEVEL_KEYS = {
   level: true, fontSize: true, lineHeight: true, fontFamily: true, color: true, fontWeight: true,

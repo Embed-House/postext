@@ -226,11 +226,13 @@ describe('configurations stored before rules 8 keep the 1.4 space under containe
     const noStyles: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     // (GROUP_THEN_TEXT: a heading or a compound would bring the other
     // version-8 pins.)
-    expect(migrateConfig(noStyles, 7, { content: GROUP_THEN_TEXT })).toBe(noStyles);
+    // (The fence brings the version-12 pin of the level cut's unit, #711,
+    // on the headings.)
+    expect(migrateConfig(noStyles, 7, { content: GROUP_THEN_TEXT }).bodyText).toBe(noStyles.bodyText);
     expect(migrateConfig(stored, CONFIG_VERSION, { content: GROUP_THEN_HEADING })).toBe(stored);
     const named: PostextConfig = { ...stored, bodyText: { paragraphContainerSpacing: 'collapse' } };
     expect(pinLegacyParagraphContainerSpacing(named)).toBe(named);
-    expect(migrateConfig(named, undefined, { content: GROUP_THEN_TEXT })).toBe(named);
+    expect(migrateConfig(named, undefined, { content: GROUP_THEN_TEXT }).bodyText).toBe(named.bodyText);
   });
 
   it('counts the paragraph styles of the HTML viewer\'s overrides', () => {

@@ -42,8 +42,18 @@ export interface BandCap {
    *  placing anything and opens the next band as well; the cap belongs to
    *  the band it was measured in. */
   startVisit?: number;
-  /** Height of the capped band in baseline-grid lines. */
+  /** Height of the capped band in lines: baseline-grid lines, or lines of
+   *  `pitchPx` when the cap carries one. */
   lines: number;
+  /** The height of one of `lines` (px) when it is not the baseline grid's:
+   *  the leading the band's own text is set on (see {@link bandLinePitch},
+   *  #711). A trailing cap only; absent, the cut stands on a grid line. */
+  pitchPx?: number;
+  /** How many times the cap may be grown by a line after an overflow, when
+   *  its lines are shorter than the grid's (#711): as far as three grid
+   *  lines reach, at most {@link MAX_PITCHED_CAP_RETRIES}. Absent:
+   *  {@link MAX_BAND_CAP_RETRIES}. */
+  retryLimit?: number;
   /** Times the cap has been grown by one line after an overflow. */
   retries: number;
   /** Trailing caps only: the zone a chapter-closing fixed box takes at the
@@ -74,6 +84,50 @@ export const MAX_BAND_PASSES = 4;
 
 /** Maximum number of `lines + 1` retries for a cap whose band overflowed. */
 export const MAX_BAND_CAP_RETRIES = 3;
+
+/** The most retries a cap with a pitch of its own gets (#711). */
+export const MAX_PITCHED_CAP_RETRIES = 6;
+
+/** The retries a cap of `pitchPx` lines may take to reach as far as
+ *  {@link MAX_BAND_CAP_RETRIES} grid lines do. */
+export function capRetryLimit(pitchPx: number, gridPx: number): number {
+  if (!(pitchPx > 0) || pitchPx >= gridPx - 0.01) return MAX_BAND_CAP_RETRIES;
+  return Math.min(MAX_PITCHED_CAP_RETRIES, Math.ceil((MAX_BAND_CAP_RETRIES * gridPx) / pitchPx - 0.01));
+}
+
+/**
+ * The leading a band's own text is set on (#711): over the lines of the
+ * flow blocks of `cols` that are not headings, not hidden and not inside a
+ * box, the line height most of them share. The grid when that height is
+ * the grid's, when no height is shared by more than half of the lines, or
+ * when the band holds no such line: a band of body text is cut on the grid
+ * as it always was, and so is one that mixes two leadings in equal parts.
+ */
+export function bandLinePitch(cols: readonly VDTColumn[], gridPx: number): number {
+  // Heights compared to a hundredth of a pixel; the pitch is the exact
+  // height (a rounded one drifts by a line over a tall band).
+  const counts = new Map<number, { n: number; height: number }>();
+  let total = 0;
+  for (const col of cols) {
+    for (const block of col.blocks) {
+      if (block.type === 'heading' || block.hidden || block.containerId !== undefined) continue;
+      for (const line of block.lines) {
+        const height = line.bbox.height;
+        if (!(height > 0)) continue;
+        const key = Math.round(height * 100);
+        const seen = counts.get(key);
+        if (seen) seen.n++;
+        else counts.set(key, { n: 1, height });
+        total++;
+      }
+    }
+  }
+  let pitch = gridPx;
+  let most = 0;
+  for (const { n, height } of counts.values()) if (n > most) { most = n; pitch = height; }
+  if (total === 0 || most * 2 <= total || Math.abs(pitch - gridPx) <= 0.01) return gridPx;
+  return pitch;
+}
 
 /** What a placement pass reports back to the band-cap driver. */
 export interface BandPassReport {
@@ -207,7 +261,7 @@ export function bandCapLinesAroundZone(
 }
 
 const capKey = (spanIndex: number, cap: BandCap): string =>
-  `${spanIndex}:${cap.startContentIndex}:${cap.startPart}:${cap.startVisit ?? 0}:${cap.lines}`;
+  `${spanIndex}:${cap.startContentIndex}:${cap.startPart}:${cap.startVisit ?? 0}:${cap.lines}${cap.pitchPx !== undefined ? `@${cap.pitchPx.toFixed(2)}` : ''}`;
 
 /**
  * Drive the band-cap passes. `initial` is the plain first pass; `runPass`
@@ -359,7 +413,11 @@ export function* resolveTrailingCapsGen<T extends BandPassReport>(
     ({ result: initial, caps: new Map(spanCaps), passCount });
 
   let result = initial;
-  for (let extra = 0; extra < MAX_BAND_PASSES; extra++) {
+  // A cap whose lines are shorter than the grid's retries in finer steps
+  // and gets as many more passes as it gets retries (#711).
+  const passBound = (): number =>
+    MAX_BAND_PASSES + Math.max(0, ...[...caps.values()].map((c) => (c.retryLimit ?? MAX_BAND_CAP_RETRIES) - MAX_BAND_CAP_RETRIES));
+  for (let extra = 0; extra < passBound(); extra++) {
     result = runPass(caps);
     passCount++;
     yield;
@@ -370,7 +428,7 @@ export function* resolveTrailingCapsGen<T extends BandPassReport>(
       const fresh = result.bandCapProposals.get(i);
       if (result.bandCapsApplied.has(i)) {
         tried.add(capKey(i, cap));
-        if (cap.retries < MAX_BAND_CAP_RETRIES) {
+        if (cap.retries < (cap.retryLimit ?? MAX_BAND_CAP_RETRIES)) {
           caps.set(i, { ...cap, lines: cap.lines + 1, retries: cap.retries + 1 });
         } else {
           caps.delete(i);

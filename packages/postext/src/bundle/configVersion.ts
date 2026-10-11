@@ -131,6 +131,10 @@ import { hasCJK } from '../measure/cjk';
  *     flush (`headings.balancing.stretchAfterWideFloats: 'flush'`, #708),
  *     where up to 1.27 a column took its after-float line as under any
  *     float ({@link pinLegacyWideFloatStretch});
+ *   - the level cut of a closing band counts lines of the band's own text
+ *     when it is off the baseline grid (`headings.balancing.trailingStep:
+ *     'lines'`, #711), where up to 1.27 every cut stood on a grid line
+ *     ({@link pinLegacyTrailingStep});
  *   - a group of an index divided between two columns keeps two entries
  *     on each side (`index.groups.splitMinEntries: 2`, #712), where up to
  *     1.27 a column could end between any two entries ({@link
@@ -244,6 +248,8 @@ const LOOSE_ORDER_RULES = 12;
 /** The rules that keep the heads level under a float over several columns
  *  (#708). */
 const WIDE_FLOAT_STRETCH_RULES = 12;
+/** The rules that cut a closing band in lines of its own text (#711). */
+const TRAILING_STEP_RULES = 12;
 /** The rules that keep two entries of an index group on each side of a
  *  column break (#712). */
 const INDEX_GROUP_SPLIT_RULES = 12;
@@ -745,6 +751,34 @@ export function pinLegacyWideFloatStretch<T extends Partial<PostextConfig>>(conf
   const balancing = isRecord(headings.balancing) ? headings.balancing : {};
   if (balancing.stretchAfterWideFloats !== undefined || balancing.stretchAfterFloats === false) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, stretchAfterWideFloats: 'always' } } };
+}
+
+/**
+ * A configuration written before #711 (postext 1.27 or earlier), pinned to
+ * the way 1.27 cut a closing band level: `headings.balancing.trailingStep:
+ * 'grid'`, every cut a whole number of baseline-grid lines, where today a
+ * band whose text is set on a leading of its own is cut by lines of that
+ * leading. A configuration that does not balance its columns, that turns
+ * `trailing` and `beforeSpan` both off or that sets the key is returned as
+ * it is (the same object).
+ */
+export function pinLegacyTrailingStep<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.trailingStep !== undefined || (balancing.trailing === false && balancing.beforeSpan === false)) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, trailingStep: 'grid' } } };
+}
+
+/** Whether markdown may set text off the body's leading in the flow, which
+ *  is all the unit of a level cut changes: a container, a directive or a
+ *  code fence, a quotation, a list, a display formula, a citation (its
+ *  list of references). Prose under headings is on the grid. Unknown
+ *  content (undefined) may. */
+function mayHaveOffGridLines(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  const test = (text: string): boolean => /^[^\S\n]*(?::::|```|~~~|>|[-*+][^\S\n]|\d+[.)][^\S\n]|\$\$)|\[@/m.test(text);
+  return typeof content === 'string' ? test(content) : content.some(test);
 }
 
 /**
@@ -1594,7 +1628,10 @@ export interface MigrateConfigOptions {
  * balances its columns and lets a heading take more than two lines, unless
  * `options.content` shows no heading, and the after-float lever under a
  * float over several columns by {@link pinLegacyWideFloatStretch}, when it
- * balances its columns, unless `options.content` shows no float, and the
+ * balances its columns, unless `options.content` shows no float, the unit
+ * of the level cut of its closing bands by {@link pinLegacyTrailingStep},
+ * when it balances its columns, unless `options.content` shows prose and
+ * headings only, and the
  * breaks inside the groups of its indexes by {@link
  * pinLegacyIndexGroupSplit}, unless `options.content` shows no `:::index`;
  * it also has the widow and
@@ -1651,6 +1688,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) out = pinLegacyLooseOrder(out);
   if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) out = pinLegacyWideFloatStretch(out);
+  if (rules < TRAILING_STEP_RULES && mayHaveOffGridLines(content)) out = pinLegacyTrailingStep(out);
   if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) out = pinLegacyIndexGroupSplit(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
@@ -1685,7 +1723,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * titles, the circled numbers and the design text on the `cjk` in force,
  * the order of the balancing levers and the after-float lever under a
  * float over several columns on the `headings` in force (when the
- * merged configuration balances its columns), the breaks inside the groups
+ * merged configuration balances its columns), with the unit of the level
+ * cut of a closing band, the breaks inside the groups
  * of an index on the `index` in force,
  * and the widow and orphan rules of a character grid on the merged `cjk`
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
@@ -1734,6 +1773,7 @@ export function migrateBundleConfig(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) merged = pinLegacyLooseOrder(merged);
   if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) merged = pinLegacyWideFloatStretch(merged);
+  if (rules < TRAILING_STEP_RULES && mayHaveOffGridLines(content)) merged = pinLegacyTrailingStep(merged);
   if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) merged = pinLegacyIndexGroupSplit(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);

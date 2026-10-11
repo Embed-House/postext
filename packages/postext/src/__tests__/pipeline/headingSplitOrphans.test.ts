@@ -120,8 +120,8 @@ describe('a paragraph kept with the heading above it splits by the orphan rule t
     // No heading in the text: nothing is kept with one.
     expect(migrateConfig(plain, 7, { content: 'Prose only, no heading.' })).toBe(plain);
     // Unknown content may hold one.
-    // (with the version-12 pins of column balancing, #707 and #708)
-    expect(migrateConfig(plain, 7).headings).toEqual({ keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } });
+    // (with the version-12 pins of column balancing, #707, #708 and #711)
+    expect(migrateConfig(plain, 7).headings).toEqual({ keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } });
     // Keep-with-next or orphan control off: the setting changes nothing.
     const noKeep: PostextConfig = { headings: { keepWithNext: false } };
     expect(pinLegacyHeadingSplit(noKeep)).toBe(noKeep);

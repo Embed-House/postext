@@ -136,7 +136,9 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
     const headings = { fontFamily: 'Georgia' };
     const v3 = await openBundle(bundleBytes({ ...BODY, headings }, { configVersion: 3 }));
     expect(laidOut(buildBundle(v3)[0]!)).toEqual(LAID_OUT_BY_1_4_1.BODY);
-    expect(v3.config.headings).toEqual(headings);
+    // (Its headings gain the balancing pins of rules 12, #711, and no break.)
+    expect(v3.config.headings).toMatchObject(headings);
+    expect(v3.config.headings?.levels).toBeUndefined();
     // Unversioned (1.4): both pins.
     const v0 = await openBundle(bundleBytes({ ...BODY, headings }));
     expect(v0.config.headings?.levels?.[0]?.breakBefore).toEqual({ enabled: false });

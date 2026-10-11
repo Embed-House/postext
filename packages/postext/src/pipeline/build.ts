@@ -216,6 +216,8 @@ import {
   type BandPassReport,
   bandCapLinesAroundZone,
   type BandCapZone,
+  bandLinePitch,
+  capRetryLimit,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
 import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
@@ -3752,7 +3754,8 @@ function placeDocumentPass(
       // The cut is measured from under the float bands the proposing pass
       // had at the band's head, which may not have landed yet.
       const top = Math.max(bandTop(cols), bareBandTop(cols, floatHeadOf) + (cap.headPx ?? 0));
-      applyBandCap(cols, cap.lines * baselineGrid, uncappedBottoms, cap.zone, cap.kind === 'trailing', top);
+      // (A trailing cap counts the lines of its band's own leading, #711.)
+      applyBandCap(cols, cap.lines * (cap.pitchPx ?? baselineGrid), uncappedBottoms, cap.zone, cap.kind === 'trailing', top);
       cappedBandColumns.set(spanIndex, cols);
       activeCap = { spanIndex, pageIndex: page.index, band };
       bandCapsApplied.add(spanIndex);
@@ -3807,7 +3810,14 @@ function placeDocumentPass(
     if (!cols.some((c) => c.blocks.length > 0)) return;
     if (!bandStart || !registeredBand || registeredBand.pageIndex !== page.index || registeredBand.band !== band) return;
     const bottoms = cols.map((c) => c.bbox.y + (c.bbox.height - c.availableHeight));
-    const aroundZone = zone ? bandCapLinesAroundZone(cols, baselineGrid, zone, (c) => columnBottom(c, uncappedBottoms)) : null;
+    // The cut counts lines of the band's own text (#711,
+    // `trailingStep: 'lines'`): an index or a list of references set on a
+    // leading of its own is cut, and retried, by whole lines of that
+    // leading, where a cut on the body grid lets a line more into one
+    // column and each retry lowers it by more than a line of the band. A
+    // band of body text has the grid for its pitch.
+    const pitch = balancingCfg.trailingStep === 'grid' ? baselineGrid : bandLinePitch(cols, baselineGrid);
+    const aroundZone = zone ? bandCapLinesAroundZone(cols, pitch, zone, (c) => columnBottom(c, uncappedBottoms)) : null;
     if (aroundZone === null && Math.max(...bottoms) - Math.min(...bottoms) <= baselineGrid + 0.5) {
       // A band that is level already needs no cap and no second pass, but
       // it ends here all the same: where the boundary closes the flow of
@@ -3835,18 +3845,19 @@ function placeDocumentPass(
     const top = bandTop(cols);
     const floatHeads = cols
       .filter((c) => c.blocks.length === 0 && reservedOf(c).top > 0)
-      .map((c) => Math.ceil((c.bbox.y - top - 0.01) / baselineGrid));
+      .map((c) => Math.ceil((c.bbox.y - top - 0.01) / pitch));
     // So does one set under a page-span opener at the head of the opener's
     // own column (#639).
     for (const c of cols) {
-      if (c.headFloatFoot !== undefined) floatHeads.push(Math.ceil((c.headFloatFoot - top - 0.01) / baselineGrid));
+      if (c.headFloatFoot !== undefined) floatHeads.push(Math.ceil((c.headFloatFoot - top - 0.01) / pitch));
     }
     bandCapProposals.set(boundaryIndex, {
       kind: 'trailing',
       startContentIndex: bandStart.contentIndex,
       startPart: bandStart.part,
       ...(bandStart.visit > 0 ? { startVisit: bandStart.visit } : {}),
-      lines: aroundZone ?? Math.max(bandCapLines(cols, baselineGrid, footBands), ...floatHeads),
+      lines: aroundZone ?? Math.max(bandCapLines(cols, pitch, footBands), ...floatHeads),
+      ...(pitch !== baselineGrid ? { pitchPx: pitch, retryLimit: capRetryLimit(pitch, baselineGrid) } : {}),
       retries: 0,
       ...(aroundZone !== null ? { zone } : {}),
       ...capHeadPx(cols),

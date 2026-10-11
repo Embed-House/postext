@@ -1,4 +1,4 @@
-import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types';
+import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, TrailingStep, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { resolveDesignSlot } from './headerFooter';
 import { isDropCap } from './dropCap';
@@ -56,6 +56,7 @@ export const DEFAULT_COLUMN_BALANCING = {
   trackParagraphs: true,
   maxTracking: 10,
   trailing: true,
+  trailingStep: 'lines' as TrailingStep,
   beforeSpan: true,
   closingBox: 'first' as ClosingBoxLever,
 };
@@ -166,6 +167,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
           partial.balancing.maxTracking ?? DEFAULT_COLUMN_BALANCING.maxTracking,
         trailing:
           partial.balancing.trailing ?? DEFAULT_COLUMN_BALANCING.trailing,
+        // Any other value reads as the default.
+        trailingStep: partial.balancing.trailingStep === 'grid' ? 'grid' as TrailingStep : DEFAULT_COLUMN_BALANCING.trailingStep,
         beforeSpan:
           partial.balancing.beforeSpan ?? DEFAULT_COLUMN_BALANCING.beforeSpan,
         // Any other value reads as the default.
@@ -434,6 +437,11 @@ export function stripHeadingsDefaults(
       && headings.balancing.trailing !== DEFAULT_COLUMN_BALANCING.trailing
     ) {
       b.trailing = headings.balancing.trailing;
+      hasBOverride = true;
+    }
+    // `'lines'` is the default; any other value resolves like it.
+    if (headings.balancing.trailingStep === 'grid') {
+      b.trailingStep = 'grid';
       hasBOverride = true;
     }
     if (
