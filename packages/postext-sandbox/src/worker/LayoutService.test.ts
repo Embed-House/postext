@@ -157,6 +157,17 @@ describe('createLayoutService', () => {
       builds[2]!.finish();
       await third;
       expect(registered.slice(2)).toEqual([['Bangers 400 normal'], ['Bangers 600 900 normal']]);
+      // A slice the text comes to need (a character of another file of
+      // the face) is sent before the build that sets it, to the worker
+      // that has measured with the family: its next build measures with
+      // it (#760).
+      fontLoader.standIns = [...fontLoader.standIns, { family: 'Bangers', weight: '600 900', style: 'italic', buffer: new ArrayBuffer(1) }];
+      const fourth = service.build({ clientId: 'canvas', priority: 'preview', content: content('*WHAM*'), config: {} });
+      await tick();
+      expect(registered.slice(4)).toEqual([['Bangers 600 900 italic']]);
+      expect(builds).toHaveLength(4);
+      builds[3]!.finish();
+      await fourth;
       service.dispose();
     } finally {
       fontLoader.custom = [];
@@ -179,9 +190,9 @@ describe('createLayoutService', () => {
 
 // #757: a catalogue family is a file per weight, style and subset. The
 // worker is sent the cuts a build is set in before it lays it out, each
-// with all its files, and a face its pages name that it was not sent takes
-// a fresh worker: a worker's canvas never looks at the font set again for
-// a font it has set text with.
+// with all its files. A face its pages name that it was not sent goes to
+// the same worker, and the document is laid out again: the engine's worker
+// measures with a face that arrives after a build (#760).
 describe('the static cuts a build is sent (#757)', () => {
   /** A document whose text is set in `fonts` (CSS font shorthands). */
   const docSetIn = (...fonts: string[]) => ({
@@ -189,25 +200,18 @@ describe('the static cuts a build is sent (#757)', () => {
     blocks: fonts.map((fontString) => ({ fontString, lines: [{ segments: [] }] })),
   }) as unknown as VDTDocument;
 
-  /** A handle per worker the service makes, each with what it was sent. */
-  function workers() {
-    const made: { registered: string[][]; unregistered: string[][]; builds: FakeBuild[]; disposed: boolean }[] = [];
-    const createHandle = () => {
-      const { handle, builds } = fakeHandle();
-      const entry = { registered: [] as string[][], unregistered: [] as string[][], builds, disposed: false };
-      handle.registerFonts = async (faces) => {
-        entry.registered.push(faces.map((f) => `${f.family} ${f.weight} ${f.style} ${f.unicodeRange}`));
-      };
-      handle.unregisterFonts = async (families) => {
-        entry.unregistered.push(families);
-      };
-      handle.dispose = () => {
-        entry.disposed = true;
-      };
-      made.push(entry);
-      return handle;
+  /** A handle that records what it is sent. */
+  function recording() {
+    const { handle, builds } = fakeHandle();
+    const registered: string[][] = [];
+    const unregistered: string[][] = [];
+    handle.registerFonts = async (faces) => {
+      registered.push(faces.map((f) => `${f.family} ${f.weight} ${f.style} ${f.unicodeRange}`));
     };
-    return { made, createHandle };
+    handle.unregisterFonts = async (families) => {
+      unregistered.push(families);
+    };
+    return { handle, builds, registered, unregistered };
   }
 
   const reset = () => {
@@ -218,36 +222,36 @@ describe('the static cuts a build is sent (#757)', () => {
   };
 
   it('sends every file of each cut the configuration asks for, and of the regular, the bold and their italics, before the build', async () => {
-    const { made, createHandle } = workers();
+    const { handle, builds, registered, unregistered } = recording();
     fontLoader.uses = { 'Source Serif 4': [{ weight: 600, style: 'normal' }] };
     fontLoader.subsets = ['latin', 'latin-ext'];
     try {
-      const service = createLayoutService({ createHandle });
+      const service = createLayoutService({ handle });
       const first = service.build({ clientId: 'canvas', priority: 'preview', content: content('One'), config: {} });
       await tick();
       // One message, the cuts in order, every subset of each: the worker
       // has them all before it measures a word.
-      expect(made[0]!.registered).toEqual([[
+      expect(registered).toEqual([[
         'Source Serif 4 400 normal latin', 'Source Serif 4 400 normal latin-ext',
         'Source Serif 4 400 italic latin', 'Source Serif 4 400 italic latin-ext',
         'Source Serif 4 600 normal latin', 'Source Serif 4 600 normal latin-ext',
         'Source Serif 4 700 normal latin', 'Source Serif 4 700 normal latin-ext',
         'Source Serif 4 700 italic latin', 'Source Serif 4 700 italic latin-ext',
       ]]);
-      expect(made[0]!.builds).toHaveLength(1);
-      made[0]!.builds[0]!.finish(docSetIn('600 20px "Source Serif 4"', 'italic 400 12px "Source Serif 4"'));
+      expect(builds).toHaveLength(1);
+      builds[0]!.finish(docSetIn('600 20px "Source Serif 4"', 'italic 400 12px "Source Serif 4"'));
       await first;
+      expect(builds).toHaveLength(1);
       // Nothing more for the same faces; a weight the configuration gains
-      // is sent alone, to the same worker, before the build that sets it.
+      // is sent alone, before the build that sets it.
       fontLoader.uses = { 'Source Serif 4': [{ weight: 600, style: 'normal' }, { weight: 300, style: 'normal' }] };
       const second = service.build({ clientId: 'canvas', priority: 'preview', content: content('Two'), config: {} });
       await tick();
-      expect(made).toHaveLength(1);
-      expect(made[0]!.registered.slice(1)).toEqual([['Source Serif 4 300 normal latin', 'Source Serif 4 300 normal latin-ext']]);
-      expect(made[0]!.unregistered).toEqual([]);
+      expect(registered.slice(1)).toEqual([['Source Serif 4 300 normal latin', 'Source Serif 4 300 normal latin-ext']]);
+      expect(unregistered).toEqual([]);
       // The page declares the cut too: it paints with what the worker measures with.
       expect(fontLoader.pageLoads).toEqual(['Source Serif 4 600 normal', 'Source Serif 4 400 italic', 'Source Serif 4 300 normal']);
-      made[0]!.builds[1]!.finish(docSetIn('300 20px "Source Serif 4"'));
+      builds[1]!.finish(docSetIn('300 20px "Source Serif 4"'));
       await second;
       service.dispose();
     } finally {
@@ -255,37 +259,34 @@ describe('the static cuts a build is sent (#757)', () => {
     }
   });
 
-  it('lays a document out again on a fresh worker when its pages are set in a face the worker was not sent', async () => {
-    const { made, createHandle } = workers();
+  it('sends the worker a face its pages name that it was not sent, and lays the document out again', async () => {
+    const { handle, builds, registered, unregistered } = recording();
     fontLoader.uses = { Geist: [{ weight: 600, style: 'normal' }] };
     try {
-      const service = createLayoutService({ createHandle });
+      const service = createLayoutService({ handle });
       const build = service.build({ clientId: 'canvas', priority: 'preview', content: content('# A *title*'), config: {}, cacheKey: 'k' });
       await tick();
-      expect(made).toHaveLength(1);
+      expect(registered).toHaveLength(1);
       // The pages set the italic of the heading weight: no file of it was sent.
-      made[0]!.builds[0]!.finish(docSetIn('600 20px Geist', 'italic 600 20px Geist'));
+      builds[0]!.finish(docSetIn('600 20px Geist', 'italic 600 20px Geist'));
       await tick();
       await tick();
-      // The page declares it, and the first worker goes: it set text with
-      // that font before its file came.
+      // The page declares it, and the worker it has gets its files: no
+      // other face is sent again, none is taken away.
       expect(fontLoader.pageLoads).toEqual(['Geist 600 normal', 'Geist 600 italic']);
-      expect(made).toHaveLength(2);
-      expect(made[0]!.disposed).toBe(true);
-      expect(made[1]!.registered).toEqual([[
-        'Geist 400 normal latin', 'Geist 400 italic latin', 'Geist 600 normal latin', 'Geist 600 italic latin', 'Geist 700 normal latin', 'Geist 700 italic latin',
-      ]]);
-      expect(made[1]!.builds.map((b) => b.cacheKey)).toEqual(['k']);
+      expect(registered.slice(1)).toEqual([['Geist 600 italic latin']]);
+      expect(unregistered).toEqual([]);
+      expect(builds.map((b) => b.cacheKey)).toEqual(['k', 'k']);
       const again = docSetIn('600 20px Geist', 'italic 600 20px Geist');
-      made[1]!.builds[0]!.finish(again);
+      builds[1]!.finish(again);
       await expect(build).resolves.toBe(again);
       // The next build of the book has its faces from the start.
       const next = service.build({ clientId: 'canvas', priority: 'preview', content: content('# B'), config: {} });
       await tick();
-      expect(made).toHaveLength(2);
-      expect(made[1]!.registered).toHaveLength(1);
-      made[1]!.builds[1]!.finish(docSetIn('italic 600 20px Geist'));
+      builds[2]!.finish(docSetIn('italic 600 20px Geist'));
       await next;
+      expect(registered).toHaveLength(2);
+      expect(builds).toHaveLength(3);
       service.dispose();
     } finally {
       reset();
@@ -293,17 +294,17 @@ describe('the static cuts a build is sent (#757)', () => {
   });
 
   it('builds once when the pages are set in the faces the worker has: the regular, the bold and their italics need no asking', async () => {
-    const { made, createHandle } = workers();
+    const { handle, builds, registered } = recording();
     fontLoader.uses = { Geist: [{ weight: 500, style: 'normal' }] };
     try {
-      const service = createLayoutService({ createHandle });
+      const service = createLayoutService({ handle });
       const build = service.build({ clientId: 'canvas', priority: 'preview', content: content('A **bold** *word*'), config: {} });
       await tick();
       const doc = docSetIn('500 12px Geist', '700 12px Geist', 'italic 400 12px Geist', 'italic 700 12px Geist');
-      made[0]!.builds[0]!.finish(doc);
+      builds[0]!.finish(doc);
       await expect(build).resolves.toBe(doc);
-      expect(made).toHaveLength(1);
-      expect(made[0]!.builds).toHaveLength(1);
+      expect(builds).toHaveLength(1);
+      expect(registered).toHaveLength(1);
       // The page is told all the same: it declares a cut when it is set.
       expect(fontLoader.pageLoads.sort()).toEqual(['Geist 400 italic', 'Geist 500 normal', 'Geist 700 italic', 'Geist 700 normal']);
       service.dispose();
@@ -312,46 +313,21 @@ describe('the static cuts a build is sent (#757)', () => {
     }
   });
 
-  it('asks a family cut by slices for the faces set alone, and starts over for a bold its pages bring', async () => {
-    const { made, createHandle } = workers();
+  it('asks a family cut by slices for the faces set alone, and sends the bold its pages bring', async () => {
+    const { handle, builds, registered } = recording();
     fontLoader.uses = { 'Noto Serif JP': [{ weight: 400, style: 'normal' }] };
     fontLoader.subsets = ['latin', '119', '118'];
     fontLoader.sliced = ['Noto Serif JP'];
     try {
-      const service = createLayoutService({ createHandle });
+      const service = createLayoutService({ handle });
       const build = service.build({ clientId: 'canvas', priority: 'preview', content: content('本'), config: {} });
       await tick();
-      expect(made[0]!.registered).toEqual([['Noto Serif JP 400 normal latin', 'Noto Serif JP 400 normal 119', 'Noto Serif JP 400 normal 118']]);
-      made[0]!.builds[0]!.finish(docSetIn('400 12px "Noto Serif JP"', '700 12px "Noto Serif JP"'));
+      expect(registered).toEqual([['Noto Serif JP 400 normal latin', 'Noto Serif JP 400 normal 119', 'Noto Serif JP 400 normal 118']]);
+      builds[0]!.finish(docSetIn('400 12px "Noto Serif JP"', '700 12px "Noto Serif JP"'));
       await tick();
       await tick();
-      expect(made).toHaveLength(2);
-      expect(made[1]!.registered[0]).toHaveLength(6);
-      made[1]!.builds[0]!.finish(docSetIn('400 12px "Noto Serif JP"', '700 12px "Noto Serif JP"'));
-      await build;
-      service.dispose();
-    } finally {
-      reset();
-    }
-  });
-
-  it('keeps the one handle it was given, and sends it the face late', async () => {
-    const { handle, builds } = fakeHandle();
-    const registered: string[][] = [];
-    handle.registerFonts = async (faces) => {
-      registered.push(faces.map((f) => `${f.family} ${f.weight} ${f.style}`));
-    };
-    fontLoader.uses = { Geist: [{ weight: 600, style: 'normal' }] };
-    try {
-      const service = createLayoutService({ handle });
-      const build = service.build({ clientId: 'canvas', priority: 'preview', content: content('# A *title*'), config: {} });
-      await tick();
-      builds[0]!.finish(docSetIn('italic 600 20px Geist'));
-      await tick();
-      await tick();
-      expect(registered.slice(1)).toEqual([['Geist 600 italic']]);
-      expect(builds).toHaveLength(2);
-      builds[1]!.finish(docSetIn('italic 600 20px Geist'));
+      expect(registered.slice(1)).toEqual([['Noto Serif JP 700 normal latin', 'Noto Serif JP 700 normal 119', 'Noto Serif JP 700 normal 118']]);
+      builds[1]!.finish(docSetIn('400 12px "Noto Serif JP"', '700 12px "Noto Serif JP"'));
       await build;
       service.dispose();
     } finally {
@@ -360,18 +336,18 @@ describe('the static cuts a build is sent (#757)', () => {
   });
 
   it('gives up after two more layouts when every one names another face', async () => {
-    const { made, createHandle } = workers();
+    const { handle, builds } = recording();
     fontLoader.uses = { Geist: [{ weight: 400, style: 'normal' }] };
     try {
-      const service = createLayoutService({ createHandle });
+      const service = createLayoutService({ handle });
       const build = service.build({ clientId: 'canvas', priority: 'preview', content: content('x'), config: {} });
       for (const weight of [300, 500, 800]) {
         await tick();
         await tick();
-        made.at(-1)!.builds.at(-1)!.finish(docSetIn(`${weight} 12px Geist`));
+        builds.at(-1)!.finish(docSetIn(`${weight} 12px Geist`));
       }
       await build;
-      expect(made).toHaveLength(3);
+      expect(builds).toHaveLength(3);
       service.dispose();
     } finally {
       reset();

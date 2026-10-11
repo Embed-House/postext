@@ -354,13 +354,8 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
-          // A factory: the layout service starts over on a fresh worker when
-          // a chapter's pages are set in a face it was not sent (#757).
-          const worker = () => {
-            const made = new Worker("/__sb/worker.js", { type: "module" });
-            made.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
-            return made;
-          };
+          const worker = new Worker("/__sb/worker.js", { type: "module" });
+          worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
           const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
           return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, errors: w.__sbErrors };
         } catch (error) {

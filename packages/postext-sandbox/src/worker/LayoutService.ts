@@ -81,30 +81,16 @@ const FONT_ROUNDS = 2;
  * typing. Within one client the last request wins: the earlier one is
  * cancelled and rejected.
  */
-export function createLayoutService(options?: {
-  /** A worker handle to use, in place of the Sandbox's own worker. */
-  handle?: LayoutWorkerHandle;
-  /** How to make another handle: the service asks for one when it has to
-   *  start over on a fresh worker (see `lacksDocumentFonts`). With a
-   *  `handle` and no factory, the service keeps that one handle. */
-  createHandle?: () => LayoutWorkerHandle;
-}): LayoutService {
+export function createLayoutService(options?: { handle?: LayoutWorkerHandle }): LayoutService {
   // The worker is spawned on first use, not on creation: the provider's
   // state initialiser also runs while the page is rendered on the server
   // (Next.js prerender), where `Worker` does not exist.
   let handle: LayoutWorkerHandle | null = options?.handle ?? null;
   // The Sandbox's own entry: Postext's worker with the citation engine
   // loaded on demand (see ./layout.worker.ts).
-  const createHandle = options?.createHandle ?? (options?.handle ? null : (): LayoutWorkerHandle => createLayoutWorker({
+  const worker = (): LayoutWorkerHandle => (handle ??= createLayoutWorker({
     worker: new Worker(new URL('./layout.worker.js', import.meta.url), { type: 'module' }),
   }));
-  const worker = (): LayoutWorkerHandle => {
-    if (!handle) {
-      if (!createHandle) throw new Error('Layout service has no worker');
-      handle = createHandle();
-    }
-    return handle;
-  };
   const queue: Entry[] = [];
   let active: Entry | null = null;
   let disposed = false;
@@ -115,11 +101,12 @@ export function createLayoutService(options?: {
   // The catalogue families (#757): the weights and slants the builds so
   // far asked of each, and the faces sent for them, by face key. A family
   // is a file per weight, style and subset, and the worker is sent the
-  // cuts a build is set in before it lays it out, each with all its files:
-  // a worker's canvas resolves a font the first time it sets text with it
-  // and never looks at the font set again for that font (Chrome 131 and
-  // 154), so a file that arrives later, another weight or another subset
-  // of a cut, would never be measured with.
+  // cuts a build is set in before it lays it out, each with all its files,
+  // so a chapter is laid out once and the files of a cut stand in the
+  // worker in the order they are declared. A face that arrives later
+  // (one only the pages name, a stand-in slice, a custom font uploaded
+  // again) is measured with from the next build on: the engine's worker
+  // makes its canvas resolve those fonts again (#760).
   const familyUses = new Map<string, Map<string, FontVariantUse>>();
   const sentFaces = new Map<string, Set<string>>();
   // The stand-in faces sent so far (#688), by face key: a family's own
@@ -172,14 +159,19 @@ export function createLayoutService(options?: {
     return (await familyCutFaces(family, uses, { standard: true })).filter((face) => !had?.has(fontPayloadKey(face)));
   };
 
-  /** Send the worker the faces of `families` it lacks. */
-  const sendFamilies = async (families: readonly string[]): Promise<void> => {
+  /** Send the worker the faces of `families` it lacks; true when it got
+   *  any. */
+  const sendFamilies = async (families: readonly string[]): Promise<boolean> => {
+    let sent = false;
     const custom = families.filter((f) => getCustomFontFamily(f) && !registeredFamilies.has(f));
     if (custom.length > 0) {
       for (const f of custom) registeredFamilies.add(f);
       try {
         const payloads = await collectFontPayloadsForFamilies(custom);
-        if (payloads.length > 0) await worker().registerFonts(payloads);
+        if (payloads.length > 0) {
+          await worker().registerFonts(payloads);
+          sent = true;
+        }
         const delivered = new Set(payloads.map((p) => p.family));
         for (const f of custom) if (!delivered.has(f)) registeredFamilies.delete(f);
       } catch (err) {
@@ -190,11 +182,11 @@ export function createLayoutService(options?: {
     // One message for every family: their files are fetched side by side.
     try {
       const lacking = (await Promise.all(families.filter((f) => !getCustomFontFamily(f)).map(lackingFaces))).flat();
-      if (lacking.length === 0) return;
+      if (lacking.length === 0) return sent;
       // A file that cannot be had is left out, and asked for again by a
       // later build.
       const payloads = await fetchFacePayloads(lacking);
-      if (payloads.length === 0) return;
+      if (payloads.length === 0) return sent;
       const keys = payloads.map((p) => [p.family, fontPayloadKey(p)] as const);
       await worker().registerFonts(payloads);
       for (const [family, key] of keys) {
@@ -202,8 +194,26 @@ export function createLayoutService(options?: {
         if (had) had.add(key);
         else sentFaces.set(family, new Set([key]));
       }
+      return true;
     } catch (err) {
       console.warn('[LayoutService] font registration failed', err);
+      return sent;
+    }
+  };
+
+  /** After the families' own faces: the bold or the italic a family has no
+   *  file for, answered by its own face (#688), in the files that hold
+   *  this build's characters. */
+  const sendStandIns = async (config: PostextConfig, content: PostextContent): Promise<void> => {
+    try {
+      const standIns = await collectStandInPayloads(config, content, registeredStandIns);
+      if (standIns.length > 0) {
+        const keys = standIns.map(fontPayloadKey);
+        await worker().registerFonts(standIns);
+        for (const key of keys) registeredStandIns.add(key);
+      }
+    } catch (err) {
+      console.warn('[LayoutService] stand-in font registration failed', err);
     }
   };
 
@@ -214,36 +224,23 @@ export function createLayoutService(options?: {
     const families = [...uses.keys()];
     const next = fontQueue.then(async () => {
       await sendFamilies(families);
-      // After the families' own faces: the bold or the italic a family
-      // has no file for, answered by its own face (#688), in the files
-      // that hold this build's characters.
-      try {
-        const standIns = await collectStandInPayloads(config, content, registeredStandIns);
-        if (standIns.length > 0) {
-          const keys = standIns.map(fontPayloadKey);
-          await worker().registerFonts(standIns);
-          for (const key of keys) registeredStandIns.add(key);
-        }
-      } catch (err) {
-        console.warn('[LayoutService] stand-in font registration failed', err);
-      }
+      await sendStandIns(config, content);
     });
     fontQueue = next;
     await next;
   };
 
   /**
-   * Whether the pages of `doc` are set in a face the worker was not sent
+   * The faces the pages of `doc` are set in that the worker was not sent
    * (#757): a weight and slant its configuration did not announce and the
    * regular, the bold and their italics do not cover (the italic of a
    * heading set at 600, the bold of a caption in a family cut by slices).
    * With the variable file every weight was there; with a file per weight
-   * the pages say which ones they need. The service notes those faces (and
-   * the page declares them), and the document has to be laid out again: on
-   * a fresh worker, since the one that set it resolved those fonts without
-   * their files and will not look again.
+   * the pages say which ones they need. The service notes those faces (the
+   * page declares them) and sends the worker their files; true when it
+   * got any, and the document is then laid out again with them.
    */
-  const lacksDocumentFonts = async (doc: VDTDocument): Promise<boolean> => {
+  const ensureDocumentFonts = async (doc: VDTDocument, config: PostextConfig, content: PostextContent): Promise<boolean> => {
     const asked = new Map<string, FontVariantUse[]>();
     for (const face of documentFontFaces(doc)) {
       const list = asked.get(face.family);
@@ -259,19 +256,14 @@ export function createLayoutService(options?: {
     }
     if (fresh.length === 0) return false;
     noteUses(fresh);
-    const lacking = await Promise.all(fresh.map(([family]) => lackingFaces(family).catch(() => [])));
-    return lacking.some((faces) => faces.length > 0);
-  };
-
-  /** Start over on a fresh worker: the next build sends it its fonts. */
-  const replaceWorker = (): void => {
-    if (!createHandle) return;
-    handle?.dispose();
-    handle = null;
-    registeredFamilies.clear();
-    sentFaces.clear();
-    registeredStandIns.clear();
-    fontQueue = Promise.resolve();
+    let sent = false;
+    const next = fontQueue.then(async () => {
+      sent = await sendFamilies(fresh.map(([family]) => family));
+      if (sent) await sendStandIns(config, content);
+    });
+    fontQueue = next;
+    await next;
+    return sent;
   };
 
   // --- the queue
@@ -309,13 +301,10 @@ export function createLayoutService(options?: {
         ? await worker().warm(request.content, request.config, { ...buildOptions, cacheKey: request.cacheKey }).then(() => null)
         : await worker().build(request.content, request.config, buildOptions);
       // Laid out again when its pages set a face the worker did not have
-      // (#757), on a fresh worker: once for the faces the first layout
-      // names, once more for any the second brings.
+      // (#757): once for the faces the first layout names, once more for
+      // any the second brings.
       for (let round = 0; doc && round < FONT_ROUNDS; round++) {
-        if (!(await lacksDocumentFonts(doc))) break;
-        if (controller.signal.aborted) throw abortError();
-        replaceWorker();
-        await ensureFonts(request.config, request.content);
+        if (!(await ensureDocumentFonts(doc, request.config, request.content))) break;
         if (controller.signal.aborted) throw abortError();
         doc = await worker().build(request.content, request.config, buildOptions);
       }

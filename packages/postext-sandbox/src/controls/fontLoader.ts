@@ -334,8 +334,10 @@ function buildFontUrl(family: string, meta: FontMetadata | null): string {
 // worker take the same order from here.
 //
 // A cut goes to the layout worker whole, before the first build that is
-// set in it (`worker/LayoutService.ts`): a worker's canvas does not take a
-// file that arrives after it first set text with a font.
+// set in it (`worker/LayoutService.ts`), so its files stand there in the
+// order they are declared and a chapter is laid out once. A face that
+// arrives after a build is measured with all the same: the engine's worker
+// makes its canvas resolve those fonts again (#760).
 
 /** The regular face: what a specimen is set in. */
 const REGULAR_USE: readonly FontVariantUse[] = [{ weight: 400, style: 'normal' }];
