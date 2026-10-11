@@ -31,7 +31,7 @@ import { readKit, readRecipeMeta, readRecipeSources, resetKitCache } from "../..
 import type { ComposedPen, SampleLocale, RecipeMeta } from "../../src/lib/cookbook/types.ts";
 import { contentType, safeFile } from "./net.ts";
 import type { EngineSpec } from "./shim.ts";
-import { importMapTag, LOCAL_PREFIX, resolveEngine, rewriteBareImports, shimModules } from "./shim.ts";
+import { importMapTag, LOCAL_PREFIX, pdfDateOf, resolveEngine, rewriteBareImports, shimModules } from "./shim.ts";
 
 const PROBE_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), "lib", "probe.js");
 
@@ -192,9 +192,10 @@ export async function localMathJaxModule(source: string): Promise<string> {
 
 export async function startPenServer(opts: PenServerOptions): Promise<PenServer> {
   const engine = resolveEngine(opts.engine);
-  const shims = shimModules(engine);
   const live = opts.live === true;
   let state = composeVariant(opts.slug, opts.variant);
+  // A captured PDF is dated the day its recipe was written (#734).
+  const shims = shimModules(engine, { pdfDate: pdfDateOf(state.meta.created) });
   const clients = new Set<http.ServerResponse>();
 
   // Live mode composes on every page request, so a save shows at once.

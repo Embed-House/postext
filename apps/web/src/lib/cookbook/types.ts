@@ -581,6 +581,12 @@ export interface CaptureManifest {
   engine: { postext: SemVer; postextPdf?: SemVer; source: "npm" | "local" };
   chrome: string;
   capturedAt: string;
+  /** The newest release on which a capture run found the recipe unchanged
+   *  (pages within rendering noise, the PDF's bytes, the committed bundle
+   *  read back by that engine), the Chrome of that run and its time
+   *  (#735). `engine` and `capturedAt` stay the run that wrote the files;
+   *  a run that writes a file removes this. */
+  verified?: { postext: SemVer; postextPdf?: SemVer; chrome: string; at: string };
   variants: Partial<Record<SampleLocale, CaptureVariant>>;
 }
 

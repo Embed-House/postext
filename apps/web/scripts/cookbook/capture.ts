@@ -11,12 +11,20 @@
  *     <variant>/<slug>.postext          the document, for the Sandbox
  *
  * A recipe writes only when every edition passes, and atomically (a temp
- * folder renamed over the old one). Images are kept, bytes and all, when
- * the source hash, the VDT hash, the engine and the page files are
- * unchanged, unless --force; the rest of the manifest (detection,
- * diagnostics, alt text, spreads) always comes from the new run,
- * and capture.json alone is rewritten when only that changed. --check
- * verifies and writes nothing. --sandbox-only writes the `.postext` files
+ * folder renamed over the old one). With the same sources, each kind of
+ * file is judged on its own, whatever engine the run used (#734, unless
+ * --force): the pages, card and OG image stay when the layout hash and the
+ * file names are the same and every page is within rendering noise of its
+ * committed image; the PDF stays when its bytes are the same (the capture
+ * dates it the day the recipe was written); the bundle stays when its
+ * bytes are the same or, written by another engine, it reads back as the
+ * pen's documents on this one. `engine`, `chrome` and `capturedAt` name the
+ * run that wrote files: a recipe with nothing to write keeps its folder
+ * byte for byte, and a run on a newer release records that in `verified`
+ * (#735; --verify writes only those records). On the recorded engine the
+ * rest of the manifest (detection, diagnostics, alt text, spreads) still
+ * follows the tooling, and capture.json alone is rewritten when only that
+ * changed. --check verifies and writes nothing. --sandbox-only writes the `.postext` files
  * alone, with the engine each capture.json records (runSandboxOnly). A
  * bundle is read back against the pen's documents before it is kept (C33).
  *
@@ -33,12 +41,12 @@ import { captureDir, recipeDir, WEB_DIR } from "../../src/lib/cookbook/paths.ts"
 import { loadRegistry } from "../../src/lib/cookbook/registry.ts";
 import { compareSemVer } from "../../src/lib/cookbook/validate.ts";
 import { listRecipeSlugs, readRecipeMeta, readRecipeSources } from "../../src/lib/cookbook/sources.ts";
-import type { CaptureManifest, CaptureVariant, SampleLocale, RecipeMeta, Registry } from "../../src/lib/cookbook/types.ts";
+import type { CaptureManifest, CaptureVariant, SampleLocale, RecipeMeta, Registry, SemVer } from "../../src/lib/cookbook/types.ts";
 import { SAMPLE_LOCALES } from "../../src/lib/cookbook/types.ts";
 import { altText, sidesOf, spreadsOf } from "./cards.ts";
 import { detect, pdfPageCount, readBackFindings, runChecks } from "./checks.ts";
 import type { Finding } from "./checks.ts";
-import type { HarnessBrowser, SandboxBundle, SandboxMeta, VariantRun } from "./harness.ts";
+import type { HarnessBrowser, PageChange, SandboxBundle, SandboxMeta, VariantRun } from "./harness.ts";
 import { launchBrowser, runVariant } from "./harness.ts";
 import { writeSheet } from "./sheet.ts";
 import type { SheetEntry } from "./sheet.ts";
@@ -63,6 +71,9 @@ export interface CaptureOptions {
   previewDir?: string;
   /** Write only the Sandbox bundles, with the engine capture.json records. */
   sandboxOnly?: boolean;
+  /** Write only `verified` records (#735): a recipe whose files would
+   *  change is listed as needing a recapture, and fails the run. */
+  verify?: boolean;
 }
 
 export interface CaptureResult {
@@ -95,12 +106,18 @@ interface Prepared {
 }
 
 /** One edition's outputs, in memory until the recipe is written. */
-interface Output {
+export interface Output {
   /** Null when the edition failed (its previews and sheet row still exist). */
   variant: CaptureVariant | null;
   files: Map<string, Buffer>;
   previews: Map<string, Buffer>;
   sheet: SheetEntry;
+  /** The published pages that are not their committed images beyond
+   *  rendering noise (#734); null when the run did not compare them. */
+  pageChanges?: PageChange[] | null;
+  /** The committed bundle, of other bytes than the run's, reads back as
+   *  the pen's documents on the run's engine (#734). */
+  committedBundleOk?: boolean;
 }
 
 const dim = (text: string) => styleText("dim", text, { stream: process.stderr });
@@ -331,8 +348,15 @@ function evaluate(
     slug, variant, ok: result.ok, card: run.card?.card480 ?? null,
     spread: [pick[0] === null ? null : strips[pick[0]], pick[1] === null ? null : strips[pick[1]]],
   };
+  // What the run found against the committed files (#734).
+  const committedBack = run.sandbox?.committedReadBack ?? null;
+  const compared = {
+    pageChanges: run.pageChanges,
+    committedBundleOk: !!committedBack && !committedBack.error && !committedBack.skipped
+      && readBackFindings(committedBack).every((f) => f.severity !== "fail"),
+  };
   if (!facts || !detected || !selected || !run.card || !result.ok) {
-    return { result, output: { variant: null, files, previews, sheet } };
+    return { result, output: { variant: null, files, previews, sheet, ...compared } };
   }
   const first = facts.builds[0];
   const specimen = facts.specimen!;
@@ -402,7 +426,7 @@ function evaluate(
   };
   // What the bundle leaves out or cannot carry, after the checks' findings.
   result.warns.push(...kept(bundled));
-  return { result, output: { variant: capture, files, previews, sheet } };
+  return { result, output: { variant: capture, files, previews, sheet, ...compared } };
 }
 
 function variantFilesExist(dir: string, v: CaptureVariant): boolean {
@@ -420,23 +444,6 @@ function sameFiles(old: CaptureVariant, next: CaptureVariant): boolean {
     && !!old.pdf === !!next.pdf;
 }
 
-/** A kept edition: its files (and what describes them: hash, sizes, bytes)
- *  stay, and so do its timings (they vary run to run and would rewrite
- *  capture.json every time); everything else comes from the new run, so
- *  detection, diagnostics, alt text and spreads follow tooling changes that
- *  leave the VDT alone. */
-function keptVariant(old: CaptureVariant, next: CaptureVariant): CaptureVariant {
-  return {
-    ...next,
-    hash8: old.hash8,
-    timings: old.timings,
-    pages: next.pages.map((p, i) => ({ ...p, w: old.pages[i].w, h: old.pages[i].h, bytes: old.pages[i].bytes })),
-    card: old.card.mode === next.card.mode ? old.card : next.card,
-    og: old.og,
-    ...(old.pdf ? { pdf: old.pdf } : {}),
-  };
-}
-
 /** Writes `bytes` to `file` through a temporary file, unless they are there already. */
 function writeIfChanged(file: string, bytes: Buffer): boolean {
   if (fs.existsSync(file) && fs.readFileSync(file).equals(bytes)) return false;
@@ -446,93 +453,279 @@ function writeIfChanged(file: string, bytes: Buffer): boolean {
   return true;
 }
 
-/** A kept edition's bundle is written again: it follows the tooling, like
- *  the rest of capture.json, and weighs little. */
-function keptBundle(dir: string, slug: string, output: Output | undefined): boolean {
-  const bytes = output?.files.get(sandboxFile(slug));
-  return bytes ? writeIfChanged(path.join(dir, sandboxFile(slug)), bytes) : false;
-}
-
 /** The manifest minus what a rewrite always changes. */
 const manifestKey = (m: CaptureManifest | null) => (m ? JSON.stringify({ ...m, capturedAt: "" }) : "");
 
-/** Writes a recipe's captures atomically; returns the editions whose files
- *  were (re)written, the editions dropped as stale and whether only
- *  capture.json changed, or null when nothing changed. */
-function writeRecipe(
-  task: Prepared,
+// ─── What a run writes (#734, #735) ─────────────────────────────────────────
+
+/** The kinds of file an edition holds, each judged on its own. */
+export type FileKind = "images" | "pdf" | "bundle";
+
+/** What one captured edition needs written, and why. */
+export interface EditionPlan {
+  locale: SampleLocale;
+  /** The kinds whose files the run writes. */
+  write: Set<FileKind>;
+  /** Why, in the words `--verify` prints: "layout hash", "pixels (p03:
+   *  worst cell 36.2 of 255, …)", "PDF", "bundle", "sources", "new edition". */
+  reasons: string[];
+  /** Nothing committed to keep: the edition's folder is written anew. */
+  fresh: boolean;
+  /** The committed bundle stays although its bytes are not the run's: it
+   *  reads back as the pen's documents on the run's engine. */
+  bundleRead: boolean;
+}
+
+const KINDS: readonly FileKind[] = ["images", "pdf", "bundle"];
+
+/** The files of one kind in an edition's outputs. */
+function kindOf(slug: string, name: string): FileKind {
+  if (name === sandboxFile(slug)) return "bundle";
+  return name === `${slug}.pdf` ? "pdf" : "images";
+}
+
+/**
+ * What a passed edition writes. With other sources, no committed edition,
+ * a missing file or --force: everything. With another layout hash or other
+ * file names: everything too (the PDF and the bundle are of that layout).
+ * Otherwise each kind on its own: the images when a page differs from its
+ * committed image beyond rendering noise, the PDF when its bytes differ,
+ * the bundle when its bytes differ and, the run being on another engine
+ * than the recorded one, the committed bundle does not read back as the
+ * pen's documents (on the recorded engine a bundle of other bytes follows
+ * the tooling, as it always did).
+ */
+export function planEdition(
+  slug: string,
+  locale: SampleLocale,
+  output: Output,
+  dir: string,
+  prev: CaptureManifest | null,
+  context: { sourceHash: string; engine: string; force: boolean },
+): EditionPlan {
+  const next = output.variant!;
+  const all = (reason: string): EditionPlan => ({
+    locale, reasons: [reason], fresh: true, bundleRead: false,
+    write: new Set(KINDS.filter((kind) => [...output.files.keys()].some((name) => kindOf(slug, name) === kind))),
+  });
+  const old = prev?.variants?.[locale];
+  if (context.force) return all("--force");
+  if (!prev) return all("no capture");
+  if (prev.sourceHash !== context.sourceHash) return all("sources");
+  if (!old) return all("new edition");
+  if (!variantFilesExist(dir, old)) return all("a committed file is missing");
+  if (old.vdtHash !== next.vdtHash) return all("layout hash");
+  if (!sameFiles(old, next)) return all("pages published");
+
+  const write = new Set<FileKind>();
+  const reasons: string[] = [];
+  const onDisk = (name: string) => fs.readFileSync(path.join(dir, name));
+  // Pages, card and OG image: they follow the pages they are made from.
+  const changes = output.pageChanges
+    ?? next.pages.filter((p) => !onDisk(p.file).equals(output.files.get(p.file)!)).map((p) => ({ n: p.n, detail: "other bytes, not compared" }));
+  if (changes.length) {
+    write.add("images");
+    const first = changes[0]!;
+    reasons.push(`pixels (p${pad(first.n)}: ${first.detail}${changes.length > 1 ? `, and ${changes.length - 1} more page${changes.length > 2 ? "s" : ""}` : ""})`);
+  }
+  const pdf = output.files.get(`${slug}.pdf`);
+  if (pdf && !onDisk(`${slug}.pdf`).equals(pdf)) {
+    write.add("pdf");
+    reasons.push("PDF");
+  }
+  const bundle = output.files.get(sandboxFile(slug));
+  let bundleRead = false;
+  if (bundle) {
+    const file = path.join(dir, sandboxFile(slug));
+    const committed = fs.existsSync(file) ? fs.readFileSync(file) : null;
+    if (!committed?.equals(bundle)) {
+      bundleRead = !!committed && prev.engine?.postext !== context.engine && output.committedBundleOk === true;
+      if (!bundleRead) {
+        write.add("bundle");
+        reasons.push("bundle");
+      }
+    }
+  }
+  return { locale, write, reasons, fresh: false, bundleRead };
+}
+
+/** capture.json's entry of a planned edition. What describes a kept file
+ *  (its sizes and bytes) stays the committed entry's; `hash8` and the
+ *  timings change only when a file of the edition is written (the timings
+ *  vary run to run and would rewrite capture.json every time); the rest
+ *  (detection, diagnostics, alt text, spreads) comes from the new run. */
+function plannedVariant(slug: string, plan: EditionPlan, output: Output, old: CaptureVariant | undefined, dir: string): CaptureVariant {
+  const next = output.variant!;
+  if (plan.fresh || !old) return next;
+  const images = plan.write.has("images");
+  const merged: CaptureVariant = {
+    ...next,
+    ...(images ? {} : {
+      pages: next.pages.map((p, i) => ({ ...p, w: old.pages[i].w, h: old.pages[i].h, bytes: old.pages[i].bytes })),
+      card: old.card.mode === next.card.mode ? old.card : next.card,
+      og: old.og,
+    }),
+    ...(old.pdf && !plan.write.has("pdf") ? { pdf: old.pdf } : {}),
+    ...(plan.bundleRead && old.sandbox ? { sandbox: old.sandbox } : {}),
+  };
+  if (!plan.write.size) return { ...merged, hash8: old.hash8, timings: old.timings };
+  // The hash of the files as the folder will hold them.
+  const bytes = [...output.files].map(([name, fresh]) => (plan.write.has(kindOf(slug, name)) ? fresh : fs.readFileSync(path.join(dir, name))));
+  return { ...merged, hash8: hash8(Buffer.concat(bytes)) };
+}
+
+/** `verified` written into capture.json's text, after `capturedAt`: no
+ *  other byte of the file changes (#735). */
+export function withVerified(text: string, verified: NonNullable<CaptureManifest["verified"]>): string {
+  const block = JSON.stringify(verified, null, 2).replace(/\n/g, "\n  ");
+  const had = /\n {2}"verified": \{[^}]*\},?(?=\n)/;
+  if (had.test(text)) return text.replace(had, `\n  "verified": ${block},`);
+  const at = /\n {2}"capturedAt": "[^"\n]*",(?=\n)/.exec(text);
+  if (at) return `${text.slice(0, at.index + at[0].length)}\n  "verified": ${block},${text.slice(at.index + at[0].length)}`;
+  // A file some other tool formatted: written again whole.
+  const { schemaVersion, slug, sourceHash: hash, engine, chrome, capturedAt, variants, ...rest } = JSON.parse(text) as CaptureManifest;
+  return `${JSON.stringify({ schemaVersion, slug, sourceHash: hash, engine, chrome, capturedAt, verified, ...rest, variants }, null, 2)}\n`;
+}
+
+/** What `writeRecipe` did, or would do under `verifyOnly`. */
+export interface WriteOutcome {
+  /** The kinds written per edition (an edition absent wrote nothing). */
+  written: Map<SampleLocale, Set<FileKind>>;
+  dropped: SampleLocale[];
+  /** Only capture.json changed: what describes the files, on the engine
+   *  that wrote them. */
+  manifestOnly: boolean;
+  /** `verified` was recorded for this release (#735). */
+  verified: string | null;
+  /** Under `verifyOnly`: why the recipe needs a recapture, per edition. */
+  needs: { locale: SampleLocale; reasons: string[] }[];
+}
+
+/**
+ * Writes a recipe's captures atomically: the files each edition's plan
+ * names ({@link planEdition}), the editions dropped as stale, or
+ * capture.json alone. `verifyOnly` (#735) writes nothing but a `verified`
+ * record, and reports the plans that would write a file. `root` is the
+ * recipe's capture folder (a test's stand-in for it).
+ */
+export function writeRecipe(
+  task: Pick<Prepared, "slug" | "meta" | "sourceHash" | "previous">,
   outputs: Map<SampleLocale, Output>,
   engine: EngineSpec,
   chrome: string,
-  force: boolean,
-): { fresh: Set<SampleLocale>; dropped: SampleLocale[]; manifestOnly: boolean } | null {
-  const finalDir = captureDir(task.slug);
+  { force = false, verifyOnly = false, root = captureDir(task.slug), now = () => new Date() }: { force?: boolean; verifyOnly?: boolean; root?: string; now?: () => Date } = {},
+): WriteOutcome {
+  const finalDir = root;
   const prev = task.previous;
-  const sameBase = !!prev && prev.sourceHash === task.sourceHash && prev.engine?.postext === engine.postext;
-  const variants: Partial<Record<SampleLocale, CaptureVariant>> = {};
-  const fresh = new Set<SampleLocale>();
-  const kept = new Set<SampleLocale>();
+  const context = { sourceHash: task.sourceHash, engine: engine.postext, force };
+  const plans = new Map<SampleLocale, EditionPlan>();
   for (const [locale, output] of outputs) {
-    const old = prev?.variants?.[locale];
-    if (!output.variant) continue;
-    if (!force && sameBase && old && old.vdtHash === output.variant.vdtHash && sameFiles(old, output.variant)
-      && variantFilesExist(path.join(finalDir, locale), old)) {
-      variants[locale] = keptVariant(old, output.variant);
-      kept.add(locale);
-    } else {
-      variants[locale] = output.variant;
-      fresh.add(locale);
-    }
+    if (output.variant) plans.set(locale, planEdition(task.slug, locale, output, path.join(finalDir, locale), prev, context));
   }
-  // Editions not captured this run survive only when their inputs did not change.
+  const writes = [...plans.values()].some((plan) => plan.write.size > 0);
+  const sameSources = !!prev && prev.sourceHash === task.sourceHash;
+  const sameEngine = sameSources && prev.engine?.postext === engine.postext;
+
+  // Editions not captured this run survive only when their inputs did not
+  // change and the manifest goes on naming the engine that pictured them.
   const sampled = new Set(task.meta.sample.locales);
-  const dropped: SampleLocale[] = [];
-  for (const locale of SAMPLE_LOCALES) {
-    const old = prev?.variants?.[locale];
-    if (!old || outputs.has(locale)) continue;
-    if (sameBase && sampled.has(locale) && variantFilesExist(path.join(finalDir, locale), old)) {
-      variants[locale] = old;
-      kept.add(locale);
-    } else dropped.push(locale);
+  const uncaptured = SAMPLE_LOCALES.filter((locale) => prev?.variants?.[locale] && !outputs.has(locale));
+  const survives = (locale: SampleLocale) => sameSources && (sameEngine || !writes) && sampled.has(locale)
+    && variantFilesExist(path.join(finalDir, locale), prev!.variants[locale]!);
+  const dropped = uncaptured.filter((locale) => !survives(locale));
+
+  const outcome: WriteOutcome = { written: new Map(), dropped: [], manifestOnly: false, verified: null, needs: [] };
+  const needs = [...plans.values()].filter((plan) => plan.write.size > 0).map((plan) => ({ locale: plan.locale, reasons: plan.reasons }));
+  if (verifyOnly && (needs.length || dropped.length)) {
+    outcome.needs = [...needs, ...dropped.map((locale) => ({ locale, reasons: ["its capture is of other inputs"] }))];
+    return outcome;
   }
 
   const usesPdf = task.meta.outputs.includes("pdf") || !!task.meta.downloads?.pdf || !!task.meta.engine.postextPdf;
+  const released = { postext: engine.postext as SemVer, ...(usesPdf ? { postextPdf: engine.postextPdf as SemVer } : {}) };
+  const file = path.join(finalDir, "capture.json");
+
+  if (!writes && !dropped.length && prev) {
+    // No file of the recipe changed. On another release than the recorded
+    // one the folder stays as it is, and a newer release is recorded as
+    // the one the recipe was last verified on (#735): a run that did not
+    // take every edition of the recipe proves nothing of the others.
+    if (!sameEngine) {
+      const whole = SAMPLE_LOCALES.every((locale) => !prev.variants[locale] || plans.has(locale));
+      const newer = compareSemVer(engine.postext, prev.verified?.postext ?? prev.engine.postext) > 0;
+      if (whole && newer && engine.source === "npm") {
+        const verified = { ...released, chrome, at: now().toISOString() };
+        const tmpFile = `${file}.tmp-${process.pid}`;
+        fs.writeFileSync(tmpFile, withVerified(fs.readFileSync(file, "utf-8"), verified));
+        fs.renameSync(tmpFile, file);
+        outcome.verified = engine.postext;
+      }
+      return outcome;
+    }
+    if (verifyOnly) return outcome;
+    // On the recorded engine: capture.json alone, when the tooling changed
+    // what describes the files (capturedAt and chrome stay: they are the
+    // run's that made the images).
+    const variants: Partial<Record<SampleLocale, CaptureVariant>> = {};
+    for (const locale of SAMPLE_LOCALES) {
+      const plan = plans.get(locale);
+      if (plan) variants[locale] = plannedVariant(task.slug, plan, outputs.get(locale)!, prev.variants[locale], path.join(finalDir, locale));
+      else if (prev.variants[locale]) variants[locale] = prev.variants[locale];
+    }
+    const manifest: CaptureManifest = {
+      schemaVersion: 1, slug: task.slug, sourceHash: task.sourceHash, engine: prev.engine, chrome: prev.chrome, capturedAt: prev.capturedAt,
+      ...(prev.verified ? { verified: prev.verified } : {}),
+      variants,
+    };
+    if (manifestKey(manifest) === manifestKey(prev)) return outcome;
+    const tmpFile = `${file}.tmp-${process.pid}`;
+    fs.writeFileSync(tmpFile, `${JSON.stringify(manifest, null, 2)}\n`);
+    fs.renameSync(tmpFile, file);
+    outcome.manifestOnly = true;
+    return outcome;
+  }
+  if (verifyOnly) {
+    // No capture to verify.
+    outcome.needs = [...plans.keys()].map((locale) => ({ locale, reasons: ["no capture"] }));
+    return outcome;
+  }
+
+  // A file is written: the manifest names this run, and `verified` goes
+  // (the files say it themselves).
+  const variants: Partial<Record<SampleLocale, CaptureVariant>> = {};
+  for (const locale of SAMPLE_LOCALES) {
+    const plan = plans.get(locale);
+    if (plan) variants[locale] = plannedVariant(task.slug, plan, outputs.get(locale)!, prev?.variants?.[locale], path.join(finalDir, locale));
+    else if (prev?.variants?.[locale] && !dropped.includes(locale)) variants[locale] = prev.variants[locale];
+  }
   const manifest: CaptureManifest = {
     schemaVersion: 1,
     slug: task.slug,
     sourceHash: task.sourceHash,
-    engine: { postext: engine.postext as CaptureManifest["engine"]["postext"], ...(usesPdf ? { postextPdf: engine.postextPdf as CaptureManifest["engine"]["postext"] } : {}), source: "npm" },
+    engine: { ...released, source: "npm" },
     chrome,
-    capturedAt: new Date().toISOString(),
-    variants: Object.fromEntries(SAMPLE_LOCALES.filter((l) => variants[l]).map((l) => [l, variants[l]])),
+    capturedAt: now().toISOString(),
+    variants,
   };
-
-  // No image changed: rewrite capture.json alone (keeping capturedAt, the
-  // time of the images) when the tooling changed what describes them.
-  if (!fresh.size && !dropped.length) {
-    let bundles = false;
-    for (const locale of kept) bundles = keptBundle(path.join(finalDir, locale), task.slug, outputs.get(locale)) || bundles;
-    if (!prev || (manifestKey(manifest) === manifestKey(prev) && !bundles)) return null;
-    const file = path.join(finalDir, "capture.json");
-    const tmpFile = `${file}.tmp-${process.pid}`;
-    fs.writeFileSync(tmpFile, `${JSON.stringify({ ...manifest, capturedAt: prev.capturedAt }, null, 2)}\n`);
-    fs.renameSync(tmpFile, file);
-    return { fresh, dropped, manifestOnly: true };
-  }
 
   const tmpRoot = path.join(WEB_DIR, ".cache", "cookbook-tmp");
   fs.mkdirSync(tmpRoot, { recursive: true });
   const tmp = fs.mkdtempSync(path.join(tmpRoot, `${task.slug}-`));
   const old = `${finalDir}.old-${process.pid}`;
   try {
-    for (const locale of kept) {
-      fs.cpSync(path.join(finalDir, locale), path.join(tmp, locale), { recursive: true, preserveTimestamps: true });
-      keptBundle(path.join(tmp, locale), task.slug, outputs.get(locale));
-    }
-    for (const locale of fresh) {
+    for (const locale of SAMPLE_LOCALES) {
+      if (!variants[locale]) continue;
+      const plan = plans.get(locale);
       const dir = path.join(tmp, locale);
-      fs.mkdirSync(dir, { recursive: true });
-      for (const [name, bytes] of outputs.get(locale)!.files) fs.writeFileSync(path.join(dir, name), bytes);
+      // What stays is copied as it is; a fresh edition starts empty, so no
+      // page of an earlier, longer capture lingers.
+      if (!plan?.fresh) fs.cpSync(path.join(finalDir, locale), dir, { recursive: true, preserveTimestamps: true });
+      else fs.mkdirSync(dir, { recursive: true });
+      if (!plan) continue;
+      for (const [name, bytes] of outputs.get(locale)!.files) {
+        if (plan.write.has(kindOf(task.slug, name))) fs.writeFileSync(path.join(dir, name), bytes);
+      }
+      if (plan.write.size) outcome.written.set(locale, plan.write);
     }
     fs.writeFileSync(path.join(tmp, "capture.json"), `${JSON.stringify(manifest, null, 2)}\n`);
     fs.mkdirSync(path.dirname(finalDir), { recursive: true });
@@ -545,7 +738,16 @@ function writeRecipe(
     fs.rmSync(tmp, { recursive: true, force: true });
     throw error;
   }
-  return { fresh, dropped, manifestOnly: false };
+  outcome.dropped = dropped;
+  return outcome;
+}
+
+/** "PDF written, images and bundle kept". */
+function writtenNote(kinds: Set<FileKind>, variant: CaptureVariant | null): string {
+  const name: Record<FileKind, string> = { images: "images", pdf: "PDF", bundle: "bundle" };
+  const has = KINDS.filter((kind) => kind === "images" || (kind === "pdf" ? !!variant?.pdf : !!variant?.sandbox));
+  const kept = has.filter((kind) => !kinds.has(kind));
+  return kept.length ? `${[...kinds].map((k) => name[k]).join(" and ")} written, ${kept.map((k) => name[k]).join(" and ")} kept` : "";
 }
 
 /** A wait of the harness that ended on its timer (#743), on stderr: the
@@ -591,9 +793,13 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
       task.variants.map((variant) => async () => {
         process.stderr.write(dim(`  capturing ${task.slug} ${variant} · postext ${engine.postext}\n`));
         try {
+          // The committed edition to compare with, when it is of these sources.
+          const committed = !opts.force && task.previous?.sourceHash === task.sourceHash && task.previous.variants?.[variant]
+            ? path.join(captureDir(task.slug), variant) : undefined;
           const run = await runVariant({
             hb, slug: task.slug, variant, meta: task.meta, engine: opts.engine, refreshNet: opts.refreshNet, png: !!opts.previewDir,
             sandbox: sandboxMeta(task.slug, variant, task.meta),
+            ...(committed ? { committedDir: committed } : {}),
           });
           sayFallbacks(run);
           return { task, variant, ...evaluate(task, run, hb, engine, registry) };
@@ -630,13 +836,23 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
         // A published capture comes from npm: the local engine only previews.
         for (const d of mine) d.result.note = engine.source === "local" ? "local engine: check only" : "check only";
       } else {
-        const written = writeRecipe(task, outputs, engine, hb.chrome, !!opts.force);
+        const outcome = writeRecipe(task, outputs, engine, hb.chrome, { force: !!opts.force, verifyOnly: !!opts.verify });
         for (const d of mine) {
-          d.result.written = !!written?.fresh.has(d.variant);
-          if (!d.result.written) d.result.note = written?.manifestOnly ? "images unchanged, capture.json updated" : "unchanged";
+          const kinds = outcome.written.get(d.variant);
+          d.result.written = !!kinds;
+          const needs = outcome.needs.find((n) => n.locale === d.variant);
+          if (needs) {
+            // --verify: the files would change, and it writes none.
+            d.result.ok = false;
+            d.result.fails.push({ check: "verify", detail: `needs a recapture: ${needs.reasons.join(", ")}` });
+            d.result.note = "not written";
+          } else if (outcome.needs.length) d.result.note = "not verified: another edition needs a recapture";
+          else if (kinds) d.result.note = writtenNote(kinds, d.output?.variant ?? null) || undefined;
+          else if (outcome.verified) d.result.note = `unchanged, verified on ${outcome.verified}`;
+          else d.result.note = outcome.manifestOnly ? "images unchanged, capture.json updated" : "unchanged";
         }
-        if (written?.dropped.length) {
-          process.stderr.write(styleText("yellow", `  ${task.slug}: removed the earlier ${written.dropped.join(", ")} capture, whose inputs changed; capture it again with --lang ${written.dropped.join(",")}\n`, { stream: process.stderr }));
+        if (outcome.dropped.length) {
+          process.stderr.write(styleText("yellow", `  ${task.slug}: removed the earlier ${outcome.dropped.join(", ")} capture, whose inputs changed; capture it again with --lang ${outcome.dropped.join(",")}\n`, { stream: process.stderr }));
         }
       }
       results.push(...mine.map((d) => d.result));
@@ -723,7 +939,7 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         if (vdtHash && vdtHash !== old.vdtHash) {
           result.warns.push({ check: "vdt", severity: "warn", detail: "the layout differs from the published pages (fonts or network?)" });
         }
-        const bundled = sandboxFindings(run.sandbox ?? { bytes: null, error: "not written", warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null });
+        const bundled = sandboxFindings(run.sandbox ?? { bytes: null, error: "not written", warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null });
         result.fails.push(...bundled.filter((f) => f.severity === "fail").map(({ check, detail }) => ({ check, detail })));
         findings = kept(bundled);
         result.warns.push(...findings);
@@ -765,6 +981,8 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         };
         if (!d.result.written) d.result.note = "unchanged";
       }
+      // A bundle written again is not the one a later release read back (#735).
+      if (mine.some((d) => d.result.written)) delete manifest.verified;
       const target = path.join(captureDir(task.slug), "capture.json");
       writeIfChanged(target, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`));
     }

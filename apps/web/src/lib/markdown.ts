@@ -26,6 +26,7 @@ import { captureVariantFor, pageImages, pdfDownload, sandboxLink } from "@/lib/c
 import { getAllRecipes, getComposed, getRecipe, getVisibleRecipes, recipeHref, writeupFor } from "@/lib/cookbook/recipes";
 import { loadRegistry } from "@/lib/cookbook/registry";
 import { relatedRecipes } from "@/lib/cookbook/related";
+import { testedOn } from "@/lib/cookbook/tested";
 import type { ComposedPen, Credit, DocAnchor, LicenseId, Locale, Recipe, Registry } from "@/lib/cookbook/types";
 import { localizedText } from "@/lib/cookbook/types";
 import { shownGotchas } from "@/lib/cookbook/validate";
@@ -1561,8 +1562,10 @@ export function recipeMarkdown(slug: string, locale: string): string | null {
   if (meta.engine.postextPdf) requires.push(`postext-pdf ≥ ${meta.engine.postextPdf}`);
   let tested = "";
   if (capture) {
-    const versions = [capture.engine.postext, capture.engine.postextPdf && `postext-pdf ${capture.engine.postextPdf}`];
-    tested = ` · ${labels.testedWith} ${versions.filter(Boolean).join(", ")} ${labels.testedOn} ${capture.capturedAt.slice(0, 10)}`;
+    // The release it was last verified on, else the one that pictured it (#735).
+    const on = testedOn(capture);
+    const versions = [on.postext, on.postextPdf && `postext-pdf ${on.postextPdf}`];
+    tested = ` · ${labels.testedWith} ${versions.filter(Boolean).join(", ")} ${labels.testedOn} ${on.at.slice(0, 10)}`;
   }
   const pages = pageImages(recipe, lang);
   const pdf = pdfDownload(recipe, lang);

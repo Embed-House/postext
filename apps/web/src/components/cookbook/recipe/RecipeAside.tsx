@@ -9,7 +9,7 @@ import { RecipeToc } from "./RecipeToc";
  *  sets, each linked to its docs), genre, outputs, level, the engine it was
  *  tested with, the last update and the licence. Server component. */
 function RecipeFacts({ view, t }: { view: RecipeView; t: RecipeT }) {
-  const { locale, recipe, registry, engine, detected } = view;
+  const { locale, recipe, registry, tested, detected } = view;
   const { meta } = recipe;
   const { taxonomy } = registry;
   const level = taxonomy.levels.find((l) => l.id === meta.level);
@@ -67,7 +67,7 @@ function RecipeFacts({ view, t }: { view: RecipeView; t: RecipeT }) {
       <div>
         <dt className="sr-only">Postext</dt>
         <dd className="cb-facts-note">
-          {engine ? t("tested", { version: engine.postext }) : t("untested")}
+          {tested ? t("tested", { version: tested.postext }) : t("untested")}
           <br />
           {t("needs", { version: meta.engine.postext })}
           {meta.engine.postextPdf && ` · postext-pdf ≥ ${meta.engine.postextPdf}`}

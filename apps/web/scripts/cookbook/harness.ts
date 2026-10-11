@@ -143,6 +143,9 @@ export interface VariantRun {
   publishError: string | null;
   cardErrors: string[];
   pages: RenderedPage[];
+  /** The published pages that differ from the committed images; null when
+   *  there was no committed folder to compare with. */
+  pageChanges: PageChange[] | null;
   card: CardImages | null;
   renderError: { message: string; taint: boolean } | null;
   timings: { totalMs: number; runMs: number };
@@ -171,6 +174,18 @@ export interface SandboxBundle {
   allPages: number;
   /** The bundle opened and laid out again against the pen's documents (C33). */
   readBack: BundleReadBack | null;
+  /** The committed bundle, when its bytes are not the run's, read back the
+   *  same way by the run's engine (#734); null when the bytes are equal or
+   *  no committed bundle was given. */
+  committedReadBack: BundleReadBack | null;
+}
+
+/** A published page whose image is not the committed one beyond rendering
+ *  noise (#734, lib/probe.js `PAGE_DIFFERENCE`). */
+export interface PageChange {
+  n: number;
+  /** "worst cell 36.2 of 255, 14 cells over 12", "no committed image". */
+  detail: string;
 }
 
 /** What the bundle is called: `recipe-<slug>`, the write-up's title. */
@@ -197,6 +212,10 @@ export interface RunOptions {
   sandbox?: SandboxMeta;
   /** Only the facts and the Sandbox bundle: no PDF, pages or card. */
   sandboxOnly?: boolean;
+  /** The edition's committed folder, when its sources are the capture's:
+   *  the new pages are compared with its images and its bundle is read
+   *  back by the run's engine, so files that say nothing new stay (#734). */
+  committedDir?: string;
 }
 
 const PROBE = "/__cb/probe.js";
@@ -261,6 +280,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     publishError: null,
     cardErrors: [],
     pages: [],
+    pageChanges: null,
     card: null,
     renderError: null,
     timings: { totalMs: 0, runMs: 0 },
@@ -389,7 +409,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     const keep = meta.capture.sandbox ?? null;
     if (opts.sandboxOnly) {
       const sandbox = opts.sandbox;
-      if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, sandbox.thumbnail ?? null));
+      if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, sandbox.thumbnail ?? null, null));
       return run;
     }
 
@@ -406,6 +426,11 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     run.pages = (rendered.pages ?? []).map((p) => ({
       n: p.n, w: p.w, h: p.h, full: dataUrlBytes(p.full), strip: dataUrlBytes(p.strip), png: p.png ? dataUrlBytes(p.png) : null,
     }));
+
+    if (opts.committedDir && !run.renderError) {
+      const dir = opts.committedDir;
+      run.pageChanges = await within("compare", () => changedPages(page, dir, run.pages));
+    }
 
     let shot: string | null = null;
     if (screenshot && !run.cardErrors.length) {
@@ -433,7 +458,9 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
       }
     }
     const sandbox = opts.sandbox;
-    if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, run.card?.card480 ?? null));
+    const committedBundle = opts.committedDir ? path.join(opts.committedDir, `${opts.slug}.postext`) : null;
+    const committed = committedBundle && fs.existsSync(committedBundle) ? fs.readFileSync(committedBundle) : null;
+    if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, run.card?.card480 ?? null, committed));
     return run;
   } finally {
     run.timings.totalMs = Date.now() - t0;
@@ -456,12 +483,13 @@ async function sandboxBundle(
   locale: SampleLocale,
   meta: SandboxMeta,
   thumbnail: Buffer | null,
+  committed: Buffer | null,
 ): Promise<SandboxBundle> {
-  const none = { warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null };
+  const none = { warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null };
   try {
     const out = await probe<{
       base64?: string; error?: string; warnings?: string[]; notes?: string[]; warns?: string[];
-      pages?: number; allPages?: number; readBack?: BundleReadBack;
+      pages?: number; allPages?: number; readBack?: BundleReadBack; committedReadBack?: BundleReadBack;
     }>(page, "sandboxBundle", {
       select,
       keep,
@@ -471,6 +499,7 @@ async function sandboxBundle(
       locale,
       thumbnail: thumbnail ? thumbnail.toString("base64") : null,
       folio: meta.folio ?? null,
+      committed: committed ? committed.toString("base64") : null,
     });
     return {
       bytes: out.base64 ? Buffer.from(out.base64, "base64") : null,
@@ -481,10 +510,36 @@ async function sandboxBundle(
       pages: out.pages ?? 0,
       allPages: out.allPages ?? 0,
       readBack: out.readBack ?? null,
+      committedReadBack: out.committedReadBack ?? null,
     };
   } catch (error) {
     return { ...none, bytes: null, error: String((error as Error).message ?? error) };
   }
+}
+
+/** The published pages whose image is not the committed one (#734): equal
+ *  bytes pass at once; the rest are decoded in the page, both sides, and
+ *  compared cell by cell (lib/probe.js `comparePages`). */
+async function changedPages(page: Page, dir: string, pages: RenderedPage[]): Promise<PageChange[]> {
+  const changes: PageChange[] = [];
+  const pairs: { n: number; committed: string; fresh: string }[] = [];
+  for (const p of pages) {
+    const file = path.join(dir, `p${String(p.n).padStart(2, "0")}.webp`);
+    if (!fs.existsSync(file)) {
+      changes.push({ n: p.n, detail: "no committed image" });
+      continue;
+    }
+    const committed = fs.readFileSync(file);
+    if (!committed.equals(p.full)) pairs.push({ n: p.n, committed: committed.toString("base64"), fresh: p.full.toString("base64") });
+  }
+  // A few at a time: each pair is two images through the protocol.
+  for (let i = 0; i < pairs.length; i += 4) {
+    const compared = await probe<{ n: number; differ: boolean; worst: number; cells: number; error?: string }[]>(page, "comparePages", pairs.slice(i, i + 4));
+    for (const c of compared) {
+      if (c.differ) changes.push({ n: c.n, detail: c.error ?? `worst cell ${c.worst} of 255, ${c.cells} cell${c.cells === 1 ? "" : "s"} over the threshold` });
+    }
+  }
+  return changes.sort((a, b) => a.n - b.n);
 }
 
 /** The DOM card (`capture.card: 'screenshot'`): the element's top 4:3, at

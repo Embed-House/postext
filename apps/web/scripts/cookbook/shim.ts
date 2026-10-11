@@ -346,10 +346,14 @@ export function createLayoutWorker(...args) {
 `;
 }
 
-function pdfShim(url: string): string {
+/** `date`: the date the capture gives a PDF whose pen sets none (#734), so
+ *  a recapture with an unchanged layout writes the same bytes. A pen on a
+ *  postext-pdf without the option ignores it. */
+function pdfShim(url: string, date: string | null = null): string {
   return `export * from '${url}';
 import * as real from '${url}';
 import { cb } from '/__shim/recorder.js';
+const DATE = ${JSON.stringify(date)};
 
 export async function renderToPdf(input, options = {}) {
   const provider = options.fontProvider;
@@ -369,7 +373,8 @@ export async function renderToPdf(input, options = {}) {
   });
   const t0 = performance.now();
   try {
-    const bytes = await real.renderToPdf(input, { ...options, fontProvider, ...(onWarning ? { onWarning } : {}) });
+    const dated = DATE && options.date === undefined ? { date: DATE } : {};
+    const bytes = await real.renderToPdf(input, { ...dated, ...options, fontProvider, ...(onWarning ? { onWarning } : {}) });
     cb.pdf = bytes;
     cb.pdfMs = performance.now() - t0;
     return bytes;
@@ -459,8 +464,16 @@ export function createEpubWorker(...args) {
 `;
 }
 
-/** The shim modules of one run, keyed by the path the server answers. */
-export function shimModules(engine: EngineSpec): Record<string, string> {
+/** The date a recipe's captured PDFs carry: the day it was written
+ *  (`recipe.json` `created`), at 00:00 UTC. It never changes for a recipe,
+ *  and a reader who opens the PDF's properties sees that day. */
+export function pdfDateOf(created: string | undefined): string | null {
+  return created && /^\d{4}-\d{2}-\d{2}$/.test(created) ? `${created}T00:00:00Z` : null;
+}
+
+/** The shim modules of one run, keyed by the path the server answers.
+ *  `pdfDate`: see {@link pdfDateOf}. */
+export function shimModules(engine: EngineSpec, { pdfDate = null }: { pdfDate?: string | null } = {}): Record<string, string> {
   const V = engine.postext;
   const P = engine.postextPdf;
   if (engine.source === "local") {
@@ -470,7 +483,7 @@ export function shimModules(engine: EngineSpec): Record<string, string> {
       "/__shim/postext.js": engineShim("postext", local("postext/index.js")),
       "/__shim/postext-bundle.js": engineShim("postext-bundle", local("postext/index.js")),
       "/__shim/postext-worker.js": workerShim(local("postext/worker/client.js")),
-      "/__shim/postext-pdf.js": pdfShim(local("postext-pdf/index.js")),
+      "/__shim/postext-pdf.js": pdfShim(local("postext-pdf/index.js"), pdfDate),
       "/__shim/postext-citeproc.js": `export * from '${local("postext-citeproc/index.js")}';\n`,
       "/__shim/postext-folio.js": `export * from '${local("postext-folio/index.js")}';\n`,
       "/__shim/postext-epub.js": epubShim(local("postext-epub/index.js")),
@@ -482,7 +495,7 @@ export function shimModules(engine: EngineSpec): Record<string, string> {
     "/__shim/postext.js": engineShim("postext", `https://esm.sh/postext@${V}`),
     "/__shim/postext-bundle.js": engineShim("postext-bundle", `https://esm.sh/postext@${V}?bundle`),
     "/__shim/postext-worker.js": workerShim(`https://esm.sh/postext@${V}/worker`),
-    "/__shim/postext-pdf.js": pdfShim(`https://esm.sh/postext-pdf@${P}?deps=postext@${V}`),
+    "/__shim/postext-pdf.js": pdfShim(`https://esm.sh/postext-pdf@${P}?deps=postext@${V}`, pdfDate),
     "/__shim/postext-citeproc.js": `export * from 'https://esm.sh/postext-citeproc@${engine.postextCiteproc}?deps=postext@${V}';\n`,
     "/__shim/postext-folio.js": `export * from 'https://esm.sh/postext-folio@${engine.postextFolio}?deps=postext@${V}';\n`,
     "/__shim/postext-epub.js": epubShim(`https://esm.sh/postext-epub@${engine.postextEpub}?deps=postext@${V}`),

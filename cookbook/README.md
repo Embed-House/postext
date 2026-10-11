@@ -117,12 +117,16 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture <slug> --preview-dir <dir>` | Also writes PNG copies of every page, the card and the social image, and the PDF the pen builds, to `<dir>/<slug>/<lang>/`, with the `capture.json` entry the edition would get. |
 | `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships and HarfBuzz as the binary it copies, whichever of the two wrote `dist`; a worker recipe starts its layout worker on the same files) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
+| `pnpm cookbook capture [slug…] --verify` | For after a release: runs as a capture does and writes only the record that this release left the capture unchanged (`verified` in `capture.json`, §11), which the recipe page, its Markdown page and the gallery print as "tested with". A recipe whose files would change is listed as needing a recapture, with the reason (layout hash, pixels, PDF, bundle), and the command exits 1. The round after a release is `pnpm cookbook capture --all --verify`, a look at what it lists, and `pnpm cookbook capture <those>`. |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
 
-The capture skips rewriting images when the layout and the card inputs did not change; pass
-`--force` to rewrite them anyway. Drafts show on the site in development
+A capture writes only the files that say something new (§11): a recipe whose layout did not
+change keeps its folder byte for byte, also on a new release; pass `--force` to rewrite
+everything anyway. `COOKBOOK_CAPTURE_DIR=<dir>` reads and writes captures in another folder (a
+copy of `apps/web/public/cookbook`), to try a capture or a `--verify` round without touching
+the committed files. Drafts show on the site in development
 (`next dev`) or with `COOKBOOK_DRAFTS=1`; production lists published recipes only.
 
 **Recipes for the next release.** A recipe that shows a feature not yet on npm is written as a
@@ -794,7 +798,41 @@ Run `pnpm exec vitest run src/lib/cookbook` from `apps/web` after any registry c
 released engine, opens it in Chrome (`COOKBOOK_CHROME`, else the Puppeteer cache), waits for
 the module to settle and the fonts to load, verifies, then paints every page with the
 engine's own renderer and writes the files atomically. A failure writes nothing to the site
-(`--preview-dir` still gets its PNGs, so you can see what failed).
+(`--preview-dir` still gets its PNGs, so you can see what failed). Each edition runs in a
+browser window of its own, and every step of the run is named: one that never answers fails
+within the recipe's timeout as `harness step <name> of <slug> <lang>`.
+
+**What a recapture keeps.** With the same sources (the source hash), each kind of file is
+judged on its own, whatever release the run used:
+
+- **Pages, card and social image** stay when the layout hash and the file names are the same
+  and every published page is within rendering noise of its committed image. Equal bytes pass
+  at once; otherwise both images are decoded and compared in cells of 8 × 8 px, and the page
+  stays when no cell's mean difference in a channel is over 12 of 255 (`PAGE_DIFFERENCE` in
+  `apps/web/scripts/cookbook/lib/probe.js`, with the measurements it was set on: another
+  Chrome's glyph edges stay under it, a word painted one pixel bolder does not).
+- **The PDF** stays when its bytes are the same. The capture dates a PDF the day its recipe
+  was written (`created` in `recipe.json`, at 00:00 UTC, through `renderToPdf`'s `date`), so
+  the same pages give the same file; a pen that sets a `date` of its own keeps it, and a pen
+  pinned before postext-pdf 1.28.0, which has no such option, gets a new PDF on every capture.
+- **The bundle** stays when its bytes are the same, or when a run on another release than the
+  recorded one reads the committed bundle back as the pen's documents (the C33 comparison, on
+  the committed bytes).
+
+`engine`, `chrome`, `capturedAt`, `hash8` and the timings in `capture.json` name the run that
+wrote files and change only when one is written; the run's line says which (`PDF written,
+images and bundle kept`). On the recorded release the rest of `capture.json` (detection,
+diagnostics, alt text) still follows the tooling.
+
+**Tested with.** A run on a newer release that finds every edition of a recipe unchanged
+writes one record, `verified: { postext, postextPdf?, chrome, at }`, and nothing else: the
+newest release on which the committed pages, PDF and bundle are still what the pen gives. The
+site prints it as the release the recipe was tested with (`lib/cookbook/tested.ts`); the
+tombstone under the pages keeps `engine`, the release that laid out what is pictured. A run
+that writes a file removes the record (the files then say it themselves), and so does
+`--sandbox-only` when it rewrites a bundle; a run on a release that is not newer, a run of
+some of the editions and a local-engine run leave it alone. `--verify` writes these records
+and no file.
 
 The capture also writes the document it pictured as a `.postext` bundle, `<slug>.postext`
 in each edition's folder, which the recipe page's Open in Sandbox button loads. The button

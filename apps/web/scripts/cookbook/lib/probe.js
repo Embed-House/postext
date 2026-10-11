@@ -1092,6 +1092,91 @@ export function renderPages({ select = 'last', pages: wanted, width = 1000, stri
   return { pages: out };
 }
 
+// ─── A page against its committed image (#734) ─────────────────────────────
+
+/**
+ * How far a page image may be from the committed one and still be kept:
+ * no cell of `cell` × `cell` px whose mean absolute difference, in any
+ * channel, is over `max` of 255. Calibrated on pages at 1000 px wide,
+ * WebP at quality 0.8 on both sides:
+ *
+ *   kept     the same layout painted by Chrome 131 and Chrome 154: worst
+ *            cell 10.2 (product-manual-warnings), 8.0 (balloon-kinds), 0
+ *            (thesis-back-matter); thesis-back-matter en p03 across
+ *            d32b8fbb0 (10 bytes changed under one layout hash): 3.6
+ *   written  one word painted a pixel bolder: 17 to 20; a word moved one
+ *            pixel: 36 to 71; a letter missing: 51; a word in another
+ *            colour: 83; vertical punctuation set higher by Chrome 154
+ *            (bunko-novel-furigana): 88 to 118
+ */
+export const PAGE_DIFFERENCE = { cell: 8, max: 12 };
+
+/** The worst cell of two RGBA images of one size (its mean absolute
+ *  difference in the channel that differs most) and how many cells are
+ *  over the threshold. */
+export function pageDifference(a, b, width, height, { cell = PAGE_DIFFERENCE.cell, max = PAGE_DIFFERENCE.max } = {}) {
+  let worst = 0;
+  let cells = 0;
+  for (let top = 0; top < height; top += cell) {
+    const rows = Math.min(cell, height - top);
+    for (let left = 0; left < width; left += cell) {
+      const cols = Math.min(cell, width - left);
+      let r = 0;
+      let g = 0;
+      let bl = 0;
+      for (let y = top; y < top + rows; y++) {
+        let i = (y * width + left) * 4;
+        for (let x = 0; x < cols; x++, i += 4) {
+          r += Math.abs(a[i] - b[i]);
+          g += Math.abs(a[i + 1] - b[i + 1]);
+          bl += Math.abs(a[i + 2] - b[i + 2]);
+        }
+      }
+      const mean = Math.max(r, g, bl) / (rows * cols);
+      if (mean > worst) worst = mean;
+      if (mean > max) cells++;
+    }
+  }
+  return { worst, cells };
+}
+
+/** Whether a page's pixels changed beyond rendering noise: two RGBA arrays
+ *  of `width` × `height`. Images of different sizes differ. */
+export function pagesDiffer(a, b, width, height) {
+  if (!a || !b || a.length !== b.length || a.length !== width * height * 4) return true;
+  return pageDifference(a, b, width, height).cells > 0;
+}
+
+async function rgbaOf(base64) {
+  const bitmap = await createImageBitmap(new Blob([bytesOfBase64(base64)], { type: 'image/webp' }));
+  const canvas = canvasOf(bitmap.width, bitmap.height);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(bitmap, 0, 0);
+  return { width: bitmap.width, height: bitmap.height, data: ctx.getImageData(0, 0, bitmap.width, bitmap.height).data };
+}
+
+/** Each pair `{ n, committed, fresh }` (two WebP files, base64) decoded and
+ *  compared: `{ n, differ, worst, cells }`, or `{ n, differ: true, error }`
+ *  when one does not decode. */
+export async function comparePages(pairs) {
+  const out = [];
+  for (const { n, committed, fresh } of pairs) {
+    try {
+      const a = await rgbaOf(committed);
+      const b = await rgbaOf(fresh);
+      if (a.width !== b.width || a.height !== b.height) {
+        out.push({ n, differ: true, worst: 255, cells: 0, error: `${a.width} × ${a.height} px committed, ${b.width} × ${b.height} px now` });
+        continue;
+      }
+      const d = pageDifference(a.data, b.data, a.width, a.height);
+      out.push({ n, differ: d.cells > 0, worst: round(d.worst, 0.1), cells: d.cells });
+    } catch (error) {
+      out.push({ n, differ: true, worst: 255, cells: 0, error: `${error?.message ?? error}` });
+    }
+  }
+  return out;
+}
+
 /** Pages whose painting taints the canvas (C15), published or not: each is
  *  painted tiny and read back. */
 export function taintedPages({ select = 'last' } = {}) {
@@ -1870,7 +1955,7 @@ export function bundleLanguage(engine, config, doc) {
  * laid out again against the pen's documents ({@link readBundleBack}), or
  * `error` when a resource's file cannot be found.
  */
-export async function sandboxBundle({ select = 'last', keep = null, id, name, description, locale, thumbnail = null, folio = null } = {}) {
+export async function sandboxBundle({ select = 'last', keep = null, id, name, description, locale, thumbnail = null, folio = null, committed = null } = {}) {
   const cb = record();
   const whole = pick(select);
   if (!whole) return { error: 'no recorded build' };
@@ -2026,8 +2111,13 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
     // The documents the bundle stands for, one per chapter, and the pages
     // of every build the capture publishes.
     const penDocs = held.flatMap((b) => b.docs ?? []);
+    const base64 = base64Of(bytes);
     return {
-      base64: base64Of(bytes), warnings: created.warnings ?? [], notes, warns, files: Object.keys(created.files).sort(),
+      base64, warnings: created.warnings ?? [], notes, warns, files: Object.keys(created.files).sort(),
+      // The committed bundle, when its bytes are others (an earlier
+      // engine wrote it): read back by this engine against the pen's
+      // documents, the C33 comparison on the committed bytes (#734).
+      ...(committed && committed !== base64 ? { committedReadBack: await readBundleBack(engine, bytesOfBase64(committed), penDocs, held) } : {}),
       builds: group ? group.builds.map((i) => i + 1) : null,
       pages: penDocs.reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
       allPages: (whole.docs ?? []).reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
