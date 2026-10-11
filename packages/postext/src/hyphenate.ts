@@ -166,8 +166,10 @@ function withoutApostropheBreaks(word: string, hyphenated: string, leftmin: numb
 
 /** A Catalan word run: letters and apostrophes, with the middle dot of an
  *  ela geminada (`l·l`) kept inside the word. hypher's own word class stops
- *  at the dot, so `il·lusió` would reach the patterns as `il` and `lusió`. */
-const CATALAN_WORD_RE = /(?:[\p{L}\p{M}'’]|(?<=[lL])·(?=[lL]))+/gu;
+ *  at the dot, so `il·lusió` would reach the patterns as `il` and `lusió`.
+ *  A soft hyphen the author typed is of the run too, as in hypher's class:
+ *  the run that holds one is left as written (#700). */
+const CATALAN_WORD_RE = /(?:[\p{L}\p{M}'’\u00AD]|(?<=[lL])·(?=[lL]))+/gu;
 const CATALAN_VOWELS = 'aeiouàèéíïòóúüAEIOUÀÈÉÍÏÒÓÚÜ';
 /** hypher's default: shorter words are left whole. */
 const MIN_WORD_LENGTH = 4;
@@ -180,7 +182,9 @@ const MIN_WORD_LENGTH = 4;
  *  break inside `l·l` is kept: the line breakers print it `l-` | `l`. */
 function hyphenateCatalan(hyphenator: Hypher, word: string): string {
   return word.replace(CATALAN_WORD_RE, (run) => {
-    if (run.length < MIN_WORD_LENGTH) return run;
+    // A word with a soft hyphen its author typed gets no other point, as
+    // under every other dictionary (#700).
+    if (run.length < MIN_WORD_LENGTH || run.includes(SOFT_HYPHEN)) return run;
     const parts = hyphenator.hyphenate(run);
     let out = parts[0] ?? '';
     for (let i = 1; i < parts.length; i++) {
@@ -197,6 +201,49 @@ function hyphenateCatalan(hyphenator: Hypher, word: string): string {
 }
 
 const SOFT_HYPHEN = '­';
+
+const WORD_CHARACTER_END_RE = /[\p{L}\p{M}\p{N}]$/u;
+const WORD_CHARACTER_START_RE = /^[\p{L}\p{M}\p{N}]/u;
+
+/**
+ * Whether the soft hyphen typed at `at` in `text` is a break opportunity
+ * (#700): only between two letters, combining marks or digits. One typed at
+ * the edge of a word, after an opening bracket or quotation mark, or before
+ * closing punctuation (`­Alice`, `(­Alice)`, `Alice­,`) breaks nothing and
+ * prints no hyphen: the line would end on a hyphen after a whole word, or on
+ * one its bracket carries. The word it stands in still gets no dictionary
+ * point, so a soft hyphen before the first letter keeps that occurrence of
+ * the word whole. Of soft hyphens typed in a row, the first counts.
+ */
+export function softHyphenBreaks(text: string, at: number): boolean {
+  if (at <= 0 || text[at - 1] === SOFT_HYPHEN) return false;
+  let next = at + 1;
+  while (text[next] === SOFT_HYPHEN) next++;
+  return WORD_CHARACTER_END_RE.test(text.slice(Math.max(0, at - 2), at)) && WORD_CHARACTER_START_RE.test(text.slice(next, next + 2));
+}
+
+/**
+ * `hyphenated` — `source` as written, or with the dictionary's soft hyphens
+ * and slash joints added — without the soft hyphens of `source` that are no
+ * break ({@link softHyphenBreaks}), for a breaker that takes every soft
+ * hyphen it is given (pretext, the design text's word cutter). The
+ * dictionary's own points stay.
+ */
+export function withoutEdgeSoftHyphens(source: string, hyphenated: string = source): string {
+  if (!source.includes(SOFT_HYPHEN)) return hyphenated;
+  let out = '';
+  let j = 0;
+  for (let i = 0; i < hyphenated.length; i++) {
+    const ch = hyphenated[i]!;
+    if (j < source.length && ch === source[j]) {
+      if (ch !== SOFT_HYPHEN || softHyphenBreaks(source, j)) out += ch;
+      j++;
+    } else {
+      out += ch;
+    }
+  }
+  return out;
+}
 
 /** A hyphen between two letters: the word is a compound. */
 const COMPOUND_RE = /\p{L}-\p{L}/u;

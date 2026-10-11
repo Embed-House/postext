@@ -6,7 +6,7 @@ import { uprightArabicSpans, uprightFace } from '../uprightArabic';
 import { createBoundingBox } from '../vdt';
 import type { MathRender } from '../math/types';
 import type { InlineSpan } from '../parse';
-import { hyphenateText, withoutSlashJoints } from '../hyphenate';
+import { hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate';
 import {
   richTokensToItems,
   computeBreakpoints,
@@ -617,8 +617,9 @@ interface SoftBreak {
 /**
  * A word as laid out (its soft hyphens removed) and the breaks its soft
  * hyphens mark: the dictionary's when `hyphenate` is on, and the author's
- * own — the U+00AD the source carries, which the dictionary leaves as they
- * are (it does not hyphenate a word that already has them). The zero-width
+ * own — the U+00AD the source carries between two letters or digits
+ * (`softHyphenBreaks`), which the dictionary leaves as they are (it does not
+ * hyphenate a word that already has them). The zero-width
  * space the dictionary puts after a slash is dropped: the rich breaker does
  * not break there, and it must not reach the line text.
  */
@@ -636,8 +637,10 @@ function syllabify(word: string, hyphenate: boolean): { clean: string; soft: Sof
     // A soft hyphen the dictionary inserted is not the source's character.
     const fromSource = j < word.length && ch === word[j];
     if (fromSource) j++;
-    if (ch === SOFT_HYPHEN) soft.push({ index: clean.length, author: fromSource });
-    else clean += ch;
+    if (ch !== SOFT_HYPHEN) clean += ch;
+    // One the author typed at the word's edge or next to punctuation is no
+    // break (#700).
+    else if (!fromSource || softHyphenBreaks(word, j - 1)) soft.push({ index: clean.length, author: fromSource });
   }
   return { clean, soft };
 }

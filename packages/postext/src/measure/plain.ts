@@ -8,7 +8,7 @@ import {
 import type { VDTLine, VDTLineSegment } from '../vdt';
 import { createBoundingBox } from '../vdt';
 import type { TextAlign } from '../types';
-import { hyphenateText, hyphenateTextKeepingCompounds } from '../hyphenate';
+import { hyphenateText, hyphenateTextKeepingCompounds, withoutEdgeSoftHyphens } from '../hyphenate';
 import {
   pretextSegmentsToItems,
   computeBreakpoints,
@@ -298,9 +298,13 @@ export function measureBlock(
   if (keepCompounds && hasOverwideCompoundPart(text, font, maxWidthPx - widestIndent)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
-  const processedText = shouldHyphenate
+  const hyphenatedText = shouldHyphenate
     ? (keepCompounds ? hyphenateTextKeepingCompounds(text) : hyphenateText(text))
     : text;
+  // Pretext breaks at every soft hyphen it is given: one typed at a word's
+  // edge or next to punctuation is no break and is left out (#700). The
+  // block's plain text keeps it, as it keeps the ones inside a line.
+  const processedText = text.includes(SOFT_HYPHEN) ? withoutEdgeSoftHyphens(text, hyphenatedText) : hyphenatedText;
 
   const prepared = prepareWithSegments(processedText, font);
   const normalSpaceWidth = textAlign === 'justify' ? normalSpaceWidthFor(font) : 0;
