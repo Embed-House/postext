@@ -498,6 +498,11 @@ headings
 │                                  'fill' = as many lines as fit, however few go on (1.4; a preset without
 │                                  configVersion 8 whose chapters have a heading reads 'fill')
 ├─ snapToGrid    true              false = keep exact marginBottom (text may sit off-grid until next snap point)
+├─ columnHeadSpace 'none'          ('none' | 'remainder', ≥ 1.28) a snapping heading that opens a column: 'none' sets it on
+│                                  the column's first line and the snap adds the part of a line under it (its text then stands
+│                                  further from it than after a paragraph); 'remainder' keeps that part of a line above it, so
+│                                  the text follows as closely as mid-column. Set 'remainder' for one-column books; keep 'none'
+│                                  in several columns, where it would lower one column's head against its neighbour
 ├─ inlineMarks   true              *it* **b** ^sup^ ~sub~ :smallcaps[] and links print in headings (italic flips:
 │                                  upright in an italic heading); false = plain, as 1.4 (a preset without
 │                                  configVersion 6 whose headings carry marks reads false)

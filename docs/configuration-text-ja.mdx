@@ -989,7 +989,7 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>見出しの上の空き。</td>
+      <td>見出しの上の空き。段の頭に来る見出しでは取り除かれます（<code>columnHeadSpace</code>を参照）。</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ Postextは、左から右に書くアルファベット系の文字体系と、�
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>見出しの下で流れをベースライングリッドに戻すかどうか。<code>true</code>では見出しの<code>marginBottom</code>をグリッドの行単位に切り上げます。<code>false</code>では指定どおりの空きを保ち、見出しの下の本文は次の吸着点（リストの終わり、<code>:::paragraphs</code>の末尾、別行立て数式）までグリッドから外れることがあります。見出しの下に1行半を空ける、多くの本に見られる組み方です。レベル（<code>levels[].snapToGrid</code>）や見出しスタイルは独自の値を持てます。ここでの値は、それらが継承する値です。</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>グリッドにそろえる見出しが段の頭（ページの頭、または段の頭にある図や表の下）に来たとき、上の空きをどれだけ残すかを決めます。<code>'none'</code>では、空きをすべて取り除き、見出しを段の1行目に置いて隣の段の頭とそろえます。グリッドにそろえるために必要な1行未満の空きは見出しの下に入るので、本文は段落の後の見出しより離れることがあります。<code>'remainder'</code>では、グリッド行単位の空きだけを取り除き、残った1行未満の空きを見出しの上に残します。本文は段落の後の見出しと同じ距離で始まります。見出しは段の頭より少し下から始まり、本文の行は動きません。隣に比べる段の頭がない1段組の本に向いています。それ以外の値は<code>'none'</code>として扱います。ページ幅の章扉の下の段、<code>span: 'page'</code>の見出し、<code>lineSpan</code>のある見出し、非表示の見出し、デザイン（<code>advancedDesign</code>）で描く見出しには適用しません。postext 1.28以降。</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

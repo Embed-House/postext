@@ -987,7 +987,7 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Espai sobre els encapçalaments.</td>
+      <td>Espai sobre els encapçalaments. Es treu en un encapçalament que obre una columna (vegeu <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1018,6 +1018,12 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Si el flux torna a la retícula de base sota un títol. Amb <code>true</code> el <code>marginBottom</code> del títol s'arrodoneix a línies senceres de la retícula; amb <code>false</code> es conserva el marge exacte i el text sota el títol pot quedar fora de la retícula fins al punt d'ajust següent (el final d'una llista, la cua d'un <code>:::paragraphs</code>, una equació), com molts llibres, que deixen línia i mitja sota el títol. Un nivell (<code>levels[].snapToGrid</code>) o un estil d'encapçalament poden fixar el seu propi valor; aquest és el que hereten.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>Què conserva del seu espai superior un encapçalament que s'ajusta a la retícula quan obre una columna, al cap de la pàgina o sota una figura o taula que encapçala la columna. <code>'none'</code>: es treu tot l'espai i l'encapçalament queda a la primera línia de la columna, a l'altura de la columna veïna; l'ajust a la retícula posa llavors sota l'encapçalament la fracció de línia que li cal, de manera que el seu text pot quedar més lluny que després d'un paràgraf. <code>'remainder'</code>: l'espai es treu només en línies senceres de retícula i la fracció de línia que sobra queda sobre l'encapçalament, de manera que el text comença sota seu a la distància a què comença després d'un paràgraf; l'encapçalament comença una mica més avall que el cap de la columna i cap línia de text no es mou. Convé a un llibre a una columna, on cap cap de columna veí no delata la diferència. Qualsevol altre valor es llegeix com a <code>'none'</code>. No s'aplica sota una obertura a tota pàgina ni a un encapçalament <code>span: 'page'</code>, amb <code>lineSpan</code>, ocult o amb disseny (<code>advancedDesign</code>). Des de postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

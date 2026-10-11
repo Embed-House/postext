@@ -989,7 +989,7 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>المسافة فوق العناوين.</td>
+      <td>المسافة فوق العناوين. تُحذف في العنوان الذي يفتتح عمودًا (انظر <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ const english: PostextConfig = { locale: 'en', direction: 'rtl' };     // forced
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>هل يعود التدفق إلى شبكة خطوط الأساس تحت العنوان. مع <code>true</code> تُقرَّب قيمة <code>marginBottom</code> للعنوان صعودًا إلى عدد صحيح من أسطر الشبكة؛ ومع <code>false</code> يُحتفظ بالهامش الدقيق، وقد يقع النص تحت العنوان خارج الشبكة حتى نقطة الالتقاط التالية (نهاية قائمة، أو ذيل حاوية <code>:::paragraphs</code>، أو معادلة منفصلة) — وهي الطريقة التي تضع بها كتب كثيرة سطرًا ونصف سطر تحت العنوان. يمكن لمستوى (<code>levels[].snapToGrid</code>) أو لنمط عنوان أن يحدد قيمته الخاصة؛ وهذه القيمة هي ما يرثانه.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>ما يحتفظ به العنوان المنضبط على الشبكة من المسافة التي فوقه حين يفتتح عمودًا، في رأس الصفحة أو تحت شكل أو جدول يتصدّر العمود. <code>'none'</code>: تُحذف المسافة كلها ويقف العنوان على السطر الأول من العمود، بمحاذاة العمود المجاور؛ ثم يضع الانضباط على الشبكة تحت العنوان جزء السطر الذي يحتاج إليه، فقد يبتعد نصه عنه أكثر مما يبتعد بعد فقرة. <code>'remainder'</code>: تُحذف المسافة بأسطر شبكة كاملة فقط ويبقى جزء السطر المتبقي فوق العنوان، فيبدأ النص تحته على البعد نفسه الذي يبدأ به بعد فقرة؛ ويبدأ العنوان أدنى قليلًا من رأس العمود ولا يتحرك أي سطر من النص. وهو يناسب كتابًا بعمود واحد، حيث لا رأس عمود مجاور يُظهر الفرق. وأي قيمة أخرى تُقرأ <code>'none'</code>. لا يُطبَّق تحت افتتاحية بعرض الصفحة ولا على عنوان <code>span: 'page'</code> أو ذي <code>lineSpan</code> أو مخفي أو ذي تصميم (<code>advancedDesign</code>). منذ postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

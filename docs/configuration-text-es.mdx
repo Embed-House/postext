@@ -989,7 +989,7 @@ La propiedad `headings` controla la tipografía de todos los niveles de encabeza
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Espacio sobre los encabezados.</td>
+      <td>Espacio sobre los encabezados. Se quita en un encabezado que abre una columna (véase <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ La propiedad `headings` controla la tipografía de todos los niveles de encabeza
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Si el flujo vuelve a la retícula base bajo un título. Con <code>true</code> el <code>marginBottom</code> del título se redondea a líneas enteras de la retícula; con <code>false</code> se conserva el margen exacto y el texto bajo el título puede quedar fuera de la retícula hasta el siguiente punto de ajuste (el final de una lista, la cola de un <code>:::paragraphs</code>, una ecuación) — como muchos libros, que dejan línea y media bajo el título. Un nivel (<code>levels[].snapToGrid</code>) o un estilo de encabezado pueden fijar su propio valor; este es el que heredan.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>Qué conserva de su espacio superior un encabezado que se ajusta a la rejilla cuando abre una columna, en cabeza de página o bajo una figura o tabla que encabeza la columna. <code>'none'</code>: se quita todo el espacio y el encabezado queda en la primera línea de la columna, a la altura de la columna vecina; el ajuste a la rejilla pone entonces bajo el encabezado la fracción de línea que necesita, de modo que su texto puede quedar más lejos de él que tras un párrafo. <code>'remainder'</code>: el espacio se quita solo en líneas completas de rejilla y la fracción de línea que sobra queda sobre el encabezado, de modo que el texto empieza bajo él a la distancia a la que empieza tras un párrafo; el encabezado empieza un poco más abajo que la cabeza de la columna y ninguna línea de texto se mueve. Conviene a un libro a una columna, donde ninguna cabeza de columna vecina delata la diferencia. Cualquier otro valor se lee como <code>'none'</code>. No se aplica bajo una apertura a toda página ni a un encabezado <code>span: 'page'</code>, con <code>lineSpan</code>, oculto o con diseño (<code>advancedDesign</code>). Desde postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

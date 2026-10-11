@@ -989,7 +989,7 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Space above headings.</td>
+      <td>Space above headings. Dropped for a heading that opens a column (see <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Whether the flow snaps back onto the baseline grid under a heading. With <code>true</code> the heading's <code>marginBottom</code> is rounded up to whole grid lines; with <code>false</code> the exact margin is kept and the text under the heading may sit off the grid until the next snap point (the end of a list, a <code>:::paragraphs</code> tail, display math) — the way many books set a line and a half under a heading. A level (<code>levels[].snapToGrid</code>) or a heading style can set its own value; this one is what they inherit.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>What a heading that snaps to the grid keeps of its space above when it opens a column, at the page's head or under a figure or table that heads the column. <code>'none'</code>: the whole space is dropped and the heading stands on the column's first line, level with the column beside it; the grid snap then puts the part of a line it needs under the heading, so its text can stand further from it than after a paragraph. <code>'remainder'</code>: the space is dropped in whole grid lines only and the part of a line that is left stays above the heading, so the text under it starts at the distance it starts at after a paragraph; the heading starts a little lower than the column's head and no line of body text moves. It suits a book in one column, where no column head beside it shows the difference. Any other value reads as <code>'none'</code>. Not under a page-span opener, and not for a <code>span: 'page'</code>, <code>lineSpan</code>, hidden or designed (<code>advancedDesign</code>) heading. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

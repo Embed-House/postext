@@ -989,7 +989,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>标题上方的间距。</td>
+      <td>标题上方的间距。开栏的标题会去掉这段间距（见<code>columnHeadSpace</code>）。</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>标题之下的文字流是否重新对齐基线网格。为<code>true</code>时，标题的<code>marginBottom</code>向上取整为整数个网格行；为<code>false</code>时保留精确的间距，标题下的文字可能偏离网格，直到下一个对齐点（列表结束处、<code>:::paragraphs</code>的末尾、行间公式）。许多书在标题下留一行半，就是这种排法。级别（<code>levels[].snapToGrid</code>）或标题样式可以设置自己的值，这里的值是它们继承的默认值。</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>对齐网格的标题在开栏时（位于页首，或位于栏首的图或表之下）保留多少上方空白。<code>'none'</code>：去掉全部空白，标题排在该栏第一行，与旁边一栏的栏首平齐；对齐网格时所需的不足一行的空白放在标题下方，因此正文与它的距离可能比段落之后的标题更远。<code>'remainder'</code>：只去掉整数个网格行的空白，剩下不足一行的部分留在标题上方，正文与它的距离同段落之后的标题一样；标题比栏首略低一些开始，正文各行都不移动。适合单栏的书，因为旁边没有栏首可以比出差别。其他取值都按<code>'none'</code>处理。不用于通栏章首之下的栏，也不用于<code>span: 'page'</code>、带<code>lineSpan</code>、隐藏或带设计（<code>advancedDesign</code>）的标题。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>

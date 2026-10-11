@@ -989,7 +989,7 @@ A propriedade `headings` controla a tipografia de todos os níveis de título (H
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Espaço acima dos títulos.</td>
+      <td>Espaço acima dos títulos. É retirado em um título que abre uma coluna (veja <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -1020,6 +1020,12 @@ A propriedade `headings` controla a tipografia de todos os níveis de título (H
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Se o fluxo volta a se ajustar à grade de linhas de base sob um título. Com <code>true</code>, o <code>marginBottom</code> do título é arredondado para cima até linhas inteiras da grade; com <code>false</code>, a margem exata é mantida e o texto sob o título pode ficar fora da grade até o próximo ponto de ajuste (o fim de uma lista, a cauda de um <code>:::paragraphs</code>, uma fórmula em destaque), como muitos livros fazem com uma linha e meia sob um título. Um nível (<code>levels[].snapToGrid</code>) ou um estilo de título pode definir o próprio valor; este é o que eles herdam.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>O que um título que se ajusta à grade conserva do espaço acima dele quando abre uma coluna, no alto da página ou sob uma figura ou tabela que encabeça a coluna. <code>'none'</code>: o espaço todo é retirado e o título fica na primeira linha da coluna, nivelado com a coluna vizinha; o ajuste à grade põe então sob o título a fração de linha de que ele precisa, de modo que o texto pode ficar mais longe dele do que depois de um parágrafo. <code>'remainder'</code>: o espaço é retirado só em linhas inteiras da grade e a fração de linha que sobra fica acima do título, de modo que o texto começa sob ele à distância em que começa depois de um parágrafo; o título começa um pouco abaixo do alto da coluna e nenhuma linha de texto se move. Convém a um livro em uma coluna, onde nenhuma cabeça de coluna vizinha mostra a diferença. Qualquer outro valor é lido como <code>'none'</code>. Não se aplica sob uma abertura na largura da página nem a um título <code>span: 'page'</code>, com <code>lineSpan</code>, oculto ou com design (<code>advancedDesign</code>). Desde o postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>
