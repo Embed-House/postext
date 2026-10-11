@@ -615,16 +615,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)`在页面上运行[`prepareFonts`](#排版前加载字体)，然后把它找到的、字体注册表中有文件的每个字体（解析函数的文件、文件包的字体、页面可读的`@font-face`规则）发送给工作线程，而且只发送含有文档字符的切片。字体到达工作线程后，它只丢弃这些字体族的测量结果，以及它缓存的已完成文档。
 
+字体要在第一次用到它的排版之前发送。在Chrome中，工作线程的canvas在第一次用某个字体测量时就把它解析定了，之后再为同一字族、字重、样式和字号注册的文件不会被采用：文字仍保持最先应答的那个字体的宽度。已经用这个字体测量过的工作线程，只能换成一个新的。
+
 ### 收集字体载荷（Fontsource / Google Fonts）
 
-`registerFonts`接收原始字体字节。获取这些字节应在主线程上进行，因为Google Fonts只向类似浏览器的User-Agent字符串返回WOFF2，而且集中缓存可以让多个工作线程实例共享同一份字节。
+`registerFonts`接收原始字体字节。获取这些字节应在主线程上进行，因为集中缓存可以让多个工作线程实例共享同一份字节。
 
-沙盒的`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）是一份可以直接拿来用的参考实现。它：
+沙盒的`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）是一份参考实现。它：
 
-1. 查询`https://api.fontsource.org/v1/fonts/{family-id}`，得知可用的字重，以及该字族是否提供可变轴。
-2. 构造一个Google Fonts CSS2 URL，覆盖该字族声明的所有字重和样式。
-3. 获取生成的`@font-face`样式表，提取每条`src: url(...) format('woff2')`声明，并下载原始字节。
+1. 查询`https://api.fontsource.org/v1/fonts/{family-id}`，得知该字族有哪些字重和样式。
+2. 从该字族在jsDelivr上的包（`@fontsource/{family-id}@5/400.css`）读取它的子集及各自的`unicode-range`，每个字族读一次。
+3. 下载每个字族的常规体、粗体及两者的斜体的全部文件（`files/{family-id}-{subset}-{weight}-{style}.woff2`）；`collectFontPayloadsForConfig(config, markdown)`则按配置所要求的字重和样式来取。这些都是静态文件，也就是PDF嵌入的文件，所以工作线程测量所用的正是PDF绘制所用的。可变文件在两个母版之间给出的字宽不同，离行宽只差零点几像素的一行就会在别处断开。
 4. 返回一个`FontPayload[]`，每次调用时其中的`buffer`都是新的`ArrayBuffer`。这一点很重要，因为`registerFonts`会转移缓冲区，发送方的副本随之失效。
+
+同一字重和样式的文件按CodePen声明它们的顺序排列：`latin`在前，文字本身的文件在后（`arabic`，或中文、日文字族的编号切片），因为两个文件都有的字符由最后加入的文件应答。Fontsource没有文件的字族改从Google的CSS2样式表读取，而它只向类似浏览器的User-Agent字符串返回WOFF2。
 
 配合`getConfigFontFamilies(config)`使用，可以得到某个`PostextConfig`实际要渲染的字族列表（正文、标题、列表项目符号、有序列表编号）。
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

@@ -615,16 +615,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)`は、ページで[`prepareFonts`](#レイアウトの前にフォントを読み込む)を実行し、見つかったフェイスのうちフォントレジストリがファイルを持っているもの（リゾルバーのファイル、バンドルのフェイス、ページの読み取り可能な`@font-face`規則）を、文書の文字を含むスライスに限ってワーカーに送ります。フェイスがワーカーに届くと、ワーカーはそのファミリーの計測結果と、仕上がった文書のキャッシュだけを捨てます。
 
+フェイスは、それを使う最初のレイアウトより前に送ってください。Chromeでは、ワーカーのcanvasはあるフォントで初めて計測した時点でそのフォントを解決し、同じファミリー、ウェイト、スタイル、サイズに対して後から登録したファイルは使われません。文字は、最初に応えたフェイスの幅のままになります。そのフォントで計測済みのワーカーは、新しいワーカーに取り替える必要があります。
+
 ### フォントペイロードの収集（Fontsource / Google Fonts）
 
-`registerFonts`はフォントの生のバイト列を受け取ります。取得するのはメインスレッドが適しています。Google Fontsはブラウザーらしいユーザーエージェント文字列にしかWOFF2を返さないこと、また中央のキャッシュがあれば複数のワーカーインスタンスで同じバイト列を共有できることが理由です。
+`registerFonts`はフォントの生のバイト列を受け取ります。取得するのはメインスレッドが適しています。中央のキャッシュがあれば、複数のワーカーインスタンスで同じバイト列を共有できるからです。
 
-Sandboxの`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）は、そのまま使える参考実装です。次の処理を行います。
+Sandboxの`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）は参考実装です。次の処理を行います。
 
-1. `https://api.fontsource.org/v1/fonts/{family-id}`に問い合わせ、利用できるウェイトと、ファミリーが可変軸を持つかどうかを調べます。
-2. ファミリーが提供するすべてのウェイトとスタイルを含むGoogle FontsのCSS2のURLを組み立てます。
-3. 生成された`@font-face`のスタイルシートを取得し、各`src: url(...) format('woff2')`宣言を抜き出して、生のバイト列をダウンロードします。
+1. `https://api.fontsource.org/v1/fonts/{family-id}`に問い合わせ、ファミリーが持つウェイトとスタイルを調べます。
+2. jsDelivrにあるファミリーのパッケージ（`@fontsource/{family-id}@5/400.css`）から、サブセットとそれぞれの`unicode-range`を読みます。ファミリーごとに1回です。
+3. 各ファミリーのレギュラー、ボールド、それぞれのイタリックについて、すべてのファイル（`files/{family-id}-{subset}-{weight}-{style}.woff2`）をダウンロードします。`collectFontPayloadsForConfig(config, markdown)`は、代わりに設定が求めるウェイトとスタイルを取得します。どれも静的ファイルで、PDFに埋め込むファイルと同じなので、ワーカーはPDFが描くのと同じフォントで計測します。可変ファイルは2つのマスターの間で送り幅が異なり、行長との差が1ピクセルに満たない行は別の位置で改行されます。
 4. 呼び出しごとに`buffer`が新しい`ArrayBuffer`になっている`FontPayload[]`を返します。`registerFonts`はバッファーを転送し、送信側のコピーを切り離された（detached）状態にするので、これが重要です。
+
+同じウェイトとスタイルのファイルは、CodePenが宣言する順に並べます。`latin`が先で、その文字体系のファイル（`arabic`、中国語や日本語のファミリーの番号付きスライス）が最後です。2つのファイルが同じ文字を持つ場合、最後に追加したファイルが使われるからです。Fontsourceにファイルがないファミリーは、GoogleのCSS2スタイルシートから読みます。こちらはブラウザーらしいユーザーエージェント文字列にしかWOFF2を返しません。
 
 `getConfigFontFamilies(config)`と組み合わせると、ある`PostextConfig`が実際に描画するファミリー（本文、見出し、リストの記号、番号付きリストの番号）の一覧が得られます。
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

@@ -1732,6 +1732,10 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 - Any `fontFamily` string resolves against customFonts first, then Google Fonts, then Fontsource
   for a family Google Fonts does not have (Commit Mono, FiraGO). The Sandbox and the `postext`
   command line fetch them; `render.mjs` does not, and measures an unbundled family with a stand-in face.
+  Both fetch static files, one per weight and style (the Sandbox Fontsource's
+  `@fontsource/<family>@5` on jsDelivr, the files a Cookbook pen loads and a PDF embeds; the
+  command line Google's static instances), so a weight between two cuts of a variable family
+  (450) has no file of its own: name a weight the family has.
 - Needed variants: at least 400/700 normal+italic (else "missing variant" warning); if the book
   uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`. The `postext` command
   line (≥ 1.28.0) fetches the bold weight the configuration names, and `postext check` reports a

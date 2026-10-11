@@ -79,7 +79,7 @@ Postext resol cada `fontFamily` contra **tots dos**: el catàleg de Google Fonts
 Fes servir fonts personalitzades quan:
 
 - El document requereix una tipografia de marca o amb llicència que no és a Google Fonts.
-- L'entorn no pot arribar a la CDN de Google Fonts (sense connexió, intranet, sensibilitat de privadesa).
+- L'entorn no pot arribar a les CDN de fonts, jsDelivr (d'on el Sandbox pren els fitxers de Fontsource) o Google Fonts (sense connexió, intranet, sensibilitat de privadesa).
 - Necessites mantenir el fitxer de font privat i evitar pujar-lo a un tercer.
 ### Esquema de configuració
 
@@ -124,7 +124,7 @@ Un cop declarada la família, cada selector de font l'agrupa sota **Custom**, pe
 Per dins:
 
 - Quan `customFonts` canvia, cada família declarada es registra automàticament com a `FontFace` a `document.fonts` — de manera que el visor HTML, el visor Canvas (que mesura a través de `document.fonts`) i qualsevol referència CSS directa agafen la cara personalitzada sense haver d'obrir abans el Font Picker.
-- El worker de composició rep els mateixos `ArrayBuffer` pel mateix canal de transferència de *font payloads*, així el mesurament (`buildFontString`, pretext) produeix mètriques idèntiques a les de Google Fonts.
+- El worker de composició rep els mateixos `ArrayBuffer` pel mateix canal de transferència de *font payloads*, així el mesurament (`buildFontString`, pretext) funciona igual que amb una família del catàleg.
 - Canviar o suprimir una variant descarta la cara desada a la memòria cau del worker per a aquella família, i es torna a registrar en el build següent, de manera que les previsualitzacions es mantenen sincronitzades amb el conjunt actual de variants.
 - **Exportació a PDF**: els binaris pujats passen per la mateixa canalització `PdfFontProvider`. Els `.woff2` es descomprimeixen; els `.ttf` i `.otf` es passen tal qual. `.woff` es rebutja amb un missatge clar (pdf-lib no pot incrustar WOFF cru — torna a pujar-lo com a `.woff2`/`.ttf`/`.otf`). L'OpenType amb taules CFF (`.otf` amb la signatura `OTTO`) s'incrusta **sense subsetting**, perquè el subsetter CFF de pdf-lib recorre cada glif en fer `save()` i es pot bloquejar durant minuts amb fonts reals; saltar-se el subset canvia una mica més de mida del PDF per temps de render constants.
 

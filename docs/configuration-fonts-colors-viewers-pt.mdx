@@ -79,7 +79,7 @@ O Postext resolve cada string de `fontFamily` **tanto** no catálogo do Google F
 Use fontes personalizadas quando:
 
 - O documento precisa de uma família tipográfica da marca ou licenciada que não está no Google Fonts.
-- O ambiente não alcança a CDN do Google Fonts (offline, intranet, contextos sensíveis à privacidade).
+- O ambiente não alcança as CDNs de fontes, o jsDelivr (de onde o Sandbox tira os arquivos da Fontsource) ou o Google Fonts (offline, intranet, contextos sensíveis à privacidade).
 - Você precisa manter o binário da fonte privado e não enviá-lo a terceiros.
 
 ### Esquema de configuração
@@ -125,7 +125,7 @@ Depois que uma família é declarada, todo seletor de fonte a agrupa em **Person
 Por baixo dos panos:
 
 - Quando `customFonts` muda, cada família declarada é registrada automaticamente como entradas `FontFace` em `document.fonts`. Assim, o visualizador HTML, a área de visualização do canvas (que mede por meio de `document.fonts`) e qualquer referência CSS direta passam a usar a fonte personalizada sem que o usuário precise abrir antes o seletor de fontes.
-- O worker de layout recebe os mesmos ArrayBuffers pelo caminho já existente de transferência de fontes, de modo que a medição (`buildFontString`, pretext) produz métricas idênticas às do Google Fonts.
+- O worker de layout recebe os mesmos ArrayBuffers pelo caminho já existente de transferência de fontes, de modo que a medição (`buildFontString`, pretext) funciona como com uma família do catálogo.
 - Alterar ou remover uma variante descarta a fonte que o worker tinha em cache para essa família e a registra de novo na composição seguinte, para que as visualizações acompanhem o conjunto atual de variantes.
 - **Exportação para PDF**: os binários enviados passam pelo mesmo pipeline de `PdfFontProvider`. Arquivos `.woff2` são descompactados; `.ttf` e `.otf` passam direto. `.woff` é recusado com um erro claro (o pdf-lib não consegue embutir WOFF puro; envie de novo como `.woff2`/`.ttf`/`.otf`). OpenType com contornos CFF (`.otf` com o número mágico `OTTO`) é embutido **sem subconjunto**, porque o gerador de subconjuntos CFF do pdf-lib percorre cada glifo no momento do `save()` e pode travar por minutos com fontes reais; abrir mão do subconjunto troca um PDF um pouco maior por tempos de renderização estáveis.
 

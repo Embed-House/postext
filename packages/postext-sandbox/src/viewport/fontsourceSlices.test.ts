@@ -3,10 +3,14 @@ import { parseFontsourceCss, parseUnicodeRange, pickSlices } from './fontsourceS
 
 vi.mock('../controls/fontLoader', () => ({
   getCustomFontFamily: () => undefined,
-  loadFont: async () => undefined,
   // The catalogue's record of the family, which the loader keeps (#753).
   fontFamilyWeights: async () => [400, 700],
   isUncataloguedFontFamily: () => false,
+  // No static files declared by the loader (#757): the provider reads the
+  // family's stylesheet itself, as it did for every family before. What it
+  // embeds when the loader has them is in controls/fontCuts.test.ts.
+  staticFaceFiles: async () => null,
+  facesForCodePoints: <T,>(faces: readonly T[]) => [...faces],
 }));
 vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
@@ -93,7 +97,7 @@ describe('createPdfFontProvider (#196)', () => {
   /** Stylesheet URLs whose next fetch throws (a network error). */
   const unreachable = new Set<string>();
   /** A file of the stub stylesheet, served from `family`'s package. */
-  const fileUrl = (family: string, slice: string) => `https://cdn.jsdelivr.net/npm/@fontsource/${family}@latest/files/noto-serif-tc-${slice}-400-normal.woff2`;
+  const fileUrl = (family: string, slice: string) => `https://cdn.jsdelivr.net/npm/@fontsource/${family}@5/files/noto-serif-tc-${slice}-400-normal.woff2`;
   const names = (files: Uint8Array | Uint8Array[]) => (Array.isArray(files) ? files : [files]).map((b) => new TextDecoder().decode(b));
   beforeEach(() => {
     fetched.length = 0;
@@ -123,7 +127,7 @@ describe('createPdfFontProvider (#196)', () => {
     // A face with no italic stylesheet sets its italic from the upright files.
     const italic = await provider('Noto Serif TC', 400, 'italic', { codePoints: cps('Ab') });
     expect((Array.isArray(italic) ? italic : [italic]).map((b) => new TextDecoder().decode(b))).toEqual(['noto-serif-tc-latin-400-normal.woff2']);
-    expect(fetched.filter((u) => u.endsWith('.css'))).toContain('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-tc@latest/400-italic.css');
+    expect(fetched.filter((u) => u.endsWith('.css'))).toContain('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-tc@5/400-italic.css');
   });
 
   it('fetches a file that failed once again, and leaves out one that fails twice', async () => {
@@ -154,11 +158,11 @@ describe('createPdfFontProvider (#196)', () => {
   it('remembers a stylesheet the CDN does not have, and fetches one it could not reach again', async () => {
     const { createPdfFontProvider } = await import('./pdfFontProvider');
     const provider = createPdfFontProvider();
-    const italicCss = 'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@latest/400-italic.css';
+    const italicCss = 'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5/400-italic.css';
     await provider('Noto Serif SC', 400, 'italic', { codePoints: cps('Ab') });
     await provider('Noto Serif SC', 400, 'italic', { codePoints: cps('Cd') });
     expect(fetched.filter((u) => u === italicCss)).toHaveLength(1);
-    const uprightCss = 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/400.css';
+    const uprightCss = 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5/400.css';
     unreachable.add(uprightCss);
     await provider('Noto Sans JP', 400, 'normal', { codePoints: cps('Ab') });
     expect(names(await provider('Noto Sans JP', 400, 'normal', { codePoints: cps('之') }))).toEqual(['noto-serif-tc-122-400-normal.woff2']);

@@ -35,8 +35,11 @@ export interface LayOutBundleOptions {
    *  bundle's edition, the resource types and the hyphenation patterns of
    *  a document that names no language follow it. */
   locale: string;
-  /** The layout worker (`worker/layout.worker.ts`, built by the host). */
-  worker?: Worker;
+  /** The layout worker (`worker/layout.worker.ts`, built by the host), or
+   *  how to make one: the layout service starts over on a fresh worker
+   *  when a chapter's pages are set in a face it was not sent (#757), which
+   *  it can only do when it is given the means. */
+  worker?: Worker | (() => Worker);
   /** A worker handle, in place of `worker` (a test's stub). */
   handle?: LayoutWorkerHandle;
   /** What identifies a chapter's layout, by the host's own measure. */
@@ -73,6 +76,10 @@ export interface LaidOutBundle {
   settled: boolean;
   /** How many builds the layout service ran. */
   builds: number;
+  /** How many workers the layout service used: one, and one more each
+   *  time a chapter's pages were set in a face it had not been sent and
+   *  it started over on a fresh worker (#757). */
+  workers: number;
   fonts: Record<string, FamilyFaces>;
 }
 
@@ -139,24 +146,36 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
 
   // The worker's faces, read before they are handed over (the buffers are
   // transferred).
-  const sent = new Map<string, string[]>();
-  const inner = options.handle ?? createLayoutWorker(options.worker ? { worker: options.worker } : {});
-  const handle: LayoutWorkerHandle = {
-    ...inner,
-    registerFonts: (faces) => {
-      for (const face of faces) {
-        const list = sent.get(face.family) ?? [];
-        list.push(`${face.weight} ${face.style ?? 'normal'}`);
-        sent.set(face.family, list);
-      }
-      return inner.registerFonts(faces);
-    },
-    unregisterFonts: (families) => inner.unregisterFonts(families),
-    build: (content, cfg, opts) => inner.build(content, cfg, opts),
-    warm: (content, cfg, opts) => inner.warm(content, cfg, opts),
-    dispose: () => inner.dispose(),
+  // What the worker that laid the last chapter out holds: a worker the
+  // service replaced takes its faces with it.
+  let sent = new Map<string, string[]>();
+  let workers = 0;
+  const recording = (inner: LayoutWorkerHandle): LayoutWorkerHandle => {
+    const faces = new Map<string, string[]>();
+    sent = faces;
+    workers++;
+    return {
+      ...inner,
+      registerFonts: (payloads) => {
+        for (const face of payloads) {
+          const list = faces.get(face.family) ?? [];
+          list.push(`${face.weight} ${face.style ?? 'normal'}`);
+          faces.set(face.family, list);
+        }
+        return inner.registerFonts(payloads);
+      },
+      unregisterFonts: (families) => inner.unregisterFonts(families),
+      build: (content, cfg, opts) => inner.build(content, cfg, opts),
+      warm: (content, cfg, opts) => inner.warm(content, cfg, opts),
+      dispose: () => inner.dispose(),
+    };
   };
-  const service = createLayoutService({ handle });
+  const { worker } = options;
+  const service = options.handle
+    ? createLayoutService({ handle: recording(options.handle) })
+    : typeof worker === 'function'
+      ? createLayoutService({ createHandle: () => recording(createLayoutWorker({ worker: worker() })) })
+      : createLayoutService({ handle: recording(createLayoutWorker(worker ? { worker } : {})) });
   const planner = createBookPlanner();
   const layouts: Record<string, ChapterLayout> = {};
   const docs = new Map<string, VDTDocument>();
@@ -213,6 +232,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
     locale: loaded.locale,
     settled: settled && chapters.every((c) => docs.has(c.id)),
     builds,
+    workers,
     fonts,
     chapters: chapters.filter((c) => docs.has(c.id)).map((c) => {
       const doc = docs.get(c.id)!;

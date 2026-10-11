@@ -26,19 +26,22 @@
  * --strict and warn without it: a pull request that moves lines on purpose
  * cannot capture the recipe again before its release.
  *
- * The lines, not the layout hash: the Sandbox does not measure with the
- * files a pen measures with. The kit loads the static cuts Fontsource
- * serves; the Sandbox's loader takes Google's variable file, whose advances
- * between the masters are not rounded to the font's units. A line of body
- * text comes out a few hundredths to a few tenths of a pixel wider or
- * narrower (an edition's widest difference: 0.11 px in the median one,
- * 2.3 px in the worst), and the layout hash rounds every box to half a
- * pixel. On the 334 editions
- * captured on 1.28.1: 134 with another layout hash, 127 of them with every
- * line the same and widths apart, 7 with two to eight lines broken at
- * another word. The lines hash (`linesHash` in lib/probe.js) holds no box,
- * so it tells the two apart; a layout hash that differs under the same
- * lines is a note.
+ * The lines, not the layout hash: up to #757 the Sandbox did not measure
+ * with the files a pen measures with. The kit loads the static cuts
+ * Fontsource serves; the Sandbox's loader took Google's variable file,
+ * whose advances between the masters are not rounded to the font's units.
+ * A line of body text came out a few hundredths to a few tenths of a pixel
+ * wider or narrower (an edition's widest difference: 0.11 px in the median
+ * one, 2.3 px in the worst), and the layout hash rounds every box to half
+ * a pixel. On the 334 editions captured on 1.28.1: 134 with another layout
+ * hash, 127 of them with every line the same and widths apart, 7 with two
+ * to eight lines broken at another word. Since #757 the loader declares
+ * the static cuts, in the kit's order, and the 334 come back with the
+ * recorded layout hash; a family it still takes from Google's style sheet
+ * (one Fontsource has no files for, a weight between two cuts) may differ
+ * again. The lines hash (`linesHash` in lib/probe.js) holds no box, so it
+ * tells a line broken elsewhere from one set to another width; a layout
+ * hash that differs under the same lines is a note.
  *
  * Run by Node's type stripping: erasable TypeScript, relative `.ts` imports.
  */
@@ -351,8 +354,13 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
-          const worker = new Worker("/__sb/worker.js", { type: "module" });
-          worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
+          // A factory: the layout service starts over on a fresh worker when
+          // a chapter's pages are set in a face it was not sent (#757).
+          const worker = () => {
+            const made = new Worker("/__sb/worker.js", { type: "module" });
+            made.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
+            return made;
+          };
           const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
           return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, errors: w.__sbErrors };
         } catch (error) {

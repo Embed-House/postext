@@ -79,7 +79,7 @@ Postext resolves every `fontFamily` string against **both** the Google Fonts cat
 Use custom fonts when:
 
 - The document needs a brand or licensed typeface that is not on Google Fonts.
-- The environment can't reach the Google Fonts CDN (offline, intranet, privacy-sensitive).
+- The environment can't reach the font CDNs, jsDelivr (where the Sandbox takes Fontsource's files from) or Google Fonts (offline, intranet, privacy-sensitive).
 - You must keep the font binary private and not upload it to a third party.
 
 ### Configuration schema
@@ -125,7 +125,7 @@ Once a family is declared, every font picker groups it under **Custom**, above t
 Under the hood:
 
 - When `customFonts` changes, every declared family is automatically registered as `FontFace` entries on `document.fonts` — so the HTML viewer, the Canvas viewport (which measures through `document.fonts`), and any direct CSS reference all pick up the custom face without requiring the user to first open the Font Picker.
-- The layout worker receives the same ArrayBuffers through the existing font payload transfer path, so measurement (`buildFontString`, pretext) produces identical metrics to Google Fonts.
+- The layout worker receives the same ArrayBuffers through the existing font payload transfer path, so measurement (`buildFontString`, pretext) works as it does for a family of the catalogue.
 - Changing or removing a variant drops the worker's cached face for that family and re-registers on the next build, so previews stay in sync with the current variant set.
 - **PDF export**: uploaded binaries flow through the same `PdfFontProvider` pipeline. `.woff2` files are decompressed; `.ttf` and `.otf` are passed through directly. `.woff` is rejected with a clear error (pdf-lib can't embed raw WOFF — re-upload as `.woff2`/`.ttf`/`.otf`). CFF-flavored OpenType (`.otf` with `OTTO` magic) is embedded **without subsetting**, because pdf-lib's CFF subsetter walks every glyph at `save()` time and can hang for minutes on real fonts; skipping subset trades a somewhat larger PDF for consistent render times.
 

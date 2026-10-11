@@ -12,12 +12,46 @@
  * draws from and nothing else (issue #196).
  */
 
+/**
+ * The major version of the `@fontsource/<id>` packages every file is taken
+ * from (#757): the one the Cookbook kit pins (`cookbook/_kit/fonts.js`), so
+ * a preview, the PDF made from it and a pen fetch the same URLs. `@latest`
+ * would move to another major on its own, the kit staying behind.
+ */
+export const FONTSOURCE_PACKAGE_VERSION = '5';
+
+/** Fontsource's id of a family: `Source Serif 4` is `source-serif-4`. */
+export function fontsourceId(family: string): string {
+  return family.toLowerCase().replace(/\s+/g, '-');
+}
+
+/** The folder of a family's package on jsDelivr. */
+function fontsourcePackageUrl(id: string): string {
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@${FONTSOURCE_PACKAGE_VERSION}`;
+}
+
+/** Fontsource's stylesheet of one weight and style: every file of the face
+ *  with its `unicode-range`. */
+export function fontsourceCssUrl(family: string, weight: number, style: 'normal' | 'italic'): string {
+  return `${fontsourcePackageUrl(fontsourceId(family))}/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+}
+
+/** One file of a face: a subset (`latin`, `latin-ext`, a slice number) in
+ *  a weight and a style. */
+export function fontsourceFileUrl(family: string, subset: string, weight: number, style: 'normal' | 'italic'): string {
+  const id = fontsourceId(family);
+  return `${fontsourcePackageUrl(id)}/files/${id}-${subset}-${weight}-${style}.woff2`;
+}
+
 /** One file of a face: its URL and the code point ranges it covers. */
 export interface FontSlice {
   /** The subset name: `latin`, `latin-ext`, or a slice number (`119`). */
   name: string;
   url: string;
   ranges: Array<[number, number]>;
+  /** The `unicode-range` as the stylesheet writes it; unset when the rule
+   *  has none. */
+  unicodeRange?: string;
 }
 
 /** A CSS `unicode-range` value (`U+0000-00FF,U+0131,U+4E??`) as ranges. */
@@ -60,7 +94,7 @@ export function parseFontsourceCss(css: string, cssUrl: string): FontSlice[] {
     // `<id>-<name>-<weight>-<style>.woff2`; the id may hold dashes too, so
     // the name is read from the right.
     const name = /-([a-z0-9]+(?:-ext)?)-\d+-(?:normal|italic)\.woff2$/i.exec(file)?.[1] ?? file;
-    out.push({ name, url, ranges: range ? parseUnicodeRange(range) : [[0, 0x10ffff]] });
+    out.push({ name, url, ranges: range ? parseUnicodeRange(range) : [[0, 0x10ffff]], ...(range ? { unicodeRange: range.trim() } : {}) });
   }
   return out;
 }

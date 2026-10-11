@@ -40,7 +40,15 @@ export function TypeSample({ body, lang }: TypeSampleProps) {
   const palette = config.colorPalette;
   const page = resolvePageConfig(config.page);
   const vertical = resolveLayoutConfig(config.layout).writingMode === 'vertical-rl';
-  useEffect(() => { loadFont(body.fontFamily); }, [body.fontFamily]);
+  // The cuts the sample is set in: the text weight, its bold and its
+  // italic (a family is a file per weight and slant, #757).
+  useEffect(() => {
+    loadFont(body.fontFamily, [
+      { weight: body.fontWeight, style: 'normal' },
+      { weight: body.boldFontWeight, style: 'normal' },
+      { weight: body.fontWeight, style: 'italic' },
+    ]);
+  }, [body.fontFamily, body.fontWeight, body.boldFontWeight]);
 
   const script = chineseScriptOf(lang);
   const japanese = isJapaneseLanguage(lang);

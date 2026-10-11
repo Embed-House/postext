@@ -615,16 +615,20 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 
 `handle.prepareFonts(content, config, options)` runs [`prepareFonts`](#loading-fonts-before-layout) on the page and then sends the worker the files of every face it found that the font registry holds (the resolver's files, a bundle's faces, the page's readable `@font-face` rules), only the slices that hold the document's characters. When faces reach the worker, it drops the measurements of those families only and its cache of finished documents.
 
+Send a face before the first build that sets text in it. In Chrome a worker's canvas resolves a font the first time it measures with it, and a file registered later for the same family, weight, style and size is not picked up: the text keeps the widths of the face that answered first. A worker that has already measured with the font has to be replaced by a new one.
+
 ### Font payload collection (Fontsource / Google Fonts)
 
-`registerFonts` takes raw font bytes. The main thread is the right place to fetch them, because Google Fonts only returns WOFF2 to browser-like User-Agent strings, and because a central cache lets multiple worker instances share the same bytes.
+`registerFonts` takes raw font bytes. The main thread is the right place to fetch them, because a central cache lets multiple worker instances share the same bytes.
 
-The sandbox's `collectFontPayloadsForFamilies` (`packages/postext-sandbox/src/controls/fontLoader.ts`) is a drop-in reference implementation. It:
+The sandbox's `collectFontPayloadsForFamilies` (`packages/postext-sandbox/src/controls/fontLoader.ts`) is a reference implementation. It:
 
-1. Queries `https://api.fontsource.org/v1/fonts/{family-id}` to discover the available weights and whether the family ships a variable axis.
-2. Builds a Google Fonts CSS2 URL that covers every weight and style the family advertises.
-3. Fetches the generated `@font-face` stylesheet, scrapes each `src: url(...) format('woff2')` declaration, and downloads the raw bytes.
+1. Queries `https://api.fontsource.org/v1/fonts/{family-id}` for the weights and styles the family has.
+2. Reads the family's subsets and their `unicode-range` from its package on jsDelivr (`@fontsource/{family-id}@5/400.css`), once per family.
+3. Downloads every file of the regular, the bold and their italics of each family (`files/{family-id}-{subset}-{weight}-{style}.woff2`); `collectFontPayloadsForConfig(config, markdown)` takes the weights and styles a configuration asks for instead. They are static files, the ones the PDF embeds, so the worker measures with what the PDF draws. A variable file gives other advances between two of its masters, and a line a fraction of a pixel from its measure breaks elsewhere.
 4. Returns a `FontPayload[]` where `buffer` is a fresh `ArrayBuffer` per call — important, because `registerFonts` transfers the buffer and leaves the sender-side copy detached.
+
+The files of a cut go in the order a pen declares them, `latin` first and the script's own files last (`arabic`, the numbered slices of a Chinese or Japanese family), since the file added last answers for a character two files hold. A family Fontsource has no files for is read from Google's CSS2 style sheet instead, which only returns WOFF2 to browser-like User-Agent strings.
 
 Pair it with `getConfigFontFamilies(config)` to get the list of families a given `PostextConfig` will actually render (body, headings, list bullets, ordered-list numbers).
 
@@ -1067,7 +1071,7 @@ function fontsourceWoff2Url(
   style: 'normal' | 'italic',
 ): string {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
+  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${weight}-${style}.woff2`;
 }
 
 export function createPdfFontProvider(): PdfFontProvider {

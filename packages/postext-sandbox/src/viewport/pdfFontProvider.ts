@@ -1,9 +1,9 @@
 import type { PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
-import { fontFamilyWeights, getCustomFontFamily, isUncataloguedFontFamily, loadFont } from '../controls/fontLoader';
+import { facesForCodePoints, fontFamilyWeights, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
 import { getFontFile } from '../storage/fontStorage';
-import { parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
+import { fontsourceCssUrl, fontsourceFileUrl, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
 
 const bytesCache = new Map<string, Promise<Uint8Array>>();
 const slicesCache = new Map<string, Promise<FontSlice[] | null>>();
@@ -13,10 +13,6 @@ const slicesCache = new Map<string, Promise<FontSlice[] | null>>();
 const FETCH_CONCURRENCY = 6;
 /** Times a file that failed is fetched again before it is left out. */
 const FETCH_RETRIES = 1;
-
-function fontsourceId(family: string): string {
-  return family.toLowerCase().replace(/\s+/g, '-');
-}
 
 function noFiles(family: string): Error {
   return new Error(`Fontsource has no files for the family "${family}"`);
@@ -31,14 +27,7 @@ function fontsourceWoff2Url(
   weight: number,
   style: 'normal' | 'italic',
 ): string {
-  const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/files/${id}-latin-${weight}-${style}.woff2`;
-}
-
-/** Fontsource's stylesheet of one weight and style: every file of the face
- *  with its unicode-range. */
-function fontsourceCssUrl(family: string, weight: number, style: 'normal' | 'italic'): string {
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${fontsourceId(family)}@latest/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  return fontsourceFileUrl(family, 'latin', weight, style);
 }
 
 /** A WOFF2 file as TrueType bytes, fetched once per URL (a failed fetch is
@@ -86,7 +75,7 @@ function fetchSlices(family: string, weight: number, style: 'normal' | 'italic')
 /** Each file of a face, fetched with one retry; a file that still fails is
  *  left out, so a CDN hiccup costs the characters of that file (reported as
  *  missing glyphs), not the face. Rejects only when every file failed. */
-async function fetchFaceFiles(slices: readonly FontSlice[], raw = false): Promise<Uint8Array[]> {
+async function fetchFaceFiles(slices: readonly Pick<FontSlice, 'url'>[], raw = false): Promise<Uint8Array[]> {
   const files = await mapLimit(slices, FETCH_CONCURRENCY, async (slice) => {
     for (let attempt = 0; ; attempt++) {
       try {
@@ -173,17 +162,19 @@ async function loadCustomFontBytes(
 }
 
 /**
- * Factory for a `PdfFontProvider` backed by Fontsource's jsdelivr CDN. Google
- * Fonts serves a single variable WOFF2 per family, so pdf-lib would embed
- * only the default instance and bold text would render at regular weight.
- * Fontsource exposes per-weight static WOFF2 files, which pdf-lib can embed
- * directly at the correct weight.
+ * Factory for a `PdfFontProvider` backed by Fontsource's jsdelivr CDN: the
+ * static files, one per weight and style, the previews are measured with
+ * (#757). A variable file would not do: pdf-lib embeds only its default
+ * instance, so bold text would render at regular weight.
  *
- * A face is answered with the files of its Fontsource stylesheet that hold
- * the characters the document sets in it (issue #196): `latin` alone for
- * English, `latin` and `latin-ext` for Czech, and for a Chinese family the
- * numbered unicode-range slices the text touches — the `latin` file of Noto
- * Serif SC has no Han at all. Without the stylesheet, the `latin` file.
+ * A face is answered from the list the font loader declares for it
+ * (`staticFaceFiles`), with the files that hold the characters the
+ * document sets in it (issue #196): `latin` alone for English, `latin` and
+ * `latin-ext` for Czech, and for a Chinese family the numbered
+ * unicode-range slices the text touches — the `latin` file of Noto Serif
+ * SC has no Han at all. The weight and the slant are the loader's too: a
+ * weight the family has no file for is set in the cut the page draws it
+ * from, an italic of a family without italics in its upright.
  *
  * With `raw`, files come as stored or fetched (WOFF2 and WOFF included),
  * for the `@font-face` rules of SVG pictures (#630).
@@ -203,12 +194,18 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
     // A system font named in a `font-family` list, or a name the catalogue
     // answered it does not have: its style sheets and files are not there
     // to ask for, weight by weight and style by style (#753). Known before
-    // the family is loaded for the first, once its lookup answers for the
-    // second.
+    // the family is looked up for the first, once its lookup answers for
+    // the second.
     if (isUncataloguedFontFamily(family)) throw noFiles(family);
-    await loadFont(family);
+    // The cut the previews measure this face with, in the order its files
+    // are declared; the browser looks a character up from the last one
+    // declared, and so does the PDF.
+    const cut = await staticFaceFiles(family, weight, style);
     if (isUncataloguedFontFamily(family)) throw noFiles(family);
+    if (cut) return fetchFaceFiles(facesForCodePoints(cut, request?.codePoints).reverse(), raw);
 
+    // A family the loader has no static files for (it took Google's style
+    // sheet): Fontsource's files of the nearest weight, where it has any.
     const available = await fontFamilyWeights(family);
     const targetWeight = available ? nearestWeight(weight, available) : weight;
 
