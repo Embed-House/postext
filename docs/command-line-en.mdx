@@ -334,7 +334,13 @@ the book does not carry, `postext` looks, in order:
    the engine's defaults;
 3. in the download cache;
 4. on [Google Fonts](https://fonts.google.com), which gives whole static
-   TrueType files; they are kept in the cache, so a family is downloaded once.
+   TrueType files, or on [Fontsource](https://fontsource.org) for a family
+   Google Fonts does not have (Commit Mono, FiraGO); they are kept in the
+   cache, so a family is downloaded once.
+
+A weight or a slant a family does not ship is set in its nearest face as it
+is, in the page images as in the PDF: a display face with one weight keeps its
+own letters for a bold, and an upright family for an italic.
 
 The cache is `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows);
 `POSTEXT_CACHE_DIR` or `--cache-dir` moves it. `--offline` skips the download.

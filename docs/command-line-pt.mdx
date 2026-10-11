@@ -340,8 +340,14 @@ nomeia e que o livro não leva, o `postext` procura, nesta ordem:
    padrões do motor;
 3. no cache de downloads;
 4. no [Google Fonts](https://fonts.google.com), que entrega arquivos
-   TrueType estáticos completos; eles ficam no cache, então cada família é
-   baixada uma única vez.
+   TrueType estáticos completos, ou na [Fontsource](https://fontsource.org)
+   quando o Google Fonts não tem a família (Commit Mono, FiraGO); eles ficam
+   no cache, então cada família é baixada uma única vez.
+
+Um peso ou uma inclinação que a família não traz é composto com a fonte mais
+próxima dela, como ela é, nas imagens de página e no PDF: uma família de
+letreiramento com um só peso mantém as próprias letras no negrito, e uma
+família sem itálico, as redondas.
 
 O cache fica em `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` no
 Windows); `POSTEXT_CACHE_DIR` ou `--cache-dir` o mudam de lugar. `--offline`
