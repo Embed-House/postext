@@ -157,7 +157,8 @@ describe('callout style defaults', () => {
       marginBottom: { value: 1, unit: 'em' },
     }]);
     expect(stripCalloutStylesDefaults(undefined)).toBeUndefined();
-    expect(stripCalloutStylesDefaults([])).toBeUndefined();
+    // An empty list is a document with no box styles, not the built-in one (#694).
+    expect(stripCalloutStylesDefaults([])).toEqual([]);
     // The built-in default needs no persisting.
     expect(stripCalloutStylesDefaults([{ id: 'note' }])).toBeUndefined();
     expect(stripCalloutStylesDefaults([{ id: 'note', name: 'Note' }])).toBeUndefined();
@@ -277,8 +278,8 @@ describe('callout style defaults', () => {
     expect(resolve(stripped)).toEqual(resolve(styles));
   });
 
-  it('stripConfigDefaults removes an empty or default calloutStyles list', () => {
-    expect(stripConfigDefaults({ calloutStyles: [] }).calloutStyles).toBeUndefined();
+  it('stripConfigDefaults removes a default calloutStyles list and keeps an empty one', () => {
+    expect(stripConfigDefaults({ calloutStyles: [] }).calloutStyles).toEqual([]);
     expect(stripConfigDefaults({ calloutStyles: [{ id: 'note', name: 'Note' }] }).calloutStyles).toBeUndefined();
     const kept: PostextConfig = { calloutStyles: [{ id: 'x', title: 'X' }] };
     expect(stripConfigDefaults(kept).calloutStyles).toEqual(kept.calloutStyles);

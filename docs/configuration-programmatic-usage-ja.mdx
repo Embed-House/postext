@@ -343,6 +343,8 @@ const minimal = stripConfigDefaults(fullConfig);
 
 既定値のなかには、設定のほかの部分で決まるものがあります。段末そろえは文字グリッドと縦組みでは既定でオフになり、脚注、キャプション、索引の既定値は文書の言語に従います。`stripConfigDefaults`は、渡された設定そのものの既定値とそれぞれの値を比べます。そのため、段末そろえが既定でオフになるところでは`headings.balancing.enabled: true`が残り、`false`は取り除かれます。除去関数を単独で呼ぶときは、その文脈を引数で渡します。`stripHeadingsDefaults(headings, balancingOnByDefault(config))`、`stripIndexDefaults(index, locale)`、`stripCaptionStyleDefaults(captionStyle, locale)`、`stripFootnotesDefaults(footnotes, locale, writingMode)`。
 
+「何もない」ことを表す値は、何もないことが既定でないところでは残ります。見出しスタイルは、自分で指定しなければ文書のヘッダーとフッターを使います。そのため、それらを空にしたスタイル（表紙の`footer: { elements: [] }`）は空のスロットを保ち、`margins`、`layout`、`bodyStyle`も空のまま残ります。見出し全体の値を変えたうえで、あるレベルを自身の既定値に戻した場合、その値は残ります。`calloutStyles: []`と`chipStyles: []`は空のリストのままです。省くと組み込みのスタイルが戻ってしまうからです。どの場合も、`resolveAllConfig(stripConfigDefaults(config))`は`resolveAllConfig(config)`と同じ結果になります。
+
 ### 解析
 
 エンジンは、Markdownのトークナイザーとフロントマターの読み取り関数を公開しています。ビルドの前に文書を調べたり、Postextが見るのと同じブロック構造をほかのツールに渡したりするのに使えます。

@@ -495,6 +495,20 @@ function deepClone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
+/** `slot` as it is stored: one in the pre-placement shape migrated, any
+ *  other as given. Nothing is dropped, so it serves where a slot has no
+ *  default of its own (a heading style's, which stands for the
+ *  document's when unset, #694). */
+export function migrateDesignSlot(
+  slot: DesignSlot | undefined,
+  kind: DesignSlotKind = 'header',
+): DesignSlot | undefined {
+  if (!slot) return undefined;
+  return isLegacyHeaderFooterSlot(slot)
+    ? migrateLegacyHeaderFooterConfig(slot, legacyKind(kind)) ?? slot
+    : slot;
+}
+
 // Strip is intentionally minimal: only returns `undefined` when the slot
 // deep-equals the default (so persisted configs omit it entirely). Per-field
 // stripping across the new union is not worth the complexity — the slot is
@@ -504,10 +518,8 @@ export function stripDesignSlotDefaults(
   slot: DesignSlot | undefined,
   kind: DesignSlotKind = 'header',
 ): DesignSlot | undefined {
-  if (!slot) return undefined;
-  const migrated = isLegacyHeaderFooterSlot(slot)
-    ? migrateLegacyHeaderFooterConfig(slot, legacyKind(kind)) ?? slot
-    : slot;
+  const migrated = migrateDesignSlot(slot, kind);
+  if (!migrated) return undefined;
   if (kind !== 'header' && kind !== 'footer') return migrated;
   if (JSON.stringify(migrated) === JSON.stringify(defaultSlotFor(kind))) return undefined;
   return migrated;

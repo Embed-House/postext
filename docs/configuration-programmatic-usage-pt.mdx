@@ -343,6 +343,8 @@ Também há removedores individuais, um por resolvedor: `stripPageDefaults`, `st
 
 Alguns padrões dependem do restante da configuração: o equilíbrio de colunas fica desativado numa grade de caracteres e no texto vertical, e as notas de rodapé, as legendas e o índice remissivo seguem o idioma do documento. `stripConfigDefaults` compara cada valor com o padrão da configuração que recebe, de modo que `headings.balancing.enabled: true` permanece onde o equilíbrio fica desativado por padrão, e `false` é removido ali. Um removedor chamado isoladamente recebe esse contexto como argumentos: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`.
 
+Um valor que diz "nada" permanece onde nada não é o padrão. Um estilo de título usa o cabeçalho e o rodapé do documento quando não define os seus, de modo que o estilo que os esvazia (`footer: { elements: [] }` numa capa) mantém o espaço vazio, e seus `margins`, `layout` e `bodyStyle` permanecem mesmo vazios. Um nível de título devolvido ao seu padrão sob valores gerais dos títulos que diferem mantém o valor. `calloutStyles: []` e `chipStyles: []` continuam sendo listas vazias: omitidas, o estilo embutido voltaria. Em todos os casos `resolveAllConfig(stripConfigDefaults(config))` resolve como `resolveAllConfig(config)`.
+
 ### Análise do markdown
 
 O motor expõe seu tokenizador de markdown e seu leitor de frontmatter. Use-os para inspecionar um documento antes de compilá-lo, ou para alimentar outras ferramentas com a mesma estrutura de blocos que o Postext enxerga:

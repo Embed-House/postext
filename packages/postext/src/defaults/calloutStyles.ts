@@ -322,11 +322,14 @@ function stripObject<T extends object>(obj: T): T | undefined {
  *  language-dependent continuation strings are kept whenever set, since
  *  their effective default depends on other config sections. Returns
  *  `undefined` when the list is the built-in default (a single bare
- *  `note` style) or empty. */
+ *  `note` style); an empty list stays empty. */
 export function stripCalloutStylesDefaults(
   styles: CalloutStyleConfig[] | undefined,
 ): CalloutStyleConfig[] | undefined {
-  if (!styles || styles.length === 0) return undefined;
+  if (!styles) return undefined;
+  // An empty list is a document with no box styles, which the built-in
+  // `note` would otherwise come back into (#694).
+  if (styles.length === 0) return [];
   const d = DEFAULT_CALLOUT_STYLE_STATIC;
   const stripped = styles.map((s) => {
     const r: CalloutStyleConfig = { id: s.id };

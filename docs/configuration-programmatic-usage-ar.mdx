@@ -343,6 +343,8 @@ const minimal = stripConfigDefaults(fullConfig);
 
 بعض القيم الافتراضية تتوقف على بقية الإعدادات: موازنة الأعمدة معطّلة في شبكة المحارف وفي النص العمودي، والحواشي السفلية والتعليقات والفهرس الأبجدي تتبع لغة المستند. تقارن `stripConfigDefaults` كل قيمة بالقيمة الافتراضية للإعدادات التي تتلقاها، فتبقى `headings.balancing.enabled: true` حيث الموازنة معطّلة افتراضيًا، وتُحذف `false` هناك. ودالة الحذف المنفردة تأخذ هذا السياق في وسائطها: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`، `stripIndexDefaults(index, locale)`، `stripCaptionStyleDefaults(captionStyle, locale)`، `stripFootnotesDefaults(footnotes, locale, writingMode)`.
 
+القيمة التي تعني «لا شيء» تبقى حيثما لا يكون «لا شيء» هو القيمة الافتراضية. نمط العنوان يأخذ ترويسة المستند وتذييله حين لا يحدّد ما يخصّه، فالنمط الذي يفرغهما (`footer: { elements: [] }` في غلاف) يحتفظ بالموضع الفارغ، وتبقى `margins` و`layout` و`bodyStyle` فيه ولو كانت فارغة. ومستوى العنوان المُعاد إلى قيمته الافتراضية تحت قيم عامة للعناوين تخالفها يحتفظ بقيمته. وتبقى `calloutStyles: []` و`chipStyles: []` قائمتين فارغتين: لو حُذفتا لعاد النمط المضمَّن. وفي كل الأحوال تُستكمل `resolveAllConfig(stripConfigDefaults(config))` كما تُستكمل `resolveAllConfig(config)`.
+
 ### التحليل
 
 يتيح المحرّك مُقطِّع markdown الخاص به وقارئ البيانات التمهيدية. استخدمهما لفحص مستند قبل بنائه، أو لتغذية أدوات أخرى ببنية الكتل نفسها التي يراها Postext:

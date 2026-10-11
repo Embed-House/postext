@@ -8,7 +8,7 @@ import type {
   ResolvedPageConfig,
   ResolvedUnorderedListsConfig,
 } from '../types';
-import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter';
+import { migrateDesignSlot, resolveDesignSlot } from './headerFooter';
 import { resolveLayoutConfig } from './layout';
 import { resolveHeadingLevelOverrides } from './headings';
 import { startEndAsLeftRight } from './shared';
@@ -106,10 +106,16 @@ export function resolveHeadingStylesConfig(
 }
 
 /** Drop unset fields and the static defaults (`numbered: true`, `toc:
- *  true`, `runningChapter: true`, `name` equal to `id`, empty slots /
- *  palettes). Level overrides
- *  and the inherited section fields are kept whenever set. Returns
- *  `undefined` when no styles remain. */
+ *  true`, `runningChapter: true`, `name` equal to `id`, an empty
+ *  `palette`). Everything else a style sets is kept, since a style's
+ *  default is what it inherits and not a value of its own (#694): level
+ *  overrides, and the section fields even when they are empty. An empty
+ *  `header` or `footer` silences the document's running head or folio on
+ *  the style's pages (a cover, an opener), one that restates the built-in
+ *  slot replaces the document's own, and `margins: {}`, `layout: {}` and
+ *  `bodyStyle: {}` resolve to a section of their own. A slot in the
+ *  pre-placement shape is stored migrated. Returns `undefined` when no
+ *  styles remain. */
 export function stripHeadingStylesDefaults(
   styles: HeadingStyleConfig[] | undefined,
 ): HeadingStyleConfig[] | undefined {
@@ -124,12 +130,10 @@ export function stripHeadingStylesDefaults(
       if (k === 'toc' && v === true) continue;
       if (k === 'runningChapter' && v === true) continue;
       if (k === 'header' || k === 'footer') {
-        const slot = stripDesignSlotDefaults(v as HeadingStyleConfig['header'], k);
-        if (slot && slot.elements && slot.elements.length > 0) out[k] = slot;
+        out[k] = migrateDesignSlot(v as HeadingStyleConfig['header'], k) ?? v;
         continue;
       }
       if (k === 'palette' && Object.keys(v as object).length === 0) continue;
-      if ((k === 'margins' || k === 'layout' || k === 'bodyStyle') && Object.keys(v as object).length === 0) continue;
       out[k] = v;
     }
     return r;
