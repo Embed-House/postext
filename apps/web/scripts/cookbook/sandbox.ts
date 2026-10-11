@@ -42,7 +42,7 @@ import { UsageError, flag, int, list, parseArgs, str, userPath } from "./args.ts
 import type { CaptureResult } from "./capture.ts";
 import type { NetIssue } from "./net.ts";
 import { releasedVersion } from "./shim.ts";
-import { harnessDetail, step } from "./steps.ts";
+import { harnessDetail, step, StepError } from "./steps.ts";
 
 export { SANDBOX_USAGE } from "./sandbox-usage.ts";
 
@@ -434,16 +434,29 @@ export async function runSandboxCheck(opts: SandboxOptions): Promise<CaptureResu
       let findings: SandboxFinding[];
       // The hash is the engine's: only the recorded release gives the recorded one.
       let version = tree;
+      // A step that never answered gets a second try in a context of its
+      // own: a font file the network stalled on is in the cache by then, and
+      // an edition that hangs for a reason of its own hangs again and fails.
+      const open = () => opts.site
+        ? runSite(hb.browser, opts.site.replace(/\/$/, ""), edition)
+        : runLocal(hb.browser, hb.userAgent, server!.url, edition, !!opts.refreshNet);
       try {
-        run = opts.site
-          ? await runSite(hb.browser, opts.site.replace(/\/$/, ""), edition)
-          : await runLocal(hb.browser, hb.userAgent, server!.url, edition, !!opts.refreshNet);
+        let stalled: StepError | null = null;
+        try {
+          run = await open();
+        } catch (error) {
+          if (!(error instanceof StepError && error.stalled)) throw error;
+          stalled = error;
+          process.stderr.write(dim(`  ${edition.slug} ${edition.variant}: ${error.message}; trying once more\n`));
+          run = await open();
+        }
         if (opts.site) version = edition.engine;
         findings = compareEdition(edition, run, {
           strict: opts.strict,
           sameEngine: opts.site ? true : edition.engine === tree,
           ...(opts.site ? { ownBundle: `/cookbook/${edition.slug}/${edition.variant}/${edition.slug}.postext` } : {}),
         });
+        if (stalled) findings.push({ severity: "info", detail: `laid out at the second try (the first: ${stalled.message})` });
       } catch (error) {
         findings = [{ severity: "fail", detail: harnessDetail(error) }];
       }

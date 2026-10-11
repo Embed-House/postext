@@ -44,7 +44,8 @@ jobs:
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: net
         with:
           path: apps/web/.cache/cookbook-net
           key: cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}
@@ -55,6 +56,14 @@ jobs:
         env:
           COOKBOOK_CHROME: /usr/bin/google-chrome
         run: pnpm cookbook sandbox --report "$RUNNER_TEMP/cookbook-sandbox.json"
+
+      # Kept when the check fails too: the next run starts from what this
+      # one fetched.
+      - uses: actions/cache/save@v4
+        if: always() && steps.net.outputs.cache-hit != 'true'
+        with:
+          path: apps/web/.cache/cookbook-net
+          key: ${{ steps.net.outputs.cache-primary-key }}
 
       - uses: actions/upload-artifact@v4
         if: always()

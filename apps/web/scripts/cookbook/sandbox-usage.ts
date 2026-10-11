@@ -18,6 +18,8 @@ export const SANDBOX_USAGE = `pnpm cookbook sandbox [slug…] [options]
   --no-strict            With --site: differences in pages are warnings
   --concurrency <n>      Editions at once (default 3)
   --timeout <s>          How long one edition may take (default 60)
+                         One that gives no answer in that time is tried once
+                         more before it fails
   --report <out.json>    The results as JSON
 
   Without --site the Sandbox is built from the working tree with bun
