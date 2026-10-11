@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getAtPath, mergePatch, parsePath, patchPaths, setAtPath } from './configPaths';
+import { canonicalSteps, formatPath, getAtPath, identityKeyOf, leafEntries, mergePatch, parsePath, patchPaths, setAtPath } from './configPaths';
 
 const config = {
   page: { margins: { top: { value: 2, unit: 'cm' } }, dpi: 300 },
@@ -10,7 +10,9 @@ describe('parsePath', () => {
   it('reads keys, positions and ids', () => {
     expect(parsePath('page.margins.top')).toEqual([{ key: 'page' }, { key: 'margins' }, { key: 'top' }]);
     expect(parsePath('headingStyles[1].fontSize')).toEqual([{ key: 'headingStyles' }, { index: 1 }, { key: 'fontSize' }]);
-    expect(parsePath('calloutStyles[id=note].title')).toEqual([{ key: 'calloutStyles' }, { id: 'note' }, { key: 'title' }]);
+    expect(parsePath('calloutStyles[id=note].title')).toEqual([{ key: 'calloutStyles' }, { where: 'id', value: 'note' }, { key: 'title' }]);
+    expect(parsePath('headings.levels[level=2]')).toEqual([{ key: 'headings' }, { key: 'levels' }, { where: 'level', value: '2' }]);
+    expect(formatPath(parsePath('headings.levels[level=2].fontSize[0]'))).toBe('headings.levels[level=2].fontSize[0]');
     expect(parsePath('')).toEqual([]);
   });
 
@@ -64,6 +66,44 @@ describe('setAtPath', () => {
   it('says when the path runs through something that is not there to hold it', () => {
     expect(() => setAtPath(config, 'page.dpi.value', 1)).toThrow(/page\.dpi is not an object/);
     expect(() => setAtPath(config, 'page[0]', 1)).toThrow(/is not a list/);
+  });
+});
+
+describe('lists whose items have a name', () => {
+  const resolved = { headings: { levels: [{ level: 1, size: 18 }, { level: 2, size: 15 }] }, brackets: [{ open: '<' }, { open: '«' }] };
+
+  it('are told apart by id or by level, the others by position', () => {
+    expect(identityKeyOf(config.headingStyles)).toBe('id');
+    expect(identityKeyOf(resolved.headings.levels)).toBe('level');
+    expect(identityKeyOf(resolved.brackets)).toBeNull();
+    expect(identityKeyOf([{ id: 'a' }, { id: 'a' }])).toBeNull();
+  });
+
+  it('a position in the resolved list is the item it names, whatever a book stores', () => {
+    const path = formatPath(canonicalSteps(resolved, parsePath('headings.levels[1].size')));
+    expect(path).toBe('headings.levels[level=2].size');
+    // A book that only stores level 2 holds it at position 0.
+    const stored = { headings: { levels: [{ level: 2, size: 20 }] } };
+    expect(getAtPath(stored, path)).toBe(20);
+    expect(formatPath(canonicalSteps(resolved, parsePath('brackets[1].open')))).toBe('brackets[1].open');
+    expect(formatPath(canonicalSteps(resolved, parsePath('nothing[3].here')))).toBe('nothing[3].here');
+  });
+
+  it('a new item starts from what names it, a number where the others carry numbers', () => {
+    expect(setAtPath({ headings: { levels: [{ level: 2, size: 20 }] } }, 'headings.levels[level=3].size', 12).headings.levels).toEqual([{ level: 2, size: 20 }, { level: 3, size: 12 }]);
+    expect(setAtPath({}, 'headings.levels[level=3].size', 12)).toEqual({ headings: { levels: [{ level: 3, size: 12 }] } });
+    expect(setAtPath({}, 'styles[id=7].size', 12)).toEqual({ styles: [{ id: '7', size: 12 }] });
+  });
+
+  it('removing from an item the list does not hold changes nothing', () => {
+    expect(setAtPath(config, 'headingStyles[id=part].fontSize', undefined)).toEqual(config);
+  });
+
+  it('lists every leaf by its path', () => {
+    expect([...leafEntries({ ...resolved, empty: {}, none: [] }).keys()]).toEqual([
+      'headings.levels[level=1].level', 'headings.levels[level=1].size', 'headings.levels[level=2].level', 'headings.levels[level=2].size',
+      'brackets[0].open', 'brackets[1].open', 'empty', 'none',
+    ]);
   });
 });
 

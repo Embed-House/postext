@@ -1,12 +1,15 @@
 // The book's design: reading and writing its configuration.
 
-import { collectConfigWarnings, resolveDebugConfig, resolveHtmlViewerConfig, stripConfigDefaults } from 'postext';
+import { collectConfigWarnings, stripConfigDefaults } from 'postext';
 import type { PostextConfig } from 'postext';
 import { SETTINGS_GROUPS, SETTINGS_SECTIONS } from '../../sidebar/sections/registry';
 import { tokenize } from '../../sidebar/search/normalize';
 import { buildSectionSearchIndex, planSettingsSearch } from '../../sidebar/search/sectionIndex';
-import { getAtPath, mergePatch, parsePath, patchPaths, setAtPath } from '../configPaths';
-import { bookPagesSummary, dispatchAndWait, layOutChapter, whenSettled, type SandboxToolHost } from '../host';
+import { configFromExport, type ConfigExport } from '../../storage/persistence';
+import { isColor, isDimension, resolveEffectiveConfig } from '../configEffective';
+import { canonicalSteps, formatPath, getAtPath, leafEntries, parsePath, patchPaths } from '../configPaths';
+import { planWrite, stableText } from '../configWrite';
+import { bookPagesSummary, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host';
 import { ToolError, type WebMcpTool } from '../modelContext';
 
 /** Every top-level key a configuration has: a path outside them is
@@ -26,46 +29,45 @@ void everySection;
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+const same = (a: unknown, b: unknown): boolean => stableText(a) === stableText(b);
 
-/** Every leaf path of `value`, lists by position, down to `depth` levels. */
-function leafPaths(value: unknown, prefix: string, depth: number, out: string[]): void {
-  if (depth === 0 || (!isRecord(value) && !Array.isArray(value))) {
-    if (prefix) out.push(prefix);
-    return;
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item, i) => {
-      const id = isRecord(item) && typeof item.id === 'string' ? `[id=${item.id}]` : `[${i}]`;
-      leafPaths(item, `${prefix}${id}`, depth - 1, out);
-    });
-    return;
-  }
-  for (const [key, member] of Object.entries(value)) leafPaths(member, prefix ? `${prefix}.${key}` : key, depth - 1, out);
-}
+/** Most settings an answer lists as having followed a change. */
+const MAX_FOLLOWED = 40;
 
 export function configTools(host: SandboxToolHost): WebMcpTool[] {
   const { store } = host;
 
-  /** The configuration with every default filled in, as the engine
-   *  resolved it for the chapter on screen — what each setting comes to
-   *  when the book does not set it. */
-  const effectiveConfig = async (signal?: AbortSignal): Promise<Record<string, unknown>> => {
+  /** The configuration with every default filled in — what each setting
+   *  comes to when the book does not set it. */
+  const effectiveOf = (config: PostextConfig): Record<string, unknown> => {
     const s = store.getSnapshot();
-    const { doc } = await layOutChapter(host, s.activeChapterId, signal);
-    return {
-      ...(doc.config as unknown as Record<string, unknown>),
-      debug: resolveDebugConfig(s.config.debug),
-      htmlViewer: resolveHtmlViewerConfig(s.config.htmlViewer),
-      ...(s.config.customFonts ? { customFonts: s.config.customFonts } : {}),
-      ...(s.config.resourceTypes ? { resourceTypes: s.config.resourceTypes } : {}),
-    };
+    return resolveEffectiveConfig(config, s.locale, s.resources);
+  };
+  const effectiveConfig = (): Record<string, unknown> => {
+    try {
+      return effectiveOf(store.getSnapshot().config);
+    } catch (err) {
+      throw new ToolError(`The engine cannot resolve the book's configuration as it stands (${err instanceof Error ? err.message : String(err)}). sandbox_get_config without "effective" shows what the book stores; removing the setting at fault (a null value in sandbox_set_config) brings its default back.`);
+    }
+  };
+
+  /** `path` with its list positions read against the resolved
+   *  configuration and turned into what tells the items apart, and the
+   *  section it starts with checked. */
+  const settingPath = (path: string, effective: Record<string, unknown> | null): string => {
+    const steps = parsePath(path);
+    const top = steps[0];
+    if (!top || !('key' in top)) throw new ToolError(`"${path}" is not a setting path.`);
+    if (!(CONFIG_KEYS as readonly string[]).includes(top.key)) {
+      throw new ToolError(`"${top.key}" is not a section of the configuration. The sections: ${CONFIG_KEYS.join(', ')}.`);
+    }
+    return effective ? formatPath(canonicalSteps(effective, steps)) : path;
   };
 
   const getConfig: WebMcpTool = {
     name: 'sandbox_get_config',
     title: 'Sandbox: read the design settings',
-    description: "The book's configuration — page size and margins, columns, body text, headings, lists, figures, running heads, notes, colours, print and so on. A book stores only what departs from the defaults: \"set\" is what it stores at the path, \"effective\" what the setting comes to with the defaults filled in (which also shows every setting that exists there). Paths look like page.margins.top, bodyText.hyphenation, headingStyles[0], calloutStyles[id=note].title. Without a path: everything the book sets, and the names of the top-level sections. The settings are documented at /docs/configuration.",
+    description: "The book's configuration — page size and margins, columns, body text, headings, lists, figures, running heads, notes, colours, print and so on. A book stores only what departs from the defaults: \"set\" is what it stores at the path, \"effective\" what the setting comes to with the defaults filled in (which also shows every setting that exists there). Paths look like page.margins.top, bodyText.hyphenation, headings.levels[level=2].fontSize, header.elements[id=titleOdd], calloutStyles[id=note].title; an item of a list can also be named by its position in the effective list ([0]), and the answer gives the path by what tells the item apart. Without a path: everything the book sets, and the names of the top-level sections. The settings are documented at /docs/configuration.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -75,33 +77,35 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       additionalProperties: false,
     },
     annotations: { readOnlyHint: true },
-    execute: async (args, { signal }) => {
+    execute: (args) => {
       const { config } = store.getSnapshot();
       const set = stripConfigDefaults(config);
-      const path = ((args.path as string | undefined) ?? '').trim();
-      if (path === '') {
+      const asked = ((args.path as string | undefined) ?? '').trim();
+      if (asked === '') {
         return {
           set,
           sections: CONFIG_KEYS,
-          ...(args.effective ? { effective: await effectiveConfig(signal) } : {}),
+          ...(args.effective ? { effective: effectiveConfig() } : {}),
         };
       }
-      const top = parsePath(path)[0];
-      if (!top || !('key' in top) || !(CONFIG_KEYS as readonly string[]).includes(top.key)) {
-        throw new ToolError(`"${path}" does not start with a section of the configuration. The sections: ${CONFIG_KEYS.join(', ')}.`);
+      if (args.effective === false) {
+        const path = settingPath(asked, null);
+        return { path, set: getAtPath(set, path) ?? null };
       }
+      const resolved = effectiveConfig();
+      const path = settingPath(asked, resolved);
       const answer: Record<string, unknown> = { path, set: getAtPath(set, path) ?? null };
-      if (args.effective !== false) {
-        const effective = getAtPath(await effectiveConfig(signal), path);
-        if (effective === undefined && answer.set === null) {
-          const parentPath = path.replace(/(\.[^.[\]]+|\[[^\]]+\])$/, '');
-          const parent = parentPath !== path ? getAtPath(await effectiveConfig(signal), parentPath) : undefined;
-          answer.note = isRecord(parent)
-            ? `Nothing is set or resolved at this path. The settings under ${parentPath}: ${Object.keys(parent).join(', ')}.`
+      const effective = getAtPath(resolved, path);
+      if (effective === undefined && answer.set === null) {
+        const parentPath = formatPath(parsePath(path).slice(0, -1));
+        const parent = parentPath !== '' ? getAtPath(resolved, parentPath) : undefined;
+        answer.note = isRecord(parent)
+          ? `Nothing is set or resolved at this path. The settings under ${parentPath}: ${Object.keys(parent).join(', ')}.`
+          : Array.isArray(parent)
+            ? `Nothing is set or resolved at this path. The items of ${parentPath}: ${[...leafEntries(parent, 1).keys()].join(', ') || 'none'}.`
             : 'Nothing is set or resolved at this path.';
-        }
-        answer.effective = effective ?? null;
       }
+      answer.effective = effective ?? null;
       return answer;
     },
   };
@@ -109,7 +113,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
   const setConfig: WebMcpTool = {
     name: 'sandbox_set_config',
     title: 'Sandbox: change the design settings',
-    description: "Change the book's configuration, then lay the book out again. changes sets one value per path (page.margins.top, bodyText.fontSize, headingStyles[0].fontSize, calloutStyles[id=note].title); a null value removes the setting, which brings its default back. patch merges an object into the configuration (objects merge, null removes, lists are replaced whole). Lengths are objects such as { \"value\": 2, \"unit\": \"cm\" }; read a setting first (sandbox_get_config) to see its shape. Answers with each setting's value before and after — which is how to take a change back — any warning the new values raise, and the pages every chapter came to before and after.",
+    description: "Change the book's configuration, then lay the book out again. changes sets one value per path, any path sandbox_get_config or sandbox_find_setting gives (page.margins.top, bodyText.fontSize, headings.levels[level=2].fontSize, header.elements[id=titleOdd].fontSize, calloutStyles[id=note].title); a null value removes the setting, which brings its default back. patch merges an object into the configuration (objects merge, null removes, lists are replaced whole). replace puts a whole configuration in place of the book's (a postext-config.json export, or a configuration object). A length is { \"value\": 2, \"unit\": \"cm\" }, a number in the setting's unit, or \"2cm\"; a colour is \"#1f3a5f\" or { \"hex\", \"model\" }. A value of the wrong shape is refused, and so is a configuration the engine cannot resolve: nothing is changed then. Answers with each setting's stored value before and after — which is how to take a change back — and what it resolves to, a note when the engine resolved something else than what was asked (a limit, a setting that depends on another), the other settings that followed, any warning the new values raise, and the pages every chapter came to before and after.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -127,6 +131,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
           },
         },
         patch: { type: 'object', description: 'An object merged into the configuration.' },
+        replace: { type: 'object', description: 'A whole configuration (or a postext-config.json export) that takes the place of the book\'s. Not with changes or patch.' },
         wait: { type: 'boolean', description: 'Wait for the book to be laid out again and answer with its pages (default true).' },
       },
       additionalProperties: false,
@@ -134,59 +139,139 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
     execute: async (args, { signal }) => {
       const changes = (args.changes as { path: string; value?: unknown }[] | undefined) ?? [];
       const patch = args.patch as Record<string, unknown> | undefined;
-      if (changes.length === 0 && !patch) throw new ToolError('Give "changes" (a list of { path, value }) or "patch" (an object to merge in).');
+      const replace = args.replace as Record<string, unknown> | undefined;
+      if (changes.length === 0 && !patch && !replace) throw new ToolError('Give "changes" (a list of { path, value }), "patch" (an object to merge in) or "replace" (a whole configuration).');
+      if (replace && (changes.length > 0 || patch)) throw new ToolError('"replace" puts a whole configuration in place: give it alone, then change settings in another call.');
       const before = store.getSnapshot();
-      let next: PostextConfig = before.config;
-      const paths: string[] = [];
-      const checkTop = (path: string) => {
-        const top = parsePath(path)[0];
-        if (!top || !('key' in top)) throw new ToolError(`"${path}" is not a setting path.`);
-        if (!(CONFIG_KEYS as readonly string[]).includes(top.key)) {
-          throw new ToolError(`"${top.key}" is not a section of the configuration. The sections: ${CONFIG_KEYS.join(', ')}.`);
-        }
+      // A book whose configuration the engine cannot resolve can still be
+      // mended: its settings are then written as given.
+      let effectiveBefore: Record<string, unknown> | null = null;
+      try {
+        effectiveBefore = effectiveOf(before.config);
+      } catch {
+        effectiveBefore = null;
+      }
+      const refuse = (what: string, err: unknown): never => {
+        throw new ToolError(`${what}: the engine cannot resolve the configuration with it (${err instanceof Error ? err.message : String(err)}). Nothing was changed.`);
       };
-      if (patch) {
-        for (const path of patchPaths(patch)) {
-          checkTop(path);
-          paths.push(path);
-        }
-        next = mergePatch(next, patch);
-      }
-      for (const change of changes) {
-        checkTop(change.path);
-        next = setAtPath(next, change.path, change.value === null ? undefined : change.value);
-        paths.push(change.path);
-      }
-      const changed = paths
-        .map((path) => ({ path, from: getAtPath(before.config, path) ?? null, to: getAtPath(next, path) ?? null }))
-        .filter((c) => !same(c.from, c.to));
-      if (changed.length === 0) return { changed: [], note: 'Every setting already had that value.' };
 
-      // A name the engine does not know is read as nothing at all: say so
-      // rather than let the change pass for one.
+      let next: PostextConfig = before.config;
+      let effective = effectiveBefore;
+      const paths: string[] = [];
       const notes: string[] = [];
-      const known = await effectiveConfig(signal).catch(() => null);
-      if (known) {
-        for (const { path, to } of changed) {
-          if (to === null) continue;
-          const steps = parsePath(path);
-          const last = steps[steps.length - 1]!;
-          if (!('key' in last) || steps.length < 2) continue;
-          const parentPath = path.slice(0, path.length - last.key.length - 1);
-          const parent = getAtPath(known, parentPath);
-          if (isRecord(parent) && !(last.key in parent) && Object.keys(parent).length > 0) {
-            notes.push(`${path}: "${last.key}" is not among the settings the engine resolves under ${parentPath} (${Object.keys(parent).join(', ')}). It is stored, but check the name.`);
+      const asked = new Map<string, unknown>();
+      const seeded: string[] = [];
+
+      if (replace) {
+        const whole = replace.type === 'postext-config' && isRecord(replace.config) ? configFromExport(replace as unknown as ConfigExport) : (replace as PostextConfig);
+        for (const key of Object.keys(whole)) settingPath(key, null);
+        next = whole;
+        try {
+          effective = effectiveOf(next);
+        } catch (err) {
+          refuse('The configuration given', err);
+        }
+        for (const key of CONFIG_KEYS) if (!same(before.config[key], next[key])) paths.push(key);
+      } else {
+        // A patch is its leaves, each written like a change.
+        const writes: { path: string; value: unknown; merged?: boolean }[] = [];
+        if (patch) for (const path of patchPaths(patch)) writes.push({ path, value: getAtPath(patch, path), merged: true });
+        for (const change of changes) writes.push({ path: change.path, value: change.value });
+        for (const write of writes) {
+          settingPath(write.path, null);
+          const removing = write.value === null || write.value === undefined;
+          // An empty object in a patch merges nothing into what is there.
+          if (write.merged && isRecord(write.value) && Object.keys(write.value).length === 0 && getAtPath(next, write.path) !== undefined) continue;
+          const plan = effective
+            ? planWrite(next, effective, write.path, removing ? undefined : write.value, effectiveOf)
+            : { next: planWrite(next, {}, write.path, removing ? undefined : write.value, () => ({})).next, path: write.path, notes: [] as string[] };
+          next = plan.next;
+          notes.push(...plan.notes);
+          if ('seeded' in plan && plan.seeded) seeded.push(...plan.seeded);
+          paths.push(plan.path);
+          if (!removing) asked.set(plan.path, getAtPath(next, plan.path));
+          if (effective) {
+            // A name the engine does not know is read as nothing at all:
+            // say so rather than let the change pass for one.
+            const steps = parsePath(plan.path);
+            const last = steps[steps.length - 1]!;
+            const parentPath = formatPath(steps.slice(0, -1));
+            const parent = parentPath !== '' ? getAtPath(effective, parentPath) : undefined;
+            if (!removing && 'key' in last && isRecord(parent) && !(last.key in parent) && Object.keys(parent).length > 0) {
+              notes.push(`${plan.path}: "${last.key}" is not among the settings the engine resolves under ${parentPath} (${Object.keys(parent).join(', ')}). It is stored, but check the name.`);
+            }
+          }
+          try {
+            effective = effectiveOf(next);
+          } catch (err) {
+            if (effectiveBefore) refuse(plan.path, err);
+            effective = null;
           }
         }
       }
-      const warningsBefore = new Set(collectConfigWarnings(before.config).map((w) => JSON.stringify(w)));
-      const warnings = collectConfigWarnings(next).filter((w) => !warningsBefore.has(JSON.stringify(w)));
+
+      const unique = [...new Set(paths)];
+      const changed = unique
+        .map((path) => {
+          const entry: Record<string, unknown> = { path, from: getAtPath(before.config, path) ?? null, to: getAtPath(next, path) ?? null };
+          if (effectiveBefore && effective) {
+            const was = getAtPath(effectiveBefore, path) ?? null;
+            const is = getAtPath(effective, path) ?? null;
+            if (!replace) entry.effective = same(was, is) ? is : { from: was, to: is };
+            // The engine keeps a setting within its limits, and some only
+            // count once another is on: the answer says what it made of
+            // the value.
+            const wanted = asked.get(path);
+            if (wanted !== undefined && (isDimension(wanted) || (!isRecord(wanted) && !Array.isArray(wanted))) && !same(is, wanted)) {
+              const holder = getAtPath(effective, formatPath(parsePath(path).slice(0, -1)));
+              notes.push(isColor(holder) && holder.paletteId
+                ? `${path}: stored as ${JSON.stringify(wanted)}, but this colour follows the palette entry "${holder.paletteId}" and resolves to ${JSON.stringify(is)}. Change colorPalette[id=${holder.paletteId}].value, or set the whole colour (a hex text) to stop following it.`
+                : `${path}: stored as ${JSON.stringify(wanted)}, but the engine resolves ${JSON.stringify(is)} there — a limit of the setting, or a setting that only counts once another one is on.`);
+            }
+          }
+          return entry;
+        })
+        .filter((c) => !same(c.from, c.to));
+      if (changed.length === 0) return { changed: [], ...(notes.length > 0 ? { notes } : {}), note: 'Every setting already had that value.' };
+      // A whole configuration put in place: the sections that differ, by
+      // name (sandbox_get_config shows what each one stores).
+      const reported = replace ? changed.map((c) => ({ path: c.path })) : changed;
+
+      // What else moved: the settings that take their value from the ones
+      // changed (a heading level from the headings, a callout's text from
+      // the body text).
+      let followed: { path: string; from: unknown; to: unknown }[] = [];
+      if (effectiveBefore && effective && !replace) {
+        const was = leafEntries(effectiveBefore);
+        const is = leafEntries(effective);
+        const own = (path: string) => unique.some((p) => path === p || path.startsWith(`${p}.`) || path.startsWith(`${p}[`) || p.startsWith(`${path}.`));
+        for (const path of new Set([...was.keys(), ...is.keys()])) {
+          if (own(path) || same(was.get(path), is.get(path))) continue;
+          // Not a change of the design: the palette link the engine drops
+          // from a resolved colour, and a default the engine spells out
+          // in a list once the book stores it.
+          if (path.endsWith('.paletteId')) continue;
+          if (was.get(path) === undefined && seeded.some((at) => path.startsWith(`${at}.`) || path.startsWith(`${at}[`))) continue;
+          followed.push({ path, from: was.get(path) ?? null, to: is.get(path) ?? null });
+        }
+      }
+      const followedMore = Math.max(0, followed.length - MAX_FOLLOWED);
+      followed = followed.slice(0, MAX_FOLLOWED);
+
+      let warnings: unknown[] = [];
+      try {
+        const warningsBefore = new Set(collectConfigWarnings(before.config).map((w) => JSON.stringify(w)));
+        warnings = collectConfigWarnings(next).filter((w) => !warningsBefore.has(JSON.stringify(w)));
+      } catch {
+        warnings = [];
+      }
       const pagesBefore = bookPagesSummary(host, before);
       await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next });
       const answer: Record<string, unknown> = {
-        changed,
+        changed: reported,
+        ...(followed.length > 0 ? { followed, ...(followedMore > 0 ? { followedMore } : {}) } : {}),
         ...(warnings.length > 0 ? { warnings } : {}),
-        ...(notes.length > 0 ? { notes } : {}),
+        ...(notes.length > 0 ? { notes: [...new Set(notes)] } : {}),
       };
       if (args.wait === false) return { ...answer, laidOut: false };
       const laidOut = await whenSettled(host, { signal });
@@ -212,14 +297,12 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       additionalProperties: false,
     },
     annotations: { readOnlyHint: true },
-    execute: async (args, { signal }) => {
+    execute: (args) => {
       const s = store.getSnapshot();
       const tokens = tokenize(args.query as string);
       if (tokens.length === 0) throw new ToolError('Give at least one word to look for.');
-      const effective = await effectiveConfig(signal);
-      const all: string[] = [];
-      leafPaths(effective, '', 6, all);
-      const paths = all
+      const effective = effectiveConfig();
+      const paths = [...leafEntries(effective, 8).keys()]
         .filter((path) => {
           // `minWordLength` answers to "word length": camelCase is split.
           const words = path.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
@@ -244,16 +327,29 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
   const resetBook: WebMcpTool = {
     name: 'sandbox_reset_to_original',
     title: 'Sandbox: put the original back',
-    description: "Put back what the book started from — the sample it is, or the sample a project was made from: its design settings only (config), its text and resources (document), its resources only, or all of it. The reader's edits to that part are discarded and cannot be recovered.",
+    description: "Put back what the book started from — the sample it is, or the sample a project was made from: its design settings only (config), its text and resources (document), its resources only, or all of it. With sample, another sample than the one on screen is put back whole, in every language the reader edited it in. The reader's edits to that part are discarded and cannot be recovered. One setting or one section goes back to the design's with a null value in sandbox_set_config.",
     inputSchema: {
       type: 'object',
-      properties: { part: { type: 'string', enum: ['config', 'document', 'resources', 'all'], description: 'What to put back.' } },
+      properties: {
+        part: { type: 'string', enum: ['config', 'document', 'resources', 'all'], description: 'What to put back.' },
+        sample: { type: 'string', description: 'With part "all": the sample to put back (its id, as sandbox_list_books gives it) instead of the book on screen. It need not be open.' },
+      },
       required: ['part'],
       additionalProperties: false,
     },
     annotations: { consequentialHint: true },
     execute: async (args, { signal }) => {
       const s = store.getSnapshot();
+      if (args.sample !== undefined) {
+        if (args.part !== 'all') throw new ToolError('A sample that is not on screen is put back whole: give part "all" with it.');
+        if (!s.presetSummaries.some((p) => p.id === args.sample)) {
+          throw new ToolError(`No sample with id ${JSON.stringify(args.sample)}. The samples: ${s.presetSummaries.map((p) => p.id).join(', ')}.`);
+        }
+        const edited = s.presetDrafts.filter((d) => d.presetId === args.sample).length;
+        await store.restorePresetOriginal(args.sample as string);
+        const laidOut = await whenSettled(host, { signal });
+        return { reset: 'all', sample: args.sample, editionsDiscarded: edited, laidOut, book: bookPagesSummary(host) };
+      }
       if (s.activeProjectId !== null) {
         const source = s.projects.find((p) => p.id === s.activeProjectId)?.sourcePresetId;
         if (!source || !s.presetSummaries.some((p) => p.id === source && p.available)) {
