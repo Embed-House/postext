@@ -328,3 +328,63 @@ describe('the files of a family sent to the worker (#689)', () => {
     expect(payloads.map((p) => p.unicodeRange)).toEqual([VIETNAMESE, LATIN_EXT, LATIN]);
   });
 });
+
+// #739: the Fonts panel tagged every family that is not a custom one
+// "Google Fonts": Commit Mono (Fontsource only), a misspelt name, and a
+// family whose record had not come yet.
+describe('where a family comes from, as the loader resolved it (#739)', () => {
+  it('is Google Fonts for a record of type google', async () => {
+    routes[fontsource('host-grotesk')] = { type: 'google', variable: true, weights: [300, 400, 500, 600, 700, 800], styles: ['italic', 'normal'] };
+    routes[google('Host Grotesk')] = HOST_CSS;
+    expect(loader.fontFamilySource('Host Grotesk')).toBeUndefined();
+    await loader.collectFontPayloadsForFamilies(['Host Grotesk']);
+    expect(loader.fontFamilySource('Host Grotesk')).toBe('google');
+  });
+
+  it('is Fontsource for a record of another type that carries its own files', async () => {
+    routes[fontsource('commit-mono')] = COMMIT_MONO;
+    await loader.loadFont('Commit Mono');
+    expect(loader.fontFamilySource('Commit Mono')).toBe('fontsource');
+  });
+
+  it('is missing for a family no service has', async () => {
+    routes[fontsource('helvetica-noue')] = 404;
+    routes[google('Helvetica Noue')] = new TypeError('Failed to fetch');
+    await loader.loadFont('Helvetica Noue').catch(() => undefined);
+    expect(loader.fontFamilySource('Helvetica Noue')).toBe('missing');
+    expect(loader.isKnownUnavailableGoogleFont('Helvetica Noue')).toBe(true);
+  });
+
+  it('is unknown while the request is in flight, and tells who listens when the answer comes', async () => {
+    let answer: (value: unknown) => void = () => undefined;
+    const pending = new Promise((resolve) => { answer = resolve; });
+    vi.stubGlobal('fetch', async (input: string) => {
+      const url = String(input);
+      requests.push(url);
+      if (url.startsWith(fontsource('lora'))) {
+        await pending;
+        return { ok: true, status: 200, json: async () => ({ type: 'google', variable: true, weights: [400, 700], styles: ['normal', 'italic'] }) };
+      }
+      return { ok: true, status: 200, json: async () => ({}), text: async () => '', arrayBuffer: async () => new ArrayBuffer(4) };
+    });
+    const resolved: string[] = [];
+    const off = loader.onFontSourceResolved((family) => resolved.push(family));
+    const loading = loader.collectFontPayloadsForFamilies(['Lora']);
+    await new Promise((r) => setTimeout(r, 5));
+    expect(loader.fontFamilySource('Lora')).toBeUndefined();
+    expect(resolved).toEqual([]);
+    answer(undefined);
+    await loading;
+    expect(loader.fontFamilySource('Lora')).toBe('google');
+    expect(resolved).toEqual(['Lora']);
+    off();
+  });
+
+  it('is your file for an uploaded family, and missing once its files are removed', () => {
+    const custom = [{ name: 'House Serif', variants: [{ weight: 400, style: 'normal' as const, fileId: 'f1', format: 'woff2' as const }] }];
+    loader.setCustomFonts(custom);
+    expect(loader.fontFamilySource('House Serif')).toBe('custom');
+    loader.setCustomFonts([]);
+    expect(loader.fontFamilySource('House Serif')).toBe('missing');
+  });
+});

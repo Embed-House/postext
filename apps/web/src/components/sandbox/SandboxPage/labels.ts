@@ -3177,6 +3177,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     bookFontsRoleOther: t("bookFontsRoleOther"),
     bookFontsSourceGoogle: t("bookFontsSourceGoogle"),
     bookFontsSourceCustom: t("bookFontsSourceCustom"),
+    bookFontsSourceFontsource: t("bookFontsSourceFontsource"),
+    bookFontsSourceMissing: t("bookFontsSourceMissing"),
     warningsEmptyDescription: t("warningsEmptyDescription"),
     warningsGroupFonts: t("warningsGroupFonts"),
     warningsGroupFigures: t("warningsGroupFigures"),

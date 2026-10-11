@@ -3273,6 +3273,8 @@ export interface SandboxLabels {
   bookFontsRoleOther: string;
   bookFontsSourceGoogle: string;
   bookFontsSourceCustom: string;
+  bookFontsSourceFontsource: string;
+  bookFontsSourceMissing: string;
   warningsEmptyDescription: string;
   warningsGroupFonts: string;
   warningsGroupFigures: string;

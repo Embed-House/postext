@@ -121,7 +121,38 @@ async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
   const meta = await promise;
   metadataCache.set(family, meta);
   metadataInFlight.delete(family);
+  for (const cb of fontSourceListeners) cb(family);
   return meta;
+}
+
+/** Where the loader takes a family from. */
+export type FontFamilySource = 'custom' | 'google' | 'fontsource' | 'missing';
+
+const fontSourceListeners = new Set<(family: string) => void>();
+
+/** Calls `cb` each time the loader learns where a family comes from (its
+ *  record arrived, or the answer that no service has it). */
+export function onFontSourceResolved(cb: (family: string) => void): () => void {
+  fontSourceListeners.add(cb);
+  return () => { fontSourceListeners.delete(cb); };
+}
+
+/**
+ * Where a family comes from, as the loader resolved it (#739): `custom`
+ * for a family uploaded as files; `fontsource` for one Google Fonts does
+ * not have and Fontsource does (its own files are declared, #689);
+ * `google` for any other family the services know; `missing` for one
+ * neither has (a misspelt name, a system font) and for a custom family
+ * whose files were removed. Undefined while no answer has come: the
+ * request is in flight or was never made.
+ */
+export function fontFamilySource(family: string): FontFamilySource | undefined {
+  if (isCustomFontFamily(family)) return 'custom';
+  if (isRemovedCustomFontFamily(family)) return 'missing';
+  if (!metadataCache.has(family)) return undefined;
+  const meta = metadataCache.get(family);
+  if (!meta) return 'missing';
+  return meta.fontsource ? 'fontsource' : 'google';
 }
 
 /**

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useReducer } from 'react';
 import { primaryFontFamily, resolveBodyTextConfig, resolveHeadingsConfig } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { getConfigFontFamilies, isCustomFontFamily, loadFont } from '../controls/fontLoader';
+import { fontFamilySource, getConfigFontFamilies, loadFont, onCustomFontsChanged, onFontSourceResolved, type FontFamilySource } from '../controls/fontLoader';
 import { RowTag } from '../ui';
 
 /** "Typefaces in this book": every family the design uses, set in itself,
@@ -25,6 +25,20 @@ export function BookFonts() {
   const ordered = [...new Set(families)].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
 
   useEffect(() => { for (const f of ordered) loadFont(f); }, [ordered.join('|')]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Where a family comes from is known once the loader has its record: the
+  // list is drawn again when one arrives, or when a file is added or removed.
+  const [, redraw] = useReducer((n: number) => n + 1, 0);
+  useEffect(() => {
+    const offSource = onFontSourceResolved(redraw);
+    const offCustom = onCustomFontsChanged(redraw);
+    return () => { offSource(); offCustom(); };
+  }, []);
+  const sourceLabel: Record<FontFamilySource, string> = {
+    custom: labels.bookFontsSourceCustom,
+    google: labels.bookFontsSourceGoogle,
+    fontsource: labels.bookFontsSourceFontsource,
+    missing: labels.bookFontsSourceMissing,
+  };
 
   return (
     <section aria-labelledby="book-fonts-title" className="mb-4">
@@ -38,7 +52,8 @@ export function BookFonts() {
           if (family === body) roles.push(labels.bookFontsRoleBody);
           if (headingFamilies.has(family)) roles.push(labels.bookFontsRoleHeadings);
           if (roles.length === 0) roles.push(labels.bookFontsRoleOther);
-          const custom = isCustomFontFamily(family);
+          // No tag while the loader has no answer (#739).
+          const source = fontFamilySource(family);
           return (
             <li key={family} className="flex items-center gap-3 rounded-md border border-(--rule) px-2.5 py-2">
               <span
@@ -52,7 +67,7 @@ export function BookFonts() {
                 <span className="truncate text-xs font-medium text-(--foreground)">{family}</span>
                 <span className="flex flex-wrap items-center gap-1">
                   {roles.map((r) => <RowTag key={r} accent={r === labels.bookFontsRoleBody}>{r}</RowTag>)}
-                  <RowTag>{custom ? labels.bookFontsSourceCustom : labels.bookFontsSourceGoogle}</RowTag>
+                  {source && <RowTag>{sourceLabel[source]}</RowTag>}
                 </span>
               </span>
             </li>
