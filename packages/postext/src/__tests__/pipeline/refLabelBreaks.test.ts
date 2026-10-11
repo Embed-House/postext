@@ -6,6 +6,7 @@ import { resolveCrossRefsConfig, stripCrossRefsDefaults } from '../../defaults/c
 import { stripConfigDefaults } from '../../defaults';
 import { resolveAllConfig } from '../../pipeline/config';
 import { anchorRefLabel, type AnchorTarget, type CrossRefStrings } from '../../pipeline/crossRefs';
+import { refLabelPieces } from '../../measure/spaces';
 import type { PostextConfig, Resource, VDTDocument, VDTLine, VDTLineSegment } from '../../index';
 import type { VDTBlock } from '../../vdt';
 
@@ -208,6 +209,34 @@ describe('a reference whose label is words breaks at its spaces (#702)', () => {
       // Whole again with the setting off.
       const off = refLines(build(md, 280, { crossRefs: { breakLabels: false } }, {}, resources as Resource[] | undefined));
       expect(off.flatMap(refSegs).map((s) => s.text)).toEqual(['the last step of fitting a wheel']);
+    }
+  });
+
+  it('a number, a Roman numeral or a single letter keeps to the word before it', () => {
+    expect(refLabelPieces('close the lever')).toEqual(['close', ' ', 'the', ' ', 'lever']);
+    // A word and its number: no break, the label is one piece.
+    for (const label of ['Fig. 1a', 'Figure 1', 'plate IV', 'lámina IV', 'Appendix A', 'page 12', 'section (3)', 'one']) {
+      expect(refLabelPieces(label), label).toBeUndefined();
+    }
+    expect(refLabelPieces('see Fig. 1a in the chapter')).toEqual(['see', ' ', 'Fig. 1a', ' ', 'in', ' ', 'the', ' ', 'chapter']);
+    expect(refLabelPieces('Table 2 and 3')).toEqual(['Table 2', ' ', 'and 3']);
+    expect(refLabelPieces('(table, below)')).toEqual(['(table,', ' ', 'below)']);
+    expect(refLabelPieces('the war of 1914 began')).toEqual(['the', ' ', 'war', ' ', 'of 1914', ' ', 'began']);
+    // Spaces at the ends of a label stay with the word beside them.
+    expect(refLabelPieces(' the map ')).toEqual([' the', ' ', 'map ']);
+  });
+
+  it('a text override that names a figure stays one segment, and a longer one never parts the number', () => {
+    const figure = { id: 'fig-map', typeId: 'figure', kind: 'bitmap', caption: 'A map.', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'f.png', format: 'png', width: 200, height: 60 } } as unknown as Resource;
+    const tail = 'Press each tyre hard with your thumb and then look once more at';
+    for (let measure = 150; measure <= 420; measure += 6) {
+      for (const label of ['Fig. 1a', 'Figure 1', 'plate IV']) {
+        const doc = build(`${tail} :ref{id="fig-map" text="${label}"} before riding away from the workshop.\n\n::resource{id="fig-map"}`, measure, {}, {}, [figure]);
+        expect(refLines(doc).flatMap(refSegs).map((s) => s.text), `${measure} ${label}`).toEqual([label]);
+      }
+      const doc = build(`${tail} :ref{id="fig-map" text="the map in Fig. 1a of the first chapter"} before riding away.\n\n::resource{id="fig-map"}`, measure, {}, {}, [figure]);
+      const words = refLines(doc).flatMap(refSegs).filter((s) => s.kind !== 'space').map((s) => s.text);
+      expect(words, `${measure}`).toEqual(['the', 'map', 'in', 'Fig. 1a', 'of', 'the', 'first', 'chapter']);
     }
   });
 

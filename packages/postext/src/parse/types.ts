@@ -283,9 +283,9 @@ export interface InlineSpan {
     case?: RefCase;
     /** Set by the pipeline once the label is resolved (#702): the label is
      *  words (a `text` override, the title of a heading, an anchor or a
-     *  box) and holds a space, so a line may break at its spaces
+     *  box) with a space between two of them, so a line may break there
      *  (`crossRefs.breakLabels`). A label with a number or a page never
-     *  is. */
+     *  is, and a number in a label of words keeps to the word before it. */
     breakable?: true;
   };
   /** Emphasis dots (着重号, `:dots[text]{style fill pos}`, #193): one mark

@@ -33,9 +33,39 @@ export function isBreakingSpace(ch: string | undefined): boolean {
   return ch !== undefined && BREAKING_SPACE_RE.test(ch);
 }
 
-/** Whether `text` holds whitespace a line may break at. */
-export function hasBreakingSpace(text: string): boolean {
-  return BREAKING_SPACE_RE.test(text);
+/** A word of a reference label that keeps to the word before it: one that
+ *  holds a digit (`1a`, `3.2`, `(12)`), a Roman numeral in capitals (`IV`)
+ *  or a single letter (`A`, `b`), brackets and stops aside. */
+const KEPT_LABEL_WORD_RE = /\p{N}|^[\p{P}\p{S}]*(?:[IVXLCDM]+|\p{L})[\p{P}\p{S}]*$/u;
+
+/**
+ * The pieces a reference label of words breaks into (#702): its words and
+ * the runs of breaking spaces between them, in order, or undefined when no
+ * line may break inside it. A number, a Roman numeral or a single letter
+ * keeps to the word before it, the space between them part of the piece
+ * (`Fig. 1a`, `plate IV`, `Appendix A`, `page 12`): only a label made of
+ * words breaks, and never between a word and its number. Spaces at the
+ * label's ends stay with the word beside them.
+ */
+export function refLabelPieces(text: string): string[] | undefined {
+  const parts = text.match(WORDS_AND_SPACES_RE);
+  if (!parts || parts.length < 3) return undefined;
+  const pieces: string[] = [];
+  let piece = '';
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i]!;
+    const next = parts[i + 1];
+    // A space is a break between two words unless the second keeps to the
+    // first; one at either end of the label joins the word beside it.
+    if (isBreakingSpaceRun(part) && piece.trim() !== '' && next !== undefined && !KEPT_LABEL_WORD_RE.test(next)) {
+      pieces.push(piece, part);
+      piece = '';
+    } else {
+      piece += part;
+    }
+  }
+  if (piece !== '') pieces.push(piece);
+  return pieces.length >= 3 ? pieces : undefined;
 }
 
 /** Whether `text` is nothing but breaking whitespace (and not empty). */

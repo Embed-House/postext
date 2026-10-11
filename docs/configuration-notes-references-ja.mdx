@@ -449,7 +449,7 @@ interface CrossRefsConfig {
       <td><code>breakLabels</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>ラベルが語である参照の、スペースの位置での改行を許します。対象は、<code>[語]{'{#id}'}</code>アンカーのテキスト、見出しや囲みのタイトル、<code>text="…"</code>による上書き（図や表への参照でも同じ）です。ラベルのスペースは行に合わせて伸縮し、参照は1つのリンクのままです。語はハイフネーションされません。番号やページを含むラベル（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）は、テンプレートに通常のスペースがあっても改行されません。<code>false</code>は、postext 1.27までと同じく、すべてのラベルを内側で改行しない1語として組みます。<code>configVersion</code> 12より前に保存した設定で、テキストに参照があるものは<code>false</code>で読み込まれるので、行の位置は変わりません（<a href="/ja/docs/configuration-programmatic-usage#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
+      <td>ラベルが語である参照の、スペースの位置での改行を許します。対象は、<code>[語]{'{#id}'}</code>アンカーのテキスト、見出しや囲みのタイトル、<code>text="…"</code>による上書き（図や表への参照でも同じ）です。ラベルのスペースは行に合わせて伸縮し、参照は1つのリンクのままです。語はハイフネーションされません。このようなラベルの中では、数字、ローマ数字、1文字だけの語は前の語から離れません（<code>Fig. 1a</code>、<code>plate IV</code>）。番号やページを含むラベル（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）は、テンプレートに通常のスペースがあっても改行されません。<code>false</code>は、postext 1.27までと同じく、すべてのラベルを内側で改行しない1語として組みます。<code>configVersion</code> 12より前に保存した設定で、テキストに参照があるものは<code>false</code>で読み込まれるので、行の位置は変わりません（<a href="/ja/docs/configuration-programmatic-usage#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
     </tr>
   </tbody>
 </table>

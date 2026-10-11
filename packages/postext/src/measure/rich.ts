@@ -30,7 +30,7 @@ import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMod
 import { latinReader, uprightDigitCandidates } from '../writingMode';
 import { sliceSpan } from '../parse/links';
 import type { CjkRegion } from '../types';
-import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isBreakingSpaceRun } from './spaces';
+import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isBreakingSpaceRun, refLabelPieces } from './spaces';
 import { breaksAfterDash, breaksAfterHardHyphen, hasCompound, isDash, raggedStretchPx } from './breakRules';
 import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate';
 import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining';
@@ -1047,8 +1047,9 @@ export function atomicSpanToken(
 
 /**
  * The tokens of a reference whose label is words (`ref.breakable`, #702):
- * one per word and per run of breaking spaces, or undefined for a label
- * that is one token ({@link atomicSpanToken}). A word is built as the whole
+ * one per piece of the label (`refLabelPieces`: a word, with the number that
+ * keeps to it, or a run of breaking spaces), or undefined for a label that
+ * is one token ({@link atomicSpanToken}). A word is built as the whole
  * label is — the reference's font, no dictionary points, never divided —
  * and a space is an ordinary space of the line: a legal break, stretched
  * and shrunk with the others. Every piece carries the reference, so the
@@ -1065,8 +1066,10 @@ export function refLabelTokens(
   letterSpacingPx: number,
 ): RichToken[] | undefined {
   if (!span.ref?.breakable || span.footnote) return undefined;
-  const parts = span.text.match(WORDS_AND_SPACES_RE);
-  if (!parts || parts.length < 2) return undefined;
+  // A number, a Roman numeral or a single letter keeps to the word before
+  // it: `Fig. 1a` is one piece, its space set as text.
+  const parts = refLabelPieces(span.text);
+  if (!parts) return undefined;
   const tokens: RichToken[] = [];
   for (const part of parts) {
     const token = atomicSpanToken({ ...span, text: part }, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);

@@ -1383,7 +1383,9 @@ crossRefs: {
 heading's or a box's title under `style=title` or on an unnumbered target, a `text="…"` override, on a figure or
 table reference too) is set word by word: lines break at its spaces, the spaces stretch on a justified line, the
 words are never hyphenated, and it stays one link (one per line in the PDF, one `<a>` in the reflowable EPUB). A
-label with a number or a page (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`) never breaks. So anchor the
+label with a number or a page (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`) never breaks. In a label of words a number, a Roman
+numeral or a single letter keeps to the word before it, so `text="Fig. 1a"`, `text="plate IV"` and `text="Appendix A"`
+stay whole and `text="the map in Fig. 1a"` breaks only between its words. So anchor the
 whole phrase the source refers to (`[close the lever so that it points backwards]{#step}`): up to 1.27 a long
 label could not come up to the line before and ports shortened the anchored phrase to two or three words. Glue
 words of a label that must stay together with U+00A0. A preset below `configVersion` 12 with a reference in a

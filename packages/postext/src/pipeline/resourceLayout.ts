@@ -70,7 +70,7 @@ import { createBoundingBox } from '../vdt';
 import { measureRichBlock, measureTextWidth, buildFontString } from '../measure';
 import type { MeasureBlockOptions } from '../measure';
 import { isSwatchFill, measureRichSnippet } from '../measure/rich';
-import { hasBreakingSpace, isBlankText } from '../measure/spaces';
+import { isBlankText, refLabelPieces } from '../measure/spaces';
 import { linkSegments } from '../measure/links';
 import { graphemeCount } from '../measure/graphemes';
 import { dimensionToPx } from '../units';
@@ -335,8 +335,9 @@ export function resolveRefSpans(
     italic: boolean;
     labelNumberGap?: string;
     anchors?: AnchorRefContext;
-    /** `crossRefs.breakLabels` (#702): a label of words that holds a space
-     *  is marked `ref.breakable`, and a line may break at its spaces. */
+    /** `crossRefs.breakLabels` (#702): a label of words with a space
+     *  between two of them is marked `ref.breakable`, and a line may break
+     *  there (`refLabelPieces`). */
     breakLabels?: boolean;
   },
 ): InlineSpan[] {
@@ -367,7 +368,9 @@ export function resolveRefSpans(
       ref = { ...ref };
       delete ref.breakable;
     }
-    if (label.words && refStyle?.breakLabels === true && hasBreakingSpace(label.text)) ref = { ...ref, breakable: true };
+    // Words only: a number keeps to the word before it (`Fig. 1a`), so a
+    // label of a word and a number has no break either.
+    if (label.words && refStyle?.breakLabels === true && refLabelPieces(label.text)) ref = { ...ref, breakable: true };
     return {
       ...span,
       ref,

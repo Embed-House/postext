@@ -1167,7 +1167,7 @@ so he learned to count the steps in the dark.
 
 `text="…"`印出自定的文字，仍然是链接；`case=capitalize`使西文名称首字母大写。文字随文档语言变化（*section 3.2*、*sección 3.2*、*第3.2节*），可在配置的[交叉引用](/zh/docs/configuration-notes-references#交叉引用)中修改；编号模板已含文字的标题（*第四章*、*Chapter 4*）照原样印出。在竖排中，引用里的数字按`cjk.uprightDigits`的规则排列。
 
-**换行。** 以文字印出的引用与周围正文一样在空格处换行：锚点的文字（`[close the lever so that it points backwards]{#step}`）、标题、自定的`text="…"`。其中的空格就是行内的空格，在两端对齐的行里与其他空格一同拉伸；引用仍是一个链接，跨两行时分成两段。其中的词从不断词。带编号或页码的引用文字（*section 3.2*、*p. 112*、*Fig. 1.7*、*Theorem 2*）从不换行，不论模板里用的是哪种空格；引用文字中的不断行空格与在别处一样把两边粘住。`crossRefs.breakLabels: false`让每个引用文字保持完整，与postext 1.27及更早版本相同，那时引用文字是一个词，无法移上前一行；见[交叉引用](/zh/docs/configuration-notes-references#交叉引用)。
+**换行。** 以文字印出的引用与周围正文一样在空格处换行：锚点的文字（`[close the lever so that it points backwards]{#step}`）、标题、自定的`text="…"`。其中的空格就是行内的空格，在两端对齐的行里与其他空格一同拉伸；引用仍是一个链接，跨两行时分成两段。其中的词从不断词。在这样的引用文字里，数字、罗马数字或单个字母与它前面的词不分开，所以`text="Fig. 1a"`、`text="plate IV"`不会被拆到两行。带编号或页码的引用文字（*section 3.2*、*p. 112*、*Fig. 1.7*、*Theorem 2*）从不换行，不论模板里用的是哪种空格；引用文字中的不断行空格与在别处一样把两边粘住。`crossRefs.breakLabels: false`让每个引用文字保持完整，与postext 1.27及更早版本相同，那时引用文字是一个词，无法移上前一行；见[交叉引用](/zh/docs/configuration-notes-references#交叉引用)。
 
 **页码引用**要在全书排好后才知道。引擎会用上一遍的页码重新排版，直到页码不再变化，与目录的做法相同；在此之前页码印为*?*。
 
