@@ -478,6 +478,11 @@
               },
               "uniqueItems": true
             },
+            "raggedLines": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Justified lines the edition may set ragged (check C34)."
+            },
             "console": {
               "type": "array",
               "items": {

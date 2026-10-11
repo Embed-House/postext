@@ -271,6 +271,9 @@ export interface RecipeMeta {
       warnings?: WarningKind[];
       /** Deliberately sparse pages (dedication, half title), 1-based. */
       nearEmptyPages?: number[];
+      /** Justified lines the edition may set ragged (their word spaces
+       *  would stretch past 3×; check C34). Default 0. */
+      raggedLines?: number;
       /** Accepted console-error substrings (e.g. the `?bundle` noise). */
       console?: string[];
       /** Only for a recipe about the defaults themselves. */
@@ -573,6 +576,13 @@ export interface CaptureVariant {
      *  the tracking cap (`cjkLoose`), `worst` the widest space between
      *  characters, in em. Absent when the pages have no such line. */
     cjkLooseLines?: { count: number; share: number; worst: number };
+    /** Justified lines set ragged because their word spaces would have
+     *  stretched past 3× (C34). Absent on an engine without the warning. */
+    raggedLines?: { count: number };
+    /** Paragraphs set a line short to take up a runt (C35): how many, how
+     *  many of them with tracking, and the most tracking, in thousandths
+     *  of an em. Absent when there is none. */
+    runtFixes?: { count: number; tracked: number; worst: number };
     findings: CaptureFinding[];
   };
 }

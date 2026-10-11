@@ -428,6 +428,8 @@ function evaluate(
             },
           }
         : {}),
+      ...(facts.raggedLines ? { raggedLines: { count: facts.raggedLines.count } } : {}),
+      ...(facts.runtFixes?.count ? { runtFixes: { count: facts.runtFixes.count, tracked: facts.runtFixes.tracked, worst: facts.runtFixes.worst } } : {}),
       findings: warns,
     },
   };

@@ -151,6 +151,17 @@ export interface ProbeFacts {
     /** The lines set short, in page order (at most 5). */
     lines?: { page: number; tracking: number; text: string }[];
   };
+  /** Justified lines set ragged because their word spaces would have
+   *  stretched past 3× (the builds' `raggedLine` warnings, #732): how many,
+   *  and the five that would have stretched most. Absent on an engine
+   *  without the warning. */
+  raggedLines?: { count: number; lines: { page: number | null; ratio: number; text: string }[] };
+  /** Paragraphs set a line short to take up a runt (`VDTBlock.runtFix`,
+   *  #733): `count` of them, `tracked` the ones that needed tracking,
+   *  `worst` the most tracking (thousandths of an em), `atCap` when one
+   *  sits at `bodyText.maxRuntTracking`, `blocks` the five most tracked
+   *  with their first words. Absent when none was fixed. */
+  runtFixes?: { count: number; tracked: number; worst: number; atCap?: boolean; blocks: { page: number; tracking: number; text: string }[] };
   /** `"right"` when the document is bound on its right edge (`doc.binding`). */
   binding?: "right";
   /** `"rtl"` when the document's text runs right to left (the resolved
@@ -849,6 +860,28 @@ function collect(input: CheckInput): Finding[] {
   if (loose && loose.total && loose.share > 0.02) {
     const where = (loose.lines ?? []).slice(0, 3).map((l) => `p. ${l.page} ${l.ratio}× “${clipText(l.text)}”`);
     add("C24", "warn", `${loose.count} of ${loose.total} justified lines (${pct(loose.share)}) stretch past ${loose.threshold}× (worst ${loose.worst}×)${where.length ? `; loosest: ${where.join(", ")}` : ""}`);
+  }
+  // C34: a justified line set ragged (its word spaces would have stretched
+  // past 3×) is a line left short in the middle of a paragraph. A recipe
+  // fits its copy, or accepts a count (`capture.expect.raggedLines`).
+  const raggedLines = facts.raggedLines;
+  if (raggedLines) {
+    const accepted = meta.capture.expect?.raggedLines ?? 0;
+    const s = (n: number) => `${n} justified line${n === 1 ? "" : "s"}`;
+    if (raggedLines.count > accepted) {
+      const where = raggedLines.lines.slice(0, 5).map((l) => `${l.page === null ? "" : `p. ${l.page} `}${l.ratio}× “${clipText(l.text)}”`);
+      add("C34", "fail", `${s(raggedLines.count)} set ragged (word spaces past 3×)${accepted ? `, and the recipe accepts ${accepted}` : ""}: ${where.join(", ")}. Reword the copy, give the line a break it can take, or accept the count with capture.expect.raggedLines`);
+    } else if (accepted > raggedLines.count) {
+      add("C34", "info", `capture.expect.raggedLines accepts ${accepted}, and the edition has ${raggedLines.count}`);
+    }
+  }
+  // C35: paragraphs set a line short to take up a runt, the ones that
+  // needed tracking: a paragraph at the cap reads tight beside its
+  // neighbours, and a few words less would have set it without.
+  const runtFixes = facts.runtFixes;
+  if (runtFixes && runtFixes.tracked > 0) {
+    const where = runtFixes.blocks.map((b) => `p. ${b.page} −${b.tracking}‰ “${b.text}${b.text.length >= 48 ? "…" : ""}”`);
+    add("C35", "info", `${runtFixes.tracked} paragraph${runtFixes.tracked === 1 ? "" : "s"} set a line short with tracking (worst −${runtFixes.worst}‰${runtFixes.atCap ? ", the cap" : ""}): ${where.join(", ")}`);
   }
   const cjkLoose = facts.cjkLoose;
   if (cjkLoose && cjkLoose.count > 0) {

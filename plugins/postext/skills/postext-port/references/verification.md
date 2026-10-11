@@ -179,6 +179,12 @@ those lines, or run the script.
   `＊＊…＊＊`) is set as text, and an attribute key outside ASCII (`作者=曹雪芹`) is
   dropped. Retype the ASCII form the warning names; keys are ASCII, values any script.
 - `PROBLEM font families used but not bundled`: add the files to `fonts[]`.
+- `WARN raggedLine` (postext ≥ 1.28.0): a line of a justified paragraph was set ragged because its word
+  spaces would have stretched past 3× (the message gives the ratio). The line that cannot take the next word
+  has too few spaces: reword it, or give the long word or address after it a place to break (a soft hyphen,
+  U+200B in an address). `VDTLine.raggedSpaceRatio` marks the line. A paragraph the engine set one line
+  shorter to take up a runt is not a warning: its block carries `runtFix: { tracking }` (thousandths of an
+  em; at `bodyText.maxRuntTracking` the paragraph reads tight, so cut or add a few words).
 - `WARN cjkLooseLine` (Chinese): a justified line could not be spread to the measure without more than half
   an em between its characters and was set short. Usually a long Latin word or URL: reword, or let it be.
 - `WARN cjkMarksExceedLeading|rubyExceedsLeading|kuntenExceedsLeading`: emphasis dots, side lines, name lines,

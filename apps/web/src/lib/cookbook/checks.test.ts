@@ -553,3 +553,78 @@ describe("C33: the Sandbox bundle read back (#690)", () => {
     ]);
   });
 });
+
+// #732: a justified line whose word spaces would stretch past 3× is set
+// ragged. Five reviewers of #660 found such a line "left short" in a
+// justified paragraph, and no check said so: the line had lost the ratio
+// C24 reads and was skipped by its loop.
+describe("C34: justified lines set ragged (#732)", () => {
+  const lines = [
+    { page: 3, ratio: 5.4, text: "The Marrowick Harbour" },
+    { page: 3, ratio: 4.1, text: "Marrow Mutual will pay" },
+    { page: 4, ratio: 3.6, text: "The ferry's first crossing, at" },
+  ];
+  const withExpect = (raggedLines: number) => meta({ capture: { hero: 1, card: "page", expect: { raggedLines } } } as Partial<RecipeMeta>);
+
+  it("passes an edition with none, and one on an engine without the warning", () => {
+    expect(of("C34", runChecks(input({ facts: facts({ raggedLines: { count: 0, lines: [] } }) })))).toEqual([]);
+    expect(of("C34", runChecks(input({ facts: facts() })))).toEqual([]);
+  });
+
+  it("fails an edition with a line the recipe does not accept, and names the lines", () => {
+    const found = of("C34", runChecks(input({ facts: facts({ raggedLines: { count: 1, lines: lines.slice(1, 2) } }) })));
+    expect(found).toEqual([{
+      check: "C34", severity: "fail",
+      detail: "1 justified line set ragged (word spaces past 3×): p. 3 4.1× “Marrow Mutual will pay”. Reword the copy, give the line a break it can take, or accept the count with capture.expect.raggedLines",
+    }]);
+    const three = of("C34", runChecks(input({ facts: facts({ raggedLines: { count: 3, lines } }) })))[0]!;
+    expect(three.detail).toContain("3 justified lines set ragged");
+    expect(three.detail).toContain("p. 3 5.4× “The Marrowick Harbour”, p. 3 4.1× “Marrow Mutual will pay”, p. 4 3.6× “The ferry's first crossing, at”");
+  });
+
+  it("passes with the count accepted, and fails with one line over it", () => {
+    expect(of("C34", runChecks(input({ meta: withExpect(1), facts: facts({ raggedLines: { count: 1, lines: lines.slice(0, 1) } }) })))).toEqual([]);
+    const over = of("C34", runChecks(input({ meta: withExpect(1), facts: facts({ raggedLines: { count: 2, lines: lines.slice(0, 2) } }) })));
+    expect(over).toHaveLength(1);
+    expect(over[0]).toMatchObject({ severity: "fail" });
+    expect(over[0]!.detail).toContain("2 justified lines set ragged (word spaces past 3×), and the recipe accepts 1:");
+  });
+
+  it("notes a recipe that accepts more lines than the edition has", () => {
+    expect(of("C34", runChecks(input({ meta: withExpect(2), facts: facts({ raggedLines: { count: 1, lines: lines.slice(0, 1) } }) })))).toEqual([
+      { check: "C34", severity: "info", detail: "capture.expect.raggedLines accepts 2, and the edition has 1" },
+    ]);
+  });
+
+  it("prints a line of a note, which has no page of its own in the count", () => {
+    const found = of("C34", runChecks(input({ facts: facts({ raggedLines: { count: 1, lines: [{ page: null, ratio: 3.4, text: "7 See the long address" }] } }) })))[0]!;
+    expect(found.detail).toContain(": 3.4× “7 See the long address”.");
+  });
+});
+
+// #733: a paragraph set one line shorter to take up a runt left no trace
+// in the capture. In history-essay-chicago-notes note 7 was set at −5‰ and
+// note 14 at −10‰, found only because the tracking was not painted (#662).
+describe("C35: paragraphs set a line short with tracking (#733)", () => {
+  it("prints nothing when no paragraph was fixed, or when word spaces alone did it", () => {
+    expect(of("C35", runChecks(input({ facts: facts() })))).toEqual([]);
+    expect(of("C35", runChecks(input({ facts: facts({ runtFixes: { count: 3, tracked: 0, worst: 0, blocks: [] } }) })))).toEqual([]);
+  });
+
+  it("notes one at the cap with its page, the amount and its first words", () => {
+    const runtFixes = { count: 2, tracked: 1, worst: 10, atCap: true, blocks: [{ page: 4, tracking: 10, text: "14 Ibid., 212. The second edition corrects the fig" }] };
+    expect(of("C35", runChecks(input({ facts: facts({ runtFixes }) })))).toEqual([{
+      check: "C35", severity: "info",
+      detail: "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “14 Ibid., 212. The second edition corrects the fig…”",
+    }]);
+  });
+
+  it("lists several, most tracked first, a split paragraph counted once by the probe", () => {
+    const runtFixes = { count: 2, tracked: 2, worst: 10, atCap: true, blocks: [{ page: 4, tracking: 10, text: "first words of the paragraph" }, { page: 3, tracking: 5, text: "another paragraph" }] };
+    expect(of("C35", runChecks(input({ facts: facts({ runtFixes }) })))[0]!.detail).toBe(
+      "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “first words of the paragraph”, p. 3 −5‰ “another paragraph”",
+    );
+    const below = { count: 1, tracked: 1, worst: 5, blocks: [{ page: 2, tracking: 5, text: "a paragraph" }] };
+    expect(of("C35", runChecks(input({ facts: facts({ runtFixes: below }) })))[0]!.detail).toBe("1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “a paragraph”");
+  });
+});

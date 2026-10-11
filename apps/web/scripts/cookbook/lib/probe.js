@@ -826,6 +826,14 @@ export function facts({ select = 'last', hero = [] } = {}) {
       page: w.pageIndex === undefined ? null : nOf(doc, w.pageIndex),
       detail: layoutDetail(w) ?? (w.kind === 'floatShrunk' ? `${w.resourceId} at ${Math.round(w.scale * 100)} %: ${w.overflowPx} px past the text block` : w.kind === 'codeOverflow' ? `${w.mode}: ${w.lines} line(s)${w.lang ? ` of ${w.lang}` : ''}` : w.kind === 'dropCap' ? `${w.reason}${w.handling ? ` (${w.handling})` : ''}: ${w.text}` : w.kind === 'textWrap' ? `${w.resourceId ?? `box ${w.box ?? ''}`.trim()}: ${w.reason}` : w.text ?? (w.kind === 'lineNumberOverlap' ? `line ${w.number}` : w.kind === 'tabInVerticalText' ? ':tab' : comicDetail(w))),
     })));
+  // C34: the justified lines the engine set ragged because their word
+  // spaces would have stretched past 3× (#732), from the builds' own
+  // `raggedLine` warnings, worst first. Not among TEXT_WARNING_KINDS: C5
+  // accepts a kind wholesale, and here a recipe accepts a count.
+  const ragged = docs.flatMap((doc) => (doc.contentWarnings ?? [])
+    .filter((w) => w.kind === 'raggedLine')
+    .map((w) => ({ page: w.pageIndex === undefined ? null : nOf(doc, w.pageIndex), ratio: Math.round(w.ratio * 10) / 10, text: (w.text ?? '').trim() })));
+  out.raggedLines = { count: ragged.length, lines: [...ragged].sort((a, b) => b.ratio - a.ratio).slice(0, 5) };
   // C31: config values the engine replaced (a character grid cut to the
   // page, an unknown numbering format, a key no setting has). Every
   // chapter of a book carries its build's warnings: one entry per value.
@@ -874,6 +882,26 @@ export function facts({ select = 'last', hero = [] } = {}) {
       if (ratio > max + 1e-6) looseLines.push({ page: n, ratio: round(ratio, 0.01), text: (line.text ?? '').trim() });
       worst = Math.max(worst, ratio);
     }
+  }
+  // C35: the paragraphs set a line short to take up a runt (#733,
+  // `VDTBlock.runtFix`), the ones that needed tracking first. A paragraph
+  // split over two columns is one (same source range).
+  const fixed = new Map();
+  for (const { block, doc, n } of all) {
+    if (!block.runtFix) continue;
+    const key = `${docs.indexOf(doc)}:${block.contentIndex ?? ''}:${block.footnoteNote ?? ''}:${block.calloutPath ?? block.containerId ?? ''}`;
+    // The first words as written: a word divided at a line end is put back.
+    const text = (block.lines ?? []).map((l) => {
+      const t = (l.text ?? '').trim();
+      return l.hyphenated && !l.hardHyphen && t.endsWith('-') ? t.slice(0, -1) : `${t} `;
+    }).join('').replace(/\s+/g, ' ').trim();
+    const cap = Number(doc.config.bodyText.maxRuntTracking) || 0;
+    if (!fixed.has(key)) fixed.set(key, { page: n, tracking: Number(block.runtFix.tracking) || 0, text: text.slice(0, 48), atCap: cap > 0 && block.runtFix.tracking >= cap });
+  }
+  if (fixed.size) {
+    const blocks = [...fixed.values()];
+    const tracked = blocks.filter((b) => b.tracking > 0).sort((a, b) => b.tracking - a.tracking || a.page - b.page);
+    out.runtFixes = { count: blocks.length, tracked: tracked.length, worst: tracked[0]?.tracking ?? 0, atCap: tracked.some((b) => b.atCap), blocks: tracked.slice(0, 5).map(({ page, tracking, text }) => ({ page, tracking, text })) };
   }
   // The loosest lines, for copy-fitting (C24 prints them).
   const loosest = [...looseLines].sort((a, b) => b.ratio - a.ratio).slice(0, 5);
