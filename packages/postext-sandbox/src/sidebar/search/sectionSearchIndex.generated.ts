@@ -2919,7 +2919,6 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'orderedListsNumberVerticalOffset',
       'orderedListsNumberVerticalOffsetTooltip',
       'orderedListsNumberWidth',
-      'orderedListsNumberWidthItem',
       'orderedListsNumberWidthLevel',
       'orderedListsNumberWidthRun',
       'orderedListsNumberWidthTooltip',
