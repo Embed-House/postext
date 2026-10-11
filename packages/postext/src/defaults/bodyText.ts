@@ -364,7 +364,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     colonListRoom: partial.colonListRoom === 'line' || partial.colonListRoom === 'item'
       ? partial.colonListRoom
       : DEFAULT_BODY_TEXT_CONFIG.colonListRoom,
-    hyphenateAcrossColumns: partial.hyphenateAcrossColumns ?? DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns,
+    // `false` and `'withinPage'` (#701) are kept; anything else reads `true`.
+    hyphenateAcrossColumns: partial.hyphenateAcrossColumns === false || partial.hyphenateAcrossColumns === 'withinPage' ? partial.hyphenateAcrossColumns : DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns,
     paragraphContainerSpacing: partial.paragraphContainerSpacing === 'add' || partial.paragraphContainerSpacing === 'collapse'
       ? partial.paragraphContainerSpacing
       : DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing,
@@ -624,7 +625,7 @@ export function stripBodyTextDefaults(
     result.colonListRoom = bodyText.colonListRoom;
     hasOverride = true;
   }
-  if (bodyText.hyphenateAcrossColumns !== undefined && bodyText.hyphenateAcrossColumns !== DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns) {
+  if (bodyText.hyphenateAcrossColumns === false || bodyText.hyphenateAcrossColumns === 'withinPage') {
     result.hyphenateAcrossColumns = bodyText.hyphenateAcrossColumns;
     hasOverride = true;
   }

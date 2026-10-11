@@ -1600,8 +1600,16 @@ export interface BodyTextConfig {
    *  A ragged paragraph set with `optimalRagged` is broken again the same
    *  way; its word spaces keep their width, so only its line ends move.
    *  Needs `optimalLineBreaking` (and `optimalRagged` for ragged text).
-   *  Running text only (not box bodies). */
-  hyphenateAcrossColumns?: boolean;
+   *  Running text only (not box bodies).
+   *
+   *  `'withinPage'` (#701) guards the lines that close a page and no
+   *  other: a word may be divided between two columns of one page, and the
+   *  last line of a page ends on a whole word wherever the word-spacing
+   *  limits allow it. A column closes its page when the text that leaves it
+   *  goes on to another page (no later column of the page takes text: a
+   *  float-only side column does not count). It moves fewer lines than
+   *  `false`; in a single-column layout the two give the same lines. */
+  hyphenateAcrossColumns?: boolean | 'withinPage';
   /** The space under a `:::paragraphs` container that closes on a
    *  paragraph, between that paragraph and the block after it:
    *  - `'collapse'` (default): the larger of the style's `spaceBetween` and
@@ -2114,7 +2122,7 @@ export interface ResolvedBodyTextConfig {
   maxRuntTracking: number;
   keepColonWithList: boolean;
   colonListRoom: ColonListRoom;
-  hyphenateAcrossColumns: boolean;
+  hyphenateAcrossColumns: boolean | 'withinPage';
   paragraphContainerSpacing: ParagraphContainerSpacing;
   /** `emphasis` resolved; absent when `*…*` is set in italics. */
   emphasis?: Exclude<EmphasisStyle, 'italic'>;

@@ -204,6 +204,7 @@ const RICH: PostextConfig = {
     fontFamily: 'Literata', fontSize: pt(10.5), lineHeight: pt(15), color: hex('#221144'), textAlign: 'left',
     fontWeight: 500, boldFontWeight: 800, firstLineIndent: pt(14), paragraphSpacing: pt(4),
     hyphenation: { enabled: false, exceptions: ['Alice', 'You-Tube'], capitalized: false },
+    hyphenateAcrossColumns: 'withinPage',
     blockquote: { fontStyle: 'normal', marginLeft: pt(30) },
     verse: { indent: pt(20) },
   },

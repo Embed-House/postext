@@ -5,7 +5,8 @@ import { measureBlock } from '../../measure/plain';
 import { computeBreakpoints } from '../../knuthPlass';
 import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH } from '../../knuthPlass/constants';
 import type { KPItem } from '../../knuthPlass/types';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults';
+import { resolveBodyTextConfig, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults';
+import { resolveAllConfig } from '../../pipeline/config';
 import type { PostextConfig, VDTDocument } from '../../index';
 
 // Deterministic text measurement stub (no DOM in the node test env).
@@ -245,5 +246,169 @@ describe('bodyText.hyphenateAcrossColumns (EF-86)', () => {
       expect(computeBreakpoints(items, { ...base, avoidHyphenAtLines: undefined, lineWidthUniformFrom: 1, fixedBreaks: fixed }), `run ${run}`)
         .toEqual(natural);
     }
+  }, 60_000);
+});
+
+describe("bodyText.hyphenateAcrossColumns: 'withinPage' (#701)", () => {
+  type Mode = boolean | 'withinPage';
+  const layoutConfig = (layout: Record<string, unknown>, across?: Mode, width = 400): PostextConfig => ({
+    page: { dpi: 96, width: pt(width), height: pt(400), margins: { top: pt(20), bottom: pt(20), left: pt(20), right: pt(20) } },
+    layout,
+    bodyText: {
+      textAlign: 'justify',
+      hyphenation: { enabled: true, locale: 'en-us' },
+      ...(across === undefined ? {} : { hyphenateAcrossColumns: across }),
+    },
+    headings: { levels: [] },
+  }) as PostextConfig;
+  const TWO = { layoutType: 'double' };
+  const THREE = { layoutType: 'multiple', columnCount: 3 };
+
+  /** The columns that take text, page by page, and whether each ends on a
+   *  hyphen; the last of a page closes it. */
+  const ends = (doc: VDTDocument): { page: string[]; inner: string[] } => {
+    const page: string[] = [];
+    const inner: string[] = [];
+    for (const p of doc.pages) {
+      const flow = p.columns.map((c, ci) => ({ c, ci })).filter(({ c }) => c.kind !== 'side' && c.blocks.length > 0);
+      flow.forEach(({ c, ci }, i) => {
+        const last = c.blocks[c.blocks.length - 1]!;
+        if (!last.lines[last.lines.length - 1]?.hyphenated) return;
+        (i === flow.length - 1 ? page : inner).push(`p${p.index}c${ci}`);
+      });
+    }
+    return { page, inner };
+  };
+  const lineTexts = (doc: VDTDocument): string[] => doc.pages.flatMap((p) => p.columns.flatMap((c) => c.blocks.flatMap((b) => b.lines.map((l) => l.text))));
+  /** Lines of `doc` that `base` does not have. */
+  const moved = (doc: VDTDocument, base: VDTDocument): number => {
+    const have = new Set(lineTexts(base));
+    return lineTexts(doc).filter((t) => !have.has(t)).length;
+  };
+
+  it('resolves and survives the strip', () => {
+    expect(resolveBodyTextConfig({ hyphenateAcrossColumns: 'withinPage' }).hyphenateAcrossColumns).toBe('withinPage');
+    expect(resolveBodyTextConfig({ hyphenateAcrossColumns: false }).hyphenateAcrossColumns).toBe(false);
+    expect(resolveBodyTextConfig({ hyphenateAcrossColumns: 'pages' as never }).hyphenateAcrossColumns).toBe(true);
+    expect(stripBodyTextDefaults({ hyphenateAcrossColumns: 'withinPage' })).toEqual({ hyphenateAcrossColumns: 'withinPage' });
+    expect(stripBodyTextDefaults({ hyphenateAcrossColumns: 'pages' as never })).toBeUndefined();
+    const stripped = stripConfigDefaults({ bodyText: { hyphenateAcrossColumns: 'withinPage' } });
+    expect(resolveAllConfig(stripped).bodyText.hyphenateAcrossColumns).toBe('withinPage');
+  });
+
+  for (const [name, layout] of [['two', TWO], ['three', THREE]] as const) {
+    it(`${name} columns: guards the page ends as false does and moves fewer lines`, () => {
+      const total = { on: 0, within: 0, off: 0, movedWithin: 0, movedOff: 0, innerOn: 0, innerWithin: 0 };
+      for (const seed of [0, 1, 2, 3, 4, 5]) {
+        const cache = createMeasurementCache();
+        const width = name === 'three' ? 600 : 400;
+        const on = buildDocument({ markdown: markdown(seed) }, layoutConfig(layout, true, width), cache);
+        const within = buildDocument({ markdown: markdown(seed) }, layoutConfig(layout, 'withinPage', width), cache);
+        const off = buildDocument({ markdown: markdown(seed) }, layoutConfig(layout, false, width), cache);
+        expect(words(within)).toBe(words(on));
+        total.on += ends(on).page.length;
+        total.within += ends(within).page.length;
+        total.off += ends(off).page.length;
+        total.innerOn += ends(on).inner.length;
+        total.innerWithin += ends(within).inner.length;
+        total.movedWithin += moved(within, on);
+        total.movedOff += moved(off, on);
+      }
+      // Non-vacuous: the default ends pages on hyphens, and columns inside them.
+      expect(total.on).toBeGreaterThanOrEqual(6);
+      expect(total.innerOn).toBeGreaterThanOrEqual(6);
+      // No more page ends on a hyphen than with `false`…
+      expect(total.within).toBeLessThanOrEqual(total.off);
+      expect(total.within).toBeLessThan(total.on);
+      // …for fewer lines changed…
+      expect(total.movedWithin).toBeGreaterThan(0);
+      expect(total.movedWithin).toBeLessThan(total.movedOff);
+      // …and the column ends inside a page are mostly left as `true` sets
+      // them (one moves only when its paragraph also crosses a page).
+      expect(total.innerWithin).toBeGreaterThan(total.innerOn / 2);
+    }, 300_000);
+  }
+
+  it('a paragraph that crosses two columns of one page and ends there keeps the lines true gives it', () => {
+    // One paragraph long enough to cross the first column, short enough to
+    // end in the second: found over the seeds, with a hyphen at the column
+    // end so that `false` does change it.
+    let found = 0;
+    for (let seed = 0; seed < 40 && found < 3; seed++) {
+      const md = text(150 + seed * 3, seed);
+      const cache = createMeasurementCache();
+      const on = buildDocument({ markdown: md }, layoutConfig(TWO, true), cache);
+      if (on.pages.length !== 1 || ends(on).inner.length === 0) continue;
+      const off = buildDocument({ markdown: md }, layoutConfig(TWO, false), cache);
+      if (lineTexts(off).join('\n') === lineTexts(on).join('\n')) continue;
+      found++;
+      const within = buildDocument({ markdown: md }, layoutConfig(TWO, 'withinPage'), cache);
+      expect(lineTexts(within)).toEqual(lineTexts(on));
+    }
+    expect(found).toBeGreaterThan(0);
+  }, 120_000);
+
+  it('a paragraph that runs over two pages has both page ends guarded', () => {
+    // One paragraph of some five columns: it closes two pages.
+    let guarded = 0;
+    for (let seed = 0; seed < 30 && guarded < 2; seed++) {
+      const md = text(700, seed);
+      const cache = createMeasurementCache();
+      const on = buildDocument({ markdown: md }, layoutConfig(TWO, true), cache);
+      expect(on.pages.length).toBeGreaterThanOrEqual(3);
+      // Both of the first two page ends on a hyphen by default, or the
+      // second at least: the end the first re-break has to foresee.
+      const natural = ends(on).page;
+      if (!natural.includes('p1c1')) continue;
+      const within = buildDocument({ markdown: md }, layoutConfig(TWO, 'withinPage'), cache);
+      const off = buildDocument({ markdown: md }, layoutConfig(TWO, false), cache);
+      if (ends(off).page.includes('p1c1')) continue; // no setting avoids it
+      guarded++;
+      expect(ends(within).page.filter((e) => e === 'p0c1' || e === 'p1c1')).toEqual(ends(off).page.filter((e) => e === 'p0c1' || e === 'p1c1'));
+      expect(ends(within).page).not.toContain('p1c1');
+    }
+    expect(guarded).toBeGreaterThan(0);
+  }, 300_000);
+
+  it('a single-column document gives the lines of false', () => {
+    let differs = 0;
+    for (const seed of [0, 1, 2, 3]) {
+      const cache = createMeasurementCache();
+      const single = { layoutType: 'single' };
+      const on = buildDocument({ markdown: markdown(seed) }, layoutConfig(single, true), cache);
+      const off = buildDocument({ markdown: markdown(seed) }, layoutConfig(single, false), cache);
+      const within = buildDocument({ markdown: markdown(seed) }, layoutConfig(single, 'withinPage'), cache);
+      expect(lineTexts(within)).toEqual(lineTexts(off));
+      if (lineTexts(off).join('\n') !== lineTexts(on).join('\n')) differs++;
+    }
+    // Non-vacuous: `false` does move lines in some of them.
+    expect(differs).toBeGreaterThan(0);
+  }, 120_000);
+
+  it('guards a column whose text goes on to the next page when a float-only side column follows it', () => {
+    // A column and a half whose narrow column holds floats only: the main
+    // column closes the page, as in a single-column layout.
+    const side = { layoutType: 'oneAndHalf', sideColumnRole: 'floats' };
+    let differs = 0;
+    for (const seed of [0, 1, 2]) {
+      const cache = createMeasurementCache();
+      const on = buildDocument({ markdown: markdown(seed) }, layoutConfig(side, true), cache);
+      expect(on.pages[0]!.columns.some((c) => c.kind === 'side')).toBe(true);
+      const off = buildDocument({ markdown: markdown(seed) }, layoutConfig(side, false), cache);
+      const within = buildDocument({ markdown: markdown(seed) }, layoutConfig(side, 'withinPage'), cache);
+      expect(lineTexts(within)).toEqual(lineTexts(off));
+      if (lineTexts(off).join('\n') !== lineTexts(on).join('\n')) differs++;
+      expect(ends(within).page.length).toBeLessThanOrEqual(ends(on).page.length);
+    }
+    expect(differs).toBeGreaterThan(0);
+  }, 120_000);
+
+  it('true and false give the lines they gave before the third value', () => {
+    // The boolean paths list every column end: the guard of `false` does
+    // not read the page.
+    const cache = createMeasurementCache();
+    const off = buildDocument({ markdown: markdown(4) }, layoutConfig(TWO, false), cache);
+    expect(ends(off).page).toEqual([]);
+    expect(ends(off).inner).toEqual([]);
   }, 60_000);
 });

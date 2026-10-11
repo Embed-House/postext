@@ -95,6 +95,8 @@ import {
   createPageWithColumns,
   currentColumn,
   advanceToNextColumn,
+  columnClosesPage,
+  flowColumnsAfter,
   advanceToNextPageBoundary,
   enforcePageParity,
   placeBlockInColumn,
@@ -654,6 +656,19 @@ function placeDocumentPass(
   // styled section with its own margins / layout — the section's.
   let contentArea = pageMetrics.contentArea;
   let geomResolved = resolved;
+  /** How many columns of a fresh page take body text, in the geometry
+   *  pages are opened with now (`hyphenateAcrossColumns: 'withinPage'`,
+   *  #701: every that many column ends, a page ends). */
+  let freshFlowColumnsOf: ResolvedConfig | undefined;
+  let freshFlowColumns = 1;
+  const freshPageFlowColumns = (): number => {
+    if (freshFlowColumnsOf !== geomResolved) {
+      freshFlowColumnsOf = geomResolved;
+      const fresh = createPageWithColumns(doc.pages.length, geomResolved, contentArea, pageWidthPx, pageHeightPx, pageIndexOffset);
+      freshFlowColumns = Math.max(1, fresh.columns.filter((c) => c.kind !== 'side').length);
+    }
+    return freshFlowColumns;
+  };
   // Page/bleed frames for design elements anchored to `'page'` / `'bleed'`,
   // in the frame of the page's flow: the sheet's, or on a vertical page
   // (`page.flow`) the flow frame, where "the top of the page" is the
@@ -6626,6 +6641,21 @@ function placeDocumentPass(
     /** Whether the paragraph was already re-broken to keep a hyphen off
      *  the last line of a column (`bodyText.hyphenateAcrossColumns`). */
     let columnEndHyphenRetried = false;
+    /** The lines (1-based, counted from the first line still to place) the
+     *  guard keeps a hyphen off: the line the split falls after and one
+     *  every full column after it, or, under `'withinPage'` (#701), those
+     *  of them that close a page — the j-th column end from here does when
+     *  the `rest` flow columns left on this page are used up and a whole
+     *  number of fresh pages, of `perPage` flow columns each, has gone by. */
+    const guardedColumnEnds = (mode: false | 'withinPage', splitAt: number, lineCount: number, fullColumn: number, page: VDTPage, columnIndex: number): number[] => {
+      const ends: number[] = [];
+      const rest = mode === false ? 0 : flowColumnsAfter(page, columnIndex);
+      const perPage = mode === false ? 1 : freshPageFlowColumns();
+      for (let n = splitAt, j = 0; n < lineCount; n += fullColumn, j++) {
+        if (j >= rest && (j - rest) % perPage === 0) ends.push(n);
+      }
+      return ends;
+    };
     /** `hyphenateAcrossColumns: false`: the paragraph's lines as set now
      *  (a re-break replaces them) and where the breaker broke them, the
      *  lines (1-based) its last re-break kept a hyphen off, and the part
@@ -7440,20 +7470,25 @@ function placeDocumentPass(
         // placement then starts over with its lines. Only a paragraph set
         // from its first line here — its earlier lines are not placed yet —
         // and never one the balancing is running long.
+        //
+        // `'withinPage'` (#701) guards only the ends that close a page: this
+        // column's when no later column of its page takes text, and then
+        // one every page of full columns. With none in the paragraph,
+        // nothing is measured again.
+        const hyphenGuard = resolved.bodyText.hyphenateAcrossColumns;
         if (
           choice.splitAt > 0
-          && !resolved.bodyText.hyphenateAcrossColumns
+          && hyphenGuard !== true
           && !columnEndHyphenRetried
           && partIndex === 0
           && looseLines === undefined
         ) {
           const fullColumn = Math.max(1, Math.floor((contentArea.height + 0.01) / style.lineHeightPx));
-          const ends: number[] = [];
-          for (let n = choice.splitAt; n < remainingLines.length; n += fullColumn) ends.push(n);
+          const ends = guardedColumnEnds(hyphenGuard, choice.splitAt, remainingLines.length, fullColumn, doc.pages[cursor.pageIndex]!, cursor.columnIndex);
           /** How a setting ends its guarded lines: whether this column's
            *  last line is hyphenated, and how many guarded lines are. */
           const columnEndHyphens = (lines: readonly VDTLine[]) => ({
-            first: lines[choice.splitAt - 1]?.hyphenated === true,
+            first: ends[0] === choice.splitAt && lines[choice.splitAt - 1]?.hyphenated === true,
             count: ends.filter((n) => lines[n - 1]?.hyphenated).length,
           });
           const natural = columnEndHyphens(remainingLines);
@@ -7494,19 +7529,21 @@ function placeDocumentPass(
         // this column's end (or fewer at the ends still to come). The
         // placed lines are checked again all the same: a break trace from
         // the other measuring path cannot keep them.
+        // Under `'withinPage'` only from a column that closes its page.
         if (
           choice.splitAt > 0
-          && !resolved.bodyText.hyphenateAcrossColumns
+          && hyphenGuard !== true
           && partIndex > 0
           && columnEndHyphenPart !== partIndex
           && looseLines === undefined
           && remainingLines[choice.splitAt - 1]?.hyphenated === true
+          && (hyphenGuard === false || columnClosesPage(doc.pages[cursor.pageIndex]!, cursor.columnIndex))
         ) {
           columnEndHyphenPart = partIndex;
           const placed = paragraphLines.length - remainingLines.length;
           const fullColumn = Math.max(1, Math.floor((contentArea.height + 0.01) / style.lineHeightPx));
-          const later: number[] = [];
-          for (let n = choice.splitAt; n < remainingLines.length; n += fullColumn) later.push(placed + n);
+          const later = guardedColumnEnds(hyphenGuard, choice.splitAt, remainingLines.length, fullColumn, doc.pages[cursor.pageIndex]!, cursor.columnIndex)
+            .map((n) => placed + n);
           // The ends already placed keep their guard; the later ones the
           // last re-break assumed give way to where the columns now end.
           const ends = [...guardedEnds.filter((n) => n <= placed), ...later];

@@ -359,6 +359,31 @@ export function closeBandAt(
   return true;
 }
 
+/** The next column of `page` after `columnIndex` that takes body text, or
+ *  -1: the flow skips float-only side columns, which never take any. */
+export function nextFlowColumn(page: VDTPage, columnIndex: number): number {
+  let next = columnIndex + 1;
+  while (next < page.columns.length && page.columns[next]!.kind === 'side') next++;
+  return next < page.columns.length ? next : -1;
+}
+
+/**
+ * Whether the text that leaves column `columnIndex` of `page` goes on to
+ * another page: {@link advanceToNextColumn} would open one. The guard of
+ * `bodyText.hyphenateAcrossColumns: 'withinPage'` (#701) reads it, so it and
+ * the flow cannot disagree about which column closes a page.
+ */
+export function columnClosesPage(page: VDTPage, columnIndex: number): boolean {
+  return nextFlowColumn(page, columnIndex) < 0;
+}
+
+/** How many columns of `page` after `columnIndex` take body text. */
+export function flowColumnsAfter(page: VDTPage, columnIndex: number): number {
+  let count = 0;
+  for (let i = columnIndex + 1; i < page.columns.length; i++) if (page.columns[i]!.kind !== 'side') count++;
+  return count;
+}
+
 export function advanceToNextColumn(
   doc: VDTDocument,
   cursor: PlacementCursor,
@@ -375,9 +400,8 @@ export function advanceToNextColumn(
   const leaving = page.columns[cursor.columnIndex];
   if (leaving) settleColumnWraps(leaving);
   // The flow skips float-only side columns: they never take body text.
-  let next = cursor.columnIndex + 1;
-  while (next < page.columns.length && page.columns[next]!.kind === 'side') next++;
-  if (next < page.columns.length) {
+  const next = nextFlowColumn(page, cursor.columnIndex);
+  if (next >= 0) {
     cursor.columnIndex = next;
   } else {
     // New page
