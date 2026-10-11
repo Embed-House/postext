@@ -94,10 +94,10 @@ export interface CjkComposition {
    *  {@link DEFAULT_NOTE_MIN_CHARS}. 1 lets a line break anywhere in a
    *  note the level allows. */
   noteMinChars?: number;
-  /** The document is on a character grid (`cjk.grid.enabled`, #718): a
-   *  paragraph that is not justified keeps every full line full, so the
-   *  runt rule carries no character down from a line it cannot spread. */
-  grid?: true;
+  /** The document's character grid keeps its full lines full
+   *  (`cjk.grid.fullLines`, #718): the runt rule carries no character down
+   *  from a line that is not justified, which it could not spread. */
+  gridFullLines?: true;
 }
 
 /** Characters of a book title a line break leaves on either side of it by
@@ -158,7 +158,7 @@ export function cjkCompositionOf(cjk: ResolvedCjkConfig, dpi: number, locale?: s
     ...(cjk.composeDesignText === false ? { plainDesignText: true as const } : {}),
     ...(cjk.latinSpacingEdge === 'western' ? { latinSpacingEdge: 'western' as const } : {}),
     ...(cjk.warichu.minChars !== DEFAULT_NOTE_MIN_CHARS ? { noteMinChars: cjk.warichu.minChars } : {}),
-    ...(cjk.grid.enabled ? { grid: true as const } : {}),
+    ...(cjk.grid.enabled && cjk.grid.fullLines ? { gridFullLines: true as const } : {}),
   };
 }
 
@@ -234,9 +234,9 @@ export function cjkCompositionKey(c: CjkComposition): string {
   // from the default.
   const titles = c.titleMinChars !== undefined && c.titleMinChars !== DEFAULT_TITLE_MIN_CHARS ? `:t${c.titleMinChars}` : '';
   const circled = c.circledNumbers === 'western' ? ':cw' : '';
-  // The grid (#718) only where set: it changes how a ragged paragraph
-  // that ends on one character is broken.
-  const grid = c.grid ? ':g' : '';
+  // The grid's full lines (#718) only where set: they change how a ragged
+  // paragraph that ends on one character is broken.
+  const grid = c.gridFullLines ? ':g' : '';
   // The note rule (#720) only where it differs from the default.
   const notes = c.noteMinChars !== undefined && c.noteMinChars !== DEFAULT_NOTE_MIN_CHARS ? `:n${c.noteMinChars}` : '';
   // The Western edge rule (#721) only where set, so every key of a

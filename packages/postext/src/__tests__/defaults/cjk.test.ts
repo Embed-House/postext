@@ -48,7 +48,7 @@ describe('cjk config', () => {
     expect(stripCjkDefaults({
       punctuationWidth: 'auto', compressAdjacent: 'auto', trimLineStart: 'auto', hangingPunctuation: 'auto',
       spaceAfterQuestion: 'auto', paragraphStartBracket: 'auto',
-      latinSpacing: { value: 0.25, unit: 'em' }, grid: { enabled: false, show: false },
+      latinSpacing: { value: 0.25, unit: 'em' }, grid: { enabled: false, show: false, fullLines: false },
     })).toBeUndefined();
     // 'none' is no default since Japan hangs by default (#418).
     expect(stripCjkDefaults({ hangingPunctuation: 'none', spaceAfterQuestion: false, paragraphStartBracket: 'indent' }))
@@ -70,10 +70,10 @@ describe('cjk config', () => {
   });
 
   it('resolves the grid only when it is on', () => {
-    expect(resolveCjkConfig(undefined, 'zh').grid).toEqual({ enabled: false, charsPerLine: 0, linesPerPage: 0, show: false });
-    expect(resolveCjkConfig({ grid: { charsPerLine: 28, show: true } }, 'zh').grid).toEqual({ enabled: false, charsPerLine: 0, linesPerPage: 0, show: false });
+    expect(resolveCjkConfig(undefined, 'zh').grid).toEqual({ enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false });
+    expect(resolveCjkConfig({ grid: { charsPerLine: 28, show: true, fullLines: true } }, 'zh').grid).toEqual({ enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false });
     expect(resolveCjkConfig({ grid: { enabled: true, charsPerLine: 28.7, linesPerPage: '27' as never, show: true } }, 'zh').grid)
-      .toEqual({ enabled: true, charsPerLine: 28, linesPerPage: 27, show: true });
+      .toEqual({ enabled: true, charsPerLine: 28, linesPerPage: 27, show: true, fullLines: false });
   });
 
   it('is resolved with the document language', () => {

@@ -3128,10 +3128,10 @@ export function composeCjkParagraph(
   // would need more than the tracking cap, the runt stays. Japanese text
   // (泣き別れ) first tries the other way JLReq prefers (§3.8.2): the line
   // above takes the character in by giving up blank (push-in), and the
-  // paragraph is a line shorter. The push-out needs a line it can spread:
-  // on a character grid (`cjk.grid`) a paragraph that is not justified
-  // keeps the character, since the line above would stay one cell short
-  // (#718). Off the grid a ragged paragraph gives it up as before.
+  // paragraph is a line shorter. A paragraph that is not justified gives
+  // the character up too, its line above one short. On manuscript paper
+  // (`cjk.grid.fullLines`, #718) it does not: the line above would stay
+  // one cell short, so only a justified line, which is spread, gives it up.
   if ((options?.runtPenalty ?? 0) > 0 && endsOnOneCharacter(lines) && fit?.jlreq) {
     const pulled = breakUnits(units, breaks, measureOf, 0, letterSpacingPx, fit, level, undefined, ranges.length - 2, emergency);
     if (pulled.length === ranges.length - 1) {
@@ -3139,7 +3139,7 @@ export function composeCjkParagraph(
       if (!set.some((l) => l.cjkLoose) && !endsOnOneCharacter(set)) lines = set;
     }
   }
-  if ((options?.runtPenalty ?? 0) > 0 && (textAlign === 'justify' || !composition.grid) && endsOnOneCharacter(lines)) {
+  if ((options?.runtPenalty ?? 0) > 0 && (textAlign === 'justify' || !composition.gridFullLines) && endsOnOneCharacter(lines)) {
     const li = ranges.length - 2;
     const above = ranges[li]!;
     let at = above.end - 1;

@@ -61,7 +61,7 @@ describe('character grid (cjk.grid)', () => {
     expect(area.x).toBeCloseTo(16 * MM + slack, 9);
     expect(140 * MM - area.x - area.width).toBeCloseTo(20 * MM + slack, 9);
     expect(area.y).toBeCloseTo(18 * MM + (165 * MM - 462) / 2, 9);
-    expect(resolved.cjk.grid).toEqual({ enabled: true, charsPerLine: 28, linesPerPage: 28, show: false });
+    expect(resolved.cjk.grid).toEqual({ enabled: true, charsPerLine: 28, linesPerPage: 28, show: false, fullLines: false });
 
     const doc = buildDocument({ markdown: PASSAGE }, config);
     const lines = doc.blocks.filter((b) => b.type === 'paragraph').flatMap((b) => b.lines);

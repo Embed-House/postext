@@ -1588,10 +1588,11 @@ export interface BodyTextConfig {
    *  Knuth–Plass. A Chinese, Japanese or Korean paragraph does not end on a
    *  line holding one character, alone or with its closing marks (孤字): the
    *  line above gives it its last character when that line can still be
-   *  justified within the tracking cap. On a character grid (`cjk.grid`)
-   *  only a justified line gives it up: one set left, right or centred
-   *  cannot be spread and would leave its last cell empty (#718). Default
-   *  true. */
+   *  justified within the tracking cap; a line set left, right or centred
+   *  gives it up too and stands one character short. On manuscript paper
+   *  (`cjk.grid.fullLines`, #718) only a justified line gives it up: the
+   *  others keep every cell and the paragraph may end on one character.
+   *  Default true. */
   avoidRunts?: boolean;
   /** Approximate minimum character count for the last line of a paragraph.
    *  Interpreted internally as `runtMinCharacters * normalSpaceWidth` pixels, so
@@ -5501,6 +5502,16 @@ export interface CjkGridConfig {
   linesPerPage?: number;
   /** Draw the grid (稿纸) over the type area on screen. Default `false`. */
   show?: boolean;
+  /** Manuscript paper (原稿用紙), where every square of a full line is
+   *  written in: a paragraph that is not justified keeps its full lines
+   *  full, so the runt rule (`bodyText.avoidRunts`) carries no character
+   *  down from a line it cannot spread, and such a paragraph may end on
+   *  one character. A justified paragraph still gives the character up,
+   *  its line spread to the measure. Default `false`: a paragraph does
+   *  not end on a single character (clreq §7.1.2, 孤字不成行; JLReq §3.5.4
+   *  takes the same care), and the line above it stands one cell short
+   *  when it is not justified (#718). */
+  fullLines?: boolean;
 }
 
 export interface ResolvedCjkGridConfig {
@@ -5511,6 +5522,8 @@ export interface ResolvedCjkGridConfig {
   /** The lines per column in use; 0 when off. */
   linesPerPage: number;
   show: boolean;
+  /** `false` when the grid is off. */
+  fullLines: boolean;
 }
 
 export interface ResolvedCjkConfig {

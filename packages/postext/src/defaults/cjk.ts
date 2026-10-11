@@ -56,7 +56,7 @@ export const DEFAULT_CJK_CONFIG: Required<Omit<CjkConfig, 'annotationColor'>> & 
   latinSpacing: { value: 0.25, unit: 'em' },
   latinSpacingEdge: 'auto',
   uprightDigits: 2,
-  grid: { enabled: false, show: false },
+  grid: { enabled: false, show: false, fullLines: false },
   emphasis: 'auto',
   emphasisMark: { style: 'auto', fill: 'auto', position: 'auto' },
   bookTitleMark: 'auto',
@@ -293,6 +293,7 @@ function resolveGrid(grid: CjkGridConfig | undefined): ResolvedCjkGridConfig {
     charsPerLine: enabled ? count(grid?.charsPerLine) ?? 0 : 0,
     linesPerPage: enabled ? count(grid?.linesPerPage) ?? 0 : 0,
     show: enabled && grid?.show === true,
+    fullLines: enabled && grid?.fullLines === true,
   };
 }
 
@@ -436,6 +437,7 @@ function stripGridDefaults(grid: CjkGridConfig | undefined): CjkGridConfig | und
   if (grid.charsPerLine !== undefined) result.charsPerLine = grid.charsPerLine;
   if (grid.linesPerPage !== undefined) result.linesPerPage = grid.linesPerPage;
   if (grid.show !== undefined && grid.show !== false) result.show = grid.show;
+  if (grid.fullLines !== undefined && grid.fullLines !== false) result.fullLines = grid.fullLines;
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
