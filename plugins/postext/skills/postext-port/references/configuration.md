@@ -301,6 +301,14 @@ H&J / Knuth–Plass
 ├─ repeatHyphen         boolean  false  the line after a break at a compound's hyphen opens with a hyphen too (vencer- | -se; Portuguese, Spanish RAE 2010); line.repeatedHyphen; never in a URL
 ├─ hardLineBreaks       boolean  true   (≥ 1.23) a backslash ending a source line, or `\\` + space, is a forced line break in paragraphs, quotes, list items;
 │                        false = 1.22: the backslashes print (a preset below configVersion 9 whose chapters end a line with `\` reads false)
+├─ scriptContext        boolean  true   (≥ 1.28) a word with no letter (`46.`, `1367)`, `».`) is shaped in the script of the text around it: nearest letter
+│                        before it in its isolate, else after; nearest right-to-left letter when painted right to left; the document's language with
+│                        no letter near. Acts only in a face that draws punctuation or digits by script (Amiri: Latin stop and brackets in Latin
+│                        text, Arabic ones otherwise) and in Latin/Greek/Cyrillic/Arabic/Hebrew contexts; `seg.scriptContext` ('Latn', 'Arab'…) says so,
+│                        and canvas, HTML, fixed EPUB and PDF paint those forms at the measured width in every browser. Do NOT glue `46.` or
+│                        `(d. 1367)` to the word before with a no-break space to keep Latin forms in an Arabic book: write ordinary spaces.
+│                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
+│                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
@@ -1772,7 +1780,8 @@ those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does
 too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
 `citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
 kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
-reference (#702). The pins keep what those rules changed, not
+reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
+no letter shaped alone). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

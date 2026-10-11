@@ -304,6 +304,7 @@ if (typeof bundleApi?.migrateConfig === 'function') {
     [(c) => c.cjk?.latinSpacingEdge, 'Han–Latin space next to letters and digits only'],
     [(c) => c.layout?.inlineCaptionSide, 'captions of resources set in the text under them, not in the side column'],
     [(c) => c.crossRefs?.breakLabels, 'reference labels set as one word'],
+    [(c) => c.bodyText?.scriptContext, 'words with no letter shaped alone'],
   ].filter(([of]) => of(read) !== of(config)).map(([, what]) => what);
   if (kept.length) {
     const v = manifest.configVersion;
