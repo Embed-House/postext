@@ -45,8 +45,11 @@ describe('pinLegacyGridBalancing (#632)', () => {
     for (const v of [undefined, 1, 5, 8, 9, 10]) {
       expect(migrateConfig(grid(), v).headings?.balancing?.enabled, String(v)).toBe(true);
     }
+    // A grid stamped 11 keeps its balancing as written; the break rules of
+    // 12 are pinned on it (#717), and one stamped 12 is read as it is.
     const current = grid();
-    expect(migrateConfig(current, 11)).toBe(current);
+    expect(migrateConfig(current, 11, { content: '正文。' }).headings).toBe(current.headings);
+    expect(migrateConfig(current, 12)).toBe(current);
   });
 
   // #651: the first save stores the migrated configuration stripped of
