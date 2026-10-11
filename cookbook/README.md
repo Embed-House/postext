@@ -802,10 +802,15 @@ own engine writes it with `createBundle`: the markdown (or the chapters of a `bu
 book), the configuration, the resources and the files they name, and the card as its
 thumbnail. Drawings go in as SVG; photos keep the bytes they were decoded from; font files
 go in only when the pen built its faces from bytes (Fontsource families travel by name).
-Some things cannot travel: a `continuation` keeps its page numbering (moved into
-`page.pageNumbering`) but loses its page offset and heading counters, a print master
-handed only to `renderToPdf` stays behind, and an interactive recipe gives the Sandbox its
-document without its controls. The run lists each of these as a `sandbox` note. Files in the
+The build's `continuation` (an excerpt that opens on page 58, a verso, in chapter 4) travels
+as the bundle's `start` (#695), so the Sandbox opens on the same page side, folio and chapter
+number. A pen on an engine that writes no `start` keeps its page numbering (moved into
+`page.pageNumbering`) and loses its page offset and heading counters; pin a release that
+writes it. The bundle's locale is the edition's language, unless the document names a
+language of its own that names the built-in resource types otherwise ("Figure 3.1" on the
+English page of a document whose `config.locale` is `ar-MA`): then it is the document's. Some things cannot travel:
+a print master handed only to `renderToPdf` stays behind, and an interactive recipe gives the
+Sandbox its document without its controls. The run lists each of these as a `sandbox` note. Files in the
 bundle carry a fixed date, so the same input always gives the same bytes. A bundle that
 cannot be written (a resource whose file the pen never registered) fails the edition.
 
@@ -832,9 +837,10 @@ count, its layout (every block, line and running head with its place on the page
 counted from the document's first) and its warnings. Any difference fails the edition and
 names the first line that differs, so what Open in Sandbox shows is what the recipe page
 shows. The failure also names its cause when laying the chapter out once more finds it:
-with the build's own `continuation`, which a bundle does not carry (a chapter number that
-restarts, a first page that changes side under mirrored margins, a blank page added before
-a spread), or with the configuration as the pen wrote it, and then the top-level keys the
+with the build's own `continuation`, which a bundle written by an engine without `start`
+does not carry (a chapter number that restarts, a first page that changes side under
+mirrored margins, a blank page added before a spread), or with the configuration as the pen
+wrote it, and then the top-level keys the
 bundle stores otherwise (a value `stripConfigDefaults` drops where it is not a default, or
 `resourceTypes` in the bundle's language instead of the document's). Neither comes from the
 pen's own code: report the failure, and never edit a bundle by hand.
