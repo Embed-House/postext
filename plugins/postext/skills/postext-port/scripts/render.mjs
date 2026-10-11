@@ -302,6 +302,7 @@ if (typeof bundleApi?.migrateConfig === 'function') {
     [(c) => `${c.bodyText?.avoidWidows}|${c.bodyText?.avoidOrphans}`, 'widow and orphan rules of a character grid'],
     [(c) => c.cjk?.warichu?.minChars, 'breaks that leave one character of a two-row note alone'],
     [(c) => c.cjk?.latinSpacingEdge, 'Han–Latin space next to letters and digits only'],
+    [(c) => c.crossRefs?.breakLabels, 'reference labels set as one word'],
   ].filter(([of]) => of(read) !== of(config)).map(([, what]) => what);
   if (kept.length) {
     const v = manifest.configVersion;
