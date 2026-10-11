@@ -247,24 +247,30 @@ def _placement(position: str | None, span: str | None, **more) -> dict | None:
     return p or None
 
 
-def _picture_marks(r: dict, safe_area: dict | None, anchors: list | None, avoid: list | None) -> None:
-    """Safe area, comic speaker anchors and avoid zones (fractions of the picture)."""
+def _picture_marks(r: dict, safe_area: dict | None, anchors: list | None, avoid: list | None,
+                   faces: list | None = None) -> None:
+    """Safe area, comic speaker anchors, avoid zones and the faces of people
+    who do not speak (fractions of the picture)."""
     if safe_area:
         r["safeArea"] = safe_area
     if anchors:
         r["anchors"] = anchors
     if avoid:
         r["avoid"] = avoid
+    if faces:
+        r["faces"] = faces
 
 
 def bitmap(project: Path | str, id_: str, file: str, caption: str = "", *, type_id: str = "figure",
            alt: str | None = None, note: str | None = None, position: str | None = None,
            span: str | None = None, safe_area: dict | None = None, anchors: list | None = None,
-           avoid: list | None = None, resolution: float | None = None, **placement) -> dict:
+           avoid: list | None = None, faces: list | None = None, resolution: float | None = None,
+           **placement) -> dict:
     """A bitmap resource with its pixel size (Node renderers cannot decode it).
     `resolution` (postext >= 1.24) is its ppi at its natural print size, on a
-    page of any dpi. A comic panel picture takes `safe_area`, `anchors` and
-    `avoid` (references/comics.md §9)."""
+    page of any dpi. A comic panel picture takes `safe_area`, `anchors`,
+    `avoid` and `faces` (the faces of people who do not speak, postext >= 1.28;
+    references/comics.md §9)."""
     size = image_size(Path(project) / file)
     r = {"id": id_, "typeId": type_id, "kind": "bitmap", "file": file, "caption": caption,
          "altText": alt if alt is not None else re.sub(r"[*_^~]", "", caption)}
@@ -272,7 +278,7 @@ def bitmap(project: Path | str, id_: str, file: str, caption: str = "", *, type_
         r["width"], r["height"] = size
     if resolution:
         r["resolution"] = resolution
-    _picture_marks(r, safe_area, anchors, avoid)
+    _picture_marks(r, safe_area, anchors, avoid, faces)
     if note:
         r["note"] = note
     pl = _placement(position, span, **placement)
@@ -284,14 +290,14 @@ def bitmap(project: Path | str, id_: str, file: str, caption: str = "", *, type_
 def svg(project: Path | str, id_: str, file: str, caption: str = "", *, type_id: str = "figure",
         pdf_file: str | None = None, alt: str | None = None, note: str | None = None,
         position: str | None = None, span: str | None = None, safe_area: dict | None = None,
-        anchors: list | None = None, avoid: list | None = None, inline_fonts: bool = True,
-        **placement) -> dict:
+        anchors: list | None = None, avoid: list | None = None, faces: list | None = None,
+        inline_fonts: bool = True, **placement) -> dict:
     size = svg_size(Path(project) / file)
     r = {"id": id_, "typeId": type_id, "kind": "svg", "file": file, "caption": caption,
          "altText": alt if alt is not None else re.sub(r"[*_^~]", "", caption)}
     if size:
         r["width"], r["height"] = round(size[0], 2), round(size[1], 2)
-    _picture_marks(r, safe_area, anchors, avoid)
+    _picture_marks(r, safe_area, anchors, avoid, faces)
     if pdf_file:
         r["pdfFile"] = pdf_file
     if not inline_fonts:

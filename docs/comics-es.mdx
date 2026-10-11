@@ -354,6 +354,7 @@ const arrive: Resource = {
     { id: 'biscuit', x: 0.4, y: 0.68 },
   ],
   avoid: [{ x: 0.51, y: 0.09, width: 0.1, height: 0.43 }], // el faro
+  faces: [{ x: 0.7, y: 0.5, width: 0.06, height: 0.1 }], // un caminante en el sendero, que no dice nada
 };
 ```
 
@@ -362,10 +363,11 @@ const arrive: Resource = {
 - `head` es adonde apuntan las burbujas de un bocadillo de pensamiento. Sin él: la boca.
 - `face` es un rectángulo que ningún bocadillo tapa. Un ancla sin él recibe una caja de protección de unos cuantos em encima y alrededor de la boca, para que los bocadillos se aparten también de una cara que nadie ha contorneado.
 - `avoid` (en el recurso) enumera otros rectángulos que ningún bocadillo tapa: una mano, un objeto clave, un letrero. En caso de apuro un bocadillo puede tapar una zona libre, nunca una cara.
+- `faces` (en el recurso) enumera, como rectángulos, las caras de quienes no hablan: alguien que pasa, la gente que hay detrás de los personajes. Cada una tiene la regla de la cara de un personaje. Ningún bocadillo la tapa en ningún recurso de última hora, y el que aun así la tapa (uno fijado) se avisa como `comicBalloonOverflow`; el pelo de encima queda protegido; ningún rabillo se dibuja sobre ella ni sobre la figura que tiene debajo si hay otro camino. Un ancla desde la que no habla ninguna línea también protege su cara, pero sigue siendo un personaje para todo lo demás (su boca es un punto que ningún bocadillo toca, y se comprueba contra la zona segura): `faces` es la marca para quien solo está en la escena.
 
 Como las anclas son fracciones de la imagen, se mueven con el recorte: el motor lleva cada una a la página a través del recorte y el reflejo de la viñeta, así que ni un arrastre de separador, ni otra división, ni una traducción apartan nunca un rabillo de su personaje. Un ancla que el recorte deja fuera de la viñeta hace que el rabillo apunte hacia ella fuera de la viñeta. La zona segura protege las anclas de eso: un ancla fuera de ella se avisa como `comicAnchorOutsideSafeArea`, un consejo de autoría, porque un recorte puede dejarla fuera. Una clave de personaje que no marca ninguna imagen de la página y que no nombra ninguna entrada del reparto se avisa como `comicUnknownSpeaker`, que suele atrapar un id mal escrito; las páginas cuyas imágenes no marcan ningún ancla no avisan de nada, así que un cómic se puede rotular sin anclas.
 
-Las anclas y las zonas libres pertenecen a la imagen y son las mismas en todos los idiomas. En el Sandbox se marcan en el editor de imágenes del [panel de Recursos](/es/docs/sandbox#panel-de-recursos): el campo **Zona segura y rotulación** abre un diálogo con tres modos, Zona segura, Personajes y Zonas libres. Un clic en la imagen añade ahí un personaje; su boca, su cabeza y su cara se arrastran a su sitio y su id se escribe al lado; un arrastre sobre una parte vacía de la imagen dibuja una zona libre. Cada marca se puede mover con las flechas (con Mayús, a pasos más grandes) y quitar con Suprimir, y el diálogo tiene su propio deshacer.
+Las anclas y las zonas libres pertenecen a la imagen y son las mismas en todos los idiomas. En el Sandbox se marcan en el editor de imágenes del [panel de Recursos](/es/docs/sandbox#panel-de-recursos): el campo **Zona segura y rotulación** abre un diálogo con tres modos, Zona segura, Personajes y Zonas libres. Un clic en la imagen añade ahí un personaje; su boca, su cabeza y su cara se arrastran a su sitio y su id se escribe al lado; un arrastre sobre una parte vacía de la imagen dibuja una zona libre. El modo Zonas libres marca también las caras de quienes no hablan: un botón añade una, y un interruptor en cada fila convierte una zona en una cara así, o al revés. Cada marca se puede mover con las flechas (con Mayús, a pasos más grandes) y quitar con Suprimir, y el diálogo tiene su propio deshacer.
 
 ## Tiras
 

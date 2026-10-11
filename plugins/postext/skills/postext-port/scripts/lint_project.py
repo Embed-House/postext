@@ -1340,16 +1340,17 @@ def _rect_problem(r) -> str | None:
 
 
 def check_picture_marks(r: dict, where: str, rep: Report) -> None:
-    """A picture's safe area, speaker anchors and avoid zones (comics.md §9)."""
+    """A picture's safe area, speaker anchors, avoid zones and bystander
+    faces (comics.md §9)."""
     sa = r.get("safeArea")
     if sa is not None:
         p = _rect_problem(sa)
         if p:
             rep.error(where, f"safeArea {p}")
             sa = None
-    anchors, avoid = r.get("anchors"), r.get("avoid")
-    if (anchors or avoid) and r.get("kind") == "table":
-        rep.warn(where, "anchors/avoid are read only on bitmap and SVG pictures placed in comic panels")
+    anchors, avoid, faces = r.get("anchors"), r.get("avoid"), r.get("faces")
+    if (anchors or avoid or faces) and r.get("kind") == "table":
+        rep.warn(where, "anchors/avoid/faces are read only on bitmap and SVG pictures placed in comic panels")
     if anchors is not None:
         if not isinstance(anchors, list):
             rep.error(where, "anchors must be a list of {id, x, y, head?, face?}")
@@ -1389,6 +1390,16 @@ def check_picture_marks(r: dict, where: str, rep: Report) -> None:
                 p = _rect_problem(z)
                 if p:
                     rep.error(f"{where} avoid[{k}]", p)
+    # The faces of people who do not speak (postext >= 1.28): rectangles
+    # like the avoid zones, never covered.
+    if faces is not None:
+        if not isinstance(faces, list):
+            rep.error(where, "faces must be a list of {x, y, width, height} (the faces of people who do not speak)")
+        else:
+            for k, z in enumerate(faces):
+                p = _rect_problem(z)
+                if p:
+                    rep.error(f"{where} faces[{k}]", p)
 
 
 def check_comics_config(cfg: dict, where: str, rep: Report) -> None:

@@ -650,6 +650,18 @@ describe.skipIf(!python)("postext-port lint on comics", () => {
     expect(lint(comicProject(letters, { en: page("up") })).out).toContain("tail='up' is ignored");
   });
 
+  it("reads the faces of people who do not speak, and checks their rectangles (#726)", () => {
+    const picture = (faces: unknown) => [
+      { id: "p1", typeId: "figure", kind: "bitmap", anchors: [{ id: "ana", x: 0.3, y: 0.5 }, { id: "ben", x: 0.7, y: 0.5 }], faces },
+      { id: "p2", typeId: "figure", kind: "bitmap" }, { id: "p3", typeId: "figure", kind: "bitmap" },
+    ];
+    const good = lint(comicProject(letters, { en: COMIC }, picture([{ x: 0.5, y: 0.1, width: 0.1, height: 0.2 }])));
+    expect(good.out).not.toMatch(/faces/);
+    const bad = lint(comicProject(letters, { en: COMIC }, picture([{ x: 0.5, y: 0.1, width: 0, height: 0.2 }]))).out;
+    expect(bad).toMatch(/faces\[0\]/);
+    expect(lint(comicProject(letters, { en: COMIC }, picture({ x: 0.5, y: 0.1, width: 0.1, height: 0.2 }))).out).toContain("faces must be a list");
+  });
+
   it("knows strips and their attributes, and flags an unclosed block", () => {
     const strip = [':::strip{span=page placement=top aspect=4/1 height=40mm}', "::panel{art=p1}", "ana: Morning!", "::panel{art=p2}", ":::", ""].join("\n");
     expect(lint(comicProject(letters, { en: strip })).out).not.toMatch(/strip attribute|not a Postext/);

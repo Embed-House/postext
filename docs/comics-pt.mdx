@@ -354,6 +354,7 @@ const arrive: Resource = {
     { id: 'biscuit', x: 0.4, y: 0.68 },
   ],
   avoid: [{ x: 0.51, y: 0.09, width: 0.1, height: 0.43 }], // o farol
+  faces: [{ x: 0.7, y: 0.5, width: 0.06, height: 0.1 }], // um caminhante na trilha, que não diz nada
 };
 ```
 
@@ -362,10 +363,11 @@ const arrive: Resource = {
 - `head` é para onde apontam as bolhas de um balão de pensamento. Sem ele: a boca.
 - `face` é um retângulo que nenhum balão cobre. Uma âncora sem ele recebe uma caixa de proteção de alguns ems acima e em volta da boca, para que os balões continuem longe de um rosto que não foi delimitado.
 - `avoid` (no recurso) lista outros retângulos que nenhum balão cobre: uma mão, um objeto-chave, uma placa. Sob pressão, um balão pode cobrir uma zona a evitar, nunca um rosto.
+- `faces` (no recurso) lista, como retângulos, os rostos de quem não fala: alguém que passa, as pessoas atrás dos personagens. Cada um tem a regra do rosto de um personagem. Nenhum balão o cobre em nenhum último recurso, e o que mesmo assim o cobre (um balão fixado) é avisado como `comicBalloonOverflow`; o cabelo acima dele fica protegido; nenhum rabicho é desenhado sobre ele nem sobre a figura que está embaixo quando há outro caminho. Uma âncora da qual nenhuma linha fala também protege o seu rosto, mas continua sendo um personagem para todo o resto (a boca é um ponto em que nenhum balão toca, e ela é conferida com a área segura): `faces` é a marca para quem só está na cena.
 
 Como as âncoras são frações do desenho, elas acompanham o recorte: o motor leva cada uma, através do recorte e do espelhamento do quadro, até a página, de modo que arrastar um divisor, mudar a divisão ou traduzir nunca tira um rabicho do seu personagem. Uma âncora que o recorte deixa fora do quadro faz o rabicho apontar para fora do quadro, na direção dela. A área segura protege as âncoras disso: uma âncora fora dela é informada como `comicAnchorOutsideSafeArea`, uma dica de autoria, já que um recorte pode cortá-la. Uma chave de personagem que nenhum desenho da página marca e nenhuma entrada do elenco nomeia é informada como `comicUnknownSpeaker`, o que costuma pegar um id digitado errado; páginas cujos desenhos não marcam nenhuma âncora não informam nada, então uma HQ pode ser letreirada sem âncoras.
 
-As âncoras e as zonas a evitar pertencem ao desenho e são as mesmas em todos os idiomas. No Sandbox, elas são marcadas no editor de imagens do [painel Recursos](/pt/docs/sandbox#painel-recursos): o campo **Área segura e letreiramento** abre um diálogo com três modos, Área segura, Personagens e Zonas a evitar. Um clique no desenho adiciona ali um personagem; a boca, a cabeça e o rosto são arrastados até o lugar certo e o id é digitado ao lado; arrastar sobre uma parte vazia do desenho traça uma zona a evitar. Cada marca pode ser movida com as setas do teclado (Shift para passos maiores) e excluída com Delete, e o diálogo tem o seu próprio desfazer.
+As âncoras e as zonas a evitar pertencem ao desenho e são as mesmas em todos os idiomas. No Sandbox, elas são marcadas no editor de imagens do [painel Recursos](/pt/docs/sandbox#painel-recursos): o campo **Área segura e letreiramento** abre um diálogo com três modos, Área segura, Personagens e Zonas a evitar. Um clique no desenho adiciona ali um personagem; a boca, a cabeça e o rosto são arrastados até o lugar certo e o id é digitado ao lado; arrastar sobre uma parte vazia do desenho traça uma zona a evitar. O modo Zonas a evitar também marca os rostos de quem não fala: um botão adiciona um, e uma chave em cada linha transforma uma zona num rosto assim, ou o contrário. Cada marca pode ser movida com as setas do teclado (Shift para passos maiores) e excluída com Delete, e o diálogo tem o seu próprio desfazer.
 
 ## Tiras
 

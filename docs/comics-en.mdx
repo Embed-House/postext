@@ -354,6 +354,7 @@ const arrive: Resource = {
     { id: 'biscuit', x: 0.4, y: 0.68 },
   ],
   avoid: [{ x: 0.51, y: 0.09, width: 0.1, height: 0.43 }], // the lighthouse
+  faces: [{ x: 0.7, y: 0.5, width: 0.06, height: 0.1 }], // a walker on the path, who says nothing
 };
 ```
 
@@ -362,10 +363,11 @@ const arrive: Resource = {
 - `head` is where a thought balloon's bubbles point. Unset: the mouth.
 - `face` is a rectangle no balloon covers. An anchor without one gets a guard box of a few ems above and around its mouth, so balloons still keep off a face that was not outlined.
 - `avoid` (on the resource) lists other rectangles no balloon covers: a hand, a key object, a sign. Under pressure a balloon may cover an avoid zone, never a face.
+- `faces` (on the resource) lists the faces of people who do not speak, as rectangles: a passer-by, the crowd behind the speakers. Each has the rule of a speaker's face. No balloon covers it at any fallback, and one that still does (a pinned one) is reported as `comicBalloonOverflow`; the hair above it is guarded; no tail is drawn across it or across the figure under it when another route exists. An anchor no line speaks from protects its face too, but it stays a speaker for everything else (its mouth is a point no balloon touches, and it is checked against the safe area): `faces` is the mark for a bystander.
 
 Because anchors are fractions of the picture, they move with the crop: the engine maps each one through the panel's crop and mirror onto the page, so a splitter drag, another split or a translation never takes a tail off its speaker. An anchor that the crop leaves outside the panel makes the tail point off the panel toward it. The safe area protects anchors from that: an anchor outside it is reported as `comicAnchorOutsideSafeArea`, an authoring hint, since a crop may cut it off. A speaker key that no picture of the page marks and no cast entry names is reported as `comicUnknownSpeaker`, which usually catches a misspelt id; pages whose pictures mark no anchors at all report nothing, so a comic can be lettered without anchors.
 
-Anchors and avoid zones belong to the picture and are the same in every language. In the Sandbox they are marked in the picture editor of the [Resources panel](/en/docs/sandbox#resources-panel): the **Safe area & lettering** field opens a dialog with three modes, Safe area, Speakers and Avoid zones. A click on the picture adds a speaker there; its mouth, head and face are dragged into place and its id typed beside it; a drag on an empty part of the picture draws an avoid zone. Every mark can be moved with the arrow keys (Shift for bigger steps) and removed with Delete, and the dialog keeps its own undo.
+Anchors and avoid zones belong to the picture and are the same in every language. In the Sandbox they are marked in the picture editor of the [Resources panel](/en/docs/sandbox#resources-panel): the **Safe area & lettering** field opens a dialog with three modes, Safe area, Speakers and Avoid zones. A click on the picture adds a speaker there; its mouth, head and face are dragged into place and its id typed beside it; a drag on an empty part of the picture draws an avoid zone. The Avoid zones mode also marks the faces of people who do not speak: a button adds one, and a switch on each row turns a zone into such a face or back. Every mark can be moved with the arrow keys (Shift for bigger steps) and removed with Delete, and the dialog keeps its own undo.
 
 ## Strips
 

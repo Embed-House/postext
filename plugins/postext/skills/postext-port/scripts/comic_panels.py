@@ -40,9 +40,10 @@ Pages on black or coloured paper: `--paper '#000000'`.
 `grid` overlays a labelled 10 % grid (5 % minor lines) on pictures, so mouth
 points, faces, avoid zones and safe areas can be read as fractions of the
 picture. `check` draws the safe area (green), mouths (red dots, labelled),
-heads (blue), faces (red boxes) and avoid zones (orange) of every resource
-that has them, from a preset.json or an art manifest (a list of
-`{file, safeArea, anchors, avoid}`). `contact` tiles images into one sheet.
+heads (blue), faces (red boxes), avoid zones (orange) and the faces of
+people who do not speak (violet boxes) of every resource that has them,
+from a preset.json or an art manifest (a list of
+`{file, safeArea, anchors, avoid, faces}`). `contact` tiles images into one sheet.
 
 Needs Pillow and NumPy.
 """
@@ -572,7 +573,7 @@ def cmd_check(a) -> None:
     fn = font(22)
     count = 0
     for e in entries:
-        if not (e.get("safeArea") or e.get("anchors") or e.get("avoid")) or not e.get("file"):
+        if not (e.get("safeArea") or e.get("anchors") or e.get("avoid") or e.get("faces")) or not e.get("file"):
             continue
         path = os.path.join(root, e["file"])
         if not os.path.exists(path):
@@ -585,6 +586,8 @@ def cmd_check(a) -> None:
             _rect(d, e["safeArea"], w, h, (0, 255, 0), 4)
         for r in e.get("avoid", []):
             _rect(d, r, w, h, (255, 140, 0), 3)
+        for r in e.get("faces", []):
+            _rect(d, r, w, h, (167, 139, 250), 3)
         for an in e.get("anchors", []):
             x, y = an["x"] * w, an["y"] * h
             d.ellipse((x - 9, y - 9, x + 9, y + 9), fill=(255, 0, 0), outline="white", width=2)
@@ -655,8 +658,8 @@ def main() -> None:
     g.add_argument("pictures", nargs="+")
     g.add_argument("--out", required=True)
     g.set_defaults(func=cmd_grid)
-    c = sub.add_parser("check", help="draw safe areas, anchors, faces and avoid zones over the pictures")
-    c.add_argument("manifest", help="preset.json, or a JSON list of {file, safeArea, anchors, avoid}")
+    c = sub.add_parser("check", help="draw safe areas, anchors, faces, avoid zones and bystander faces over the pictures")
+    c.add_argument("manifest", help="preset.json, or a JSON list of {file, safeArea, anchors, avoid, faces}")
     c.add_argument("--out", required=True)
     c.add_argument("--root", help="folder the files are relative to (default: the manifest's)")
     c.set_defaults(func=cmd_check)
