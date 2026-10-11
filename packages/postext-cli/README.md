@@ -55,7 +55,7 @@ A book is any of:
 
 ### Fonts
 
-A family the book does not carry is looked up in the `--font-dir` folders, then among the faces compiled in (EB Garamond, Open Sans), then in the cache, then downloaded once from Google Fonts into `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows; `POSTEXT_CACHE_DIR` or `--cache-dir` moves it). `--offline` never downloads. A family found nowhere is set in EB Garamond, with a warning, so the layout and the PDF still agree.
+A family the book does not carry is looked up in the `--font-dir` folders, then among the faces compiled in (EB Garamond, Open Sans), then in the cache, then downloaded once from Google Fonts (from Fontsource when Google Fonts does not have it) into `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows; `POSTEXT_CACHE_DIR` or `--cache-dir` moves it). `--offline` never downloads. A weight or a slant a family does not ship is set in its nearest face as it is, in the page images as in the PDF. A family found nowhere is set in EB Garamond, with a warning, so the layout and the PDF still agree.
 
 ### Scripts and agents
 
