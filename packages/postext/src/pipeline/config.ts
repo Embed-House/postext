@@ -32,6 +32,7 @@ import {
   resolveCjkConfig,
   resolvePdfGenerationConfig,
   resolvePrintConfig,
+  resolveContrastConfig,
   resolveFolioConfig,
   resolveComicsConfig,
   comicReadingDirection,
@@ -179,6 +180,8 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     // Print production (PDF/X, profile, black, preflight): postext-pdf and
     // the preflight read it, layout does not.
     ...(config?.print ? { print: resolvePrintConfig(config.print) } : {}),
+    // The contrast check's settings: `contrastDocument` reads them.
+    ...(config?.contrast ? { contrast: resolveContrastConfig(config.contrast) } : {}),
     // Not used by layout either: the Folio 3D viewer reads it.
     ...(config?.folio ? { folio: resolveFolioConfig(config.folio, page.sizePreset) } : {}),
     // Line numbers (#621): only a config that sets the section carries

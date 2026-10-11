@@ -28,6 +28,7 @@ import type {
   ResolvedMathConfig,
   ResolvedPdfGenerationConfig,
   ResolvedPrintConfig,
+  ResolvedContrastConfig,
   ResolvedFolioConfig,
   ResolvedDesignSlot,
   ResolvedPartsConfig,
@@ -127,6 +128,10 @@ export interface ResolvedConfig {
   /** Print production (`PostextConfig.print`), resolved, when the config
    *  sets any. Layout ignores it; postext-pdf and the preflight read it. */
   print?: ResolvedPrintConfig;
+  /** The contrast check's settings (`PostextConfig.contrast`), resolved,
+   *  when the config sets any. Layout ignores them; `contrastDocument`
+   *  reads them. */
+  contrast?: ResolvedContrastConfig;
   /** The Folio 3D viewer settings (`PostextConfig.folio`), resolved, when
    *  the config sets any. Layout ignores them; `postext-folio` reads them. */
   folio?: ResolvedFolioConfig;

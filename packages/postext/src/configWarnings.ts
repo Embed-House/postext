@@ -44,6 +44,7 @@ import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/b
 import { parseFootnoteNumberFormat } from './defaults/footnotes';
 import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics';
 import { resolvePrintConfig } from './defaults/print';
+import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
 import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
@@ -141,6 +142,7 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
+  out.push(...collectContrastChoiceWarnings(config));
 /** The drop cap settings of a config (#623): each paragraph style's, each
  *  heading level's and each heading style's (and those of the HTML
  *  viewer's overrides), with their paths. */
@@ -320,6 +322,23 @@ function collectPrintChoiceWarnings(config: PostextConfig): ConfigWarning[] {
  *  over), `suggestion` the word it is closest to, when one is close. */
 function collectComicChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   const comics = config.comics as unknown;
+/** The contrast check's level and mode (#748): one written otherwise
+ *  reads as the default. */
+function collectContrastChoiceWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  const c = config.contrast;
+  if (!c) return out;
+  const level = c.level as unknown;
+  if (level !== undefined && !(CONTRAST_LEVELS as readonly unknown[]).includes(level)) {
+    out.push({ kind: 'unknownConfigValue', path: 'contrast.level', value: String(level), used: DEFAULT_CONTRAST_CONFIG.level });
+  }
+  const mode = c.mode as unknown;
+  if (mode !== undefined && !(CONTRAST_MODES as readonly unknown[]).includes(mode)) {
+    out.push({ kind: 'unknownConfigValue', path: 'contrast.mode', value: String(mode), used: DEFAULT_CONTRAST_CONFIG.mode });
+  }
+  return out;
+}
+
   if (!comics || typeof comics !== 'object' || Array.isArray(comics)) return [];
   const c = comics as ComicsConfig;
   const out: ConfigWarning[] = [];

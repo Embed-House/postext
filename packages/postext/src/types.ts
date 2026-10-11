@@ -5466,6 +5466,58 @@ export interface ResolvedPrintConfig {
   inkLimit: number;
   black: ResolvedPrintBlackConfig;
   preflight: ResolvedPrintPreflightConfig;
+/** The conformance level a contrast ratio is held to (WCAG 2): `'AA'`
+ *  asks 4.5:1 of text and 3:1 of large text, `'AAA'` 7:1 and 4.5:1. */
+export type ContrastLevel = 'AA' | 'AAA';
+
+/** Which rendition the contrast check reads: `'screen'` (the sRGB colours,
+ *  as the canvas, the HTML and an RGB PDF show them), `'print'` (the inks
+ *  on the paper of the output profile), `'both'`, or `'auto'`: the screen
+ *  always, and print as well for a book set up for print (a PDF/X
+ *  standard, a CMYK PDF, or crop marks). */
+export type ContrastMode = 'auto' | 'screen' | 'print' | 'both';
+
+/** Reversed text (light text knocked out of an inked ground) fills in on
+ *  press when it is small or its strokes are thin, whatever its contrast
+ *  ratio: the sizes under which the print check reports it. */
+export interface ContrastReversedTextConfig {
+  /** Report reversed text. Defaults to true. */
+  enabled?: boolean;
+  /** Reversed text smaller than this is reported. Defaults to 8 pt. */
+  minSize?: Dimension;
+  /** The same for italics and light weights, whose strokes are thinner.
+   *  Defaults to 12 pt. */
+  minFineSize?: Dimension;
+  /** A weight at or under this counts as light. Defaults to 300. */
+  lightWeight?: number;
+}
+
+export interface ResolvedContrastReversedTextConfig {
+  enabled: boolean;
+  minSize: Dimension;
+  minFineSize: Dimension;
+  lightWeight: number;
+}
+
+/** The contrast check (`contrastDocument`): the text of the laid-out pages
+ *  against the ground it is set on. Layout ignores it. */
+export interface ContrastConfig {
+  /** Run the check. Defaults to true. */
+  enabled?: boolean;
+  /** Defaults to `'AA'`. */
+  level?: ContrastLevel;
+  /** Defaults to `'auto'`. */
+  mode?: ContrastMode;
+  reversedText?: ContrastReversedTextConfig;
+}
+
+export interface ResolvedContrastConfig {
+  enabled: boolean;
+  level: ContrastLevel;
+  mode: ContrastMode;
+  reversedText: ResolvedContrastReversedTextConfig;
+}
+
 }
 
 /** How postext-pdf writes the file. Layout ignores it; the VDT carries it
@@ -6945,3 +6997,6 @@ export interface PostextConfig {
    *  {@link locale}, else `bodyText.hyphenation.locale`, else English). */
   resourceTypes?: ResourceType[];
 }
+  /** The contrast check: level, rendition, reversed text. */
+  contrast?: ContrastConfig;
+

@@ -17,6 +17,7 @@ import { stripDebugDefaults } from './debug';
 import { stripHtmlViewerDefaults } from './htmlViewer';
 import { stripPdfGenerationDefaults } from './pdfGeneration';
 import { stripPrintDefaults } from './print';
+import { stripContrastDefaults } from './contrast';
 import { stripFolioDefaults } from './folio';
 import { stripHeaderFooterDefaults } from './headerFooter';
 import { stripPartsDefaults } from './parts';
@@ -52,6 +53,7 @@ export { DEFAULT_DEBUG_CONFIG, resolveDebugConfig, stripDebugDefaults } from './
 export { DEFAULT_HTML_VIEWER_CONFIG, resolveHtmlViewerConfig, stripHtmlViewerDefaults, mergeConfigOverrides, applyHtmlViewerOverrides } from './htmlViewer';
 export { DEFAULT_PDF_GENERATION_CONFIG, resolvePdfGenerationConfig, stripPdfGenerationDefaults } from './pdfGeneration';
 export { DEFAULT_PRINT_CONFIG, DEFAULT_PRINT_BLACK_CONFIG, DEFAULT_PRINT_PREFLIGHT_CONFIG, DEFAULT_RICH_BLACK, resolvePrintConfig, resolvePrintBlackConfig, resolvePrintPreflightConfig, stripPrintDefaults, profileInkLimit } from './print';
+export { DEFAULT_CONTRAST_CONFIG, DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG, CONTRAST_LEVELS, CONTRAST_MODES, resolveContrastConfig, resolveContrastReversedTextConfig, stripContrastDefaults } from './contrast';
 export { FOLIO_PAPER_STOCKS, FOLIO_MAX_TILT, DEFAULT_FOLIO_CONFIG, isNewspaperSizePreset, folioDefaultsFor, folioForTrim, resolveFolioConfig, stripFolioDefaults, wrapFolioYaw } from './folio';
 export type { FolioPaperStock } from './folio';
 export { DEFAULT_HEADER_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_FOOTER_SLOT, DEFAULT_TEXT_ELEMENT, DEFAULT_RULE_ELEMENT, resolveHeaderFooterConfig, stripHeaderFooterDefaults } from './headerFooter';
@@ -205,6 +207,12 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.print = strippedPrint;
   } else {
     delete result.print;
+  }
+  const strippedContrast = stripContrastDefaults(config.contrast);
+  if (strippedContrast) {
+    result.contrast = strippedContrast;
+  } else {
+    delete result.contrast;
   }
   const strippedFolio = stripFolioDefaults(config.folio, config.page?.sizePreset);
   if (strippedFolio) {

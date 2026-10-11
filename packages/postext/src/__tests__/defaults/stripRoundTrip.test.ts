@@ -8,6 +8,7 @@ import {
   resolveLineNumbersConfig,
   resolvePdfGenerationConfig,
   resolvePrintConfig,
+  resolveContrastConfig,
   stripConfigDefaults,
 } from '../../defaults';
 import { resolveAllConfig } from '../../pipeline/config';
@@ -80,6 +81,7 @@ function read(config: PostextConfig): string {
     ...resolved,
     pdfGeneration: resolvePdfGenerationConfig(config.pdfGeneration),
     print: resolvePrintConfig(config.print),
+    contrast: resolveContrastConfig(config.contrast),
     folio: resolveFolioConfig(config.folio, resolved.page.sizePreset),
     lineNumbers: resolveLineNumbersConfig(config.lineNumbers, resolved.bodyText),
     codeStyle: resolveCodeStyleConfig(config.codeStyle, resolved.bodyText),
@@ -273,6 +275,7 @@ const RICH: PostextConfig = {
   cjk: { compression: 'none' },
   pdfGeneration: { colorSpace: 'cmyk' },
   print: { black: { text: 'k' } },
+  contrast: { level: 'AAA' },
   folio: { cover: { stiffness: 0.9 } },
   debug: { pageOutline: { enabled: true } },
   htmlViewer: { fitFiguresToPage: false },
