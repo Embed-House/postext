@@ -5123,12 +5123,6 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resetSectionConfirm',
     ],
   },
-  'debug': {
-    sources: ['color', 'dimension'],
-    literals: [],
-    keys: [
-      'baselineGrid',
-      'baselineGridColor',
   'contrast': {
     sources: ['dimension'],
     literals: [],
@@ -5157,6 +5151,12 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'resetSectionConfirm',
     ],
   },
+  'debug': {
+    sources: ['color', 'dimension'],
+    literals: [],
+    keys: [
+      'baselineGrid',
+      'baselineGridColor',
       'baselineGridColorTooltip',
       'baselineGridLineWidth',
       'baselineGridLineWidthTooltip',
