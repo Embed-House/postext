@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { inflateSync } from 'node:zlib';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
@@ -94,6 +97,8 @@ function types(pdf: PDFDocument, ref: PDFRef, out: Array<{ type: string; kids: s
   return out;
 }
 
+const hasVerapdf = process.env.VERAPDF === '1' && spawnSync('verapdf', ['--version'], { encoding: 'utf8' }).status === 0;
+
 let doc: VDTDocument;
 let column: VDTColumn;
 let side: VDTColumn;
@@ -147,4 +152,13 @@ describe('a side caption of a resource set in the text, in the PDF (#729)', () =
     expect(flow[at - 1]).toBe('P');
     expect(flow[at + 1]).toBe('P');
   });
+
+  it.skipIf(!hasVerapdf)('passes veraPDF (PDF/UA-1)', async () => {
+    const bytes = await renderToPdf(doc, { fontProvider, outlines: false });
+    const file = path.join(os.tmpdir(), `postext-inline-caption-side-ua-${process.pid}.pdf`);
+    fs.writeFileSync(file, bytes);
+    const out = spawnSync('verapdf', ['--flavour', 'ua1', '--format', 'text', file], { encoding: 'utf8' });
+    fs.unlinkSync(file);
+    expect(out.stdout).toMatch(/^PASS /m);
+  }, 120_000);
 });
