@@ -1221,6 +1221,10 @@ export interface SandboxLabels {
   headingsKeepWithNextSplitFill: string;
   headingsSnapToGrid: string;
   headingsSnapToGridTooltip: string;
+  headingsColumnHeadSpace: string;
+  headingsColumnHeadSpaceTooltip: string;
+  headingsColumnHeadSpaceNone: string;
+  headingsColumnHeadSpaceRemainder: string;
   headingsInlineMarks: string;
   headingsInlineMarksTooltip: string;
   headingFontWeight: string;

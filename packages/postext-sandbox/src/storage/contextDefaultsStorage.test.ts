@@ -114,6 +114,15 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(map.get('postext-sandbox-config')).toBe('{}');
   });
 
+  it('keeps "Heading that opens a column" set close to its text (#706)', () => {
+    const map = installStorage();
+    const close: PostextConfig = { headings: { columnHeadSpace: 'remainder' } };
+    saveConfig(close);
+    expect(loadConfig()).toEqual(close);
+    saveConfig({ headings: { columnHeadSpace: 'none' } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('keeps "Under a figure across columns" set to as under any figure (#708)', () => {
     const map = installStorage();
     const always: PostextConfig = { headings: { balancing: { stretchAfterWideFloats: 'always' } } };

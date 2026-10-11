@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { resolveHeadingsConfig, balancingOnByDefault, DEFAULT_HEADINGS_CONFIG, DEFAULT_COLUMN_BALANCING, dimensionsEqual, colorsEqual } from 'postext';
-import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats } from 'postext';
+import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, ColumnHeadSpace, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats } from 'postext';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -138,6 +138,10 @@ export const HeadingsSection = memo(function HeadingsSection() {
   const isKeepWithNextDefault = headings.keepWithNext === D.keepWithNext;
   const isKeepWithNextSplitDefault = headings.keepWithNextSplit === D.keepWithNextSplit;
   const isSnapToGridDefault = headings.snapToGrid === D.snapToGrid;
+  const isColumnHeadSpaceDefault = headings.columnHeadSpace === D.columnHeadSpace;
+  /** A heading of some level snaps to the grid (the levels inherit the
+   *  document's switch): only then does the column-head setting act. */
+  const someHeadingSnaps = headings.snapToGrid || headings.levels.some((l) => l.snapToGrid);
   const isInlineMarksDefault = headings.inlineMarks === D.inlineMarks;
   const isBalEnabledDefault = balancingOn === balancingDefault;
   const isBalGridLinesDefault = (headings.balancing.gridLines ?? 'allow') === 'allow';
@@ -312,6 +316,21 @@ export const HeadingsSection = memo(function HeadingsSection() {
         isDefault={isSnapToGridDefault}
         onReset={() => resetField('snapToGrid')}
       />
+
+      {someHeadingSnaps && (
+        <SelectInput
+          label={labels.headingsColumnHeadSpace}
+          value={headings.columnHeadSpace}
+          options={[
+            { value: 'none', label: labels.headingsColumnHeadSpaceNone },
+            { value: 'remainder', label: labels.headingsColumnHeadSpaceRemainder },
+          ]}
+          onChange={(value) => updateHeadings({ columnHeadSpace: value as ColumnHeadSpace })}
+          tooltip={labels.headingsColumnHeadSpaceTooltip}
+          isDefault={isColumnHeadSpaceDefault}
+          onReset={() => resetField('columnHeadSpace')}
+        />
+      )}
 
       <ToggleSwitch
         label={labels.headingsInlineMarks}
