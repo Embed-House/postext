@@ -6,7 +6,8 @@ import { useSandboxSelector } from '../context/SandboxContext';
 import { HtmlPreview, type HtmlPreviewHandle } from './HtmlPreview';
 import { HtmlToolbar } from './HtmlToolbar';
 import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { usePageHashSync, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
+import { useViewerControls } from './viewerControls';
+import { usePageHashSync, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import {
   loadHtmlFontScale,
   saveHtmlFontScale,
@@ -94,9 +95,34 @@ export function HtmlViewport() {
   const handlePageCountChange = useCallback((count: number, firstPage: number, pageNumbers: readonly number[], book?: BookPageMap) => {
     setLayout((l) => ({ pageCount: count, firstPage, pageNumbers, version: l.version + 1, ...(book ? { book } : {}) }));
   }, []);
-  const handleCurrentPageChange = usePageHashSync(layout, handleJumpToPage);
+  const syncPageHash = usePageHashSync(layout, handleJumpToPage);
+  const [currentPage, setCurrentPage] = useState(0);
+  const handleCurrentPageChange = useCallback((pageIndex: number) => {
+    setCurrentPage(pageIndex);
+    syncPageHash(pageIndex);
+  }, [syncPageHash]);
 
   const shell = useFloatingToolbarShell('html', generating);
+
+  useViewerControls('html', {
+    status: () => ({
+      fontScale,
+      columns: effectiveColumnMode,
+      toolbarPinned: shell.pinned,
+      generating,
+      pageCount: layout.pageCount,
+      pageIndex: currentPage,
+      pageNumber: pageNumberAt(layout, currentPage),
+    }),
+    set: (settings) => {
+      if (settings.fontScale !== undefined) setFontScale(clampFontScale(settings.fontScale));
+      if (settings.columns !== undefined) setColumnMode(settings.columns);
+      if (settings.toolbarPinned !== undefined) shell.setPinned(settings.toolbarPinned);
+    },
+    regenerate: handleRegenerate,
+    goToPage: handleJumpToPage,
+    step: handleScrollColumn,
+  });
 
   return (
     <div className="relative h-full w-full" {...shell.containerProps}>

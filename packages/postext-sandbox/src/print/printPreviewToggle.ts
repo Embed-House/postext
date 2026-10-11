@@ -20,6 +20,11 @@ function read(): boolean {
   return value;
 }
 
+/** Whether the print preview is on, read outside React. */
+export function printPreviewOn(): boolean {
+  return read();
+}
+
 export function setPrintPreview(on: boolean): void {
   value = on;
   try {

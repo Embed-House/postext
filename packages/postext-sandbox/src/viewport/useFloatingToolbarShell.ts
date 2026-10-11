@@ -62,6 +62,7 @@ function useBusyLatch(value: boolean, graceMs: number): boolean {
 export interface FloatingToolbarShell {
   pinned: boolean;
   togglePin: () => void;
+  setPinned: (pinned: boolean) => void;
   hidden: boolean;
   containerProps: { onMouseLeave: () => void };
   // Props for an overlay div sitting on top of the content at the right edge.
@@ -175,6 +176,7 @@ export function useFloatingToolbarShell(
   return {
     pinned,
     togglePin,
+    setPinned,
     hidden,
     containerProps: { onMouseLeave: onLeave },
     hoverStripProps: {

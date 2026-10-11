@@ -7,6 +7,7 @@ import { useSandboxDispatch, useSandboxStateGetter } from '../context/SandboxCon
 import { FolioPreview, type FolioPreviewHandle } from './FolioPreview';
 import { FolioToolbar } from './FolioToolbar';
 import { useFloatingToolbarShell } from './useFloatingToolbarShell';
+import { useViewerControls } from './viewerControls';
 import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import { useCompactLayout } from '../hooks/useCompactLayout';
 import { useLargeTargets } from '../ui/largeTargets';
@@ -92,6 +93,26 @@ export function FolioViewport() {
   const pageCount = layout.pageCount;
   const first = spread[0] ?? 0;
   const shown = spread[spread.length - 1] ?? 0;
+
+  useViewerControls('folio', {
+    status: () => ({
+      interaction,
+      toolbarPinned: shell.pinned,
+      generating,
+      pageCount,
+      pageIndex: shown,
+      pageNumber: pageNumberAt(layout, shown),
+    }),
+    set: (settings) => {
+      if (settings.interaction !== undefined) handleSetInteraction(settings.interaction);
+      if (settings.toolbarPinned !== undefined) shell.setPinned(settings.toolbarPinned);
+    },
+    regenerate: handleRegenerate,
+    goToPage: (pageIndex) => previewRef.current?.turnToPage(pageIndex),
+    step: (delta) => (delta > 0 ? handleNext() : handlePrev()),
+    resetView: handleResetView,
+    saveView: handleSaveView,
+  });
   // The phone layout docks the bar along the bottom: the book is laid out
   // above it (button + padding + border, the bar's offset and a gap).
   const dockedBar = compact ? (large ? 44 : 32) + 2 * 4 + 2 + 2 * 8 : 0;

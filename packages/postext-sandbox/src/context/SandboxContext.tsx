@@ -728,7 +728,7 @@ export function sandboxReducer(state: SandboxState, action: SandboxAction): Sand
   }
 }
 
-interface SandboxStore {
+export interface SandboxStore {
   getSnapshot: () => SandboxState;
   subscribe: (cb: () => void) => () => void;
   dispatch: Dispatch<SandboxAction>;
@@ -799,6 +799,12 @@ export function useSandbox(): SandboxContextValue {
   const store = useStore();
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
   return { state, dispatch: store.dispatch, docRef: store.docRef };
+}
+
+/** The whole store, for code that reads and acts outside React's render
+ *  (the WebMCP tools, ../webmcp). Stable for the provider's lifetime. */
+export function useSandboxStore(): SandboxStore {
+  return useStore();
 }
 
 /** Stable dispatch reference — never triggers a re-render on state changes. */

@@ -170,7 +170,8 @@ function iconFor(kind: WarningPayload['kind']) {
   }
 }
 
-function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
+/** A warning's one-line title, as the panel shows it. */
+export function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightTitle(payload.check, labels);
@@ -427,7 +428,8 @@ function formatVariantList(
   return variants.map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''}`).join(', ');
 }
 
-function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
+/** What the panel says under a warning's title. */
+export function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightDetail(payload.check, labels);

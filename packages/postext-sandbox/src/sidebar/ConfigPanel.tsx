@@ -37,7 +37,7 @@ import { GROUP_ICONS } from './settings/groupIcons';
 import { DesignSummary } from './settings/DesignSummary';
 import { PageGroupPreview } from './settings/PageGroupPreview';
 import { PreviewHighlightProvider } from './settings/previewHighlight';
-import { OpenSettingsGroupContext } from '../context/settingsNavigation';
+import { OpenSettingsGroupContext, onSettingsGroupRequest } from '../context/settingsNavigation';
 import { SECTION_COMPONENTS } from './sections/components';
 
 /** The Design panel. Three views share one header and search box:
@@ -95,6 +95,9 @@ export function ConfigPanel() {
     saveSettingsGroup(id);
     bodyRef.current?.scrollTo({ top: 0 });
   }, []);
+
+  // A group asked for from outside the panel (the WebMCP tools).
+  useEffect(() => onSettingsGroupRequest(openGroupFromSection), [openGroupFromSection]);
 
   useEffect(() => {
     const target = pendingFocus.current;
