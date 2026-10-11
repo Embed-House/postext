@@ -1558,7 +1558,7 @@ SVGのリソースは、さらに`diagramStyle.singleInk`（既定値は`false`�
     <tr>
       <td><code>captionSide</code></td>
       <td><code>true</code> · <code>false</code></td>
-      <td>サイド段をフロート専用にした1段半レイアウト（<code>layout.sideColumnRole: 'floats'</code>）では、<code>captionSide</code>を指定した<code>"column"</code>フロートは本体を主段に置き、キャプション（と注記）をサイド段に、図の上端（下端のフロートでは下端）の高さにそろえて組みます。サイド段はその帯を明け渡します。そのような段のないページでは、キャプションは図の下に置かれます。</td>
+      <td>サイド段をフロート専用にした1段半レイアウト（<code>layout.sideColumnRole: 'floats'</code>）では、<code>captionSide</code>を指定した<code>"column"</code>フロートは本体を主段に置き、キャプション（と注記）をサイド段に、図の上端（下端のフロートでは下端）の高さにそろえて組みます。サイド段はその帯を明け渡します。そのような段のないページでは、キャプションは図の下に置かれます。postext 1.28からは、本文中に置いた（<code>"here"</code>）1段幅のリソースにも適用されます。キャプションと注記は本体の上端の高さでサイド段に組まれ、本文中のブロックは本体だけの高さになり、あとから置かれるサイド段の図や囲みはこのキャプションを避けます。リソースの横でサイド段がふさがっているときは、キャプションは本体の下に置かれます。次の段やページへ送られたリソースは、そこで改めて判断します。囲みの中、縦組みのページ、文字が回り込む図版には適用されません。<code>layout.inlineCaptionSide: false</code>にすると、サイド段のキャプションは段幅のフロートだけになります。</td>
     </tr>
     <tr>
       <td><code>span</code></td>

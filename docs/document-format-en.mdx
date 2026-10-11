@@ -1558,7 +1558,7 @@ Each resource has a **placement** that decides where its float lands, resolved p
     <tr>
       <td><code>captionSide</code></td>
       <td><code>true</code> · <code>false</code></td>
-      <td>In a one-and-a-half layout whose side column is reserved for floats (<code>layout.sideColumnRole: 'floats'</code>), a <code>"column"</code> float with <code>captionSide</code> keeps its body in the main column and sets its caption (and note) in the side column, level with the figure's top — or its bottom for a bottom float; the side column gives up that band. A page without such a column keeps the caption under the figure.</td>
+      <td>In a one-and-a-half layout whose side column is reserved for floats (<code>layout.sideColumnRole: 'floats'</code>), a <code>"column"</code> float with <code>captionSide</code> keeps its body in the main column and sets its caption (and note) in the side column, level with the figure's top — or its bottom for a bottom float; the side column gives up that band. A page without such a column keeps the caption under the figure. Since postext 1.28 a resource set in the text (<code>"here"</code>), one column wide, takes it too: its caption and note stand in the side column, level with the top of its body, the block in the text is as tall as the body alone, and the side figures and boxes set after it keep clear of the caption. Where the side column is taken beside the embed, the caption stays under the body; an embed that moves to the next column or page decides again there. Not inside a box, on a vertical page, or for a picture the text wraps round. <code>layout.inlineCaptionSide: false</code> keeps side captions to column floats.</td>
     </tr>
     <tr>
       <td><code>span</code></td>

@@ -454,6 +454,12 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // 等同�
       <td>框（<code>:::callout</code>）内的行内资源是否保留<code>inlineResourceGap</code>设定的间距，即框内文字的一行：资源上方保留，设为<code>'around'</code>时下方也保留，并取它与下一块自身空白中较大的一个。位于框（或拆分后框的某一段）顶部或底部时，由内边距把资源隔开，不再加间距。<code>false</code>把资源紧接在前面的文字之下，把后面的文字紧接在资源之下，与postext 1.4及以前相同。早期版本存储的配置，如果其中的章在框内嵌入了资源，读入时按<code>false</code>处理（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4或更早版本写出的文件包</a>）；在代码中，<code>postext/bundle</code>的<code>pinLegacyBoxResourceGap</code>起同样作用。</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>随文放置的资源（<code>position: 'here'</code>）是否像栏内浮动体那样采用<code>placement.captionSide</code>。在侧栏专供浮动体使用的一栏半版式中（<code>sideColumnRole: 'floats'</code>），侧栏在资源旁边空着时，题注和附注排在侧栏，与主体顶边齐平，正文栏中的块只有主体那么高。侧栏已被占用或页面没有侧栏时，题注仍排在主体下方。设为<code>false</code>时只有栏内浮动体把题注放到侧栏，与postext 1.27及更早版本相同。自postext 1.28起。早期版本保存的<code>'oneAndHalf'</code>版式配置，若章节嵌入了资源，按<code>false</code>读取；在代码中，<code>postext/bundle</code>的<code>pinLegacyInlineCaptionSide</code>作用相同。</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>

@@ -454,6 +454,12 @@ A propriedade `layout` controla como as colunas se dispõem dentro da área de c
       <td>Se um recurso inline dentro de um boxe (<code>:::callout</code>) mantém o vão definido por <code>inlineResourceGap</code>, uma linha do próprio texto do boxe: acima do recurso, e também abaixo com <code>'around'</code>, valendo o maior entre ele e o espaço próprio do bloco seguinte. No topo ou no pé do boxe, ou de um fragmento de um boxe dividido, o espaçamento interno já separa o recurso e nenhum vão é acrescentado. <code>false</code> coloca o recurso logo abaixo do texto anterior e o texto seguinte logo abaixo do recurso, como até o postext 1.4. As configurações guardadas por versões anteriores cujos capítulos incorporam um recurso dentro de um boxe são lidas com <code>false</code> (veja <a href="/pt/docs/configuration-programmatic-usage#pacotes-gravados-pelo-postext-14-ou-anterior">Pacotes escritos pelo postext 1.4 ou anterior</a>); em código, <code>pinLegacyBoxResourceGap</code> de <code>postext/bundle</code> faz o mesmo.</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Se um recurso posto no texto (<code>position: 'here'</code>) aceita <code>placement.captionSide</code> como um flutuante de coluna. Numa diagramação de coluna e meia com a coluna lateral reservada aos flutuantes (<code>sideColumnRole: 'floats'</code>), a legenda e a nota vão para a coluna lateral, na altura do topo do corpo, onde essa coluna está livre ao seu lado; o bloco na coluna de texto tem então a altura do corpo sozinho. Onde a coluna lateral está ocupada, e numa página sem ela, a legenda fica sob o corpo. <code>false</code> deixa as legendas laterais só para os flutuantes de coluna, como até o postext 1.27. Desde o postext 1.28. As configurações salvas por versões anteriores com uma diagramação <code>'oneAndHalf'</code> cujos capítulos incorporam um recurso são lidas com <code>false</code>; em código, <code>pinLegacyInlineCaptionSide</code> de <code>postext/bundle</code> faz o mesmo.</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>

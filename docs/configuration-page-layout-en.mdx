@@ -454,6 +454,12 @@ The `layout` property controls how columns are arranged within the content area.
       <td>Whether an inline resource inside a box (<code>:::callout</code>) keeps the gap <code>inlineResourceGap</code> sets, a line of the box's own text: above the resource, and below it too with <code>'around'</code>, the larger of it and the next block's own space applying. At the top or the foot of the box, or of a fragment of a split box, the padding sets the resource off instead and no gap is added. <code>false</code> sets the resource right under the text before it and the text after it right under the resource, as up to postext 1.4. Configurations stored by earlier versions whose chapters embed a resource inside a box are read with <code>false</code> (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>); in code, <code>pinLegacyBoxResourceGap</code> from <code>postext/bundle</code> does the same.</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Whether a resource set in the text (<code>position: 'here'</code>) takes <code>placement.captionSide</code> as a column float does. In a column-and-a-half layout whose side column is kept for floats (<code>sideColumnRole: 'floats'</code>) its caption and note go to the side column, level with the top of its body, where that column is free beside it; the block in the text column is then as tall as the body alone. Where the side column is taken, and on a page without one, the caption stays under the body. <code>false</code> keeps side captions to column floats, as up to postext 1.27. Since postext 1.28. Configurations stored by earlier versions with a <code>'oneAndHalf'</code> layout whose chapters embed a resource are read with <code>false</code>; in code, <code>pinLegacyInlineCaptionSide</code> from <code>postext/bundle</code> does the same.</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>

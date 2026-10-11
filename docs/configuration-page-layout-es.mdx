@@ -454,6 +454,12 @@ La propiedad `layout` controla cómo se organizan las columnas dentro del área 
       <td>Si un recurso en línea dentro de un recuadro (<code>:::callout</code>) conserva el hueco que fija <code>inlineResourceGap</code>, una línea del texto del propio recuadro: encima del recurso y, con <code>'around'</code>, también debajo, y se aplica el mayor de ese hueco y el espacio propio del bloque siguiente. Al principio o al final del recuadro, o de un fragmento de un recuadro partido, ya lo separa el relleno y no se añade hueco. Con <code>false</code> el recurso queda justo bajo el texto anterior y el texto siguiente justo bajo el recurso, como hasta postext 1.4. Las configuraciones guardadas por versiones anteriores cuyos capítulos insertan un recurso dentro de un recuadro se leen con <code>false</code> (ver <a href="/es/docs/configuration-programmatic-usage#paquetes-escritos-por-postext-14-o-anterior">Paquetes escritos por postext 1.4 o anterior</a>); en código, <code>pinLegacyBoxResourceGap</code>, de <code>postext/bundle</code>, hace lo mismo.</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Si un recurso puesto en el texto (<code>position: 'here'</code>) admite <code>placement.captionSide</code> como un flotante de columna. En una disposición de columna y media con la columna lateral reservada a los flotantes (<code>sideColumnRole: 'floats'</code>), su pie y su nota van a la columna lateral, a la altura del borde superior de su cuerpo, donde esa columna está libre a su lado; el bloque en la columna de texto mide entonces lo que el cuerpo solo. Donde la columna lateral está ocupada, y en una página sin ella, el pie queda bajo el cuerpo. <code>false</code> deja los pies al margen solo para los flotantes de columna, como hasta postext 1.27. Desde postext 1.28. Las configuraciones guardadas por versiones anteriores con una disposición <code>'oneAndHalf'</code> cuyos capítulos incrustan un recurso se leen con <code>false</code>; en código, <code>pinLegacyInlineCaptionSide</code> de <code>postext/bundle</code> hace lo mismo.</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>

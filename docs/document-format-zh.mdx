@@ -1560,7 +1560,7 @@ SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着�
     <tr>
       <td><code>captionSide</code></td>
       <td><code>true</code> · <code>false</code></td>
-      <td>在侧栏专供浮动体使用的一栏半版式中（<code>layout.sideColumnRole: 'floats'</code>），带<code>captionSide</code>的<code>"column"</code>浮动体把主体留在主栏，把题注（和附注）排在侧栏，与图的顶边齐平（底部浮动体则与底边齐平）；侧栏让出这一段横带。没有这种侧栏的页面，题注仍排在图的下方。</td>
+      <td>在侧栏专供浮动体使用的一栏半版式中（<code>layout.sideColumnRole: 'floats'</code>），带<code>captionSide</code>的<code>"column"</code>浮动体把主体留在主栏，把题注（和附注）排在侧栏，与图的顶边齐平（底部浮动体则与底边齐平）；侧栏让出这一段横带。没有这种侧栏的页面，题注仍排在图的下方。自postext 1.28起，随文放置（<code>"here"</code>）且占一栏的资源同样适用：题注和附注排在侧栏，与主体顶边齐平，正文中的块只有主体那么高，之后排入的侧栏图和方框会避开这段题注。侧栏在资源旁边已被占用时，题注仍排在主体下方；移到下一栏或下一页的资源在那里重新判断。方框内的资源、竖排页面和文字绕排的图片不适用。<code>layout.inlineCaptionSide: false</code>让侧栏题注只用于栏内浮动体。</td>
     </tr>
     <tr>
       <td><code>span</code></td>

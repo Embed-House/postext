@@ -454,6 +454,12 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td>囲み（<code>:::callout</code>）の中のインラインのリソースが、<code>inlineResourceGap</code>で決まる間隔（囲み自身のテキストの1行分）を取るかどうか。リソースの上に取り、<code>'around'</code>なら下にも取って、その間隔と次のブロック自身の空きの大きいほうが適用されます。囲みの上端や下端、あるいは分割された囲みの断片の上端や下端では、パディングがリソースを隔てるため間隔は加えません。<code>false</code>にすると、postext 1.4までと同じく、リソースを前のテキストの直下に、あとのテキストをリソースの直下に置きます。以前のバージョンで保存された設定のうち、章で囲みの中にリソースを埋め込んでいるものは<code>false</code>として読み込まれます（<a href="/ja/docs/configuration-programmatic-usage#postext-14以前で書き出したバンドル">postext 1.4以前で書き出されたバンドル</a>を参照）。コードでは、<code>postext/bundle</code>の<code>pinLegacyBoxResourceGap</code>で同じことができます。</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>本文中に置いたリソース（<code>position: 'here'</code>）が、段幅のフロートと同じく<code>placement.captionSide</code>に従うかどうか。サイド段をフロート専用にした1段半レイアウト（<code>sideColumnRole: 'floats'</code>）では、リソースの横でサイド段が空いていれば、キャプションと注記を本体の上端の高さでサイド段に組み、本文段のブロックは本体だけの高さになります。サイド段がふさがっているとき、またサイド段のないページでは、キャプションは本体の下に置かれます。<code>false</code>では、postext 1.27までと同じく、サイド段のキャプションは段幅のフロートだけになります。postext 1.28以降。それ以前のバージョンが保存した<code>'oneAndHalf'</code>レイアウトの設定は、章がリソースを埋め込んでいれば<code>false</code>として読み込まれます。コードでは<code>postext/bundle</code>の<code>pinLegacyInlineCaptionSide</code>が同じ働きをします。</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>

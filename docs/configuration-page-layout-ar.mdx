@@ -454,6 +454,12 @@ resourceTypes: [{ id: 'plate', counterFormat: 'upper-roman', … }], // same as 
       <td>هل يحتفظ المورد المدرج داخل إطار (<code>:::callout</code>) بالفجوة التي يضبطها <code>inlineResourceGap</code>، وهي سطر من نص الإطار نفسه: فوق المورد، وتحته أيضًا مع <code>'around'</code>، فتُطبَّق الكبرى بينها وبين المسافة الخاصة بالكتلة التالية. في أعلى الإطار أو أسفله، أو في أعلى جزء من إطار مقسوم أو أسفله، تتولى الحشوة فصل المورد ولا تُضاف فجوة. تضع <code>false</code> المورد مباشرة تحت النص الذي قبله، والنص الذي بعده مباشرة تحت المورد، كما كان حتى postext 1.4. والإعدادات التي خزّنتها إصدارات سابقة وتضمّن فصولها موردًا داخل إطار تُقرأ بالقيمة <code>false</code> (انظر <a href="/ar/docs/configuration-programmatic-usage#الحزم-التي-كتبها-postext-14-أو-ما-قبله">الحزم المكتوبة بالإصدار postext 1.4 أو أقدم</a>)؛ وفي الشيفرة، يفعل <code>pinLegacyBoxResourceGap</code> من <code>postext/bundle</code> الشيء نفسه.</td>
     </tr>
     <tr>
+      <td><code>inlineCaptionSide</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>هل يأخذ المورد الموضوع في النص (<code>position: 'here'</code>) الخاصية <code>placement.captionSide</code> كما يأخذها العنصر العائم بعرض العمود. في تخطيط العمود ونصف العمود الذي يُخصَّص عموده الجانبي للعناصر العائمة (<code>sideColumnRole: 'floats'</code>) يذهب تعليقه وملاحظته إلى العمود الجانبي، بمحاذاة أعلى جسمه، حيث يكون ذلك العمود خاليًا بجواره؛ ويكون ارتفاع الكتلة في عمود النص حينئذ ارتفاع الجسم وحده. وحيث يكون العمود الجانبي مشغولًا، وفي صفحة ليس فيها هذا العمود، يبقى التعليق تحت الجسم. و<code>false</code> يقصر التعليقات الجانبية على العناصر العائمة بعرض العمود، كما كان حتى postext 1.27. منذ postext 1.28. والإعدادات التي حفظتها إصدارات أقدم بتخطيط <code>'oneAndHalf'</code> وفصولها تضمّن موردًا تُقرأ بالقيمة <code>false</code>؛ وفي الشيفرة يؤدي <code>pinLegacyInlineCaptionSide</code> من <code>postext/bundle</code> العمل نفسه.</td>
+    </tr>
+    <tr>
       <td><code>boxChildSplitMinLines</code></td>
       <td><code>number</code></td>
       <td><code>2</code></td>
