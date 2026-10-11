@@ -1462,7 +1462,9 @@ export interface BodyTextConfig {
    *  attribute of the same name overrides the setting for its poem. */
   verse?: VerseConfig;
   /** When true, discourage a paragraph from ending with fewer than `orphanMinLines`
-   *  lines at the top of the next column. Soft (penalty-based). Default true. */
+   *  lines at the top of the next column. Soft (penalty-based). Default true;
+   *  false on a character grid (`cjk.grid`) in the Japan region, where a
+   *  page holds the lines its grid counts (#717, `avoidOrphansByDefault`). */
   avoidOrphans?: boolean;
   /** Minimum lines required at the top of the next column when a paragraph is split.
    *  Only effective when `avoidOrphans` is true. Default 2. */
@@ -1476,7 +1478,8 @@ export interface BodyTextConfig {
    *  Only effective when `avoidOrphans` is true. Default true. */
   avoidOrphansInLists?: boolean;
   /** When true, discourage a paragraph from starting with fewer than `widowMinLines`
-   *  lines at the bottom of the current column. Soft (penalty-based). Default true. */
+   *  lines at the bottom of the current column. Soft (penalty-based). Default true;
+   *  false on a character grid (`cjk.grid`, #717, `avoidWidowsByDefault`). */
   avoidWidows?: boolean;
   /** Minimum lines required at the bottom of the current column when a paragraph is
    *  split. Only effective when `avoidWidows` is true. Default 2. */
@@ -1497,7 +1500,10 @@ export interface BodyTextConfig {
    *  Knuth–Plass. A Chinese, Japanese or Korean paragraph does not end on a
    *  line holding one character, alone or with its closing marks (孤字): the
    *  line above gives it its last character when that line can still be
-   *  justified within the tracking cap. Default true. */
+   *  justified within the tracking cap. On a character grid (`cjk.grid`)
+   *  only a justified line gives it up: one set left, right or centred
+   *  cannot be spread and would leave its last cell empty (#718). Default
+   *  true. */
   avoidRunts?: boolean;
   /** Approximate minimum character count for the last line of a paragraph.
    *  Interpreted internally as `runtMinCharacters * normalSpaceWidth` pixels, so
