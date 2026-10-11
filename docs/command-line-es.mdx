@@ -352,18 +352,21 @@ configuración y que el libro no lleva, `postext` busca, por este orden:
    Fonts no tiene la familia (Commit Mono, FiraGO); se guardan en la caché,
    así que cada familia se descarga una sola vez.
 
-Un peso o una inclinación que la familia no trae se compone con su fuente más
-cercana tal cual, en las imágenes de página igual que en el PDF: una familia
-de rotulación con un solo peso conserva sus letras en la negrita, y una
-familia sin cursiva, las redondas.
+Un peso que la familia no trae se compone con la fuente que elegiría un
+navegador (la selección de fuentes de CSS: por encima de 500 primero las más
+pesadas, por debajo de 400 primero las más ligeras, de modo que el 600 de una
+familia con 400 y 700 es su 700, y el 550 también), y una inclinación que no
+trae, con sus redondas, tal cual en ambos casos, en las imágenes de página
+igual que en el PDF: una familia de rotulación con un solo peso conserva sus
+letras en la negrita, y una familia sin cursiva, las redondas.
 
 Se descargan los pesos que nombra la configuración: redonda, negrita y sus
 cursivas para cada familia, y cualquier otro peso que dé un ajuste, incluido el
 de la negrita (`bodyText.boldFontWeight: 600` pide la fuente de peso 600). Si
 un peso que la familia sí trae no se pudo cargar (sin conexión y sin archivo en
 la caché, una descarga fallida, una carpeta de fuentes sin el archivo), el
-texto se compone con la fuente más cercana de la familia y `postext check` lo
-lista como advertencia `fontFallback`: sus líneas pueden partir de otro modo
+texto se compone con la fuente de la familia que responde por él según la
+misma regla y `postext check` lo lista como advertencia `fontFallback`: sus líneas pueden partir de otro modo
 que en el Sandbox.
 
 La caché está en `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` en
