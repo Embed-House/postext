@@ -2,20 +2,20 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { Crop, MessageCircle, Plus, Trash2, TriangleAlert, Undo2, X } from 'lucide-react';
+import { Crop, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X } from 'lucide-react';
 import type { Resource, ResourceSafeArea } from 'postext';
 import { safeAreaHeightRange, safeAreaSource } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import { NumberInput } from '../../controls';
 import { FieldRow } from '../../controls/FieldRow';
-import { Button, IconButton, SegmentedControl, usePortalContainer } from '../../ui';
+import { Button, IconButton, SegmentedControl, Switch, usePortalContainer } from '../../ui';
 import { POPUP_SURFACE, POPUP_Z_INDEX } from '../../ui/surface';
 import { useBlobObjectUrl } from './ResourcePreview';
 import {
   HANDLES, INITIAL_SAFE_AREA, MIN_SIDE,
-  addAnchor, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
-  marksOf, normalizeMarks, nudge, removeMark, sameMarks, withAnchor, zoneAround,
-  type AnchorIdProblem, type Handle, type MarkDrag, type MarkTarget, type PictureMarks, type Point,
+  addAnchor, addBystanderFace, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
+  marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, zoneAround,
+  type AnchorIdProblem, type Handle, type MarkDrag, type MarkTarget, type PictureMarks, type Point, type ZoneTarget,
 } from './pictureMarks';
 
 // ---------------------------------------------------------------------------
@@ -28,7 +28,10 @@ import {
 // - Speakers (`Resource.anchors`, #557/#569): the mouth each balloon tail
 //   points at, named by the speaker id the comic's script uses, with an
 //   optional head point (thought balloons) and face rectangle;
-// - Avoid zones (`Resource.avoid`): rectangles no balloon covers.
+// - Avoid zones (`Resource.avoid`): rectangles no balloon covers, and, in
+//   the same mode, the faces of the people who do not speak
+//   (`Resource.faces`, #726): rectangles no balloon covers at any
+//   fallback. A switch on each row moves a rectangle between the two.
 // Every mark is a focusable target (arrow keys move it, Delete removes it)
 // and every pointer target is at least 44 px on touch screens.
 // ---------------------------------------------------------------------------
@@ -43,6 +46,9 @@ const SPEAKER_COLORS = ['#f97316', '#22d3ee', '#facc15', '#a3e635', '#e879f9', '
 const speakerColor = (i: number) => SPEAKER_COLORS[i % SPEAKER_COLORS.length]!;
 const AVOID_COLOR = '#ef4444';
 const AVOID_FILL = 'repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.32) 0 5px, rgba(239, 68, 68, 0.08) 5px 10px)';
+/** A bystander's face is drawn as a speaker's face is (a tinted box, no
+ *  hatching), in a colour no speaker takes. */
+const BYSTANDER_COLOR = '#a78bfa';
 
 /** The picture's intrinsic size, from the resource or, failing that, the
  *  loaded image. */
@@ -127,11 +133,12 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
             ? labels.resourceSafeAreaSummary.replace('__w__', share(area.width)).replace('__h__', share(area.height))
             : labels.resourceSafeAreaNone}
         </span>
-        {withLettering && (marks.anchors.length > 0 || marks.avoid.length > 0) && (
+        {withLettering && (marks.anchors.length > 0 || marks.avoid.length > 0 || marks.faces.length > 0) && (
           <span className="text-xs text-(--slate)">
             {labels.resourceMarksSummary
               .replace('__speakers__', count(marks.anchors.length))
-              .replace('__zones__', count(marks.avoid.length))}
+              .replace('__zones__', count(marks.avoid.length))
+              .replace('__faces__', count(marks.faces.length))}
           </span>
         )}
         <div className="flex flex-wrap gap-1.5">
@@ -168,14 +175,18 @@ export function SafeAreaField({ resource, onChange }: SafeAreaFieldProps) {
   );
 }
 
-/** Speakers (a dot at each mouth) and avoid zones over the field's
- *  thumbnail, subtly: the dialog is where they are read and edited. */
+/** Speakers (a dot at each mouth), avoid zones and bystanders' faces over
+ *  the field's thumbnail, subtly: the dialog is where they are read and
+ *  edited. */
 function ThumbnailMarks({ marks }: { marks: PictureMarks }) {
-  if (!marks.anchors.length && !marks.avoid.length) return null;
+  if (!marks.anchors.length && !marks.avoid.length && !marks.faces.length) return null;
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       {marks.avoid.map((r, i) => (
         <div key={`a${i}`} className="absolute" style={{ ...boxStyle(r), border: `1px solid ${AVOID_COLOR}`, background: 'rgba(239, 68, 68, 0.18)' }} />
+      ))}
+      {marks.faces.map((r, i) => (
+        <div key={`f${i}`} className="absolute" style={{ ...boxStyle(r), border: `1px solid ${BYSTANDER_COLOR}`, background: `${BYSTANDER_COLOR}2e` }} />
       ))}
       {marks.anchors.map((a, i) => (
         <span
@@ -209,7 +220,9 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
   const marksRef = useRef(marks);
   const [past, setPast] = useState<PictureMarks[]>([]);
   const [selAnchor, setSelAnchor] = useState<number | null>(null);
-  const [selAvoid, setSelAvoid] = useState<number | null>(null);
+  /** The avoid zone or the bystander's face the Avoid zones mode acts on. */
+  const [selZone, setSelZone] = useState<ZoneTarget | null>(null);
+  const zoneSelected = (t: ZoneTarget) => selZone?.kind === t.kind && selZone.index === t.index;
   const [showIdErrors, setShowIdErrors] = useState(false);
   const [loaded, setLoaded] = useState<{ width: number; height: number } | undefined>(undefined);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -218,6 +231,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
   const markEls = useRef(new Map<string, HTMLElement>());
   const idInputs = useRef(new Map<number, HTMLInputElement>());
   const addButton = useRef<HTMLButtonElement>(null);
+  const zoneSwitches = useRef(new Map<string, HTMLElement>());
   const focusNext = useRef<(() => void) | null>(null);
 
   const setMarks = (next: PictureMarks) => {
@@ -251,7 +265,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     setMode(withLettering ? initialMode : 'safe');
     setPast([]);
     setSelAnchor(saved.anchors.length ? 0 : null);
-    setSelAvoid(null);
+    setSelZone(null);
     setShowIdErrors(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -277,7 +291,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     const host = el.closest<HTMLElement>('[data-mark]');
     if (!host) return null;
     const kind = host.dataset.mark as MarkTarget['kind'];
-    const editable = mode === 'safe' ? kind === 'safe' : mode === 'speakers' ? kind === 'mouth' || kind === 'head' || kind === 'face' : kind === 'avoid';
+    const editable = mode === 'safe' ? kind === 'safe' : mode === 'speakers' ? kind === 'mouth' || kind === 'head' || kind === 'face' : kind === 'avoid' || kind === 'bystander';
     if (!editable) return null;
     const handle = (el.closest<HTMLElement>('[data-handle]')?.dataset.handle as Handle | undefined) ?? 'move';
     const target = kind === 'safe' ? { kind } : { kind, index: Number(host.dataset.index) };
@@ -286,7 +300,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
 
   const select = (t: MarkTarget) => {
     if (t.kind === 'mouth' || t.kind === 'head' || t.kind === 'face') setSelAnchor(t.index);
-    if (t.kind === 'avoid') setSelAvoid(t.index);
+    if (t.kind === 'avoid' || t.kind === 'bystander') setSelZone(t);
   };
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -316,7 +330,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
       const index = before.avoid.length;
       const from = { x: clamp(p.x, 0, 1), y: clamp(p.y, 0, 1), width: 0, height: 0 };
       const start = { ...before, avoid: [...before.avoid, from] };
-      setSelAvoid(index);
+      setSelZone({ kind: 'avoid', index });
       drag.current = { ...base, target: { kind: 'avoid', index }, handle: 'se', start, from, created: 'avoid' };
       setMarks(applyDrag(drag.current, { x: p.x + MIN_SIDE, y: p.y + MIN_SIDE }));
     }
@@ -365,7 +379,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
       e.preventDefault();
       commit(removeMark(marksRef.current, target));
       if (target.kind === 'mouth') setSelAnchor(null);
-      if (target.kind === 'avoid') setSelAvoid(null);
+      if (target.kind === 'avoid' || target.kind === 'bystander') setSelZone(null);
       focusNext.current = () =>
         target.kind === 'head' || target.kind === 'face'
           ? markEls.current.get(targetKey({ kind: 'mouth', index: target.index }))?.focus()
@@ -411,8 +425,23 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
     const next = { ...marksRef.current, avoid: [...marksRef.current.avoid, zoneAround({ x: 0.5, y: 0.5 }, 0.2)] };
     const index = next.avoid.length - 1;
     commit(next);
-    setSelAvoid(index);
+    setSelZone({ kind: 'avoid', index });
     focusNext.current = () => markEls.current.get(targetKey({ kind: 'avoid', index }))?.focus();
+  };
+  const addBystanderAtCentre = () => {
+    const next = addBystanderFace(marksRef.current, { x: 0.5, y: 0.5 });
+    const target: ZoneTarget = { kind: 'bystander', index: next.faces.length - 1 };
+    commit(next);
+    setSelZone(target);
+    focusNext.current = () => markEls.current.get(targetKey(target))?.focus();
+  };
+  /** Move a rectangle to the other list (zone ⇄ bystander's face) and keep
+   *  the keyboard on its switch. */
+  const switchKind = (target: ZoneTarget) => {
+    const moved = switchZone(marksRef.current, target);
+    commit(moved.marks);
+    setSelZone(moved.target);
+    focusNext.current = () => zoneSwitches.current.get(targetKey(moved.target))?.focus();
   };
 
   const save = () => {
@@ -546,34 +575,36 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
                 />
               )}
 
-              {/* Avoid zones. */}
-              {withLettering && marks.avoid.map((r, i) => {
+              {/* Avoid zones, and the faces of the people who do not speak. */}
+              {withLettering && ([...marks.avoid.map((r, i) => [r, { kind: 'avoid', index: i }] as const), ...marks.faces.map((r, i) => [r, { kind: 'bystander', index: i }] as const)] as [ResourceSafeArea, ZoneTarget][]).map(([r, target]) => {
                 const active = mode === 'avoid';
-                const target: MarkTarget = { kind: 'avoid', index: i };
-                const label = labels.resourceAvoidZoneAria.replace('__n__', String(i + 1));
+                const face = target.kind === 'bystander';
+                const color = face ? BYSTANDER_COLOR : AVOID_COLOR;
+                const label = (face ? labels.resourceBystanderFaceAria : labels.resourceAvoidZoneAria).replace('__n__', String(target.index + 1));
+                const selected = active && zoneSelected(target);
                 return (
                   <div
-                    key={`avoid-${i}`}
+                    key={targetKey(target)}
                     ref={active ? register(targetKey(target)) : undefined}
-                    data-mark="avoid"
-                    data-index={i}
+                    data-mark={target.kind}
+                    data-index={target.index}
                     role={active ? 'group' : undefined}
                     tabIndex={active ? 0 : undefined}
                     aria-label={active ? label : undefined}
                     aria-hidden={active ? undefined : true}
                     onKeyDown={active ? onMarkKeyDown(target) : undefined}
-                    onFocus={active ? () => setSelAvoid(i) : undefined}
+                    onFocus={active ? () => setSelZone(target) : undefined}
                     className={`absolute focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--foreground) ${active ? '' : 'pointer-events-none'}`}
                     style={{
                       ...boxStyle(r),
                       cursor: active ? 'move' : undefined,
-                      background: AVOID_FILL,
-                      border: `2px ${active && selAvoid === i ? 'solid' : 'dashed'} ${AVOID_COLOR}`,
+                      background: face ? `${color}33` : AVOID_FILL,
+                      border: `2px ${selected ? 'solid' : 'dashed'} ${color}`,
                       opacity: active ? 1 : 0.55,
                     }}
                   >
-                    <MarkTag color={AVOID_COLOR}>{String(i + 1)}</MarkTag>
-                    {active && selAvoid === i && <RectHandles color={AVOID_COLOR} />}
+                    <MarkTag color={color}>{face ? <><Smile size={10} aria-hidden="true" />{String(target.index + 1)}</> : String(target.index + 1)}</MarkTag>
+                    {selected && <RectHandles color={color} />}
                   </div>
                 );
               })}
@@ -764,41 +795,62 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, o
 
               {mode === 'avoid' && (
                 <>
-                  {marks.avoid.length === 0 && <p className="m-0 text-xs text-(--slate)">{labels.resourceAvoidEmpty}</p>}
+                  {marks.avoid.length === 0 && marks.faces.length === 0 && <p className="m-0 text-xs text-(--slate)">{labels.resourceAvoidEmpty}</p>}
                   <ul className="m-0 flex list-none flex-col gap-1 p-0">
-                    {marks.avoid.map((r, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center justify-between gap-2 rounded-md border px-2 py-1 text-xs"
-                        style={{ borderColor: selAvoid === i ? AVOID_COLOR : 'var(--pt-control-border)' }}
-                      >
-                        <button
-                          type="button"
-                          className="min-h-7 flex-1 cursor-pointer text-start text-(--foreground) pt-large:min-h-11"
-                          onClick={() => {
-                            setSelAvoid(i);
-                            markEls.current.get(targetKey({ kind: 'avoid', index: i }))?.focus();
-                          }}
+                    {([...marks.avoid.map((r, i) => [r, { kind: 'avoid', index: i }] as const), ...marks.faces.map((r, i) => [r, { kind: 'bystander', index: i }] as const)] as [ResourceSafeArea, ZoneTarget][]).map(([r, target]) => {
+                      const face = target.kind === 'bystander';
+                      const n = String(target.index + 1);
+                      const key = targetKey(target);
+                      const switchId = `pt-zone-face-${key}`;
+                      return (
+                        <li
+                          key={key}
+                          className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 rounded-md border px-2 py-1 text-xs"
+                          style={{ borderColor: zoneSelected(target) ? (face ? BYSTANDER_COLOR : AVOID_COLOR) : 'var(--pt-control-border)', borderInlineStartWidth: 4, borderInlineStartColor: face ? BYSTANDER_COLOR : AVOID_COLOR }}
                         >
-                          {labels.resourceAvoidZoneAria.replace('__n__', String(i + 1))}
-                          <span className="ms-2 text-(--slate)">{pct(r.width)} × {pct(r.height)} %</span>
-                        </button>
-                        <IconButton
-                          label={labels.resourceAvoidZoneDelete.replace('__n__', String(i + 1))}
-                          icon={<Trash2 size={13} aria-hidden="true" />}
-                          destructive
-                          onClick={() => {
-                            commit(removeMark(marksRef.current, { kind: 'avoid', index: i }));
-                            setSelAvoid(null);
-                            focusNext.current = () => addButton.current?.focus();
-                          }}
-                        />
-                      </li>
-                    ))}
+                          <button
+                            type="button"
+                            className="min-h-7 flex-1 cursor-pointer text-start text-(--foreground) pt-large:min-h-11"
+                            onClick={() => {
+                              setSelZone(target);
+                              markEls.current.get(key)?.focus();
+                            }}
+                          >
+                            {(face ? labels.resourceBystanderFaceAria : labels.resourceAvoidZoneAria).replace('__n__', n)}
+                            <span className="ms-2 text-(--slate)">{pct(r.width)} × {pct(r.height)} %</span>
+                          </button>
+                          <span className="inline-flex items-center gap-1.5">
+                            <span id={switchId} className="text-(--slate)">{labels.resourceZoneIsFace}</span>
+                            <span ref={(el) => {
+                              const root = el?.querySelector<HTMLElement>('[role="switch"]');
+                              if (root) zoneSwitches.current.set(key, root);
+                              else zoneSwitches.current.delete(key);
+                            }}>
+                              <Switch checked={face} onCheckedChange={() => switchKind(target)} ariaLabelledBy={switchId} />
+                            </span>
+                          </span>
+                          <IconButton
+                            label={(face ? labels.resourceBystanderFaceDelete : labels.resourceAvoidZoneDelete).replace('__n__', n)}
+                            icon={<Trash2 size={13} aria-hidden="true" />}
+                            destructive
+                            onClick={() => {
+                              commit(removeMark(marksRef.current, target));
+                              setSelZone(null);
+                              focusNext.current = () => addButton.current?.focus();
+                            }}
+                          />
+                        </li>
+                      );
+                    })}
                   </ul>
-                  <Button ref={addButton} size="sm" icon={<Plus size={13} aria-hidden="true" />} className="self-start" onClick={addAvoidAtCentre}>
-                    {labels.resourceAvoidAdd}
-                  </Button>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Button ref={addButton} size="sm" icon={<Plus size={13} aria-hidden="true" />} onClick={addAvoidAtCentre}>
+                      {labels.resourceAvoidAdd}
+                    </Button>
+                    <Button size="sm" icon={<Smile size={13} aria-hidden="true" />} onClick={addBystanderAtCentre}>
+                      {labels.resourceBystanderAdd}
+                    </Button>
+                  </div>
                 </>
               )}
             </div>

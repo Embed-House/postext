@@ -2358,6 +2358,10 @@ export interface SandboxLabels {
   resourceAvoidAdd: string;
   resourceAvoidZoneAria: string;
   resourceAvoidZoneDelete: string;
+  resourceBystanderAdd: string;
+  resourceBystanderFaceAria: string;
+  resourceBystanderFaceDelete: string;
+  resourceZoneIsFace: string;
   uploadPdfMasterDrop: string;
   uploadPdfMasterReplace: string;
   uploadPdfMasterRemove: string;
