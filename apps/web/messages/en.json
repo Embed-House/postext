@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "Print the head of each group of entries: its letter, pinyin initial or stroke count",
     "indexGroupsMarginTop": "Space above a group",
     "indexGroupsMarginTopTooltip": "Space above each letter group, head or not. Default: one line of the index",
+    "indexGroupsSplitMinEntries": "Entries kept together at a column end",
+    "indexGroupsSplitMinEntriesTooltip": "When a column ends inside a group, the fewest entries of the group left at its foot and the fewest carried to the head of the next. A group too short for that moves whole. 1 lets a column end between any two entries",
     "indexSymbolsLabel": "Symbols head",
     "indexSymbolsLabelPlaceholder": "Default for the language",
     "indexNumbersLabel": "Numbers head",

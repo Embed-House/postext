@@ -49,7 +49,9 @@ import type { ProjectThumbnail } from './projects';
  *  every line above a heading before any other lever (see
  *  `pinLegacyLooseOrder` in `postext/bundle`, #707), and the line a column
  *  took alone under a figure across several columns (see
- *  `pinLegacyWideFloatStretch`, #708).
+ *  `pinLegacyWideFloatStretch`, #708), and the column breaks between any
+ *  two entries of a group of their indexes (see
+ *  `pinLegacyIndexGroupSplit`, #712).
  *  Records 1 and 2 were numbered by the Sandbox alone, before 1.5; they
  *  are older than 3 on every count. Records 3 to 7 were written by the 1.5
  *  prereleases: 3 before the maths size changed, 4 before the inline gap

@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "見出し語の各グループの見出し（文字、ピンインの頭文字、画数）を印字します。",
     "indexGroupsMarginTop": "グループの上のアキ",
     "indexGroupsMarginTopTooltip": "各文字グループの上のアキです。見出しの有無にかかわらず適用します。既定値は索引の1行分です。",
+    "indexGroupsSplitMinEntries": "段の終わりでまとめて残す項目数",
+    "indexGroupsSplitMinEntriesTooltip": "段がグループの途中で終わるとき、段の末尾に残すそのグループの項目数と、次の段の頭に送る項目数の下限です。それだけの項目がないグループは、まとめて次の段に移ります。1にすると、どの項目のあいだでも段を改められます。",
     "indexSymbolsLabel": "記号の見出し",
     "indexSymbolsLabelPlaceholder": "言語の既定値",
     "indexNumbersLabel": "数字の見出し",

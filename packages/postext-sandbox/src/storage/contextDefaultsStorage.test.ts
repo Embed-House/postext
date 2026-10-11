@@ -114,6 +114,17 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(map.get('postext-sandbox-config')).toBe('{}');
   });
 
+  it('keeps "Entries kept together at a column end" when it is not 2 (#712)', () => {
+    const map = installStorage();
+    for (const splitMinEntries of [1, 3]) {
+      const config: PostextConfig = { index: { groups: { splitMinEntries } } };
+      saveConfig(config);
+      expect(loadConfig()).toEqual(config);
+    }
+    saveConfig({ index: { groups: { splitMinEntries: 2 } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('keeps "Heading that opens a column" set close to its text (#706)', () => {
     const map = installStorage();
     const close: PostextConfig = { headings: { columnHeadSpace: 'remainder' } };

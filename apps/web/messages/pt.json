@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "Imprime a cabeça de cada grupo de entradas: a letra, a inicial do pinyin ou o número de traços",
     "indexGroupsMarginTop": "Espaço acima de um grupo",
     "indexGroupsMarginTopTooltip": "Espaço acima de cada grupo de letra, com cabeça ou sem. Padrão: uma linha do índice",
+    "indexGroupsSplitMinEntries": "Entradas mantidas juntas no fim da coluna",
+    "indexGroupsSplitMinEntriesTooltip": "Quando uma coluna termina dentro de um grupo, o mínimo de entradas do grupo que ficam no pé dela e o mínimo que passam para o alto da seguinte. Um grupo curto demais passa inteiro. Com 1, a coluna pode terminar entre quaisquer duas entradas",
     "indexSymbolsLabel": "Cabeça dos símbolos",
     "indexSymbolsLabelPlaceholder": "Padrão do idioma",
     "indexNumbersLabel": "Cabeça dos números",

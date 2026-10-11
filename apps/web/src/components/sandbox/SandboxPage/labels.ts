@@ -2856,6 +2856,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     indexGroupsEnabledTooltip: t("indexGroupsEnabledTooltip"),
     indexGroupsMarginTop: t("indexGroupsMarginTop"),
     indexGroupsMarginTopTooltip: t("indexGroupsMarginTopTooltip"),
+    indexGroupsSplitMinEntries: t("indexGroupsSplitMinEntries"),
+    indexGroupsSplitMinEntriesTooltip: t("indexGroupsSplitMinEntriesTooltip"),
     indexSymbolsLabel: t("indexSymbolsLabel"),
     indexSymbolsLabelPlaceholder: t("indexSymbolsLabelPlaceholder"),
     indexNumbersLabel: t("indexNumbersLabel"),

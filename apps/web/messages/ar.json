@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "يطبع رأس كل مجموعة من المداخل: حرفها، أو حرفها الأول في البينيين، أو عدد ضرباتها",
     "indexGroupsMarginTop": "المسافة فوق المجموعة",
     "indexGroupsMarginTopTooltip": "المسافة فوق كل مجموعة حرف، برأس أو بدونه. الافتراضي: سطر واحد من الفهرس",
+    "indexGroupsSplitMinEntries": "المداخل التي تبقى معًا عند نهاية العمود",
+    "indexGroupsSplitMinEntriesTooltip": "حين ينتهي عمود داخل مجموعة: أقل عدد من مداخل المجموعة يبقى في أسفله وأقل عدد ينتقل إلى رأس العمود التالي. والمجموعة الأقصر من ذلك تنتقل كاملة. ومع 1 يجوز أن ينتهي العمود بين أي مدخلين",
     "indexSymbolsLabel": "عنوان مجموعة الرموز",
     "indexSymbolsLabelPlaceholder": "الافتراضي للغة",
     "indexNumbersLabel": "عنوان مجموعة الأرقام",

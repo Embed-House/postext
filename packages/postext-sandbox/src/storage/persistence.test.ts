@@ -199,17 +199,23 @@ describe('working configuration', () => {
       bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
+      // (it may print an index: a column may end between any two entries of a group, #712)
+      index: { groups: { splitMinEntries: 1 } },
       cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
       crossRefs: { breakLabels: false },
     });
+    // (Every copy stamped before 12 also gets the pins of rules 12 that read
+    // no content: the order of the balancing levers, #707, the line under a
+    // float across columns, #708, and the breaks inside index groups, #712.)
     // One stamped 5 gets the version-6, version-7 and version-8 pins only
     // (EF-110, EF-115, EF-117, EF-122; EF-141; EF-186).
     expect(configFromExport({ ...legacy, configVersion: 5 })).toEqual({
-      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' },
+      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } },
       layout: { inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
       bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
+      index: { groups: { splitMinEntries: 1 } },
       cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
       crossRefs: { breakLabels: false },
     });
@@ -217,25 +223,25 @@ describe('working configuration', () => {
     // breaks, the ragged breaking when it sets text ragged (EF-141,
     // EF-147), the split under a heading (EF-185) and the compound breaks
     // (EF-186).
-    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill' }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     const ragged = { ...legacy, config: { bodyText: { textAlign: 'left' as const } } };
-    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, headings: { keepWithNextSplit: 'fill' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 7 gets the version-8 pins only: the split under a
     // heading, the compound breaks, and the space under containers when it
     // declares a paragraph style (EF-159, EF-181).
-    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill' }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     const styled = { ...legacy, config: { paragraphStyles: [{ id: 'verse' }] } };
-    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill' }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 8 (postext 1.5 to 1.22) gets the version-9 and version-10
     // pins only: the verse layout, a first-line indent dropped from a style
     // that hangs, the printed backslashes (#620), fences read as Markdown
     // (#624) and the 1.23 verse turnovers.
     const hanging = { ...legacy, config: { paragraphStyles: [{ id: 'bib', firstLineIndent: { value: 1, unit: 'em' as const }, hangingIndent: { value: 2, unit: 'em' as const } }] } };
-    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
-    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 9 (postext 1.23) gets the version-10 pin only: its lines
     // of verse turn over at their natural spacing (#620).
-    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { verse: { tighten: false } }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } }, bodyText: { verse: { tighten: false } }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 10 (postext 1.24) gets the version-11 pins: its inline
     // tables move whole and its :::columns fences are read as 1.24 read
     // them (#634).

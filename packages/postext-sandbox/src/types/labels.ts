@@ -3056,6 +3056,8 @@ export interface SandboxLabels {
   indexGroupsEnabledTooltip: string;
   indexGroupsMarginTop: string;
   indexGroupsMarginTopTooltip: string;
+  indexGroupsSplitMinEntries: string;
+  indexGroupsSplitMinEntriesTooltip: string;
   indexSymbolsLabel: string;
   indexSymbolsLabelPlaceholder: string;
   indexNumbersLabel: string;

@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "在每组词条前印出组头：字母、拼音首字母或笔画数",
     "indexGroupsMarginTop": "组上方间距",
     "indexGroupsMarginTopTooltip": "每个字母组上方的间距，不论是否有组头。默认：索引的一行",
+    "indexGroupsSplitMinEntries": "栏尾处同组至少保留的条目数",
+    "indexGroupsSplitMinEntriesTooltip": "一栏在某一组中间结束时，该组留在栏尾的条目数和转到下一栏栏首的条目数的下限。条目不够的组整组移到下一栏。设为1时，可以在任意两条之间换栏",
     "indexSymbolsLabel": "符号组头",
     "indexSymbolsLabelPlaceholder": "语言默认值",
     "indexNumbersLabel": "数字组头",

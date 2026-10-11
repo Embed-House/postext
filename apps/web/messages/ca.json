@@ -3477,6 +3477,8 @@
     "indexGroupsEnabledTooltip": "Imprimeix la capçalera de cada grup d'entrades: la seva lletra, la inicial del pinyin o el nombre de traços",
     "indexGroupsMarginTop": "Espai sobre cada grup",
     "indexGroupsMarginTopTooltip": "Espai sobre cada grup de lletra, amb inicial o sense. Per defecte: una línia de l'índex",
+    "indexGroupsSplitMinEntries": "Entrades que es mantenen juntes al final de columna",
+    "indexGroupsSplitMinEntriesTooltip": "Quan una columna acaba dins d'un grup, el mínim d'entrades del grup que queden al seu peu i el mínim que passen al cap de la següent. Un grup massa curt passa sencer. Amb 1, una columna pot acabar entre dues entrades qualssevol",
     "indexSymbolsLabel": "Capçalera dels símbols",
     "indexSymbolsLabelPlaceholder": "La de la llengua",
     "indexNumbersLabel": "Capçalera dels números",

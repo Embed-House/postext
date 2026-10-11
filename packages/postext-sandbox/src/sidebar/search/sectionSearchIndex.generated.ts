@@ -2567,6 +2567,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'indexGroupsEnabledTooltip',
       'indexGroupsMarginTop',
       'indexGroupsMarginTopTooltip',
+      'indexGroupsSplitMinEntries',
+      'indexGroupsSplitMinEntriesTooltip',
       'indexIgnoreArticle',
       'indexIgnoreArticleTooltip',
       'indexIndent',
