@@ -261,7 +261,7 @@ Geometry:
 Typography
 ```
 bodyText
-├─ fontFamily        string          'EB Garamond'   Google Font name or a customFonts family name
+├─ fontFamily        string          'EB Garamond'   a customFonts family, or one on Google Fonts / Fontsource
 ├─ fontSize          Dimension(abs)  8 pt
 ├─ lineHeight        Dimension       1.5 em          em = × fontSize; pt = absolute leading → BASELINE GRID PITCH
 ├─ fontWeight        number          400
@@ -1660,7 +1660,9 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 ## 20. Fonts — `customFonts` and what goes in preset.json
 
 `CustomFontFamily = { name, variants: [{ weight 100–900, style 'normal'|'italic', fileId, format 'woff2'|'woff'|'ttf'|'otf', fileName? }], redistributable?: boolean (default true) }`.
-- Any `fontFamily` string resolves against customFonts first, then Google Fonts.
+- Any `fontFamily` string resolves against customFonts first, then Google Fonts, then Fontsource
+  for a family Google Fonts does not have (Commit Mono, FiraGO). The Sandbox and the `postext`
+  command line fetch them; `render.mjs` does not, and measures an unbundled family with a stand-in face.
 - Needed variants: at least 400/700 normal+italic (else "missing variant" warning); if the book
   uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`. The `postext` command
   line (≥ 1.28.0) fetches the bold weight the configuration names, and `postext check` reports a

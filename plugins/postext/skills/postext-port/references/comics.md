@@ -540,7 +540,9 @@ sfx{plate at="77.3% 14.4%" rotate=-11 skew=-8}: Incantations\
   HTML and EPUB.
 - **Fonts**: the lettering face, the SFX face and every face a style, cast
   entry or `font=` names must be in the manifest's `fonts` for headless
-  renders and the PDF (the browser alone can fetch Google Fonts).
+  renders and the PDF (`render.mjs` downloads nothing; the Sandbox and the
+  `postext` command line fetch a missing face from Google Fonts, or from
+  Fontsource when Google Fonts does not have it).
   `lint_project.py` lists the default faces of the book's language that
   are missing. The built-in styles ask for bold (`shout`, `sfx`) and
   italic (`inner`): bundle 400, 700 and italic variants, or list a

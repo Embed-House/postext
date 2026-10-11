@@ -25,8 +25,11 @@
 // (--preflight forces it). The PDF separates through the output profile from
 // postext's icc/ folder, or the bundle's custom one.
 //
-// The browser measures with canvas and loads Google Fonts for families you did
-// not bundle; here only bundled faces exist, so bundle every family you use.
+// Fonts: the Sandbox and the `postext` command line take a family the book
+// does not carry from Google Fonts, or from Fontsource when Google Fonts does
+// not have it (the command line caches the files). This script downloads
+// nothing: only bundled faces exist here, an unbundled family is measured
+// with a stand-in face, so bundle every family you use.
 // The config is read as the Sandbox reads it: a manifest without
 // `configVersion` keeps the postext 1.4 rules it was written for (a NOTE line
 // lists them).
@@ -211,6 +214,20 @@ const resources = (manifest.resources ?? []).map((spec) => {
   const s = { ...spec, ...(wording.get(spec.id) ?? {}) };
   const { file, pdfFile, width, height, resolution, fileResolution, source, ...rest } = s;
   const base = { ...rest, createdAt: 0, updatedAt: 0 };
+  if (s.kind === 'video') {
+    // A video: the address it plays from and its poster frame, a picture
+    // of the bundle (`poster`), with the size the manifest gives it.
+    const { poster, ...plain } = base;
+    const video = { source: 'file', ...(s.video ?? {}) };
+    delete video.fileId;
+    delete video.poster;
+    if (typeof poster === 'string' && existsSync(join(BUNDLE, poster))) {
+      blobs.set(poster, new Uint8Array(readFileSync(join(BUNDLE, poster))));
+      const ext = poster.split('.').pop().toLowerCase();
+      video.poster = { fileId: poster, format: ext === 'jpg' ? 'jpeg' : ext, width: width ?? 0, height: height ?? 0 };
+    }
+    return { ...plain, kind: 'video', video };
+  }
   if (!file) return base;
   const bytes = new Uint8Array(readFileSync(join(BUNDLE, file)));
   blobs.set(file, bytes);
@@ -405,7 +422,7 @@ if (computeWarnings) {
     console.log(`SANDBOX-WARN ${JSON.stringify(w.payload)} ${where(w.sourceStart)}`);
   }
 }
-if (unknownFamilies.size) problems.push(`font families used but not bundled (measured with a stand-in face; the browser would try Google Fonts): ${[...unknownFamilies].join(', ')}`);
+if (unknownFamilies.size) problems.push(`font families used but not bundled (measured here with a stand-in face; the Sandbox and the postext command line fetch them from Google Fonts, or from Fontsource when Google Fonts does not have the family): ${[...unknownFamilies].join(', ')}`);
 for (const p of problems) console.log('PROBLEM', p);
 
 // ---- page JPEGs, painted by the engine's canvas renderer -------------------------
@@ -436,9 +453,55 @@ if (JPEG) {
     console.error('--jpeg needs @napi-rs/canvas next to postext:\n  cd ~/.cache/postext-tools && npm i @napi-rs/canvas');
     process.exit(2);
   }
+  // SVG pictures on Skia, as the command line draws them
+  // (packages/postext-cli/src/svgImage.ts). `loadImage` rasterises an SVG
+  // once, at the size the SVG declares, and `drawImage` stretches that
+  // bitmap: a figure placed larger than its SVG says came out soft. An SVG
+  // image rasterises again when its width and height are set, so before
+  // each draw it is given the size it is drawn at on the device, in the
+  // proportions it declares, growing only, up to 8192 px on a side.
+  const svgImages = new WeakSet();
+  const SVG_MAX_SIDE = 8192;
+  const loadSvgImage = async (svgText) => {
+    const image = await napi.loadImage(Buffer.from(svgText));
+    svgImages.add(image);
+    return image;
+  };
+  const sizeSvgImage = (image, width, height) => {
+    if (typeof image !== 'object' || image === null || !svgImages.has(image)) return;
+    const nw = image.naturalWidth;
+    const nh = image.naturalHeight;
+    if (!(nw > 0) || !(nh > 0) || !Number.isFinite(width) || !Number.isFinite(height)) return;
+    const k = Math.min(Math.max(width / nw, height / nh), SVG_MAX_SIDE / Math.max(nw, nh));
+    const w = Math.ceil(nw * k);
+    const h = Math.ceil(nh * k);
+    if (w <= image.width && h <= image.height) return;
+    image.width = Math.max(w, image.width);
+    image.height = Math.max(h, image.height);
+  };
+  const patched = new WeakSet();
+  const drawsSvgAtSize = (canvas) => {
+    const getContext = canvas.getContext.bind(canvas);
+    canvas.getContext = (...args) => {
+      const ctx = getContext(...args);
+      if (!ctx || patched.has(ctx)) return ctx;
+      patched.add(ctx);
+      const drawImage = ctx.drawImage;
+      ctx.drawImage = function (...draw) {
+        // drawImage(image, dx, dy, dw, dh): how the engine draws a registered picture.
+        if (draw.length === 5) {
+          const m = ctx.getTransform();
+          sizeSvgImage(draw[0], Math.abs(draw[3]) * Math.hypot(m.a, m.b), Math.abs(draw[4]) * Math.hypot(m.c, m.d));
+        }
+        drawImage.apply(ctx, draw);
+      };
+      return ctx;
+    };
+    return canvas;
+  };
   // Layout is done: from here on the engine's scratch canvases (rasterised
   // SVGs, maths) are real ones.
-  globalThis.OffscreenCanvas = class { constructor(w, h) { return napi.createCanvas(Math.max(1, w), Math.max(1, h)); } };
+  globalThis.OffscreenCanvas = class { constructor(w, h) { return drawsSvgAtSize(napi.createCanvas(Math.max(1, w), Math.max(1, h))); } };
   globalThis.Path2D ??= napi.Path2D;
   globalThis.DOMMatrix ??= napi.DOMMatrix;
   // Every bundled face under its family name (Skia picks weight and style
@@ -447,11 +510,25 @@ if (JPEG) {
     const { bytes } = await loadFace(v.file);
     napi.GlobalFonts.register(Buffer.from(bytes), [...families.entries()].find(([, x]) => x === vs)[0]);
   }
+  // A book with `diagramStyle.singleInk` shows its drawings in that ink:
+  // the markup is recoloured before it is decoded, as the command line
+  // does, and every picture is registered as already in its final colours.
+  // A release without these exports registers as before.
+  const inkHex = typeof bundleApi?.diagramInkHex === 'function' ? bundleApi.diagramInkHex(config) : null;
+  const recolours = typeof postext.applySingleInkToSvg === 'function';
+  const settled = typeof bundleApi?.diagramInkHex === 'function' && recolours ? { singleInk: false } : {};
   for (const r of resources) {
-    const fileId = r.svg?.fileId ?? r.bitmap?.fileId;
+    // A video shows its poster.
+    const fileId = r.svg?.fileId ?? r.bitmap?.fileId ?? r.video?.poster?.fileId;
     if (!fileId || !blobs.has(fileId)) continue;
     try {
-      postext.registerResourceImage(fileId, await napi.loadImage(Buffer.from(blobs.get(fileId))), { vector: !!r.svg });
+      if (r.svg) {
+        let text = new TextDecoder().decode(blobs.get(fileId));
+        if (inkHex && recolours) text = postext.applySingleInkToSvg(text, inkHex);
+        postext.registerResourceImage(fileId, await loadSvgImage(text), { vector: true, ...settled });
+      } else {
+        postext.registerResourceImage(fileId, await napi.loadImage(Buffer.from(blobs.get(fileId))), { vector: false, ...settled });
+      }
     } catch (e) { console.log(`JPEG-WARN image ${fileId} does not decode: ${e.message}`); }
   }
   mkdirSync(JPEG, { recursive: true });
@@ -461,7 +538,8 @@ if (JPEG) {
   const wanted = pickPages(opt('pages', null));
   for (const i of wanted) {
     const page = doc.pages[i];
-    const canvas = napi.createCanvas(1, 1);
+    // A picture too large for the engine's cache is drawn on the page itself.
+    const canvas = drawsSvgAtSize(napi.createCanvas(1, 1));
     postext.renderPageToCanvas(page, doc, canvas, {
       scale,
       onWarning: (w) => console.log(`JPEG-WARN page ${i + 1} ${w.kind} ${w.fileId ?? ''}`),

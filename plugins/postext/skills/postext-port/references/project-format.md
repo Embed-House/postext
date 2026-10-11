@@ -244,7 +244,7 @@ embeds them with `::resource{id="…"}` (placement `here`).
   `font-family` (postext ≥ 1.25). An `<img>` cannot see the page's fonts, so
   the engine embeds the faces the text names as `@font-face` data URIs when
   the picture is shown (canvas, HTML, EPUB): the bundle's own fonts first,
-  then registered or Google families. The PDF sets SVG `<text>` with the
+  then registered families and those of Google Fonts or Fontsource. The PDF sets SVG `<text>` with the
   document's embedded faces. No outlining, no hand-made `@font-face`; set
   `"inlineFonts": false` on an SVG resource that carries its own faces or
   must stay byte-identical. Checks: `svgFontUnavailable` (a family with no
@@ -267,8 +267,10 @@ embeds them with `::resource{id="…"}` (placement `here`).
 
 - `name` is what every `fontFamily` in the config references. Bundle **every**
   family the config uses (body, headings, callouts, captions, tables, lists,
-  design text, running heads): the browser can fetch Google Fonts for missing
-  names, but the PDF export and headless renders cannot.
+  design text, running heads). The Sandbox and the `postext` command line
+  fetch a missing family from Google Fonts, or from Fontsource when Google
+  Fonts does not have it; `render.mjs` downloads nothing, measures a missing
+  family with a stand-in face and embeds only bundled faces in its PDF.
 - Provide 400/700 normal + italic where the text uses them; semibold bold →
   add 600 and `bodyText.boldFontWeight: 600`.
 - `redistributable: false`: rendering and PDF embedding work, but a `.postext`
@@ -347,7 +349,7 @@ import { renderToPdf, decompressWoff2 } from 'postext-pdf';
 // Open: chapters, config (customFonts wired to the bundle's files), resources.
 const bundle = await openBundle(bytes, { locale: 'es' }); // Uint8Array | ArrayBuffer | Blob
 await loadBundleFonts(bundle);        // browser: FontFace for every bundled face (drops stale widths)
-// Google families the bundle names but does not carry: prepareFonts(chapters, bundle.config, { resolve })
+// Families the bundle names but does not carry (Google Fonts, or Fontsource): prepareFonts(chapters, bundle.config, { resolve })
 await registerBundleImages(bundle);   // canvas backend; bundleImageUrl(bundle) for renderToHtml
 const docs = buildBundle(bundle);     // one VDTDocument per chapter, chained like the Sandbox
 const pdf = await renderToPdf(docs, {

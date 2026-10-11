@@ -86,9 +86,10 @@ Differences from `render.mjs`: `--chapters` is 1-based (`--chapters 3`
 is the third chapter file) and lays those chapters out as a short book;
 `check` reports the engine's warnings and the print preflight but not the
 Sandbox's extra checks that `render.mjs` adds with `SANDBOX-WARN`; a font
-family the project does not bundle is downloaded from Google Fonts (and
-cached) as the browser would, where `render.mjs` measures it with a
-stand-in face; `--offline` keeps it from downloading.
+family the project does not bundle is downloaded and cached, from Google
+Fonts or, for a family Google Fonts does not have, from Fontsource, as the
+Sandbox loads it, where `render.mjs` downloads nothing and measures the
+family with a stand-in face; `--offline` keeps it from downloading.
 
 ### `render.mjs` (Node)
 
@@ -140,6 +141,14 @@ const canvas = createCanvas(1, 1);
 renderPageToCanvas(doc.pages[11], doc, canvas, { scale: 100 / doc.config.page.dpi });
 writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
 ```
+
+An SVG decoded with `loadImage` is a bitmap of the size the SVG declares,
+and `drawImage` stretches it: a figure placed larger than its file says
+comes out soft. `render.mjs` gives each SVG image the size it is drawn at
+before every draw (`sizeSvgImage` and `drawsSvgAtSize` in its `--jpeg`
+block, wrapped around both canvases above), recolours the markup of a
+book with `diagramStyle.singleInk` and registers a video's poster: copy
+those lines, or run the script.
 
 ### What the log says
 
@@ -322,7 +331,7 @@ the page images instead of claiming the port is visually verified.
 | Over-stretched justified lines (URLs, long compounds) | the engine sets those lines ragged; break URLs with `/`; add soft hyphens (U+00AD) |
 | Word overflowing a table cell | the engine divides it; widen `columnWidths` |
 | Numbered list drifting off the grid | restate list margins in pt/grid units for both list types |
-| Text in a figure in the wrong font | the bundle (or Google) must hold the family its `font-family` names, spelt the same; Checks shows `svgFontUnavailable` (≥ 1.25 embeds the faces itself) |
+| Text in a figure in the wrong font | the bundle must hold the family its `font-family` names, spelt the same (or Google Fonts or Fontsource must have it, for the Sandbox and the command line); Checks shows `svgFontUnavailable` (≥ 1.25 embeds the faces itself) |
 | Blank figure in the browser | too many nested SVG filters: flatten |
 | Page count differs by one per chapter | a copy-fitted source (`compact` style), or accept it and note it |
 | Chinese lines a character longer or shorter than the source's | `cjk.grid` `charsPerLine`; the region's `punctuationWidth` (Kaiming vs full width) and `compressAdjacent` |
