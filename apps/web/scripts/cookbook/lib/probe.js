@@ -1630,6 +1630,14 @@ export function bundleGroup(picked, name = '', { keep = 0, explicit = false, key
 
 // ─── The bundle, read back (C33) ────────────────────────────────────────────
 
+/** The layout hash of one document: every block, line and running head
+ *  with its place on the page, pages counted from the document's first.
+ *  What C33 compares, what `sandbox.chapters` records and what
+ *  `pnpm cookbook sandbox` computes of the Sandbox's own layout (#736). */
+export function layoutHash(doc) {
+  return shortHash(vdtText([doc], { own: true }));
+}
+
 /** A short hash of a layout text (two rounds of FNV-1a), for the report. */
 function shortHash(text) {
   let a = 0x811c9dc5;
@@ -1656,7 +1664,7 @@ function firstDifference(pen, bundle) {
 }
 
 /** What a warning of a document names, positions aside. */
-function warningsOf(doc) {
+export function warningsOf(doc) {
   const said = (w) => (/^comic[A-Z]/.test(w.kind) ? comicDetail(w)
     : layoutDetail(w) ?? [w.resourceId, w.target, w.term, w.text, w.reason, w.value]
       .filter((x) => typeof x === 'string' || typeof x === 'number').join(' '));
@@ -2119,6 +2127,9 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
       // documents, the C33 comparison on the committed bytes (#734).
       ...(committed && committed !== base64 ? { committedReadBack: await readBundleBack(engine, bytesOfBase64(committed), penDocs, held) } : {}),
       builds: group ? group.builds.map((i) => i + 1) : null,
+      // The warnings of the builds the bundle holds, as C33 keys them: what
+      // the Sandbox may raise on this bundle without it being news (#736).
+      penWarnings: penDocs.flatMap((doc) => (doc ? warningsOf(doc) : [])),
       pages: penDocs.reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
       allPages: (whole.docs ?? []).reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
       readBack: await readBundleBack(engine, bytes, penDocs, held),

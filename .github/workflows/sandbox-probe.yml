@@ -1,0 +1,69 @@
+name: Sandbox probe
+
+# After a release, every recipe bundle opened in the Sandbox of the
+# deployed site (`pnpm cookbook sandbox --site`, #736): the route a reader
+# opens from a recipe page, with the layout worker's documents read from
+# the page. It fails when an edition does not lay out, raises a warning its
+# pen does not, shows another page count than capture.json records, or
+# fetched another edition's bundle (#737).
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      site:
+        description: The site to probe
+        default: https://postext.dev
+        required: false
+
+jobs:
+  probe:
+    name: Open the recipe bundles on the site
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SITE: ${{ inputs.site || 'https://postext.dev' }}
+
+    steps:
+      # The released commit: its capture.json files are what the site serves.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The site's pages print the version they were built from (JSON-LD
+      # `softwareVersion`): wait until the deploy of this release is live.
+      - name: Wait for the deploy
+        run: |
+          VERSION=$(node -p "require('./packages/postext/package.json').version")
+          for _ in $(seq 1 80); do
+            if curl -fsSL --max-time 30 "$SITE/en" | grep -q "\"softwareVersion\":\"$VERSION\""; then
+              echo "$SITE serves postext $VERSION"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "$SITE does not serve postext $VERSION after 20 minutes" >&2
+          exit 1
+
+      - name: pnpm cookbook sandbox --site
+        env:
+          COOKBOOK_CHROME: /usr/bin/google-chrome
+        run: pnpm cookbook sandbox --site "$SITE" --report "$RUNNER_TEMP/sandbox-probe.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sandbox-probe
+          path: ${{ runner.temp }}/sandbox-probe.json
+          retention-days: 30

@@ -213,14 +213,21 @@ function sandboxMeta(slug: string, variant: SampleLocale, meta: RecipeMeta): San
 }
 /** capture.json's `sandbox` entry: the bundle, the folio it carries, and,
  *  when it holds only some of the published builds, which one the recipe
- *  kept (`capture.sandbox`) and how many pages it lays out to. */
-function sandboxEntry(slug: string, bundle: SandboxBundle & { bytes: Buffer }, meta: RecipeMeta) {
+ *  kept (`capture.sandbox`) and how many pages it lays out to; then what
+ *  `pnpm cookbook sandbox` compares the Sandbox's own layout with (#736):
+ *  each chapter's pages and layout hash as the bundle reads back, and the
+ *  warnings of the pen's builds it holds. */
+export function sandboxEntry(slug: string, bundle: Pick<SandboxBundle, "pages" | "allPages" | "readBack" | "penWarnings"> & { bytes: Buffer }, meta: Pick<RecipeMeta, "folio" | "capture">) {
   const folio = folioHash(meta.folio);
   const keep = meta.capture.sandbox;
+  const back = bundle.readBack && !bundle.readBack.error && !bundle.readBack.skipped ? bundle.readBack : null;
+  const chapters = (back?.chapters ?? []).map((c) => c.bundle).filter((c): c is { pages: number; hash: string } => !!c);
   return {
     file: sandboxFile(slug), bytes: bundle.bytes.length, ...(folio ? { folio } : {}),
     ...(keep !== undefined ? { keep } : {}),
     ...(bundle.pages && bundle.pages !== bundle.allPages ? { pages: bundle.pages } : {}),
+    ...(chapters.length ? { chapters: chapters.map(({ pages, hash }) => ({ pages, hash })) } : {}),
+    ...(bundle.penWarnings.length ? { warnings: bundle.penWarnings } : {}),
   };
 }
 
@@ -939,7 +946,7 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
         if (vdtHash && vdtHash !== old.vdtHash) {
           result.warns.push({ check: "vdt", severity: "warn", detail: "the layout differs from the published pages (fonts or network?)" });
         }
-        const bundled = sandboxFindings(run.sandbox ?? { bytes: null, error: "not written", warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null });
+        const bundled = sandboxFindings(run.sandbox ?? { bytes: null, error: "not written", warnings: [], notes: [], warns: [], penWarnings: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null });
         result.fails.push(...bundled.filter((f) => f.severity === "fail").map(({ check, detail }) => ({ check, detail })));
         findings = kept(bundled);
         result.warns.push(...findings);
@@ -984,7 +991,9 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
       // A bundle written again is not the one a later release read back (#735).
       if (mine.some((d) => d.result.written)) delete manifest.verified;
       const target = path.join(captureDir(task.slug), "capture.json");
-      writeIfChanged(target, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`));
+      if (writeIfChanged(target, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`))) {
+        for (const d of mine) if (!d.result.written) d.result.note = "bundle unchanged, capture.json updated";
+      }
     }
   } finally {
     await hb.browser.close().catch(() => {});

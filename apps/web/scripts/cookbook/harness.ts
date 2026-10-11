@@ -168,6 +168,9 @@ export interface SandboxBundle {
   /** Builds left out because their configuration is another and the recipe
    *  did not say which to keep (`capture.sandbox`). */
   warns: string[];
+  /** The warnings of the pen's builds the bundle holds (kind and what it
+   *  names, positions aside): `sandbox.warnings` in capture.json (#736). */
+  penWarnings: string[];
   /** The pages of the builds the bundle holds, and of every build the
    *  capture publishes. */
   pages: number;
@@ -485,11 +488,11 @@ async function sandboxBundle(
   thumbnail: Buffer | null,
   committed: Buffer | null,
 ): Promise<SandboxBundle> {
-  const none = { warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null };
+  const none = { warnings: [], notes: [], warns: [], penWarnings: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null };
   try {
     const out = await probe<{
       base64?: string; error?: string; warnings?: string[]; notes?: string[]; warns?: string[];
-      pages?: number; allPages?: number; readBack?: BundleReadBack; committedReadBack?: BundleReadBack;
+      pages?: number; allPages?: number; readBack?: BundleReadBack; committedReadBack?: BundleReadBack; penWarnings?: string[];
     }>(page, "sandboxBundle", {
       select,
       keep,
@@ -507,6 +510,7 @@ async function sandboxBundle(
       warnings: out.warnings ?? [],
       notes: out.notes ?? [],
       warns: out.warns ?? [],
+      penWarnings: out.penWarnings ?? [],
       pages: out.pages ?? 0,
       allPages: out.allPages ?? 0,
       readBack: out.readBack ?? null,

@@ -2,7 +2,7 @@
  * The Cookbook CLI: `pnpm cookbook <command>` (from the repo root or
  * apps/web; it runs in apps/web with Node's type stripping).
  *
- *   new · dev · capture · lint · schema · coverage · help
+ *   new · dev · capture · sandbox · lint · schema · coverage · help
  *
  * Exit codes: 0 when everything is green, 1 on any failure, 2 on a usage
  * error. Heavy modules (the capture harness, the pen server) load only for
@@ -22,6 +22,7 @@ import { COVERAGE_USAGE, runCoverage } from "./coverage.ts";
 import { DEV_USAGE, ENGINE_PATTERN, runDev } from "./dev.ts";
 import { LINT_USAGE, runLint } from "./lint.ts";
 import { NEW_USAGE, runNew } from "./new.ts";
+import { SANDBOX_USAGE } from "./sandbox-usage.ts";
 import { SCHEMA_USAGE, runSchema } from "./schema.ts";
 
 // ─── capture ────────────────────────────────────────────────────────────────
@@ -216,6 +217,12 @@ const COMMANDS: Record<string, Command> = {
     usage: CAPTURE_USAGE,
     summary: "Capture and verify pages, cards and PDFs (default: stale recipes)",
   },
+  sandbox: {
+    // The check pulls in puppeteer: loaded only for this command.
+    run: async (argv) => (await import("./sandbox.ts")).runSandbox(argv),
+    usage: SANDBOX_USAGE,
+    summary: "Lay every bundle out as the Sandbox does and compare it with capture.json",
+  },
   lint: { run: runLint, usage: LINT_USAGE, summary: "Static checks, grouped by recipe (default: all)" },
   schema: { run: runSchema, usage: SCHEMA_USAGE, summary: "Regenerate cookbook/recipe.schema.json" },
   coverage: {
@@ -229,6 +236,7 @@ const SYNOPSES: Record<string, string> = {
   new: "new <slug> --chapter <id> [--from <slug>]",
   dev: "dev <slug> [--lang es] [--port 4400]",
   capture: "capture [slug…] [--all] [--check] [--force] …",
+  sandbox: "sandbox [slug…] [--site <url>] [--strict] …",
   lint: "lint [slug…]",
   schema: "schema [--check]",
   coverage: "coverage [--json] [--catalog <file>]",

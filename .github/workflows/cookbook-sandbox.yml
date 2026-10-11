@@ -1,0 +1,64 @@
+name: Cookbook in the Sandbox
+
+# Every recipe bundle laid out by the Sandbox of the pull request: its font
+# loader, its layout service and its worker, built from the working tree
+# (`pnpm cookbook sandbox`, #736). It fails when the Sandbox raises a
+# warning the recipe's pen does not, cannot lay a bundle out, or hangs. A
+# page count other than the recorded one is a warning here: a pull request
+# that moves lines on purpose cannot capture the recipes again before its
+# release.
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - packages/postext-sandbox/**
+      - packages/postext/**
+      - cookbook/**
+      - apps/web/public/cookbook/**
+      - apps/web/scripts/cookbook/**
+      - .github/workflows/cookbook-sandbox.yml
+
+jobs:
+  sandbox:
+    name: Lay out the recipe bundles
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm turbo run build --filter=postext-sandbox...
+
+      # Font files and style sheets, fetched once a week: a Chinese or
+      # Japanese family comes in some 120 files.
+      - name: The week of the font cache
+        id: week
+        run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: apps/web/.cache/cookbook-net
+          key: cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}
+          restore-keys: |
+            cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: pnpm cookbook sandbox
+        env:
+          COOKBOOK_CHROME: /usr/bin/google-chrome
+        run: pnpm cookbook sandbox --report "$RUNNER_TEMP/cookbook-sandbox.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cookbook-sandbox
+          path: ${{ runner.temp }}/cookbook-sandbox.json
+          retention-days: 14
