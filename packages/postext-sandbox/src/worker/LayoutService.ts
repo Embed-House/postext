@@ -1,7 +1,7 @@
 import { createLayoutWorker } from 'postext/worker';
 import type { BuildProgress, BuildStats, LayoutWorkerHandle } from 'postext/worker';
 import type { PostextConfig, PostextContent, VDTDocument } from 'postext';
-import { collectFontPayloadsForFamilies, getConfigFontFamilies, onCustomFontsChanged } from '../controls/fontLoader';
+import { collectFontPayloadsForFamilies, collectStandInPayloads, fontPayloadKey, getConfigFontFamilies, onCustomFontsChanged } from '../controls/fontLoader';
 import { resourcesKeyOf } from '../book/layoutKeys';
 import { perfSizeKb, perfSpan } from '../perf/marks';
 
@@ -82,10 +82,16 @@ export function createLayoutService(options?: { handle?: LayoutWorkerHandle }): 
 
   // --- fonts: registered lazily, once per family, for the worker's lifetime
   const registeredFamilies = new Set<string>();
+  // The stand-in faces sent so far (#688), by face key: a family's own
+  // file under a bold or an italic it lacks, for the characters of the
+  // builds so far.
+  const registeredStandIns = new Set<string>();
   let fontQueue: Promise<void> = Promise.resolve();
   const unsubscribeFonts = onCustomFontsChanged((families) => {
     const toUnregister = families.filter((f) => registeredFamilies.has(f));
     for (const f of families) registeredFamilies.delete(f);
+    // The worker drops every face of the family, its stand-ins too.
+    for (const key of registeredStandIns) if (families.some((f) => key.startsWith(`${f}|`))) registeredStandIns.delete(key);
     if (toUnregister.length === 0) return;
     fontQueue = fontQueue.then(() =>
       worker().unregisterFonts(toUnregister).catch((err) => {
@@ -94,24 +100,35 @@ export function createLayoutService(options?: { handle?: LayoutWorkerHandle }): 
     );
   });
 
-  const ensureFonts = async (config: PostextConfig, markdown?: string): Promise<void> => {
+  const ensureFonts = async (config: PostextConfig, content: PostextContent): Promise<void> => {
     // The text decides some faces too (a comic page letters in its own).
-    const families = getConfigFontFamilies(config, markdown);
+    const families = getConfigFontFamilies(config, content.markdown);
     const missing = families.filter((f) => !registeredFamilies.has(f));
-    if (missing.length === 0) {
-      await fontQueue;
-      return;
-    }
     for (const f of missing) registeredFamilies.add(f);
     const next = fontQueue.then(async () => {
+      if (missing.length > 0) {
+        try {
+          const payloads = await collectFontPayloadsForFamilies(missing);
+          if (payloads.length > 0) await worker().registerFonts(payloads);
+          const delivered = new Set(payloads.map((p) => p.family));
+          for (const f of missing) if (!delivered.has(f)) registeredFamilies.delete(f);
+        } catch (err) {
+          for (const f of missing) registeredFamilies.delete(f);
+          console.warn('[LayoutService] font registration failed', err);
+        }
+      }
+      // After the families' own faces: the bold or the italic a family
+      // has no file for, answered by its own face (#688), in the files
+      // that hold this build's characters.
       try {
-        const payloads = await collectFontPayloadsForFamilies(missing);
-        if (payloads.length > 0) await worker().registerFonts(payloads);
-        const delivered = new Set(payloads.map((p) => p.family));
-        for (const f of missing) if (!delivered.has(f)) registeredFamilies.delete(f);
+        const standIns = await collectStandInPayloads(config, content, registeredStandIns);
+        if (standIns.length > 0) {
+          const keys = standIns.map(fontPayloadKey);
+          await worker().registerFonts(standIns);
+          for (const key of keys) registeredStandIns.add(key);
+        }
       } catch (err) {
-        for (const f of missing) registeredFamilies.delete(f);
-        console.warn('[LayoutService] font registration failed', err);
+        console.warn('[LayoutService] stand-in font registration failed', err);
       }
     });
     fontQueue = next;
@@ -140,7 +157,7 @@ export function createLayoutService(options?: { handle?: LayoutWorkerHandle }): 
     });
     let stats: BuildStats | null = null;
     try {
-      await ensureFonts(request.config, request.content.markdown);
+      await ensureFonts(request.config, request.content);
       if (controller.signal.aborted) throw abortError();
       const buildOptions = {
         signal: controller.signal,

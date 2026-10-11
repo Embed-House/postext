@@ -8,8 +8,13 @@ import {
   localeScript,
   unregisterVerticalAlternates,
   prepareFonts,
+  comicFontFamilies,
+  configFontFaces,
+  fontSampleText,
 } from 'postext';
+import type { PostextContent } from 'postext';
 import { getFontFile } from '../storage/fontStorage';
+import { parseUnicodeRange } from '../viewport/fontsourceSlices';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 
@@ -30,10 +35,54 @@ export type { FontContentText, FontUsageDocument, FontVariantUse };
 const loadedFonts = new Set<string>();
 const loadingPromises = new Map<string, Promise<void>>();
 
+/** A face of a family as it is served: one file, with the weight, the slant
+ *  and the characters (`unicode-range`) it answers for. */
+export interface FamilyFace {
+  family: string;
+  /** `'400'`, or a range (`'100 900'`). */
+  weight: string;
+  style: string;
+  unicodeRange?: string;
+  url: string;
+}
+
 interface FontMetadata {
   variable: boolean;
   weights: number[];
   hasItalic: boolean;
+  /** The family's files on Fontsource, for a family Google Fonts does not
+   *  serve (Fontsource's `type` is not `google`: Commit Mono, FiraGO,
+   *  DejaVu Sans…): asked of Google, its style sheet is a 400 with no CORS
+   *  headers (#689). */
+  fontsource?: FamilyFace[];
+}
+
+/** What the Fontsource API says of a family, as far as the loader reads it. */
+interface FontsourceRecord {
+  variable?: boolean;
+  weights?: number[];
+  styles?: string[];
+  type?: string;
+  unicodeRange?: Record<string, string>;
+  variants?: Record<string, Record<string, Record<string, { url?: { woff2?: string } }>>>;
+}
+
+/** The WOFF2 files of a Fontsource record, one face per weight, style and
+ *  subset, in the order the record lists them. */
+function fontsourceFaces(family: string, data: FontsourceRecord): FamilyFace[] {
+  const out: FamilyFace[] = [];
+  const ranges = data.unicodeRange ?? {};
+  for (const [weight, styles] of Object.entries(data.variants ?? {})) {
+    for (const [style, subsets] of Object.entries(styles ?? {})) {
+      for (const [subset, file] of Object.entries(subsets ?? {})) {
+        const url = file?.url?.woff2;
+        if (!url) continue;
+        const unicodeRange = ranges[subset] ?? ranges[`[${subset}]`];
+        out.push({ family, weight, style: style === 'italic' ? 'italic' : 'normal', ...(unicodeRange ? { unicodeRange } : {}), url });
+      }
+    }
+  }
+  return out;
 }
 
 const metadataCache = new Map<string, FontMetadata | null>();
@@ -52,17 +101,16 @@ async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
     try {
       const res = await fetch(`https://api.fontsource.org/v1/fonts/${toFontsourceId(family)}`);
       if (!res.ok) return null;
-      const data = await res.json() as {
-        variable?: boolean;
-        weights?: number[];
-        styles?: string[];
-      };
+      const data = await res.json() as FontsourceRecord;
       const weights = (data.weights ?? []).filter((w) => typeof w === 'number');
       if (weights.length === 0) return null;
+      // Fontsource also lists families that are not on Google Fonts.
+      const own = data.type !== undefined && data.type !== 'google' ? fontsourceFaces(family, data) : [];
       return {
         variable: data.variable === true,
         weights,
         hasItalic: (data.styles ?? []).includes('italic'),
+        ...(own.length > 0 ? { fontsource: own } : {}),
       };
     } catch {
       return null;
@@ -128,21 +176,27 @@ export function loadFont(font: string): Promise<void> {
 
   const promise = (async () => {
     const meta = await fetchFontMetadata(font);
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = buildFontUrl(font, meta);
-    const linkLoaded = new Promise<void>((resolve) => {
-      link.onload = () => resolve();
-      link.onerror = () => resolve();
-    });
-    document.head.appendChild(link);
+    if (meta?.fontsource) {
+      // Not on Google Fonts (#689): its faces are declared from
+      // Fontsource's files, and loaded below like a style sheet's.
+      declareFaces(meta.fontsource);
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = buildFontUrl(font, meta);
+      const linkLoaded = new Promise<void>((resolve) => {
+        link.onload = () => resolve();
+        link.onerror = () => resolve();
+      });
+      document.head.appendChild(link);
 
-    // The stylesheet must be parsed before document.fonts sees the faces;
-    // waiting on document.fonts.ready alone can resolve prematurely.
-    await Promise.race([
-      linkLoaded,
-      new Promise<void>((resolve) => setTimeout(resolve, FONT_LOAD_TIMEOUT_MS)),
-    ]);
+      // The stylesheet must be parsed before document.fonts sees the faces;
+      // waiting on document.fonts.ready alone can resolve prematurely.
+      await Promise.race([
+        linkLoaded,
+        new Promise<void>((resolve) => setTimeout(resolve, FONT_LOAD_TIMEOUT_MS)),
+      ]);
+    }
 
     // Explicitly request each variant so document.fonts tracks them as pending
     const weights = meta?.weights?.length ? meta.weights : [400, 700];
@@ -238,6 +292,26 @@ async function loadFontSpecs(specs: readonly string[], text: string): Promise<vo
  */
 export function ensureConfigFontsLoaded(config: PostextConfig, markdown?: FontContentText): Promise<void> {
   if (typeof document === 'undefined' || !document.fonts) return Promise.resolve();
+  // The stand-ins first (#688): once declared they are faces the check
+  // below names and the loads that follow bring in.
+  if (!standInsSettled(config, markdown)) {
+    // Given up after the timeout, like a face that does not load: the
+    // previews declare what is left when they look again.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    return Promise.race([
+      declareStandIns(config, markdown).catch(() => false),
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, FONT_LOAD_TIMEOUT_MS);
+      }),
+    ]).then(() => {
+      if (timer !== undefined) clearTimeout(timer);
+      return loadMissingConfigFonts(config, markdown);
+    });
+  }
+  return loadMissingConfigFonts(config, markdown);
+}
+
+function loadMissingConfigFonts(config: PostextConfig, markdown?: FontContentText): Promise<void> {
   const missing = missingConfigFontSpecs(config, markdown);
   if (missing.length === 0) return Promise.resolve();
   // The engine's preparation (#629): every face the configuration asks
@@ -319,14 +393,6 @@ export function createFontGate(): FontGate {
 // Worker font payload collection
 // ---------------------------------------------------------------------------
 
-interface ParsedFace {
-  family: string;
-  weight: string;
-  style: string;
-  unicodeRange?: string;
-  url: string;
-}
-
 const FACE_RE = /@font-face\s*\{([^}]+)\}/g;
 const DECL_RES = {
   family: /font-family:\s*['"]?([^;'"]+)['"]?\s*;/i,
@@ -336,8 +402,8 @@ const DECL_RES = {
   src: /src:\s*url\(([^)]+)\)\s*format\(['"]?woff2['"]?\)/i,
 };
 
-function parseFontFaceCss(css: string): ParsedFace[] {
-  const out: ParsedFace[] = [];
+function parseFontFaceCss(css: string): FamilyFace[] {
+  const out: FamilyFace[] = [];
   for (const match of css.matchAll(FACE_RE)) {
     const body = match[1]!;
     const srcMatch = DECL_RES.src.exec(body);
@@ -358,40 +424,82 @@ function parseFontFaceCss(css: string): ParsedFace[] {
   return out;
 }
 
+const familyFacesCache = new Map<string, Promise<FamilyFace[]>>();
+/** When a family's faces could not be had, by family. */
+const familyFacesFailedAt = new Map<string, number>();
+/** How long a family that gave no faces is left alone: every build asks
+ *  for its families, and a family that is nowhere would otherwise cost a
+ *  failed request per keystroke. */
+const FAMILY_FACES_RETRY_MS = 30_000;
+
+/**
+ * The faces a family that is not a custom one is served as, in the order
+ * its style sheet declares them: Google's, or Fontsource's files for a
+ * family Google Fonts does not have. Empty when they cannot be had (the
+ * request fails, the family is nowhere), and asked again after a while.
+ * Never rejects: a failed style sheet is one family without faces, not a
+ * build without fonts (#689).
+ */
+export function fetchFamilyFaces(family: string): Promise<FamilyFace[]> {
+  const cached = familyFacesCache.get(family);
+  const failedAt = familyFacesFailedAt.get(family);
+  if (cached && (failedAt === undefined || Date.now() - failedAt < FAMILY_FACES_RETRY_MS)) return cached;
+  familyFacesFailedAt.delete(family);
+  const promise = (async (): Promise<FamilyFace[]> => {
+    try {
+      const meta = await fetchFontMetadata(family);
+      if (meta?.fontsource) return meta.fontsource;
+      // Google Fonts returns woff2 only if the UA is browser-like. Normal
+      // fetch from the main thread inherits the browser UA, so this is
+      // fine. From a worker it would return ttf; that's why we do this on
+      // the main thread. A family Google does not have answers 400 with no
+      // CORS headers, which rejects.
+      const res = await fetch(buildFontUrl(family, meta), { credentials: 'omit' });
+      if (!res.ok) return [];
+      return parseFontFaceCss(await res.text());
+    } catch {
+      return [];
+    }
+  })();
+  familyFacesCache.set(family, promise);
+  void promise.then((faces) => {
+    if (faces.length === 0 && familyFacesCache.get(family) === promise) familyFacesFailedAt.set(family, Date.now());
+  });
+  return promise;
+}
+
 const facePayloadCache = new Map<string, Promise<FontPayload[]>>();
 
 function faceCacheKey(p: { family: string; weight: string; style: string; unicodeRange?: string }): string {
   return `${p.family}|${p.weight}|${p.style}|${p.unicodeRange ?? ''}`;
 }
 
-async function fetchFamilyPayloads(family: string): Promise<FontPayload[]> {
-  const custom = getCustomFontFamily(family);
-  if (custom) return fetchCustomFamilyPayloads(custom);
-  const meta = await fetchFontMetadata(family);
-  const cssUrl = buildFontUrl(family, meta);
-  // Google Fonts returns woff2 only if the UA is browser-like. Normal fetch
-  // from the main thread inherits the browser UA, so this is fine. From a
-  // worker it would return ttf; that's why we do this on the main thread.
-  const cssRes = await fetch(cssUrl, { credentials: 'omit' });
-  if (!cssRes.ok) return [];
-  const css = await cssRes.text();
-  const faces = parseFontFaceCss(css);
-  const payloads: FontPayload[] = [];
-  await Promise.all(faces.map(async (face) => {
+/** The files of `faces` as worker payloads, in the order of `faces` (a
+ *  family's slices overlap at a few code points, where the order they are
+ *  added in decides, #629). A file that fails is left out. */
+async function fetchFacePayloads(faces: readonly FamilyFace[]): Promise<FontPayload[]> {
+  const payloads = await Promise.all(faces.map(async (face): Promise<FontPayload | null> => {
     try {
       const r = await fetch(face.url, { credentials: 'omit' });
-      if (!r.ok) return;
-      const buffer = await r.arrayBuffer();
-      payloads.push({
+      if (!r.ok) return null;
+      return {
         family: face.family,
         weight: face.weight,
         style: face.style,
         unicodeRange: face.unicodeRange,
-        buffer,
-      });
-    } catch { /* ignore individual face failures */ }
+        buffer: await r.arrayBuffer(),
+      };
+    } catch {
+      return null; // ignore individual face failures
+    }
   }));
-  return payloads;
+  return payloads.filter((p): p is FontPayload => p !== null);
+}
+
+async function fetchFamilyPayloads(family: string): Promise<FontPayload[]> {
+  const custom = getCustomFontFamily(family);
+  if (custom) return fetchCustomFamilyPayloads(custom);
+  return fetchFacePayloads(await fetchFamilyFaces(family));
 }
 
 /**
@@ -427,7 +535,7 @@ export async function collectFontPayloadsForFamilies(
       return cached.then(async (payloads) => {
         // If any buffer has been neutered (byteLength === 0), re-fetch.
         if (payloads.some((p) => p.buffer.byteLength === 0)) {
-          const fresh = fetchFamilyPayloads(family);
+          const fresh = fetchFamilyPayloads(family).catch((): FontPayload[] => []);
           facePayloadCache.set(family, fresh);
           return fresh;
         }
@@ -435,7 +543,9 @@ export async function collectFontPayloadsForFamilies(
         return payloads.map((p) => ({ ...p, buffer: p.buffer.slice(0) }));
       });
     }
-    const promise = fetchFamilyPayloads(family).then((payloads) => {
+    // A family that cannot be fetched gives no payload; the others of
+    // the build are registered all the same (#689).
+    const promise = fetchFamilyPayloads(family).catch((): FontPayload[] => []).then((payloads) => {
       // An empty face list means the family could not be fetched (or was
       // looked up before its custom definition landed): don't cache it, so
       // the next build retries instead of measuring with a fallback forever.
@@ -457,6 +567,248 @@ export async function collectFontPayloadsForFamilies(
     }
   }
   return flat;
+}
+
+// ---------------------------------------------------------------------------
+// Stand-in faces: a bold or an italic the family has no file for
+// ---------------------------------------------------------------------------
+//
+// A browser asked for the 700 of a family with one 400 file draws the 400
+// heavier, and slants an upright for an italic the family lacks: letters no
+// file holds, while the PDF embeds the file there is (the provider snaps to
+// the nearest weight, and to the upright). The comic faces are the common
+// case: a shout and a sound effect are lettered in bold, an inner voice in
+// italics, in families that ship one weight (Bangers, Patrick Hand, Zen
+// Antique, Dela Gothic One). The Sandbox declares the file the browser
+// would have drawn from as the face asked, so the previews set the letters
+// the PDF embeds, as the Cookbook kit's comics block and the command line
+// do (#688). A weight another real face answers as it is (a 600 set from
+// the 700) is left to the browser, and reported by the engine (#650).
+
+/** The weights the heaviest cut of a family with no bold stands in for:
+ *  the ones a browser makes bold from a face of 500 or less. */
+const BOLD_STAND_IN = '600 900';
+
+function isSlanted(style: string): boolean {
+  return /italic|oblique/i.test(style);
+}
+
+/** A weight descriptor (`'400'`, `'bold'`, `'100 900'`) as a range. */
+function weightSpan(weight: string): [number, number] {
+  const parts = weight.trim().split(/\s+/).map((w) => (w === 'bold' ? 700 : w === 'normal' ? 400 : Number(w)));
+  const lo = Number.isFinite(parts[0]) ? parts[0]! : 400;
+  const hi = Number.isFinite(parts[1]) ? parts[1]! : lo;
+  return [Math.min(lo, hi), Math.max(lo, hi)];
+}
+
+/** The weight descriptor CSS font matching settles on for `target` among
+ *  `weights` (CSS Fonts 4, §5.2): from 400 to 500 the weights up to 500
+ *  first, then lighter, then heavier; below 400 lighter first; above 500
+ *  heavier first. */
+function matchWeight(weights: readonly string[], target: number): string | undefined {
+  const spans = [...new Set(weights)].map((weight) => ({ weight, span: weightSpan(weight) }));
+  const exact = spans.find(({ span }) => target >= span[0] && target <= span[1]);
+  if (exact) return exact.weight;
+  const lighter = spans.filter(({ span }) => span[1] < target).sort((a, b) => b.span[1] - a.span[1]);
+  const heavier = spans.filter(({ span }) => span[0] > target).sort((a, b) => a.span[0] - b.span[0]);
+  if (target >= 400 && target <= 500) {
+    return (heavier.find(({ span }) => span[0] <= 500) ?? lighter[0] ?? heavier[0])?.weight;
+  }
+  return (target < 400 ? lighter[0] ?? heavier[0] : heavier[0] ?? lighter[0])?.weight;
+}
+
+/**
+ * The faces to declare beside a family's own (`own`: every file of the
+ * family, with its weight, slant and range), each the copy of one of them
+ * under another weight or slant:
+ *
+ * - in each slant, the heaviest cut for 600 to 900 when that cut is 500 or
+ *   lighter (the weights a browser would make bold from it);
+ * - for a family with no italic, the upright cut each weight of `italics`
+ *   (the italics a build asks of the family) is matched to, as an italic.
+ *
+ * A family with a bold and an italic of its own gets none.
+ */
+export function standInFaces<T extends { weight: string; style: string }>(own: readonly T[], italics: readonly number[] = []): T[] {
+  const upright = own.filter((f) => !isSlanted(f.style));
+  const slanted = own.filter((f) => isSlanted(f.style));
+  const bold = (pool: readonly T[]): T[] => {
+    if (pool.length === 0) return [];
+    const top = Math.max(...pool.map((f) => weightSpan(f.weight)[1]));
+    if (top > 500) return [];
+    return pool.filter((f) => weightSpan(f.weight)[1] === top).map((f) => ({ ...f, weight: BOLD_STAND_IN }));
+  };
+  const uprightBold = bold(upright);
+  const out = [...uprightBold, ...bold(slanted)];
+  if (slanted.length === 0 && italics.length > 0) {
+    const pool = [...upright, ...uprightBold];
+    const weights = pool.map((f) => f.weight);
+    const cuts = new Set<string>();
+    for (const weight of italics) {
+      const cut = matchWeight(weights, weight);
+      if (cut !== undefined) cuts.add(cut);
+    }
+    for (const f of pool) if (cuts.has(f.weight)) out.push({ ...f, style: 'italic' });
+  }
+  return out;
+}
+
+/**
+ * The italics a build may ask of each family, by weight: the ones the
+ * configuration sets (the engine's `configFontFaces`: the body's emphasis,
+ * a style set in italics, code), and the regular and bold italics of the
+ * faces comic pages are lettered in (an inner voice is set in italics,
+ * emphasis in bold italics). A bold needs no asking: its stand-in follows
+ * from the family's faces alone.
+ */
+export function askedItalics(config: PostextConfig, markdown?: FontContentText): Map<string, number[]> {
+  const out = new Map<string, number[]>();
+  const add = (family: string, weight: number): void => {
+    const list = out.get(family);
+    if (!list) out.set(family, [weight]);
+    else if (!list.includes(weight)) list.push(weight);
+  };
+  for (const f of configFontFaces(config, markdown)) if (f.style === 'italic') add(f.family, f.weight);
+  for (const family of comicFontFamilies(config, markdown)) {
+    for (const v of STANDARD_FONT_VARIANTS) if (v.style === 'italic') add(family, v.weight);
+  }
+  return out;
+}
+
+/** The stand-in faces of a family that is not a custom one, for the
+ *  italics asked of it; none when its faces cannot be had. A custom
+ *  family keeps what its author uploaded (and its own check, *Missing
+ *  font variant*). */
+async function familyStandIns(family: string, italics: readonly number[] | undefined): Promise<FamilyFace[]> {
+  if (getCustomFontFamily(family)) return [];
+  return standInFaces(await fetchFamilyFaces(family), italics);
+}
+
+/** `FontFace`s the Sandbox declared itself (the faces of a Fontsource
+ *  family, the stand-ins), by face key. */
+const declaredFaces = new Set<string>();
+
+/** Declare `faces` in `document.fonts`, each once; they load when a text
+ *  or a `load` asks for them. Returns the ones added. */
+function declareFaces(faces: readonly FamilyFace[]): FamilyFace[] {
+  const FontFaceCtor = (globalThis as { FontFace?: typeof FontFace }).FontFace;
+  if (typeof document === 'undefined' || !document.fonts || !FontFaceCtor) return [];
+  const added: FamilyFace[] = [];
+  for (const face of faces) {
+    const key = faceCacheKey(face);
+    if (declaredFaces.has(key)) continue;
+    declaredFaces.add(key);
+    try {
+      document.fonts.add(new FontFaceCtor(face.family, `url(${JSON.stringify(face.url)}) format('woff2')`, {
+        weight: face.weight,
+        style: face.style,
+        ...(face.unicodeRange ? { unicodeRange: face.unicodeRange } : {}),
+      }));
+      added.push(face);
+    } catch (err) {
+      console.warn('[postext-sandbox] failed to declare font face', face.family, face.weight, face.style, err);
+    }
+  }
+  return added;
+}
+
+/** Family and the italics asked of it: what a family's stand-ins were
+ *  declared for. */
+function standInKey(family: string, italics: readonly number[] | undefined): string {
+  return `${family}|${[...(italics ?? [])].sort((a, b) => a - b).join(',')}`;
+}
+
+/** The keys whose stand-ins are declared on the page (or were tried). */
+const settledStandIns = new Set<string>();
+const standInDeclarations = new Map<string, Promise<boolean>>();
+
+function standInKeys(config: PostextConfig, markdown?: FontContentText): { family: string; italics: number[] | undefined; key: string }[] {
+  const italics = askedItalics(config, markdown);
+  return getConfigFontFamilies(config, markdown)
+    .filter((family) => !getCustomFontFamily(family))
+    .map((family) => ({ family, italics: italics.get(family), key: standInKey(family, italics.get(family)) }));
+}
+
+/** Whether the stand-ins of every family of a config are declared on the
+ *  page: nothing left for `declareStandIns` to do. */
+export function standInsSettled(config: PostextConfig, markdown?: FontContentText): boolean {
+  if (typeof document === 'undefined' || !document.fonts || typeof (globalThis as { FontFace?: unknown }).FontFace === 'undefined') return true;
+  return standInKeys(config, markdown).every(({ key }) => settledStandIns.has(key));
+}
+
+/**
+ * Declare on the page the stand-in faces of every family a config sets
+ * text in, and load them for the characters of the document, so the canvas
+ * paints a bold or an italic the family lacks with the family's own
+ * letters. Once per family and set of italics asked. Resolves to whether
+ * any face was added (the previews paint again then).
+ */
+export async function declareStandIns(config: PostextConfig, markdown?: FontContentText): Promise<boolean> {
+  if (standInsSettled(config, markdown)) return false;
+  const sample = fontSampleText(markdown, config);
+  const results = await Promise.all(standInKeys(config, markdown).map(({ family, italics, key }) => {
+    if (settledStandIns.has(key)) return false;
+    let declaration = standInDeclarations.get(key);
+    if (!declaration) {
+      declaration = (async (): Promise<boolean> => {
+        const added = declareFaces(await familyStandIns(family, italics).catch((): FamilyFace[] => []));
+        // One load per weight and slant brings in the files that hold
+        // the document's characters.
+        const specs = [...new Set(added.map((f) => `${isSlanted(f.style) ? 'italic ' : ''}${weightSpan(f.weight)[0]} 16px "${family}"`))];
+        await loadFontSpecs(specs, sample);
+        return added.length > 0;
+      })().finally(() => {
+        settledStandIns.add(key);
+        standInDeclarations.delete(key);
+      });
+      standInDeclarations.set(key, declaration);
+    }
+    return declaration;
+  }));
+  return results.some(Boolean);
+}
+
+/** A unicode-range holds one of `codePoints`. */
+function rangeHolds(unicodeRange: string | undefined, codePoints: ReadonlySet<number>): boolean {
+  if (!unicodeRange) return true;
+  const ranges = parseUnicodeRange(unicodeRange);
+  for (const cp of codePoints) for (const [lo, hi] of ranges) if (cp >= lo && cp <= hi) return true;
+  return false;
+}
+
+/**
+ * The stand-in faces of a build as worker payloads: for every family the
+ * config sets text in, the files of its stand-ins that hold a character
+ * of the document (a Japanese display face comes as some 120 slices, and a
+ * page uses a handful), leaving out the faces of `sent` (face keys, as
+ * {@link fontPayloadKey} gives them). The worker registers them after the
+ * family's own faces.
+ */
+export async function collectStandInPayloads(
+  config: PostextConfig,
+  content: PostextContent | FontContentText,
+  sent?: ReadonlySet<string>,
+): Promise<FontPayload[]> {
+  const markdown = content !== undefined && typeof content === 'object' && !Array.isArray(content) ? (content as PostextContent).markdown : content as FontContentText;
+  const italics = askedItalics(config, markdown);
+  let codePoints: Set<number> | undefined;
+  const wanted: FamilyFace[] = [];
+  for (const family of getConfigFontFamilies(config, markdown)) {
+    const faces = (await familyStandIns(family, italics.get(family)).catch((): FamilyFace[] => []))
+      .filter((face) => !sent?.has(faceCacheKey(face)));
+    if (faces.length === 0) continue;
+    if (!codePoints) {
+      codePoints = new Set<number>();
+      for (const ch of fontSampleText(content, config)) codePoints.add(ch.codePointAt(0)!);
+    }
+    for (const face of faces) if (rangeHolds(face.unicodeRange, codePoints)) wanted.push(face);
+  }
+  return fetchFacePayloads(wanted);
+}
+
+/** The key of a payload's face: family, weight, style and range. */
+export function fontPayloadKey(payload: Pick<FontPayload, 'family' | 'weight' | 'style' | 'unicodeRange'>): string {
+  return faceCacheKey(payload);
 }
 
 // ---------------------------------------------------------------------------
@@ -519,6 +871,8 @@ export function setCustomFonts(list: CustomFontFamily[] | undefined, options: { 
     loadedFonts.delete(family);
     loadingPromises.delete(family);
     facePayloadCache.delete(family);
+    familyFacesCache.delete(family);
+    familyFacesFailedAt.delete(family);
     const faces = registeredCustomFaces.get(family);
     if (faces && typeof document !== 'undefined' && document.fonts) {
       for (const ff of faces) {
@@ -701,7 +1055,7 @@ function twinSourceKey(family: string): string {
   return custom ? `custom:${familySignature(custom)}` : 'google';
 }
 
-async function verticalFacesOf(family: string): Promise<VerticalAlternatesFace[]> {
+async function verticalFacesOf(family: string, italics?: readonly number[]): Promise<VerticalAlternatesFace[]> {
   const custom = getCustomFontFamily(family);
   if (custom) {
     const faces: VerticalAlternatesFace[] = [];
@@ -711,10 +1065,10 @@ async function verticalFacesOf(family: string): Promise<VerticalAlternatesFace[]
     }));
     return faces;
   }
-  const meta = await fetchFontMetadata(family);
-  const res = await fetch(buildFontUrl(family, meta), { credentials: 'omit' });
-  if (!res.ok) return [];
-  return parseFontFaceCss(await res.text()).map((face) => ({
+  // The stand-ins too (#688): a shout lettered in columns is set in the
+  // bold the family's own file answers for.
+  const own = await fetchFamilyFaces(family);
+  return [...own, ...standInFaces(own, italics)].map((face) => ({
     source: face.url,
     weight: face.weight,
     style: face.style,
@@ -731,6 +1085,7 @@ async function verticalFacesOf(family: string): Promise<VerticalAlternatesFace[]
  */
 export async function loadVerticalTwins(config: PostextConfig, markdown?: FontContentText): Promise<boolean> {
   if (typeof document === 'undefined' || !configIsVertical(config, markdown)) return false;
+  const italics = askedItalics(config, markdown);
   const results = await Promise.all(getConfigFontFamilies(config, markdown).map((family) => {
     const key = twinSourceKey(family);
     const entry = verticalTwins.get(family);
@@ -742,7 +1097,7 @@ export async function loadVerticalTwins(config: PostextConfig, markdown?: FontCo
       unregisterVerticalAlternates(family);
       verticalTwinsDone.delete(family);
     }
-    const promise = verticalFacesOf(family)
+    const promise = verticalFacesOf(family, italics.get(family))
       .then((faces) => loadVerticalAlternates(family, faces))
       .catch(() => false)
       .then((ok) => {

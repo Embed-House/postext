@@ -2,10 +2,24 @@ import { describe, expect, it, vi } from 'vitest';
 import type { LayoutWorkerHandle } from 'postext/worker';
 import type { VDTDocument } from 'postext';
 
+/** What the font loader answers: the families of a build, their own
+ *  faces, and the stand-ins not sent yet (#688). */
+const fontLoader = vi.hoisted(() => ({
+  families: [] as string[],
+  standIns: [] as { family: string; weight: string; style: string; buffer: ArrayBuffer }[],
+  changed: null as ((families: string[]) => void) | null,
+}));
+
 vi.mock('../controls/fontLoader', () => ({
-  getConfigFontFamilies: () => [],
-  collectFontPayloadsForFamilies: async () => [],
-  onCustomFontsChanged: () => () => {},
+  getConfigFontFamilies: () => fontLoader.families,
+  collectFontPayloadsForFamilies: async (families: string[]) => families.map((family) => ({ family, weight: '400', style: 'normal', buffer: new ArrayBuffer(1) })),
+  collectStandInPayloads: async (_config: unknown, _content: unknown, sent: ReadonlySet<string>) =>
+    fontLoader.standIns.filter((p) => !sent.has(`${p.family}|${p.weight}|${p.style}`)),
+  fontPayloadKey: (p: { family: string; weight: string; style: string }) => `${p.family}|${p.weight}|${p.style}`,
+  onCustomFontsChanged: (cb: (families: string[]) => void) => {
+    fontLoader.changed = cb;
+    return () => {};
+  },
 }));
 
 import { createLayoutService } from './LayoutService';
@@ -88,6 +102,41 @@ describe('createLayoutService', () => {
     builds[1]!.finish();
     await expect(third).resolves.toBeTruthy();
     service.dispose();
+  });
+
+  it('sends the stand-in faces after the families\' own, each once (#688)', async () => {
+    const { handle, builds } = fakeHandle();
+    const registered: string[][] = [];
+    handle.registerFonts = async (faces) => {
+      registered.push(faces.map((f) => `${f.family} ${f.weight} ${f.style}`));
+    };
+    fontLoader.families = ['Bangers'];
+    fontLoader.standIns = [{ family: 'Bangers', weight: '600 900', style: 'normal', buffer: new ArrayBuffer(1) }];
+    try {
+      const service = createLayoutService({ handle });
+      const first = service.build({ clientId: 'canvas', priority: 'preview', content: content('WHAM'), config: {} });
+      await tick();
+      expect(registered).toEqual([['Bangers 400 normal'], ['Bangers 600 900 normal']]);
+      builds[0]!.finish();
+      await first;
+      // The next build has nothing new to send.
+      const second = service.build({ clientId: 'canvas', priority: 'preview', content: content('WHAM!'), config: {} });
+      await tick();
+      builds[1]!.finish();
+      await second;
+      expect(registered).toHaveLength(2);
+      // A family whose files change is sent again, its stand-ins too.
+      fontLoader.changed?.(['Bangers']);
+      const third = service.build({ clientId: 'canvas', priority: 'preview', content: content('WHAM!!'), config: {} });
+      await tick();
+      builds[2]!.finish();
+      await third;
+      expect(registered.slice(2)).toEqual([['Bangers 400 normal'], ['Bangers 600 900 normal']]);
+      service.dispose();
+    } finally {
+      fontLoader.families = [];
+      fontLoader.standIns = [];
+    }
   });
 
   it('passes the cache key through and cancels a client on request', async () => {

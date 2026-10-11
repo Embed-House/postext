@@ -10,7 +10,7 @@ import { buildBookChapters, type HeldChapterDoc } from '../book/buildBook';
 import { layoutCacheKey } from '../book/layoutKeys';
 import { chapterLayoutFromDoc, leadingBlankPageCount } from '../book/pagination';
 import { stitchDocuments, type StitchedBook } from '../book/stitch';
-import { createFontGate, loadVerticalTwins, verticalTwinsSettled } from '../controls/fontLoader';
+import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../controls/fontLoader';
 import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
 import { getBlob } from '../storage/blobStore';
 import { previewFor, usePrintSetup } from '../print/printSetup';
@@ -275,6 +275,12 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
     }
     if (!verticalTwinsSettled(deferredConfig, fontText)) {
       loadVerticalTwins(deferredConfig, fontText).then((added) => {
+        if (added && !cancelled) setRebuildKey((k) => k + 1);
+      });
+    }
+    // Stand-in faces (#688), as in the canvas.
+    if (!standInsSettled(deferredConfig, fontText)) {
+      declareStandIns(deferredConfig, fontText).then((added) => {
         if (added && !cancelled) setRebuildKey((k) => k + 1);
       });
     }

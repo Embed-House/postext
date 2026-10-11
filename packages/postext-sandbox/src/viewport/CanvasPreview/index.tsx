@@ -17,7 +17,7 @@ import { clearOverlay, drawOverlay } from './overlay';
 import { syncComicEditors } from '../comics/comicEditing';
 import { findResourceLocation } from './geometry';
 import type { BookPageMap } from '../usePageHashSync';
-import { createFontGate, loadVerticalTwins, verticalTwinsSettled } from '../../controls/fontLoader';
+import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../../controls/fontLoader';
 import { ensureResourceImages } from '../../controls/resourceImages';
 import { useLayoutWorker } from '../../worker/useLayoutWorker';
 import { layoutCacheKey } from '../../book/layoutKeys';
@@ -463,6 +463,16 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     // pages are painted again when they land (with the fallbacks meanwhile).
     if (!verticalTwinsSettled(deferredConfig, fontText)) {
       loadVerticalTwins(deferredConfig, fontText).then((added) => {
+        if (added && !cancelled) setRebuildKey((k) => k + 1);
+      });
+    }
+
+    // A bold or an italic a family has no file for is painted with the
+    // family's own face, declared beside its faces (#688): when the wait
+    // above had nothing to load they are declared here, and the pages
+    // painted again once they are in.
+    if (!standInsSettled(deferredConfig, fontText)) {
+      declareStandIns(deferredConfig, fontText).then((added) => {
         if (added && !cancelled) setRebuildKey((k) => k + 1);
       });
     }

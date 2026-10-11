@@ -23,7 +23,7 @@ import { composeBookMemo, toBookSelection } from '../../book/compose';
 import { leadingBlankPageCount } from '../../book/pagination';
 import type { ComposedBook } from '../../book/types';
 import { useShadowDom } from '../../hooks/useShadowDom';
-import { ensureConfigFontsLoaded, missingConfigFontSpecs } from '../../controls/fontLoader';
+import { ensureConfigFontsLoaded, missingConfigFontSpecs, standInsSettled } from '../../controls/fontLoader';
 import { ensureResourceImageUrls, ensureResourceVideoUrls, getResourceImageUrl, getResourceVideoUrl } from '../../controls/resourceImages';
 import { attachHlsPlayers } from '../../controls/hlsPlayers';
 import { useLayoutWorker } from '../../worker/useLayoutWorker';
@@ -327,7 +327,9 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
     // Wait for required fonts, so measurement isn't poisoned by fallbacks.
     if (typeof document !== 'undefined' && document.fonts) {
       const missing = missingConfigFontSpecs(currentConfig, currentSource.markdown);
-      if (missing.length > 0) {
+      // The stand-ins of a bold or an italic a family lacks are declared
+      // by the same wait (#688).
+      if (missing.length > 0 || !standInsSettled(currentConfig, currentSource.markdown)) {
         await ensureConfigFontsLoaded(currentConfig, currentSource.markdown);
         if (seq !== renderSeqRef.current) return;
       }
