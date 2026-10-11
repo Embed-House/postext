@@ -7478,6 +7478,23 @@ function placeDocumentPass(
             regateCitedFloats(blockIdx, lines);
             if (balancing && balancing.spaceAbove > 0) {
               balanceExtraInColumn.set(curCol, (balanceExtraInColumn.get(curCol) ?? 0) - balancing.spaceAbove);
+        // A block whose lines fit, and whose snap would reach the grid line
+        // under the column's foot (a foot the notes reserved there took off
+        // the grid, or a bottom margin on the column's last line), ends at
+        // the foot (#716): its box stays inside its column and the room left
+        // reads 0, not a negative height. The space it still owed is dropped,
+        // as pending spacing is at any column's end. A column cut by a band
+        // cap keeps the overrun: there it is how the block's bottom margin
+        // reaches the page-span box under the cut (`bandUsedBottomWithSide`).
+        if (
+          shouldSnapToGrid && partIndex === 0
+          && !uncappedBottoms.has(curCol)
+          && h > curCol.availableHeight + FIT_EPS
+          && effectiveRemainHeight <= curCol.availableHeight + FIT_EPS
+        ) {
+          h = Math.max(effectiveRemainHeight, curCol.availableHeight);
+          tailOwed = 0;
+        }
             }
             continue;
           }

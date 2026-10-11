@@ -97,7 +97,8 @@ describe('heading opening a short band under a page-span box', () => {
 
   it('moves to the next page when the band cannot hold the heading at all', () => {
     const md = markdown(392);
-    expect(roomUnderHeading(md)).toBeLessThan(0);
+    // The heading's box ends at its column's foot (#716): no room is left.
+    expect(roomUnderHeading(md)).toBeLessThanOrEqual(0);
     expectHeadingOpensNextPage(md);
   }, 60_000);
 });
