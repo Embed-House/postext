@@ -1,53 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { inlineSvgFontsDetailed, svgFontRequests, type Resource, type SvgFontFaceReport } from 'postext';
+import type { Resource } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import { ToggleSwitch } from '../../controls';
 import { FieldRow } from '../../controls/FieldRow';
-import { sandboxSvgFontProvider } from '../../controls/svgFontProvider';
-import { getBlob } from '../../storage/blobStore';
+import { svgWithInlineFonts } from './resourceEdits';
+import { readSvgFaces, type FaceRow } from './svgFaces';
 
 // The fonts of an SVG resource (#630): the families its text names, whether
 // each is embedded when the picture is shown or exported, and the
 // resource's opt-out (`svg.inlineFonts: false`).
 
-/** One face as listed: its name and what became of it. */
-interface FaceRow {
-  face: string;
-  status: SvgFontFaceReport['status'] | 'kept';
-  bytes?: number;
-}
-
-function faceName(f: { family: string; weight: number; style: string }): string {
-  return `${f.family} ${f.weight}${f.style === 'italic' ? ' italic' : ''}`;
-}
-
-/** The faces of the SVG stored as `fileId`: inlined through the Sandbox's
- *  provider when `inline`, else only named. Null while loading. */
+/** The faces of the SVG stored as `fileId` (see `readSvgFaces`). Null
+ *  while loading. */
 function useSvgFaces(fileId: string, inline: boolean): FaceRow[] | null {
   const [rows, setRows] = useState<FaceRow[] | null>(null);
   useEffect(() => {
     let cancelled = false;
     setRows(null);
-    void (async () => {
-      const rec = await getBlob(fileId).catch(() => null);
-      if (!rec || rec.contentType !== 'image/svg+xml') {
+    readSvgFaces(fileId, inline).then(
+      (next) => {
+        if (!cancelled) setRows(next);
+      },
+      () => {
         if (!cancelled) setRows([]);
-        return;
-      }
-      const text = new TextDecoder().decode(rec.bytes);
-      let next: FaceRow[];
-      if (inline) {
-        const result = await inlineSvgFontsDetailed(text, sandboxSvgFontProvider());
-        next = result.faces.map((f) => ({ face: faceName(f), status: f.status, ...(f.bytes !== undefined ? { bytes: f.bytes } : {}) }));
-      } else {
-        next = svgFontRequests(text).map((r) => ({ face: faceName({ family: r.families[0]!, weight: r.weight, style: r.style }), status: 'kept' as const }));
-      }
-      if (!cancelled) setRows(next);
-    })().catch(() => {
-      if (!cancelled) setRows([]);
-    });
+      },
+    );
     return () => {
       cancelled = true;
     };
@@ -86,18 +65,9 @@ export function SvgFontsField({ resource, onChange }: SvgFontsFieldProps) {
             label={labels.resourceSvgInlineFonts}
             tooltip={labels.resourceSvgInlineFontsTooltip}
             checked={own}
-            onChange={(v) => {
-              const next = { ...svg };
-              if (v) delete next.inlineFonts;
-              else next.inlineFonts = false;
-              onChange(next);
-            }}
+            onChange={(v) => onChange(svgWithInlineFonts(svg, v))}
             isDefault={svg.inlineFonts === undefined}
-            onReset={() => {
-              const next = { ...svg };
-              delete next.inlineFonts;
-              onChange(next);
-            }}
+            onReset={() => onChange(svgWithInlineFonts(svg, true))}
           />
         )}
         {rows === null ? (

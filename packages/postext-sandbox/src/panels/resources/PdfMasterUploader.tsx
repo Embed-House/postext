@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import { FileText, Loader2, X } from 'lucide-react';
 import { deleteBlob, putBlob } from '../../storage/blobStore';
 import { useSandboxLabels } from '../../context/SandboxContext';
+import { isPdfBytes } from './resourceEdits';
 
 interface PdfMasterUploaderProps {
   /** Currently attached master, if any. */
@@ -13,12 +14,6 @@ interface PdfMasterUploaderProps {
 }
 
 const ACCEPT = 'application/pdf,.pdf';
-
-/** True when the bytes start with a PDF header (`%PDF`). */
-function isPdfBytes(bytes: ArrayBuffer): boolean {
-  const b = new Uint8Array(bytes, 0, Math.min(4, bytes.byteLength));
-  return b.length === 4 && b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46;
-}
 
 /** Attach / replace / remove the vector print master of an SVG resource: a
  *  single-page PDF the PDF export embeds verbatim in place of the SVG. */

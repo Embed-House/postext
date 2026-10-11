@@ -180,6 +180,79 @@ export async function defaultPoster(src: string): Promise<{ poster: ResourceVide
   }
 }
 
+/** How long a detached video may take to show its first frame. */
+const VIDEO_LOAD_TIMEOUT_MS = 30_000;
+
+/**
+ * A detached, muted `<video>` on `src`, handed to `read` once its first
+ * frame is ready, then let go. `src` is a stored file's object URL, or
+ * with `address` a web address: set as the editor's player sets it
+ * (`attachVideoSource`, hls.js for a stream the browser does not play
+ * itself) and read cross-origin, so a frame of it can be captured. Rejects
+ * when the video cannot be read, or does not load in time.
+ */
+export async function withLoadedVideo<T>(
+  src: string,
+  options: { address?: boolean; hls?: boolean },
+  read: (video: HTMLVideoElement) => Promise<T> | T,
+): Promise<T> {
+  const video = document.createElement('video');
+  video.preload = 'auto';
+  video.muted = true;
+  video.playsInline = true;
+  let release: (() => void) | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let gone = false;
+  try {
+    await new Promise<void>((resolve, reject) => {
+      video.onloadeddata = () => resolve();
+      video.onerror = () => reject(new Error('Unreadable video'));
+      timer = setTimeout(() => reject(new Error('The video did not load in time')), VIDEO_LOAD_TIMEOUT_MS);
+      if (!options.address) {
+        video.src = src;
+        return;
+      }
+      video.crossOrigin = 'anonymous';
+      void import('postext-folio')
+        .then(({ attachVideoSource }) => attachVideoSource(video, src, { hls: options.hls }))
+        // A source that arrives after the video was given up is let go.
+        .then((r) => (gone ? r() : (release = r)), reject);
+    });
+    return await read(video);
+  } finally {
+    gone = true;
+    clearTimeout(timer);
+    if (release) release();
+    else {
+      video.removeAttribute('src');
+      video.load();
+    }
+  }
+}
+
+/** The frame of a video at `time` seconds (kept inside its length), stored
+ *  as a poster, with the time it was taken at: what the editor's "use this
+ *  frame" takes from its player. A frame from a server that refuses
+ *  cross-origin reads taints the canvas, and the capture rejects. */
+export function posterAt(src: string, time: number, options: { address?: boolean; hls?: boolean } = {}): Promise<{ poster: ResourceVideoPoster; time: number }> {
+  return withLoadedVideo(src, options, async (video) => {
+    const length = Number.isFinite(video.duration) ? video.duration : 0;
+    await seekVideo(video, Math.max(0, length > 0 ? Math.min(time, length) : time));
+    return { poster: await captureFrame(video), time: Math.round(video.currentTime * 100) / 100 };
+  });
+}
+
+/** Frame size and length of the video at a web address, as the editor
+ *  reads them once its player loads it; a value it cannot tell is left
+ *  out. */
+export function addressMetadata(url: string, hls: boolean): Promise<{ width?: number; height?: number; duration?: number }> {
+  return withLoadedVideo(url, { address: true, hls }, (video) => ({
+    duration: Number.isFinite(video.duration) ? Math.round(video.duration * 100) / 100 : undefined,
+    width: video.videoWidth || undefined,
+    height: video.videoHeight || undefined,
+  }));
+}
+
 /** Seconds as `m:ss` (or `h:mm:ss`). */
 export function formatDuration(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));

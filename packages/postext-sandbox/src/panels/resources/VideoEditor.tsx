@@ -2,26 +2,35 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Camera, Film, Loader2, RefreshCw } from 'lucide-react';
-import { parseVideoUrl, videoFormatOfUrl, type Resource, type ResourceVideo, type ResourceVideoPoster, type VideoPlayerOptions, type VideoSource } from 'postext';
+import { parseVideoUrl, videoFormatOfUrl, type Resource, type ResourceVideo, type VideoPlayerOptions, type VideoSource } from 'postext';
 import { useSandboxLabels } from '../../context/SandboxContext';
 import type { SandboxLabels } from '../../types/labels';
 import { FieldRow } from '../../controls/FieldRow';
 import { useFieldIds } from '../../controls/fieldContext';
 import { NumberInput, SelectInput } from '../../controls';
 import { Button } from '../../ui';
-import { putBlob } from '../../storage/blobStore';
 import { attachVideoSource } from 'postext-folio';
 import { BitmapUploader, type BitmapUploadResult } from './BitmapUploader';
 import { useBlobObjectUrl } from './ResourcePreview';
 import {
   VIDEO_ACCEPT,
   captureFrame,
-  defaultPoster,
   fetchStreamInfo,
   formatDuration,
-  readVideoMetadata,
   videoFormatOf,
 } from './videoMedia';
+import {
+  VIDEO_PLAYER_SOURCES,
+  addressEdit,
+  isHttp,
+  isNewStreamVideo,
+  mergeVideo,
+  playerWith,
+  posterEdit,
+  sourceSwitched,
+  streamInfoEdit,
+  videoFileEdit,
+} from './videoEdits';
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-2 py-1.5';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)', fontFamily: 'inherit', fontSize: 13, lineHeight: '20px' } as const;
@@ -60,18 +69,18 @@ function UrlControl({ value, placeholder, onChange, onCommit }: {
 /** The per-video player switches the panel offers, and which sources honour
  *  each (the rest are left to the book's Video style). */
 const PLAYER_SWITCHES: { key: Exclude<PlayerKey, 'preload'>; label: (l: SandboxLabels) => string; help: (l: SandboxLabels) => string; sources: VideoSource[]; inverted?: boolean }[] = [
-  { key: 'controls', label: (l) => l.videoPlayerControls, help: (l) => l.videoPlayerControlsHelp, sources: ['youtube', 'vimeo', 'file'] },
-  { key: 'download', label: (l) => l.videoPlayerDownload, help: (l) => l.videoPlayerDownloadHelp, sources: ['file'] },
-  { key: 'fullscreen', label: (l) => l.videoPlayerFullscreen, help: (l) => l.videoPlayerFullscreenHelp, sources: ['youtube', 'vimeo', 'file'] },
-  { key: 'playbackRate', label: (l) => l.videoPlayerPlaybackRate, help: (l) => l.videoPlayerPlaybackRateHelp, sources: ['vimeo', 'file'] },
-  { key: 'pictureInPicture', label: (l) => l.videoPlayerPictureInPicture, help: (l) => l.videoPlayerPictureInPictureHelp, sources: ['vimeo', 'file'] },
-  { key: 'remotePlayback', label: (l) => l.videoPlayerRemotePlayback, help: (l) => l.videoPlayerRemotePlaybackHelp, sources: ['file'] },
-  { key: 'autoplay', label: (l) => l.videoPlayerAutoplay, help: (l) => l.videoPlayerAutoplayHelp, sources: ['youtube', 'vimeo', 'file'] },
-  { key: 'muted', label: (l) => l.videoPlayerMuted, help: (l) => l.videoPlayerMutedHelp, sources: ['youtube', 'vimeo', 'file'] },
-  { key: 'loop', label: (l) => l.videoPlayerLoop, help: (l) => l.videoPlayerLoopHelp, sources: ['youtube', 'vimeo', 'file'] },
+  { key: 'controls', label: (l) => l.videoPlayerControls, help: (l) => l.videoPlayerControlsHelp, sources: VIDEO_PLAYER_SOURCES.controls },
+  { key: 'download', label: (l) => l.videoPlayerDownload, help: (l) => l.videoPlayerDownloadHelp, sources: VIDEO_PLAYER_SOURCES.download },
+  { key: 'fullscreen', label: (l) => l.videoPlayerFullscreen, help: (l) => l.videoPlayerFullscreenHelp, sources: VIDEO_PLAYER_SOURCES.fullscreen },
+  { key: 'playbackRate', label: (l) => l.videoPlayerPlaybackRate, help: (l) => l.videoPlayerPlaybackRateHelp, sources: VIDEO_PLAYER_SOURCES.playbackRate },
+  { key: 'pictureInPicture', label: (l) => l.videoPlayerPictureInPicture, help: (l) => l.videoPlayerPictureInPictureHelp, sources: VIDEO_PLAYER_SOURCES.pictureInPicture },
+  { key: 'remotePlayback', label: (l) => l.videoPlayerRemotePlayback, help: (l) => l.videoPlayerRemotePlaybackHelp, sources: VIDEO_PLAYER_SOURCES.remotePlayback },
+  { key: 'autoplay', label: (l) => l.videoPlayerAutoplay, help: (l) => l.videoPlayerAutoplayHelp, sources: VIDEO_PLAYER_SOURCES.autoplay },
+  { key: 'muted', label: (l) => l.videoPlayerMuted, help: (l) => l.videoPlayerMutedHelp, sources: VIDEO_PLAYER_SOURCES.muted },
+  { key: 'loop', label: (l) => l.videoPlayerLoop, help: (l) => l.videoPlayerLoopHelp, sources: VIDEO_PLAYER_SOURCES.loop },
   // `exclusive`, shown the positive way round: "on" stores `false`.
-  { key: 'exclusive', label: (l) => l.videoPlayerAlongside, help: (l) => l.videoPlayerAlongsideHelp, sources: ['file'], inverted: true },
-  { key: 'privacy', label: (l) => l.videoPlayerPrivacy, help: (l) => l.videoPlayerPrivacyHelp, sources: ['youtube', 'vimeo'] },
+  { key: 'exclusive', label: (l) => l.videoPlayerAlongside, help: (l) => l.videoPlayerAlongsideHelp, sources: VIDEO_PLAYER_SOURCES.exclusive, inverted: true },
+  { key: 'privacy', label: (l) => l.videoPlayerPrivacy, help: (l) => l.videoPlayerPrivacyHelp, sources: VIDEO_PLAYER_SOURCES.privacy },
 ];
 
 interface VideoEditorProps {
@@ -88,17 +97,14 @@ export function VideoEditor({ resource, onChange }: VideoEditorProps) {
   const source = video.source;
   const setVideo = useCallback(
     (partial: Partial<ResourceVideo>, extra: Partial<Resource> = {}) => {
-      const next: ResourceVideo = { ...video, ...partial };
-      for (const k of Object.keys(next) as (keyof ResourceVideo)[]) if (next[k] === undefined) delete next[k];
-      onChange({ video: next, ...extra });
+      onChange({ video: mergeVideo(video, partial), ...extra });
     },
     [video, onChange],
   );
 
   const setSource = (next: VideoSource) => {
     if (next === source) return;
-    // A link of another platform, or a file, does not carry over.
-    setVideo({ source: next, url: undefined, fileId: undefined, format: undefined, duration: undefined, posterTime: undefined });
+    setVideo(sourceSwitched(next));
   };
 
   return (
@@ -173,15 +179,8 @@ function StreamVideo({ resource, video, source, setVideo }: PartProps & { source
     try {
       const info = await fetchStreamInfo(source, url);
       if (!info.poster) setFailed(true);
-      setVideo(
-        {
-          ...(setUrl ? { url } : {}),
-          ...(info.poster ? { poster: info.poster } : {}),
-          ...(info.width && info.height ? { width: info.width, height: info.height } : {}),
-        },
-        // The platform's title is a fair first alternative text.
-        info.title && !resource?.altText ? { altText: info.title } : {},
-      );
+      const edit = streamInfoEdit(info, setUrl ? url : undefined, resource);
+      setVideo(edit.video, edit.resource);
     } catch {
       setFailed(true);
       if (setUrl) setVideo({ url });
@@ -193,10 +192,8 @@ function StreamVideo({ resource, video, source, setVideo }: PartProps & { source
   const commit = () => {
     const url = draft.trim();
     if (url === (video.url ?? '')) return;
-    const next = parseVideoUrl(url);
-    const before = parseVideoUrl(video.url);
     // A new video: its own poster. The same video at another start keeps it.
-    if (next && next.source === source && next.id !== before?.id) void fetchPoster(url, true);
+    if (isNewStreamVideo(source, url, video.url)) void fetchPoster(url, true);
     else setVideo({ url: url || undefined });
   };
 
@@ -230,8 +227,6 @@ function StreamVideo({ resource, video, source, setVideo }: PartProps & { source
     </FieldRow>
   );
 }
-
-const isHttp = (url: string | undefined): url is string => !!url && /^https?:\/\/\S+$/i.test(url.trim());
 
 /** A self-hosted video: the upload or its address alone (an MP4 or WebM on
  *  a server, an HLS stream, #476), the frame picker and the production
@@ -269,30 +264,17 @@ function FileVideo({ video, setVideo }: PartProps) {
 
   const handleFile = async (file: File) => {
     setError(null);
-    const format = videoFormatOf(file);
-    if (!format) {
+    if (!videoFormatOf(file)) {
       setError(labels.resourceVideoInvalid);
       return;
     }
     setBusy(true);
-    const local = URL.createObjectURL(file);
     try {
-      const meta = await readVideoMetadata(local);
-      const fileId = await putBlob(await file.arrayBuffer(), file.type || `video/${format}`);
-      const first = await defaultPoster(local);
-      setVideo({
-        source: 'file',
-        fileId,
-        format,
-        width: meta.width || undefined,
-        height: meta.height || undefined,
-        duration: meta.duration || undefined,
-        ...(first ? { poster: first.poster, posterTime: first.time } : {}),
-      });
+      const edit = await videoFileEdit(file);
+      if (edit) setVideo(edit);
     } catch {
       setError(labels.resourceVideoInvalid);
     } finally {
-      URL.revokeObjectURL(local);
       setBusy(false);
     }
   };
@@ -317,8 +299,7 @@ function FileVideo({ video, setVideo }: PartProps) {
     if (url === (video.url ?? '')) return;
     setError(null);
     readNext.current = !video.fileId;
-    // Without a file the address is the source: its format comes with it.
-    setVideo(video.fileId ? { url: url || undefined } : { url: url || undefined, format: videoFormatOfUrl(url), width: undefined, height: undefined, duration: undefined });
+    setVideo(addressEdit(video, url));
   };
 
   /** An address's size and length, read once it loads. */
@@ -421,8 +402,7 @@ function PosterField({ video, setVideo }: PartProps) {
   const labels = useSandboxLabels();
   const url = useBlobObjectUrl(video.poster?.fileId);
   const applyPoster = (r: BitmapUploadResult) => {
-    const poster: ResourceVideoPoster = { fileId: r.fileId, format: r.format, width: r.width, height: r.height };
-    setVideo({ poster, posterTime: undefined });
+    setVideo(posterEdit(r));
   };
   return (
     <FieldRow stacked label={labels.resourceVideoPoster} tooltip={labels.resourceVideoPosterHelp} className="mb-0">
@@ -445,11 +425,8 @@ function PlayerOverrides({ video, setVideo }: PartProps) {
   const labels = useSandboxLabels();
   const player = video.player ?? {};
   const set = (key: PlayerKey, value: string, inverted = false) => {
-    const next: VideoPlayerOptions = { ...player };
-    if (value === 'inherit') delete next[key];
-    else if (key === 'preload') next.preload = value as VideoPlayerOptions['preload'];
-    else (next as Record<string, unknown>)[key] = (value === 'on') !== inverted;
-    setVideo({ player: Object.keys(next).length > 0 ? next : undefined });
+    const stored = value === 'inherit' ? undefined : key === 'preload' ? value : (value === 'on') !== inverted;
+    setVideo({ player: playerWith(player, key, stored as VideoPlayerOptions[PlayerKey]) });
   };
   const options = [
     { value: 'inherit', label: labels.resourceVideoInherit },

@@ -1,10 +1,35 @@
 'use client';
 
 import { useEffect, useReducer } from 'react';
-import { primaryFontFamily, resolveBodyTextConfig, resolveHeadingsConfig } from 'postext';
+import { primaryFontFamily, resolveBodyTextConfig, resolveHeadingsConfig, type PostextConfig } from 'postext';
 import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
 import { fontFamilySource, getConfigFontFamilies, loadFont, onCustomFontsChanged, onFontSourceResolved, type FontFamilySource } from '../controls/fontLoader';
 import { RowTag } from '../ui';
+
+/** A family the book is set in, and what it sets. */
+export interface BookFontFamily {
+  family: string;
+  body: boolean;
+  headings: boolean;
+}
+
+/** Every family the design and the text use, with where it is used: the
+ *  body first, then the headings, then the rest alphabetically. `texts`
+ *  are the chapters' sources (the text names faces too: comic lettering, a
+ *  comic line's own `font=`). */
+export function bookFontFamilies(config: PostextConfig, texts: readonly string[]): BookFontFamily[] {
+  // Families as the engine sets them: a CSS font stack by its first family,
+  // as `getConfigFontFamilies` lists it.
+  const body = primaryFontFamily(resolveBodyTextConfig(config.bodyText).fontFamily);
+  const headings = resolveHeadingsConfig(config.headings);
+  const headingFamilies = new Set([headings.fontFamily, ...headings.levels.map((l) => l.fontFamily)].map(primaryFontFamily));
+  const families = getConfigFontFamilies(config, [...texts]);
+  // Body first, then headings, then the rest alphabetically.
+  const rank = (f: string) => (f === body ? 0 : headingFamilies.has(f) ? 1 : 2);
+  return [...new Set(families)]
+    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
+    .map((family) => ({ family, body: family === body, headings: headingFamilies.has(family) }));
+}
 
 /** "Typefaces in this book": every family the design uses, set in itself,
  *  with where it is used and where it comes from. Answers the first thing an
@@ -14,15 +39,8 @@ export function BookFonts() {
   const config = useSandboxSelector((s) => s.config);
   // The text names faces too: comic lettering, a comic line's own `font=`.
   const chapters = useSandboxSelector((s) => s.chapters);
-  // Families as the engine sets them: a CSS font stack by its first family,
-  // as `getConfigFontFamilies` lists it.
-  const body = primaryFontFamily(resolveBodyTextConfig(config.bodyText).fontFamily);
-  const headings = resolveHeadingsConfig(config.headings);
-  const headingFamilies = new Set([headings.fontFamily, ...headings.levels.map((l) => l.fontFamily)].map(primaryFontFamily));
-  const families = getConfigFontFamilies(config, chapters.map((c) => c.markdown));
-  // Body first, then headings, then the rest alphabetically.
-  const rank = (f: string) => (f === body ? 0 : headingFamilies.has(f) ? 1 : 2);
-  const ordered = [...new Set(families)].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+  const used = bookFontFamilies(config, chapters.map((c) => c.markdown));
+  const ordered = used.map((u) => u.family);
 
   useEffect(() => { for (const f of ordered) loadFont(f); }, [ordered.join('|')]); // eslint-disable-line react-hooks/exhaustive-deps
   // Where a family comes from is known once the loader has its record: the
@@ -47,10 +65,10 @@ export function BookFonts() {
       </h3>
       <p className="mb-2 text-[0.68rem] leading-[1.4] text-(--slate)">{labels.bookFontsDescription}</p>
       <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-        {ordered.map((family) => {
+        {used.map(({ family, body, headings }) => {
           const roles: string[] = [];
-          if (family === body) roles.push(labels.bookFontsRoleBody);
-          if (headingFamilies.has(family)) roles.push(labels.bookFontsRoleHeadings);
+          if (body) roles.push(labels.bookFontsRoleBody);
+          if (headings) roles.push(labels.bookFontsRoleHeadings);
           if (roles.length === 0) roles.push(labels.bookFontsRoleOther);
           // No tag while the loader has no answer (#739).
           const source = fontFamilySource(family);

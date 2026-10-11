@@ -19,6 +19,7 @@ import { NumberInput } from '../../controls';
 import { Button } from '../../ui';
 import { getBlob } from '../../storage/blobStore';
 import { fill } from '../../print/fillTokens';
+import { bitmapAtFileResolution, bitmapWithResolution } from './resourceEdits';
 
 type Bitmap = NonNullable<Resource['bitmap']>;
 
@@ -143,24 +144,20 @@ export function BitmapResolutionField({ bitmap, onChange }: BitmapResolutionFiel
         label={labels.resourceBitmapResolution}
         tooltip={labels.resourceBitmapResolutionTooltip}
         value={Math.round((bitmap.resolution ?? effective) * 100) / 100}
-        onChange={(v) => onChange({ ...bitmap, resolution: Math.max(1, v) })}
+        onChange={(v) => onChange(bitmapWithResolution(bitmap, v))}
         min={1}
         max={4800}
         step={1}
         suffix="ppi"
         isDefault={bitmap.resolution === undefined}
-        onReset={() => {
-          const next: Bitmap = { ...bitmap };
-          delete next.resolution;
-          onChange(next);
-        }}
+        onReset={() => onChange(bitmapWithResolution(bitmap, undefined))}
       />
       {fileResolution !== undefined && bitmap.resolution !== fileResolution && (
         <div>
           <Button
             variant="outline"
             size="xs"
-            onClick={() => onChange({ ...bitmap, resolution: fileResolution, ...(bitmap.fileResolution === undefined ? { fileResolution } : {}) })}
+            onClick={() => onChange(bitmapAtFileResolution(bitmap, fileResolution))}
           >
             {fill(labels.resourceBitmapResolutionFromFile, { ppi: number(fileResolution, 2) })}
           </Button>

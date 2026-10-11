@@ -25,6 +25,30 @@ function newFamilyName(existing: CustomFontFamily[], base: string): string {
   return `${base} ${i}`;
 }
 
+/** `families` with the family `current` named `next` (trimmed). Null when
+ *  there is nothing to rename: an empty name, the name it has, or the name
+ *  of another family. */
+export function familiesRenamed(families: readonly CustomFontFamily[], current: string, next: string): CustomFontFamily[] | null {
+  const trimmed = next.trim();
+  if (!trimmed || trimmed === current) return null;
+  if (families.some((f) => f.name === trimmed)) return null;
+  return families.map((f) => (f.name === current ? { ...f, name: trimmed } : f));
+}
+
+/** `families` with `partial` laid over the face at `index` of the family
+ *  `familyName` (its weight, its style). */
+export function familiesWithFace(families: readonly CustomFontFamily[], familyName: string, index: number, partial: Partial<CustomFontVariant>): CustomFontFamily[] {
+  return families.map((f) => (f.name === familyName
+    ? { ...f, variants: f.variants.map((v, i) => (i === index ? { ...v, ...partial } : v)) }
+    : f));
+}
+
+/** `families` without the face at `index` of the family `familyName`. The
+ *  face's file is the caller's to delete. */
+export function familiesWithoutFace(families: readonly CustomFontFamily[], familyName: string, index: number): CustomFontFamily[] {
+  return families.map((f) => (f.name === familyName ? { ...f, variants: f.variants.filter((_, i) => i !== index) } : f));
+}
+
 const WEIGHTS: number[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 
 const COMPACT_CONTROL: React.CSSProperties = {
@@ -93,11 +117,8 @@ export function FontsPanel() {
   const commitRename = (currentName: string) => {
     const trimmed = draftName.trim();
     setEditingName(null);
-    if (!trimmed || trimmed === currentName) return;
-    if (customFonts.some((f) => f.name === trimmed)) return;
-    const next = customFonts.map((f) =>
-      f.name === currentName ? { ...f, name: trimmed } : f,
-    );
+    const next = familiesRenamed(customFonts, currentName, draftName);
+    if (!next) return;
     writeFamilies(next);
     setExpanded((prev) => {
       if (!(currentName in prev)) return prev;
@@ -152,10 +173,8 @@ export function FontsPanel() {
     index: number,
     partial: Partial<CustomFontVariant>,
   ) => {
-    const fam = customFonts.find((f) => f.name === familyName);
-    if (!fam) return;
-    const variants = fam.variants.map((v, i) => (i === index ? { ...v, ...partial } : v));
-    updateFamily(familyName, { variants });
+    if (!customFonts.some((f) => f.name === familyName)) return;
+    writeFamilies(familiesWithFace(customFonts, familyName, index, partial));
   };
 
   const removeVariant = async (familyName: string, index: number) => {
@@ -165,8 +184,7 @@ export function FontsPanel() {
     if (target) {
       await deleteFontFile(target.fileId).catch(() => undefined);
     }
-    const variants = fam.variants.filter((_, i) => i !== index);
-    updateFamily(familyName, { variants });
+    writeFamilies(familiesWithoutFace(customFonts, familyName, index));
   };
 
   const hasCustomFonts = customFonts.length > 0;
