@@ -1372,8 +1372,19 @@ crossRefs: {
   section?: string;   // levels 2–6: "section {n}", "§ {n}"
   page?: string;      // style=page: "p. {n}"
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // a :ref to an anchor without style=
+  breakLabels?: boolean; // ≥ 1.28, default true: a label of words breaks at its spaces; false = one word, as ≤ 1.27
 }
 ```
+
+**Labels that break (postext ≥ 1.28).** A reference that prints words (the text of a `[words]{#id}` anchor, a
+heading's or a box's title under `style=title` or on an unnumbered target, a `text="…"` override, on a figure or
+table reference too) is set word by word: lines break at its spaces, the spaces stretch on a justified line, the
+words are never hyphenated, and it stays one link (one per line in the PDF, one `<a>` in the reflowable EPUB). A
+label with a number or a page (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`) never breaks. So anchor the
+whole phrase the source refers to (`[close the lever so that it points backwards]{#step}`): up to 1.27 a long
+label could not come up to the line before and ports shortened the anchored phrase to two or three words. Glue
+words of a label that must stay together with U+00A0. A preset below `configVersion` 12 with a reference in a
+chapter reads `breakLabels: false`.
 
 ## 19a3. `citations` — CitationsConfig (postext ≥ 1.12)
 
@@ -1738,7 +1749,8 @@ when a chapter embeds a resource, `layout.flowColumns: false` when a chapter ope
 those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
 too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
 `citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
-kana or kanji (#721). The pins keep what those rules changed, not
+kana or kanji (#721), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
+reference (#702). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

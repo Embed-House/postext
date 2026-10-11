@@ -1555,6 +1555,8 @@ Every manifest `createBundle` and the Sandbox write carries `configVersion: 12`:
 
 The rules of 12 also change how a short column is balanced, and a manifest stamped `11` or older keeps what it was laid out with. The order of the levers (#707): it gets `headings.balancing.maxLinesBeforeLoose` set to its own `maxLinesPerHeading`, or `4` when it sets none (`pinLegacyLooseOrder`), on the `headings` in force, when a chapter read has a heading and the merged configuration balances its columns, lets a heading take more than two lines and does not set the key already.
 
+The rules of 12 break a reference's label at its spaces when the label is words (#702). A manifest stamped `11` or older gets `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) on the `crossRefs` in force, when a chapter read holds a reference (`:ref{…}`, `\ref{…}`, `\eqref{…}` or a pandoc-crossref `@id`) and the configuration does not name the setting: every label stays the one word it was laid out as.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

@@ -1554,6 +1554,8 @@ Tot manifest que escriuen `createBundle` i el Sandbox porta `configVersion: 12`:
 
 Les regles de 12 canvien a més com s'equilibra una columna curta, i un manifest marcat `11` o anterior conserva allò amb què es va compondre. L'ordre de les palanques (#707): rep `headings.balancing.maxLinesBeforeLoose` amb el valor del seu propi `maxLinesPerHeading`, o `4` si no en fixa cap (`pinLegacyLooseOrder`), al `headings` vigent, quan un capítol llegit té un encapçalament i la configuració combinada equilibra les seves columnes, deixa que un encapçalament prengui més de dues línies i no fixa ja la clau.
 
+Les regles de 12 tallen el rètol d'una referència pels seus espais quan el rètol són paraules (#702). Un manifest marcat `11` o anterior rep `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) al `crossRefs` vigent, quan un capítol llegit conté una referència (`:ref{…}`, `\ref{…}`, `\eqref{…}` o un `@id` de pandoc-crossref) i la configuració no anomena l'ajust: cada rètol continua sent la paraula única amb què es va compondre.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

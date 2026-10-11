@@ -1555,6 +1555,8 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 规则12还改变了短栏的齐底方式，标为`11`或更早的清单保持它原来排版时的做法。各手段的顺序（#707）：若读取的章节含有标题，且合并后的配置对各栏做齐底、允许一个标题加两行以上、又尚未设置该项，清单会在生效的`headings`上得到`headings.balancing.maxLinesBeforeLoose`，其值取自己的`maxLinesPerHeading`，未设置时为`4`（`pinLegacyLooseOrder`）。
 
+规则12让以文字印出的引用在引用文字的空格处断开（#702）。若读取的章节含有引用（`:ref{…}`、`\ref{…}`、`\eqref{…}`或pandoc-crossref的`@id`），且配置没有设置该项，标为`11`或更早的清单会在生效的`crossRefs`上得到`crossRefs.breakLabels: false`（`pinLegacyRefLabelBreaks`）：每个引用文字仍是原来排版时的那一个词。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

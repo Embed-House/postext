@@ -443,6 +443,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>What a <code>:ref</code> to a heading or an anchor prints without <code>style=</code>. <code>'default'</code>: a numbered heading by its word and number, an unnumbered one by its title, an anchor by its text. A reference that sets <code>style</code> keeps it, and references to figures and tables are not affected.</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference reads with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+    </tr>
   </tbody>
 </table>
 

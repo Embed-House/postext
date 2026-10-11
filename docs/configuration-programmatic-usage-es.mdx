@@ -1557,6 +1557,8 @@ Todo manifiesto que escriben `createBundle` y el Sandbox lleva `configVersion: 1
 
 Las reglas de 12 cambian además cómo se equilibra una columna corta, y un manifiesto marcado `11` o anterior conserva aquello con lo que se compuso. El orden de las palancas (#707): recibe `headings.balancing.maxLinesBeforeLoose` con el valor de su propio `maxLinesPerHeading`, o `4` si no fija ninguno (`pinLegacyLooseOrder`), en el `headings` vigente, cuando un capítulo leído tiene un encabezado y la configuración combinada equilibra sus columnas, deja que un encabezado tome más de dos líneas y no fija ya la clave.
 
+Las reglas de 12 cortan el rótulo de una referencia por sus espacios cuando el rótulo son palabras (#702). Un manifiesto marcado `11` o anterior recibe `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) en el `crossRefs` vigente, cuando un capítulo leído contiene una referencia (`:ref{…}`, `\ref{…}`, `\eqref{…}` o un `@id` de pandoc-crossref) y la configuración no nombra el ajuste: cada rótulo sigue siendo la palabra única con la que se compuso.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

@@ -1555,6 +1555,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 وقواعد 12 تغيّر كذلك طريقة موازنة العمود القصير، والبيان المختوم بـ `11` أو أقدم يحتفظ بما صُفّ به. ترتيب الأدوات (#707): يتلقى `headings.balancing.maxLinesBeforeLoose` بقيمة `maxLinesPerHeading` الخاصة به، أو `4` إن لم يحدّد قيمة (`pinLegacyLooseOrder`)، على `headings` السارية، حين يكون في فصل مقروء عنوان ويكون الإعداد المدمج يوازن أعمدته ويسمح للعنوان بأكثر من سطرين ولا يحدّد المفتاح من قبل.
 
+وقواعد 12 تكسر تسمية الإحالة عند مسافاتها حين تكون التسمية كلمات (#702). والبيان المختوم بـ `11` أو أقدم يتلقى `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) على `crossRefs` السارية، حين يكون في فصل مقروء إحالة (`:ref{…}` أو `\ref{…}` أو `\eqref{…}` أو `@id` من pandoc-crossref) ولا يسمّي الإعداد هذا الخيار: فتبقى كل تسمية الكلمة الواحدة التي صُفّت بها.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

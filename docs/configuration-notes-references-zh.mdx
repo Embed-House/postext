@@ -443,6 +443,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>指向标题或锚点、未设<code>style=</code>的<code>:ref</code>印出的内容。<code>'default'</code>：有编号的标题印名称和编号，无编号的印标题，锚点印其文字。已设<code>style</code>的引用保持不变，指向图表的引用不受影响。</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>允许行在以文字印出的引用内部的空格处断开：<code>[文字]{'{#id}'}</code>锚点的文字、标题或框的标题、自定的<code>text="…"</code>（指向图或表的引用也一样）。引用文字中的空格随行拉伸和压缩，引用仍是一个链接；其中的词不断词。带编号或页码的引用文字（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）从不断开，即使模板里是普通空格。<code>false</code>把每个引用文字排成一个词，中间不换行，与postext 1.27及更早版本相同。在<code>configVersion</code> 12之前保存、正文含有引用的配置，读取时采用<code>false</code>，各行留在原处（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+    </tr>
   </tbody>
 </table>
 

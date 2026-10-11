@@ -1555,6 +1555,8 @@ Todo manifesto que `createBundle` e o Sandbox gravam leva `configVersion: 12`: a
 
 As regras de 12 também mudam o equilíbrio de uma coluna curta, e um manifesto marcado `11` ou anterior mantém aquilo com que foi composto. A ordem dos recursos (#707): ele recebe `headings.balancing.maxLinesBeforeLoose` com o valor do seu próprio `maxLinesPerHeading`, ou `4` quando não define nenhum (`pinLegacyLooseOrder`), no `headings` vigente, quando um capítulo lido tem um título e a configuração mesclada equilibra as colunas, deixa um título receber mais de duas linhas e ainda não define a chave.
 
+As regras de 12 quebram o rótulo de uma referência nos seus espaços quando o rótulo são palavras (#702). Um manifesto marcado `11` ou anterior recebe `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) no `crossRefs` vigente, quando um capítulo lido contém uma referência (`:ref{…}`, `\ref{…}`, `\eqref{…}` ou um `@id` do pandoc-crossref) e a configuração não nomeia a opção: todo rótulo continua sendo a única palavra com que foi composto.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

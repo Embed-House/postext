@@ -1555,6 +1555,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 規則12では、短い段のそろえ方も変わりました。`11`以前のマニフェストは、組んだときのやり方を保ちます。調整手段の順序（#707）：読み込んだ章に見出しがあり、マージした設定が段をそろえる設定で、見出し1つに2行を超えて足すことを許し、この項目をまだ指定していなければ、有効な`headings`に`headings.balancing.maxLinesBeforeLoose`を受け取ります。値はその設定自身の`maxLinesPerHeading`で、指定がなければ`4`です（`pinLegacyLooseOrder`）。
 
+規則12では、ラベルが語である参照を、ラベルのスペースで改行します（#702）。`11`以前のマニフェストは、読み込んだ章に参照（`:ref{…}`、`\ref{…}`、`\eqref{…}`、pandoc-crossrefの`@id`）があり、設定がこの項目を指定していなければ、有効な`crossRefs`に`crossRefs.breakLabels: false`を受け取ります（`pinLegacyRefLabelBreaks`）。どのラベルも、組んだときと同じ1語のままです。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 
