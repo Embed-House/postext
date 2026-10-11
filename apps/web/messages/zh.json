@@ -2719,6 +2719,7 @@
     "resourceIdHintSuggested": "必填，建议：__id__",
     "resourceIdHintDuplicate": "已有其他资源使用此ID。",
     "resourceIdAria": "资源ID",
+    "resourceIdHelp": "正文中指称此资源所用的词：用::resource'{'id=\"…\"'}'放置，用:ref'{'id=\"…\"'}'引用。可用文字、数字和连字符，每个资源各不相同。在此改名不会改写正文。",
     "resourceTypeFieldLabel": "类型",
     "resourceTypeFieldAria": "资源类型",
     "resourceNoTypes": "未定义类型",

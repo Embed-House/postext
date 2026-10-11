@@ -802,6 +802,7 @@
     "resourceIdHintSuggested": "Obligatorio — sugerido: __id__",
     "resourceIdHintDuplicate": "Otro recurso ya usa este id.",
     "resourceIdAria": "ID del recurso",
+    "resourceIdHelp": "La palabra con la que el texto nombra este recurso: ::resource'{'id=\"…\"'}' lo coloca y :ref'{'id=\"…\"'}' lo cita. Letras, cifras y guiones; cada recurso necesita la suya. Cambiarla aquí no reescribe el texto.",
     "resourceTypeFieldLabel": "Tipo",
     "resourceTypeFieldAria": "Tipo de recurso",
     "resourceNoTypes": "No hay tipos definidos",

@@ -2719,6 +2719,7 @@
     "resourceIdHintSuggested": "必須（候補：__id__）",
     "resourceIdHintDuplicate": "このIDはすでに別のリソースで使われています。",
     "resourceIdAria": "リソースのID",
+    "resourceIdHelp": "本文でこのリソースを指すときに使う語です。::resource'{'id=\"…\"'}'で配置し、:ref'{'id=\"…\"'}'で参照します。文字、数字、ハイフンが使えます。リソースごとに別の語が必要です。ここで変更しても本文は書き換わりません。",
     "resourceTypeFieldLabel": "種類",
     "resourceTypeFieldAria": "リソースの種類",
     "resourceNoTypes": "種類が定義されていません",

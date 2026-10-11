@@ -2050,6 +2050,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     resourceIdHintSuggested: t("resourceIdHintSuggested"),
     resourceIdHintDuplicate: t("resourceIdHintDuplicate"),
     resourceIdAria: t("resourceIdAria"),
+    resourceIdHelp: t("resourceIdHelp"),
     resourceTypeFieldLabel: t("resourceTypeFieldLabel"),
     resourceTypeFieldAria: t("resourceTypeFieldAria"),
     resourceNoTypes: t("resourceNoTypes"),

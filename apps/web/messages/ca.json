@@ -2719,6 +2719,7 @@
     "resourceIdHintSuggested": "Obligatori — suggeriment: __id__",
     "resourceIdHintDuplicate": "Un altre recurs ja fa servir aquest id.",
     "resourceIdAria": "ID del recurs",
+    "resourceIdHelp": "La paraula amb què el text anomena aquest recurs: ::resource'{'id=\"…\"'}' el col·loca i :ref'{'id=\"…\"'}' el cita. Lletres, xifres i guionets; cada recurs necessita la seva. Canviar-la aquí no reescriu el text.",
     "resourceTypeFieldLabel": "Tipus",
     "resourceTypeFieldAria": "Tipus de recurs",
     "resourceNoTypes": "No hi ha tipus definits",

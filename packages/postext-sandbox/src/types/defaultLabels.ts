@@ -2069,6 +2069,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   resourceIdHintSuggested: "Required — suggested: __id__",
   resourceIdHintDuplicate: "Another resource already uses this id.",
   resourceIdAria: "Resource ID",
+  resourceIdHelp: 'The word the text uses for this resource: ::resource{id="…"} places it and :ref{id="…"} cites it. Letters, digits and hyphens; each resource needs its own. Renaming it here does not rewrite the text.',
   resourceTypeFieldLabel: "Type",
   resourceTypeFieldAria: "Resource type",
   resourceNoTypes: "No types defined",

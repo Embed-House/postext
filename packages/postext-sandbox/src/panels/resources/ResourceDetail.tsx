@@ -267,7 +267,7 @@ export function ResourceDetail({
       <PanelBody padded>
       <div className="flex flex-col gap-4">
         <Field
-          label={labels.idLabel} tooltip={labels.styleIdHelp}
+          label={labels.idLabel} tooltip={labels.resourceIdHelp}
           hint={
             idEmpty
               ? labels.resourceIdHintSuggested.replace('__id__', suggestedId)

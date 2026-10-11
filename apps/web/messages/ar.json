@@ -2719,6 +2719,7 @@
     "resourceIdHintSuggested": "مطلوب — المقترح: __id__",
     "resourceIdHintDuplicate": "يستخدم مورد آخر هذا المعرّف بالفعل.",
     "resourceIdAria": "معرّف المورد",
+    "resourceIdHelp": "الكلمة التي يسمّي بها النص هذا المورد: ⁦::resource'{'id=\"…\"'}'⁩ يضعه و⁦:ref'{'id=\"…\"'}'⁩ يحيل إليه. حروف وأرقام وواصلات؛ ولكل مورد كلمته الخاصة. تغييرها هنا لا يعيد كتابة النص.",
     "resourceTypeFieldLabel": "النوع",
     "resourceTypeFieldAria": "نوع المورد",
     "resourceNoTypes": "لا توجد أنواع محددة",

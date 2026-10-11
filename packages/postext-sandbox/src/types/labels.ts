@@ -2247,6 +2247,7 @@ export interface SandboxLabels {
   resourceIdHintSuggested: string;
   resourceIdHintDuplicate: string;
   resourceIdAria: string;
+  resourceIdHelp: string;
   resourceTypeFieldLabel: string;
   resourceTypeFieldAria: string;
   resourceNoTypes: string;
