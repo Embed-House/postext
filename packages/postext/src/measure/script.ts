@@ -185,7 +185,14 @@ export function withScriptMark(text: string, script: ScriptContext, rtl: boolean
   return lead + text + trail;
 }
 
-const PROBE_MARKS: readonly string[] = (Object.keys(AFTER) as ScriptContext[]).map((script) => GLUE + AFTER[script]);
+/** The scripts a face is asked with. Not Hebrew: a shaper applies no
+ *  kerning (`GPOS`) in a Hebrew run of a face that has no Hebrew
+ *  positioning, so the row would come out another width in every kerned
+ *  Latin face (Lora, Cormorant Garamond, Fraunces: measured), none of
+ *  which draws a mark otherwise by script. A face that does so for Hebrew
+ *  alone is not told apart, and is left as it was. */
+const PROBE_SCRIPTS: readonly ScriptContext[] = ['Latn', 'Grek', 'Cyrl', 'Arab'];
+const PROBE_MARKS: readonly string[] = PROBE_SCRIPTS.map((script) => GLUE + AFTER[script]);
 
 /** Whether the face `font` draws its punctuation or digits otherwise by
  *  script (`scriptSensitive`, asked once a font string): only then is a
