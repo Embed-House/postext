@@ -3,21 +3,21 @@
   "slug": "clinical-trial-consort-flow",
   "sourceHash": "b3cb0cd6f5bc44cb0b60a4cc9544d2c31e3dc686c06111c49d7b6204de01866a",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:13:20.083Z",
+  "capturedAt": "2026-10-11T03:49:50.728Z",
   "variants": {
     "en": {
-      "hash8": "0e313a02",
+      "hash8": "66bf0271",
       "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 112,
-        "buildMs": 451,
-        "totalMs": 1332,
+        "importMs": 244,
+        "fontsMs": 118,
+        "buildMs": 472,
+        "totalMs": 1413,
         "builds": 1
       },
       "specimen": {
@@ -135,7 +135,7 @@
       },
       "sandbox": {
         "file": "clinical-trial-consort-flow.postext",
-        "bytes": 121986,
+        "bytes": 121990,
         "folio": "a7ebcb67"
       },
       "detected": {
