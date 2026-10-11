@@ -31,12 +31,44 @@ import { breaksAfterHardHyphen, hasCompound, raggedStretchPx } from './breakRule
 import { joiningScriptIn } from './joining';
 import { getMeasureDirection } from './bidiLines';
 import { needsBidi } from '../bidi';
-import { faceReadsScript, getMeasureScriptContext, isLetterless } from './script';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, wordPieceScript } from './script';
 
 /** Whether a word of `text` (between breaking spaces) has no letter. */
 function holdsLetterlessWord(text: string): boolean {
   const words = text.match(WORDS_AND_SPACES_RE);
   return words !== null && words.some((word) => !isBreakingSpaceRun(word) && isLetterless(word));
+}
+
+/** A hyphen or a dash: where a word may part at the end of a line. */
+const HYPHEN_OR_DASH_RE = /[-\u2010-\u2015]/;
+
+/** Whether a word of `text` that has a letter parts, after a hyphen or a
+ *  dash it carries, into a piece with none (`COVID-19`, `(pre-2001)`,
+ *  `2-methyl`): the line may end there, and the piece is then a text of
+ *  its own, measured and painted in the script of its word (#725). */
+function holdsLetterlessPiece(text: string): boolean {
+  if (!HYPHEN_OR_DASH_RE.test(text)) return false;
+  for (const word of text.match(WORDS_AND_SPACES_RE) ?? []) {
+    if (isBreakingSpaceRun(word) || wordPieceScript(word) === undefined) continue;
+    let from = 0;
+    for (let at = 0; at < word.length; at++) {
+      if (!HYPHEN_OR_DASH_RE.test(word[at]!)) continue;
+      if (isLetterless(word.slice(from, at + 1))) return true;
+      from = at + 1;
+    }
+    if (from > 0 && isLetterless(word.slice(from))) return true;
+  }
+  return false;
+}
+
+/** Whether a word of `text` that has a letter and a character with none
+ *  (`10.1006/ijhc.2001.0458`) is wider than `widthPx`: cut where its line
+ *  ends, it may leave a piece with no letter (#725). */
+function hasOverwideMixedWord(text: string, font: string, widthPx: number): boolean {
+  for (const word of text.match(WORDS_AND_SPACES_RE) ?? []) {
+    if (!isBreakingSpaceRun(word) && wordPieceScript(word) !== undefined && measureTextWidth(word, font) > widthPx) return true;
+  }
+  return false;
 }
 
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
@@ -275,7 +307,11 @@ export function measureBlock(
   // breaker, which measures it in the script of the text around it and
   // says so on its segment. Pretext would measure it alone, in whatever
   // script the browser picks for a text with none.
-  if (getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) && holdsLetterlessWord(text)) {
+  // So does a word with a letter that may part into a piece with none:
+  // after its hyphen (`COVID-19`), or anywhere when it is wider than its
+  // line. The breaker measures that piece in the script of its word.
+  const readsScript = getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font);
+  if (readsScript && (holdsLetterlessWord(text) || holdsLetterlessPiece(text))) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   const shouldHyphenate = options?.hyphenate ?? false;
@@ -296,6 +332,9 @@ export function measureBlock(
   // A glued group wider than the narrowest line likewise (EF-66): pretext
   // would cut it between characters.
   if (text.includes(FIGURE_SPACE) || hasOverwideGluedGroup(text, font, Math.min(maxWidthPx, ...(options?.restWidths ?? []).map((s) => s.maxWidthPx)) - widestIndent)) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
+  if (readsScript && hasOverwideMixedWord(text, font, Math.min(maxWidthPx, ...(options?.restWidths ?? []).map((s) => s.maxWidthPx)) - widestIndent)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   // Words of a joining script stay whole: pretext would break one at a soft

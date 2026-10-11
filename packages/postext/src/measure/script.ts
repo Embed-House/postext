@@ -26,14 +26,38 @@
  * It costs nothing where it does nothing: a face whose punctuation is the
  * same under every script ({@link scriptSensitive}, nearly all of them) is
  * left alone, with no field on its segments.
+ *
+ * Two more cases follow from the same rule.
+ *
+ * A word that has a letter is one script run, and so are the pieces it is
+ * painted in. `10.1006/ijhc.2001.0458` may end a line at each of its
+ * joints, and each piece between two joints is a text of its own to every
+ * renderer; `10.1006/`, `.2001` and `.0458` hold no letter. Painted alone
+ * they took the browser's pick, while their places were measured inside
+ * the word, in its script: in Noto Serif SC, whose digits are 0.47 em by
+ * default and 0.55 em under `latn`, the difference was air after `ijhc`.
+ * A piece with no letter takes the script it has inside its word
+ * ({@link pieceScriptContext}): of the letter before it there, else of the
+ * word's first letter.
+ *
+ * A doubled ellipsis or dash (`……`, `——`) is the Chinese and Japanese mark
+ * whatever it is cited in. In a document in one of those languages, a
+ * word with no letter that holds one (`…….` closing an English sentence
+ * of a colophon) gives the pair the forms of Han text (`'Hani'`), and
+ * what stands with it (the full stop) the script of the sentence
+ * ({@link cutDoubledMarks}). Noto Serif SC draws `…` as three dots on the
+ * baseline, 0.9 em wide, under `latn`, and as three centred dots in a
+ * full em otherwise.
  */
 
 import { bidiClassOf, type BidiIsolate } from '../bidi';
-import { localeScript } from '../locale';
+import { languageOf, localeScript } from '../locale';
 import { measureMarkedWidth, scriptSensitive } from './canvas';
 
-/** The scripts a word with no letter may be shaped in (ISO 15924). */
-export type ScriptContext = 'Latn' | 'Grek' | 'Cyrl' | 'Arab' | 'Hebr';
+/** The scripts a word with no letter may be shaped in (ISO 15924). `'Hani'`
+ *  (Han) is given to a doubled ellipsis or dash only ({@link
+ *  cutDoubledMarks}): a word beside Han text is shaped alone, as it was. */
+export type ScriptContext = 'Latn' | 'Grek' | 'Cyrl' | 'Arab' | 'Hebr' | 'Hani';
 
 /** A character with a script of its own: a letter, in the sense of this
  *  module (a digit, a mark of punctuation and a symbol are `Common`, a
@@ -140,6 +164,72 @@ function isRtlScript(script: ScriptContext): boolean {
   return script === 'Arab' || script === 'Hebr';
 }
 
+/** A character with no script of its own: what a piece with no letter is
+ *  made of (a combining mark, `Inherited`, never stands alone). */
+const COMMON_RE = /\p{Script=Common}/u;
+
+/**
+ * The script the pieces of `word` with no letter are shaped in, when it
+ * may have such pieces: a word painted left to right that holds a letter
+ * and a character with no script (`10.1006/ijhc.2001`, `COVID-19`, `37 °C`
+ * glued by its no-break space). It is the script of its first letter: the
+ * one a shaper gives what stands before that letter. Undefined for a word
+ * of letters only, for a word with no letter (it has a script of its own,
+ * {@link resolveScriptContext}) and when the letter is of a script the
+ * engine does not act on.
+ */
+export function wordPieceScript(word: string): ScriptContext | undefined {
+  if (!COMMON_RE.test(word)) return undefined;
+  const first = nearestScript(word, 0, 0, 0, word.length, false);
+  return first === 'other' ? undefined : first;
+}
+
+/**
+ * The script the piece `[from, to)` of a word is shaped in when it holds
+ * no letter: the script of the nearest letter before it in `text` (the
+ * word, or what is left of it after a cut), else `wordScript`, the script
+ * in force where `text` starts ({@link wordPieceScript} for a whole word,
+ * {@link scriptAt} for the rest of one). Undefined for a piece with a
+ * letter, which is shaped in its own script, and when the letter before
+ * it is of a script the engine does not act on.
+ */
+export function pieceScriptContext(text: string, from: number, to: number, wordScript: ScriptContext | undefined): ScriptContext | undefined {
+  if (wordScript === undefined || !isLetterless(text.slice(from, to))) return undefined;
+  return scriptAt(text, from, wordScript);
+}
+
+/** The script in force at `at` of `text`: of the nearest letter before
+ *  it, else `wordScript`. */
+export function scriptAt(text: string, at: number, wordScript: ScriptContext | undefined): ScriptContext | undefined {
+  const before = nearestScript(text, at, at, 0, at, false);
+  return before === 'other' ? undefined : before ?? wordScript;
+}
+
+/** A doubled ellipsis or dash: the Chinese ellipsis and dash (省略号 ……,
+ *  破折号 ——) and the Japanese ones (…… and ――, also typed ——). */
+const DOUBLED_MARK = '\\u2026{2,}|\\u2014{2,}|\\u2015{2,}';
+const DOUBLED_MARK_SPLIT_RE = new RegExp(`(${DOUBLED_MARK})`, 'u');
+const DOUBLED_MARK_ONLY_RE = new RegExp(`^(?:${DOUBLED_MARK})$`, 'u');
+
+/** Whether `text` is a doubled ellipsis or dash and nothing else. */
+export function isDoubledMark(text: string): boolean {
+  return DOUBLED_MARK_ONLY_RE.test(text);
+}
+
+/**
+ * A word with no letter cut around the doubled ellipses and dashes it
+ * holds: `…….` gives `……` and `.`, `“——”` gives `“`, `——` and `”`. The
+ * pair is shaped as Han text ({@link isDoubledMark}), the rest in the
+ * script of its context. Undefined when the word has a letter (a shaper
+ * sets it whole, in its script) or holds no such pair, or is one and
+ * nothing else.
+ */
+export function cutDoubledMarks(word: string): string[] | undefined {
+  if (!isLetterless(word) || isDoubledMark(word)) return undefined;
+  const pieces = word.split(DOUBLED_MARK_SPLIT_RE).filter((piece) => piece !== '');
+  return pieces.length > 1 ? pieces : undefined;
+}
+
 /**
  * Whether a word shaped in `script` takes no tracking, as a word of a
  * joining script takes none (`measure/joining.ts`): the Arabic script. The
@@ -159,11 +249,12 @@ export function scriptContextUntracked(script: ScriptContext | undefined): boole
 const GLUE = '\u00A0';
 
 /** After a word painted left to right: a character of the script that
- *  stays in the word's left-to-right run. For Arabic and Hebrew a sign of
+ *  stays in the word's left-to-right run (for Han 一, the ideograph a
+ *  Chinese or Japanese text is surest to have loaded). For Arabic and Hebrew a sign of
  *  the script with no direction of its own (U+060E, the poetic verse sign;
  *  U+FB29, the alternative plus sign): a letter would open a right-to-left
  *  run, and Chrome 154 shapes each run of a canvas text alone. */
-const AFTER: Readonly<Record<ScriptContext, string>> = { Latn: 'n', Grek: '\u03BD', Cyrl: '\u043D', Arab: '\u060E', Hebr: '\uFB29' };
+const AFTER: Readonly<Record<ScriptContext, string>> = { Latn: 'n', Grek: '\u03BD', Cyrl: '\u043D', Arab: '\u060E', Hebr: '\uFB29', Hani: '\u4E00' };
 /** Before a word painted right to left: a letter of the script. */
 const BEFORE: Readonly<Partial<Record<ScriptContext, string>>> = { Arab: '\u0628', Hebr: '\u05D0' };
 
@@ -222,6 +313,13 @@ export function rtlTextWidth(text: string, font: string): number {
   return measureMarkedWidth(text, font, '', '', true);
 }
 
+/** Whether a document in the language of `tag` sets the doubled ellipsis
+ *  and dash as its own marks ({@link cutDoubledMarks}): Chinese, Japanese. */
+export function hanMarksOfLocale(tag: unknown): boolean {
+  const language = languageOf(tag);
+  return language === 'zh' || language === 'ja';
+}
+
 /** The script of a language tag when it is one the engine acts on
  *  (`ar`, `fa`, `ur` → `'Arab'`; `he` → `'Hebr'`; `el` → `'Grek'`; `ru` →
  *  `'Cyrl'`; `en`, `es`… → `'Latn'`), else undefined. */
@@ -239,6 +337,9 @@ export interface MeasureScriptContext {
   /** The script of the document's language, for a word with no letter
    *  anywhere near it. */
   script?: ScriptContext;
+  /** The document is in Chinese or Japanese: a doubled ellipsis or dash
+   *  is its mark, set in the forms of Han text ({@link cutDoubledMarks}). */
+  hanMarks?: boolean;
 }
 
 const OUTSIDE_A_BUILD: MeasureScriptContext = { enabled: true, script: 'Latn' };
@@ -262,5 +363,6 @@ export function getMeasureScriptContext(): MeasureScriptContext {
 export function scriptContextKey(): string {
   const s = measureScriptContext;
   if (!s.enabled) return 'sc0\x00';
+  if (s.hanMarks) return `sc${s.script ?? '-'}H\x00`;
   return s.script === 'Latn' ? '' : `sc${s.script ?? '-'}\x00`;
 }

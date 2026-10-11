@@ -16,6 +16,7 @@ import { lineTracking, trackSegments } from './tracking';
 import { graphemeCount } from '../measure/graphemes';
 import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate';
 import { joiningScriptIn } from '../measure/joining';
+import { pieceScriptContext } from '../measure/script';
 
 interface RichBreakPoint {
   charIndex: number;
@@ -96,6 +97,9 @@ interface RichToken {
   /** The script a word with no letter is shaped in (#725, see
    *  `measure/rich.ts`). */
   scriptContext?: import('../measure/script').ScriptContext;
+  /** A word with a letter that may be set in pieces with none: the script
+   *  in force where it starts (see `measure/rich.ts`). */
+  wordScript?: import('../measure/script').ScriptContext;
 }
 
 export function richTokensToItems(
@@ -294,6 +298,12 @@ export function reconstructRichLines(
           ? token.text.slice(meta.subStart, meta.subEnd)
           : token.text;
         const cleanText = cleanSoftHyphens(subText);
+        // A piece with no letter of a word that has one (`10.1006/` of a
+        // DOI) is painted in the script it has inside the word (#725).
+        const pieceScript = token.scriptContext
+          ?? (token.wordScript !== undefined && meta.subStart !== undefined && meta.subEnd !== undefined
+            ? pieceScriptContext(token.text, meta.subStart, meta.subEnd, token.wordScript)
+            : undefined);
         lineSegments.push({
           kind: token.mathRender ? 'math' : token.swatch ? 'swatch' : token.chip ? 'chip' : 'text',
           text: cleanText,
@@ -318,7 +328,7 @@ export function reconstructRichLines(
           ...(token.cjkMarks ? { cjkMarks: token.cjkMarks } : {}),
           ...(token.inserted ? { inserted: true } : {}),
           ...(token.runs ? { runs: token.runs } : {}),
-          ...(token.scriptContext ? { scriptContext: token.scriptContext } : {}),
+          ...(pieceScript ? { scriptContext: pieceScript } : {}),
         });
         textParts.push(cleanText);
       } else if (it.type === 'glue' && meta) {

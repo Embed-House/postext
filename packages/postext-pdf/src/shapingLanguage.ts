@@ -62,10 +62,10 @@ export function withShapingLanguage<T>(language: string | undefined, fn: () => T
 
 /** The scripts a word with no letter may be shaped in (ISO 15924, as
  *  `VDTLineSegment.scriptContext` names them) and their OpenType tags. */
-const OPENTYPE_SCRIPT: Readonly<Record<string, string>> = { Latn: 'latn', Grek: 'grek', Cyrl: 'cyrl', Arab: 'arab', Hebr: 'hebr' };
+const OPENTYPE_SCRIPT: Readonly<Record<string, string>> = { Latn: 'latn', Grek: 'grek', Cyrl: 'cyrl', Arab: 'arab', Hebr: 'hebr', Hani: 'hani' };
 /** A letter of each script: the file of a face cut into several that
  *  holds it is the one the script's text is set in (`fileRuns`). */
-const SCRIPT_LETTER: Readonly<Record<string, number>> = { Latn: 0x6E, Grek: 0x3BD, Cyrl: 0x43D, Arab: 0x628, Hebr: 0x5D0 };
+const SCRIPT_LETTER: Readonly<Record<string, number>> = { Latn: 0x6E, Grek: 0x3BD, Cyrl: 0x43D, Arab: 0x628, Hebr: 0x5D0, Hani: 0x4E00 };
 
 let currentScript: string | undefined;
 

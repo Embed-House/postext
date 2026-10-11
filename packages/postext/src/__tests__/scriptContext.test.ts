@@ -6,7 +6,8 @@ import { renderToHtml } from '../html-backend';
 import { buildDocument } from '../pipeline';
 import { clearMeasurementCache } from '../measure';
 import { measureBlock } from '../measure/plain';
-import { faceReadsScript, isLetterless, resolveScriptContext, scriptMark, scriptTextWidth, setMeasureScriptContext, withScriptMark } from '../measure/script';
+import { measureRichBlock } from '../measure/rich';
+import { cutDoubledMarks, faceReadsScript, hanMarksOfLocale, isDoubledMark, isLetterless, pieceScriptContext, resolveScriptContext, scriptAt, scriptMark, scriptTextWidth, setMeasureScriptContext, withScriptMark, wordPieceScript } from '../measure/script';
 import { measureTextWidth } from '../measure/canvas';
 import { spanIsolates } from '../bidi';
 import { parseInlineFormatting } from '../parse/inlineFormatting';
@@ -23,13 +24,17 @@ import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt';
 // stage shapes it in that script.
 
 const NBSP = '\u00A0';
+const ELLIPSIS = '\u2026';
+const EM_DASH = '\u2014';
+const HAN_MARK = '\u4E00';
 const BEH = '\u0628';
 const VERSE_SIGN = '\u060E';
 
 /** How each character is drawn: by its own script, or by the script of
  *  the run it stands in when it has none. */
-type Script = 'Latn' | 'Arab' | 'Grek' | 'Cyrl' | 'Hebr';
+type Script = 'Latn' | 'Arab' | 'Grek' | 'Cyrl' | 'Hebr' | 'Hani';
 function ownScript(ch: string): Script | undefined {
+  if (/\p{Script=Han}/u.test(ch)) return 'Hani';
   if (/\p{Script=Latin}/u.test(ch)) return 'Latn';
   if (/\p{Script=Arabic}/u.test(ch)) return 'Arab';
   if (/\p{Script=Greek}/u.test(ch)) return 'Grek';
@@ -40,9 +45,21 @@ function ownScript(ch: string): Script | undefined {
 /** Advances in a face like Amiri, in ems: the Latin forms of the full
  *  stop, the brackets and the guillemets are another width than the
  *  default ones. A face named `Plain` draws them one way. */
-function advance(ch: string, script: Script | 'DFLT', sensitive: boolean, hebrewUnkerned = false): number {
+function advance(ch: string, script: Script | 'DFLT', sensitive: boolean, hebrewUnkerned = false, song = false): number {
   const latin = !sensitive || script === 'Latn';
   if (ch === ' ' || ch === NBSP) return 0.25;
+  // A face like Noto Serif SC (`Song`): its digits are proportional and
+  // its ellipsis three dots on the baseline under a Western script, half
+  // an em and a full em of centred dots otherwise (measured: 0.55 against
+  // 0.47 em, 0.9 against 1 em).
+  if (song) {
+    const western = script === 'Latn' || script === 'Grek' || script === 'Cyrl';
+    if (isDigit(ch)) return western ? 0.55 : 0.47;
+    if (ch === ELLIPSIS) return western ? 0.9 : 1;
+    if (ch === EM_DASH || ownScript(ch) === 'Hani') return 1;
+    if (ch === '.' || ch === '/' || ch === ':' || ch === '-') return 0.3;
+    return 0.5;
+  }
   // A kerned Latin face: a shaper applies no kerning in a Hebrew run of a
   // face with no Hebrew positioning, so its marks come out wider there.
   if (hebrewUnkerned && script === 'Hebr' && ch === ',') return 0.23;
@@ -86,7 +103,10 @@ function shapedWidth(text: string, font: string, direction: string): number {
       let script: Script | 'DFLT' = first ?? (chrome === 131 ? 'DFLT' : 'Latn');
       for (const ch of unit) {
         script = ownScript(ch) ?? script;
-        width += advance(ch, script, sensitive, font.includes('Kerned')) * size;
+        // A current Chrome gives a run with no letter Latin forms, but
+        // leaves an ellipsis in it as the face draws it by default.
+        const drawn = first === undefined && chrome === 154 && ch === ELLIPSIS ? 'DFLT' : script;
+        width += advance(ch, drawn, sensitive, font.includes('Kerned'), font.includes('Song')) * size;
       }
     }
   }
@@ -673,5 +693,270 @@ describe('the leader of a contents entry (#725)', () => {
     const doc = build(MD, { ...book(config('Plain')), headings: { fontFamily: 'Plain' }, toc: { pageNumber: { fontFamily: 'Plain' } } });
     expect(leaders(doc).length).toBeGreaterThan(0);
     expect(leaders(doc).some((s) => 'scriptContext' in s)).toBe(false);
+  });
+});
+
+// A word that has a letter is one script run, and each piece it is painted
+// in belongs to it. The joints of a DOI or a web address, the hyphen of a
+// compound and a cut in a word wider than its line leave pieces with no
+// letter (`10.1006/`, `.2001`, `19`), each a text of its own to a
+// renderer. Their places are measured inside the word, in its script;
+// painted alone they took the browser's pick, and in a face that draws
+// digits by script (Noto Serif SC: 0.47 em by default, 0.55 em under
+// `latn`) the difference was air after the next piece.
+const SONG = '10px Song';
+const DOI = 'DOI: [10.1006/ijhc.2001.0458](https://doi.org/10.1006/ijhc.2001.0458) end.';
+const chinese = (extra: PostextConfig = {}): PostextConfig => config('Song', { locale: 'zh-Hans', ...extra });
+const pieces = (doc: VDTDocument): [string, string | undefined, number][] => segmentsOf(doc).filter((seg) => seg.kind === 'text').map((seg) => [seg.text, seg.scriptContext, +seg.width.toFixed(4)]);
+
+describe('the pieces of a word that has a letter (#725)', () => {
+  it('a word of letters and marks has one script for its pieces with no letter: its first letter\'s', () => {
+    expect(wordPieceScript('10.1006/ijhc.2001.0458')).toBe('Latn');
+    expect(wordPieceScript('COVID-19')).toBe('Latn');
+    expect(wordPieceScript(`37${NBSP}\u00B0C`)).toBe('Latn');
+    expect(wordPieceScript('\u03B1-2')).toBe('Grek');
+    // Letters only, no letter at all, or a script the engine does not act on.
+    expect(wordPieceScript('ijhc')).toBeUndefined();
+    expect(wordPieceScript('10.1006/')).toBeUndefined();
+    expect(wordPieceScript('\u0E01-2')).toBeUndefined();
+  });
+
+  it('a piece with no letter takes the script of the letter before it in the word, else the word\'s', () => {
+    const word = '10.1006/ijhc.2001.0458';
+    expect(pieceScriptContext(word, 0, 8, 'Latn')).toBe('Latn');
+    expect(pieceScriptContext(word, 12, 17, 'Latn')).toBe('Latn');
+    // A piece with a letter is shaped by its own.
+    expect(pieceScriptContext(word, 8, 12, 'Latn')).toBeUndefined();
+    expect(pieceScriptContext(word, 0, 12, 'Latn')).toBeUndefined();
+    // Two scripts in one word: the nearer letter before the piece.
+    expect(pieceScriptContext('ab-\u03B1\u03B2-19', 6, 8, 'Latn')).toBe('Grek');
+    expect(scriptAt('ab-\u03B1\u03B2-19', 3, 'Latn')).toBe('Latn');
+    // A word with no script for its pieces says nothing of them.
+    expect(pieceScriptContext(word, 0, 8, undefined)).toBeUndefined();
+  });
+
+  it('a DOI: every piece in its Latin forms, each box the width of its own ink, on both browsers', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      expect(faceReadsScript(SONG)).toBe(true);
+      expect(pieces(build(DOI, chinese()))).toEqual([
+        ['DOI:', undefined, 18],
+        // Six digits at 5.5 px, the stop and the stroke at 3.
+        ['10.1006/', 'Latn', 39],
+        ['ijhc', undefined, 20],
+        ['.2001', 'Latn', 25],
+        ['.0458', 'Latn', 25],
+        ['end.', undefined, 18],
+      ]);
+    }
+  });
+
+  it('with the rule off the lines are what postext 1.27 measured, the first piece alone', () => {
+    const off = chinese({ bodyText: { scriptContext: false } });
+    on(131);
+    // `10.1006/` in the default forms (six digits at 4.7 px), and the
+    // 4.8 px it lacks left after `ijhc`.
+    expect(pieces(build(DOI, off))).toEqual([
+      ['DOI:', undefined, 18],
+      ['10.1006/', undefined, 34.2],
+      ['ijhc', undefined, 24.8],
+      ['.2001', undefined, 25],
+      ['.0458', undefined, 25],
+      ['end.', undefined, 18],
+    ]);
+    on(154);
+    expect(pieces(build(DOI, off)).map(([text, script, width]) => [text, script, width])).toEqual([
+      ['DOI:', undefined, 18],
+      ['10.1006/', undefined, 39],
+      ['ijhc', undefined, 20],
+      ['.2001', undefined, 25],
+      ['.0458', undefined, 25],
+      ['end.', undefined, 18],
+    ]);
+  });
+
+  it('an address with no letter at all takes the script of the sentence, its pieces too', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const doc = build('See [10.1006/2001.0458](https://doi.org/10.1006/2001.0458) there.', chinese());
+      expect(pieces(doc).filter(([, script]) => script)).toEqual([['10.1006/', 'Latn', 39], ['2001', 'Latn', 22], ['.0458', 'Latn', 25]]);
+    }
+  });
+
+  it('the canvas and the HTML paint each such piece beside the mark of its script', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const doc = build(DOI, chinese());
+      const seen = painted(doc);
+      const texts = seen.map((p) => p.text);
+      expect(texts).toEqual(['DOI:', `10.1006/${NBSP}n`, 'ijhc', `.2001${NBSP}n`, `.0458${NBSP}n`, 'end.']);
+      // Each piece starts where the one before it ends: no air in the word.
+      const at = (text: string): number => seen.find((p) => p.text === text)!.x;
+      expect(at('ijhc') - at(`10.1006/${NBSP}n`)).toBeCloseTo(39, 6);
+      expect(at(`.2001${NBSP}n`) - at('ijhc')).toBeCloseTo(20, 6);
+      expect(at(`.0458${NBSP}n`) - at(`.2001${NBSP}n`)).toBeCloseTo(25, 6);
+      const html = renderToHtml(doc);
+      const mark = `<span aria-hidden="true" style="font-size:0;-webkit-user-select:none;user-select:none;">${NBSP}n</span>`;
+      for (const piece of ['10.1006/', '.2001', '.0458']) expect(html).toContain(`>${piece}${mark}</`);
+      expect(html).not.toContain(`>ijhc${mark}`);
+    }
+  });
+
+  it('both breakers: a compound broken after its hyphen, the number on the next line in the word\'s script', () => {
+    const spans = [{ text: 'COVID-19 cc', bold: false, italic: false }];
+    for (const optimal of [true, false]) {
+      for (const version of [131, 154] as const) {
+        on(version);
+        // The compound is 39 px wide in a measure of 35: it parts at its hyphen.
+        const block = measureRichBlock(spans, SONG, SONG, SONG, SONG, 35, 14, { textAlign: 'left', optimal, hyphenate: false });
+        expect(block.lines.map((l) => l.text), `${optimal} ${version}`).toEqual(['COVID-', '19 cc']);
+        const number = block.lines[1]!.segments![0]!;
+        expect([number.text, number.scriptContext, +number.width.toFixed(4)]).toEqual(['19', 'Latn', 11]);
+        const head = block.lines[0]!.segments!.find((seg) => seg.text === 'COVID-')!;
+        expect(head.scriptContext).toBeUndefined();
+        expect(head.width).toBeCloseTo(28, 6);
+      }
+    }
+  });
+
+  it('a word cut where its line ends: what is left of it with no letter keeps the word\'s script', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      // Wider than any line: cut between two characters, a hyphen added.
+      const block = measureRichBlock([{ text: 'ab12345678901234567890', bold: false, italic: false }], SONG, SONG, SONG, SONG, 60, 14, { textAlign: 'left', optimal: false, hyphenate: false });
+      expect(block.lines.length).toBeGreaterThan(1);
+      const rest = block.lines.slice(1).flatMap((l) => l.segments ?? []).filter((seg) => seg.kind === 'text');
+      expect(rest.length).toBeGreaterThan(0);
+      for (const seg of rest) {
+        expect(seg.scriptContext, seg.text).toBe('Latn');
+        // Its digits at 5.5 px, and the hyphen a cut adds at 3.
+        const digits = seg.text.replace(/-/g, '').length;
+        expect(seg.width).toBeCloseTo(digits * 5.5 + (seg.text.length - digits) * 3, 6);
+      }
+    }
+  });
+
+  it('a paragraph with no formatting goes to the word-by-word breaker when a word of it may part into such a piece', () => {
+    const opts = { textAlign: 'left' as const };
+    const lines = (text: string, width: number) => measureBlock(text, SONG, width, 14, opts).lines;
+    const marked = (text: string, width: number) => lines(text, width).flatMap((l) => l.segments ?? []).filter((seg) => seg.scriptContext).map((seg) => [seg.text, seg.scriptContext, +seg.width.toFixed(4)]);
+    for (const version of [131, 154] as const) {
+      on(version);
+      // Pretext ends a line after any hyphen and measures `19` alone, each
+      // browser its way; the breaker parts a compound between two letters
+      // only (`breaksAfterHardHyphen`), so the number stays with its word.
+      expect(lines('see COVID-19 there', 50).map((l) => l.text.trim())).toEqual(['see', 'COVID-19', 'there']);
+      // A word wider than its line is cut where the line ends: what is
+      // left of it, seven digits and a stop, in the word's Latin forms.
+      expect(marked('DOI:10.1006/ijhc.2001.0458 end', 90)).toEqual([['001.0458', 'Latn', 41.5]]);
+    }
+    // With the rule off the paragraph stays with pretext, as in postext
+    // 1.27: the number alone on the next line, 9.4 px wide on Chrome 131
+    // and 11 px on a current one.
+    setMeasureScriptContext({ enabled: false });
+    on(131);
+    const old = lines('see COVID-19 there', 50);
+    expect(old.map((l) => l.text.trim())).toEqual(['see COVID-', '19 there']);
+    expect(old[1]!.segments![0]!.width).toBeCloseTo(9.4, 6);
+    on(154);
+    expect(lines('see COVID-19 there', 50)[1]!.segments![0]!.width).toBeCloseTo(11, 6);
+    // A paragraph with no such word stays with pretext under the rule too.
+    setMeasureScriptContext({ enabled: true, script: 'Latn' });
+    expect(lines('see after-dinner talk there', 60).map((l) => l.text.trim())).toEqual(measureRichBlock([{ text: 'see after-dinner talk there', bold: false, italic: false }], SONG, SONG, SONG, SONG, 60, 14, opts).lines.map((l) => l.text.trim()));
+    expect(lines('see after-dinner talk there', 60).flatMap((l) => l.segments ?? []).some((seg) => seg.scriptContext)).toBe(false);
+  });
+
+  it('a face that draws digits one way, and a word of letters, are left as they were', () => {
+    const plain = build(DOI, config('Plain', { locale: 'zh-Hans' }));
+    expect(segmentsOf(plain).some((seg) => 'scriptContext' in seg)).toBe(false);
+    expect(layout(plain)).toEqual(layout(build(DOI, config('Plain', { locale: 'zh-Hans', bodyText: { scriptContext: false } }))));
+    const words = measureRichBlock([{ text: 'after-dinner talk', bold: false, italic: false }], SONG, SONG, SONG, SONG, 40, 14, { textAlign: 'left', optimal: true, hyphenate: false });
+    expect(words.lines.flatMap((l) => l.segments ?? []).some((seg) => seg.scriptContext)).toBe(false);
+  });
+});
+
+// `……` and `——` are the Chinese ellipsis and dash (and the Japanese
+// ones): two marks that make one. Cited in an English sentence of a
+// Chinese book ("Cuts inside a paragraph are marked …….") the nearest
+// letter is Latin, and Noto Serif SC drew the pair in its Latin form:
+// three dots on the baseline, twice, run into the full stop.
+describe('a doubled ellipsis or dash in a Chinese or Japanese document (#725)', () => {
+  const COLOPHON = `Dashes are set as ${EM_DASH}${EM_DASH} here. Cuts inside a paragraph are marked ${ELLIPSIS}${ELLIPSIS}. Set in Song.`;
+
+  it('is told from one mark, and cut out of a word with no letter', () => {
+    for (const mark of [`${ELLIPSIS}${ELLIPSIS}`, `${EM_DASH}${EM_DASH}`, '\u2015\u2015', `${ELLIPSIS}${ELLIPSIS}${ELLIPSIS}`]) expect(isDoubledMark(mark)).toBe(true);
+    for (const mark of [ELLIPSIS, EM_DASH, `${ELLIPSIS}${EM_DASH}`, '...', `${ELLIPSIS}${ELLIPSIS}.`]) expect(isDoubledMark(mark)).toBe(false);
+    expect(cutDoubledMarks(`${ELLIPSIS}${ELLIPSIS}.`)).toEqual([`${ELLIPSIS}${ELLIPSIS}`, '.']);
+    expect(cutDoubledMarks(`\u201C${EM_DASH}${EM_DASH}\u201D,`)).toEqual(['\u201C', `${EM_DASH}${EM_DASH}`, '\u201D,']);
+    // The pair alone needs no cut; one mark, and a word with a letter, are left whole.
+    expect(cutDoubledMarks(`${ELLIPSIS}${ELLIPSIS}`)).toBeUndefined();
+    expect(cutDoubledMarks(`${ELLIPSIS}.`)).toBeUndefined();
+    expect(cutDoubledMarks(`wait${ELLIPSIS}${ELLIPSIS}and`)).toBeUndefined();
+  });
+
+  it('the document\'s language says so: Chinese and Japanese', () => {
+    for (const tag of ['zh', 'zh-Hans', 'zh-Hant-TW', 'ja', 'ja-JP']) expect(hanMarksOfLocale(tag)).toBe(true);
+    for (const tag of ['en', 'ko', 'ar', '', undefined]) expect(hanMarksOfLocale(tag)).toBe(false);
+  });
+
+  it('beside the Han mark both browsers measure the pair in its Han forms', () => {
+    expect(scriptMark('Hani', false)).toEqual({ lead: '', trail: `${NBSP}${HAN_MARK}` });
+    for (const version of [131, 154] as const) {
+      on(version);
+      expect(scriptTextWidth(`${ELLIPSIS}${ELLIPSIS}`, SONG, 'Hani', false)).toBeCloseTo(20, 6);
+      expect(scriptTextWidth(`${ELLIPSIS}${ELLIPSIS}`, SONG, 'Latn', false)).toBeCloseTo(18, 6);
+    }
+  });
+
+  it('cited in a Latin sentence it keeps its Han forms, and the stop after it the sentence\'s', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const doc = build(COLOPHON, chinese({ page: { width: pt(520), height: pt(600), dpi: 72, margins: { top: pt(10), bottom: pt(10), left: pt(10), right: pt(10) } } }));
+      expect(pieces(doc).filter(([, script]) => script)).toEqual([
+        [`${EM_DASH}${EM_DASH}`, 'Hani', 20],
+        // Two full ems of centred dots, not 18 px of dots on the baseline.
+        [`${ELLIPSIS}${ELLIPSIS}`, 'Hani', 20],
+        ['.', 'Latn', 3],
+      ]);
+      // The pair and its stop are one word: nothing between them.
+      const segs = segmentsOf(doc);
+      const at = segs.findIndex((seg) => seg.text === `${ELLIPSIS}${ELLIPSIS}`);
+      expect(segs[at + 1]!.text).toBe('.');
+      // Canvas and HTML paint it beside a Han character.
+      expect(painted(doc).map((p) => p.text)).toContain(`${ELLIPSIS}${ELLIPSIS}${NBSP}${HAN_MARK}`);
+      expect(renderToHtml(doc)).toContain(`>${ELLIPSIS}${ELLIPSIS}<span aria-hidden="true" style="font-size:0;-webkit-user-select:none;user-select:none;">${NBSP}${HAN_MARK}</span></`);
+    }
+  });
+
+  it('the pair and its stop never part at the end of a line', () => {
+    on(131);
+    const spans = [{ text: `are marked ${ELLIPSIS}${ELLIPSIS}. Set`, bold: false, italic: false }];
+    setMeasureScriptContext({ enabled: true, hanMarks: true });
+    for (const optimal of [true, false]) {
+      // `are marked ……` fits (70 px), its stop (3 px more) does not.
+      const block = measureRichBlock(spans, SONG, SONG, SONG, SONG, 72, 14, { textAlign: 'left', optimal, hyphenate: false });
+      expect(block.lines.map((l) => l.text), String(optimal)).toEqual(['are marked', `${ELLIPSIS}${ELLIPSIS}. Set`]);
+    }
+  });
+
+  it('in a document of another language the pair takes the script of the sentence, as any word with no letter', () => {
+    on(131);
+    const doc = build(COLOPHON, config('Song', { locale: 'en', page: { width: pt(520), height: pt(600), dpi: 72, margins: { top: pt(10), bottom: pt(10), left: pt(10), right: pt(10) } } }));
+    expect(pieces(doc).filter(([, script]) => script)).toEqual([
+      [`${EM_DASH}${EM_DASH}`, 'Latn', 20],
+      [`${ELLIPSIS}${ELLIPSIS}.`, 'Latn', 21],
+    ]);
+  });
+
+  it('with the rule off, and in a face that draws it one way, nothing is cut', () => {
+    on(131);
+    const wide = { page: { width: pt(520), height: pt(600), dpi: 72, margins: { top: pt(10), bottom: pt(10), left: pt(10), right: pt(10) } } };
+    const off = build(COLOPHON, chinese({ ...wide, bodyText: { scriptContext: false } }));
+    expect(segmentsOf(off).some((seg) => seg.scriptContext)).toBe(false);
+    // What postext 1.27 set: the word whole, in the default forms.
+    expect(pieces(off).find(([text]) => text.startsWith(ELLIPSIS))).toEqual([`${ELLIPSIS}${ELLIPSIS}.`, undefined, 23]);
+    const plain = build(COLOPHON, config('Plain', { locale: 'zh-Hans', ...wide }));
+    expect(segmentsOf(plain).some((seg) => 'scriptContext' in seg)).toBe(false);
+    expect(segmentsOf(plain).some((seg) => seg.text === `${ELLIPSIS}${ELLIPSIS}.`)).toBe(true);
   });
 });

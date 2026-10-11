@@ -37,7 +37,7 @@ import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining
 import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines';
 import { TATWEEL, justifyLinesWithKashida, kashidaCapacity } from './kashida';
 import { needsBidi, resolveParagraph, spanIsolates, type BidiIsolate, type BidiParagraph } from '../bidi';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, resolveScriptContext, rtlTextWidth, scriptContextUntracked, scriptTextWidth, type ScriptContext } from './script';
+import { cutDoubledMarks, faceReadsScript, getMeasureScriptContext, isDoubledMark, isLetterless, pieceScriptContext, resolveScriptContext, rtlTextWidth, scriptAt, scriptContextUntracked, scriptTextWidth, wordPieceScript, type ScriptContext } from './script';
 
 export interface RichBreakPoint {
   charIndex: number;
@@ -183,6 +183,11 @@ export interface RichToken {
    *  Absent on every other token. */
   scriptContext?: ScriptContext;
   scriptRtl?: true;
+  /** A word with a letter that may be painted in pieces with none
+   *  (`10.1006/ijhc.2001`): the script in force where its text starts,
+   *  which such a piece takes when no letter stands before it in the text
+   *  (`pieceScriptContext`). */
+  wordScript?: ScriptContext;
 }
 
 /** Whether a resolved swatch colour can fill the square: a six- or
@@ -304,6 +309,20 @@ function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShif
   };
 }
 
+/** The script fields of the piece `[from, to)` of `token`, a head or a
+ *  tail of it: the token's own when it is a word with no letter, or one
+ *  measured right to left; else, for a word with a letter that may have
+ *  pieces with none (`RichToken.wordScript`), the script of the piece when
+ *  it holds no letter (it is then measured and painted in it), or the
+ *  script in force where it starts, for the pieces cut from it later. */
+function pieceScriptFields(token: Pick<RichToken, 'text' | 'scriptContext' | 'scriptRtl' | 'wordScript'>, from: number, to: number): Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'wordScript'> {
+  if (token.wordScript === undefined) return {};
+  const script = pieceScriptContext(token.text, from, to, token.wordScript);
+  if (script) return { scriptContext: script };
+  const start = scriptAt(token.text, from, token.wordScript);
+  return start ? { wordScript: start } : {};
+}
+
 /** The width of a word of a joining script (Arabic…), always painted
  *  right to left: measured so too in a face that draws its punctuation by
  *  script (#725, `rtlTextWidth`), so the bracket or the stop at its edge
@@ -314,11 +333,14 @@ function rtlWordWidth(text: string, font: string): number {
 
 /** How a token's text is measured: in its script when it is a word with
  *  no letter given one (#725), else as any text (`textWidth`). */
-function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps'>, font: string): (text: string) => number {
+function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps' | 'wordScript'>, font: string): (text: string) => number {
   const script = token.scriptContext;
   if (script) return (text) => (text === '' ? 0 : scriptTextWidth(text, font, script, token.scriptRtl === true));
   // A right-to-left word of a face that draws punctuation by script.
   if (token.scriptRtl) return (text) => (text === '' ? 0 : rtlTextWidth(text, font));
+  // What opens a word before its first letter is measured in its script.
+  const word = token.wordScript;
+  if (word) return (text) => (isLetterless(text) ? scriptTextWidth(text, font, word, false) : textWidth(text, font, token.smallCaps));
   return (text) => textWidth(text, font, token.smallCaps);
 }
 
@@ -787,8 +809,8 @@ export function emergencySplit(
     const headWidth = widthBefore(idx);
     if (headWidth > lineMaxWidth) continue;
     return {
-      head: { ...flags, text: text.slice(0, idx), kind: 'text', width: headWidth },
-      tail: { ...tailAfter(token, idx + 1, widthBefore(idx + 1)), ...flags },
+      head: { ...flags, ...pieceScriptFields(token, 0, idx), text: text.slice(0, idx), kind: 'text', width: headWidth },
+      tail: { ...tailAfter(token, idx + 1, widthBefore(idx + 1)), ...flags, ...pieceScriptFields(token, idx + 1, text.length) },
     };
   }
   // No hyphen where the cut falls next to an ideograph, or right after a
@@ -851,8 +873,8 @@ export function emergencySplit(
   return {
     head: geminate
       ? { ...flags, text: withLineEndHyphen(text.slice(0, at)), kind: 'text', width: widthBefore(at - 1) + markW(at) }
-      : { ...flags, text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
-    tail: { ...tailAfter(token, at, widthBefore(at)), ...flags },
+      : { ...flags, ...pieceScriptFields(token, 0, at), text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
+    tail: { ...tailAfter(token, at, widthBefore(at)), ...flags, ...pieceScriptFields(token, at, text.length) },
     ...(afterHyphen(at) ? { hard: true } : {}),
   };
 }
@@ -1267,19 +1289,54 @@ function tokenizeSpans(
   const scriptState = getMeasureScriptContext();
   let paragraphText: string | undefined;
   let isolates: BidiIsolate[] | undefined;
-  // `script` undefined: a right-to-left word with letters, measured as it
-  // is painted (`rtlTextWidth`).
+  // `script` undefined: a word with letters. Right to left, it is measured
+  // as it is painted (`rtlTextWidth`); left to right, the pieces of it
+  // that hold no letter are measured and painted in `pieces`, the script
+  // they have inside it (`wordPieceScript`).
   const contextOf = !scriptState.enabled || measuringVertically()
     ? undefined
-    : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean } | undefined => {
+    : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean; pieces?: ScriptContext } | undefined => {
         if (!faceReadsScript(font) || hasCJK(word)) return undefined;
         const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
-        if (!isLetterless(word)) return rtl ? { script: undefined, rtl } : undefined;
+        if (!isLetterless(word)) {
+          if (rtl) return { script: undefined, rtl };
+          const pieces = wordPieceScript(word);
+          return pieces ? { script: undefined, rtl, pieces } : undefined;
+        }
+        // The Chinese or Japanese document's own ellipsis and dash.
+        if (!rtl && scriptState.hanMarks && isDoubledMark(word)) return { script: 'Hani', rtl };
         paragraphText ??= bidi?.text ?? spans.map((sp) => sp.text).join('');
         isolates ??= spans.some((sp) => sp.direction) ? spanIsolates(spans) : [];
         const script = resolveScriptContext(paragraphText, at, at + length, rtl, isolates, scriptState.script);
         return script ? { script, rtl } : rtl ? { script: undefined, rtl } : undefined;
       };
+
+  /** How a word in the context `contextOf` gave it is measured: whole
+   *  (`whole`, undefined: as any text) and up to one of its breaks
+   *  (`upTo`), the tracking it takes, and the fields its token carries. */
+  const scriptMeasure = (context: ReturnType<NonNullable<typeof contextOf>>, font: string, sc: boolean): {
+    whole?: (text: string) => number;
+    upTo?: (text: string) => number;
+    untracked: boolean;
+    fields: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'wordScript'>;
+  } => {
+    if (!context) return { untracked: false, fields: {} };
+    const { script, rtl, pieces } = context;
+    const whole = script ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, script, rtl))
+      : rtl ? (text: string): number => (text === '' ? 0 : rtlTextWidth(text, font))
+      : undefined;
+    // What stands before the word's first letter is measured in its
+    // script; from that letter on, a shaper gives the text that script.
+    const upTo = pieces
+      ? (text: string): number => (text === '' ? 0 : isLetterless(text) ? scriptTextWidth(text, font, pieces, false) : textWidth(text, font, sc))
+      : whole;
+    return {
+      ...(whole ? { whole } : {}),
+      ...(upTo ? { upTo } : {}),
+      untracked: scriptContextUntracked(script),
+      fields: { ...(script ? { scriptContext: script } : {}), ...(rtl ? { scriptRtl: true as const } : {}), ...(pieces ? { wordScript: pieces } : {}) },
+    };
+  };
 
   for (const span of spans) {
     const spanBase = spanStart;
@@ -1332,7 +1389,13 @@ function tokenizeSpans(
     // ("37 °C"), which the line then never breaks at (EF-66).
     const matched = span.text.match(WORDS_AND_SPACES_RE);
     if (!matched) continue;
-    const parts = bidi ? cutAtLevels(matched, spanBase, bidi) : matched;
+    const levelled = bidi ? cutAtLevels(matched, spanBase, bidi) : matched;
+    // In a Chinese or Japanese document a word with no letter is cut
+    // around its doubled ellipses and dashes: the document's own marks,
+    // set as Han text whatever sentence cites them (`cutDoubledMarks`).
+    const parts = contextOf && scriptState.hanMarks && faceReadsScript(font)
+      ? levelled.flatMap((part) => (isBreakingSpaceRun(part) ? undefined : cutDoubledMarks(part)) ?? [part])
+      : levelled;
 
     let partStart = spanBase;
     for (const part of parts) {
@@ -1341,9 +1404,15 @@ function tokenizeSpans(
       const isSpace = isBreakingSpaceRun(part);
       if (!isSpace && URL_LIKE_RE.test(part.replace(/\u00AD/g, '')) && !(letterSpacingPx !== 0 && joiningScriptIn(part))) {
         const clean = part.replace(/\u00AD/g, '');
+        // An address is one script run: its pieces with no letter
+        // (`10.1006/`, `.2001`) are measured in the script they have in
+        // it, and an address with no letter at all in its context's (#725).
+        const inScript = scriptMeasure(contextOf?.(clean, partAt, part.length, font), font, sc);
+        const spacing = inScript.untracked ? 0 : letterSpacingPx;
+        const upTo = inScript.upTo ?? ((text: string): number => textWidth(text, font, sc));
         const breakPoints: RichBreakPoint[] = urlBreakIndices(clean).map((charIndex) => ({
           charIndex,
-          widthBefore: textWidth(clean.slice(0, charIndex), font, sc) + (letterSpacingPx === 0 ? 0 : letterSpacingPx * graphemeCount(clean.slice(0, charIndex))),
+          widthBefore: upTo(clean.slice(0, charIndex)) + (spacing === 0 ? 0 : spacing * graphemeCount(clean.slice(0, charIndex))),
         }));
         tokens.push({
           text: clean,
@@ -1352,8 +1421,9 @@ function tokenizeSpans(
           captionLabel: span.captionLabel,
           ...scriptFields,
           ...scFields,
+          ...inScript.fields,
           kind: 'text',
-          width: textWidth(clean, font, sc) + track(clean),
+          width: (inScript.whole ? inScript.whole(clean) : textWidth(clean, font, sc)) + (inScript.untracked ? 0 : track(clean)),
           ...(breakPoints.length > 0 ? { breakPoints, hyphenWidth: 0, bareBreaks: true } : {}),
         });
         continue;
@@ -1373,15 +1443,14 @@ function tokenizeSpans(
       // A word with no letter: measured in the script of its context, its
       // pieces at a break too (#725). In the Arabic script it takes no
       // tracking, as the Arabic words around it take none.
-      const context = contextOf && !isSpace && !cjk ? contextOf(clean, partAt, part.length, font) : undefined;
-      const untracked = context !== undefined && scriptContextUntracked(context.script);
+      // A word with a letter: its pieces with no letter (`COVID-` | `19`)
+      // in the script they have inside it.
+      const measured = scriptMeasure(contextOf && !isSpace && !cjk ? contextOf(clean, partAt, part.length, font) : undefined, font, sc);
+      const untracked = measured.untracked;
       const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
-      const script = context?.script;
-      const inScript = !context ? undefined
-        : script ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, script, context.rtl))
-        : (text: string): number => (text === '' ? 0 : rtlTextWidth(text, font));
-      const contextFields = context ? { ...(script ? { scriptContext: script } : {}), ...(context.rtl ? { scriptRtl: true as const } : {}) } : {};
-      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, inScript);
+      const inScript = measured.whole;
+      const contextFields = measured.fields;
+      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo);
       if (breakPoints.length > 0) {
         tokens.push({
           text: clean,
@@ -1622,9 +1691,10 @@ function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidt
   return {
     head: mark !== '' && bp.replacesWidth !== undefined
       ? { ...flags, text: withLineEndHyphen(token.text.slice(0, bp.charIndex)), kind: 'text', width: bp.widthBefore - bp.replacesWidth + markWidth }
-      : { ...flags, text: token.text.slice(0, bp.charIndex) + mark, kind: 'text', width: bp.widthBefore + markWidth },
+      : { ...flags, ...pieceScriptFields(token, 0, bp.charIndex), text: token.text.slice(0, bp.charIndex) + mark, kind: 'text', width: bp.widthBefore + markWidth },
     tail: {
       ...flags,
+      ...pieceScriptFields(token, bp.charIndex, token.text.length),
       text: token.text.slice(bp.charIndex),
       kind: 'text',
       width: token.width - bp.widthBefore,

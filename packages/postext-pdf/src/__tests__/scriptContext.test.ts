@@ -106,7 +106,7 @@ describe('the script in force (#725)', () => {
     expect(shapingScript()).toBeUndefined();
     expect(withShapingScript('Latn', () => shapingScript())).toBe('Latn');
     expect(withShapingScript('Latn', () => withShapingScript('Arab', () => shapingScript()))).toBe('Arab');
-    expect(withShapingScript('Hani', () => shapingScript())).toBeUndefined();
+    expect(withShapingScript('Thai', () => shapingScript())).toBeUndefined();
     expect(() => withShapingScript('Latn', () => { throw new Error('x'); })).toThrow();
     expect(shapingScript()).toBeUndefined();
     // Text shaped in a script is another entry of every cache.
