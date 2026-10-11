@@ -535,6 +535,9 @@ describe("package exports", () => {
       "forcedVerticalRuns",
       "segmentOrientation",
       "graphemesOf",
+      // A word with no letter shaped in the script of its context (#725).
+      "scriptMark",
+      "withScriptMark",
       "bidiClassOf",
       "isRtlScriptChar",
       "needsBidi",

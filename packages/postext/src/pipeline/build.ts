@@ -54,6 +54,7 @@ import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike 
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
+import { getMeasureScriptContext, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -552,9 +553,11 @@ export function buildDocumentPass(
   const uprightDigits = getMeasureUprightDigits();
   const direction = getMeasureDirection();
   const arabicNumbers = getMeasureArabicNumbers();
+  const scriptContext = getMeasureScriptContext();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setMeasureScriptContext(scriptContext);
     setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
     setCjkComposition(composition);
@@ -639,6 +642,9 @@ function placeDocumentPass(
   // And, in an Arabic-script book, read a number that opens a paragraph as
   // the numbers after its letters (#665).
   setMeasureArabicNumbers(arabicNumbersOf(resolved));
+  // A word with no letter is shaped in the script of the text around it,
+  // and with no letter near in the script of the document's language (#725).
+  setMeasureScriptContext({ enabled: resolved.bodyText.scriptContext !== false, script: scriptContextOfLocale(resolvedLocale(resolved)) });
 
   // Compute baseline grid
   const baselineGrid = computeBaselineGrid(resolved);

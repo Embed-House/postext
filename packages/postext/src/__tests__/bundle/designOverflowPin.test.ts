@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyDesignOverflow } from '../../bundle/configVersion';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyDesignOverflow, pinLegacyScriptContext } from '../../bundle/configVersion';
 import { resolveAllConfig } from '../../pipeline/config';
 import type { DesignElement, DesignSlot, PostextConfig, ResolvedDesignSlot, ResolvedDesignTextElement, TextOverflow } from '../../types';
 
@@ -77,7 +77,7 @@ describe('pinLegacyDesignOverflow (#628)', () => {
     const current = stored();
     // (Content with no embed: the version-11 inline table pin, #634, has
     // nothing to pin.)
-    expect(migrateConfig(current, 10, { content: '' })).toBe(current);
+    expect(migrateConfig(current, 10, { content: '' })).toEqual(pinLegacyScriptContext(current));
   });
 
   it('returns the same object when nothing needs the pin', () => {

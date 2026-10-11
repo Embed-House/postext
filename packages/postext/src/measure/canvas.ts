@@ -96,6 +96,99 @@ export function measureRunWidth(text: string, font: string): number {
   return width;
 }
 
+// Widths of words with no letter, measured in a script (#725).
+let _markedCaches = new Map<string, Map<string, number>>();
+let _markedCacheEntries = 0;
+/** Font string → whether its punctuation changes with the script. */
+let _sensitive = new Map<string, boolean>();
+
+function rawWidth(ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D, text: string, rtl: boolean): number {
+  // A right-to-left word is measured as it is painted: its brackets mirrored.
+  if (!rtl || !('direction' in ctx)) return ctx.measureText(text).width;
+  const direction = ctx.direction;
+  ctx.direction = 'rtl';
+  const width = ctx.measureText(text).width;
+  ctx.direction = direction;
+  return width;
+}
+
+/**
+ * The width of `text` set between `lead` and `trail`, less theirs: `text`
+ * as the browser shapes it in the script of the mark beside it (#725, see
+ * `measure/script.ts`; a word with no letter takes the script of the text
+ * it stands in). `rtl`: measured in a right-to-left context, as the word is
+ * painted. The mark is glued with a no-break space, so nothing kerns
+ * across. For text with no CJK character (it is measured in one run).
+ */
+export function measureMarkedWidth(text: string, font: string, lead: string, trail: string, rtl: boolean): number {
+  let byText = _markedCaches.get(font);
+  if (byText === undefined) {
+    byText = new Map();
+    _markedCaches.set(font, byText);
+  }
+  const key = `${rtl ? '<' : '>'}${lead}\x00${trail}\x00${text}`;
+  const cached = byText.get(key);
+  if (cached !== undefined) return cached;
+  const ctx = getMeasureCtx();
+  if (font !== _currentFont) {
+    ctx.font = font;
+    _currentFont = font;
+  }
+  const markKey = `${rtl ? '<' : '>'}${lead}\x00${trail}`;
+  let mark = byText.get(markKey);
+  if (mark === undefined) {
+    mark = rawWidth(ctx, lead + trail, rtl);
+    byText.set(markKey, mark);
+    _markedCacheEntries++;
+  }
+  const width = Math.max(0, rawWidth(ctx, lead + text + trail, rtl) - mark);
+  if (_markedCacheEntries >= MAX_WIDTH_CACHE_ENTRIES) {
+    _markedCaches = new Map();
+    _markedCacheEntries = 0;
+    byText = new Map();
+    _markedCaches.set(font, byText);
+  }
+  byText.set(key, width);
+  _markedCacheEntries++;
+  return width;
+}
+
+/** The marks {@link scriptSensitive} compares: the punctuation and digits
+ *  a face may draw by script. */
+const SCRIPT_PROBE = '.,:;!?()[]\u00AB\u00BB\u201C\u201D\u2018\u2019\'"-\u2013\u2014/\u2026*%&0123456789';
+/** Least difference between two of the probe's widths that counts, as a
+ *  fraction of the smaller: above the noise of two measures, far below
+ *  any change of glyph (Amiri's full stop alone moves the row by 1.3 %). */
+const PROBE_TOLERANCE = 0.0005;
+
+/**
+ * Whether the face `font` draws punctuation or digits otherwise by script:
+ * a fixed row of them is measured beside each of `marks` (a character of
+ * each script, glued after it) and the widths compared. One false answer
+ * a font string for nearly every face, which then goes no further; the
+ * answer is dropped with the cached widths when faces change. A measurer
+ * that tells nothing apart (no canvas, a stub) answers false.
+ */
+export function scriptSensitive(font: string, marks: readonly string[]): boolean {
+  const known = _sensitive.get(font);
+  if (known !== undefined) return known;
+  const ctx = getMeasureCtx();
+  if (font !== _currentFont) {
+    ctx.font = font;
+    _currentFont = font;
+  }
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (const mark of marks) {
+    const width = ctx.measureText(SCRIPT_PROBE + mark).width - ctx.measureText(mark).width;
+    if (width < lo) lo = width;
+    if (width > hi) hi = width;
+  }
+  const sensitive = Number.isFinite(lo) && lo > 0 && hi - lo > lo * PROBE_TOLERANCE;
+  _sensitive.set(font, sensitive);
+  return sensitive;
+}
+
 /** Drop all cached text widths. Must be called whenever font faces are
  *  (un)registered: widths measured against fallback glyphs are stale. */
 export function clearTextWidthCache(): void {
@@ -155,9 +248,19 @@ export function evictTextWidths(families: Iterable<string> | null): void {
     _widthCacheEntries = 0;
     _runCaches = new Map();
     _runCacheEntries = 0;
+    _markedCaches = new Map();
+    _markedCacheEntries = 0;
+    _sensitive = new Map();
   } else {
     _widthCacheEntries -= dropFamilies(_widthCaches, set);
     _runCacheEntries -= dropFamilies(_runCaches, set);
+    _markedCacheEntries -= dropFamilies(_markedCaches, set);
+    for (const font of [..._sensitive.keys()]) {
+      const family = fontStringFamily(font);
+      // A face of the stack may stand in for another: any font string
+      // that names a changed family is asked again.
+      if (family === null || [...set].some((f) => font.toLowerCase().includes(f))) _sensitive.delete(font);
+    }
   }
   // The context resolves its font again on the next measure.
   _currentFont = '';

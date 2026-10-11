@@ -3,7 +3,7 @@ import { buildDocument } from '../../pipeline';
 import { breaksAfterDash } from '../../measure/breakRules';
 import { measureRichBlock } from '../../measure/rich';
 import { measureBlock } from '../../measure/plain';
-import { migrateConfig, pinLegacyDashBreaks, CONFIG_VERSION } from '../../bundle/configVersion';
+import { migrateConfig, pinLegacyDashBreaks, CONFIG_VERSION, pinLegacyScriptContext } from '../../bundle/configVersion';
 import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
 import type { PostextConfig } from '../../types';
 import type { VDTLine } from '../../vdt';
@@ -331,7 +331,7 @@ describe('breakAfterDashes in the configuration', () => {
     // Unknown content may set one.
     expect(migrateConfig(stored, 6).bodyText?.breakAfterDashes).toBe(false);
     // Text with no closed dash, today's rules, or a named value: as it is.
-    expect(migrateConfig(stored, 6, { content: 'Sancho dijo —como siempre— que no, y calló.' })).toBe(stored);
+    expect(migrateConfig(stored, 6, { content: 'Sancho dijo —como siempre— que no, y calló.' })).toEqual(pinLegacyScriptContext(stored));
     expect(migrateConfig(stored, 6, { content: ['No dash.', 'From 1914–1918.'] }).bodyText?.breakAfterDashes).toBe(false);
     expect(migrateConfig(stored, CONFIG_VERSION, { content: ALICE })).toBe(stored);
     // A dash touching an inline mark (the Markdown is read raw).
@@ -340,13 +340,13 @@ describe('breakAfterDashes in the configuration', () => {
     }
     const named: PostextConfig = { bodyText: { breakAfterDashes: true } };
     expect(pinLegacyDashBreaks(named)).toBe(named);
-    expect(migrateConfig(named, undefined, { content: ALICE })).toBe(named);
+    expect(migrateConfig(named, undefined, { content: ALICE })).toEqual(pinLegacyScriptContext(named));
   });
 
   it('is not pinned for a dash after a quote that opens a line of dialogue, where no rule breaks', () => {
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const content of ['He said "—and then" and left.', 'Le dijo «—Hola» y se fue.', 'Er sagte »—Ich weiß« und ging.', "She whispered '—and then' twice.", '"—Hola", dijo.', 'Il dit «\u00A0—non\u00A0» et partit.']) {
-      expect(migrateConfig(stored, 6, { content }), content).toBe(stored);
+      expect(migrateConfig(stored, 6, { content }), content).toEqual(pinLegacyScriptContext(stored));
     }
     // A closing quote before the dash, in any of its forms, is pinned.
     for (const content of ['she said "no"—and left', 'sie sagte „nein“—und ging', 'hun sagde »nej«—og gik', 'elle dit «\u00A0non\u00A0»—et partit', 'said *no*"—and left', 'sagte **„nein“**—und']) {

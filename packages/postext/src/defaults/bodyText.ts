@@ -343,6 +343,9 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     breakAfterDashes: partial.breakAfterDashes ?? DEFAULT_BODY_TEXT_CONFIG.breakAfterDashes,
     breakAfterHyphens: partial.breakAfterHyphens ?? DEFAULT_BODY_TEXT_CONFIG.breakAfterHyphens,
     hardLineBreaks: partial.hardLineBreaks ?? DEFAULT_BODY_TEXT_CONFIG.hardLineBreaks,
+    // Present only when off (#725): a document that shapes its words with
+    // no letter in the script of their context resolves as before.
+    ...(partial.scriptContext === false ? { scriptContext: false as const } : {}),
     // Absent unless set, so a document without tab stops resolves as before (#622).
     ...(Array.isArray(partial.tabStops) ? { tabStops: partial.tabStops } : {}),
     ...(partial.tabInterval ? { tabInterval: partial.tabInterval } : {}),
@@ -534,6 +537,11 @@ export function stripBodyTextDefaults(
   }
   if (bodyText.hardLineBreaks !== undefined && bodyText.hardLineBreaks !== DEFAULT_BODY_TEXT_CONFIG.hardLineBreaks) {
     result.hardLineBreaks = bodyText.hardLineBreaks;
+    hasOverride = true;
+  }
+  // On by default, and resolved only when off (#725).
+  if (bodyText.scriptContext === false) {
+    result.scriptContext = false;
     hasOverride = true;
   }
   if (Array.isArray(bodyText.tabStops)) {

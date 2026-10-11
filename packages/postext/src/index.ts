@@ -536,6 +536,10 @@ export { resourceBlockToPage, resourceBlockToLocal, resourceBlockRectToPage, tab
 export { flowToPage, pageToFlow, flowRectToPage, pageRectToFlow, pageIsVertical, pageIsMirrored, verticalFlowOf, lineTextAlign, leaderRuleGeometry, DEFAULT_CENTRAL_BASELINE } from './vdt';
 export { verticalOrientation, verticalRuns, uaxVerticalOrientation, isVerticalCell, verticalCellEms, CORNER_OFFSET_EM, uprightDigitRuns, forcedVerticalRuns, segmentOrientation } from './writingMode';
 export { graphemesOf } from './measure/graphemes';
+// A word with no letter shaped in the script of its context (#725): the
+// mark a renderer sets it beside (`VDTLineSegment.scriptContext`).
+export { scriptMark, withScriptMark } from './measure/script';
+export type { ScriptContext } from './measure/script';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {
   bidiClassOf, isRtlScriptChar, needsBidi, mirroredChar, mirroredCodePoint, joiningTypeOf, hasJoiningScript, joinsWithNext,

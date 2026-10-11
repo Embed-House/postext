@@ -229,7 +229,8 @@ function segmentIsStyled(s: VDTLineSegment): boolean {
   return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
     || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.runs !== undefined || s.sideMarker !== undefined
-    || s.leader !== undefined;
+    // A word with no letter painted in the script of its context (#725).
+    || s.leader !== undefined || s.scriptContext !== undefined;
 }
 
 /** A rule leader (#622): a line across `width` px under the baseline, its

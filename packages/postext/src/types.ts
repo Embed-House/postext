@@ -1502,6 +1502,32 @@ export interface BodyTextConfig {
    *  `pinLegacyHardBreaks`). Titles (`\\` in a heading), captions, notes
    *  and table cells break at `\\` either way. */
   hardLineBreaks?: boolean;
+  /** Shape a word with no letter (`46.`, `1367)`, `».`: digits,
+   *  punctuation or symbols alone) in the script of the text around it
+   *  (#725). Such a word has no script of its own, and a face may draw its
+   *  marks by script: Amiri sets a Latin full stop, brackets and guillemets
+   *  under Latin and Arabic ones otherwise, of other widths. Left alone,
+   *  each shaper picks a script by its own rule (one version of a browser
+   *  the font's default, the next Latin, the PDF the default), so a
+   *  document broke its lines otherwise from one browser to another and
+   *  its PDF set glyphs of another width in the measured places. With
+   *  this on, a word painted left to right takes the script of the nearest
+   *  letter before it in its isolate, else after it; one painted right to
+   *  left (a bracket or a full stop at a right-to-left level) the script
+   *  of the nearest right-to-left letter; with no letter near, the script
+   *  of the document's language. The layout measures it in that script
+   *  and says so on its segment (`VDTLineSegment.scriptContext`), and the
+   *  canvas, the HTML, the fixed-layout EPUB and the PDF paint those
+   *  forms at that width. It acts on Latin, Greek, Cyrillic, Arabic and
+   *  Hebrew contexts, and only in a face whose punctuation or digits
+   *  change with the script (asked once a face): every other face is laid
+   *  out and painted as before. It governs the running text, headings,
+   *  lists, captions, notes and table cells; design text (running heads,
+   *  openers), comic lettering and paragraphs set by the CJK composer are
+   *  not touched. Default `true`. `false` shapes such a word alone, as up
+   *  to postext 1.27 (configurations stored before `configVersion` 12
+   *  read with it, see `pinLegacyScriptContext` in `postext/bundle`). */
+  scriptContext?: boolean;
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
    *  it. A paragraph style or a callout body that sets its own replaces
@@ -2165,6 +2191,9 @@ export interface ResolvedBodyTextConfig {
   breakAfterDashes: boolean;
   breakAfterHyphens: boolean;
   hardLineBreaks: boolean;
+  /** Present only when switched off (see
+   *  {@link BodyTextConfig.scriptContext}). */
+  scriptContext?: false;
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */

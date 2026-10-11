@@ -207,10 +207,10 @@ describe('migrateConfig and pinLegacyMathSize', () => {
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     const prose = migrateConfig(plain, 3, { content: ['# One', 'Prose only.'] });
     expect(prose.math).toBeUndefined();
-    expect(prose.bodyText).toBe(plain.bodyText);
+    expect(prose.bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
     expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     expect(migrateConfig(plain, 3).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
-    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toBe(plain.bodyText);
+    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
   });
 
   it('writes only what differs from the defaults', () => {

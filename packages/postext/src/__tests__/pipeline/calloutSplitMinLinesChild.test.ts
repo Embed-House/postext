@@ -3,7 +3,7 @@ import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
 import { CONFIG_VERSION, migrateConfig, pinLegacyBoxChildCut } from '../../bundle';
-import { migrateBundleConfig } from '../../bundle/configVersion';
+import { migrateBundleConfig, pinLegacyScriptContext } from '../../bundle/configVersion';
 import type { VDTBlock, VDTDocument } from '../../vdt';
 import type { PostextConfig } from '../../types';
 
@@ -185,7 +185,7 @@ describe('layout.boxChildSplitMinLines', () => {
     // Today's rules, a book with no box, or a configuration that names the
     // setting: as it is.
     expect(migrateConfig(cfg, CONFIG_VERSION, { content: box })).toBe(cfg);
-    expect(migrateConfig(cfg, 5, { content: `${SENTENCE}\n\nA mention of \`:::callout\` in the text.` })).toBe(cfg);
+    expect(migrateConfig(cfg, 5, { content: `${SENTENCE}\n\nA mention of \`:::callout\` in the text.` })).toEqual(pinLegacyScriptContext(cfg));
     const named: PostextConfig = { layout: { boxChildSplitMinLines: 2 } };
     expect(pinLegacyBoxChildCut(named)).toBe(named);
     expect(pinLegacyBoxChildCut({} as PostextConfig).layout).toEqual({ boxChildSplitMinLines: 1 });

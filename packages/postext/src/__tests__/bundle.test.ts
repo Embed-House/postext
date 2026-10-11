@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { pinLegacyScriptContext } from '../bundle/configVersion';
 import { zipSync } from 'fflate';
 import {
   bitmapSize,
@@ -730,12 +731,12 @@ describe('bundles written by postext 1.4 or earlier', () => {
     const old: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { parity: 'odd' } }] } };
     expect(migrateConfig(old, CONFIG_VERSION)).toBe(old);
     expect(migrateConfig(old, 99)).toBe(old);
-    expect(migrateConfig(old, 3, prose)).toBe(old);
+    expect(migrateConfig(old, 3, prose)).toEqual(pinLegacyScriptContext(old));
     expect(migrateConfig(old, undefined, prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     expect(migrateConfig(old, '3', prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
-    expect(migrateConfig(plain, undefined, prose)).toBe(plain);
+    expect(migrateConfig(plain, undefined, prose)).toEqual(pinLegacyScriptContext(plain));
     const full: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { enabled: true, parity: 'odd' } }] } };
-    expect(migrateConfig(full, undefined, prose)).toBe(full);
+    expect(migrateConfig(full, undefined, prose)).toEqual(pinLegacyScriptContext(full));
   });
 });

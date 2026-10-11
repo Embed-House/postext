@@ -35,6 +35,7 @@ import { isJapaneseLanguage, renderLangOf } from './locale';
 import { hasCJK } from './measure/cjk';
 import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
+import { scriptMark, type ScriptContext } from './measure/script';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
@@ -84,6 +85,9 @@ const inkScaleDecl = (scale: number): string =>
  *  vertical page carry it too (#703). A box that also takes
  *  {@link CJK_TEXT_DECL} takes {@link CJK_TRACKED_TEXT_DECL} in its place. */
 const TRACKED_LIGATURES_DECL = "font-feature-settings:'liga' 1,'clig' 1;";
+/** The box of a script mark (see {@link scriptTextHtml}): no size, so it
+ *  advances nothing, and no part of a selection or a copy. */
+const SCRIPT_MARK_DECL = 'font-size:0;-webkit-user-select:none;user-select:none;';
 /** {@link CJK_TEXT_DECL} for a box of a tracked text (#703): one
  *  `font-feature-settings` with the ligatures of
  *  {@link TRACKED_LIGATURES_DECL} beside its own features. The property
@@ -280,9 +284,28 @@ function segmentBox(seg: VDTLineSegment, inherited: TextDirection, rootLang: str
   const attrs = dirAttr(seg.rtl ? 'rtl' : 'ltr', inherited) + (seg.lang !== undefined && seg.lang !== rootLang ? ` lang="${esc(seg.lang)}"` : '');
   const decl = tracking !== 0 && joiningScriptIn(seg.text) ? 'letter-spacing:0;' : '';
   const html = seg.runs && seg.runs.length > 0 ? wordRunsHtml(seg, font, color, paint)
-    : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida) : undefined;
+    : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida)
+    : seg.scriptContext !== undefined ? scriptTextHtml(seg.text, seg.scriptContext, seg.rtl === true) : undefined;
   if (!attrs && !decl && html === undefined) return PLAIN_BOX;
   return html === undefined ? { attrs, decl } : { attrs, decl, html };
+}
+
+/**
+ * A word with no letter set in the script the layout measured it in
+ * (`VDTLineSegment.scriptContext`, #725): its text, and beside it the mark
+ * of the script (`scriptMark`, a character of the script glued with a
+ * no-break space) in a box of no size. The browser reads the script of
+ * digits and punctuation from the text they stand in, across the box, so
+ * the word takes the forms and the width of that script, where alone it
+ * would take the ones the browser picks for a text with no letter. The
+ * mark comes after a left-to-right word and before a right-to-left one,
+ * as on the canvas; it has no size, is hidden from assistive technology
+ * and is left out of a selection, so the page reads and copies as written.
+ */
+function scriptTextHtml(text: string, script: ScriptContext, rtl: boolean): string {
+  const { lead, trail } = scriptMark(script, rtl);
+  const hidden = (mark: string): string => (mark === '' ? '' : `<span aria-hidden="true" style="${SCRIPT_MARK_DECL}">${esc(mark)}</span>`);
+  return hidden(lead) + esc(text) + hidden(trail);
 }
 
 /**

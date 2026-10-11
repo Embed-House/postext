@@ -4,7 +4,7 @@ import { computeChapterTitles } from '../../pipeline/placeholders';
 import { renderToHtml } from '../../html-backend';
 import { setHyphenationLocale } from '../../hyphenate';
 import { createMeasurementCache, measureBlock, measureRichBlock } from '../../measure';
-import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION } from '../../bundle/configVersion';
+import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION, pinLegacyScriptContext } from '../../bundle/configVersion';
 import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
 import type { PostextConfig } from '../../types';
 import type { VDTLine } from '../../vdt';
@@ -141,17 +141,17 @@ describe('a break after a compound’s hyphen on both paths (EF-186)', () => {
     expect(migrateConfig(stored, 7).bodyText?.breakAfterHyphens).toBe(false);
     // Text with no compound, today's rules, a named value, or no Knuth–Plass: as it is.
     for (const content of ['No compound here.', 'From 1914-1918, COVID-19 and -5 °C.', ['Plain.', 'Also plain.']]) {
-      expect(migrateConfig(stored, 7, { content }), JSON.stringify(content)).toBe(stored);
+      expect(migrateConfig(stored, 7, { content }), JSON.stringify(content)).toEqual(pinLegacyScriptContext(stored));
     }
     expect(migrateConfig(stored, CONFIG_VERSION, { content: EN })).toBe(stored);
     const named: PostextConfig = { bodyText: { breakAfterHyphens: true } };
     expect(pinLegacyHyphenBreaks(named)).toBe(named);
-    expect(migrateConfig(named, undefined, { content: EN })).toBe(named);
+    expect(migrateConfig(named, undefined, { content: EN })).toEqual(pinLegacyScriptContext(named));
     const firstFit: PostextConfig = { bodyText: { optimalLineBreaking: false } };
-    expect(migrateConfig(firstFit, 7, { content: EN })).toBe(firstFit);
+    expect(migrateConfig(firstFit, 7, { content: EN })).toEqual(pinLegacyScriptContext(firstFit));
     // A bundle pins the `bodyText` the layers leave in force.
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Georgia' } }], 7, { content: [EN] });
-    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', breakAfterHyphens: false });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', breakAfterHyphens: false, scriptContext: false });
     // The pin lays the book out as 1.4 did.
     for (const width of [40, 56, 72]) {
       const pinned = migrateConfig(config(width), 7, { content: EN });

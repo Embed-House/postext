@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline';
 import { measureBlock, measureRichBlock, type MeasureBlockOptions } from '../../measure';
-import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION } from '../../bundle/configVersion';
+import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION, pinLegacyScriptContext } from '../../bundle/configVersion';
 import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
 import type { PostextConfig } from '../../types';
 import type { VDTBlock, VDTLine } from '../../vdt';
@@ -186,7 +186,7 @@ describe('optimalRagged in the configuration', () => {
     expect(CONFIG_VERSION).toBe(12);
     const ragged: PostextConfig = { bodyText: { textAlign: 'left' } };
     for (const version of [undefined, 3, 5, 6]) {
-      expect(migrateConfig(ragged, version, { content: 'Text.' }).bodyText, `${version}`).toEqual({ textAlign: 'left', optimalRagged: false });
+      expect(migrateConfig(ragged, version, { content: 'Text.' }).bodyText, `${version}`).toEqual({ textAlign: 'left', optimalRagged: false, scriptContext: false });
     }
     // A ragged paragraph style, box body, part body or HTML viewer override.
     for (const cfg of [
@@ -208,15 +208,15 @@ describe('optimalRagged in the configuration', () => {
       headings: { textAlign: 'left' },
       headingStyles: [{ id: 's', bodyStyle: { textAlign: 'justify' } }],
     };
-    expect(migrateConfig(justified, 6, { content: 'Text.' })).toBe(justified);
+    expect(migrateConfig(justified, 6, { content: 'Text.' })).toEqual(pinLegacyScriptContext(justified));
     expect(migrateConfig(ragged, CONFIG_VERSION, { content: 'Text.' })).toBe(ragged);
     const greedy: PostextConfig = { bodyText: { textAlign: 'left', optimalLineBreaking: false } };
-    expect(migrateConfig(greedy, undefined, { content: 'Text.' })).toBe(greedy);
+    expect(migrateConfig(greedy, undefined, { content: 'Text.' })).toEqual(pinLegacyScriptContext(greedy));
     const named: PostextConfig = { bodyText: { textAlign: 'left', optimalRagged: true } };
     expect(pinLegacyRaggedBreaking(named)).toBe(named);
     // The bundle reader pins the `bodyText` the layers leave in force.
     expect(migrateBundleConfig({ bodyText: { fontFamily: 'Base' } }, [{ paragraphStyles: [{ id: 'p', name: 'P', textAlign: 'left' }] }], undefined, { content: ['Text.'] }).bodyText)
-      .toEqual({ fontFamily: 'Base', optimalRagged: false });
+      .toEqual({ fontFamily: 'Base', optimalRagged: false, scriptContext: false });
   });
 
   it('keeps a section style’s ragged body as 1.4 set it once pinned', () => {

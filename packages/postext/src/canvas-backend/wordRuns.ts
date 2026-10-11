@@ -2,6 +2,7 @@ import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
 import { fillTrackedWord } from './trackedText';
+import { fillScriptWord } from './scriptText';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -35,6 +36,12 @@ const MARK_RE = /\p{M}/u;
  * (Hebrew) too, its pieces from the right end of its box (#703). A word of
  * a joining script and a word set in several styles are never painted in
  * pieces.
+ *
+ * A word with no letter that the layout gave a script
+ * (`VDTLineSegment.scriptContext`, #725) is painted in it, beside a mark
+ * of the script that is clipped away (`fillScriptWord`), whole: where it
+ * could also be painted in pieces (a face that ligates `!=`), the script
+ * takes it.
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,
@@ -54,7 +61,8 @@ export function fillSegmentWord(
     ctx.direction = 'rtl';
     ctx.textAlign = 'left';
   }
-  if (tracking !== 0 && !untracked && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
+  if (seg.scriptContext !== undefined && !seg.runs) fillScriptWord(ctx, seg.text, seg.scriptContext, rtl, x, y, paint);
+  else if (tracking !== 0 && !untracked && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
   else paint(seg.text, x, y);
   if (seg.runs) paintWordRuns(ctx, seg, x, y, paint, runStyle);
   if (rtl) {

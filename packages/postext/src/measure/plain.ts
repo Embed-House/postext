@@ -26,11 +26,18 @@ import { composesAsCjk, composesDashRow } from './cjkCompose';
 import { markCuts } from './markCuts';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measuringVertically, withMeasureWritingMode } from './vertical';
 import { holdsVerticalCell } from '../writingMode';
-import { WORDS_AND_SPACES_RE } from './spaces';
+import { WORDS_AND_SPACES_RE, isBreakingSpaceRun } from './spaces';
 import { breaksAfterHardHyphen, hasCompound, raggedStretchPx } from './breakRules';
 import { joiningScriptIn } from './joining';
 import { getMeasureDirection } from './bidiLines';
 import { needsBidi } from '../bidi';
+import { faceReadsScript, getMeasureScriptContext, isLetterless } from './script';
+
+/** Whether a word of `text` (between breaking spaces) has no letter. */
+function holdsLetterlessWord(text: string): boolean {
+  const words = text.match(WORDS_AND_SPACES_RE);
+  return words !== null && words.some((word) => !isBreakingSpaceRun(word) && isLetterless(word));
+}
 
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 const FIGURE_SPACE = '\u2007';
@@ -261,6 +268,14 @@ export function measureBlock(
   // they end up on the far side of), and gives its lines their order
   // (`measure/bidiLines.ts`).
   if ((options?.direction ?? getMeasureDirection()) === 'rtl' || needsBidi(text)) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
+  // A word with no letter (`46.`, `1367)`) in a face that draws its
+  // punctuation by script (#725, `measure/script.ts`): the word-by-word
+  // breaker, which measures it in the script of the text around it and
+  // says so on its segment. Pretext would measure it alone, in whatever
+  // script the browser picks for a text with none.
+  if (getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) && holdsLetterlessWord(text)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   const shouldHyphenate = options?.hyphenate ?? false;

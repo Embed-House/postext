@@ -161,6 +161,11 @@ import { hasCJK } from '../measure/cjk';
  *     word to do so (`comics.lettering.strictPlacement`, #728), where up
  *     to 1.27 a narrow shape that cut one could win over a balloon read
  *     out of order ({@link pinLegacyBalloonPlacement});
+ *   - a word with no letter (`46.`, `1367)`) is shaped in the script of
+ *     the text around it, in a face that draws its punctuation by script
+ *     (`bodyText.scriptContext`, #725), where up to 1.27 it was shaped
+ *     alone, in the script each browser and the PDF picked ({@link
+ *     pinLegacyScriptContext});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -271,6 +276,9 @@ const REF_LABEL_BREAK_RULES = 12;
 /** The rules that keep a reshaped comic balloon from parting a Chinese
  *  word (#728). */
 const BALLOON_PLACEMENT_RULES = 12;
+/** The rules that shape a word with no letter in the script of its
+ *  context (#725). */
+const SCRIPT_CONTEXT_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1462,6 +1470,23 @@ export function pinLegacyBalloonPlacement<T extends Partial<PostextConfig>>(conf
   return { ...config, comics: { ...comics, lettering: { ...lettering, strictPlacement: false } } };
 }
 
+/**
+ * A configuration written before #725 (postext 1.27 or earlier), pinned to
+ * the way it shaped a word with no letter (`46.`, `1367)`):
+ * `bodyText.scriptContext: false`, each such word shaped alone, in the
+ * script the browser that measures it and the PDF's shaper pick, where
+ * today it takes the script of the text around it. Every such
+ * configuration gets it: the rule acts in a face that draws its
+ * punctuation by script, and which faces a document loads is not known
+ * here. A configuration that names the setting already is returned as it
+ * is (the same object).
+ */
+export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.scriptContext !== undefined) return config;
+  return { ...config, bodyText: { ...bodyText, scriptContext: false } };
+}
+
 /** A line that opens a comic: a `:::page` or a `:::strip` fence. */
 const COMIC_FENCE_LINE_RE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;
 
@@ -1647,7 +1672,8 @@ export interface MigrateConfigOptions {
  * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference,
  * and its comic balloons placed as 1.27 placed them by {@link
  * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
- * or strip.
+ * or strip, and its words with no letter shaped alone by {@link
+ * pinLegacyScriptContext}.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1696,6 +1722,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) out = pinLegacyInlineCaptionSide(out);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) out = pinLegacyBalloonPlacement(out);
+  if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   return out;
 }
 
@@ -1731,7 +1758,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * Western word that take the Han–Latin space (in the Japan region, read
  * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
  * force, the side caption of a resource set in the text on the `layout` in
- * force, and the labels of cross-references on the `crossRefs` in force.
+ * force, and the labels of cross-references on the `crossRefs` in force,
+ * and the shaping of words with no letter on the `bodyText` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1781,5 +1809,6 @@ export function migrateBundleConfig(
   if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) merged = pinLegacyInlineCaptionSide(merged);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) merged = pinLegacyBalloonPlacement(merged);
+  if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   return merged;
 }

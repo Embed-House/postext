@@ -421,6 +421,18 @@ export interface VDTLineSegment {
    *  innermost that names one), a BCP 47 tag as written. Renderers declare
    *  it (HTML `lang`, PDF `/Lang`). Absent otherwise. */
   lang?: string;
+  /** The script this word is shaped in (ISO 15924), when it has no letter
+   *  of its own and its face draws punctuation or digits by script (#725,
+   *  `bodyText.scriptContext`): `46.` ending a Latin sentence set in an
+   *  Arabic face takes `'Latn'`, the brackets of `(1367)` in an Arabic
+   *  sentence `'Arab'`. `width` was measured in that script, and every
+   *  renderer shapes the word in it: the canvas and the HTML by setting it
+   *  beside a hidden character of the script (`scriptMark`), the PDF by
+   *  asking its shaper for it. Left alone, each shaper would choose by a
+   *  rule of its own. Absent on every other segment, and on every segment
+   *  of a face that draws them the same under any script. (The name
+   *  `script` is taken by superscripts and subscripts.) */
+  scriptContext?: import('./measure/script').ScriptContext;
   /** The run's UAX #9 embedding level, when it is more than 1 (a number or
    *  a Latin word inside an Arabic phrase inside an English paragraph) or a
    *  renderer needs it for tagging and `/ActualText`. Absent otherwise:

@@ -93,6 +93,9 @@ interface RichToken {
   runs?: { text: string; bold?: boolean; italic?: boolean }[];
   /** How far kashidas may widen this word, px (`measure/kashida.ts`). */
   kashida?: number;
+  /** The script a word with no letter is shaped in (#725, see
+   *  `measure/rich.ts`). */
+  scriptContext?: import('../measure/script').ScriptContext;
 }
 
 export function richTokensToItems(
@@ -315,6 +318,7 @@ export function reconstructRichLines(
           ...(token.cjkMarks ? { cjkMarks: token.cjkMarks } : {}),
           ...(token.inserted ? { inserted: true } : {}),
           ...(token.runs ? { runs: token.runs } : {}),
+          ...(token.scriptContext ? { scriptContext: token.scriptContext } : {}),
         });
         textParts.push(cleanText);
       } else if (it.type === 'glue' && meta) {
