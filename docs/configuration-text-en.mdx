@@ -1055,7 +1055,8 @@ Publishers expect every column to start at the top of the page and end flush wit
 2. **Pictures with a safe area** — a picture with a safe area (`Resource.safeArea`, see [Document format › Safe area](/en/docs/document-format#safe-area)) set inline in the short column, or floated at its head or its foot over that column alone, grows by whole grid lines, cropped within its safe area, until the column is full or the crop reaches the safe area. A taller picture leaves no hole on the page, so it runs before any space is added; a float at the head of a column on a page or band whose column heads stay level (see below) does not grow. Recorded as `flexFigure`. It has no setting of its own: only a picture whose resource marks a safe area can grow.
 3. **Headings** — whole grid lines are added to the top margin of the headings inside the short column. When several lines are needed and the column holds several headings, the lines are distributed among them, always giving the largest share to the most important heading (an `h2` receives more than an `h3`). Headings sitting at the very top of a column never receive extra space, so columns keep starting at the page top — except a heading right under a figure or table that heads its column on a page that flows on: the room goes above that heading, under the figure.
 4. **List ends** — when the headings cannot absorb the whole gap, a grid line is added where a list/enumeration ends (space after a list reads naturally), capped per list end.
-5. **Loose paragraphs** — as a last resort, one paragraph of the column is re-broken one line longer (TeX's `\looseness=+1`), choosing the longest paragraph so the extra word spacing dilutes invisibly. The loose solution is only accepted when every line stays **below `bodyText.maxWordSpacing`** — type colour never exceeds the limit you already configured. Requires `bodyText.optimalLineBreaking`.
+5. **Under formulas, boxes and figures** — then one grid line goes under a display formula or a callout box the text resumes after (`stretchAfterDisplays`; it reads as the element's own margin), and under a figure or table that heads the column (`stretchAfterFloats`, capped by `maxLinesAfterFloat`).
+6. **Loose paragraphs** — as a last resort, one paragraph of the column is re-broken one line longer (TeX's `\looseness=+1`), choosing the longest paragraph so the extra word spacing dilutes invisibly. The loose solution is only accepted when every line stays **below `bodyText.maxWordSpacing`** — type colour never exceeds the limit you already configured. Requires `bodyText.optimalLineBreaking`.
 
 On a character grid (`cjk.grid`, see [Chinese layout › The character grid](/en/docs/chinese-layout#the-character-grid)) every character stands in a cell one em wide and every line on the grid's line pitch, which is also the baseline grid. Balancing is off there by default, as in vertical text: a page set line by line on a grid, the way GB/T 9704 counts 22 lines of 28 characters, leaves a short column short. A configuration that sets `enabled: true` gets levers that keep the grid: headings, list ends, displays and figures take whole grid lines, so the text below them moves by whole rows, and `gridLines: 'off'` keeps those out for a standard that has no empty row to give. A Chinese or Japanese paragraph runs a line long only when no gap between two of its characters spreads past `maxTracking`, and takes no tracking on its letters: a line a character short spreads an em over its gaps, far past the default 0.01 em, so on a grid of whole cells the loose lever usually finds nothing. The box closing a column and the pictures with a safe area are off the grid by design and work as anywhere.
 
@@ -1094,6 +1095,12 @@ The last column of a page is only balanced when the page flows naturally into th
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Maximum extra grid lines after a single list end.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Allow one extra grid line under a display formula, and under a callout box, in the short column, after the list-end lever: the block after it moves down a line. Set it to <code>false</code> to leave the space under formulas and boxes as their own margins set it; the gap goes on to the levers after this one, and the column ends short if they do not close it. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>stretchAfterFloats</code></td>
