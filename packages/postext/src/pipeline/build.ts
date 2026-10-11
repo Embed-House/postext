@@ -4805,8 +4805,9 @@ function placeDocumentPass(
         if (levelBefore && !capActive && !proposedSpan) {
           // The box leaves an uncapped band: level it behind the box (a
           // trailing cap, resolved after balancing) and keep balancing from
-          // stretching its last column to the page bottom meanwhile.
-          proposeTrailingCap(startIdx);
+          // stretching its last column to the page bottom meanwhile. A band
+          // that is level already is closed at its text (#713).
+          proposeTrailingCap(startIdx, undefined, true);
           markForcedBreak();
         } else if (capActive && cap?.kind === 'trailing') {
           // Reached inside the band cut level for it: delivered even though
