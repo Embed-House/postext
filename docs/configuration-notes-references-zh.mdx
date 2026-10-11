@@ -837,6 +837,12 @@ const config: PostextConfig = {
       <td>每组上方的空白，不论有没有组标题；第一组上方没有（它与标题的距离由标题决定），栏顶也没有。</td>
     </tr>
     <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>一栏或一页在某一组中间结束时，该组留在栏尾的条目数和转到下一栏栏首的条目数的下限。取<code>2</code>时，不会有条目单独留在栏尾的组标题之下，也不会有条目单独排在下一栏栏首、后面紧接下一组：两条或三条的组整组移到下一栏，四条及以上的组只在两边各留两条的位置分开。一条指一个条目块（主条目或子条目，连同排在它上方的组标题和无页码的上级条目）；比一栏还高的组只能在必要处分开。收尾区段的截平也遵守这条规则，因此最后一组无法分摊时，各栏可能相差这一组的行数。取<code>1</code>时，可以在任意两条之间换栏，与postext 1.27及之前相同。自postext 1.28起；此前保存且印有索引的文档保持<code>1</code>（<code>pinLegacyIndexGroupSplit</code>）。</td>
+    </tr>
+    <tr>
       <td><code>groups.symbolsLabel</code>、<code>numbersLabel</code></td>
       <td><code>string</code></td>
       <td>按语言；<code>'0–9'</code>，中文为<code>'数字'</code> / <code>'數字'</code></td>

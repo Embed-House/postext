@@ -778,7 +778,7 @@ The page numbers are the ones the document actually prints. A document laid out 
 
 ### `:::index`
 
-`:::index` prints the back-of-book index where it stands: the terms marked with `:index[…]` or `:index{term="…"}` across the book, with their pages, which follow the text as it moves. It is described with the marks in [Back-of-book index](#back-of-book-index).
+`:::index` prints the back-of-book index where it stands: the terms marked with `:index[…]` or `:index{term="…"}` across the book, with their pages, which follow the text as it moves. It is described with the marks in [Back-of-book index](#back-of-book-index). A column never ends after the first entry of a group, nor before its last one: two entries of the group stay and two go on, or the group moves whole (`index.groups.splitMinEntries`).
 
 ```md
 # Index {style="index"}

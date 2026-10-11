@@ -1443,6 +1443,7 @@ What `:::index` prints from the `:index` marks (document-format.md §10.5). An e
 | `groups.enabled` | `true` | letter heads (A, B…, `0–9`, Symbols; 数字 / 數字 and 符号 / 符號 in Chinese) |
 | `groups.fontFamily/fontSize/fontWeight/italic/color` | entries', 700 | set on the entries' pitch |
 | `groups.marginTop` | one index line | above each group; none above the first or at a column top |
+| `groups.splitMinEntries` | `2` (≥ 1.28) | entries of a group kept on each side of a column break: no entry alone under its head at a column foot, none alone at a column head; a group of 2–3 moves whole. `1` = any break (1.27; a preset without `configVersion` 12 that prints an index reads `1`). A last group that cannot be shared can leave the closing columns uneven |
 | `groups.symbolsLabel` / `numbersLabel` | by language / `'0–9'` (数字 / 數字 in Chinese) | |
 
 Two columns come from the **heading style** of the index chapter, not from `index`:

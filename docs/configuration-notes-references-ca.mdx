@@ -836,6 +836,12 @@ const config: PostextConfig = {
       <td>Espai sobre cada grup, amb lletra de capçalera o sense; cap sobre el primer grup, la distància del qual a l'encapçalament la fixa l'encapçalament, ni a dalt de tot d'una columna.</td>
     </tr>
     <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Quan una columna o una pàgina acaba dins d'un grup, el mínim d'entrades del grup que queden al peu de la columna i el mínim que passen al cap de la següent. Amb <code>2</code>, cap entrada no queda sola sota la seva lletra de capçalera al peu d'una columna i cap no obre sola una columna abans del grup següent: un grup de dues o tres entrades passa sencer, i un de quatre o més només es divideix on en queden dues i en passen dues. Una entrada és un bloc d'entrada (una entrada principal o una subentrada, amb la capçalera i les entrades sense pàgina que van al damunt); un grup més alt que una columna es divideix on no hi ha més remei. El tall a nivell d'una banda de tancament també segueix la regla, de manera que un últim grup que no es pot repartir pot deixar les columnes desiguals per les seves línies. Amb <code>1</code>, una columna pot acabar entre dues entrades qualssevol, com fins a postext 1.27. Des de postext 1.28; els documents desats abans que imprimeixen un índex conserven <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
+    </tr>
+    <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>
       <td><code>string</code></td>
       <td>segons la llengua; <code>'0–9'</code>, <code>'数字'</code> / <code>'數字'</code> en xinès</td>

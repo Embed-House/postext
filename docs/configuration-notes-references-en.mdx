@@ -837,6 +837,12 @@ const config: PostextConfig = {
       <td>Space above each group, with or without a head; none above the first group, whose distance from the heading is the heading's, and none at the top of a column.</td>
     </tr>
     <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>When a column or a page ends inside a group, the fewest entries of the group left at the foot of the column and the fewest carried to the head of the next. With <code>2</code> no entry stands alone under its head at a column's foot and none opens a column alone before the next group: a group of two or three entries moves whole, and one of four or more is divided only where two stay and two go. An entry is one entry block (a main entry or a sub-entry, with the head and the page-less entries set above it); a group taller than a column is divided where it must be. The level cut of a closing band follows the rule too, so a last group that cannot be shared can leave the columns uneven by its lines. <code>1</code> lets a column end between any two entries, as up to postext 1.27. Since postext 1.28; documents stored earlier that print an index keep <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
+    </tr>
+    <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>
       <td><code>string</code></td>
       <td>by language; <code>'0–9'</code>, <code>'数字'</code> / <code>'數字'</code> in Chinese</td>

@@ -837,6 +837,12 @@ const config: PostextConfig = {
       <td>Espacio sobre cada grupo, con letra de cabeza o sin ella; ninguno sobre el primer grupo, cuya distancia al encabezado la fija el encabezado, ni en lo alto de una columna.</td>
     </tr>
     <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Cuando una columna o una página termina dentro de un grupo, el mínimo de entradas del grupo que quedan al pie de la columna y el mínimo que pasan a la cabeza de la siguiente. Con <code>2</code>, ninguna entrada queda sola bajo su letra de cabeza al pie de una columna y ninguna abre sola una columna antes del grupo siguiente: un grupo de dos o tres entradas pasa entero, y uno de cuatro o más solo se divide donde quedan dos y pasan dos. Una entrada es un bloque de entrada (una entrada principal o una subentrada, con la cabeza y las entradas sin página que van encima); un grupo más alto que una columna se divide donde no hay más remedio. El corte a nivel de una banda de cierre sigue también la regla, de modo que un último grupo que no se puede repartir puede dejar las columnas desiguales por sus líneas. Con <code>1</code>, una columna puede terminar entre dos entradas cualesquiera, como hasta postext 1.27. Desde postext 1.28; los documentos guardados antes que imprimen un índice conservan <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
+    </tr>
+    <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>
       <td><code>string</code></td>
       <td>según el idioma; <code>'0–9'</code>, <code>'数字'</code> / <code>'數字'</code> en chino</td>
