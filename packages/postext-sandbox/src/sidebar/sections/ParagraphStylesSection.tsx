@@ -452,6 +452,20 @@ function ParagraphStyleCard({
         isDefault={unset('snapToGrid')}
         onReset={() => onResetField('snapToGrid')}
       />
+      {/* The rule of the space under this style's own groups (#715). */}
+      <SelectInput
+        label={labels.paragraphStyleContainerSpacing}
+        value={style.containerSpacing ?? 'inherit'}
+        options={[
+          { value: 'inherit', label: labels.paragraphStyleContainerSpacingInherit },
+          { value: 'collapse', label: labels.paragraphContainerSpacingCollapse },
+          { value: 'add', label: labels.paragraphContainerSpacingAdd },
+        ]}
+        onChange={(v) => (v === 'inherit' ? onResetField('containerSpacing') : onChange({ containerSpacing: v as ParagraphContainerSpacing }))}
+        tooltip={labels.paragraphStyleContainerSpacingTooltip}
+        isDefault={unset('containerSpacing')}
+        onReset={() => onResetField('containerSpacing')}
+      />
     </div>
     </SearchScope>
   );

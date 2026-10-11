@@ -2558,6 +2558,9 @@ export interface SandboxLabels {
   paragraphStyleMarginBottomTooltip: string;
   paragraphStyleSnapToGrid: string;
   paragraphStyleSnapToGridTooltip: string;
+  paragraphStyleContainerSpacing: string;
+  paragraphStyleContainerSpacingTooltip: string;
+  paragraphStyleContainerSpacingInherit: string;
   paragraphStyleLineNumbers: string;
   paragraphStyleLineNumbersAuto: string;
   paragraphStyleLineNumbersOn: string;
