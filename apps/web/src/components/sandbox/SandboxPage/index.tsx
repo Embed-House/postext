@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CompactLanguageSwitcher } from "@/components/sandbox/CompactLanguageSwitcher";
 import { LogoMark } from "@/components/brand/Logo";
 import { htmlLang, siteLocale, type SiteLocale } from "@/i18n/locales";
+import { recipeBundleCandidates } from "@/lib/cookbook/sandboxBundles";
 import { buildSandboxLabels } from "./labels";
 
 // Private preset bundles are served by /api/private-presets only in local dev
@@ -17,8 +18,6 @@ const PRESET_SOURCES: { url: string; private?: boolean }[] = [
   { url: "/presets" },
   ...(process.env.NODE_ENV === "production" ? [] : [{ url: "/api/private-presets", private: true }]),
 ];
-
-const RECIPE_SLUG = /^[a-z0-9-]+$/;
 
 /** The guide's text for each interface language: the Chinese interface
  *  opens its Simplified Chinese edition, the Japanese one its Japanese
@@ -33,26 +32,9 @@ const GUIDE_MARKDOWN: Record<SiteLocale, string> = {
   pt: DEFAULT_MARKDOWN_PT_BR,
 };
 
-/** Cookbook recipes open in the sandbox by link: `#recipe=<slug>&lang=es`
- *  names the recipe's `.postext` bundle, which the capture writes next to
- *  its pages (`public/cookbook/<slug>/<variant>/<slug>.postext`). A recipe
- *  captured in one language only still opens from the other language's
- *  link: the sandbox tries the variants in order. Recipes are captured in
- *  English and Spanish, some in Brazilian Portuguese too: a Catalan link
- *  (`lang=ca`) tries Spanish first, a Portuguese one (`lang=pt-BR`) its
- *  own capture, then English, then Spanish, any other language
- *  (`lang=zh-Hans`, `lang=ja`) English. */
-const HASH_BUNDLES = {
-  recipe: (slug: string, lang: string | null) => {
-    if (!RECIPE_SLUG.test(slug)) return null;
-    // Catalan reads the Spanish capture first, the nearer language.
-    const first = lang !== null && /^(es|ca)(-|$)/i.test(lang) ? "es" : "en";
-    const second = first === "es" ? "en" : "es";
-    const portuguese = lang !== null && /^pt(-|_|$)/i.test(lang);
-    const variants = portuguese ? ["pt", "en", "es"] : [first, second];
-    return variants.map((variant) => `/cookbook/${slug}/${variant}/${slug}.postext`);
-  },
-};
+/** `#recipe=<slug>&lang=<tag>` opens a Cookbook recipe's bundle: the edition
+ *  the link names, then the ones most recipes have (lib/cookbook/sandboxBundles). */
+const HASH_BUNDLES = { recipe: recipeBundleCandidates };
 
 export function SandboxPage() {
   const t = useTranslations("Sandbox");
