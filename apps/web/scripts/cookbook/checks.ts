@@ -400,6 +400,15 @@ export interface BundleReadBack {
   /** Warnings the bundle's layout raises beyond the pen's (kind and what
    *  it names, positions aside). */
   extraWarnings: string[];
+  /** How each side divides its words (the patterns of its resolved
+   *  configuration and whether they run) and the language the bundle's
+   *  configuration names, null when it names none (#660). Null or missing
+   *  when a side has no resolved configuration to read. */
+  language?: {
+    pen: { locale: string; enabled: boolean };
+    bundle: { locale: string; enabled: boolean };
+    named: string | null;
+  } | null;
 }
 
 /**
@@ -407,7 +416,11 @@ export interface BundleReadBack {
  * opens `<slug>.postext` and lays it out with the one configuration it
  * carries; the capture does the same with the pen's engine and fails when
  * a chapter comes out with another page count or another layout than the
- * pen's document, or raises a warning the pen's builds did not.
+ * pen's document, or raises a warning the pen's builds did not. It fails
+ * as well when the bundle divides its words in another language than the
+ * pen, or names no language at all (#660): the pen's engine sets such a
+ * document in English, so its layout compares equal, while the Sandbox
+ * reads it in the interface language and breaks its lines otherwise.
  */
 export function readBackFindings(readBack: BundleReadBack | null | undefined): Finding[] {
   if (!readBack) return [];
@@ -444,6 +457,16 @@ export function readBackFindings(readBack: BundleReadBack | null | undefined): F
     }
   }
   for (const warning of readBack.extraWarnings) add("fail", `the bundle raises ${warning}, which the pen's builds do not`);
+  const language = readBack.language;
+  if (language) {
+    const sets = (h: { locale: string; enabled: boolean }) => (h.enabled ? `hyphenates in ${h.locale}` : `sets its text without hyphenation (${h.locale})`);
+    if (language.pen.locale !== language.bundle.locale || language.pen.enabled !== language.bundle.enabled) {
+      add("fail", `the bundle ${sets(language.bundle)}, the pen ${sets(language.pen)}`);
+    } else if (!language.named) {
+      add("fail", `the bundle's configuration names no language, and the pen ${sets(language.pen)}: `
+        + "the Sandbox reads such a document in the interface language and breaks its lines otherwise");
+    }
+  }
   return dedupe(out);
 }
 

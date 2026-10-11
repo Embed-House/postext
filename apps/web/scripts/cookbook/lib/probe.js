@@ -1633,7 +1633,9 @@ function causeOf(engine, opened, index, held, penText) {
  * (a document's pages counted from its own first, so a chapter that opens
  * elsewhere in the book compares by what its pages hold), where the two
  * part and why ({@link causeOf}; `held` are the builds the bundle holds);
- * plus the warnings the bundle raises and the pen's builds did not. The
+ * plus the warnings the bundle raises and the pen's builds did not, and
+ * the language each side divides its words in with the one the bundle's
+ * configuration names ({@link languageBack}). The
  * faces are the ones the pen loaded. `skipped` when the engine cannot read
  * a bundle back, `error` when the bundle does not open or lay out.
  */
@@ -1668,7 +1670,44 @@ export async function readBundleBack(engine, bytes, penDocs, held = []) {
     });
     if (penDocs[i] && docs[i]) extra.push(...extraWarnings(warningsOf(penDocs[i]), warningsOf(docs[i])));
   }
-  return { chapters, extraWarnings: extra };
+  return { chapters, extraWarnings: extra, language: languageBack(penDocs[0], docs[0], opened?.config) };
+}
+
+/** A language tag that says something: a blank or missing one is none. */
+const tagOf = (value) => (typeof value === 'string' && value.trim() ? value.trim() : null);
+
+/** The language a configuration names for its document: `locale`, else the
+ *  hyphenation locale as written (the engine reads them in that order);
+ *  null when it names neither. */
+export function namedLanguage(config) {
+  return tagOf(config?.locale) ?? tagOf(config?.bodyText?.hyphenation?.locale);
+}
+
+/** How a built document divides its words: the patterns of its resolved
+ *  configuration and whether they run. Null for a document without one. */
+function hyphenationOf(doc) {
+  const h = doc?.config?.bodyText?.hyphenation;
+  return tagOf(h?.locale) ? { locale: h.locale, enabled: h.enabled !== false } : null;
+}
+
+/**
+ * The language of the bundle beside the pen's (#660): how each side's
+ * document divides its words (`pen`, `bundle`: the patterns and whether
+ * they run), and the language the bundle's configuration names (`named`,
+ * null when it names none). A bundle that names none lays out the same on
+ * the pen's engine, where a document without a language is English, and
+ * otherwise in a reader that fills in its own: the Sandbox reads such a
+ * document in the interface language (`withHyphenationLocale`), so its
+ * lines break with other patterns than the published pages'. Null when a
+ * side has no resolved configuration to read.
+ * @param {any} penDoc the pen's first document
+ * @param {any} bundleDoc the bundle's first chapter, laid out
+ * @param {any} stored the configuration the bundle opened with
+ */
+export function languageBack(penDoc, bundleDoc, stored) {
+  const pen = hyphenationOf(penDoc);
+  const bundle = hyphenationOf(bundleDoc);
+  return pen && bundle ? { pen, bundle, named: namedLanguage(stored) } : null;
 }
 
 /**
@@ -1744,6 +1783,38 @@ export function bundleLocale(engine, config, resources, edition) {
 }
 
 /**
+ * The language to write into a bundle's configuration (#660), when the one
+ * it would store names none. The engine sets a document that names no
+ * language in English, and `createBundle` drops a hyphenation locale that
+ * restates that default (`stripConfigDefaults`), so the bundle of such a
+ * pen says nothing: the Sandbox then reads it in the interface language
+ * and hyphenates an English text with Spanish or Catalan patterns, or sets
+ * it as Chinese. The language is the one the pen's document was laid out
+ * in (its resolved `locale`, else its hyphenation tag or patterns), and it
+ * is written as `locale`, the one key every reader takes first and no
+ * strip drops. Nothing for a configuration that names its language as
+ * stored, or for a document with no resolved configuration.
+ * @param {any} engine
+ * @param {any} config the bundle's configuration, plain
+ * @param {any} doc the pen's first document
+ * @returns {{ locale?: string, note?: string }}
+ */
+export function bundleLanguage(engine, config, doc) {
+  let stored = config;
+  if (typeof engine?.stripConfigDefaults === 'function') {
+    try {
+      stored = plain(engine.stripConfigDefaults(config ?? {})) ?? config;
+    } catch { /* read as written */ }
+  }
+  if (namedLanguage(stored)) return {};
+  const h = doc?.config?.bodyText?.hyphenation;
+  const language = tagOf(doc?.config?.locale) ?? tagOf(h?.tag) ?? tagOf(h?.locale);
+  if (!language) return {};
+  const said = namedLanguage(config) ? 'createBundle drops the hyphenation locale, which restates the default' : 'the pen names no language';
+  return { locale: language, note: `locale ${language} written into the bundle's configuration: ${said}, and the Sandbox would read the document in the interface language` };
+}
+
+/**
  * The document `select` picks, as a `.postext` file for the Sandbox,
  * written by the pen's own engine (`createBundle`): its markdown (or its
  * chapters, for a buildBundle book), its configuration as JSON, its
@@ -1752,7 +1823,8 @@ export function bundleLocale(engine, config, resources, edition) {
  * a pen on an engine that writes none gets its page numbering in
  * `page.pageNumbering` and the rest reported in `notes`, as before. The
  * bundle's locale is the one that gives the pen's resource type names
- * ({@link bundleLocale}). Of several
+ * ({@link bundleLocale}), and its configuration names the language the
+ * pen's document was set in ({@link bundleLanguage}). Of several
  * builds the bundle holds the ones that share the configuration of the
  * build `keep` names (`capture.sandbox`; the first by default), a chapter
  * each when they are chained with `continuation` (see {@link bundleGroup});
@@ -1859,6 +1931,10 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
   const named = bundleLocale(engine, config, resources, locale);
   if (named.resourceTypes) config.resourceTypes = named.resourceTypes;
   if (named.note) notes.push(named.note);
+  // The document's language, when the configuration would store none (#660).
+  const language = bundleLanguage(engine, config, build.docs?.[0]);
+  if (language.locale) config.locale = language.locale;
+  if (language.note) notes.push(language.note);
   const input = {
     id,
     name,

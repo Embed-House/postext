@@ -808,7 +808,13 @@ number. A pen on an engine that writes no `start` keeps its page numbering (move
 `page.pageNumbering`) and loses its page offset and heading counters; pin a release that
 writes it. The bundle's locale is the edition's language, unless the document names a
 language of its own that names the built-in resource types otherwise ("Figure 3.1" on the
-English page of a document whose `config.locale` is `ar-MA`): then it is the document's. Some things cannot travel:
+English page of a document whose `config.locale` is `ar-MA`): then it is the document's. The
+bundle's configuration names the document's language: a pen that names none (neither `locale`
+nor `bodyText.hyphenation.locale`), or only the default patterns, which `createBundle` drops,
+gets the language its pages were set in written as `locale` (`en-us`), since the Sandbox reads a
+document without one in the reader's interface language and would hyphenate an English text with
+Spanish patterns. The run notes it; a recipe does better to name its language itself, in each
+edition (`locale: t({ en: 'en-us', es: 'es' })`). Some things cannot travel:
 a print master handed only to `renderToPdf` stays behind, and an interactive recipe gives the
 Sandbox its document without its controls. The run lists each of these as a `sandbox` note. Files in the
 bundle carry a fixed date, so the same input always gives the same bytes. A bundle that
@@ -845,6 +851,12 @@ bundle stores otherwise (a value `stripConfigDefaults` drops where it is not a d
 `resourceTypes` in the bundle's language instead of the document's). Neither comes from the
 pen's own code: report the failure, and never edit a bundle by hand.
 
+The read-back compares the language too, which the layout cannot show: the pen's engine sets a
+bundle that names no language in English, as it set the pen's document, while the Sandbox fills
+in the interface language. C33 fails a bundle whose configuration names no language, and one
+that divides its words with other patterns than the pen, or with hyphenation switched the other
+way.
+
 After a tooling change, `--sandbox-only` rewrites the bundles without recapturing the pages:
 it runs each pen on the engine its `capture.json` records and warns when the layout no
 longer matches the published pages.
@@ -871,7 +883,8 @@ its kind in `expect.warnings`. A formula the maths engine could not set fails to
 a small red box and takes the room of one, so the pages after it are not the recipe's. The line
 names the formula, its page and MathJax's message, one line per message. A Sandbox bundle that
 does not lay out as the pen's documents fails as well (C33, above): another page count,
-another layout, or a warning the pen's builds did not raise.
+another layout, a warning the pen's builds did not raise, another hyphenation language, or no
+language named.
 
 **Warnings** go into `capture.json` for the reviewer: blank-page cascades (C22), near-empty
 pages not listed in `expect.nearEmptyPages` (C23), loose lines over 2 % (C24; a Chinese,

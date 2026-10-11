@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { defaultResourceTypes, effectiveResourceTypes } from "postext";
-import { bundleGroup, bundleLocale, configKeyOf, extraWarnings, readBundleBack, startLossNotes, startOf } from "../../../scripts/cookbook/lib/probe.js";
+import { defaultResourceTypes, effectiveResourceTypes, resolveBodyTextConfig, stripConfigDefaults } from "postext";
+import type { PostextConfig } from "postext";
+import {
+  bundleGroup, bundleLanguage, bundleLocale, configKeyOf, extraWarnings, languageBack, namedLanguage, readBundleBack, startLossNotes, startOf,
+} from "../../../scripts/cookbook/lib/probe.js";
 
 // The Sandbox bundle of a capture whose `capture.doc` lists several builds:
 // chained with `continuation` they make a book, one chapter per build
@@ -176,6 +179,85 @@ describe("bundleLocale: the locale that gives the pen's resource types", () => {
   });
 });
 
+// ─── The language a bundle names (#660) ──────────────────────────────────────
+
+/** A document as the engine builds it from `config`: its resolved hyphenation and locale. */
+const built = (config: PostextConfig) => ({
+  config: { bodyText: resolveBodyTextConfig(config.bodyText, config.locale), ...(config.locale ? { locale: config.locale } : {}) },
+});
+
+describe("bundleLanguage: the language written into a bundle that would name none (#660)", () => {
+  const engine = { stripConfigDefaults };
+  const lora: PostextConfig = { bodyText: { fontFamily: "Lora" } };
+
+  it("writes the language the pen's document was set in when the pen names none", () => {
+    const named = bundleLanguage(engine, lora, built(lora));
+    expect(named.locale).toBe("en-us");
+    expect(named.note).toBe("locale en-us written into the bundle's configuration: the pen names no language, "
+      + "and the Sandbox would read the document in the interface language");
+    // Hyphenation switched off: the document still has a language a reader would replace.
+    const off: PostextConfig = { bodyText: { hyphenation: { enabled: false } } };
+    expect(bundleLanguage(engine, off, built(off)).locale).toBe("en-us");
+    expect(bundleLanguage(engine, {}, built({})).locale).toBe("en-us");
+  });
+
+  it("writes it too when the pen names the default patterns, which createBundle drops", () => {
+    const english: PostextConfig = { bodyText: { fontFamily: "Lora", hyphenation: { locale: "en-us" } } };
+    // What the bundle would store says nothing of the language.
+    expect(namedLanguage(stripConfigDefaults(english))).toBeNull();
+    const named = bundleLanguage(engine, english, built(english));
+    expect(named.locale).toBe("en-us");
+    expect(named.note).toContain("createBundle drops the hyphenation locale, which restates the default");
+  });
+
+  it("is kept by the strip, and lays the document out in the same language", () => {
+    const written = { ...lora, locale: bundleLanguage(engine, lora, built(lora)).locale! };
+    expect(namedLanguage(stripConfigDefaults(written))).toBe("en-us");
+    expect(built(written).config.bodyText.hyphenation).toEqual(built(lora).config.bodyText.hyphenation);
+    // `bodyText.hyphenation.locale` would not do: the strip drops it again.
+    expect(namedLanguage(stripConfigDefaults({ ...lora, bodyText: { ...lora.bodyText, hyphenation: { locale: "en-us" } } }))).toBeNull();
+  });
+
+  it("leaves a configuration that names its language as stored", () => {
+    const spanish: PostextConfig = { bodyText: { hyphenation: { locale: "es" } } };
+    for (const config of [{ locale: "es" }, { locale: "ja" }, { locale: "en" }, spanish, { locale: "ar-MA", bodyText: { hyphenation: { locale: "en-us" } } }] as PostextConfig[]) {
+      expect(bundleLanguage(engine, config, built(config))).toEqual({});
+    }
+    // A hyphenation locale kept with a setting beside it that is no default.
+    const ragged: PostextConfig = { bodyText: { hyphenation: { locale: "en-us", ragged: true } } };
+    expect(namedLanguage(stripConfigDefaults(ragged))).toBe("en-us");
+    expect(bundleLanguage(engine, ragged, built(ragged))).toEqual({});
+  });
+
+  it("writes nothing for a document with no resolved configuration, and reads a configuration as written without the engine's strip", () => {
+    expect(bundleLanguage(engine, lora, undefined)).toEqual({});
+    expect(bundleLanguage(engine, lora, { config: {} })).toEqual({});
+    expect(bundleLanguage({}, lora, built(lora)).locale).toBe("en-us");
+    expect(bundleLanguage({}, { bodyText: { hyphenation: { locale: "en-us" } } }, built({}))).toEqual({});
+    expect(namedLanguage({ locale: " ", bodyText: { hyphenation: { locale: "" } } })).toBeNull();
+    expect(namedLanguage(undefined)).toBeNull();
+  });
+});
+
+describe("languageBack: the bundle's language beside the pen's (#660)", () => {
+  it("reads how each side divides its words, and the language the bundle names", () => {
+    expect(languageBack(built({}), built({ locale: "en-us" }), { locale: "en-us" })).toEqual({
+      pen: { locale: "en-us", enabled: true }, bundle: { locale: "en-us", enabled: true }, named: "en-us",
+    });
+    // The same patterns on the pen's engine, and nothing a reader could go by.
+    expect(languageBack(built({}), built({}), { colorPalette: [] })).toMatchObject({ named: null });
+    expect(languageBack(built({ locale: "es" }), built({ bodyText: { hyphenation: { locale: "ca" } } }), { bodyText: { hyphenation: { locale: "ca" } } })).toEqual({
+      pen: { locale: "es", enabled: true }, bundle: { locale: "ca", enabled: true }, named: "ca",
+    });
+    expect(languageBack(built({ locale: "ja" }), built({ locale: "ja" }), { locale: "ja" })!.pen.enabled).toBe(false);
+  });
+
+  it("says nothing when a side has no resolved configuration", () => {
+    expect(languageBack(undefined, built({}), {})).toBeNull();
+    expect(languageBack(built({}), { pages: [] }, {})).toBeNull();
+  });
+});
+
 // ─── C33: the bundle read back ───────────────────────────────────────────────
 
 const line = (text: string, x = 10) => ({ text, bbox: { x, y: 20, width: 100, height: 12 } });
@@ -209,6 +291,19 @@ describe("readBundleBack (#690)", () => {
     expect(back.chapters[1].bundle!.pages).toBe(2);
     expect(back.chapters[1].pen!.hash).not.toBe(back.chapters[1].bundle!.hash);
     expect(back.chapters[1].difference).toBe("page 1: the pen sets L10,20,100,12|A balloon, the bundle L10,20,100,12|A balloon in");
+  });
+
+  it("reports the language of both sides and the one the bundle names (#660)", async () => {
+    const page = [{ label: "1", lines: ["One"] }];
+    const pen = [{ ...doc(page), ...built({}) }];
+    const opens = (stored: PostextConfig) => ({ openBundle: async () => ({ config: stored }), buildBundle: () => [{ ...doc(page), ...built(stored) }] });
+    const silent = await readBundleBack(opens({}), new Uint8Array(), pen);
+    expect(silent.chapters[0].difference).toBeNull();
+    expect(silent.language).toEqual({ pen: { locale: "en-us", enabled: true }, bundle: { locale: "en-us", enabled: true }, named: null });
+    expect((await readBundleBack(opens({ locale: "en-us" }), new Uint8Array(), pen)).language!.named).toBe("en-us");
+    expect((await readBundleBack(opens({ locale: "es" }), new Uint8Array(), pen)).language!.bundle.locale).toBe("es");
+    // Documents with no resolved configuration (an engine that keeps none).
+    expect((await readBundleBack(engineFor([doc(page)]), new Uint8Array(), [doc(page)])).language).toBeNull();
   });
 
   it("lists the warnings the bundle raises beyond the pen's", async () => {
