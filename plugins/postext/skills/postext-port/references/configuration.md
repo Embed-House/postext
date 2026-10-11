@@ -1706,6 +1706,10 @@ metadata (front matter of chapter 1), `view` (top-level of the manifest, not con
 `pdfGeneration`: `{ outlines = true, forceColorSpace = false, colorSpace = 'cmyk'|'rgb'|'grayscale' ('cmyk'), accessible = true (tagged PDF/UA-1, lang = config.locale) }`.
 `renderToPdf` takes each setting from its own options, else from the first document's `pdfGeneration`
 (`colorSpace` only while `forceColorSpace` is on), else the defaults (bookmarks, tagged, RGB).
+`renderToPdf(docs, { date })` (postext-pdf ≥ 1.28.0; a `Date`, milliseconds or a date string) fixes
+the file's creation and modification dates (and a PDF/X file's XMP dates and document id): the same
+document and `date` give the same bytes, so a regenerated PDF with an unchanged layout does not show
+as a change. Left out, the file is stamped with the time of the call.
 
 `print` (postext ≥ 1.22; layout ignores it, postext-pdf / the preflight / the print preview read it):
 

@@ -54,3 +54,47 @@ describe('PDF metadata from typed frontmatter', () => {
     expect((await PDFDocument.load(await renderToPdf(odd, { fontProvider }))).getTitle()).toBe('One');
   });
 });
+
+// #734: pdf-lib stamps a new file with the time of the call, so two renders
+// of one document differed in their two Info dates (and in the
+// cross-reference stream they move): a capture rewrote 56 PDFs whose
+// pages had not changed.
+describe('RenderToPdfOptions.date (#734)', () => {
+  const doc = () => buildDocument({ markdown: '---\ntitle: Dated\n---\n\n# One\n\nText with a [link](https://example.com).' }, config);
+
+  it('gives the same bytes for two renders with one date', async () => {
+    const date = new Date('2026-09-27T00:00:00Z');
+    for (const accessible of [true, false]) {
+      const a = await renderToPdf(doc(), { fontProvider, accessible, date });
+      // The clock moves between the two renders.
+      await new Promise((resolve) => setTimeout(resolve, 1100));
+      const b = await renderToPdf(doc(), { fontProvider, accessible, date });
+      expect(Buffer.from(a).equals(Buffer.from(b)), `accessible ${accessible}`).toBe(true);
+      const pdf = await PDFDocument.load(a, { updateMetadata: false });
+      expect(pdf.getCreationDate()?.toISOString()).toBe('2026-09-27T00:00:00.000Z');
+      expect(pdf.getModificationDate()?.toISOString()).toBe('2026-09-27T00:00:00.000Z');
+    }
+  }, 20_000);
+
+  it('takes a date, a time in milliseconds or a string, as createBundle\'s mtime does', async () => {
+    const stamp = Date.UTC(2026, 8, 27);
+    const bytes = await Promise.all([new Date(stamp), stamp, '2026-09-27T00:00:00Z', '2026-09-27'].map((date) => renderToPdf(doc(), { fontProvider, date })));
+    for (const other of bytes.slice(1)) expect(Buffer.from(other).equals(Buffer.from(bytes[0]!))).toBe(true);
+  });
+
+  it('stamps the file with the time of the call when no date is given', async () => {
+    const before = Date.now();
+    const pdf = await PDFDocument.load(await renderToPdf(doc(), { fontProvider }), { updateMetadata: false });
+    const after = Date.now();
+    for (const stamped of [pdf.getCreationDate(), pdf.getModificationDate()]) {
+      // A PDF date keeps whole seconds.
+      expect(stamped!.getTime()).toBeGreaterThanOrEqual(before - 1000);
+      expect(stamped!.getTime()).toBeLessThanOrEqual(after + 1000);
+    }
+  });
+
+  it('refuses an invalid date, naming the option', async () => {
+    await expect(renderToPdf(doc(), { fontProvider, date: 'not a date' })).rejects.toThrow(/renderToPdf's `date` is not a valid date \(got not a date\)/);
+    await expect(renderToPdf(doc(), { fontProvider, date: Number.NaN })).rejects.toThrow(/`date`/);
+  });
+});

@@ -134,6 +134,23 @@ export interface RenderToPdfOptions {
   /** Where catalogue profiles are fetched from (`<base>/<id>.icc`).
    *  Defaults to the npm CDN copy of postext's `icc/` folder. */
   profileBaseUrl?: string;
+  /** The file's date (#734): its `/CreationDate` and `/ModDate` and, in a
+   *  PDF/X render, the dates of the XMP packet, with the trailer `/ID` and
+   *  the XMP `DocumentID` taken from it, the title and the page count.
+   *  The same document rendered twice with one `date` gives the same
+   *  bytes. When omitted, the file is stamped with the time of the call
+   *  (and a PDF/X one gets a random id). The type `mtime` has in
+   *  `createBundle`; an invalid date throws. */
+  date?: Date | number | string;
+}
+
+/** `RenderToPdfOptions.date` as a date, or a throw that names the option. */
+function checkedDate(date: Date | number | string): Date {
+  const out = new Date(date);
+  if (Number.isNaN(out.getTime())) {
+    throw new Error(`postext-pdf: renderToPdf's \`date\` is not a valid date (got ${String(date)})`);
+  }
+  return out;
 }
 
 /** A print setting the render could not honour. */
@@ -696,8 +713,14 @@ export async function renderToPdf(
   const first = docs[0];
   if (!first) throw new Error('postext-pdf: nothing to render');
   const totalPages = docs.reduce((n, d) => n + d.pages.length, 0);
+  const date = options.date !== undefined ? checkedDate(options.date) : undefined;
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
+  // pdf-lib stamps a new file with the time of the call.
+  if (date) {
+    pdfDoc.setCreationDate(date);
+    pdfDoc.setModificationDate(date);
+  }
 
   const metaTitle = metadataString(first.metadata?.title);
   const metaAuthor = metadataString(first.metadata?.author);
@@ -839,6 +862,7 @@ export async function renderToPdf(
       producer: 'postext-pdf',
       creatorTool: 'postext',
       pdfua: !!tree,
+      ...(date ? { date, pages: totalPages } : {}),
     }, !printMode.convertImages);
   }
 

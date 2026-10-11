@@ -26,8 +26,12 @@ export interface PdfXMeta {
   creatorTool: string;
   /** The file is also tagged PDF/UA-1. */
   pdfua: boolean;
-  /** Set the dates (tests pin them). */
+  /** The file's dates (`RenderToPdfOptions.date`, #734). With one, the
+   *  sixteen id bytes come from it, the title and `pages` and not from a
+   *  random source: the same document and date give the same file. */
   date?: Date;
+  /** The page count, for the id of a dated file. */
+  pages?: number;
 }
 
 function xmlEscape(s: string): string {
@@ -47,6 +51,29 @@ function randomBytes(n: number): Uint8Array {
   const c = (globalThis as { crypto?: { getRandomValues?: (a: Uint8Array) => Uint8Array } }).crypto;
   if (c?.getRandomValues) return c.getRandomValues(out);
   for (let i = 0; i < n; i++) out[i] = Math.floor(Math.random() * 256);
+  return out;
+}
+
+/** Sixteen bytes from a text: four FNV-1a passes from different bases.
+ *  An identifier that repeats for the same input, not a digest to trust. */
+export function seededBytes(text: string): Uint8Array {
+  const data = new TextEncoder().encode(text);
+  const out = new Uint8Array(16);
+  for (let k = 0; k < 4; k++) {
+    let h = (0x811c9dc5 ^ Math.imul(k + 1, 0x9e3779b1)) >>> 0;
+    for (const byte of data) {
+      h ^= byte;
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    // One more round so a short text still fills the word.
+    h ^= h >>> 15;
+    h = Math.imul(h, 0x2c1b3c6d) >>> 0;
+    h ^= h >>> 12;
+    out[k * 4] = h >>> 24;
+    out[k * 4 + 1] = (h >>> 16) & 0xff;
+    out[k * 4 + 2] = (h >>> 8) & 0xff;
+    out[k * 4 + 3] = h & 0xff;
+  }
   return out;
 }
 
@@ -110,7 +137,9 @@ export function writePdfX(pdfDoc: PDFDocument, mode: PrintColorMode, meta: PdfXM
   const standard = mode.standard;
   const context = pdfDoc.context;
   const date = meta.date ?? new Date();
-  const idBytes = randomBytes(16);
+  const idBytes = meta.date
+    ? seededBytes(`${isoDate(meta.date)}\n${meta.title}\n${meta.pages ?? 0}`)
+    : randomBytes(16);
   const documentId = uuid(idBytes);
 
   // Output intent with the destination profile.
