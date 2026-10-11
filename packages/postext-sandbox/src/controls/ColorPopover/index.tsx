@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, type RefObject } from 'react';
+import { useState, useEffect, useCallback, type ReactNode, type RefObject } from 'react';
 import type { ColorPaletteEntry } from 'postext';
 import { Popover, type PopoverCloseReason } from '../../ui';
 import { useSandboxLabels } from '../../context/SandboxContext';
@@ -34,6 +34,8 @@ interface ColorPopoverBodyProps {
   onLinkPalette?: (entryId: string) => void;
   onUnlinkPalette?: () => void;
   unlinkLabel?: string;
+  /** Shown under the inputs (the colour's contrast in the book, #748). */
+  footer?: ReactNode;
 }
 
 interface ColorPopoverProps extends ColorPopoverBodyProps {
@@ -72,7 +74,7 @@ export function ColorPopover({ open, onOpenChange, anchor, ariaLabel, ...body }:
   );
 }
 
-function ColorPopoverBody({ hex, onChange, cmyk: authoredCmyk, onCmykChange, initialMode = 'hex', onModeChange, palette, linkedPaletteId, onLinkPalette, onUnlinkPalette, unlinkLabel }: ColorPopoverBodyProps) {
+function ColorPopoverBody({ hex, onChange, cmyk: authoredCmyk, onCmykChange, initialMode = 'hex', onModeChange, palette, linkedPaletteId, onLinkPalette, onUnlinkPalette, unlinkLabel, footer }: ColorPopoverBodyProps) {
   const { large } = useLargeTargets();
   const labels = useSandboxLabels();
   const [hsv, setHsv] = useState<HSV>(() => hexToHsv(hexWithoutAlpha(hex)));
@@ -264,6 +266,7 @@ function ColorPopoverBody({ hex, onChange, cmyk: authoredCmyk, onCmykChange, ini
         hexLabel={labels.colorHexField}
         hexError={hexError ? labels.colorHexInvalid : null}
       />
+      {footer}
     </>
   );
 }

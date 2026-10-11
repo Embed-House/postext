@@ -1,4 +1,5 @@
 import type {
+  OutputTransform,
   PostextConfig,
   VDTBlock,
   VDTDocument,
@@ -32,6 +33,8 @@ import {
   matchHyphenationLocale,
   findLooseLines,
   preflightDocument,
+  contrastDocument,
+  resolveContrastConfig,
   resolvePdfGenerationConfig,
   resolvePrintConfig,
 } from 'postext';
@@ -44,9 +47,10 @@ import {
   isKnownUnavailableGoogleFont,
   isRemovedCustomFontFamily,
 } from '../controls/fontLoader';
-import type { PreflightCheck, Warning, WarningPayload } from './types';
+import type { ContrastCheck, PreflightCheck, Warning, WarningPayload } from './types';
 import type { PdfFontCheck } from '../controls/pdfFontWarnings';
 import type { PreflightInputs } from '../print/preflightInputs';
+import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastStore';
 import type { ComposedBook } from '../book/types';
 import { fromBookLine, fromBookOffset } from '../book/compose';
 import { frontmatterRange } from '../book/frontmatter';
@@ -1030,8 +1034,42 @@ export function computeWarnings(params: {
   const warnings = computeDocumentWarnings({ markdown, config, doc, resources, storageUnavailable, unavailableImages, svgFontIssues, bookMetadata: book?.metadata });
   warnings.push(...pdfFontWarnings(pdfFontChecks, pdfFontChecksStale));
   if (preflight && doc) warnings.push(...collectPreflightWarnings(doc, config, resources, preflight));
+  if (doc) warnings.push(...collectContrastWarnings(doc, config, preflight?.transform));
   if (!book) return warnings;
   return attributeToChapters(warnings, book, chapterTitles);
+}
+
+/** The contrast check (#748) of the laid-out document: the text and ground
+ *  pairs under the book's level, on screen and (for a book set up for
+ *  print, once its profile has loaded) on paper, and the reversed text too
+ *  fine for the press. One entry per pair, with the book page of its first
+ *  occurrence. */
+export function collectContrastWarnings(doc: VDTDocument, config: PostextConfig, transform?: OutputTransform): Warning[] {
+  const contrast = resolveContrastConfig(config.contrast);
+  if (!contrast.enabled) return [];
+  // A document that does not carry its page settings has no paper to read
+  // the text against.
+  if (!doc.config?.page?.backgroundColor || !doc.config.page.cutLines) return [];
+  const issues = contrastDocument(doc, {
+    contrast,
+    media: contrastMediaFor(config, doc, contrast),
+    pairs: documentContrastPairs(doc, contrast, transform),
+    ...(transform ? { transform } : {}),
+  });
+  const offset = doc.pageIndexOffset ?? 0;
+  return issues.map((issue): Warning => {
+    const { sourceStart, sourceEnd, pageIndex } = issue;
+    const check = { ...issue } as Partial<typeof issue>;
+    delete check.rect;
+    delete check.sourceStart;
+    delete check.sourceEnd;
+    delete check.pageIndex;
+    return {
+      id: `contrast-${issue.kind}-${issue.color}-${issue.background}-${issue.kind === 'lowContrast' ? issue.required : ''}`,
+      payload: { kind: 'contrast', check: check as ContrastCheck, page: doc.pages[pageIndex - offset]?.pageNumberValue ?? pageIndex + 1 },
+      ...(sourceStart !== undefined ? { sourceStart, ...(sourceEnd !== undefined ? { sourceEnd } : {}) } : {}),
+    };
+  });
 }
 
 const SEVERITY_ORDER = { critical: 0, warning: 1, info: 2 } as const;

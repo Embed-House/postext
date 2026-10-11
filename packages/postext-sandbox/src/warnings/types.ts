@@ -1,10 +1,11 @@
-import type { PreflightIssue, PreflightSeverity } from 'postext';
+import type { ContrastIssue, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
  *  the part opener is a single slot. */
 export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
 
 export type WarningKind =
   | 'preflight'
+  | 'contrast'
   | 'missingFont'
   | 'missingFontFamily'
   | 'missingFontVariant'
@@ -443,10 +444,17 @@ export type WarningPayload =
   | { kind: 'comicUnknownSpeaker'; speaker: string }
   /** A print preflight finding (#605): the engine's check, or what a
    *  placed PDF brings in. `page` is the book page number to jump to. */
-  | { kind: 'preflight'; check: PreflightCheck; page?: number };
+  | { kind: 'preflight'; check: PreflightCheck; page?: number }
+  /** A contrast finding (#748): text that does not read on its ground, or
+   *  reversed text too fine for the press. `page` is the book page number
+   *  of its first occurrence. */
+  | { kind: 'contrast'; check: ContrastCheck; page?: number };
 
 /** `Omit` over each member of a union. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+/** One contrast finding as the Checks panel lists it. */
+export type ContrastCheck = DistributiveOmit<ContrastIssue, 'rect' | 'sourceStart' | 'sourceEnd' | 'pageIndex'>;
 
 /** One preflight finding as the Checks panel lists it. */
 export type PreflightCheck =

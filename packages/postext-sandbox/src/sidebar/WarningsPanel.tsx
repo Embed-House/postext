@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { AlertTriangle, ChevronRight, CircleCheck, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
+import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
@@ -9,6 +9,7 @@ import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '.
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
 import { preflightDetail, preflightTitle } from '../print/preflightText';
+import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 
@@ -34,6 +35,8 @@ function iconFor(kind: WarningPayload['kind']) {
   switch (kind) {
     case 'preflight':
       return Printer;
+    case 'contrast':
+      return Contrast;
     case 'missingFont':
     case 'missingFontFamily':
     case 'missingFontVariant':
@@ -169,6 +172,8 @@ function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightTitle(payload.check, labels);
+    case 'contrast':
+      return contrastTitle(payload.check, labels);
     case 'missingFont':
       return labels.warningsMissingFontTitle;
     case 'missingFontFamily':
@@ -420,6 +425,8 @@ function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightDetail(payload.check, labels);
+    case 'contrast':
+      return contrastDetail(payload.check, labels);
     case 'missingFont':
       return `"${payload.family}" — ${labels.warningsMissingFontDetail}`;
     case 'missingFontFamily':
@@ -743,9 +750,9 @@ function WarningItem({
   onClick: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
-  // A preflight finding, or a design text cut on a page (#628), names its
-  // book page.
-  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
+  // A preflight or contrast finding, or a design text cut on a page
+  // (#628), names its book page.
+  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
@@ -792,6 +799,9 @@ export function WarningsPanel() {
     // A cut design text opens its page; one that prints a heading or a
     // frontmatter field also selects it in the editor.
     if (w.payload.kind === 'designTextTruncated') goToBookPage(w.payload.page);
+    // A contrast finding opens the page of its first occurrence, and
+    // selects its text when it has a place in the source.
+    if (w.payload.kind === 'contrast' && w.payload.page !== undefined) goToBookPage(w.payload.page);
     if (isFontWarning(w.payload.kind)) {
       // Surface the custom-font manager so the user can upload the missing
       // variant, re-add the family, or disambiguate duplicates.
@@ -840,6 +850,7 @@ function categoryLabel(category: WarningCategory, labels: SandboxLabels): string
     case 'figures': return labels.warningsGroupFigures;
     case 'markup': return labels.warningsGroupMarkup;
     case 'design': return labels.warningsGroupDesign;
+    case 'contrast': return labels.contrastSection;
     case 'typesetting': return labels.warningsGroupTypesetting;
     case 'preflight': return labels.warningsGroupPreflight;
     case 'system': return labels.warningsGroupSystem;
