@@ -315,7 +315,8 @@ describe('the break rules of a character grid survive a save (#717)', () => {
     await putProject(migrated);
     const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
     expect(raw.version).toBe(PROJECT_RECORD_VERSION);
-    expect(raw.config.bodyText).toEqual(ON);
+    // (With the pin every record stored before 12 takes, #725.)
+    expect(raw.config.bodyText).toEqual({ ...ON, scriptContext: false });
     expect(laidOut((await getProject('old'))!.config)).toEqual(ON);
   });
 

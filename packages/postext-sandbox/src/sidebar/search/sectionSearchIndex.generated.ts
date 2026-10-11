@@ -1171,6 +1171,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'bodyRuntMinCharactersTooltip',
       'bodyRuntPenalty',
       'bodyRuntPenaltyTooltip',
+      'bodyScriptContext',
+      'bodyScriptContextTooltip',
       'bodyShortListMaxItems',
       'bodyShortListMaxItemsTooltip',
       'bodyShortListSplit',

@@ -357,6 +357,17 @@ export const BodyTextSection = memo(function BodyTextSection() {
           isDefault={bodyText.hardLineBreaks === D.hardLineBreaks}
           onReset={() => resetField('hardLineBreaks')}
         />
+        {/* A word with no letter takes the script of the text around it
+            (#725): on unless the configuration says no (a stored one from
+            before the rule is read with it off). */}
+        <ToggleSwitch
+          label={labels.bodyScriptContext}
+          checked={bodyText.scriptContext !== false}
+          onChange={(checked) => updateBodyText({ scriptContext: checked })}
+          tooltip={labels.bodyScriptContextTooltip}
+          isDefault={bodyText.scriptContext !== false}
+          onReset={() => resetField('scriptContext')}
+        />
         <ToggleSwitch
           label={labels.bodyRepeatHyphen}
           checked={bodyText.repeatHyphen}

@@ -83,7 +83,8 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       version: 3, id: 'p', name: 'P', resources: [], createdAt: 1, updatedAt: 1,
       chapters: [chapter('Prose only.')], activeChapterId: 'a', config,
     };
-    expect(migrateProjectRecord(saved, deps)!.config).toEqual(config);
+    // (But for the pin every record stored before 12 takes, #725.)
+    expect(migrateProjectRecord(saved, deps)!.config).toEqual({ bodyText: { fontFamily: 'Georgia', scriptContext: false } });
   });
 
   it('reads back its own config exports as they are', async () => {
