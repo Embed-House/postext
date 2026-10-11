@@ -114,6 +114,15 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(map.get('postext-sandbox-config')).toBe('{}');
   });
 
+  it('keeps "Level cut counted in" set to grid lines (#711)', () => {
+    const map = installStorage();
+    const grid: PostextConfig = { headings: { balancing: { trailingStep: 'grid' } } };
+    saveConfig(grid);
+    expect(loadConfig()).toEqual(grid);
+    saveConfig({ headings: { balancing: { trailingStep: 'lines' } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('keeps "Entries kept together at a column end" when it is not 2 (#712)', () => {
     const map = installStorage();
     for (const splitMinEntries of [1, 3]) {
@@ -226,7 +235,7 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
     const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '10' });
     const migrated = loadConfig()!;
     // (with the balancing pins of a copy stamped before 12, #707 and #708)
-    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always' } });
+    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } });
     saveConfig(migrated);
     expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
     // Stamped current, it is read as stored: the value has to be there.

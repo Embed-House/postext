@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { resolveHeadingsConfig, balancingOnByDefault, DEFAULT_HEADINGS_CONFIG, DEFAULT_COLUMN_BALANCING, dimensionsEqual, colorsEqual } from 'postext';
-import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, ColumnHeadSpace, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats } from 'postext';
+import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, ColumnHeadSpace, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats, TrailingStep } from 'postext';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -50,7 +50,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
   const resetBalancingField = (
     field: 'enabled' | 'maxLinesPerHeading' | 'maxLinesBeforeLoose' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterDisplays' | 'stretchAfterFloats'
       | 'maxLinesAfterFloat' | 'stretchAfterWideFloats' | 'looseParagraphs' | 'maxLooseParagraphs' | 'trackParagraphs' | 'maxTracking'
-      | 'trailing' | 'beforeSpan' | 'closingBox' | 'gridLines',
+      | 'trailing' | 'trailingStep' | 'beforeSpan' | 'closingBox' | 'gridLines',
   ) => {
     if (!raw?.balancing) return;
     const next = { ...raw.balancing };
@@ -169,6 +169,11 @@ export const HeadingsSection = memo(function HeadingsSection() {
   const WIDE_FLOATS_OPTIONS = [
     { value: 'flush', label: labels.balanceAfterWideFloatsFlush },
     { value: 'always', label: labels.balanceAfterWideFloatsAlways },
+  ];
+  const isBalTrailingStepDefault = headings.balancing.trailingStep === DEFAULT_COLUMN_BALANCING.trailingStep;
+  const TRAILING_STEP_OPTIONS = [
+    { value: 'lines', label: labels.balanceTrailingStepLines },
+    { value: 'grid', label: labels.balanceTrailingStepGrid },
   ];
   const CLOSING_BOX_OPTIONS = [
     { value: 'first', label: labels.balanceClosingBoxFirst },
@@ -542,6 +547,19 @@ export const HeadingsSection = memo(function HeadingsSection() {
                 isDefault={isBalTrailingDefault}
                 onReset={() => resetBalancingField('trailing')}
               />
+              {headings.balancing.trailing && (
+                <SelectInput
+                  label={labels.balanceTrailingStep}
+                  value={headings.balancing.trailingStep}
+                  options={TRAILING_STEP_OPTIONS}
+                  onChange={(value) =>
+                    updateHeadings({ balancing: { ...raw?.balancing, trailingStep: value as TrailingStep } })
+                  }
+                  tooltip={labels.balanceTrailingStepTooltip}
+                  isDefault={isBalTrailingStepDefault}
+                  onReset={() => resetBalancingField('trailingStep')}
+                />
+              )}
               <ToggleSwitch
                 label={labels.balanceBeforeSpan}
                 checked={headings.balancing.beforeSpan}

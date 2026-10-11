@@ -1473,6 +1473,10 @@ export interface SandboxLabels {
   balanceTrackParagraphsTooltip: string;
   balanceTrailing: string;
   balanceTrailingTooltip: string;
+  balanceTrailingStep: string;
+  balanceTrailingStepTooltip: string;
+  balanceTrailingStepLines: string;
+  balanceTrailingStepGrid: string;
   balanceBeforeSpan: string;
   balanceBeforeSpanTooltip: string;
   balanceClosingBox: string;
