@@ -429,7 +429,11 @@ export interface VDTLineSegment {
    *  renderer shapes the word in it: the canvas and the HTML by setting it
    *  beside a hidden character of the script (`scriptMark`), the PDF by
    *  asking its shaper for it. Left alone, each shaper would choose by a
-   *  rule of its own. Absent on every other segment, and on every segment
+   *  rule of its own. A piece with no letter of a word that has one
+   *  (`10.1006/` of a DOI parted at its joints) says the script it has
+   *  inside that word; a doubled ellipsis or dash (`……`, `——`) of a word
+   *  with no letter in a Chinese or Japanese document says `'Hani'`, the
+   *  forms of Han text. Absent on every other segment, and on every segment
    *  of a face that draws them the same under any script. (The name
    *  `script` is taken by superscripts and subscripts.) */
   scriptContext?: import('./measure/script').ScriptContext;

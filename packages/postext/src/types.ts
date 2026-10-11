@@ -1515,7 +1515,13 @@ export interface BodyTextConfig {
    *  letter before it in its isolate, else after it; one painted right to
    *  left (a bracket or a full stop at a right-to-left level) the script
    *  of the nearest right-to-left letter; with no letter near, the script
-   *  of the document's language. The layout measures it in that script
+   *  of the document's language. A piece with no letter of a word that
+   *  has one (`10.1006/` and `.2001` of a DOI that ends a line at its
+   *  joints, what a cut leaves of a word wider than its line) takes the
+   *  script it has inside the word. In a Chinese or Japanese document a
+   *  doubled ellipsis or dash (`……`, `——`) in a word with no letter is
+   *  the document's own mark, set in the forms of Han text whatever
+   *  sentence cites it. The layout measures it in that script
    *  and says so on its segment (`VDTLineSegment.scriptContext`), and the
    *  canvas, the HTML, the fixed-layout EPUB and the PDF paint those
    *  forms at that width. It acts on Latin, Greek, Cyrillic, Arabic and

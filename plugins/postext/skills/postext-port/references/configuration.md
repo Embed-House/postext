@@ -307,6 +307,10 @@ H&J / Knuth–Plass
 │                        text, Arabic ones otherwise) and in Latin/Greek/Cyrillic/Arabic/Hebrew contexts; `seg.scriptContext` ('Latn', 'Arab'…) says so,
 │                        and canvas, HTML, fixed EPUB and PDF paint those forms at the measured width in every browser. Do NOT glue `46.` or
 │                        `(d. 1367)` to the word before with a no-break space to keep Latin forms in an Arabic book: write ordinary spaces.
+│                        A piece with no letter of a word that has one (`10.1006/`, `.2001` of a DOI broken at its joints, the rest of a word
+│                        cut at the line end) takes the script it has inside the word, so a DOI sets solid in Noto Serif SC. In a zh/ja document
+│                        a doubled ellipsis or dash (`……`, `——`, `――`) cited in a Latin sentence (`are marked …….`) keeps its Han forms
+│                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
