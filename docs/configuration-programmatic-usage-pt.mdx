@@ -1557,6 +1557,8 @@ As regras de 12 também mudam o equilíbrio de uma coluna curta, e um manifesto 
 
 As regras de 12 quebram o rótulo de uma referência nos seus espaços quando o rótulo são palavras (#702). Um manifesto marcado `11` ou anterior recebe `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) no `crossRefs` vigente, quando um capítulo lido contém uma referência (`:ref{…}`, `\ref{…}`, `\eqref{…}` ou um `@id` do pandoc-crossref) e a configuração não nomeia a opção: todo rótulo continua sendo a única palavra com que foi composto.
 
+As regras de 12 compõem uma palavra sem letras (`46.`, `1367)`) na escrita do texto ao redor (#725). Um manifesto marcado `11` ou anterior recebe `bodyText.scriptContext: false` (`pinLegacyScriptContext`) no `bodyText` em vigor, seja qual for o conteúdo dos capítulos, quando a configuração não nomeia o ajuste: essa palavra é composta sozinha, como foi diagramada. A regra atua numa fonte que desenha a pontuação conforme a escrita, e ao ler um manifesto não se sabe quais fontes o livro carrega.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

@@ -226,6 +226,12 @@ export const metadata = {
       <td>把源文本行末的反斜杠，以及后跟空格的<code>{'\\\\'}</code>，读作段落、引文或列表项内部的强制换行（CommonMark的硬换行）：后面的文字在同一段落中另起一行，换行前的一行按自然宽度排，与末行相同。段落末尾的反斜杠照样印出，行末两个空格不算换行（见<a href="/zh/docs/document-format#段落内的换行">文档格式 › 段落内的换行</a>）。<code>false</code>保留1.22的读法：反斜杠照样印出，各行用空格连接；更早保存、文字中有这种反斜杠的配置按此读取（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。标题、图注、注释和表格单元格在两种设置下都在<code>{'\\\\'}</code>处换行。</td>
     </tr>
     <tr>
+      <td><code>scriptContext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>让没有字母的词（<code>46.</code>、<code>1367)</code>、<code>».</code>：只有数字、标点或符号）按周围文字的书写系统成形。字体可以按书写系统绘制这些符号（Amiri在拉丁文中用拉丁字形的句点和括号，其他情况下用阿拉伯字形，宽度不同），而排版引擎单独拿到这个词时各按自己的规则选书写系统，浏览器的不同版本和PDF并不一致。开启后，该词取所在隔离段内前面最近字母的书写系统（没有则取后面的）；从右到左绘制时取最近的从右到左字母的书写系统；附近没有字母时取文档语言的书写系统。排版按这个书写系统测量，Canvas、HTML、固定版式EPUB和PDF以这个宽度绘制这些字形。它作用于拉丁文、希腊文、西里尔文、阿拉伯文和希伯来文的上下文，并且只对标点或数字随书写系统变化的字体起作用；按阿拉伯文成形的词不加字距。列表标记、交叉引用的标签、设计文本、漫画文字和CJK排版器排的段落不受影响。<code>false</code>让这类词单独成形，与postext 1.27及更早版本相同；在<code>configVersion</code> 12之前保存的配置按此读取（<code>pinLegacyScriptContext</code>）。参见<a href="/zh/docs/arabic-layout#没有字母的词">没有字母的词</a>。</td>
+    </tr>
+    <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>未设置</td>

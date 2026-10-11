@@ -1557,6 +1557,8 @@ The rules of 12 also change how a short column is balanced, and a manifest stamp
 
 The rules of 12 break a reference's label at its spaces when the label is words (#702). A manifest stamped `11` or older gets `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) on the `crossRefs` in force, when a chapter read holds a reference (`:ref{…}`, `\ref{…}`, `\eqref{…}` or a pandoc-crossref `@id`) and the configuration does not name the setting: every label stays the one word it was laid out as.
 
+The rules of 12 shape a word with no letter (`46.`, `1367)`) in the script of the text around it (#725). A manifest stamped `11` or older gets `bodyText.scriptContext: false` (`pinLegacyScriptContext`) on the `bodyText` in force, whatever its chapters hold, when the configuration does not name the setting: such a word is shaped alone, as it was laid out. The rule acts in a face that draws its punctuation by script, and which faces a book loads is not known when its manifest is read.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

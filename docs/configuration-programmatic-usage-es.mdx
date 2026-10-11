@@ -1559,6 +1559,8 @@ Las reglas de 12 cambian además cómo se equilibra una columna corta, y un mani
 
 Las reglas de 12 cortan el rótulo de una referencia por sus espacios cuando el rótulo son palabras (#702). Un manifiesto marcado `11` o anterior recibe `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) en el `crossRefs` vigente, cuando un capítulo leído contiene una referencia (`:ref{…}`, `\ref{…}`, `\eqref{…}` o un `@id` de pandoc-crossref) y la configuración no nombra el ajuste: cada rótulo sigue siendo la palabra única con la que se compuso.
 
+Las reglas de 12 componen una palabra sin letras (`46.`, `1367)`) en la escritura del texto que la rodea (#725). Un manifiesto marcado `11` o anterior recibe `bodyText.scriptContext: false` (`pinLegacyScriptContext`) sobre el `bodyText` vigente, contengan lo que contengan sus capítulos, cuando la configuración no nombra el ajuste: esa palabra se compone aislada, como se maquetó. La regla actúa en una fuente que dibuja su puntuación según la escritura, y al leer un manifiesto no se sabe qué fuentes carga el libro.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

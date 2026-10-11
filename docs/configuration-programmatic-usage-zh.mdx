@@ -1557,6 +1557,8 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 规则12让以文字印出的引用在引用文字的空格处断开（#702）。若读取的章节含有引用（`:ref{…}`、`\ref{…}`、`\eqref{…}`或pandoc-crossref的`@id`），且配置没有设置该项，标为`11`或更早的清单会在生效的`crossRefs`上得到`crossRefs.breakLabels: false`（`pinLegacyRefLabelBreaks`）：每个引用文字仍是原来排版时的那一个词。
 
+规则12让没有字母的词（`46.`、`1367)`）按周围文字的书写系统成形（#725）。标记为`11`或更早的清单，只要配置没有写明这项设置，不论章节内容如何，都会在生效的`bodyText`上得到`bodyText.scriptContext: false`（`pinLegacyScriptContext`）：这类词仍然单独成形，与当初排版时一样。这条规则只对按书写系统绘制标点的字体起作用，而读取清单时并不知道这本书加载哪些字体。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

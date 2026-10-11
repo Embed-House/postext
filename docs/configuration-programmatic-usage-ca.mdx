@@ -1556,6 +1556,8 @@ Les regles de 12 canvien a més com s'equilibra una columna curta, i un manifest
 
 Les regles de 12 tallen el rètol d'una referència pels seus espais quan el rètol són paraules (#702). Un manifest marcat `11` o anterior rep `crossRefs.breakLabels: false` (`pinLegacyRefLabelBreaks`) al `crossRefs` vigent, quan un capítol llegit conté una referència (`:ref{…}`, `\ref{…}`, `\eqref{…}` o un `@id` de pandoc-crossref) i la configuració no anomena l'ajust: cada rètol continua sent la paraula única amb què es va compondre.
 
+Les regles de 12 componen una paraula sense lletres (`46.`, `1367)`) en l'escriptura del text que l'envolta (#725). Un manifest marcat `11` o anterior rep `bodyText.scriptContext: false` (`pinLegacyScriptContext`) sobre el `bodyText` vigent, continguin el que continguin els seus capítols, quan la configuració no anomena l'ajust: aquesta paraula es compon aïllada, com es va maquetar. La regla actua en una font que dibuixa la puntuació segons l'escriptura, i en llegir un manifest no se sap quines fonts carrega el llibre.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

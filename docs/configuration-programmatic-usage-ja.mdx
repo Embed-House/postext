@@ -1557,6 +1557,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 規則12では、ラベルが語である参照を、ラベルのスペースで改行します（#702）。`11`以前のマニフェストは、読み込んだ章に参照（`:ref{…}`、`\ref{…}`、`\eqref{…}`、pandoc-crossrefの`@id`）があり、設定がこの項目を指定していなければ、有効な`crossRefs`に`crossRefs.breakLabels: false`を受け取ります（`pinLegacyRefLabelBreaks`）。どのラベルも、組んだときと同じ1語のままです。
 
+規則12では、文字を含まない語（`46.`、`1367)`）を周りの文字の文字体系で組みます（#725）。`11`以前のマニフェストは、設定がこの項目を指定していなければ、章の内容にかかわらず、有効な`bodyText`に`bodyText.scriptContext: false`（`pinLegacyScriptContext`）を受け取ります。こうした語は、レイアウトしたときと同じく単独で組まれます。この規則は約物を文字体系ごとに描き分けるフォントで働きますが、マニフェストを読む時点では本がどのフォントを読み込むか分からないためです。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 
