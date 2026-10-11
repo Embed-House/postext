@@ -2,7 +2,9 @@
 // than its slot follows `placement.align` at any width — a bitmap smaller
 // than the column, or one `layout.fitFiguresToPage` shrank — and an inline
 // embed takes Width and Align like a float, so both controls are offered
-// there too; the caption-beside switch stays with column floats.
+// there too. The caption-beside switch serves a column float and an inline
+// embed one column wide (#729, `layout.inlineCaptionSide`), not a page-span,
+// a side or a turned resource.
 
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
@@ -63,13 +65,17 @@ describe('ResourceDetail placement: width and align', () => {
     expect(align(render(table({ position: 'auto', width: 0.5 })))).toBe(true);
   });
 
-  it('offers Width and Align for an inline embed, without the caption-beside switch', () => {
+  it('offers Width, Align and the caption-beside switch for an inline embed', () => {
     const html = render(bitmap({ position: 'here', align: 'center' }));
     expect(width(html)).toBe(true);
     expect(align(html)).toBe(true);
-    expect(captionSide(html)).toBe(false);
-    // A column float keeps the switch.
+    // An inline embed takes a side caption as a column float does (#729).
+    expect(captionSide(html)).toBe(true);
     expect(captionSide(render(bitmap({ position: 'auto' })))).toBe(true);
+    // Not across the page, in the side column, or turned.
+    expect(captionSide(render(bitmap({ position: 'here', span: 'page' })))).toBe(false);
+    expect(captionSide(render(bitmap({ position: 'auto', span: 'side' })))).toBe(false);
+    expect(captionSide(render(bitmap({ position: 'auto', rotate: 'ccw' })))).toBe(false);
   });
 
   it('hides Width and Align for a turned resource (a page of its own)', () => {
