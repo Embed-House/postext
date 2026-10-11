@@ -309,7 +309,7 @@ As edições chinesas marcam o texto entre as linhas em vez de usar itálico ou 
 
 ### Warichu
 
-`:warichu[…]` compõe uma nota em duas fileiras de meio corpo dentro da linha (双行夹注), a forma do comentário nas edições clássicas. A fileira de cima fica com pelo menos metade de cada trecho, de modo que a de baixo nunca é a mais longa, e um sinal que não pode abrir uma linha nunca abre a fileira de baixo. Uma nota longa preenche o que resta da linha e continua na linha, coluna ou página seguinte, e os seus parênteses ficam só antes da primeira fileira e depois da última. No texto vertical, a subcoluna da direita é lida primeiro. `cjk.warichu` define o corpo, a cor e os parênteses padrão.
+`:warichu[…]` compõe uma nota em duas fileiras de meio corpo dentro da linha (双行夹注), a forma do comentário nas edições clássicas. A fileira de cima fica com pelo menos metade de cada trecho, de modo que a de baixo não é a mais longa, e um sinal que não pode abrir uma linha nunca abre a fileira de baixo; quando as únicas dobras que respeitam essa regra caem antes da metade (`本名。`), toma-se a mais próxima e a fileira de baixo é a mais longa (`本` sobre `名。`). Uma nota longa preenche o que resta da linha e continua na linha, coluna ou página seguinte, deixando pelo menos dois dos seus caracteres de cada lado da quebra (`cjk.warichu.minChars`), e os seus parênteses ficam só antes da primeira fileira e depois da última. No texto vertical, a subcoluna da direita é lida primeiro. `cjk.warichu` define o corpo, a cor e os parênteses padrão.
 
 ### Espaço na entrelinha
 

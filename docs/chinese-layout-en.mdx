@@ -309,7 +309,7 @@ Chinese editions mark text between the lines rather than with italics or underli
 
 ### Warichu
 
-`:warichu[…]` sets a note in two half-size rows inside the line (双行夹注), the form of the commentary in classical editions. The upper row takes at least half of each part, so the lower row is never the longer, and a mark that may not open a line never opens the lower row. A long note fills what is left of the line and goes on in the next line, column or page, and its brackets go only before the first row and after the last. In vertical text the right sub-column is read first. `cjk.warichu` sets the size, colour and default brackets.
+`:warichu[…]` sets a note in two half-size rows inside the line (双行夹注), the form of the commentary in classical editions. The upper row takes at least half of each part, so the lower row is not the longer, and a mark that may not open a line never opens the lower row; when the only folds that keep that rule fall before the half (`本名。`), the nearest one is taken and the lower row is the longer (`本` over `名。`). A long note fills what is left of the line and goes on in the next line, column or page, leaving at least two of its characters on each side of the break (`cjk.warichu.minChars`), and its brackets go only before the first row and after the last. In vertical text the right sub-column is read first. `cjk.warichu` sets the size, colour and default brackets.
 
 ### Room in the leading
 

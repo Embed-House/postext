@@ -53,7 +53,7 @@ interface CjkConfig {
     align?: 'auto' | 'center' | 'jis' | 'start'; // 比基字短的读音怎样排开。
     smallKana?: 'keep' | 'full';                 // 读音中的小假名按原样，或排成全尺寸。
   };
-  warichu?: { fontSize?: Dimension; color?: ColorValue; open?: string; close?: string };
+  warichu?: { fontSize?: Dimension; color?: ColorValue; open?: string; close?: string; minChars?: number };
   kunten?: { fontSize?: Dimension; color?: ColorValue; placement?: 'inline' | 'interlinear' }; // 汉文训读记号。
 }
 ```
@@ -198,7 +198,7 @@ interface CjkConfig {
       <td><code>warichu</code></td>
       <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
       <td>正文的一半大小；日本用括号（），其他地区无括号</td>
-      <td><code>:warichu[…]</code>的双行夹注：夹注的字号（默认半个em，两行正好填满一行的em）、颜色，以及按正文字号排在第一行之前、最后一行之后的括号（夹注自己的<code>open</code> / <code>close</code>优先）。在日本，空的<code>open</code>或<code>close</code>（<code>''</code>）让夹注不加这一侧的括号。</td>
+      <td><code>:warichu[…]</code>的双行夹注：夹注的字号（默认半个em，两行正好填满一行的em）、颜色，以及按正文字号排在第一行之前、最后一行之后的括号（夹注自己的<code>open</code> / <code>close</code>优先）。在日本，空的<code>open</code>或<code>close</code>（<code>''</code>）让夹注不加这一侧的括号。<code>minChars</code>（默认<code>2</code>）是在夹注内部断行时断点两侧至少各留的字数：不超过三个字的夹注不会被拆开，找不到其他断点的行退回到<code>lineBreak</code>允许的断点，设为<code>1</code>时凡允许之处都可断行，与postext 1.27及更早版本相同。postext 1.28之前保存、正文中有夹注的配置按<code>1</code>读取。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>kunten</code></td>
@@ -346,7 +346,7 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 - **傍线**（傍線，`:sideline[…]{style pos}`）沿文字旁排，包括标点和空格：`solid`、`double`、`wavy`或`dotted`，默认横排时在文字下方，竖排时在右侧；两条线相接时各让出八分之一em。它适用于任何文字。
 - **专名线和书名线**（专名号`:name[…]`，`bookTitleMark: 'wavy'`下的书名号`:book[…]`）画在字身框下方（竖排时在左侧），跨过线内的空格。两段相接处，各自的端点让出八分之一em，因此`:name[賈寶玉]:name[林黛玉]`读起来是两个名字。着重号和线标在同一侧标注同一段文字时，线离文字更近。在`'brackets'`下，《》是参与断行的文字，像其他字符一样绘制和复制；它们不占纯文本或源映射中的字符（这些片段标记为`inserted`）。
 - **注音**排在行间空白中，贴着基字的字身框，居中于基字；含拉丁字母（拼音）且位于基字上方的注音，升高其字体下伸部（g、j、p、q、y）的深度再加正文的0.04 em，使其不碰到基字，同一行的所有注音保持同一条基线；比基字宽的注音会加宽基字的框，但减去它可以伸到相邻无注音字符上的四分之一注音em；两个注音之间至少相隔四分之一注音em（两个注音符号注音之间为四分之一符号em，因此两个字各配三个符号时仍留在各自的字格中）。单字注音（每个字一个读音）可以在字之间断行；词组注音从不断开。在日本，读音改为遵循`ruby.align`和`ruby.overhang`：比基字短时按1:2:1排开，比基字长时可以伸到假名上但不伸到汉字上，其余的空间靠拉开基字得到；两个及以上字符的按字注音是熟语注音，每个字保留自己的读音，读音可以伸到词中下一个字上，但从不与另一个读音重叠，行仍可在字之间断开（JLReq §3.3）。在行首或行尾，基字和注音对齐到边缘（clreq §5.5.4）。横排时，注音符号在每个字右侧排成一列，字的框随之加宽；竖排时，同样的一列沿字的右侧向下排。声调符号位于这一列右侧，其墨迹的一半高出最后一个符号的顶端（clreq §5.5.3.3），按墨迹定位，因为字体把这些符号排在字身框中偏高的位置；竖排时它直立，与第一个符号上方的轻声点一样。
-- **夹注**（双行夹注）按夹注字号折成两行，在本行中居中，两行之间没有间隙。上一行持续收字，直到至少容纳这一部分的一半，因此下一行永远不会更长；如果下一行会以不能出现在行首的标点开头，上一行再多收一个字。一行剩余空间排不下的夹注先填满本行，再接到下一行、下一栏或下一页；它的括号只排在第一行之前和最后一行之后。竖排时，上一行是右边的一行，先读。
+- **夹注**（双行夹注）按夹注字号折成两行，在本行中居中，两行之间没有间隙。上一行持续收字，直到至少容纳这一部分的一半，因此下一行不会更长；如果下一行会以不能出现在行首的标点开头，上一行再多收一个字。如果这样的折法都会让下一行以标点开头（`本名。`），就取前面最近的折法，下一行反而更长：上行`本`，下行`名。`；只有一个字和它的标点的部分仍排成一行。一行剩余空间排不下的夹注先填满本行，再接到下一行、下一栏或下一页，并且只在断点两侧各留有`warichu.minChars`个字的地方断行（默认2个；标点和词间空格不计），所以不会有哪一行、哪一栏或哪一页以单独一个小字和它的句号开头；它的括号只排在第一行之前和最后一行之后。竖排时，上一行是右边的一行，先读。
 - **汉文训读记号**（`:kunten[字]{kaeri okuri tate}`）把最后一个字的返点排在它之后、行的下端一侧（竖排时在左下），送假名从字的中部起排在行的上端一侧，较长的送假名把下一个字往后推，竖点是连到下一个字的一条短线（JIS X 4051 §5）。复制的文字和PDF的`/ActualText`把送假名读在各自的字后面，略去返点；行间空白容不下它们时报为`kuntenExceedsLeading`。
 
 行距从不改变：着重号、线标和注音都位于行间空白中。如果一个段落的行间空白（行距减去字号）在一侧有标注时不足半个em，或在两侧都有标注时不足八分之五em（clreq §5.6.1），会报告一条`cjkMarksExceedLeading`内容警告；注音高于行间空白（拼音注音连同其升高量一起计算）的段落报告`rubyExceedsLeading`。请给这样的段落一个行距更大的段落样式。带振假名的日文书通常把正文行距设为约1.75 em（JLReq §2.4.2）。
@@ -365,7 +365,7 @@ resolveCjkConfig(undefined, 'zh-HK');
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },
-//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '' }, kunten: { … } }
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '', minChars: 2 }, kunten: { … } }
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
@@ -373,7 +373,7 @@ resolveCjkConfig(undefined, 'ja');
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },
-//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '（', close: '）' }, kunten: { … } }
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '（', close: '）', minChars: 2 }, kunten: { … } }
 ```
 
 在沙盒中，这些设置位于**版面设计 › 书写系统 › 东亚排版**。
