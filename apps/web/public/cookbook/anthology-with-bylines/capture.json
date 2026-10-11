@@ -3,20 +3,20 @@
   "slug": "anthology-with-bylines",
   "sourceHash": "4bfd7fd35889e5a09520e2b75f147c42c825890761212f94ac80b8e823f2ba44",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.454Z",
+  "capturedAt": "2026-10-11T03:48:28.005Z",
   "variants": {
     "en": {
-      "hash8": "eb9e3721",
+      "hash8": "2f699e31",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 129,
+        "importMs": 127,
         "fontsMs": 26,
-        "buildMs": 56,
-        "totalMs": 801,
+        "buildMs": 55,
+        "totalMs": 798,
         "builds": 1
       },
       "specimen": {
@@ -177,7 +177,7 @@
       },
       "sandbox": {
         "file": "anthology-with-bylines.postext",
-        "bytes": 243445,
+        "bytes": 243468,
         "folio": "6cdad6f3"
       },
       "detected": {
@@ -411,6 +411,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

@@ -3,20 +3,20 @@
   "slug": "web-worker-live-editor",
   "sourceHash": "1bee20042cfa3cf0eebe3476dd27453a6d3b6fb1bc89ff6972bd5d924fc66fe2",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.997Z",
+  "capturedAt": "2026-10-11T03:52:05.604Z",
   "variants": {
     "en": {
-      "hash8": "4e897fac",
+      "hash8": "21bfa9ae",
       "vdtHash": "f28c72ad1821926ff80cada74187bed204248786",
       "timings": {
-        "importMs": 1507,
-        "fontsMs": 1556,
-        "buildMs": 89,
-        "totalMs": 3697,
+        "importMs": 969,
+        "fontsMs": 296,
+        "buildMs": 84,
+        "totalMs": 1906,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "web-worker-live-editor.postext",
-        "bytes": 218701,
+        "bytes": 218728,
         "folio": "ddaa1eeb"
       },
       "detected": {
@@ -296,6 +296,11 @@
             "check": "C3",
             "severity": "info",
             "detail": "a worker recipe: captured without request interception (hosts checked, network not cached)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

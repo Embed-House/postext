@@ -3,20 +3,20 @@
   "slug": "five-chapter-openers",
   "sourceHash": "3d4620ebb4bb2ced5b74d7e28eceecc00e49dbef2f4bf8fb95a13e91bd9c3dcb",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.223Z",
+  "capturedAt": "2026-10-11T03:53:22.490Z",
   "variants": {
     "en": {
-      "hash8": "e0ac5c5a",
+      "hash8": "d68c902a",
       "vdtHash": "45587f7495f542a963e19fb3590dbea4a204e252",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 2,
-        "buildMs": 87,
-        "totalMs": 828,
+        "importMs": 129,
+        "fontsMs": 1,
+        "buildMs": 84,
+        "totalMs": 819,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100996,
+          "bytes": 100990,
           "alt": "Opening page 1: The Voice."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66794,
+          "bytes": 66804,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -152,7 +152,7 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28450,
+        "bytes": 28459,
         "folio": "8cdc51df"
       },
       "detected": {
@@ -403,13 +403,13 @@
       }
     },
     "es": {
-      "hash8": "15d88d88",
+      "hash8": "7c21cf4d",
       "vdtHash": "12a9a52a7154dc26eeb05039fb7610dfba8e4749",
       "timings": {
         "importMs": 127,
         "fontsMs": 1,
-        "buildMs": 174,
-        "totalMs": 912,
+        "buildMs": 178,
+        "totalMs": 914,
         "builds": 1
       },
       "specimen": {
@@ -487,7 +487,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 71564,
+          "bytes": 71558,
           "alt": "Página de apertura 5: Salta a la vista."
         },
         {
@@ -545,7 +545,7 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28168,
+        "bytes": 28177,
         "folio": "8cdc51df"
       },
       "detected": {

@@ -3,21 +3,21 @@
   "slug": "brand-fonts-identity-manual",
   "sourceHash": "0833e10e903fe8f2d301e763f8e9c774ffb2db8563d7ea20191ff3bca322df8b",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.946Z",
+  "capturedAt": "2026-10-11T03:53:22.485Z",
   "variants": {
     "en": {
-      "hash8": "fedd769b",
+      "hash8": "5872b95c",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 51,
-        "buildMs": 54,
-        "totalMs": 804,
+        "importMs": 165,
+        "fontsMs": 46,
+        "buildMs": 55,
+        "totalMs": 830,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 99506,
+          "bytes": 99504,
           "alt": "Opening page 3: 02 Type."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 108066,
+          "bytes": 108030,
           "alt": "Opening page 4: 03 Usage. Do 1. Lines at 0°, 45° and 90°, bent together at an even spacing; one capsule for the interchange. · Don’t 1. Free angles, mixed radii, uneven spacing and stations drawn in the line colour."
         }
       ],
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "brand-fonts-identity-manual.postext",
-        "bytes": 106300,
+        "bytes": 106325,
         "folio": "17625bac"
       },
       "detected": {
@@ -364,6 +364,11 @@
           "worst": 0
         },
         "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
           {
             "check": "sandbox",
             "severity": "info",

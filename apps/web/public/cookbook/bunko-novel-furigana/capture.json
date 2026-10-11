@@ -3,21 +3,21 @@
   "slug": "bunko-novel-furigana",
   "sourceHash": "a9fb2e403e0a34e8535ed4c888fb0a2ce3caf1a94b58b7da3ca06e8f9c7c3829",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.966Z",
+  "capturedAt": "2026-10-11T03:48:53.632Z",
   "variants": {
     "en": {
-      "hash8": "0dd4fac7",
+      "hash8": "f2e9d677",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 299,
+        "importMs": 168,
+        "fontsMs": 271,
         "buildMs": 53,
-        "totalMs": 1076,
+        "totalMs": 1055,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28189,
+        "bytes": 28196,
         "folio": "c397d9a7"
       },
       "detected": {
@@ -344,13 +344,13 @@
       }
     },
     "es": {
-      "hash8": "d242b9fc",
+      "hash8": "92a34405",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 267,
-        "buildMs": 54,
-        "totalMs": 1048,
+        "importMs": 167,
+        "fontsMs": 275,
+        "buildMs": 53,
+        "totalMs": 1064,
         "builds": 1
       },
       "specimen": {
@@ -490,7 +490,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28230,
+        "bytes": 28237,
         "folio": "c397d9a7"
       },
       "detected": {

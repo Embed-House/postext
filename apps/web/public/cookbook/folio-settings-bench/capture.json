@@ -3,20 +3,20 @@
   "slug": "folio-settings-bench",
   "sourceHash": "cc1b0f98fc2f1409e255902c7515e09826af8b9a16e3f06910cd919f17e38a51",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:10:30.020Z",
+  "capturedAt": "2026-10-11T03:50:19.302Z",
   "variants": {
     "en": {
-      "hash8": "744b24f3",
+      "hash8": "0b800ab9",
       "vdtHash": "0dd0208791389c884eb7adf699b0c3a5d75b7a5c",
       "timings": {
-        "importMs": 2252,
-        "fontsMs": 5,
+        "importMs": 149,
+        "fontsMs": 3,
         "buildMs": 35,
-        "totalMs": 2862,
+        "totalMs": 766,
         "builds": 1
       },
       "specimen": {
@@ -191,7 +191,7 @@
       },
       "sandbox": {
         "file": "folio-settings-bench.postext",
-        "bytes": 17901,
+        "bytes": 17910,
         "folio": "1756b569"
       },
       "detected": {

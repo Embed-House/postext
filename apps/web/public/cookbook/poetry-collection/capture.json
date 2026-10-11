@@ -3,20 +3,20 @@
   "slug": "poetry-collection",
   "sourceHash": "cb0f3b0c16717e75b0c0386bbbffccb0be68044b71440cbd1fcd83d34b9207ab",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.251Z",
+  "capturedAt": "2026-10-11T03:51:04.557Z",
   "variants": {
     "en": {
-      "hash8": "024144fc",
+      "hash8": "34b48315",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 33,
+        "importMs": 126,
+        "fontsMs": 34,
         "buildMs": 39,
-        "totalMs": 787,
+        "totalMs": 771,
         "builds": 1
       },
       "specimen": {
@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "poetry-collection.postext",
-        "bytes": 370763,
+        "bytes": 370783,
         "folio": "6d3a2b7c"
       },
       "detected": {
@@ -373,7 +373,13 @@
           "share": 0,
           "worst": 1.51
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

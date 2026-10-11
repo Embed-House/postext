@@ -3,20 +3,20 @@
   "slug": "epub-fixed-and-reflowable",
   "sourceHash": "6ba77cdd6f7396b8171c685f9e59acb43c326191cff349346e767142b579baca",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.116Z",
+  "capturedAt": "2026-10-11T03:50:19.272Z",
   "variants": {
     "en": {
-      "hash8": "2156bf3e",
+      "hash8": "1905f52d",
       "vdtHash": "c96216bea05311b078948a2306d76538cec6bd71",
       "timings": {
-        "importMs": 133,
-        "fontsMs": 36,
-        "buildMs": 72,
-        "totalMs": 811,
+        "importMs": 136,
+        "fontsMs": 34,
+        "buildMs": 73,
+        "totalMs": 806,
         "builds": 1
       },
       "specimen": {
@@ -140,7 +140,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 21837
+        "bytes": 21852
       },
       "detected": {
         "apis": [
@@ -340,13 +340,13 @@
       }
     },
     "es": {
-      "hash8": "d797508e",
+      "hash8": "685cf81a",
       "vdtHash": "c8c457410ceb3f9647d1d1ca3698831678e7f732",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 35,
-        "buildMs": 341,
-        "totalMs": 1059,
+        "importMs": 136,
+        "fontsMs": 34,
+        "buildMs": 330,
+        "totalMs": 1053,
         "builds": 1
       },
       "specimen": {
@@ -470,7 +470,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 26868
+        "bytes": 26882
       },
       "detected": {
         "apis": [

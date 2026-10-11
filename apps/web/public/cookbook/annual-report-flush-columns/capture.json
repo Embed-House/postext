@@ -3,20 +3,20 @@
   "slug": "annual-report-flush-columns",
   "sourceHash": "e824117977d2d9a872cac13e9bdaa7831589250800454f90be83d95c8fee6cba",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.452Z",
+  "capturedAt": "2026-10-11T03:48:28.002Z",
   "variants": {
     "en": {
-      "hash8": "859cdb68",
+      "hash8": "fc0c9158",
       "vdtHash": "b585cd45d2e8e8119620237d6fc4b106362d869b",
       "timings": {
-        "importMs": 126,
+        "importMs": 137,
         "fontsMs": 27,
-        "buildMs": 112,
-        "totalMs": 876,
+        "buildMs": 111,
+        "totalMs": 889,
         "builds": 1
       },
       "specimen": {
@@ -126,7 +126,7 @@
       },
       "sandbox": {
         "file": "annual-report-flush-columns.postext",
-        "bytes": 88681,
+        "bytes": 88692,
         "folio": "8ef7de69"
       },
       "detected": {
@@ -409,7 +409,13 @@
           "share": 0,
           "worst": 1.78
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

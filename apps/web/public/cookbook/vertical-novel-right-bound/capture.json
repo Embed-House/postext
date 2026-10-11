@@ -3,21 +3,21 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "4256cbaf87fdfc9ffd95d8398c9406472fc3104902d79e1f4f007f2982d30380",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.977Z",
+  "capturedAt": "2026-10-11T03:52:05.590Z",
   "variants": {
     "en": {
-      "hash8": "b17c6b92",
+      "hash8": "03509d7b",
       "vdtHash": "58000b5255810f22acfb16d4f41cad6543f075f1",
       "timings": {
         "importMs": 169,
-        "fontsMs": 352,
-        "buildMs": 49,
-        "totalMs": 1105,
+        "fontsMs": 346,
+        "buildMs": 48,
+        "totalMs": 1137,
         "builds": 1
       },
       "specimen": {
@@ -159,7 +159,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279295,
+        "bytes": 279308,
         "folio": "02ddac55"
       },
       "detected": {
@@ -352,17 +352,23 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d5b9f3de",
+      "hash8": "777bd2a6",
       "vdtHash": "bcdcb37b970cfa95fdc05fce7542f1935663495b",
       "timings": {
-        "importMs": 167,
+        "importMs": 171,
         "fontsMs": 346,
-        "buildMs": 48,
-        "totalMs": 1142,
+        "buildMs": 51,
+        "totalMs": 1102,
         "builds": 1
       },
       "specimen": {
@@ -504,7 +510,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279317,
+        "bytes": 279330,
         "folio": "02ddac55"
       },
       "detected": {
@@ -697,7 +703,13 @@
           "share": 0,
           "worst": 0.05
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale zh-Hant, the document's language: es names its resource types otherwise"
+          }
+        ]
       }
     }
   }

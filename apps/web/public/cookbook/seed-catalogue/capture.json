@@ -3,20 +3,20 @@
   "slug": "seed-catalogue",
   "sourceHash": "1bf5d64fa3dc49988fedc126218960e403f10b7df044187b7cbbc2cad4641e52",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.916Z",
+  "capturedAt": "2026-10-11T03:51:38.281Z",
   "variants": {
     "en": {
-      "hash8": "9ae3d693",
+      "hash8": "fbf9420c",
       "vdtHash": "3ccd93ebb4a4b6a4aa9815376b23d2df3d4bbc03",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 42,
-        "buildMs": 40,
-        "totalMs": 793,
+        "importMs": 154,
+        "fontsMs": 48,
+        "buildMs": 41,
+        "totalMs": 840,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "seed-catalogue.postext",
-        "bytes": 713547,
+        "bytes": 713568,
         "folio": "d45f6f65"
       },
       "detected": {
@@ -374,7 +374,13 @@
           "share": 0,
           "worst": 1.33
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

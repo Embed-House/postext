@@ -3,20 +3,20 @@
   "slug": "conference-programme",
   "sourceHash": "4b620f45bd4f2b5f99fcc4d8eafc6121dede39b84cc1563317a1aedff628a17e",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.074Z",
+  "capturedAt": "2026-10-11T03:50:19.252Z",
   "variants": {
     "en": {
-      "hash8": "9b819592",
+      "hash8": "dfe64c73",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 35,
+        "importMs": 151,
+        "fontsMs": 31,
         "buildMs": 54,
-        "totalMs": 802,
+        "totalMs": 821,
         "builds": 1
       },
       "specimen": {
@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32726,
+        "bytes": 32747,
         "folio": "1751ca77"
       },
       "detected": {
@@ -401,17 +401,23 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9c6f48a3",
+      "hash8": "732c2efb",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 125,
-        "fontsMs": 30,
-        "buildMs": 54,
-        "totalMs": 796,
+        "importMs": 141,
+        "fontsMs": 28,
+        "buildMs": 53,
+        "totalMs": 797,
         "builds": 1
       },
       "specimen": {
@@ -536,7 +542,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32732,
+        "bytes": 32752,
         "folio": "1751ca77"
       },
       "detected": {
@@ -796,7 +802,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

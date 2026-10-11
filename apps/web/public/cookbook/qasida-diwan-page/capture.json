@@ -3,21 +3,21 @@
   "slug": "qasida-diwan-page",
   "sourceHash": "4a6e2d3eac2dba5096c9aa7740ab1431e80138cf5d69c39c4936efbe9df510bf",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.285Z",
+  "capturedAt": "2026-10-11T03:51:04.568Z",
   "variants": {
     "en": {
-      "hash8": "4146f850",
+      "hash8": "6c4222fd",
       "vdtHash": "f102f2524ca3308171d09c7ba1bb3aefdde8ade6",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 67,
-        "buildMs": 71,
-        "totalMs": 852,
+        "importMs": 162,
+        "fontsMs": 71,
+        "buildMs": 73,
+        "totalMs": 847,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29823
+        "bytes": 29835
       },
       "detected": {
         "apis": [
@@ -314,13 +314,13 @@
       }
     },
     "es": {
-      "hash8": "3df923ae",
+      "hash8": "93d25ed9",
       "vdtHash": "c9812a0a496fb9e4ef6a09580918ee5a56587ed4",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 68,
-        "buildMs": 73,
-        "totalMs": 852,
+        "importMs": 171,
+        "fontsMs": 69,
+        "buildMs": 75,
+        "totalMs": 857,
         "builds": 1
       },
       "specimen": {
@@ -424,7 +424,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29879
+        "bytes": 29891
       },
       "detected": {
         "apis": [

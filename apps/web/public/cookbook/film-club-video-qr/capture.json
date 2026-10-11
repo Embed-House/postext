@@ -3,21 +3,21 @@
   "slug": "film-club-video-qr",
   "sourceHash": "fcb07ddf34fa39c21b852ed8ef260568730a1a9d167778fd12b2296e66358a00",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.27.0",
+    "postextPdf": "1.27.0",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.209Z",
+  "capturedAt": "2026-10-11T03:50:19.284Z",
   "variants": {
     "en": {
-      "hash8": "d98528bb",
+      "hash8": "be70f33b",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 121,
-        "buildMs": 44,
-        "totalMs": 958,
+        "importMs": 168,
+        "fontsMs": 107,
+        "buildMs": 43,
+        "totalMs": 901,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84112,
+          "bytes": 84110,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 410375,
+        "bytes": 410384,
         "folio": "edbbafa0"
       },
       "detected": {
@@ -402,13 +402,13 @@
       }
     },
     "es": {
-      "hash8": "1336f92d",
+      "hash8": "215964e6",
       "vdtHash": "524112d7bf7c2be7058945f34b56f0b081943cdc",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 104,
+        "importMs": 170,
+        "fontsMs": 100,
         "buildMs": 48,
-        "totalMs": 921,
+        "totalMs": 906,
         "builds": 1
       },
       "specimen": {
@@ -441,7 +441,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95444,
+          "bytes": 95462,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {
@@ -537,7 +537,7 @@
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 419163,
+        "bytes": 419170,
         "folio": "edbbafa0"
       },
       "detected": {
