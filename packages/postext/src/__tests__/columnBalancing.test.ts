@@ -834,6 +834,35 @@ describe('after-display lever and the level of a closing band', () => {
     expect(proposal.lines.get(5)).toBe(1);
   });
 
+  it('adds no line under a formula or a box with stretchAfterDisplays off (#710)', () => {
+    const justified = (contentIndex: number) =>
+      fakeBlock({ type: 'paragraph', contentIndex, textAlign: 'justify', lines: [fakeLine(), fakeLine(), fakeLine()] });
+    const build = (): VDTDocument => fakeDoc([
+      [
+        { blocks: [justified(1), math(2), para(3), boxChild(4), para(5)], availableHeight: 2 * 24 },
+        { blocks: [para(6)], availableHeight: 0 },
+      ],
+      [{ blocks: [para(10)], availableHeight: 0 }],
+    ]);
+    // The candidates are offered either way: the switch acts on the proposal.
+    const kinds = collectColumnGaps(build(), new Set())[0]!.candidates.map((c) => `${c.kind}:${c.contentIndex}`);
+    expect(kinds).toEqual(expect.arrayContaining(['afterDisplay:3', 'afterDisplay:5', 'looseParagraph:1']));
+
+    // On (and unset): one line under each, and nothing left for the loose lever.
+    for (const options of [baseOptions(), baseOptions({ stretchAfterDisplays: true })]) {
+      const on = proposeBalanceLines(build(), new Set(), emptyState(), options);
+      expect([on.lines.get(3), on.lines.get(5)]).toEqual([1, 1]);
+      expect(on.loose.size).toBe(0);
+    }
+    // Off: nothing under the displays; the gap goes on to the paragraph.
+    const off = proposeBalanceLines(build(), new Set(), emptyState(), baseOptions({ stretchAfterDisplays: false }));
+    expect(off.lines.size).toBe(0);
+    expect([...off.loose.keys()]).toEqual([1]);
+    // With no lever after it, the column ends short.
+    const short = proposeBalanceLines(build(), new Set(), emptyState(), baseOptions({ stretchAfterDisplays: false, looseParagraphs: false }));
+    expect(short.changed).toBe(false);
+  });
+
   it('never stretches a column of a closing page past the tallest column beside it', () => {
     // Page 0 does not flow on (forced break): column 0 ends one line above
     // column 1, which is the page's last column. Column 0 may take that one

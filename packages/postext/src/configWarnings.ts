@@ -416,7 +416,7 @@ const HEADINGS_KEYS = {
   marginTop: true, marginBottom: true, keepWithNext: true, keepWithNextSpread: true, keepWithNextSplit: true, snapToGrid: true, inlineMarks: true, balancing: true, levels: true,
 } satisfies Record<keyof HeadingsConfig, true>;
 const BALANCING_KEYS = {
-  enabled: true, maxLinesPerHeading: true, stretchAfterLists: true, maxLinesAfterList: true,
+  enabled: true, maxLinesPerHeading: true, stretchAfterLists: true, maxLinesAfterList: true, stretchAfterDisplays: true,
   stretchAfterFloats: true, maxLinesAfterFloat: true, looseParagraphs: true, maxLooseParagraphs: true,
   trackParagraphs: true, maxTracking: true, trailing: true, beforeSpan: true, closingBox: true, gridLines: true,
 } satisfies Record<keyof ColumnBalancingConfig, true>;

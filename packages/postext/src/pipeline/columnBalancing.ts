@@ -35,6 +35,8 @@
  *    levers and takes only what they leave; with `'off'` never);
  *  - extra grid lines where a list/enumeration ends (space after a list
  *    reads naturally), capped per list end;
+ *  - one grid line under a display formula or a callout box (it reads as
+ *    the element's own margin), unless `stretchAfterDisplays` is off;
  *  - extra grid lines between a top float band (a figure or table at the
  *    head of the column) and the text under it, capped per band — a
  *    little more air under a figure is invisible;
@@ -65,6 +67,11 @@ import type { ClosingBoxLever } from '../types';
 
 /** Tolerance against FP drift when converting free space to grid lines. */
 const EPS = 0.01;
+
+/** Grid lines the after-display lever may add under one display formula or
+ *  callout box. It has a switch (`stretchAfterDisplays`, #710) and no cap
+ *  setting: nobody wants two lines of white under a formula. */
+const MAX_LINES_AFTER_DISPLAY = 1;
 
 /** Balancing attempts a segment of pages (see {@link pageSegments}) may
  *  spend: passes in which it tried new levers. */
@@ -643,6 +650,8 @@ export interface BalanceProposalOptions {
   maxLinesPerHeading: number;
   stretchAfterLists: boolean;
   maxLinesAfterList: number;
+  /** `headings.balancing.stretchAfterDisplays` (#710); on when omitted. */
+  stretchAfterDisplays?: boolean;
   stretchAfterFloats: boolean;
   maxLinesAfterFloat: number;
   looseParagraphs: boolean;
@@ -742,6 +751,9 @@ export interface BalanceProposal {
  *     order), capped at `maxLinesPerHeading`;
  *  2. list ends — round-robin in reading order, capped at
  *     `maxLinesAfterList`;
+ *  2b. after-display points — the block after a display formula or a
+ *     callout box, one line each (`stretchAfterDisplays: false` skips the
+ *     step);
  *  3. after-float points — the first block under a float band, capped at
  *     `maxLinesAfterFloat`;
  *  4. loose paragraphs — every eligible candidate of the column is offered,
@@ -833,11 +845,11 @@ export function proposeBalanceLines(
       remaining = distribute(listEnds, remaining, options.maxLinesAfterList);
     }
 
-    if (remaining > 0 && rows) {
+    if (remaining > 0 && rows && options.stretchAfterDisplays !== false) {
       const afterDisplay = gap.candidates
         .filter((c) => c.kind === 'afterDisplay')
         .sort((a, b) => a.order - b.order);
-      remaining = distribute(afterDisplay, remaining, 1);
+      remaining = distribute(afterDisplay, remaining, MAX_LINES_AFTER_DISPLAY);
     }
 
     if (remaining > 0 && rows && options.stretchAfterFloats) {

@@ -46,6 +46,7 @@ export const DEFAULT_COLUMN_BALANCING = {
   maxLinesPerHeading: 4,
   stretchAfterLists: true,
   maxLinesAfterList: 1,
+  stretchAfterDisplays: true,
   stretchAfterFloats: true,
   maxLinesAfterFloat: 1,
   looseParagraphs: true,
@@ -138,6 +139,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
           partial.balancing.stretchAfterLists ?? DEFAULT_COLUMN_BALANCING.stretchAfterLists,
         maxLinesAfterList:
           partial.balancing.maxLinesAfterList ?? DEFAULT_COLUMN_BALANCING.maxLinesAfterList,
+        stretchAfterDisplays:
+          partial.balancing.stretchAfterDisplays ?? DEFAULT_COLUMN_BALANCING.stretchAfterDisplays,
         stretchAfterFloats:
           partial.balancing.stretchAfterFloats ?? DEFAULT_COLUMN_BALANCING.stretchAfterFloats,
         maxLinesAfterFloat:
@@ -347,6 +350,13 @@ export function stripHeadingsDefaults(
       && headings.balancing.maxLinesAfterList !== DEFAULT_COLUMN_BALANCING.maxLinesAfterList
     ) {
       b.maxLinesAfterList = headings.balancing.maxLinesAfterList;
+      hasBOverride = true;
+    }
+    if (
+      headings.balancing.stretchAfterDisplays !== undefined
+      && headings.balancing.stretchAfterDisplays !== DEFAULT_COLUMN_BALANCING.stretchAfterDisplays
+    ) {
+      b.stretchAfterDisplays = headings.balancing.stretchAfterDisplays;
       hasBOverride = true;
     }
     if (

@@ -8801,6 +8801,7 @@ function* buildDocumentBalanced(
         maxLinesPerHeading: balancing.maxLinesPerHeading,
         stretchAfterLists: balancing.stretchAfterLists,
         maxLinesAfterList: balancing.maxLinesAfterList,
+        stretchAfterDisplays: balancing.stretchAfterDisplays,
         stretchAfterFloats: balancing.stretchAfterFloats,
         maxLinesAfterFloat: balancing.maxLinesAfterFloat,
         looseParagraphs: balancing.looseParagraphs,

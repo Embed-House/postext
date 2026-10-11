@@ -19,4 +19,13 @@ describe('headings.balancing defaults', () => {
     expect(stripHeadingsDefaults({ balancing: { beforeSpan: false, trailing: false } }))
       .toEqual({ balancing: { beforeSpan: false, trailing: false } });
   });
+
+  it('stretchAfterDisplays (a line under a formula or a box) is on by default (#710)', () => {
+    expect(DEFAULT_COLUMN_BALANCING.stretchAfterDisplays).toBe(true);
+    expect(resolveHeadingsConfig().balancing.stretchAfterDisplays).toBe(true);
+    expect(resolveHeadingsConfig({ balancing: { trailing: false } }).balancing.stretchAfterDisplays).toBe(true);
+    expect(resolveHeadingsConfig({ balancing: { stretchAfterDisplays: false } }).balancing.stretchAfterDisplays).toBe(false);
+    expect(stripHeadingsDefaults({ balancing: { stretchAfterDisplays: true } })).toBeUndefined();
+    expect(stripHeadingsDefaults({ balancing: { stretchAfterDisplays: false } })).toEqual({ balancing: { stretchAfterDisplays: false } });
+  });
 });

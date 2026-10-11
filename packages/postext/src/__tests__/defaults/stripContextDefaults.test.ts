@@ -56,6 +56,17 @@ describe('stripConfigDefaults and the balancing default of the document (#651)',
       .toEqual({ balancing: { enabled: true, maxTracking: 40 } });
   });
 
+  it('keeps stretchAfterDisplays off and drops it on, in every context (#710)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: false })).headings, name)
+        .toEqual({ balancing: { stretchAfterDisplays: false } });
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: true })).headings, name).toBeUndefined();
+    }
+    const off = stripConfigDefaults(withBalancing({}, { stretchAfterDisplays: false }));
+    expect(resolveAllConfig(off).headings.balancing.stretchAfterDisplays).toBe(false);
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { stretchAfterDisplays: true }))).headings.balancing.stretchAfterDisplays).toBe(true);
+  });
+
   it('keeps gridLines off, in every context', () => {
     for (const [name, context] of Object.entries(CONTEXTS)) {
       const config = withBalancing(context, { gridLines: 'off' });

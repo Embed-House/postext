@@ -3882,6 +3882,13 @@ export interface ColumnBalancingConfig {
   stretchAfterLists?: boolean;
   /** Maximum extra grid lines after a single list end. Default 1. */
   maxLinesAfterList?: number;
+  /** Allow one extra grid line under a display formula, and under a callout
+   *  box, in the short column (the block after it moves down a line), after
+   *  the headings and the list ends have been tried. `false` leaves the
+   *  space under formulas and boxes as their own margins set it: the gap
+   *  goes on to the levers after this one and the column ends short if they
+   *  do not close it (#710). Default true. */
+  stretchAfterDisplays?: boolean;
   /** Allow extra grid lines between a top float (figure / table band) and
    *  the text under it in the same column, after headings and list ends
    *  have been tried. Never on a page that does not flow on (a chapter's
@@ -3990,6 +3997,7 @@ export interface ResolvedHeadingsConfig {
     maxLinesPerHeading: number;
     stretchAfterLists: boolean;
     maxLinesAfterList: number;
+    stretchAfterDisplays: boolean;
     stretchAfterFloats: boolean;
     maxLinesAfterFloat: number;
     looseParagraphs: boolean;
