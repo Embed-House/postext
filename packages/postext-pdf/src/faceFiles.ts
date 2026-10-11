@@ -18,6 +18,7 @@
 import type { PDFFont } from 'pdf-lib';
 import { mirroredCodePoint } from 'postext';
 import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces';
+import { shapingScriptLetter } from './shapingLanguage';
 
 /** The fontkit face of an embedded font, as far as coverage needs it. */
 interface CoverageFace {
@@ -132,10 +133,30 @@ export interface FileRun {
  * `(d. 1367)` in an Arabic book was cut into the `arabic` file, the first
  * to hold it, and printed in that file's form, wider than the layout
  * measured, against a closing bracket from the `latin` one.
+ *
+ * A word shaped in a script the layout gave it (#725, the script in force,
+ * `withShapingScript`) is set whole in the file that holds a letter of
+ * that script, when that file has all its characters: `46.` after a Latin
+ * word in the `latin` file, whose `latn` forms the layout measured. The
+ * first file to hold a full stop may be the `arabic` one, which has no
+ * Latin form for it. A word the file cannot set whole (the `(` of an
+ * Arabic sentence, whose mirror only the `latin` file holds) is cut as
+ * any other text.
  */
 export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   const list = faceFilesOf(font);
   if (!list) return [{ font, text }];
+  const letter = shapingScriptLetter();
+  if (letter !== undefined) {
+    const file = list.fileFor(letter);
+    // A mirrored character of a right-to-left run goes by the glyph the
+    // run will show, as below (#401): the file must hold that one.
+    if (file && [...text].every((ch) => {
+      const cp = ch.codePointAt(0)!;
+      const mirror = rtl ? mirroredCodePoint(cp) : cp;
+      return isDefaultIgnorable(cp) || isJoiningControl(cp) || list.covers(file, mirror !== cp && list.fileFor(mirror) ? mirror : cp);
+    })) return [{ font: file, text }];
+  }
   const runs: FileRun[] = [];
   let current: FileRun | undefined;
   // Joining controls waiting for the letter after them (see below).

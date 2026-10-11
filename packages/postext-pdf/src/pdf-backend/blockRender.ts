@@ -21,7 +21,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
-import { openTypeLanguageOf, shapingLanguage, withShapingLanguage } from '../shapingLanguage';
+import { openTypeLanguageOf, shapingLanguage, withShapingLanguage, withShapingScript } from '../shapingLanguage';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
 export interface ResourceRenderContext {
@@ -349,8 +349,10 @@ function renderSegments(
     // On a line with directions each segment is one run: HarfBuzz shapes a
     // right-to-left one (and any complex text), and a word set in several
     // styles. The kashidas justification inserted are painted, not read.
+    // A word with no letter is shaped in the script the layout measured it
+    // in (`scriptContext`, #725), by HarfBuzz or by fontkit.
     const shaped = !seg.sideMarker && (seg.runs !== undefined || (directed && (seg.rtl || needsComplexShaping(seg.text))))
-      && paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line));
+      && withShapingScript(seg.scriptContext, () => paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line)));
     if (seg.sideMarker) {
       // Its run, not its text, with no character spacing.
       if (tracking !== 0) setTrackingPx(ctx, 0);
@@ -360,7 +362,7 @@ function renderSegments(
       // Painted by HarfBuzz.
     } else {
       withShapingLanguage(seg.lang === undefined ? shapingLanguage() : openTypeLanguageOf(seg.lang), () => {
-        if (!composed) drawTextPx(ctx, seg.text, x, baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText);
+        if (!composed) withShapingScript(seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText));
         else paintComposedText(ctx, seg, x, baseline, font, size, color, colorHex, actualText, tracking, fontCache, blockFont, rubyElem, holder);
       });
     }
@@ -562,7 +564,10 @@ function renderLineText(
  *  `:upright`, `:sideways`) keeps its segment apart. */
 function segmentIsStyled(s: VDTLineSegment): boolean {
   return s.bold || s.italic || s.runs !== undefined || s.sideMarker !== undefined || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined || s.href !== undefined || s.pageLink !== undefined || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
-    || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.leader !== undefined;
+    || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.leader !== undefined
+    // A word with no letter shaped in the script of its context (#725):
+    // its line is painted word by word, each in its script.
+    || s.scriptContext !== undefined;
 }
 
 /** {@link segmentIsStyled} for a line of the CJK composer or one down a
