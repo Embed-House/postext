@@ -108,6 +108,10 @@ export interface RichToken {
   refAnchor?: true;
   /** The book page index the anchor landed on, when known. */
   refPageIndex?: number;
+  /** A later piece of a reference whose label breaks at its spaces (#702,
+   *  {@link refLabelTokens}): a word after the first, or a space between
+   *  two of them. Its segment is flagged `refContinues`. */
+  refContinues?: true;
   /** A footnote marker (`[^id]`): atomic like a reference; the id flows
    *  onto the segment. */
   footnoteId?: string;
@@ -1041,6 +1045,43 @@ export function atomicSpanToken(
 }
 
 /**
+ * The tokens of a reference whose label is words (`ref.breakable`, #702):
+ * one per word and per run of breaking spaces, or undefined for a label
+ * that is one token ({@link atomicSpanToken}). A word is built as the whole
+ * label is — the reference's font, no dictionary points, never divided —
+ * and a space is an ordinary space of the line: a legal break, stretched
+ * and shrunk with the others. Every piece carries the reference, so the
+ * link has no holes; every piece after the first is flagged
+ * `refContinues`, so the reference stays one position in the source. A
+ * no-break space inside the label glues, as anywhere.
+ */
+export function refLabelTokens(
+  span: InlineSpan,
+  normalFont: string,
+  boldFont: string,
+  italicFont: string,
+  boldItalicFont: string,
+  letterSpacingPx: number,
+): RichToken[] | undefined {
+  if (!span.ref?.breakable || span.footnote) return undefined;
+  const parts = span.text.match(WORDS_AND_SPACES_RE);
+  if (!parts || parts.length < 2) return undefined;
+  const tokens: RichToken[] = [];
+  for (const part of parts) {
+    const token = atomicSpanToken({ ...span, text: part }, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
+    if (!token) return undefined;
+    if (isBreakingSpaceRun(part)) {
+      token.kind = 'space';
+      // A space has no capitals to shrink.
+      delete token.smallCaps;
+    }
+    if (tokens.length > 0) token.refContinues = true;
+    tokens.push(token);
+  }
+  return tokens;
+}
+
+/**
  * A footnote marker set apart from the text (`footnotes.markerPosition`,
  * JLReq §4.2.3), at its size (`span.footnote.scale` of `font`, the text's):
  * - `'side'`: an interlinear 合印 in the line gap over the text before it,
@@ -1085,7 +1126,7 @@ export function tokenSegment(t: RichToken): PendingSegment {
     ...(t.mathRender ? { mathRender: t.mathRender } : {}),
     ...(t.swatch ? { swatch: t.swatch } : {}),
     ...(t.chip ? { chip: t.chip } : {}),
-    ...(t.refResourceId !== undefined ? { refResourceId: t.refResourceId, ...(t.refAnchor ? { refAnchor: true as const } : {}), ...(t.refPageIndex !== undefined ? { refPageIndex: t.refPageIndex } : {}) } : {}),
+    ...(t.refResourceId !== undefined ? { refResourceId: t.refResourceId, ...(t.refAnchor ? { refAnchor: true as const } : {}), ...(t.refPageIndex !== undefined ? { refPageIndex: t.refPageIndex } : {}), ...(t.refContinues ? { refContinues: true } : {}) } : {}),
     ...(t.footnoteId !== undefined ? { footnoteId: t.footnoteId } : {}),
     ...(t.captionLabel ? { captionLabel: true } : {}),
     ...(t.labelTab || t.tab ? { labelTab: true as const } : {}),
@@ -1191,6 +1232,12 @@ function tokenizeSpans(
       for (let k = 0; k < Math.max(1, span.tab.count ?? 1); k++) {
         tokens.push({ text: k === 0 ? span.text : '', bold: span.bold, italic: span.italic, kind: 'space', width: 0, tab });
       }
+      continue;
+    }
+    // A reference whose label is words: one token per word and space (#702).
+    const label = refLabelTokens(span, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
+    if (label) {
+      tokens.push(...label);
       continue;
     }
     const atomic = atomicSpanToken(span, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);

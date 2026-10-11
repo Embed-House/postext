@@ -250,7 +250,8 @@ function renderSegments(
     if (xs) x = xs[i]!;
     const textElem = langs ? textElemOf(i) : elem;
     if (seg.kind === 'space') {
-      const inLink = uris.space(seg.text);
+      // A space inside a reference label (#702) is read in its `Link`.
+      const inLink = uris.space(seg.text) ?? refRun.space(seg);
       if (ctx.tags && seg.text) {
         tagContent(ctx, inLink ?? textElem);
         // The gap of a poem's bayt holds the tab of its plain text (#378),

@@ -241,6 +241,7 @@ function compareBytes(a: readonly number[], b: readonly number[]): number {
 interface RefSegment {
   text: string;
   refResourceId?: string;
+  refAnchor?: true;
   refContinues?: boolean;
 }
 
@@ -260,9 +261,12 @@ export interface RefRunState {
 
 /**
  * Follows one inline `:ref` across the segments that paint it. A reference
- * set in small capitals is painted as several runs, one per case, the later
- * ones flagged `refContinues`: they share one `Link` element, and the link
- * annotation, recorded once the last run is painted, covers them all.
+ * set in small capitals is painted as several runs, one per case, and one
+ * whose label is words (#702) as a run per word, with the spaces between
+ * them; the later ones are flagged `refContinues`: on a line they share one
+ * `Link` element, and the link annotation, recorded once the last run is
+ * painted, covers them all, spaces included. A label broken over two lines
+ * gives one link per line, as a Markdown link does ({@link UriRuns}).
  */
 export class RefRun {
   private current: RefRunState | undefined;
@@ -286,12 +290,23 @@ export class RefRun {
     return this.current.link;
   }
 
+  /** Call for a space of the line: one inside the open reference (#702)
+   *  joins its text. Returns the `Link` element the space is read in, none
+   *  for a space outside a reference or an untagged render. */
+  space(seg: RefSegment, resourceId = refTarget(seg)): StructElem | undefined {
+    const current = this.current;
+    if (!current || resourceId === undefined || !seg.refContinues || current.resourceId !== resourceId) return undefined;
+    current.text += seg.text;
+    return current.link;
+  }
+
   /** Call after painting `seg`. Returns the whole reference once its last
-   *  run is painted (`next` does not continue it), else nothing. */
-  leave(seg: RefSegment, next: RefSegment | undefined, resourceId = seg.refResourceId): RefRunState | undefined {
+   *  run is painted (`next` does not continue it: `nextResourceId` is what
+   *  it links to, as the caller resolves it), else nothing. */
+  leave(seg: RefSegment, next: RefSegment | undefined, resourceId = seg.refResourceId, nextResourceId = next ? refTarget(next) : undefined): RefRunState | undefined {
     const current = this.current;
     if (!current || resourceId === undefined) return undefined;
-    if (next?.refContinues && next.refResourceId === current.resourceId) return undefined;
+    if (next?.refContinues && (nextResourceId === current.resourceId || next.refResourceId === current.resourceId)) return undefined;
     this.current = undefined;
     return current;
   }

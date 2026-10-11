@@ -4790,6 +4790,16 @@ export interface CrossRefsConfig {
    *  `'default'`: a numbered heading by its label and number, an
    *  unnumbered one by its title, an anchor by its text. */
   defaultStyle?: 'default' | 'number' | 'title' | 'page';
+  /** Let a line break at the spaces of a reference whose label is words
+   *  (#702): the text of a `[words]{#id}` anchor, the title of a heading or
+   *  a box, a `text="…"` override. The label's spaces then take part in
+   *  justification like the others of the line, and the reference stays
+   *  one link. A label with a number or a page (`section 3.2`, `p. 112`,
+   *  `Fig. 1.7`, `Theorem 2`) never breaks, whatever space its template
+   *  holds. Default `true`. `false`: every label is one unbreakable word,
+   *  as up to postext 1.27; configurations stored before `configVersion`
+   *  12 read with it (see `pinLegacyRefLabelBreaks` in `postext/bundle`). */
+  breakLabels?: boolean;
 }
 
 /** {@link CrossRefsConfig} with every value resolved. */
@@ -4798,6 +4808,7 @@ export interface ResolvedCrossRefsConfig {
   section: string;
   page: string;
   defaultStyle: 'default' | 'number' | 'title' | 'page';
+  breakLabels: boolean;
 }
 
 /** Footnotes. A Japanese document (`locale: 'ja'`) resolves the fields it

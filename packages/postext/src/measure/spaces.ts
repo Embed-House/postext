@@ -33,6 +33,11 @@ export function isBreakingSpace(ch: string | undefined): boolean {
   return ch !== undefined && BREAKING_SPACE_RE.test(ch);
 }
 
+/** Whether `text` holds whitespace a line may break at. */
+export function hasBreakingSpace(text: string): boolean {
+  return BREAKING_SPACE_RE.test(text);
+}
+
 /** Whether `text` is nothing but breaking whitespace (and not empty). */
 export function isBreakingSpaceRun(text: string): boolean {
   return /^[^\S\u00A0\u2007\u202F\uFEFF\u3000]+$/.test(text);

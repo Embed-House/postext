@@ -18,11 +18,12 @@ export function resolveCrossRefsConfig(partial?: CrossRefsConfig, locale?: strin
     section: template(partial?.section) ?? words.section,
     page: template(partial?.page) ?? words.page,
     defaultStyle: typeof partial?.defaultStyle === 'string' && STYLES.has(partial.defaultStyle) ? partial.defaultStyle : 'default',
+    breakLabels: partial?.breakLabels !== false,
   };
 }
 
 /** The values a config sets on purpose: non-blank templates, a style other
- *  than `'default'`. */
+ *  than `'default'`, labels kept whole. */
 export function stripCrossRefsDefaults(crossRefs?: CrossRefsConfig): CrossRefsConfig | undefined {
   if (!crossRefs) return undefined;
   const result: CrossRefsConfig = {};
@@ -31,5 +32,8 @@ export function stripCrossRefsDefaults(crossRefs?: CrossRefsConfig): CrossRefsCo
     if (typeof v === 'string' && v.trim().length > 0) result[key] = v;
   }
   if (crossRefs.defaultStyle !== undefined && crossRefs.defaultStyle !== 'default') result.defaultStyle = crossRefs.defaultStyle;
+  // `false` is what a configuration stored before `configVersion` 12 reads
+  // with (#702): it must outlive the strip.
+  if (crossRefs.breakLabels === false) result.breakLabels = false;
   return Object.keys(result).length > 0 ? result : undefined;
 }

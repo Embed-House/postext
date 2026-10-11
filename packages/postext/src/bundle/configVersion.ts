@@ -137,6 +137,10 @@ import { hasCJK } from '../measure/cjk';
  *     side that ends in a bracket or a sign (`cjk.latinSpacingEdge:
  *     'western'`, #721), where up to 1.27 only a side that ends in a
  *     letter or a digit did ({@link pinLegacyLatinSpacingEdge});
+ *   - a reference whose label is words (an anchor's text, a title, a
+ *     `text="…"` override) breaks at the spaces of its label
+ *     (`crossRefs.breakLabels`, #702), where up to 1.27 every label was
+ *     one unbreakable word ({@link pinLegacyRefLabelBreaks});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -231,6 +235,9 @@ const NOTE_BREAK_RULES = 12;
 /** The rules that set the Han–Latin space next to the brackets and signs
  *  of a Western word in the Japan region (#721). */
 const LATIN_SPACING_EDGE_RULES = 12;
+/** The rules that break a reference's label of words at its spaces
+ *  (#702). */
+const REF_LABEL_BREAK_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1287,6 +1294,31 @@ export function pinLegacyLatinSpacingEdge<T extends Partial<PostextConfig>>(conf
   return { ...config, cjk: { ...cjk, latinSpacingEdge: 'letters' } };
 }
 
+/**
+ * A configuration written before #702 (postext 1.27 or earlier), pinned to
+ * the way it set a cross-reference: `crossRefs.breakLabels: false`, every
+ * label one word no line breaks inside, where today a label of words (the
+ * text of a `[words]{#id}` anchor, a title, a `text="…"` override) breaks
+ * at its spaces and those spaces stretch with the line. A configuration
+ * that names the setting already is returned as it is (the same object).
+ */
+export function pinLegacyRefLabelBreaks<T extends Partial<PostextConfig>>(config: T): T {
+  const crossRefs: NonNullable<PostextConfig['crossRefs']> = isRecord(config.crossRefs) ? config.crossRefs : {};
+  if (crossRefs.breakLabels !== undefined) return config;
+  return { ...config, crossRefs: { ...crossRefs, breakLabels: false } };
+}
+
+/** A reference typed in the text: `:ref{…}`, LaTeX's `\ref{…}` and
+ *  `\eqref{…}`, or a pandoc-crossref `@id` (an `@` that opens a word). */
+const REF_RE = /:ref\{|\\(?:eq)?ref\{|(?:^|[^\p{L}\p{N}])@[\p{L}\p{N}_]/mu;
+
+/** Whether markdown may hold a cross-reference. Unknown content
+ *  (undefined) may. */
+function mayHaveRefs(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? REF_RE.test(content) : content.some((text) => REF_RE.test(text));
+}
+
 /** Whether markdown may hold kana or kanji. Unknown content (undefined)
  *  may. */
 function mayHaveCjkText(content: string | readonly string[] | undefined): boolean {
@@ -1448,7 +1480,9 @@ export interface MigrateConfigOptions {
  * configuration shows a note, and the sides of a Western word that take
  * the Han–Latin space in the Japan region by {@link
  * pinLegacyLatinSpacingEdge}, unless `options.content` shows no kana or
- * kanji. A current one is returned as it is (the same object).
+ * kanji, and the labels of its cross-references kept whole by {@link
+ * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference.
+ * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
  * read twice under its old number would grow twice.
@@ -1490,6 +1524,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
+  if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
   return out;
 }
 
@@ -1521,7 +1556,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
  * Western word that take the Han–Latin space (in the Japan region, read
  * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
- * force.
+ * force, and the labels of cross-references on the `crossRefs` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1565,5 +1600,6 @@ export function migrateBundleConfig(
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);
+  if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
   return merged;
 }

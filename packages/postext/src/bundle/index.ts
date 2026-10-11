@@ -18,6 +18,7 @@ export { pinLegacyLooseOrder } from './configVersion';
 export { pinLegacyGridBreakRules } from './configVersion';
 export { pinLegacyNoteBreaks } from './configVersion';
 export { pinLegacyLatinSpacingEdge } from './configVersion';
+export { pinLegacyRefLabelBreaks } from './configVersion';
 export type { MigrateConfigOptions } from './configVersion';
 export {
   isBundleManifest,

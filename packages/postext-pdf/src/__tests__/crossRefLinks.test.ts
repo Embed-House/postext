@@ -99,3 +99,54 @@ describe('cross-references between chapters (#264)', () => {
     expect(found[0]!.dest.get(0)).toEqual(pdf.getPage(physical).ref);
   }, 60_000);
 });
+
+describe('a reference label broken over two lines (#702)', () => {
+  const LABEL = 'close the lever so that it points backwards';
+  const markdown = `To fit it, tighten the nut, then [${LABEL}]{#step}. Squeeze the front brake twice.\n\nPress each tyre hard with your thumb. A tyre that gives easily needs air. Finally, check that both levers are closed, as :ref{id="step"} in the section on wheels describes.`;
+  const narrow = (breakLabels: boolean): PostextConfig => ({
+    ...config,
+    page: { width: pt(230), height: pt(400), margins: { top: pt(18), bottom: pt(18), left: pt(18), right: pt(18) } },
+    bodyText: { textAlign: 'left', hyphenation: { enabled: false } },
+    headings: { levels: [] },
+    crossRefs: { breakLabels },
+  });
+  /** The label's pieces on each line that holds some. */
+  const labelLines = (d: VDTDocument) => d.blocks.flatMap((b) => b.lines)
+    .map((l) => (l.segments ?? []).filter((s) => s.refResourceId !== undefined))
+    .filter((segs) => segs.length > 0);
+  const rectsOf = (file: PDFDocument): number[][] => file.getPages().flatMap((page) => (page.node.Annots()?.asArray() ?? []).map((ref) => {
+    const annot = file.context.lookup(ref, PDFDict);
+    return annot.lookup(PDFName.of('Rect'), PDFArray).asArray().map((n) => Number(String(n)));
+  }));
+
+  it('gives one link per line, over the words and the spaces between them', async () => {
+    const d = buildDocument({ markdown }, narrow(true));
+    const lines = labelLines(d);
+    expect(lines).toHaveLength(2);
+    const file = await PDFDocument.load(await renderToPdf(d, { fontProvider, accessible: true }));
+    const found = links(file);
+    expect(found).toHaveLength(2);
+    const step = d.anchors!.find((a) => a.id === 'step')!;
+    for (const link of found) expect(link.dest.get(0)).toEqual(file.getPages()[step.pageIndex]!.ref);
+    // Each `Link` element reads the words of its line, spaces included.
+    expect(found.map((l) => l.contents)).toEqual(lines.map((segs) => segs.map((s) => s.text).join('')));
+    expect(found.map((l) => l.contents).join(' ')).toBe(LABEL);
+    // And its rectangle runs from the first word of the line to the last:
+    // the two are as wide as the label's pieces on each line.
+    const rects = rectsOf(file);
+    const widths = rects.map((r) => r[2]! - r[0]!);
+    const pieces = lines.map((segs) => segs.reduce((w, s) => w + s.width, 0));
+    expect(widths[0]! / widths[1]!).toBeCloseTo(pieces[0]! / pieces[1]!, 2);
+    // Two lines: the second rectangle lies under the first.
+    expect(rects[1]![3]!).toBeLessThanOrEqual(rects[0]![1]! + 0.01);
+  }, 60_000);
+
+  it('with breakLabels: false the label is one link on one line', async () => {
+    const d = buildDocument({ markdown }, narrow(false));
+    expect(labelLines(d)).toHaveLength(1);
+    const file = await PDFDocument.load(await renderToPdf(d, { fontProvider, accessible: true }));
+    const found = links(file);
+    expect(found).toHaveLength(1);
+    expect(found[0]!.contents).toBe(LABEL);
+  }, 60_000);
+});

@@ -41,6 +41,7 @@ import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredB
 import { measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import {
   atomicSpanToken,
+  refLabelTokens,
   setLabelTabs,
   emergencySplit,
   expandSmallCaps,
@@ -852,9 +853,30 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
       zwsp = false;
       continue;
     }
-    const atomic = atomicSpanToken(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx);
-    if (atomic) {
+    // A reference whose label is words (#702): one unit per word and per
+    // space, each carrying the reference; only the first is glued to the
+    // text before it, so a line may break after a space of the label.
+    const whole = refLabelTokens(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx)
+      ?? atomicSpanToken(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx);
+    const atomics = whole === undefined ? [] : Array.isArray(whole) ? whole : [whole];
+    for (const [k, atomic] of atomics.entries()) {
       const style = styleOf(span, fonts, vertical);
+      if (atomic.kind === 'space') {
+        units.push({
+          kind: 'space',
+          text: atomic.text,
+          width: atomic.width,
+          graphemes: graphemeCount(atomic.text),
+          first: 'western',
+          last: 'western',
+          firstCjk: false,
+          lastCjk: false,
+          style,
+          at: 0,
+          token: atomic,
+        });
+        continue;
+      }
       const graphemes = graphemesOf(atomic.text);
       const object = atomic.chip !== undefined || atomic.mathRender !== undefined || atomic.swatch !== undefined;
       const firstG = graphemes[0] ?? '';
@@ -871,13 +893,13 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
         style,
         at: 0,
         token: atomic,
-        ...(atomic.refResourceId !== undefined || atomic.footnoteId !== undefined ? { glueBefore: true } : {}),
+        ...((atomic.refResourceId !== undefined || atomic.footnoteId !== undefined) && k === 0 ? { glueBefore: true } : {}),
         ...(zwsp ? { zwspBefore: true } : {}),
         ...glue(),
       });
       zwsp = false;
-      continue;
     }
+    if (atomics.length > 0) continue;
     if (span.text.length === 0) continue;
     const style = styleOf(span, fonts, vertical);
     const graphemes = graphemesOf(span.text);
@@ -2853,7 +2875,11 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
       continue;
     }
     if (u.kind === 'space') {
-      pieces.push({ seg: { kind: 'space', text: u.text, width: spaceWidth ?? u.width }, parts: [u.text], key: undefined });
+      // A space inside a reference label (#702) is of the reference.
+      const ref = u.token?.refResourceId !== undefined
+        ? { refResourceId: u.token.refResourceId, ...(u.token.refAnchor ? { refAnchor: true as const } : {}), ...(u.token.refPageIndex !== undefined ? { refPageIndex: u.token.refPageIndex } : {}), refContinues: true }
+        : {};
+      pieces.push({ seg: { kind: 'space', text: u.text, width: spaceWidth ?? u.width, ...ref }, parts: [u.text], key: undefined });
       continue;
     }
     if (u.kind === 'atomic') {

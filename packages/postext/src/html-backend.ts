@@ -698,10 +698,14 @@ function renderMarkedWordSegment(
 }
 
 /** A `:ref` painted as several runs (a label in small capitals: one run per
- *  case) from `segs[start]` on. Every run is placed as measured, and all of
- *  them sit in one anchor, so the reference stays one link. `paint` renders
- *  one run, as plain text, at its x. Returns the markup, the index past the
- *  last run and the x after it. */
+ *  case; a label of words, #702: one per word and per space) from
+ *  `segs[start]` on. Every run is placed as measured, and all of them sit
+ *  in one anchor, so the reference stays one link on its line. `paint`
+ *  renders one run, as plain text, at its x; a space inside the label is
+ *  copy text that advances by `layout.gap` (the line's justified space),
+ *  and `layout.at` gives each segment's x on a line whose segments are
+ *  reordered. Returns the markup, the index past the last run and the x
+ *  after it. */
 function renderRefRuns(
   segs: readonly VDTLineSegment[],
   start: number,
@@ -709,13 +713,21 @@ function renderRefRuns(
   color: string,
   paint: (seg: VDTLineSegment, x: number) => string,
   linked = true,
+  layout?: { gap?: (space: VDTLineSegment) => number; at?: readonly number[] },
 ): { html: string; end: number; x: number } {
   const runs: string[] = [];
   let i = start;
   do {
     const seg = segs[i]!;
-    runs.push(paint(seg, x));
-    x += seg.width;
+    if (layout?.at) x = layout.at[i]!;
+    if (seg.kind === 'space') {
+      const gap = layout?.gap ? layout.gap(seg) : seg.width;
+      runs.push(copyTextHtml(seg.text, x, gap - seg.width));
+      x += gap;
+    } else {
+      runs.push(paint(seg, x));
+      x += seg.width;
+    }
     i++;
   } while (segs[i]?.refContinues);
   if (!linked) return { html: runs.join(''), end: i, x };
@@ -989,7 +1001,10 @@ function renderSegments(
       continue;
     }
     if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, runX) => paintText(run, runX, true), refLinks(refKey(seg), targets), {
+        gap: (space) => (useJustify ? justifiedSpaceWidth : space.width),
+        ...(at ? { at } : {}),
+      });
       parts.push(group.html);
       x = group.x;
       i = group.end - 1;
@@ -1140,7 +1155,9 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets), {
+        gap: (space) => (useJustify && !space.autospace ? justifiedSpaceWidth : space.width),
+      });
       parts.push(group.html);
       x = group.x;
       i = group.end - 1;
@@ -1797,7 +1814,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-        const group = renderRefRuns(segs, i, x, linkColor, (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+        const group = renderRefRuns(segs, i, x, linkColor, (run, runX) => paintText(run, runX, true), refLinks(refKey(seg), targets), at ? { at } : undefined);
         parts.push(group.html);
         x = group.x;
         i = group.end - 1;

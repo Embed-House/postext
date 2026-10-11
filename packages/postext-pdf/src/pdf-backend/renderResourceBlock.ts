@@ -657,7 +657,8 @@ function paintLineRuns(
       else if (!lang) langSpan = undefined;
       const textElem = langSpan?.elem ?? elem;
       if (seg.kind === 'space') {
-        const inLink = uris.space(seg.text);
+        // A space inside a reference label (#702) is read in its `Link`.
+        const inLink = uris.space(seg.text) ?? refRun.space(seg, resolveRefId(seg));
         if (ctx.tags && seg.text) {
           tagContent(ctx, inLink ?? textElem);
           drawTextPx(ctx, seg.text, x, line.baseline, baseFont, baseSize, color);
@@ -739,7 +740,7 @@ function paintLineRuns(
           if (tracking !== 0) setTrackingPx(ctx, tracking);
         }
       }
-      const ref = refId !== undefined ? refRun.leave(seg, segs[i + 1], refId) : undefined;
+      const ref = refId !== undefined ? refRun.leave(seg, segs[i + 1], refId, segs[i + 1] ? resolveRefId(segs[i + 1]!) : undefined) : undefined;
       if (ref && linkRegistry) {
         const { scale, pageHeightPt } = ctx;
         const x1 = ref.left * scale;
