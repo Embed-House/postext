@@ -40,9 +40,12 @@ function ownScript(ch: string): Script | undefined {
 /** Advances in a face like Amiri, in ems: the Latin forms of the full
  *  stop, the brackets and the guillemets are another width than the
  *  default ones. A face named `Plain` draws them one way. */
-function advance(ch: string, script: Script | 'DFLT', sensitive: boolean): number {
+function advance(ch: string, script: Script | 'DFLT', sensitive: boolean, hebrewUnkerned = false): number {
   const latin = !sensitive || script === 'Latn';
   if (ch === ' ' || ch === NBSP) return 0.25;
+  // A kerned Latin face: a shaper applies no kerning in a Hebrew run of a
+  // face with no Hebrew positioning, so its marks come out wider there.
+  if (hebrewUnkerned && script === 'Hebr' && ch === ',') return 0.23;
   if (ch === '.') return latin ? 0.2 : 0.3;
   if (ch === '(' || ch === ')' || ch === '[' || ch === ']') return latin ? 0.25 : 0.45;
   if (ch === '\u00AB' || ch === '\u00BB') return latin ? 0.47 : 0.41;
@@ -83,7 +86,7 @@ function shapedWidth(text: string, font: string, direction: string): number {
       let script: Script | 'DFLT' = first ?? (chrome === 131 ? 'DFLT' : 'Latn');
       for (const ch of unit) {
         script = ownScript(ch) ?? script;
-        width += advance(ch, script, sensitive) * size;
+        width += advance(ch, script, sensitive, font.includes('Kerned')) * size;
       }
     }
   }
@@ -301,6 +304,19 @@ describe('a Latin note set in a face that draws punctuation by script (#725)', (
       expect(segmentsOf(doc).some((s) => 'scriptContext' in s)).toBe(false);
       expect(layout(doc)).toEqual(layout(build(NOTE, config('Plain', { bodyText: { scriptContext: false } }))));
     }
+  });
+
+  it('a kerned Latin face, wider in a Hebrew run alone, is not taken for one that draws marks by script', () => {
+    const KERNED = '10px Plain Kerned';
+    const ctx = new BrowserCtx();
+    ctx.font = KERNED;
+    // Beside the Hebrew mark the comma is 0.3 px wider (the marks are as
+    // wide as each other here)…
+    expect(ctx.measureText(`12,${NBSP}\uFB29`).width - ctx.measureText(`12,${NBSP}n`).width).toBeCloseTo(0.3, 6);
+    // …and the face is still left alone.
+    expect(faceReadsScript(KERNED)).toBe(false);
+    const doc = build(NOTE, config('Plain Kerned'));
+    expect(segmentsOf(doc).some((s) => 'scriptContext' in s)).toBe(false);
   });
 
   it('a paragraph with no formatting goes to the word-by-word breaker only when it holds such a word in such a face', () => {
