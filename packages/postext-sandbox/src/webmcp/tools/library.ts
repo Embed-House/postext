@@ -2,12 +2,18 @@
 // and the files a book is exported to.
 
 import { emptyTemplate, postextToDocx } from 'postext/word';
+import type { DuplicateSource, SandboxState } from '../../context/SandboxContext';
 import { slugify } from '../../panels/resources/slugify';
+import { isDocumentUntouched } from '../../presets';
+import { bundleContentLocales, choosePresetOpen, isEditionOnScreen } from '../../presets/locale';
+import { readBundleZipManifest } from '../../presets/zip';
 import { downloadBytes, exportConfigToJson, exportMarkdownFile } from '../../storage/persistence';
 import type { ViewportTab } from '../../types';
-import { bookPagesSummary, chapterOf, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host';
+import { loadLastTemplateId, loadTemplates } from '../../word/sandboxImport';
+import { stateReaches } from '../chapterEdits';
+import { bookPagesSummary, chapterOf, dispatchAndWait, isSettled, whenSettled, type SandboxToolHost } from '../host';
 import { ToolError, type WebMcpTool } from '../modelContext';
-import { bookIdentity } from './book';
+import { bookIdentity, fileParam, pendingQuestion } from './book';
 import { readFileInput, type FileInput } from './resources';
 import { controlsOf } from './view';
 
@@ -18,7 +24,37 @@ const MAX_DATA_BYTES = 12 * 1024 * 1024;
 /** How long a PDF or an EPUB may take to write. */
 const GENERATE_TIMEOUT_MS = 10 * 60_000;
 
+/** How long a cover may take to show in the list of projects. */
+const COVER_MS = 800;
+
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+const messageOf = (err: unknown): string => (err instanceof Error ? err.message : String(err));
+
+/** The language the sample on screen is open in, when `presetId` is that
+ *  sample; null otherwise, or while it is not known. */
+function languageOnScreen(s: SandboxState, presetId: string): string | null {
+  if (s.activeProjectId !== null || s.activePresetId !== presetId) return null;
+  return s.presetApplied?.presetId === presetId ? s.presetApplied.locale ?? null : null;
+}
+
+/** The languages a `.postext` file carries and the one it is written in,
+ *  read from its manifest alone (what the Books panel asks about before
+ *  it imports a file in several). */
+function bundleLanguages(bytes: Uint8Array): { manifest: Record<string, unknown>; languages: string[]; own: string | null } {
+  let manifest: unknown;
+  try {
+    manifest = readBundleZipManifest(bytes);
+  } catch (err) {
+    throw new ToolError(`The file is not a .postext book: ${messageOf(err)}.`);
+  }
+  const { locales, own } = bundleContentLocales(manifest);
+  return {
+    manifest: typeof manifest === 'object' && manifest !== null ? manifest as Record<string, unknown> : {},
+    languages: locales.length > 0 ? locales : own ? [own] : [],
+    own,
+  };
+}
 
 function toBase64(bytes: Uint8Array): string {
   let binary = '';
@@ -38,28 +74,34 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const listBooks: WebMcpTool = {
     name: 'sandbox_list_books',
     title: 'Sandbox: the books',
-    description: "The books the Sandbox can open: the samples it ships (each in one or more languages; one the reader edited keeps their version) and the reader's own projects, stored in this browser. Says which one is on screen.",
+    description: "The books the Sandbox can open: the samples it ships (each in one or more languages; one the reader edited keeps their version, and editedLanguages says in which languages) and the reader's own projects, stored in this browser (cover: true on those with a cover picture). Says which one is on screen.",
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     annotations: { readOnlyHint: true, untrustedContentHint: true },
     execute: () => {
       const s = store.getSnapshot();
       return {
         onScreen: bookIdentity(host),
-        samples: s.presetSummaries.map((p) => ({
-          id: p.id,
-          name: p.name,
-          ...(p.description ? { description: p.description } : {}),
-          ...(p.locales?.length ? { languages: p.locales } : p.locale ? { languages: [p.locale] } : {}),
-          ...(p.available ? {} : { available: false }),
-          ...(s.hiddenPresetIds.includes(p.id) ? { hidden: true } : {}),
-          ...(s.presetDrafts.some((d) => d.presetId === p.id) ? { edited: true } : {}),
-        })),
+        samples: s.presetSummaries.map((p) => {
+          const drafts = s.presetDrafts.filter((d) => d.presetId === p.id);
+          // A draft kept before its language was recorded names none.
+          const editedLanguages = drafts.map((d) => d.locale).filter((l) => l !== '');
+          return {
+            id: p.id,
+            name: p.name,
+            ...(p.description ? { description: p.description } : {}),
+            ...(p.locales?.length ? { languages: p.locales } : p.locale ? { languages: [p.locale] } : {}),
+            ...(p.available ? {} : { available: false }),
+            ...(s.hiddenPresetIds.includes(p.id) ? { hidden: true } : {}),
+            ...(drafts.length > 0 ? { edited: true, ...(editedLanguages.length > 0 ? { editedLanguages } : {}) } : {}),
+          };
+        }),
         projects: s.projects.map((p) => ({
           id: p.id,
           name: p.name,
           ...(p.description ? { description: p.description } : {}),
           ...(p.locale ? { language: p.locale } : {}),
           chapters: p.chapterCount,
+          ...(p.thumbnail ? { cover: true } : {}),
           updated: new Date(p.updatedAt).toISOString(),
           ...(p.sourcePresetId ? { madeFrom: p.sourcePresetId } : {}),
         })),
@@ -102,16 +144,18 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const saveBook: WebMcpTool = {
     name: 'sandbox_save_book',
     title: 'Sandbox: make, copy or rename a book',
-    description: "Make a project — the reader's own book, kept in this browser — or tend the list of books: new_blank starts an empty book; copy_current keeps the book on screen as a new project (how a sample becomes the reader's own); duplicate copies a sample or a project without opening the original; rename changes a project's name or description; hide_sample and show_sample take a sample off the list and put it back. A new book is opened at once.",
+    description: "Make a project — the reader's own book, kept in this browser — or tend the list of books: new_blank starts an empty book; copy_current keeps the book on screen as a new project (how a sample becomes the reader's own); duplicate copies a sample or a project without opening the original (a sample the reader edited is copied with their edits, unless from says original); rename changes a project's name or description; set_cover gives a project a cover picture and remove_cover takes it away; hide_sample and show_sample take a sample off the list and put it back. A new book is opened at once.",
     inputSchema: {
       type: 'object',
       properties: {
-        action: { type: 'string', enum: ['new_blank', 'copy_current', 'duplicate', 'rename', 'hide_sample', 'show_sample'] },
+        action: { type: 'string', enum: ['new_blank', 'copy_current', 'duplicate', 'rename', 'set_cover', 'remove_cover', 'hide_sample', 'show_sample'] },
         kind: { type: 'string', enum: ['sample', 'project'], description: 'duplicate: what the id names.' },
-        id: { type: 'string', description: 'duplicate, rename, hide_sample, show_sample: the book.' },
-        language: { type: 'string', description: 'duplicate a sample: the language to copy.' },
+        id: { type: 'string', description: 'duplicate, rename, hide_sample, show_sample: the book. set_cover, remove_cover: the project (the one on screen when left out).' },
+        language: { type: 'string', description: 'duplicate a sample: the language to copy. Left out, the one a click on the sample would open: the one on screen, else the interface language, else the language the reader last edited.' },
+        from: { type: 'string', enum: ['edited', 'original'], description: 'duplicate a sample: copy the reader\'s edited version in that language (edited; refused when there is none) or the sample as it ships (original). Left out, the edited version when there is one, as the Books panel does.' },
         name: { type: 'string', description: 'new_blank, copy_current, rename: the name.' },
         description: { type: 'string', description: 'rename: the description (empty clears it).' },
+        file: fileParam('set_cover: the picture (PNG, JPEG, WebP, GIF or SVG): where to fetch it (url) or its bytes (base64).'),
       },
       required: ['action'],
       additionalProperties: false,
@@ -129,10 +173,51 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
         }
         case 'duplicate': {
           if (args.id === undefined || args.kind === undefined) throw new ToolError('duplicate needs the kind and the id of the book to copy.');
-          const id = await projects.duplicate({ kind: args.kind === 'sample' ? 'preset' : 'project', id: args.id as string, ...(args.language ? { locale: args.language as string } : {}) });
+          const language = args.language as string | undefined;
+          let copied: 'edited' | 'original' | undefined;
+          let copy: () => Promise<string>;
+          if (args.kind === 'project') {
+            if (!s.projects.some((p) => p.id === args.id)) throw new ToolError(`No project with id ${JSON.stringify(args.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`);
+            copy = () => projects.duplicate({ kind: 'project', id: args.id as string });
+          } else {
+            const preset = s.presetSummaries.find((p) => p.id === args.id);
+            if (!preset) throw new ToolError(`No sample with id ${JSON.stringify(args.id)}. The samples: ${s.presetSummaries.map((p) => p.id).join(', ')}.`);
+            // What the Books panel copies: the sample as it stands on
+            // screen when it is there with edits, else the saved draft a
+            // click on it would open, else the original.
+            const onScreen = s.activeProjectId === null && preset.id === s.activePresetId;
+            const current = languageOnScreen(s, preset.id);
+            const drafts = s.presetDrafts.filter((d) => d.presetId === preset.id);
+            const choice = choosePresetOpen({ summary: preset, ...(language ? { requested: language } : {}), current: onScreen ? current : null, viewer: s.locale, drafts });
+            const editedOnScreen = onScreen && s.storeReady && !isDocumentUntouched(s, s.presetApplied) && (!language || isEditionOnScreen(preset, language, current));
+            const original: DuplicateSource = { kind: 'preset', id: preset.id, ...(language ?? current ? { locale: (language ?? current)! } : {}) };
+            if (args.from === 'original') {
+              copied = 'original';
+              copy = () => projects.duplicate(original);
+            } else if (editedOnScreen) {
+              copied = 'edited';
+              copy = () => projects.create({ from: 'current' });
+            } else if (choice.draft) {
+              const draft = choice.draft;
+              copied = 'edited';
+              copy = () => projects.duplicate({ ...original, ...(draft.locale ? { locale: draft.locale } : {}), draftKey: draft.key });
+            } else if (args.from === 'edited') {
+              const edited = drafts.map((d) => d.locale).filter((l) => l !== '');
+              throw new ToolError(`The reader has no edited version of ${JSON.stringify(preset.id)}${language ? ` in ${language}` : ''}${edited.length > 0 ? ` (edited: ${edited.join(', ')})` : ''}. from: "original" copies the sample as it ships.`);
+            } else {
+              copied = 'original';
+              copy = () => projects.duplicate(original);
+            }
+          }
+          let id: string;
+          try {
+            id = await copy();
+          } catch (err) {
+            throw new ToolError(`The book could not be copied: ${messageOf(err)}`);
+          }
           await sleep(50);
           const laidOut = await whenSettled(host, { signal });
-          return { project: id, opened: bookIdentity(host), laidOut };
+          return { project: id, ...(copied ? { copied } : {}), opened: bookIdentity(host), laidOut };
         }
         case 'rename': {
           const id = (args.id as string | undefined) ?? s.activeProjectId;
@@ -140,6 +225,42 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           const current = s.projects.find((p) => p.id === id)!;
           await projects.rename(id, name ?? current.name, args.description as string | undefined);
           return { project: id, name: name ?? current.name };
+        }
+        case 'set_cover':
+        case 'remove_cover': {
+          const id = (args.id as string | undefined) ?? s.activeProjectId;
+          const project = id ? s.projects.find((p) => p.id === id) : undefined;
+          if (!project) {
+            throw new ToolError(args.id !== undefined
+              ? `No project with id ${JSON.stringify(args.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`
+              : 'A cover belongs to a project: give its id, or open one (a sample becomes a project with copy_current).');
+          }
+          const coverOf = (): string | undefined => store.getSnapshot().projects.find((p) => p.id === project.id)?.thumbnail?.fileId;
+          const before = project.thumbnail?.fileId;
+          if (args.action === 'remove_cover') {
+            if (before === undefined) return { project: project.id, cover: false, changed: false };
+            try {
+              await projects.setThumbnail(project.id, null);
+            } catch (err) {
+              throw new ToolError(`The cover could not be removed: ${messageOf(err)}`);
+            }
+            await stateReaches(host, () => coverOf() === undefined, COVER_MS);
+            return { project: project.id, cover: coverOf() !== undefined, changed: coverOf() === undefined };
+          }
+          if (args.file === undefined) throw new ToolError('set_cover needs the picture as "file" (a url, or its bytes as base64): PNG, JPEG, WebP, GIF or SVG.');
+          const file = await readFileInput(args.file as FileInput, signal);
+          try {
+            await projects.setThumbnail(project.id, file);
+          } catch (err) {
+            throw new ToolError(`The cover could not be set: ${messageOf(err)}`);
+          }
+          // A picture the Sandbox does not take leaves the cover as it was
+          // and says why in the Books panel's notice.
+          if (!(await stateReaches(host, () => coverOf() !== before, COVER_MS))) {
+            const notice = store.getSnapshot().projectNotice;
+            throw new ToolError(`The picture was not taken as the cover (${file.type || 'unknown type'}): a cover is a PNG, JPEG, WebP, GIF or SVG file.${notice ? ` The Books panel says: ${notice}` : ''}`, notice ? { notice } : undefined);
+          }
+          return { project: project.id, cover: true, changed: true };
         }
         case 'hide_sample':
         case 'show_sample': {
@@ -176,7 +297,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const importBook: WebMcpTool = {
     name: 'sandbox_import_book',
     title: 'Sandbox: import a .postext book',
-    description: 'Import a .postext file (a book with its chapters, design, resources and fonts in one archive) as a new project, and open it.',
+    description: 'Import a .postext file (a book with its chapters, design, resources and fonts in one archive) as a new project, and open it. A file may carry the book in several languages: inspect: true reads the file and answers with them without importing, as the Books panel asks before it imports; language then says which to open.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -186,22 +307,44 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           properties: { url: { type: 'string' }, base64: { type: 'string' }, fileName: { type: 'string' } },
           additionalProperties: false,
         },
-        language: { type: 'string', description: 'A file in several languages: the one to open.' },
+        language: { type: 'string', description: 'A file in several languages: the one to open. The interface language when left out.' },
+        inspect: { type: 'boolean', description: 'Read the file and answer with its name and the languages it carries, without importing it.' },
       },
       required: ['file'],
       additionalProperties: false,
     },
     execute: async (args, { signal }) => {
       const file = await readFileInput(args.file as FileInput, signal);
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      if (args.inspect) {
+        const { manifest, languages, own } = bundleLanguages(bytes);
+        return {
+          imported: false,
+          file: file.name,
+          ...(typeof manifest.id === 'string' && manifest.id ? { id: manifest.id } : {}),
+          ...(typeof manifest.name === 'string' && manifest.name ? { name: manifest.name } : {}),
+          ...(typeof manifest.description === 'string' && manifest.description ? { description: manifest.description } : {}),
+          languages,
+          ...(own ? { writtenIn: own } : {}),
+          ...(languages.length > 1 ? { note: 'Import it with language set to one of these.' } : {}),
+        };
+      }
       let id: string;
       try {
-        id = await projects.importBundleBytes(await file.arrayBuffer(), file.name, args.language ? { locale: args.language as string } : undefined);
+        id = await projects.importBundleBytes(bytes, file.name, args.language ? { locale: args.language as string } : undefined);
       } catch (err) {
-        throw new ToolError(`The file could not be imported: ${err instanceof Error ? err.message : String(err)}`);
+        throw new ToolError(`The file could not be imported: ${messageOf(err)}`);
+      }
+      // The languages the reader could have been asked about.
+      let languages: string[] = [];
+      try {
+        languages = bundleLanguages(bytes).languages;
+      } catch {
+        // The import read the archive its own way.
       }
       await sleep(50);
       const laidOut = await whenSettled(host, { signal });
-      return { project: id, opened: bookIdentity(host), laidOut, book: bookPagesSummary(host) };
+      return { project: id, opened: bookIdentity(host), ...(languages.length > 1 ? { languages } : {}), laidOut, book: bookPagesSummary(host) };
     },
   };
 
@@ -237,7 +380,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   const exportBook: WebMcpTool = {
     name: 'sandbox_export',
     title: 'Sandbox: export the book',
-    description: "Write the book on screen to a file: pdf (the chapter on screen or the whole book, print-ready), epub (reflowable, or fixed to the printed pages), postext (the whole project in one archive, to open again or hand to the postext command line), docx (Word), markdown (the chapter's source) or config (the design settings as JSON). The file is downloaded by the reader's browser, or — pdf and epub — handed back base64-encoded with deliver: \"data\". Exporting a pdf or an epub shows that viewer tab.",
+    description: "Write the book on screen to a file: pdf (the chapter on screen or the whole book, print-ready), epub (reflowable, or fixed to the printed pages), postext (the whole project in one archive, to open again or hand to the postext command line), docx (Word, with a saved Word template when one is named), markdown (the chapter's source) or config (the design settings as JSON). A postext archive can also be written of a book that is not on screen (book): a project as it was last saved, or a sample as it ships, in one of its languages. The file is downloaded by the reader's browser, or — pdf and epub — handed back base64-encoded with deliver: \"data\". Exporting a pdf or an epub shows that viewer tab.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -246,6 +389,18 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
         epubLayout: { type: 'string', enum: ['reflowable', 'fixed'], description: 'epub: the rendition (default: as the EPUB tab stands).' },
         chapter: { type: ['integer', 'string'], description: 'markdown: the chapter (position from 1, title or id); the one on screen when left out.' },
         deliver: { type: 'string', enum: ['download', 'data'], description: 'download (default) saves the file through the browser; data hands a pdf or an epub back in the result.' },
+        book: {
+          type: 'object',
+          description: 'postext: another book than the one on screen, exported without opening it, as its row of the Books panel does. A sample is exported as it ships, not with the reader\'s edits (open it, or duplicate it, to export those).',
+          properties: {
+            kind: { type: 'string', enum: ['sample', 'project'] },
+            id: { type: 'string', description: 'The id, as sandbox_list_books gives it.' },
+            language: { type: 'string', description: 'A sample in several languages: the one to export. The one on screen when the sample is on screen, else the interface language.' },
+          },
+          required: ['kind', 'id'],
+          additionalProperties: false,
+        },
+        template: { type: 'string', description: 'docx: the id of a saved Word template (sandbox_word_templates lists them), whose mapping names the Word styles and travels in the file for the way back, or "none". Left out, the template last used when it is still saved, as the export dialog opens.' },
       },
       required: ['format'],
       additionalProperties: false,
@@ -257,6 +412,10 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
       if (deliver === 'data' && format !== 'pdf' && format !== 'epub') {
         throw new ToolError(`Only a pdf or an epub is handed back as data. The ${format} is downloaded; its content is also at hand through ${format === 'markdown' ? 'sandbox_read_text' : format === 'config' ? 'sandbox_get_config' : 'the download'}.`);
       }
+      if (args.book !== undefined && format !== 'postext') {
+        throw new ToolError(`"book" goes with format "postext". A ${format} is written of the book on screen: open the other one first with sandbox_open_book.`);
+      }
+      if (args.template !== undefined && format !== 'docx') throw new ToolError('"template" goes with format "docx".');
       if (format === 'pdf' || format === 'epub') {
         if (format === 'pdf' && args.scope !== undefined && args.scope !== s.pdfScope) await dispatchAndWait(host, { type: 'SET_PDF_SCOPE', payload: args.scope as 'chapter' | 'book' });
         if (format === 'epub' && args.epubLayout !== undefined && args.epubLayout !== s.epubLayout) await dispatchAndWait(host, { type: 'SET_EPUB_LAYOUT', payload: args.epubLayout as 'fixed' | 'reflowable' });
@@ -270,15 +429,54 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
         return { ...answer, downloaded: true };
       }
       switch (format) {
-        case 'postext':
-          await projects.exportProject();
-          return { format, downloaded: true, file: `${slugify(bookName()) || 'project'}.postext`, ...(store.getSnapshot().projectNotice ? { notice: store.getSnapshot().projectNotice } : {}) };
+        case 'postext': {
+          const other = args.book as { kind: 'sample' | 'project'; id: string; language?: string } | undefined;
+          let target: DuplicateSource | undefined;
+          let name = bookName();
+          if (other?.kind === 'project') {
+            const project = s.projects.find((p) => p.id === other.id);
+            if (!project) throw new ToolError(`No project with id ${JSON.stringify(other.id)}. The projects: ${s.projects.map((p) => `${p.id} (${p.name})`).join(', ') || 'none'}.`);
+            if (other.language !== undefined) throw new ToolError('A project is in one language; "language" picks among those of a sample.');
+            target = { kind: 'project', id: project.id };
+            name = project.name;
+          } else if (other) {
+            const preset = s.presetSummaries.find((p) => p.id === other.id);
+            if (!preset) throw new ToolError(`No sample with id ${JSON.stringify(other.id)}. The samples: ${s.presetSummaries.map((p) => p.id).join(', ')}.`);
+            if (!preset.available) throw new ToolError('That sample cannot be loaded right now (its files did not answer).');
+            const language = other.language ?? languageOnScreen(s, preset.id) ?? undefined;
+            target = { kind: 'preset', id: preset.id, ...(language ? { locale: language } : {}) };
+            name = preset.name;
+          }
+          try {
+            await projects.exportProject(target);
+          } catch (err) {
+            throw new ToolError(`The book could not be exported: ${messageOf(err)}`);
+          }
+          // What the archive had to leave out is said in the Books panel's notice.
+          await sleep(50);
+          const notice = store.getSnapshot().projectNotice;
+          return {
+            format,
+            downloaded: true,
+            file: `${slugify(name) || 'project'}.postext`,
+            ...(other ? { book: other } : {}),
+            ...(notice ? { notice } : {}),
+          };
+        }
         case 'docx': {
           const whole = (args.scope ?? 'book') === 'book';
           const active = s.chapters.find((c) => c.id === s.activeChapterId)!;
           const list = (whole ? s.chapters : [active]).map((c) => ({ title: c.title, markdown: c.id === s.activeChapterId ? s.markdown : c.markdown }));
+          // The template the export dialog would open on: the one named,
+          // else the one last used while it is still saved.
+          const saved = loadTemplates();
+          const wanted = (args.template as string | undefined) ?? loadLastTemplateId() ?? 'none';
+          const template = wanted === 'none' ? undefined : saved.find((t) => t.id === wanted);
+          if (!template && args.template !== undefined && wanted !== 'none') {
+            throw new ToolError(`No saved Word template with id ${JSON.stringify(wanted)}. The saved ones: ${saved.map((t) => `${t.id} (${t.name})`).join(', ') || 'none'}; "none" exports without one.`);
+          }
           const bytes = postextToDocx(list, {
-            template: emptyTemplate(),
+            template: template ?? emptyTemplate(),
             config: s.config,
             book: whole && s.chapters.length > 1,
             title: bookName(),
@@ -286,7 +484,7 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
           });
           const file = `${slugify(whole ? bookName() : active.title) || 'document'}.docx`;
           downloadBytes(bytes, file, DOCX_MIME);
-          return { format, downloaded: true, file, bytes: bytes.byteLength };
+          return { format, downloaded: true, file, bytes: bytes.byteLength, template: template ? { id: template.id, name: template.name } : 'none' };
         }
         case 'markdown': {
           const { chapter } = chapterOf(s, args.chapter);
@@ -304,4 +502,51 @@ export function libraryTools(host: SandboxToolHost): WebMcpTool[] {
   };
 
   return [listBooks, openBook, saveBook, deleteBook, importBook, exportBook];
+}
+
+/** The tool that answers what the Sandbox asks or tells the reader about
+ *  their books. */
+export function answerTools(host: SandboxToolHost): WebMcpTool[] {
+  const { store } = host;
+
+  const answer: WebMcpTool = {
+    name: 'sandbox_answer',
+    title: 'Sandbox: answer a question or a notice',
+    description: "Answer the dialog the Sandbox opens when a link names a book the reader already has their own version of (sandbox_get_state reports it as question, and ready stays false until it is answered): replaceCopy: false opens the reader's version, as closing the dialog does; replaceCopy: true replaces it with the published one, which deletes their copy and its changes for good — ask the reader first. dismissNotice: true clears the message of the Books panel (notice in sandbox_get_state). Answers with the book on screen afterwards and its pages.",
+    inputSchema: {
+      type: 'object',
+      properties: {
+        replaceCopy: { type: 'boolean', description: 'The answer to the pending question: true replaces the reader\'s version with the published book, false keeps theirs.' },
+        dismissNotice: { type: 'boolean', description: 'Clear the notice of the Books panel.' },
+      },
+      additionalProperties: false,
+    },
+    annotations: { consequentialHint: true },
+    execute: async (args, { signal }) => {
+      const s = store.getSnapshot();
+      if (args.replaceCopy === undefined && args.dismissNotice !== true) {
+        throw new ToolError('Nothing to answer: give replaceCopy (true or false) for a pending question, or dismissNotice: true for the notice.');
+      }
+      const out: Record<string, unknown> = {};
+      const question = pendingQuestion(s);
+      if (args.replaceCopy !== undefined) {
+        if (!question) throw new ToolError('The Sandbox is not asking anything. sandbox_get_state reports a pending question as "question".');
+        out.answered = { about: question.about, id: question.id, name: question.name, replaced: args.replaceCopy === true };
+      }
+      if (args.dismissNotice === true) {
+        out.dismissed = s.projectNotice;
+        if (s.projectNotice !== null) await dispatchAndWait(host, { type: 'SET_PROJECT_NOTICE', payload: null });
+      }
+      if (args.replaceCopy !== undefined) {
+        store.answerBundleReplace(args.replaceCopy === true);
+        // The book the link names opens once the question is answered.
+        await sleep(50);
+        const laidOut = await whenSettled(host, { signal });
+        return { ...out, onScreen: bookIdentity(host), laidOut, book: bookPagesSummary(host) };
+      }
+      return { ...out, onScreen: bookIdentity(host), laidOut: isSettled(host) };
+    },
+  };
+
+  return [answer];
 }
