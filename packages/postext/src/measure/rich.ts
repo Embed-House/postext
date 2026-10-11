@@ -6,7 +6,7 @@ import { uprightArabicSpans, uprightFace } from '../uprightArabic';
 import { createBoundingBox } from '../vdt';
 import type { MathRender } from '../math/types';
 import type { InlineSpan } from '../parse';
-import { hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate';
 import {
   richTokensToItems,
   computeBreakpoints,
@@ -621,13 +621,14 @@ interface SoftBreak {
  * (`softHyphenBreaks`), which the dictionary leaves as they are (it does not
  * hyphenate a word that already has them). The zero-width
  * space the dictionary puts after a slash is dropped: the rich breaker does
- * not break there, and it must not reach the line text.
+ * not break there, and it must not reach the line text. `byDictionary`
+ * leaves the document's rules out (#699): every point of the patterns.
  */
-function syllabify(word: string, hyphenate: boolean): { clean: string; soft: SoftBreak[] } {
+function syllabify(word: string, hyphenate: boolean, byDictionary = false): { clean: string; soft: SoftBreak[] } {
   // A word of a joining script is never divided, not even at a soft hyphen
   // its author typed: its letters connect (`measure/joining.ts`).
   if (joiningScriptIn(word)) return { clean: word.includes(SOFT_HYPHEN) ? word.split(SOFT_HYPHEN).join('') : word, soft: [] };
-  const hyphenated = hyphenate ? withoutSlashJoints(word, hyphenateText(word)) : word;
+  const hyphenated = hyphenate ? withoutSlashJoints(word, byDictionary ? hyphenateByDictionary(word) : hyphenateText(word)) : word;
   if (!hyphenated.includes(SOFT_HYPHEN)) return { clean: hyphenated, soft: [] };
   let clean = '';
   const soft: SoftBreak[] = [];
@@ -778,6 +779,17 @@ export function emergencySplit(
   if (clean === text) {
     for (const s of soft) {
       if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
+    }
+  }
+  // A word the document keeps whole (`hyphenation.exceptions`, capitalised
+  // words, cited names) is still divided when it is wider than its measure:
+  // at its entry's points above, else at the dictionary's syllables (#699).
+  if (at === 0 && getHyphenationRulesKey() !== '') {
+    const whole = syllabify(text, true, true);
+    if (whole.clean === text) {
+      for (const s of whole.soft) {
+        if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
+      }
     }
   }
   if (at === 0 && !syllablesOnly) {

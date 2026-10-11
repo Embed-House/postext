@@ -1269,6 +1269,31 @@ export interface ResolvedHyphenationConfig {
   compounds: boolean;
 }
 
+  /** Words the dictionary must not divide, or may divide only where the
+   *  entry says (#699), as in TeX's `\hyphenation{…}`. An entry is one word:
+   *  written without a hyphen (`'Alice'`) it is never divided; written with
+   *  hyphens (`'You-Tube'`) it is divided only at those points. It matches a
+   *  run of letters inside a word as written, so `(Alice,` and `Alice’s`
+   *  match `Alice` and a compound is matched part by part; an inflected form
+   *  is another entry. An entry in lower case matches the word in any case
+   *  (`'blender'` covers `Blender` and `BLENDER`); one with an initial
+   *  capital matches only the occurrences that start with a capital, so
+   *  `'Rose'` keeps the name whole and leaves `rose` to the dictionary. A
+   *  soft hyphen typed in an occurrence still decides that occurrence, and a
+   *  word wider than its whole measure is still divided. Applies wherever
+   *  the dictionary runs: body, headings, lists, boxes, captions, table
+   *  cells, notes, running heads and the other design text. Default none. */
+  exceptions?: string[];
+  /** Divide capitalised words like any other. Default `true`. `false`: the
+   *  dictionary adds no break inside a run of letters that starts with a
+   *  capital (`Alice`, `Ámsterdam`, `UNESCO`, the `Alembert` of
+   *  `d’Alembert`), the first word of a sentence included: InDesign's
+   *  "Hyphenate Capitalized Words" switched off, TeX's `\uchyph=0`. Of no
+   *  use in German, which capitalises every noun: name the words in
+   *  {@link exceptions}, or keep the cited authors whole with
+   *  `citations.hyphenateNames`. An entry of `exceptions` with points still
+   *  divides its word there. */
+  capitalized?: boolean;
 /** `BodyTextConfig.kashida`. */
 export type KashidaSetting = 'auto' | 'none';
 /** `BodyTextConfig.kashidaPatterns`. */
@@ -1282,6 +1307,10 @@ export interface ResolvedKashidaConfig {
   maxLength: number;
 }
 
+  /** The words of `HyphenationConfig.exceptions`, trimmed, checked, without
+   *  duplicates and sorted; absent when the document names none. */
+  exceptions?: string[];
+  capitalized: boolean;
 export interface BodyTextConfig {
   /** One family, as every `fontFamily` field: a CSS font stack is set in
    *  its first family (see `primaryFontFamily`) and reported by
@@ -4622,6 +4651,16 @@ export interface CitationsConfig {
   };
 }
 
+  /** Let the dictionary divide the names of the authors the document cites.
+   *  Default `true`. `false` (#699): the family names and the `literal`
+   *  names of every work of the references are never divided where they
+   *  start with a capital, in a citation, in the running text and in the
+   *  bibliography, so no line ends on `(Lup-`. Each name is read run of
+   *  letters by run of letters (`García-Márquez` gives two), and an author
+   *  called Baker does not keep `baker` whole. A bibliography cannot be
+   *  typed into `bodyText.hyphenation.exceptions`, and a German book cannot
+   *  use `hyphenation.capitalized: false`. */
+  hyphenateNames?: boolean;
 /** {@link CitationsConfig} with every value resolved. */
 export interface ResolvedCitationsConfig {
   style: string;
@@ -4673,6 +4712,7 @@ export interface ResolvedCrossRefsConfig {
   page: string;
   defaultStyle: 'default' | 'number' | 'title' | 'page';
 }
+  hyphenateNames: boolean;
 
 /** Footnotes. A Japanese document (`locale: 'ja'`) resolves the fields it
  *  leaves unset after JLReq §4.2: a vertical one sets endnotes after each

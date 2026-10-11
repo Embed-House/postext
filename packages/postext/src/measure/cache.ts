@@ -2,7 +2,7 @@ import type { InlineSpan } from '../parse';
 import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types';
 import { measureBlock } from './plain';
 import { measureRichBlock } from './rich';
-import { getHyphenationLocale } from '../hyphenate';
+import { getHyphenationLocale, getHyphenationRulesKey } from '../hyphenate';
 import { hasCJK } from './cjk';
 import { getCjkLineBreak } from './cjkClasses';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical';
@@ -18,7 +18,15 @@ import { evictionsSince, measurementGeneration } from './canvas';
  *  and the Arabic reading of leading numbers (#665), in the documents
  *  that have it. */
 function optionsKey(options: MeasureBlockOptions | undefined): string {
-  return `${(options?.direction ?? getMeasureDirection()) === 'rtl' ? 'rtl\x00' : ''}${getMeasureArabicNumbers() ? 'an\x00' : ''}${options?.textAlign ?? ''}\x00${options?.hyphenate ?? ''}\x00${options?.firstLineIndentPx ?? ''}\x00${options?.hangingIndent ?? ''}\x00${options?.optimal ?? ''}\x00${options?.maxStretchRatio ?? ''}\x00${options?.minShrinkRatio ?? ''}\x00${options?.runtPenalty ?? ''}\x00${options?.runtMinCharacters ?? ''}\x00${options?.looseness ?? ''}\x00${options?.letterSpacingPx ?? ''}\x00${options?.hyphenationZonePx ?? ''}\x00${getHyphenationLocale()}${options?.justifyTrackingPx ? `\x00${options.justifyTrackingPx}` : ''}${options?.runtGraded ? '\x00rg' : ''}${options?.labelColumnPx !== undefined ? `\x00lc${options.labelColumnPx}` : ''}${options?.labelLength ? `\x00ll${options.labelLength}` : ''}${options?.avoidHyphenAtLines?.length ? `\x00ah${options.avoidHyphenAtLines.join(',')}` : ''}${options?.kashida ? `\x00k${options.kashida.patterns}:${options.kashida.perWord}:${options.kashida.maxLengthPx}` : ''}${options?.lineIndentsPx?.length ? `\x00li${options.lineIndentsPx.join(',')}` : ''}${options?.tabs ? `\x00tb${JSON.stringify(options.tabs)}` : ''}`;
+  return `${(options?.direction ?? getMeasureDirection()) === 'rtl' ? 'rtl\x00' : ''}${getMeasureArabicNumbers() ? 'an\x00' : ''}${options?.textAlign ?? ''}\x00${options?.hyphenate ?? ''}\x00${options?.firstLineIndentPx ?? ''}\x00${options?.hangingIndent ?? ''}\x00${options?.optimal ?? ''}\x00${options?.maxStretchRatio ?? ''}\x00${options?.minShrinkRatio ?? ''}\x00${options?.runtPenalty ?? ''}\x00${options?.runtMinCharacters ?? ''}\x00${options?.looseness ?? ''}\x00${options?.letterSpacingPx ?? ''}\x00${options?.hyphenationZonePx ?? ''}\x00${getHyphenationLocale()}${options?.justifyTrackingPx ? `\x00${options.justifyTrackingPx}` : ''}${options?.runtGraded ? '\x00rg' : ''}${options?.labelColumnPx !== undefined ? `\x00lc${options.labelColumnPx}` : ''}${options?.labelLength ? `\x00ll${options.labelLength}` : ''}${options?.avoidHyphenAtLines?.length ? `\x00ah${options.avoidHyphenAtLines.join(',')}` : ''}${options?.kashida ? `\x00k${options.kashida.patterns}:${options.kashida.perWord}:${options.kashida.maxLengthPx}` : ''}${options?.lineIndentsPx?.length ? `\x00li${options.lineIndentsPx.join(',')}` : ''}${options?.tabs ? `\x00tb${JSON.stringify(options.tabs)}` : ''}${hyphenationRulesKey()}`;
+}
+
+/** The document's hyphenation rules (#699: words kept whole, capitalised
+ *  words, cited names), joined to the key only when one is set, so every key
+ *  of a document without rules is unchanged. */
+function hyphenationRulesKey(): string {
+  const key = getHyphenationRulesKey();
+  return key === '' ? '' : `\x00hr${key}`;
 }
 
 /** The CJK line-break level and composition (punctuation widths, hanging,

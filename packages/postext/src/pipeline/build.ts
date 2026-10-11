@@ -38,6 +38,8 @@ import {
 import { extractFrontmatter, normalizeMetadata } from '../frontmatter';
 import { collectConfigWarnings } from '../configWarnings';
 import { initHyphenator } from '../measure';
+import { setHyphenationRules } from '../hyphenate';
+import { citedNames } from '../citations/names';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
 import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
@@ -601,7 +603,10 @@ function placeDocumentPass(
   // design text — and so do the words wider than their measure, divided at a
   // syllable even in ragged text. Left unset, a build would hyphenate with
   // whichever dictionary the previous one (or the default, en-us) chose.
-  initHyphenator(resolved.bodyText.hyphenation.locale);
+  // With the words the document keeps whole (#699); the names of the
+  // authors it cites join them below, once its references are read.
+  const hyphenationRules = { exceptions: resolved.bodyText.hyphenation.exceptions, capitalized: resolved.bodyText.hyphenation.capitalized };
+  initHyphenator(resolved.bodyText.hyphenation.locale, hyphenationRules);
   // CJK text breaks at the document's level wherever it is measured (body,
   // captions, cells, notes, boxes), as it hyphenates in its language.
   setCjkLineBreak(resolved.cjk.lineBreak);
@@ -698,6 +703,11 @@ function placeDocumentPass(
   const parsedBody = numberTitlesFor(headingMarksFor(tashkilFor(literalBreaksFor(parseMarkdownMemo(markdownBody, codeParseOptions(resolved)), resolved), resolved.bodyText.tashkil), resolved), resolved);
   const citationContext = content.citations
     ?? (needsCitationContext(parsedBody, frontmatterMeta) ? bookCitationContexts([{ metadata: frontmatterMeta as Record<string, unknown>, blocks: parsedBody }], content.resources)[0] : undefined);
+  // `citations.hyphenateNames: false`: the cited authors' names are never
+  // divided, in a citation, in the text or in the bibliography (#699).
+  if (citationContext && !resolved.citations.hyphenateNames) {
+    setHyphenationRules({ ...hyphenationRules, names: citedNames(citationContext.items) });
+  }
   const citationsApplied = citationContext
     ? applyCitations(
       parsedBody,

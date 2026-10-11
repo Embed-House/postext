@@ -1,6 +1,6 @@
 import { clearCache } from '@chenglou/pretext';
 import type { LocaleTag } from '../types';
-import { setHyphenationLocale } from '../hyphenate';
+import { setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate';
 import { clearTextWidthCache, evictTextWidths, measurementGeneration } from './canvas';
 import type { MeasurementCache } from './types';
 
@@ -94,8 +94,10 @@ export function quoteFamily(fontFamily: string): string {
  * `matchHyphenationLocale`). Must be called before measureBlock is used with
  * hyphenation.
  */
-export function initHyphenator(locale: LocaleTag): void {
+export function initHyphenator(locale: LocaleTag, rules?: HyphenationRules): void {
   setHyphenationLocale(locale);
+  // A build with no rules clears the ones of the build before (#699).
+  setHyphenationRules(rules);
 }
 
 /**

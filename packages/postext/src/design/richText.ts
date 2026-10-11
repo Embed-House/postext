@@ -13,7 +13,7 @@ import type { InlineSpan } from '../parse/types';
 import { buildFontString } from '../measure';
 import { scriptMetrics, stackedScriptPairs } from '../measure/rich';
 import { graphemeCount } from '../measure/graphemes';
-import { hyphenateText } from '../hyphenate';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText } from '../hyphenate';
 import { endsInsideGeminate } from '../measure/geminate';
 import { NO_BREAK_SPACES, isBreakingSpace } from '../measure/spaces';
 import type { TextOverflow } from '../types';
@@ -364,8 +364,11 @@ function breakWord(m: RichMeasurer, a: number, b: number, maxWidth: number, hyph
   if (hasJoiningScript(text.slice(a, b))) return { end: b, hyphen: false };
   if (hyphenate) {
     const word = m.rt.text.slice(a, b);
-    const hy = hyphenateText(word);
-    if (hy.includes(SOFT_HYPHEN) && hy.replaceAll(SOFT_HYPHEN, '') === word) {
+    // A word the document's rules keep whole is divided at the dictionary's
+    // syllables when no point of its own fits (#699).
+    for (const divide of getHyphenationRulesKey() === '' ? [hyphenateText] : [hyphenateText, hyphenateByDictionary]) {
+      const hy = divide(word);
+      if (!hy.includes(SOFT_HYPHEN) || hy.replaceAll(SOFT_HYPHEN, '') !== word) continue;
       let best = -1;
       let k = 0;
       for (const part of hy.split(SOFT_HYPHEN).slice(0, -1)) {

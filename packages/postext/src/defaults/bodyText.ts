@@ -2,6 +2,7 @@ import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, Re
 import { cjkRegionOf, hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
+import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
 
 export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] = {
   enabled: true,
@@ -9,6 +10,7 @@ export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] =
   ragged: false,
   zone: { value: 3, unit: 'em' },
   compounds: true,
+  capitalized: true,
 };
 
 /**
@@ -118,7 +120,10 @@ export function hyphenationEqual(a: HyphenationConfig | undefined, b: Hyphenatio
     && (a.locale ?? D.locale) === (b.locale ?? D.locale)
     && (a.ragged ?? D.ragged) === (b.ragged ?? D.ragged)
     && dimensionsEqual(a.zone ?? D.zone, b.zone ?? D.zone)
-    && (a.compounds ?? D.compounds) === (b.compounds ?? D.compounds);
+    && (a.compounds ?? D.compounds) === (b.compounds ?? D.compounds)
+    && (a.capitalized ?? D.capitalized) === (b.capitalized ?? D.capitalized)
+    // A list that names no valid word is no list.
+    && (normalizeHyphenationExceptions(a.exceptions) ?? []).join('\x00') === (normalizeHyphenationExceptions(b.exceptions) ?? []).join('\x00');
 }
 
 /** Tags of languages set without hyphenation (CJK, right-to-left scripts)
@@ -163,6 +168,7 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
     zone: partial?.zone ?? D.zone,
     compounds: partial?.compounds ?? D.compounds,
   };
+  const exceptions = normalizeHyphenationExceptions(partial?.exceptions);
 }
 
 /** Whether a document in `locale` is written in Arabic script (`ar`,
@@ -170,6 +176,8 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
 function arabicScript(locale: unknown): boolean {
   return localeScript(locale) === 'Arab';
 }
+    ...(exceptions ? { exceptions } : {}),
+    capitalized: partial?.capitalized ?? D.capitalized,
 
 const EMPHASES: readonly EmphasisStyle[] = ['italic', 'bold', 'color', 'overline'];
 const TASHKIL_MODES: readonly TashkilMode[] = ['keep', 'strip', 'strip-vowels'];

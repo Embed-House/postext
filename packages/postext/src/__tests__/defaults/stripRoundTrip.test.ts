@@ -201,7 +201,7 @@ const RICH: PostextConfig = {
   bodyText: {
     fontFamily: 'Literata', fontSize: pt(10.5), lineHeight: pt(15), color: hex('#221144'), textAlign: 'left',
     fontWeight: 500, boldFontWeight: 800, firstLineIndent: pt(14), paragraphSpacing: pt(4),
-    hyphenation: { enabled: false },
+    hyphenation: { enabled: false, exceptions: ['Alice', 'You-Tube'], capitalized: false },
     blockquote: { fontStyle: 'normal', marginLeft: pt(30) },
     verse: { indent: pt(20) },
   },
@@ -264,7 +264,7 @@ const RICH: PostextConfig = {
   index: { columns: 3, separator: ' · ', see: { italic: false } },
   footnotes: { numbering: 'chapter', fontSize: pt(7.5), rule: { enabled: false } },
   crossRefs: { color: hex('#0044aa') },
-  citations: { style: 'apa' },
+  citations: { style: 'apa', hyphenateNames: false },
   math: { enabled: true, fontSize: pt(11) },
   lineNumbers: { enabled: true, every: 5 },
   codeStyle: { fontFamily: 'JetBrains Mono', fontSize: pt(8) },

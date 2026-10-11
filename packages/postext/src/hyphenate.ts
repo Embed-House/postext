@@ -10,8 +10,10 @@ import nl from 'hyphenation.nl';
 import type { HyphenationLocale, LocaleTag } from './types';
 import { hyphenationLocaleFor } from './locale';
 import { joiningScriptIn } from './measure/joining';
+import { normalizeHyphenationExceptions } from './hyphenationExceptions';
 
 export { HYPHENATION_LOCALES, matchHyphenationLocale, hyphenationLocaleFor } from './locale';
+export { normalizeHyphenationExceptions } from './hyphenationExceptions';
 
 /** Catalan words the IEC divides at their prefix rather than by syllable
  *  (*Llibre d'estil*, VI § 2.7): `vos-altres`, not `vo-saltres`. */
@@ -83,14 +85,58 @@ function memoFor(locale: HyphenationLocale): Map<string, string> {
  * using TeX/Liang patterns for the active locale, or for `locale` (any BCP 47
  * tag, see {@link matchHyphenationLocale}) when given — a missing or blank
  * one counts as not given. The dictionary also puts a zero-width space after
- * a slash inside a word (see {@link withoutSlashJoints}).
+ * a slash inside a word (see {@link withoutSlashJoints}). The document's
+ * rules ({@link setHyphenationRules}: words kept whole or divided at named
+ * points, capitalised words, cited names) are applied to the dictionary's
+ * result; {@link hyphenateByDictionary} gives the dictionary's own.
  */
 export function hyphenateText(text: string, locale?: LocaleTag): string {
+  const rules = activeRules;
+  if (!rules) return hyphenateByDictionary(text, locale);
+  const loc = typeof locale === 'string' && locale.trim() !== '' ? hyphenationLocaleFor(locale) : currentLocale;
+  let memo = rules.memo.get(loc);
+  if (!memo) {
+    memo = new Map();
+    rules.memo.set(loc, memo);
+  }
+  return eachToken(text, (word) => {
+    let ruled = memo.get(word);
+    if (ruled === undefined) {
+      ruled = withHyphenationRules(word, hyphenateByDictionary(word, loc), rules);
+      if (memo.size >= WORD_MEMO_SLOTS) memo.clear();
+      memo.set(word, ruled);
+    }
+    return ruled;
+  });
+}
+
+/**
+ * {@link hyphenateText} without the document's rules: every point the
+ * patterns give. A word wider than its whole measure is divided there when
+ * a rule keeps it whole (#699).
+ */
+export function hyphenateByDictionary(text: string, locale?: LocaleTag): string {
   const loc = typeof locale === 'string' && locale.trim() !== '' ? hyphenationLocaleFor(locale) : currentLocale;
   const hyphenator = getHyphenator(loc);
   const memo = memoFor(loc);
-  // Token by token: whitespace never joins a word, so hyphenating the
-  // tokens one at a time gives the text the dictionary would.
+  return eachToken(text, (word) => {
+    let hyphenated = memo.get(word);
+    if (hyphenated === undefined) {
+      // A word of a joining script (an Arabic word quoted in an English
+      // book) is never divided: its letters connect (`measure/joining.ts`).
+      hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : hyphenator.hyphenateText(word);
+      if (loc === 'en-us' && APOSTROPHE_RE.test(word)) hyphenated = withoutApostropheBreaks(word, hyphenated, enUs.leftmin, enUs.rightmin);
+      if (memo.size >= WORD_MEMO_SLOTS) memo.clear();
+      memo.set(word, hyphenated);
+    }
+    return hyphenated;
+  });
+}
+
+/** `text` with each whitespace-delimited token replaced by `divide` of it.
+ *  Token by token: whitespace never joins a word, so hyphenating the tokens
+ *  one at a time gives the text the dictionary would. */
+function eachToken(text: string, divide: (word: string) => string): string {
   let out = '';
   let i = 0;
   const n = text.length;
@@ -101,19 +147,165 @@ export function hyphenateText(text: string, locale?: LocaleTag): string {
       out += text.slice(i, j);
     } else {
       while (j < n && !isSpace(text.charCodeAt(j))) j++;
-      const word = text.slice(i, j);
-      let hyphenated = memo.get(word);
-      if (hyphenated === undefined) {
-        // A word of a joining script (an Arabic word quoted in an English
-        // book) is never divided: its letters connect (`measure/joining.ts`).
-        hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : hyphenator.hyphenateText(word);
-        if (loc === 'en-us' && APOSTROPHE_RE.test(word)) hyphenated = withoutApostropheBreaks(word, hyphenated, enUs.leftmin, enUs.rightmin);
-        if (memo.size >= WORD_MEMO_SLOTS) memo.clear();
-        memo.set(word, hyphenated);
-      }
-      out += hyphenated;
+      out += divide(text.slice(i, j));
     }
     i = j;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// The document's rules (#699)
+// ---------------------------------------------------------------------------
+
+/** What a document asks of its dictionary beyond the patterns
+ *  (`bodyText.hyphenation.exceptions` and `capitalized`,
+ *  `citations.hyphenateNames`). */
+export interface HyphenationRules {
+  /** Words the dictionary never divides (`'Alice'`) or divides only at the
+   *  hyphens of the entry (`'You-Tube'`), as resolved
+   *  (`normalizeHyphenationExceptions`). An entry in lower case matches the
+   *  word in any case; one with an initial capital matches the occurrences
+   *  that start with a capital. */
+  exceptions?: readonly string[];
+  /** `false`: no break inside a word that starts with a capital. */
+  capitalized?: boolean;
+  /** Names never divided where they start with a capital (the authors a
+   *  document cites, `citations.hyphenateNames: false`). Each is read run
+   *  of letters by run of letters. */
+  names?: readonly string[];
+}
+
+interface CompiledRules {
+  id: number;
+  /** Break offsets by lower-cased word, for an entry in lower case. */
+  anyCase: Map<string, readonly number[]>;
+  /** The same for an entry with an initial capital, and the names. */
+  capitalised: Map<string, readonly number[]>;
+  keepCapitalised: boolean;
+  /** The ruled form of each token under these rules, per locale: a book
+   *  whose builds alternate between two sets (with and without the cited
+   *  names) keeps both. `wordMemo` holds the dictionary's own result. */
+  memo: Map<HyphenationLocale, Map<string, string>>;
+}
+
+const NO_POINTS: readonly number[] = [];
+/** A run of letters and combining marks, the middle dot of an `l·l` inside
+ *  it: what an exception matches and what a capital opens. */
+const LETTER_RUN_RE = /(?:[\p{L}\p{M}]|(?<=[lL])·(?=[lL]))+/gu;
+const CAPITAL_START_RE = /^[\p{Lu}\p{Lt}]/u;
+
+/** An entry's word (its hyphens removed) and the offsets of its points. */
+function readException(entry: string): { word: string; points: number[] } {
+  let word = '';
+  const points: number[] = [];
+  for (const ch of entry) {
+    if (ch !== '-') word += ch;
+    else if (word.length > 0 && points[points.length - 1] !== word.length) points.push(word.length);
+  }
+  return { word, points: points.filter((p) => p < word.length) };
+}
+
+function compileRules(rules: HyphenationRules, id: number): CompiledRules {
+  const anyCase = new Map<string, readonly number[]>();
+  const capitalised = new Map<string, readonly number[]>();
+  // Names first: an entry of the list for the same word decides.
+  for (const name of rules.names ?? []) {
+    for (const run of name.normalize('NFC').match(LETTER_RUN_RE) ?? []) {
+      if (CAPITAL_START_RE.test(run)) capitalised.set(run.toLowerCase(), NO_POINTS);
+    }
+  }
+  for (const entry of rules.exceptions ?? []) {
+    const { word, points } = readException(entry);
+    if (word === '') continue;
+    (CAPITAL_START_RE.test(word) ? capitalised : anyCase).set(word.toLowerCase(), points.length > 0 ? points : NO_POINTS);
+  }
+  return { id, anyCase, capitalised, keepCapitalised: rules.capitalized === false, memo: new Map() };
+}
+
+/** Rule sets by their canonical text: equal rules share one id, which the
+ *  measurement cache key carries (`measure/cache.ts`). */
+const internedRules = new Map<string, CompiledRules>();
+let nextRulesId = 1;
+let activeRules: CompiledRules | undefined;
+
+/**
+ * Set the rules {@link hyphenateText} applies to the dictionary's result:
+ * the document's, on every build (`initHyphenator`); a call with none, or
+ * with rules that ask for nothing, clears the ones of the build before. A
+ * host that measures text outside `buildDocument` sets them as it sets the
+ * locale ({@link setHyphenationLocale}).
+ */
+export function setHyphenationRules(rules?: HyphenationRules): void {
+  const exceptions = normalizeHyphenationExceptions(rules?.exceptions);
+  const names = rules?.names && rules.names.length > 0 ? [...new Set(rules.names)].sort() : undefined;
+  const keepCapitalised = rules?.capitalized === false;
+  const next = exceptions || names || keepCapitalised
+    ? internRules({ ...(exceptions ? { exceptions } : {}), ...(names ? { names } : {}), ...(keepCapitalised ? { capitalized: false } : {}) })
+    : undefined;
+  activeRules = next;
+}
+
+function internRules(rules: HyphenationRules): CompiledRules {
+  const key = JSON.stringify([rules.exceptions ?? [], rules.names ?? [], rules.capitalized === false]);
+  let compiled = internedRules.get(key);
+  if (!compiled) {
+    // A host that edits its list word by word interns one set per edit.
+    if (internedRules.size >= 256) internedRules.clear();
+    compiled = compileRules(rules, nextRulesId++);
+    internedRules.set(key, compiled);
+  }
+  return compiled;
+}
+
+/** An id of the active rule set, `''` when no rule is set: lines measured
+ *  under one set of rules are not reused under another. */
+export function getHyphenationRulesKey(): string {
+  return activeRules ? `r${activeRules.id}` : '';
+}
+
+/** The points a rule gives `run` (a run of letters), or undefined when no
+ *  rule names it and the dictionary's stand. */
+function ruledPoints(run: string, rules: CompiledRules): readonly number[] | undefined {
+  const capital = CAPITAL_START_RE.test(run);
+  const key = run.normalize('NFC').toLowerCase();
+  const points = (capital ? rules.capitalised.get(key) : undefined) ?? rules.anyCase.get(key);
+  if (points) return points.length > 0 && key.length !== run.length ? NO_POINTS : points;
+  return capital && rules.keepCapitalised ? NO_POINTS : undefined;
+}
+
+/**
+ * `hyphenated` — the dictionary's division of `word` — under `rules`: in
+ * each run of letters a rule names, the dictionary's points are dropped and
+ * the entry's own, if it has some, put in. A run next to a soft hyphen the
+ * author typed is left alone: that occurrence is already decided.
+ */
+function withHyphenationRules(word: string, hyphenated: string, rules: CompiledRules): string {
+  let edits: Array<{ start: number; end: number; points: readonly number[] }> | undefined;
+  for (const m of word.matchAll(LETTER_RUN_RE)) {
+    const start = m.index;
+    const end = start + m[0].length;
+    if (word[start - 1] === SOFT_HYPHEN || word[end] === SOFT_HYPHEN) continue;
+    const points = ruledPoints(m[0], rules);
+    if (points) (edits ??= []).push({ start, end, points });
+  }
+  if (!edits) return hyphenated;
+  let out = '';
+  let j = 0;
+  let e = 0;
+  for (let i = 0; i < hyphenated.length; i++) {
+    const ch = hyphenated[i]!;
+    while (e < edits.length && edits[e]!.end <= j) e++;
+    const edit = edits[e];
+    const inside = edit !== undefined && j > edit.start && j < edit.end;
+    if (j < word.length && ch === word[j]) {
+      if (inside && edit.points.includes(j - edit.start)) out += SOFT_HYPHEN;
+      out += ch;
+      j++;
+    } else if (!(inside && ch === SOFT_HYPHEN)) {
+      // What the dictionary added outside the run (a point, a slash joint).
+      out += ch;
+    }
   }
   return out;
 }

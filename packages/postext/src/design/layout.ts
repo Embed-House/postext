@@ -29,7 +29,7 @@ import { graphemeCount } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
 import { parseInlineSnippetSpans } from '../parse/inlineSnippet';
 import type { InlineSpan } from '../parse/types';
-import { hyphenateText, withoutEdgeSoftHyphens, withoutSlashJoints } from '../hyphenate';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, withoutEdgeSoftHyphens, withoutSlashJoints } from '../hyphenate';
 import { withLineEndHyphen } from '../measure/geminate';
 import { BREAKING_SPACE_RUNS_SPLIT_RE, NO_BREAK_SPACES, isBreakingSpaceRun } from '../measure/spaces';
 import {
@@ -634,10 +634,13 @@ function breakWordWithHyphenation(
   if (hasJoiningScript(word)) return undefined;
   if (useHyphenation) {
     // Syllables only: the slash joints would ride along into the pieces.
-    // A soft hyphen typed at the word's edge or next to punctuation is no
-    // break (#700).
-    const hy = withoutEdgeSoftHyphens(word, withoutSlashJoints(word, hyphenateText(word)));
-    if (hy.includes(SOFT_HYPHEN)) {
+    // A word the document's rules keep whole is divided at the dictionary's
+    // syllables when no point of its own fits (#699).
+    for (const divide of getHyphenationRulesKey() === '' ? [hyphenateText] : [hyphenateText, hyphenateByDictionary]) {
+      // A soft hyphen typed at the word's edge or next to punctuation is no
+      // break (#700).
+      const hy = withoutEdgeSoftHyphens(word, withoutSlashJoints(word, divide(word)));
+      if (!hy.includes(SOFT_HYPHEN)) continue;
       const parts = hy.split(SOFT_HYPHEN);
       let best: { head: string; tail: string } | undefined;
       for (let i = 1; i < parts.length; i++) {
