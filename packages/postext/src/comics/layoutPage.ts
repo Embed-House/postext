@@ -473,6 +473,16 @@ function drawnTail(b: VDTComicBalloon): [VDTPoint, VDTPoint] | undefined {
   return [{ x: c.x + dx / k, y: c.y + dy / k }, { x: b.tailTip.x, y: b.tailTip.y }];
 }
 
+/** A script's `tail=` as the lettering reads it. `left` and `right` name
+ *  a side of the panel's picture as stored (#727), as `at=` and `to=`
+ *  name points of it: on the page that is the same side of the panel, and
+ *  the other one when the picture is mirrored. A panel with no picture
+ *  reads them as the page's. The other values pass through. */
+function tailSideOnPage(tail: ComicScriptItem['tail'], panel: VDTComicPanel): ComicScriptItem['tail'] {
+  if ((tail === 'left' || tail === 'right') && panel.art?.mirrored) return tail === 'left' ? 'right' : 'left';
+  return tail;
+}
+
 /** What {@link letterPanels} needs. */
 export interface LetterPanelsInput {
   source: ComicPageSource;
@@ -598,7 +608,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
       const own = pickBalloonStyle(comics, it.style?.trim());
       const st = own ?? pickBalloonStyle(comics, it.role === 'speech' ? cast?.balloonStyle : undefined)
         ?? pickBalloonStyle(comics, roleStyleId(it.role)) ?? pickBalloonStyle(comics, 'speech')!;
-      const tail = it.tail;
+      const tail = tailSideOnPage(it.tail, panel);
       return {
         id: `${panel.index}:${k}`,
         order: k,

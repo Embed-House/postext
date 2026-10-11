@@ -35,7 +35,7 @@ export interface ComicScriptLine {
 const SCRIPT_KEYS = new Set(['at', 'to', 'tail', 'join', 'break', 'rotate', 'skew', 'size', 'color', 'font', 'style', 'id', 'vertical', 'horizontal', 'mode']);
 
 const POSITION_KEYWORDS: ReadonlySet<string> = new Set(['top-start', 'top-end', 'bottom-start', 'bottom-end', 'top', 'bottom']);
-const TAIL_VALUES: ReadonlySet<string> = new Set(['none', 'auto', 'top', 'bottom', 'start', 'end']);
+const TAIL_VALUES: ReadonlySet<string> = new Set(['none', 'auto', 'top', 'bottom', 'start', 'end', 'left', 'right']);
 
 /** Whether a line continues the balloon above: two spaces or a tab of
  *  indentation. */

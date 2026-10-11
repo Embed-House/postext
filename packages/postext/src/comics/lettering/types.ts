@@ -29,8 +29,10 @@ export type BalloonTailKind = 'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'
 export type LetteringPosition = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom';
 
 /** A panel side, for an off-panel speaker (`tail=<side>`). `start` / `end`
- *  follow the panel's reading direction. */
-export type PanelSide = 'top' | 'bottom' | 'start' | 'end';
+ *  follow the panel's reading direction; `left` / `right` are sides of the
+ *  page (#727: the layout has already turned a side of a mirrored picture
+ *  over). */
+export type PanelSide = 'top' | 'bottom' | 'start' | 'end' | 'left' | 'right';
 
 /**
  * A balloon style with every length resolved to page px: the resolved
