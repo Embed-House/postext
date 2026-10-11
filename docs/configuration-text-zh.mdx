@@ -1112,13 +1112,19 @@ headings: {
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>在列表结尾手段之后，允许在短栏栏首的图或表（顶部浮动体）下方增加网格行，让其下的文字下移，而不是让该栏短一截结束。在不延续到下一页的页面（一章的末页）上，以及由<code>trailing</code>截平的收尾区段中，从不这样做：那里各栏栏首保持平齐，最后一栏可以短一行结束。图下方的第一个块可能是前一页开始的段落的余下部分：它同样会下移，下移量是分页规则在栏底留出的那一行（段首孤行（widow）规则留空的一行，或者一个段落间距，其后已放不下文字）。设为<code>false</code>可让文字紧贴在图下方。</td>
+      <td>在列表结尾手段之后，允许在短栏栏首的图或表（顶部浮动体）下方增加网格行，让其下的文字下移，而不是让该栏短一截结束。在不延续到下一页的页面（一章的末页）上，以及由<code>trailing</code>截平的收尾区段中，从不这样做：那里各栏栏首保持平齐，最后一栏可以短一行结束。图下方的第一个块可能是前一页开始的段落的余下部分：它同样会下移，下移量是分页规则在栏底留出的那一行（段首孤行（widow）规则留空的一行，或者一个段落间距，其后已放不下文字）。设为<code>false</code>可让文字紧贴在图下方。浮动体跨多栏时，其下各栏要么一起下移，要么都不动，见<code>stretchAfterWideFloats</code>。</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>单个顶部浮动体下方最多增加的网格行数。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>用于跨两个及以上文字栏的图或表之下。取<code>'flush'</code>时，只有该浮动体下方的每个文字栏都加上同样的行数（各栏栏首因此保持平齐），或者所加的行正好补满该栏时，才让一栏下移；会让某一栏栏首下移、而该栏仍然短一截的行不会加上，空余交给放松段落。<code>'always'</code>把这样的栏当作任何浮动体下方的栏来处理，与postext 1.27及之前相同。其他取值都按<code>'flush'</code>处理。自postext 1.28起；此前保存的文档保持<code>'always'</code>（<code>pinLegacyWideFloatStretch</code>）。</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>

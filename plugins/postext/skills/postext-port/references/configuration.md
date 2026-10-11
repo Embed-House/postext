@@ -619,6 +619,7 @@ Defaults:
 ```
 enabled true | maxLinesPerHeading 4 | maxLinesBeforeLoose 2 (≥ 1.28) | stretchAfterLists true | maxLinesAfterList 1
 stretchAfterDisplays true (≥ 1.28) | stretchAfterFloats true | maxLinesAfterFloat 1
+stretchAfterWideFloats 'flush' ('flush' | 'always', ≥ 1.28)
 looseParagraphs true | maxLooseParagraphs 2
 trackParagraphs true | maxTracking 10 (‰ em) | trailing true | beforeSpan true
 closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'off', ≥ 1.25)
@@ -628,7 +629,9 @@ closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'o
 Levers in order: box closing a short column pushed to the foot → extra grid lines above headings
 (favouring lower level numbers; at most `maxLinesBeforeLoose` each at this point, ≥ 1.28) → after list ends → under display formulas and boxes (one line;
 `stretchAfterDisplays: false` skips it, ≥ 1.28, for a paper whose formulas should keep their own
-margins) → under top floats → loose paragraphs
+margins) → under top floats (under a float over several columns, ≥ 1.28, the columns under it move
+down together, or one alone only when the line ends it flush: `stretchAfterWideFloats: 'always'` is
+the 1.27 lever, which could lower one head and still leave its column short) → loose paragraphs
 (TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking)
 → the headings' further lines up to `maxLinesPerHeading`, only when the loose paragraphs have
 nothing left to give (≥ 1.28; up to 1.27 a heading took all its lines first, which opened four

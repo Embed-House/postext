@@ -1112,13 +1112,19 @@ The last column of a page is only balanced when the page flows naturally into th
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Allow extra grid lines under a figure or table that heads the short column (a top float), after the list-end lever, so the text below it moves down instead of the column ending short. Never on a page that does not flow on (a chapter's closing page) nor in a closing band cut level by <code>trailing</code>: there the column heads stay level and the last column may end a line short. The first block under the figure may be the rest of a paragraph begun on the page before: it moves down all the same, by the line the break rules left free at the column's foot (a line the widow rule kept empty, or a paragraph space with no room for text after it). Set it to <code>false</code> to keep the text right under the figure.</td>
+      <td>Allow extra grid lines under a figure or table that heads the short column (a top float), after the list-end lever, so the text below it moves down instead of the column ending short. Never on a page that does not flow on (a chapter's closing page) nor in a closing band cut level by <code>trailing</code>: there the column heads stay level and the last column may end a line short. The first block under the figure may be the rest of a paragraph begun on the page before: it moves down all the same, by the line the break rules left free at the column's foot (a line the widow rule kept empty, or a paragraph space with no room for text after it). Set it to <code>false</code> to keep the text right under the figure. Under a float over several columns the columns move together or not at all, see <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Maximum extra grid lines under a single top float.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Under a figure or table that stands over two or more text columns. With <code>'flush'</code> a column moves down under it only when every text column under the float takes the same lines, so their heads stay level, or when the lines end that column flush; a line that would lower one column's head and still leave it short is not added, and the gap goes on to the loose paragraphs. <code>'always'</code> stretches such a column as under any float, as up to postext 1.27. Any other value reads as <code>'flush'</code>. Since postext 1.28; documents stored earlier keep <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>

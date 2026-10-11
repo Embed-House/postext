@@ -1113,13 +1113,19 @@ A última coluna de uma página só é equilibrada quando a página continua nat
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite linhas extras da grade sob uma figura ou tabela que encabeça a coluna curta (um flutuante no alto), depois do recurso de final de lista, para que o texto abaixo desça em vez de a coluna terminar curta. Nunca numa página que não continua (a página de fechamento de um capítulo) nem numa faixa de fechamento cortada por igual por <code>trailing</code>: ali as cabeças de coluna ficam niveladas e a última coluna pode terminar uma linha mais curta. O primeiro bloco sob a figura pode ser o resto de um parágrafo começado na página anterior: ele desce do mesmo jeito, pela linha que as regras de quebra deixaram livre no pé da coluna (uma linha que a regra de viúvas deixou vazia, ou um espaço de parágrafo sem lugar para texto depois dele). Defina como <code>false</code> para manter o texto logo abaixo da figura.</td>
+      <td>Permite linhas extras da grade sob uma figura ou tabela que encabeça a coluna curta (um flutuante no alto), depois do recurso de final de lista, para que o texto abaixo desça em vez de a coluna terminar curta. Nunca numa página que não continua (a página de fechamento de um capítulo) nem numa faixa de fechamento cortada por igual por <code>trailing</code>: ali as cabeças de coluna ficam niveladas e a última coluna pode terminar uma linha mais curta. O primeiro bloco sob a figura pode ser o resto de um parágrafo começado na página anterior: ele desce do mesmo jeito, pela linha que as regras de quebra deixaram livre no pé da coluna (uma linha que a regra de viúvas deixou vazia, ou um espaço de parágrafo sem lugar para texto depois dele). Defina como <code>false</code> para manter o texto logo abaixo da figura. Sob um flutuante em várias colunas, as colunas descem juntas ou não descem: veja <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Máximo de linhas extras da grade sob um único flutuante no alto.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Sob uma figura ou tabela que ocupa duas ou mais colunas de texto. Com <code>'flush'</code>, uma coluna só desce sob ela quando todas as colunas de texto sob o flutuante recebem as mesmas linhas, de modo que as cabeças continuam niveladas, ou quando as linhas deixam essa coluna rente ao pé; não se soma uma linha que baixaria a cabeça de uma coluna e ainda a deixaria curta, e a lacuna passa aos parágrafos frouxos. <code>'always'</code> estica essa coluna como sob qualquer flutuante, como até o postext 1.27. Qualquer outro valor é lido como <code>'flush'</code>. Desde o postext 1.28; os documentos salvos antes mantêm <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>

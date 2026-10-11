@@ -1112,13 +1112,19 @@ La última columna de una página solo se equilibra cuando la página fluye de f
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permite líneas de rejilla adicionales bajo una figura o tabla que encabeza la columna corta (un flotante superior), tras la palanca de los finales de lista, de modo que el texto de debajo baja en lugar de acabar la columna corta. Nunca en una página que no fluye hacia la siguiente (la página final de un capítulo) ni en una banda de cierre cortada a nivel por <code>trailing</code>: ahí las cabezas de las columnas quedan a la misma altura y la última columna puede terminar una línea más corta. El primer bloque bajo la figura puede ser la continuación de un párrafo empezado en la página anterior: baja igualmente, la línea que las reglas de corte dejaron libre al pie de la columna (una línea que la regla de viudas dejó vacía, o un espacio entre párrafos sin sitio para texto detrás). Con <code>false</code>, el texto queda justo debajo de la figura.</td>
+      <td>Permite líneas de rejilla adicionales bajo una figura o tabla que encabeza la columna corta (un flotante superior), tras la palanca de los finales de lista, de modo que el texto de debajo baja en lugar de acabar la columna corta. Nunca en una página que no fluye hacia la siguiente (la página final de un capítulo) ni en una banda de cierre cortada a nivel por <code>trailing</code>: ahí las cabezas de las columnas quedan a la misma altura y la última columna puede terminar una línea más corta. El primer bloque bajo la figura puede ser la continuación de un párrafo empezado en la página anterior: baja igualmente, la línea que las reglas de corte dejaron libre al pie de la columna (una línea que la regla de viudas dejó vacía, o un espacio entre párrafos sin sitio para texto detrás). Con <code>false</code>, el texto queda justo debajo de la figura. Bajo un flotante a varias columnas, las columnas bajan juntas o no bajan: véase <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Número máximo de líneas de rejilla adicionales bajo un mismo flotante superior.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Bajo una figura o tabla que ocupa dos o más columnas de texto. Con <code>'flush'</code>, una columna solo baja bajo ella cuando todas las columnas de texto que quedan bajo el flotante toman las mismas líneas, de modo que sus cabezas siguen a la misma altura, o cuando las líneas dejan esa columna a ras; no se añade una línea que bajaría la cabeza de una columna y la dejaría corta igualmente, y el hueco pasa a los párrafos corridos. <code>'always'</code> estira esa columna como bajo cualquier flotante, como hasta postext 1.27. Cualquier otro valor se lee como <code>'flush'</code>. Desde postext 1.28; los documentos guardados antes conservan <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>

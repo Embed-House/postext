@@ -1109,13 +1109,19 @@ L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de man
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet línies de retícula addicionals sota una figura o taula que encapçala la columna curta (un flotant superior), després de la palanca dels finals de llista, de manera que el text de sota baixa en lloc d'acabar la columna curta. Mai en una pàgina que no flueix cap a la següent (la pàgina final d'un capítol) ni en una banda de tancament tallada a nivell per <code>trailing</code>: allà els caps de les columnes queden a la mateixa altura i l'última columna pot acabar una línia més curta. El primer bloc sota la figura pot ser la continuació d'un paràgraf començat a la pàgina anterior: baixa igualment, la línia que les regles de tall van deixar lliure al peu de la columna (una línia que la regla de vídues va deixar buida, o un espai entre paràgrafs sense lloc per a text al darrere). Amb <code>false</code>, el text queda just a sota de la figura.</td>
+      <td>Permet línies de retícula addicionals sota una figura o taula que encapçala la columna curta (un flotant superior), després de la palanca dels finals de llista, de manera que el text de sota baixa en lloc d'acabar la columna curta. Mai en una pàgina que no flueix cap a la següent (la pàgina final d'un capítol) ni en una banda de tancament tallada a nivell per <code>trailing</code>: allà els caps de les columnes queden a la mateixa altura i l'última columna pot acabar una línia més curta. El primer bloc sota la figura pot ser la continuació d'un paràgraf començat a la pàgina anterior: baixa igualment, la línia que les regles de tall van deixar lliure al peu de la columna (una línia que la regla de vídues va deixar buida, o un espai entre paràgrafs sense lloc per a text al darrere). Amb <code>false</code>, el text queda just a sota de la figura. Sota un flotant a diverses columnes, les columnes baixen juntes o no baixen: vegeu <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Nombre màxim de línies de retícula addicionals sota un mateix flotant superior.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Sota una figura o taula que ocupa dues o més columnes de text. Amb <code>'flush'</code>, una columna només baixa sota seu quan totes les columnes de text que queden sota el flotant prenen les mateixes línies, de manera que els seus caps continuen a la mateixa altura, o quan les línies deixen aquesta columna a ras; no s'afegeix una línia que baixaria el cap d'una columna i la deixaria curta igualment, i el buit passa als paràgrafs correguts. <code>'always'</code> estira aquesta columna com sota qualsevol flotant, com fins a postext 1.27. Qualsevol altre valor es llegeix com a <code>'flush'</code>. Des de postext 1.28; els documents desats abans conserven <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>
