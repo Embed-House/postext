@@ -161,6 +161,10 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   columnModeRef.current = columnMode;
   sourceRef.current = deferredSource;
   wholeBookRef.current = deferredWholeBook;
+  // Where the book starts (#695): the whole book read as one document
+  // starts there, as its first chapter does on its own.
+  const bookStartRef = useRef(state.bookStart);
+  bookStartRef.current = state.bookStart;
   configRef.current = deferredConfig;
   localeRef.current = state.locale;
   resourcesRef.current = state.resources;
@@ -432,7 +436,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
           metadata: currentSource.metadata,
           resources: resourcesRef.current,
           ...(currentWholeBook
-            ? {}
+            ? (bookStartRef.current ? { continuation: bookStartRef.current } : {})
             : { continuation: currentLayout.continuation, outline: currentLayout.plan.outline, ...(currentLayout.plan.citations ? { citations: currentLayout.plan.citations } : {}) }),
         },
         configOverride,

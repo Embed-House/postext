@@ -97,7 +97,7 @@ export async function applyPreset(
   }
   if (wantsResources) dispatch({ type: 'SET_RESOURCES', payload: loaded.resources });
   const book: BookContent | null = wantsMarkdown
-    ? { chapters: loaded.chapters, activeChapterId: loaded.chapters[0]!.id, ...(loaded.canvasScope ? { canvasScope: loaded.canvasScope } : {}) }
+    ? { chapters: loaded.chapters, activeChapterId: loaded.chapters[0]!.id, ...(loaded.canvasScope ? { canvasScope: loaded.canvasScope } : {}), ...(loaded.start ? { start: loaded.start } : {}) }
     : null;
   if (book) {
     dispatch({ type: 'SET_BOOK', payload: book });

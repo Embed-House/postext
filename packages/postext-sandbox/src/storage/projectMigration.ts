@@ -3,7 +3,7 @@
 // supplied by the caller.
 
 import type { PostextConfig, Resource } from 'postext';
-import { CONFIG_VERSION, migrateConfig as migrateEngineConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats } from 'postext/bundle';
+import { CONFIG_VERSION, migrateConfig as migrateEngineConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats , bundleStart } from 'postext/bundle';
 import { deriveChapterTitle, newChapter } from '../book/chapterOps';
 import type { BookContent, Chapter } from '../book/types';
 import type { ProjectThumbnail } from './projects';
@@ -97,7 +97,9 @@ export function normalizeBookContent(raw: unknown, deps: MigrationDeps): BookCon
     ? raw.activeChapterId
     : chapters[0]!.id;
   const canvasScope = raw.canvasScope === 'book' || raw.canvasScope === 'chapter' ? raw.canvasScope : undefined;
-  return { chapters, activeChapterId, ...(canvasScope ? { canvasScope } : {}) };
+  // Where the book starts (#695), in the shape the engine takes.
+  const start = bundleStart(raw.start);
+  return { chapters, activeChapterId, ...(canvasScope ? { canvasScope } : {}), ...(start ? { start } : {}) };
 }
 
 /** A configuration saved by postext 1.4 or earlier, pinned to the heading

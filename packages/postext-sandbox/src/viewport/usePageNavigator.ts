@@ -26,7 +26,9 @@ export function usePageNavigator(
   const ref = useRef<PageNavigator | null>(null);
   ref.current = (pageIndex, doc) => {
     const local = pageIndex - (doc.pageIndexOffset ?? 0);
-    const stitchedChapter = chapterOfPageRef?.current ? chapterOfPageRef.current(pageIndex) : -1;
+    // The stitched document's own page index: the book's, less the pages
+    // before a book that starts mid-way (#695).
+    const stitchedChapter = chapterOfPageRef?.current ? chapterOfPageRef.current(local) : -1;
     let chapter: number;
     let page: number;
     if (stitchedChapter >= 0 && local >= 0 && local < doc.pages.length) {

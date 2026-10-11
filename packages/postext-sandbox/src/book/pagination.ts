@@ -7,7 +7,7 @@
 
 import { anchorOutline, bookCitationContexts, citationContextKey, citationSourceOf, mayNeedCitations, needsCitationContext, configUsesPlaceholder, contentOutline, continuationAfter, extractFrontmatter, formatNumeral, indexOutline, outlineFromDoc, outlineKey, parseMarkdown, resolveHeadingsConfig, resolvePageConfig, DEFAULT_PARTS_CONFIG, tocOutline } from 'postext';
 import type { CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
-import type { BookPages, BookPlan, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
+import type { BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
 import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
 
 /** The page number `n` resolves to when the chapter's first page is
@@ -104,7 +104,18 @@ interface CountersEntry {
 }
 
 export interface BookPlanner {
-  plan(chapters: readonly Chapter[], config: PostextConfig, resources: Resource[], layouts: Record<string, ChapterLayout>): BookPlan;
+  /** `start`: where the book starts, when it holds part of a longer one
+   *  (#695). Its first chapter then inherits it, and every chapter after
+   *  counts on from it. */
+  plan(chapters: readonly Chapter[], config: PostextConfig, resources: Resource[], layouts: Record<string, ChapterLayout>, start?: BookStart): BookPlan;
+}
+
+/** The key of a first chapter's layout record: `'first'` for a book that
+ *  starts at its beginning (the records stored so far), and everything the
+ *  start says otherwise, since the pages before it, the side it opens on
+ *  and the counters it inherits never shift under it. */
+function firstContinuationKey(start: BookStart | undefined): string {
+  return start ? `first|${JSON.stringify(start)}` : 'first';
 }
 
 function countersKey(c: LayoutContinuation | undefined): string {
@@ -328,13 +339,19 @@ export function createBookPlanner(): BookPlanner {
   };
 
   return {
-    plan(chapters, config, resources, layouts) {
+    plan(chapters, config, resources, layouts, bookStart) {
       const numbering = resolvePageConfig(config.page).pageNumbering;
+      // Where the book starts: the pages before it and the numbering in
+      // effect are the first chapter's alone (the page chain supplies them
+      // from then on); the counters and the open part are what the
+      // counter chain goes on from.
+      const start = bookStart && Object.keys(bookStart).length > 0 ? bookStart : undefined;
+      const { pageIndexOffset: startOffset = 0, pageNumbering: startNumbering, ...startCounters } = start ?? {};
 
       // The counter chain: what each chapter inherits, pure over the text.
       const entries: CountersEntry[] = [];
       {
-        let before: LayoutContinuation | undefined;
+        let before: LayoutContinuation | undefined = Object.keys(startCounters).length > 0 ? startCounters : undefined;
         for (const chapter of chapters) {
           const entry = countersAfter(chapter, config, resources, before);
           entries.push(entry);
@@ -362,13 +379,17 @@ export function createBookPlanner(): BookPlanner {
       // the count of its verse from the text (`continuationAfter`).
       const lineStarts: (number | undefined)[] = [];
       {
-        let pages: PageStart | null = { physical: 0, number: numbering.startAt, format: numbering.format };
+        let pages: PageStart | null = {
+          physical: startOffset,
+          number: startNumbering?.startAt ?? numbering.startAt,
+          format: startNumbering?.format ?? numbering.format,
+        };
         let lines: number | undefined;
         let linesKnown = true;
         let countersFingerprint = '';
         chapters.forEach((chapter, index) => {
           const continuationKey = index === 0
-            ? 'first'
+            ? firstContinuationKey(start)
             : pages
               ? `${countersFingerprint}|${pages.physical % 2}|${pages.format}`
               : `${countersFingerprint}|?`;
@@ -470,8 +491,9 @@ export function createBookPlanner(): BookPlanner {
       const byId: Record<string, ChapterPlan> = {};
       const bookPages: BookPages = {};
       let stalePendingId: string | null = null;
-      // Counters inherited by the chapter being planned (undefined = first).
-      let counters: LayoutContinuation | undefined;
+      // Counters inherited by the chapter being planned (undefined = the
+      // first of a book that starts at its beginning).
+      let counters: LayoutContinuation | undefined = Object.keys(startCounters).length > 0 ? startCounters : undefined;
       // The book's citations (#272): numbered, disambiguated and listed
       // across the chapters, each chapter formatted against its share.
       const captionsCite = resources.some((r) => r.caption?.includes('@') || r.note?.includes('@'));
@@ -497,7 +519,7 @@ export function createBookPlanner(): BookPlanner {
           ? { pageIndexOffset: 1, pageNumbering: { format: numbering.format, startAt: numbering.startAt + 1 } }
           : {};
         const continuation: LayoutContinuation | undefined = first
-          ? total
+          ? (start ? { ...start, ...total } : total)
           : {
             ...counters,
             ...(pages ? { pageIndexOffset: pages.physical, pageNumbering: { format: pages.format, startAt: pages.number } } : provisional),

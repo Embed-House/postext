@@ -4,6 +4,14 @@
 
 import type { CitationContext } from 'postext';
 import type { DocumentMetadata, LayoutContinuation, NumeralStyle, OutlineEntry } from 'postext';
+import type { BundleStart } from 'postext/bundle';
+
+/** Where a book starts when it is part of a longer one (#695): what its
+ *  first chapter is laid out after (the pages before it, the numbering in
+ *  effect, the heading counters, the open part). A bundle carries it as
+ *  `preset.json`'s `start`; the Sandbox keeps it with the book and hands
+ *  it to the planner. No panel edits it: it is data of the book. */
+export type BookStart = BundleStart;
 
 export interface Chapter {
   /** Stable across rename/reorder; unique across projects. Random for a
@@ -34,6 +42,9 @@ export interface BookContent {
    *  Absent means `'chapter'`. Kept with the book: a short novel reads as
    *  one document, a textbook one chapter at a time. */
   canvasScope?: LayoutScope;
+  /** Where the book starts, when it holds part of a longer one (see
+   *  {@link BookStart}). Absent: at page 1, with every counter at zero. */
+  start?: BookStart;
 }
 
 /** Where one chapter's text sits inside the composed document. */
@@ -167,7 +178,9 @@ export interface ChapterPlan {
    *  the first part. */
   part?: ChapterPart;
   /** What the engine inherits. `undefined` for the first chapter (a
-   *  self-contained document); the counters alone while the pages of a
+   *  self-contained document) unless the book says where it starts
+   *  ({@link BookStart}), which is then what its first chapter inherits;
+   *  the counters alone while the pages of a
    *  preceding chapter are still unknown, with one page before it and the
    *  numbering one on when the chapter opens with a heading that breaks to
    *  an even page (`opensOnEvenPage`). When the configuration prints

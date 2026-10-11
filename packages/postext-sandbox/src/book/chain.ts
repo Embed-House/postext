@@ -22,13 +22,14 @@ export async function layOutBookChain(
 ): Promise<VDTDocument[]> {
   const pass = async (bookPageCount: number | undefined): Promise<{ docs: VDTDocument[]; pages: number }> => {
     const docs: VDTDocument[] = [];
-    let offset = 0;
+    // The pages before the book, when it says where it starts (#695).
+    let offset = plans[0]?.index === 0 ? plans[0].continuation?.pageIndexOffset ?? 0 : 0;
     let nextNumbering: { format: NumeralStyle; startAt: number } | null = null;
     const total = bookPageCount !== undefined ? { bookPageCount } : {};
     for (const plan of plans) {
-      // The first chapter inherits nothing but the book's page count. The
-      // page fields of a plan not yet paginated are provisional: the chain
-      // has the real ones.
+      // The first chapter inherits the book's start, if it has one, and
+      // the book's page count. The page fields of a plan not yet paginated
+      // are provisional: the chain has the real ones.
       const { pageNumbering: planNumbering, ...inherited } = plan.continuation ?? {};
       const numbering = nextNumbering ?? (plan.paginated ? planNumbering : undefined);
       const continuation: LayoutContinuation | undefined = plan.index === 0
