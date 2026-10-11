@@ -1289,6 +1289,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     orderedListsNumberWidthTooltip: t("orderedListsNumberWidthTooltip"),
     orderedListsNumberWidthRun: t("orderedListsNumberWidthRun"),
     orderedListsNumberWidthLevel: t("orderedListsNumberWidthLevel"),
+    orderedListsNumberWidthItem: t("orderedListsNumberWidthItem"),
     orderedListsNumberAlign: t("orderedListsNumberAlign"),
     orderedListsNumberAlignTooltip: t("orderedListsNumberAlignTooltip"),
     orderedListsNumberAlignEnd: t("orderedListsNumberAlignEnd"),
