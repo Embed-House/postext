@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-double-spread",
-  "sourceHash": "2b992b1ccc3fe0fd33ff2caac9ac76e645b38468dde0cff3b8fb94af850046bd",
+  "sourceHash": "b7ac5c9a29a47731720ea4f1cb12b50038dc167d2bdbf7590c726603694752a0",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:49:50.734Z",
+  "capturedAt": "2026-10-11T20:22:29.977Z",
   "variants": {
     "en": {
-      "hash8": "ae2a10f4",
+      "hash8": "92241806",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 92,
-        "buildMs": 249,
-        "totalMs": 1067,
+        "importMs": 1164,
+        "fontsMs": 542,
+        "buildMs": 281,
+        "totalMs": 3689,
         "builds": 1
       },
       "specimen": {
@@ -83,12 +83,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873000,
+        "bytes": 872999,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893376
+        "bytes": 893390,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "1480502de5c84057"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -235,6 +241,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -255,13 +264,13 @@
       }
     },
     "es": {
-      "hash8": "d2933a6a",
+      "hash8": "11cd9c4a",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 95,
-        "buildMs": 240,
-        "totalMs": 1067,
+        "importMs": 1227,
+        "fontsMs": 556,
+        "buildMs": 292,
+        "totalMs": 3087,
         "builds": 1
       },
       "specimen": {
@@ -327,12 +336,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873805,
+        "bytes": 873803,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893541
+        "bytes": 893551,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "61bdfa94f994e108"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -479,6 +494,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -499,13 +517,13 @@
       }
     },
     "ca": {
-      "hash8": "7f68169c",
+      "hash8": "e7f59dfe",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 92,
-        "buildMs": 242,
-        "totalMs": 1062,
+        "importMs": 1677,
+        "fontsMs": 450,
+        "buildMs": 279,
+        "totalMs": 3148,
         "builds": 1
       },
       "specimen": {
@@ -571,12 +589,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873473,
+        "bytes": 873471,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893434
+        "bytes": 893447,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e008277bb2991eb3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -723,6 +747,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -743,13 +770,13 @@
       }
     },
     "zh": {
-      "hash8": "d3b90b85",
+      "hash8": "274cb782",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 211,
-        "buildMs": 266,
-        "totalMs": 1213,
+        "importMs": 1730,
+        "fontsMs": 1418,
+        "buildMs": 312,
+        "totalMs": 4895,
         "builds": 1
       },
       "specimen": {
@@ -820,7 +847,13 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893778
+        "bytes": 893787,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "487cd560390dfe0a"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -968,6 +1001,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -988,13 +1024,13 @@
       }
     },
     "ar": {
-      "hash8": "eab092af",
+      "hash8": "9fef934e",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 104,
-        "buildMs": 257,
-        "totalMs": 1064,
+        "importMs": 1425,
+        "fontsMs": 696,
+        "buildMs": 295,
+        "totalMs": 3029,
         "builds": 1
       },
       "specimen": {
@@ -1061,12 +1097,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 885244,
+        "bytes": 885242,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893825
+        "bytes": 893838,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "7fe6ec5721888b03"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1216,6 +1258,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1236,13 +1281,13 @@
       }
     },
     "ja": {
-      "hash8": "89cf27c5",
+      "hash8": "f6331ae9",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 200,
-        "buildMs": 206,
-        "totalMs": 1135,
+        "importMs": 1558,
+        "fontsMs": 1202,
+        "buildMs": 256,
+        "totalMs": 4990,
         "builds": 1
       },
       "specimen": {
@@ -1309,12 +1354,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895741,
+        "bytes": 895739,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893834
+        "bytes": 893844,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f24806279ec07125"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1463,6 +1514,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1483,13 +1537,13 @@
       }
     },
     "pt": {
-      "hash8": "ccae580c",
+      "hash8": "02425927",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 91,
-        "buildMs": 281,
-        "totalMs": 1106,
+        "importMs": 1666,
+        "fontsMs": 684,
+        "buildMs": 332,
+        "totalMs": 3249,
         "builds": 1
       },
       "specimen": {
@@ -1555,12 +1609,18 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 873620,
+        "bytes": 873617,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893506
+        "bytes": 893511,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f9f0d5f901a3a38b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1706,6 +1766,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "section-heads-field-manual",
-  "sourceHash": "50e8c61f208ee5b1d7040f5abb9b03a48e8b1a2f144e313734f36d5beb251531",
+  "sourceHash": "6fa73e8eadb1e691c331f8d3f2eadb20dd2cd8fd3aee5dd1d52fe60d18bfbd0b",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.912Z",
+  "capturedAt": "2026-10-11T20:22:30.810Z",
   "variants": {
     "en": {
-      "hash8": "e6b26fd0",
-      "vdtHash": "bb842014497648d6e62a3f660d19a469c114aeb1",
+      "hash8": "da6e1fd7",
+      "vdtHash": "e49da79aeee8d17e20131d359b6a1a8e69ece565",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 4,
-        "buildMs": 64,
-        "totalMs": 793,
+        "importMs": 728,
+        "fontsMs": 6,
+        "buildMs": 141,
+        "totalMs": 2969,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 132418,
+          "bytes": 132670,
           "alt": "Page 3: 1.8 Lead-off ditches."
         }
       ],
@@ -100,8 +100,14 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31291,
-        "folio": "0260efa6"
+        "bytes": 31293,
+        "folio": "0260efa6",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "7d0e1e3fee313d25"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -322,20 +328,29 @@
         "iterationCount": 2,
         "looseLines": {
           "count": 2,
-          "share": 0.0196,
+          "share": 0.0194,
           "worst": 1.78
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "a8108c5e",
+      "hash8": "cc390015",
       "vdtHash": "e435c4dc3a3581b9691ecb4da3ca88efd1e9587b",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 3,
-        "buildMs": 53,
-        "totalMs": 787,
+        "importMs": 1036,
+        "fontsMs": 6,
+        "buildMs": 126,
+        "totalMs": 1881,
         "builds": 1
       },
       "specimen": {
@@ -420,7 +435,13 @@
       "sandbox": {
         "file": "section-heads-field-manual.postext",
         "bytes": 31491,
-        "folio": "0260efa6"
+        "folio": "0260efa6",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "d98ce7f930ab1f15"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -643,6 +664,9 @@
           "count": 2,
           "share": 0.0172,
           "worst": 1.46
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pepper-and-carrot-page",
-  "sourceHash": "07c9aa08831cc93e20ba512e605878e46c15524a6ec8aca691f4f0d0fd872404",
+  "sourceHash": "eb2f82f2a949610e937a642eb7dffee76ea1fa26c693d7d4431f7b0977b321b1",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.290Z",
+  "capturedAt": "2026-10-11T20:22:30.647Z",
   "variants": {
     "en": {
-      "hash8": "1397e843",
+      "hash8": "1b493001",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 168,
-        "buildMs": 146,
-        "totalMs": 1044,
+        "importMs": 1537,
+        "fontsMs": 877,
+        "buildMs": 188,
+        "totalMs": 4639,
         "builds": 1
       },
       "specimen": {
@@ -99,12 +99,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 687854,
+        "bytes": 687850,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675753
+        "bytes": 675751,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "12bfca5857993efa"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -276,17 +282,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "b0c68dff",
+      "hash8": "1ff4c965",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 164,
-        "buildMs": 153,
-        "totalMs": 1053,
+        "importMs": 1254,
+        "fontsMs": 917,
+        "buildMs": 210,
+        "totalMs": 3907,
         "builds": 1
       },
       "specimen": {
@@ -368,12 +377,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689889,
+        "bytes": 689887,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675998
+        "bytes": 675996,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "af58ace61e416e3c"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -545,17 +560,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ca": {
-      "hash8": "97252bec",
+      "hash8": "7957eebd",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 160,
-        "buildMs": 154,
-        "totalMs": 1050,
+        "importMs": 1017,
+        "fontsMs": 1371,
+        "buildMs": 191,
+        "totalMs": 4028,
         "builds": 1
       },
       "specimen": {
@@ -637,12 +655,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688153,
+        "bytes": 688151,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675877
+        "bytes": 675874,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "3f97818c082209ca"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -814,17 +838,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "zh": {
-      "hash8": "692a1813",
+      "hash8": "4bd1a9d8",
       "vdtHash": "8b40fa0916623ac081d84978d36feb6c069d0414",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 362,
-        "buildMs": 142,
-        "totalMs": 1240,
+        "importMs": 1085,
+        "fontsMs": 1610,
+        "buildMs": 177,
+        "totalMs": 4568,
         "builds": 1
       },
       "specimen": {
@@ -906,12 +933,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 743172,
+        "bytes": 743375,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676137
+        "bytes": 676135,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "04c2f35e18133680"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1084,17 +1117,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ar": {
-      "hash8": "b8cd8b16",
-      "vdtHash": "a4ca6da349dc5fbfdffab04252ec4b91e132b04c",
+      "hash8": "4945c313",
+      "vdtHash": "1b785ccdf3009d9a11a68bd1448b1a5d210bc58c",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 127,
-        "buildMs": 143,
-        "totalMs": 970,
+        "importMs": 1286,
+        "fontsMs": 710,
+        "buildMs": 176,
+        "totalMs": 3212,
         "builds": 1
       },
       "specimen": {
@@ -1126,7 +1162,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 29088,
+          "bytes": 29040,
           "alt": "صفحة الافتتاح ١: حلقة ٨ : حفلةُ عيدِ ميلادِ فُلفُل."
         },
         {
@@ -1177,12 +1213,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 692883,
+        "bytes": 692886,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676762
+        "bytes": 676759,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "8f57d1f0359085d2"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1357,17 +1399,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "44d8eb8b",
+      "hash8": "dd24f2ba",
       "vdtHash": "d96a7805773f5919b05691d4d1559da70cc6a370",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 417,
-        "buildMs": 154,
-        "totalMs": 1314,
+        "importMs": 1217,
+        "fontsMs": 2076,
+        "buildMs": 206,
+        "totalMs": 4402,
         "builds": 1
       },
       "specimen": {
@@ -1399,7 +1450,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 35116,
+          "bytes": 35064,
           "alt": "章扉、1ページ：エピソード 8: ペッパーの誕生パーティー。"
         },
         {
@@ -1450,12 +1501,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 725141,
+        "bytes": 725140,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676819
+        "bytes": 676817,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "5ea37d2632410866"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1629,17 +1686,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "pt": {
-      "hash8": "1eb48212",
+      "hash8": "ee629e01",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 157,
-        "buildMs": 146,
-        "totalMs": 1034,
+        "importMs": 694,
+        "fontsMs": 464,
+        "buildMs": 189,
+        "totalMs": 2272,
         "builds": 1
       },
       "specimen": {
@@ -1721,12 +1781,18 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689244,
+        "bytes": 689242,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675984
+        "bytes": 675982,
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "a3016b7120189889"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1897,6 +1963,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

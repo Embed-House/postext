@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "justification-lab",
-  "sourceHash": "9f820c89168a182ab12f5acea03a37a40434192e214105b09182c4d22fb5e98a",
+  "sourceHash": "d90087551afb6ba8baf7dc89c59572b43132992179492b889483e9bb57cf48a4",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.565Z",
+  "capturedAt": "2026-10-11T20:22:30.306Z",
   "variants": {
     "en": {
-      "hash8": "ac3034c3",
-      "vdtHash": "b1b0668e1cb9db8d4a584e23f57f59744eeef0a7",
+      "hash8": "106af00e",
+      "vdtHash": "86cfc166e9e8f9660f2c2d7da71ff06dd39238ba",
       "timings": {
-        "importMs": 131,
+        "importMs": 883,
         "fontsMs": 2,
-        "buildMs": 69,
-        "totalMs": 871,
+        "buildMs": 75,
+        "totalMs": 2146,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 115352,
+          "bytes": 115948,
           "alt": "Opening page 1: The river problem."
         },
         {
@@ -100,8 +100,18 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 34596,
-        "folio": "aab16fb5"
+        "bytes": 34594,
+        "folio": "aab16fb5",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "99efc768f93ccab2"
+          }
+        ],
+        "warnings": [
+          "raggedLine Unhyphenated justification in a",
+          "raggedLine narrow measure hands every"
+        ]
       },
       "detected": {
         "apis": [
@@ -313,23 +323,41 @@
           "share": 0.0261,
           "worst": 2.02
         },
+        "raggedLines": {
+          "count": 2
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C24",
             "severity": "warn",
             "detail": "3 of 115 justified lines (2.6 %) stretch past 1.6× (worst 2.02×); loosest: p. 3 2.02× “too, and the slack is shared out in”, p. 3 1.8× “shortfall to the few word spaces on”, p. 3 1.71× “the line. With hyphenation the line”"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Two numbers fence the glue in: a space may shrin…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "aed74ca4",
-      "vdtHash": "1bd68fd4223c8c7a66961fbce9de0ec57fa92eec",
+      "hash8": "4e1f5e12",
+      "vdtHash": "b6fa89103ba58230a9e7d49ac56c99d00cd8a5a0",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 1,
-        "buildMs": 121,
-        "totalMs": 912,
+        "importMs": 515,
+        "fontsMs": 3,
+        "buildMs": 193,
+        "totalMs": 2445,
         "builds": 2
       },
       "specimen": {
@@ -385,7 +413,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 133474,
+          "bytes": 134174,
           "alt": "Página 3: Lo que el ojo perdona."
         }
       ],
@@ -413,8 +441,17 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 35288,
-        "folio": "aab16fb5"
+        "bytes": 35293,
+        "folio": "aab16fb5",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "8b36019c102796d2"
+          }
+        ],
+        "warnings": [
+          "raggedLine Partirlas permite cortar también"
+        ]
       },
       "detected": {
         "apis": [
@@ -626,7 +663,31 @@
           "share": 0.0172,
           "worst": 2.3000000000000003
         },
-        "findings": []
+        "raggedLines": {
+          "count": 1
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C34",
+            "severity": "info",
+            "detail": "capture.expect.raggedLines accepts 2, and the edition has 1"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La separación silábica le da al algoritmo más pu…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

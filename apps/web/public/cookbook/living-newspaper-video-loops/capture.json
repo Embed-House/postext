@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "living-newspaper-video-loops",
-  "sourceHash": "5c071aea7e5d5decd9856722d62f72cdc9d8aa49ffe73bbd708dc0f49d6dc812",
+  "sourceHash": "046afd023b1345985693226d955c37137a45a1639aeeb6b635b3c6315bc0a122",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.787Z",
+  "capturedAt": "2026-10-11T20:22:30.353Z",
   "variants": {
     "en": {
-      "hash8": "c2508b1c",
-      "vdtHash": "c39cccc09bc92ed08e28efa59b2a634b15b69935",
+      "hash8": "1a7a51a7",
+      "vdtHash": "0aa32c7c09fa687cd36cd59d0f36ba18f7d203e6",
       "timings": {
-        "importMs": 148,
-        "fontsMs": 22,
-        "buildMs": 358,
-        "totalMs": 2701,
+        "importMs": 744,
+        "fontsMs": 116,
+        "buildMs": 449,
+        "totalMs": 3825,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1536,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 176924,
+          "bytes": 200306,
           "alt": "Opening page 1: The Wexcombe Lantern. Mrs Edith Rowe speaks from the platform at the foot of Quay Hill before cutting the ribbon. · Miss Constance Lacey waves from the cockpit on Wexcombe Common."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1536,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 261570,
+          "bytes": 269078,
           "alt": "Opening page 2: Town & Harbour. High water at Wexcombe Quay · Twelve o’clock on the Guildhall tower, for the first time since 1924. · Skipper Jacob Hosking and the 82-pound cod on the quay."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1536,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 242448,
+          "bytes": 266354,
           "alt": "Opening page 3: Stage & Screen. This week at the picture houses · The Regional programme · Miss Rosalind Avery as Hester Lane, on the garden steps in Act III."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1536,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 264016,
+          "bytes": 270542,
           "alt": "Opening page 4: Sport. This week’s fixtures · Wexcombe v. St Austell · Fifty miles: the first five · Tom Rundle at Gannet Park, before the penalty he saved."
         }
       ],
@@ -116,8 +116,14 @@
       },
       "sandbox": {
         "file": "living-newspaper-video-loops.postext",
-        "bytes": 295057,
-        "folio": "0b15553b"
+        "bytes": 297035,
+        "folio": "0b15553b",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "86e34a81a8f4d863"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -252,6 +258,7 @@
           "layout.columnRule.lineWidth",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -313,13 +320,14 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "videoStyle"
         ],
-        "configLeaves": 439,
+        "configLeaves": 440,
         "designElements": 16,
         "directives": [
           ":::callout",
@@ -403,11 +411,19 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 5,
+        "iterationCount": 6,
         "looseLines": {
-          "count": 16,
-          "share": 0.0312,
-          "worst": 2.3000000000000003
+          "count": 9,
+          "share": 0.0159,
+          "worst": 1.93
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
         },
         "findings": [
           {
@@ -418,12 +434,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.12 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 1.19 MB (warning at 0.9 MB for 4 pages)"
           },
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "16 of 513 justified lines (3.1 %) stretch past 1.6× (worst 2.3000000000000003×); loosest: p. 2 2.3000000000000003× “The Petrel was towed into harbour”, p. 1 2.27× “good drying weather. Bathers are re-”, p. 2 1.8900000000000001× “net Point with three men aboard, and”"
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The fish was sold to Messrs Kitto of the Strand …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
@@ -454,11 +475,6 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "keeper: video file keeper-loop.mp4 left out (it plays from video.url)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

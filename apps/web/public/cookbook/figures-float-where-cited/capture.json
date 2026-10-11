@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "figures-float-where-cited",
-  "sourceHash": "67b3a77283bd0f60b8c791a95b646c6a6da629faf53b93341b1435b08345d797",
+  "sourceHash": "89ca83527b9385e12f0aaefaabd53b7130d79ddcad9ed0258edec917cea1afe3",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:19.276Z",
+  "capturedAt": "2026-10-11T20:22:30.152Z",
   "variants": {
     "en": {
-      "hash8": "9c161a9f",
+      "hash8": "af73fe79",
       "vdtHash": "08ca59610cbec5bcb94bf491bc1c3fdb643f5207",
       "timings": {
-        "importMs": 136,
-        "fontsMs": 125,
-        "buildMs": 292,
-        "totalMs": 1131,
+        "importMs": 1162,
+        "fontsMs": 368,
+        "buildMs": 408,
+        "totalMs": 3363,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Montserrat"
         ],
         "pages": 4,
-        "ownLines": 228
+        "ownLines": 224
       },
       "pages": [
         {
@@ -72,7 +72,7 @@
           "h": 1250,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174230,
+          "bytes": 174240,
           "alt": "Page 29: 2.3 The tools of the ice. Figure 2.6. Roche moutonnée. The ice polished the gentle face and plucked the steep one. · Figure 2.4. Abrasion: stones held in the base of the ice scratch the bed. · Figure 2.5. Plucking: water freezes in the joints and the ice carries block…"
         },
         {
@@ -115,8 +115,14 @@
       },
       "sandbox": {
         "file": "figures-float-where-cited.postext",
-        "bytes": 1463354,
-        "folio": "3d25f7bf"
+        "bytes": 1463331,
+        "folio": "3d25f7bf",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "c05b7591ae13c1fd"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -181,8 +187,6 @@
           "header.elements[].textTransform",
           "header.elements[].thickness",
           "headings",
-          "headings.balancing",
-          "headings.balancing.maxLinesPerHeading",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -237,7 +241,7 @@
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 247,
+        "configLeaves": 246,
         "designElements": 12,
         "directives": [
           "::resource",
@@ -295,7 +299,6 @@
           }
         ],
         "features": [
-          "column-balancing",
           "figure-citations",
           "heading-attributes",
           "heading-numbering",
@@ -316,6 +319,9 @@
           "share": 0,
           "worst": 1.98
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -326,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "2cb665f6",
-      "vdtHash": "bc5ab5fc99c5c9b16276829c453ff4e984a0ab11",
+      "hash8": "e45ef261",
+      "vdtHash": "5fd084613038889d2716b192c6cbbf8aae18a49e",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 126,
-        "buildMs": 231,
-        "totalMs": 1056,
+        "importMs": 1490,
+        "fontsMs": 259,
+        "buildMs": 318,
+        "totalMs": 3406,
         "builds": 1
       },
       "specimen": {
@@ -355,7 +361,7 @@
           "Montserrat"
         ],
         "pages": 4,
-        "ownLines": 228
+        "ownLines": 224
       },
       "pages": [
         {
@@ -388,7 +394,7 @@
           "h": 1250,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174318,
+          "bytes": 175790,
           "alt": "Página 29: 2.3 Las herramientas del hielo. Figura 2.6. Roca aborregada. El hielo pulió la cara tendida y arrancó bloques de la abrupta. · Figura 2.4. Abrasión: los cantos presos en la base del hielo rayan el lecho. · Figura 2.5. Arranque: el agua se hiela en las diaclasas y el…"
         },
         {
@@ -431,8 +437,14 @@
       },
       "sandbox": {
         "file": "figures-float-where-cited.postext",
-        "bytes": 1463392,
-        "folio": "3d25f7bf"
+        "bytes": 1463365,
+        "folio": "3d25f7bf",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "bdc6a3f673fc3fbe"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -497,8 +509,6 @@
           "header.elements[].textTransform",
           "header.elements[].thickness",
           "headings",
-          "headings.balancing",
-          "headings.balancing.maxLinesPerHeading",
           "headings.color",
           "headings.fontFamily",
           "headings.fontWeight",
@@ -553,7 +563,7 @@
           "paragraphStyles",
           "unorderedLists"
         ],
-        "configLeaves": 247,
+        "configLeaves": 246,
         "designElements": 12,
         "directives": [
           "::resource",
@@ -611,7 +621,6 @@
           }
         ],
         "features": [
-          "column-balancing",
           "figure-citations",
           "heading-attributes",
           "heading-numbering",
@@ -632,7 +641,15 @@
           "share": 0,
           "worst": 1.98
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

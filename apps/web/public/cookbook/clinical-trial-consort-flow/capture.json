@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "clinical-trial-consort-flow",
-  "sourceHash": "b3cb0cd6f5bc44cb0b60a4cc9544d2c31e3dc686c06111c49d7b6204de01866a",
+  "sourceHash": "bf9ffe4aa0c0b56383130f22b39287da1ba9cef8efe97bf914def53bb39d0f06",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:49:50.728Z",
+  "capturedAt": "2026-10-11T20:22:29.968Z",
   "variants": {
     "en": {
-      "hash8": "66bf0271",
+      "hash8": "61a7bd60",
       "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 244,
-        "fontsMs": 118,
-        "buildMs": 472,
-        "totalMs": 1413,
+        "importMs": 1177,
+        "fontsMs": 602,
+        "buildMs": 579,
+        "totalMs": 3192,
         "builds": 1
       },
       "specimen": {
@@ -130,13 +130,19 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 238861,
+        "bytes": 238859,
         "pages": 8
       },
       "sandbox": {
         "file": "clinical-trial-consort-flow.postext",
-        "bytes": 121990,
-        "folio": "a7ebcb67"
+        "bytes": 121988,
+        "folio": "a7ebcb67",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "dafa69daffbf2394"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -480,11 +486,24 @@
           "share": 0.003,
           "worst": 2.15
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Results Participants were on average 22.2 years …”"
           }
         ]
       }

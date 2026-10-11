@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "jukugo-furigana-textbook",
-  "sourceHash": "c2f61ec3894126acc578c1d1141cdbb4ad6ee0325f8a32066769086040f66d95",
+  "sourceHash": "6a79c55d491660dde0ce771884dd02b06905588ca4a1309d485901d5e0eb521c",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:46.781Z",
+  "capturedAt": "2026-10-11T20:22:30.301Z",
   "variants": {
     "en": {
-      "hash8": "5d01032e",
-      "vdtHash": "46b3aa633741641ce902faf136384cec338f1712",
+      "hash8": "0f1adaeb",
+      "vdtHash": "6e5e8dd18321bc7f21cc4b6bcaf3aaca338a7d18",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 187,
-        "buildMs": 64,
-        "totalMs": 997,
+        "importMs": 928,
+        "fontsMs": 521,
+        "buildMs": 98,
+        "totalMs": 2139,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 83962,
+          "bytes": 88830,
           "alt": "Page 25."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63146,
+          "bytes": 58372,
           "alt": "Page 26."
         }
       ],
@@ -99,13 +99,19 @@
       },
       "pdf": {
         "file": "jukugo-furigana-textbook.pdf",
-        "bytes": 129767,
+        "bytes": 129778,
         "pages": 3
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22217,
-        "folio": "2b1033e5"
+        "bytes": 22820,
+        "folio": "2b1033e5",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "227c422a808505d8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -299,7 +305,15 @@
           "share": 0,
           "worst": 0.05
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -309,13 +323,13 @@
       }
     },
     "es": {
-      "hash8": "c935ac48",
-      "vdtHash": "269d61745a8190a6b011f56a5856133565442470",
+      "hash8": "11602c5f",
+      "vdtHash": "d3004bd578b580c86a76da9efb73bb7bbab62326",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 186,
-        "buildMs": 56,
-        "totalMs": 990,
+        "importMs": 1252,
+        "fontsMs": 683,
+        "buildMs": 71,
+        "totalMs": 2563,
         "builds": 1
       },
       "specimen": {
@@ -358,7 +372,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 83962,
+          "bytes": 88830,
           "alt": "Página 25."
         },
         {
@@ -369,7 +383,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 64538,
+          "bytes": 59120,
           "alt": "Página 26."
         }
       ],
@@ -397,13 +411,19 @@
       },
       "pdf": {
         "file": "jukugo-furigana-textbook.pdf",
-        "bytes": 129941,
+        "bytes": 129948,
         "pages": 3
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22249,
-        "folio": "2b1033e5"
+        "bytes": 22852,
+        "folio": "2b1033e5",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "fc86c3cf241c18cf"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -597,7 +617,15 @@
           "share": 0,
           "worst": 0.05
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

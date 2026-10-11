@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "web-worker-live-editor",
-  "sourceHash": "1bee20042cfa3cf0eebe3476dd27453a6d3b6fb1bc89ff6972bd5d924fc66fe2",
+  "sourceHash": "94737b4fe0ec0f83b94c96aa6d83f40bfd320d5cc08096182e16cd59a206ecac",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.604Z",
+  "capturedAt": "2026-10-11T20:22:31.129Z",
   "variants": {
     "en": {
-      "hash8": "21bfa9ae",
+      "hash8": "bb66ec5b",
       "vdtHash": "f28c72ad1821926ff80cada74187bed204248786",
       "timings": {
-        "importMs": 969,
-        "fontsMs": 296,
-        "buildMs": 84,
-        "totalMs": 1906,
+        "importMs": 1788,
+        "fontsMs": 1573,
+        "buildMs": 139,
+        "totalMs": 4095,
         "builds": 1
       },
       "specimen": {
@@ -125,8 +125,14 @@
       },
       "sandbox": {
         "file": "web-worker-live-editor.postext",
-        "bytes": 218728,
-        "folio": "ddaa1eeb"
+        "bytes": 218746,
+        "folio": "ddaa1eeb",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "089c4ca98e18c9b9"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -200,6 +206,7 @@
           "headings.levels[].numberingTemplate",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -228,10 +235,11 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 228,
+        "configLeaves": 229,
         "designElements": 14,
         "directives": [
           ":::space",
@@ -291,6 +299,14 @@
           "share": 0.0076,
           "worst": 2.09
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C3",
@@ -298,9 +314,9 @@
             "detail": "a worker recipe: captured without request interception (hosts checked, network not cached)"
           },
           {
-            "check": "sandbox",
+            "check": "C35",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ ““The experiment!” cried Filby, who was getting b…”"
           }
         ]
       }

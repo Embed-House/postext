@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "74d81c0189b4116004a51d31ffc76f5d052c42c1c741c7c07de10e7c712b37cf",
+  "sourceHash": "2f8d294c528545c542b5ccbf89b93f0753581fec4494421e298f379dcb7abf26",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.506Z",
+  "capturedAt": "2026-10-11T20:22:29.767Z",
   "variants": {
     "en": {
-      "hash8": "3d78c0ef",
+      "hash8": "2d852695",
       "vdtHash": "e34bb0c4f98af58e2a09050a71580f54f4aa2825",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 4,
-        "buildMs": 87,
-        "totalMs": 829,
+        "importMs": 912,
+        "fontsMs": 5,
+        "buildMs": 179,
+        "totalMs": 2019,
         "builds": 1
       },
       "specimen": {
@@ -100,8 +100,14 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43202,
-        "folio": "e8c31713"
+        "bytes": 43219,
+        "folio": "e8c31713",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "63fd7d45248761f5"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -297,23 +303,36 @@
           "share": 0,
           "worst": 1.8800000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The ruling fixed the lines as well as the frame.…”"
+          },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "054cb6f9",
+      "hash8": "636c57cf",
       "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 3,
-        "buildMs": 54,
-        "totalMs": 791,
+        "importMs": 1343,
+        "fontsMs": 5,
+        "buildMs": 101,
+        "totalMs": 2458,
         "builds": 1
       },
       "specimen": {
@@ -397,8 +416,14 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 44049,
-        "folio": "e8c31713"
+        "bytes": 44067,
+        "folio": "e8c31713",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "c69cb87c7102b906"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -594,23 +619,26 @@
           "share": 0,
           "worst": 1.83
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "0f2ad6d1",
+      "hash8": "2e4570a4",
       "vdtHash": "f1a0564255a404acb4b0129639aefa3c0cc930c6",
       "timings": {
-        "importMs": 136,
+        "importMs": 854,
         "fontsMs": 3,
-        "buildMs": 53,
-        "totalMs": 794,
+        "buildMs": 99,
+        "totalMs": 2785,
         "builds": 1
       },
       "specimen": {
@@ -694,8 +722,14 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42978,
-        "folio": "e8c31713"
+        "bytes": 42994,
+        "folio": "e8c31713",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "c509bd0d04841261"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -891,11 +925,14 @@
           "share": 0,
           "worst": 1.77
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 8 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

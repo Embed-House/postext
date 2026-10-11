@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "6ee033bd6190ba2a5098b8407b622a361f8fabff192d8e405ae0f8a3db0d3cc8",
+  "sourceHash": "d544220ce65795046dad3833775ea80ebfe4a99b112449d5da92770d9b7619f1",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.649Z",
+  "capturedAt": "2026-10-11T20:22:29.862Z",
   "variants": {
     "en": {
-      "hash8": "6c72cb91",
+      "hash8": "76e2a72b",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 67,
-        "buildMs": 856,
-        "totalMs": 1688,
+        "importMs": 1480,
+        "fontsMs": 178,
+        "buildMs": 1118,
+        "totalMs": 5039,
         "builds": 1
       },
       "specimen": {
@@ -172,8 +172,14 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492632,
-        "folio": "8e6f438d"
+        "bytes": 1492631,
+        "folio": "8e6f438d",
+        "chapters": [
+          {
+            "pages": 32,
+            "hash": "1c1bb2de9cf88892"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -366,23 +372,36 @@
           "share": 0.0018,
           "worst": 1.94
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           }
         ]
       }
     },
     "es": {
-      "hash8": "cd299b9a",
+      "hash8": "cb0ab760",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 66,
-        "buildMs": 885,
-        "totalMs": 1726,
+        "importMs": 1580,
+        "fontsMs": 109,
+        "buildMs": 1087,
+        "totalMs": 3845,
         "builds": 1
       },
       "specimen": {
@@ -537,8 +556,14 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492646,
-        "folio": "8e6f438d"
+        "bytes": 1492645,
+        "folio": "8e6f438d",
+        "chapters": [
+          {
+            "pages": 32,
+            "hash": "1c1bb2de9cf88892"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -731,11 +756,24 @@
           "share": 0.0018,
           "worst": 1.94
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           }
         ]
       }

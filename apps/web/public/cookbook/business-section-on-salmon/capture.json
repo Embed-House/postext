@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "business-section-on-salmon",
-  "sourceHash": "b47726d857be43923a4a8b41a9f907b115e3258a2a196ea446c42ad45c5db4c4",
+  "sourceHash": "4db0940742f5a64e34788014aa7bf248927e194e2b53fa9dbcc20491ff008d29",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.642Z",
+  "capturedAt": "2026-10-11T20:22:29.855Z",
   "variants": {
     "en": {
-      "hash8": "fb4386e2",
-      "vdtHash": "3ca28e58f9c65df967c5dfaf1651338bd9ed3824",
+      "hash8": "505ba172",
+      "vdtHash": "f92345b194a26c7c38993dd5541eb79acae1b984",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 49,
-        "buildMs": 509,
-        "totalMs": 1278,
+        "importMs": 816,
+        "fontsMs": 125,
+        "buildMs": 587,
+        "totalMs": 2961,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "Source Serif 4"
         ],
         "pages": 8,
-        "ownLines": 243
+        "ownLines": 242
       },
       "pages": [
         {
@@ -51,7 +51,7 @@
           "h": 1492,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 180560,
+          "bytes": 195040,
           "alt": "Opening page 1: The Marrowick Ledger. The Marrow Barrier at 9.30pm on Monday, its gates closed against the surge. The river behind them rose by 30 centimetres."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1492,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155450,
+          "bytes": 155728,
           "alt": "Opening page 3: Region. Where the money goes · Weather · Tides at Kingsquay · The Holm Maid leaves Skerra pier on her first crossing since May."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1492,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 201574,
+          "bytes": 201566,
           "alt": "Opening page 4: Opinion. Holding the line, by Kit Carrow."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1492,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 111148,
+          "bytes": 111024,
           "alt": "Opening page 6: Markets. The MX 40 over the past year, daily closes. · Sectors on the Marrowick Exchange, change on the day. · Indices · Currencies · Commodities · Most traded."
         },
         {
@@ -153,8 +153,14 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218561,
-        "folio": "77d83e3b"
+        "bytes": 1218667,
+        "folio": "77d83e3b",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "5b1b2b67108a6965"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -477,20 +483,38 @@
         "converged": true,
         "iterationCount": 6,
         "looseLines": {
-          "count": 16,
-          "share": 0.0307,
+          "count": 15,
+          "share": 0.0278,
           "worst": 2.98
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.31 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
           },
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "16 of 522 justified lines (3.1 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 1 2.86× “council had expected, and the”, p. 7 2.71× “The company estimated”"
+            "detail": "15 of 539 justified lines (2.8 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 7 2.71× “The company estimated”, p. 3 2.65× “terday, raises on-street parking”"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 7 −5‰ “Flour costs, which rose by almost half in 2023, …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "trade-paperback-novel",
-  "sourceHash": "b7eaa8e1a23cd415d74af56595280c7c47b1a02a330c93c38e83b65b5c3fdbfc",
+  "sourceHash": "a5c593d7a79700e808c2fdbe9387a4b5bace2c870e46d0ed4286ce7ec21168bc",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.584Z",
+  "capturedAt": "2026-10-11T20:22:30.999Z",
   "variants": {
     "en": {
-      "hash8": "466b9586",
+      "hash8": "8583ad06",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 129,
+        "importMs": 219,
         "fontsMs": 32,
-        "buildMs": 42,
-        "totalMs": 792,
+        "buildMs": 62,
+        "totalMs": 962,
         "builds": 1
       },
       "specimen": {
@@ -166,8 +166,14 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 374182,
-        "folio": "846eba29"
+        "bytes": 374181,
+        "folio": "846eba29",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "38f1a7d906c6deb1"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -346,6 +352,9 @@
           "share": 0.0087,
           "worst": 2.15
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -356,13 +365,13 @@
       }
     },
     "pt": {
-      "hash8": "052998fb",
+      "hash8": "b5205571",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 30,
-        "buildMs": 171,
-        "totalMs": 915,
+        "importMs": 184,
+        "fontsMs": 31,
+        "buildMs": 206,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -512,8 +521,14 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 372833,
-        "folio": "846eba29"
+        "bytes": 372831,
+        "folio": "846eba29",
+        "chapters": [
+          {
+            "pages": 8,
+            "hash": "b80543be64c3d3e2"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -686,6 +701,9 @@
           "count": 1,
           "share": 0.0179,
           "worst": 2.23
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

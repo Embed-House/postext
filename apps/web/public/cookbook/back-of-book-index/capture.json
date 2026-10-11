@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "back-of-book-index",
-  "sourceHash": "cdac974b520df2ae1088e9b4f716f02cef2e1bff97c449094264783c004e87ed",
+  "sourceHash": "6f0d9e12686b2421f9b5de34a5ce122926126190abbfe7e1b3d9c2c8e22c3ada",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.495Z",
+  "capturedAt": "2026-10-11T20:22:29.709Z",
   "variants": {
     "en": {
-      "hash8": "8341eac4",
-      "vdtHash": "5fd5551654417954c1262e4729660a251ad5143a",
+      "hash8": "5f841a4b",
+      "vdtHash": "567fbe441250ca13ccc219d5f880d9059fa7beae",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 58,
-        "buildMs": 58,
-        "totalMs": 988,
+        "importMs": 1989,
+        "fontsMs": 78,
+        "buildMs": 73,
+        "totalMs": 2919,
         "builds": 2
       },
       "specimen": {
@@ -149,7 +149,7 @@
           "h": 1319,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 74982,
+          "bytes": 77984,
           "alt": "Page 306."
         }
       ],
@@ -193,13 +193,27 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 200750,
+        "bytes": 200923,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 29703,
-        "folio": "8dec2b23"
+        "bytes": 29713,
+        "folio": "8dec2b23",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "ba9063b87fdc749c"
+          },
+          {
+            "pages": 4,
+            "hash": "1219ed9cb50162c0"
+          },
+          {
+            "pages": 2,
+            "hash": "56ca775b522bf095"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -505,28 +519,36 @@
           "share": 0.0092,
           "worst": 2.0100000000000002
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.30 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.31 MB (warning at 1.0 MB for 10 pages)"
           },
           {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "f4331087",
-      "vdtHash": "0c4bf05f48862bef9137429db9cc99031cff3941",
+      "hash8": "c53348f3",
+      "vdtHash": "3425c1e6734c0df06ad03d5aaa75c71f6e5f237e",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 54,
-        "buildMs": 57,
-        "totalMs": 991,
+        "importMs": 1852,
+        "fontsMs": 142,
+        "buildMs": 69,
+        "totalMs": 2949,
         "builds": 2
       },
       "specimen": {
@@ -658,7 +680,7 @@
           "h": 1319,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 82822,
+          "bytes": 83030,
           "alt": "Página 306."
         }
       ],
@@ -702,13 +724,27 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 218679,
+        "bytes": 218663,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 30292,
-        "folio": "8dec2b23"
+        "bytes": 30291,
+        "folio": "8dec2b23",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "ce547cb623a86658"
+          },
+          {
+            "pages": 4,
+            "hash": "73b99a6175227861"
+          },
+          {
+            "pages": 2,
+            "hash": "b3b762e1b4252269"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1014,6 +1050,9 @@
           "share": 0.0046,
           "worst": 2
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
@@ -1024,6 +1063,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

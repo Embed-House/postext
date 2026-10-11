@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "0788999a67cd9d03465cd298400eda8bf90f91cab84016dbf73464a920e5f66b",
+  "sourceHash": "eb236a77f98c86dc811456eb391531e379b94d432b9d643077997581e0160f09",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:12:14.916Z",
+  "capturedAt": "2026-10-11T20:22:29.788Z",
   "variants": {
     "en": {
-      "hash8": "d7ed5eaa",
+      "hash8": "7bcc1c92",
       "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 2407,
-        "buildMs": 431,
-        "totalMs": 3595,
+        "importMs": 1754,
+        "fontsMs": 3344,
+        "buildMs": 605,
+        "totalMs": 6436,
         "builds": 1
       },
       "specimen": {
@@ -141,13 +141,19 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 395217,
+        "bytes": 395214,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 123957,
-        "folio": "a418809e"
+        "bytes": 123955,
+        "folio": "a418809e",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "52f6eade4e9b40b0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -480,11 +486,24 @@
           "share": 0.0156,
           "worst": 2.34
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Several independent teams may be addressing the …”"
           },
           {
             "check": "C26",
@@ -495,13 +514,13 @@
       }
     },
     "es": {
-      "hash8": "7d112895",
-      "vdtHash": "68eedabd901b2adccb0269a203765b2d78871792",
+      "hash8": "2a10724e",
+      "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 123,
-        "buildMs": 396,
-        "totalMs": 1264,
+        "importMs": 1852,
+        "fontsMs": 1192,
+        "buildMs": 556,
+        "totalMs": 4270,
         "builds": 1
       },
       "specimen": {
@@ -625,13 +644,19 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 425020,
+        "bytes": 425017,
         "pages": 7
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126642,
-        "folio": "a418809e"
+        "bytes": 126640,
+        "folio": "a418809e",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "7102d9794f7dd883"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -962,7 +987,10 @@
         "looseLines": {
           "count": 2,
           "share": 0.0058,
-          "worst": 2.15
+          "worst": 2.1
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
@@ -974,6 +1002,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

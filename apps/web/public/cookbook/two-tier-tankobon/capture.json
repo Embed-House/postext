@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "two-tier-tankobon",
-  "sourceHash": "09418af666e90223936244e2d93c530116133d7ff865555df8d2d4f080214ae7",
+  "sourceHash": "1ab04f41cb715d1518a0ed4714db967ca03639df8b1bfd39fc90ef9bf6679882",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.954Z",
+  "capturedAt": "2026-10-11T20:22:31.007Z",
   "variants": {
     "en": {
-      "hash8": "676e1ca9",
-      "vdtHash": "09d7d319dbab446fd8b42929455865cf6ede7689",
+      "hash8": "48b1da92",
+      "vdtHash": "67258c9bf6f5c0c1ade6528c963766933df61385",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 320,
-        "buildMs": 61,
-        "totalMs": 1095,
+        "importMs": 197,
+        "fontsMs": 378,
+        "buildMs": 66,
+        "totalMs": 1214,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95382,
+          "bytes": 98570,
           "alt": "Opening page 211: 蜘蛛の糸."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 146710,
+          "bytes": 147688,
           "alt": "Page 212: 二."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144928,
+          "bytes": 149698,
           "alt": "Page 213."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 70854,
+          "bytes": 61950,
           "alt": "Page 214: 三."
         },
         {
@@ -153,13 +153,19 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281262,
+        "bytes": 281180,
         "pages": 7
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 24441,
-        "folio": "95c7420e"
+        "bytes": 23464,
+        "folio": "95c7420e",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "472569dded063f9d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -331,17 +337,26 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d8b2256e",
-      "vdtHash": "b9cfdc8c7358f549f9c08cb0fb706c7ac4927e57",
+      "hash8": "791455b9",
+      "vdtHash": "126571f4ba3eb720413355fd7c18821414d7f297",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 319,
-        "buildMs": 62,
-        "totalMs": 1096,
+        "importMs": 205,
+        "fontsMs": 389,
+        "buildMs": 70,
+        "totalMs": 1222,
         "builds": 1
       },
       "specimen": {
@@ -374,7 +389,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95446,
+          "bytes": 98526,
           "alt": "Página de apertura 211: 蜘蛛の糸."
         },
         {
@@ -385,7 +400,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 146710,
+          "bytes": 147688,
           "alt": "Página 212: 二."
         },
         {
@@ -396,7 +411,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144928,
+          "bytes": 149698,
           "alt": "Página 213."
         },
         {
@@ -407,7 +422,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 70854,
+          "bytes": 61950,
           "alt": "Página 214: 三."
         },
         {
@@ -477,13 +492,19 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281407,
+        "bytes": 281321,
         "pages": 7
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 24463,
-        "folio": "95c7420e"
+        "bytes": 23486,
+        "folio": "95c7420e",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "7942a93a1834c3c6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -655,7 +676,16 @@
           "share": 0,
           "worst": 0.06
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

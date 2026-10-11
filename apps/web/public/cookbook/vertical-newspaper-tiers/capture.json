@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "1c67201c6df7b382051db28df340952b09f0702ec91e847ce3160005b9df0fe5",
+  "sourceHash": "8411f7b665bfd03fb1b097ec68e3e0db4784b95a73d7c3c40b397a61401fb6eb",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.965Z",
+  "capturedAt": "2026-10-11T20:22:31.096Z",
   "variants": {
     "en": {
-      "hash8": "8cedb0a5",
+      "hash8": "ce198f39",
       "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 351,
-        "buildMs": 52,
-        "totalMs": 1111,
+        "importMs": 300,
+        "fontsMs": 432,
+        "buildMs": 57,
+        "totalMs": 1345,
         "builds": 1
       },
       "specimen": {
@@ -91,13 +91,19 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379314,
+        "bytes": 379312,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22400,
-        "folio": "e5cb273f"
+        "bytes": 22399,
+        "folio": "e5cb273f",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "73b89024258160aa"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -337,17 +343,20 @@
           "share": 0,
           "worst": 0.06
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "b88ead9f",
+      "hash8": "5a12f9cd",
       "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 332,
-        "buildMs": 50,
-        "totalMs": 1099,
+        "importMs": 221,
+        "fontsMs": 508,
+        "buildMs": 56,
+        "totalMs": 1357,
         "builds": 1
       },
       "specimen": {
@@ -421,13 +430,19 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379454,
+        "bytes": 379449,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22428,
-        "folio": "e5cb273f"
+        "bytes": 22427,
+        "folio": "e5cb273f",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "ead2a2bebbb52dc6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -666,6 +681,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.06
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

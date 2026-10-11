@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "print-ready-pdf",
-  "sourceHash": "d110acdc0b47a4cd31f2a002f0366e1fc447d0a28ef5c6cf29f427b8d8a2f3bc",
+  "sourceHash": "78ca75206dc9156fef13203433d55d2b3d43c03d01d46c8564b848422cd3a885",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.258Z",
+  "capturedAt": "2026-10-11T20:22:30.722Z",
   "variants": {
     "es": {
-      "hash8": "3dc021c2",
-      "vdtHash": "d75476b65d721b2af71c3ac07956033c86c6b167",
+      "hash8": "70f46b6d",
+      "vdtHash": "731346965b7c574a9b7c70d0d12cb2b5299688cd",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 39,
-        "buildMs": 27,
-        "totalMs": 816,
+        "importMs": 1238,
+        "fontsMs": 73,
+        "buildMs": 79,
+        "totalMs": 6442,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1297,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 40914,
+          "bytes": 40954,
           "alt": "Página de apertura 1: Cartografías imaginarias."
         },
         {
@@ -120,8 +120,14 @@
       },
       "sandbox": {
         "file": "print-ready-pdf.postext",
-        "bytes": 102418,
-        "folio": "2465c19b"
+        "bytes": 102417,
+        "folio": "2465c19b",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "7cd4dff372aa68f5"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -342,7 +348,15 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "0eddb22eabffbbd1a5ab8cb45f96723182e270b67e6d5fb4cdba5a33575acae8",
+  "sourceHash": "687b8759d67575fbbe54e5624900e3ba06d90f310f107b4efb88a5d0271deebd",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.922Z",
+  "capturedAt": "2026-10-11T20:22:30.474Z",
   "variants": {
     "en": {
-      "hash8": "19a99922",
+      "hash8": "aee30964",
       "vdtHash": "664c1cc1968e625f35b19432dc038ec6947580c8",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 52,
-        "buildMs": 111,
-        "totalMs": 951,
+        "importMs": 1561,
+        "fontsMs": 71,
+        "buildMs": 225,
+        "totalMs": 3242,
         "builds": 1
       },
       "specimen": {
@@ -101,13 +101,19 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 123076,
+        "bytes": 123074,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53286,
-        "folio": "b245c39c"
+        "bytes": 53285,
+        "folio": "b245c39c",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "f6165968f0cb5cfc"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -400,17 +406,31 @@
           "share": 0.0108,
           "worst": 2.21
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “What is already known Self-monitoring lowers blo…”"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "54f87a8c",
+      "hash8": "9b2086c6",
       "vdtHash": "de7caee6ad82d8f4d42b3b7a0a1717e8c8df7fb4",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 55,
-        "buildMs": 105,
-        "totalMs": 947,
+        "importMs": 1736,
+        "fontsMs": 385,
+        "buildMs": 162,
+        "totalMs": 3462,
         "builds": 1
       },
       "specimen": {
@@ -494,13 +514,19 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 132602,
+        "bytes": 132600,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
         "bytes": 54517,
-        "folio": "b245c39c"
+        "folio": "b245c39c",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "89e680616b3ef6db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -792,6 +818,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.97
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

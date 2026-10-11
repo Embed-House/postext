@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "history-essay-chicago-notes",
-  "sourceHash": "00e938c6ee1b645217795b68660477294956957c95d1291cc1c46ef91abbc6c7",
+  "sourceHash": "e4281a262eccd94d9b94b233194cdba16f63212d08317e722aab66b6446bc4f6",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.536Z",
+  "capturedAt": "2026-10-11T20:22:30.276Z",
   "variants": {
     "en": {
-      "hash8": "19f51488",
-      "vdtHash": "cb0831936c958c10f1fbb35d8bc01ddf2b94481e",
+      "hash8": "39127f90",
+      "vdtHash": "994aae3a811c99b2205ceb072cb0db1659f464e2",
       "timings": {
-        "importMs": 243,
-        "fontsMs": 32,
-        "buildMs": 435,
-        "totalMs": 1351,
+        "importMs": 1276,
+        "fontsMs": 38,
+        "buildMs": 501,
+        "totalMs": 2707,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 152578,
+          "bytes": 152430,
           "alt": "Page 3: THE TOWNS HESITATE."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 126762,
+          "bytes": 126492,
           "alt": "Page 4: A SETTLEMENT, NOT A CONQUEST."
         }
       ],
@@ -114,13 +114,19 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 86088,
+        "bytes": 86005,
         "pages": 4
       },
       "sandbox": {
         "file": "history-essay-chicago-notes.postext",
-        "bytes": 17385,
-        "folio": "d7c0312b"
+        "bytes": 17381,
+        "folio": "d7c0312b",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "c3f55bde4b7773ee"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -318,17 +324,26 @@
           "share": 0,
           "worst": 1.96
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "f3c2b8cc",
-      "vdtHash": "bf4264bd051500f1780024e7d1f064ef0bde8c52",
+      "hash8": "7904d9dc",
+      "vdtHash": "5d4c797d0c8398d84f1c79e2864e796fe0b7cea3",
       "timings": {
-        "importMs": 196,
-        "fontsMs": 32,
-        "buildMs": 447,
-        "totalMs": 1298,
+        "importMs": 1966,
+        "fontsMs": 36,
+        "buildMs": 555,
+        "totalMs": 4386,
         "builds": 1
       },
       "specimen": {
@@ -382,7 +397,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144308,
+          "bytes": 144158,
           "alt": "Página 3: LAS CIUDADES DUDAN."
         },
         {
@@ -393,7 +408,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 131588,
+          "bytes": 131420,
           "alt": "Página 4: UN ACUERDO, NO UNA CONQUISTA."
         }
       ],
@@ -425,13 +440,19 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 90761,
+        "bytes": 90662,
         "pages": 4
       },
       "sandbox": {
         "file": "history-essay-chicago-notes.postext",
-        "bytes": 18115,
-        "folio": "d7c0312b"
+        "bytes": 18108,
+        "folio": "d7c0312b",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "2cbba35f3ee150b9"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -629,7 +650,16 @@
           "share": 0,
           "worst": 1.74
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

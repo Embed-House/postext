@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "garden-almanac",
-  "sourceHash": "df7dfb705bc04d519ec93db187f1ac2110e7fd22cd70274213a1572df743ebc9",
+  "sourceHash": "d720fd78afab85a126165a1fda5a1a6b13bb248906e412a577ffe378f9b1d60b",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.245Z",
+  "capturedAt": "2026-10-11T20:22:30.214Z",
   "variants": {
     "en": {
-      "hash8": "1e478df8",
+      "hash8": "4dc4077e",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 69,
-        "buildMs": 57,
-        "totalMs": 848,
+        "importMs": 558,
+        "fontsMs": 602,
+        "buildMs": 99,
+        "totalMs": 2060,
         "builds": 1
       },
       "specimen": {
@@ -115,8 +115,14 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190202,
-        "folio": "49229ae8"
+        "bytes": 190200,
+        "folio": "49229ae8",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "ee9e1ec279a02e38"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -390,17 +396,20 @@
           "share": 0,
           "worst": 1.56
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "91e3fd2a",
+      "hash8": "b6548da2",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 64,
-        "buildMs": 58,
-        "totalMs": 837,
+        "importMs": 1585,
+        "fontsMs": 1284,
+        "buildMs": 91,
+        "totalMs": 4057,
         "builds": 1
       },
       "specimen": {
@@ -499,8 +508,14 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190204,
-        "folio": "49229ae8"
+        "bytes": 190201,
+        "folio": "49229ae8",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "ee9e1ec279a02e38"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -773,6 +788,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.56
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

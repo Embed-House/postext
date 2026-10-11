@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "aa997701def0fb6aadcc9149558bf806cc15cf578dd718ad92cb53bf4068d233",
+  "sourceHash": "f84fa58d8cf1fed1350a052ef1beca440640a8f7f5cbecf45cd4f4f1e3e77b9e",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.242Z",
+  "capturedAt": "2026-10-11T20:22:30.698Z",
   "variants": {
     "en": {
-      "hash8": "d9786d20",
-      "vdtHash": "ccc61807386589cdec3b00574c62ed2acb3a74f6",
+      "hash8": "428b8a44",
+      "vdtHash": "06767cd7f40ab538a3884f63dec15a13dc2084f8",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 136,
-        "buildMs": 209,
-        "totalMs": 1118,
+        "importMs": 1201,
+        "fontsMs": 546,
+        "buildMs": 290,
+        "totalMs": 4027,
         "builds": 1
       },
       "specimen": {
@@ -126,13 +126,19 @@
       },
       "pdf": {
         "file": "physics-letter-two-columns.pdf",
-        "bytes": 573257,
+        "bytes": 573258,
         "pages": 5
       },
       "sandbox": {
         "file": "physics-letter-two-columns.postext",
-        "bytes": 151009,
-        "folio": "72637274"
+        "bytes": 151007,
+        "folio": "72637274",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "fa1f6b1b612d7c17"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -431,17 +437,35 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 3,
+        "iterationCount": 2,
         "looseLines": {
           "count": 2,
           "share": 0.0085,
           "worst": 2.11
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.13 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “[15] R. W. P. Drever, The Detection of Gravitati…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

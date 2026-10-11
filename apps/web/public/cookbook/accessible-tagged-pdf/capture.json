@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "accessible-tagged-pdf",
-  "sourceHash": "501f3b0ab5546a6508fb84568c7a2b8be1f441c48e07b57490b7472f697281e4",
+  "sourceHash": "79c1bc64b1bd78039aa4f73b1b96302aadebe7c442a6088cc9e7ba7c76e5cc0d",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:27.998Z",
+  "capturedAt": "2026-10-11T20:22:29.636Z",
   "variants": {
     "es": {
-      "hash8": "a9d51471",
+      "hash8": "a6765dec",
       "vdtHash": "b4d90a107216c3f089ce544b14ad07edef22c525",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 28,
-        "buildMs": 54,
-        "totalMs": 872,
+        "importMs": 28110,
+        "fontsMs": 49,
+        "buildMs": 122,
+        "totalMs": 29358,
         "builds": 1
       },
       "specimen": {
@@ -116,13 +116,19 @@
       },
       "pdf": {
         "file": "accessible-tagged-pdf.pdf",
-        "bytes": 58526,
+        "bytes": 58524,
         "pages": 4
       },
       "sandbox": {
         "file": "accessible-tagged-pdf.postext",
-        "bytes": 36309,
-        "folio": "ccb10a06"
+        "bytes": 36308,
+        "folio": "ccb10a06",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "e5927d70139ca394"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -376,6 +382,9 @@
           "count": 0,
           "share": 0,
           "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

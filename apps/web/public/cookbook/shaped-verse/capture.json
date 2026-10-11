@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "shaped-verse",
-  "sourceHash": "5e4f95b8a7587a67f42e11396b5915e5e81ac0fae933b509750315524bfb91dc",
+  "sourceHash": "b406c5c47cb62822557f1f7874244318d549d28550fef82be73c8bcc7e022865",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.921Z",
+  "capturedAt": "2026-10-11T20:22:30.819Z",
   "variants": {
     "en": {
-      "hash8": "5d3a7c45",
+      "hash8": "eee1a066",
       "vdtHash": "e68d134f3f30cd3f24d988e99b3f3a1d9ea8578a",
       "timings": {
-        "importMs": 128,
+        "importMs": 1049,
         "fontsMs": 0,
-        "buildMs": 19,
-        "totalMs": 759,
+        "buildMs": 58,
+        "totalMs": 1834,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "IM Fell Great Primer"
         ],
         "pages": 4,
-        "ownLines": 98
+        "ownLines": 99
       },
       "pages": [
         {
@@ -114,8 +114,14 @@
       },
       "sandbox": {
         "file": "shaped-verse.postext",
-        "bytes": 19426,
-        "folio": "900eced1"
+        "bytes": 19427,
+        "folio": "900eced1",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "314ed77a8862e1b8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -154,6 +160,7 @@
           "headings.textAlign",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -174,9 +181,10 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page"
         ],
-        "configLeaves": 54,
+        "configLeaves": 55,
         "designElements": 0,
         "directives": [
           ":::space",
@@ -225,23 +233,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d1381d9e",
+      "hash8": "11f50860",
       "vdtHash": "41a22084e64aec2a822b75bbd8eb77fceb4ecb07",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 1,
-        "buildMs": 19,
-        "totalMs": 759,
+        "importMs": 359,
+        "fontsMs": 0,
+        "buildMs": 44,
+        "totalMs": 1400,
         "builds": 1
       },
       "specimen": {
@@ -263,7 +268,7 @@
           "IM Fell Great Primer"
         ],
         "pages": 4,
-        "ownLines": 98
+        "ownLines": 99
       },
       "pages": [
         {
@@ -339,8 +344,14 @@
       },
       "sandbox": {
         "file": "shaped-verse.postext",
-        "bytes": 19319,
-        "folio": "900eced1"
+        "bytes": 19316,
+        "folio": "900eced1",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "473df2be256be442"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -379,6 +390,7 @@
           "headings.textAlign",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -399,9 +411,10 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page"
         ],
-        "configLeaves": 54,
+        "configLeaves": 55,
         "designElements": 0,
         "directives": [
           ":::space",
@@ -450,13 +463,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

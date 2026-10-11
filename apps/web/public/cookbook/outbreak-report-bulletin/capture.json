@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "b2c43424b932cae6bc8b02cbada45f8ca6bca0bd485ced0e571d738feeb7739f",
+  "sourceHash": "26e0fe2a132b1fdc1daf48c69177cd6c996610e69720a1b6b88e66722da60515",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.258Z",
+  "capturedAt": "2026-10-11T20:22:30.585Z",
   "variants": {
     "en": {
-      "hash8": "cabbb781",
+      "hash8": "747765e3",
       "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 179,
-        "fontsMs": 60,
-        "buildMs": 346,
-        "totalMs": 1162,
+        "importMs": 1589,
+        "fontsMs": 80,
+        "buildMs": 464,
+        "totalMs": 4454,
         "builds": 1
       },
       "specimen": {
@@ -142,13 +142,19 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 193039,
+        "bytes": 193037,
         "pages": 6
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95696,
-        "folio": "0cf5d184"
+        "bytes": 95695,
+        "folio": "0cf5d184",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "03041ac77e9ae29d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -438,6 +444,9 @@
           "count": 1,
           "share": 0.0047,
           "worst": 2.02
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

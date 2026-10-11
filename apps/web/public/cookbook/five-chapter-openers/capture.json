@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "five-chapter-openers",
-  "sourceHash": "3d4620ebb4bb2ced5b74d7e28eceecc00e49dbef2f4bf8fb95a13e91bd9c3dcb",
+  "sourceHash": "00ea9bdf3cd7c31a8e8ebfc77518659332ff3bfcd88420686ef0afc6acb20765",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:53:22.490Z",
+  "capturedAt": "2026-10-11T20:22:30.178Z",
   "variants": {
     "en": {
-      "hash8": "d68c902a",
+      "hash8": "1a49e0d1",
       "vdtHash": "45587f7495f542a963e19fb3590dbea4a204e252",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 1,
-        "buildMs": 84,
-        "totalMs": 819,
+        "importMs": 1384,
+        "fontsMs": 2,
+        "buildMs": 131,
+        "totalMs": 2912,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66804,
+          "bytes": 66774,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -152,8 +152,14 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28459,
-        "folio": "8cdc51df"
+        "bytes": 28461,
+        "folio": "8cdc51df",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "585de1796c88cbb7"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -399,17 +405,20 @@
           "share": 0.0143,
           "worst": 1.62
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "7c21cf4d",
+      "hash8": "cdbdfb31",
       "vdtHash": "12a9a52a7154dc26eeb05039fb7610dfba8e4749",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 1,
-        "buildMs": 178,
-        "totalMs": 914,
+        "importMs": 1436,
+        "fontsMs": 2,
+        "buildMs": 278,
+        "totalMs": 3035,
         "builds": 1
       },
       "specimen": {
@@ -545,8 +554,14 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28177,
-        "folio": "8cdc51df"
+        "bytes": 28178,
+        "folio": "8cdc51df",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "3772352c9982c99e"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -791,6 +806,9 @@
           "count": 1,
           "share": 0.0139,
           "worst": 1.61
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

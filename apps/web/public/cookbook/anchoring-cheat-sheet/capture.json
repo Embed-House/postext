@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anchoring-cheat-sheet",
-  "sourceHash": "f0ca36f0579d5153a3b66f4f34e8d7b9d88795340e38124b471c794bda53fac9",
+  "sourceHash": "7f616dc1e44cdd335228c216f32701827a1906aca3f8d23a471db53f30afc88d",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.443Z",
+  "capturedAt": "2026-10-11T20:22:29.652Z",
   "variants": {
     "en": {
-      "hash8": "7cd1c372",
-      "vdtHash": "59ee6ae558f6f77c0458c9afbdb28a60d4f5c10c",
+      "hash8": "6055687b",
+      "vdtHash": "83b4c5c2478a8640f808f3fe6c6466a94448c263",
       "timings": {
-        "importMs": 137,
-        "fontsMs": 4,
-        "buildMs": 25,
-        "totalMs": 766,
+        "importMs": 1183,
+        "fontsMs": 7,
+        "buildMs": 55,
+        "totalMs": 1990,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Martian Mono"
         ],
         "pages": 2,
-        "ownLines": 178
+        "ownLines": 179
       },
       "pages": [
         {
@@ -85,8 +85,14 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42866,
-        "folio": "061973f6"
+        "bytes": 42880,
+        "folio": "061973f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "6328fe8e8c7ccd64"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -147,6 +153,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.cutLines",
           "page.cutLines.bleed",
@@ -174,10 +181,11 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 1052,
+        "configLeaves": 1053,
         "designElements": 67,
         "directives": [
           ":::paragraphs"
@@ -249,28 +257,31 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "es": {
-      "hash8": "021ba53c",
-      "vdtHash": "179bf5efd21133b9f31e23d9b510a3cd99a11c00",
+      "hash8": "fe3b0cff",
+      "vdtHash": "740960f561a724cb8de0b55f121be0586184cf3c",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 4,
-        "buildMs": 26,
-        "totalMs": 760,
+        "importMs": 1608,
+        "fontsMs": 5,
+        "buildMs": 66,
+        "totalMs": 2714,
         "builds": 1
       },
       "specimen": {
@@ -293,7 +304,7 @@
           "Martian Mono"
         ],
         "pages": 2,
-        "ownLines": 178
+        "ownLines": 179
       },
       "pages": [
         {
@@ -339,8 +350,14 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42402,
-        "folio": "061973f6"
+        "bytes": 42412,
+        "folio": "061973f6",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "5692690d645b8385"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -401,6 +418,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.cutLines",
           "page.cutLines.bleed",
@@ -428,10 +446,11 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 1052,
+        "configLeaves": 1053,
         "designElements": 67,
         "directives": [
           ":::paragraphs"
@@ -503,16 +522,19 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }

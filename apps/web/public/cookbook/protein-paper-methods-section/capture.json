@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "protein-paper-methods-section",
-  "sourceHash": "7f49cea4043bea9e59944abb1f9d23d63bc67f67d3a32931278083f0eda85d63",
+  "sourceHash": "ef93c9ac0d16dd49555922b743703eb504a9979478bde3bf3d4efb330c30998c",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.276Z",
+  "capturedAt": "2026-10-11T20:22:30.743Z",
   "variants": {
     "en": {
-      "hash8": "f673f937",
+      "hash8": "2525de6c",
       "vdtHash": "7d65b4d482af7e0ae5727f913c9c9a21dd94b38d",
       "timings": {
-        "importMs": 179,
-        "fontsMs": 61,
-        "buildMs": 804,
-        "totalMs": 1636,
+        "importMs": 2609,
+        "fontsMs": 637,
+        "buildMs": 1156,
+        "totalMs": 6480,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 189470,
+          "bytes": 189332,
           "alt": "Opening page 1: Highly accurate protein structure prediction with AlphaFold. Fig. 1 | AlphaFold produces highly accurate structures. a, Median accuracy on the CASP14 domains of AlphaFold and of the next best method, as r.m.s.d.95 over Cα atoms (backbone) and over all atoms, wi…"
         },
         {
@@ -126,13 +126,19 @@
       },
       "pdf": {
         "file": "protein-paper-methods-section.pdf",
-        "bytes": 204706,
+        "bytes": 204709,
         "pages": 5
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77638,
-        "folio": "9eaee533"
+        "bytes": 77622,
+        "folio": "9eaee533",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "985abee642776c94"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -416,11 +422,24 @@
           "share": 0.0153,
           "worst": 2.32
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 4,
+          "tracked": 4,
+          "worst": 10
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Since CASP14, we have found that the accuracy of…”, p. 5 −10‰ “53. Lim, C. J. et al. The structure of human CST…”, p. 5 −10‰ “Acknowledgements We thank A. Rrustemi, A. Gu, A.…”, p. 5 −5‰ “All input data are freely available from public …”"
           }
         ]
       }

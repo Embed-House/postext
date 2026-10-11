@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "folio-settings-bench",
-  "sourceHash": "cc1b0f98fc2f1409e255902c7515e09826af8b9a16e3f06910cd919f17e38a51",
+  "sourceHash": "e711fd8a1b8751e27cccf190189268e50858f04a924e00d524a193e783641518",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:50:19.302Z",
+  "capturedAt": "2026-10-11T20:22:30.197Z",
   "variants": {
     "en": {
-      "hash8": "0b800ab9",
+      "hash8": "22d24559",
       "vdtHash": "0dd0208791389c884eb7adf699b0c3a5d75b7a5c",
       "timings": {
-        "importMs": 149,
-        "fontsMs": 3,
-        "buildMs": 35,
-        "totalMs": 766,
+        "importMs": 1137,
+        "fontsMs": 6,
+        "buildMs": 71,
+        "totalMs": 2951,
         "builds": 1
       },
       "specimen": {
@@ -192,7 +192,13 @@
       "sandbox": {
         "file": "folio-settings-bench.postext",
         "bytes": 17910,
-        "folio": "1756b569"
+        "folio": "1756b569",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "3709509e88cbd3c4"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -383,6 +389,9 @@
           "count": 0,
           "share": 0,
           "worst": 2
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

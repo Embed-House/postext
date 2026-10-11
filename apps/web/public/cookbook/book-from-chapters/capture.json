@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "book-from-chapters",
-  "sourceHash": "15abc1f691990e3eef9cc63a639c7a57b661028cf9c21f2eb2e7287b8bf7bf9e",
+  "sourceHash": "39a70687cada3a58797de0e184ca57f4eb93cb5cc119fc0f5ce7939b55a04ccc",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.063Z",
+  "capturedAt": "2026-10-11T20:22:29.807Z",
   "variants": {
     "en": {
-      "hash8": "5cf3724e",
+      "hash8": "3119f463",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 60,
-        "buildMs": 71,
-        "totalMs": 858,
+        "importMs": 1405,
+        "fontsMs": 1249,
+        "buildMs": 106,
+        "totalMs": 3612,
         "builds": 1
       },
       "specimen": {
@@ -204,13 +204,35 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 121306,
+        "bytes": 121305,
         "pages": 11
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 46849,
-        "folio": "0459f0ab"
+        "bytes": 46848,
+        "folio": "0459f0ab",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "54fa19f380e728ab"
+          },
+          {
+            "pages": 2,
+            "hash": "6a4e58e6c402ce68"
+          },
+          {
+            "pages": 1,
+            "hash": "45a9f4a6fae72222"
+          },
+          {
+            "pages": 3,
+            "hash": "27290abe813451c2"
+          },
+          {
+            "pages": 3,
+            "hash": "f3440a4e233fb6fe"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -460,17 +482,20 @@
           "share": 0,
           "worst": 1.54
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "926e020c",
+      "hash8": "532062e1",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 59,
-        "buildMs": 76,
-        "totalMs": 861,
+        "importMs": 1804,
+        "fontsMs": 350,
+        "buildMs": 124,
+        "totalMs": 4266,
         "builds": 1
       },
       "specimen": {
@@ -662,8 +687,30 @@
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 47123,
-        "folio": "0459f0ab"
+        "bytes": 47122,
+        "folio": "0459f0ab",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "94f86b7a92d382aa"
+          },
+          {
+            "pages": 2,
+            "hash": "e885bf42525f1b54"
+          },
+          {
+            "pages": 1,
+            "hash": "d2ac6a65151e39df"
+          },
+          {
+            "pages": 3,
+            "hash": "b712efcc7247a05a"
+          },
+          {
+            "pages": 3,
+            "hash": "05b5cdc0de6a4b60"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -912,6 +959,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.61
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

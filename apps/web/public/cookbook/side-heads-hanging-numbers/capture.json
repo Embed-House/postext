@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "side-heads-hanging-numbers",
-  "sourceHash": "83fe709e48636cb5300f4e566c65367acb33ee71c10cef0c209b581150aaa53d",
+  "sourceHash": "44791fdcd9e685f2b78fe0895cf9e92d75ee09a3708b7e6d08fbda77e252a877",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:19:22.681Z",
+  "capturedAt": "2026-10-11T20:22:30.861Z",
   "variants": {
-    "es": {
-      "hash8": "2482255c",
-      "vdtHash": "cc90da5f778b435d2f2a01e5a54259e7f794e1a7",
+    "en": {
+      "hash8": "0972c76a",
+      "vdtHash": "b4ac9f246a4b482f524154867e5b331a204e9587",
       "timings": {
-        "importMs": 141,
-        "fontsMs": 3,
-        "buildMs": 39,
-        "totalMs": 799,
+        "importMs": 554,
+        "fontsMs": 8,
+        "buildMs": 118,
+        "totalMs": 1433,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Noto Serif Display"
         ],
         "pages": 5,
-        "ownLines": 246
+        "ownLines": 261
       },
       "pages": [
         {
@@ -50,8 +50,8 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93400,
-          "alt": "Página de apertura 1: Bases del concurso."
+          "bytes": 88580,
+          "alt": "Opening page 1: Competition brief."
         },
         {
           "n": 2,
@@ -61,8 +61,8 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134278,
-          "alt": "Página 2: 2 El emplazamiento. Figura 1. La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el borde norte. Flechas rojas: accesos posibles; flecha gris: servicio."
+          "bytes": 129550,
+          "alt": "Page 2: 2 The site. Figure 1. The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks along the north edge. Red arrows: possible entrances; grey arrow: service."
         },
         {
           "n": 3,
@@ -72,8 +72,8 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77024,
-          "alt": "Página 3: 3.2 Áreas internas. Figura 2. Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con las armaduras corroídas. · Tabla 1. Programa de superficies útiles por zonas."
+          "bytes": 73868,
+          "alt": "Page 3: 3.2 Staff areas. Figure 2. Quay front, 1:300. In red, the four frames at the east end, where the reinforcement has corroded. · Table 1. Schedule of net floor areas."
         },
         {
           "n": 4,
@@ -83,8 +83,8 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 117270,
-          "alt": "Página 4: 5 Entrega de propuestas."
+          "bytes": 116748,
+          "alt": "Page 4: 5 Submission of entries."
         },
         {
           "n": 5,
@@ -94,8 +94,8 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 46378,
-          "alt": "Página 5: 6.2 Premios. Tabla 2. Calendario del concurso."
+          "bytes": 44024,
+          "alt": "Page 5: 6.2 Prizes. Table 2. Competition timetable."
         }
       ],
       "spreads": [
@@ -126,8 +126,14 @@
       },
       "sandbox": {
         "file": "side-heads-hanging-numbers.postext",
-        "bytes": 27491,
-        "folio": "2324bd6f"
+        "bytes": 26530,
+        "folio": "2324bd6f",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "a43e7aeedd20ca90"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -222,6 +228,7 @@
           "layout.sideColumnPercent",
           "layout.sideColumnRole",
           "layout.sideColumnSide",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -267,12 +274,13 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 333,
+        "configLeaves": 334,
         "designElements": 15,
         "directives": [
           ":::callout",
@@ -348,11 +356,367 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "es": {
+      "hash8": "b0c18d3e",
+      "vdtHash": "05cd015399770ed6b13ddb7974d9e7a3f9663b69",
+      "timings": {
+        "importMs": 1100,
+        "fontsMs": 6,
+        "buildMs": 112,
+        "totalMs": 3815,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "oneAndHalf",
+        "gutterMm": 7,
+        "mirror": false,
+        "body": {
+          "family": "Mona Sans",
+          "sizePt": 10,
+          "leadingPt": 14
+        },
+        "families": [
+          "DM Mono",
+          "Mona Sans",
+          "Noto Serif Display"
+        ],
+        "pages": 5,
+        "ownLines": 261
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 93400,
+          "alt": "Página de apertura 1: Bases del concurso."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 134248,
+          "alt": "Página 2: 2 El emplazamiento. Figura 1. La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el borde norte. Flechas rojas: accesos posibles; flecha gris: servicio."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 77024,
+          "alt": "Página 3: 3.2 Áreas internas. Figura 2. Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con las armaduras corroídas. · Tabla 1. Programa de superficies útiles por zonas."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 117270,
+          "alt": "Página 4: 5 Entrega de propuestas."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 46560,
+          "alt": "Página 5: 6.2 Premios. Tabla 2. Calendario del concurso."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "side-heads-hanging-numbers.postext",
+        "bytes": 27505,
+        "folio": "2324bd6f",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "5710235c90e472ec"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "defaultResourceTypes",
+          "registerResourceImage",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceBold",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "captionStyle",
+          "captionStyle.fontSize",
+          "captionStyle.gap",
+          "captionStyle.labelColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].lineHeight",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "header",
+          "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].direction",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].lineHeight",
+          "header.elements[].overflow",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "header.elements[].thickness",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].numberingTemplate",
+          "headings.levels[].span",
+          "layout",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "layout.sideColumnPercent",
+          "layout.sideColumnRole",
+          "layout.sideColumnSide",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].namePlural",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel",
+          "tableStyle",
+          "tableStyle.bodyFontSize",
+          "tableStyle.borderColor",
+          "tableStyle.borderWidth",
+          "tableStyle.cellPadding",
+          "tableStyle.headerBackground",
+          "tableStyle.headerColor",
+          "tableStyle.headerFontSize",
+          "tableStyle.rules"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "resourceTypes",
+          "tableStyle"
+        ],
+        "configLeaves": 334,
+        "designElements": 15,
+        "directives": [
+          ":::callout",
+          "::resource",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}",
+          ":ref"
+        ],
+        "resources": {
+          "svg": 3,
+          "bitmap": 0,
+          "table": 2
+        },
+        "fonts": [
+          {
+            "family": "DM Mono",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Mona Sans",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Mona Sans",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif Display",
+            "weight": 300,
+            "style": "italic"
+          },
+          {
+            "family": "Noto Serif Display",
+            "weight": 300,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif Display",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "column-and-a-half",
+          "column-balancing",
+          "figure-citations",
+          "heading-attributes",
+          "heading-numbering",
+          "inline-embeds",
+          "localised-labels",
+          "opener-band",
+          "opener-design",
+          "page-background",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "side-boxes",
+          "side-column-floats"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

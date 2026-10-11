@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annotated-classic-glosses",
-  "sourceHash": "8686fda572d419bfb398dfbaffac13e039237309b6505b9688be0865df00c6ab",
+  "sourceHash": "bdcbcfb5e708da26a758415b308295fa4618bcba22213a3d48b90f9f28073908",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:11:34.446Z",
+  "capturedAt": "2026-10-11T20:22:29.657Z",
   "variants": {
     "en": {
-      "hash8": "987c0396",
+      "hash8": "e30dbd3c",
       "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 25,
-        "buildMs": 77,
-        "totalMs": 826,
+        "importMs": 1016,
+        "fontsMs": 35,
+        "buildMs": 104,
+        "totalMs": 3318,
         "builds": 1
       },
       "specimen": {
@@ -100,8 +100,14 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319065,
-        "folio": "923d57f4"
+        "bytes": 319055,
+        "folio": "923d57f4",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "b41c070ec0e04896"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -116,6 +122,8 @@
           "bodyText.firstLineIndent",
           "bodyText.fontFamily",
           "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.exceptions",
           "bodyText.indentAfterHeading",
           "bodyText.italicColor",
           "bodyText.lineHeight",
@@ -200,6 +208,7 @@
           "layout.sideColumnPercent",
           "layout.sideColumnRole",
           "layout.sideColumnSide",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -210,10 +219,7 @@
           "page.margins.mirror",
           "page.margins.right",
           "page.margins.top",
-          "page.width",
-          "paragraphStyles",
-          "paragraphStyles[].hyphenation",
-          "paragraphStyles[].id"
+          "page.width"
         ],
         "configSections": [
           "bodyText",
@@ -224,14 +230,13 @@
           "header",
           "headings",
           "layout",
-          "page",
-          "paragraphStyles"
+          "locale",
+          "page"
         ],
         "configLeaves": 254,
         "designElements": 11,
         "directives": [
-          ":::callout",
-          ":::paragraphs"
+          ":::callout"
         ],
         "inline": [
           "{attrs}",
@@ -281,7 +286,6 @@
           "opener-design",
           "page-background",
           "page-role-filters",
-          "paragraph-styles",
           "resources",
           "side-boxes",
           "side-column-floats"
@@ -295,6 +299,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.8800000000000001
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
@@ -310,7 +317,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "continuation carried as the bundle's start: pageNumbering"
           }
         ]
       }

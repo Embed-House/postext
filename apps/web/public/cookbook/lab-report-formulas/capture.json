@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "lab-report-formulas",
-  "sourceHash": "0bcc8867c4fc47dd7e46fde2d5c9f8e202a9228a6829de719facf5ac9cc5cae0",
+  "sourceHash": "06352bc60f92ad7a4d57bb0412ffb433c301003a86380b5484f5edd0b633517f",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.581Z",
+  "capturedAt": "2026-10-11T20:22:30.329Z",
   "variants": {
     "en": {
-      "hash8": "61fddcb2",
+      "hash8": "33ece255",
       "vdtHash": "78a366fe1aa21b9c025482a889d0ae88a74aba07",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 106,
-        "buildMs": 62,
-        "totalMs": 934,
+        "importMs": 1612,
+        "fontsMs": 165,
+        "buildMs": 122,
+        "totalMs": 3700,
         "builds": 1
       },
       "specimen": {
@@ -115,13 +115,19 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 193512,
+        "bytes": 193510,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36559,
-        "folio": "977c8d61"
+        "bytes": 36557,
+        "folio": "977c8d61",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "9e412622f2379038"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -427,17 +433,20 @@
           "share": 0.0164,
           "worst": 1.53
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "df73db9a",
+      "hash8": "c4e1d788",
       "vdtHash": "6be2b97b8c7d9bc8f5a005e8ce47c6f7c091c39b",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 107,
-        "buildMs": 65,
-        "totalMs": 943,
+        "importMs": 1324,
+        "fontsMs": 647,
+        "buildMs": 123,
+        "totalMs": 2974,
         "builds": 1
       },
       "specimen": {
@@ -535,13 +544,19 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 205505,
+        "bytes": 205504,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37865,
-        "folio": "977c8d61"
+        "bytes": 37863,
+        "folio": "977c8d61",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "9005d167def201e3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -846,6 +861,9 @@
           "count": 1,
           "share": 0.0154,
           "worst": 1.52
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

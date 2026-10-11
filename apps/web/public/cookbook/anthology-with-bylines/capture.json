@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anthology-with-bylines",
-  "sourceHash": "4bfd7fd35889e5a09520e2b75f147c42c825890761212f94ac80b8e823f2ba44",
+  "sourceHash": "953f2e0235b36203dde328a0a81aa090c2b838b0bb2236fc2c3f27ac407b4617",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.005Z",
+  "capturedAt": "2026-10-11T20:22:29.668Z",
   "variants": {
     "en": {
-      "hash8": "2f699e31",
+      "hash8": "1b3fae18",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 26,
-        "buildMs": 55,
-        "totalMs": 798,
+        "importMs": 986,
+        "fontsMs": 40,
+        "buildMs": 90,
+        "totalMs": 2880,
         "builds": 1
       },
       "specimen": {
@@ -177,8 +177,14 @@
       },
       "sandbox": {
         "file": "anthology-with-bylines.postext",
-        "bytes": 243468,
-        "folio": "6cdad6f3"
+        "bytes": 243467,
+        "folio": "6cdad6f3",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "b0c317993741b807"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -282,6 +288,7 @@
           "headings.levels[].numberingTemplate",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -337,11 +344,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "toc"
         ],
-        "configLeaves": 344,
+        "configLeaves": 345,
         "designElements": 17,
         "directives": [
           ":::toc",
@@ -406,16 +414,14 @@
           "share": 0.0169,
           "worst": 1.6400000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
           }
         ]
       }

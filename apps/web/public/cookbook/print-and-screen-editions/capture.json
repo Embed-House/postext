@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "print-and-screen-editions",
-  "sourceHash": "bb523de2efc3fc9042ec3590a545ec7b81203b2a871431ac1033b48abdbf45d3",
+  "sourceHash": "215a84a40ebbf7c873ca67e1b019f536297619cf5e6e12ca99d25427ea938b46",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:56.254Z",
+  "capturedAt": "2026-10-11T20:22:30.716Z",
   "variants": {
     "en": {
-      "hash8": "9838687b",
+      "hash8": "b86c8212",
       "vdtHash": "60ae331f534d41cc28044aa2c9aacd6a0cd8b8ac",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 43,
-        "buildMs": 226,
-        "totalMs": 960,
+        "importMs": 738,
+        "fontsMs": 280,
+        "buildMs": 320,
+        "totalMs": 2240,
         "builds": 2
       },
       "specimen": {
@@ -115,8 +115,14 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 186501,
-        "folio": "d9a24b31"
+        "bytes": 186500,
+        "folio": "d9a24b31",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "a69c7df66d430510"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -333,17 +339,20 @@
           "share": 0,
           "worst": 1.84
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "f32099e5",
+      "hash8": "2d7156c5",
       "vdtHash": "b21de88e54730916b7395c401324be276c556e68",
       "timings": {
-        "importMs": 126,
-        "fontsMs": 39,
-        "buildMs": 93,
-        "totalMs": 830,
+        "importMs": 716,
+        "fontsMs": 57,
+        "buildMs": 154,
+        "totalMs": 2503,
         "builds": 2
       },
       "specimen": {
@@ -388,7 +397,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 114394,
+          "bytes": 114392,
           "alt": "Página de apertura 2: Lluvia. Figura 1. El pluviómetro en sección: el embudo vierte en un tubo con la décima parte de su área."
         },
         {
@@ -442,8 +451,14 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 187195,
-        "folio": "d9a24b31"
+        "bytes": 187180,
+        "folio": "d9a24b31",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "261b0b83195e02e3"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -659,6 +674,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.83
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

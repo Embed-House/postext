@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "balloon-kinds",
-  "sourceHash": "f767c67a38f989632d6b6f11f2c3b0c663b415df6511f78a56965150a83bd6ba",
+  "sourceHash": "5614dee20ecbcaec459a8aff1ee87ced13945319026ee73967852c9e1ca6460c",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:28.024Z",
+  "capturedAt": "2026-10-11T20:22:29.724Z",
   "variants": {
     "en": {
-      "hash8": "6910a798",
-      "vdtHash": "aa6038474d3814b65b099c7673ca550da790f2ac",
+      "hash8": "f84af731",
+      "vdtHash": "741e9ba1b4cbefe7456e18ce8a09307b09fc17cb",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 87,
-        "buildMs": 708,
-        "totalMs": 1528,
+        "importMs": 1786,
+        "fontsMs": 407,
+        "buildMs": 856,
+        "totalMs": 4328,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78848,
+          "bytes": 78882,
           "alt": "Opening page 1: Lettering style sheet."
         },
         {
@@ -88,12 +88,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 994234,
+        "bytes": 994227,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954656
+        "bytes": 954655,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f780b7556ecc471f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -284,17 +290,36 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 1 −10‰ “Pinned.  The balloon is centred on that point o…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "931394d3",
-      "vdtHash": "d92725194a04f0c55e91328d6ba3e31a2b0605aa",
+      "hash8": "dfff82e6",
+      "vdtHash": "7e8ad8cefc2dbcf233e8d2ef02662fe7c05cc0ac",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 88,
-        "buildMs": 662,
-        "totalMs": 1479,
+        "importMs": 1340,
+        "fontsMs": 459,
+        "buildMs": 788,
+        "totalMs": 3972,
         "builds": 1
       },
       "specimen": {
@@ -326,7 +351,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 88782,
+          "bytes": 88860,
           "alt": "Página de apertura 1: Hoja de estilo de rotulación."
         },
         {
@@ -365,12 +390,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 996725,
+        "bytes": 996727,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954981
+        "bytes": 954981,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f9dd289354ac6185"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -561,17 +592,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "d49bd515",
-      "vdtHash": "b6e9f48a51be5d712f6a516304ef8d349f628a67",
+      "hash8": "67aefeef",
+      "vdtHash": "09fd22eaefd8eb692bf193bebcd0d01a123efebb",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 87,
-        "buildMs": 662,
-        "totalMs": 1480,
+        "importMs": 1925,
+        "fontsMs": 347,
+        "buildMs": 808,
+        "totalMs": 4631,
         "builds": 1
       },
       "specimen": {
@@ -603,7 +643,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 83830,
+          "bytes": 83806,
           "alt": "Pàgina d'obertura 1: Full d’estil de retolació."
         },
         {
@@ -642,12 +682,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 995531,
+        "bytes": 995524,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954917
+        "bytes": 954916,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "7995c78590c9ccdf"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -838,17 +884,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "4a7ff732",
-      "vdtHash": "e5d8d8201d02170f703ecfc8d5157acf8a7fc672",
+      "hash8": "1fb75c2e",
+      "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 270,
-        "buildMs": 548,
-        "totalMs": 1561,
+        "importMs": 1612,
+        "fontsMs": 1140,
+        "buildMs": 651,
+        "totalMs": 4121,
         "builds": 1
       },
       "specimen": {
@@ -880,7 +935,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 75406,
+          "bytes": 75548,
           "alt": "章首页，第 1 页：嵌字样式表。"
         },
         {
@@ -919,12 +974,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1028010,
+        "bytes": 1027954,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955325
+        "bytes": 955323,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "de70035681cc67c0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1116,17 +1177,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "cb0bf2c5",
+      "hash8": "9020cd33",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 104,
-        "buildMs": 689,
-        "totalMs": 1497,
+        "importMs": 1596,
+        "fontsMs": 1131,
+        "buildMs": 854,
+        "totalMs": 5134,
         "builds": 1
       },
       "specimen": {
@@ -1158,7 +1228,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 79664,
+          "bytes": 79706,
           "alt": "صفحة الافتتاح ١: دليل أسلوب كتابة الحوار."
         },
         {
@@ -1198,12 +1268,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1012912,
+        "bytes": 1012790,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955300
+        "bytes": 955303,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a7213d8dff75b88b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1397,17 +1473,20 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "ja": {
-      "hash8": "977a238e",
-      "vdtHash": "76b7730a9ffb919be1d72fdeb2b2737aea2fd012",
+      "hash8": "81d82b4a",
+      "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 322,
-        "buildMs": 419,
-        "totalMs": 1441,
+        "importMs": 1438,
+        "fontsMs": 3131,
+        "buildMs": 518,
+        "totalMs": 6507,
         "builds": 1
       },
       "specimen": {
@@ -1439,7 +1518,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 86062,
+          "bytes": 86486,
           "alt": "章扉、1ページ：写植スタイルシート。"
         },
         {
@@ -1479,12 +1558,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1059951,
+        "bytes": 1060011,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955301
+        "bytes": 955301,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "cfcfc46fc60ad755"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1677,17 +1762,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "aee1ebcb",
-      "vdtHash": "d590b47ec89fa4eea9cd847a57dabb02f06b39dc",
+      "hash8": "b706755d",
+      "vdtHash": "ff3577f055a081d8454805278da37a8ca13309b1",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 84,
-        "buildMs": 759,
-        "totalMs": 1566,
+        "importMs": 1704,
+        "fontsMs": 641,
+        "buildMs": 898,
+        "totalMs": 4719,
         "builds": 1
       },
       "specimen": {
@@ -1719,7 +1813,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 91458,
+          "bytes": 91572,
           "alt": "Página de abertura 1: Folha de estilo de letreiramento."
         },
         {
@@ -1758,12 +1852,18 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 996097,
+        "bytes": 996099,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954897
+        "bytes": 954897,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "013c8101e665796d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1954,7 +2054,16 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

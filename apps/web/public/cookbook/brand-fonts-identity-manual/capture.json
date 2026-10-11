@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "brand-fonts-identity-manual",
-  "sourceHash": "0833e10e903fe8f2d301e763f8e9c774ffb2db8563d7ea20191ff3bca322df8b",
+  "sourceHash": "197809507d2b9d1ab5b7cb16fada8f0724cbfebdd3dee1147b48683436e877f2",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:53:22.485Z",
+  "capturedAt": "2026-10-11T20:22:29.823Z",
   "variants": {
     "en": {
-      "hash8": "5872b95c",
+      "hash8": "d982fb4a",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 46,
-        "buildMs": 55,
-        "totalMs": 830,
+        "importMs": 1108,
+        "fontsMs": 266,
+        "buildMs": 107,
+        "totalMs": 3357,
         "builds": 1
       },
       "specimen": {
@@ -116,13 +116,19 @@
       },
       "pdf": {
         "file": "brand-fonts-identity-manual.pdf",
-        "bytes": 51520,
+        "bytes": 51483,
         "pages": 4
       },
       "sandbox": {
         "file": "brand-fonts-identity-manual.postext",
-        "bytes": 106325,
-        "folio": "17625bac"
+        "bytes": 106328,
+        "folio": "17625bac",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "cce48b247850d214"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -227,6 +233,7 @@
           "layout",
           "layout.gutterWidth",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -277,12 +284,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyles"
         ],
-        "configLeaves": 384,
+        "configLeaves": 385,
         "designElements": 15,
         "directives": [
           ":::callout",
@@ -363,12 +371,10 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          },
           {
             "check": "sandbox",
             "severity": "info",

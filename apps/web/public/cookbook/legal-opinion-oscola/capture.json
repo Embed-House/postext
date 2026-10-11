@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "46ffcbfb6ad1bac6e6f71b1749367a442b7edcfadd013d5554178a884f7daf02",
+  "sourceHash": "0964b28cfaaf7a2844a7540f5c916b5481c80550a45c6ac03e351d53e2781adf",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:15:26.585Z",
+  "capturedAt": "2026-10-11T20:22:30.334Z",
   "variants": {
     "en": {
-      "hash8": "12401733",
+      "hash8": "2c1d8e19",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 32,
-        "buildMs": 135,
-        "totalMs": 965,
+        "importMs": 1822,
+        "fontsMs": 36,
+        "buildMs": 199,
+        "totalMs": 4296,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 161
+        "ownLines": 162
       },
       "pages": [
         {
@@ -115,13 +115,19 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 89512,
+        "bytes": 89511,
         "pages": 4
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23006,
-        "folio": "223edec1"
+        "bytes": 23003,
+        "folio": "223edec1",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "b872f730e4fcf5b8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -327,17 +333,20 @@
           "share": 0,
           "worst": 1.6400000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "cb854a1d",
-      "vdtHash": "dec9e172bd3aae9c5ad71b37126eae508df9c274",
+      "hash8": "c295411b",
+      "vdtHash": "dd0b895147d7e0a20e297a1723961914425e2f01",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 31,
-        "buildMs": 527,
-        "totalMs": 1356,
+        "importMs": 1883,
+        "fontsMs": 38,
+        "buildMs": 671,
+        "totalMs": 3677,
         "builds": 1
       },
       "specimen": {
@@ -359,7 +368,7 @@
           "Libre Franklin"
         ],
         "pages": 4,
-        "ownLines": 161
+        "ownLines": 162
       },
       "pages": [
         {
@@ -435,13 +444,19 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 93500,
+        "bytes": 93498,
         "pages": 4
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23010,
-        "folio": "223edec1"
+        "bytes": 23007,
+        "folio": "223edec1",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "a44123828b0745b2"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -647,7 +662,26 @@
           "share": 0,
           "worst": 1.76
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “7 Lord Bridge hizo suyas las palabras del juez B…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

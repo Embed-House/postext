@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "parts-in-colour",
-  "sourceHash": "d405e490a74e6a702f0535d2dc695c1ba0d311cb584ab487efcacd972cd5d5cb",
+  "sourceHash": "4d8c7d2799da0e0fae57aec4048f9031d3f5410cbe97dbae792d464307e3ab89",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:17:23.272Z",
+  "capturedAt": "2026-10-11T20:22:30.595Z",
   "variants": {
     "en": {
-      "hash8": "ad0019e8",
+      "hash8": "733d260a",
       "vdtHash": "0e5889b3360077090ccfa5da2047c750f0b77848",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 31,
-        "buildMs": 79,
-        "totalMs": 832,
+        "importMs": 671,
+        "fontsMs": 52,
+        "buildMs": 110,
+        "totalMs": 2707,
         "builds": 1
       },
       "specimen": {
@@ -193,7 +193,13 @@
       "sandbox": {
         "file": "parts-in-colour.postext",
         "bytes": 843871,
-        "folio": "a033cff5"
+        "folio": "a033cff5",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "99ba13f79b386881"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -479,17 +485,20 @@
           "share": 0,
           "worst": 1.3800000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "2fffe7c0",
+      "hash8": "0380445b",
       "vdtHash": "31d347092a81c1b9efa5c01bdc022c9921779bf7",
       "timings": {
-        "importMs": 131,
-        "fontsMs": 31,
-        "buildMs": 59,
-        "totalMs": 802,
+        "importMs": 1111,
+        "fontsMs": 243,
+        "buildMs": 104,
+        "totalMs": 2571,
         "builds": 1
       },
       "specimen": {
@@ -666,7 +675,13 @@
       "sandbox": {
         "file": "parts-in-colour.postext",
         "bytes": 843801,
-        "folio": "a033cff5"
+        "folio": "a033cff5",
+        "chapters": [
+          {
+            "pages": 10,
+            "hash": "80855903209bb003"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -951,6 +966,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.54
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-front-page",
-  "sourceHash": "97f96cbaf2570e577385a042145b779ae7d05672595c1a59abe32847e636287b",
+  "sourceHash": "3a209e205cc38f51558e7769b6676e7f00915c6dd732f8167fd3f800bc7683c4",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:53:22.488Z",
+  "capturedAt": "2026-10-11T20:22:30.536Z",
   "variants": {
     "en": {
-      "hash8": "5b0b20ed",
-      "vdtHash": "338876c0f2e56a0f9c060018b95b0ea7b14d4da0",
+      "hash8": "b6410d38",
+      "vdtHash": "4f9d3577c2f86f3c219c3113504231ed24fa64d4",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 33,
-        "buildMs": 105,
-        "totalMs": 871,
+        "importMs": 1101,
+        "fontsMs": 197,
+        "buildMs": 165,
+        "totalMs": 2263,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 154398,
+          "bytes": 154400,
           "alt": "Opening page 1: The Elverdale Courier. File picture: turbines on an upland ridge. Each of the three planned for Harrow Ridge would generate 2.3 megawatts."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 185390,
+          "bytes": 185810,
           "alt": "Opening page 2: Town & Valley. The rebuilt pier. Its new concrete footing (red) goes six metres below the riverbed. Both arches were relaid with their own stones. · The next five days · How the wards voted."
         }
       ],
@@ -89,8 +89,14 @@
       },
       "sandbox": {
         "file": "newspaper-front-page.postext",
-        "bytes": 200639,
-        "folio": "7d33b710"
+        "bytes": 200640,
+        "folio": "7d33b710",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "12105c9e05415b78"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -212,6 +218,7 @@
           "layout.gutterWidth",
           "layout.inlineResourceGap",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -270,13 +277,14 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 503,
+        "configLeaves": 504,
         "designElements": 22,
         "directives": [
           ":::callout",
@@ -370,14 +378,17 @@
         "iterationCount": 2,
         "looseLines": {
           "count": 1,
-          "share": 0.0152,
+          "share": 0.0147,
           "worst": 1.75
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

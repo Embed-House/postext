@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "zotero-bibtex-nocite",
-  "sourceHash": "6e2a96ca3618d76a90c4797088cd91653e1051e7a55b233dbe1ab9eba3df95f5",
+  "sourceHash": "8d0a5c8628be8e5232747c5320ea6097a0a67906963c09b65f22c1f65bb869d9",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:39.480Z",
+  "capturedAt": "2026-10-11T20:22:31.184Z",
   "variants": {
     "en": {
-      "hash8": "87c1e58f",
+      "hash8": "86085fee",
       "vdtHash": "58b2adb558c4b1f4d991a09587851a71d25acbf0",
       "timings": {
-        "importMs": 146,
-        "fontsMs": 5,
-        "buildMs": 529,
-        "totalMs": 1297,
+        "importMs": 259,
+        "fontsMs": 6,
+        "buildMs": 603,
+        "totalMs": 1545,
         "builds": 1
       },
       "specimen": {
@@ -88,8 +88,14 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19091,
-        "folio": "059452bc"
+        "bytes": 19090,
+        "folio": "059452bc",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f2551fa19683aa7f"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -261,17 +267,20 @@
           "share": 0,
           "worst": 1.98
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "9fcc60f6",
+      "hash8": "cc9d7001",
       "vdtHash": "655bcf601c1bf04052d6efffa40d159ce5cd7e18",
       "timings": {
-        "importMs": 145,
-        "fontsMs": 5,
-        "buildMs": 491,
-        "totalMs": 1250,
+        "importMs": 227,
+        "fontsMs": 6,
+        "buildMs": 542,
+        "totalMs": 1413,
         "builds": 1
       },
       "specimen": {
@@ -343,8 +352,14 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19747,
-        "folio": "059452bc"
+        "bytes": 19746,
+        "folio": "059452bc",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "d3a083159896d97d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -515,6 +530,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.87
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

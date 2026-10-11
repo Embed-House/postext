@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "vocalised-classical-prose",
-  "sourceHash": "02f9b982da81b9c26ec5cade8e3d6d0836fc4fd3080b0aaffb96734795c5e435",
+  "sourceHash": "99947dabdc92f91857f5ded7581b0dce5d15ffec1fb125d2d6376393a22d05e2",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:20:08.985Z",
+  "capturedAt": "2026-10-11T20:22:31.116Z",
   "variants": {
     "en": {
-      "hash8": "383e601e",
-      "vdtHash": "5e57bcf18aa19c420dd54d458fc7efe46defd3d3",
+      "hash8": "22617219",
+      "vdtHash": "3ee5260508696be07c239cd7e0ef72102c7c91fe",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 32,
-        "buildMs": 75,
-        "totalMs": 775,
+        "importMs": 148,
+        "fontsMs": 34,
+        "buildMs": 90,
+        "totalMs": 838,
         "builds": 1
       },
       "specimen": {
@@ -81,7 +81,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38252,
+          "bytes": 38310,
           "alt": "Page ٤."
         }
       ],
@@ -114,7 +114,13 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36330
+        "bytes": 36327,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "c8b5e1aaf540b138"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -256,17 +262,36 @@
           "share": 0,
           "worst": 1.33
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Set in Amiri and Aref Ruqaa (SIL OFL) · Text: al…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d6faa351",
-      "vdtHash": "aa04683f48d081dcd52f29f099685703ec48f5be",
+      "hash8": "18b26016",
+      "vdtHash": "60238519a34f1d62bfad9b498caba15c2afaf7a1",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 30,
-        "buildMs": 75,
-        "totalMs": 767,
+        "importMs": 139,
+        "fontsMs": 33,
+        "buildMs": 91,
+        "totalMs": 797,
         "builds": 1
       },
       "specimen": {
@@ -331,7 +356,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 39920,
+          "bytes": 39890,
           "alt": "Página ٤."
         }
       ],
@@ -364,7 +389,13 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36382
+        "bytes": 36378,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "d93e904422c3c194"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -504,9 +535,18 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.42
+          "worst": 1.57
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

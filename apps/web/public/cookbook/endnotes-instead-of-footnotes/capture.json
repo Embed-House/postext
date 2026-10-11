@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "endnotes-instead-of-footnotes",
-  "sourceHash": "5432046a1341e60d0b328f83221909471c1bc8fbf855687f414fd3d92e24a2d4",
+  "sourceHash": "708f4a080361426b6041f00a40d5367fa781dc729f59d1b40e6933d4f0444bdf",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.113Z",
+  "capturedAt": "2026-10-11T20:22:30.135Z",
   "variants": {
     "en": {
-      "hash8": "5bcab6e0",
+      "hash8": "4ebd6e31",
       "vdtHash": "e4999498153329210326f1834fe8debf4c9f584d",
       "timings": {
-        "importMs": 130,
-        "fontsMs": 37,
-        "buildMs": 66,
-        "totalMs": 810,
+        "importMs": 1525,
+        "fontsMs": 116,
+        "buildMs": 127,
+        "totalMs": 2663,
         "builds": 1
       },
       "specimen": {
@@ -93,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128044,
+          "bytes": 128042,
           "alt": "Opening page 19: Notes."
         }
       ],
@@ -125,8 +125,14 @@
       },
       "sandbox": {
         "file": "endnotes-instead-of-footnotes.postext",
-        "bytes": 78132,
-        "folio": "3d3a1e90"
+        "bytes": 78143,
+        "folio": "3d3a1e90",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "353c9844bd6dc464"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -206,6 +212,7 @@
           "headings.levels[].level",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -245,11 +252,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 332,
+        "configLeaves": 333,
         "designElements": 18,
         "directives": [
           ":::paragraphs"
@@ -336,16 +344,14 @@
           "share": 0,
           "worst": 1.78
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "continuation.pageIndexOffset 14 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

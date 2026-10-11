@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "community-newsletter",
-  "sourceHash": "d08087602039159ecb5a640d3ab57c5f0fa692a30f1933a7c6e2ddaad85f0944",
+  "sourceHash": "5b8fb63164968380050ccc12be666b7eeb287d52416f463e4e84756d4b239f34",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:49:50.797Z",
+  "capturedAt": "2026-10-11T20:22:30.092Z",
   "variants": {
     "en": {
-      "hash8": "f053251b",
+      "hash8": "a6b9a789",
       "vdtHash": "d5f528c1898961589bbd0d00ab128b8154b465c0",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 29,
-        "buildMs": 42,
-        "totalMs": 786,
+        "importMs": 1421,
+        "fontsMs": 98,
+        "buildMs": 90,
+        "totalMs": 2952,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Work Sans"
         ],
         "pages": 2,
-        "ownLines": 167
+        "ownLines": 168
       },
       "pages": [
         {
@@ -89,8 +89,14 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81201,
-        "folio": "0414c868"
+        "bytes": 81199,
+        "folio": "0414c868",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "872bd1e511ea8e09"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -187,6 +193,7 @@
           "layout.gutterWidth",
           "layout.layoutType",
           "layout.sideColumnPercent",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -225,11 +232,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 275,
+        "configLeaves": 276,
         "designElements": 8,
         "directives": [
           ":::paragraphs",
@@ -298,23 +306,20 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     },
     "es": {
-      "hash8": "880a8393",
+      "hash8": "67c15b86",
       "vdtHash": "a62a7faa8305895a7ad2843b3dab7f88b31d12f8",
       "timings": {
-        "importMs": 127,
-        "fontsMs": 27,
-        "buildMs": 33,
-        "totalMs": 776,
+        "importMs": 1176,
+        "fontsMs": 150,
+        "buildMs": 77,
+        "totalMs": 2272,
         "builds": 1
       },
       "specimen": {
@@ -337,7 +342,7 @@
           "Work Sans"
         ],
         "pages": 2,
-        "ownLines": 167
+        "ownLines": 168
       },
       "pages": [
         {
@@ -387,8 +392,14 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81881,
-        "folio": "0414c868"
+        "bytes": 81874,
+        "folio": "0414c868",
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "30d47b1bee5d6b9d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -485,6 +496,7 @@
           "layout.gutterWidth",
           "layout.layoutType",
           "layout.sideColumnPercent",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.dpi",
@@ -523,11 +535,12 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 275,
+        "configLeaves": 276,
         "designElements": 8,
         "directives": [
           ":::paragraphs",
@@ -596,13 +609,10 @@
           "share": 0,
           "worst": 0
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

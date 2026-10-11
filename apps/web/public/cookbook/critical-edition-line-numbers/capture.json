@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "critical-edition-line-numbers",
-  "sourceHash": "37d983ea84084bfc17c6dd8c53d7bad6063b1ba76d5a3aa5d5b7fff0254aaa82",
+  "sourceHash": "c53486a3d4befa9bfc698849e4dceb304c6cb23391466955eb128378a0f0e415",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:05.081Z",
+  "capturedAt": "2026-10-11T20:22:30.103Z",
   "variants": {
     "en": {
-      "hash8": "9e67fbab",
-      "vdtHash": "97b236012d609303db3366f6b877ca2cf481634a",
+      "hash8": "ad5462f9",
+      "vdtHash": "07468e409ef5400855eb4297fb4b8812c1ff05cf",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 19,
-        "buildMs": 52,
-        "totalMs": 795,
+        "importMs": 1255,
+        "fontsMs": 16,
+        "buildMs": 96,
+        "totalMs": 3242,
         "builds": 1
       },
       "specimen": {
@@ -152,8 +152,14 @@
       },
       "sandbox": {
         "file": "critical-edition-line-numbers.postext",
-        "bytes": 107992,
-        "folio": "bc0e5eea"
+        "bytes": 107987,
+        "folio": "bc0e5eea",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "2efb050be3be3735"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -245,6 +251,7 @@
           "lineNumbers.interval",
           "lineNumbers.position",
           "lineNumbers.restart",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -275,10 +282,11 @@
           "headings",
           "layout",
           "lineNumbers",
+          "locale",
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 230,
+        "configLeaves": 231,
         "designElements": 11,
         "directives": [
           ":::verse",
@@ -344,11 +352,14 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

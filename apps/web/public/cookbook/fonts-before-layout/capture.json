@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "fonts-before-layout",
-  "sourceHash": "bcf02b75fc1a04ae685a3cb75231e80747c51bf4dde458c4b36bbf9897c9b4d9",
+  "sourceHash": "e651d3690ed7ca201a6f26b4df432a3cf0c64f40cb4a34f887b6cb9c4b3bb980",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:14:44.233Z",
+  "capturedAt": "2026-10-11T20:22:30.201Z",
   "variants": {
     "en": {
-      "hash8": "51c4aa60",
+      "hash8": "e7e865d6",
       "vdtHash": "0c1ef201c84c95cf7ac8d8dff7a325431f209674",
       "timings": {
-        "importMs": 131,
+        "importMs": 1526,
         "fontsMs": 1,
-        "buildMs": 7,
-        "totalMs": 803,
+        "buildMs": 8,
+        "totalMs": 2916,
         "builds": 3
       },
       "specimen": {
@@ -114,8 +114,14 @@
       },
       "sandbox": {
         "file": "fonts-before-layout.postext",
-        "bytes": 422071,
-        "folio": "4b67afad"
+        "bytes": 422070,
+        "folio": "4b67afad",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "68a92d76deb21a2e"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -199,6 +205,7 @@
           "headings.levels[].span",
           "layout",
           "layout.layoutType",
+          "locale",
           "page",
           "page.dpi",
           "page.height",
@@ -247,12 +254,13 @@
           "header",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 277,
+        "configLeaves": 278,
         "designElements": 10,
         "directives": [
           ":::paragraphs",
@@ -323,11 +331,19 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "C35",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “When the faces arrived, Postext dropped every wi…”"
           }
         ]
       }

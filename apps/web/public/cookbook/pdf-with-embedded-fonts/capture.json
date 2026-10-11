@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pdf-with-embedded-fonts",
-  "sourceHash": "5496f16ce0a9c27971ba363f124618f98da93b20bbb3c528a23dac4ee3f379d3",
+  "sourceHash": "3b6a7c965ed1f1f04cd207c3967ebdd5e15b3d552fc676fc6af78f2ba8c20cda",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:04.550Z",
+  "capturedAt": "2026-10-11T20:22:30.638Z",
   "variants": {
     "en": {
-      "hash8": "122eda5d",
+      "hash8": "504fe877",
       "vdtHash": "6614b01a37d0ff6a777bd67b097f1a4e32a7cf36",
       "timings": {
-        "importMs": 197,
-        "fontsMs": 50,
-        "buildMs": 34,
-        "totalMs": 890,
+        "importMs": 1611,
+        "fontsMs": 122,
+        "buildMs": 70,
+        "totalMs": 4015,
         "builds": 1
       },
       "specimen": {
@@ -115,13 +115,19 @@
       },
       "pdf": {
         "file": "pdf-with-embedded-fonts.pdf",
-        "bytes": 89369,
+        "bytes": 89367,
         "pages": 4
       },
       "sandbox": {
         "file": "pdf-with-embedded-fonts.postext",
-        "bytes": 30448,
-        "folio": "885e614d"
+        "bytes": 30449,
+        "folio": "885e614d",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "01b7e254d7fb35f6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -194,6 +200,7 @@
           "layout",
           "layout.inlineResourceGap",
           "layout.layoutType",
+          "locale",
           "page",
           "page.backgroundColor",
           "page.height",
@@ -241,12 +248,13 @@
           "headingStyles",
           "headings",
           "layout",
+          "locale",
           "page",
           "paragraphStyles",
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 227,
+        "configLeaves": 228,
         "designElements": 11,
         "directives": [
           "::resource",
@@ -316,13 +324,10 @@
           "share": 0,
           "worst": 1.56
         },
-        "findings": [
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
-          }
-        ]
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

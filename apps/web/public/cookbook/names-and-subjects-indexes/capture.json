@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "names-and-subjects-indexes",
-  "sourceHash": "74b9b4b2bb938d7785012e57df1676a9277d340eb69912ebb1687b6429a5ff0f",
+  "sourceHash": "fcd835ed1ca1ddb4b0e36189ac6a6bd3b48b3c012b4bea84d07abd4ded99ac81",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.943Z",
+  "capturedAt": "2026-10-11T20:22:30.495Z",
   "variants": {
     "en": {
-      "hash8": "e24991a2",
-      "vdtHash": "873133820c795bc0429f261f7a92f0666157b5ab",
+      "hash8": "76295571",
+      "vdtHash": "1ee2d1bee34f81d339504d2e948ad35641b12ecc",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 28,
-        "buildMs": 124,
-        "totalMs": 939,
+        "importMs": 1762,
+        "fontsMs": 38,
+        "buildMs": 188,
+        "totalMs": 3048,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libre Franklin"
         ],
         "pages": 7,
-        "ownLines": 145
+        "ownLines": 142
       },
       "pages": [
         {
@@ -105,7 +105,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 40262,
+          "bytes": 40728,
           "alt": "Opening page 6: Index of Names."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 41124,
+          "bytes": 41362,
           "alt": "Opening page 7: Index of Subjects."
         }
       ],
@@ -152,13 +152,19 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 116615,
+        "bytes": 116577,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 16973,
-        "folio": "581a62c9"
+        "bytes": 16855,
+        "folio": "581a62c9",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "7a076c9cd316f43a"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -256,7 +262,6 @@
           "index.groups.fontFamily",
           "index.groups.fontSize",
           "index.groups.fontWeight",
-          "index.groups.marginTop",
           "index.indent",
           "index.lineHeight",
           "index.main",
@@ -303,7 +308,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 253,
+        "configLeaves": 252,
         "designElements": 11,
         "directives": [
           ":::paragraphs",
@@ -387,17 +392,26 @@
           "share": 0,
           "worst": 1.81
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "411a86b0",
-      "vdtHash": "05b1d598a1be4d6c76874f80bcc2b5fca0b3d1bc",
+      "hash8": "f23b0c54",
+      "vdtHash": "41c1b576705fe8442f83218e328c6536a3d6ab95",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 26,
-        "buildMs": 136,
-        "totalMs": 944,
+        "importMs": 1439,
+        "fontsMs": 43,
+        "buildMs": 193,
+        "totalMs": 3697,
         "builds": 1
       },
       "specimen": {
@@ -419,7 +433,7 @@
           "Libre Franklin"
         ],
         "pages": 7,
-        "ownLines": 145
+        "ownLines": 142
       },
       "pages": [
         {
@@ -485,7 +499,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 42710,
+          "bytes": 42644,
           "alt": "Página de apertura 6: Índice onomástico."
         },
         {
@@ -496,7 +510,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 44600,
+          "bytes": 44966,
           "alt": "Página de apertura 7: Índice de materias."
         }
       ],
@@ -532,13 +546,19 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 130368,
+        "bytes": 130392,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17385,
-        "folio": "581a62c9"
+        "bytes": 17494,
+        "folio": "581a62c9",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "8bcb6be7eee92189"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -636,7 +656,6 @@
           "index.groups.fontFamily",
           "index.groups.fontSize",
           "index.groups.fontWeight",
-          "index.groups.marginTop",
           "index.indent",
           "index.lineHeight",
           "index.main",
@@ -683,7 +702,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 253,
+        "configLeaves": 252,
         "designElements": 11,
         "directives": [
           ":::paragraphs",
@@ -767,11 +786,19 @@
           "share": 0,
           "worst": 1.73
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

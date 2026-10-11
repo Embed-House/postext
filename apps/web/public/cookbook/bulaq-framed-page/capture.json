@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bulaq-framed-page",
-  "sourceHash": "dddbcd9dda86950234e970d597a37957cf5835ff6d06190681d56a72bdc02eb9",
+  "sourceHash": "f5a54958ba09be35286bee402650305594d556a0fc542b99e2e9fe7f950f1ef7",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.627Z",
+  "capturedAt": "2026-10-11T20:22:29.835Z",
   "variants": {
     "en": {
-      "hash8": "a2c0da55",
-      "vdtHash": "ee470893091a2ee6fb9dc398c5a1826189c0683d",
+      "hash8": "76e60103",
+      "vdtHash": "f209e5eff08c8f19b36eb49188ea00b8a7239131",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 65,
-        "buildMs": 95,
-        "totalMs": 869,
+        "importMs": 1450,
+        "fontsMs": 293,
+        "buildMs": 147,
+        "totalMs": 3883,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +105,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 34216,
+          "bytes": 34250,
           "alt": "Page ٦."
         }
       ],
@@ -142,12 +142,18 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 109715,
+        "bytes": 109694,
         "pages": 6
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26383
+        "bytes": 26377,
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "59c80aabf7d854cf"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -362,17 +368,26 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "4d1702a5",
-      "vdtHash": "493b41b66dfbdfd7c28b306def6923ed6f602698",
+      "hash8": "153f5bdc",
+      "vdtHash": "6b8d7055fc41adb04a90a265a431501113ae8f32",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 65,
-        "buildMs": 94,
-        "totalMs": 870,
+        "importMs": 1776,
+        "fontsMs": 261,
+        "buildMs": 134,
+        "totalMs": 2762,
         "builds": 1
       },
       "specimen": {
@@ -460,7 +475,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 34760,
+          "bytes": 34796,
           "alt": "Página ٦."
         }
       ],
@@ -497,12 +512,18 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110640,
+        "bytes": 110613,
         "pages": 6
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26408
+        "bytes": 26402,
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "819cdf86bd64af0a"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -717,7 +738,16 @@
           "share": 0,
           "worst": 1.72
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

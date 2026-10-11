@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "running-heads-by-parity",
-  "sourceHash": "5db63d1a9005aeda12f7cf3262948e87729fba59c05b30608beedd0549375458",
+  "sourceHash": "b9b685463529a05272947ba88f738ec83d313dacddd0f7ab2b240c41e4e08f96",
   "engine": {
-    "postext": "1.26.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:18:26.896Z",
+  "capturedAt": "2026-10-11T20:22:30.795Z",
   "variants": {
     "en": {
-      "hash8": "0c64b54e",
+      "hash8": "e299626c",
       "vdtHash": "0fd2ce0f5bc9963d0e66b0da481d735d672036c2",
       "timings": {
-        "importMs": 130,
+        "importMs": 995,
         "fontsMs": 0,
-        "buildMs": 111,
-        "totalMs": 851,
+        "buildMs": 169,
+        "totalMs": 2059,
         "builds": 1
       },
       "specimen": {
@@ -125,8 +125,17 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 24097,
-        "folio": "95f31ab7"
+        "bytes": 24113,
+        "folio": "95f31ab7",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "d51bebc1d4935989"
+          }
+        ],
+        "warnings": [
+          "designTextTruncated That the soul expends its passions upon false objects, where the true are wanting"
+        ]
       },
       "detected": {
         "apis": [
@@ -305,23 +314,36 @@
           "share": 0,
           "worst": 1.6400000000000001
         },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
         "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “Quintus Marcius, the Roman legate in the war aga…”"
+          },
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 28 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }
     },
     "es": {
-      "hash8": "4a2dc20e",
+      "hash8": "cc7c69c1",
       "vdtHash": "03511421b5d1dfa2a26bebd282903dc09494abdc",
       "timings": {
-        "importMs": 161,
+        "importMs": 962,
         "fontsMs": 0,
-        "buildMs": 51,
-        "totalMs": 815,
+        "buildMs": 81,
+        "totalMs": 2661,
         "builds": 1
       },
       "specimen": {
@@ -430,8 +452,17 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 22539,
-        "folio": "95f31ab7"
+        "bytes": 22557,
+        "folio": "95f31ab7",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "80090b3765101087"
+          }
+        ],
+        "warnings": [
+          "designTextTruncated Cómo el alma descarga sus pasiones sobre objetos falsos cuando le faltan los verdaderos"
+        ]
       },
       "detected": {
         "apis": [
@@ -610,11 +641,14 @@
           "share": 0,
           "worst": 1.53
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 28 dropped (even: same page sides)"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
           }
         ]
       }

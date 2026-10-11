@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "spanish-pocket-novel",
-  "sourceHash": "04bec2544813ba9accb06d879bdb7a28aee65121947c598453f439c5ce3cdbb8",
+  "sourceHash": "2e63068a18a0421473262731777a6fb32c5b3d14da8ddc8936f9844bae6a0ab5",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:38.292Z",
+  "capturedAt": "2026-10-11T20:22:30.873Z",
   "variants": {
     "es": {
-      "hash8": "b2933687",
+      "hash8": "c667e256",
       "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 21,
-        "buildMs": 42,
-        "totalMs": 787,
+        "importMs": 904,
+        "fontsMs": 30,
+        "buildMs": 90,
+        "totalMs": 1980,
         "builds": 1
       },
       "specimen": {
@@ -125,8 +125,14 @@
       },
       "sandbox": {
         "file": "spanish-pocket-novel.postext",
-        "bytes": 43134,
-        "folio": "bb7ddf9c"
+        "bytes": 43133,
+        "folio": "bb7ddf9c",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "6c661260e30ebb54"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -325,6 +331,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.6500000000000001
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

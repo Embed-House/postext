@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bunko-novel-furigana",
-  "sourceHash": "a9fb2e403e0a34e8535ed4c888fb0a2ce3caf1a94b58b7da3ca06e8f9c7c3829",
+  "sourceHash": "187da97fe70130335959273112cf446ff8bbffdd5f548e3bd8c8273149fd8f94",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:48:53.632Z",
+  "capturedAt": "2026-10-11T20:22:29.846Z",
   "variants": {
     "en": {
-      "hash8": "f2e9d677",
+      "hash8": "67b20ffa",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 271,
-        "buildMs": 53,
-        "totalMs": 1055,
+        "importMs": 1930,
+        "fontsMs": 2603,
+        "buildMs": 67,
+        "totalMs": 5286,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 9,
-        "ownLines": 148
+        "ownLines": 145
       },
       "pages": [
         {
@@ -152,13 +152,19 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330739,
+        "bytes": 330741,
         "pages": 9
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28196,
-        "folio": "c397d9a7"
+        "bytes": 28172,
+        "folio": "c397d9a7",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "9ea70dde5f8d5da0"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -171,8 +177,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidOrphans",
-          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -272,7 +276,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 143,
+        "configLeaves": 141,
         "designElements": 6,
         "directives": [],
         "inline": [
@@ -340,17 +344,20 @@
           "share": 0,
           "worst": 0.25
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "92a34405",
+      "hash8": "bad069c2",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 275,
-        "buildMs": 53,
-        "totalMs": 1064,
+        "importMs": 1694,
+        "fontsMs": 1509,
+        "buildMs": 67,
+        "totalMs": 4368,
         "builds": 1
       },
       "specimen": {
@@ -371,7 +378,7 @@
           "Shippori Mincho B1"
         ],
         "pages": 9,
-        "ownLines": 148
+        "ownLines": 145
       },
       "pages": [
         {
@@ -490,8 +497,14 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28237,
-        "folio": "c397d9a7"
+        "bytes": 28212,
+        "folio": "c397d9a7",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "4c2334b9095582b7"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -504,8 +517,6 @@
         ],
         "configKeys": [
           "bodyText",
-          "bodyText.avoidOrphans",
-          "bodyText.avoidWidows",
           "bodyText.boldColor",
           "bodyText.color",
           "bodyText.firstLineIndent",
@@ -605,7 +616,7 @@
           "locale",
           "page"
         ],
-        "configLeaves": 143,
+        "configLeaves": 141,
         "designElements": 6,
         "directives": [],
         "inline": [
@@ -672,6 +683,9 @@
           "count": 0,
           "share": 0,
           "worst": 0.25
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

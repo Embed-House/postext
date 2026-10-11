@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-right-to-left",
-  "sourceHash": "662c5becc132dae6f2e9b087bc1be692be94d14cbf2867d502d468aa08025db6",
+  "sourceHash": "599e9fd582471418cdd25540feffff725ee5bf0040e3a1784f5a6207bd65762a",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.866Z",
+  "capturedAt": "2026-10-11T20:22:30.431Z",
   "variants": {
     "en": {
-      "hash8": "c5f92f36",
+      "hash8": "339c21c3",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 242,
-        "buildMs": 859,
-        "totalMs": 2183,
+        "importMs": 1781,
+        "fontsMs": 1599,
+        "buildMs": 991,
+        "totalMs": 6355,
         "builds": 2
       },
       "specimen": {
@@ -109,15 +109,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521475,
+        "bytes": 1521473,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410310,
+        "bytes": 1410331,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -242,6 +248,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -251,19 +260,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ccf67f6c",
+      "hash8": "48405440",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 235,
-        "buildMs": 852,
-        "totalMs": 2164,
+        "importMs": 1318,
+        "fontsMs": 2081,
+        "buildMs": 996,
+        "totalMs": 7240,
         "builds": 2
       },
       "specimen": {
@@ -360,10 +369,16 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410443,
+        "bytes": 1410462,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -488,6 +503,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -497,19 +515,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "13c88803",
+      "hash8": "6721b0f4",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 238,
-        "buildMs": 854,
-        "totalMs": 2306,
+        "importMs": 1493,
+        "fontsMs": 1496,
+        "buildMs": 1001,
+        "totalMs": 6533,
         "builds": 2
       },
       "specimen": {
@@ -601,15 +619,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522199,
+        "bytes": 1522196,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410433,
+        "bytes": 1410453,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -734,6 +758,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -743,19 +770,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "9196874f",
+      "hash8": "b065809d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 238,
-        "buildMs": 855,
-        "totalMs": 2432,
+        "importMs": 1433,
+        "fontsMs": 1742,
+        "buildMs": 1023,
+        "totalMs": 8873,
         "builds": 2
       },
       "specimen": {
@@ -847,15 +874,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1544572,
+        "bytes": 1544570,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410544,
+        "bytes": 1410564,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -980,6 +1013,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -989,19 +1025,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "6aeec097",
+      "hash8": "58db6dd9",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 237,
-        "buildMs": 850,
-        "totalMs": 2215,
+        "importMs": 2288,
+        "fontsMs": 2604,
+        "buildMs": 991,
+        "totalMs": 8191,
         "builds": 2
       },
       "specimen": {
@@ -1093,15 +1129,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1530172,
+        "bytes": 1530169,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410760,
+        "bytes": 1410779,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "bfdc5fb1b08dad3b"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1226,6 +1268,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1235,19 +1280,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "9e842760",
+      "hash8": "0c900a8a",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 257,
-        "buildMs": 854,
-        "totalMs": 2251,
+        "importMs": 1114,
+        "fontsMs": 2314,
+        "buildMs": 985,
+        "totalMs": 7209,
         "builds": 2
       },
       "specimen": {
@@ -1339,15 +1384,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521163,
+        "bytes": 1521160,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410506,
+        "bytes": 1410526,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1472,6 +1523,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1486,19 +1540,19 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "313956ba",
+      "hash8": "15972c60",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 240,
-        "buildMs": 855,
-        "totalMs": 2228,
+        "importMs": 970,
+        "fontsMs": 2126,
+        "buildMs": 1012,
+        "totalMs": 6269,
         "builds": 2
       },
       "specimen": {
@@ -1590,15 +1644,21 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522049,
+        "bytes": 1522047,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410421,
+        "bytes": 1410444,
         "folio": "80b0969c",
         "keep": "last",
-        "pages": 2
+        "pages": 2,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "a5dc34310710e4db"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -1723,6 +1783,9 @@
           "share": 0,
           "worst": 0
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -1732,7 +1795,7 @@
           {
             "check": "sandbox",
             "severity": "info",
-            "detail": "continuation.pageIndexOffset 1: page 1 is a verso in the recipe, a recto in the Sandbox"
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
           }
         ]
       }

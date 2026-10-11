@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manual-see-page-references",
-  "sourceHash": "aec678e445f65d4127e892599f32fc87cd171a05fedb866ce8014aaa9d5dae06",
+  "sourceHash": "27915d6efbe6090bdee174ebb1a310124f59d6a138c159e0381bf4f3f2a556e7",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.916Z",
+  "capturedAt": "2026-10-11T20:22:30.468Z",
   "variants": {
     "en": {
-      "hash8": "cb142a5e",
-      "vdtHash": "2b45ae281967c7ac2990356fefe5d57b5c54f811",
+      "hash8": "6c3f3b77",
+      "vdtHash": "712ed02bec0ad907138b2588f514fd0f06792975",
       "timings": {
-        "importMs": 173,
-        "fontsMs": 27,
-        "buildMs": 48,
-        "totalMs": 865,
+        "importMs": 1054,
+        "fontsMs": 30,
+        "buildMs": 87,
+        "totalMs": 2336,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 96628,
+          "bytes": 99234,
           "alt": "Page 2: 1 Before your first ride."
         },
         {
@@ -114,13 +114,19 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36615,
+        "bytes": 37220,
         "pages": 4
       },
       "sandbox": {
         "file": "manual-see-page-references.postext",
         "bytes": 12436,
-        "folio": "4335096f"
+        "folio": "4335096f",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "75b085005a919718"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -318,17 +324,26 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "fc858393",
-      "vdtHash": "44e220338e17bcf0994798a57ac7135552398785",
+      "hash8": "4f5ab941",
+      "vdtHash": "db847e4158e9c364fdb1c2fbd1427e13f081f2a7",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 26,
-        "buildMs": 44,
-        "totalMs": 808,
+        "importMs": 1519,
+        "fontsMs": 35,
+        "buildMs": 83,
+        "totalMs": 4045,
         "builds": 1
       },
       "specimen": {
@@ -371,7 +386,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 104006,
+          "bytes": 107168,
           "alt": "Página 2: 1 Antes de la primera salida."
         },
         {
@@ -425,13 +440,19 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 36545,
+        "bytes": 37217,
         "pages": 4
       },
       "sandbox": {
         "file": "manual-see-page-references.postext",
-        "bytes": 12980,
-        "folio": "4335096f"
+        "bytes": 12983,
+        "folio": "4335096f",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "6027a6b3bd078b81"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -629,7 +650,16 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }

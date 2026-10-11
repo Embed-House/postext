@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "mla-humanities-essay",
-  "sourceHash": "9c0cf138dd756048ca94f944310c2fa1e3f79c59b8070ee241041d1ccb3777da",
+  "sourceHash": "bca3f6c3d0f28335486202d7d0596d2c755e85ad5233852b93fe11275ba2a9c5",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:16:33.936Z",
+  "capturedAt": "2026-10-11T20:22:30.489Z",
   "variants": {
     "en": {
-      "hash8": "dc7a4f0e",
+      "hash8": "2758ffd5",
       "vdtHash": "aeeb7aaff771f2fadcc155673cfa79108d5db99d",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 32,
-        "buildMs": 82,
-        "totalMs": 917,
+        "importMs": 1863,
+        "fontsMs": 36,
+        "buildMs": 128,
+        "totalMs": 3207,
         "builds": 1
       },
       "specimen": {
@@ -114,13 +114,19 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 86107,
+        "bytes": 86106,
         "pages": 4
       },
       "sandbox": {
         "file": "mla-humanities-essay.postext",
-        "bytes": 16908,
-        "folio": "070584e0"
+        "bytes": 16906,
+        "folio": "070584e0",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "edca0ca4e3f600a6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -330,17 +336,20 @@
           "share": 0,
           "worst": 1.77
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": []
       }
     },
     "es": {
-      "hash8": "41ebd564",
+      "hash8": "56c4f5d6",
       "vdtHash": "7e9d0444b1b469b4a6b5ab616769497245a62456",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 31,
-        "buildMs": 84,
-        "totalMs": 913,
+        "importMs": 2140,
+        "fontsMs": 35,
+        "buildMs": 125,
+        "totalMs": 4343,
         "builds": 1
       },
       "specimen": {
@@ -437,13 +446,19 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 91218,
+        "bytes": 91216,
         "pages": 4
       },
       "sandbox": {
         "file": "mla-humanities-essay.postext",
-        "bytes": 17041,
-        "folio": "070584e0"
+        "bytes": 17038,
+        "folio": "070584e0",
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "c356297c72bd1178"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -652,6 +667,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.78
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

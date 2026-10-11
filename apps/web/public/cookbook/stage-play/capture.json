@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "stage-play",
-  "sourceHash": "7f2690dce5790a7e47268e9428e5724f470383e93776d984f11e49c1bf1ffa6a",
+  "sourceHash": "1d0683ceab8794b2c43b6613fb4bc16238f2716f7a84a198e46d6b424f8ee8b2",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:38.296Z",
+  "capturedAt": "2026-10-11T20:22:30.908Z",
   "variants": {
     "en": {
-      "hash8": "8c81b4ec",
-      "vdtHash": "7accaf882306030a989b52c0513e9a1e8c33a1bf",
+      "hash8": "ea069af2",
+      "vdtHash": "4ad978657d69393da5b14f4fd35f89ee64564f9f",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 4,
-        "buildMs": 41,
-        "totalMs": 785,
+        "importMs": 272,
+        "fontsMs": 5,
+        "buildMs": 74,
+        "totalMs": 969,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Playfair Display SC"
         ],
         "pages": 5,
-        "ownLines": 157
+        "ownLines": 160
       },
       "pages": [
         {
@@ -82,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 147338,
+          "bytes": 142938,
           "alt": "Page 4."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 143516,
+          "bytes": 147942,
           "alt": "Page 5."
         }
       ],
@@ -125,8 +125,14 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22416,
-        "folio": "059474f1"
+        "bytes": 22428,
+        "folio": "059474f1",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "9ae8b62c215cc9e8"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -144,6 +150,7 @@
           "bodyText.hangingIndent",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxRuntTracking",
           "bodyText.maxWordSpacing",
           "bodyText.minWordSpacing",
           "colorPalette",
@@ -257,7 +264,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 286,
+        "configLeaves": 287,
         "designElements": 14,
         "directives": [
           ":::paragraphs",
@@ -322,19 +329,28 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.51
+          "worst": 1.78
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "970a0f0b",
+      "hash8": "75575ac6",
       "vdtHash": "e5b1fe795f2a01b7037caf01111416ac60d66d8d",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 3,
-        "buildMs": 36,
-        "totalMs": 768,
+        "importMs": 425,
+        "fontsMs": 4,
+        "buildMs": 71,
+        "totalMs": 1139,
         "builds": 1
       },
       "specimen": {
@@ -356,7 +372,7 @@
           "Playfair Display SC"
         ],
         "pages": 5,
-        "ownLines": 157
+        "ownLines": 160
       },
       "pages": [
         {
@@ -443,8 +459,14 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22542,
-        "folio": "059474f1"
+        "bytes": 22553,
+        "folio": "059474f1",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "1caa8a384b41aa80"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -462,6 +484,7 @@
           "bodyText.hangingIndent",
           "bodyText.italicColor",
           "bodyText.lineHeight",
+          "bodyText.maxRuntTracking",
           "bodyText.maxWordSpacing",
           "bodyText.minWordSpacing",
           "colorPalette",
@@ -575,7 +598,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 286,
+        "configLeaves": 287,
         "designElements": 14,
         "directives": [
           ":::paragraphs",
@@ -641,6 +664,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.59
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": []
       }

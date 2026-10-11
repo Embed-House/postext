@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "thesis-back-matter",
-  "sourceHash": "7d7173e1e1791d3fb528dea5bf498019d11130f30df8792b176199c2b610b857",
+  "sourceHash": "4198d86dc4021a4b908a9720b0b739461b100456b1a3710ae336a2a153c5d7be",
   "engine": {
-    "postext": "1.27.0",
-    "postextPdf": "1.27.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:52:05.580Z",
+  "capturedAt": "2026-10-11T20:22:30.994Z",
   "variants": {
     "en": {
-      "hash8": "7736e2db",
-      "vdtHash": "d3fffdfe54cbd7bd276c78145c2b01458ea425c4",
+      "hash8": "1892e767",
+      "vdtHash": "58bdbc7a44d770d70948ab18b7146ec729340d9f",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 26,
-        "buildMs": 119,
-        "totalMs": 936,
+        "importMs": 288,
+        "fontsMs": 28,
+        "buildMs": 128,
+        "totalMs": 1150,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Libertinus Serif Display"
         ],
         "pages": 7,
-        "ownLines": 181
+        "ownLines": 183
       },
       "pages": [
         {
@@ -50,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95094,
+          "bytes": 95088,
           "alt": "Opening page 171: 6 Conclusion. Table 6.1. Main results by medium."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1420,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 59230,
+          "bytes": 56234,
           "alt": "Opening page 176: Index."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1420,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 29584,
+          "bytes": 31240,
           "alt": "Page 177."
         }
       ],
@@ -152,13 +152,19 @@
       },
       "pdf": {
         "file": "thesis-back-matter.pdf",
-        "bytes": 116187,
+        "bytes": 116171,
         "pages": 7
       },
       "sandbox": {
         "file": "thesis-back-matter.postext",
-        "bytes": 20490,
-        "folio": "8d599631"
+        "bytes": 20541,
+        "folio": "8d599631",
+        "chapters": [
+          {
+            "pages": 7,
+            "hash": "af45705ea3bad650"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -287,6 +293,7 @@
           "index.turnoverIndent",
           "layout",
           "layout.layoutType",
+          "locale",
           "orderedLists",
           "orderedLists.marginBottom",
           "orderedLists.marginTop",
@@ -339,6 +346,7 @@
           "headings",
           "index",
           "layout",
+          "locale",
           "orderedLists",
           "page",
           "paragraphStyles",
@@ -346,7 +354,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 865,
+        "configLeaves": 866,
         "designElements": 51,
         "directives": [
           ":::paragraphs",
@@ -415,17 +423,20 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 4,
+        "iterationCount": 3,
         "looseLines": {
           "count": 0,
           "share": 0,
           "worst": 1.56
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
-            "check": "sandbox",
+            "check": "vdt",
             "severity": "info",
-            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "storybook-chapter-vignettes",
-  "sourceHash": "20201aef39302db471deb5ce728eb4ea67fb0cdbded3259f508130a2eb88d789",
+  "sourceHash": "03408dd9b8e194377bf6dff0974a35b925bca02329719d9594c91c19fe1211b0",
   "engine": {
-    "postext": "1.27.0",
+    "postext": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T03:51:38.303Z",
+  "capturedAt": "2026-10-11T20:22:30.912Z",
   "variants": {
     "en": {
-      "hash8": "a940c659",
+      "hash8": "81cbfc2c",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 32,
-        "buildMs": 40,
-        "totalMs": 805,
+        "importMs": 336,
+        "fontsMs": 37,
+        "buildMs": 65,
+        "totalMs": 1268,
         "builds": 1
       },
       "specimen": {
@@ -125,8 +125,14 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820962,
-        "folio": "ebfafef3"
+        "bytes": 820959,
+        "folio": "ebfafef3",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "91e10ca904d0569d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -316,6 +322,9 @@
           "share": 0,
           "worst": 1.45
         },
+        "raggedLines": {
+          "count": 0
+        },
         "findings": [
           {
             "check": "sandbox",
@@ -326,13 +335,13 @@
       }
     },
     "es": {
-      "hash8": "d1fec682",
+      "hash8": "7ce52189",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 32,
-        "buildMs": 39,
-        "totalMs": 811,
+        "importMs": 301,
+        "fontsMs": 40,
+        "buildMs": 67,
+        "totalMs": 1256,
         "builds": 1
       },
       "specimen": {
@@ -441,8 +450,14 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 821012,
-        "folio": "ebfafef3"
+        "bytes": 821009,
+        "folio": "ebfafef3",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "91e10ca904d0569d"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -631,6 +646,9 @@
           "count": 0,
           "share": 0,
           "worst": 1.45
+        },
+        "raggedLines": {
+          "count": 0
         },
         "findings": [
           {

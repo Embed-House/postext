@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "002f9d6767bb5a449c9d445248b2502f695ca0c66a802bf647689eea103118cc",
+  "sourceHash": "7eb1c2bc771c0ab62e078ccd574d8ae654fe61f959d4bcee2865c3c9c156907d",
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0",
+    "postext": "1.28.1",
+    "postextPdf": "1.28.1",
     "source": "npm"
   },
   "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-10T22:10:30.007Z",
+  "capturedAt": "2026-10-11T20:22:29.695Z",
   "variants": {
     "en": {
-      "hash8": "c7defa0c",
-      "vdtHash": "fc9fff2030ed159f83b09b8c8392ab7ed7414e56",
+      "hash8": "0a3da0a2",
+      "vdtHash": "fc2fc1949f0cd4a3f42f67d22fe8c64c7a6874b9",
       "timings": {
-        "importMs": 6663,
-        "fontsMs": 87,
-        "buildMs": 529,
-        "totalMs": 7870,
+        "importMs": 1863,
+        "fontsMs": 534,
+        "buildMs": 615,
+        "totalMs": 4725,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95488,
+          "bytes": 95128,
           "alt": "Page ٨٨: ٢- الكشيدة في الطباعة العربية."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 53706,
+          "bytes": 53766,
           "alt": "Page ٩٠: المراجع."
         },
         {
@@ -126,13 +126,19 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98986,
+        "bytes": 99063,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14404,
-        "folio": "baed3d35"
+        "bytes": 14403,
+        "folio": "baed3d35",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "8e77f2725f7b38f6"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -386,17 +392,26 @@
           "share": 0,
           "worst": 1.29
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "be720794",
-      "vdtHash": "9cc6272c9092553414ab10cd0d91fa12c5a80d8f",
+      "hash8": "576851c2",
+      "vdtHash": "4969cce40dbd3f45a1b9ed0bd619bcf50961dd09",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 65,
-        "buildMs": 506,
-        "totalMs": 1302,
+        "importMs": 2626,
+        "fontsMs": 581,
+        "buildMs": 603,
+        "totalMs": 5027,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +454,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95488,
+          "bytes": 95128,
           "alt": "Página ٨٨: ٢- الكشيدة في الطباعة العربية."
         },
         {
@@ -461,7 +476,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 53338,
+          "bytes": 53406,
           "alt": "Página ٩٠: المراجع."
         },
         {
@@ -505,13 +520,19 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98809,
+        "bytes": 98879,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14478,
-        "folio": "baed3d35"
+        "bytes": 14477,
+        "folio": "baed3d35",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "8ad4d29107c529fd"
+          }
+        ]
       },
       "detected": {
         "apis": [
@@ -765,7 +786,16 @@
           "share": 0,
           "worst": 1.29
         },
-        "findings": []
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
