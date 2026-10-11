@@ -2812,6 +2812,21 @@ export type ContentWarning = ContentWarningBase & (
    *  say). The build reports it instead of dropping it silently. It has a
    *  source range and no page. Found by the layout. */
   | { kind: 'unplaced'; resourceId?: string }
+  /** `shortListSplit` (#749): a list of `items` items, short by
+   *  `bodyText.shortListMaxItems`, cut between two columns or pages. Under
+   *  `bodyText.shortListSplit: 'warn'` every such list is reported; under
+   *  `'avoid'` only the one no column could hold whole (a list taller than
+   *  an empty column, or than the room a float left of one). One per
+   *  list, with the range of the list and the page of its first item.
+   *  Found by the layout. */
+  | { kind: 'shortListSplit'; items: number }
+  /** `openerFloat` (#749): a float set on an opener page (the page a part
+   *  or a heading's own break opens, the first page of a document that
+   *  starts with a heading) under `layout.openerFloats: 'warn'`: a figure,
+   *  a table or a strip (`resourceId`), or a floated box. One per float,
+   *  with the range of the block citing it (of the box) and its page.
+   *  Found by the layout. */
+  | { kind: 'openerFloat'; resourceId?: string }
   /** `designTextTruncated` (#628): a design text element did not fit its
    *  width and lost part of a line: cut by an ellipsis (`mode`
    *  `'ellipsis-*'`, its `overflow`) or clipped with ink past its box

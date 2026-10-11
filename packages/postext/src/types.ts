@@ -1070,6 +1070,20 @@ export interface LayoutConfig {
    *  read with `false` when it sets a page-span heading (see
    *  `migrateConfig` in `postext/bundle`). */
   floatsUnderOpener?: boolean;
+  /** Floats on an opener page (#749): the page a part opens, the page a
+   *  heading opens with its own break (`breakBefore`, or a `span: 'page'`
+   *  heading that opens a page), and the first page of a document that
+   *  starts with a heading. A float is a figure, a table or a comic strip
+   *  with a floating placement, or a `:::callout` floated to the head or
+   *  foot (`placement: 'top' | 'bottom' | 'auto'`), in a column, across
+   *  the page or in the side column; an inline (`'here'`) resource, a
+   *  `'fixed'` box and a `span: 'side'` box are not. `'allow'` (the
+   *  default) sets floats there as on any page. `'warn'` lays the page out
+   *  the same and reports each float on it (an `openerFloat` content
+   *  warning). `'avoid'` keeps the opener page clear: a float that would
+   *  land there takes the first free slot after it, so the page holds the
+   *  opener and text alone. */
+  openerFloats?: CompositionRule;
   /** Where an inline resource (`placement.position: 'here'`, embedded with
    *  `::resource`) keeps the float gap, a line: `'around'` keeps it above
    *  and below the resource, and the text after it goes back onto the
@@ -1166,6 +1180,7 @@ export interface ResolvedLayoutConfig {
   maxTopFraction: number;
   hugClosingFloats: boolean;
   floatsUnderOpener: boolean;
+  openerFloats: CompositionRule;
   inlineResourceGap: InlineResourceGap;
   inlineResourceGapInBoxes: boolean;
   flowColumns: boolean;
@@ -1519,6 +1534,25 @@ export interface BodyTextConfig {
   /** When true, list items also receive widow protection (not just paragraphs).
    *  Only effective when `avoidWidows` is true. Default true. */
   avoidWidowsInLists?: boolean;
+  /** A short list cut between two columns or pages (#749): one of up to
+   *  `shortListMaxItems` items, in the running text. `avoidOrphansInLists`
+   *  and `avoidWidowsInLists` keep the lines of one item together; this
+   *  rule keeps the items of one list together. `'allow'` (the default)
+   *  cuts such a list wherever the column ends, as any other. `'warn'`
+   *  lays it out the same and reports each list cut (a `shortListSplit`
+   *  content warning). `'avoid'` sets the list whole: when it does not fit
+   *  under what the column holds it opens the next column, the headings
+   *  right above it and the colon line that introduces it
+   *  (`keepColonWithList`) going with it. A float offered the foot of the
+   *  column the list stands whole in takes its next slot instead, and the
+   *  colon line counts the room a figure it cites will take there. A list
+   *  taller than an empty column is cut as any other, and reported. Lists inside a `:::callout`
+   *  follow the box's own cut rules, and the entries of `:::toc` and
+   *  `:::index` are not lists. */
+  shortListSplit?: CompositionRule;
+  /** The most items a list has to count as short for `shortListSplit`,
+   *  the items of its nested lists included. Default 3. */
+  shortListMaxItems?: number;
   /** Weight applied to the squared "unused column space" cost. Higher values make
    *  the layout prefer filling columns tightly; 0 disables the slack pressure.
    *  Default 10. */
@@ -1672,6 +1706,13 @@ export type TashkilMode = 'keep' | 'strip' | 'strip-vowels';
 /** The room kept for a list under the colon line that introduces it
  *  (`BodyTextConfig.colonListRoom`). */
 export type ColonListRoom = 'item' | 'line';
+
+/** How far a composition rule goes (`BodyTextConfig.shortListSplit`,
+ *  `LayoutConfig.openerFloats`, #749): `'allow'` leaves the rule off (the
+ *  layout is not changed and nothing is reported), `'warn'` leaves the
+ *  layout as it is and reports each case in
+ *  `VDTDocument.contentWarnings`, `'avoid'` applies the rule. */
+export type CompositionRule = 'allow' | 'warn' | 'avoid';
 
 /** How the space under a `:::paragraphs` container is worked out
  *  (`BodyTextConfig.paragraphContainerSpacing`). */
@@ -2112,6 +2153,8 @@ export interface ResolvedBodyTextConfig {
   widowMinLines: number;
   widowPenalty: number;
   avoidWidowsInLists: boolean;
+  shortListSplit: CompositionRule;
+  shortListMaxItems: number;
   slackWeight: number;
   avoidRunts: boolean;
   runtMinCharacters: number;

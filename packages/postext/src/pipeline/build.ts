@@ -919,6 +919,29 @@ function placeDocumentPass(
   /** The flow segment has ended and its floats and side boxes are taking
    *  pages after the text (see `drainPendingFloats`, #639). */
   let drainingAfterText = false;
+  /** Opener pages (`layout.openerFloats`, #749): the page a part opens,
+   *  the page a heading opens with its own break, and the first page of a
+   *  document that starts with a heading. Under `'avoid'` they offer a
+   *  float no slot (see `placeFloatInColumns`), so it takes the first one
+   *  after them; under `'warn'` each float set on one is reported. */
+  const openerPages = new Set<VDTPage>();
+  const openerFloatRule = resolved.layout.openerFloats;
+  /** The `openerFloat` warnings of this pass, and the floats they name. */
+  const openerFloatNotes: ContentWarning[] = [];
+  const openerFloatsNoted = new Set<string>();
+  const noteOpenerFloat = (page: VDTPage, f: PlannedFloat): void => {
+    if (openerFloatRule !== 'warn' || !openerPages.has(page) || openerFloatsNoted.has(f.resourceId)) return;
+    openerFloatsNoted.add(f.resourceId);
+    const box = f.callout ? calloutFloats.get(f.callout.startIdx) : undefined;
+    const first = contentBlocks[box ? f.callout!.startIdx : f.firstBlockIdx];
+    const last = contentBlocks[box ? box.plan.endIdx : f.firstBlockIdx];
+    openerFloatNotes.push({
+      kind: 'openerFloat',
+      ...(box ? {} : { resourceId: f.resourceId }),
+      ...(first && last ? { sourceStart: first.sourceStart + bodyOffset, sourceEnd: last.sourceEnd + bodyOffset } : {}),
+      pageIndex: page.index,
+    });
+  };
   /** `span: 'side'` boxes of a style with `sideAtColumnEnd: 'after'`
    *  (EF-161), and the side boxes fenced behind them, waiting for the text
    *  after their fence to land (see `settleAwaitingSideBoxes`). Each keeps
@@ -1961,6 +1984,9 @@ function placeDocumentPass(
     side = false,
     refY?: number,
   ): PlaceResult => {
+    // An opener page takes no float (`layout.openerFloats: 'avoid'`, #749):
+    // it waits for the page the flow opens next.
+    if (openerFloatRule === 'avoid' && openerPages.has(page)) return 'defer';
     const first = targetCols[0]!;
     const probe = probeFloatBand(page, f, targetCols, position, pageSpan, anchorToCap, side, refY);
     if (!probe) return 'skip';
@@ -2032,6 +2058,7 @@ function placeDocumentPass(
       if (!built) return 'skip';
       first.availableHeight = Math.max(0, first.availableHeight - need);
       commitFloatBlock(page, first, built, xLeft, y, width, f.firstBlockIdx);
+      noteOpenerFloat(page, f);
       if (drainingAfterText && !calloutFloatOf(f.resourceId)) {
         const citing = contentBlocks[f.firstBlockIdx];
         setAfterText.set(built.block, {
@@ -2296,6 +2323,7 @@ function placeDocumentPass(
     }
 
     commitFloatBlock(page, first, built, xLeft, y, width, f.firstBlockIdx);
+    noteOpenerFloat(page, f);
     floatsPlaced++;
     return rest ? { rest } : 'placed';
   };
@@ -2487,13 +2515,15 @@ function placeDocumentPass(
     page: VDTPage,
     f: PlannedFloat,
     slot: FloatSlot,
-    box: { heightAt: (width: number) => number },
+    box: { heightAt: (width: number) => number; stays?: boolean },
     anchorToCap: boolean,
   ): boolean => {
     const cursorCol = page.columns[cursor.columnIndex];
     if (!cursorCol) return false;
+    // (A short list set whole stays under what introduces it: only the
+    // cursor's column counts for it, #749.)
     const candidates = bandColumns(page, currentBand(page, cursor))
-      .filter((c) => c.kind !== 'span' && c.index >= cursorCol.index && (c === cursorCol || c.blocks.length === 0));
+      .filter((c) => c.kind !== 'span' && c.index >= cursorCol.index && (c === cursorCol || (!box.stays && c.blocks.length === 0)));
     const fitsIn = (c: VDTColumn, available: number): boolean => available >= box.heightAt(c.bbox.width) - 0.01;
     if (!candidates.some((c) => fitsIn(c, c.availableHeight))) return false;
     const probe = probeFloatBand(page, f, slot.cols, slot.position, slot.pageSpan, anchorToCap);
@@ -2508,11 +2538,12 @@ function placeDocumentPass(
    *  empty columns; the band bottom for page-span floats). Runs before each
    *  block is placed, so a float lands in the first gap after its reference.
    *  `nextBlockIdx` is that block: a keep-together box it opens holds the
-   *  slots that would starve it (see `slotStarvesBox`). */
+   *  slots that would starve it (see `slotStarvesBox`), and so does a
+   *  short list set whole (`shortListBoxAt`). */
   const tryPlacePendingFloatsOnCurrentPage = (preferTop = false, nextBlockIdx?: number, anyPosition = false): void => {
     if (pendingFloats.length === 0) return;
     const page = doc.pages[cursor.pageIndex]!;
-    const box = nextBlockIdx !== undefined ? keepTogetherBoxAt(nextBlockIdx) : null;
+    const box = nextBlockIdx !== undefined ? (keepTogetherBoxAt(nextBlockIdx) ?? shortListBoxAt(nextBlockIdx)) : null;
     for (let i = 0; i < pendingFloats.length;) {
       if (heldBack(i)) { i++; continue; }
       const f = pendingFloats[i]!;
@@ -4506,6 +4537,8 @@ function placeDocumentPass(
      * to the head or foot of a page, the bands it was floated to.
      */
     const placeSpanFloatsAtCut = (page: VDTPage, capActiveHere: boolean): boolean => {
+      // Not on an opener page that takes no float (#749).
+      if (openerFloatRule === 'avoid' && openerPages.has(page)) return false;
       let placedAny = false;
       for (let i = 0; i < pendingFloats.length;) {
         const f = pendingFloats[i]!;
@@ -4537,6 +4570,7 @@ function placeDocumentPass(
         if (built.block.resourceBlock) offsetResourceBlockToAbsolute(built.block.resourceBlock, 0, built.block.bbox.y);
         built.block.contentIndex = f.firstBlockIdx;
         doc.blocks.push(built.block);
+        noteOpenerFloat(page, f);
         floatsPlaced++;
         placedAny = true;
         pendingFloats.splice(i, 1);
@@ -5740,6 +5774,171 @@ function placeDocumentPass(
     }).splitAt > 0;
   };
 
+  // --- Short lists kept whole (`bodyText.shortListSplit`, #749) -------------
+  const shortListRule = resolved.bodyText.shortListSplit;
+  /** The short lists of the running text by the content index of their
+   *  first item (`null`: a block that opens none). */
+  const shortLists = new Map<number, { items: number[] } | null>();
+  /**
+   * The short list content block `idx` opens: a run of list items (seen
+   * through container markers, its nested lists included) of up to
+   * `bodyText.shortListMaxItems` items, `idx` being its first. Not the
+   * entries of the contents or of an index, which are set as list items.
+   */
+  const shortListFrom = (idx: number): { items: number[] } | undefined => {
+    const known = shortLists.get(idx);
+    if (known !== undefined) return known ?? undefined;
+    const isItem = (b: ContentBlock | undefined): boolean =>
+      b?.type === 'listItem' && b.toc === undefined && b.index === undefined;
+    let found: { items: number[] } | null = null;
+    if (isItem(contentBlocks[idx]) && prevNonMarkerBlock(contentBlocks, idx)?.type !== 'listItem') {
+      const items: number[] = [];
+      let i = idx;
+      for (; i < contentBlocks.length; i++) {
+        const b = contentBlocks[i]!;
+        if (isMarkerBlock(b)) continue;
+        if (!isItem(b)) break;
+        items.push(i);
+        if (items.length > resolved.bodyText.shortListMaxItems) break;
+      }
+      if (items.length <= resolved.bodyText.shortListMaxItems) found = { items };
+    }
+    shortLists.set(idx, found);
+    return found ?? undefined;
+  };
+  /** The room a short list takes in a column `width` wide, from the top of
+   *  its first line to the foot of its last (the space above it aside),
+   *  and its lines, for the notes they cite. Undefined when an item
+   *  cannot be measured. */
+  const shortListNeed = (list: { items: number[] }, width: number, ctx: BlockMeasureContext): { height: number; lines: VDTLine[] } | undefined => {
+    let height = 0;
+    const lines: VDTLine[] = [];
+    let prev: ContentBlock | undefined;
+    for (const idx of list.items) {
+      const raw = contentBlocks[idx]!;
+      const item = measureContentBlock(raw, idx, width, ctx);
+      if (!item) return undefined;
+      if (prev) {
+        height += listItemGapPx(
+          { spacingPx: listItemSpacingPx(prev, ctx.resolved), depth: prev.depth ?? 1 },
+          { spacingPx: listItemSpacingPx(raw, ctx.resolved), depth: raw.depth ?? 1 },
+        );
+      }
+      height += item.measured.lines.length * item.kind.style.lineHeightPx;
+      lines.push(...item.measured.lines);
+      prev = raw;
+    }
+    return { height, lines };
+  };
+  /**
+   * The room the floats text block `blockIdx` cites would take from the
+   * foot of `col` once their citing lines are placed: for each one still
+   * held back for it, the band of its first slot on the page, when that is
+   * a foot band over `col` that the room the block leaves under it
+   * (`roomAfter`) still holds. Read before the block is placed, so an
+   * estimate: the colon line of a short list set whole counts it, since
+   * the figure that line cites takes the foot of the column right after
+   * it, where the list would have gone.
+   */
+  const citedFootTake = (blockIdx: number, col: VDTColumn, roomAfter: number): number => {
+    const page = doc.pages[cursor.pageIndex]!;
+    if (openerFloatRule === 'avoid' && openerPages.has(page)) return 0;
+    let take = 0;
+    for (const [id, gate] of citationGates) {
+      if (gate.blockIdx !== blockIdx) continue;
+      const f = pendingFloats.find((p) => p.resourceId === id);
+      const slot = f ? enumerateCurrentPageSlots(page, cursor.columnIndex, f, capKindOf, openerHeadOf)[0] : undefined;
+      if (!f || !slot || slot.side || slot.position !== 'bottom' || !slot.cols.includes(col)) continue;
+      const probe = probeFloatBand(page, f, slot.cols, slot.position, slot.pageSpan, false);
+      if (!probe) continue;
+      const band = col.availableHeight - availableAfterBand(col, 'bottom', probe, false);
+      if (band <= roomAfter + FIT_EPS) take = Math.max(take, band);
+    }
+    return take;
+  };
+  /** The short list item `idx` belongs to, and its place in it. */
+  const shortListItemAt = (idx: number): { list: { items: number[] }; item: number } | undefined => {
+    if (contentBlocks[idx]?.type !== 'listItem') return undefined;
+    let start = idx;
+    for (let i = idx - 1, seen = 0; i >= 0 && seen <= resolved.bodyText.shortListMaxItems; i--) {
+      const b = contentBlocks[i]!;
+      if (isMarkerBlock(b)) continue;
+      if (b.type !== 'listItem') break;
+      start = i;
+      seen++;
+    }
+    const list = shortListFrom(start);
+    const item = list ? list.items.indexOf(idx) : -1;
+    return list && item >= 0 ? { list, item } : undefined;
+  };
+  /**
+   * Under `'avoid'`, the short list content block `idx` opens or goes on
+   * with, as the floats offered a slot right before it see a keep-together
+   * box (`slotStarvesBox`): its height at a column width, from that item
+   * on. A float yields to it when the cursor's column holds the list whole
+   * and would not with the float: the figure a list's own lead-in cites
+   * would otherwise take the foot of the column once its citing line is
+   * placed, and cut the list under it.
+   */
+  const shortListBoxAt = (idx: number): { heightAt: (width: number) => number; stays: boolean } | null => {
+    if (shortListRule !== 'avoid') return null;
+    const at = shortListItemAt(idx);
+    if (!at) return null;
+    const ctx = partPlan.byBlock[idx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[idx]);
+    const rest = { items: at.list.items.slice(at.item) };
+    const heights = new Map<number, number>();
+    return {
+      stays: true,
+      heightAt: (width) => {
+        const key = Math.round(width * 100);
+        let h = heights.get(key);
+        if (h === undefined) {
+          const need = shortListNeed(rest, width, ctx);
+          h = need ? need.height + pendingSpacing : 0;
+          heights.set(key, h);
+        }
+        return h;
+      },
+    };
+  };
+  /** A `shortListSplit` warning for each short list whose items the pass
+   *  set in more than one column: all of them under `'warn'`, under
+   *  `'avoid'` the ones no column could hold whole. */
+  const shortListWarnings = (): ContentWarning[] => {
+    if (shortListRule === 'allow') return [];
+    // Where each list item of the running text landed (a box's children
+    // carry `containerId`).
+    const placed = new Map<number, { pageIndex: number; columns: Set<string> }>();
+    for (const page of doc.pages) {
+      for (const c of page.columns) {
+        for (const b of c.blocks) {
+          if (b.type !== 'listItem' || b.containerId !== undefined || b.contentIndex === undefined) continue;
+          const at = placed.get(b.contentIndex) ?? { pageIndex: page.index, columns: new Set<string>() };
+          at.columns.add(`${page.index}:${c.index}`);
+          placed.set(b.contentIndex, at);
+        }
+      }
+    }
+    const out: ContentWarning[] = [];
+    for (let idx = 0; idx < contentBlocks.length; idx++) {
+      const list = placed.has(idx) ? shortListFrom(idx) : undefined;
+      if (!list) continue;
+      const columns = new Set<string>();
+      for (const item of list.items) for (const key of placed.get(item)?.columns ?? []) columns.add(key);
+      if (columns.size < 2) continue;
+      const first = contentBlocks[list.items[0]!]!;
+      const last = contentBlocks[list.items[list.items.length - 1]!]!;
+      out.push({
+        kind: 'shortListSplit',
+        items: list.items.length,
+        sourceStart: first.sourceStart + bodyOffset,
+        sourceEnd: last.sourceEnd + bodyOffset,
+        pageIndex: placed.get(idx)!.pageIndex,
+      });
+    }
+    return out;
+  };
+
   /** The page break into a page of the parity `even` asks (a spread opens
    *  on a verso, an even page): the page the cursor stands on, an empty
    *  one, is marked a parity blank and passed while its number is odd. Even
@@ -5858,6 +6057,10 @@ function placeDocumentPass(
     inlineGapOwed = pendingSpacing > 0 ? { afterIdx: blockIdx, pending: pendingSpacing, exact: owed } : null;
     return undefined;
   };
+
+  /** The first block of the document that sets something: a heading there
+   *  opens the document's first page (`openerPages`, #749). */
+  const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
 
   for (let blockIdx = 0; blockIdx < contentBlocks.length; blockIdx++) {
     if (options?.shouldCancel?.()) throw new BuildCancelledError();
@@ -6028,6 +6231,7 @@ function placeDocumentPass(
           titleSourceStart,
           titleSourceEnd,
         }, pageIndexOffset);
+        openerPages.add(doc.pages[cursor.pageIndex]!);
         flushPendingNumberingAtBoundary();
         continue;
       }
@@ -6192,6 +6396,9 @@ function placeDocumentPass(
     if (rawBlock.type === 'heading' && rawBlock.level) {
       const level = headingLevels.forBlock(rawBlock);
       const bb = level?.breakBefore;
+      /** The heading opens its page (#749): with its own break, or as the
+       *  first block of the document. */
+      let opensPage = blockIdx === firstFlowBlockIdx;
       if (bb && bb.enabled) {
         pendingSpacing = 0;
         closeFlowSegment(blockIdx);
@@ -6200,6 +6407,7 @@ function placeDocumentPass(
           enforcePageParity(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, bb.parity);
         }
         flushPendingNumberingAtBoundary();
+        opensPage = true;
       }
       // `span: 'page'` headings open a chapter band across the full content
       // width. Always start on a fresh page boundary so the band sits at the
@@ -6213,7 +6421,9 @@ function placeDocumentPass(
         advanceToNextPageBoundary(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
         cursor.columnIndex = 0;
         flushPendingNumberingAtBoundary();
+        opensPage = true;
       }
+      if (opensPage) openerPages.add(doc.pages[cursor.pageIndex]!);
     }
 
     const id = `block-${blockIdCounter++}`;
@@ -7060,6 +7270,16 @@ function placeDocumentPass(
           effectiveGap = Math.ceil((paragraphBottom + effectiveGap - 0.01) / baselineGrid) * baselineGrid - paragraphBottom;
         }
         const minSpaceForList = effectiveGap + bodyStyle.lineHeightPx;
+        // A short list set whole (`shortListSplit: 'avoid'`, #749) needs
+        // all its room under the colon line, when a column can hold the
+        // line and the list at all — less what a figure this paragraph
+        // cites will take from the column's foot (`citedFootTake`).
+        let listIdx = blockIdx + 1;
+        while (listIdx < contentBlocks.length && isMarkerBlock(contentBlocks[listIdx])) listIdx++;
+        const wholeList = shortListRule === 'avoid' ? shortListFrom(listIdx) : undefined;
+        const wholeNeed = wholeList ? shortListNeed(wholeList, curCol.bbox.width, blockMeasureCtx) : undefined;
+        const keepsListWhole = wholeNeed !== undefined
+          && style.lineHeightPx + effectiveGap + wholeNeed.height <= contentArea.height + FIT_EPS;
         // A line of room is not always enough (EF-110): with
         // `colonListRoom: 'item'` the first item has to be able to start
         // there, by the rules that split it — a two-line item the orphan
@@ -7069,6 +7289,7 @@ function placeDocumentPass(
           availableAfter < minSpaceForList - FIT_EPS
           || (resolved.bodyText.colonListRoom === 'item'
             && !firstListItemStarts(blockIdx, availableAfter - effectiveGap, curCol.bbox.width, blockMeasureCtx))
+          || (keepsListWhole && availableAfter - effectiveGap - citedFootTake(blockIdx, curCol, availableAfter) < wholeNeed.height - FIT_EPS)
         ) {
           const effectiveWidowMin = resolved.bodyText.avoidWidows
             ? Math.max(1, resolved.bodyText.widowMinLines)
@@ -7213,6 +7434,41 @@ function placeDocumentPass(
               advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
               continue;
             }
+          }
+        }
+      }
+
+      // A short list is set whole (`bodyText.shortListSplit: 'avoid'`,
+      // #749): when its items do not all fit under what the column holds
+      // and an empty column would hold them, the list opens the next
+      // column, with the headings right above it. Not a list a colon line
+      // introduces: that line already took the list's room into account,
+      // and the two stay together. Nor one that opens its column, or
+      // stands under nothing but headings: it cannot do better anywhere.
+      if (vdtType === 'listItem' && partIndex === 0 && shortListRule === 'avoid' && curCol.blocks.length > 0) {
+        const list = shortListFrom(blockIdx);
+        const headingRun = trailingHeadingRun(curCol);
+        const lead = list ? prevNonMarkerBlock(contentBlocks, blockIdx) : undefined;
+        const colonLed = lead?.type === 'paragraph' && resolved.bodyText.keepColonWithList && /[:：︰﹕]\s*$/.test(lead.text);
+        const need = list && !colonLed && headingRun < curCol.blocks.length
+          ? shortListNeed(list, curCol.bbox.width, blockMeasureCtx)
+          : undefined;
+        if (need && need.height <= contentArea.height + FIT_EPS) {
+          const listNotes = notesPrefixCost(curCol, need.lines);
+          const room = curCol.availableHeight - spacingBefore - (listNotes ? listNotes[listNotes.length - 1]! : 0);
+          if (need.height > room + FIT_EPS) {
+            if (resolved.headings.keepWithNext && headingRun > 0) {
+              const rolledBack = rollbackHeadings(curCol);
+              if (rolledBack.length > 0) {
+                blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
+                pendingSpacing = 0;
+                advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+                break;
+              }
+            }
+            pendingSpacing = 0;
+            advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+            continue;
           }
         }
       }
@@ -7899,6 +8155,9 @@ function placeDocumentPass(
   });
   if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // The composition rules (#749): short lists cut, floats on opener pages.
+  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes];
+  if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
 
   const { proposals: citingPageProposals, refused: citingPageRefused } = settleCitingPageFloats();
 
@@ -7995,7 +8254,7 @@ export function* buildDocumentGen(
   // cap; words of a joining script that run past their line, and styles
   // whose letter-spacing such words do not take.
   // Line numbers set over a float of the side column (#621).
-  const loose = [...cjkLooseLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? [])];
+  const loose = [...cjkLooseLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
   // Side boxes and side floats set on pages after the text, and what the
   // layout could place nowhere (#639).
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
@@ -8047,6 +8306,9 @@ const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */
 const textWrapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
+/** The `shortListSplit` and `openerFloat` warnings of a build (#749),
+ *  found by its last pass. */
+const compositionWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** What a pass set in the side column of a page opened after the text of
  *  its chapter (#639): a side box's frame, a side float's block, with the
  *  source range an `afterText` warning points at. Read from the finished

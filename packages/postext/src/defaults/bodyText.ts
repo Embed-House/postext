@@ -1,6 +1,6 @@
 import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
 import { cjkRegionOf, hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
-import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
+import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
 import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
 
@@ -52,6 +52,12 @@ export const DEFAULT_BLOCKQUOTE_CONFIG: ResolvedBlockquoteConfig = {
   indent: { value: 0, unit: 'em' },
 };
 
+/** A `shortListMaxItems` as written (#749): a whole number of items, one
+ *  or more, else `undefined`. */
+export function shortListMaxItemsOf(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : undefined;
+}
+
 export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   fontFamily: 'EB Garamond',
   fontSize: { value: 8, unit: 'pt' },
@@ -98,6 +104,8 @@ export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   widowMinLines: 2,
   widowPenalty: 1000,
   avoidWidowsInLists: true,
+  shortListSplit: 'allow',
+  shortListMaxItems: 3,
   slackWeight: 10,
   avoidRunts: true,
   runtMinCharacters: 20,
@@ -352,6 +360,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     widowMinLines: partial.widowMinLines ?? DEFAULT_BODY_TEXT_CONFIG.widowMinLines,
     widowPenalty: partial.widowPenalty ?? DEFAULT_BODY_TEXT_CONFIG.widowPenalty,
     avoidWidowsInLists: partial.avoidWidowsInLists ?? DEFAULT_BODY_TEXT_CONFIG.avoidWidowsInLists,
+    shortListSplit: compositionRuleOf(partial.shortListSplit) ?? DEFAULT_BODY_TEXT_CONFIG.shortListSplit,
+    shortListMaxItems: shortListMaxItemsOf(partial.shortListMaxItems) ?? DEFAULT_BODY_TEXT_CONFIG.shortListMaxItems,
     slackWeight: partial.slackWeight ?? DEFAULT_BODY_TEXT_CONFIG.slackWeight,
     avoidRunts: partial.avoidRunts ?? DEFAULT_BODY_TEXT_CONFIG.avoidRunts,
     runtMinCharacters: partial.runtMinCharacters ?? DEFAULT_BODY_TEXT_CONFIG.runtMinCharacters,
@@ -583,6 +593,14 @@ export function stripBodyTextDefaults(
   }
   if (bodyText.avoidWidowsInLists !== undefined && bodyText.avoidWidowsInLists !== DEFAULT_BODY_TEXT_CONFIG.avoidWidowsInLists) {
     result.avoidWidowsInLists = bodyText.avoidWidowsInLists;
+    hasOverride = true;
+  }
+  if (bodyText.shortListSplit !== undefined && bodyText.shortListSplit !== DEFAULT_BODY_TEXT_CONFIG.shortListSplit) {
+    result.shortListSplit = bodyText.shortListSplit;
+    hasOverride = true;
+  }
+  if (bodyText.shortListMaxItems !== undefined && bodyText.shortListMaxItems !== DEFAULT_BODY_TEXT_CONFIG.shortListMaxItems) {
+    result.shortListMaxItems = bodyText.shortListMaxItems;
     hasOverride = true;
   }
   if (bodyText.slackWeight !== undefined && bodyText.slackWeight !== DEFAULT_BODY_TEXT_CONFIG.slackWeight) {

@@ -196,6 +196,7 @@ export type {
   GridLinesLever,
   KeepWithNextSplit,
   ColonListRoom,
+  CompositionRule,
   ParagraphContainerSpacing,
   EmphasisStyle,
   TashkilMode,

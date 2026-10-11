@@ -873,6 +873,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'unplaced':
       text = `${w.resourceId !== undefined ? `The resource "${w.resourceId}"` : 'A box'} found no slot before the layout ended — it is on no page`;
       break;
+    case 'shortListSplit':
+      text = `A list of ${w.items} ${w.items === 1 ? 'item' : 'items'} is cut between two columns — bodyText.shortListSplit: "avoid" sets a short list whole when a column can hold it`;
+      break;
+    case 'openerFloat':
+      text = `${w.resourceId !== undefined ? `The resource "${w.resourceId}"` : 'A floated box'} is set on an opener page — layout.openerFloats: "avoid" moves it to the first slot after that page`;
+      break;
     case 'textWrap': {
       const what = w.resourceId !== undefined ? `The resource "${w.resourceId}"` : `A "${w.box ?? 'callout'}" box`;
       text = w.reason === 'moved'

@@ -119,6 +119,14 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   if (patterns !== undefined && patterns !== 'auto' && patterns !== 'naskh' && patterns !== 'simple' && patterns !== 'nastaliq') {
     out.push({ kind: 'unknownConfigValue', path: 'bodyText.kashidaPatterns', value: String(patterns), used: 'auto' });
   }
+  // The level of a composition rule (#749): read as `'allow'`, the rule off.
+  const rule = (path: string, value: unknown) => {
+    if (value !== undefined && value !== 'allow' && value !== 'warn' && value !== 'avoid') {
+      out.push({ kind: 'unknownConfigValue', path, value: String(value), used: 'allow' });
+    }
+  };
+  rule('bodyText.shortListSplit', config.bodyText?.shortListSplit);
+  rule('layout.openerFloats', config.layout?.openerFloats);
   // Where a heading's number stands (#401).
   const position = (path: string, value: unknown) => {
     if (value !== undefined && value !== 'before' && value !== 'replace') {

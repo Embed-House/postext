@@ -1,5 +1,5 @@
 import type { BitmapResolution, Dimension, FloatShrinkConfig, FloatShrinkMode, LayoutConfig, LayoutType, ResolvedLayoutConfig, ResolvedTextWrapConfig, TextWrapConfig } from '../types';
-import { dimensionsEqual, colorsEqual } from './shared';
+import { dimensionsEqual, colorsEqual, compositionRuleOf } from './shared';
 
 export const DEFAULT_COLUMN_RULE = {
   enabled: false,
@@ -104,6 +104,7 @@ export const DEFAULT_LAYOUT_CONFIG: ResolvedLayoutConfig = {
   maxTopFraction: DEFAULT_MAX_TOP_FRACTION,
   hugClosingFloats: true,
   floatsUnderOpener: true,
+  openerFloats: 'allow',
   inlineResourceGap: 'around',
   inlineResourceGapInBoxes: true,
   flowColumns: true,
@@ -136,6 +137,7 @@ export function resolveLayoutConfig(partial?: LayoutConfig): ResolvedLayoutConfi
     maxTopFraction: maxTopFractionOf(partial.maxTopFraction) ?? DEFAULT_MAX_TOP_FRACTION,
     hugClosingFloats: partial.hugClosingFloats ?? DEFAULT_LAYOUT_CONFIG.hugClosingFloats,
     floatsUnderOpener: partial.floatsUnderOpener ?? DEFAULT_LAYOUT_CONFIG.floatsUnderOpener,
+    openerFloats: compositionRuleOf(partial.openerFloats) ?? DEFAULT_LAYOUT_CONFIG.openerFloats,
     inlineResourceGap: partial.inlineResourceGap === 'above' ? 'above' : DEFAULT_LAYOUT_CONFIG.inlineResourceGap,
     inlineResourceGapInBoxes: partial.inlineResourceGapInBoxes ?? DEFAULT_LAYOUT_CONFIG.inlineResourceGapInBoxes,
     flowColumns: partial.flowColumns ?? DEFAULT_LAYOUT_CONFIG.flowColumns,
@@ -226,6 +228,10 @@ export function stripLayoutDefaults(layout?: LayoutConfig): LayoutConfig | undef
   }
   if (layout.floatsUnderOpener !== undefined && layout.floatsUnderOpener !== DEFAULT_LAYOUT_CONFIG.floatsUnderOpener) {
     result.floatsUnderOpener = layout.floatsUnderOpener;
+    hasOverride = true;
+  }
+  if (layout.openerFloats !== undefined && layout.openerFloats !== DEFAULT_LAYOUT_CONFIG.openerFloats) {
+    result.openerFloats = layout.openerFloats;
     hasOverride = true;
   }
   if (layout.inlineResourceGap !== undefined && layout.inlineResourceGap !== DEFAULT_LAYOUT_CONFIG.inlineResourceGap) {
