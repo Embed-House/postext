@@ -76,6 +76,7 @@ import {
 } from './cjkClasses';
 import { hasCJK } from './cjk';
 import { graphemeCount, graphemesOf, lastGrapheme } from './graphemes';
+import { ratiosOf } from './spaceRatios';
 import { isBreakingSpace } from './spaces';
 import { trimChipLineEdges } from './chipEdges';
 import { cellAdvance, flowTextWidth, fontEm, fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measureCentralBaseline, verticalTrackCount, withMeasureWritingMode } from './vertical';
@@ -2712,6 +2713,9 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
   let tracking = 0;
   let loose = false;
   let spaceRatio: number | undefined;
+  // The same spacing as the breaker bounds it, when the line's own spaces
+  // are not regular ones (#704, `justifiedSpaceRatios`).
+  let spaceLimitRatio: number | undefined;
   let ragged = false;
   const stretches: boolean[] = [];
   if (justify) {
@@ -2749,7 +2753,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
           // Word spaces first, up to half an em each, all set alike.
           spaceWidth = Math.max(widest, Math.min((natural + slack) / spaces, Math.max(ctx.em / 2, widest)));
           slack -= spaceWidth * spaces - natural;
-          if (ctx.normalSpace > 0) spaceRatio = spaceWidth / ctx.normalSpace;
+          ({ justifiedSpaceRatio: spaceRatio, justifiedSpaceLimitRatio: spaceLimitRatio } = ratiosOf(spaceWidth * spaces, natural, spaces, ctx.normalSpace));
         }
         if (autos.length > 0 && slack > FIT_EPS) {
           // Then the Han–Latin spaces, up to half an em each (clreq
@@ -2784,7 +2788,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
         // Latin words only (an English sentence in a CJK paragraph): the
         // spaces take it all, as in a Latin line (the renderers stretch
         // them, and a line past the ratio is set ragged).
-        if (ctx.normalSpace > 0) spaceRatio = (natural + slack) / spaces / ctx.normalSpace;
+        ({ justifiedSpaceRatio: spaceRatio, justifiedSpaceLimitRatio: spaceLimitRatio } = ratiosOf(natural + slack, natural, spaces, ctx.normalSpace));
       } else if (us.some((u) => u.kind === 'text' && (u.firstCjk || u.lastCjk))) {
         // A CJK character with nothing to spread against.
         loose = true;
@@ -2974,7 +2978,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
     ...(range.hyphenated && range.hardHyphen ? { hardHyphen: true } : {}),
     segments: trimmed,
     isLastLine: isLast,
-    ...(spaceRatio !== undefined && !loose ? { justifiedSpaceRatio: spaceRatio } : {}),
+    ...(spaceRatio !== undefined && !loose ? { justifiedSpaceRatio: spaceRatio, ...(spaceLimitRatio !== undefined ? { justifiedSpaceLimitRatio: spaceLimitRatio } : {}) } : {}),
     ...(loose ? { ragged: true, cjkLoose: true } : ragged ? { ragged: true } : {}),
     cjkComposed: true,
   };

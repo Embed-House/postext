@@ -198,8 +198,9 @@ export function measureForcedBreaks(
     const placed = shifted(r.lines, lines.length * lineHeightPx);
     if (k < lastPiece) {
       const end = placed[placed.length - 1]!;
-      const { justifiedSpaceRatio: _ratio, ...ragged } = end;
+      const { justifiedSpaceRatio: _ratio, justifiedSpaceLimitRatio: _limit, ...ragged } = end;
       void _ratio;
+      void _limit;
       placed[placed.length - 1] = { ...ragged, isLastLine: true, hardBreak: true };
     }
     lines.push(...placed);

@@ -132,6 +132,7 @@ describe("package exports", () => {
       "findLooseLines",
       "drawLooseLines",
       "lineLooseness",
+      "lineWordSpacing",
       "primaryFontFamily",
       "buildFontString",
       "measureBlock",

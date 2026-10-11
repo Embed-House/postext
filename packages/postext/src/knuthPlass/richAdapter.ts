@@ -4,6 +4,7 @@
  * reconstruction of VDT lines from the optimal breakpoint sequence.
  */
 
+import { justifiedSpaceRatios } from '../measure/spaceRatios';
 import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
 import { createBoundingBox } from '../vdt';
 import type { TextAlign } from '../types';
@@ -370,20 +371,8 @@ export function reconstructRichLines(
     if (tracking !== 0) trackSegments(segments, tracking);
     const contentWidth = segments.reduce((s, seg) => s + seg.width, 0);
 
-    // Compute justifiedSpaceRatio
-    let justifiedSpaceRatio: number | undefined;
-    if (textAlign === 'justify' && !isLastLine && normalSpaceWidth > 0) {
-      let wordWidth = 0;
-      let spaceCount = 0;
-      for (const seg of segments) {
-        if (seg.kind === 'space') spaceCount++;
-        else wordWidth += seg.width;
-      }
-      if (spaceCount > 0) {
-        const justifiedSpaceWidth = (lineMaxWidth - wordWidth) / spaceCount;
-        justifiedSpaceRatio = justifiedSpaceWidth / normalSpaceWidth;
-      }
-    }
+    // The line's word spacing: as painted, and as the breaker bounds it.
+    const spaceRatios = textAlign === 'justify' && !isLastLine ? justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth) : {};
 
     lines.push({
       text: lineText,
@@ -395,7 +384,7 @@ export function reconstructRichLines(
       ...(opensRepeated ? { repeatedHyphen: true } : {}),
       segments,
       isLastLine,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
       ...(tracking !== 0 ? { letterSpacing: tracking } : {}),
     });
 

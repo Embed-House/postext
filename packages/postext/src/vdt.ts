@@ -726,6 +726,16 @@ export interface VDTLine {
    *  grows by the slack shared among them, and the line ends on the right
    *  edge of the measure. */
   justifiedSpaceRatio?: number;
+  /** The word spacing of the line as the breaker bounds it (#704): 1 plus
+   *  the line's slack over its spaces, each counted at its own width, in
+   *  regular spaces. That is the number `bodyText.minWordSpacing` and
+   *  `maxWordSpacing` limit: a space of an italic or a bold run is narrower
+   *  or wider than the regular one, so a line that holds one is painted a
+   *  little under or over the limit it was broken within, and
+   *  {@link justifiedSpaceRatio} alone would read past it. Present only
+   *  when it differs from `justifiedSpaceRatio`; read both through
+   *  `lineWordSpacing`. Reports only: no break and no lever reads it. */
+  justifiedSpaceLimitRatio?: number;
   /** The Chinese marks set on this line (emphasis dots, proper-name and
    *  book-title lines, #193), for renderers to draw as they are; absent on
    *  a line with none. */

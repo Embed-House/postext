@@ -46,7 +46,7 @@ export type { CjkGridGeometry, CjkGridCells } from './pipeline/cjkGrid';
 export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault } from './pipeline/config';
 export { renderTemplateNumber } from './pipeline/resourceNumbering';
 export type { ColumnRuleSegment } from './columnRule';
-export { findLooseLines, drawLooseLines, lineLooseness } from './looseLines';
+export { findLooseLines, drawLooseLines, lineLooseness, lineWordSpacing } from './looseLines';
 export type { LooseLine, FindLooseLinesOptions, DrawLooseLinesOptions } from './looseLines';
 export { primaryFontFamily } from './measure/font';
 export { buildFontString, measureBlock, measureRichBlock, measureGlyphWidth, initHyphenator, clearMeasurementCache, createMeasurementCache, cachedMeasureBlock, cachedMeasureRichBlock, setCjkLineBreak, getCjkLineBreak, setCjkComposition, getCjkComposition, cjkCompositionOf, punctuationAdvance, punctuationSide, PLAIN_CJK_COMPOSITION } from './measure';

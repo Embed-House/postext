@@ -874,7 +874,10 @@ export function facts({ select = 'last', hero = [] } = {}) {
         if (line.cjkLoose) cjkShort.push({ page: n, tracking: emPx > 0 ? round(tracking / emPx, 0.01) : 0, text: (line.text ?? '').trim() });
         continue;
       }
-      const ratio = line.justifiedSpaceRatio;
+      // The word spacing as the limits bound it (#704): on a line that
+      // holds a bold or an italic space the painted ratio reads a little
+      // past the limit the breaker kept (`lineWordSpacing` in the engine).
+      const ratio = line.justifiedSpaceLimitRatio ?? line.justifiedSpaceRatio;
       if (ratio === undefined || line.isLastLine || line.ragged) continue;
       justified++;
       // A line set at the limit (its tracking took the rest) is not past it:

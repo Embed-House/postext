@@ -16,7 +16,8 @@ import { SOFT_HYPHEN } from './types';
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
 import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import { isRuntLastLine } from './runts';
-import { computeJustifiedSpaceRatio, hasOverfullLine } from './plain';
+import { hasOverfullLine } from './plain';
+import { justifiedSpaceRatios } from './spaceRatios';
 import { quoteFamily } from './font';
 import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns } from '../design/bidiText';
@@ -2117,13 +2118,7 @@ function measureRichText(
     const contentWidth = segments.reduce((sum, t) => sum + t.width, 0);
 
     // A tabbed line is set as measured: its widths are final.
-    const justifiedSpaceRatio = lineTabbed ? undefined : computeJustifiedSpaceRatio(
-      segments,
-      lineMaxWidth,
-      normalSpaceWidth,
-      textAlign,
-      isLastLine,
-    );
+    const spaceRatios = lineTabbed || textAlign !== 'justify' || isLastLine ? {} : justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth);
 
     lines.push({
       text: lineText,
@@ -2134,7 +2129,7 @@ function measureRichText(
       ...(lineRepeated && lineText.startsWith('-') ? { repeatedHyphen: true } : {}),
       segments,
       isLastLine,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
       ...(lineWordOverflow ? { wordOverflow: true as const } : {}),
       ...(lineTabbed ? { tabbed: true as const, ...(textAlign === 'justify' ? { ragged: true } : {}) } : {}),
     });

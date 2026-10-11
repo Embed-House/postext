@@ -29,7 +29,9 @@ export function raggedLooseLines(lines: VDTLine[], textAlign: string | undefined
   const out = lines.map((line) => {
     if (line.isLastLine || line.justifiedSpaceRatio === undefined || line.justifiedSpaceRatio <= LINE_MAX_SPACE_RATIO) return line;
     changed = true;
-    const { justifiedSpaceRatio: needed, letterSpacing, ...rest } = line;
+    // The line is set ragged: neither ratio of a justified line holds.
+    const { justifiedSpaceRatio: needed, justifiedSpaceLimitRatio: _limit, letterSpacing, ...rest } = line;
+    void _limit;
     if (!letterSpacing) return { ...rest, ragged: true, raggedSpaceRatio: needed };
     return { ...rest, ...untracked(line, letterSpacing), ragged: true, raggedSpaceRatio: needed };
   });

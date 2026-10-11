@@ -34,6 +34,7 @@
 import type { VDTLine, VDTLineSegment } from '../vdt';
 import { findKashidaPoints, kashidaPatternSet, type KashidaPatternSetName } from './kashidaPatterns';
 import { joiningScriptIn } from './joining';
+import { justifiedSpaceRatios } from './spaceRatios';
 import { joiningTypeOf } from '../bidi';
 import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants';
 import type { ResolvedBodyTextConfig } from '../types';
@@ -293,21 +294,19 @@ export function justifyLinesWithKashida(
     const spaceShare = spaceCount * normalSpaceWidth * (SPACE_SHARE - 1);
     const done = distributeKashida(line.segments, target - natural - spaceShare, options, widthOf);
     if (!done) continue;
-    let words = 0;
-    let spaces = 0;
-    for (const seg of done.segments) {
-      if (seg.kind === 'space') spaces++;
-      else words += seg.width;
-    }
-    const ratio = spaces > 0 && normalSpaceWidth > 0 ? (target - words) / spaces / normalSpaceWidth : undefined;
+    const ratios = justifiedSpaceRatios(done.segments, target, normalSpaceWidth);
+    const ratio = ratios.justifiedSpaceRatio;
     // Without the kashidas the pipeline would set this line ragged; it
     // still would with them: leave it to that.
     if (ratio !== undefined && ratio > RAGGED_SPACE_RATIO) continue;
+    // The ratios of the line as it stood give way to the stretched one's.
+    const { justifiedSpaceLimitRatio: _before, ...unstretched } = line;
+    void _before;
     lines[i] = {
-      ...line,
+      ...unstretched,
       segments: done.segments,
       bbox: { ...line.bbox, width: natural + done.added },
-      ...(ratio !== undefined ? { justifiedSpaceRatio: ratio } : {}),
+      ...ratios,
       kashida: done.count,
     };
   }

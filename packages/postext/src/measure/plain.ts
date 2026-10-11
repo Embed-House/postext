@@ -19,6 +19,7 @@ import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate'
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, maxLineIndent, maxLineInset, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
 import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import { isRuntLastLine } from './runts';
+import { justifiedSpaceRatios } from './spaceRatios';
 import { measureRichBlock } from './rich';
 import { hasCJK, hasCJKRun } from './cjk';
 import { composesAsCjk, composesDashRow } from './cjkCompose';
@@ -187,6 +188,9 @@ export function hasOverfullLine(lines: VDTLine[], lineWidth: (lineIndex: number)
   });
 }
 
+/** The painted word-space ratio of a justified line that is not the last
+ *  (`VDTLine.justifiedSpaceRatio`); the breakers call `justifiedSpaceRatios`,
+ *  which gives the ratio the limits bound too (#704). */
 export function computeJustifiedSpaceRatio(
   segments: VDTLineSegment[],
   lineMaxWidth: number,
@@ -406,13 +410,7 @@ export function measureBlock(
     // Whether this turns out to be the last line is only known once the
     // loop ends; the ratio is computed as if it weren't and corrected below.
     // This avoids a second layoutNextLine call per line just to peek ahead.
-    const justifiedSpaceRatio = computeJustifiedSpaceRatio(
-      segments,
-      lineMaxWidth,
-      normalSpaceWidth,
-      textAlign,
-      false,
-    );
+    const spaceRatios = textAlign === 'justify' ? justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth) : {};
 
     // Pretext's line text already ends with the hyphen of a soft-hyphen
     // break; add it only when it does not. It also carries the zero-width
@@ -431,7 +429,7 @@ export function measureBlock(
       hyphenated,
       segments,
       isLastLine: false,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
     });
 
     cursor = nextCursor;
@@ -443,6 +441,7 @@ export function measureBlock(
   if (lastLine) {
     lastLine.isLastLine = true;
     delete lastLine.justifiedSpaceRatio;
+    delete lastLine.justifiedSpaceLimitRatio;
   }
   markInsetLines(lines, maxWidthPx, options);
 
