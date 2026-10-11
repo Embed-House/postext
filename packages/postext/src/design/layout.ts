@@ -40,6 +40,7 @@ import {
 import { hasJoiningScript, joinsWithNext } from '../bidi';
 import { designBaseDirection, directRuns } from './bidiText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
+import { getCjkComposition } from '../measure/cjkPunctuation';
 import {
   RichMeasurer,
   ellipsisEndCut,
@@ -818,6 +819,49 @@ function layoutText(
   };
 }
 
+/** The placeholders that mirror text from the document: a title, a
+ *  frontmatter value, an attribute, a running mark. */
+const MIRRORED_PLACEHOLDER_RE = /\{(?:titleText|chapterTitle|chapterTitleAtTop|partTitle|title|subtitle|author|(?:attr|firstMark|lastMark)\.[^{}]+)\}/g;
+
+/**
+ * Where the texts a design text mirrors from the document start and end
+ * in the text it prints (#724): offsets into the printed text with its
+ * inline marks dropped, the text the composer sets. A number the layout
+ * wrote next to such a text (`{number}{titleText}`,
+ * `{chapterNumber}{chapterTitle}`, `{numberHan}、{titleText}`) is not half
+ * of a number with it, so the rule that sets the 、 of 二、三日 solid does
+ * not read across these offsets. Literal text of the template and the
+ * inside of one placeholder's value are read as before, and so are two
+ * number placeholders side by side.
+ *
+ * The offset of a placeholder is the length of the template's prefix
+ * printed alone (placeholders filled, marks dropped, the case transformed),
+ * as `withPrintedTitle` finds `{titleText}`; one the printed text does not
+ * hold there (a template whose marks span the placeholder) is left out.
+ * Empty when the text holds no 、 or ・.
+ */
+function mirroredTextSeams(el: ResolvedDesignTextElement, printed: string, placeholders: DesignPlaceholderContext): number[] {
+  if (!printed.includes('、') && !printed.includes('・')) return [];
+  const upper = el.textTransform === 'uppercase';
+  const print = (template: string): string => {
+    const resolved = resolveDesignText(template, placeholders, el.inlineMarks === true);
+    const plain = el.inlineMarks ? plainDesignText(resolved) : resolved;
+    return upper ? plain.toLocaleUpperCase() : plain;
+  };
+  let whole: string | undefined;
+  const out = new Set<number>();
+  for (const m of el.content.matchAll(MIRRORED_PLACEHOLDER_RE)) {
+    whole ??= print(el.content);
+    const value = print(m[0]);
+    if (value === '') continue;
+    const start = print(el.content.slice(0, m.index)).length;
+    if (whole.slice(start, start + value.length) !== value) continue;
+    if (start > 0) out.add(start);
+    if (start + value.length < whole.length) out.add(start + value.length);
+  }
+  return [...out].sort((a, b) => a - b);
+}
+
 /**
  * Lay out a text some of whose rows (`\n` apart) compose as CJK (#637):
  * those rows are set by the CJK composer (`design/cjkText.ts`), wrapped
@@ -838,6 +882,8 @@ function layoutCjkRows(
   overflow: TextOverflow,
   maxContentWidth: number | undefined,
   hyphenate: boolean | undefined,
+  /** The number seams of a range of `source`, relative to its start (#724). */
+  seamsOf: (a: number, b: number) => number[] = () => [],
 ): TextMeasurement | undefined {
   const wrap = overflow === 'wrap' && maxContentWidth !== undefined;
   const rows: { text: string; width: number; runs?: DesignTextRun[]; xOffset?: number }[] = [];
@@ -849,7 +895,7 @@ function layoutCjkRows(
   for (const row of source.split('\n')) {
     const end = start + row.length;
     if (composesDesignAsCjk(row)) {
-      const lines = composeCjkDesignParagraph(spansOf(start, end), fonts, wrap ? maxContentWidth : undefined, lineHeightPx, letterSpacingPx, measureIn);
+      const lines = composeCjkDesignParagraph(spansOf(start, end), fonts, wrap ? maxContentWidth : undefined, lineHeightPx, letterSpacingPx, measureIn, [], seamsOf(start, end));
       if (lines.some((l) => tooWide(l.width))) {
         if (overflow !== 'clip') return undefined;
         truncated = true;
@@ -1030,6 +1076,17 @@ export function layoutDesignSlot(
       textContent.set(el.id, el.textTransform === 'uppercase' ? text.toLocaleUpperCase() : text);
     }
   }
+  // Where a number the layout wrote meets a text mirrored from the
+  // document in each printed text (#724): Japanese text only, whose rule
+  // for a 、 between two kanji numerals would read across the two.
+  const textSeams = new Map<string, number[]>();
+  if (getCjkComposition().region === 'japan') {
+    for (const el of ordered) {
+      if (el.kind !== 'text') continue;
+      const seams = mirroredTextSeams(el, textContent.get(el.id) ?? '', context.placeholders);
+      if (seams.length > 0) textSeams.set(el.id, seams);
+    }
+  }
 
   const resolvedGeo = new Map<string, ResolvedPrimitive>();
   // Primitives per element, keyed by the element itself (a text element may
@@ -1073,8 +1130,8 @@ export function layoutDesignSlot(
       // head on the sheet, a design of a horizontal page); in a vertical
       // flow the text already runs down.
       const prims = el.writingMode === 'vertical-rl' && getMeasureWritingMode() !== 'vertical-rl'
-        ? layoutVerticalTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge)
-        : layoutTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge, context);
+        ? layoutVerticalTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge, textSeams.get(el.id))
+        : layoutTextElement(el, textContent.get(el.id) ?? '', pin, fillRef, context.dpi, useElementEdge, context, textSeams.get(el.id));
       resolvedGeo.set(el.id, prims[0]!);
       primsByElement.set(el, prims);
       const truncated = prims[0]!.truncated;
@@ -1289,8 +1346,13 @@ function layoutTextElement(
   anchoredToElement: boolean,
   /** The document's direction and the slot's frame (`LayoutContext`). */
   frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean } = {},
+  /** Offsets into the printed text (its inline marks dropped) where a
+   *  number the layout wrote meets a text mirrored from the document
+   *  (#724, {@link mirroredTextSeams}). */
+  seams: readonly number[] = [],
 ): ResolvedTextPrimitive[] {
   let text = resolvedText;
+  const seamsOf = (a: number, b: number): number[] => seams.filter((s) => s > a && s < b).map((s) => s - a);
   const fontSizePx = dimPx(el.fontSize, dpi);
   const weight = el.fontWeight === 400 ? 'normal' : String(el.fontWeight);
   const style = el.italic ? 'italic' : 'normal';
@@ -1431,7 +1493,7 @@ function layoutTextElement(
         const indents: number[] = [];
         for (let i = 0; i <= Math.max(capLines, 1); i++) indents.push(offsetOf(i));
         const [a, b] = paraRanges[p]!;
-        for (const l of composeCjkDesignParagraph(spansOf(a, b, para), cjkFonts, maxW, lineHeightPx, letterSpacingPx, measureIn, indents)) {
+        for (const l of composeCjkDesignParagraph(spansOf(a, b, para), cjkFonts, maxW, lineHeightPx, letterSpacingPx, measureIn, indents, seamsOf(a, b))) {
           wrapped.push({
             text: l.text,
             width: l.width,
@@ -1472,7 +1534,7 @@ function layoutTextElement(
     m = { lines: wrapped, contentWidth: w, contentHeight: wrapped.length * lineHeightPx, needsClip: false };
   } else {
     const cjk = source.split('\n').some(composesDesignAsCjk)
-      ? layoutCjkRows(source, (a, b) => spansOf(a, b, source.slice(a, b)), cjkFonts, richM, measure, measureIn, lineHeightPx, letterSpacingPx, el.overflow, contentMax, el.hyphenate)
+      ? layoutCjkRows(source, (a, b) => spansOf(a, b, source.slice(a, b)), cjkFonts, richM, measure, measureIn, lineHeightPx, letterSpacingPx, el.overflow, contentMax, el.hyphenate, seamsOf)
       : undefined;
     if (cjk) m = cjk;
     else if (richM && contentMax !== undefined) m = layoutRichText(richM, lineHeightPx, el.overflow, contentMax, el.hyphenate);
@@ -1637,6 +1699,7 @@ function layoutVerticalTextElement(
   container: AnchorReference,
   dpi: number,
   anchoredToElement: boolean,
+  seams?: readonly number[],
 ): ResolvedTextPrimitive[] {
   const flowPin: AnchorResult = { anchorX: pin.anchorY, anchorY: -pin.anchorX, pinX: pin.pinY, pinY: flipPin(pin.pinX) };
   const flowContainer: AnchorReference = { x: container.y, y: -(container.x + container.width), width: container.height, height: container.width };
@@ -1657,7 +1720,7 @@ function layoutVerticalTextElement(
       ? { box: { ...el.box, ...(padding ? { padding: { top: padding.right, right: padding.bottom, bottom: padding.left, left: padding.top } } : {}) } }
       : {}),
   };
-  const [main] = withMeasureWritingMode('vertical-rl', () => layoutTextElement(turned, resolvedText, flowPin, flowContainer, dpi, anchoredToElement));
+  const [main] = withMeasureWritingMode('vertical-rl', () => layoutTextElement(turned, resolvedText, flowPin, flowContainer, dpi, anchoredToElement, {}, seams));
   return [{ ...main!, x: -(main!.y + main!.height), y: main!.x, width: main!.height, height: main!.width, vertical: true }];
 }
 

@@ -52,7 +52,8 @@ const UNBOUNDED_PX = 1e7;
  * (the last repeating; the line starts that far in), or one line when
  * `maxWidth` is undefined. `measureIn` measures a run's text as the
  * renderers paint it (tracking included), so a run whose box is its
- * glyphs' advance carries no `inkOffset`.
+ * glyphs' advance carries no `inkOffset`. `seams` are where the rule of
+ * 二、三日 stops reading (#724).
  */
 export function composeCjkDesignParagraph(
   spans: InlineSpan[],
@@ -62,11 +63,16 @@ export function composeCjkDesignParagraph(
   letterSpacingPx: number,
   measureIn: (text: string, font: string) => number,
   indents: readonly number[] = [],
+  /** Where a number the layout wrote meets a text mirrored from the
+   *  document, as offsets into the paragraph (#724,
+   *  `MeasureBlockOptions.numberSeams`). */
+  seams: readonly number[] = [],
 ): CjkDesignLine[] {
   const measured = composeCjkParagraph(spans, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, maxWidth ?? UNBOUNDED_PX, lineHeightPx, {
     textAlign: 'left',
     ...(letterSpacingPx !== 0 ? { letterSpacingPx } : {}),
     ...(indents.some((x) => x > 0) ? { lineIndentsPx: indents } : {}),
+    ...(seams.length > 0 ? { numberSeams: seams } : {}),
   });
   return measured.lines.map((line) => designLineOf(line, fonts, measureIn));
 }

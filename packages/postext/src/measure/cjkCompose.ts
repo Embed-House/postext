@@ -1472,7 +1472,7 @@ function labelEndUnit(units: readonly Unit[], labelLength: number): number {
  * ・ between kanji numerals is set solid (`Unit.solid`), and with
  * `spaceAfterQuestion` a ？ or ！ takes its one-em space (`Unit.aki`).
  */
-function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number, labelLength = 0): Unit[] {
+function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number, labelLength = 0, seams?: readonly number[]): Unit[] {
   const plain = isPlainComposition(c);
   // Down the line the mainland interpunct's cell is half an em already.
   if (plain && (c.region !== 'mainland' || c.vertical)) return units;
@@ -1491,12 +1491,15 @@ function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number,
     // 二、三日, 三・一四: the mark between two kanji numerals is its glyph
     // alone (JLReq §3.1.3), and the number is not broken there.
     // A heading's number is not half of a number with its title (#679):
-    // the unit that ends it is where the rule stops reading.
+    // the unit that ends it is where the rule stops reading. So is the
+    // seam between a number and a title in a design text (#724).
     const labelEnd = labelLength > 0 ? labelEndUnit(units, labelLength) : -1;
+    const seamEnds = seams?.length ? new Set(seams.filter((s) => s > 0).map((s) => labelEndUnit(units, s))) : undefined;
     for (let k = 1; k + 1 < units.length; k++) {
       const u = units[k]!;
       if (!u.punct || (u.text !== '、' && u.text !== '・')) continue;
       if (k === labelEnd || k - 1 === labelEnd) continue;
+      if (seamEnds && (seamEnds.has(k) || seamEnds.has(k - 1))) continue;
       if (!charUnitIn(units[k - 1], KANJI_DIGITS) || !charUnitIn(units[k + 1], KANJI_DIGITS) || units[k + 1]!.glueBefore) continue;
       shrinkPunctuation(u.punct, u.punct.blank);
       u.width = full.get(u)! - boxCut(u.punct);
@@ -3056,7 +3059,7 @@ export function composeCjkParagraph(
   const plainText = spans.map((s) => s.text).join('');
   // Japanese text: only its two-em dashes, drawn as one stroke (#680).
   const route: MarkRouting = routesSharedMarks(composition, plainText) || (joinsDashPairs(composition, plainText) ? 'dashes' : false);
-  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength);
+  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength, options?.numberSeams);
   // A bibliography label's column (#290).
   if (options?.labelColumnPx !== undefined) {
     setLabelTabs(units, (u) => u.token?.labelTab, options.labelColumnPx, (u, w) => {
