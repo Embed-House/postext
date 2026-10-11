@@ -155,8 +155,13 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     hyphens && '-epub-hyphens: auto',
     hyphens && '-webkit-hyphens: auto',
     body.fontWeight !== 400 && `font-weight: ${body.fontWeight}`,
-    body.avoidOrphans && `orphans: ${Math.max(1, body.orphanMinLines)}`,
-    body.avoidWidows && `widows: ${Math.max(1, body.widowMinLines)}`,
+    // CSS names the two rules the other way round (#717): `orphans` is
+    // the lines a paragraph keeps at the foot of a page (the engine's
+    // `avoidWidows`), `widows` the lines at the head of the next (its
+    // `avoidOrphans`). A rule that is off writes 1: the initial value of
+    // both properties is 2, so leaving one out would keep the rule.
+    `orphans: ${body.avoidWidows ? Math.max(1, body.widowMinLines) : 1}`,
+    `widows: ${body.avoidOrphans ? Math.max(1, body.orphanMinLines) : 1}`,
     'margin: 0',
     'padding: 0 1em',
     ...japaneseDecls(config.cjk),
