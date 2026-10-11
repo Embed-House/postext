@@ -129,6 +129,10 @@ export interface MeasuredContentBlock {
   /** Tracking the text was measured with (px per glyph), when column
    *  balancing asked for it — renderers must paint the block with it. */
   letterSpacingPx?: number;
+  /** The paragraph was set one line shorter to take up a runt (#733): the
+   *  rung of negative tracking that carried it, in thousandths of an em, 0
+   *  when tighter word spaces alone did. Absent when no fix was made. */
+  runtTracking?: number;
   /** A paragraph a drop cap opens (#623): the letter, relative to the
    *  column. Its lines were set short of it. */
   dropCap?: MeasuredDropCap;
@@ -239,6 +243,7 @@ function resolveInlineSpans(block: ContentBlock, style: BlockStyle, ctx: BlockMe
       italic: bodyStyle.referenceItalic ?? false,
       labelNumberGap: resolved.captionStyle.labelNumberGap,
       ...(ctx.anchorRefs ? { anchors: ctx.anchorRefs } : {}),
+      breakLabels: resolved.crossRefs.breakLabels,
     });
     contentBlock = {
       ...contentBlock,
@@ -683,6 +688,7 @@ export function measureContentBlock(
   const { mathDisplayRender } = first;
   let measured = first.measured;
   let trackingPx = letterSpacingPx;
+  let runtTracking: number | undefined;
 
   // A runt the penalty could not break up (the alternatives all cost more):
   // set the paragraph one line shorter, the way a compositor does. Tighter
@@ -717,6 +723,7 @@ export function measureContentBlock(
       if (profile.loosest <= loosestAllowed && profile.ragged <= natural.ragged) {
         measured = attempt.measured;
         trackingPx = spacing;
+        runtTracking = rung;
         break;
       }
     }
@@ -849,6 +856,7 @@ export function measureContentBlock(
     return {
       kind, contentBlock, measured, prefixLen: 0, absoluteSourceMap: rawBlock.sourceMap.map((o) => o + bodyOffset), mathDisplayRender,
       ...(trackingPx !== 0 ? { letterSpacingPx: trackingPx } : {}),
+      ...(runtTracking !== undefined ? { runtTracking } : {}),
       dropCap: placed,
     };
   }
@@ -857,6 +865,7 @@ export function measureContentBlock(
   return {
     kind, contentBlock, measured, prefixLen, absoluteSourceMap, mathDisplayRender,
     ...(trackingPx !== 0 ? { letterSpacingPx: trackingPx } : {}),
+    ...(runtTracking !== undefined ? { runtTracking } : {}),
   };
 }
 

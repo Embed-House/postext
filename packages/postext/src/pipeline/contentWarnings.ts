@@ -533,6 +533,29 @@ export function cjkLooseLineWarnings(doc: VDTDocument): ContentWarning[] {
   return out;
 }
 
+/** A `raggedLine` warning for each line of a justified paragraph set
+ *  ragged because its word spaces would have stretched past 3×
+ *  (`VDTLine.raggedSpaceRatio`, #732), on the page it was placed on: the
+ *  running text, the paragraphs of a box and the notes at a column foot
+ *  (all of them blocks of the document). */
+export function raggedLineWarnings(doc: VDTDocument): ContentWarning[] {
+  const out: ContentWarning[] = [];
+  for (const block of doc.blocks) {
+    for (const line of block.lines) {
+      if (line.raggedSpaceRatio === undefined) continue;
+      out.push({
+        kind: 'raggedLine',
+        text: line.text,
+        ratio: line.raggedSpaceRatio,
+        ...(line.sourceStart !== undefined ? { sourceStart: line.sourceStart } : {}),
+        ...(line.sourceEnd !== undefined ? { sourceEnd: line.sourceEnd } : {}),
+        ...(block.pageIndex >= 0 ? { pageIndex: block.pageIndex } : {}),
+      });
+    }
+  }
+  return out;
+}
+
 /** An `unbreakableWordOverflow` warning for each line holding a word of a
  *  joining script wider than the line (`VDTLine.wordOverflow`), on the page
  *  it was placed on; and once per text for a design text line that does
@@ -825,6 +848,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'cjkLooseLine':
       text = `The justified line "${w.text}" needs more space between its characters than the cap allows — it is set short of the measure`;
+      break;
+    case 'raggedLine':
+      text = `The justified line "${w.text.trim()}" would need its word spaces at ${Math.round(w.ratio * 10) / 10}× their width: it is set ragged`;
       break;
     case 'fontFallback': {
       const face = `"${w.family}" ${w.weight}${w.style === 'italic' ? ' italic' : ''}`;

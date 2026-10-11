@@ -217,7 +217,7 @@ import {
   type BandCapZone,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
 import { dropCapSinkAfter } from './dropCap';
 import { mostlyJoiningScript } from '../measure/joining';
 import { composesAsCjk } from '../measure/cjkCompose';
@@ -3226,6 +3226,7 @@ function placeDocumentPass(
           // The tracking the note was measured with (a runt taken up by
           // setting it one line shorter, #662): painted with it too.
           if (m.letterSpacingPx !== undefined) blk.letterSpacing = m.letterSpacingPx;
+          if (m.runtTracking !== undefined) blk.runtFix = { tracking: m.runtTracking };
           blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign), noteStyle.lineHeightPx).map((line) => ({
             ...line,
             bbox: createBoundingBox(line.bbox.x + x, line.bbox.y + y, line.bbox.width, line.bbox.height),
@@ -6556,7 +6557,7 @@ function placeDocumentPass(
     let capInfo = measuredBlock.dropCap;
     /** Tracking the block's lines are set with; a paragraph moved whole into
      *  a column of another width is measured again, and may change it. */
-    let { letterSpacingPx } = measuredBlock;
+    let { letterSpacingPx, runtTracking } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;
     // A structural heading (`hidden`) is placed like any heading — its
     // break, keep-with-next and grid snap apply — but with no line height
@@ -6938,6 +6939,7 @@ function placeDocumentPass(
             laterWidths = [];
             wrapInsets = [];
             letterSpacingPx = again.letterSpacingPx;
+            runtTracking = again.runtTracking;
             remainingLines = [...raggedLooseLines(again.measured.lines, style.textAlign)];
             paragraphLines = remainingLines;
             paragraphBreaks = again.measured.breaks;
@@ -7111,6 +7113,7 @@ function placeDocumentPass(
             if (placed === 0) {
               capInfo = again!.dropCap;
               letterSpacingPx = again!.letterSpacingPx;
+              runtTracking = again!.runtTracking;
               guardedEnds = [];
               columnEndHyphenRetried = false;
             }
@@ -7301,7 +7304,7 @@ function placeDocumentPass(
             const splitLines = remainingLines.slice(0, splitAt);
             const blk = createVDTBlock(id, vdtType, style.fontString, style.color, style.textAlign);
             applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
             blk.contentIndex = blockIdx;
             stampBlockExtras(blk, rawBlock);
             blk.headingLevel = headingLevel;
@@ -7398,7 +7401,7 @@ function placeDocumentPass(
             const splitLines = remainingLines.slice(0, splitAt);
             const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
             applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
             blk.contentIndex = blockIdx;
             stampBlockExtras(blk, rawBlock);
             blk.lines = resetLinePositions(splitLines, style.lineHeightPx);
@@ -7554,7 +7557,7 @@ function placeDocumentPass(
         const partId = partIndex === 0 ? id : `${id}-cont-${partIndex}`;
         const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
         applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
         blk.contentIndex = blockIdx;
         stampBlockExtras(blk, rawBlock);
         if (partIndex === 0) { blk.headingLevel = headingLevel; if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; } if (headingNumber !== undefined) blk.headingNumber = headingNumber; }
@@ -7862,7 +7865,7 @@ function placeDocumentPass(
 
           const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
           applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
           blk.contentIndex = blockIdx;
           stampBlockExtras(blk, rawBlock);
           if (partIndex === 0) { blk.headingLevel = headingLevel; if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; } if (headingNumber !== undefined) blk.headingNumber = headingNumber; }
@@ -7959,7 +7962,7 @@ function placeDocumentPass(
       const partId = partIndex === 0 ? id : `${id}-cont-${partIndex}`;
       const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
       applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
       blk.contentIndex = blockIdx;
       stampBlockExtras(blk, rawBlock);
       // Stamp the prefix as the other placement branches do: a full-page
@@ -8255,7 +8258,7 @@ export function* buildDocumentGen(
   // cap; words of a joining script that run past their line, and styles
   // whose letter-spacing such words do not take.
   // Line numbers set over a float of the side column (#621).
-  const loose = [...cjkLooseLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
+  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
   // Side boxes and side floats set on pages after the text, and what the
   // layout could place nowhere (#639).
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));

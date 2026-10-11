@@ -684,6 +684,12 @@ export interface VDTLine {
    *  CJK line flagged {@link cjkLoose}, or a line holding a tab stop
    *  ({@link tabbed}). */
   ragged?: boolean;
+  /** The word-space ratio (justified over natural, over 3) the line would
+   *  have needed to reach the measure, when it was set {@link ragged}
+   *  because of it (#732). It marks that fallback and no other: a tabbed
+   *  line, a code line and a CJK line are ragged without it. Reported as a
+   *  `raggedLine` content warning. */
+  raggedSpaceRatio?: number;
   /** A justified CJK line that needed more inter-character spacing than the
    *  cap (½ em, or `bodyText.maxJustifyTracking` when it is set): it is set
    *  with the cap, short of the measure and {@link ragged}, and reported as
@@ -1607,6 +1613,12 @@ export interface VDTBlock {
    *  via canvas `letterSpacing`, CSS `letter-spacing` or PDF `Tc`, adding a
    *  line's own `VDTLine.letterSpacing`. */
   letterSpacing?: number;
+  /** Set one line shorter to take up a runt (`bodyText.tightenRunts`,
+   *  #733): `tracking` is the negative tracking used, in thousandths of an
+   *  em, 0 when the word spaces alone carried the line. Absent when no fix
+   *  was made. The tracking itself is in {@link letterSpacing}, with
+   *  whatever else the style asks for; the renderers do not read this. */
+  runtFix?: { tracking: number };
   /** Column balancing: the levers that fired on this block — space added
    *  above it, the paragraph run a line long — and how much. Absent when
    *  balancing left the block alone. The band caps that cut a band level
@@ -2653,6 +2665,15 @@ export type ContentWarning = ContentWarningBase & (
    *  address that cannot break. `text` is the line's text. Found by the
    *  layout, so `collectContentWarnings` never returns it. */
   | { kind: 'cjkLooseLine'; text: string }
+  /** A line of a justified paragraph set ragged because its word spaces
+   *  would have stretched past 3× their width to reach the measure
+   *  (`VDTLine.raggedSpaceRatio`, #732): the first line of a story in a
+   *  narrow column that cannot take the next word, the line before a web
+   *  address that breaks only at its joints. `text` is the line's text and
+   *  `ratio` the stretch it would have needed. Reword the copy or give the
+   *  line a break it can take. Found by the layout, so
+   *  `collectContentWarnings` never returns it. */
+  | { kind: 'raggedLine'; text: string; ratio: number }
   /** A word of a joining script (Arabic, Syriac, N'Ko…) wider than its
    *  line: such a word is never divided (its letters connect, and a piece
    *  would lose its joining forms), so it runs past the measure

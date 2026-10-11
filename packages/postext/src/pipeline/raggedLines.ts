@@ -3,18 +3,20 @@ import { trackSegments } from '../knuthPlass/tracking';
 import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants';
 
 /** Word-space ratio (justified over natural) past which a justified line
- *  is set ragged instead of stretched. Matches the sandbox's loose-line
- *  threshold, so such a line is fixed rather than flagged. */
+ *  is set ragged instead of stretched. */
 export const LINE_MAX_SPACE_RATIO = RAGGED_SPACE_RATIO;
 
 /**
  * A justified line the breaker could not fill — a long link that breaks
  * only at its own joints, a list item whose last word cannot come up and
  * whose every hyphenation leaves a runt — would have its few word spaces
- * stretched to several times their width. Rather than flag the paragraph,
- * set such lines ragged (like a paragraph's last line): the text keeps its
- * natural spacing and the right edge gives instead. Lines within the
- * threshold are left as measured.
+ * stretched to several times their width. Such lines are set ragged (like
+ * a paragraph's last line): the text keeps its natural spacing and the
+ * right edge gives instead. The ratio the line would have needed is kept
+ * as `raggedSpaceRatio` (#732), which the layout reports as a `raggedLine`
+ * content warning: a line left short in a justified paragraph is a thing
+ * its author wants to know of. Lines within the threshold are left as
+ * measured.
  *
  * A line set ragged also drops the justification tracking the breaker gave
  * it (`VDTLine.letterSpacing`, `bodyText.maxJustifyTracking`): its letters
@@ -27,10 +29,9 @@ export function raggedLooseLines(lines: VDTLine[], textAlign: string | undefined
   const out = lines.map((line) => {
     if (line.isLastLine || line.justifiedSpaceRatio === undefined || line.justifiedSpaceRatio <= LINE_MAX_SPACE_RATIO) return line;
     changed = true;
-    const { justifiedSpaceRatio: _loose, letterSpacing, ...rest } = line;
-    void _loose;
-    if (!letterSpacing) return { ...rest, ragged: true };
-    return { ...rest, ...untracked(line, letterSpacing), ragged: true };
+    const { justifiedSpaceRatio: needed, letterSpacing, ...rest } = line;
+    if (!letterSpacing) return { ...rest, ragged: true, raggedSpaceRatio: needed };
+    return { ...rest, ...untracked(line, letterSpacing), ragged: true, raggedSpaceRatio: needed };
   });
   return changed ? out : lines;
 }

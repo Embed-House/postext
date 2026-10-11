@@ -917,7 +917,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
       ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
     if (!measuredBlock) return undefined;
-    const { kind, measured, prefixLen, absoluteSourceMap, mathDisplayRender, resourceBlock, letterSpacingPx, code } = measuredBlock;
+    const { kind, measured, prefixLen, absoluteSourceMap, mathDisplayRender, resourceBlock, letterSpacingPx, runtTracking, code } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;
     // A structural heading (`hidden`) keeps its lines' text but prints
     // nothing and takes no room: no line height, no margins, and the
@@ -958,6 +958,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // shorter, a heading level's `letterSpacing`): painted as measured,
     // as in the flow (EF-111).
     if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+    if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
     blk.contentIndex = blockIdx;
     blk.containerId = containerId;
     const paragraphStyleId = paragraphStyleIdOf(raw, container, derivedCtx.resolved);
