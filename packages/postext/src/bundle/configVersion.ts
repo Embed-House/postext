@@ -119,6 +119,10 @@ import { hasCJK } from '../measure/cjk';
  *     (`layout.floatsUnderOpener`, #639), where up to 1.24 such a float
  *     landed from the second column on ({@link pinLegacyOpenerHeadFloats}).
  * - 12 (#747), the rules of postext 1.28, each listed with its pin below.
+ *   - a page on a character grid (`cjk.grid.enabled`) holds its lines:
+ *     `bodyText.avoidWidows` is off by default there, and
+ *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
+ *     1.27 both were on ({@link pinLegacyGridBreakRules});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -199,6 +203,10 @@ const FLOW_COLUMNS_RULES = 11;
 /** The rules that offer a float the head of a page-span opener's own
  *  column. */
 const OPENER_HEAD_FLOAT_RULES = 11;
+
+/** The rules that turn the widow rule off on a character grid, and the
+ *  orphan rule too in the Japan region (#717). */
+const GRID_BREAK_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -633,6 +641,29 @@ export function pinLegacyGridBalancing<T extends Partial<PostextConfig>>(config:
   const balancing = isRecord(headings.balancing) ? headings.balancing : {};
   if (balancing.enabled !== undefined) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, enabled: true } } };
+}
+
+/**
+ * A configuration written before #717 (postext 1.27 or earlier), pinned to
+ * the break rules it laid out with on a character grid: a config with
+ * `cjk.grid.enabled` gets `bodyText.avoidWidows: true` and
+ * `bodyText.avoidOrphans: true`, each where it does not set the key,
+ * where today the first is off by default on a grid and the second too in
+ * the Japan region. Any other configuration is returned as it is (the same
+ * object).
+ */
+export function pinLegacyGridBreakRules<T extends Partial<PostextConfig>>(config: T): T {
+  if (!isRecord(config.cjk) || !isRecord(config.cjk.grid) || config.cjk.grid.enabled !== true) return config;
+  const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.avoidWidows !== undefined && bodyText.avoidOrphans !== undefined) return config;
+  return {
+    ...config,
+    bodyText: {
+      ...bodyText,
+      ...(bodyText.avoidWidows === undefined ? { avoidWidows: true } : {}),
+      ...(bodyText.avoidOrphans === undefined ? { avoidOrphans: true } : {}),
+    },
+  };
 }
 
 /**
@@ -1301,7 +1332,9 @@ export interface MigrateConfigOptions {
  * `options.content` nor the configuration holds CJK text, and the slots
  * under its page-span openers by {@link pinLegacyOpenerHeadFloats}, when
  * it sets a heading level or style with `span: 'page'`, unless
- * `options.content` shows no heading. A current one is returned as it is (the same object).
+ * `options.content` shows no heading; one older than 12 has the widow and
+ * orphan rules of a page on a character grid pinned by {@link
+ * pinLegacyGridBreakRules}. A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
  * read twice under its old number would grow twice.
@@ -1339,6 +1372,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) out = pinLegacyInlineTableSplit(out);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) out = pinLegacyFlowColumns(out);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
+  if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   return out;
 }
 
@@ -1363,7 +1397,9 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * inline tables on the `tableStyle` in force, the `:::columns` groups and
  * the slots under a page-span opener on the `layout` in force (the slots
  * when the merged configuration sets a page-span heading), and the book
- * titles, the circled numbers and the design text on the `cjk` in force.
+ * titles, the circled numbers and the design text on the `cjk` in force,
+ * and the widow and orphan rules of a character grid on the merged `cjk`
+ * and `bodyText`.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1403,5 +1439,6 @@ export function migrateBundleConfig(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) merged = pinLegacyInlineTableSplit(merged);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) merged = pinLegacyFlowColumns(merged);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
+  if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   return merged;
 }

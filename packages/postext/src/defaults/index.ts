@@ -1,7 +1,7 @@
 import type { PostextConfig } from '../types';
 import { stripPageDefaults } from './page';
 import { stripLayoutDefaults } from './layout';
-import { stripBodyTextDefaults } from './bodyText';
+import { avoidOrphansByDefault, avoidWidowsByDefault, stripBodyTextDefaults } from './bodyText';
 import { balancingOnByDefault, stripHeadingsDefaults } from './headings';
 import { stripTableStyleDefaults, stripTableStylesDefaults } from './tableStyle';
 import { stripCaptionStyleDefaults } from './captionStyle';
@@ -35,7 +35,7 @@ import { presentTag } from '../locale';
 export { dimensionsEqual, colorsEqual, resolveColorValue, applyPaletteToConfig, applyPaletteToResolvedConfig, DEFAULT_COLOR_PALETTE, DEFAULT_MAIN_COLOR, DEFAULT_MAIN_COLOR_ID, DEFAULT_MAIN_COLOR_NAME, DEFAULT_MAIN_COLOR_HEX, cloneDefaultColorPalette, isDefaultColorPalette } from './shared';
 export { PAGE_SIZE_PRESETS, DEFAULT_CUT_LINES, DEFAULT_PAGE_CONFIG, DEFAULT_PAGE_NUMBERING, resolvePageConfig, stripPageDefaults } from './page';
 export { DEFAULT_COLUMN_RULE, DEFAULT_LAYOUT_CONFIG, DEFAULT_FLOAT_MIN_SCALE, DEFAULT_MAX_TOP_FRACTION, DEFAULT_TEXT_WRAP, resolveLayoutConfig, stripLayoutDefaults } from './layout';
-export { DEFAULT_HYPHENATION_CONFIG, DEFAULT_BODY_TEXT_CONFIG, DEFAULT_BLOCKQUOTE_CONFIG, hyphenationEqual, resolveBodyTextConfig, stripBodyTextDefaults } from './bodyText';
+export { DEFAULT_HYPHENATION_CONFIG, DEFAULT_BODY_TEXT_CONFIG, DEFAULT_BLOCKQUOTE_CONFIG, hyphenationEqual, avoidWidowsByDefault, avoidOrphansByDefault, resolveBodyTextConfig, stripBodyTextDefaults } from './bodyText';
 export { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
 export { DEFAULT_COLUMN_BALANCING, DEFAULT_HEADINGS_CONFIG, balancingOnByDefault, resolveHeadingsConfig, stripHeadingsDefaults } from './headings';
 export { resolveTableStyleConfig, stripTableStyleDefaults, resolveTableStylesConfig, stripTableStylesDefaults, pickTableStyle, defaultTableContinuationStrings } from './tableStyle';
@@ -100,7 +100,9 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
   } else {
     delete result.layout;
   }
-  const strippedBodyText = stripBodyTextDefaults(config.bodyText, config.locale);
+  // The break rules are off by default on a character grid (#717): each
+  // is compared with the default of this document.
+  const strippedBodyText = stripBodyTextDefaults(config.bodyText, config.locale, avoidWidowsByDefault(config), avoidOrphansByDefault(config));
   if (strippedBodyText) {
     result.bodyText = strippedBodyText;
   } else {

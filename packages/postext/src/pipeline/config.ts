@@ -2,7 +2,7 @@ import type { DigitSystem, PostextConfig, ResolvedHeadingLevelConfig } from '../
 import { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../defaults/layout';
 
 export { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN };
-export { balancingOnByDefault };
+export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault };
 import {
   resolvePageConfig,
   resolveLayoutConfig,
@@ -40,6 +40,8 @@ import {
   DEFAULT_LAYOUT_CONFIG,
   balancingOnByDefault,
 } from '../defaults';
+  avoidWidowsByDefault,
+  avoidOrphansByDefault,
 import { dimensionToPx } from '../units';
 import { applyCjkGrid } from './cjkGrid';
 import { directionOf, localeScript, presentTag, resolveNumerals } from '../locale';
@@ -106,7 +108,10 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
   // The character grid (`cjk.grid`) sets the margins and the gutter before
   // anything reads them (see `cjkGrid.ts`).
   const config = applyCjkGrid(applyPaletteToConfig(rawConfig));
-  const bodyText = resolveBodyTextConfig(config?.bodyText, config?.locale);
+  // The break rules follow the document's defaults (#717) before any
+  // other section reads the body text (paragraph styles, parts and
+  // heading styles are resolved from it).
+  const bodyText = defaultBreakRules(resolveBodyTextConfig(config?.bodyText, config?.locale), config);
   // The document language as `resolvedLocale` reads it: the script of the
   // numeral tokens 一 and 壹 in list and page formats follows it, as it does
   // in heading templates and `:::numbering`, and so does the `cjk` region.
@@ -193,6 +198,19 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
 /** The headings with column balancing off when the document's default
  *  turns it off ({@link balancingOnByDefault}) and its config does not
  *  turn it on itself. */
+/** The body text with the widow and orphan rules off where the document's
+ *  defaults turn them off (a character grid: {@link avoidWidowsByDefault},
+ *  {@link avoidOrphansByDefault}) and its config does not set them. */
+function defaultBreakRules(
+  bodyText: ResolvedConfig['bodyText'],
+  config: PostextConfig | undefined,
+): ResolvedConfig['bodyText'] {
+  const widowsOff = config?.bodyText?.avoidWidows === undefined && bodyText.avoidWidows && !avoidWidowsByDefault(config);
+  const orphansOff = config?.bodyText?.avoidOrphans === undefined && bodyText.avoidOrphans && !avoidOrphansByDefault(config);
+  if (!widowsOff && !orphansOff) return bodyText;
+  return { ...bodyText, ...(widowsOff ? { avoidWidows: false } : {}), ...(orphansOff ? { avoidOrphans: false } : {}) };
+}
+
 function defaultBalancing(
   headings: ResolvedConfig['headings'],
   config: PostextConfig | undefined,

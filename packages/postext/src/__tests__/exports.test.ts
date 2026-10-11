@@ -126,6 +126,8 @@ describe("package exports", () => {
       "initHyphenator",
       "clearMeasurementCache",
       "createMeasurementCache",
+      "avoidWidowsByDefault",
+      "avoidOrphansByDefault",
       "cachedMeasureBlock",
       "cachedMeasureRichBlock",
       "setCjkLineBreak",

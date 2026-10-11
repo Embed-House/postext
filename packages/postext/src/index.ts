@@ -29,7 +29,7 @@ export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hang
 export { lineInkExtent } from './lineInk';
 export { applyCjkGrid, cjkGridGeometry, cjkGridCells, CHARACTER_GRID_COLOR } from './pipeline/cjkGrid';
 export type { CjkGridGeometry, CjkGridCells } from './pipeline/cjkGrid';
-export { balancingOnByDefault } from './pipeline/config';
+export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault } from './pipeline/config';
 export type { ColumnRuleSegment } from './columnRule';
 export { findLooseLines, drawLooseLines, lineLooseness } from './looseLines';
 export type { LooseLine, FindLooseLinesOptions, DrawLooseLinesOptions } from './looseLines';

@@ -1,5 +1,5 @@
-import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
-import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
+import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
+import { cjkRegionOf, hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
 
@@ -10,6 +10,37 @@ export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] =
   zone: { value: 3, unit: 'em' },
   compounds: true,
 };
+
+/**
+ * Whether a paragraph keeps `widowMinLines` lines at the foot of a column
+ * when `config` does not set `bodyText.avoidWidows` itself. Off on a
+ * character grid (`cjk.grid`, #717): the grid counts the lines of a page,
+ * and a paragraph moved on whole leaves the page a line short. clreq
+ * §7.1.2 and JLReq §3.5.4 have no rule for a paragraph's first line at
+ * the foot of a page.
+ */
+export function avoidWidowsByDefault(config: PostextConfig | undefined): boolean {
+  return config?.cjk?.grid?.enabled !== true;
+}
+
+/**
+ * Whether a paragraph keeps `orphanMinLines` lines at the head of the next
+ * column when `config` does not set `bodyText.avoidOrphans` itself. Off on
+ * a character grid in the Japan region (#717): JLReq §3.5.4 counts the
+ * characters of a paragraph's last line, never its lines at a page break.
+ * A Chinese grid keeps the rule: 孤行, the last line of a paragraph alone
+ * at the head of a page, is the one clreq §7.1.2 names. The region is
+ * `cjk.region`, or under `'auto'` the one of the document language as
+ * `resolveAllConfig` reads it (`locale`, else the hyphenation locale).
+ */
+export function avoidOrphansByDefault(config: PostextConfig | undefined): boolean {
+  if (config?.cjk?.grid?.enabled !== true) return true;
+  const named = config.cjk.region;
+  const region = named === 'mainland' || named === 'taiwan' || named === 'hongkong' || named === 'japan'
+    ? named
+    : cjkRegionOf(presentTag(config.locale) ?? presentTag(config.bodyText?.hyphenation?.locale));
+  return region !== 'japan';
+}
 
 /** Blockquotes as postext 1.4 set them: grey, italic, the body's
  *  first-line indent, no side indent. */
@@ -346,8 +377,18 @@ function namesOtherPatterns(hyphenation: HyphenationConfig, documentLocale: Loca
 /** `bodyText` without the fields that hold their default. `documentLocale`
  *  (the config's `locale`) matters to hyphenation only: in a Chinese,
  *  Japanese or Korean document its default is off, and the patterns of a
- *  document that names its language are that language's. */
-export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?: LocaleTag): BodyTextConfig | undefined {
+ *  document that names its language are that language's. `avoidWidowsOn`
+ *  and `avoidOrphansOn` are the document's defaults for the two break
+ *  rules (`avoidWidowsByDefault(config)`, `avoidOrphansByDefault(config)`,
+ *  #717): each rule is dropped when it restates its own, so `true` is
+ *  kept on a character grid where the rule is off, and `false` dropped
+ *  there. */
+export function stripBodyTextDefaults(
+  bodyText?: BodyTextConfig,
+  documentLocale?: LocaleTag,
+  avoidWidowsOn: boolean = DEFAULT_BODY_TEXT_CONFIG.avoidWidows,
+  avoidOrphansOn: boolean = DEFAULT_BODY_TEXT_CONFIG.avoidOrphans,
+): BodyTextConfig | undefined {
   if (!bodyText) return undefined;
 
   const result: BodyTextConfig = {};
@@ -501,7 +542,9 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.verse = verse;
     hasOverride = true;
   }
-  if (bodyText.avoidOrphans !== undefined && bodyText.avoidOrphans !== DEFAULT_BODY_TEXT_CONFIG.avoidOrphans) {
+  // The break rules are compared with the default of the document (#717):
+  // on a character grid `true` is kept and `false` dropped.
+  if (bodyText.avoidOrphans !== undefined && bodyText.avoidOrphans !== avoidOrphansOn) {
     result.avoidOrphans = bodyText.avoidOrphans;
     hasOverride = true;
   }
@@ -509,7 +552,7 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.orphanMinLines = bodyText.orphanMinLines;
     hasOverride = true;
   }
-  if (bodyText.avoidWidows !== undefined && bodyText.avoidWidows !== DEFAULT_BODY_TEXT_CONFIG.avoidWidows) {
+  if (bodyText.avoidWidows !== undefined && bodyText.avoidWidows !== avoidWidowsOn) {
     result.avoidWidows = bodyText.avoidWidows;
     hasOverride = true;
   }
