@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // 注释行距；em为注释字号。
   color?: ColorValue;         // 注释颜色；未设置时为正文颜色。
   textAlign?: TextAlign;      // 未设置时为正文的对齐方式。
+  wordBreak?: 'normal' | 'keep-all'; // 未设置时为文档的 cjk.wordBreak。
   hangingIndent?: Dimension;  // 注释转行的缩进。
   spaceBetween?: Dimension;   // 两条注释之间的间距。
   spaceAbove?: Dimension;     // 正文与分隔线之间的间距；em为正文字号。

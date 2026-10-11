@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Interlineado de la nota; em es el cuerpo de la nota.
   color?: ColorValue;         // Color de la nota; sin valor, el del cuerpo.
   textAlign?: TextAlign;      // Sin valor, la alineación del cuerpo.
+  wordBreak?: 'normal' | 'keep-all'; // Sin valor, el cjk.wordBreak del documento.
   hangingIndent?: Dimension;  // Sangría de las líneas siguientes de una nota.
   spaceBetween?: Dimension;   // Espacio entre dos notas.
   spaceAbove?: Dimension;     // Espacio entre el texto y el filete; em es el cuerpo del texto.

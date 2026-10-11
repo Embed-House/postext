@@ -1,7 +1,6 @@
 import { describe, it, expect, afterEach, beforeAll, afterAll } from 'vitest';
 import { buildDocument } from '../pipeline';
 import { createMeasurementCache } from '../measure';
-import { measureBlock } from '../measure/plain';
 import { measureRichBlock } from '../measure/rich';
 import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, normalizeHyphenationExceptions, setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate';
 import { stripConfigDefaults } from '../defaults';

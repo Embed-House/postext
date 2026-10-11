@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Interlineat de la nota; em és el cos de la nota.
   color?: ColorValue;         // Color de la nota; sense valor, el del cos.
   textAlign?: TextAlign;      // Sense valor, l'alineació del cos.
+  wordBreak?: 'normal' | 'keep-all'; // Sense valor, el cjk.wordBreak del document.
   hangingIndent?: Dimension;  // Sagnat de les línies següents d'una nota.
   spaceBetween?: Dimension;   // Espai entre dues notes.
   spaceAbove?: Dimension;     // Espai entre el text i el filet; em és el cos del text.

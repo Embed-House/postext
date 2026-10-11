@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Note leading; em is the note size.
   color?: ColorValue;         // Note colour; the body colour when unset.
   textAlign?: TextAlign;      // The body alignment when unset.
+  wordBreak?: 'normal' | 'keep-all'; // The document's cjk.wordBreak when unset.
   hangingIndent?: Dimension;  // Indent of a note's turnover lines.
   spaceBetween?: Dimension;   // Space between two notes.
   spaceAbove?: Dimension;     // Space between the text and the rule; em is the body size.
