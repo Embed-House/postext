@@ -5414,58 +5414,6 @@ export interface ResolvedPrintPreflightConfig {
   checkFonts: boolean;
 }
 
-/** An ICC output profile the user uploaded (their printer's), stored
- *  out-of-band like a font or a picture. */
-export interface CustomOutputProfile {
-  /** The profile's name (its `desc` tag, or the file name). */
-  name: string;
-  /** Identifier of the stored `.icc` file. */
-  fileId: string;
-  /** The printing condition's registry name when the profile is one
-   *  (e.g. `FOGRA51`), for the PDF/X OutputConditionIdentifier; else
-   *  `Custom`. */
-  registryName?: string;
-  /** Total ink limit of the condition, percent. */
-  inkLimit?: number;
-}
-
-/** Print production: the PDF/X standard, the output profile CMYK is
- *  separated with, how black prints, and the preflight thresholds. Layout
- *  ignores it; postext-pdf and the preflight read it. */
-export interface PrintConfig {
-  /** PDF/X flavour. Defaults to `'none'`. Any PDF/X standard writes CMYK
-   *  through the output profile whatever `pdfGeneration.colorSpace` says. */
-  standard?: PdfXStandard;
-  /** The output profile, by catalogue id (`OUTPUT_PROFILES`), or
-   *  `'custom'` for `customProfile`. Defaults to `'fogra39'`. */
-  outputProfile?: string;
-  customProfile?: CustomOutputProfile;
-  /** Defaults to `'relative'`. */
-  renderingIntent?: PrintRenderingIntent;
-  /** Map sRGB black to the darkest printable black (relative intent).
-   *  Defaults to true. */
-  blackPointCompensation?: boolean;
-  /** Convert RGB pictures to the output CMYK. PDF/X-1a always does; in
-   *  PDF/X-4 false keeps them RGB, tagged sRGB, for the printer's RIP.
-   *  Defaults to true. */
-  convertImages?: boolean;
-  /** Total area coverage limit, percent. Defaults to the profile's. */
-  inkLimit?: number;
-  black?: PrintBlackConfig;
-  preflight?: PrintPreflightConfig;
-}
-
-export interface ResolvedPrintConfig {
-  standard: PdfXStandard;
-  outputProfile: string;
-  customProfile?: CustomOutputProfile;
-  renderingIntent: PrintRenderingIntent;
-  blackPointCompensation: boolean;
-  convertImages: boolean;
-  /** The configured limit, else the profile's. */
-  inkLimit: number;
-  black: ResolvedPrintBlackConfig;
-  preflight: ResolvedPrintPreflightConfig;
 /** The conformance level a contrast ratio is held to (WCAG 2): `'AA'`
  *  asks 4.5:1 of text and 3:1 of large text, `'AAA'` 7:1 and 4.5:1. */
 export type ContrastLevel = 'AA' | 'AAA';
@@ -5518,6 +5466,58 @@ export interface ResolvedContrastConfig {
   reversedText: ResolvedContrastReversedTextConfig;
 }
 
+/** An ICC output profile the user uploaded (their printer's), stored
+ *  out-of-band like a font or a picture. */
+export interface CustomOutputProfile {
+  /** The profile's name (its `desc` tag, or the file name). */
+  name: string;
+  /** Identifier of the stored `.icc` file. */
+  fileId: string;
+  /** The printing condition's registry name when the profile is one
+   *  (e.g. `FOGRA51`), for the PDF/X OutputConditionIdentifier; else
+   *  `Custom`. */
+  registryName?: string;
+  /** Total ink limit of the condition, percent. */
+  inkLimit?: number;
+}
+
+/** Print production: the PDF/X standard, the output profile CMYK is
+ *  separated with, how black prints, and the preflight thresholds. Layout
+ *  ignores it; postext-pdf and the preflight read it. */
+export interface PrintConfig {
+  /** PDF/X flavour. Defaults to `'none'`. Any PDF/X standard writes CMYK
+   *  through the output profile whatever `pdfGeneration.colorSpace` says. */
+  standard?: PdfXStandard;
+  /** The output profile, by catalogue id (`OUTPUT_PROFILES`), or
+   *  `'custom'` for `customProfile`. Defaults to `'fogra39'`. */
+  outputProfile?: string;
+  customProfile?: CustomOutputProfile;
+  /** Defaults to `'relative'`. */
+  renderingIntent?: PrintRenderingIntent;
+  /** Map sRGB black to the darkest printable black (relative intent).
+   *  Defaults to true. */
+  blackPointCompensation?: boolean;
+  /** Convert RGB pictures to the output CMYK. PDF/X-1a always does; in
+   *  PDF/X-4 false keeps them RGB, tagged sRGB, for the printer's RIP.
+   *  Defaults to true. */
+  convertImages?: boolean;
+  /** Total area coverage limit, percent. Defaults to the profile's. */
+  inkLimit?: number;
+  black?: PrintBlackConfig;
+  preflight?: PrintPreflightConfig;
+}
+
+export interface ResolvedPrintConfig {
+  standard: PdfXStandard;
+  outputProfile: string;
+  customProfile?: CustomOutputProfile;
+  renderingIntent: PrintRenderingIntent;
+  blackPointCompensation: boolean;
+  convertImages: boolean;
+  /** The configured limit, else the profile's. */
+  inkLimit: number;
+  black: ResolvedPrintBlackConfig;
+  preflight: ResolvedPrintPreflightConfig;
 }
 
 /** How postext-pdf writes the file. Layout ignores it; the VDT carries it
@@ -6979,6 +6979,9 @@ export interface PostextConfig {
   /** Print production: PDF/X, output profile, black, preflight. */
   print?: PrintConfig;
 
+  /** The contrast check: level, rendition, reversed text. */
+  contrast?: ContrastConfig;
+
   colorPalette?: ColorPaletteEntry[];
 
   /** User-provided font families. Referenced the same way as Google Fonts:
@@ -6997,6 +7000,3 @@ export interface PostextConfig {
    *  {@link locale}, else `bodyText.hyphenation.locale`, else English). */
   resourceTypes?: ResourceType[];
 }
-  /** The contrast check: level, rendition, reversed text. */
-  contrast?: ContrastConfig;
-

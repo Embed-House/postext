@@ -134,6 +134,7 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   }
   out.push(...collectComicChoiceWarnings(config));
   out.push(...collectPrintChoiceWarnings(config));
+  out.push(...collectContrastChoiceWarnings(config));
   out.push(...collectLineNumbersWarnings(config));
   out.push(...collectWrapWarnings(config));
   out.push(...collectCodeStyleWarnings(config));
@@ -142,7 +143,6 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
-  out.push(...collectContrastChoiceWarnings(config));
 /** The drop cap settings of a config (#623): each paragraph style's, each
  *  heading level's and each heading style's (and those of the HTML
  *  viewer's overrides), with their paths. */
@@ -314,14 +314,6 @@ function collectPrintChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
-/** The comics settings that take one of a few words (#590): the reading
- *  and art directions, a panel style's border style and fit, the
- *  lettering's writing mode, case, final stop and joins, a balloon style's
- *  shape, tail, target, position, alignment and case. `used` is what the
- *  setting resolved to (the default, or the value of the style it is laid
- *  over), `suggestion` the word it is closest to, when one is close. */
-function collectComicChoiceWarnings(config: PostextConfig): ConfigWarning[] {
-  const comics = config.comics as unknown;
 /** The contrast check's level and mode (#748): one written otherwise
  *  reads as the default. */
 function collectContrastChoiceWarnings(config: PostextConfig): ConfigWarning[] {
@@ -339,6 +331,14 @@ function collectContrastChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
+/** The comics settings that take one of a few words (#590): the reading
+ *  and art directions, a panel style's border style and fit, the
+ *  lettering's writing mode, case, final stop and joins, a balloon style's
+ *  shape, tail, target, position, alignment and case. `used` is what the
+ *  setting resolved to (the default, or the value of the style it is laid
+ *  over), `suggestion` the word it is closest to, when one is close. */
+function collectComicChoiceWarnings(config: PostextConfig): ConfigWarning[] {
+  const comics = config.comics as unknown;
   if (!comics || typeof comics !== 'object' || Array.isArray(comics)) return [];
   const c = comics as ComicsConfig;
   const out: ConfigWarning[] = [];
