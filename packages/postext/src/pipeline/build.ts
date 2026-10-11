@@ -6855,11 +6855,12 @@ function placeDocumentPass(
      *  guard keeps a hyphen off: the line the split falls after and one
      *  every full column after it, or, under `'withinPage'` (#701), those
      *  of them that close a page — the j-th column end from here does when
-     *  the `rest` flow columns left on this page are used up and a whole
-     *  number of fresh pages, of `perPage` flow columns each, has gone by. */
+     *  the `rest` columns left on this page that still take a line of this
+     *  text are used up and a whole number of fresh pages, of `perPage`
+     *  flow columns each, has gone by. */
     const guardedColumnEnds = (mode: false | 'withinPage', splitAt: number, lineCount: number, fullColumn: number, page: VDTPage, columnIndex: number): number[] => {
       const ends: number[] = [];
-      const rest = mode === false ? 0 : flowColumnsAfter(page, columnIndex);
+      const rest = mode === false ? 0 : flowColumnsAfter(page, columnIndex, style.lineHeightPx);
       const perPage = mode === false ? 1 : freshPageFlowColumns();
       for (let n = splitAt, j = 0; n < lineCount; n += fullColumn, j++) {
         if (j >= rest && (j - rest) % perPage === 0) ends.push(n);
@@ -7793,7 +7794,7 @@ function placeDocumentPass(
           && columnEndHyphenPart !== partIndex
           && looseLines === undefined
           && remainingLines[choice.splitAt - 1]?.hyphenated === true
-          && (hyphenGuard === false || columnClosesPage(doc.pages[cursor.pageIndex]!, cursor.columnIndex))
+          && (hyphenGuard === false || columnClosesPage(doc.pages[cursor.pageIndex]!, cursor.columnIndex, style.lineHeightPx))
         ) {
           columnEndHyphenPart = partIndex;
           const placed = paragraphLines.length - remainingLines.length;

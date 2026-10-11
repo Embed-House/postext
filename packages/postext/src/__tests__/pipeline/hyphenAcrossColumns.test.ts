@@ -8,6 +8,8 @@ import type { KPItem } from '../../knuthPlass/types';
 import { resolveBodyTextConfig, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults';
 import { resolveAllConfig } from '../../pipeline/config';
 import type { PostextConfig, VDTDocument } from '../../index';
+import type { VDTPage } from '../../vdt';
+import { columnClosesPage, flowColumnsAfter } from '../../pipeline/placement';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -411,4 +413,31 @@ describe("bodyText.hyphenateAcrossColumns: 'withinPage' (#701)", () => {
     expect(ends(off).page).toEqual([]);
     expect(ends(off).inner).toEqual([]);
   }, 60_000);
+});
+
+describe("which column closes its page (#701)", () => {
+  const page = (...columns: Array<{ kind?: 'side'; availableHeight: number }>): VDTPage => ({ columns } as unknown as VDTPage);
+
+  it('the last column that takes text does, whatever float-only side column follows it', () => {
+    const two = page({ availableHeight: 400 }, { availableHeight: 400 });
+    expect(columnClosesPage(two, 0)).toBe(false);
+    expect(columnClosesPage(two, 1)).toBe(true);
+    expect(flowColumnsAfter(two, 0)).toBe(1);
+    const side = page({ availableHeight: 400 }, { kind: 'side', availableHeight: 400 });
+    expect(columnClosesPage(side, 0)).toBe(true);
+    const three = page({ availableHeight: 400 }, { availableHeight: 400 }, { availableHeight: 400 });
+    expect(flowColumnsAfter(three, 0)).toBe(2);
+    expect(columnClosesPage(three, 1)).toBe(false);
+  });
+
+  it('a column the floats have filled is counted out: the text only passes through it', () => {
+    // A table that takes the whole second column of a datasheet page: the
+    // first column's text goes on to the next page.
+    const filled = page({ availableHeight: 400 }, { availableHeight: 6 });
+    expect(columnClosesPage(filled, 0, 16)).toBe(true);
+    expect(flowColumnsAfter(filled, 0, 16)).toBe(0);
+    // With room for a line it still takes text.
+    const room = page({ availableHeight: 400 }, { availableHeight: 16 });
+    expect(columnClosesPage(room, 0, 16)).toBe(false);
+  });
 });

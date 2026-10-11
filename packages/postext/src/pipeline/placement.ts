@@ -367,20 +367,30 @@ export function nextFlowColumn(page: VDTPage, columnIndex: number): number {
   return next < page.columns.length ? next : -1;
 }
 
-/**
- * Whether the text that leaves column `columnIndex` of `page` goes on to
- * another page: {@link advanceToNextColumn} would open one. The guard of
- * `bodyText.hyphenateAcrossColumns: 'withinPage'` (#701) reads it, so it and
- * the flow cannot disagree about which column closes a page.
- */
-export function columnClosesPage(page: VDTPage, columnIndex: number): boolean {
-  return nextFlowColumn(page, columnIndex) < 0;
+/** Whether column `col` can take a line of text `minRoomPx` high: not a
+ *  float-only side column, and not one the floats placed so far have
+ *  filled (a table that takes a whole column of a datasheet). */
+function takesText(col: VDTColumn, minRoomPx: number): boolean {
+  return col.kind !== 'side' && col.availableHeight >= minRoomPx - 0.01;
 }
 
-/** How many columns of `page` after `columnIndex` take body text. */
-export function flowColumnsAfter(page: VDTPage, columnIndex: number): number {
+/**
+ * Whether the text that leaves column `columnIndex` of `page` goes on to
+ * another page: no later column of the page takes a line `minRoomPx` high.
+ * The guard of `bodyText.hyphenateAcrossColumns: 'withinPage'` (#701) reads
+ * it. It is the test {@link advanceToNextColumn} makes (it skips side
+ * columns and opens a page after the last column), and it also counts out
+ * a column with no room left, which the flow would enter only to leave.
+ */
+export function columnClosesPage(page: VDTPage, columnIndex: number, minRoomPx = 0): boolean {
+  return flowColumnsAfter(page, columnIndex, minRoomPx) === 0;
+}
+
+/** How many columns of `page` after `columnIndex` take a line of text
+ *  `minRoomPx` high. */
+export function flowColumnsAfter(page: VDTPage, columnIndex: number, minRoomPx = 0): number {
   let count = 0;
-  for (let i = columnIndex + 1; i < page.columns.length; i++) if (page.columns[i]!.kind !== 'side') count++;
+  for (let i = columnIndex + 1; i < page.columns.length; i++) if (takesText(page.columns[i]!, minRoomPx)) count++;
   return count;
 }
 

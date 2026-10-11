@@ -1646,7 +1646,8 @@ export interface BodyTextConfig {
    *  last line of a page ends on a whole word wherever the word-spacing
    *  limits allow it. A column closes its page when the text that leaves it
    *  goes on to another page (no later column of the page takes text: a
-   *  float-only side column does not count). It moves fewer lines than
+   *  float-only side column does not, nor does a column the floats have
+   *  filled). It moves fewer lines than
    *  `false`; in a single-column layout the two give the same lines. */
   hyphenateAcrossColumns?: boolean | 'withinPage';
   /** The space under a `:::paragraphs` container that closes on a
