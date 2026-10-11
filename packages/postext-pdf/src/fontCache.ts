@@ -119,6 +119,22 @@ export function coverAllGlyphUnicode(font: PDFFont): void {
   };
 }
 
+/**
+ * Make the face's space glyph for the space (#755). fontkit makes a glyph
+ * once, with the characters of the text that first shows it, and the
+ * font's `/ToUnicode` map is written from them: in a face that draws the
+ * no-break space with the space glyph, a title set before any space
+ * (`Nº 12`) would have every space of the document read as a no-break
+ * space, or take a span each to read right (`glyphReads` in
+ * `pdf-backend/primitives.ts`).
+ */
+export function spaceGlyphForSpace(font: PDFFont): void {
+  const face = (font as unknown as {
+    embedder?: { font?: { hasGlyphForCodePoint?(codePoint: number): boolean; glyphForCodePoint?(codePoint: number): unknown } };
+  }).embedder?.font;
+  if (face?.hasGlyphForCodePoint?.(0x20)) face.glyphForCodePoint?.(0x20);
+}
+
 /** What the pages set in a face, handed to the {@link PdfFontProvider}. */
 export interface PdfFontRequest {
   /** The characters (Unicode code points) the document sets in the face,
@@ -332,6 +348,7 @@ export class FontCache {
       }
       // Japanese text is shaped in its language system (`JAN `).
       shapeInCurrentLanguage(embedded);
+      spaceGlyphForSpace(embedded);
       this.embedded.add(embedded);
       return embedded;
     })();
