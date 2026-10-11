@@ -3,7 +3,7 @@
 // custom fonts. No DOM or storage access.
 
 import { canonicalLocaleTag, matchContentLocale, presentTag, sameContentLocale } from '../locale';
-import type { CustomFontFamily, CustomFontFormat, Resource } from '../types';
+import type { CustomFontFamily, CustomFontFormat, HeadingCounters, PartState, Resource } from '../types';
 import type {
   BundleChapterSpec,
   BundleFontFamilySpec,
@@ -14,6 +14,7 @@ import type {
   BundleManifest,
   BundleManifestV1,
   BundleResourceSpec,
+  BundleStart,
   BundleViewSpec,
 } from './types';
 
@@ -73,6 +74,7 @@ function isLocaleOverrides(v: unknown): v is BundleLocaleOverrides {
   if (!isRecord(v)) return false;
   if (v.config !== undefined && !isRecord(v.config)) return false;
   if (v.view !== undefined && !isViewField(v.view)) return false;
+  if (v.start !== undefined && !isRecord(v.start)) return false;
   if (v.resources !== undefined) {
     if (!Array.isArray(v.resources)) return false;
     if (!v.resources.every((r) => isRecord(r) && isNonEmptyString(r.id))) return false;
@@ -99,6 +101,7 @@ export function isBundleManifest(data: unknown): data is BundleManifest {
   if (data.version === 2 && !isChaptersField(data.chapters)) return false;
   if (!hasValidShowcaseMeta(data)) return false;
   if (data.view !== undefined && !isViewField(data.view)) return false;
+  if (data.start !== undefined && !isRecord(data.start)) return false;
   if (data.localized !== undefined && !isLocalizedField(data.localized)) return false;
   if (data.config !== undefined && !isRecord(data.config)) return false;
   if (data.resources !== undefined) {
@@ -197,6 +200,88 @@ export function pickBundleView(manifest: BundleManifest, locale: string): Bundle
   const own = pickLocaleOverrides(manifest, locale)?.view;
   if (!own) return manifest.view;
   return { ...manifest.view, ...own };
+}
+
+const count = (v: unknown): number | undefined =>
+  (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? Math.floor(v) : undefined);
+
+/** Heading counters with every level a whole number: a level left out
+ *  (`{ h1: 3 }`) or ill-typed counts zero. */
+function headingCounters(v: unknown): HeadingCounters | undefined {
+  if (!isRecord(v)) return undefined;
+  return { h1: count(v.h1) ?? 0, h2: count(v.h2) ?? 0, h3: count(v.h3) ?? 0, h4: count(v.h4) ?? 0, h5: count(v.h5) ?? 0, h6: count(v.h6) ?? 0 };
+}
+
+/** A map of counters (`{ figure: { counter, heading } }`), ill-typed
+ *  entries left out; undefined when none is left. */
+function counterMap(v: unknown): Record<string, { counter: number; heading: HeadingCounters }> | undefined {
+  if (!isRecord(v)) return undefined;
+  const out: Record<string, { counter: number; heading: HeadingCounters }> = {};
+  for (const [key, entry] of Object.entries(v)) {
+    const counter = isRecord(entry) ? count(entry.counter) : undefined;
+    if (counter !== undefined) out[key] = { counter, heading: headingCounters((entry as Record<string, unknown>).heading) ?? headingCounters({})! };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/**
+ * Where a book starts ({@link BundleStart}), as a manifest or a caller
+ * gives it, in the shape the engine takes as a `continuation`: the fields
+ * it knows, each of the right type, the heading counters complete. A field
+ * of another type is left out rather than failing the bundle, and so is
+ * `bookPageCount`. Undefined when nothing is left: a book that starts at
+ * its own beginning.
+ */
+export function bundleStart(value: unknown): BundleStart | undefined {
+  if (!isRecord(value)) return undefined;
+  const out: BundleStart = {};
+  const pageIndexOffset = count(value.pageIndexOffset);
+  if (pageIndexOffset !== undefined) out.pageIndexOffset = pageIndexOffset;
+  if (isRecord(value.pageNumbering)) {
+    const { format, startAt } = value.pageNumbering;
+    const numbering: NonNullable<BundleStart['pageNumbering']> = {
+      ...(isNonEmptyString(format) ? { format: format as NonNullable<BundleStart['pageNumbering']>['format'] } : {}),
+      ...(typeof startAt === 'number' && Number.isFinite(startAt) ? { startAt: Math.floor(startAt) } : {}),
+    };
+    if (Object.keys(numbering).length > 0) out.pageNumbering = numbering;
+  }
+  const headings = headingCounters(value.headings);
+  if (headings) out.headings = headings;
+  const resourceCounters = counterMap(value.resourceCounters);
+  if (resourceCounters) out.resourceCounters = resourceCounters;
+  if (isRecord(value.resourceNumbers)) {
+    const numbers: NonNullable<BundleStart['resourceNumbers']> = {};
+    for (const [id, entry] of Object.entries(value.resourceNumbers)) {
+      if (isRecord(entry) && typeof entry.number === 'string' && isNonEmptyString(entry.typeId)) {
+        numbers[id] = { number: entry.number, typeId: entry.typeId, heading: headingCounters(entry.heading) ?? headingCounters({})! };
+      }
+    }
+    if (Object.keys(numbers).length > 0) out.resourceNumbers = numbers;
+  }
+  const statementCounters = counterMap(value.statementCounters);
+  if (statementCounters) out.statementCounters = statementCounters;
+  const footnoteNumber = count(value.footnoteNumber);
+  if (footnoteNumber !== undefined) out.footnoteNumber = footnoteNumber;
+  const lineNumber = count(value.lineNumber);
+  if (lineNumber !== undefined) out.lineNumber = lineNumber;
+  if (isRecord(value.part) && typeof value.part.number === 'string' && typeof value.part.title === 'string') {
+    const part: PartState = { number: value.part.number, title: value.part.title };
+    if (isRecord(value.part.palette)) {
+      const palette = Object.fromEntries(Object.entries(value.part.palette).filter((entry): entry is [string, string] => typeof entry[1] === 'string'));
+      if (Object.keys(palette).length > 0) part.palette = palette;
+    }
+    out.part = part;
+  }
+  if (value.afterPartPage === true) out.afterPartPage = true;
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** Where the edition served for `locale` starts: that language's
+ *  `localized[…].start`, else the manifest's `start`; undefined for a book
+ *  that starts at its own beginning. */
+export function pickBundleStart(manifest: BundleManifest, locale: string): BundleStart | undefined {
+  const own = pickLocaleOverrides(manifest, locale)?.start;
+  return bundleStart(own !== undefined ? own : manifest.start);
 }
 
 /** The locale a bundle actually serves for `locale`: the key of its

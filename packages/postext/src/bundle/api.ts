@@ -3,7 +3,7 @@
 
 import type { PostextConfig, Resource } from '../types';
 import { readBundle, planBundle, resolveBundleFiles } from './codec';
-import type { BundleCanvasScope, BundleChapter, BundleFontFile, BundleManifest, BundleManifestV2 } from './types';
+import type { BundleCanvasScope, BundleChapter, BundleFontFile, BundleManifest, BundleManifestV2, BundleStart } from './types';
 import { mimeForFile, pickBundleView, slugify } from './manifest';
 import { openBundleZip, zipBundle } from './zip';
 
@@ -36,6 +36,10 @@ export interface PostextBundle {
   /** How the bundle asks to be viewed (`book`: the whole book as one
    *  canvas). */
   canvasScope?: BundleCanvasScope;
+  /** Where the book starts, when the bundle holds part of a longer one
+   *  (#695): the `continuation` of its first chapter, which `buildBundle`
+   *  lays it out with. Absent for a book that starts at its beginning. */
+  start?: BundleStart;
   /** Non-fatal problems met while reading (unsupported font files, a
    *  missing print master). */
   warnings: string[];
@@ -81,6 +85,7 @@ export async function openBundle(
     files: zip.files,
     ...(manifest.thumbnail && zip.files.has(manifest.thumbnail) ? { thumbnail: manifest.thumbnail } : {}),
     ...(view?.canvasScope ? { canvasScope: view.canvasScope } : {}),
+    ...(read.start ? { start: read.start } : {}),
     warnings,
   };
 }
@@ -133,6 +138,13 @@ export interface CreateBundleInput {
   thumbnail?: { data: BundleFileData; mime: string };
   /** Ask viewers to lay the whole book out as one canvas. */
   canvasScope?: BundleCanvasScope;
+  /** Where the book starts, for a bundle that holds part of a longer one
+   *  (#695): the `continuation` a single document would be built with
+   *  (`{ pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: {
+   *  h1: 3 } }`: page 58, a verso, in chapter 4). Written as `preset.json`'s
+   *  `start`; `openBundle` returns it and `buildBundle` lays the first
+   *  chapter out with it. */
+  start?: BundleStart;
   /** Modification date written on every file of the archive. Unset: the
    *  time of the call, so two calls with the same input give different
    *  bytes. A fixed date built from local fields (`new Date(1980, 0, 1)`)
@@ -163,6 +175,9 @@ export interface CreateBundleLocale {
    *  of its own (`bitmap.fileId` / `svg.fileId`, `svg.pdfFileId`, looked up
    *  in `files`) when the artwork carries words. Other fields are shared. */
   resources?: (Pick<Resource, 'id'> & Partial<Resource>)[];
+  /** Where this language's edition starts, when not where the primary one
+   *  does (a right-bound edition that opens on the other side). */
+  start?: BundleStart;
 }
 
 export interface CreatedBundle {
@@ -197,6 +212,7 @@ export async function createBundle(input: CreateBundleInput): Promise<CreatedBun
       ...(entry.chapters && entry.chapters.length > 0 ? { chapters: titled(entry.chapters) } : {}),
       ...(entry.config ? { config: entry.config } : {}),
       ...(entry.resources ? { resources: entry.resources } : {}),
+      ...(entry.start !== undefined ? { start: entry.start } : {}),
     }]))
     : undefined;
   const fileMap = input.files instanceof Map ? input.files : new Map(Object.entries(input.files ?? {}));
@@ -212,6 +228,7 @@ export async function createBundle(input: CreateBundleInput): Promise<CreatedBun
       config: input.config ?? {},
       resources: input.resources ?? [],
       ...(input.canvasScope ? { canvasScope: input.canvasScope } : {}),
+      ...(input.start ? { start: input.start } : {}),
       ...(input.thumbnail ? { thumbnail: { fileId: THUMBNAIL_ID, mime: input.thumbnail.mime } } : {}),
       ...(localized ? { localized } : {}),
     },
