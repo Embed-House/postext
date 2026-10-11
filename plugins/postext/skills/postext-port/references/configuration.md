@@ -200,6 +200,7 @@ layout
 ├─ openerFloats       'allow' | 'warn' | 'avoid'             default 'allow'  ≥ 1.28 floats on an opener page (a part's page, the page a heading opens with breakBefore or span:'page', the first page of a document that starts with a heading): 'warn' = same layout + one `openerFloat` warning per float; 'avoid' = the page takes no float, each goes to the first slot after it (inline 'here' resources, 'fixed' and span:'side' boxes stay)
 ├─ inlineResourceGap  'around' | 'above'                     default 'around'  (a preset without configVersion ≥ 5 reads 'above')
 ├─ inlineResourceGapInBoxes boolean                          default true  (a preset below configVersion 6 reads false)
+├─ inlineCaptionSide  boolean                                default true  ≥ 1.28 a 'here' resource takes placement.captionSide: caption + note in the float-only side column, level with the body's top, where that column is free beside it (else under the body); false = column floats only (a oneAndHalf preset below configVersion 12 whose chapters embed a ::resource reads false)
 ├─ boxChildSplitMinLines number                              default 2  lines of a paragraph/item a box cut leaves per side (a preset below configVersion 6 with a :::callout reads 1)
 ├─ flowColumns        boolean                                default true   ≥ 1.25 :::columns outside a box sets sub-columns in the text (span="page" across a multi-column page), and a group, in a box or in the text, is cut across columns/pages; false = 1.24 (fence ignored outside a box, group never cut; a preset below configVersion 11 with a :::columns fence reads false)
 └─ writingMode        'horizontal-tb' | 'vertical-rl'         default 'horizontal-tb'   postext ≥ 1.9; a heading style's layout may set its own
@@ -1149,7 +1150,8 @@ span:     'column' (default) | 'page' | 'side' (float-only side column; else beh
 rotate?:  'ccw' | 'cw'   (landscape: page-span float on its own page)
 width?:   0 < w < 1 fraction of column/page width (default whole)
 align?:   'left' (default) | 'center' | 'right'
-captionSide?: boolean    caption in the float-only side column, level with the figure (column floats, oneAndHalf+floats)
+captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
+                         ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
                          ≥ the page's column count = page-wide; ignored for page/side spans, rotate, here;
                          captionSide only on 1-column floats
@@ -1754,7 +1756,7 @@ when a chapter embeds a resource, `layout.flowColumns: false` when a chapter ope
 those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
 too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
 `citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
-kana or kanji (#721), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
+kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
 reference (#702). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.

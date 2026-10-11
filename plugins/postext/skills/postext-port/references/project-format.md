@@ -217,7 +217,7 @@ embeds them with `::resource{id="…"}` (placement `here`).
   `span` `column` | `page` | `side` (the float column of a `oneAndHalf` layout);
   `width` 0–1 + `align` (`align` also places a bitmap/SVG narrower than its slot,
   e.g. a small bitmap or one `fitFiguresToPage` shrank); `captionSide: true` (caption in the side column beside
-  a main-column figure); `rotate: "ccw"|"cw"` (landscape table/figure on its own
+  a main-column figure, floated or, ≥ 1.28, set `here`); `rotate: "ccw"|"cw"` (landscape table/figure on its own
   page, spine-flush; split between rows when too long). Missing fields fall
   back to the resource type's `defaultPlacement`, then `auto`/`column`.
 - A `here` resource that is only `:ref`'d and never `::resource`'d is numbered

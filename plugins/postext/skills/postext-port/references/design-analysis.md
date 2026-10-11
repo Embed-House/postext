@@ -297,7 +297,7 @@ per-resource `placement`:
 | Across the page, at the top | `position: "top"`, `span: "page"` |
 | Exactly where it is mentioned, including ornaments and tables under their paragraph (a long one splits across columns from 1.25) | `position: "here"` + `::resource{id}` |
 | In the outer margin column | `span: "side"` (layout `oneAndHalf`, side role `floats`) |
-| Figure in the main column with its caption in the margin | `span: "column"`, `captionSide: true` |
+| Figure in the main column with its caption in the margin | `span: "column"`, `captionSide: true` (a float, or ≥ 1.28 a figure kept `position: "here"`) |
 | Across some of a newspaper's columns (2 of 5) | `span: "column"`, `columns: 2` (≥ 1.18; boxes: callout `columns`) |
 | Narrower than the column | `width: 0.7`, `align: "center"` |
 | Picture with the text running beside it (newsletter, magazine, a portrait in a profile) | `position: "here"`, `wrap: "right"`, `width: 0.4` + `::resource{id}` before the paragraph (≥ 1.24) |
