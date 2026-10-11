@@ -3658,7 +3658,7 @@ function placeDocumentPass(
    * the displaced text (see {@link bandCapLinesAroundZone}) — the box then
    * fits on the page, under its columns, rather than opening a page alone.
    */
-  const proposeTrailingCap = (boundaryIndex: number, zone?: BandCapZone): void => {
+  const proposeTrailingCap = (boundaryIndex: number, zone?: BandCapZone, closeLevel = false): void => {
     const balancingCfg = resolved.headings.balancing;
     if (!balancingCfg.enabled || !balancingCfg.trailing) return;
     const page = doc.pages[cursor.pageIndex]!;
@@ -3688,7 +3688,16 @@ function placeDocumentPass(
     if (!bandStart || !registeredBand || registeredBand.pageIndex !== page.index || registeredBand.band !== band) return;
     const bottoms = cols.map((c) => c.bbox.y + (c.bbox.height - c.availableHeight));
     const aroundZone = zone ? bandCapLinesAroundZone(cols, baselineGrid, zone, (c) => columnBottom(c, uncappedBottoms)) : null;
-    if (aroundZone === null && Math.max(...bottoms) - Math.min(...bottoms) <= baselineGrid + 0.5) return;
+    if (aroundZone === null && Math.max(...bottoms) - Math.min(...bottoms) <= baselineGrid + 0.5) {
+      // A band that is level already needs no cap and no second pass, but
+      // it ends here all the same: where the boundary closes the flow of
+      // its page, its columns are cut on the grid line under its text, as
+      // a delivered cap would leave them, so the column rule stops with
+      // the text and not at the page foot (#713). Nothing is to be filled
+      // up to the cut, so the columns are not flagged `trailingCap`.
+      if (closeLevel) closeLevelBand(cols, bottoms);
+      return;
+    }
     // Float bands reserved at the columns' feet are the band's content too:
     // the level cut must leave them room under the text (a figure placed
     // before a span box then anchors to the cut, see `anchorToCap`). A band
@@ -3722,6 +3731,24 @@ function placeDocumentPass(
       ...(aroundZone !== null ? { zone } : {}),
       ...capHeadPx(cols),
     });
+  };
+
+  /** Cut the columns of a closing band that ends level on the grid line
+   *  under its lowest text (#713). What a column paints below its used
+   *  height counts too (a tail whose negative margin snapped the flow back
+   *  above its last line): the renderers clip a column to its box. The true
+   *  bottoms go to `uncappedBottoms`, as under a delivered cap, so notes and
+   *  floats keep reading the page's foot. */
+  const closeLevelBand = (cols: readonly VDTColumn[], bottoms: readonly number[]): void => {
+    const top = bandTop(cols);
+    let lowest = Math.max(...bottoms);
+    for (const c of cols) {
+      for (const b of c.blocks) {
+        if (!b.hidden) lowest = Math.max(lowest, paintedBottom(b), b.bbox.y + b.bbox.height);
+      }
+    }
+    const lines = Math.ceil((lowest - top - 0.01) / baselineGrid);
+    applyBandCap(cols, lines * baselineGrid, uncappedBottoms, undefined, false, top);
   };
 
   /** Close the flow at a chapter-level boundary (block `boundaryIndex`):
@@ -3759,7 +3786,7 @@ function placeDocumentPass(
       pendingFloats.splice(i, 1);
     }
     tryPlacePendingFloatsOnCurrentPage();
-    proposeTrailingCap(boundaryIndex);
+    proposeTrailingCap(boundaryIndex, undefined, true);
     markForcedBreak();
     hugClosingText();
     drainPendingFloats();

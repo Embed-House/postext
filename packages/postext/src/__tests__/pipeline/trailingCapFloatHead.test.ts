@@ -72,6 +72,32 @@ describe('a closing band cut under a float that heads its empty columns (#681)',
     });
   }
 
+  it('closes the band at its text when the story ends level with the picture\'s band (#713)', () => {
+    // 60 words: the first column ends one line under the picture's band,
+    // level with the columns under the picture, so no cap is proposed. The
+    // band is closed where it stands: before, its columns kept their boxes
+    // down to the page's foot, through the picture hugged under the text.
+    const doc = story(true, 60);
+    const page = doc.pages[0]!;
+    const head = page.floats!.find((f) => f.resourceBlock?.resource.id === 'head')!;
+    const foot = page.floats!.find((f) => f.resourceBlock?.resource.id === 'foot')!;
+    const text = page.columns.filter((c) => c.kind !== 'span');
+    const used = text[0]!.bbox.y + text[0]!.bbox.height - text[0]!.availableHeight;
+    expect(text[0]!.trailingCap ?? false).toBe(false);
+    for (const c of text) expect(bottom(c)).toBeCloseTo(used, 1);
+    expect(used - (head.bbox.y + head.bbox.height)).toBeLessThanOrEqual(3 * doc.baselineGrid);
+    for (const c of text.slice(1)) {
+      expect(c.blocks).toHaveLength(0);
+      expect(c.bbox.height).toBeLessThanOrEqual(doc.baselineGrid + 0.5);
+    }
+    // The picture at the foot is where it was: hugged one line under the text.
+    expect(foot.bbox.y).toBeCloseTo(743.1, 0);
+    expect(foot.bbox.y).toBeGreaterThanOrEqual(bottom(text[0]!) - 0.5);
+    // A story two words longer takes a cap, as before.
+    const longer = story(true, 62).pages[0]!.columns.filter((c) => c.kind !== 'span');
+    expect(longer[0]!.trailingCap).toBe(true);
+  });
+
   it('keeps the text room between two float bands in a column no cap cut', () => {
     // A long story: the first page flows on, and the picture at the head of
     // a column with the other at its foot leaves at least three lines.

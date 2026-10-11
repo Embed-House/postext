@@ -222,3 +222,88 @@ describe('column rule of a styled section (EF-112)', () => {
     expect(verticalStrokes(doc, first).length).toBeGreaterThan(0);
   });
 });
+
+describe('column rule of a closing band (#713)', () => {
+  // A closing band ends its columns, and so its rule, on the grid line
+  // under its text, whether a level cut was needed (two lines and more:
+  // a trailing cap) or the band was level already (one line, or a story
+  // that ends level with the picture beside it).
+  const WORD = 'abcdefgh';
+  const para = (k: number): string => Array.from({ length: k }, () => WORD).join(' ');
+  const plain = (extra: Partial<PostextConfig> = {}): PostextConfig => base(
+    { layoutType: 'double', gutterWidth: pt(20), columnRule: { enabled: true } },
+    { bodyText: { fontSize: pt(10), lineHeight: pt(12), textAlign: 'left', hyphenation: { enabled: false }, firstLineIndent: pt(0) }, ...extra },
+  );
+  const textFoot = (page: VDTPage): number => {
+    let foot = 0;
+    for (const c of page.columns) for (const b of c.blocks) for (const l of b.lines) foot = Math.max(foot, l.bbox.y + l.bbox.height);
+    return foot;
+  };
+
+  // 170pt columns: two words to the line.
+  for (const lines of [1, 2, 3, 4, 10]) {
+    it(`ends the rule with the text of a two-column document of ${lines} line${lines === 1 ? '' : 's'}`, () => {
+      const doc = build(para(lines * 2), plain());
+      expect(doc.pages).toHaveLength(1);
+      const page = doc.pages[0]!;
+      const segments = columnRuleSegments(page.columns, page.footnoteAreas);
+      expect(segments).toHaveLength(1);
+      expect(segments[0]!.top).toBeCloseTo(20, 2);
+      const foot = textFoot(page);
+      expect(segments[0]!.bottom).toBeGreaterThanOrEqual(foot - 0.01);
+      expect(segments[0]!.bottom).toBeLessThanOrEqual(foot + doc.baselineGrid + 0.01);
+      // The canvas strokes the same segment.
+      const strokes = verticalStrokes(doc, page);
+      expect(strokes).toHaveLength(1);
+      expect(strokes[0]!.y0).toBeCloseTo(segments[0]!.top, 2);
+      expect(strokes[0]!.y1).toBeCloseTo(segments[0]!.bottom, 2);
+    });
+  }
+
+  it('rules one line beside one line, and flags no level cut where none was made', () => {
+    const doc = build(para(2), plain());
+    const page = doc.pages[0]!;
+    expect(columnRuleSegments(page.columns, page.footnoteAreas)).toEqual([{ x: 200, top: 20, bottom: 32 }]);
+    for (const c of page.columns) {
+      expect(c.bbox.y + c.bbox.height).toBeCloseTo(32, 2);
+      // Nothing is to be filled up to the cut: balancing must not read the
+      // band as one a trailing cap cut.
+      expect(c.trailingCap ?? false).toBe(false);
+    }
+  });
+
+  it('leaves a band that takes a level cut as it was', () => {
+    const doc = build(para(8), plain());
+    const page = doc.pages[0]!;
+    expect(page.columns.map((c) => c.trailingCap)).toEqual([true, true]);
+    expect(page.columns.map((c) => c.blocks.reduce((n, b) => n + b.lines.length, 0))).toEqual([2, 2]);
+    expect(columnRuleSegments(page.columns, page.footnoteAreas)).toEqual([{ x: 200, top: 20, bottom: 44 }]);
+  });
+
+  it('keeps an uneven band whole when trailing balance is off or a column break ended it', () => {
+    const off = build(para(2), plain({ headings: { balancing: { trailing: false } } })).pages[0]!;
+    expect(columnRuleSegments(off.columns, off.footnoteAreas)[0]!.bottom).toBeCloseTo(480, 2);
+    const broken = build(`${para(2)}\n\n:::columnbreak\n\n${para(2)}`, plain()).pages[0]!;
+    expect(broken.columns.map((c) => c.blocks.length)).toEqual([1, 1]);
+    expect(columnRuleSegments(broken.columns, broken.footnoteAreas)[0]!.bottom).toBeCloseTo(480, 2);
+  });
+
+  it('runs the rule on to the notes at the foot of a column closed at its text', () => {
+    const doc = build(`${WORD} note.[^a]\n\n[^a]: ${para(3)}`, plain({ footnotes: { placement: 'column' } }));
+    const page = doc.pages[0]!;
+    // The column ends under its one line; the note stays at the page's foot.
+    expect(page.columns[0]!.bbox.y + page.columns[0]!.bbox.height).toBeCloseTo(32, 2);
+    const area = page.footnoteAreas![0]!;
+    expect(area.bbox.y + area.bbox.height).toBeCloseTo(480, 2);
+    const note = doc.blocks.find((b) => b.footnoteNote === 'a')!;
+    expect(note.bbox.y).toBeCloseTo(460, 1);
+    expect(columnRuleSegments(page.columns, page.footnoteAreas)).toEqual([{ x: 200, top: 20, bottom: 480 }]);
+  });
+
+  it('lays out the same document twice the same way', () => {
+    for (const lines of [1, 4]) {
+      const first = JSON.stringify(build(para(lines * 2), plain()).pages);
+      expect(JSON.stringify(build(para(lines * 2), plain()).pages)).toBe(first);
+    }
+  });
+});

@@ -1835,7 +1835,9 @@ export interface VDTColumn {
    *  gap is intentional, so column balancing leaves it alone. */
   forcedBreak?: boolean;
   /** True while a band cap (trailing or before a page-span box) cuts this
-   *  column level with the others of its band. */
+   *  column level with the others of its band. A closing band that ended
+   *  level with no cap carries it too: its columns are cut on the grid line
+   *  under its text when the flow of the page is closed (#713). */
   bandCapped?: boolean;
   /** True when a trailing band cap cut this column so a closing band ends
    *  level: its bottom is the level cut, and column balancing fills the
