@@ -813,8 +813,9 @@ judged on its own, whatever release the run used:
   Chrome's glyph edges stay under it, a word painted one pixel bolder does not).
 - **The PDF** stays when its bytes are the same. The capture dates a PDF the day its recipe
   was written (`created` in `recipe.json`, at 00:00 UTC, through `renderToPdf`'s `date`), so
-  the same pages give the same file; a pen that sets a `date` of its own keeps it, and a pen
-  pinned before postext-pdf 1.28.0, which has no such option, gets a new PDF on every capture.
+  the same pages give the same file; a pen that sets a `date` of its own keeps it, and a run
+  on a postext-pdf before 1.28.0 (`--engine npm@1.27.1`), which has no such option, gets a new
+  PDF every time.
 - **The bundle** stays when its bytes are the same, or when a run on another release than the
   recorded one reads the committed bundle back as the pen's documents (the C33 comparison, on
   the committed bytes).
