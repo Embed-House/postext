@@ -48,7 +48,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
   };
 
   const resetBalancingField = (
-    field: 'enabled' | 'maxLinesPerHeading' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterFloats'
+    field: 'enabled' | 'maxLinesPerHeading' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterDisplays' | 'stretchAfterFloats'
       | 'maxLinesAfterFloat' | 'looseParagraphs' | 'maxLooseParagraphs' | 'trackParagraphs' | 'maxTracking'
       | 'trailing' | 'beforeSpan' | 'closingBox' | 'gridLines',
   ) => {
@@ -144,6 +144,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
   const isBalMaxLinesDefault = headings.balancing.maxLinesPerHeading === DEFAULT_COLUMN_BALANCING.maxLinesPerHeading;
   const isBalAfterListsDefault = headings.balancing.stretchAfterLists === DEFAULT_COLUMN_BALANCING.stretchAfterLists;
   const isBalMaxAfterListDefault = headings.balancing.maxLinesAfterList === DEFAULT_COLUMN_BALANCING.maxLinesAfterList;
+  const isBalAfterDisplaysDefault = headings.balancing.stretchAfterDisplays === DEFAULT_COLUMN_BALANCING.stretchAfterDisplays;
   const isBalAfterFloatsDefault = headings.balancing.stretchAfterFloats === DEFAULT_COLUMN_BALANCING.stretchAfterFloats;
   const isBalMaxAfterFloatDefault = headings.balancing.maxLinesAfterFloat === DEFAULT_COLUMN_BALANCING.maxLinesAfterFloat;
   const isBalLooseDefault = headings.balancing.looseParagraphs === DEFAULT_COLUMN_BALANCING.looseParagraphs;
@@ -384,6 +385,16 @@ export const HeadingsSection = memo(function HeadingsSection() {
               onReset={() => resetBalancingField('maxLinesAfterList')}
             />
           )}
+          <ToggleSwitch
+            label={labels.balanceAfterDisplays}
+            checked={headings.balancing.stretchAfterDisplays}
+            onChange={(v) =>
+              updateHeadings({ balancing: { ...raw?.balancing, stretchAfterDisplays: v } })
+            }
+            tooltip={labels.balanceAfterDisplaysTooltip}
+            isDefault={isBalAfterDisplaysDefault}
+            onReset={() => resetBalancingField('stretchAfterDisplays')}
+          />
           <ToggleSwitch
             label={labels.balanceAfterFloats}
             checked={headings.balancing.stretchAfterFloats}

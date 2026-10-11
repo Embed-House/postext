@@ -1378,6 +1378,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   balanceAfterFloats: 'Stretch under figures',
   balanceAfterFloatsTooltip: 'Add a baseline-grid line between a figure or table at the head of a column and the text under it when the column needs to reach the page bottom',
   balanceAfterListsTooltip: 'Add a baseline-grid line after a list ends when the column needs to reach the page bottom',
+  balanceAfterDisplays: 'Stretch under formulas and boxes',
+  balanceAfterDisplaysTooltip: 'Add a baseline-grid line under a display formula or a callout box when the column needs to reach the page bottom. Off, the space under them stays as their own margins set it',
   balanceLooseParagraphs: 'Loose paragraphs',
   balanceLooseParagraphsTooltip: 'As a last resort, re-break one paragraph per column one line looser, within the maximum word spacing',
   balanceMaxLooseParagraphs: 'Max loose paragraphs',

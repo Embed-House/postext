@@ -1446,6 +1446,8 @@ export interface SandboxLabels {
   balanceColumnsMaxLinesTooltip: string;
   balanceAfterLists: string;
   balanceAfterListsTooltip: string;
+  balanceAfterDisplays: string;
+  balanceAfterDisplaysTooltip: string;
   balanceAfterFloats: string;
   balanceAfterFloatsTooltip: string;
   balanceLooseParagraphs: string;

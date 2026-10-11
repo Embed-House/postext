@@ -1984,6 +1984,8 @@
     "balanceColumnsMaxLinesTooltip": "单个标题上方最多可增加的网格行数",
     "balanceAfterLists": "列表后加行",
     "balanceAfterListsTooltip": "栏需要排到页底时，在列表结束后增加一行基线网格",
+    "balanceAfterDisplays": "公式与框下加行",
+    "balanceAfterDisplaysTooltip": "栏需要排到页底时，在独立公式或标注框下方增加一行基线网格。关闭后，它们下方的空白只由各自的边距决定",
     "balanceAfterFloats": "图下加行",
     "balanceAfterFloatsTooltip": "栏需要排到页底时，在栏顶的图或表与其下方的文字之间增加一行基线网格",
     "balanceLooseParagraphs": "放松段落",

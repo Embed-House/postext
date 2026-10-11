@@ -1984,6 +1984,8 @@
     "balanceColumnsMaxLinesTooltip": "Nombre màxim de línies de retícula addicionals que es poden afegir sobre un mateix títol",
     "balanceAfterLists": "Estirar després de llistes",
     "balanceAfterListsTooltip": "Afegeix una línia de retícula després del final d'una llista quan la columna ha d'arribar al peu de pàgina",
+    "balanceAfterDisplays": "Estirar sota fórmules i caixes",
+    "balanceAfterDisplaysTooltip": "Afegeix una línia de retícula sota una fórmula destacada o una caixa quan la columna ha d'arribar al peu de pàgina. Desactivat, l'espai de sota queda com el fixen els seus propis marges",
     "balanceAfterFloats": "Estirar sota figures",
     "balanceAfterFloatsTooltip": "Afegeix una línia de retícula entre una figura o taula al capdamunt de la columna i el text que va a sota quan la columna ha d'arribar al peu de pàgina",
     "balanceLooseParagraphs": "Paràgrafs correguts",

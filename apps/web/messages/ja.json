@@ -1984,6 +1984,8 @@
     "balanceColumnsMaxLinesTooltip": "1つの見出しの上に加えられるグリッド行の最大数です。",
     "balanceAfterLists": "リストの後で広げる",
     "balanceAfterListsTooltip": "段をページの下端まで届かせる必要があるとき、リストの終わりの後にベースライングリッドの行を1行加えます。",
+    "balanceAfterDisplays": "数式と囲みの下で広げる",
+    "balanceAfterDisplaysTooltip": "段をページの下端まで届かせる必要があるとき、別行立ての数式や囲みの下にベースライングリッドの行を1行加えます。オフにすると、その下の空きはそれぞれのマージンで決まったままです。",
     "balanceAfterFloats": "図の下で広げる",
     "balanceAfterFloatsTooltip": "段をページの下端まで届かせる必要があるとき、段の先頭にある図や表とその下の本文とのあいだにベースライングリッドの行を1行加えます。",
     "balanceLooseParagraphs": "ゆるい段落",

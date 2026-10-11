@@ -2680,6 +2680,8 @@
     "balanceColumnsMaxLinesTooltip": "Número máximo de líneas de rejilla adicionales que se pueden añadir sobre un mismo título",
     "balanceAfterLists": "Estirar tras listas",
     "balanceAfterListsTooltip": "Añade una línea de rejilla tras el final de una lista cuando la columna necesita llegar al pie de página",
+    "balanceAfterDisplays": "Estirar bajo fórmulas y cajas",
+    "balanceAfterDisplaysTooltip": "Añade una línea de rejilla bajo una fórmula destacada o una caja cuando la columna necesita llegar al pie de página. Desactivado, el espacio bajo ellas queda como lo fijan sus propios márgenes",
     "balanceAfterFloats": "Estirar bajo figuras",
     "balanceAfterFloatsTooltip": "Añade una línea de rejilla entre una figura o tabla en cabeza de columna y el texto que va debajo cuando la columna necesita llegar al pie de página",
     "balanceLooseParagraphs": "Párrafos corridos",

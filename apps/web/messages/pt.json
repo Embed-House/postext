@@ -1984,6 +1984,8 @@
     "balanceColumnsMaxLinesTooltip": "Número máximo de linhas extras da grade que podem ser acrescentadas acima de um mesmo título",
     "balanceAfterLists": "Esticar após listas",
     "balanceAfterListsTooltip": "Acrescenta uma linha da grade depois do fim de uma lista quando a coluna precisa chegar ao pé da página",
+    "balanceAfterDisplays": "Esticar sob fórmulas e boxes",
+    "balanceAfterDisplaysTooltip": "Acrescenta uma linha da grade sob uma fórmula em destaque ou um boxe quando a coluna precisa chegar ao pé da página. Desligado, o espaço abaixo deles fica como as próprias margens definem",
     "balanceAfterFloats": "Esticar sob figuras",
     "balanceAfterFloatsTooltip": "Acrescenta uma linha da grade entre uma figura ou tabela no alto da coluna e o texto abaixo dela quando a coluna precisa chegar ao pé da página",
     "balanceLooseParagraphs": "Parágrafos frouxos",

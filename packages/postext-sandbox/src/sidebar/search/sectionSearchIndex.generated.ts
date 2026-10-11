@@ -1270,6 +1270,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
     sources: ['color', 'dimension', 'font', 'resources'],
     literals: [],
     keys: [
+      'balanceAfterDisplays',
+      'balanceAfterDisplaysTooltip',
       'balanceAfterFloats',
       'balanceAfterFloatsTooltip',
       'balanceAfterLists',

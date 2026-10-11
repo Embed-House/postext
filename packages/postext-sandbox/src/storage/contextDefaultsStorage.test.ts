@@ -105,6 +105,15 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(loadConfig()!.headings?.balancing?.gridLines).toBe('off');
   });
 
+  it('keeps "Stretch under formulas and boxes" switched off, and stores nothing for on (#710)', () => {
+    const map = installStorage();
+    const off: PostextConfig = { headings: { balancing: { stretchAfterDisplays: false } } };
+    saveConfig(off);
+    expect(loadConfig()).toEqual(off);
+    saveConfig({ headings: { balancing: { stretchAfterDisplays: true } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('stores nothing for the default of a plain page, and keeps it switched off', () => {
     const map = installStorage();
     saveConfig(toggled({}, true));

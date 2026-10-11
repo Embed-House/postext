@@ -1362,6 +1362,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     balanceColumnsMaxLinesTooltip: t("balanceColumnsMaxLinesTooltip"),
     balanceAfterLists: t("balanceAfterLists"),
     balanceAfterListsTooltip: t("balanceAfterListsTooltip"),
+    balanceAfterDisplays: t("balanceAfterDisplays"),
+    balanceAfterDisplaysTooltip: t("balanceAfterDisplaysTooltip"),
     balanceAfterFloats: t("balanceAfterFloats"),
     balanceAfterFloatsTooltip: t("balanceAfterFloatsTooltip"),
     balanceLooseParagraphs: t("balanceLooseParagraphs"),
