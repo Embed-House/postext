@@ -109,6 +109,22 @@ describe('postext cli', () => {
     expect(pages('s.postext', '--chapters', '2').chapters).toEqual(pages('b.postext', '--chapters', '2').chapters);
   }, 60_000);
 
+  // #696: a comic line may name its own face (`font=`). The book's fonts
+  // are the configuration's and the ones its text names.
+  it('resolves the face a comic line names in the text alone', () => {
+    const dir = book();
+    const families = () => JSON.parse(run(['info', 'ch', '--json', '--offline'], dir).stdout).fonts.map((f: { family: string }) => f.family);
+    expect(families()).not.toContain('Dela Gothic One');
+    writeFileSync(join(dir, 'ch', '03.md'), ':::page{split="*"}\n::panel\nrival{shout}: MEEEN!\nsfx{at="74% 30%" font="Dela Gothic One" vertical}: ドン\n:::\n');
+    const withComic = families();
+    expect(withComic).toContain('Dela Gothic One');
+    // The lettering faces of a comic page were asked for already.
+    expect(withComic).toContain('Comic Neue');
+    // The same words outside a comic page name nothing.
+    writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\nA line that says font="Dela Gothic One".\n');
+    expect(families()).not.toContain('Dela Gothic One');
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');

@@ -122,7 +122,7 @@ export function EpubViewport() {
       console.warn('[EpubViewport]', n);
     };
     try {
-      await ensureConfigFontsLoaded(snapshot.config);
+      await ensureConfigFontsLoaded(snapshot.config, snapshot.chapters.map((c) => c.markdown));
       signal.throwIfAborted();
       // The whole book, always: an EPUB is the book, not a chapter.
       const docs: VDTDocument[] = await layOutBookPrint({
@@ -151,7 +151,7 @@ export function EpubViewport() {
         withheldFamilies.add(family);
       };
       const [{ fonts, withheld }, cover] = await Promise.all([
-        collectEpubFonts(snapshot.config, docs),
+        collectEpubFonts(snapshot.config, docs, snapshot.chapters.map((c) => c.markdown)),
         epubCoverOf(docs[0]!, snapshot, metadata.title, { projectThumbnail: project?.thumbnail, presetThumbnailUrl: preset?.thumbnailUrl }),
       ]);
       for (const family of withheld) onWithheld(family);
@@ -185,7 +185,7 @@ export function EpubViewport() {
       }
       if (!bytes) {
         // The font buffers went to the worker if it was tried: fetch them again.
-        const again = typeof Worker !== 'undefined' ? (await collectEpubFonts(snapshot.config, docs)).fonts : fonts;
+        const again = typeof Worker !== 'undefined' ? (await collectEpubFonts(snapshot.config, docs, snapshot.chapters.map((c) => c.markdown))).fonts : fonts;
         bytes = await renderToEpub(docs, { ...options, fonts: again });
       }
       write.end({ kb: Math.round(bytes.byteLength / 1024) });

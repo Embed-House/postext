@@ -526,7 +526,7 @@ Canvas、HTMLのページ、Folioの**テキストを選択**モードでは、�
 
 ## プログラムからの利用
 
-漫画に必要なのは`buildDocument`だけです。リソースが絵とそのセーフエリア、アンカー、回避エリアを持ち、設定が必要に応じて`comics`を持ちます。写植は読み込んだフォントで文字を測るので、ほかの書体と同じく、写植の書体はレイアウトの前に読み込んでおく必要があります。`comicFontFamilies(config, markdown)`は文書の漫画に必要な書体（写植の書体と、すべての吹き出しのスタイルと登場人物の書体）を一覧にし、`markdownHasComics(markdown)`はテキストに漫画のページか帯漫画があるかどうかを返します。PDFでは、フォントプロバイダーがほかの書体と同じようにそれらの書体を求められます。
+漫画に必要なのは`buildDocument`だけです。リソースが絵とそのセーフエリア、アンカー、回避エリアを持ち、設定が必要に応じて`comics`を持ちます。写植は読み込んだフォントで文字を測るので、ほかの書体と同じく、写植の書体はレイアウトの前に読み込んでおく必要があります。`comicFontFamilies(config, markdown)`は文書の漫画に必要な書体（写植の書体、すべての吹き出しのスタイルと登場人物の書体、そして台本の行が`font=`で指定する書体）を一覧にし、`markdownHasComics(markdown)`はテキストに漫画のページか帯漫画があるかどうかを返します。PDFでは、フォントプロバイダーがほかの書体と同じようにそれらの書体を求められます。
 
 組まれた漫画はVDTにあります。`page.comic`（`VDTComicPage`）は、枠、読む方向、読む順に並んだコマ（多角形、枠線、背景、`art.source`と`art.box`としての絵のトリミング）、割り線（書き込み先の`split`の値のソース範囲付き）、吹き出し（輪郭のパス、テキストのブロック、しっぽの先、種類、話者）を持ちます。割り方の文法はエディターのためにエクスポートされています。`parseComicSplit`、`serializeComicSplit`、`moveComicSplitLine`、`splitComicCell`、`mergeComicCells`は`split`の値を読み、書き換え、できるかぎりその中の`*`を保ちます。`comicArtCrop`と`comicCropFeasibleRange`はトリミングを計算し、`comicArtPointToPage`は絵の上の点をページ上に写します。
 

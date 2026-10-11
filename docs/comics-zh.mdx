@@ -526,7 +526,7 @@ tomas: and there's a storm on the way.
 
 ## 在代码中使用
 
-漫画只需要`buildDocument`：资源带着画面及其安全区、锚点和避让区，配置可以带`comics`。嵌字用已加载的字体测量文字，所以嵌字字体必须和其他字体一样在排版之前加载：`comicFontFamilies(config, markdown)`列出一个文档的漫画所需的字体（嵌字字体、每种对白框样式的字体以及角色表中的字体），`markdownHasComics(markdown)`说明一段文字中有没有漫画页或漫画条。生成PDF时，字体提供函数会像被请求其他字体一样被请求这些字体。
+漫画只需要`buildDocument`：资源带着画面及其安全区、锚点和避让区，配置可以带`comics`。嵌字用已加载的字体测量文字，所以嵌字字体必须和其他字体一样在排版之前加载：`comicFontFamilies(config, markdown)`列出一个文档的漫画所需的字体（嵌字字体、每种对白框样式的字体、角色表中的字体，以及脚本行用`font=`指定的字体），`markdownHasComics(markdown)`说明一段文字中有没有漫画页或漫画条。生成PDF时，字体提供函数会像被请求其他字体一样被请求这些字体。
 
 排好的漫画在VDT中：`page.comic`（`VDTComicPage`）包含画框、阅读方向、按阅读顺序排列的分格（多边形、边框、底色，以及画面的裁切`art.source`和`art.box`）、分格线（带有它们写入的`split`值的源码范围）和对白框（轮廓路径、文字块、尾巴尖端、种类、说话人）。切分语法为编辑器导出：`parseComicSplit`、`serializeComicSplit`、`moveComicSplitLine`、`splitComicCell`和`mergeComicCells`读取并改写`split`值，尽可能保留其中的`*`。`comicArtCrop`和`comicCropFeasibleRange`计算裁切，`comicArtPointToPage`把画面上的一个点映射到页面上。
 

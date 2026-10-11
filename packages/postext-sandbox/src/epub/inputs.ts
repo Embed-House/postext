@@ -17,8 +17,11 @@ import { documentCodePoints, facesForText, fontFormatOf } from './fontSubsets';
 export async function collectEpubFonts(
   config: PostextConfig,
   docs: readonly VDTDocument[],
+  /** The book's text: it names faces too (comic lettering, a comic
+   *  line's own `font=`, #696). */
+  markdown?: readonly string[],
 ): Promise<{ fonts: EpubFontFile[]; withheld: string[] }> {
-  const families = getConfigFontFamilies(config);
+  const families = getConfigFontFamilies(config, markdown);
   const withheld = families.filter((f) => getCustomFontFamily(f)?.redistributable === false);
   const payloads = await collectFontPayloadsForFamilies(families.filter((f) => !withheld.includes(f)));
   const faces = facesForText(payloads, documentCodePoints(docs));
