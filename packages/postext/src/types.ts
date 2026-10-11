@@ -5045,6 +5045,11 @@ export interface CjkConfig {
    *  before characters are spread, and shrinks down to ⅛ em when the line
    *  takes one more character. */
   latinSpacing?: Dimension;
+  /** Which side of a Western word takes `latinSpacing` (#721, see
+   *  {@link CjkLatinSpacingEdge}). `'auto'` (the default): `'western'` in
+   *  the Japan region, `'letters'` elsewhere. An unknown value reads as
+   *  `'auto'`. */
+  latinSpacingEdge?: 'auto' | CjkLatinSpacingEdge;
   /** Tate-chu-yoko (縱中橫) in vertical text: a number of at most this many
    *  ASCII digits is set side by side in one upright cell (`2026年9月28日`:
    *  `9` and `28` upright, `2026` sideways). `0` turns it off; default
@@ -5338,6 +5343,22 @@ export type CjkParagraphStartBracket = 'indent' | 'half' | 'flush';
  *    line is broken inside it anyway, where `normal` would break it. */
 export type CjkWordBreak = 'normal' | 'keep-all';
 
+/** Where a Western word takes the Han–Latin space (`cjk.latinSpacingEdge`):
+ *  - `letters` (clreq §6.3.3, CSS `text-autospace`): on a side that ends
+ *    in a letter or a digit, so `abc関数` takes it and `normalize()関数`
+ *    does not;
+ *  - `western` (JLReq §3.2.6: the space stands between Japanese text and
+ *    Western characters, the marks of a Western word among them, §3.9.2):
+ *    a Western word that holds a letter or a digit takes it on a side that
+ *    ends in a bracket or a sign too, so `normalize()関数`, `(abc)関数`,
+ *    `A+関数` and `100%関数` are set like `abc関数`. Two sides stay solid,
+ *    where the mark binds to what follows or precedes it: after an opening
+ *    bracket or a prefix sign that ends the word (`abc(関数`), and before
+ *    a closing bracket, a pause, a stop or a postfix sign that opens it
+ *    (`関数)abc`). A bracket or a sign with no letter or digit in its word
+ *    (`関数(かんすう)は`) stands in Japanese context and takes none. */
+export type CjkLatinSpacingEdge = 'letters' | 'western';
+
 /** The character grid of `cjk.grid`: the type area is derived from the
  *  body size, not authored as margins. Each column is `charsPerLine` ems
  *  wide and holds `linesPerPage` lines of the body's line height; with two
@@ -5392,6 +5413,7 @@ export interface ResolvedCjkConfig {
   /** Set (false) only when off: absent, CJK design text is composed. */
   composeDesignText?: false;
   latinSpacing: Dimension;
+  latinSpacingEdge: CjkLatinSpacingEdge;
   uprightDigits: 0 | 2 | 3 | 4;
   grid: ResolvedCjkGridConfig;
   emphasis: CjkEmphasis;

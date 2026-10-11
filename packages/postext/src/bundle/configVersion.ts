@@ -6,6 +6,7 @@
 import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
 import { avoidOrphansByDefault } from '../defaults/bodyText';
+import { cjkRegionOfConfig } from '../defaults/cjk';
 import { dimensionsEqual } from '../defaults/shared';
 import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
 import { DEFAULT_PAGE_CONFIG } from '../defaults/page';
@@ -127,6 +128,10 @@ import { hasCJK } from '../measure/cjk';
  *   - a line breaks inside a two-row note only where two of its characters
  *     stand on either side (`cjk.warichu.minChars: 2`, #720), where up to
  *     1.27 it could leave one ({@link pinLegacyNoteBreaks});
+ *   - in the Japan region a Western word takes the Han–Latin space on a
+ *     side that ends in a bracket or a sign (`cjk.latinSpacingEdge:
+ *     'western'`, #721), where up to 1.27 only a side that ends in a
+ *     letter or a digit did ({@link pinLegacyLatinSpacingEdge});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -214,6 +219,9 @@ const GRID_BREAK_RULES = 12;
 /** The rules that keep two characters of a two-row note on either side of
  *  a line break (#720). */
 const NOTE_BREAK_RULES = 12;
+/** The rules that set the Han–Latin space next to the brackets and signs
+ *  of a Western word in the Japan region (#721). */
+const LATIN_SPACING_EDGE_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1226,6 +1234,29 @@ export function pinLegacyNoteBreaks<T extends Partial<PostextConfig>>(config: T)
   return { ...config, cjk: { ...cjk, warichu: { ...warichu, minChars: 1 } } };
 }
 
+/**
+ * A configuration written before #721 (postext 1.27 or earlier), pinned to
+ * the sides of a Western word 1.27 set the Han–Latin space on:
+ * `cjk.latinSpacingEdge: 'letters'` on a configuration that resolves to
+ * the Japan region ({@link cjkRegionOfConfig}) and does not set the key,
+ * where today such a document also sets the space on a side that ends in
+ * a bracket or a sign (`normalize()関数`). A Chinese document keeps
+ * `'letters'` by default, and any other configuration is returned as it is
+ * (the same object).
+ */
+export function pinLegacyLatinSpacingEdge<T extends Partial<PostextConfig>>(config: T): T {
+  const cjk = cjkOf(config);
+  if (cjk.latinSpacingEdge !== undefined || cjkRegionOfConfig(config as PostextConfig) !== 'japan') return config;
+  return { ...config, cjk: { ...cjk, latinSpacingEdge: 'letters' } };
+}
+
+/** Whether markdown may hold kana or kanji. Unknown content (undefined)
+ *  may. */
+function mayHaveCjkText(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? hasCJK(content) : content.some(hasCJK);
+}
+
 /** A two-row note typed in the text. */
 const NOTE_RE = /:warichu\[/;
 
@@ -1372,9 +1403,12 @@ export interface MigrateConfigOptions {
  * it sets a heading level or style with `span: 'page'`, unless
  * `options.content` shows no heading; one older than 12 has the widow and
  * orphan rules of a page on a character grid pinned by {@link
- * pinLegacyGridBreakRules}, and the breaks inside its two-row notes by
+ * pinLegacyGridBreakRules}, the breaks inside its two-row notes by
  * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
- * configuration shows a note. A current one is returned as it is (the same object).
+ * configuration shows a note, and the sides of a Western word that take
+ * the Han–Latin space in the Japan region by {@link
+ * pinLegacyLatinSpacingEdge}, unless `options.content` shows no kana or
+ * kanji. A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
  * read twice under its old number would grow twice.
@@ -1414,6 +1448,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
+  if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
   return out;
 }
 
@@ -1440,7 +1475,9 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * when the merged configuration sets a page-span heading), and the book
  * titles, the circled numbers and the design text on the `cjk` in force,
  * and the widow and orphan rules of a character grid on the merged `cjk`
- * and `bodyText`, and the breaks inside two-row notes on the `cjk` in
+ * and `bodyText`, and the breaks inside two-row notes and the sides of a
+ * Western word that take the Han–Latin space (in the Japan region, read
+ * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
  * force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
@@ -1483,5 +1520,6 @@ export function migrateBundleConfig(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
+  if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);
   return merged;
 }

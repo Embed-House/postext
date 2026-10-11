@@ -9,6 +9,7 @@ import type {
   CjkHangingPunctuation,
   CjkKuntenConfig,
   CjkKuntenPlacement,
+  CjkLatinSpacingEdge,
   CjkLineBreak,
   CjkParagraphStartBracket,
   CjkPunctuationWidth,
@@ -21,6 +22,7 @@ import type {
   CjkWordBreak,
   ColorValue,
   Dimension,
+  PostextConfig,
   ResolvedCjkConfig,
   ResolvedCjkEmphasisMarkConfig,
   ResolvedCjkGridConfig,
@@ -28,7 +30,7 @@ import type {
   ResolvedCjkRubyConfig,
   ResolvedCjkWarichuConfig,
 } from '../types';
-import { cjkRegionOf, isJapaneseLanguage, languageOf } from '../locale';
+import { cjkRegionOf, isJapaneseLanguage, languageOf, presentTag } from '../locale';
 import { dimensionsEqual } from './shared';
 
 /** `cjk` as written when nothing is set: everything follows the locale
@@ -52,6 +54,7 @@ export const DEFAULT_CJK_CONFIG: Required<Omit<CjkConfig, 'annotationColor'>> & 
   circledNumbers: 'cjk',
   composeDesignText: true,
   latinSpacing: { value: 0.25, unit: 'em' },
+  latinSpacingEdge: 'auto',
   uprightDigits: 2,
   grid: { enabled: false, show: false },
   emphasis: 'auto',
@@ -236,6 +239,24 @@ export function defaultCjkHangingPunctuation(region: CjkRegion): CjkHangingPunct
   return region === 'japan' ? 'allow' : 'none';
 }
 
+/** Which side of a Western word takes the Han–Latin space by default
+ *  (#721): any side of a word that holds a letter or a digit in Japan
+ *  (JLReq §3.2.6), a side that ends in a letter or a digit in the Chinese
+ *  regions (clreq §6.3.3). */
+export function defaultCjkLatinSpacingEdge(region: CjkRegion): CjkLatinSpacingEdge {
+  return region === 'japan' ? 'western' : 'letters';
+}
+
+/** The region a configuration's `cjk` settings resolve to: `cjk.region`
+ *  when it names one, else the region of the document language as
+ *  `resolveAllConfig` reads it (`locale`, else the hyphenation locale),
+ *  `'mainland'` for a language with none. */
+export function cjkRegionOfConfig(config: PostextConfig | undefined): CjkRegion {
+  const named = config?.cjk?.region;
+  if (named && REGIONS.includes(named as CjkRegion)) return named as CjkRegion;
+  return cjkRegionOf(presentTag(config?.locale) ?? presentTag(config?.bodyText?.hyphenation?.locale)) ?? 'mainland';
+}
+
 /** Whether ？！ take a full-width space after them by default: in Japan
  *  (JLReq §3.1.6), not in the Chinese regions. */
 export function defaultCjkSpaceAfterQuestion(region: CjkRegion): boolean {
@@ -329,6 +350,9 @@ export function resolveCjkConfig(partial: CjkConfig | undefined, locale: string 
     ...(partial?.circledNumbers === 'western' ? { circledNumbers: 'western' as const } : {}),
     ...(partial?.composeDesignText === false ? { composeDesignText: false as const } : {}),
     latinSpacing,
+    latinSpacingEdge: partial?.latinSpacingEdge === 'letters' || partial?.latinSpacingEdge === 'western'
+      ? partial.latinSpacingEdge
+      : defaultCjkLatinSpacingEdge(region),
     uprightDigits,
     grid: resolveGrid(partial?.grid),
     emphasis: partial?.emphasis && EMPHASES.includes(partial.emphasis as CjkEmphasis)
@@ -434,6 +458,9 @@ export function stripCjkDefaults(cjk?: CjkConfig): CjkConfig | undefined {
   if (cjk.circledNumbers !== undefined && cjk.circledNumbers !== d.circledNumbers) result.circledNumbers = cjk.circledNumbers;
   if (cjk.composeDesignText !== undefined && cjk.composeDesignText !== d.composeDesignText) result.composeDesignText = cjk.composeDesignText;
   if (cjk.latinSpacing !== undefined && !dimensionsEqual(cjk.latinSpacing, d.latinSpacing)) result.latinSpacing = cjk.latinSpacing;
+  // `'letters'` and `'western'` are kept even where they restate the
+  // region's default, as the other `'auto'` keys are.
+  if (cjk.latinSpacingEdge !== undefined && cjk.latinSpacingEdge !== d.latinSpacingEdge) result.latinSpacingEdge = cjk.latinSpacingEdge;
   if (cjk.uprightDigits !== undefined && cjk.uprightDigits !== d.uprightDigits) result.uprightDigits = cjk.uprightDigits;
   const grid = stripGridDefaults(cjk.grid);
   if (grid) result.grid = grid;

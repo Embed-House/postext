@@ -1503,11 +1503,16 @@ function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number,
  *  their logical order; undefined for a unit that is not a chip, or a chip
  *  in a superscript or a subscript. */
 function chipEdgeGrapheme(u: Unit, edge: 'first' | 'last'): string | undefined {
-  const runs = u.kind === 'atomic' && !u.style.script ? u.token?.chip?.runs : undefined;
-  if (!runs) return undefined;
-  const text = runs.map((r) => r.text).join('');
+  const text = chipText(u);
   if (text === '') return undefined;
   return edge === 'first' ? String.fromCodePoint(text.codePointAt(0)!) : lastGrapheme(text);
+}
+
+/** The words of a chip in their logical order; empty for a unit that is
+ *  not a chip, or a chip in a superscript or a subscript. */
+function chipText(u: Unit): string {
+  const runs = u.kind === 'atomic' && !u.style.script ? u.token?.chip?.runs : undefined;
+  return runs ? runs.map((r) => r.text).join('') : '';
 }
 
 /** `units` with the Han–Latin spaces of `cjk.latinSpacing` (see
@@ -1523,9 +1528,32 @@ function chipEdgeGrapheme(u: Unit, edge: 'first' | 'last'): string | undefined {
  *  goes at a line end and is dropped at a line start like any space, and
  *  a bracket, a mark or a sign next to the chip is neither Han nor Latin,
  *  so 「:chip[x]」 takes none. Down a vertical line the chip is set
- *  sideways, as a Latin run is, and the same rule holds. */
+ *  sideways, as a Latin run is, and the same rule holds.
+ *
+ *  Which edge of a Western word is Latin follows `cjk.latinSpacingEdge`
+ *  (#721). `'letters'`: one that is a letter or a digit. `'western'` (the
+ *  Japan region's): any edge of a word that holds a letter or a digit,
+ *  its brackets and signs being Western characters too (JLReq §3.2.6,
+ *  §3.9.2), but for a mark that binds to the other side: an opening
+ *  bracket or a prefix sign that ends the word, a closing bracket, a
+ *  pause, a stop or a postfix sign that opens it. A word of marks alone
+ *  (`(`, `!`) stands in Japanese context and takes none. */
 function latinSpaces(units: Unit[], c: CjkComposition): Unit[] {
   const out: Unit[] = [];
+  const western = c.latinSpacingEdge === 'western';
+  /** Whether `text` holds a letter or a digit that is not CJK. */
+  const holdsLetter = (text: string): boolean => {
+    for (const g of text) if (isLatinSpacingLatin(g) && !isCjkGrapheme(g) && !isLatinSpacingHan(g)) return true;
+    return false;
+  };
+  /** Whether the edge `g` of the Western word `text` takes the space. */
+  const latinEdge = (text: string, g: string, edge: 'first' | 'last'): boolean => {
+    if (isLatinSpacingLatin(g)) return true;
+    if (!western || g === '\u00A0' || g === '\u202F') return false;
+    const cls = cjkClassOf(g);
+    if (edge === 'last' ? cls === 'opening' || cls === 'prefix' : cls === 'closing' || cls === 'pause' || cls === 'stop' || cls === 'postfix') return false;
+    return holdsLetter(text);
+  };
   const han = (u: Unit | undefined, edge: 'first' | 'last'): boolean => {
     if (!u) return false;
     const chipEdge = chipEdgeGrapheme(u, edge);
@@ -1539,9 +1567,11 @@ function latinSpaces(units: Unit[], c: CjkComposition): Unit[] {
   const latin = (u: Unit | undefined, edge: 'first' | 'last'): boolean => {
     if (!u) return false;
     const chipEdge = chipEdgeGrapheme(u, edge);
-    if (chipEdge !== undefined) return !isCjkGrapheme(chipEdge) && !isLatinSpacingHan(chipEdge) && isLatinSpacingLatin(chipEdge);
+    if (chipEdge !== undefined) {
+      return !isCjkGrapheme(chipEdge) && !isLatinSpacingHan(chipEdge) && latinEdge(chipText(u), chipEdge, edge);
+    }
     return u.kind === 'text' && !!u.run && !u.note && !u.style.script && !(edge === 'first' ? u.cellStart : u.cellEnd)
-      && isLatinSpacingLatin(edge === 'first' ? String.fromCodePoint(u.text.codePointAt(0)!) : lastGrapheme(u.text));
+      && latinEdge(u.text, edge === 'first' ? String.fromCodePoint(u.text.codePointAt(0)!) : lastGrapheme(u.text), edge);
   };
   const spaceOf = (h: Unit): number => latinSpacingPx(c, emOfFont(h.style.font));
   for (let k = 0; k < units.length; k++) {

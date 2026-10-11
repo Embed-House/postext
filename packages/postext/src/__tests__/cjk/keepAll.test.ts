@@ -157,7 +157,9 @@ describe('cjk.wordBreak config (#463)', () => {
 
   it('joins the composition key only when set', () => {
     const key = (cjk: PostextConfig['cjk']) => cjkCompositionKey(cjkCompositionOf(resolveCjkConfig(cjk, 'ja'), 96, 'ja'));
-    expect(key(KEEP)).toBe(`${key({})}:ka`);
+    // `:ka` stands with the other Japanese settings, before the suffixes
+    // of the later rules.
+    expect(key({ ...KEEP, latinSpacingEdge: 'letters' })).toBe(`${key({ latinSpacingEdge: 'letters' })}:ka`);
     expect(cjkCompositionOf(resolveCjkConfig({}, 'zh-Hans'), 96, 'zh-Hans')).not.toHaveProperty('keepAll');
   });
 

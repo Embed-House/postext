@@ -466,6 +466,7 @@ describe("package exports", () => {
       "defaultCjkParagraphStartBracket",
       "defaultCjkRubyOverhang",
       "defaultCjkRubyAlign",
+      "defaultCjkLatinSpacingEdge",
       "DEFAULT_PRINT_CONFIG",
       "DEFAULT_PRINT_BLACK_CONFIG",
       "DEFAULT_PRINT_PREFLIGHT_CONFIG",

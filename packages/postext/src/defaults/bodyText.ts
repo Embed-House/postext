@@ -1,5 +1,6 @@
 import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
-import { cjkRegionOf, hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
+import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
+import { cjkRegionOfConfig } from './cjk';
 import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
 import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
@@ -37,11 +38,7 @@ export function avoidWidowsByDefault(config: PostextConfig | undefined): boolean
  */
 export function avoidOrphansByDefault(config: PostextConfig | undefined): boolean {
   if (config?.cjk?.grid?.enabled !== true) return true;
-  const named = config.cjk.region;
-  const region = named === 'mainland' || named === 'taiwan' || named === 'hongkong' || named === 'japan'
-    ? named
-    : cjkRegionOf(presentTag(config.locale) ?? presentTag(config.bodyText?.hyphenation?.locale));
-  return region !== 'japan';
+  return cjkRegionOfConfig(config) !== 'japan';
 }
 
 /** Blockquotes as postext 1.4 set them: grey, italic, the body's

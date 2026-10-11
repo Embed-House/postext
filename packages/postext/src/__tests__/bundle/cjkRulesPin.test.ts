@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyNoteBreaks, pinLegacyTitleBreaks } from '../../bundle/configVersion';
+import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyLatinSpacingEdge, pinLegacyNoteBreaks, pinLegacyTitleBreaks } from '../../bundle/configVersion';
 import { resolveAllConfig } from '../../pipeline/config';
 import { stripConfigDefaults } from '../../defaults';
 import type { PostextConfig } from '../../types';
@@ -144,5 +144,81 @@ describe('pin of #720', () => {
     const stripped = stripConfigDefaults(migrateConfig(zh(), 11, { content: NOTE }));
     expect(stripped.cjk).toEqual({ warichu: { minChars: 1 } });
     expect(resolveAllConfig(stripped).cjk.warichu.minChars).toBe(1);
+  });
+});
+
+// #721: a Japanese configuration stored before a Western word took the
+// Han–Latin space next to its brackets and signs (configVersion 11 or
+// older, postext 1.27 or earlier) keeps the space next to letters and
+// digits alone, when its text holds kana or kanji.
+describe('pin of #721', () => {
+  const ja = (extra: PostextConfig = {}): PostextConfig => ({ locale: 'ja', ...extra });
+  const TEXT = 'このnormalize()関数です。';
+  const edge = (config: PostextConfig) => resolveAllConfig(config).cjk.latinSpacingEdge;
+
+  it('pins the 1.27 rule on a Japanese configuration that does not set the key', () => {
+    const config = ja({ cjk: { lineBreak: 'ja-strict' } });
+    expect(pinLegacyLatinSpacingEdge(config).cjk).toEqual({ lineBreak: 'ja-strict', latinSpacingEdge: 'letters' });
+    expect(pinLegacyLatinSpacingEdge(ja()).cjk).toEqual({ latinSpacingEdge: 'letters' });
+    expect(config.cjk).toEqual({ lineBreak: 'ja-strict' });
+    expect(edge(migrateConfig(config, 11, { content: TEXT }))).toBe('letters');
+    expect(edge(config)).toBe('western');
+    // The region the configuration resolves to: named, or read from the
+    // locale or the hyphenation locale.
+    expect(pinLegacyLatinSpacingEdge<PostextConfig>({ cjk: { region: 'japan' } }).cjk).toEqual({ region: 'japan', latinSpacingEdge: 'letters' });
+    expect(pinLegacyLatinSpacingEdge<PostextConfig>({ bodyText: { hyphenation: { locale: 'ja' } } }).cjk).toEqual({ latinSpacingEdge: 'letters' });
+    expect(pinLegacyLatinSpacingEdge<PostextConfig>({ locale: 'zh-Hant', cjk: { region: 'japan' } }).cjk?.latinSpacingEdge).toBe('letters');
+  });
+
+  it('leaves every other configuration as it is', () => {
+    for (const config of [
+      ja({ cjk: { latinSpacingEdge: 'western' } }),
+      ja({ cjk: { latinSpacingEdge: 'letters' } }),
+      ja({ cjk: { latinSpacingEdge: 'auto' } }),
+      ja({ cjk: { region: 'taiwan' } }),
+      zh(),
+      { locale: 'zh-Hans' } as PostextConfig,
+      { locale: 'en' } as PostextConfig,
+      {} as PostextConfig,
+    ]) {
+      expect(pinLegacyLatinSpacingEdge(config)).toBe(config);
+    }
+  });
+
+  it('pins only when the text holds kana or kanji', () => {
+    expect(migrateConfig(ja(), 11, { content: TEXT }).cjk).toEqual({ latinSpacingEdge: 'letters' });
+    expect(migrateConfig(ja(), 11, { content: ['A Latin chapter.', TEXT] }).cjk).toEqual({ latinSpacingEdge: 'letters' });
+    const latin = ja();
+    expect(migrateConfig(latin, 11, { content: 'A chapter with no kana at all.' })).toBe(latin);
+    // Unknown content may hold some (and a note: the pin of #720 too).
+    expect(migrateConfig(ja(), 11).cjk).toEqual({ warichu: { minChars: 1 }, latinSpacingEdge: 'letters' });
+    // A Chinese document is never pinned.
+    const chinese = zh();
+    expect(migrateConfig(chinese, 11, { content: '撰此一書也。' })).toBe(chinese);
+  });
+
+  it('pins every version before 12, none from 12', () => {
+    for (const v of [undefined, 1, 5, 8, 10, 11]) {
+      expect(migrateConfig(ja(), v, { content: TEXT }).cjk?.latinSpacingEdge, String(v)).toBe('letters');
+    }
+    const current = ja();
+    expect(migrateConfig(current, 12, { content: TEXT })).toBe(current);
+  });
+
+  it('pins a bundle on the merged configuration of each locale', () => {
+    // An English base with a Japanese edition: the edition is pinned, the
+    // base edition is not.
+    const base: PostextConfig = { cjk: { lineBreak: 'strict' } };
+    const edition = migrateBundleConfig(base, [{ locale: 'en' }, { locale: 'ja' }], 11, { content: TEXT });
+    expect(edition.cjk).toEqual({ lineBreak: 'strict', latinSpacingEdge: 'letters' });
+    expect(migrateBundleConfig(base, [{ locale: 'en' }], 11, { content: TEXT }).cjk).toBe(base.cjk);
+    expect(migrateBundleConfig(base, [{ locale: 'ja' }], 12, { content: TEXT }).cjk).toBe(base.cjk);
+  });
+
+  it('survives stripping the defaults', () => {
+    const stripped = stripConfigDefaults(migrateConfig(ja(), 11, { content: TEXT }));
+    expect(stripped.cjk).toEqual({ latinSpacingEdge: 'letters' });
+    expect(edge(stripped)).toBe('letters');
+    expect(migrateConfig(stripped, 12)).toBe(stripped);
   });
 });

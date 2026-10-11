@@ -447,7 +447,9 @@ describe('config', () => {
   it('keys measurements by the new settings, other keys unchanged', () => {
     const zh = comp({}, 'zh-Hans');
     expect(cjkCompositionKey(zh)).toBe('mainland:kaiming:1:1:none:0.25em:zh');
-    expect(cjkCompositionKey(comp())).toBe('japan:fullwidth:1:1:allow:0.25em:ja:q:phalf');
+    // Japan's Western edge rule (#721) joins the key; `'letters'` leaves it out.
+    expect(cjkCompositionKey(comp())).toBe('japan:fullwidth:1:1:allow:0.25em:ja:q:phalf:lw');
+    expect(cjkCompositionKey(comp({ latinSpacingEdge: 'letters' }))).toBe('japan:fullwidth:1:1:allow:0.25em:ja:q:phalf');
   });
 });
 

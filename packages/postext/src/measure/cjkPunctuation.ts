@@ -84,6 +84,11 @@ export interface CjkComposition {
    *  (`cjk.composeDesignText: false`, #637); unset: a design text that
    *  composes as CJK is set by the CJK composer. */
   plainDesignText?: true;
+  /** `'western'`: a Western word that holds a letter or a digit takes the
+   *  Han–Latin space on a side that ends in a bracket or a sign too
+   *  (`cjk.latinSpacingEdge`, #721); unset: on a side that ends in a
+   *  letter or a digit only. */
+  latinSpacingEdge?: 'western';
   /** How many characters of a warichu note a line break leaves on either
    *  side of it at least (`cjk.warichu.minChars`, #720); unset:
    *  {@link DEFAULT_NOTE_MIN_CHARS}. 1 lets a line break anywhere in a
@@ -151,6 +156,7 @@ export function cjkCompositionOf(cjk: ResolvedCjkConfig, dpi: number, locale?: s
     ...(cjk.titleMinChars !== DEFAULT_TITLE_MIN_CHARS ? { titleMinChars: cjk.titleMinChars } : {}),
     ...(cjk.circledNumbers === 'western' ? { circledNumbers: 'western' as const } : {}),
     ...(cjk.composeDesignText === false ? { plainDesignText: true as const } : {}),
+    ...(cjk.latinSpacingEdge === 'western' ? { latinSpacingEdge: 'western' as const } : {}),
     ...(cjk.warichu.minChars !== DEFAULT_NOTE_MIN_CHARS ? { noteMinChars: cjk.warichu.minChars } : {}),
     ...(cjk.grid.enabled ? { grid: true as const } : {}),
   };
@@ -233,7 +239,10 @@ export function cjkCompositionKey(c: CjkComposition): string {
   const grid = c.grid ? ':g' : '';
   // The note rule (#720) only where it differs from the default.
   const notes = c.noteMinChars !== undefined && c.noteMinChars !== DEFAULT_NOTE_MIN_CHARS ? `:n${c.noteMinChars}` : '';
-  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}${grid}${notes}`;
+  // The Western edge rule (#721) only where set, so every key of a
+  // document that spaces letters and digits alone stays as it was.
+  const edge = c.latinSpacingEdge === 'western' ? ':lw' : '';
+  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}${grid}${notes}${edge}`;
 }
 
 /** Whether a composition changes nothing: the text is set as without it. */
