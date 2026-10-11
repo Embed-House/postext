@@ -18,7 +18,7 @@ import { hasJoiningScript } from '../../bidi';
 import { hasCJK } from '../../measure/cjk';
 import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from '../../design/richText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText';
-import { cjkCompositionKey, getCjkComposition } from '../../measure/cjkPunctuation';
+import { cjkCompositionKey, getCjkComposition, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
 import { layoutTextElementAt } from '../../design/layout';
 import { designBaseDirection } from '../../design/bidiText';
 import { primitiveToBlock } from '../../pipeline/headerFooter';
@@ -130,22 +130,46 @@ function trackingOf(p: PreparedText, style: LetteringStyle): number {
   return Number.isFinite(t) && !joiningScriptIn(p.text) ? t : 0;
 }
 
+/** The composition a balloon line is measured under (#723): the
+ *  document's with nothing given up and nothing added between the
+ *  characters. Every mark keeps its whole width (none set in half an em,
+ *  none compressed beside another mark or at an end of the line, none
+ *  hung) and no space opens between Han and Latin. What is left of the
+ *  composer's work on the line is the 破折号, set in two cells of one em. */
+function measuringComposition(c: CjkComposition): CjkComposition {
+  return { ...c, punctuationWidth: 'fullwidth', compressAdjacent: false, trimLineStart: false, hangingPunctuation: 'none', latinSpacing: { em: 0 } };
+}
+
 /**
- * The width the layout sets `text` at when it is a line of its own that
- * the CJK composer sets (#723), undefined when the layout sets it at the
- * font's advances. `setLines` hands each chosen line to the design-text
- * layout as a row, and a row that composes as CJK (`composesDesignAsCjk`,
- * the layout's own test) goes through `composeCjkDesignParagraph`: a
- * 破折号 takes two cells of one em there whatever the face's dash
- * advances (#652), and a mark takes the width `cjk.punctuationWidth` and
- * `compressAdjacent` give it. Composed here the same way, on one
- * unbounded line, so the line that is scored is the line that is printed.
+ * The width of `text` as a line of its own that the CJK composer sets
+ * (#723), undefined when the layout sets it at the font's advances.
+ * `setLines` hands each chosen line to the design-text layout as a row,
+ * and a row that composes as CJK (`composesDesignAsCjk`, the layout's own
+ * test) goes through `composeCjkDesignParagraph`, where a 破折号 takes
+ * two cells of one em whatever the face's dashes advance (#652). The line
+ * is composed here by the same composer, on one unbounded line, so the
+ * pair counts in the shaping what it takes on the page.
+ *
+ * The rest of the line is measured as before ({@link measuringComposition}):
+ * a line that ends in a comma the document's composition sets in half an
+ * em is still measured half an em long, and Latin inside Han text without
+ * the space `cjk.latinSpacing` opens. With every line measured as set,
+ * eight balloons of the published comics chose other lines and two of
+ * their pages read worse; with the space alone, one caption broke its
+ * title in two (the comparison of #723). A text whose lines hold no pair
+ * is shaped as it was.
  */
 function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesignFonts, pitch: number, tracking: number): number | undefined {
   if (text.includes('\n') || !composesDesignAsCjk(text)) return undefined;
   const measureIn = (t: string, font: string): number => Math.max(0, flowTextWidth(t, font) + tracking * graphemeCount(t));
-  const lines = composeCjkDesignParagraph(spans(), fonts, undefined, pitch, tracking, measureIn);
-  return lines.length === 1 ? lines[0]!.width : undefined;
+  const own = getCjkComposition();
+  setCjkComposition(measuringComposition(own));
+  try {
+    const lines = composeCjkDesignParagraph(spans(), fonts, undefined, pitch, tracking, measureIn);
+    return lines.length === 1 ? lines[0]!.width : undefined;
+  } finally {
+    setCjkComposition(own);
+  }
 }
 
 /** A measurer of line widths over the prepared text, in the writing mode
@@ -153,9 +177,10 @@ function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesign
  *  through the design-text measurer of its own markup, so that what is
  *  measured is what the layout sets; a markup that does not read back to
  *  the same text falls back to plain. With `composed`, a range the layout
- *  sets with the CJK composer is measured by composing it (#723): the
- *  shaping asks for it, the ruby does not (it places a reading along a
- *  line, and the start of a line is no line of its own). */
+ *  sets with the CJK composer is measured by composing it (#723, see
+ *  `composedWidth`): the shaping asks for it, the ruby does not (it
+ *  places a reading along a line, and the start of a line is no line of
+ *  its own). */
 function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): Measurer {
   const tracking = trackingOf(p, style);
   const pitch = style.fontSizePx * style.lineHeight;

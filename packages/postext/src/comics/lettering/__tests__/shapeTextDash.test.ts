@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { clearTextWidthCache } from '../../../measure/canvas';
-import { PLAIN_CJK_COMPOSITION, setCjkComposition } from '../../../measure/cjkPunctuation';
+import { cjkCompositionOf, getCjkComposition, PLAIN_CJK_COMPOSITION, setCjkComposition } from '../../../measure/cjkPunctuation';
+import { resolveCjkConfig } from '../../../defaults/cjk';
 import { prepareText, readLetteringText } from '../text';
 import { shapeText } from '../shape-text';
 import { presetLetteringStyles } from '../presets';
@@ -9,11 +10,13 @@ import type { InlineSpan } from '../../../parse/types';
 // #723: the lines of a balloon are chosen with the widths they are set
 // at. A line the design-text layout sets with the CJK composer (#637) is
 // measured by composing it, so a 破折号 counts its two cells of one em in
-// the shaping as on the set line (#652), and a mark the composer sets at
-// a width that is not its glyph's counts that width. The stub is the one
-// of `design/cjkDesignDash.test.ts` (Noto Serif SC's dash, 0.89 em wide;
-// Han and full-width marks one em; everything under U+2E80 half an em,
-// the curly quotation marks among them).
+// the shaping as on the set line (#652), and a mark the composer sets in
+// a cell wider than its glyph counts the cell. What the document's
+// composition takes off a line (a mark set in half an em) or adds between
+// Han and Latin is not measured: those lines are measured as before. The
+// stub is the one of `design/cjkDesignDash.test.ts` (Noto Serif SC's
+// dash, 0.89 em wide; Han and full-width marks one em; everything under
+// U+2E80 half an em, the curly quotation marks among them).
 
 const EM = 20;
 const SIZE_RE = /(\d*\.?\d+)px/;
@@ -153,5 +156,34 @@ describe('a balloon line is measured at the width it is set at (#723)', () => {
     const s = shape('萝拉——！', 'zh-Hans');
     expect(s.lines.map((l) => l.width)).toEqual([advances('萝拉——！')]);
     expect(printed(s).map((l) => l.width)).toEqual([advances('萝拉——！')]);
+  });
+
+  describe('under the composition of a Simplified Chinese book (half-width marks, compression, a Han–Latin space)', () => {
+    const book = () => setCjkComposition(cjkCompositionOf(resolveCjkConfig(undefined, 'zh-Hans'), 96, 'zh-Hans'));
+
+    it('a pair counts two ems, and the document keeps its composition', () => {
+      book();
+      const own = getCjkComposition();
+      const s = shape('他说话了——不要走', 'zh-Hans');
+      expect(s.lines.map((l) => l.width / EM)).toEqual([4, 5]);
+      expect(printed(s).map((l) => l.width / EM)).toEqual([4, 5]);
+      expect(getCjkComposition()).toBe(own);
+    });
+
+    it('a mark the composition sets in half an em is measured whole, as before', () => {
+      book();
+      const s = shape('快点，老家伙。说句话呀', 'zh-Hans');
+      // The lines the shaping chose before #723, measured at the advances.
+      expect(printed(s).map((l) => l.text)).toEqual(['快点，', '老家伙。', '说句话呀']);
+      expect(s.lines.map((l) => l.width / EM)).toEqual([3, 4, 4]);
+      // The set lines give up half an em at each mark.
+      expect(printed(s).map((l) => l.width / EM)).toEqual([2.5, 3.5, 4]);
+    });
+
+    it('Latin inside Han text is measured without the space the composition opens', () => {
+      book();
+      const s = shape('第8集：小辣椒的生日', 'zh-Hans');
+      for (const [i, l] of printed(s).entries()) expect(s.lines[i]!.width).toBeCloseTo(advances(l.text), 6);
+    });
   });
 });
