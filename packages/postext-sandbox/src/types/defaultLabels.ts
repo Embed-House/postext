@@ -857,6 +857,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   cjkWarichuOpenTooltip: 'Set at the text size before the first row of a note, such as 〔 or （. Empty: none. Japanese text has （ by default: clear the field for none, reset it for （ again. The open attribute of a note wins.',
   cjkWarichuClose: 'Closing bracket',
   cjkWarichuCloseTooltip: 'Set after the last row of a note, such as 〕 or ）. Empty: none; Japanese text has ） by default (clear the field for none). The close attribute of a note wins.',
+  cjkWarichuMinChars: 'Characters kept together',
+  cjkWarichuMinCharsTooltip: 'How many characters of a note a line break leaves on either side of it at least, so no line (and no column or page) opens on a single small character with its stop. Marks and word spaces do not count. A note of up to twice the number less one is never divided; when no other break fits the line, it is broken inside the note anyway. With 1 a line may break anywhere in a note the Line breaking allows, as before postext 1.28.',
   cjkKunten: 'Kanbun marks',
   cjkKuntenDescription: 'Return marks (返り点) and okurigana (送り仮名) set with :kunten[…] on classical Chinese read in Japanese.',
   cjkKuntenSize: 'Mark size',

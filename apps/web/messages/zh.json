@@ -1458,6 +1458,8 @@
     "cjkWarichuOpenTooltip": "按文字字号排在夹注第一行之前，如〔或（。留空：不加。日文默认用（：清空即不加，重置则恢复（。夹注自身的open属性优先。",
     "cjkWarichuClose": "闭括号",
     "cjkWarichuCloseTooltip": "排在夹注最后一行之后，如〕或）。留空：不加；日文默认用）（清空即不加）。夹注自身的close属性优先。",
+    "cjkWarichuMinChars": "夹注断行最少字数",
+    "cjkWarichuMinCharsTooltip": "在夹注内部断行时，断点两侧至少各留几个字，使一行（以及一栏、一页）不会以单独一个小字和它的句号开头。标点和词间空格不计数。不超过此数两倍减一个字的夹注不会被拆开；若该行找不到其他断点，仍在夹注内部断行。设为 1 时，凡避头尾允许之处都可断行，与 postext 1.28 之前相同。",
     "cjkKunten": "汉文训点",
     "cjkKuntenDescription": "用:kunten[…]给按日语训读的古汉语加上返点（返り点）和送假名（送り仮名）。",
     "cjkKuntenSize": "训点字号",

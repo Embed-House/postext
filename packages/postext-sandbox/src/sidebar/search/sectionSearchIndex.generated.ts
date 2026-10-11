@@ -3420,6 +3420,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'cjkWarichuColor',
       'cjkWarichuColorTooltip',
       'cjkWarichuDescription',
+      'cjkWarichuMinChars',
+      'cjkWarichuMinCharsTooltip',
       'cjkWarichuOpen',
       'cjkWarichuOpenTooltip',
       'cjkWarichuSize',

@@ -915,6 +915,8 @@ export interface SandboxLabels {
   cjkWarichuOpenTooltip: string;
   cjkWarichuClose: string;
   cjkWarichuCloseTooltip: string;
+  cjkWarichuMinChars: string;
+  cjkWarichuMinCharsTooltip: string;
   cjkKunten: string;
   cjkKuntenDescription: string;
   cjkKuntenSize: string;

@@ -1458,6 +1458,8 @@
     "cjkWarichuOpenTooltip": "Composto no tamanho do texto antes da primeira linha de uma nota, como 〔 ou （. Vazio: nenhum. O texto japonês tem （ por padrão: limpe o campo para nenhum, redefina-o para voltar a （. O atributo open de uma nota prevalece.",
     "cjkWarichuClose": "Parêntese de fechamento",
     "cjkWarichuCloseTooltip": "Composto depois da última linha de uma nota, como 〕 ou ）. Vazio: nenhum; o texto japonês tem ） por padrão (limpe o campo para nenhum). O atributo close de uma nota prevalece.",
+    "cjkWarichuMinChars": "Caracteres mantidos juntos",
+    "cjkWarichuMinCharsTooltip": "Quantos caracteres de uma nota uma quebra de linha deixa no mínimo de cada lado, para que nenhuma linha (nem coluna, nem página) comece com um único caractere pequeno e o seu ponto. Sinais e espaços entre palavras não contam. Uma nota de até o dobro menos um nunca é partida; se nenhuma outra quebra couber na linha, ela é partida dentro da nota mesmo assim. Com 1 a linha pode ser partida onde a Quebra de linha permitir, como antes do postext 1.28.",
     "cjkKunten": "Marcas de kanbun",
     "cjkKuntenDescription": "Marcas de retorno (返り点) e okurigana (送り仮名) compostos com :kunten[…] no chinês clássico lido em japonês.",
     "cjkKuntenSize": "Tamanho das marcas",

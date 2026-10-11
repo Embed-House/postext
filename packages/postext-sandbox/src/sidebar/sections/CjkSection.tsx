@@ -172,6 +172,10 @@ export const CjkSection = memo(function CjkSection() {
   const markColor = raw?.annotationColor ?? body.color;
   const ruby = raw?.ruby;
   const warichu = raw?.warichu;
+  // As the engine reads it (`resolveWarichu`): one or more, rounded down.
+  const warichuMinChars = typeof warichu?.minChars === 'number' && Number.isFinite(warichu.minChars) && warichu.minChars >= 1
+    ? Math.floor(warichu.minChars)
+    : DEFAULT_CJK_CONFIG.warichu.minChars!;
   const kunten = raw?.kunten;
   const auto = (name: string) => labels.cjkAuto.replace('__value__', name);
   // Ruby overhang and alignment (#422): Japan's by name, else the clreq
@@ -593,6 +597,16 @@ export const CjkSection = memo(function CjkSection() {
               tooltip={labels.cjkWarichuSizeTooltip}
               isDefault={warichu?.fontSize === undefined || dimensionsEqual(warichu.fontSize, DEFAULT_CJK_CONFIG.warichu.fontSize!)}
               onReset={() => writeWarichu({ fontSize: undefined })}
+            />
+            <NumberInput
+              label={labels.cjkWarichuMinChars}
+              value={warichuMinChars}
+              onChange={(v) => writeWarichu({ minChars: Math.max(1, Math.round(v)) })}
+              min={1}
+              max={6}
+              tooltip={labels.cjkWarichuMinCharsTooltip}
+              isDefault={warichuMinChars === DEFAULT_CJK_CONFIG.warichu.minChars}
+              onReset={() => writeWarichu({ minChars: undefined })}
             />
             <ColorPicker
               label={labels.cjkWarichuColor}

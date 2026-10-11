@@ -836,6 +836,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     cjkWarichuOpenTooltip: t("cjkWarichuOpenTooltip"),
     cjkWarichuClose: t("cjkWarichuClose"),
     cjkWarichuCloseTooltip: t("cjkWarichuCloseTooltip"),
+    cjkWarichuMinChars: t("cjkWarichuMinChars"),
+    cjkWarichuMinCharsTooltip: t("cjkWarichuMinCharsTooltip"),
     cjkKunten: t("cjkKunten"),
     cjkKuntenDescription: t("cjkKuntenDescription"),
     cjkKuntenSize: t("cjkKuntenSize"),

@@ -2154,6 +2154,8 @@
     "cjkWarichuOpenTooltip": "Va al tamaño del texto antes de la primera fila de la nota, como 〔 o （. Vacío: ninguno. En texto japonés va （ por omisión: vacía el campo para no poner ninguno y restablécelo para volver a （. Manda el atributo open de cada nota.",
     "cjkWarichuClose": "Signo de cierre",
     "cjkWarichuCloseTooltip": "Va tras la última fila de la nota, como 〕 o ）. Vacío: ninguno; en texto japonés va ） por omisión (vacía el campo para no poner ninguno). Manda el atributo close de cada nota.",
+    "cjkWarichuMinChars": "Caracteres que van juntos",
+    "cjkWarichuMinCharsTooltip": "Cuántos caracteres de una nota deja como mínimo un corte de línea a cada lado, para que ninguna línea (ni columna, ni página) empiece con un solo carácter pequeño y su punto. Los signos y los espacios entre palabras no cuentan. Una nota de hasta el doble menos uno no se parte nunca; si ningún otro corte cabe en la línea, la línea se parte dentro de la nota de todos modos. Con 1 la línea puede partirse donde lo permita el Corte de línea, como antes de postext 1.28.",
     "cjkKunten": "Marcas de kanbun",
     "cjkKuntenDescription": "Marcas de retorno (返り点) y okurigana (送り仮名) puestas con :kunten[…] en chino clásico leído en japonés.",
     "cjkKuntenSize": "Tamaño de las marcas",

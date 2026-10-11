@@ -1458,6 +1458,8 @@
     "cjkWarichuOpenTooltip": "Va a la mida del text abans de la primera fila de la nota, com 〔 o （. Buit: cap. En text japonès hi va （ per defecte: buida el camp perquè no n'hi hagi cap i restableix-lo per tornar a （. Té prioritat l'atribut open de cada nota.",
     "cjkWarichuClose": "Signe de tancament",
     "cjkWarichuCloseTooltip": "Va després de l'última fila de la nota, com 〕 o ）. Buit: cap; en text japonès hi va ） per defecte (buida el camp perquè no n'hi hagi cap). Té prioritat l'atribut close de cada nota.",
+    "cjkWarichuMinChars": "Caràcters que van junts",
+    "cjkWarichuMinCharsTooltip": "Quants caràcters d'una nota deixa com a mínim un tall de línia a cada costat, perquè cap línia (ni columna, ni pàgina) no comenci amb un sol caràcter petit i el seu punt. Els signes i els espais entre paraules no compten. Una nota de fins al doble menys u no es parteix mai; si cap altre tall no hi cap, la línia es parteix dins de la nota igualment. Amb 1 la línia es pot partir on ho permeti el Tall de línia, com abans de postext 1.28.",
     "cjkKunten": "Marques de kanbun",
     "cjkKuntenDescription": "Marques de retorn (返り点) i okurigana (送り仮名) posades amb :kunten[…] en xinès clàssic llegit en japonès.",
     "cjkKuntenSize": "Mida de les marques",
