@@ -1,4 +1,4 @@
-// ─── Kit · images v2 ── recipes with pictures · postext.dev/cookbook
+// ─── Kit · images v3 ── recipes with pictures · postext.dev/cookbook
 /** Registers a photo or PNG for the canvas and keeps its bytes for the PDF.
  *  fetch → ImageBitmap never taints the canvas (a plain cross-origin <img> would). */
 async function loadImage(fileId, url) {
@@ -9,13 +9,14 @@ async function loadImage(fileId, url) {
   (loadImage.bytes ??= new Map()).set(fileId, bytes);
 }
 
-/** Registers SVG markup as a vector image, its fonts inside (inlineSvgFonts, ≥ 1.25). */
-async function loadSvg(fileId, svg) {
+/** Registers SVG markup as a vector image, its fonts inside (inlineSvgFonts, ≥ 1.25).
+ *  `options` go to registerResourceImage: { singleInk: true } tints it on the canvas. */
+async function loadSvg(fileId, svg, options) {
   if (typeof inlineSvgFonts === 'function') svg = await inlineSvgFonts(svg, svgFaces);
   const img = new Image();
   img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   await img.decode();
-  registerResourceImage(fileId, img);
+  registerResourceImage(fileId, img, options);
   (loadImage.bytes ??= new Map()).set(fileId, new TextEncoder().encode(svg));
 }
 

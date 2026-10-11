@@ -1,4 +1,4 @@
-// ─── Kit · comics v1 ── comic pages · postext.dev/cookbook
+// ─── Kit · comics v2 ── comic pages · postext.dev/cookbook
 // The engine letters a comic in a face per language (defaultComicFont:
 // Comic Neue, Zen Antique for Japanese, Noto Sans SC, LXGW WenKai TC,
 // Playpen Sans Arabic; defaultComicSfxFont: Bangers, Dela Gothic One,
@@ -97,11 +97,13 @@ async function comicPdfProvider(family, weight, style, request) {
 /** A panel picture as a resource for art= (and pop=): loads `url`
  *  (write asset('lh-arrive.jpg') in the call, so the lint checks the file)
  *  and declares it with `meta`, its entry in the art manifest:
- *  { width, height, alt, safeArea, anchors, avoid }. The safe area is what
- *  every crop keeps, the anchors the speakers' mouths, heads and faces,
- *  the avoid zones what no balloon covers; all in fractions of the picture,
- *  the same in every language. Without width and height, the picture's own
- *  size. Needs the images block. Resolves to the resource. */
+ *  { width, height, alt, safeArea, anchors, avoid, faces }. The safe area
+ *  is what every crop keeps, the anchors the speakers' mouths, heads and
+ *  faces, the avoid zones what no balloon covers unless a panel has no
+ *  other room, and `faces` the faces of the people who do not speak, which
+ *  no balloon ever covers; all in fractions of the picture, the same in
+ *  every language. Without width and height, the picture's own size. Needs
+ *  the images block. Resolves to the resource. */
 async function comicPanel(id, url, meta = {}) {
   const fileId = decodeURIComponent(url.split('/').pop());
   await loadImage(fileId, url);
@@ -118,5 +120,6 @@ async function comicPanel(id, url, meta = {}) {
     ...(meta.safeArea && { safeArea: meta.safeArea }),
     ...(meta.anchors?.length && { anchors: meta.anchors }),
     ...(meta.avoid?.length && { avoid: meta.avoid }),
+    ...(meta.faces?.length && { faces: meta.faces }),
   };
 }

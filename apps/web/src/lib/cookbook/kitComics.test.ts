@@ -167,6 +167,15 @@ describe("kit block comics: comicPanel", () => {
     });
   });
 
+  it("passes on the faces of the people who do not speak (#726)", async () => {
+    const { comicPanel } = kitWith(serve({}), { stubs: stubs() });
+    const faces = [{ x: 0.062, y: 0.305, width: 0.022, height: 0.055 }];
+    const panel = await comicPanel("ds1", "https://example.test/assets/ds1.jpg", { width: 1900, height: 633, faces });
+    expect(panel.faces).toEqual(faces);
+    const none = await comicPanel("ds1", "https://example.test/assets/ds1.jpg", { width: 1900, height: 633, faces: [] });
+    expect(none).not.toHaveProperty("faces");
+  });
+
   it("reads the size off the picture when the manifest has none", async () => {
     const s = stubs();
     const { comicPanel } = kitWith(serve({}), { stubs: s });
