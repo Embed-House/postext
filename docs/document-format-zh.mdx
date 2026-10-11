@@ -421,10 +421,20 @@ Keep the lantern lit **every** night.
       <td><code>span</code></td>
       <td>只用于正文中：<code>column</code>（默认）或<code>page</code>。</td>
     </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>组上方的间距，取长度，写法同<code>gap</code>。它与组上方待用的间距合并；位于栏首，或组是框里的第一个块时，不留间距。自postext 1.28起提供。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>组下方的间距，取长度；<code>0</code>表示不留。在正文中它取代正文的段间距；在框内它是到下一个块之前的间距。自postext 1.28起提供。</td>
+    </tr>
   </tbody>
 </table>
 
 整体排出的组在各栏最齐平的地方切开，可以在块之间，也可以在段落或列表项的行之间，后者的剩余部分在下一栏顶部接着排，不带项目符号；如果用`breaks`固定了各栏的起点，则不会在段落内部切开，适合文字栏旁边配一栏图的情况。
+
+**组前后的间距。**在正文中，组之后跟着正文的段间距（开启`bodyText.paragraphSpacing`时为一行，否则没有），在框内则没有自己的间距。在围栏上写`marginTop`和`marginBottom`可以设定：`:::columns{count=3 span="page" marginBottom="0.75em"}`。两者都是最小值，与相邻块自身保留的间距合并，同框的外边距一样。在正文中，文字在组之下回到基线网格，所以间距总是整行；跨栏或跨页拆开的组，上边距归第一部分，下边距归最后一部分。`em`按组所在文字的字号计算；不是长度的值和负值都被忽略。
 
 ```md
 :::callout{type="summary"}

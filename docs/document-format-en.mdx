@@ -421,10 +421,20 @@ A `:::columns{count=2}` … `:::` group sets the blocks between its fences in `c
       <td><code>span</code></td>
       <td>In the running text only: <code>column</code> (the default) or <code>page</code>.</td>
     </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>The space above the group, a length as <code>gap</code> takes. It merges with the space pending above the group; none at the head of a column, or when the group opens its box. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>The space under the group, a length; <code>0</code> asks for none. In the running text it takes the place of the body's paragraph spacing; in a box it is the space before the next block. Since postext 1.28.</td>
+    </tr>
   </tbody>
 </table>
 
 A group set whole is cut where its columns level best — between blocks, or between the lines of a paragraph or list item, whose tail goes on at the head of the next column without its bullet — unless `breaks` fixes the column starts, with no cut inside a paragraph: a text column beside a figure column.
+
+**The space around a group.** In the running text a group is followed by the body's paragraph spacing (a line with `bodyText.paragraphSpacing`, none without it), and inside a box by no space of its own. `marginTop` and `marginBottom` on the fence set it: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Each is a minimum that merges with the space the block beside it keeps for itself, as a box's margins do. In the running text the flow returns to the baseline grid under the group, so the space comes out in whole lines, and a group divided between columns or pages keeps the top margin for its first part and the bottom one for its last. An `em` is the size of the text the group stands in; a value that is not a length, or a negative one, is ignored.
 
 ```md
 :::callout{type="summary"}

@@ -421,10 +421,20 @@ Un grup `:::columns{count=2}` … `:::` compon els blocs entre les seves tanques
       <td><code>span</code></td>
       <td>Només al text corregut: <code>column</code> (el valor per defecte) o <code>page</code>.</td>
     </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>L'espai sobre el grup, una longitud com la de <code>gap</code>. Es fon amb l'espai pendent sobre el grup; no n'hi ha cap al cap d'una columna, ni quan el grup obre el seu requadre. Des de postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>L'espai sota el grup, una longitud; <code>0</code> demana que no n'hi hagi cap. Al text corregut ocupa el lloc de la separació entre paràgrafs del cos; en un requadre és l'espai abans del bloc següent. Des de postext 1.28.</td>
+    </tr>
   </tbody>
 </table>
 
 Un grup compost sencer es talla on millor s'anivellen les seves columnes —entre blocs, o entre les línies d'un paràgraf o element de llista, la cua del qual continua al capdamunt de la columna següent sense la vinyeta—, llevat que `breaks` fixi on comença cada columna, sense tallar dins d'un paràgraf: una columna de text al costat d'una columna amb una figura.
+
+**L'espai al voltant d'un grup.** Al text corregut, un grup va seguit de la separació entre paràgrafs del cos (una línia amb `bodyText.paragraphSpacing`, res sense), i dins d'un requadre de cap espai propi. `marginTop` i `marginBottom` a la tanca el fixen: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Cadascun és un mínim que es fon amb l'espai que el bloc veí es reserva, com els marges d'un requadre. Al text corregut el flux torna a la retícula de base sota el grup, de manera que l'espai surt en línies senceres, i un grup dividit entre columnes o pàgines conserva el marge superior per a la primera part i l'inferior per a l'última. Un `em` és la mida del text on es troba el grup; un valor que no és una longitud, o un de negatiu, s'ignora.
 
 ```md
 :::callout{type="summary"}

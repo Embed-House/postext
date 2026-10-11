@@ -421,10 +421,20 @@ Un grupo `:::columns{count=2}` … `:::` compone los bloques entre sus vallas en
       <td><code>span</code></td>
       <td>Solo en el texto corrido: <code>column</code> (el valor por defecto) o <code>page</code>.</td>
     </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td>El espacio sobre el grupo, una longitud como la de <code>gap</code>. Se funde con el espacio pendiente sobre el grupo; no hay ninguno a la cabeza de una columna, ni cuando el grupo abre su recuadro. Desde postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td>El espacio bajo el grupo, una longitud; <code>0</code> pide que no haya ninguno. En el texto corrido ocupa el lugar de la separación entre párrafos del cuerpo; en un recuadro es el espacio antes del bloque siguiente. Desde postext 1.28.</td>
+    </tr>
   </tbody>
 </table>
 
 Un grupo compuesto entero se corta donde mejor se nivelan sus columnas —entre bloques, o entre las líneas de un párrafo o elemento de lista, cuya cola sigue en la cabeza de la columna siguiente sin su viñeta—, salvo que `breaks` fije dónde empieza cada columna, sin cortar dentro de un párrafo: una columna de texto junto a una columna con una figura.
+
+**El espacio alrededor de un grupo.** En el texto corrido, a un grupo le sigue la separación entre párrafos del cuerpo (una línea con `bodyText.paragraphSpacing`, nada sin ella), y dentro de un recuadro ningún espacio propio. `marginTop` y `marginBottom` en la valla lo fijan: `:::columns{count=3 span="page" marginBottom="0.75em"}`. Cada uno es un mínimo que se funde con el espacio que el bloque vecino guarda para sí, como los márgenes de un recuadro. En el texto corrido el flujo vuelve a la rejilla de línea base bajo el grupo, así que el espacio resulta en líneas enteras, y un grupo dividido entre columnas o páginas conserva el margen superior para su primera parte y el inferior para la última. Un `em` es el tamaño del texto en el que está el grupo; un valor que no es una longitud, o uno negativo, se ignora.
 
 ```md
 :::callout{type="summary"}
