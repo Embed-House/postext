@@ -547,9 +547,14 @@ export interface CaptureVariant {
      *  builds whose pages the capture counts. */
     pages?: number;
     /** Each chapter of the bundle as it reads back on the capture's
-     *  engine: its pages and its layout hash (lib/probe.js `layoutHash`).
-     *  What `pnpm cookbook sandbox` compares the Sandbox's layout with. */
-    chapters?: { pages: number; hash: string }[];
+     *  engine: its pages, its layout hash (lib/probe.js `layoutHash`:
+     *  every line with its box) and its lines hash (`linesHash`: the lines
+     *  and their order, no box; missing from a capture made before it was
+     *  recorded). What `pnpm cookbook sandbox` compares the Sandbox's
+     *  layout with: the lines, since the Sandbox measures with another
+     *  build of a family than the pen and the boxes differ by fractions
+     *  of a pixel. */
+    chapters?: { pages: number; hash: string; lines?: string }[];
     /** The warnings of the pen's builds the bundle holds (kind and what
      *  it names, positions aside): the Sandbox may raise these and no
      *  others. Left out when there are none. */

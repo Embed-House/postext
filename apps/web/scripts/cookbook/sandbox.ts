@@ -22,9 +22,23 @@
  * worker or the page reports an error, when nothing comes within the
  * timeout, or when the Sandbox raises a warning that is not in
  * `sandbox.warnings`. A chapter count, a page count or (on the engine
- * capture.json records) a layout hash other than `sandbox.chapters` fails
- * with --strict and warns without it: a pull request that moves lines on
- * purpose cannot capture the recipe again before its release.
+ * capture.json records) lines other than `sandbox.chapters` fail with
+ * --strict and warn without it: a pull request that moves lines on purpose
+ * cannot capture the recipe again before its release.
+ *
+ * The lines, not the layout hash: the Sandbox does not measure with the
+ * files a pen measures with. The kit loads the static cuts Fontsource
+ * serves; the Sandbox's loader takes Google's variable file, whose advances
+ * between the masters are not rounded to the font's units. A line of body
+ * text comes out a few hundredths to a few tenths of a pixel wider or
+ * narrower (an edition's widest difference: 0.11 px in the median one,
+ * 2.3 px in the worst), and the layout hash rounds every box to half a
+ * pixel. On the 334 editions
+ * captured on 1.28.1: 134 with another layout hash, 127 of them with every
+ * line the same and widths apart, 7 with two to eight lines broken at
+ * another word. The lines hash (`linesHash` in lib/probe.js) holds no box,
+ * so it tells the two apart; a layout hash that differs under the same
+ * lines is a note.
  *
  * Run by Node's type stripping: erasable TypeScript, relative `.ts` imports.
  */
@@ -52,6 +66,8 @@ export { SANDBOX_USAGE } from "./sandbox-usage.ts";
 export interface SandboxChapter {
   pages: number;
   hash?: string;
+  /** The lines and their order, no box (lib/probe.js `linesHash`). */
+  lines?: string;
   /** Kind and what it names, positions aside (lib/probe.js `warningsOf`). */
   warnings: string[];
 }
@@ -105,13 +121,38 @@ function fallbackFamily(warning: string, families: readonly string[]): string | 
   return [...families].sort((a, b) => b.length - a.length).find((family) => rest.startsWith(`${family} `)) ?? null;
 }
 
+/** "A", "A and B", "A, B and C". */
+const listed = (names: readonly string[]) => (names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`);
+
+/**
+ * The families of a run the page set from a variable file: every loaded
+ * face of theirs answers for a range of weights ("200 900 normal"). A
+ * family with one cut and a stand-in for its bold (#688: "400 normal" and
+ * "600 900 normal") is not one. Empty for a run that reports no faces
+ * (`--site`).
+ */
+export function variableFamilies(fonts: SandboxRun["fonts"]): string[] {
+  return Object.entries(fonts)
+    .filter(([, held]) => {
+      const loaded = held.page.filter((face) => !/\((unloaded|loading|error)\)/.test(face));
+      return loaded.length > 0 && loaded.every((face) => /^\d+ \d+ /.test(face));
+    })
+    .map(([family]) => family);
+}
+
 /**
  * An edition's run against its record. Failures: an error of the page or
  * the worker, a layout that did not settle, a warning the pen's builds do
  * not have (for a `fontFallback`, with the family's faces on the page and
  * in the worker). A chapter count, a page count or, on the recorded engine
- * (`sameEngine`), a layout hash other than the recorded one: failures with
- * `strict`, warnings without. An edition whose capture.json has no
+ * (`sameEngine`), lines other than the recorded ones: failures with
+ * `strict`, warnings without. A layout hash other than the recorded one
+ * under the recorded lines is a note: the Sandbox measures with another
+ * build of the family than the pen (Google's variable file, the pen the
+ * static cuts), and the hash rounds widths that differ by fractions of a
+ * pixel. With no lines recorded (a capture from before them) the layout
+ * hash cannot tell a line that moved from such a width: a warning that
+ * says to capture again. An edition whose capture.json has no
  * `sandbox.chapters` yet is compared on its page total, and its warnings
  * are notes: there is nothing recorded to read them against.
  */
@@ -158,11 +199,23 @@ export function compareEdition(
     return out;
   }
   const one = want.length === 1;
+  const variable = variableFamilies(run.fonts);
+  const measured = variable.length ? `the Sandbox measures ${listed(variable)} from ${variable.length === 1 ? "a variable file" : "variable files"}, a pen from the static cuts` : "";
   got.forEach((chapter, i) => {
     const name = one ? "the bundle" : `chapter ${i + 1}`;
-    if (chapter.pages !== want[i]!.pages) add(moved, `the Sandbox lays ${name} out to ${s(chapter.pages)}, the capture records ${want[i]!.pages}`);
-    else if (sameEngine && chapter.hash !== undefined && chapter.hash !== want[i]!.hash) {
-      add(moved, `the Sandbox lays ${name} out otherwise than the capture records (${s(chapter.pages)} on both sides, layout hash ${chapter.hash} against ${want[i]!.hash})`);
+    const recorded = want[i]!;
+    if (chapter.pages !== recorded.pages) {
+      add(moved, `the Sandbox lays ${name} out to ${s(chapter.pages)}, the capture records ${recorded.pages}`);
+      return;
+    }
+    if (!sameEngine || chapter.hash === undefined || chapter.hash === recorded.hash) return;
+    const hashes = `layout hash ${chapter.hash} against ${recorded.hash}`;
+    if (recorded.lines === undefined || chapter.lines === undefined) {
+      add("warn", `the Sandbox lays ${name} out to another layout hash than the capture records (${s(chapter.pages)} on both sides, ${hashes}), and capture.json records no lines hash to tell a line that breaks elsewhere from one set to another width: capture with --sandbox-only`);
+    } else if (chapter.lines !== recorded.lines) {
+      add(moved, `the Sandbox breaks the lines of ${name} otherwise than the capture records (${s(chapter.pages)} on both sides, lines hash ${chapter.lines} against ${recorded.lines})${measured ? `; ${measured}, and a line a fraction of a pixel from its measure breaks on either side of it` : ""}`);
+    } else {
+      add("info", `the Sandbox sets ${name} in the lines the capture records, some of them to another width (${hashes})${measured ? `: ${measured}` : ""}`);
     }
   });
   return out;
@@ -290,17 +343,17 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
       async (bundle: string, locale: string) => {
         const w = window as unknown as {
           __sbReady?: boolean; __sbErrors: string[];
-          __postextSandbox?: { layOutBundle(bytes: Uint8Array, options: object): Promise<{ chapters: { pages: number; hash?: string; warnings: string[] }[]; fonts: Record<string, { page: string[]; worker: string[] }>; settled: boolean }> };
+          __postextSandbox?: { layOutBundle(bytes: Uint8Array, options: object): Promise<{ chapters: { pages: number; hash?: string; lines?: string; warnings: string[] }[]; fonts: Record<string, { page: string[]; worker: string[] }>; settled: boolean }> };
         };
         if (!w.__sbReady || !w.__postextSandbox) return { error: `the Sandbox entry did not load: ${w.__sbErrors.join(" · ")}` };
         try {
-          const probe = (await import("/__cb/probe.js" as string)) as { layoutHash(doc: unknown): string; warningsOf(doc: unknown): string[] };
+          const probe = (await import("/__cb/probe.js" as string)) as { layoutHash(doc: unknown): string; linesHash(doc: unknown): string; warningsOf(doc: unknown): string[] };
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
           const worker = new Worker("/__sb/worker.js", { type: "module" });
           worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
-          const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, warningsOf: probe.warningsOf });
+          const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
           return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, errors: w.__sbErrors };
         } catch (error) {
           return { error: `the bundle does not open and lay out in the Sandbox: ${String((error as Error)?.message ?? error)}`, errors: w.__sbErrors };
@@ -352,7 +405,7 @@ const SITE_HOOK = `(() => {
 const QUIET_MS = 2500;
 
 async function runSite(browser: Browser, site: string, edition: Edition): Promise<SandboxRun> {
-  const probe = (await import("./lib/probe.js" as string)) as { layoutHash(doc: unknown): string; warningsOf(doc: unknown): string[] };
+  const probe = (await import("./lib/probe.js" as string)) as { layoutHash(doc: unknown): string; linesHash(doc: unknown): string; warningsOf(doc: unknown): string[] };
   const name = `${edition.slug} ${edition.variant}`;
   const within = <T>(what: string, run: () => Promise<T>, timeoutMs = edition.timeoutMs) => step(what, { edition: name, timeoutMs }, run);
   const context = await browser.createBrowserContext();
@@ -387,7 +440,7 @@ async function runSite(browser: Browser, site: string, edition: Edition): Promis
     errors.push(...(await page.evaluate("window.__sbSite.errors") as string[]));
     docs.sort((a, b) => a.offset - b.offset || a.seq - b.seq);
     const chapters = docs.map(({ doc }) => ({
-      pages: (doc as { pages: unknown[] }).pages.length, hash: probe.layoutHash(doc), warnings: probe.warningsOf(doc),
+      pages: (doc as { pages: unknown[] }).pages.length, hash: probe.layoutHash(doc), lines: probe.linesHash(doc), warnings: probe.warningsOf(doc),
     }));
     return { chapters, fonts: {}, settled: true, errors, bundleUrl };
   } finally {
@@ -432,7 +485,7 @@ export async function runSandboxCheck(opts: SandboxOptions): Promise<CaptureResu
       process.stderr.write(dim(`  ${opts.site ? "opening" : "laying out"} ${edition.slug} ${edition.variant}\n`));
       let run: SandboxRun | null = null;
       let findings: SandboxFinding[];
-      // The hash is the engine's: only the recorded release gives the recorded one.
+      // The lines are the engine's: only the recorded release gives the recorded ones.
       let version = tree;
       // A step that never answered gets a second try in a context of its
       // own: a font file the network stalled on is in the cache by then, and

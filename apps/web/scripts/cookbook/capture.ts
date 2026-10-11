@@ -215,18 +215,18 @@ function sandboxMeta(slug: string, variant: SampleLocale, meta: RecipeMeta): San
  *  when it holds only some of the published builds, which one the recipe
  *  kept (`capture.sandbox`) and how many pages it lays out to; then what
  *  `pnpm cookbook sandbox` compares the Sandbox's own layout with (#736):
- *  each chapter's pages and layout hash as the bundle reads back, and the
- *  warnings of the pen's builds it holds. */
+ *  each chapter's pages, layout hash and lines hash as the bundle reads
+ *  back, and the warnings of the pen's builds it holds. */
 export function sandboxEntry(slug: string, bundle: Pick<SandboxBundle, "pages" | "allPages" | "readBack" | "penWarnings"> & { bytes: Buffer }, meta: Pick<RecipeMeta, "folio" | "capture">) {
   const folio = folioHash(meta.folio);
   const keep = meta.capture.sandbox;
   const back = bundle.readBack && !bundle.readBack.error && !bundle.readBack.skipped ? bundle.readBack : null;
-  const chapters = (back?.chapters ?? []).map((c) => c.bundle).filter((c): c is { pages: number; hash: string } => !!c);
+  const chapters = (back?.chapters ?? []).map((c) => c.bundle).filter((c): c is { pages: number; hash: string; lines?: string } => !!c);
   return {
     file: sandboxFile(slug), bytes: bundle.bytes.length, ...(folio ? { folio } : {}),
     ...(keep !== undefined ? { keep } : {}),
     ...(bundle.pages && bundle.pages !== bundle.allPages ? { pages: bundle.pages } : {}),
-    ...(chapters.length ? { chapters: chapters.map(({ pages, hash }) => ({ pages, hash })) } : {}),
+    ...(chapters.length ? { chapters: chapters.map(({ pages, hash, lines }) => ({ pages, hash, ...(lines ? { lines } : {}) })) } : {}),
     ...(bundle.penWarnings.length ? { warnings: bundle.penWarnings } : {}),
   };
 }

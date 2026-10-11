@@ -1041,10 +1041,12 @@ function legibility(page, doc, blocks, resolved) {
 }
 
 /** The text the VDT hash covers: pages → blocks → lines (text + bbox
- *  rounded to 0.5 px), plus the design slots' text. OS-independent. */
-function vdtText(docs, { own = false } = {}) {
+ *  rounded to 0.5 px), plus the design slots' text. OS-independent.
+ *  Without `boxes`: what is set and in what order, and nothing measured
+ *  ({@link linesHash}). */
+function vdtText(docs, { own = false, boxes = true } = {}) {
   const r = (v) => round(Number(v) || 0, 0.5);
-  const box = (b) => (b ? `${r(b.x)},${r(b.y)},${r(b.width)},${r(b.height)}` : '-');
+  const box = (b) => (!boxes ? '' : b ? `${r(b.x)},${r(b.y)},${r(b.width)},${r(b.height)}` : '-');
   const out = [];
   const lines = (list) => { for (const l of list ?? []) out.push(`L${box(l.bbox)}|${l.text}`); };
   const slot = (tag, design) => {
@@ -1669,6 +1671,20 @@ export function layoutHash(doc) {
   return shortHash(vdtText([doc], { own: true }));
 }
 
+/** The lines hash of one document: its pages, the blocks of each in their
+ *  order and the text of every line and running head, with no box. A line
+ *  that breaks at another word, a block on another page and a line more or
+ *  fewer change it; a width that differs does not. What holds between two
+ *  builds of one family: a pen measures with the static cuts Fontsource
+ *  serves and the Sandbox with Google's variable file, whose advances
+ *  between the masters are not rounded to the font's units, so the widths
+ *  {@link layoutHash} rounds to half a pixel fall on either side of it
+ *  (#736: on 1.28.1, 127 of 334 editions with every line the same and
+ *  another layout hash). */
+export function linesHash(doc) {
+  return shortHash(vdtText([doc], { own: true, boxes: false }));
+}
+
 /** A short hash of a layout text (two rounds of FNV-1a), for the report. */
 function shortHash(text) {
   let a = 0x811c9dc5;
@@ -1818,11 +1834,11 @@ export async function readBundleBack(engine, bytes, penDocs, held = []) {
     const side = (doc) => {
       if (!doc) return null;
       const text = vdtText([doc], { own: true });
-      return { pages: doc.pages?.length ?? 0, hash: shortHash(text), text };
+      return { pages: doc.pages?.length ?? 0, hash: shortHash(text), lines: linesHash(doc), text };
     };
     const pen = side(penDocs[i]);
     const bundle = side(docs[i]);
-    const strip = (s) => (s ? { pages: s.pages, hash: s.hash } : null);
+    const strip = (s) => (s ? { pages: s.pages, hash: s.hash, lines: s.lines } : null);
     const differs = !!pen && !!bundle && pen.text !== bundle.text;
     chapters.push({
       chapter: i + 1, pen: strip(pen), bundle: strip(bundle),

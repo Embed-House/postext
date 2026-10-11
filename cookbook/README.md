@@ -118,7 +118,7 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships and HarfBuzz as the binary it copies, whichever of the two wrote `dist`; a worker recipe starts its layout worker on the same files) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
 | `pnpm cookbook capture [slug…] --verify` | For after a release: runs as a capture does and writes only the record that this release left the capture unchanged (`verified` in `capture.json`, §11), which the recipe page, its Markdown page and the gallery print as "tested with". A recipe whose files would change is listed as needing a recapture, with the reason (layout hash, pixels, PDF, bundle), and the command exits 1. The round after a release is `pnpm cookbook capture --all --verify`, a look at what it lists, and `pnpm cookbook capture <those>`. |
-| `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Google Fonts and Fontsource, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11). With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
+| `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Google Fonts and Fontsource, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11): pages, lines and warnings. With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
 | `pnpm cookbook sandbox [slug…] --site https://postext.dev` | The same comparison on a deployed site: the Sandbox route a recipe page links to, one browser context per edition, the layout worker's documents read from the page. It also fails when the page fetched another edition's bundle. Page differences fail here (`--no-strict` makes them warnings). |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
@@ -836,10 +836,26 @@ defects lived on that path with every capture check green (a bold drawn by the b
 family's failed request costing every family its faces, a bundle keeping one configuration
 of several, a configuration that changed when stripped), and each showed as a warning the
 Sandbox raised and the pen did not. So the `sandbox` entry of `capture.json` also records
-what the Sandbox may give back: `chapters`, each chapter's pages and layout hash as the
-bundle reads back (the hash C33 compares), and `warnings`, the warnings of the pen's builds
-the bundle holds, kind and what each names, left out when there are none. `--sandbox-only`
-writes both without touching a picture.
+what the Sandbox may give back: `chapters`, each chapter's pages, layout hash (`hash`, the
+one C33 compares: every line with its box, to half a pixel) and lines hash (`lines`: the
+pages, the blocks and the text of every line in their order, with no box) as the bundle
+reads back, and `warnings`, the warnings of the pen's builds the bundle holds, kind and what
+each names, left out when there are none. `--sandbox-only` writes them without touching a
+picture.
+
+The two hashes are there because the Sandbox does not measure with the files a pen measures
+with. The kit loads the static cuts Fontsource serves (`<family>-latin-400-normal.woff2`);
+the Sandbox's loader asks Google Fonts for the whole weight axis and gets the variable file.
+At a master of the family the two give the same advances; between masters the static cut has
+them rounded to the font's units and the variable file does not (Nunito Sans 400: 64 of 74
+glyphs up to half a unit apart; Source Serif 4 at 600: up to 1.2). A line of body text comes
+out a few hundredths to a few tenths of a pixel wider or narrower (an edition's widest
+difference is 0.11 px in the median one and 2.3 px in the worst, Latin set in Noto Serif JP),
+the layout hash rounds every box to half a pixel, and a width near the half falls on either
+side. On the 334
+editions captured on 1.28.1 the Sandbox gave another layout hash for 134: 127 with every
+line the same, 7 (five recipes) with two to eight lines broken at another word, a line that
+was within that fraction of its measure. The lines hash tells the two apart.
 
 `pnpm cookbook sandbox` lays the bundle out with the Sandbox package's own functions
 (`packages/postext-sandbox/src/headless/layOutBundle.ts`: the bundle read as a project
@@ -851,9 +867,16 @@ its worker, each continuing the one before) and compares:
   `sandbox.warnings`. For a `fontFallback` the line names the family's faces on the page and
   in the worker, which is where the four defects were read.
 - **Warnings, failures with `--strict`**: another chapter count, another page count, or, on
-  the release `capture.json` records, another layout hash than `sandbox.chapters`. A pull
-  request that moves lines on purpose cannot capture the recipe again before its release, so
-  on the working tree these only warn; on a site (`--site`) they fail.
+  the release `capture.json` records, other lines than `sandbox.chapters` (`lines`): a line
+  broken at another word, a line more or fewer, a block on another page. A pull request that
+  moves lines on purpose cannot capture the recipe again before its release, so on the
+  working tree these only warn; on a site (`--site`) they fail.
+- **Notes**: the recorded lines under another layout hash, which is the same page set with
+  another build of its faces. The line names the families the Sandbox took from a variable
+  file.
+- A chapter recorded with no `lines` (a capture from before them) and another layout hash
+  warns, strict or not, and says to capture with `--sandbox-only`: the layout hash alone
+  cannot tell a line that moved from one set to another width.
 - An edition whose `capture.json` has no `sandbox.chapters` yet is compared on its page
   total, and its warnings are printed as notes.
 

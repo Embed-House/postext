@@ -156,9 +156,12 @@ describe('layOutBundle (#736)', () => {
     const out = await layOutBundle(await bundle(), {
       locale: 'en', handle,
       layoutHash: (doc: VDTDocument) => `h${doc.pages.length}`,
+      linesHash: (doc: VDTDocument) => `l${doc.pages.length}`,
       warningsOf: (doc: VDTDocument) => (doc.contentWarnings ?? []).map((w) => `${w.kind}!`),
     });
     expect(out.chapters.map((c) => c.hash)).toEqual([`h${out.chapters[0]!.pages}`, `h${out.chapters[1]!.pages}`]);
+    // The lines of a chapter, keyed apart from its boxes (#736).
+    expect(out.chapters.map((c) => c.lines)).toEqual([`l${out.chapters[0]!.pages}`, `l${out.chapters[1]!.pages}`]);
     expect(out.chapters[1]!.warnings).toContain('unknownResourceId!');
   });
 
