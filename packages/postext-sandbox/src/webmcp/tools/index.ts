@@ -4,10 +4,11 @@ import { bookTools } from './book';
 import { checkTools } from './checks';
 import { comicTools } from './comics';
 import { configTools } from './config';
-import { libraryTools } from './library';
+import { answerTools, libraryTools } from './library';
 import { pageTools } from './pages';
 import { resourceTools } from './resources';
 import { viewTools } from './view';
+import { wordTools } from './word';
 
 /** Every tool the Sandbox hands an agent, in the order an agent meets
  *  them: what is open, the pages, the text, the design, how it is shown,
@@ -23,6 +24,8 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...resourceTools(host),
     ...comicTools(host),
     ...libraryTools(host),
+    ...wordTools(host),
+    ...answerTools(host),
     ...checkTools(host),
   ];
 }
