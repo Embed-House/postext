@@ -38,8 +38,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.26.0",
-    "postextPdf": "1.26.0"
+    "postext": "1.28.0",
+    "postextPdf": "1.28.0"
   },
   "kit": [
     "core",

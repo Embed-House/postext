@@ -124,10 +124,6 @@ const config = () => ({
     firstLineIndent: mm(4), indentAfterHeading: false },
   headings: {
     fontFamily: DISPLAY, fontWeight: 800, color: col('ink'),
-    // Columns end flush by adding grid lines above the H2s. Beside a float band a column can
-    // come up several lines short; one line per heading (the default is 4) keeps a section
-    // head from floating in a gap, and the balancer's other levers take what is left.
-    balancing: { maxLinesPerHeading: 1 },
     levels: [
       // A chapter opens on a recto; 'odd' leaves a blank verso only when one is needed.
       { level: 1, fontSize: pt(27), span: 'page', breakBefore: { enabled: true, parity: 'odd' },

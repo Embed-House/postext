@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 123 · A Japanese technical manual: kana, kanji and Latin ═══
 // https://postext.dev/en/cookbook/japanese-technical-manual
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: drawn in code
-// Fonts: Noto Serif JP, Noto Sans JP, BIZ UDGothic (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Noto Serif JP, Noto Sans JP, BIZ UDGothic (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, defaultResourceTypes, parseTSV,
   registerResourceImage, inlineSvgFonts,
@@ -51,6 +51,8 @@ const bodyText = {
   textAlign: 'justify', firstLineIndent: em(1), indentAfterHeading: true, // 1 字下げ
   referenceBold: false, // 図3-1 and 表3-1 in the text weight: the face loads no bold
   hyphenation: { enabled: false }, avoidRunts: true, // no one-character last line
+  // The grid cuts a list where the page ends: the four forms stay in one piece.
+  shortListSplit: 'avoid', shortListMaxItems: 4,
 };
 // #endregion
 

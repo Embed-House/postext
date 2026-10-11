@@ -5,7 +5,7 @@ plain: "一本旅行自行车的简短用户手册。正文让你去看另一节
 description: "用Postext排产品手册：编号章节、段落和步骤上的锚点，以及按编号、标题和页码给出的交叉引用，会自动更新并可点击跳转。"
 question: "怎样引用某一节及其所在页码，并在书变动时保持正确？"
 aliases: ["交叉引用", "参见第几页", "页码引用", "锚点", "标签", "参见某节", "手册", "用户手册", "内部链接", "pandoc-crossref"]
-pageNotes: { "1": "第1页：上半页一条藏青色色带，上有OWNER’S MANUAL、白色大号窄体的型号Ardena T3、副标题和版次，下缘一条橙色细带；下方是简介和一份目录，其中的节号、标题和页码都是橙色的交叉引用。", "2": "第2页：第1节，有section 3.2 on page 3这样的引用，以及链接到2.2节某一步骤的close the lever；调整座高的编号步骤；关于胎压的2.1节。", "3": "第3页：拆装前轮、关于刹车的第3节、一个带橙色侧条的Wet weather框，以及3.2节的开头。", "4": "第4页：调整刹车线、关于链条的第4节（回指第3页的Wet weather），以及保养计划：每个周期都指向一节和一页。" }
+pageNotes: { "1": "第1页：上半页一条藏青色色带，上有OWNER’S MANUAL、白色大号窄体的型号Ardena T3、副标题和版次，下缘一条橙色细带；下方是简介和一份目录，其中的节号、标题和页码都是橙色的交叉引用。", "2": "第2页：第1节，有section 3.2 on page 3这样的引用，以及链接到2.2节某一步骤的close the lever so that it points backwards；调整座高的编号步骤；关于胎压的2.1节。", "3": "第3页：拆装前轮、关于刹车的第3节、一个带橙色侧条的Wet weather框，以及3.2节的开头。", "4": "第4页：调整刹车线、关于链条的第4节（回指第3页的Wet weather），以及保养计划：每个周期都指向一节和一页。" }
 ---
 
 ## 成品一览
@@ -16,7 +16,7 @@ pageNotes: { "1": "第1页：上半页一条藏青色色带，上有OWNER’S MA
 
 ### 1 · 给要指向的地方起名
 
-代码就是上面的[简短回答](#简短回答)。标题用Pandoc的标识符写法，`### Checking pad wear {#sec-pad-wear}`；胎压警告以`:anchor{#warn-pressure}`开头，这是一个不可见的标记；装前轮的最后一步是`[close the lever]{#step-close-lever}`，文字保留并获得名字；提示框以`:::callout{#box-wet type="note" title="Wet weather"}`开头。引用这一步会印出它的文字，引用提示框会印出框的标题。
+代码就是上面的[简短回答](#简短回答)。标题用Pandoc的标识符写法，`### Checking pad wear {#sec-pad-wear}`；胎压警告以`:anchor{#warn-pressure}`开头，这是一个不可见的标记；装前轮的最后一步是`[close the lever so that it points backwards]{#step-close-lever}`，文字保留并获得名字；提示框以`:::callout{#box-wet type="note" title="Wet weather"}`开头。引用这一步会印出它的文字，引用提示框会印出框的标题。
 
 ### 2 · 同一个目标，四种叫法
 

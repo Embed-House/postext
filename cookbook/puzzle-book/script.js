@@ -180,6 +180,7 @@ const chip = (id, fill) => ({ id, fontFamily: LABEL, fontSize: em(0.8), bold: tr
 // resourceTypes is declared with the answers below: config() runs later.
 const config = () => ({
   colorPalette, resourceTypes, tableStyle, tableStyles, footer, header: { elements: [] },
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { width: mm(PAGE), height: mm(PAGE), dpi: 150, margins: { top: mm(MARGIN),
     bottom: mm(MARGIN), left: mm(MARGIN), right: mm(MARGIN) } },
   layout: { layoutType: 'single' },

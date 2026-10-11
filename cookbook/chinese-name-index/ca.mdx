@@ -59,11 +59,11 @@ Una llista curta de noms es llegeix bé amb una línia en blanc entre grups i ca
 
 ```diff
 -  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
--    marginTop: pt(7) },
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
 +  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
 ```
 
 ## Errors freqüents
 
 - La configuració `index` és del document, així que un document imprimeix un sol ordre. Un llibre que vulgui un índex per pinyin i un altre per traços es compon dues vegades, com fa aquest codi.
-- En una retícula de caràcters l'equilibratge de columnes està desactivat per defecte, i l'última pàgina de cada índex ompliria la primera columna fins al peu: el colofó de l'edició simplificada començaria sota la Z i acabaria al cap de la segona columna. `headings.balancing: { enabled: true }` iguala les dues columnes d'aquesta pàgina i deixa el colofó sencer sota la segona ([Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes)).
+- En una retícula de caràcters l'equilibratge de columnes està desactivat per defecte, i l'última pàgina de cada índex ompliria la primera columna fins al peu: el colofó de l'edició simplificada començaria sota la Z i acabaria al cap de la segona columna. `headings.balancing: { enabled: true }` talla abans la primera columna d'aquesta pàgina, de manera que els noms continuen a la segona i el colofó queda sencer a sota ([Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes)). El tall cau entre entrades i no deixa mai un nom d'un grup sol al peu o al cap d'una columna (`index.groups.splitMinEntries`, 2 per defecte), així que les dues columnes només acaben igualades quan les llargades ho permeten. Aquí cada colofó porta una frase sobre l'ordre del seu índex, i les columnes de les dues pàgines de tancament acaben a menys d'un terç de línia l'una de l'altra.

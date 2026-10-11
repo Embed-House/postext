@@ -14,7 +14,7 @@ One line of the script is one balloon: the speaker, the kind in braces when it i
 - **Inner voice.** :chip[maya{inner}:]{style="code"} What she does not say aloud: no tail, a grey box, italics.
 - **Editor’s note.** :chip[note:]{style="code"} Small, in the panel’s lower corner.
 - **Sound effect.** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} No balloon: display letters in red with a white outline, placed and turned by hand.
-- **Off-panel.** :chip[tomas{tail=end}:]{style="code"} The speaker is outside the picture; the tail runs to the panel’s edge.
+- **Off-panel.** :chip[tomas{tail=right}:]{style="code"} The speaker is outside the picture; the tail runs to the panel’s edge.
 - **Pinned.** :chip[skipper{at="44% 22%"}:]{style="code"} The balloon is centred on that point of the picture, whatever the crop.
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout}: *Gannet!* Steer for the light! Keep it on your bow!
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: KRA-KOOM
 skipper{at="44% 22%"}: We see it… we see the light…
-tomas{tail=end}: Easy now. Bring her round slow.
+tomas{tail=right}: Easy now. Bring her round slow.
 ::panel{art=bk-window}
 maya{inner}: Come on. Come on. Come on.
 caption{at=bottom-start}: It took them two hours.

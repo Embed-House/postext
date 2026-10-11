@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 098 · An edited volume with a bibliography per chapter ═════
 // https://postext.dev/en/cookbook/edited-volume-chapter-bibliographies
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Libre Caslon Text & Display, IBM Plex Sans Condensed (OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Libre Caslon Text & Display, IBM Plex Sans Condensed (OFL 1.1) · Needs postext ≥ 1.28.0
 // Three essays by three contributors, each a Markdown document of its own with its own
 // BibTeX block, laid out by buildBundle as one volume: every chapter closes on its own list.
 import {
@@ -146,9 +146,10 @@ const config = () => ({
     textAlign: 'justify', firstLineIndent: mm(4.5), indentAfterHeading: false,
     hyphenation: { enabled: true }, optimalLineBreaking: true, maxWordSpacing: 1.7,
     avoidWidows: true, avoidOrphans: true, avoidRunts: true },
+  // 'remainder': a subhead that opens a page keeps the half line above it and stands as
+  // close to its text as the subheads set in mid-page.
   headings: { fontFamily: DISPLAY, fontWeight: 400, color: col('ink'),
-    // A page that ends short may open at most one extra line above a subhead.
-    balancing: { maxLinesPerHeading: 1 }, levels: [
+    columnHeadSpace: 'remainder', levels: [
     // 'any': an essay opens on the next page, recto or verso, as in most edited volumes.
     { level: 1, numberingTemplate: '{1}', marginBottom: pt(LEAD),
       breakBefore: { enabled: true, parity: 'any' }, advancedDesign: opener },

@@ -16,13 +16,13 @@ Two pages of a research note, 号数活字の三つの系列 (“Three series of
 
 ### 1 · The style, the locale and the notes
 
-The code is [the short answer](#the-short-answer) above. `postext-citeproc` ships SIST 02 as `'sist02'` and the CSL locale `ja-JP`, which writes the list’s terms in Japanese and joins two Japanese authors with と and more with ほか in a narrative citation ([Citations](/en/docs/configuration-notes-references#citations)). In the text, `[@kawada1949; @suzuki2015]` prints (2, 3), and `高橋[@takahashi2012]が` puts the number after the name, 高橋(8)が. The style differs from the Chinese GB/T 7714 in the marker: SIST 02 sets the number in parentheses on the line, GB/T 7714 in square brackets raised. The notes need nothing: `locale: 'ja'` gives a horizontal document notes at the foot of the column, numbered from 1 on each page, with a superscript marker and a rule a third of the column long.
+The code is [the short answer](#the-short-answer) above. `postext-citeproc` ships SIST 02 as `'sist02'` and the CSL locale `ja-JP`, which writes the list’s terms in Japanese and joins two Japanese authors with と and more with ほか in a narrative citation ([Citations](/en/docs/configuration-notes-references#citations)). In the text, `[@kawada1949; @suzuki2015]` prints (2, 3), and `高橋[@takahashi2012]が` puts the number after the name, 高橋(8)が, which the page sets with a quarter em on each side of the parentheses, as it does round any Western word in Japanese text. The style differs from the Chinese GB/T 7714 in the marker: SIST 02 sets the number in parentheses on the line, GB/T 7714 in square brackets raised. The notes need nothing: `locale: 'ja'` gives a horizontal document notes at the foot of the column, numbered from 1 on each page, with a superscript marker and a rule a third of the column long.
 
 ### 2 · The references in a CSL-YAML block
 
 The works are listed at the end of the Markdown in `:::references{format=csl-yaml}`, the format Zotero exports as CSL YAML ([Citing](/en/docs/document-format#citing)). Japanese names go in as `family` and `given`, `{family: 鈴木, given: 広光}`, and SIST 02 prints them solid, 鈴木広光, while Kornicki keeps his comma: Kornicki, Peter. A book series goes in `collection-title` and prints in parentheses after the year; the two articles from 日本印刷学会誌 give volume, issue and pages as vol. 49, no. 2, p. 76–80. Every work is real; their entries can be checked in CiNii.
 
-<PageShot page={2} crop="0.5,0.08,0.45,0.25" caption="Page 24: entries (3) to (9), Japanese names family first, place before publisher, the year last." />
+<PageShot page={2} crop="0.5,0.36,0.45,0.212" caption="Page 24: entries (3) to (9), Japanese names family first, place before publisher, the year last." />
 
 ### 3 · The title on the journal’s band
 

@@ -7,8 +7,7 @@ author: "Nuria Castellví, Tomás Iribarren, Helena Quiroga"
 
 **Resumen.** Medimos el aire a la altura de la cabeza en las dieciséis manzanas de la avenida de la Estación, y fotografiamos sus aceras con una cámara térmica, en las catorce tardes de 2025 que pasaron de 30 °C. De 13:00 a 17:00, bajo un 70 % de copa o más, el aire estuvo 4,2 °C más fresco que en el tramo comercial, casi sin árboles, y el pavimento 15 °C más fresco. El Ayuntamiento decidirá así cuáles de sus 212 alcorques vacíos plantará primero.
 
-:::callout{type="grid" span="page"}
-:::columns{count=3 breaks="3,4"}
+:::columns{count=3 breaks="3,4" span="page" marginBottom="0.75em"}
 :::callout{type="panel" title="Introducción"}
 En julio, a media tarde, una acera de hormigón al sol puede pasar de 50 °C, y el aire que tiene encima se calienta con ella. Las copas detienen el sol antes de que llegue al pavimento [1, 2].
 
@@ -81,7 +80,6 @@ El Ayuntamiento arbolará primero las manzanas más calurosas, empezando por el 
 :::space{lines=0.75}
 
 Gracias al alumbrado público de Almedo por las farolas y a Inês Barros por sus catorce vueltas con la cámara térmica.
-:::
 :::
 :::
 

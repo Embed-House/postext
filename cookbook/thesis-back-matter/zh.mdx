@@ -28,7 +28,7 @@ pageNotes: { "1": "第171页是第6章Conclusion的开篇，位于一条62 mm高
 
 <Excerpt region="appendix" />
 
-附录的样式设了`numberingTemplate: '{1:A}'`，把所在级别的计数器印成字母；`# Interview guide {style="appendix" startAt=1}`让计数器重新开始，所以第一个附录是A而不是G（[标题样式](/zh/docs/configuration-styles#标题样式)）。色带通过`{number}`读到这个字母，书眉通过`{chapterNumber}`读到。资源类型的`{h1}`把计数器印成数字，所以附录自己的资源类型把其中的表编为A.1、A.2，依此类推；如果用默认类型，这张表会成为表1.1。本章自己的标题按各级模板计数：`'{1}.{2}'`印出6.1，`continuation.headings.h1: 5`让这一章成为第六章。
+附录的样式设了`numberingTemplate: '{1:A}'`，把所在级别的计数器印成字母；`# Interview guide {style="appendix" startAt=1}`让计数器重新开始，所以第一个附录是A而不是G（[标题样式](/zh/docs/configuration-styles#标题样式)）。色带通过`{number}`读到这个字母，书眉通过`{chapterNumber}`读到。资源类型的`{h1}`在不指定样式时把计数器印成数字，所以附录里的表用模板为`'{h1:A}.{n}'`的类型：A.1、A.2，依此类推，第二个附录则是B.1；如果用默认类型，这张表会成为表1.1。本章自己的标题按各级模板计数：`'{1}.{2}'`印出6.1，`continuation.headings.h1: 5`让这一章成为第六章。
 
 ### 4 · 把书眉放在外侧
 

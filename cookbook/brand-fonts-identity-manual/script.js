@@ -164,7 +164,7 @@ const resourceTypes = [...defaultResourceTypes(LANG),
 const FOOT = { position: 'bottom' }; // cited in one paragraph: its page's foot, one per column
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette, resourceTypes, customFonts: customFonts(),
   page: { width: mm(PAGE.width), height: mm(PAGE.height), dpi: 150,
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.inner),

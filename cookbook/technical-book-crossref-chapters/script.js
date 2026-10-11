@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 094 · A technical book whose references cross chapters ═══
 // https://postext.dev/en/cookbook/technical-book-crossref-chapters
 // Code: MIT · Text: original (CC BY 4.0) · Charts: generated in code (CC BY 4.0)
-// Fonts: IBM Plex Serif, Sans Condensed and Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: IBM Plex Serif, Sans Condensed and Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // A small handbook in four Markdown documents. The text writes @fig:sun, @tbl:loads and
 // @sec:array-size the way pandoc-crossref reads them, and buildBundle resolves each one to
 // the right number, title or page wherever in the book its target lies.
@@ -153,7 +153,10 @@ const config = () => ({
     textAlign: 'justify', firstLineIndent: mm(4.5), indentAfterHeading: false,
     hyphenation: { enabled: true }, optimalLineBreaking: true,
     avoidWidows: true, avoidOrphans: true, avoidRunts: true },
-  headings: { fontFamily: COND, color: col('ink'), fontWeight: 600, levels: [
+  // 'remainder': a section title that opens a page keeps the half line above it, so its
+  // text follows it as closely as under the titles set in mid-page (a book in one column).
+  headings: { fontFamily: COND, color: col('ink'), fontWeight: 600,
+    columnHeadSpace: 'remainder', levels: [
     // 'any': short chapters start on the next page, recto or verso.
     { level: 1, fontSize: pt(30), numberingTemplate: '{1}',
       breakBefore: { enabled: true, parity: 'any' }, advancedDesign: opener,

@@ -22,6 +22,8 @@ El código es [la respuesta corta](#la-respuesta-corta) de arriba. La [retícula
 
 El papel de manuscrito tiene su propio kinsoku. Un kana pequeño o una ー pueden empezar línea, cada uno en su casilla; `ja-loose` lo permite. Un 、 o un 。 que abriría línea se escribe en la última casilla de la anterior, junto al carácter que hay allí, o justo debajo; `hangingPunctuation: 'force'` lo cuelga bajo la vigésima casilla, y ninguna línea se aprieta nunca. Con `'allow'`, el valor por defecto en japonés, el motor mete primero el signo en la línea apretando a media casilla otro 、 de dentro, lo que hace un libro impreso y nunca un manuscrito: el resto de esa línea quedaría media casilla más arriba, cruzando las líneas de la retícula.
 
+La última línea de un párrafo pide un ajuste más. Postext evita que un párrafo acabe en un solo carácter: la línea anterior le cede el último suyo, y como aquí el texto no va justificado, esa línea se quedaría con una casilla vacía. En el papel de manuscrito se escribe en todas las casillas de una línea completa, así que la retícula lleva `fullLines: true`: en la <PageRef page={3}>hoja 3</PageRef> la línea que acaba en 来 conserva sus veinte casillas y el párrafo se cierra con た。 solo ([retícula de caracteres](/es/docs/configuration-east-asian#retícula-de-caracteres)).
+
 ### 3 · Escribe el título y el nombre donde los ponen las normas
 
 <Excerpt region="heading" />

@@ -16,7 +16,7 @@ O relatório anual de 2025 da Tidewell Community Energy, uma cooperativa inventa
 
 ### 1 · Mantenha cada linha na grade e deixe as alavancas fecharem os vãos
 
-O código é [a resposta curta](#a-resposta-curta) logo acima. A mancha tem exatamente 50 linhas de 13,4 pt de altura, e a margem inferior (21,6 mm) é calculada a partir dessa altura. Um intertítulo ocupa uma linha da grade acima dele e uma para si, então uma coluna que termina curta fica curta em linhas inteiras, e linhas inteiras são o que o <Feature id="column-balancing">balanceamento de colunas</Feature> acrescenta. Na <PageRef page={3}>página 3</PageRef>, o parágrafo de três linhas sobre a chuva de granizo vai inteiro para a página 4 por causa de `avoidOrphans`, o nome que o Postext dá à regra que impede a última linha de um parágrafo de ficar sozinha no alto de uma coluna, e a coluna direita termina duas linhas curta. `maxLinesPerHeading: 1` dá uma dessas linhas ao espaço acima de *The Saltings and the roofs* e deixa a outra para a alavanca seguinte, que a acrescenta depois da lista de telhados. Com o padrão de 4, as duas linhas iriam para cima do título.
+O código é [a resposta curta](#a-resposta-curta) logo acima. A mancha tem exatamente 50 linhas de 13,4 pt de altura, e a margem inferior (21,6 mm) é calculada a partir dessa altura. Um intertítulo ocupa uma linha da grade acima dele e uma para si, então uma coluna que termina curta fica curta em linhas inteiras, e linhas inteiras são o que o <Feature id="column-balancing">balanceamento de colunas</Feature> acrescenta. Na <PageRef page={3}>página 3</PageRef>, o parágrafo de três linhas sobre a chuva de granizo vai inteiro para a página 4 por causa de `avoidOrphans`, o nome que o Postext dá à regra que impede a última linha de um parágrafo de ficar sozinha no alto de uma coluna, e a coluna direita termina duas linhas curta. `maxLinesPerHeading: 1` dá uma dessas linhas ao espaço acima de *The Saltings and the roofs* e deixa a outra para a alavanca seguinte, que a acrescenta depois da lista de telhados. Por padrão, um título recebe até duas linhas antes de as alavancas seguintes serem tentadas (`maxLinesBeforeLoose`), e até quatro quando elas não têm mais nada a dar, então as duas linhas iriam para cima do título.
 
 ### 2 · Corte o texto em nível acima de um boxe que atravessa a página
 
@@ -50,7 +50,7 @@ As duas linhas livres da página 3 vão então para cima de *The Saltings and th
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
-+const balancing = {}; // the default: up to 4 lines above each heading
++const balancing = {}; // the default: two lines above a heading, then the other levers
 ```
 
 ### Desligue o balanceamento

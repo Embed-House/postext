@@ -7,8 +7,7 @@ author: "Amara Osei, Tomás Lindqvist, Hannah Kiel"
 
 **Summary.** We logged the air at head height on the sixteen blocks of Ashby Road, and photographed both sidewalks with a thermal camera, on the fourteen afternoons of 2025 above 30 °C. From 13:00 to 17:00 the air on the blocks under 70 % canopy or more was 4.2 °C cooler than on the near-treeless blocks of the Parade, and the paving 15 °C cooler. The council will use the result to choose which of its 212 empty tree pits to plant first.
 
-:::callout{type="grid" span="page"}
-:::columns{count=3 breaks="3,4"}
+:::columns{count=3 breaks="3,4" span="page" marginBottom="0.75em"}
 :::callout{type="panel" title="Introduction"}
 By mid-afternoon in July a sunlit concrete sidewalk can pass 50 °C, and the air above it warms with it. Tree crowns stop the sun before it reaches the paving [1, 2].
 
@@ -81,7 +80,6 @@ The council plants the hottest blocks first. We will repeat the survey in the su
 :::space{lines=0.75}
 
 We thank the Wrenfield street-lighting depot for the lamp posts, and Inês Barros for walking the thermal survey fourteen times.
-:::
 :::
 :::
 

@@ -16,7 +16,7 @@ La memoria de 2025 de Tidewell Community Energy, una cooperativa inventada con d
 
 ### 1 · Todo sobre la rejilla, y las palancas cierran los huecos
 
-El código es [la respuesta corta](#la-respuesta-corta) de arriba. La caja de texto mide exactamente 50 líneas de 13,4 pt, y el margen inferior (21,6 mm) se calcula a partir de esa altura. Cada ladillo ocupa una línea de la rejilla encima y otra propia, así que una columna que acaba corta se queda corta en líneas enteras, que es lo que añade el <Feature id="column-balancing">equilibrado de columnas</Feature>. En la <PageRef page={3}>página 3</PageRef>, el párrafo de tres líneas sobre el granizo pasa entero a la página 4 por `avoidOrphans`, el ajuste con el que Postext impide que la última línea de un párrafo quede sola en la cabeza de una columna (la línea viuda de los manuales españoles), y la columna derecha se queda dos líneas corta. Con `maxLinesPerHeading: 1`, una de esas líneas va al espacio sobre *The Saltings and the roofs* y la otra queda para la palanca siguiente, que la pone tras la lista de tejados. Con el valor por defecto, 4, irían las dos sobre el título.
+El código es [la respuesta corta](#la-respuesta-corta) de arriba. La caja de texto mide exactamente 50 líneas de 13,4 pt, y el margen inferior (21,6 mm) se calcula a partir de esa altura. Cada ladillo ocupa una línea de la rejilla encima y otra propia, así que una columna que acaba corta se queda corta en líneas enteras, que es lo que añade el <Feature id="column-balancing">equilibrado de columnas</Feature>. En la <PageRef page={3}>página 3</PageRef>, el párrafo de tres líneas sobre el granizo pasa entero a la página 4 por `avoidOrphans`, el ajuste con el que Postext impide que la última línea de un párrafo quede sola en la cabeza de una columna (la línea viuda de los manuales españoles), y la columna derecha se queda dos líneas corta. Con `maxLinesPerHeading: 1`, una de esas líneas va al espacio sobre *The Saltings and the roofs* y la otra queda para la palanca siguiente, que la pone tras la lista de tejados. Por defecto, un título toma hasta dos líneas antes de que se prueben las palancas que le siguen (`maxLinesBeforeLoose`), y hasta cuatro cuando a estas no les queda nada que dar, así que las dos irían sobre el título.
 
 ### 2 · Iguala el texto sobre un recuadro que cruza la página
 
@@ -50,7 +50,7 @@ En la página 3, las dos líneas libres van entonces sobre *The Saltings and the
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
-+const balancing = {}; // the default: up to 4 lines above each heading
++const balancing = {}; // the default: two lines above a heading, then the other levers
 ```
 
 ### Desactiva el equilibrado

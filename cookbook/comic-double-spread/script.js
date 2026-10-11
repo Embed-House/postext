@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 154 · One comic page across a double spread ═══════════════
 // https://postext.dev/en/cookbook/comic-double-spread
 // Code: MIT · Story: written for the recipe (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Patrick Hand, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.25.1
+// Fonts: Patrick Hand, Bangers, the comic faces of each script (OFL) · Needs postext ≥ 1.28.0
 // One split tree laid across two facing pages: a panorama runs over the spine, and the
 // tier under it splits at the spine's gutter. Same album, same lettering as Nº 152.
 import {
@@ -138,7 +138,7 @@ const ART = {
       who('lola', .065, .58, [.063, .55], [.045, .51, .04, .11]),
       who('paco', .925, .38, [.925, .34], [.9, .3, .05, .12]),
     ],
-    avoid: [box([.047, .28, .048, .2])], // the fishmonger behind Lola, a bystander
+    faces: [box([.062, .305, .022, .055])], // the fishmonger behind Lola, who says nothing
   },
   ds2: { width: 1152, height: 1152, safeArea: box([.31, .08, .35, .62]),
     alt: t({ en: "Lola, tearful, stands among grown-ups' legs and shopping bags.",

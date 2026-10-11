@@ -16,13 +16,13 @@ Dues pàgines d'una nota de recerca, 号数活字の三つの系列 («Les tres 
 
 ### 1 · L'estil, la locale i les notes
 
-El codi és [la resposta curta](#la-resposta-curta) de més amunt. `postext-citeproc` porta la SIST 02 com a `'sist02'` i la locale CSL `ja-JP`, que escriu en japonès els termes de la llista i, en una citació narrativa, uneix dos autors japonesos amb と i més de dos amb ほか ([Cites](/ca/docs/configuration-text#cites)). Al text, `[@kawada1949; @suzuki2015]` imprimeix (2, 3), i `高橋[@takahashi2012]が` posa el número després del nom, 高橋(8)が. L'estil es distingeix de la GB/T 7714 xinesa per la crida: la SIST 02 posa el número entre parèntesis a la línia, i la GB/T 7714, entre claudàtors i volat. Les notes no necessiten res: `locale: 'ja'` dona a un document horitzontal notes al peu de la columna, numerades des d'1 a cada pàgina, amb la crida volada i un filet d'un terç de la columna.
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. `postext-citeproc` porta la SIST 02 com a `'sist02'` i la locale CSL `ja-JP`, que escriu en japonès els termes de la llista i, en una citació narrativa, uneix dos autors japonesos amb と i més de dos amb ほか ([Cites](/ca/docs/configuration-text#cites)). Al text, `[@kawada1949; @suzuki2015]` imprimeix (2, 3), i `高橋[@takahashi2012]が` posa el número després del nom, 高橋(8)が, que la pàgina compon amb un quart de quadratí a cada costat del parèntesi, com al voltant de qualsevol paraula occidental en un text japonès. L'estil es distingeix de la GB/T 7714 xinesa per la crida: la SIST 02 posa el número entre parèntesis a la línia, i la GB/T 7714, entre claudàtors i volat. Les notes no necessiten res: `locale: 'ja'` dona a un document horitzontal notes al peu de la columna, numerades des d'1 a cada pàgina, amb la crida volada i un filet d'un terç de la columna.
 
 ### 2 · Les referències en un bloc CSL-YAML
 
 Les obres van al final del Markdown dins `:::references{format=csl-yaml}`, el format que Zotero exporta com a CSL YAML ([Citar](/ca/docs/document-format#citar)). Els noms japonesos entren com a `family` i `given`, `{family: 鈴木, given: 広光}`, i la SIST 02 els imprimeix junts, 鈴木広光, mentre que Kornicki conserva la coma: Kornicki, Peter. Una col·lecció va a `collection-title` i surt entre parèntesis després de l'any. Els dos articles de 日本印刷学会誌 donen el volum, el número i les pàgines com a vol. 49, no. 2, p. 76–80. Totes les obres són reals, i les seves fitxes es poden comprovar a CiNii.
 
-<PageShot page={2} crop="0.5,0.08,0.45,0.25" caption="Pàgina 24: les entrades (3) a (9), amb el cognom japonès davant, el lloc abans de l'editorial i l'any al final." />
+<PageShot page={2} crop="0.5,0.342,0.45,0.212" caption="Pàgina 24: les entrades (3) a (9), amb el cognom japonès davant, el lloc abans de l'editorial i l'any al final." />
 
 ### 3 · El títol sobre la banda de la revista
 

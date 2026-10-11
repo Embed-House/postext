@@ -149,7 +149,7 @@ const footer = { elements: [drop('odd', 'bottom-right', -OUTER),
   drop('even', 'bottom-left', OUTER)] };
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette, page, layout, header, footer,
   bodyText: { // every paragraph sits in a styled container and takes these as defaults
     fontFamily: TEXT, fontSize: pt(10.5), lineHeight: pt(LEAD), color: col('ink'),

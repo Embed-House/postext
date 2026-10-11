@@ -1,8 +1,8 @@
 ---
 title: "Pôster científico numa única página grande"
-summary: "Pôster de congresso de 600 × 800 mm: faixa de título sobre um box na largura da página com três colunas de painéis, mapa de calor e −4,2 °C em 150 pt."
+summary: "Pôster de congresso de 600 × 800 mm: faixa de título sobre um grupo na largura da página com três colunas de painéis, mapa de calor e −4,2 °C em 150 pt."
 plain: "Um pôster grande para um congresso científico, sobre as árvores da rua e o calor do verão. Mostra como organizar em colunas caixas de texto e gráficos numa única página muito grande."
-description: "Pôster científico no Postext: a faixa de título como design do H1, três colunas de boxes aninhados num box na largura da página, amostras de cor, chips e PNG."
+description: "Pôster científico no Postext: a faixa de título como design do H1, três colunas de boxes num grupo na largura da página, amostras de cor, chips e PNG."
 question: "Como ponho três colunas de painéis na largura de uma página de duas colunas, como num pôster de congresso?"
 aliases: ["pôster científico", "pôster acadêmico", "pôster de congresso", "banner de congresso", "e-pôster", "pôster digital", "pôster A1", "três colunas de painéis", "grade de pôster"]
 pageNotes: { "1": "Uma faixa verde no alto traz a linha do encontro, o título Street trees and sidewalk heat em letras brancas pesadas, os autores com suas afiliações, uma etiqueta P-47 e uma marca redonda com uma árvore e um sol laranja. Sob um resumo em duas colunas, seis painéis formam três colunas, cada um sob uma tarja colorida: Introduction e Methods, com uma planta da rua; Results, sob uma tarja laranja, com −4,2 °C em algarismos laranja muito grandes, uma legenda de quatro cores, um mapa de calor de 16 quarteirões por hora e um gráfico de barras; Conclusions, Planting plan e References. Uma faixa verde-clara ao longo do pé traz as palavras-chave em molduras arredondadas." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "Uma faixa verde no alto traz a linha do encontro, o título S
 
 ## O que você vai compor
 
-Um pôster de congresso para um estudo inventado sobre árvores de rua e calor na calçada, composto numa única página de 600 × 800 mm. Uma faixa verde traz o encontro, o título em Bitter de 110 pt, os autores com as marcas de afiliação e a marca da School of Geography. Sob um resumo em duas colunas, um box sem moldura atravessa as duas colunas do corpo e contém uma grade de três colunas com seis painéis, cada um num box próprio sob uma tarja de 6 pt. A coluna do meio abre com −4,2 °C em laranja de 150 pt, seguido de um mapa de calor do ar por quarteirão e hora, com legenda em amostras de cor, e de um gráfico de barras da pavimentação. Uma faixa tingida com chips de palavras-chave fica apoiada na margem inferior. O mesmo arquivo compõe uma edição em espanhol, e o pen oferece a página como um PNG de 1.701 × 2.268 px.
+Um pôster de congresso para um estudo inventado sobre árvores de rua e calor na calçada, composto numa única página de 600 × 800 mm. Uma faixa verde traz o encontro, o título em Bitter de 110 pt, os autores com as marcas de afiliação e a marca da School of Geography. Sob um resumo em duas colunas, um grupo `:::columns` atravessa as duas colunas do corpo e compõe seis painéis em três colunas, cada um num box sob uma tarja de 6 pt. A coluna do meio abre com −4,2 °C em laranja de 150 pt, seguido de um mapa de calor do ar por quarteirão e hora, com legenda em amostras de cor, e de um gráfico de barras da pavimentação. Uma faixa tingida com chips de palavras-chave fica apoiada na margem inferior. O mesmo arquivo compõe uma edição em espanhol, e o pen oferece a página como um PNG de 1.701 × 2.268 px.
 
 ## Preparo
 
@@ -26,11 +26,11 @@ Nos 300 dpi padrão, o pôster quebra cada linha no mesmo lugar que a 72 dpi, ma
 
 O H1 leva como atributos o encontro, o número do pôster, os autores e as afiliações, e o seu design os compõe sobre uma caixa verde ancorada à página, com 158 mm de altura ([span e design avançado](/pt/docs/configuration-text#largura-e-design-avançado)). A caixa termina 133 mm abaixo da margem superior. Sem `minHeight`, o resumo começaria 0,9 mm abaixo do verde; um `minHeight` de onze linhas da grade deixa 14 mm. As marcas de afiliação são os caracteres ¹ ² ³, os únicos algarismos sobrescritos da faixa Latin-1.
 
-### 3 · Aninhe os painéis num box na largura da página
+### 3 · Componha os painéis num grupo na largura da página
 
-<Excerpt region="answer" highlight="3-9,21" />
+<Excerpt region="answer" highlight="3-10,19" />
 
-O corpo corre em duas colunas e os painéis em três, então a grade é um grupo `:::columns{count=3}` dentro de um callout sem moldura, e `span="page"` estende esse callout sobre as duas colunas do corpo, sob o resumo ([`:::columns`](/pt/docs/document-format#columns)). Um grupo escrito direto no texto também pode ocupar a largura da página, mas deixa abaixo de si uma linha de espaço entre parágrafos, aqui 38 pt, e a faixa de palavras-chave passaria para uma segunda página. Cada painel é um callout aninhado no grupo: recebe o seu próprio estilo, os 175 mm de largura da coluna e 18 mm de `marginTop` sob o painel de cima ([o contêiner `:::callout`](/pt/docs/configuration-styles#o-contêiner-callout)). `breaks="3,4"` manda o terceiro painel, Results, para o alto da coluna do meio e o quarto, Conclusions, para o alto da última. Sem ele, o grupo se equilibra e corta no painel mais próximo de cada terço da pilha. Com este texto, os cortes caem nos mesmos dois painéis; o atributo os mantém ali quando o texto mudar.
+O corpo corre em duas colunas e os painéis em três, então a grade é um grupo `:::columns{count=3}` escrito direto no texto, e `span="page"` o estende sobre as duas colunas do corpo, sob o resumo, com a medianiz da página entre as suas colunas ([`:::columns`](/pt/docs/document-format#columns)). Sem mais nada, um grupo no texto é seguido por uma linha de espaço entre parágrafos, aqui 38 pt, e a faixa de palavras-chave passaria para uma segunda página; `marginBottom="0.75em"` na cerca fica no lugar dessa linha (postext 1.28), e a faixa cabe no pé da página. Cada painel é um callout dentro do grupo: recebe o seu próprio estilo, os 175 mm de largura da coluna e 18 mm de `marginTop` sob o painel de cima ([o contêiner `:::callout`](/pt/docs/configuration-styles#o-contêiner-callout)). `breaks="3,4"` manda o terceiro painel, Results, para o alto da coluna do meio e o quarto, Conclusions, para o alto da última. Sem ele, o grupo se equilibra e corta no painel mais próximo de cada terço da pilha. Com este texto, os cortes caem nos mesmos dois painéis; o atributo os mantém ali quando o texto mudar.
 
 ### 4 · Mantenha cada figura no seu painel
 
@@ -48,7 +48,7 @@ As células do mapa de calor e os quatro trechos `:swatch{color="…"}` da legen
 
 <Excerpt region="type" />
 
-Os estilos de parágrafo valem dentro dos boxes, inclusive dos aninhados, então −4,2 °C é um bloco `:::paragraphs{style="stat"}` em Bitter de 150 pt dentro do painel Results ([estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)). O número é escrito em negrito, então sai em Bitter 700 e no `boldColor` do estilo, o laranja do painel. Um segundo estilo dá às referências um recuo deslocado de 9 mm. A faixa de palavras-chave é um box tingido com `placement="bottom"`, flutuando no pé da página sob a grade.
+Os estilos de parágrafo valem dentro dos boxes, então −4,2 °C é um bloco `:::paragraphs{style="stat"}` em Bitter de 150 pt dentro do painel Results ([estilos de parágrafo](/pt/docs/configuration-styles#estilos-de-parágrafo)). O número é escrito em negrito, então sai em Bitter 700 e no `boldColor` do estilo, o laranja do painel. Um segundo estilo dá às referências um recuo deslocado de 9 mm. A faixa de palavras-chave é um box tingido com `placement="bottom"`, flutuando no pé da página sob a grade.
 
 ## Variações
 
@@ -65,4 +65,4 @@ Um congresso que peça um arquivo maior recebe um PNG de 3.543 × 4.724 px com a
 
 - No canvas, a Rethink Sans desenha um único algarismo entre parênteses, como o número do fascículo em 11(3), como um algarismo dentro de um círculo; por isso as referências trazem só o volume e as páginas.
 - Um box na largura da página que fecha o documento passa para uma nova página a menos que sobrem abaixo dele duas linhas do corpo. Por isso a faixa de palavras-chave flutua com `placement="bottom"`, que a põe na margem inferior, nos 50 mm que sobram sob a grade.
-- `bodyText.paragraphContainerSpacing: 'add'` fecha um grupo `:::paragraphs` com o espaço próprio do estilo, o que mantém −4,2 °C junto da linha que o explica. Sob a última referência esse espaço é o `spaceBetween` do estilo, 2,8 mm, então um `:::space{lines=0.75}` antes do agradecimento abre 10,8 mm, perto dos 10,6 mm entre os outros parágrafos de um painel. Com o padrão, `'collapse'`, um grupo é seguido por uma linha do espaço entre parágrafos do painel: o agradecimento dispensa o `:::space`, mas a linha acrescentada sob −4,2 °C empurra a faixa de palavras-chave para uma segunda página.
+- `containerSpacing: 'add'` nos estilos `stat` e `refs` fecha os grupos `:::paragraphs` deles com o espaço próprio do estilo, o que mantém −4,2 °C junto da linha que o explica; os outros grupos do pôster seguem a regra do documento (desde o postext 1.28; antes a regra só podia ser definida para o documento inteiro, com `bodyText.paragraphContainerSpacing`). Sob a última referência esse espaço é o `spaceBetween` do estilo, 2,8 mm, então um `:::space{lines=0.75}` antes do agradecimento abre 10,8 mm, perto dos 10,6 mm entre os outros parágrafos de um painel. Sem ele, com o `'collapse'` do documento, um grupo é seguido por uma linha do espaço entre parágrafos do painel: o agradecimento dispensa o `:::space`, mas a linha acrescentada sob −4,2 °C empurra a faixa de palavras-chave para uma segunda página.

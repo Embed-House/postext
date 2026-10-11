@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 059 · Research poster on one big page ══════════════════
 // https://postext.dev/en/cookbook/research-poster
 // Code: MIT · Text and data: original, synthetic (CC BY 4.0) · Figures: generated in code
-// Fonts: Rethink Sans, Bitter, Saira Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Rethink Sans, Bitter, Saira Condensed (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPage, renderPageToCanvas, registerResourceImage,
   defaultResourceTypes, inlineSvgFonts,
@@ -82,21 +82,19 @@ const band = { enabled: true,
   ] } };
 // #endregion
 
-// #region answer: three columns of panels inside one box across the page
-// The body text runs in two columns and the panels in three: a :::columns group in a
-// frameless callout, and span="page" lays that callout across both body columns.
-//   :::callout{type="grid" span="page"}       ← one frameless box across the page
-//   :::columns{count=3 breaks="3,4"}          ← panel 3 opens column 2, panel 4 column 3
-//   :::callout{type="panel" title="Introduction"}   ← each panel is a box nested in it
+// #region answer: three columns of panels in a group across the page
+// The body text runs in two columns and the panels in three: a :::columns group in the
+// text, and span="page" lays it across both body columns, the gutter apart.
+//   :::columns{count=3 breaks="3,4" span="page" marginBottom="0.75em"}
+//                                             ← panel 3 opens column 2, panel 4 column 3
+//   :::callout{type="panel" title="Introduction"}   ← each panel is a box in the group
 //   …
 //   :::                                       ← closes the panel; then the other panels
 //   :::                                       ← closes the columns group
-//   :::                                       ← closes the grid
-const grid = { id: 'grid', backgroundEnabled: false, // no fill or frame; each panel has a stripe
-  padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) },
-  columnGap: mm(GAP) };
-// A nested box takes the width of its column and ignores span and placement (gotcha:
-// nested-callout-limits). Its one device is a 6 pt stripe along the top.
+// marginBottom sets the space under the group: without it the group is followed by a
+// line of the summary's paragraph spacing, 38 pt.
+// A box in a group takes the width of its column. Its one device is a 6 pt stripe along
+// the top.
 const panel = { id: 'panel', backgroundEnabled: false,
   stripe: { enabled: true, side: 'top', width: pt(6), color: col('canopy') },
   padding: { top: mm(5), right: pt(0), bottom: pt(0), left: pt(0) },
@@ -111,11 +109,15 @@ const results = { ...panel, id: 'results', // the finding: the same panel, strip
 
 // #region type: paragraph styles for the figure, the references and the key; the foot strip
 const paragraphStyles = [
-  // Paragraph styles apply inside boxes, nested ones included. The figure is written
-  // **bold**: that sets it in Bitter 700 and in the style's boldColor.
+  // Paragraph styles apply inside boxes. The figure is written **bold**: that sets it in
+  // Bitter 700 and in the style's boldColor.
+  // containerSpacing 'add': the group ends on the style's own space, with no line of
+  // paragraph spacing under it. −4.2 °C sits on the line that explains it, and a :::space
+  // sets the gap under the references.
   { id: 'stat', fontFamily: 'Bitter', fontSize: pt(150), lineHeight: pt(130),
-    boldColor: col('heat') },
-  { id: 'refs', fontSize: pt(19), lineHeight: pt(26), hangingIndent: mm(9), spaceBetween: pt(8) },
+    boldColor: col('heat'), containerSpacing: 'add' },
+  { id: 'refs', fontSize: pt(19), lineHeight: pt(26), hangingIndent: mm(9), spaceBetween: pt(8),
+    containerSpacing: 'add' },
   { id: 'key', fontSize: pt(19), lineHeight: pt(28) }, // the key of Figure 2
 ];
 const chipStyles = [{ id: 'keyword', background: col('paper'), borderColor: col('canopy'),
@@ -128,14 +130,11 @@ const strip = { id: 'strip', background: col('tint'), // one device: a tint
 
 const config = () => ({
   colorPalette, page,
+  locale: t({ en: 'en-us', es: 'es' }), // the poster's language, and its bundle's
   layout: { layoutType: 'double', gutterWidth: mm(GAP) },
   // The summary's type; the boxes take the family, the rag and the paragraph spacing from it.
   bodyText: { fontFamily: 'Rethink Sans', fontSize: pt(28), lineHeight: pt(LEAD),
     color: col('ink'), textAlign: 'left', firstLineIndent: pt(0), paragraphSpacing: true,
-    // 'add': a :::paragraphs group ends on its style's own space, with no line of paragraph
-    // spacing under it. −4.2 °C sits on the line that explains it, and a :::space sets the gap
-    // under the references.
-    paragraphContainerSpacing: 'add',
     // Bold, the :ref labels and the italics of the references in ink: left to their defaults
     // they follow main-color, the canopy green.
     boldColor: col('ink'), italicColor: col('ink') },
@@ -145,7 +144,7 @@ const config = () => ({
     // parity 'any': a second poster in the file would start the next page, either side.
     { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
       marginBottom: pt(0), advancedDesign: band }] },
-  calloutStyles: [grid, panel, results, strip],
+  calloutStyles: [panel, results, strip],
   paragraphStyles, chipStyles, resourceTypes,
   captionStyle: { fontSize: pt(19), labelColor: col('canopy'), gap: mm(3),
     note: { fontSize: pt(17), color: col('muted') } },

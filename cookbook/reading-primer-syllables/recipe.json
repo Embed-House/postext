@@ -60,6 +60,7 @@
   ],
   "sample": {
     "locales": [
+      "en",
       "es"
     ]
   },
@@ -124,8 +125,8 @@
       },
       {
         "what": {
-          "en": "A watercolour of the map in the picture grid",
-          "es": "Una acuarela de el mapa de la tabla de dibujos"
+          "en": "A watercolour of the map in the picture grid of both units",
+          "es": "Una acuarela del mapa de la tabla de dibujos de las dos unidades"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -151,8 +152,8 @@
       },
       {
         "what": {
-          "en": "A watercolour of the monkey in the picture grid",
-          "es": "Una acuarela de el mono de la tabla de dibujos"
+          "en": "A watercolour of the monkey: in the picture grid of the Spanish unit and on the opener of the English one",
+          "es": "Una acuarela del mono: en la tabla de dibujos de la unidad española y en la apertura de la inglesa"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",
@@ -166,6 +167,60 @@
         "who": "Generated With Diffusion Models",
         "license": "original",
         "file": "muneca-640.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the moon on the opener of the English unit",
+          "es": "Una acuarela de la luna de la apertura de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "moon-480.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the mat in the picture grid of the English unit",
+          "es": "Una acuarela del felpudo de la tabla de dibujos de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mat-640.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the man in the picture grid of the English unit",
+          "es": "Una acuarela del hombre de la tabla de dibujos de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "man-640.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the mug in the picture grid of the English unit",
+          "es": "Una acuarela de la taza de la tabla de dibujos de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mug-640.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the mop in the picture grid of the English unit",
+          "es": "Una acuarela de la fregona de la tabla de dibujos de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mop-640.jpg"
+      },
+      {
+        "what": {
+          "en": "A watercolour of the mud in the picture grid of the English unit",
+          "es": "Una acuarela del barro de la tabla de dibujos de la unidad inglesa"
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "mud-640.jpg"
       },
       {
         "what": {
@@ -196,7 +251,7 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-26",
-  "updated": "2026-10-10",
+  "updated": "2026-10-11",
   "related": [
     "worksheet-answer-boxes",
     "exam-paper",

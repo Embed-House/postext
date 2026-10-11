@@ -59,11 +59,11 @@ Una lista corta de nombres se lee bien con una línea en blanco entre grupos y n
 
 ```diff
 -  groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
--    marginTop: pt(7) },
+-    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
 +  groups: { enabled: false, marginTop: pt(14) }, // no heads; a blank line between groups
 ```
 
 ## Errores frecuentes
 
 - La configuración `index` es del documento, así que un documento imprime un solo orden. Un libro que quiera un índice por pinyin y otro por trazos se compone dos veces, como hace este código.
-- En una retícula de caracteres el equilibrado de columnas está desactivado por defecto, y la última página de cada índice llenaría la primera columna hasta el pie: el colofón de la edición simplificada empezaría bajo la Z y acabaría en la cabeza de la segunda columna. `headings.balancing: { enabled: true }` iguala las dos columnas de esa página y deja el colofón entero bajo la segunda ([Equilibrado de columnas](/es/docs/configuration-text#equilibrado-de-columnas)).
+- En una retícula de caracteres el equilibrado de columnas está desactivado por defecto, y la última página de cada índice llenaría la primera columna hasta el pie: el colofón de la edición simplificada empezaría bajo la Z y acabaría en la cabeza de la segunda columna. `headings.balancing: { enabled: true }` corta antes la primera columna de esa página, de modo que los nombres siguen en la segunda y el colofón queda entero debajo ([Equilibrado de columnas](/es/docs/configuration-text#equilibrado-de-columnas)). El corte cae entre entradas y nunca deja un nombre de un grupo solo al pie o en la cabeza de una columna (`index.groups.splitMinEntries`, 2 por defecto), así que las dos columnas solo acaban a la par cuando las longitudes lo permiten. Aquí cada colofón lleva una frase sobre el orden de su índice, y las columnas de las dos páginas de cierre acaban a menos de un tercio de línea una de otra.

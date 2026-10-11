@@ -151,6 +151,7 @@ const sectionLevel = { level: 2, fontSize: pt(14), lineHeight: pt(20),
 
 const config = () => ({
   colorPalette, layout, chipStyles, header, footer: { elements: [] },
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { sizePreset: 'custom', width: mm(TRIM_W), height: mm(TRIM_H), dpi: 150,
     margins: { top: mm(TOP), bottom: mm(BOTTOM), left: mm(LEFT), right: mm(RIGHT) } },
   bodyText: { fontFamily: SANS, fontSize: pt(9.3), lineHeight: pt(LEAD), color: col('ink'),

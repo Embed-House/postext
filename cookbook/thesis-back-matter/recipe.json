@@ -64,15 +64,11 @@
       "followup": "EF-60",
       "package": "postext",
       "note": "every back-matter style sets breakBefore itself: without it the glossary, references and index would inherit the chapters’ odd parity and open after blank pages"
-    },
-    {
-      "package": "postext",
-      "note": "the appendix's tables take a resource type of their own, numbered 'A.{n}': a resource template's {h1} prints the heading counter as a number, never the letter the appendix style's '{1:A}' gives it, so a second appendix needs a second type"
     }
   ],
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0"
+    "postext": "1.28.0",
+    "postextPdf": "1.28.0"
   },
   "kit": [
     "core",
@@ -144,5 +140,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-25",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }

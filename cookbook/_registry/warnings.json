@@ -1776,13 +1776,13 @@
       "pt": "Boxe transborda a coluna"
     },
     "cause": {
-      "en": "A box that no cut can split (a figure, table or :::columns group taller than the column, or too high splitMinLines) was placed overflowing; the engine records it in doc.warnings and the Sandbox lists it. A span: 'side' box taller than an empty side column is placed overflowing too.",
-      "es": "Una caja que ningún corte puede partir (una figura, una tabla o un grupo :::columns más alto que la columna, o un splitMinLines demasiado alto) se colocó desbordada; el motor lo anota en doc.warnings y el Sandbox lo muestra. Un recuadro con span: 'side' más alto que una columna lateral vacía también se coloca desbordado.",
-      "ca": "Una caixa que cap tall no pot partir (una figura, una taula o un grup :::columns més alt que la columna, o un splitMinLines massa alt) s'ha col·locat desbordada; el motor ho anota a doc.warnings i el Sandbox ho mostra. Un requadre amb span: 'side' més alt que una columna lateral buida també es col·loca desbordat.",
-      "zh": "某个无法在任何位置切开的框（比栏还高的图、表或:::columns组，或splitMinLines设得太高）被放置后溢出；引擎把它记在doc.warnings中，沙盒会列出它。比空侧栏还高的span: 'side'框同样会溢出放置。",
-      "ar": "صندوق لا يمكن لأي قطع أن يقسمه (شكل أو جدول أو مجموعة :::columns أطول من العمود، أو قيمة splitMinLines مرتفعة جدًّا) وُضع فائضًا؛ يسجّله المحرّك في doc.warnings ويعرضه Sandbox في قائمته. وكذلك يوضع فائضًا إطار span: 'side' أطول من عمود جانبي فارغ.",
-      "ja": "どこでも分割できないボックス（段より高い図、表、:::columnsグループ、または大きすぎるsplitMinLines）が、はみ出した状態で配置されました。エンジンはこれをdoc.warningsに記録し、Sandboxが一覧に表示します。空のサイド段より高いspan: 'side'の囲みも、はみ出した状態で配置されます。",
-      "pt": "Uma caixa que nenhum corte consegue dividir (uma figura, uma tabela ou um grupo :::columns mais alto que a coluna, ou um splitMinLines alto demais) foi colocada transbordando; o motor registra isso em doc.warnings e o Sandbox mostra na lista. Um boxe com span: 'side' mais alto que uma coluna lateral vazia também é colocado transbordando."
+      "en": "A box that no cut can split (a figure, a table or a box nested inside it taller than the column, or too high splitMinLines) was placed overflowing; the engine records it in doc.warnings and the Sandbox lists it. A span: 'side' box taller than an empty side column is placed overflowing too.",
+      "es": "Una caja que ningún corte puede partir (una figura, una tabla o un recuadro anidado en ella más alto que la columna, o un splitMinLines demasiado alto) se colocó desbordada; el motor lo anota en doc.warnings y el Sandbox lo muestra. Un recuadro con span: 'side' más alto que una columna lateral vacía también se coloca desbordado.",
+      "ca": "Una caixa que cap tall no pot partir (una figura, una taula o un requadre niat a dins més alt que la columna, o un splitMinLines massa alt) s'ha col·locat desbordada; el motor ho anota a doc.warnings i el Sandbox ho mostra. Un requadre amb span: 'side' més alt que una columna lateral buida també es col·loca desbordat.",
+      "zh": "某个无法在任何位置切开的框（比栏还高的图、表或嵌套在其中的框，或splitMinLines设得太高）被放置后溢出；引擎把它记在doc.warnings中，沙盒会列出它。比空侧栏还高的span: 'side'框同样会溢出放置。",
+      "ar": "صندوق لا يمكن لأي قطع أن يقسمه (شكل أو جدول أو إطار متداخل فيه أطول من العمود، أو قيمة splitMinLines مرتفعة جدًّا) وُضع فائضًا؛ يسجّله المحرّك في doc.warnings ويعرضه Sandbox في قائمته. وكذلك يوضع فائضًا إطار span: 'side' أطول من عمود جانبي فارغ.",
+      "ja": "どこでも分割できないボックス（段より高い図、表、入れ子の囲み、または大きすぎるsplitMinLines）が、はみ出した状態で配置されました。エンジンはこれをdoc.warningsに記録し、Sandboxが一覧に表示します。空のサイド段より高いspan: 'side'の囲みも、はみ出した状態で配置されます。",
+      "pt": "Uma caixa que nenhum corte consegue dividir (uma figura, uma tabela ou um boxe aninhado nela mais alto que a coluna, ou um splitMinLines alto demais) foi colocada transbordando; o motor registra isso em doc.warnings e o Sandbox mostra na lista. Um boxe com span: 'side' mais alto que uma coluna lateral vazia também é colocado transbordando."
     },
     "fix": {
       "en": "Shorten the box, let it split with keepTogether: false, lower splitMinLines, or give it another span.",

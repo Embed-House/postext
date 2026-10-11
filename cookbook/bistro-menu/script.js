@@ -113,7 +113,8 @@ const paragraphStyles = [dish,
 // #region centred: one axis for the card: the name, the course heads and the notes centred
 // bodyText (in config) centres the lines under the name and the notes; only the dishes and the
 // wine list keep a left edge. Ragged text is hyphenated only with bodyText.hyphenation.ragged,
-// so the config sets no locale: French patterns would change nothing on this card.
+// so no word on this card is divided, the French dish names included. The config's locale
+// names each edition's language, English or Spanish, for the bundle the Sandbox opens.
 const headings = { fontFamily: DISPLAY, fontWeight: 400, color: col('wine'), textAlign: 'center',
   levels: [ // Limelight ships one weight, 400, and no italic
     // The H1 break is off: by default an H1 opens a recto, which would part the name from the
@@ -196,6 +197,7 @@ function bottles() { // 158 × 29 mm: glasses, bottles and a carafe on a brass s
 
 const config = () => ({
   colorPalette, tableStyle, resourceTypes,
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { sizePreset: 'custom', width: mm(230), height: mm(310), dpi: 150,
     backgroundColor: col('paper'), // one card, printed both sides: margins are not mirrored
     margins: { top: mm(22), bottom: mm(20), left: mm(36), right: mm(36) } },

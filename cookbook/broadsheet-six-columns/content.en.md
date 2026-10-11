@@ -46,7 +46,7 @@ The line will run 9.4 kilometres from Northgate station, through the city centre
 
 The vote ends a fight that began in 2019, when the port authority offered the city the trackbed of its disused railway for one pound. Two earlier plans, a guided busway in 2021 and a cable car in 2023, failed for lack of money. This one has a promise of £318 million from the national transport fund, which expires if construction has not begun by March 2028.
 
-“We have talked about this for longer than some of our councillors have been alive,” said the council leader, Ines Moberly, closing the debate. “Tonight we stop talking. The quays will have six thousand new homes by the end of the decade, and those families will not all be able to drive into town.”
+“We have talked about this for longer than some of our councillors have been alive,” Ines Moberly, the council leader, said, closing the debate. “Tonight we stop talking. The quays will have six thousand new homes by the end of the decade, and those families will not all be able to drive into town.”
 
 ### Six hours in the chamber
 

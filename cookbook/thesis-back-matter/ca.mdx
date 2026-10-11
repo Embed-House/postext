@@ -28,7 +28,7 @@ La marca és `{number}`: un 6 al capítol, una A a l'apèndix i res en un títol
 
 <Excerpt region="appendix" />
 
-L'estil de l'apèndix porta `numberingTemplate: '{1:A}'`, que imprimeix el comptador del nivell com a lletra, i `# Interview guide {style="appendix" startAt=1}` reinicia aquest comptador, així que el primer apèndix és l'A i no el G ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). La banda llegeix la lletra amb `{number}` i la capçalera amb `{chapterNumber}`. El `{h1}` d'un tipus de recurs imprimeix el comptador com a número, i per això un tipus propi numera les taules de l'apèndix A.1, A.2, etc.; amb el tipus per defecte, la taula seria l'1.1. Els títols del capítol es numeren amb les plantilles de cada nivell: `'{1}.{2}'` imprimeix 6.1, i `continuation.headings.h1: 5` fa d'aquest el sisè capítol.
+L'estil de l'apèndix porta `numberingTemplate: '{1:A}'`, que imprimeix el comptador del nivell com a lletra, i `# Interview guide {style="appendix" startAt=1}` reinicia aquest comptador, així que el primer apèndix és l'A i no el G ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). La banda llegeix la lletra amb `{number}` i la capçalera amb `{chapterNumber}`. El `{h1}` d'un tipus de recurs imprimeix el comptador com a número llevat que anomeni un estil, i per això les taules de l'apèndix porten un tipus amb la plantilla `'{h1:A}.{n}'`: A.1, A.2, etc., i B.1 en un segon apèndix; amb el tipus per defecte, la taula seria l'1.1. Els títols del capítol es numeren amb les plantilles de cada nivell: `'{1}.{2}'` imprimeix 6.1, i `continuation.headings.h1: 5` fa d'aquest el sisè capítol.
 
 ### 4 · Les capçaleres, cap al marge exterior
 

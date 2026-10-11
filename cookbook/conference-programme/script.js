@@ -162,7 +162,7 @@ const coverStyle = { id: 'coberta', numbered: false,
     ] } } };
 
 const config = () => ({
-
+  locale: 'ca', // the programme is in Catalan in both editions: written out, never LANG
   resourceTypes, colorPalette, tableStyle, chipStyles, paragraphStyles,
   header, footer, headingStyles: [coverStyle],
   page: { width: mm(PAGE.w), height: mm(PAGE.h), dpi: 150, // a 1,004 px canvas per page

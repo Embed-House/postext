@@ -5,7 +5,7 @@
 // A four-page zine for a risograph with a blue drum and a fluorescent pink one. The drawings
 // are made in full colour and printed from the pink drum as tints of pink.
 import {
-  buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
+  buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, decodeSvgImage,
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -33,16 +33,14 @@ const colorPalette = [...Object.entries(palette), ['main-color', DRUMS.spot]]
 // renderToPdf reads the ink from the config and recolours every SVG it is handed; the canvas
 // does the same to a picture registered with singleInk: true. Both get the drawing as drawn.
 const diagramStyle = { singleInk: true, inkColor: col('spot') };
-const printFiles = new Map(); // fileId → the bytes renderToPdf embeds
-async function registerArt(fileId, svg) {
-  const img = new Image();
-  img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-  await img.decode();
-  registerResourceImage(fileId, img, { singleInk: true }); // the canvas tints it as it paints
-  printFiles.set(fileId, new TextEncoder().encode(svg)); // the PDF recolours these bytes
-}
-const pdfOptions = { fontProvider: fontsourceProvider,
-  resourceBytes: (id) => printFiles.get(id) }; // the drawings as drawn, the PNG as it is
+// The kit's loadSvg hands the flag to registerResourceImage, so the canvas tints the drawing
+// as it paints, and keeps the markup for imageBytes: the PDF recolours those bytes.
+const loadArt = (map) => Promise.all([
+  loadSvg('network.svg', map, { singleInk: true }),
+  loadSvg('moon.svg', moon(), { singleInk: true }),
+  loadSvg('blind.svg', blind(), { singleInk: true }),
+]);
+const pdfOptions = { fontProvider: fontsourceProvider, resourceBytes: imageBytes };
 // #endregion
 
 const TRIM = { width: 120, height: 160 }; // mm: a 240 × 160 sheet folded once
@@ -117,13 +115,11 @@ const quote = { id: 'quote', backgroundEnabled: false, marginTop: pt(LEAD), marg
 // The inset keeps the map's own colours. Single ink touches SVG only, so the map goes in
 // as a PNG snapshot, which neither the canvas nor the PDF recolours.
 async function registerSnapshot(fileId, svg, width, height) {
-  const img = new Image();
-  img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-  await img.decode();
   const canvas = new OffscreenCanvas(width, height);
-  canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-  registerResourceImage(fileId, await createImageBitmap(canvas));
-  printFiles.set(fileId, new Uint8Array(await (await canvas.convertToBlob()).arrayBuffer()));
+  canvas.getContext('2d').drawImage(await decodeSvgImage(svg), 0, 0, width, height);
+  const png = URL.createObjectURL(await canvas.convertToBlob());
+  await loadImage(fileId, png); // the kit registers the PNG and keeps its bytes for the PDF
+  URL.revokeObjectURL(png);
 }
 const INSET = 30; // mm: the snapshot's width; its height follows the map's 100 × 69.5
 const drawn = { id: 'drawn', marginTop: pt(LEAD), advancedDesign: { enabled: true,
@@ -163,6 +159,7 @@ const back = { id: 'back', span: 'page', // the setting moon runs past the text 
 
 const config = () => ({
   colorPalette, diagramStyle, resourceTypes: [drawing],
+  locale: 'en-us', // the zine is written in English
   page: { sizePreset: 'custom', width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'), margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom),
       left: mm(MARGIN.inner), right: mm(MARGIN.outer), mirror: true } },
@@ -389,8 +386,7 @@ const FONTS = { Epilogue: ['400', '700'], Anton: ['400'], 'Space Mono': ['400', 
 
 // ─── 4 · Build & show ───────────────────────────────────────────────────────
 const map = network();
-await Promise.all([registerArt('network.svg', map), registerArt('moon.svg', moon()),
-  registerArt('blind.svg', blind()), registerSnapshot('as-drawn.png', map, 600, 417)]);
+await Promise.all([loadArt(map), registerSnapshot('as-drawn.png', map, 600, 417)]);
 const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));
 showPages(doc, { title: 'Night Buses: a two-ink riso zine' });
 offerPdf(() => renderToPdf(doc, pdfOptions), `${RECIPE}.pdf`);
@@ -398,4 +394,4 @@ offerPdf(() => renderToPdf(doc, pdfOptions), `${RECIPE}.pdf`);
 offerPdf(() => renderToPdf(doc, { ...pdfOptions, colorSpace: 'grayscale' }),
   `${RECIPE}-grey-proof.pdf`);
 
-// @kit core fonts viewer pdf · the Cookbook inlines cookbook/_kit/*.js here
+// @kit core fonts viewer pdf images · the Cookbook inlines cookbook/_kit/*.js here

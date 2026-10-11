@@ -18,7 +18,7 @@ From the clearance Athletic broke down the left, and young Billy Trounce, who is
 
 The first half had belonged to Treviskey. Their centre-forward, Hendra, scored after nine minutes with a header from a corner, and only a fine save by Rundle from the same player, low down at the near post, kept the score at one goal to nil at the interval. Athletic were level ten minutes after the restart, when Opie, son of the clockmaker, turned in a cross from Trounce at the second attempt.
 
-The final, against Penhallow Rovers, will be played at Gannet Park on the 24th, kick-off at three. The club asks supporters to come early and to leave their wives’ hats at home.
+The final, against Penhallow Rovers, will be played at Gannet Park on the 24th, kick-off at three, and the Silver Band will play from two. The club asks supporters to come early and to leave their wives’ hats at home.
 
 ## Rovers come by the long road {style="third"}
 
@@ -28,7 +28,7 @@ Rovers have the stronger side on paper, with three men who have played for the c
 
 ## The Harbour Mile {style="third"}
 
-The Harbour Mile, run on Whit Monday along the Strand from the Custom House to the lifeboat slip and back, was won for the third year running by Jack Penrose of the Wexcombe Harriers in 4 minutes 31 seconds, a record for the course. He was followed home by his brother Harry, eleven yards behind, and by a visiting runner from Truro, who said that he had been told the course was flat. Forty-four ran, the youngest fourteen and the oldest sixty-two, and every one of them finished, though two had to be helped up the slip. The new trams were stopped for twenty minutes while the race passed, the first time, said the Borough Engineer, that the line has given way to anybody.
+The Harbour Mile, run on Whit Monday along the Strand from the Custom House to the lifeboat slip and back, was won for the third year running by Jack Penrose of the Wexcombe Harriers in 4 minutes 31 seconds, a record for the course. He was followed home by his brother Harry, eleven yards behind, and by a visiting runner from Truro, who said he had been told that the course was flat. Forty-four ran, the youngest fourteen and the oldest sixty-two, and every one of them finished, though two had to be helped up the slip. The trial trams were stopped for twenty minutes while the race passed, the first time, said the Borough Engineer, that the line has given way to anybody.
 
 ## Swimming club’s new raft {style="third"}
 
@@ -42,7 +42,7 @@ The Wexcombe Amateur Swimming Club has moored a new diving raft off West Sands, 
 
 ::resource{id="scores"}
 
-Wexcombe beat St Austell by 41 runs at the Rec on Saturday. Dunstan’s 64, his first fifty of the season, carried the town to 168, and the Rev. A. Carne took five wickets for 22 with his slow left-arm bowling, which St Austell found as hard to read as his sermons.
+Wexcombe beat St Austell by 41 runs at the Rec on Saturday. Dunstan’s 64, his first fifty of the season, carried the town to 168, and the Rev. A. Carne took five wickets for 22 with his slow left-arm bowling, which St Austell found as hard to read as his sermons. Truro are the visitors this afternoon; wickets are pitched at half past two, and Dunstan has promised the town another fifty.
 
 ## Regatta and bowls {style="third"}
 
@@ -50,7 +50,7 @@ The Harbour Regatta is fixed for Saturday the 1st of July, with gig racing, a sw
 
 ## Wheelers’ fifty-mile trial {style="third"}
 
-The Wexcombe Wheelers held their fifty-mile time trial on Sunday morning over the coast road to Hayle and back, starting at six o’clock to have the road to themselves. Twenty-three riders started at one-minute intervals and twenty finished; two punctured at Gwithian and one stopped, by his own account, for breakfast. The winner, Mr Leonard Uren, a postman, beat the club record by four minutes on a machine he built himself from parts, and was back at his round by nine.
+The Wexcombe Wheelers held their fifty-mile time trial on Sunday morning over the coast road to Hayle and back, starting at six o’clock to have the road to themselves. Twenty-three riders started at one-minute intervals and twenty finished; two punctured at Gwithian and one stopped, by his own account, for breakfast. The winner, Mr Leonard Uren, a postman, beat the club record by four minutes on a machine he built himself from parts, and was back at his round by nine, with the letters for Quay Hill.
 
 ::resource{id="wheelers"}
 
@@ -58,11 +58,11 @@ The club’s next event is the hill climb up Quay Hill on the 25th, which the Wa
 
 ## Gigs on the bay {style="third"}
 
-The pilot gigs were out on the bay on Wednesday evening for the first time this summer, six boats in a practice race from the lifeboat slip round the Stags and back. The Wexcombe crew in the old *Bonnet*, built in 1838 and still the fastest boat on this coast in a flat sea, led from the start and won by four lengths from Penhallow. The crews race for the Harbour Cup at the Regatta on the 1st of July, when nine gigs are expected.
+The pilot gigs were out on the bay on Wednesday evening for the first time this summer, six boats in a practice race from the lifeboat slip round the Stags and back. The Wexcombe crew in the old *Bonnet*, built in 1838 and still the fastest boat on this coast in a flat sea, led from the start and won by four lengths from Penhallow, whose crew say the tide was against them. The crews race for the Harbour Cup at the Regatta on the 1st of July, when nine gigs are expected.
 
 ## Angling {style="third"}
 
-Sea fishing from the pier has been good all week, with mackerel taken on feathers at every tide and a bass of nine pounds by Mr Fred Curnow on Tuesday evening, the best of the season so far. The Sea Angling Club’s monthly competition on Sunday was won by Mr Curnow again, with a catch of eleven pounds. Visitors may fish from the pier on payment of twopence to the pier master.
+Sea fishing from the pier has been good all week, with mackerel taken on feathers at every tide and a bass of nine pounds by Mr Fred Curnow on Tuesday evening, the best of the season so far. The Sea Angling Club’s monthly competition on Sunday was won by Mr Curnow again, with a catch of eleven pounds. Visitors may fish from the pier on payment of twopence to the pier master, who also sells bait.
 
 ## Racing at Penhallow {style="third"}
 

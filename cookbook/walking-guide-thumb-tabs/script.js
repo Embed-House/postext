@@ -184,6 +184,7 @@ const chipStyles = [{ id: 'fact', background: col('paper'), borderColor: col('mu
 const MAP_WORD = t({ en: 'Map', es: 'Plano' }); // the caption reads 'Map 1'
 const config = () => ({
   colorPalette,
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { sizePreset: 'custom', width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'), margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom),
       left: mm(MARGIN.inner), right: mm(MARGIN.outer), mirror: true } },

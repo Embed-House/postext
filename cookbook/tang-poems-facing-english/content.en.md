@@ -24,7 +24,7 @@ Up towards the glorious moon I raise my head,
 
 [^bed]: **牀** chuáng, now written 床: a bed. Some commentators read it as the railing round a well, others as a folding seat set out in the courtyard; Giles keeps the bed.
 
-[^moon]: **明月** míngyuè, the bright moon. The collected works of Li Bai read 山月 here, the moon over the hills, and 看⁠月⁠光 in the first line; the 1705 edition of all Tang poetry reads 山月 but keeps 明⁠月⁠光. This page follows the anthology of 1763, the text Chinese children learn by heart. **鄉** xiāng rhymes with 光 guāng and 霜 shuāng at the ends of the first two lines; Giles rhymes his quatrain on alternate lines instead.
+[^moon]: **明月** míngyuè, the bright moon. The collected works of Li Bai read 山月 here, the moon over the hills, and 看月光 in the first line; the 1705 edition of all Tang poetry reads 山月 but keeps 明月光. This page follows the anthology of 1763, the text Chinese children learn by heart. **鄉** xiāng rhymes with 光 guāng and 霜 shuāng at the ends of the first two lines; Giles rhymes his quatrain on alternate lines instead.
 
 # Drinking Alone under the Moon {style="en" kicker="Li Bai · 701–762"}
 

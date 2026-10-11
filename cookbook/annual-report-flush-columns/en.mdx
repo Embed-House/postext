@@ -16,7 +16,7 @@ The 2025 annual report of Tidewell Community Energy, an invented co-operative wi
 
 ### 1 · Keep every line on the grid and let the levers close the gaps
 
-The code is [the short answer](#the-short-answer) above. The text block is exactly 50 lines of 13.4 pt deep, and the bottom margin (21.6 mm) is derived from that depth. A crosshead takes one grid line above it and one for itself, so a column that ends short is short by whole lines, and whole lines are what <Feature id="column-balancing">column balancing</Feature> adds. On <PageRef page={3}>page 3</PageRef> the three-line hailstorm paragraph goes whole to page 4 under `avoidOrphans`, Postext's name for the rule that keeps a paragraph's last line from standing alone at the head of a column, and the right column ends two lines short. `maxLinesPerHeading: 1` gives one of those lines to the space above *The Saltings and the roofs* and leaves the other to the next lever, which adds it after the list of roofs. At the default of 4, both lines would go above the heading.
+The code is [the short answer](#the-short-answer) above. The text block is exactly 50 lines of 13.4 pt deep, and the bottom margin (21.6 mm) is derived from that depth. A crosshead takes one grid line above it and one for itself, so a column that ends short is short by whole lines, and whole lines are what <Feature id="column-balancing">column balancing</Feature> adds. On <PageRef page={3}>page 3</PageRef> the three-line hailstorm paragraph goes whole to page 4 under `avoidOrphans`, Postext's name for the rule that keeps a paragraph's last line from standing alone at the head of a column, and the right column ends two lines short. `maxLinesPerHeading: 1` gives one of those lines to the space above *The Saltings and the roofs* and leaves the other to the next lever, which adds it after the list of roofs. By default a heading takes up to two lines before the levers after it are tried (`maxLinesBeforeLoose`), and up to four once they have nothing left to give, so both lines would go above the heading.
 
 ### 2 · Cut the text level above a box that crosses the page
 
@@ -50,7 +50,7 @@ Both free lines on page 3 then go above *The Saltings and the roofs*, and none a
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
-+const balancing = {}; // the default: up to 4 lines above each heading
++const balancing = {}; // the default: two lines above a heading, then the other levers
 ```
 
 ### Switch the balancing off

@@ -60,5 +60,5 @@ subtitle: "程乙本前三回选读"
 :::index
 
 :::paragraphs{style="colophon"}
-Sueño en el pabellón rojo, capítulos 1 a 3, edición en caracteres simplificados: los pasajes en que aparecen los personajes, según el texto de Cheng y Gao de 1792 (zh.wikisource, revisión 9685985, CC BY-SA 4.0), convertido a caracteres simplificados con OpenCC, con —— donde el original pone －－. Los cortes dentro de un párrafo se marcan con ……. Compuesto en Noto Serif SC, Noto Sans SC y Ma Shan Zheng (SIL OFL).
+Sueño en el pabellón rojo, capítulos 1 a 3, edición en caracteres simplificados: los pasajes en que aparecen los personajes, según el texto de Cheng y Gao de 1792 (zh.wikisource, revisión 9685985, CC BY-SA 4.0), convertido a caracteres simplificados con OpenCC, con —— donde el original pone －－. Los cortes dentro de un párrafo se marcan con ……. El índice va por inicial en pinyin, al uso de la China continental. Compuesto en Noto Serif SC, Noto Sans SC y Ma Shan Zheng (SIL OFL).
 :::

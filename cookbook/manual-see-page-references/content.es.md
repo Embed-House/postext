@@ -41,7 +41,7 @@ Las cubiertas son de 700 × 38 mm. Úsalas entre 3,5 y 5 bar: la cifra baja para
 2. Abre la palanca de cierre rápido, sin herramientas, y afloja tres vueltas la tuerca del otro lado.
 3. Levanta la bicicleta por delante y deja caer la rueda.
 
-Para montarla, asienta bien el eje en las dos punteras, aprieta la tuerca hasta que la palanca encuentre resistencia a mitad de su recorrido y [cierra la palanca]{#step-close-lever} de modo que apunte hacia atrás. Con la rueda puesta, aprieta dos veces el freno delantero; si la maneta va blanda, puede que las pastillas se hayan movido, y el :ref{id="sec-brake-cable"}, en la :ref{id="sec-brake-cable" style=page}, explica cómo ajustarlas de nuevo.
+Para montarla, asienta bien el eje en las dos punteras, aprieta la tuerca hasta que la palanca encuentre resistencia a mitad de su recorrido y [cierra la palanca de modo que apunte hacia atrás]{#step-close-lever}. Con la rueda puesta, aprieta dos veces el freno delantero; si la maneta va blanda, puede que las pastillas se hayan movido, y el :ref{id="sec-brake-cable"}, en la :ref{id="sec-brake-cable" style=page}, explica cómo ajustarlas de nuevo.
 
 ## Frenos {#sec-brakes}
 

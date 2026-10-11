@@ -14,7 +14,7 @@
 - **内心独白。** :chip[maya{inner}:]{style="code"} 没说出口的话：没有尾巴，灰色方框。
 - **编者注。** :chip[note:]{style="code"} 小字，放在格子右下角。
 - **拟声词。** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} 没有对话框：红色的大字加白边，位置和角度由人指定。
-- **画外音。** :chip[tomas{tail=end}:]{style="code"} 说话人在画面之外；尾巴伸到格子边上。
+- **画外音。** :chip[tomas{tail=right}:]{style="code"} 说话人在画面之外；尾巴伸到格子边上。
 - **固定位置。** :chip[skipper{at="44% 22%"}:]{style="code"} 对话框的中心固定在画面的这个点上，不管怎么裁切。
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout}: “塘鹅号”！朝着灯光开！别让它离开船头！
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: 轰隆隆
 skipper{at="44% 22%"}: 看到了……我们看到灯光了……
-tomas{tail=end}: 慢点儿。慢慢掉头。
+tomas{tail=right}: 慢点儿。慢慢掉头。
 ::panel{art=bk-window}
 maya{inner}: 快点。快点。快点。
 caption{at=bottom-start}: 他们花了两个小时。

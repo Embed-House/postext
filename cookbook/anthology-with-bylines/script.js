@@ -146,7 +146,7 @@ const contentsOpener = { enabled: true, slot: { elements: [ // {title}, {subtitl
 ] } };
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette,
   page: { sizePreset: 'custom', width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     backgroundColor: col('paper'), margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom),

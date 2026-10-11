@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 079 · An index of Chinese names, by pinyin and by strokes ═══
 // https://postext.dev/en/cookbook/chinese-name-index
 // Code: MIT · Text: 紅樓夢 (1792), zh.wikisource revision 9685985 (CC BY-SA 4.0) · Pictures: none
-// Fonts: Noto Serif/Sans SC/TC, Ma Shan Zheng, LXGW WenKai TC (OFL 1.1) · Needs postext ≥ 1.25.1
+// Fonts: Noto Serif/Sans SC/TC, Ma Shan Zheng, LXGW WenKai TC (OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
@@ -51,7 +51,7 @@ const index = (e) => ({
   separator: '\u3000', locatorSeparator: '，', // 贾宝玉　4，6: an ideographic space, then ，
   see: { italic: false }, // 见 / 見 upright: Chinese has no italic (gotcha: cjk-no-italic)
   groups: { fontFamily: e.sans, fontSize: pt(9.5), fontWeight: 700, color: col('cinnabar'),
-    marginTop: pt(7) },
+    marginTop: pt(6.25) }, // the three names of 九畫 stay whole at the foot of their column
 });
 const indexHeading = { id: 'index', numbered: false, breakBefore: { enabled: true, parity: 'any' },
   layout: { layoutType: 'double', gutterWidth: pt(21) } }; // two columns, 2 characters apart
@@ -113,7 +113,7 @@ const config = () => ({
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: em(2), indentAfterHeading: true, // 2 characters
     avoidWidows: true, avoidOrphans: true },
-  // Off by default on a character grid: turned on, the two columns of each index end level.
+  // Off by default on a character grid. On, an index's last page is cut between whole entries.
   headings: { fontFamily: e.kai, fontWeight: 400, color: col('ink'), balancing: { enabled: true },
     levels: [{ level: 1, fontSize: pt(16), marginBottom: pt(0),
       advancedDesign: opener(e, 6, '第{numberHan}回'), // 第一回, 第二回… in the edition's script

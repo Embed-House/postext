@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 093 · One text in four citation styles ════════════════
 // https://postext.dev/en/cookbook/one-text-four-citation-styles
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Source Serif 4, Source Sans 3 (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Source Serif 4, Source Sans 3 (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';
@@ -39,6 +39,9 @@ const SHOWN = [ // the same text, built once per entry
 const citations = (style) => ({
   style, // 'apa' → '(Warde, 1955)'; 'ieee' → '[1]'; the list is sorted and set to match
   link: true,
+  // The authors' names stay whole in the citations, the text and the list: the APA build
+  // set '(Lup-' | 'ton, 2010)'.
+  hyphenateNames: false,
   bibliography: { fontSize: em(0.85), lineHeight: pt(11.2), hangingIndent: mm(6),
     entrySpacing: pt(2), labelWidth: mm(6), doi: 'hide' },
 });

@@ -20,7 +20,7 @@
   "gotchas": ["top-float-next-page"],
   "related": ["print-ready-pdf", "live-palette-retint", "magazine-cover-and-contents", "figures-float-where-cited"],
   "engine": { "postext": "1.25.0", "postextPdf": "1.25.0" },
-  "kit": ["core", "fonts", "viewer", "pdf"],
+  "kit": ["core", "fonts", "viewer", "pdf", "images"],
   "sample": { "locales": ["en"] },
   "capture": {
     "hero": [2, 3],
@@ -48,5 +48,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-09-26",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }

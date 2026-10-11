@@ -22,6 +22,8 @@ The code is [the short answer](#the-short-answer) above. The [character grid](/e
 
 Manuscript paper has its own kinsoku. A small kana or ー may start a line, each in its own square; `ja-loose` allows it. A 、 or 。 that would head a line is written in the last square of the line before, with the character there, or just below it; `hangingPunctuation: 'force'` hangs it below the twentieth square, and no line is ever squeezed. With `'allow'`, the default for Japanese, the engine first takes the mark into the line by squeezing a 、 inside it to half a square, which a printed book does and a manuscript never does: the rest of that line would sit half a square up, across the grid's lines.
 
+The last line of a paragraph needs one more setting. Postext keeps a paragraph from ending on a single character: the line before gives it its last one, and since the text here is not justified, that line would stop a square short. On manuscript paper every square of a full line is written in, so the grid sets `fullLines: true`: on <PageRef page={3}>sheet 3</PageRef> the line that ends 来 keeps its twenty squares and the paragraph closes on た。 alone ([character grid](/en/docs/configuration-east-asian#character-grid)).
+
 ### 3 · Write the title and the name where the rules put them
 
 <Excerpt region="heading" />

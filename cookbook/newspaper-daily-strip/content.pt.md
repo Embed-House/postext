@@ -38,11 +38,11 @@ Ines Barlow desenha um pinguim e uma morsa toda manhã de segunda a sexta, na me
 
 Barlow cresceu em cima da padaria dos pais, na Harrow Road, e é daí que vêm os croissants. O pinguim veio depois, de um cartão-postal que a avó mandou da Cidade do Cabo. “Desenhei o Pip no verso de um bloco de pedidos quando tinha nove anos. Ele já usava o cachecol. O Otto me custou mais vinte anos.”
 
-Ela mandou as seis primeiras tirinhas para a Gazeta no verão de 2016, com uma carta de apresentação de uma linha só. O editor de quadrinhos da época, Martin Fry, publicou as tiras em caráter de teste por um mês. O teste nunca terminou. Fry, hoje aposentado, ainda recebe a tirinha pelo correio um dia antes. “Ele me avisa quando a piada está fraca”, diz Barlow. “Quase sempre tem razão.”
+Ela mandou as seis primeiras tirinhas para a Gazeta no verão de 2016, com uma carta de apresentação de uma linha só. O editor de quadrinhos da época, Martin Fry, publicou essas tiras em caráter de teste por um mês. O teste nunca terminou. Fry, agora aposentado, ainda recebe a tirinha pelo correio um dia antes. “Ele me avisa quando a piada está fraca”, diz Barlow. “Quase sempre tem razão.”
 
-O trabalho começa na segunda, com cinco rascunhos a lápis em folhas A4, quatro quadros por folha. Na quarta, já estão arte-finalizados e coloridos. Os desenhos chegam ao jornal sem nenhuma palavra; o texto vai à parte, num roteiro curto: quem fala, em que quadro e o quê. Cada onomatopeia ganha uma linha própria.
+O trabalho começa toda segunda, com cinco rascunhos a lápis em folhas A4, quatro quadros por folha. Na quarta, já estão arte-finalizados e coloridos. Os desenhos chegam ao jornal sem nenhuma palavra; o texto vai à parte, num roteiro curto: quem fala, em que quadro e o quê. Cada onomatopeia ganha uma linha própria no roteiro.
 
-O hábito começou com a edição francesa, em 2019. “Letrear uma tira duas vezes à mão era uma semana de trabalho”, conta. “Agora cada jornal compõe o texto na sua língua, e os balões são desenhados em volta.” Os jornais brasileiros recebem *Acabou de sair do forno!*; a edição japonesa compõe os balões em colunas verticais e, como a árabe, lê os quadros da direita para a esquerda. Os desenhos nunca mudam.
+O hábito começou com a edição francesa, em 2019. “Letrear uma tira duas vezes à mão era uma semana de trabalho”, conta. “Agora cada jornal compõe o texto na sua própria língua, e os balões são desenhados em volta dele.” Os jornais brasileiros recebem *Acabou de sair do forno!*; a edição japonesa compõe os balões em colunas verticais e, como a árabe, lê os quadros da direita para a esquerda. Os desenhos nunca mudam de um jornal para outro.
 
 A tira dominical é a exceção à regra dos quatro quadros. Ocupa meia página, em cores, e Barlow a trata como um conto curto: três quadros, uma piada mais lenta e quase sempre um peixe. A desta semana está na capa.
 
@@ -78,7 +78,7 @@ E o que vem agora para a dupla? “O Otto vai aprender a patinar”, diz Barlow.
 **Querida Ines Barlow,** o Pip vai crescer um dia? — *Sam, Brook Lane*
 :::
 
-**Ines Barlow responde:** Ele cresce um pouquinho a cada inverno. Só não percebe.
+**Ines Barlow responde:** Ele cresce um pouquinho a cada inverno. Só ele não percebe.
 
 :::paragraphs{style="flush"}
 Escreva para Pip e Otto na Gazeta, 12 Bridge Street, Corrington, ou por e-mail. As cartas podem ser resumidas.

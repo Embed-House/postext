@@ -16,7 +16,6 @@
   "features": {
     "primary": [
       "callout-columns",
-      "nested-callouts",
       "span-boxes"
     ],
     "also": [
@@ -41,14 +40,11 @@
   },
   "answers": [
     "Q59",
-    "Q61",
     "Q60",
     "Q52"
   ],
   "gaps": [],
-  "gotchas": [
-    "nested-callout-limits"
-  ],
+  "gotchas": [],
   "explainsWarnings": [],
   "related": [
     "newspaper-front-page",
@@ -56,14 +52,9 @@
     "worksheet-answer-boxes",
     "cv-with-sidebar"
   ],
-  "workarounds": [
-    {
-      "package": "postext",
-      "note": "bodyText.paragraphContainerSpacing is 'add', so a :::paragraphs group ends on its style's own space: −4.2 °C sits on the line that explains it, and a :::space{lines=0.75} opens 10.8 mm between the references and the acknowledgement. With the default 'collapse' the line added under −4.2 °C moves the keyword strip to a second page"
-    }
-  ],
+  "workarounds": [],
   "engine": {
-    "postext": "1.25.0"
+    "postext": "1.28.0"
   },
   "kit": [
     "core",
@@ -138,5 +129,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-26",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }

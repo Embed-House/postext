@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 131 · Film club programme with video QR codes ═════════
 // https://postext.dev/en/cookbook/film-club-video-qr
 // Code: MIT · Text and title cards: original (CC BY 4.0) · Films: Blender Foundation (CC BY)
-// Fonts: Literata, Big Shoulders Display, Barlow Semi Condensed (SIL OFL) · Needs postext ≥ 1.25.0
+// Fonts: Literata, Big Shoulders Display, Barlow Semi Condensed (SIL OFL) · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage,
   defaultResourceTypes, parseVideoUrl, videoWatchUrl,
@@ -142,12 +142,12 @@ const config = () => ({
     backgroundColor: col('paper'),
     margins: { top: mm(TOP), bottom: mm(24), left: mm(INNER), right: mm(OUTER), mirror: true } },
   layout: { layoutType: 'single' },
-  bodyText: {
-    fontFamily: TEXT, fontSize: pt(9.8), lineHeight: pt(LEAD), color: col('ink'),
+  bodyText: { fontFamily: TEXT, fontSize: pt(9.8), lineHeight: pt(LEAD), color: col('ink'),
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: mm(4.5), indentAfterHeading: false,
-    hyphenation: { enabled: true }, optimalLineBreaking: true,
-    avoidWidows: true, avoidOrphans: true, avoidRunts: true,
+    // The dictionary divided Áms-terdam, Blen-der and You-Tube: the list keeps them whole.
+    hyphenation: { enabled: true, exceptions: ['Ámsterdam', 'Blender', 'YouTube'] },
+    optimalLineBreaking: true, avoidWidows: true, avoidOrphans: true, avoidRunts: true,
   },
   headings: { fontFamily: DISPLAY, fontWeight: 700, color: col('ink'), levels: [
     // parity 'any': each film opens the next page, with no blank page before it.

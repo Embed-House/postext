@@ -176,7 +176,7 @@ const footer = { elements: [ // folios at the outer foot; entries (versos) add t
     { color: col('ink'), align: 'right' }),
 ] };
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette, resourceTypes: [plateType, listType],
   // A bitmap is never set wider than its declared pixels at this dpi: at 150 dpi a 1,900-px
   // scan may reach 322 mm, so the text block decides (at 300 dpi it stops at 161 mm).

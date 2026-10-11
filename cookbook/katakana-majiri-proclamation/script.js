@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 128 · A Meiji proclamation in kanji and katakana ═════════
 // https://postext.dev/en/cookbook/katakana-majiri-proclamation
 // Code: MIT · Text: Kanpō 1889, ja.wikisource (CC BY-SA 4.0); notes (CC BY 4.0)
-// Fonts: Shippori Mincho B1, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.26.0
+// Fonts: Shippori Mincho B1, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // The Meiji Constitution as the Official Gazette printed it: kanji and katakana, vertical.
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, loadVerticalAlternates,
@@ -41,11 +41,12 @@ const layout = { layoutType: 'single', writingMode: 'vertical-rl' }; // bound on
 const cjk = { grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES } };
 // Each article is an item of an ordered list: the counter is japanese-informal (十八, not
 // 一十八), the prefix 第 and the separator 條 wrap it, and the turnover lines go back to
-// the head of the line, as in the Gazette. numberAlign 'start' begins every label at the
-// head of its line: 第九條 and 第十一條 start together. Chapter two starts its list at 18.
+// the head of the line, as in the Gazette. numberWidth 'item' starts the text of each
+// article one gap after its own label: one full-width space follows 第九條 and 第十一條
+// alike, and their texts start a character apart. Chapter two starts its list at 18.
 const orderedLists = {
   numberFormat: 'japanese-informal', prefix: '第', separator: '條', gap: em(1),
-  numberAlign: 'start',
+  numberWidth: 'item',
   indent: em(0), hangingIndent: false, fontFamily: MINCHO, fontWeight: 800,
   color: col('ink'), marginTop: pt(0), marginBottom: pt(0), itemSpacing: pt(0),
 };

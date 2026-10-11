@@ -40,11 +40,12 @@ const chipStyles = [
     borderColor: col('ink'), borderWidth: pt(0.8) }, // an outline for the child to colour in
 ];
 const vowel = (s) => s.normalize('NFD').toLowerCase().match(/[aeiou]/)[0]; // 'mú' → 'u'
-const chipOf = (s, end) => `:chip[${s}]{style="${vowel(s)}${/m/i.test(s) ? '' : '-borde'}${end}"}`;
+const chipOf = (s, v, end) => `:chip[${s}]{style="${v}${/m/i.test(s) ? '' : '-borde'}${end}"}`;
 // {mi·mo·sa} → :chip[mi]{style="i"}:chip[mo]{style="o"}:chip[sa]{style="a-borde"}, and a word
-// written after another word, as in 'me {mi·ma}.', takes the '-frase' twins.
+// written after another word, as in 'me {mi·ma}.', takes the '-frase' twins. A piece with no
+// vowel, the m and the p of the English {m·a·p}, takes the vowel of its word.
 const syllables = (text) => text.replace(/(\p{L} )?\{([\p{L}·]+)\}/gu, (_, before = '', word) =>
-  before + word.split('·').map((s) => chipOf(s, before ? '-frase' : '')).join(''));
+  before + word.split('·').map((s) => chipOf(s, vowel(s + word), before && '-frase')).join(''));
 // #endregion
 
 const at = (x, y, size, edge = 'top-left') => ({ anchor: { to: 'page', edge },
@@ -56,6 +57,7 @@ const picture = (id, resourceId, placement) => ({ kind: 'image', id, resourceId,
 const tag = { textTransform: 'uppercase', letterSpacing: pt(1.5) };
 
 // #region opener: the letter's page: a cream band, a giant Mm and two things that start with m
+const THINGS = t({ en: ['monkey', 'moon'], es: ['mariposa', 'manzana'] }); // ids and labels
 const BAND = 104; // mm: the depth of the band's drawing; its wave dips to 101.9 mm
 // The opener reserves seventeen grid lines, the first grid line past the foot of the band's
 // image, so the first activity title stands on the grid like the others: two lines under
@@ -70,10 +72,10 @@ const opener = { enabled: true, minHeight: pt(17 * GRID),
       { anchor: { to: '#unit', edge: 'right-of' }, offset: { x: mm(4), y: mm(1.4) } }, tag),
     words('letter', '{titleText}', DISPLAY, 190, 700, 'ink', at(SIDE - 3, 19), { lineHeight: 1 }),
     words('name', '{attr.name}', LABEL, 20, 600, 'ink', at(SIDE + 1, 76)),
-    picture('butterfly', 'mariposa', at(146, 12, { width: mm(40) })),
-    picture('apple', 'manzana', at(151, 53, { width: mm(30) })),
-    ...[['mariposa', 45.5], ['manzana', 84.5]].map(([name, y]) => words(name, name, LABEL, 10,
-      600, 'muted', at(146, y, { width: mm(40) }), { align: 'center' })), // under each picture
+    picture('first', THINGS[0], at(146, 12, { width: mm(40) })),
+    picture('second', THINGS[1], at(151, 53, { width: mm(30) })),
+    ...[45.5, 84.5].map((y, k) => words(THINGS[k], THINGS[k], LABEL, 10, 600, 'muted',
+      at(146, y, { width: mm(40) }), { align: 'center' })), // its name under each picture
   ] } };
 // #endregion
 
@@ -91,7 +93,8 @@ const activity = (id, icon) => ({ id, advancedDesign: { enabled: true, slot: { e
 // #endregion
 
 // #region pictures: six picture words in a rounded grid, each picture inside its cell
-const PICTURE_WORDS = ['ma·no', 'ma·pa', 'me·sa', 'mi·mo·sa', 'mo·no', 'mu·ñe·ca'];
+const PICTURE_WORDS = t({ en: ['m·a·p', 'm·a·t', 'm·a·n', 'm·u·g', 'm·o·p', 'm·u·d'],
+  es: ['ma·no', 'ma·pa', 'me·sa', 'mi·mo·sa', 'mo·no', 'mu·ñe·ca'] });
 const tableStyles = [{ id: 'dibujos', borderRadius: mm(5), // the frame and its fills, rounded
   headerBackgroundEnabled: false, // a header row added later would print grey (#f0f0f0)
   bodyBackgroundEnabled: true, bodyBackground: col('cream'), // cream tiles…
@@ -107,8 +110,8 @@ PICTURE_WORDS.forEach((word, k) => { // the picture above the word, 0.72 of the 
 // #endregion
 
 // The type of every picture and the table: its empty captionPrefix prints no caption line.
-const sheet = { id: 'lamina', name: 'Lámina', shortLabel: '', captionPrefix: '',
-  numberingTemplate: '{n}', resetOn: 'never', counterFormat: 'decimal' };
+const sheet = { id: 'lamina', name: t({ en: 'Plate', es: 'Lámina' }), shortLabel: '',
+  captionPrefix: '', numberingTemplate: '{n}', resetOn: 'never', counterFormat: 'decimal' };
 const here = (id, rest) => ({ id, typeId: 'lamina', createdAt: 0, updatedAt: 0,
   placement: { position: 'here' }, ...rest });
 
@@ -127,7 +130,7 @@ const config = () => ({
   colorPalette, chipStyles, tableStyles, resourceTypes: [sheet],
   page: { width: mm(210), height: mm(260), dpi: 150, margins: { top: mm(TOP), bottom: mm(20),
     left: mm(SIDE), right: mm(SIDE) } }, // equal sides: nothing to mirror
-  layout: { layoutType: 'single' },
+  locale: t({ en: 'en-gb', es: 'es' }), layout: { layoutType: 'single' },
   bodyText: { fontFamily: TEXT, fontSize: pt(11), lineHeight: pt(GRID), color: col('ink'),
     textAlign: 'left', firstLineIndent: pt(0) }, // ragged, so no word is hyphenated
   headings: { fontFamily: LABEL, // the titles print through designs, but are measured in it
@@ -223,6 +226,10 @@ const glyphs = {
     6.8],
   u: (x, b) => [`M${x} ${b - 8}V${b - 2.8}C${x} ${b - 1} ${x + 1.3} ${b} ${x + 3} ${b}S${x + 6.2} `
     + `${b - 1} ${x + 6.2} ${b - 2.8}M${x + 6.2} ${b - 8}V${b}`, 6.2],
+  n: (x, b) => [`M${x} ${b - 8}V${b}M${x} ${b - 5.4}C${x} ${b - 7.4} ${x + 1.4} ${b - 8} `
+    + `${x + 2.7} ${b - 8}S${x + 5.3} ${b - 7.2} ${x + 5.3} ${b - 5.4}V${b}`, 5.3],
+  t: (x, b) => [`M${x + 1.6} ${b - 12}V${b - 2}C${x + 1.6} ${b - 0.7} ${x + 2.4} ${b} ${x + 3.8} `
+    + `${b}M${x} ${b - 8}H${x + 3.8}`, 3.8],
 };
 const KERN = 1.8; // mm between letters
 const write = (word, x, b) => word.split('').reduce(([d, at], ch) => {
@@ -237,28 +244,42 @@ const model = (letter, b, [x, y], dir) => line(write(letter, 4, b)[0], P.ink, 1.
   + shape(`M${x - 3.5} ${y + dir * 5.2}H${x - 1.3}L${x - 2.4} ${y + dir * 7.2}Z`, P.i);
 const repeat = (letter, b) => Array.from({ length: 7 }, (_, k) =>
   dashed(write(letter, TRACE.first + k * TRACE.pitch, b))).join('');
-// The five syllables, each centred in a fifth of the row.
-const syllableRow = (b) => ['ma', 'me', 'mi', 'mo', 'mu'].map((syll, k) => {
+// The last row: the five syllables, or three words of the English unit, each centred in
+// its share of the row.
+const TRACED = t({ en: ['man', 'mat', 'men'], es: ['ma', 'me', 'mi', 'mo', 'mu'] });
+const syllableRow = (b) => TRACED.map((syll, k) => {
   const w = write(syll, 0, b)[1] - KERN;
-  return dashed(write(syll, (k + 0.5) * (TRACE.w / 5) - w / 2, b));
+  return dashed(write(syll, (k + 0.5) * (TRACE.w / TRACED.length) - w / 2, b));
 }).join('');
 drawings.trazos = () => svgDoc(TRACE.w, 67, guides(17) + model('m', 17, [4, 9], 1)
   + repeat('m', 17) + guides(41) + model('M', 41, [4, 41], -1) + repeat('M', 41)
   + guides(65) + syllableRow(65));
-// The watercolours, by resource id: [file, width, height] in px.
-const PAINTINGS = {
-  mariposa: ['mariposa-660.jpg', 660, 540], manzana: ['manzana-480.jpg', 480, 480],
-  ...Object.fromEntries(['mano', 'mapa', 'mesa', 'mimosa', 'mono', 'muneca']
-    .map((id) => [id, [`${id}-640.jpg`, 640, 480]])) };
-const ALT = { banda: 'Franja de color crema con el borde ondulado',
-  manzana: 'Una manzana roja con una hoja', mariposa: 'Una mariposa morada con manchas amarillas',
-  mano: 'Una mano abierta', mapa: 'Un mapa del tesoro con un río y un camino hasta una cruz',
-  mesa: 'Una mesa con una manzana y una taza', mono: 'Un mono sentado',
-  mimosa: 'Una rama de mimosa con flores amarillas y hojas plumosas',
-  muneca: 'Una muñeca de trapo con coletas y vestido morado',
-  oreja: 'Una oreja', ojo: 'Un ojo', libro: 'Un libro abierto', lapiz: 'Un lápiz',
-  trazos: 'Tres pautas: la eme minúscula y la mayúscula, cada una con un modelo y siete de puntos '
-    + 'para repasar, y las sílabas ma, me, mi, mo y mu de puntos' };
+// The watercolours of each edition, by resource id: [file, width, height] in px. The map
+// and the monkey serve both.
+const painted = (ids) => Object.fromEntries(ids.map((id) => [id, [`${id}-640.jpg`, 640, 480]]));
+const PAINTINGS = t({
+  en: { monkey: ['mono-640.jpg', 640, 480], moon: ['moon-480.jpg', 480, 480],
+    map: ['mapa-640.jpg', 640, 480], ...painted(['mat', 'man', 'mug', 'mop', 'mud']) },
+  es: { mariposa: ['mariposa-660.jpg', 660, 540], manzana: ['manzana-480.jpg', 480, 480],
+    ...painted(['mano', 'mapa', 'mesa', 'mimosa', 'mono', 'muneca']) } });
+const ALT = t({
+  en: { banda: 'A cream band with a wavy lower edge', monkey: 'A monkey sitting',
+    moon: 'A yellow crescent moon with two stars',
+    map: 'A treasure map with a river and a path to a cross', mat: 'A striped doormat',
+    man: 'A man waving', mug: 'A blue mug with white dots', mop: 'A string mop',
+    mud: 'A puddle of mud', oreja: 'An ear', ojo: 'An eye', libro: 'An open book',
+    lapiz: 'A pencil',
+    trazos: 'Three rows of writing guides: the small m and the capital M, each with a model and '
+      + 'seven dotted letters to trace, and the dotted words man, mat and men' },
+  es: { banda: 'Franja de color crema con el borde ondulado',
+    manzana: 'Una manzana roja con una hoja', mariposa: 'Una mariposa morada con manchas amarillas',
+    mano: 'Una mano abierta', mapa: 'Un mapa del tesoro con un río y un camino hasta una cruz',
+    mesa: 'Una mesa con una manzana y una taza', mono: 'Un mono sentado',
+    mimosa: 'Una rama de mimosa con flores amarillas y hojas plumosas',
+    muneca: 'Una muñeca de trapo con coletas y vestido morado',
+    oreja: 'Una oreja', ojo: 'Un ojo', libro: 'Un libro abierto', lapiz: 'Un lápiz',
+    trazos: 'Tres pautas: la eme minúscula y la mayúscula, cada una con un modelo y siete de '
+      + 'puntos para repasar, y las sílabas ma, me, mi, mo y mu de puntos' } });
 // Each picture is a resource that the opener, a heading style, a table cell or the text names
 // by id. Drawings in px, 10 to the millimetre (the viewBox's own).
 const size = (svg) => svg.match(/width="(\d+)" height="(\d+)"/).slice(1).map(Number);
@@ -286,6 +307,6 @@ const continuation = { pageIndexOffset: 36, pageNumbering: { startAt: 37 } }; //
 const doc = await buildDocumentWithFonts({ markdown: text, resources, continuation },
   config(),
   kitFonts(FONTS));
-showPages(doc, { title: 'Letra a letra · La eme' });
+showPages(doc, { title: t({ en: 'Letter by Letter · The m', es: 'Letra a letra · La eme' }) });
 
 // @kit core fonts viewer images · the Cookbook inlines cookbook/_kit/*.js here

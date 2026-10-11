@@ -16,7 +16,7 @@ La memòria de 2025 de Tidewell Community Energy, una cooperativa inventada amb 
 
 ### 1 · Tot sobre la retícula, i les palanques tanquen els buits
 
-El codi és [la resposta curta](#la-resposta-curta) de dalt. La caixa de text fa exactament 50 línies de 13,4 pt, i el marge inferior (21,6 mm) es calcula a partir d'aquesta alçada. Cada intertítol ocupa una línia de la retícula a sobre i una altra de pròpia, així que una columna que acaba curta es queda curta en línies senceres, que és el que afegeix l'<Feature id="column-balancing">equilibratge de columnes</Feature>. A la <PageRef page={3}>pàgina 3</PageRef>, el paràgraf de tres línies sobre la calamarsa passa sencer a la pàgina 4 per `avoidOrphans`, l'ajust amb què Postext impedeix que l'última línia d'un paràgraf quedi sola al cap d'una columna (la línia vídua dels manuals espanyols), i la columna dreta es queda dues línies curta. Amb `maxLinesPerHeading: 1`, una d'aquestes línies va a l'espai sobre *The Saltings and the roofs* i l'altra queda per a la palanca següent, que la posa després de la llista de teulades. Amb el valor per defecte, 4, anirien totes dues sobre el títol.
+El codi és [la resposta curta](#la-resposta-curta) de dalt. La caixa de text fa exactament 50 línies de 13,4 pt, i el marge inferior (21,6 mm) es calcula a partir d'aquesta alçada. Cada intertítol ocupa una línia de la retícula a sobre i una altra de pròpia, així que una columna que acaba curta es queda curta en línies senceres, que és el que afegeix l'<Feature id="column-balancing">equilibratge de columnes</Feature>. A la <PageRef page={3}>pàgina 3</PageRef>, el paràgraf de tres línies sobre la calamarsa passa sencer a la pàgina 4 per `avoidOrphans`, l'ajust amb què Postext impedeix que l'última línia d'un paràgraf quedi sola al cap d'una columna (la línia vídua dels manuals espanyols), i la columna dreta es queda dues línies curta. Amb `maxLinesPerHeading: 1`, una d'aquestes línies va a l'espai sobre *The Saltings and the roofs* i l'altra queda per a la palanca següent, que la posa després de la llista de teulades. Per defecte, un títol pren fins a dues línies abans que es provin les palanques que el segueixen (`maxLinesBeforeLoose`), i fins a quatre quan a aquestes no els queda res per donar, així que totes dues anirien sobre el títol.
 
 ### 2 · Iguala el text sobre un requadre que travessa la pàgina
 
@@ -50,7 +50,7 @@ A la pàgina 3, les dues línies lliures van llavors sobre *The Saltings and the
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
-+const balancing = {}; // the default: up to 4 lines above each heading
++const balancing = {}; // the default: two lines above a heading, then the other levers
 ```
 
 ### Desactiva l'equilibratge

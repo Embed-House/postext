@@ -111,7 +111,7 @@ const footer = { elements: [
     { ...folio, align: 'right', pages: 'opener', overflow: 'clip' }),
 ] };
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   resourceTypes, colorPalette, // resourceTypes below: Figure 1, Table 1 through the article
   page: { width: mm(TRIM_W), height: mm(TRIM_H), dpi: 150, pageNumbering: { startAt: 213 },
     margins: { top: mm(TOP), bottom: mm(BOTTOM), left: mm(M), right: mm(M), mirror: true } },

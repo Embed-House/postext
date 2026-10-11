@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 135 · Magazine feature on a three-column grid ═════════
 // https://postext.dev/en/cookbook/magazine-three-column-feature
 // Code: MIT · Text: original (CC BY 4.0) · Photographs: generated with diffusion models
-// Fonts: Source Serif 4, Fraunces, Barlow Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Source Serif 4, Fraunces, Barlow Condensed (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // A travel feature from a monthly magazine, pages 84–89 of the issue. The story opens on a
 // spread, a photograph bled across both pages, then runs on in three columns: pictures across
 // two of them, one across the page and one in a single column, a pull quote floated across
@@ -146,7 +146,7 @@ const config = () => ({
     // A 40-character measure: a line no break can set within twice the normal space takes up
     // to 0.015 em of tracking for the rest instead of spreading its spaces wider still.
     minWordSpacing: 0.7, maxJustifyTracking: 15,
-    hyphenateAcrossColumns: false }, // no word is divided over a column or a page
+    hyphenateAcrossColumns: 'withinPage' }, // no word is divided over a page
   headings: { fontFamily: 'Fraunces', fontWeight: 600, color: col('sea'), levels: [
     // parity 'any': the spread opens on the next page (the default waits for a recto).
     { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' } },

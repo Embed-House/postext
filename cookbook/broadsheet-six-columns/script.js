@@ -145,7 +145,7 @@ const opinion = { id: 'opinion', advancedDesign: flag, // its section runs in fi
 // #endregion
 
 const config = () => ({
-  colorPalette, resourceTypes,
+  locale: 'en-us', colorPalette, resourceTypes, // locale: the edition's language
   page: { sizePreset: 'broadsheet', dpi: 150, backgroundColor: col('paper'), // 375 × 597 mm
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.side),
       right: mm(MARGIN.side) } },

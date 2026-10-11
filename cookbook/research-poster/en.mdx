@@ -1,8 +1,8 @@
 ---
 title: "Research poster on one big page"
-summary: "A 600 × 800 mm conference poster: a title band over one page-wide box with three columns of nested panels, a heat map keyed by swatches and −4.2 °C at 150 pt."
+summary: "A 600 × 800 mm conference poster: a title band over three columns of panels in one page-wide group, a heat map keyed by swatches and −4.2 °C at 150 pt."
 plain: "A large poster for a science conference, about street trees and summer heat. It shows how to arrange boxes of text and charts in columns on one very large page."
-description: "A research poster in Postext: a heading design for the title band, three columns of nested boxes in one page-span box, swatches, chips and an e-poster PNG."
+description: "A research poster in Postext: a heading design for the title band, three columns of boxes in one page-wide group, swatches, chips and an e-poster PNG."
 question: "How do I set three columns of panels across a two-column page, as on a conference poster?"
 aliases: ["conference poster", "academic poster", "scientific poster", "e-poster", "A1 poster", "three columns of panels", "poster grid"]
 pageNotes: { "1": "A green band across the top holds the meeting line, the title Street trees and sidewalk heat in heavy white letters, the authors with their affiliations, a P-47 tab and a round mark with a tree and an orange sun. Under a two-column summary, six panels form three columns, each under a coloured stripe: Introduction and Methods, with a plan of the street; Results under an orange stripe, with −4.2 °C in very large orange figures, a four-colour key, a heat map of 16 blocks by hour and a bar chart; Conclusions, Planting plan and References. A pale green strip along the foot holds the keywords in rounded frames." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "A green band across the top holds the meeting line, the title
 
 ## What you'll build
 
-A conference poster for an invented study of street trees and sidewalk heat, set on one 600 × 800 mm page. A green band carries the meeting, the title in Bitter at 110 pt, the authors with their affiliation marks and the School of Geography's mark. Under a two-column summary, one frameless box crosses both body columns and holds a three-column grid of six panels, each a box of its own under a 6 pt stripe. The middle column opens with −4.2 °C in orange at 150 pt, then a heat map of the air by block and hour, keyed with colour swatches, and a bar chart of the paving. A tinted strip of keyword chips sits on the bottom margin. The same file sets a Spanish edition, and the pen offers the page as a 1,701 × 2,268 px PNG.
+A conference poster for an invented study of street trees and sidewalk heat, set on one 600 × 800 mm page. A green band carries the meeting, the title in Bitter at 110 pt, the authors with their affiliation marks and the School of Geography's mark. Under a two-column summary, one `:::columns` group crosses both body columns and sets six panels in three columns, each a box under a 6 pt stripe. The middle column opens with −4.2 °C in orange at 150 pt, then a heat map of the air by block and hour, keyed with colour swatches, and a bar chart of the paving. A tinted strip of keyword chips sits on the bottom margin. The same file sets a Spanish edition, and the pen offers the page as a 1,701 × 2,268 px PNG.
 
 ## Method
 
@@ -26,11 +26,11 @@ At the default 300 dpi the poster breaks every line where it does at 72 dpi, but
 
 The H1 carries the meeting, the poster number, the authors and the affiliations as attributes, and its design sets them over a page-anchored green box 158 mm deep ([span and advanced design](/en/docs/configuration-text#span-and-advanced-design)). The box ends 133 mm under the top margin. Without a `minHeight` the summary would start 0.9 mm under the green; a `minHeight` of eleven grid lines leaves 14 mm. The affiliation marks are the characters ¹ ² ³, the only superscript figures in the Latin-1 range.
 
-### 3 · Nest the panels in one box across the page
+### 3 · Set the panels in a group across the page
 
-<Excerpt region="answer" highlight="3-9,21" />
+<Excerpt region="answer" highlight="3-10,19" />
 
-The body runs in two columns and the panels in three, so the grid is a `:::columns{count=3}` group inside a frameless callout, and `span="page"` sets that callout across both body columns, under the summary ([`:::columns`](/en/docs/document-format#columns)). A group fenced straight into the text can span the page too, but it leaves a line of paragraph spacing under itself, 38 pt here, and the keyword strip would move to a second page. Each panel is a callout nested in the group: it takes its own style, the column's 175 mm width and 18 mm of `marginTop` under the panel above it ([the `:::callout` container](/en/docs/configuration-styles#the-callout-container)). `breaks="3,4"` sends the third panel, Results, to the head of the middle column and the fourth, Conclusions, to the head of the last. Without it the group balances and cuts at the panel nearest each third of the stack. With this copy the cuts fall at the same two panels; the attribute keeps them there when the copy changes.
+The body runs in two columns and the panels in three, so the grid is a `:::columns{count=3}` group fenced straight into the text, and `span="page"` sets it across both body columns, under the summary, with the page's gutter between its columns ([`:::columns`](/en/docs/document-format#columns)). Left to itself, a group in the text is followed by a line of paragraph spacing, 38 pt here, and the keyword strip would move to a second page; `marginBottom="0.75em"` on the fence takes the place of that line (postext 1.28), and the strip fits at the foot of the page. Each panel is a callout in the group: it takes its own style, the column's 175 mm width and 18 mm of `marginTop` under the panel above it ([the `:::callout` container](/en/docs/configuration-styles#the-callout-container)). `breaks="3,4"` sends the third panel, Results, to the head of the middle column and the fourth, Conclusions, to the head of the last. Without it the group balances and cuts at the panel nearest each third of the stack. With this copy the cuts fall at the same two panels; the attribute keeps them there when the copy changes.
 
 ### 4 · Keep each figure in its panel
 
@@ -48,7 +48,7 @@ The heat map's cells and the four `:swatch{color="…"}` runs of its key name th
 
 <Excerpt region="type" />
 
-Paragraph styles apply inside boxes, nested ones included, so −4.2 °C is a `:::paragraphs{style="stat"}` block in Bitter at 150 pt inside the Results panel ([paragraph styles](/en/docs/configuration-styles#paragraph-styles)). The figure is written in bold, so it prints in Bitter 700 and in the style's `boldColor`, the orange of the panel. A second style gives the references a 9 mm hanging indent. The keyword strip is a tinted box with `placement="bottom"`, floated to the foot of the page under the grid.
+Paragraph styles apply inside boxes, so −4.2 °C is a `:::paragraphs{style="stat"}` block in Bitter at 150 pt inside the Results panel ([paragraph styles](/en/docs/configuration-styles#paragraph-styles)). The figure is written in bold, so it prints in Bitter 700 and in the style's `boldColor`, the orange of the panel. A second style gives the references a 9 mm hanging indent. The keyword strip is a tinted box with `placement="bottom"`, floated to the foot of the page under the grid.
 
 ## Variations
 
@@ -65,4 +65,4 @@ A meeting that asks for a larger file gets a 3,543 × 4,724 px PNG with the same
 
 - Rethink Sans draws a single figure in parentheses, such as the issue number in 11(3), as a circled figure on the canvas, so the references give the volume and the pages only.
 - A page-span box that ends the document moves to a new page unless two body lines of room are left under it. So the keyword strip is floated with `placement="bottom"`, which sets it on the bottom margin, in the 50 mm left under the grid.
-- `bodyText.paragraphContainerSpacing: 'add'` ends a `:::paragraphs` group on its style's own space, which keeps −4.2 °C on the line that explains it. Under the last reference that space is the style's `spaceBetween`, 2.8 mm, so a `:::space{lines=0.75}` before the acknowledgement opens 10.8 mm, near the 10.6 mm between the other paragraphs of a panel. With the default, `'collapse'`, a group is followed by a line of the panel's paragraph spacing: the acknowledgement needs no `:::space`, but the line it adds under −4.2 °C pushes the keyword strip to a second page.
+- `containerSpacing: 'add'` on the styles `stat` and `refs` ends their `:::paragraphs` groups on the style's own space, which keeps −4.2 °C on the line that explains it; every other group of the poster follows the document's rule (since postext 1.28; before it the rule could only be set for the whole document, with `bodyText.paragraphContainerSpacing`). Under the last reference that space is the style's `spaceBetween`, 2.8 mm, so a `:::space{lines=0.75}` before the acknowledgement opens 10.8 mm, near the 10.6 mm between the other paragraphs of a panel. Without it, under the document's `'collapse'`, a group is followed by a line of the panel's paragraph spacing: the acknowledgement needs no `:::space`, but the line it adds under −4.2 °C pushes the keyword strip to a second page.

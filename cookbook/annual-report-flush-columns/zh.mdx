@@ -16,7 +16,7 @@ Tidewell Community Energy的2025年度报告。这是一家虚构的合作社，
 
 ### 1 · 所有行都在网格上，由调节手段补齐空缺
 
-代码见上面的[简短回答](#简短回答)。版心正好是50行13.4 pt的高度，下页边距（21.6 mm）由这个高度推算出来。小标题在上方占一条网格线，自身再占一条，所以短了的栏总是短整数行，而<Feature id="column-balancing">各栏齐底</Feature>补的也正是整行。在<PageRef page={3}>第3页</PageRef>，三行的冰雹那一段因为`avoidOrphans`整段移到第4页（`avoidOrphans`是Postext的规则名，防止段落最后一行单独留在栏首），右栏于是少了两行。`maxLinesPerHeading: 1`把其中一行给*The Saltings and the roofs*上方的空白，另一行留给下一项调节手段，它把这一行加在屋顶列表之后。取默认值4时，两行都会加到这个标题上方。
+代码见上面的[简短回答](#简短回答)。版心正好是50行13.4 pt的高度，下页边距（21.6 mm）由这个高度推算出来。小标题在上方占一条网格线，自身再占一条，所以短了的栏总是短整数行，而<Feature id="column-balancing">各栏齐底</Feature>补的也正是整行。在<PageRef page={3}>第3页</PageRef>，三行的冰雹那一段因为`avoidOrphans`整段移到第4页（`avoidOrphans`是Postext的规则名，防止段落最后一行单独留在栏首），右栏于是少了两行。`maxLinesPerHeading: 1`把其中一行给*The Saltings and the roofs*上方的空白，另一行留给下一项调节手段，它把这一行加在屋顶列表之后。默认情况下，标题先最多加两行，再轮到它之后的调节手段（`maxLinesBeforeLoose`），等它们无行可加时才加到最多4行，所以两行都会加到这个标题上方。
 
 ### 2 · 在横跨页面的框上方齐平截断正文
 
@@ -50,7 +50,7 @@ Tidewell Community Energy的2025年度报告。这是一家虚构的合作社，
 
 ```diff
 -const balancing = { maxLinesPerHeading: 1 }; // 每个标题一行；多出的由下一项调节手段承担
-+const balancing = {}; // 默认值：每个标题上方最多4行
++const balancing = {}; // 默认值：每个标题先加两行，再轮到其他调节手段
 ```
 
 ### 关闭各栏齐底

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 111 · Fully vocalised classical prose with Qur'anic brackets ═══
 // https://postext.dev/en/cookbook/vocalised-classical-prose
 // Code: MIT · Text: al-Hamadhānī, Maqāmāt, ar.wikisource (PD) · Pictures: none
-// Fonts: Amiri, Aref Ruqaa (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Amiri, Aref Ruqaa (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 import { buildDocument, withLoadedFonts, renderPageToCanvas } from 'https://esm.sh/postext';
 
 const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es')

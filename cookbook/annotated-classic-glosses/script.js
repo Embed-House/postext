@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 032 · Annotated classic with margin glosses ════════════
 // https://postext.dev/en/cookbook/annotated-classic-glosses
 // Code: MIT · Text: Lewis Carroll (PD), glosses (CC BY 4.0) · Headpiece: diffusion models
-// Fonts: Unna, Rozha One, Cormorant SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Unna, Rozha One, Cormorant SC (SIL OFL 1.1) · Needs postext ≥ 1.28.0
 // The mad tea-party as an annotated edition: the text keeps to one column, and its glosses stand
 // in the outer margin beside the lines they explain, changing sides with the spread.
 import {
@@ -98,11 +98,10 @@ const bodyText = { // justified and hyphenated (en-us) by default
   indentAfterHeading: false,
   // Unna's space is narrow, 0.22 em. At the default 0.6 the line breaker set 'Alice felt
   // dreadfully puzzled. The Hatter’s remark seemed to have' with its spaces at 0.69.
-  minWordSpacing: 0.75 };
-// The dictionary divides the heroine's name on page 81, 'said Al-' | 'ice indignantly'. The
-// paragraph that holds it is fenced in this style, which keeps every word whole; its one
-// break, in 'together', is a soft hyphen typed in the text.
-const paragraphStyles = [{ id: 'whole', hyphenation: false }];
+  minWordSpacing: 0.75,
+  // The dictionary divides the heroine's name, 'said Al-' | 'ice indignantly' on page 81.
+  // The list keeps it whole wherever it stands; every other word is divided as before.
+  hyphenation: { exceptions: ['Alice'] } };
 // #endregion
 
 // #region opener: a headpiece, the chapter's numeral and title, a headnote with a drop cap
@@ -183,7 +182,8 @@ const footer = { elements: [{ ...head('drop-folio', 'odd', '{pageNumber}', -OUTE
     offset: { x: mm(-OUTER), y: mm(-DROP) } } }] };
 
 const config = () => ({
-  colorPalette, page, layout, bodyText, paragraphStyles, calloutStyles, chipStyles, header,
+  locale: 'en-us', // the chapter is in English: its hyphenation patterns, and the bundle's language
+  colorPalette, page, layout, bodyText, calloutStyles, chipStyles, header,
   footer,
   headings: {
     fontFamily: DISPLAY, fontWeight: 400, color: col('ink'), // Rozha One has one weight

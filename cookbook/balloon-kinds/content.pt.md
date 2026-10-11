@@ -14,7 +14,7 @@ Cada linha do roteiro é um balão: quem fala, o tipo entre chaves quando não �
 - **Voz interior.** :chip[maya{inner}:]{style="code"} O que ela não diz em voz alta: sem rabicho, caixa cinza, itálico.
 - **Nota do editor.** :chip[note:]{style="code"} Pequena, no canto inferior do quadro.
 - **Onomatopeia.** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} Sem balão: letras de cartaz em vermelho com contorno branco, posicionadas e giradas à mão.
-- **Fora de quadro.** :chip[tomas{tail=end}:]{style="code"} Quem fala está fora da imagem; o rabicho vai até a borda do quadro.
+- **Fora de quadro.** :chip[tomas{tail=right}:]{style="code"} Quem fala está fora da imagem; o rabicho vai até a borda do quadro.
 - **Fixado.** :chip[skipper{at="44% 22%"}:]{style="code"} O balão fica centrado nesse ponto da imagem, qualquer que seja o recorte.
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout}: *Gannet!* Rumo à luz! Mantenha a proa nela!
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: KA-BRUUM
 skipper{at="44% 22%"}: Dá pra ver… dá pra ver a luz…
-tomas{tail=end}: Calma agora. Vira devagar.
+tomas{tail=right}: Calma agora. Vira devagar.
 ::panel{art=bk-window}
 maya{inner}: Vai. Vai. Vai.
 caption{at=bottom-start}: Levou duas horas.

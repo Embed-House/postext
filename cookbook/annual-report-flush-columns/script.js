@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 037 · Annual report with flush columns ═══════════════════════
 // https://postext.dev/en/cookbook/annual-report-flush-columns
 // Code: MIT · Text: original (CC BY 4.0) · Art: drawn in code · Typefaces: SIL OFL 1.1
-// Fonts: Brygada 1918, Epilogue, Spline Sans Mono, Mrs Saint Delafield · Needs postext ≥ 1.25.0
+// Fonts: Brygada 1918, Epilogue, Spline Sans Mono, Mrs Saint Delafield · Needs postext ≥ 1.28.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, mergeCells, inlineSvgFonts,
 } from 'https://esm.sh/postext';
@@ -41,11 +41,13 @@ const text = (id, content, look, placement) => ({ kind: 'text', id, content, pla
 // The text block is LINES lines of LEAD deep (MARGIN.bottom is derived from them) and every
 // heading takes whole lines, so a column the break rules leave short is short by whole lines.
 // Balancing (on by default) stretches it back to its foot with its levers, in this order: a
-// box that closes the column moves down to it; lines above the headings; one line where a
-// list ends; one line under a float at the column head; last, a paragraph set one line longer
-// and looser, with up to maxTracking of tracking. A closing band whose columns differ by more
-// than a line is cut level instead (trailing), and so is the band a page-wide box leaves when
-// it has to move on to the next page (beforeSpan).
+// box that closes the column moves down to it; a picture with a safe area grows; lines above
+// the headings, two each at most (maxLinesBeforeLoose); one line where a list ends; one under
+// a display formula or a box, then under a float at the column head; a paragraph set one line
+// longer and looser, with up to maxTracking of tracking; last, the lines a heading may still
+// take, up to maxLinesPerHeading. A closing band whose columns differ by more than a line is
+// cut level instead (trailing), and so is the band a page-wide box leaves when it has to move
+// on to the next page (beforeSpan).
 const balancing = { maxLinesPerHeading: 1 }; // one line per heading; the next lever takes more
 const flowText = { // justification, hyphenation and Knuth–Plass stay at their defaults (on)
   fontFamily: 'Brygada 1918', fontSize: pt(9.4), lineHeight: pt(LEAD),
@@ -133,7 +135,7 @@ const footer = { elements: [
 ] };
 
 const config = () => ({
-  colorPalette, resourceTypes,
+  locale: 'en-us', colorPalette, resourceTypes, // the report is written in English
   page: { width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150,
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.inner),
       right: mm(MARGIN.outer), mirror: true } },

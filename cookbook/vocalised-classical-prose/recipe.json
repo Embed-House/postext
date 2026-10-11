@@ -44,7 +44,7 @@
     "arabicMarksExceedLeading"
   ],
   "engine": {
-    "postext": "1.25.0"
+    "postext": "1.28.0"
   },
   "kit": [
     "core",
@@ -123,7 +123,7 @@
     "content": "MIT"
   },
   "created": "2026-10-04",
-  "updated": "2026-10-10",
+  "updated": "2026-10-11",
   "related": [
     "qasida-diwan-page"
   ]

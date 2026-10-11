@@ -68,11 +68,11 @@ Los autores agradecen sus comentarios al borrador a los lectores del comité de 
   pages = {1119--1184}, year = 1981, doi = {10.1002/spe.4380111102}}
 @phdthesis{liang1983,
   author = {Liang, Franklin Mark}, title = {Word Hy-phen-a-tion by Com-put-er},
-  school = {Stanford University}, address = {Stanford, CA}, year = 1983}
+  school = {Stanford Univ.}, address = {Stanford, CA}, year = 1983}
 @phdthesis{plass1981,
   author = {Plass, Michael Frederick},
   title = {Optimal Pagination Techniques for Automatic Typesetting Systems},
-  school = {Stanford University}, address = {Stanford, CA}, year = 1981}
+  school = {Stanford Univ.}, address = {Stanford, CA}, year = 1981}
 @book{knuth1984,
   author = {Knuth, Donald E.}, title = {The {TeX}book}, publisher = {Addison-Wesley},
   address = {Reading, MA}, year = 1984}

@@ -79,7 +79,8 @@
       "pages": [
         3,
         3
-      ]
+      ],
+      "raggedLines": 2
     }
   },
   "folio": {
@@ -126,6 +127,6 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-25",
-  "updated": "2026-10-10",
+  "updated": "2026-10-11",
   "related": ["spanish-pocket-novel", "proof-sheet-diagnostics", "baseline-grid-book-page", "section-heads-field-manual"]
 }

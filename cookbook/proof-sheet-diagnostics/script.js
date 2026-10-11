@@ -1,10 +1,9 @@
 // ═══ Postext Cookbook · Nº 055 · A galley proof with every fault marked in red ══════
 // https://postext.dev/en/cookbook/proof-sheet-diagnostics
 // Code: MIT · Text: original (CC BY 4.0) · Map: code (CC BY 4.0) · Photo: diffusion models
-// Fonts: Charis SIL, Chivo, Fragment Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
-import {
-  buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage,
-  parseMarkdownWithIssues, KNOWN_DIRECTIVES, KNOWN_CONTAINERS,
+// Fonts: Charis SIL, Chivo, Fragment Mono (SIL OFL 1.1) · Needs postext ≥ 1.28.0
+import { buildDocumentWithFonts, prepareFonts, renderPageToCanvas, registerResourceImage,
+  parseMarkdownWithIssues, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, lineWordSpacing,
 } from 'https://esm.sh/postext';
 
 const LANG = 'en'; // @lang: the language of the sample document ('en' | 'es')
@@ -109,7 +108,8 @@ const FIRST_PASS = [ // [corrected, faulty], replaced wherever it occurs
   [' https://', ' '], // a web address without its scheme
   [':::\n:::\n', ''], // the fact box's two closing fences
   ['\u20601971.', '1971.'], // the word joiner before 1971 (gotcha: digit-period-list)
-];
+  [t({ en: 'October 2.\n:::', es: 'octubre.\n:::' }), t({ en: 'October 2.', es: 'octubre.' })],
+]; // last: the timeline's closing fence, so its box stays open inside the open fact box
 const firstPass = (md) => FIRST_PASS.reduce((out, [fix, fault]) => out.replaceAll(fix, fault), md);
 // #endregion
 
@@ -141,7 +141,7 @@ function proof(md, doc) {
   const max = doc.config.bodyText.maxWordSpacing;
   for (const l of doc.pages.flatMap((p) => p.columns.flatMap((c) => c.blocks))
     .flatMap((b) => b.lines ?? [])) {
-    const ratio = Math.round(l.justifiedSpaceRatio * 100) / 100; // as the report prints it
+    const ratio = Math.round(lineWordSpacing(l) * 100) / 100; // as the report prints it
     if (ratio > max) add('looseLine', l.sourceStart, l.sourceEnd, ratio);
     if (l.ragged) add('raggedLine', l.sourceStart, l.sourceEnd); // past 3×: no ratio left
     if (l.hyphenated && /[./]\S+-$/.test(l.text)) add('addressHyphen', l.sourceStart, l.sourceEnd);

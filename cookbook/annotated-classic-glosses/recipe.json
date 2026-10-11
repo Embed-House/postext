@@ -26,7 +26,7 @@
     { "package": "postext", "note": "the kicker prints Chapter {attr.num}, the numeral written on the heading line: the excerpt is a document of its own, so {chapterNumber} would count its one H1 and print 1" }
   ],
   "related": ["critical-edition-line-numbers", "textbook-margin-column", "endnotes-instead-of-footnotes", "spanish-pocket-novel"],
-  "engine": { "postext": "1.25.0" },
+  "engine": { "postext": "1.28.0" },
   "kit": ["core", "fonts", "viewer", "images"],
   "sample": { "locales": ["en"] },
   "capture": {
@@ -73,5 +73,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-09-25",
-  "updated": "2026-10-10"
+  "updated": "2026-10-11"
 }

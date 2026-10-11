@@ -14,7 +14,7 @@ Cada línia del guió és una bafarada: qui parla, el tipus entre claus si no é
 - **Veu interior.** :chip[maya{inner}:]{style="code"} El que no diu en veu alta: sense rabet, caixa grisa, cursiva.
 - **Nota de l’editor.** :chip[note:]{style="code"} Petita, al racó inferior de la vinyeta.
 - **Onomatopeia.** :chip[sfx{at="16% 28%" rotate=-10}:]{style="code"} Sense bafarada: lletres de cartell en vermell amb contorn blanc, col·locades i girades a mà.
-- **Fora de camp.** :chip[tomas{tail=end}:]{style="code"} Qui parla és fora de la imatge; el rabet arriba a la vora de la vinyeta.
+- **Fora de camp.** :chip[tomas{tail=right}:]{style="code"} Qui parla és fora de la imatge; el rabet arriba a la vora de la vinyeta.
 - **Fixada.** :chip[skipper{at="44% 22%"}:]{style="code"} La bafarada se centra en aquell punt de la imatge, sigui quin sigui el retall.
 
 :::paragraphs{style="imprint"}
@@ -35,7 +35,7 @@ tomas{shout at="27% 82%"}: *Gannet*! Proa a la llum! No la perdis!
 ::panel{art=bk-sea}
 sfx{at="16% 28%" rotate=-10}: BRRROOM!
 skipper{at="44% 22%"}: La veiem… veiem la llum…
-tomas{tail=end}: A poc a poc. Vira a poc a poc.
+tomas{tail=right}: A poc a poc. Vira a poc a poc.
 ::panel{art=bk-window}
 maya{inner}: Vinga. Vinga. Vinga.
 caption{at=bottom-start}: Van trigar dues hores.

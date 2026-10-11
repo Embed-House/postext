@@ -22,11 +22,11 @@ The trams reached the harbour yesterday, eleven years after the Corporation firs
 
 ::resource{id="mayor"}
 
-“It has taken us longer than the Romans took to build their roads,” Mrs Rowe told the crowd from a platform dressed in bunting, “and our road is only a mile and three furlongs long. But it is ours, it is paid for, and from Monday a docker in Saltings Row can be at the Town Hall in nine minutes for a penny.”
+“This has taken us longer than the Romans took to build their roads,” Mrs Rowe told the crowd from a platform dressed in bunting, “and our road is only a mile and three furlongs long. But it is ours, it is paid for, and from Monday a docker in Saltings Row can be at the Town Hall in nine minutes for a penny.”
 
-The Harbour line leaves the main route at Market Cross and runs down Quay Hill, along the Strand and out to a new turning loop beside the lifeboat house. Four cars, rebuilt in the Corporation’s own works at Fennick Lane, will run every eight minutes from six in the morning until half past eleven at night.
+The Harbour line leaves the main route at Market Cross and runs down Quay Hill, along the Strand and out to a new turning loop beside the lifeboat house. Four cars, rebuilt in the Corporation’s works at Fennick Lane and painted green and cream, will run every eight minutes from six in the morning until half past eleven at night.
 
-The line cost £41,300, of which £12,000 came from the government’s grant for public works. Some two hundred men of the town were taken on to lay it, most of them from the register at the Labour Exchange, and the Borough Engineer, Mr Lionel Cardew, said that not one day had been lost to accident since the first sett was lifted in October.
+The line cost £41,300, of which £12,000 came from the government’s grant for public works. Some two hundred Wexcombe men were taken on to lay it, most of them off the register at the Labour Exchange, and the Borough Engineer, Mr Lionel Cardew, said that not one day had been lost to accident since the first sett was lifted in October. The rails were rolled at Workington, and the setts are granite from Penhallow.
 
 :::paragraphs{style="jump"}
 A hill too steep, and the fares: **page 2**
@@ -37,21 +37,23 @@ A hill too steep, and the fares: **page 2**
 ## Miss Lacey lands on the Common {style="second"}
 
 :::paragraphs{style="flush"}
-The aviator Miss Constance Lacey brought her biplane down on Wexcombe Common at twenty past six on Wednesday evening, at the end of a flight from Croydon of three hours and fifty minutes. She came in low over the cricket pavilion, scattering a game of the Wednesday Eleven, and rolled to a stop forty yards from the bandstand.
+The aviator Miss Constance Lacey brought her biplane down on Wexcombe Common at twenty past six on Wednesday evening, at the end of a flight from Croydon of three hours and fifty minutes. She came in low over the cricket pavilion, scattering a game of the Wednesday Eleven, and rolled to a stop forty yards from the bandstand, where the Silver Band was at practice and did not miss a bar.
 :::
 
 
 Miss Lacey, who is twenty-four, is flying round the coast of England and Wales in stages to raise money for the lifeboat fund, and has so far raised £1,108. “The Common is the best field I have met since Kent,” she said, “though the cows took some persuading.”
 
-Her machine is a two-seater of 1929 with a Gipsy engine, bought second-hand from a flying club in Hampshire and named *Kittiwake*. She navigates with a road map folded on her knee, and follows the railway lines where the coast turns misty. “The Great Western has never once let me down,” she said. “I cannot say the same for the weather.”
+A hat went round the crowd before she had her goggles off, and came back with £9 4s. 2d. for the fund, a brass button and a note promising a shilling on Friday. The coxswain of the *Sarah Jolly*, Mr William Bassett, walked up from the harbour to shake her hand, and told her that she was welcome to the lifeboat any time the weather kept her on the ground.
 
-She stayed the night at the Mermaid, where the landlord refused to take her money, and left at seven the next morning for Penzance, waving to a crowd of schoolchildren who had been let out of lessons to see her off. Two of them had sat up all night on the pavilion roof to be sure of a good view. The pavilion has asked for a signed photograph for its wall, and the Wednesday Eleven for a replay.
+Her machine is a two-seater of 1929 with a Gipsy engine, bought second-hand from a flying club in Hampshire and named *Kittiwake*. The front seat carries a suitcase, a spare magneto and a tin of toffee. She navigates with a road map folded on her knee, and follows the railway lines where the coast turns misty. “The Great Western has never once let me down,” she said. “I cannot say the same for the weather.”
+
+She stayed the night at the Mermaid, where the landlord refused to take her money, and left at seven the next morning for Penzance, waving to a crowd of schoolchildren who had been let out of lessons to see her off. Two of them had sat up all night on the pavilion roof to be sure of a good view. She hopes to round Land’s End tomorrow and to be home in Croydon by the end of the month. The pavilion has asked for a signed photograph for its wall, and the Wednesday Eleven for a replay.
 
 ### The weather
 
-Fair at first, with a fresh breeze from the west; cloud later and a little rain in the evening, clearing overnight. Sea moderate, with a swell on the bar at low water. Sunrise 4.58, sunset 9.31. Yesterday’s highest temperature in the town was 68 degrees, at the Fish Market at three o’clock, and the lowest 51, at the coastguard station at dawn. The Harbour Master reports the best visibility of the year from Gannet Point, where the Stags could be seen plainly at noon and the smoke of the Scilly packet an hour before she was due.
+Fair at first, with a fresh breeze from the west; cloud later and a little rain in the evening, clearing overnight. Sea moderate, with a swell on the bar at low water. Sunrise 4.58, sunset 9.31. High water at the Quay this evening at 5.38. Yesterday’s highest temperature in the town was 68 degrees, at the Fish Market at three o’clock, and the lowest 51, at the coastguard station at dawn. The Harbour Master reports the best visibility of the year from Gannet Point, where the Stags could be seen plainly at noon and the smoke of the Scilly packet an hour before she was due. The glass at the Harbour Office stood at 30.1 inches at nine last night, and steady.
 
-*Tomorrow:* bright, a light northerly air, good drying weather. Bathers are reminded that the red flag on West Sands means what it says.
+*Tomorrow:* bright, with a light northerly air and good drying weather. Bathers are reminded that the red flag on West Sands means what it says, however the sea may look from the promenade.
 
 :::callout{type="briefs" span="page" placement="bottom" title="In brief"}
 :::columns{count=4 breaks="2,3,4"}
@@ -103,25 +105,25 @@ The largest cod landed at Wexcombe in living memory came ashore on Thursday in t
 
 ::resource{id="fisherman"}
 
-“I’ve fished these grounds since I was eleven,” Mr Hosking said, “and I never saw his like. He fought for three-quarters of an hour, and I reckon he’d have won if my grandson hadn’t been there to hold my belt.”
+“I’ve fished these grounds since I was eleven,” Mr Hosking said, “and never saw his like. He fought three-quarters of an hour, and I reckon he’d have won if my grandson hadn’t held my belt.”
 
 The fish was sold to Messrs Kitto of the Strand for a guinea and is to be shown in their window, packed in ice, until Monday. A photograph has been sent to the Natural History Museum, which has asked whether the skipper might part with the head. Mr Hosking says he will think about it.
 
 ## Council votes for an open-air bathing pool {style="second"}
 
-The Town Council on Tuesday voted by eighteen votes to seven to build an open-air bathing pool at Gannet Point, in the hollow of the old quarry below the coastguard cottages. The pool will be filled by the tide through a sluice, and will measure fifty yards by twenty, with diving stages and a café.
+The Town Council on Tuesday voted by eighteen votes to seven to build an open-air bathing pool at Gannet Point, in the hollow of the old quarry below the coastguard cottages. The pool will be filled by the tide through a sluice, and measure fifty yards by twenty, with diving stages and a café.
 
 The Borough Engineer puts the cost at £9,600. Councillor Bastian, who led the opposition, said the town already had a perfectly good sea. Councillor Mrs Pascoe replied that the sea was perfectly good only in August, and that children had been drowned in it.
 
-Work is to begin in October, so that the pool may open for the summer of 1934. Seventy men will be employed.
+Work is to begin in October, so that the pool may open for the summer of 1934. Seventy men will be employed, and the stone for the terraces is to come out of the quarry itself. Admission will be twopence.
 
 ## Lifeboat out twice in one night {style="second"}
 
-The Wexcombe lifeboat *Sarah Jolly* was launched twice on Tuesday night, the first time at a quarter to eleven to the yacht *Petrel*, whose engine had failed off Gannet Point with three men aboard, and the second at half past two to a fishing boat reported overdue from the mackerel grounds.
+The Wexcombe lifeboat *Sarah Jolly* was launched twice on Tuesday night, the first time at a quarter to eleven to the yacht *Petrel*, whose engine had failed off Gannet Point with a crew of three aboard, and the second at half past two to a fishing boat reported overdue from the mackerel grounds.
 
-The *Petrel* was towed into harbour shortly after midnight. The fishing boat, the *Brothers’ Pride*, was found at anchor in the lee of the Stags, her crew asleep. “They had a good catch and saw no reason to hurry,” said the coxswain, Mr William Bassett. “I told them what I thought of that, and then I gave them a tow, because the tide was turning.”
+The *Petrel* came into harbour on the tow shortly after midnight, and her owner, a visitor from Bristol, has sent five pounds to the station with his apologies to the crew’s wives. The fishing boat, the *Brothers’ Pride*, was found anchored in the lee of the Stags, with her crew asleep. “They had a good catch and saw no reason to hurry,” said the coxswain, Mr William Bassett. “I told them what I thought of that, and then I gave them a tow, because the tide was turning.”
 
-The crew of twelve were back in their beds by five. It was the boat’s fourteenth service this year. The collecting box at the Lifeboat House, the coxswain added, has been lighter this summer than the boat has been busy, and he would be glad to see it the other way about.
+The crew of twelve were back in their beds by five, and four of them were at the Fish Market by seven. It was the boat’s fourteenth service this year, and her third since Whitsun. The collecting box at the Lifeboat House, the coxswain added, has been lighter this summer than the boat has been busy, and he would be glad to see it the other way about.
 
 ## Fire at the rope works {style="second"}
 
@@ -145,4 +147,4 @@ The Watch Committee has fixed the speed of the trams on Quay Hill at four miles 
 
 ## Shipping {style="third"}
 
-**Arrived:** *Mary Jane*, ketch, from Swansea with coal; *Goldfinch*, steamer, from Rotterdam with timber; *Ellen*, schooner, from Fowey with china clay for the potteries; *Pride of Wexcombe*, trawler, from the Smalls with a full hold. **Sailed:** *Morning Star* and *Brothers’ Pride* for the mackerel grounds; *Lynher*, barge, for Plymouth with pit props; *Goldfinch*, in ballast, for Cardiff. **In harbour:** the training ship *Exe*, until Wednesday; visitors on board each afternoon from two, and the band of the ship plays on the quarterdeck at four. **Fish Market:** mackerel 9s. the box, pilchards 6s., hake scarce at 2s. 6d. the stone; crab plentiful and cheap.
+**Arrived:** *Mary Jane*, ketch, from Swansea with coal; *Goldfinch*, steamer, from Rotterdam with timber; *Ellen*, schooner, from Fowey with china clay; *Pride of Wexcombe*, trawler, from the Smalls with a full hold. **Sailed:** *Morning Star* and *Brothers’ Pride* for the mackerel grounds; *Lynher*, barge, for Plymouth with pit props; *Goldfinch*, in ballast, for Cardiff. **In harbour:** the training ship *Exe*, until Wednesday; visitors on board each afternoon from two, and the band of the ship plays on the quarterdeck at four. **Fish Market:** mackerel 9s. the box, pilchards 6s., hake scarce at 2s. 6d. the stone; crab plentiful and cheap. **Expected:** the ketch *Bessie Clark*, from Lydney with coal, on Monday’s tide.

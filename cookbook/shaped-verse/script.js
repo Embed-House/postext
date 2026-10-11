@@ -77,6 +77,7 @@ const titles = {
 // :::pagebreak opens the last page.
 const config = () => ({
   colorPalette,
+  locale: t({ en: 'en-us', es: 'es' }), // the language of each edition, and of its bundle
   page: { // mirror: left is the inner margin; 150 dpi is for the screen
     sizePreset: 'custom', width: mm(TRIM.w), height: mm(TRIM.h), dpi: 150,
     backgroundColor: col('paper'),

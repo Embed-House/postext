@@ -133,7 +133,7 @@ const folio = (pages) => ({ kind: 'text', id: `folio-${pages}`, content: '{pageN
   fontFamily: 'Marcellus SC', fontSize: pt(9), color: col('muted'), align: 'center',
   placement: { anchor: { to: 'container', edge: 'top' }, offset: { y: mm(10) } } });
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette,
   // The list replaces Figure and Table; a book with figures spreads defaultResourceTypes() in.
   resourceTypes: [ornament],

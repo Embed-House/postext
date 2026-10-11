@@ -116,7 +116,7 @@ const aside = { id: 'aside', breakBefore: { enabled: false }, advancedDesign: { 
   ...H2, marginTop: pt(LEAD) };
 // #endregion
 
-const config = () => ({
+const config = () => ({ locale: 'en-us', // the sample is in English
   colorPalette, resourceTypes: [plain], headings, headingStyles: [cover, aside],
   page: { width: mm(PAGE.width), height: mm(PAGE.height), backgroundColor: col('paper'),
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.inner),
