@@ -914,7 +914,10 @@ prefix = ''   (≥ 1.9) text before the number, in the separator's style: prefix
 separator = '.', numberFontSize = 1em, gap = 0.5em, indent = 0em, numberVerticalOffset = 0em
 marginTop/Bottom = 1.5em, itemSpacing = 0em, hangingIndent = true, snapTopToGrid = false
 numberWidth = 'run'  ('run' = text after the widest number of the item's own run, so a list broken by a figure or
-                      a paragraph can shift its text; 'level' = widest number at that depth in the chapter)
+                      a paragraph can shift its text; 'level' = widest number at that depth in the chapter;
+                      'item' (≥ 1.28) = after the item's own number: each text one `gap` after its own label, 第九條 and
+                      第十一條 followed by the same space, texts starting at different places (Japanese statutes);
+                      turnovers by hangingIndent: false = back at the list indent, true = under the item's own text)
 numberAlign = 'end'  (≥ 1.26; 'end' = numbers flush against the text, 9. and 10. end together; 'start' = numbers at
                       the start of the column, so 第九條 and 第十一條 begin together; the text starts at the same place)
 separatorFontFamily / separatorFontWeight / separatorItalic / separatorColor  → inherit number style
@@ -931,7 +934,8 @@ GB/T 15834 list hierarchy for Chinese: levels 一、 / （一） / 1. / （1） 
 `[{level:1,numberFormat:'arabic',separator:'.'}, {level:2,numberFormat:'arabic',prefix:'（',separator:'）'},
 {level:3,numberFormat:'katakana',separator:''}, {level:4,numberFormat:'katakana',prefix:'（',separator:'）'}, {level:5,numberFormat:'circled-decimal',separator:''}]`.
 Numbers are right-aligned within a run (within the depth with `numberWidth: 'level'`); `numberAlign: 'start'` sets
-them at the start of the column instead (statute articles, any label of varying length). Around a list nested
+them at the start of the column instead (statute articles, any label of varying length), and `numberWidth: 'item'`
+(≥ 1.28) drops the column: each text follows its own label by `gap` (numberAlign then changes nothing). Around a list nested
 in another the outer list's `itemSpacing` applies on both sides. List margins of 1.5em are large — books usually want
 `{0.5,'em'}` or a pt value. Nested list depth in markdown = 2 spaces per level (max 5).
 
