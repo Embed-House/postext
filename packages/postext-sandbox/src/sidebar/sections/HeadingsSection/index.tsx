@@ -48,7 +48,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
   };
 
   const resetBalancingField = (
-    field: 'enabled' | 'maxLinesPerHeading' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterDisplays' | 'stretchAfterFloats'
+    field: 'enabled' | 'maxLinesPerHeading' | 'maxLinesBeforeLoose' | 'stretchAfterLists' | 'maxLinesAfterList' | 'stretchAfterDisplays' | 'stretchAfterFloats'
       | 'maxLinesAfterFloat' | 'looseParagraphs' | 'maxLooseParagraphs' | 'trackParagraphs' | 'maxTracking'
       | 'trailing' | 'beforeSpan' | 'closingBox' | 'gridLines',
   ) => {
@@ -142,6 +142,7 @@ export const HeadingsSection = memo(function HeadingsSection() {
   const isBalEnabledDefault = balancingOn === balancingDefault;
   const isBalGridLinesDefault = (headings.balancing.gridLines ?? 'allow') === 'allow';
   const isBalMaxLinesDefault = headings.balancing.maxLinesPerHeading === DEFAULT_COLUMN_BALANCING.maxLinesPerHeading;
+  const isBalBeforeLooseDefault = headings.balancing.maxLinesBeforeLoose === DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose;
   const isBalAfterListsDefault = headings.balancing.stretchAfterLists === DEFAULT_COLUMN_BALANCING.stretchAfterLists;
   const isBalMaxAfterListDefault = headings.balancing.maxLinesAfterList === DEFAULT_COLUMN_BALANCING.maxLinesAfterList;
   const isBalAfterDisplaysDefault = headings.balancing.stretchAfterDisplays === DEFAULT_COLUMN_BALANCING.stretchAfterDisplays;
@@ -359,6 +360,19 @@ export const HeadingsSection = memo(function HeadingsSection() {
             tooltip={labels.balanceColumnsMaxLinesTooltip}
             isDefault={isBalMaxLinesDefault}
             onReset={() => resetBalancingField('maxLinesPerHeading')}
+          />
+          <NumberInput
+            label={labels.balanceMaxLinesBeforeLoose}
+            value={headings.balancing.maxLinesBeforeLoose}
+            onChange={(v) =>
+              updateHeadings({ balancing: { ...raw?.balancing, maxLinesBeforeLoose: v } })
+            }
+            min={0}
+            max={8}
+            step={1}
+            tooltip={labels.balanceMaxLinesBeforeLooseTooltip}
+            isDefault={isBalBeforeLooseDefault}
+            onReset={() => resetBalancingField('maxLinesBeforeLoose')}
           />
           <ToggleSwitch
             label={labels.balanceAfterLists}

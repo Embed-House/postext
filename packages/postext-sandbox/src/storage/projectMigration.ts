@@ -45,6 +45,9 @@ import type { ProjectThumbnail } from './projects';
  *  fences outside a box that were ignored (see {@link
  *  pinLegacyFlowColumns}, #634) and the slots a float found under a
  *  page-span opener (see {@link pinLegacyOpenerHeadFloats}, #639).
+ *  Records saved before 12 keep the order their columns were balanced in,
+ *  every line above a heading before any other lever (see
+ *  `pinLegacyLooseOrder` in `postext/bundle`, #707).
  *  Records 1 and 2 were numbered by the Sandbox alone, before 1.5; they
  *  are older than 3 on every count. Records 3 to 7 were written by the 1.5
  *  prereleases: 3 before the maths size changed, 4 before the inline gap

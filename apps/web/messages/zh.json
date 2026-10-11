@@ -1986,6 +1986,8 @@
     "balanceColumnsTooltip": "在标题上方增加基线网格行，使各栏与页面底部齐平",
     "balanceColumnsMaxLines": "每个标题最多行数",
     "balanceColumnsMaxLinesTooltip": "单个标题上方最多可增加的网格行数",
+    "balanceMaxLinesBeforeLoose": "先加在标题上方的行数",
+    "balanceMaxLinesBeforeLooseTooltip": "在尝试列表结尾、公式、图和放松段落之前，标题上方最多先加的网格行数。只有它们再也补不了时，标题才继续加行，直到上面的上限。设为上限值时，标题先加满全部行，与postext 1.27及之前相同",
     "balanceAfterLists": "列表后加行",
     "balanceAfterListsTooltip": "栏需要排到页底时，在列表结束后增加一行基线网格",
     "balanceAfterDisplays": "公式与框下加行",

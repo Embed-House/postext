@@ -1300,6 +1300,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'balanceMaxLinesAfterFloatTooltip',
       'balanceMaxLinesAfterList',
       'balanceMaxLinesAfterListTooltip',
+      'balanceMaxLinesBeforeLoose',
+      'balanceMaxLinesBeforeLooseTooltip',
       'balanceMaxLooseParagraphs',
       'balanceMaxLooseParagraphsTooltip',
       'balanceMaxTracking',

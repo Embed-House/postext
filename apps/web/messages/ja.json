@@ -1986,6 +1986,8 @@
     "balanceColumnsTooltip": "見出しの上にベースライングリッドの行を加え、段の末尾をページの下端にそろえます。",
     "balanceColumnsMaxLines": "見出しあたりの最大行数",
     "balanceColumnsMaxLinesTooltip": "1つの見出しの上に加えられるグリッド行の最大数です。",
+    "balanceMaxLinesBeforeLoose": "ほかの手段の前に見出しへ足す行数",
+    "balanceMaxLinesBeforeLooseTooltip": "リストの終わり、数式、図、ゆるい段落を試す前に、見出しの上へ足せるグリッド行の数です。それらで埋められなくなったときだけ、上の最大行数まで見出しにさらに行を足します。最大行数と同じ値にすると、postext 1.27までと同じく、まず見出しにすべての行を足します。",
     "balanceAfterLists": "リストの後で広げる",
     "balanceAfterListsTooltip": "段をページの下端まで届かせる必要があるとき、リストの終わりの後にベースライングリッドの行を1行加えます。",
     "balanceAfterDisplays": "数式と囲みの下で広げる",

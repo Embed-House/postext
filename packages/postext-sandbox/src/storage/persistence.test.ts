@@ -119,7 +119,8 @@ describe('working configuration', () => {
   it('reads a stamped copy as it is', async () => {
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
-      'postext-sandbox-config-version': '11',
+      // Today's stamp: a copy stamped 11 gets the pins of rules 12 (#707).
+      'postext-sandbox-config-version': '12',
     });
     const { loadConfig } = await import('./persistence');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
@@ -173,7 +174,8 @@ describe('working configuration', () => {
     // An export carries no chapters: it may hold a heading anywhere, so
     // every copy stamped before 8 keeps 1.4's split under a heading too.
     const v3 = configFromExport({ ...legacy, configVersion: 3 });
-    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' });
+    // (and every copy stamped before 12 the order of its balancing levers, #707)
+    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
     expect(v3.math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     // One stamped 4 (a later 1.5 prerelease) gets the inline gap and the
     // version-6, version-7 and version-8 pins: an export carries no
@@ -183,8 +185,10 @@ describe('working configuration', () => {
     // not pinned.
     // It may set a poem with no separator anywhere too, and end a line with
     // a backslash, which printed up to 1.22 (#620).
+    // It may hold a heading in balanced columns: the order of the balancing
+    // levers is pinned too (#707).
     expect(configFromExport({ ...legacy, configVersion: 4 })).toEqual({
-      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' },
+      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } },
       layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
       bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
       codeStyle: { blocks: false },

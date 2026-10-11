@@ -114,6 +114,17 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(map.get('postext-sandbox-config')).toBe('{}');
   });
 
+  it('keeps "Lines per heading before other levers" when it is not 2 (#707)', () => {
+    const map = installStorage();
+    for (const maxLinesBeforeLoose of [0, 4]) {
+      const config: PostextConfig = { headings: { balancing: { maxLinesBeforeLoose } } };
+      saveConfig(config);
+      expect(loadConfig()).toEqual(config);
+    }
+    saveConfig({ headings: { balancing: { maxLinesBeforeLoose: 2 } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('stores nothing for the default of a plain page, and keeps it switched off', () => {
     const map = installStorage();
     saveConfig(toggled({}, true));
@@ -185,7 +196,8 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
   it('in the working configuration', () => {
     const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '10' });
     const migrated = loadConfig()!;
-    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true } });
+    // (with the order of its balancing levers, pinned for a copy stamped before 12, #707)
+    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4 } });
     saveConfig(migrated);
     expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
     // Stamped current, it is read as stored: the value has to be there.
@@ -201,7 +213,7 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
     await putProject(migrated);
     const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
     expect(raw.version).toBe(PROJECT_RECORD_VERSION);
-    expect(raw.config.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true } });
+    expect(raw.config.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4 } });
     expect(balanced((await getProject('old'))!.config)).toBe(true);
   });
 

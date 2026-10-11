@@ -1378,6 +1378,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   balanceColumnsTooltip: 'Add baseline-grid lines above headings so columns end flush with the page bottom',
   balanceColumnsMaxLines: 'Max lines per heading',
   balanceColumnsMaxLinesTooltip: 'Maximum extra grid lines that may be added above a single heading',
+  balanceMaxLinesBeforeLoose: 'Lines per heading before other levers',
+  balanceMaxLinesBeforeLooseTooltip: 'Grid lines a heading may take before the list ends, the formulas, the figures and the loose paragraphs are tried. It gets its further lines, up to the maximum above, only when they have nothing left to give. Set it to the maximum to give headings all their lines first, as up to postext 1.27',
   balanceAfterLists: 'Stretch after lists',
   balanceAfterFloats: 'Stretch under figures',
   balanceAfterFloatsTooltip: 'Add a baseline-grid line between a figure or table at the head of a column and the text under it when the column needs to reach the page bottom',
