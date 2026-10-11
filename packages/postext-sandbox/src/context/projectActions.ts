@@ -31,7 +31,7 @@ import {
   saveProjectId,
 } from '../storage/persistence';
 import { cloneBook, singleChapterBook } from '../book/chapterOps';
-import type { BookContent, Chapter } from '../book/types';
+import type { BookContent, BookStart, Chapter } from '../book/types';
 import { createBookPlanner } from '../book/pagination';
 import { cloneContentForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
 import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
@@ -170,7 +170,7 @@ async function adoptPresetThumbnail(summary: PresetSummary, projectId: string, l
  *  carried them, else from IndexedDB (the built-in preset seeds its blobs
  *  directly). */
 function bookFromLoaded(loaded: LoadedPreset): BookContent {
-  return { chapters: loaded.chapters, activeChapterId: loaded.chapters[0]!.id, ...(loaded.canvasScope ? { canvasScope: loaded.canvasScope } : {}) };
+  return { chapters: loaded.chapters, activeChapterId: loaded.chapters[0]!.id, ...(loaded.canvasScope ? { canvasScope: loaded.canvasScope } : {}), ...(loaded.start ? { start: loaded.start } : {}) };
 }
 
 async function adoptLoadedPreset(loaded: LoadedPreset, projectId: string): Promise<ProjectContent> {
@@ -216,9 +216,10 @@ async function storedCurrentLayouts(
   config: PostextConfig,
   resources: Resource[],
   extra: Record<string, ChapterLayout> = {},
+  start?: BookStart,
 ): Promise<Record<string, ChapterLayout>> {
   const stored = await getChapterLayouts(chapters.map((c) => c.id)).catch(() => ({}));
-  const plan = createBookPlanner().plan(chapters, config, resources, { ...stored, ...extra });
+  const plan = createBookPlanner().plan(chapters, config, resources, { ...stored, ...extra }, start);
   const out: Record<string, ChapterLayout> = {};
   for (const c of plan.chapters) if (c.layout) out[c.chapterId] = c.layout;
   return out;
@@ -234,7 +235,7 @@ function newRecord(
 }
 
 function bookOfState(s: SandboxState): BookContent {
-  return { chapters: s.chapters, activeChapterId: s.activeChapterId, ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}) };
+  return { chapters: s.chapters, activeChapterId: s.activeChapterId, ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}), ...(s.bookStart ? { start: s.bookStart } : {}) };
 }
 
 /** File id a preset's cover picture is handed to the bundle builder under
@@ -278,7 +279,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       dispatch({ type: 'UPDATE_CONFIG', payload: { customFonts: config.customFonts } });
     }
     if (wantsResources) dispatch({ type: 'SET_RESOURCES', payload: record.resources });
-    const book: BookContent = { chapters: record.chapters, activeChapterId: record.activeChapterId, ...(record.canvasScope ? { canvasScope: record.canvasScope } : {}) };
+    const book: BookContent = { chapters: record.chapters, activeChapterId: record.activeChapterId, ...(record.canvasScope ? { canvasScope: record.canvasScope } : {}), ...(record.start ? { start: record.start } : {}) };
     if (wantsMarkdown) dispatch({ type: 'SET_BOOK', payload: book });
     clearMeasurementCache();
     saveProjectId(record.id);
@@ -514,7 +515,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // Its pagination: the records kept while it was the working book
         // (still in memory when it is, and unedited).
         const inMemory = !s.activeProjectId && s.activePresetId === target.id ? deps.currentLayouts() : {};
-        const layouts = await storedCurrentLayouts(loaded.chapters, loaded.config, loaded.resources, inMemory);
+        const layouts = await storedCurrentLayouts(loaded.chapters, loaded.config, loaded.resources, inMemory, loaded.start);
         content = {
           ...bookFromLoaded(loaded),
           config: loaded.config,
@@ -529,7 +530,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // The configuration as the working book had it (`applyRecord`), so
         // the records written then still fingerprint the same.
         const config = withDefaultResourceTypes(record.config, s.locale);
-        const layouts = await storedCurrentLayouts(record.chapters, config, record.resources);
+        const layouts = await storedCurrentLayouts(record.chapters, config, record.resources, {}, record.start);
         content = { ...record, config, layouts };
       } else {
         await deps.flushWorkingSave();

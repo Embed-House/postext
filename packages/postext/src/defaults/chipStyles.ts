@@ -65,10 +65,14 @@ export function pickChipStyle(
 
 /** Drop every field equal to its static default (and `name` equal to `id`).
  *  Inherited fields (`fontFamily`, `fontSize`, `color`, and `paddingTop` /
- *  `paddingBottom`, which follow `paddingY`) are kept whenever set. Returns `undefined` when the list is the built-in default (a single
- *  bare `chip` style) or empty. */
+ *  `paddingBottom`, which follow `paddingY`) are kept whenever set. Returns
+ *  `undefined` when the list is the built-in default (a single bare `chip`
+ *  style); an empty list stays empty. */
 export function stripChipStylesDefaults(styles: ChipStyleConfig[] | undefined): ChipStyleConfig[] | undefined {
-  if (!styles || styles.length === 0) return undefined;
+  if (!styles) return undefined;
+  // An empty list is a document with no chip styles, which the built-in
+  // `chip` would otherwise come back into (#694).
+  if (styles.length === 0) return [];
   const d = DEFAULT_CHIP_STYLE_STATIC;
   const stripped = styles.map((s) => {
     const r: ChipStyleConfig = { id: s.id };

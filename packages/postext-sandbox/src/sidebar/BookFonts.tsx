@@ -12,12 +12,14 @@ import { RowTag } from '../ui';
 export function BookFonts() {
   const labels = useSandboxLabels();
   const config = useSandboxSelector((s) => s.config);
+  // The text names faces too: comic lettering, a comic line's own `font=`.
+  const chapters = useSandboxSelector((s) => s.chapters);
   // Families as the engine sets them: a CSS font stack by its first family,
   // as `getConfigFontFamilies` lists it.
   const body = primaryFontFamily(resolveBodyTextConfig(config.bodyText).fontFamily);
   const headings = resolveHeadingsConfig(config.headings);
   const headingFamilies = new Set([headings.fontFamily, ...headings.levels.map((l) => l.fontFamily)].map(primaryFontFamily));
-  const families = getConfigFontFamilies(config);
+  const families = getConfigFontFamilies(config, chapters.map((c) => c.markdown));
   // Body first, then headings, then the rest alphabetically.
   const rank = (f: string) => (f === body ? 0 : headingFamilies.has(f) ? 1 : 2);
   const ordered = [...new Set(families)].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));

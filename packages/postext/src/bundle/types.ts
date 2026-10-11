@@ -3,7 +3,7 @@
 // `fonts/*` — zipped into one file. These types describe the manifest; the
 // codec lives in `manifest.ts`, `codec.ts` and `zip.ts`.
 
-import type { CustomFontFormat, PostextConfig, Resource } from '../types';
+import type { CustomFontFormat, LayoutContinuation, PostextConfig, Resource } from '../types';
 
 /** Optional showcase metadata a manifest may carry: everything a picker can
  *  show beyond name and description. All fields are purely descriptive. */
@@ -92,8 +92,24 @@ export interface BundleLocaleOverrides {
   /** How this language's edition opens, over the manifest's `view` (a
    *  vertical edition read whole, its translation a chapter at a time). */
   view?: BundleViewSpec;
+  /** Where this language's edition starts, in place of the manifest's
+   *  `start` (a right-bound edition that opens on the other side). */
+  start?: BundleStart;
   resources?: (Pick<BundleResourceSpec, 'id'> & Partial<Pick<BundleResourceSpec, 'caption' | 'note' | 'altText' | 'table' | 'file' | 'pdfFile' | 'poster' | 'video' | 'width' | 'height' | 'resolution' | 'fileResolution'>>)[];
 }
+
+/** Where the book of a bundle starts (#695): what its first chapter is
+ *  laid out after, for a bundle that holds part of a longer publication
+ *  (pages 58 to 61 of an issue, chapter 4 of a textbook). It is the
+ *  `continuation` a single document would be built with
+ *  (`buildDocument({ markdown, continuation }, config)`), less
+ *  `bookPageCount`, which the reader counts: the pages before the first
+ *  one (`pageIndexOffset`: an odd count opens the book on a verso, with
+ *  the mirrored margins and running heads of that side), the page
+ *  numbering in effect (`pageNumbering`), the heading counters
+ *  (`headings`: `{ h1: 3 }` makes the first `#` chapter 4), the open part
+ *  and the other counters. Every field is optional. */
+export type BundleStart = Omit<LayoutContinuation, 'bookPageCount'>;
 
 /** What a canvas lays out: the active chapter (continued after the ones
  *  before it) or the whole book as one continuous document. */
@@ -114,6 +130,10 @@ interface BundleManifestBase extends BundleShowcaseMeta {
    *  served from a private preset source. */
   default?: boolean;
   view?: BundleViewSpec;
+  /** Where the book starts, when it is part of a longer one (see
+   *  {@link BundleStart}). Absent: at page 1, a recto, with every counter
+   *  at zero. A reader that does not know the field ignores it. */
+  start?: BundleStart;
   /** The configuration rules `config` and each `localized[…].config` are
    *  written for (`CONFIG_VERSION`: 8 since postext 1.5, which writes it on
    *  every manifest). A manifest without it was written by postext 1.4 or

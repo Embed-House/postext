@@ -1,6 +1,7 @@
 // Lay a bundle's book out chapter by chapter, the way the Sandbox does:
 // each chapter continues the one before it (heading and resource counters,
-// the open part, page parity and page numbering), every chapter reads the
+// the open part, page parity and page numbering), the first one from where
+// the bundle says its book starts (`start`), every chapter reads the
 // book's metadata (the first chapter's front matter), a chapter printing
 // the contents (`:::toc`) receives the whole book's outline, and
 // `{bookTotalPages}` counts the whole book.
@@ -14,7 +15,8 @@ import { createMeasurementCache } from '../measure';
 import type { MeasurementCache } from '../measure';
 import { extractFrontmatter } from '../frontmatter';
 import { configUsesPlaceholder } from '../design/placeholders';
-import type { BundleChapter } from './types';
+import { bundleStart } from './manifest';
+import type { BundleChapter, BundleStart } from './types';
 
 export interface BuildBundleOptions extends BuildDocumentOptions {
   /** Configuration to lay out with instead of the bundle's own. */
@@ -75,9 +77,12 @@ function firstContentPage(doc: VDTDocument): { pageLabel: string; pageIndex: num
 
 /** Lay out every chapter of `bundle`, in order; returns one `VDTDocument`
  *  per chapter. Hand the array to `renderToPdf` for the whole book, or
- *  paint `docs[i]` for one chapter. */
+ *  paint `docs[i]` for one chapter. A bundle that holds part of a longer
+ *  book (`start`, #695) is laid out from there: its first chapter with
+ *  that continuation, as `buildDocument({ markdown, continuation: start },
+ *  config)` would, and the chapters after it chained from it. */
 export function buildBundle(
-  bundle: { chapters: readonly Pick<BundleChapter, 'markdown'>[]; config: PostextConfig; resources?: readonly Resource[] },
+  bundle: { chapters: readonly Pick<BundleChapter, 'markdown'>[]; config: PostextConfig; resources?: readonly Resource[]; start?: BundleStart },
   options: BuildBundleOptions = {},
 ): VDTDocument[] {
   const { config: configOverride, cache: sharedCache, onChapter, metadata: givenMetadata, ...buildOptions } = options;
@@ -117,6 +122,13 @@ export function buildBundle(
   // every chapter is laid out: the book goes round once more with it. It
   // never moves a page break, so one more round settles it.
   const usesBookTotal = configUsesPlaceholder(config, 'bookTotalPages');
+  // Where the book starts: the pages before it and the numbering in effect
+  // are the first chapter's alone (the chain supplies them from then on),
+  // the counters and the open part are what every chapter after it counts
+  // on from.
+  const start = bundleStart(bundle.start);
+  const { pageIndexOffset: startOffset = 0, pageNumbering: _startNumbering, ...startCounters } = start ?? {};
+  void _startNumbering;
 
   let outline: OutlineEntry[] | undefined;
   let bookPageCount: number | undefined;
@@ -124,13 +136,13 @@ export function buildBundle(
   for (let round = 0; ; round++) {
     docs = [];
     const continuations: (LayoutContinuation | undefined)[] = [];
-    let counters: LayoutContinuation | undefined;
-    let physical = 0;
+    let counters: LayoutContinuation | undefined = Object.keys(startCounters).length > 0 ? startCounters : undefined;
+    let physical = startOffset;
     let next: { startAt: number; format: VDTDocument['pages'][number]['pageNumberFormat'] } | undefined;
     const total = bookPageCount !== undefined ? { bookPageCount } : {};
     sources.forEach((markdown, index) => {
       const continuation: LayoutContinuation | undefined = index === 0
-        ? (bookPageCount !== undefined ? total : undefined)
+        ? (start || bookPageCount !== undefined ? { ...start, ...total } : undefined)
         : { ...counters, pageIndexOffset: physical, ...(next ? { pageNumbering: next } : {}), ...total };
       const doc = buildDocument(
         { markdown, metadata, resources, ...(continuation ? { continuation } : {}), ...(hasToc[index] && outline ? { outline } : {}), ...(citations ? { citations: citations[index] } : {}) },

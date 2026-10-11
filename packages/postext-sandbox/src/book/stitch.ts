@@ -69,7 +69,9 @@ export function stitchDocuments(chapters: readonly StitchedChapter[]): StitchedB
     ...(contentWarnings.length > 0 ? { contentWarnings } : {}),
     converged,
     iterationCount,
-    pageIndexOffset: 0,
+    // The pages before the book (#695: one that says where it starts), so
+    // the sides of its pages are the book's; none otherwise.
+    pageIndexOffset: first.pageIndexOffset ?? 0,
     ...(restarts.length > 0 ? { pageNumberRestarts: restarts } : {}),
   };
   return { doc, pageChapterIds, pageChapters, chapterFirstPages };

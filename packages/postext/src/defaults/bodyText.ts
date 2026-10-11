@@ -381,7 +381,12 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.italicColor = bodyText.italicColor;
     hasOverride = true;
   }
-  if (bodyText.referenceColor !== undefined && !colorsEqual(bodyText.referenceColor, DEFAULT_BODY_TEXT_CONFIG.referenceColor)) {
+  // The reference colour follows the bold colour, so one set back to the
+  // default under another bold colour is no default there (#694).
+  if (bodyText.referenceColor !== undefined && (
+    !colorsEqual(bodyText.referenceColor, DEFAULT_BODY_TEXT_CONFIG.referenceColor)
+    || (bodyText.boldColor !== undefined && !colorsEqual(bodyText.boldColor, bodyText.referenceColor))
+  )) {
     result.referenceColor = bodyText.referenceColor;
     hasOverride = true;
   }

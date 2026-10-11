@@ -19,6 +19,7 @@ import {
   type BundleFontFile,
   type BundleManifest,
   type BundleResourceSpec,
+  type BundleStart,
   type CreateBundleInput,
 } from 'postext/bundle';
 import { CliError, UsageError, type Options } from './args';
@@ -50,6 +51,9 @@ export interface Book {
   manifest?: BundleManifest;
   /** Path of the cover picture inside the book. */
   thumbnail?: string;
+  /** Where the book starts, when it holds part of a longer one (the
+   *  manifest's `start`): the continuation of its first chapter. */
+  start?: BundleStart;
   /** What to watch for changes (--watch). */
   watchPaths: string[];
 }
@@ -355,6 +359,7 @@ export async function loadBook(inputs: readonly string[], opts: Options, reporte
       files,
       manifest: m,
       ...(m.thumbnail && files.has(m.thumbnail) ? { thumbnail: m.thumbnail } : {}),
+      ...(read.start ? { start: read.start } : {}),
       watchPaths: [dir],
     };
   } else {
@@ -390,6 +395,7 @@ export async function loadBook(inputs: readonly string[], opts: Options, reporte
       files: opened.files,
       manifest: opened.manifest,
       ...(opened.thumbnail ? { thumbnail: opened.thumbnail } : {}),
+      ...(opened.start ? { start: opened.start } : {}),
       watchPaths,
     };
   }

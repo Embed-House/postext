@@ -1,7 +1,23 @@
+import type { BundleStart } from 'postext/bundle';
 import type { CommandContext } from '../context';
 import { layOut } from '../layout';
 import { style } from '../log';
 import { openBook } from '../session';
+
+/** Where a book that is part of a longer one starts, in a line. */
+function describeStart(start: BundleStart): string {
+  const parts: string[] = [];
+  const before = start.pageIndexOffset ?? 0;
+  if (start.pageIndexOffset !== undefined) parts.push(`after ${before} page${before === 1 ? '' : 's'} (page 1 is a ${before % 2 ? 'verso' : 'recto'})`);
+  const numbering = start.pageNumbering;
+  if (numbering?.startAt !== undefined) parts.push(`numbered from ${numbering.startAt}${numbering.format ? ` (${numbering.format})` : ''}`);
+  else if (numbering?.format) parts.push(`numbered in ${numbering.format}`);
+  if (start.headings && start.headings.h1 > 0) parts.push(`after chapter ${start.headings.h1}`);
+  if (start.part) parts.push(`in part ${[start.part.number, start.part.title].filter(Boolean).join(' ')}`);
+  const counters = (['resourceCounters', 'resourceNumbers', 'statementCounters', 'footnoteNumber', 'lineNumber', 'afterPartPage'] as const).filter((key) => start[key] !== undefined);
+  if (counters.length) parts.push(`with ${counters.join(', ')}`);
+  return `starts ${parts.join(', ')}`;
+}
 
 export default async function info(ctx: CommandContext): Promise<void> {
   const { opts, reporter } = ctx;
@@ -34,6 +50,7 @@ export default async function info(ctx: CommandContext): Promise<void> {
       locale: book.locale,
       ...(book.locales ? { locales: book.locales } : {}),
       ...(page?.sizePreset ? { pageSize: page.sizePreset } : {}),
+      ...(book.start ? { start: book.start } : {}),
     },
     chapters,
     resources: { total: book.resources.length, ...kinds },
@@ -44,6 +61,7 @@ export default async function info(ctx: CommandContext): Promise<void> {
   const out: string[] = [];
   out.push(`${style.bold(book.name)}${book.description ? ` — ${book.description}` : ''}`);
   out.push(`  ${book.kind}, id ${book.id}, locale ${book.locale}${book.locales ? ` (also ${book.locales.filter((l) => l !== book.locale).join(', ')})` : ''}`);
+  if (book.start) out.push(`  ${describeStart(book.start)}`);
   if (layout) out.push(`  ${layout.pageCount} pages`);
   out.push('', style.bold(`Chapters (${chapters.length})`));
   for (const c of chapters) out.push(`  ${String(c.index).padStart(3)}  ${c.title}${style.dim(`  ${c.words} words${c.pages !== undefined ? `, ${c.pages} pages` : ''}${c.file ? `  ${c.file}` : ''}`)}`);

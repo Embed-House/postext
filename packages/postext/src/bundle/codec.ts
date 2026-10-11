@@ -8,6 +8,7 @@ import type { PostextConfig, Resource } from '../types';
 import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults';
 import {
   bitmapInfo,
+  bundleStart,
   chapterFileName,
   extensionForBitmapFormat,
   extensionForImageMime,
@@ -19,6 +20,7 @@ import {
   isPdfFile,
   isSvgFile,
   mimeForFile,
+  pickBundleStart,
   pickChapterSpecs,
   pickLocaleOverrides,
   resolveBundleConfigLocale,
@@ -43,6 +45,7 @@ import type {
   BundleManifest,
   BundleManifestV2,
   BundleResourceSpec,
+  BundleStart,
 } from './types';
 
 /** The configuration a bundle's own `config` is laid over: the default
@@ -132,6 +135,10 @@ export interface ReadBundleResult {
   /** Resource payloads (pictures and PDF print masters). */
   blobs: BundleBlob[];
   fonts: BundleFontFile[];
+  /** Where the book starts, for a bundle that holds part of a longer one
+   *  (the manifest's `start`, or the locale's own): the `continuation` of
+   *  the first chapter. Absent for a book that starts at its beginning. */
+  start?: BundleStart;
 }
 
 const identityIds: BundleIdScheme = { blob: (f) => f, font: (f) => f };
@@ -321,7 +328,8 @@ export async function readBundle(
     }
   }
 
-  return { manifest, locale: served, chapters, config, resources, blobs, fonts };
+  const start = pickBundleStart(manifest, locale);
+  return { manifest, locale: served, chapters, config, resources, blobs, fonts, ...(start ? { start } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -351,6 +359,9 @@ export interface BundleLocaleContent {
    *  carries words. Other fields are shared; an id that is not among the
    *  resources is left out with a warning. */
   resources?: readonly (Pick<Resource, 'id'> & Partial<Resource>)[];
+  /** Where the locale's edition starts, when not where the shared one
+   *  does (see {@link BundleContent.start}). */
+  start?: BundleStart;
 }
 
 export interface BundleContent {
@@ -361,6 +372,10 @@ export interface BundleContent {
   canvasScope?: BundleCanvasScope;
   /** The cover picture, carried as the manifest's `thumbnail`. */
   thumbnail?: { fileId: string; mime: string };
+  /** Where the book starts, for a bundle that holds part of a longer one:
+   *  the `continuation` its first chapter is laid out with, written as the
+   *  manifest's `start`. Left out, or empty, nothing is written. */
+  start?: BundleStart;
   /** Other locales of a bilingual bundle, by locale tag (`es`, `pt-BR`);
    *  `chapters`, `config` and `resources` are then the primary locale's
    *  (`BundleMeta.locale`, required). Written as the manifest's `locales`,
@@ -554,6 +569,8 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     chapterSpecs = writeChapters(content.chapters);
   }
 
+  const start = bundleStart(content.start);
+
   // Per locale, what differs from the shared content: configuration keys,
   // and the wording and artwork of resources.
   const localizedSpecs: Record<string, BundleLocaleOverrides> = {};
@@ -607,6 +624,12 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
       if (Object.keys(spec).length > 1) wording.push(spec);
     }
     if (wording.length > 0) overrides.resources = wording;
+    // A start of its own, when it is not the shared one; an empty one
+    // says the locale's edition starts at its beginning.
+    if (entry.start !== undefined) {
+      const own = bundleStart(entry.start);
+      if (!sameJson(own, start)) overrides.start = own ?? {};
+    }
     localizedSpecs[locale] = overrides;
   }
 
@@ -620,6 +643,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     ...(localized && meta.locale ? { locales: [meta.locale, ...Object.keys(localized)] } : {}),
     ...(thumbnailPath ? { thumbnail: thumbnailPath } : {}),
     ...(content.canvasScope === 'book' ? { view: { canvasScope: 'book' as const } } : {}),
+    ...(start ? { start } : {}),
     chapters: chapterSpecs,
     config: configWithoutFonts as PostextConfig,
     ...(resources.length > 0 ? { resources } : {}),

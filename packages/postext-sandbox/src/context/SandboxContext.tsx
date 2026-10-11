@@ -56,7 +56,7 @@ import { choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetReade
 import { fetchBundleBytes, openHashBundle } from './hashBundle';
 import { getChapterLayouts, pruneChapterLayoutStore, putChapterLayouts } from '../storage/layouts';
 import type { ProjectSummary } from '../storage/projects';
-import type { BookContent, BookPages, BookPlan, Chapter, ChapterLayout, ChapterPlan, ComposedBook, LayoutScope } from '../book/types';
+import type { BookContent, BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPlan, ComposedBook, LayoutScope } from '../book/types';
 import { createBookPlanner, sameChapterLayout, sameLayoutInputs } from '../book/pagination';
 import {
   activeChapter,
@@ -184,6 +184,11 @@ export interface SandboxState {
    *  working copy and the project record); a preset's `view` seeds it. The
    *  HTML preview always lays out the active chapter. */
   canvasScope: LayoutScope;
+  /** Where the book starts, when it holds part of a longer one (#695: a
+   *  bundle's `start`): what its first chapter is laid out after. Kept
+   *  with the book (the working copy, the project record, the draft of a
+   *  preset) and written back on export; no panel edits it. */
+  bookStart?: BookStart;
   /** The EPUB 3 rendition the EPUB tab builds: the printed pages as a
    *  fixed layout, or a reflowable book (the EPUB default, and the
    *  Sandbox's). The tab always takes the whole book, so it has no scope;
@@ -368,14 +373,22 @@ function withBook(state: SandboxState, book: BookContent, resetSelection = false
   // A book too long to be shown whole (see `book/scope.ts`) is shown a
   // chapter at a time, whatever it asks for.
   const canvasScope = effectiveCanvasScope(book.canvasScope, book.chapters.length);
+  // The same start, read again from storage or a bundle, is a new object.
+  const sameStart = book.start === state.bookStart || JSON.stringify(book.start ?? null) === JSON.stringify(state.bookStart ?? null);
   if (
     book.chapters === state.chapters &&
     book.activeChapterId === state.activeChapterId &&
-    canvasScope === state.canvasScope
+    canvasScope === state.canvasScope &&
+    sameStart
   ) return state;
   const chapterChanged = book.activeChapterId !== state.activeChapterId;
+  const { bookStart: _previousStart, ...rest } = state;
+  void _previousStart;
   return {
-    ...state,
+    ...rest,
+    // Where the book starts comes with the book: another book has its own
+    // or none.
+    ...(sameStart ? (state.bookStart ? { bookStart: state.bookStart } : {}) : book.start ? { bookStart: book.start } : {}),
     chapters: book.chapters,
     activeChapterId: book.activeChapterId,
     canvasScope,
@@ -403,6 +416,7 @@ function bookOf(state: SandboxState): BookContent {
     chapters: state.chapters,
     activeChapterId: state.activeChapterId,
     ...(state.canvasScope === 'book' ? { canvasScope: state.canvasScope } : {}),
+    ...(state.bookStart ? { start: state.bookStart } : {}),
   };
 }
 
@@ -1258,6 +1272,7 @@ export function SandboxProvider({
       activeChapterId: book.activeChapterId,
       pdfScope: effectiveCanvasScope(book.canvasScope, book.chapters.length),
       canvasScope: effectiveCanvasScope(book.canvasScope, book.chapters.length),
+      ...(book.start ? { bookStart: book.start } : {}),
       epubLayout: loadEpubLayout() ?? defaultEpubLayout(),
       chapterLayouts: {},
       hiddenPresetIds: loadHiddenPresetIds(),
@@ -1374,6 +1389,7 @@ export function SandboxProvider({
       chapters: draft.chapters,
       activeChapterId: draft.activeChapterId,
       ...(draft.canvasScope ? { canvasScope: draft.canvasScope } : {}),
+      ...(draft.start ? { start: draft.start } : {}),
     };
     dispatch({ type: 'SET_ACTIVE_PROJECT', payload: { id: null } });
     dispatch({ type: 'SET_PRESET', payload: { id: draft.presetId, config: draft.baseConfig ? withDefaultResourceTypes(draft.baseConfig, loc) : undefined } });
@@ -1924,6 +1940,8 @@ export function SandboxProvider({
         chapters: s.chapters,
         activeChapterId: s.activeChapterId,
         canvasScope: s.canvasScope,
+        // `undefined` clears a start the record held for another book.
+        start: s.bookStart,
         config: stripConfigDefaults(s.config),
         resources,
       }).catch(() => undefined);
@@ -1947,6 +1965,7 @@ export function SandboxProvider({
         chapters: s.chapters,
         activeChapterId: s.activeChapterId,
         ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}),
+        ...(s.bookStart ? { start: s.bookStart } : {}),
         config: s.config,
         resources,
         updatedAt: Date.now(),
@@ -1974,7 +1993,7 @@ export function SandboxProvider({
   useEffect(() => {
     if (!hydratedRef.current) return;
     saverRef.current!.schedule();
-  }, [state.chapters, state.activeChapterId, state.canvasScope, state.config, state.resources, state.activeProjectId, state.presetApplied, state.storeReady]);
+  }, [state.chapters, state.activeChapterId, state.canvasScope, state.bookStart, state.config, state.resources, state.activeProjectId, state.presetApplied, state.storeReady]);
 
   // Leaving the page — closing the tab, following a link out (the logo),
   // switching apps on a phone — writes the pending edits at once instead
@@ -2180,10 +2199,10 @@ export function SandboxProvider({
   const plannerRef = useRef(createBookPlanner());
   const planCacheRef = useRef<{ key: unknown[]; value: BookPlan } | null>(null);
   const getPlan = (s: SandboxState): BookPlan => {
-    const key = [s.chapters, s.config, s.resources, s.chapterLayouts];
+    const key = [s.chapters, s.config, s.resources, s.chapterLayouts, s.bookStart];
     const cached = planCacheRef.current;
     if (cached && cached.key.every((k, i) => k === key[i])) return cached.value;
-    const value = plannerRef.current.plan(s.chapters, s.config, s.resources, s.chapterLayouts);
+    const value = plannerRef.current.plan(s.chapters, s.config, s.resources, s.chapterLayouts, s.bookStart);
     planCacheRef.current = { key, value };
     return value;
   };

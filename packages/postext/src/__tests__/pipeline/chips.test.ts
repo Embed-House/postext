@@ -104,6 +104,8 @@ describe('chip styles', () => {
     expect(stripChipStylesDefaults([{ id: 'key', paddingX: { value: 0.3, unit: 'em' }, bold: true }])).toEqual([{ id: 'key', bold: true }]);
     const cfg = stripConfigDefaults({ chipStyles: [{ id: 'chip' }] });
     expect(cfg.chipStyles).toBeUndefined();
+    // An empty list is a document with no chip styles (#694).
+    expect(stripConfigDefaults({ chipStyles: [] }).chipStyles).toEqual([]);
   });
 
   it('falls back to the first style for a missing or unknown id', () => {

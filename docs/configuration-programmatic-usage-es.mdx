@@ -343,6 +343,8 @@ También están disponibles funciones individuales, una por resolver: `stripPage
 
 Algunos valores por defecto dependen del resto de la configuración: el equilibrado de columnas está desactivado en una retícula de caracteres y en el texto vertical, y las notas al pie, los pies de recurso y el índice analítico siguen el idioma del documento. `stripConfigDefaults` compara cada valor con el valor por defecto de la configuración que recibe, de modo que `headings.balancing.enabled: true` se conserva donde el equilibrado está desactivado por defecto, y `false` se elimina ahí. Una función llamada por separado recibe ese contexto como argumentos: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`, `stripIndexDefaults(index, locale)`, `stripCaptionStyleDefaults(captionStyle, locale)`, `stripFootnotesDefaults(footnotes, locale, writingMode)`.
 
+Un valor que dice «nada» se conserva allí donde nada no es el valor por defecto. Un estilo de encabezado toma la cabecera y el pie del documento cuando no fija los suyos, así que el estilo que los vacía (`footer: { elements: [] }` en una cubierta) conserva el hueco vacío, y sus `margins`, `layout` y `bodyStyle` se conservan aunque estén vacíos. Un nivel de encabezado devuelto a su valor por defecto bajo valores generales de los encabezados que difieren conserva el valor. `calloutStyles: []` y `chipStyles: []` siguen siendo listas vacías: omitidas, volvería el estilo integrado. En todos los casos `resolveAllConfig(stripConfigDefaults(config))` se resuelve igual que `resolveAllConfig(config)`.
+
 ### Parseo
 
 El motor expone su tokenizador de markdown y su lector de frontmatter. Úsalos para inspeccionar un documento antes de construirlo, o para alimentar a otras herramientas con la misma estructura de bloques que ve Postext:
@@ -1511,6 +1513,7 @@ bundle.files;      // Map<ruta, Uint8Array>: todos los archivos del paquete
     <tr><td><code>fonts</code></td><td>Una entrada por variante: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
     <tr><td><code>files</code></td><td>Todos los archivos del zip, por su ruta.</td></tr>
     <tr><td><code>thumbnail</code>, <code>canvasScope</code></td><td>La ruta de la portada, y cómo pide el paquete que se muestre: la <code>view</code> del manifiesto, con la <code>localized[…].view</code> del idioma servido por encima.</td></tr>
+    <tr><td><code>start</code></td><td>Dónde empieza el libro, para un paquete que contiene parte de uno más largo: el <code>start</code> del manifiesto, o el <code>localized[…].start</code> del idioma servido. Falta en un libro que empieza por su principio.</td></tr>
     <tr><td><code>warnings</code></td><td>Problemas que no impiden abrirlo: un archivo de fuente no admitido, un máster de impresión que falta.</td></tr>
   </tbody>
 </table>
@@ -1602,6 +1605,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Autora' } });
 docs[3].metadata.title;   // el `title:` del primer capítulo
 ```
 
+**Dónde empieza el libro.** Un paquete puede contener parte de una publicación más larga: las páginas 58 a 61 de un número, el capítulo 4 de un libro de texto. Su `start` dice qué lo precede, en los términos de la `continuation` de `buildDocument`: las páginas anteriores a la primera (`pageIndexOffset`, que decide de qué lado cae la página 1 y, con él, los márgenes en espejo y las cabeceras de páginas pares e impares), la numeración de página vigente (`pageNumbering`), los contadores de encabezados (`headings`), la parte abierta (`part`) y los contadores de recursos, enunciados, notas al pie y líneas. `createBundle` lo escribe como `start` en `preset.json`, `openBundle` lo devuelve en `bundle.start`, y `buildBundle` compone con él el primer capítulo, como haría `buildDocument({ markdown, continuation: start }, config)`, y encadena a partir de ahí los siguientes; `{bookTotalPages}` cuenta también las páginas anteriores al libro. Un manifiesto sin `start` se lee como antes, y un lector que no conoce el campo lo ignora. `bookPageCount` no forma parte de él: las páginas las cuenta quien lee. En un paquete con varios idiomas, `localized[…].start` da a una edición su propio comienzo.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Página 58, par, en el capítulo 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### Ejemplo en vivo: abrir un paquete
 
 El pen carga un libro de ejemplo de dos capítulos (`lantern.postext`, con su propia tipografía, una figura SVG y una tabla) desde el repositorio. Registra las fuentes e imágenes del paquete, compone el libro con `buildBundle` y pinta todas las páginas. *Make the PDF* renderiza los mismos documentos con `postext-pdf`, incrustando las fuentes del paquete. Elige un `.postext` tuyo, por ejemplo uno exportado del Sandbox, para verlo igual.
@@ -1644,6 +1663,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td>Los datos por <code>fileId</code> (un objeto o un <code>Map</code>): las imágenes que citan los recursos y los archivos de fuente que citan las variantes de <code>config.customFonts</code>. Cada valor puede ser un <code>Uint8Array</code>, un <code>ArrayBuffer</code>, un <code>Blob</code> o un texto (el código de un SVG).</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: una portada (PNG, JPEG, WebP, GIF o SVG).</td></tr>
     <tr><td><code>canvasScope</code></td><td><code>'book'</code> pide a los visores que compongan el libro entero como un solo lienzo.</td></tr>
+    <tr><td><code>start</code></td><td>Dónde empieza el libro, para un paquete que contiene parte de uno más largo: la <code>continuation</code> con la que se compondría un documento suelto. Se escribe como <code>start</code> del manifiesto.</td></tr>
     <tr><td><code>mtime</code></td><td>La fecha de modificación que se escribe en cada archivo del zip (un <code>Date</code>, una marca de tiempo o una fecha en texto). Si falta, es la hora de la llamada, así que dos llamadas con los mismos datos dan bytes distintos. Con una fecha fija, los mismos datos dan siempre los mismos bytes, que se pueden comparar o resumir con un hash. Un zip guarda una fecha y una hora sin zona horaria, en pasos de dos segundos, de 1980 a 2099, y la fecha se escribe en la hora local de la máquina. Para que los bytes coincidan en cualquier máquina, construye la fecha con campos locales, como <code>new Date(1980, 0, 1)</code>: una marca de tiempo o un texto que acaba en <code>Z</code> nombran un instante, que cae en una hora local distinta en cada zona horaria (<code>'1980-01-01T00:00:00Z'</code> todavía es 1979 al oeste de UTC). Una fecha fuera de esos años, en hora local, lanza un error.</td></tr>
     <tr><td><code>localized</code></td><td>Otros idiomas del mismo libro, por etiqueta de idioma: <code>&#123; en: &#123; chapters?, config?, resources? &#125; &#125;</code>. Las entradas anteriores pasan a ser el contenido de <code>locale</code>, que entonces es obligatorio. Consulta <a href="#paquetes-bilingües">Paquetes bilingües</a>.</td></tr>
   </tbody>

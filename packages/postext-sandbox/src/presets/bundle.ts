@@ -12,7 +12,7 @@ import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys';
 import { createDefaultConfig } from '../context/defaultConfig';
 import { svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
 import { deriveChapterTitle, newChapter } from '../book/chapterOps';
-import type { Chapter, ChapterLayout, LayoutScope } from '../book/types';
+import type { BookStart, Chapter, ChapterLayout, LayoutScope } from '../book/types';
 import { presetChapterId, presetFileId, presetFontFileId } from './manifest';
 import type {
   LoadedPreset,
@@ -143,6 +143,8 @@ export async function parseBundle(
     ...(layouts ? { layouts } : {}),
     // The edition's own view over the bundle's (`localized[…].view`).
     ...(view?.canvasScope ? { canvasScope: view.canvasScope } : {}),
+    // Where the book starts, for a bundle that holds part of a longer one.
+    ...(read.start ? { start: read.start } : {}),
   };
 }
 
@@ -166,6 +168,8 @@ export interface BundleContent {
   /** The book's canvas scope, written as the manifest's `view` when it is
    *  not the default. */
   canvasScope?: LayoutScope;
+  /** Where the book starts, written as the manifest's `start` (#695). */
+  start?: BookStart;
   /** The cover picture, carried as the manifest's `thumbnail` so a project
    *  keeps it across an export/import round trip. */
   thumbnail?: { fileId: string; mime: string };
@@ -210,6 +214,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     config: content.config,
     resources: content.resources,
     ...(content.canvasScope ? { canvasScope: content.canvasScope } : {}),
+    ...(content.start ? { start: content.start } : {}),
     ...(content.thumbnail ? { thumbnail: content.thumbnail } : {}),
   });
 

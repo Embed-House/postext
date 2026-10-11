@@ -48,14 +48,17 @@ export async function buildBookChapters({ chapters, plan, config, rawConfig, res
   const next = new Map<string, HeldChapterDoc>();
   const built: StitchedChapter[] = [];
   const records: ChapterLayout[] = [];
-  let offset = 0;
+  // The pages before the book, when it says where it starts (#695).
+  const firstPlan = chapters[0] ? plan.byId[chapters[0].id] : undefined;
+  let offset = firstPlan?.index === 0 ? firstPlan.continuation?.pageIndexOffset ?? 0 : 0;
   let nextNumbering: { format: NumeralStyle; startAt: number } | null = null;
   for (const chapter of chapters) {
     const chapterPlan = plan.byId[chapter.id];
     if (!chapterPlan) return null;
     const source = composeBookMemo(chapters, chapter.id);
-    // The first chapter inherits nothing but the book's page count; the
-    // page fields of a plan not yet paginated are provisional.
+    // The first chapter inherits the book's start, if it has one, and the
+    // book's page count; the page fields of a plan not yet paginated are
+    // provisional.
     const { pageNumbering: planNumbering, ...inherited } = chapterPlan.continuation ?? {};
     const numbering = nextNumbering ?? (chapterPlan.paginated ? planNumbering : undefined);
     const continuation: LayoutContinuation | undefined = chapterPlan.index === 0

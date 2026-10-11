@@ -343,6 +343,8 @@ const minimal = stripConfigDefaults(fullConfig);
 
 بعض القيم الافتراضية تتوقف على بقية الإعدادات: موازنة الأعمدة معطّلة في شبكة المحارف وفي النص العمودي، والحواشي السفلية والتعليقات والفهرس الأبجدي تتبع لغة المستند. تقارن `stripConfigDefaults` كل قيمة بالقيمة الافتراضية للإعدادات التي تتلقاها، فتبقى `headings.balancing.enabled: true` حيث الموازنة معطّلة افتراضيًا، وتُحذف `false` هناك. ودالة الحذف المنفردة تأخذ هذا السياق في وسائطها: `stripHeadingsDefaults(headings, balancingOnByDefault(config))`، `stripIndexDefaults(index, locale)`، `stripCaptionStyleDefaults(captionStyle, locale)`، `stripFootnotesDefaults(footnotes, locale, writingMode)`.
 
+القيمة التي تعني «لا شيء» تبقى حيثما لا يكون «لا شيء» هو القيمة الافتراضية. نمط العنوان يأخذ ترويسة المستند وتذييله حين لا يحدّد ما يخصّه، فالنمط الذي يفرغهما (`footer: { elements: [] }` في غلاف) يحتفظ بالموضع الفارغ، وتبقى `margins` و`layout` و`bodyStyle` فيه ولو كانت فارغة. ومستوى العنوان المُعاد إلى قيمته الافتراضية تحت قيم عامة للعناوين تخالفها يحتفظ بقيمته. وتبقى `calloutStyles: []` و`chipStyles: []` قائمتين فارغتين: لو حُذفتا لعاد النمط المضمَّن. وفي كل الأحوال تُستكمل `resolveAllConfig(stripConfigDefaults(config))` كما تُستكمل `resolveAllConfig(config)`.
+
 ### التحليل
 
 يتيح المحرّك مُقطِّع markdown الخاص به وقارئ البيانات التمهيدية. استخدمهما لفحص مستند قبل بنائه، أو لتغذية أدوات أخرى ببنية الكتل نفسها التي يراها Postext:
@@ -1509,6 +1511,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
     <tr><td><code>fonts</code></td><td>مُدخل واحد لكل وجه خط: <code>&#123; family, weight, style, format, file, bytes &#125;</code>.</td></tr>
     <tr><td><code>files</code></td><td>كل ملف في الأرشيف، ومفتاحه مساره.</td></tr>
     <tr><td><code>thumbnail</code>، <code>canvasScope</code></td><td>مسار صورة الغلاف، وطريقة العرض التي تطلبها الحزمة: الحقل <code>view</code> في البيان، وفوقه <code>localized[…].view</code> الخاص باللغة المقدَّمة.</td></tr>
+    <tr><td><code>start</code></td><td>موضع بداية الكتاب، في حزمة تضمّ جزءًا من كتاب أطول: <code>start</code> في البيان، أو <code>localized[…].start</code> للغة المقروءة. لا يوجد في كتاب يبدأ من أوله.</td></tr>
     <tr><td><code>warnings</code></td><td>مشكلات لا توقف القراءة: ملف خط غير مدعوم، أو نسخة طباعة أصلية مفقودة.</td></tr>
   </tbody>
 </table>
@@ -1600,6 +1603,22 @@ const docs = buildBundle(bundle, { metadata: { author: 'A. Author' } });
 docs[3].metadata.title;   // the first chapter's `title:`
 ```
 
+**موضع بداية الكتاب.** قد تضمّ الحزمة جزءًا من مطبوعة أطول: الصفحات من 58 إلى 61 من عدد، أو الفصل الرابع من كتاب مدرسي. يحدّد `start` ما يسبقها، بحقول `continuation` في `buildDocument`: عدد الصفحات قبل الصفحة الأولى (`pageIndexOffset`، وهو يحدّد الجهة التي تقع فيها الصفحة 1، ومعها الهوامش المتناظرة وترويسات الصفحات الفردية والزوجية)، وترقيم الصفحات الساري (`pageNumbering`)، وعدّادات العناوين (`headings`)، والجزء المفتوح (`part`)، وعدّادات الموارد والعبارات المرقّمة والحواشي السفلية والأسطر. تكتبه `createBundle` في `preset.json` باسم `start`، وتعيده `openBundle` في `bundle.start`، وتُخرج `buildBundle` به الفصل الأول كما تفعل `buildDocument({ markdown, continuation: start }, config)`، وتصل به الفصول التالية؛ ويحسب `{bookTotalPages}` الصفحات السابقة للكتاب أيضًا. البيان الذي لا يحوي `start` يُقرأ كما كان، والقارئ الذي لا يعرف الحقل يتجاهله. و`bookPageCount` ليس منه: القارئ هو من يعدّ الصفحات. وفي حزمة بعدة لغات يمنح `localized[…].start` إحدى الطبعات بداية خاصة بها.
+
+```ts
+const { bytes } = await createBundle({
+  name: 'Field notes, chapter 4',
+  markdown,
+  config,
+  // Page 58, an even page, in chapter 4.
+  start: { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } },
+});
+const bundle = await openBundle(bytes);
+bundle.start;                 // { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, … } }
+const [doc] = buildBundle(bundle);
+doc.pages[0].pageLabel;       // '58'
+```
+
 ### مثال حي: فتح حزمة
 
 يحمّل هذا المثال على CodePen كتابًا نموذجيًا من فصلين (`lantern.postext`، بخطه الخاص وشكل SVG وجدول) من المستودع. ويسجّل خطوط الحزمة وصورها، ويُخرج الكتاب بـ`buildBundle` ويرسم كل صفحة. ويُنتج زر *Make the PDF* المستندات نفسها بـ`postext-pdf`، مضمِّنًا خطوط الحزمة. اختر ملف `.postext` خاصًا بك، مصدَّرًا من Sandbox مثلًا، لتراه بالطريقة نفسها.
@@ -1642,6 +1661,7 @@ const { bytes, manifest, warnings } = await createBundle({
     <tr><td><code>files</code></td><td>الملفات حسب <code>fileId</code> (كائن أو <code>Map</code>): الصور التي تشير إليها الموارد، وملفات الخطوط التي تشير إليها متغيرات <code>config.customFonts</code>. يمكن أن تكون القيم <code>Uint8Array</code> أو <code>ArrayBuffer</code> أو <code>Blob</code> أو سلسلة نصية (شيفرة SVG).</td></tr>
     <tr><td><code>thumbnail</code></td><td><code>&#123; data, mime &#125;</code>: صورة غلاف (PNG أو JPEG أو WebP أو GIF أو SVG).</td></tr>
     <tr><td><code>canvasScope</code></td><td>القيمة <code>'book'</code> تطلب من العارضين إخراج الكتاب كله لوحةً واحدة.</td></tr>
+    <tr><td><code>start</code></td><td>موضع بداية الكتاب، في حزمة تضمّ جزءًا من كتاب أطول: هو <code>continuation</code> الذي يُبنى به مستند مفرد. يُكتب في البيان باسم <code>start</code>.</td></tr>
     <tr><td><code>mtime</code></td><td>تاريخ التعديل المكتوب على كل ملف في الأرشيف (<code>Date</code> أو طابع زمني أو سلسلة تاريخ). إذا أُغفل فهو وقت الاستدعاء، فيعطي استدعاءان بالمُدخل نفسه بايتات مختلفة. مرّر تاريخًا ثابتًا يعطِ المُدخل نفسه البايتات نفسها، فتستطيع حساب بصمتها (hash) أو مقارنتها. يحفظ ملف zip تاريخًا ووقتًا بلا منطقة زمنية، بخطوات من ثانيتين، من 1980 إلى 2099، ويُكتب التاريخ بالتوقيت المحلي للجهاز. وللحصول على بايتات متطابقة على كل جهاز، ابنِ التاريخ من حقول محلية، مثل <code>new Date(1980, 0, 1)</code>: فالطابع الزمني أو السلسلة المنتهية بـ<code>Z</code> يسمّيان لحظة بعينها، تقع في وقت محلي مختلف في كل منطقة زمنية (<code>'1980-01-01T00:00:00Z'</code> ما زال في 1979 غربَ UTC). والتاريخ الواقع خارج تلك السنوات، بالتوقيت المحلي، يرمي خطأً.</td></tr>
     <tr><td><code>localized</code></td><td>لغات أخرى للكتاب نفسه، حسب وسم اللغة: <code>&#123; es: &#123; chapters?, config?, resources? &#125; &#125;</code>. تصبح المُدخلات أعلاه حينئذٍ محتوى <code>locale</code>، وهو مطلوب. انظر <a href="#الحزم-الثنائية-اللغة">الحزم الثنائية اللغة</a>.</td></tr>
   </tbody>

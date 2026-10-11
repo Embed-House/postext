@@ -1672,12 +1672,87 @@ export async function readBundleBack(engine, bytes, penDocs, held = []) {
 }
 
 /**
+ * A build's continuation as a bundle's `start` (#695): plain JSON, without
+ * `bookPageCount`, which a reader counts. Null when it says nothing.
+ * @param {unknown} continuation
+ */
+export function startOf(continuation) {
+  if (!continuation || typeof continuation !== 'object') return null;
+  const start = plain(continuation) ?? {};
+  delete start.bookPageCount;
+  return Object.keys(start).length ? start : null;
+}
+
+/** What a bundle written by an engine without `start` loses of `start`. */
+export function startLossNotes(start) {
+  const notes = [];
+  if (start.pageIndexOffset) {
+    notes.push(start.pageIndexOffset % 2
+      ? `continuation.pageIndexOffset ${start.pageIndexOffset}: page 1 is a verso in the recipe, a recto in the Sandbox`
+      : `continuation.pageIndexOffset ${start.pageIndexOffset} dropped (even: same page sides)`);
+  }
+  if (start.headings) notes.push(`continuation.headings ${JSON.stringify(start.headings)} dropped (chapter numbers restart)`);
+  for (const key of Object.keys(start)) {
+    if (!['pageNumbering', 'pageIndexOffset', 'headings'].includes(key)) notes.push(`continuation.${key} dropped`);
+  }
+  return notes;
+}
+
+/**
+ * The locale a bundle is written with. A reader lays a bundle's
+ * configuration over the built-in resource types of the bundle's locale
+ * ("Figure 3.1", "Figura 3.1"), while the pen's document takes them from
+ * its own language (`config.locale`, else the hyphenation locale). The
+ * edition's language is the bundle's locale when it gives the pen's types,
+ * when no type name can print (no resources, or the configuration lists
+ * its own types) and when the document names no language (the read-back
+ * then tells whether a name prints otherwise); else the document's
+ * language, when that gives them. When neither does, the pen's types are
+ * written into the configuration (`resourceTypes`).
+ * @param {any} engine
+ * @param {any} config the bundle's configuration, plain
+ * @param {any[]} resources
+ * @param {string} edition
+ * @returns {{ locale: string, resourceTypes?: any[], note?: string }}
+ */
+export function bundleLocale(engine, config, resources, edition) {
+  const keep = { locale: edition };
+  if (!resources?.length || config?.resourceTypes?.length) return keep;
+  if (typeof engine?.effectiveResourceTypes !== 'function' || typeof engine?.defaultResourceTypes !== 'function') return keep;
+  let pen;
+  try {
+    pen = plain(engine.effectiveResourceTypes(config, resources)) ?? [];
+  } catch {
+    return keep;
+  }
+  // Every type the pen names, as the candidate locale names it.
+  const gives = (candidate) => {
+    let types;
+    try {
+      types = plain(engine.defaultResourceTypes(candidate)) ?? [];
+    } catch {
+      return false;
+    }
+    const byId = new Map(types.map((t) => [t.id, t]));
+    return pen.every((t) => byId.has(t.id) && stableJson(byId.get(t.id)) === stableJson(t));
+  };
+  if (gives(edition)) return keep;
+  const document = [config?.locale, config?.bodyText?.hyphenation?.locale].find((l) => typeof l === 'string' && l.trim());
+  if (!document) return keep;
+  if (gives(document)) return { locale: document, note: `bundle locale ${document}, the document's language: ${edition} names its resource types otherwise` };
+  return { locale: edition, resourceTypes: pen, note: `resourceTypes written into the configuration: neither ${edition} nor ${document} gives the pen's` };
+}
+
+/**
  * The document `select` picks, as a `.postext` file for the Sandbox,
  * written by the pen's own engine (`createBundle`): its markdown (or its
  * chapters, for a buildBundle book), its configuration as JSON, its
  * resources and every file they name, plus `thumbnail` (base64 WebP, the
- * card). A continuation cannot travel in a bundle: its page numbering goes
- * into `page.pageNumbering`, the rest is reported in `notes`. Of several
+ * card). The build's continuation travels as the bundle's `start` (#695);
+ * a pen on an engine that writes none gets its page numbering in
+ * `page.pageNumbering` and the rest reported in `notes`, as before. The
+ * bundle's locale is the one that gives the pen's resource type names
+ * ({@link bundleLocale}). Of several
  * builds the bundle holds the ones that share the configuration of the
  * build `keep` names (`capture.sandbox`; the first by default), a chapter
  * each when they are chained with `continuation` (see {@link bundleGroup});
@@ -1722,21 +1797,12 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
     }
   }
 
-  const cont = build.kind === 'bundle' ? null : content.continuation;
-  if (cont && typeof cont === 'object') {
-    if (cont.pageNumbering) {
-      config.page = { ...config.page, pageNumbering: { ...config.page?.pageNumbering, ...plain(cont.pageNumbering) } };
-    }
-    if (cont.pageIndexOffset) {
-      notes.push(cont.pageIndexOffset % 2
-        ? `continuation.pageIndexOffset ${cont.pageIndexOffset}: page 1 is a verso in the recipe, a recto in the Sandbox`
-        : `continuation.pageIndexOffset ${cont.pageIndexOffset} dropped (even: same page sides)`);
-    }
-    if (cont.headings) notes.push(`continuation.headings ${JSON.stringify(plain(cont.headings))} dropped (chapter numbers restart)`);
-    for (const key of Object.keys(cont)) {
-      if (!['pageNumbering', 'pageIndexOffset', 'headings'].includes(key)) notes.push(`continuation.${key} dropped`);
-    }
-  }
+  // Where the document starts: the continuation its build was laid out
+  // with (a book the pen builds with buildBundle carries its own `start`),
+  // which a bundle records as `start` (#695) so the Sandbox opens on the
+  // same page side, folio and chapter number.
+  const cont = build.kind === 'bundle' ? content.start : content.continuation;
+  const start = startOf(cont);
 
   const resources = (chain?.resources ?? source.resources).map((r) => plain(r));
   // `styleId: null` means the house style; postext 1.5 reads only a missing one so.
@@ -1788,14 +1854,20 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
   }
   if (missing.length) return { error: `no file for ${missing.join(', ')}`, notes, warns };
 
+  // The bundle's locale names the built-in resource types its reader
+  // gives it ("Figure", "شكل"): the one that gives the pen's.
+  const named = bundleLocale(engine, config, resources, locale);
+  if (named.resourceTypes) config.resourceTypes = named.resourceTypes;
+  if (named.note) notes.push(named.note);
   const input = {
     id,
     name,
     ...(description ? { description } : {}),
-    locale,
+    locale: named.locale,
     config,
     resources,
     files,
+    ...(start ? { start } : {}),
     ...(thumbnail ? { thumbnail: { data: bytesOfBase64(thumbnail), mime: 'image/webp' } } : {}),
   };
   if (build.kind === 'bundle') {
@@ -1814,7 +1886,20 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
     input.chapters = [{ title: headingTitle(markdown) || name, markdown }];
   }
   try {
-    const created = await engine.createBundle(input);
+    let created = await engine.createBundle(input);
+    if (start && !created.manifest?.start) {
+      // An engine from before #695 writes no `start`: the page numbering
+      // goes into the configuration, as it did, and the rest is lost.
+      const rest = { ...input };
+      delete rest.start;
+      if (start.pageNumbering) {
+        rest.config = { ...config, page: { ...config.page, pageNumbering: { ...config.page?.pageNumbering, ...start.pageNumbering } } };
+      }
+      notes.push(...startLossNotes(start));
+      created = await engine.createBundle(rest);
+    } else if (start) {
+      notes.push(`continuation carried as the bundle's start: ${Object.keys(start).join(', ')}`);
+    }
     // Zip again with a fixed date: createBundle before 1.5 stamps the time
     // of the call, and fflate reads it from Date.now().
     const now = Date.now;

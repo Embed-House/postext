@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { bundleGroup, configKeyOf, extraWarnings, readBundleBack } from "../../../scripts/cookbook/lib/probe.js";
+import { defaultResourceTypes, effectiveResourceTypes } from "postext";
+import { bundleGroup, bundleLocale, configKeyOf, extraWarnings, readBundleBack, startLossNotes, startOf } from "../../../scripts/cookbook/lib/probe.js";
 
 // The Sandbox bundle of a capture whose `capture.doc` lists several builds:
 // chained with `continuation` they make a book, one chapter per build
@@ -101,6 +102,77 @@ describe("configKeyOf (#690)", () => {
     expect(configKeyOf({ locale: "en", page: { dpi: 300 } })).not.toBe(configKeyOf({ locale: "en", page: {} }));
     const broken = { stripConfigDefaults: () => { throw new Error("no"); } };
     expect(configKeyOf({ locale: "en" }, broken)).toBe(configKeyOf({ locale: "en" }));
+  });
+});
+
+// ─── What the bundle takes from the pen's build ──────────────────────────────
+
+describe("startOf: the build's continuation as the bundle's start (#695)", () => {
+  it("carries the continuation as plain data, without the book's page count", () => {
+    const continuation = { pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 }, bookPageCount: 320 };
+    expect(startOf(continuation)).toEqual({ pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 } });
+    expect(startOf(continuation)).not.toBe(continuation);
+  });
+
+  it("is nothing for a build with no continuation, or with one that says nothing", () => {
+    for (const none of [undefined, null, "x", {}, { bookPageCount: 9 }]) expect(startOf(none)).toBeNull();
+  });
+
+  it("says what a bundle written by an engine without `start` loses", () => {
+    expect(startLossNotes({ pageIndexOffset: 57, pageNumbering: { startAt: 58 }, headings: { h1: 3 }, part: { number: "II", title: "T" } })).toEqual([
+      "continuation.pageIndexOffset 57: page 1 is a verso in the recipe, a recto in the Sandbox",
+      'continuation.headings {"h1":3} dropped (chapter numbers restart)',
+      "continuation.part dropped",
+    ]);
+    expect(startLossNotes({ pageIndexOffset: 8, pageNumbering: { startAt: 9 } })).toEqual(["continuation.pageIndexOffset 8 dropped (even: same page sides)"]);
+    expect(startLossNotes({ pageNumbering: { startAt: 41 } })).toEqual([]);
+  });
+});
+
+describe("bundleLocale: the locale that gives the pen's resource types", () => {
+  const engine = { defaultResourceTypes, effectiveResourceTypes };
+  const figure = [{ id: "plan", typeId: "figure", kind: "svg" }];
+
+  it("keeps the edition's language when it names the types as the document does", () => {
+    expect(bundleLocale(engine, { locale: "es" }, figure, "es")).toEqual({ locale: "es" });
+    expect(bundleLocale(engine, { locale: "en" }, figure, "en")).toEqual({ locale: "en" });
+    // A document that names no language reads in English, as its edition.
+    expect(bundleLocale(engine, {}, figure, "en")).toEqual({ locale: "en" });
+  });
+
+  it("takes the document's language when the edition would rename them", () => {
+    // maghreb-edition-european-digits: an Arabic document on the English and Spanish pages.
+    const arabic = { locale: "ar-MA" };
+    for (const edition of ["en", "es"]) {
+      const named = bundleLocale(engine, arabic, figure, edition);
+      expect(named.locale).toBe("ar-MA");
+      expect(named.resourceTypes).toBeUndefined();
+      expect(named.note).toContain("ar-MA");
+    }
+    expect(defaultResourceTypes("ar-MA")[0]!.captionPrefix).not.toBe(defaultResourceTypes("en")[0]!.captionPrefix);
+    // The hyphenation locale names the language when `locale` does not.
+    expect(bundleLocale(engine, { bodyText: { hyphenation: { locale: "es" } } }, figure, "en").locale).toBe("es");
+  });
+
+  it("keeps the edition's language for a document that names none", () => {
+    // The read-back (C33) tells when a type name prints otherwise.
+    expect(bundleLocale(engine, {}, figure, "es")).toEqual({ locale: "es" });
+    expect(bundleLocale(engine, { bodyText: { hyphenation: { locale: " " } } }, figure, "es")).toEqual({ locale: "es" });
+  });
+
+  it("leaves the edition's language where no type name can print", () => {
+    expect(bundleLocale(engine, { locale: "ar-MA" }, [], "en")).toEqual({ locale: "en" });
+    const own = { locale: "ar-MA", resourceTypes: defaultResourceTypes("es") };
+    expect(bundleLocale(engine, own, figure, "en")).toEqual({ locale: "en" });
+    // An engine that cannot say: as before.
+    expect(bundleLocale({}, { locale: "ar-MA" }, figure, "en")).toEqual({ locale: "en" });
+  });
+
+  it("writes the pen's types into the configuration when no locale gives them", () => {
+    const odd = { defaultResourceTypes, effectiveResourceTypes: () => [{ ...defaultResourceTypes("en")[0]!, captionPrefix: "Plate" }] };
+    const named = bundleLocale(odd, { locale: "en-GB" }, figure, "en");
+    expect(named.locale).toBe("en");
+    expect(named.resourceTypes).toEqual([{ ...defaultResourceTypes("en")[0]!, captionPrefix: "Plate" }]);
   });
 });
 

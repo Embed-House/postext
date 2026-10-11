@@ -4,6 +4,7 @@ import { DEFAULT_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_TEXT_ELEMENT, parseMa
 import {
   customFontsSignature,
   getConfigFontFamilies,
+  getConfigFontSpecs,
   configIsVertical,
   setCustomFonts,
   collectFontUsage,
@@ -81,6 +82,25 @@ describe('getConfigFontFamilies', () => {
     expect(getConfigFontFamilies({ comics: { lettering: { fontFamily: 'Bubblegum Sans' } } })).toContain('Bubblegum Sans');
     expect(configIsVertical({ locale: 'ja' }, page)).toBe(true);
     expect(configIsVertical({ locale: 'ja' })).toBe(false);
+  });
+
+  // #696: manga-action-slants opened with ドン in a fallback face
+  // (`fontFallback … "Dela Gothic One" … "missing"`): the family is named
+  // by the line alone, and nothing asked for it.
+  it('adds the face a comic line sets for itself, named in the text alone', () => {
+    const text = ':::page{split="*"}\n::panel{art=strike}\nrival{shout}: MEEEN!\nsfx{at="74% 30%" font="Dela Gothic One" vertical}: ドン\n:::\n';
+    for (const config of [{}, { locale: 'ja', comics: {} }, { comics: { lettering: { fontFamily: 'Zen Antique' } } }]) {
+      const families = getConfigFontFamilies(config, text);
+      expect(families).toContain('Dela Gothic One');
+      // What the page loads and checks before a build, in the weights a
+      // sound effect is set in.
+      expect(getConfigFontSpecs(config, text)).toEqual(expect.arrayContaining(['400 16px "Dela Gothic One"', '700 16px "Dela Gothic One"']));
+    }
+    // The chapters of a book, each read.
+    expect(getConfigFontFamilies({}, ['# One', text])).toContain('Dela Gothic One');
+    // Not without the text, and not from a line outside a comic page.
+    expect(getConfigFontFamilies({ comics: {} })).not.toContain('Dela Gothic One');
+    expect(getConfigFontFamilies({}, 'A paragraph: font="Dela Gothic One".')).not.toContain('Dela Gothic One');
   });
   it('collects the callout style fonts the layout worker must register', () => {
     const families = getConfigFontFamilies({

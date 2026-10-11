@@ -78,6 +78,53 @@ describe('postext cli', () => {
     expect(r.stdout.subarray(1, 4).toString()).toBe('PNG');
   }, 60_000);
 
+  // #695: `preset.json`'s `start` says where a book that is part of a longer
+  // one starts; every command lays the book out from there.
+  it('lays a book out from where its preset.json says it starts', () => {
+    const dir = book();
+    expect(run(['pack', 'ch', '--name', 'Test', '-o', 'b.postext', '-q'], dir).code).toBe(0);
+    expect(run(['unpack', 'b.postext', '-o', 'u', '-q'], dir).code).toBe(0);
+    const pages = (input: string, ...more: string[]) => {
+      const report = JSON.parse(run(['info', input, '--pages', '--json', '--offline', ...more], dir).stdout);
+      return { start: report.book.start, chapters: report.chapters.map((c: { pages?: number }) => c.pages) };
+    };
+    const plain = pages('u');
+    expect(plain.start).toBeUndefined();
+    // One page before the book: page 1 is a verso, and the chapter, which
+    // opens on a recto, leaves it blank.
+    const path = join(dir, 'u', 'preset.json');
+    const manifest = JSON.parse(readFileSync(path, 'utf8'));
+    writeFileSync(path, JSON.stringify({ ...manifest, start: { pageIndexOffset: 1, pageNumbering: { startAt: 58 }, headings: { h1: 3 } } }));
+    const started = pages('u');
+    expect(started.start).toEqual({ pageIndexOffset: 1, pageNumbering: { startAt: 58 }, headings: { h1: 3, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 } });
+    expect(started.chapters[0]).toBe(plain.chapters[0] + 1);
+    expect(started.chapters[1]).toBe(plain.chapters[1]);
+    // Packed again, the bundle carries it.
+    expect(run(['pack', 'u', '-o', 's.postext', '-q'], dir).code).toBe(0);
+    expect(pages('s.postext')).toEqual(started);
+    const text = run(['info', 's.postext', '--offline'], dir).stdout;
+    expect(text).toContain('starts after 1 page (page 1 is a verso), numbered from 58, after chapter 3');
+    expect(run(['check', 's.postext', '--offline', '-q'], dir).code).toBe(0);
+    // A selection that leaves the first chapter out starts at page 1.
+    expect(pages('s.postext', '--chapters', '2').chapters).toEqual(pages('b.postext', '--chapters', '2').chapters);
+  }, 60_000);
+
+  // #696: a comic line may name its own face (`font=`). The book's fonts
+  // are the configuration's and the ones its text names.
+  it('resolves the face a comic line names in the text alone', () => {
+    const dir = book();
+    const families = () => JSON.parse(run(['info', 'ch', '--json', '--offline'], dir).stdout).fonts.map((f: { family: string }) => f.family);
+    expect(families()).not.toContain('Dela Gothic One');
+    writeFileSync(join(dir, 'ch', '03.md'), ':::page{split="*"}\n::panel\nrival{shout}: MEEEN!\nsfx{at="74% 30%" font="Dela Gothic One" vertical}: ドン\n:::\n');
+    const withComic = families();
+    expect(withComic).toContain('Dela Gothic One');
+    // The lettering faces of a comic page were asked for already.
+    expect(withComic).toContain('Comic Neue');
+    // The same words outside a comic page name nothing.
+    writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\nA line that says font="Dela Gothic One".\n');
+    expect(families()).not.toContain('Dela Gothic One');
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');

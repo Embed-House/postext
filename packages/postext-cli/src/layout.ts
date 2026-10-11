@@ -57,8 +57,12 @@ export async function layOut(book: Book, opts: Options, reporter: Reporter, cach
       reporter.warn({ kind: issue.kind, severity: 'warning', message: describeIssue(issue), at: sourceAt(chapters[i], issue.sourceStart) });
     }
   }
+  // Where the book starts (`preset.json`'s `start`) is where its first
+  // chapter does: a selection that leaves that chapter out (--chapters) is
+  // laid out from page 1, as it always was.
+  const start = chapters[0] === book.chapters[0] ? book.start : undefined;
   const docs = reporter.time('layout', () => buildBundle(
-    { chapters, config: book.config, resources: book.resources },
+    { chapters, config: book.config, resources: book.resources, ...(start ? { start } : {}) },
     {
       cache: cache ?? createMeasurementCache(),
       onChapter: (index, doc) => reporter.detail(`  laid out ${chapters[index]!.file ?? chapters[index]!.title}: ${doc.pages.length} pages`),

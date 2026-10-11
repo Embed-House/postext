@@ -16,7 +16,7 @@ import type {
   BundleShowcaseMeta,
   BundleViewSpec,
 } from 'postext/bundle';
-import type { ChapterLayout, Chapter, LayoutScope } from '../book/types';
+import type { BookStart, ChapterLayout, Chapter, LayoutScope } from '../book/types';
 
 export type PresetSource = 'builtin' | 'public' | 'private';
 
@@ -106,6 +106,8 @@ export interface LoadedPreset {
   layouts?: Record<string, ChapterLayout>;
   /** The canvas scope the manifest's `view` asks for, when it names one. */
   canvasScope?: LayoutScope;
+  /** Where the bundle's book starts (the manifest's `start`, #695). */
+  start?: BookStart;
 }
 
 export interface PresetProvider {
