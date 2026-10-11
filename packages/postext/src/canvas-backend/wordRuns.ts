@@ -28,11 +28,13 @@ const MARK_RE = /\p{M}/u;
  *   the segment's style, then once more in each other run's style, clipped
  *   to that run's stretch of the word ({@link paintWordRuns}).
  *
- * A left-to-right word of a tracked line that the browser would shape
- * without its ligatures under letter-spacing is painted with them, as it
- * was measured (`fillTrackedWord`, #663): in pieces, which a mirrored page
- * turns back as one run (#685). A right-to-left word and a word of a
- * joining script are never painted in pieces.
+ * A word of a tracked line that the browser would shape without its
+ * ligatures under letter-spacing is painted with them, as it was measured
+ * (`fillTrackedWord`, #663): in pieces, which a mirrored page turns back
+ * as one run (#685). A right-to-left word of a script that does not join
+ * (Hebrew) too, its pieces from the right end of its box (#703). A word of
+ * a joining script and a word set in several styles are never painted in
+ * pieces.
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,
@@ -52,7 +54,7 @@ export function fillSegmentWord(
     ctx.direction = 'rtl';
     ctx.textAlign = 'left';
   }
-  if (tracking !== 0 && !untracked && !rtl && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
+  if (tracking !== 0 && !untracked && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
   else paint(seg.text, x, y);
   if (seg.runs) paintWordRuns(ctx, seg, x, y, paint, runStyle);
   if (rtl) {

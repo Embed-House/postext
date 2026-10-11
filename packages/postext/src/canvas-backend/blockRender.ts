@@ -569,7 +569,7 @@ function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, 
   if (mirroredPaintActive()) runs.reverse();
   let at = x;
   for (const run of runs) {
-    paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y));
+    paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y), run.text);
     if (runs.length > 1) at += ctx.measureText(run.text).width;
   }
 }

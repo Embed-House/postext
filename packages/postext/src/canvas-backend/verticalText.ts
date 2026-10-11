@@ -36,6 +36,7 @@ import { graphemeCount, graphemesOf } from '../measure/graphemes';
 import { markPieces, type MarkCutRule } from '../measure/markCuts';
 import { measureRunWidth } from '../measure/canvas';
 import { hasCJK } from '../measure/cjk';
+import { fillTrackedWord } from './trackedText';
 
 /** What the painter needs while a vertical flow paints. */
 export interface VerticalPaintState {
@@ -435,8 +436,15 @@ function paintVertical(
   for (const run of runs) {
     if (run.cell === undefined) {
       // The frame turns it sideways: painted as it is, the letters tracked.
-      put(ctx, run.text, cx, baseline, mode);
-      cx += ctx.measureText(run.text).width;
+      // A run that would lose its ligatures to the tracking keeps them, in
+      // pieces, and the pen moves by the width it was measured at: its
+      // natural width and the tracking after each letter (#703). Painted
+      // whole it was wider than its place, and so was the pen's move.
+      const spaced = parseFloat(ctx.letterSpacing) || 0;
+      const advance = spaced !== 0
+        ? fillTrackedWord(ctx, run.text, cx, baseline, spaced, (piece, px, py) => put(ctx, piece, px, py, mode))
+        : (put(ctx, run.text, cx, baseline, mode), undefined);
+      cx += advance ?? ctx.measureText(run.text).width;
       continue;
     }
     if (run.glyph.orient === 'tcy') {

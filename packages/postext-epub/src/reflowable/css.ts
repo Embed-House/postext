@@ -94,6 +94,12 @@ export interface CssRule {
   decls: string[];
 }
 
+/** Beside every `letter-spacing` (#703): letter-spacing never changes the
+ *  glyphs. A reading system turns the common ligatures off where the
+ *  letter-spacing is not zero; asked for as features they stay, as in the
+ *  print layout, the fixed-layout pages and the PDF. */
+const TRACKED_LIGATURES = "font-feature-settings: 'liga' 1, 'clig' 1";
+
 /** A rule from its declarations (the falsy ones left out); none when it
  *  declares nothing. */
 function rule(selector: string, decls: (string | false | undefined | null)[]): CssRule | '' {
@@ -216,6 +222,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       color(level.color),
       `text-align: ${ALIGN[headings.textAlign] ?? 'start'}`,
       level.letterSpacing.value !== 0 && `letter-spacing: ${em(level.letterSpacing, hPx)}`,
+      level.letterSpacing.value !== 0 && TRACKED_LIGATURES,
       level.textTransform === 'uppercase' && 'text-transform: uppercase',
       lineSpanMargin !== undefined
         ? `margin: ${round(lineSpanMargin / hPx)}em 0`
@@ -389,6 +396,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
         st.headerItalic ? 'font-style: italic' : reset && 'font-style: normal',
         st.headerTextTransform === 'uppercase' ? 'text-transform: uppercase' : reset && 'text-transform: none',
         st.headerLetterSpacing.value !== 0 ? `letter-spacing: ${round(px(st.headerLetterSpacing, cellPx) / cellPx)}em` : reset && 'letter-spacing: normal',
+        st.headerLetterSpacing.value !== 0 && TRACKED_LIGATURES,
         st.headerBackgroundEnabled ? color(st.headerBackground, 'background-color') : reset && 'background-color: transparent',
       ],
       extra,
@@ -472,6 +480,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       color(t.color),
       t.textTransform === 'uppercase' && 'text-transform: uppercase',
       t.letterSpacing.value !== 0 && `letter-spacing: ${round(px(t.letterSpacing, tPx) / tPx)}em`,
+      t.letterSpacing.value !== 0 && TRACKED_LIGATURES,
       `margin-block-end: ${round(px(t.gap, tPx) / tPx)}em`,
       'text-indent: 0',
     ]));

@@ -90,4 +90,34 @@ describe('line tracking in the PDF', () => {
     const plain = buildDocument({ markdown: '::resource{id="t"}\n', resources: [table] }, wide);
     expect(spacings(await contentOf(plain))).toEqual([]);
   }, 60_000);
+
+  it('keeps the tracking of a Hebrew run of a design text and lifts it for an Arabic one (#703)', async () => {
+    // A running head is measured with its tracking unless it holds a letter
+    // of a joining script. Up to postext 1.27 every right-to-left run was
+    // set untracked (`Tc` 0 around it), a Hebrew one narrower than its place.
+    const head = (content: string): PostextConfig => ({
+      ...config(),
+      page: { ...config().page, width: pt(300), margins: { top: pt(40), bottom: pt(10), left: pt(10), right: pt(10) } },
+      header: {
+        elements: [{
+          kind: 'text', id: 'rh', content, fontFamily: 'Lora', fontSize: pt(12), letterSpacing: pt(2), overflow: 'wrap', direction: 'rtl',
+          placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'auto' } },
+        }],
+      },
+    });
+    const hebrew = buildDocument({ markdown: 'aaa' }, head('\u05E9\u05DC\u05D5\u05DD \u05E9\u05DC\u05D5\u05DD'));
+    const block = hebrew.pages[0]!.header!.blocks[0]!;
+    if (block.kind !== 'text') throw new Error('no header text');
+    expect(block.letterSpacingPx).toBeCloseTo(2, 5);
+    expect(block.lines[0]!.runs?.every((r) => r.rtl) ?? false).toBe(true);
+    // Nine characters, each 7 px and its tracking.
+    expect(block.lines[0]!.width).toBeCloseTo(9 * (7 + 2), 5);
+    expect(spacings(await contentOf(hebrew))).toEqual([2, 0]);
+    // A text with Arabic letters is measured untracked: nothing to set.
+    const arabic = buildDocument({ markdown: 'aaa' }, head('\u0633\u0644\u0627\u0645'));
+    const arabicBlock = arabic.pages[0]!.header!.blocks[0]!;
+    if (arabicBlock.kind !== 'text') throw new Error('no header text');
+    expect(arabicBlock.letterSpacingPx ?? 0).toBe(0);
+    expect(spacings(await contentOf(arabic))).toEqual([]);
+  }, 60_000);
 });

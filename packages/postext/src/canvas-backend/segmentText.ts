@@ -3,6 +3,7 @@ import type { MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { segmentOrientation } from '../writingMode';
 import { fillFlowText, verticalPaintActive } from './verticalText';
+import { fillTrackedWord } from './trackedText';
 
 /**
  * Paint `text` of a line set word by word (not `VDTLine.cjkComposed`) on
@@ -37,7 +38,12 @@ export function fillSegmentText(
   const px = x + (seg.inkOffset ?? 0);
   const py = baseline + (seg.baselineShift ?? 0);
   if (seg.inkScale === undefined) {
-    fillFlowText(ctx, seg.text, px, py, 'fill', undefined, cuts, segmentOrientation(seg));
+    // A Western run of a tracked line of the CJK composer keeps its
+    // ligatures, as it was measured (#703). Down a vertical line the
+    // vertical painter does it for each sideways run.
+    const tracking = !verticalPaintActive() && !seg.rtl && !hasCJK(seg.text) ? parseFloat(ctx.letterSpacing) || 0 : 0;
+    if (tracking !== 0) fillTrackedWord(ctx, seg.text, px, py, tracking, (piece, x, y) => fillFlowText(ctx, piece, x, y, 'fill', undefined, cuts));
+    else fillFlowText(ctx, seg.text, px, py, 'fill', undefined, cuts, segmentOrientation(seg));
     return;
   }
   ctx.save();
