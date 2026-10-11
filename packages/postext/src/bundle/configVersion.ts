@@ -3,7 +3,7 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig } from '../types';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
 import { avoidOrphansByDefault } from '../defaults/bodyText';
 import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
@@ -131,6 +131,10 @@ import { hasCJK } from '../measure/cjk';
  *     flush (`headings.balancing.stretchAfterWideFloats: 'flush'`, #708),
  *     where up to 1.27 a column took its after-float line as under any
  *     float ({@link pinLegacyWideFloatStretch});
+ *   - a group of an index divided between two columns keeps two entries
+ *     on each side (`index.groups.splitMinEntries: 2`, #712), where up to
+ *     1.27 a column could end between any two entries ({@link
+ *     pinLegacyIndexGroupSplit});
  *   - a page on a character grid (`cjk.grid.enabled`) holds its lines:
  *     `bodyText.avoidWidows` is off by default there, and
  *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
@@ -240,6 +244,9 @@ const LOOSE_ORDER_RULES = 12;
 /** The rules that keep the heads level under a float over several columns
  *  (#708). */
 const WIDE_FLOAT_STRETCH_RULES = 12;
+/** The rules that keep two entries of an index group on each side of a
+ *  column break (#712). */
+const INDEX_GROUP_SPLIT_RULES = 12;
 
 /** The rules that turn the widow rule off on a character grid, and the
  *  orphan rule too in the Japan region (#717). */
@@ -738,6 +745,31 @@ export function pinLegacyWideFloatStretch<T extends Partial<PostextConfig>>(conf
   const balancing = isRecord(headings.balancing) ? headings.balancing : {};
   if (balancing.stretchAfterWideFloats !== undefined || balancing.stretchAfterFloats === false) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, stretchAfterWideFloats: 'always' } } };
+}
+
+/**
+ * A configuration written before #712 (postext 1.27 or earlier), pinned to
+ * the way 1.27 broke an index between columns: `index.groups.
+ * splitMinEntries: 1`, so a column may end between any two entries of a
+ * group, where today two of them stay and two go on. A configuration that
+ * sets the key is returned as it is (the same object).
+ */
+export function pinLegacyIndexGroupSplit<T extends Partial<PostextConfig>>(config: T): T {
+  const index: IndexConfig = isRecord(config.index) ? config.index : {};
+  const groups = isRecord(index.groups) ? index.groups : {};
+  if (groups.splitMinEntries !== undefined) return config;
+  return { ...config, index: { ...index, groups: { ...groups, splitMinEntries: 1 } } };
+}
+
+/** An `:::index` fence on a line of its own, as the block parser reads one
+ *  (the line trimmed). */
+const INDEX_FENCE_LINE_RE = /^[^\S\n]*:::[^\S\n]*index[^\S\n]*(?:\{[^}\n]*\})?[^\S\n]*$/m;
+
+/** Whether markdown may print an index. Unknown content (undefined) may. */
+function mayHaveIndexes(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  if (typeof content === 'string') return INDEX_FENCE_LINE_RE.test(content);
+  return content.some((text) => INDEX_FENCE_LINE_RE.test(text));
 }
 
 /** Whether markdown may set a float: a resource embedded on its own line
@@ -1562,8 +1594,10 @@ export interface MigrateConfigOptions {
  * balances its columns and lets a heading take more than two lines, unless
  * `options.content` shows no heading, and the after-float lever under a
  * float over several columns by {@link pinLegacyWideFloatStretch}, when it
- * balances its columns, unless `options.content` shows no float; it also
- * has the widow and
+ * balances its columns, unless `options.content` shows no float, and the
+ * breaks inside the groups of its indexes by {@link
+ * pinLegacyIndexGroupSplit}, unless `options.content` shows no `:::index`;
+ * it also has the widow and
  * orphan rules of a page on a character grid pinned by {@link
  * pinLegacyGridBreakRules}, the breaks inside its two-row notes by
  * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
@@ -1617,6 +1651,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) out = pinLegacyLooseOrder(out);
   if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) out = pinLegacyWideFloatStretch(out);
+  if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) out = pinLegacyIndexGroupSplit(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
@@ -1650,7 +1685,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * titles, the circled numbers and the design text on the `cjk` in force,
  * the order of the balancing levers and the after-float lever under a
  * float over several columns on the `headings` in force (when the
- * merged configuration balances its columns),
+ * merged configuration balances its columns), the breaks inside the groups
+ * of an index on the `index` in force,
  * and the widow and orphan rules of a character grid on the merged `cjk`
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
  * Western word that take the Han–Latin space (in the Japan region, read
@@ -1698,6 +1734,7 @@ export function migrateBundleConfig(
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
   if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) merged = pinLegacyLooseOrder(merged);
   if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) merged = pinLegacyWideFloatStretch(merged);
+  if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) merged = pinLegacyIndexGroupSplit(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);

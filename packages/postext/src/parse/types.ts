@@ -646,6 +646,13 @@ export interface IndexBlockInfo {
    *  and its sub-entry above a sub-sub-entry), printed above it in the
    *  same block for the same reason, outermost first. */
   leads?: { level: number; spans: InlineSpan[] }[];
+  /** Which group of the index the entry is in (0 for the first), its place
+   *  among the entry blocks of that group (0 for the one under the head)
+   *  and how many they are: what the keep rule of a group divided between
+   *  two columns reads (`index.groups.splitMinEntries`, #712). */
+  groupIndex?: number;
+  groupPlace?: number;
+  groupSize?: number;
 }
 
 export interface ContentBlock {

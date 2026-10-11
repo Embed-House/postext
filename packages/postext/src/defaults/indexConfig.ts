@@ -19,7 +19,7 @@ export const DEFAULT_INDEX_CONFIG = {
   main: { bold: true, italic: false },
   see: { italic: true },
   groupBy: 'auto' as IndexGroupBy,
-  groups: { enabled: true, fontWeight: 700 },
+  groups: { enabled: true, fontWeight: 700, splitMinEntries: 2 },
 };
 
 const GROUP_BY: readonly IndexGroupBy[] = ['auto', 'letter', 'pinyin', 'stroke', 'gojuon', 'kana', 'none'];
@@ -88,6 +88,10 @@ export function resolveIndexConfig(
       color: g?.color ?? color,
       // One line of the index's own leading: a blank line between groups.
       marginTop: g?.marginTop ?? lineHeight,
+      // A whole number of 1 or more (#712).
+      splitMinEntries: typeof g?.splitMinEntries === 'number' && Number.isFinite(g.splitMinEntries)
+        ? Math.max(1, Math.round(g.splitMinEntries))
+        : d.groups.splitMinEntries,
       ...(g?.symbolsLabel !== undefined ? { symbolsLabel: g.symbolsLabel } : {}),
       ...(g?.numbersLabel !== undefined ? { numbersLabel: g.numbersLabel } : {}),
     },
@@ -136,6 +140,7 @@ export function stripIndexDefaults(index: IndexConfig | undefined, documentLocal
     const g = definedFields(r.groups);
     if (g?.enabled === d.groups.enabled) delete g.enabled;
     if (g?.fontWeight === d.groups.fontWeight) delete g.fontWeight;
+    if (g?.splitMinEntries === d.groups.splitMinEntries) delete g.splitMinEntries;
     if (g && Object.keys(g).length > 0) r.groups = g;
     else delete r.groups;
   }

@@ -4060,6 +4060,52 @@ function placeDocumentPass(
     return n;
   };
 
+  /**
+   * An index group divided between two columns keeps at least
+   * `index.groups.splitMinEntries` entries on each side (#712). `entry` is
+   * the entry block about to leave `col` (it does not fit, or would be
+   * divided between its lines); `k` entries of its group already close the
+   * column and `r` are still to place, this one included. Too few behind
+   * (`k < min`): the `k` go on with it. Too few ahead (`r < min`): enough of
+   * them go on for the next column to open with `min`, and all of them when
+   * that would leave too few behind. The blocks taken off the column are
+   * returned in column order (the caller rewinds to the first), with the
+   * run of headings they would strand; empty when the rule asks for
+   * nothing or cannot be met: the group's entries are all the column holds
+   * under its headings (they would open the next column as they open this
+   * one), or the entry that would lead the move is the rest of one begun
+   * in the column before.
+   */
+  const rollbackIndexGroup = (col: VDTColumn, entry: ContentBlock, min: number): VDTBlock[] => {
+    const info = entry.index;
+    if (!info || min <= 1 || info.groupIndex === undefined || info.groupPlace === undefined || info.groupSize === undefined) return [];
+    const sameGroup = (b: VDTBlock): boolean => {
+      const raw = b.contentIndex !== undefined ? contentBlocks[b.contentIndex] : undefined;
+      return raw?.index !== undefined && raw.index.groupIndex === info.groupIndex && raw.sourceStart === entry.sourceStart;
+    };
+    let k = 0;
+    for (let j = col.blocks.length - 1; j >= 0 && sameGroup(col.blocks[j]!); j--) k++;
+    if (k === 0) return [];
+    const r = info.groupSize - info.groupPlace;
+    let take = 0;
+    if (k < min) take = k;
+    else if (r < min) take = k - (min - r) < min ? k : min - r;
+    if (take === 0) return [];
+    // Nothing but the group under the column's headings: it stays.
+    const above = col.blocks.slice(0, col.blocks.length - k);
+    if (take === k && above.every((b) => isFreeHeading(b) || b.hidden)) return [];
+    // The rest of an entry begun in the column before cannot move back.
+    if (col.blocks[col.blocks.length - take]!.id.includes('-cont-')) return [];
+    let left = take;
+    const popped = rollbackTrailingBlocks(col, doc.blocks, () => left-- > 0);
+    // The headings the group stood under go with it.
+    const heads = take === k ? rollbackHeadings(col) : [];
+    // The space above the blocks taken off is the column's again.
+    const last = col.blocks[col.blocks.length - 1];
+    if (last) col.availableHeight = col.bbox.y + col.bbox.height - (last.bbox.y + last.bbox.height);
+    return [...heads, ...popped];
+  };
+
   /** Stamp a callout frame's content index and source range: the whole
    *  fence (opening to closing marker) for an unsplit box; for a fragment
    *  of a split box, from the fence start (first fragment) or the first
@@ -7898,6 +7944,19 @@ function placeDocumentPass(
           }
         }
         break;
+      }
+
+      // An index entry that leaves the column takes the entries of its
+      // group the keep rule does not let stay with it (#712): the roll-back
+      // comes before any cut between its own lines.
+      if (rawBlock.index && partIndex === 0 && curCol.blocks.length > 0) {
+        const rolledBack = rollbackIndexGroup(curCol, rawBlock, blockMeasureCtx.resolved.index.groups.splitMinEntries);
+        if (rolledBack.length > 0) {
+          blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
+          pendingSpacing = 0;
+          advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+          break;
+        }
       }
 
       // Block doesn't fit — try to split (orphan/widow-aware)

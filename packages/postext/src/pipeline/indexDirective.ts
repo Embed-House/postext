@@ -436,6 +436,9 @@ function indexBlocksFor(
 
   const out: ContentBlock[] = [];
   const baseBlock = { sourceStart: directive.sourceStart, sourceEnd: directive.sourceEnd };
+  /** The group being expanded and the entry blocks it holds so far. */
+  let groupIndex = 0;
+  let groupPlace = 0;
   const push = (
     node: IndexNode,
     level: number,
@@ -460,6 +463,8 @@ function indexBlocksFor(
       ...(group?.start && !group.first ? { groupStart: true } : {}),
       ...(group?.start && cfg.groups.enabled && grouping !== 'none' ? { group: group.label } : {}),
       ...(leads.length > 0 ? { leads } : {}),
+      groupIndex,
+      groupPlace: groupPlace++,
     };
     out.push({
       ...baseBlock,
@@ -481,8 +486,13 @@ function indexBlocksFor(
     const start = key !== lastGroup;
     const first = lastGroup === undefined;
     lastGroup = key;
+    if (start && !first) { groupIndex++; groupPlace = 0; }
     push(node, 0, { label: group.label, start, first });
   }
+  // Every entry block knows the size of its group (#712).
+  const sizes = new Map<number, number>();
+  for (const b of out) sizes.set(b.index!.groupIndex!, (sizes.get(b.index!.groupIndex!) ?? 0) + 1);
+  for (const b of out) b.index!.groupSize = sizes.get(b.index!.groupIndex!)!;
   return { blocks: out, warnings };
 }
 

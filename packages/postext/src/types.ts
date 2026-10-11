@@ -6605,6 +6605,17 @@ export interface IndexGroupsConfig {
   /** Space above each group (letter head or not), except at the top of a
    *  column. Default one body line. */
   marginTop?: Dimension;
+  /** The fewest entries of a group left at the foot of a column, and the
+   *  fewest carried to the head of the next, when a column or a page ends
+   *  inside the group (#712). An entry is one entry block: a main entry or
+   *  a sub-entry, with the head and the page-less entries set above it. A
+   *  group too short to leave that many on each side moves whole to the
+   *  next column; one taller than a column is divided where it must be.
+   *  `1` lets a column end between any two entries, as up to postext 1.27.
+   *  A whole number of 1 or more. Default `2`; configurations stored
+   *  earlier whose text sets an index read with `1` (see `migrateConfig` in
+   *  `postext/bundle`). */
+  splitMinEntries?: number;
   /** Head of the entries that start with a symbol. Default `Symbols` /
    *  `Símbolos` in the document language. */
   symbolsLabel?: string;
@@ -6728,6 +6739,7 @@ export interface ResolvedIndexConfig {
     italic: boolean;
     color: ColorValue;
     marginTop: Dimension;
+    splitMinEntries: number;
     symbolsLabel?: string;
     numbersLabel?: string;
   };
