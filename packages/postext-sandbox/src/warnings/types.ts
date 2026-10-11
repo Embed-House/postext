@@ -94,6 +94,8 @@ export type WarningKind =
   | 'columnsTooNarrow'
   | 'afterText'
   | 'unplaced'
+  | 'shortListSplit'
+  | 'openerFloat'
   | 'codeOverflow'
   | 'floatShrunk'
   | 'unknownConfigKey'
@@ -384,6 +386,13 @@ export type WarningPayload =
   /** A box or a floated resource (`resourceId`) still waiting for a slot
    *  when the layout ended (#639): it is on no page. */
   | { kind: 'unplaced'; resourceId?: string }
+  /** A short list of `items` items cut between two columns or pages
+   *  (`bodyText.shortListSplit`, #749), its first item on book page
+   *  `page`. */
+  | { kind: 'shortListSplit'; page: number; items: number }
+  /** A figure, a table (`resourceId`) or a floated box set on an opener
+   *  page, book page `page` (`layout.openerFloats: 'warn'`, #749). */
+  | { kind: 'openerFloat'; page: number; resourceId?: string }
   /** A line number set in the side column overlaps a side box, caption or
    *  figure (#621); both are painted. `number` as printed. */
   | { kind: 'lineNumberOverlap'; number: string }

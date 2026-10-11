@@ -1161,6 +1161,13 @@ export interface SandboxLabels {
   bodyColonListRoomTooltip: string;
   bodyColonListRoomItem: string;
   bodyColonListRoomLine: string;
+  compositionRuleAllow: string;
+  compositionRuleWarn: string;
+  compositionRuleAvoid: string;
+  bodyShortListSplit: string;
+  bodyShortListSplitTooltip: string;
+  bodyShortListMaxItems: string;
+  bodyShortListMaxItemsTooltip: string;
 
   // Headings section
   headings: string;
@@ -1837,6 +1844,10 @@ export interface SandboxLabels {
   warningsAfterTextDetail: string;
   warningsUnplacedTitle: string;
   warningsUnplacedDetail: string;
+  warningsShortListSplitTitle: string;
+  warningsShortListSplitDetail: string;
+  warningsOpenerFloatTitle: string;
+  warningsOpenerFloatDetail: string;
   warningsTextWrapTooNarrow: string;
   warningsTextWrapFewLines: string;
   warningsTextWrapMoved: string;
@@ -3164,6 +3175,8 @@ export interface SandboxLabels {
   flowColumnsTooltip: string;
   floatsUnderOpener: string;
   floatsUnderOpenerTooltip: string;
+  openerFloats: string;
+  openerFloatsTooltip: string;
   pageGroupSize: string;
   pageGroupMargins: string;
   pageGroupMarginsDescription: string;

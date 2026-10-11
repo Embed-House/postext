@@ -165,6 +165,21 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'shortListSplit' || w.kind === 'openerFloat') {
+      // The composition rules (#749): a short list cut between columns, a
+      // float on an opener page, each by its book page.
+      const page = (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0);
+      out.push({
+        id: `layout-${w.kind}-${w.sourceStart ?? 'x'}-${i}`,
+        payload: w.kind === 'shortListSplit'
+          ? { kind: 'shortListSplit', page, items: w.items }
+          : { kind: 'openerFloat', page, ...(w.resourceId !== undefined ? { resourceId: w.resourceId } : {}) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'fontFallback') {
       // A face the layout measured with a fallback (#629): one per face,
       // whatever chapter found it; no place in the text.

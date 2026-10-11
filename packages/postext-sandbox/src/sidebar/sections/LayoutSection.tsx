@@ -397,6 +397,20 @@ export const LayoutSection = memo(function LayoutSection() {
         isDefault={layout.floatsUnderOpener === D.floatsUnderOpener}
         onReset={() => resetField('floatsUnderOpener')}
       />
+      {/* Floats on opener pages (#749): off, reported, or kept off them. */}
+      <SelectInput
+        label={labels.openerFloats}
+        value={layout.openerFloats}
+        options={[
+          { value: 'allow', label: labels.compositionRuleAllow },
+          { value: 'warn', label: labels.compositionRuleWarn },
+          { value: 'avoid', label: labels.compositionRuleAvoid },
+        ]}
+        onChange={(v) => updateLayout({ openerFloats: v as LayoutConfig['openerFloats'] })}
+        tooltip={labels.openerFloatsTooltip}
+        isDefault={layout.openerFloats === D.openerFloats}
+        onReset={() => resetField('openerFloats')}
+      />
       {/* Text wrap round pictures and boxes (#627): the defaults a
           resource, a resource type or a box may set aside. */}
       <DimensionInput

@@ -57,6 +57,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'columnsTooNarrow':
     case 'afterText':
     case 'unplaced':
+    case 'shortListSplit':
+    case 'openerFloat':
       return FileWarning;
     case 'headingHierarchy':
       return Heading;
@@ -353,6 +355,10 @@ function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
       return labels.warningsAfterTextTitle;
     case 'unplaced':
       return labels.warningsUnplacedTitle;
+    case 'shortListSplit':
+      return labels.warningsShortListSplitTitle;
+    case 'openerFloat':
+      return labels.warningsOpenerFloatTitle;
     case 'unknownConfigKey':
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
@@ -651,6 +657,10 @@ function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsAfterTextDetail.replace('__page__', String(payload.page))}`;
     case 'unplaced':
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsUnplacedDetail}`;
+    case 'shortListSplit':
+      return labels.warningsShortListSplitDetail.replace('__page__', String(payload.page)).replace('__items__', String(payload.items));
+    case 'openerFloat':
+      return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsOpenerFloatDetail.replace('__page__', String(payload.page))}`;
     case 'codeOverflow': {
       const detail = payload.mode === 'wrap' ? labels.warningsCodeOverflowWrap
         : payload.mode === 'clip' ? labels.warningsCodeOverflowClip

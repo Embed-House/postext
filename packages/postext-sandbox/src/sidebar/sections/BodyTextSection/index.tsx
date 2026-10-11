@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
 import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, avoidOrphansByDefault, avoidWidowsByDefault, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
-import type { BodyTextConfig, ColonListRoom, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
+import type { BodyTextConfig, ColonListRoom, CompositionRule, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
 import { ChevronRight } from 'lucide-react';
 import {
   CollapsibleSection,
@@ -153,6 +153,8 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const isAvoidRuntsInListsDefault = bodyText.avoidRuntsInLists === D.avoidRuntsInLists;
   const isKeepColonWithListDefault = bodyText.keepColonWithList === D.keepColonWithList;
   const isColonListRoomDefault = bodyText.colonListRoom === D.colonListRoom;
+  const isShortListSplitDefault = bodyText.shortListSplit === D.shortListSplit;
+  const isShortListMaxItemsDefault = bodyText.shortListMaxItems === D.shortListMaxItems;
 
   // `*…*` is set in bold by default in a language written in Arabic script
   // (the engine's `defaultEmphasisFor`): Auto names what it gives.
@@ -177,6 +179,13 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const COLON_LIST_ROOM_OPTIONS = [
     { value: 'item', label: labels.bodyColonListRoomItem },
     { value: 'line', label: labels.bodyColonListRoomLine },
+  ];
+
+  // The three levels of a composition rule (#749).
+  const COMPOSITION_RULE_OPTIONS = [
+    { value: 'allow', label: labels.compositionRuleAllow },
+    { value: 'warn', label: labels.compositionRuleWarn },
+    { value: 'avoid', label: labels.compositionRuleAvoid },
   ];
 
   // In a right-to-left book `left` is the start: flush right, ragged left.
@@ -532,6 +541,29 @@ export const BodyTextSection = memo(function BodyTextSection() {
             tooltip={labels.bodyColonListRoomTooltip}
             isDefault={isColonListRoomDefault}
             onReset={() => resetField('colonListRoom')}
+          />
+        )}
+        {/* A short list kept whole (#749): off, reported, or applied. */}
+        <SelectInput
+          label={labels.bodyShortListSplit}
+          value={bodyText.shortListSplit}
+          options={COMPOSITION_RULE_OPTIONS}
+          onChange={(value) => updateBodyText({ shortListSplit: value as CompositionRule })}
+          tooltip={labels.bodyShortListSplitTooltip}
+          isDefault={isShortListSplitDefault}
+          onReset={() => resetField('shortListSplit')}
+        />
+        {bodyText.shortListSplit !== 'allow' && (
+          <NumberInput
+            label={labels.bodyShortListMaxItems}
+            value={bodyText.shortListMaxItems}
+            onChange={(v) => updateBodyText({ shortListMaxItems: Math.max(1, Math.round(v)) })}
+            min={1}
+            max={20}
+            step={1}
+            tooltip={labels.bodyShortListMaxItemsTooltip}
+            isDefault={isShortListMaxItemsDefault}
+            onReset={() => resetField('shortListMaxItems')}
           />
         )}
       </CollapsibleSection>
