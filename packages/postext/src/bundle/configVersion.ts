@@ -5,6 +5,7 @@
 
 import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
+import { avoidOrphansByDefault } from '../defaults/bodyText';
 import { dimensionsEqual } from '../defaults/shared';
 import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
 import { DEFAULT_PAGE_CONFIG } from '../defaults/page';
@@ -646,22 +647,25 @@ export function pinLegacyGridBalancing<T extends Partial<PostextConfig>>(config:
 /**
  * A configuration written before #717 (postext 1.27 or earlier), pinned to
  * the break rules it laid out with on a character grid: a config with
- * `cjk.grid.enabled` gets `bodyText.avoidWidows: true` and
- * `bodyText.avoidOrphans: true`, each where it does not set the key,
- * where today the first is off by default on a grid and the second too in
- * the Japan region. Any other configuration is returned as it is (the same
- * object).
+ * `cjk.grid.enabled` gets `bodyText.avoidWidows: true`, and in the Japan
+ * region `bodyText.avoidOrphans: true` too, each where it does not set the
+ * key, where today the first is off by default on a grid and the second
+ * in the Japan region ({@link avoidOrphansByDefault}; a Chinese grid keeps
+ * it on, so nothing is written there). Any other configuration is
+ * returned as it is (the same object).
  */
 export function pinLegacyGridBreakRules<T extends Partial<PostextConfig>>(config: T): T {
   if (!isRecord(config.cjk) || !isRecord(config.cjk.grid) || config.cjk.grid.enabled !== true) return config;
   const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
-  if (bodyText.avoidWidows !== undefined && bodyText.avoidOrphans !== undefined) return config;
+  const widows = bodyText.avoidWidows === undefined;
+  const orphans = bodyText.avoidOrphans === undefined && !avoidOrphansByDefault(config as PostextConfig);
+  if (!widows && !orphans) return config;
   return {
     ...config,
     bodyText: {
       ...bodyText,
-      ...(bodyText.avoidWidows === undefined ? { avoidWidows: true } : {}),
-      ...(bodyText.avoidOrphans === undefined ? { avoidOrphans: true } : {}),
+      ...(widows ? { avoidWidows: true } : {}),
+      ...(orphans ? { avoidOrphans: true } : {}),
     },
   };
 }

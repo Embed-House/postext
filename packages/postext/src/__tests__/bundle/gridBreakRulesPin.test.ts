@@ -8,7 +8,8 @@ import type { PostextConfig } from '../../types';
 
 // #717: a configuration stored before the widow and orphan rules were
 // turned off by default on a character grid (configVersion 11 or older,
-// postext 1.27 or earlier) keeps both on, unless it set them itself.
+// postext 1.27 or earlier) keeps both on, unless it set them itself. The
+// pin writes a rule only where today's default turns it off.
 
 const GRID = { enabled: true, charsPerLine: 38, linesPerPage: 15 };
 const grid = (locale: string, extra: PostextConfig = {}): PostextConfig => ({ locale, cjk: { grid: GRID }, ...extra });
@@ -19,18 +20,22 @@ const rules = (config: PostextConfig) => {
 const ON = { avoidWidows: true, avoidOrphans: true };
 
 describe('pinLegacyGridBreakRules (#717)', () => {
-  it('writes both rules on a grid that sets neither', () => {
-    for (const locale of ['ja', 'zh-Hans', 'zh-Hant']) {
+  it('writes the rules a grid that sets neither lost: the foot rule, and in Japan the head rule', () => {
+    const pinned: Record<string, object> = { ja: ON, 'zh-Hans': { avoidWidows: true }, 'zh-Hant': { avoidWidows: true } };
+    for (const [locale, written] of Object.entries(pinned)) {
       const config = grid(locale, { bodyText: { fontFamily: 'Noto Serif JP' } });
       const out = migrateConfig(config, 11);
-      expect(out.bodyText, locale).toEqual({ fontFamily: 'Noto Serif JP', ...ON });
+      expect(out.bodyText, locale).toEqual({ fontFamily: 'Noto Serif JP', ...written });
       expect(rules(out), locale).toEqual(ON);
       // No body text section at all.
-      expect(migrateConfig(grid(locale), 11).bodyText, locale).toEqual(ON);
-      expect(migrateConfig(grid(locale), 8).bodyText, locale).toMatchObject(ON);
+      expect(migrateConfig(grid(locale), 11).bodyText, locale).toEqual(written);
+      expect(migrateConfig(grid(locale), 8).bodyText, locale).toMatchObject(written);
       // The stored configuration is not touched.
       expect(config.bodyText).toEqual({ fontFamily: 'Noto Serif JP' });
     }
+    // The region the configuration names decides, as it does the default.
+    expect(migrateConfig({ cjk: { region: 'japan', grid: GRID } }, 11).bodyText).toEqual(ON);
+    expect(migrateConfig(grid('ja', { cjk: { region: 'mainland', grid: GRID } }), 11).bodyText).toEqual({ avoidWidows: true });
     // Under today's rules the same configuration lays out with them off.
     expect(rules(grid('ja'))).toEqual({ avoidWidows: false, avoidOrphans: false });
     expect(rules(grid('zh-Hans'))).toEqual({ avoidWidows: false, avoidOrphans: true });
@@ -39,6 +44,8 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   it('writes only the rule a configuration leaves unset', () => {
     expect(pinLegacyGridBreakRules(grid('ja', { bodyText: { avoidWidows: false } })).bodyText).toEqual({ avoidWidows: false, avoidOrphans: true });
     expect(pinLegacyGridBreakRules(grid('ja', { bodyText: { avoidOrphans: false } })).bodyText).toEqual({ avoidOrphans: false, avoidWidows: true });
+    const chinese = grid('zh-Hans', { bodyText: { avoidWidows: false } });
+    expect(pinLegacyGridBreakRules(chinese)).toBe(chinese);
   });
 
   it('leaves every other configuration as it is', () => {
@@ -69,9 +76,11 @@ describe('pinLegacyGridBreakRules (#717)', () => {
     expect(ja.bodyText).toEqual(ON);
     expect(migrateConfig(ja, 12)).toBe(ja);
     expect(rules(ja)).toEqual(ON);
-    // China: the head rule is the default there and is dropped; the page
-    // lays out the same.
-    const zh = stripConfigDefaults(migrateConfig(grid('zh-Hans'), 11));
+    // China: the head rule is the default there, so only the foot rule
+    // was written, and it stays.
+    const pinned = migrateConfig(grid('zh-Hans'), 11);
+    const zh = stripConfigDefaults(pinned);
+    expect(zh).toEqual(pinned);
     expect(zh.bodyText).toEqual({ avoidWidows: true });
     expect(rules(zh)).toEqual(ON);
     // Saved again and again, they stay.
@@ -81,7 +90,8 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   it('pins a bundle on its merged layers', () => {
     const base: PostextConfig = { bodyText: { fontFamily: 'Noto Serif SC' } };
     const merged = migrateBundleConfig(base, [grid('zh-Hans'), { layout: { layoutType: 'double' } }], 11);
-    expect(merged.bodyText).toEqual({ fontFamily: 'Noto Serif SC', ...ON });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Noto Serif SC', avoidWidows: true });
+    expect(migrateBundleConfig(base, [grid('zh-Hans'), { locale: 'ja' }], 11).bodyText).toEqual({ fontFamily: 'Noto Serif SC', ...ON });
     // A layer that takes the grid away leaves nothing to pin.
     const plain = migrateBundleConfig(base, [grid('zh-Hans'), { cjk: { grid: { enabled: false } } }], 11);
     expect(plain.bodyText).toBe(base.bodyText);

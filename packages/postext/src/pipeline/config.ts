@@ -39,9 +39,9 @@ import {
   applyPaletteToResolvedConfig,
   DEFAULT_LAYOUT_CONFIG,
   balancingOnByDefault,
-} from '../defaults';
   avoidWidowsByDefault,
   avoidOrphansByDefault,
+} from '../defaults';
 import { dimensionToPx } from '../units';
 import { applyCjkGrid } from './cjkGrid';
 import { directionOf, localeScript, presentTag, resolveNumerals } from '../locale';
@@ -195,9 +195,6 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
   return applyPaletteToResolvedConfig(resolved, rawConfig?.colorPalette);
 }
 
-/** The headings with column balancing off when the document's default
- *  turns it off ({@link balancingOnByDefault}) and its config does not
- *  turn it on itself. */
 /** The body text with the widow and orphan rules off where the document's
  *  defaults turn them off (a character grid: {@link avoidWidowsByDefault},
  *  {@link avoidOrphansByDefault}) and its config does not set them. */
@@ -211,6 +208,9 @@ function defaultBreakRules(
   return { ...bodyText, ...(widowsOff ? { avoidWidows: false } : {}), ...(orphansOff ? { avoidOrphans: false } : {}) };
 }
 
+/** The headings with column balancing off when the document's default
+ *  turns it off ({@link balancingOnByDefault}) and its config does not
+ *  turn it on itself. */
 function defaultBalancing(
   headings: ResolvedConfig['headings'],
   config: PostextConfig | undefined,
