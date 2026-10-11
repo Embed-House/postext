@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'Postextの組版エンジンをブラウザーで試せるインタラクティブな実験の場',
   lang: 'ja',
-  lastUpdated: '2026-10-07',
-  readingTime: '15分',
+  lastUpdated: '2026-10-11',
+  readingTime: '16分',
   order: 20,
   plainSummary: "Sandboxは、何もインストールせずにPostextを試せる、このサイトの無料の道具です。片側に文章を書くと、もう片側に仕上がったページが表示され、入力に合わせてすぐに変わります。フォント、ページの大きさ、段の数、色を選び、絵を加えることもできます。作ったものは章に分けた1冊の本としてまとめ、PDFやEPUBの電子書籍としてダウンロードできます。作業の内容は、そのつど自分のブラウザーに保存されます。",
 };
@@ -683,6 +683,21 @@ Sandboxは作業内容を自動的にブラウザーに保存します。
 
 **本文**パネルのヘッダーからは作業中の章をプレーンな`.md`ファイルとしてダウンロードでき、その**読み込み**ボタンは作業中の章を`.md`ファイルの内容で置き換えます。**デザイン**パネルの**読み込み**ボタンは`.json`ファイルを選ぶダイアログを開き、ファイルを想定する`type`と`version`で検証します。無効なファイルは何も通知されずに無視されます。以前のバージョンにあった`postext-markdown.json`のラッパーと、ひとまとめの`postext-sandbox.json`形式はなくなりました。
 
+## エージェント：WebMCP
+
+Sandboxは、[WebMCP](https://webmachinelearning.github.io/webmcp/)（`document.modelContext`）を通じて、ブラウザーで動くエージェントに専用のツールを渡します。アシスタントは画面をクリックしてたどる代わりに、本そのものを直接扱えます。設定は要りません。Sandboxが画面にある間はツールが登録されており、このサイトのほかのページもそれぞれいくつかのツールを登録します（ドキュメントとレシピ集の検索、ページをMarkdownとして読む、レシピをSandboxで開く、言語とテーマの切り替え）。
+
+ツールは、デザイナーが目で確かめながら繰り返す手順、つまり「変える、ページを見る、また変える」のために作られています。
+
+- **見る** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_get_warnings`：本とその章、ページの範囲。任意のページを指定した幅のJPEG、PNG、WebPにしたもの、または細部を見るための切り抜き（求めれば印刷プレビュー付き）。同じページのデータ（ブロックと行、各段がどこまで埋まっているか、どの行が間延びしているか、語が分割された行はどれか）。そして「検査」パネルの一覧。
+- **変える** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`：パスで指定する任意の設定（`bodyText.fontSize`、`page.margins.top`）、厳密な検索と置換による本文、章、画像、SVGの図、表、フォント。変更すると、各値の変更前と変更後、それぞれの章が何ページになったかが返ります。
+- **表示する** — `sandbox_set_view`, `sandbox_go_to_page`：ビューアーのタブ、サイドパネル、章か本全体か、拡大率、合わせ方と見開き、読者側の文字サイズ、印刷プレビュー、ページに描くガイド、そして画面に出ているページ。
+- **保存する** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`：サンプルと自分のプロジェクト、`.postext`ファイルの読み込み、そしてPDF、EPUB、`.postext`、Word、Markdown、設定のJSONへの書き出し。
+
+本を変更するツールは組版が終わるのを待つので、次の画像はいつも新しいページのものです。ページは、画面にどのタブが出ていても、ツールのために組まれて描かれます。取り消せない操作（章、リソース、プロジェクトの削除、元の状態への復元）には重大な操作の印が付いており、ブラウザーが先に確認を求められます。画面で操作するときと同じく、すべてはお使いのブラウザーの中にとどまります。ツールが届くのは、Sandbox自身が届く範囲だけです。
+
+WebMCPは草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`で使えます。WebMCPのないブラウザーでは、同じツールが`window.postextWebMcp`にあり（`listTools()`、`executeTool(name, args)`）、ページ内でスクリプトを実行できるエージェントが使えます。Sandboxを埋め込むときは、`webmcp={false}`でツールを登録しないようにできます（[Props](#props)を参照）。
+
 ## 単体での利用
 
 Sandboxは単体のReactパッケージ（`postext-sandbox`）としても提供されており、任意のReactアプリケーションに組み込めます。
@@ -761,6 +776,11 @@ function App() {
       <td><code>onMarkdownChange</code></td>
       <td><code>(markdown) =&gt; void</code></td>
       <td>Markdownが変わったときのコールバック</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>マウントされている間、ブラウザーのエージェント向けにSandboxの<a href="#エージェントwebmcp">WebMCPツール</a>を登録します。既定値は<code>true</code></td>
     </tr>
     <tr>
       <td><code>themeToggle</code></td>

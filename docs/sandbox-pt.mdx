@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'Ambiente interativo para experimentar com o motor de layout do Postext',
   lang: 'pt',
-  lastUpdated: '2026-10-07',
-  readingTime: '15 min',
+  lastUpdated: '2026-10-11',
+  readingTime: '16 min',
   order: 20,
   plainSummary: "O Sandbox é uma ferramenta gratuita deste site para experimentar o Postext sem instalar nada. Você escreve o texto de um lado e vê as páginas prontas do outro, e elas mudam enquanto você digita. Dá para escolher fontes, tamanhos de página, colunas e cores, e incluir imagens. Você pode organizar o trabalho como um livro com capítulos e baixá-lo em PDF ou como livro digital EPUB. O trabalho é salvo no seu próprio navegador à medida que você avança.",
 };
@@ -683,6 +683,21 @@ O cabeçalho do **painel Design** baixa `postext-config.json` sem os valores pad
 
 O cabeçalho do **painel Texto** baixa o capítulo ativo como um arquivo `.md` simples, e o seu botão **Importar** substitui o capítulo ativo pelo conteúdo de um arquivo `.md`. O botão **Importar** do painel Design abre um seletor de arquivos `.json`, validados contra o `type` e a `version` esperados; arquivos inválidos são ignorados sem aviso. O invólucro `postext-markdown.json` e o formato combinado `postext-sandbox.json` de versões anteriores não existem mais.
 
+## Agentes: WebMCP
+
+O Sandbox entrega a um agente que trabalhe no navegador as suas próprias ferramentas por meio do [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), de modo que um assistente atua sobre o próprio livro em vez de sair clicando pela interface. Não há nada a configurar: as ferramentas ficam registradas enquanto o Sandbox está na tela, e o restante deste site registra algumas próprias em cada página (buscar na documentação e nas Receitas, ler uma página como Markdown, abrir uma receita no Sandbox, trocar de idioma e de tema).
+
+Elas foram pensadas para o ciclo que um designer percorre a olho: mudar algo, olhar a página, mudar de novo.
+
+- **Ver** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_get_warnings`: o livro com seus capítulos e intervalos de páginas; qualquer página como JPEG, PNG ou WebP na largura pedida, ou um recorte para vê-la de perto, com a prévia de impressão se for pedida; a mesma página como dados (seus blocos e linhas, quanto cada coluna se enche, quais linhas ficam frouxas ou terminam em palavra partida); e o que o painel Verificações lista.
+- **Mudar** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`: qualquer ajuste pelo seu caminho (`bodyText.fontSize`, `page.margins.top`), o texto por localizar e substituir exatos, os capítulos, as imagens, os desenhos SVG, as tabelas e as fontes. Uma mudança responde com cada valor antes e depois e com as páginas que cada capítulo ocupa.
+- **Mostrar** — `sandbox_set_view`, `sandbox_go_to_page`: a aba do visualizador, o painel lateral, capítulo ou livro inteiro, o zoom, o ajuste e as páginas lado a lado, o tamanho da letra do leitor, a prévia de impressão, as guias desenhadas sobre as páginas e a página na tela.
+- **Guardar** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`: as amostras e os seus projetos, um arquivo `.postext` importado e o livro exportado para PDF, EPUB, `.postext`, Word, Markdown ou seus ajustes em JSON.
+
+Uma ferramenta que muda o livro espera a diagramação, de modo que a imagem seguinte é sempre a das páginas novas; a página é diagramada e pintada para a ferramenta seja qual for a aba na tela. O que não pode ser desfeito — apagar um capítulo, um recurso ou um projeto, restaurar o original — vai marcado como consequente, para que o navegador possa perguntar antes. Como na interface, tudo fica no seu navegador: as ferramentas não alcançam nada que o próprio Sandbox não alcance.
+
+O WebMCP é um rascunho: o Chrome o oferece como teste de origem e atrás de `chrome://flags/#enable-webmcp-testing`. Em um navegador que não o tenha, as mesmas ferramentas estão em `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), para um agente que possa executar código na página. Ao incorporar o Sandbox, `webmcp={false}` as deixa de fora (veja [Props](#props)).
+
 ## Uso independente
 
 O Sandbox está disponível como um pacote React independente (`postext-sandbox`) que pode ser embutido em qualquer aplicativo React:
@@ -761,6 +776,11 @@ function App() {
       <td><code>onMarkdownChange</code></td>
       <td><code>(markdown) =&gt; void</code></td>
       <td>Callback chamado quando o markdown muda</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>Registra as <a href="#agentes-webmcp">ferramentas WebMCP</a> do Sandbox para agentes no navegador enquanto está montado. Padrão <code>true</code></td>
     </tr>
     <tr>
       <td><code>themeToggle</code></td>

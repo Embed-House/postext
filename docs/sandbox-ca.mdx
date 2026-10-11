@@ -5,8 +5,8 @@ export const metadata = {
   sidebarTitle: 'Sandbox',
   description: 'Entorn interactiu per experimentar amb el motor de maquetació de Postext',
   lang: 'ca',
-  lastUpdated: '2026-10-07',
-  readingTime: '15 min',
+  lastUpdated: '2026-10-11',
+  readingTime: '16 min',
   order: 20,
   plainSummary: "El Sandbox és una eina gratuïta d'aquest web per provar Postext sense instal·lar res. Escrius el text a una banda i veus les pàgines acabades a l'altra, i canvien mentre escrius. Pots triar tipografies, mides de pàgina, columnes i colors, i afegir imatges. Pots organitzar la teva feina com un llibre amb capítols i baixar-lo en PDF o com a llibre electrònic EPUB. La teva feina es desa al teu propi navegador sobre la marxa.",
 };
@@ -681,6 +681,21 @@ La capçalera del **tauler Disseny** baixa `postext-config.json` amb els valors 
 
 La capçalera del **tauler Text** baixa el capítol actiu com un fitxer `.md` i el seu botó **Importar** substitueix el capítol actiu pel contingut d'un fitxer `.md`. El botó **Importar** del tauler Disseny obre un selector de fitxers `.json` validats contra el `type` i la `version` esperats; els fitxers no vàlids s'ignoren silenciosament. L'embolcall `postext-markdown.json` i el format combinat `postext-sandbox.json` de versions anteriors ja no existeixen.
 
+## Agents: WebMCP
+
+El Sandbox lliura a un agent que treballi al navegador les seves pròpies eines mitjançant [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`), de manera que un assistent actua sobre el llibre mateix en lloc d'anar fent clic per la interfície. No cal configurar res: les eines queden registrades mentre el Sandbox és a la pantalla, i la resta d'aquest lloc en registra unes quantes de pròpies a cada pàgina (cercar a la documentació i al Receptari, llegir una pàgina com a Markdown, obrir una recepta al Sandbox, canviar d'idioma i de tema).
+
+Estan pensades per al cicle que un dissenyador recorre a ull: canviar alguna cosa, mirar la pàgina, tornar a canviar.
+
+- **Veure** — `sandbox_get_state`, `sandbox_render_page`, `sandbox_inspect_pages`, `sandbox_get_warnings`: el llibre amb els seus capítols i els seus rangs de pàgines; qualsevol pàgina com a JPEG, PNG o WebP a l'amplada demanada, o un retall per veure-la de prop, amb la previsualització d'impressió si es demana; la mateixa pàgina com a dades (els seus blocs i línies, com s'omple cada columna, quines línies queden fluixes o acaben en paraula partida); i el que llista el panell Revisió.
+- **Canviar** — `sandbox_set_config`, `sandbox_get_config`, `sandbox_find_setting`, `sandbox_edit_text`, `sandbox_write_text`, `sandbox_read_text`, `sandbox_search_text`, `sandbox_manage_chapters`, `sandbox_save_resource`, `sandbox_save_font`: qualsevol ajust per la seva ruta (`bodyText.fontSize`, `page.margins.top`), el text mitjançant cerca i substitució exactes, els capítols, les imatges, els dibuixos SVG, les taules i les fonts. Un canvi respon amb cada valor abans i després i amb les pàgines que ocupa cada capítol.
+- **Mostrar** — `sandbox_set_view`, `sandbox_go_to_page`: la pestanya del visor, el panell lateral, capítol o llibre sencer, el zoom, l'ajust i les pàgines encarades, la mida de lletra del lector, la previsualització d'impressió, les guies dibuixades sobre les pàgines i la pàgina a la pantalla.
+- **Desar** — `sandbox_list_books`, `sandbox_open_book`, `sandbox_save_book`, `sandbox_import_book`, `sandbox_export`: les mostres i els teus projectes, un fitxer `.postext` importat i el llibre exportat a PDF, EPUB, `.postext`, Word, Markdown o els seus ajustos en JSON.
+
+Una eina que canvia el llibre espera la maquetació, de manera que la imatge següent és sempre la de les pàgines noves; la pàgina es maqueta i es pinta per a l'eina sigui quina sigui la pestanya a la pantalla. El que no es pot desfer —esborrar un capítol, un recurs o un projecte, restaurar l'original— va marcat com a conseqüent, perquè el navegador et pugui preguntar abans. Igual que amb la interfície, tot es queda al teu navegador: les eines no arriben a res que el Sandbox mateix no arribi.
+
+WebMCP és un esborrany: Chrome l'ofereix com a prova d'origen i darrere de `chrome://flags/#enable-webmcp-testing`. En un navegador que no el tingui, les mateixes eines són a `window.postextWebMcp` (`listTools()`, `executeTool(name, args)`), per a un agent que pugui executar codi a la pàgina. En incrustar el Sandbox, `webmcp={false}` les deixa fora (vegeu [Props](#props)).
+
 ## Ús standalone
 
 El Sandbox està disponible com un paquet React independent (`postext-sandbox`) que es pot incrustar en qualsevol aplicació React:
@@ -759,6 +774,11 @@ function App() {
       <td><code>onMarkdownChange</code></td>
       <td><code>(markdown) =&gt; void</code></td>
       <td>Callback quan canvia el markdown</td>
+    </tr>
+    <tr>
+      <td><code>webmcp</code></td>
+      <td><code>boolean</code></td>
+      <td>Registra les <a href="#agents-webmcp">eines WebMCP</a> del Sandbox per a agents al navegador mentre està muntat. Per defecte <code>true</code></td>
     </tr>
     <tr>
       <td><code>themeToggle</code></td>
