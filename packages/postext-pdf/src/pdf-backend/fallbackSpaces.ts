@@ -84,6 +84,12 @@ export function substituteGlyph(face: { hasGlyphForCodePoint(codePoint: number):
   return options.find((alt) => face.hasGlyphForCodePoint(alt));
 }
 
+/** Whether `cp` is one of the spaces HarfBuzz sets from the space glyph
+ *  ({@link FALLBACK_SPACES}): the no-break space, the fixed-width spaces. */
+export function isSpaceCharacter(cp: number): boolean {
+  return FALLBACK_SPACES.has(cp);
+}
+
 /** Whether {@link fallbackPieces} paints `cp` without the face's glyph for
  *  it: a space set from the face's space glyph, or a default-ignorable
  *  character left out. A face lacking one of these is not missing it. */

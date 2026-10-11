@@ -41,8 +41,9 @@ import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
 import { joinsLetters, scriptContextUntracked, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging';
-import { fallbackPieces, type FallbackFace, type TextPiece } from './fallbackSpaces';
+import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
+import { needsComplexShaping } from '../complexShaping';
 import { shapingKey, withShapingScript } from '../shapingLanguage';
 
 export interface PageCtx {
@@ -76,6 +77,11 @@ export interface PageCtx {
    *  vertical painter reads it, since it sets its own spacing inside its
    *  text objects. */
   trackingPx?: number;
+  /** How many spans opened with {@link beginActualTextSpan} are open:
+   *  what is painted inside one is read as the span's text, and no glyph
+   *  takes a span of its own there (#755; a reader that meets an
+   *  `/ActualText` inside another, Poppler, drops the outer one). */
+  readSpans?: number;
   /** Set while a right-to-left page's flow paints through its mirror
    *  (`VDTMirroredFlowFrame`, {@link mirrorMatrix}): every text object
    *  and picture is turned back about its own box, so it reads as written
@@ -495,14 +501,34 @@ export function drawLinePx(
 const showByFont = new WeakMap<PDFFont, Map<string, PDFOperator>>();
 const ENCODE_CACHE_SLOTS = 50_000;
 
+/** A glyph fontkit laid out: its id in the font file and the characters
+ *  the font's `/ToUnicode` map gives it (see {@link glyphReads}). */
+interface LaidGlyph {
+  id: number;
+  advanceWidth: number;
+  codePoints: number[];
+}
+
 /** The fontkit side of a pdf-lib custom font — what kerning needs. */
 interface ShapingFace {
   unitsPerEm: number;
   layout(text: string, features?: unknown): {
-    glyphs: Array<{ advanceWidth: number }>;
+    glyphs: LaidGlyph[];
     positions: Array<{ xAdvance: number; xOffset: number }>;
   };
 }
+
+/** A glyph of a show-text array read as `text`, not as the characters the
+ *  font's `/ToUnicode` map gives it (#755, {@link glyphReads}): shown in a
+ *  `/Span` of its own whose `/ActualText` is `text`. `hex` is its code. */
+interface ReadGlyph {
+  hex: string;
+  text: string;
+}
+
+/** A part of a show-text array: a run of glyph codes, a pen adjustment, or
+ *  a glyph read through a span. */
+type ShowPart = string | number | ReadGlyph;
 
 /** Round a TJ adjustment to 1/100 of a text-space unit. */
 function tjNumber(n: number): number {
@@ -530,8 +556,14 @@ export function showTextShaped(font: PDFFont, text: string): PDFOperator {
   const key = shapingKey(text);
   const hit = cache.get(key);
   if (hit) return hit;
-  noteMissingGlyphs(font, text);
-  const op = fallbackOperator(font, text) ?? shapedTextOperator(font, text);
+  const run = shownRun(font, text);
+  let op: PDFOperator;
+  if (run) op = partsOperator(font, plainParts(run.parts));
+  else {
+    // A standard font: no shaper, pdf-lib's own encoding.
+    noteMissingGlyphs(font, text);
+    op = showText(font.encodeText(text));
+  }
   if (cache.size >= ENCODE_CACHE_SLOTS) cache.clear();
   cache.set(key, op);
   return op;
@@ -545,9 +577,16 @@ export interface TextShow {
 
 /** The show-text operators of `text` in `font`'s face: one
  *  ({@link showTextShaped}) for a face of one file, else one per run of
- *  characters set in the same file (see `faceFiles.ts`). */
-export function textShows(font: PDFFont, text: string): TextShow[] {
-  return fileRuns(font, text).map((run) => ({ font: run.font, op: showTextShaped(run.font, run.text) }));
+ *  characters set in the same file (see `faceFiles.ts`). A glyph the
+ *  font's `/ToUnicode` map reads as other text is shown in a span of its
+ *  own ({@link glyphReads}), unless `read` is false: the caller reads the
+ *  text some other way (an `/ActualText` over all of it, a figure's
+ *  alternate text). */
+export function textShows(font: PDFFont, text: string, read = true): TextShow[] {
+  return fileRuns(font, text).flatMap((run) => {
+    const shown = read ? shownRun(run.font, run.text) : undefined;
+    return shown?.reads ? partsShows(run.font, shown.parts) : [{ font: run.font, op: showTextShaped(run.font, run.text) }];
+  });
 }
 
 function shapingFace(font: PDFFont): { face: ShapingFace & FallbackFace; features: unknown } | undefined {
@@ -557,25 +596,92 @@ function shapingFace(font: PDFFont): { face: ShapingFace & FallbackFace; feature
   return { face, features: embedder!.fontFeatures };
 }
 
-/** `text` shaped as one run: a `TJ` with the shaper's positions, or a plain
- *  `Tj` when it has none. */
-function shapedTextOperator(font: PDFFont, text: string): PDFOperator {
-  // `encodeText` also registers the glyphs with the font's subset (the ids
-  // it returns are subset ids), so it runs even when positions are added.
-  const encoded = font.encodeText(text);
-  const parts = shapedParts(font, text, encoded);
-  return parts && parts.length > 1 ? adjustedOperator(font, parts) : showText(encoded);
+/**
+ * What the glyphs fontkit laid `text` out with are read as, where the
+ * font's `/ToUnicode` map reads them as other text (#755); undefined when
+ * the map reads every one as written, which is nearly always.
+ *
+ * The map is one per font, and a glyph keeps the characters it was first
+ * given (fontkit makes a glyph once, with the characters of the text that
+ * first showed it; `shapedText.ts` does the same for the glyphs HarfBuzz
+ * shows). A glyph two characters share therefore reads as the first of
+ * them the document set: the bracket a right-to-left run mirrors is the
+ * glyph of the other bracket, so after `(١)` in an Arabic note the glyph
+ * of `)` stands for `(`, and a later `(Brill, 2017)` in the same font read
+ * back `(Brill, 2017(`. A form the shaper puts in a character's place
+ * takes the characters of that character's own glyph, the wrong ones
+ * with them. The same goes for any two characters the face's cmap draws
+ * with one glyph: the hyphen-minus and the hyphen, the space and the
+ * no-break space. Such a glyph is shown in a span whose `/ActualText` is
+ * its character here, as `shapedText.ts` does for a cluster HarfBuzz
+ * shaped: the first use of a glyph costs nothing, each use for another
+ * character one span.
+ *
+ * The glyphs are walked against the text. A glyph whose own characters
+ * are the next ones of the text reads right; one with no characters (the
+ * second glyph of a decomposed letter) reads as nothing; one that holds
+ * one character, and not the next of the text, is read as that next
+ * character. Three glyphs are left as they read: `.notdef`, which stands
+ * for every character the face lacks; the space glyph fontkit hides an
+ * invisible character behind; and the space glyph, read as a space, under
+ * a no-break space or any other space the face draws with it (a space the
+ * face lacks reads as a space too, see `fallbackSpaces.ts`). The reads
+ * hold only when the walk ends where the text does (every glyph accounted
+ * for, one way or another); when it does not — a glyph for several
+ * characters that holds others, a variation selector — the run is left as
+ * it reads.
+ */
+function glyphReads(face: ShapingFace, glyphs: readonly LaidGlyph[], text: string): Array<string | undefined> | undefined {
+  // fontkit hands a right-to-left run's glyphs over in visual order: such
+  // text is HarfBuzz's whenever it is loaded, and is not walked here.
+  if (needsComplexShaping(text)) return undefined;
+  let reads: Array<string | undefined> | undefined;
+  let space: number | undefined;
+  // UTF-16 offset in `text` of the next character to read.
+  let at = 0;
+  for (let i = 0; i < glyphs.length; i++) {
+    const glyph = glyphs[i]!;
+    const own = glyph.codePoints;
+    if (glyph.id !== 0 && (!own || own.length === 0)) continue;
+    let end = at;
+    for (const cp of own ?? []) {
+      if (text.codePointAt(end) !== cp) {
+        end = -1;
+        break;
+      }
+      end += cp > 0xffff ? 2 : 1;
+    }
+    if (end > at) {
+      at = end;
+      continue;
+    }
+    const cp = text.codePointAt(at);
+    if (cp === undefined) return undefined;
+    at += cp > 0xffff ? 2 : 1;
+    if (glyph.id === 0) continue;
+    if (isDefaultIgnorable(cp) && glyph.id === (space ??= cmapGlyphId(face, 0x20))) continue;
+    if (own.length !== 1) return undefined;
+    if (own[0] === 0x20 && isSpaceCharacter(cp)) continue;
+    reads ??= new Array<string | undefined>(glyphs.length);
+    reads[i] = String.fromCodePoint(cp);
+  }
+  return at === text.length ? reads : undefined;
 }
 
-/** The `TJ` array (hex glyph runs and adjustments) of a shaped run, or
- *  undefined when the shaper's positions cannot be matched to its glyphs. */
-function shapedParts(font: PDFFont, text: string, encoded: PDFHexString): Array<string | number> | undefined {
-  return shapedRun(font, text, encoded)?.parts;
+/** The id of the glyph the face's cmap gives `cp` (0: none), read from the
+ *  cmap itself: `glyphForCodePoint` would make the glyph, with `cp` as the
+ *  characters it then keeps in the font's map. */
+function cmapGlyphId(face: ShapingFace, cp: number): number {
+  const cmap = (face as unknown as { _cmapProcessor?: { lookup?(codePoint: number): number } })._cmapProcessor;
+  return typeof cmap?.lookup === 'function' ? cmap.lookup(cp) || 0 : 0;
 }
 
-/** {@link shapedParts} with the sum of the glyphs' own widths (their `W`
- *  entries), in thousandths of the font size. */
-function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts: Array<string | number>; widths: number } | undefined {
+/** The `TJ` array (hex glyph runs and adjustments) of a shaped run, with
+ *  the sum of the glyphs' own widths (their `W` entries), in thousandths
+ *  of the font size; undefined when the shaper's positions cannot be
+ *  matched to its glyphs. A glyph the font's map reads as other text is a
+ *  part of its own ({@link glyphReads}). */
+function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts: ShowPart[]; widths: number } | undefined {
   const shaping = shapingFace(font);
   if (!shaping) return undefined;
   const { face } = shaping;
@@ -583,12 +689,13 @@ function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts:
   const hex = encoded.asString();
   const count = run.glyphs.length;
   if (count === 0 || hex.length !== count * 4 || run.positions.length !== count) return undefined;
+  const reads = glyphReads(face, run.glyphs, text);
   // TJ numbers are thousandths of text space, subtracted from the pen: a
   // glyph drawn at `pen + xOffset` then advancing by `xAdvance` (not its
   // W width `advanceWidth`) is `-xOffset, glyph, -(xAdvance - w - xOffset)`.
   const toText = 1000 / face.unitsPerEm;
   const subsetFont = isSubsetFont(font);
-  const parts: Array<string | number> = [];
+  const parts: ShowPart[] = [];
   let pendingHex = '';
   let pendingAdjust = 0;
   const flushHex = () => {
@@ -604,7 +711,11 @@ function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts:
       parts.push(lead);
     }
     const cid = hex.slice(i * 4, i * 4 + 4);
-    pendingHex += cid;
+    const read = reads?.[i];
+    if (read !== undefined) {
+      flushHex();
+      parts.push({ hex: cid, text: read });
+    } else pendingHex += cid;
     pendingAdjust = -(pos.xAdvance - run.glyphs[i]!.advanceWidth - pos.xOffset) * toText;
     widths += cid === '0000' && subsetFont ? MISSING_WIDTH : run.glyphs[i]!.advanceWidth * toText;
   }
@@ -636,10 +747,12 @@ function partsOperator(font: PDFFont, parts: Array<string | number>): PDFOperato
 }
 
 /** Append a part to a `TJ` array, merging it into a neighbouring glyph run
- *  or number; a zero adjustment is dropped. */
-function pushPart(parts: Array<string | number>, part: string | number): void {
+ *  or number; a zero adjustment is dropped. A glyph read through a span
+ *  stays a part of its own. */
+function pushPart(parts: ShowPart[], part: ShowPart): void {
   const last = parts[parts.length - 1];
-  if (typeof part === 'number') {
+  if (typeof part === 'object') parts.push(part);
+  else if (typeof part === 'number') {
     if (part === 0) return;
     if (typeof last === 'number') parts[parts.length - 1] = tjNumber(last + part);
     else parts.push(part);
@@ -652,34 +765,89 @@ function pushPart(parts: Array<string | number>, part: string | number): void {
  *  widths less the adjustments, before any character spacing) and how
  *  many glyphs they show. */
 interface ShownRun {
-  parts: Array<string | number>;
+  parts: ShowPart[];
   advance: number;
   glyphs: number;
+  /** A glyph of it is read through a span ({@link ReadGlyph}). */
+  reads: boolean;
 }
 
 /** Glyphs and pen advance of a run of parts whose glyph widths sum to
  *  `widths` (thousandths of the font size). */
-function shownRunOf(parts: Array<string | number>, widths: number): ShownRun {
+function shownRunOf(parts: ShowPart[], widths: number): ShownRun {
   let advance = widths;
   let glyphs = 0;
+  let reads = false;
   for (const part of parts) {
     if (typeof part === 'number') advance -= part;
-    else glyphs += part.length / 4;
+    else if (typeof part === 'string') glyphs += part.length / 4;
+    else {
+      glyphs += part.hex.length / 4;
+      reads = true;
+    }
   }
-  return { parts, advance, glyphs };
+  return { parts, advance, glyphs, reads };
 }
 
-/** The parts of a text holding spaces the face has no glyph for, or
- *  invisible characters (see {@link fallbackOperator}). */
+/** `parts` with every glyph read through the font's map: one show-text
+ *  array, as before any glyph took a span. */
+function plainParts(parts: readonly ShowPart[]): Array<string | number> {
+  const out: Array<string | number> = [];
+  for (const part of parts) pushPart(out, typeof part === 'object' ? part.hex : part);
+  return out;
+}
+
+/**
+ * The show-text operators of `parts` in `font`: one, or, around each glyph
+ * read through a span ({@link ReadGlyph}), the span's `BDC`, the glyph and
+ * its `EMC`. The glyphs and the pen adjustments are the same ones in the
+ * same order, cut into several arrays: nothing moves on the page.
+ */
+function partsShows(font: PDFFont, parts: readonly ShowPart[]): TextShow[] {
+  const shows: TextShow[] = [];
+  let plain: Array<string | number> = [];
+  const flush = () => {
+    if (plain.length > 0) shows.push({ font, op: partsOperator(font, plain) });
+    plain = [];
+  };
+  for (const part of parts) {
+    if (typeof part !== 'object') {
+      pushPart(plain, part);
+      continue;
+    }
+    flush();
+    const props = font.doc.context.obj({ ActualText: PDFHexString.fromText(part.text) }) as unknown as OperatorArg;
+    shows.push(
+      { font, op: PDFOperator.of(PDFOperatorNames.BeginMarkedContentSequence, [PDFName.of('Span'), props]) },
+      { font, op: showText(PDFHexString.of(part.hex)) },
+      { font, op: PDFOperator.of(PDFOperatorNames.EndMarkedContent) },
+    );
+  }
+  flush();
+  if (shows.length === 0) shows.push({ font, op: partsOperator(font, []) });
+  return shows;
+}
+
+/**
+ * The parts of a text holding a space the face has no glyph for (a narrow
+ * no-break space, a figure space…) or an invisible character (a word
+ * joiner): painted as the canvas measured it, not as `.notdef` boxes (see
+ * `fallbackSpaces.ts`). A missing space is the face's space glyph — text
+ * extraction still finds a space there — moved to the browser's advance
+ * for it; an invisible character is not drawn.
+ */
 function fallbackRun(font: PDFFont, face: FallbackFace, pieces: TextPiece[]): ShownRun {
   const toText = 1000 / face.unitsPerEm;
   const spaceGlyph = face.hasGlyphForCodePoint(0x20) ? face.glyphForCodePoint(0x20) : undefined;
-  const parts: Array<string | number> = [];
+  const parts: ShowPart[] = [];
   let widths = 0;
   for (const piece of pieces) {
     if ('space' in piece) {
       if (spaceGlyph) {
-        pushPart(parts, font.encodeText(' ').asString());
+        // The face's space glyph, read as a space whatever the font's map
+        // gives it (a no-break space set before any space, #755).
+        const space = font.encodeText(' ');
+        for (const part of shapedRun(font, ' ', space)?.parts ?? [space.asString()]) pushPart(parts, part);
         pushPart(parts, tjNumber((spaceGlyph.advanceWidth - piece.space) * toText));
         widths += spaceGlyph.advanceWidth * toText;
       } else {
@@ -693,23 +861,6 @@ function fallbackRun(font: PDFFont, face: FallbackFace, pieces: TextPiece[]): Sh
     widths += shaped?.widths ?? font.widthOfTextAtSize(piece.text, 1000);
   }
   return shownRunOf(parts, widths);
-}
-
-/**
- * The show-text operator of a text holding a space the face has no glyph
- * for (a narrow no-break space, a figure space…) or an invisible character
- * (a word joiner): painted as the canvas measured it, not as `.notdef`
- * boxes (see `fallbackSpaces.ts`). A missing space is the face's space
- * glyph — text extraction still finds a space there — moved to the
- * browser's advance for it; an invisible character is not drawn. Undefined
- * for text that needs none of this.
- */
-function fallbackOperator(font: PDFFont, text: string): PDFOperator | undefined {
-  const shaping = shapingFace(font);
-  if (!shaping) return undefined;
-  const pieces = fallbackPieces(shaping.face, text);
-  if (!pieces) return undefined;
-  return partsOperator(font, fallbackRun(font, shaping.face, pieces).parts);
 }
 
 const runsByFont = new WeakMap<PDFFont, Map<string, ShownRun>>();
@@ -787,7 +938,7 @@ export function measuredTextOperator(
   sizePx: number,
   trackingPx = 0,
 ): PDFOperator | undefined {
-  const shows = measuredTextShows(font, pieces, sizePx, trackingPx);
+  const shows = measuredTextShows(font, pieces, sizePx, trackingPx, false);
   return shows && shows.length === 1 ? shows[0]!.op : undefined;
 }
 
@@ -795,17 +946,22 @@ export function measuredTextOperator(
  * {@link measuredTextOperator} for a face of any number of files: the
  * pieces cut into runs by file (see `faceFiles.ts`), one show-text
  * operator per stretch set in the same file. The pen carries across the
- * font switches, so every piece still starts where the layout put it.
+ * font switches, so every piece still starts where the layout put it. A
+ * glyph the font's `/ToUnicode` map reads as other text is shown in a span
+ * of its own between two of them ({@link glyphReads}).
  */
 export function measuredTextShows(
   font: PDFFont,
   pieces: readonly { text: string; width: number }[],
   sizePx: number,
   trackingPx = 0,
+  /** False when the caller reads the text some other way: no glyph takes
+   *  a span of its own (see {@link textShows}). */
+  read = true,
 ): TextShow[] | undefined {
   if (!(sizePx > 0)) return undefined;
-  const groups: Array<{ font: PDFFont; parts: Array<string | number> }> = [];
-  let group: { font: PDFFont; parts: Array<string | number> } | undefined;
+  const groups: Array<{ font: PDFFont; parts: ShowPart[] }> = [];
+  let group: { font: PDFFont; parts: ShowPart[] } | undefined;
   const tracking = (trackingPx / sizePx) * 1000;
   // How far the pen is right of where the layout wants it, in thousandths.
   let ahead = 0;
@@ -819,7 +975,7 @@ export function measuredTextShows(
         group = { font: file, parts: [] };
         groups.push(group);
       }
-      for (const part of run.parts) pushPart(group.parts, part);
+      for (const part of run.parts) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
       advance += run.advance + run.glyphs * tracking;
     }
     ahead += advance - (piece.width / sizePx) * 1000;
@@ -834,7 +990,7 @@ export function measuredTextShows(
     }
   }
   if (groups.length === 0) groups.push({ font, parts: [] });
-  return groups.map((g) => ({ font: g.font, op: partsOperator(g.font, g.parts) }));
+  return groups.flatMap((g) => partsShows(g.font, g.parts));
 }
 
 const fontKeysByPage = new WeakMap<PDFPage, Map<PDFFont, PDFName>>();
@@ -894,7 +1050,7 @@ export function drawTextPx(
     // Right-to-left and joining scripts are shaped with HarfBuzz when the
     // document loaded it (`shapedText.ts`).
     if (complexPainter?.(ctx, text, xPx, baselinePx, font, sizePx, color, outline, actualText, direction)) return;
-    pushTextObject(ctx, textShows(font, text), xPx, baselinePx, font, sizePx, color, outline, actualText);
+    pushTextObject(ctx, textShows(font, text, actualText === undefined && !ctx.readSpans), xPx, baselinePx, font, sizePx, color, outline, actualText);
   } finally {
     ctx.runAdvancePx = outer;
   }
@@ -978,7 +1134,7 @@ export function drawMeasuredTextPx(
     endActualTextSpan(ctx, { font, text: pieces[0]?.text ?? '', sizePx, xPx, baselinePx });
     return true;
   }
-  const shows = measuredTextShows(font, pieces, sizePx, trackingPx);
+  const shows = measuredTextShows(font, pieces, sizePx, trackingPx, actualText === undefined && !ctx.readSpans);
   if (!shows) return false;
   // Every piece starts where the layout put it: the run is as wide as the
   // layout measured it.
@@ -1081,6 +1237,7 @@ export function withActualText(ctx: PageCtx, text: string, shows: readonly PDFOp
  */
 export function beginActualTextSpan(ctx: PageCtx, text: string, state: LineTextState): void {
   ctx.tags?.close();
+  ctx.readSpans = (ctx.readSpans ?? 0) + 1;
   const props = ctx.page.doc.context.obj({ ActualText: PDFHexString.fromText(text) }) as unknown as OperatorArg;
   ctx.page.pushOperators(
     ...lineTextState(ctx, state),
@@ -1171,6 +1328,7 @@ export function compressedMarkSpacingPx(
  *  state in force (see `lineTextState`). */
 export function endActualTextSpan(ctx: PageCtx, state: LineTextState): void {
   ctx.tags?.close();
+  ctx.readSpans = Math.max(0, (ctx.readSpans ?? 0) - 1);
   ctx.page.pushOperators(
     ...lineTextState(ctx, state),
     PDFOperator.of(PDFOperatorNames.EndMarkedContent),

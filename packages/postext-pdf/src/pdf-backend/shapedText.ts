@@ -31,6 +31,11 @@
  * with the cluster's text as written, in logical order (PDF 1.7 §14.9.4).
  * pdf.js 5 ignores the span and reads the glyphs; Poppler reads it, but
  * turns a span of several characters around in a right-to-left line.
+ * The text fontkit sets in the same font is checked against the same map
+ * (`glyphReads` in `primitives.ts`, #755): the bracket a right-to-left run
+ * was first to show reads as written in the Latin text after it. Inside a
+ * span that already reads its text (the line's, `ctx.readSpans`) no
+ * cluster takes one: Poppler, meeting a span in a span, drops the outer.
  */
 import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNames, moveText, setCharacterSpacing, setCharacterSqueeze, setFillingColor, setTextRise, type Color, type PDFFont } from 'pdf-lib';
 import { lineRuns, resolveParagraph } from 'postext';
@@ -582,7 +587,7 @@ function layoutShapedText(
         // A file HarfBuzz cannot read (a standard font): fontkit's glyphs.
         if (state.rise !== 0) shows.push({ font: file, op: setTextRise(0) });
         state.rise = 0;
-        shows.push(...textShows(file, part));
+        shows.push(...textShows(file, part, spanOp !== undefined));
         const plain = textAdvancePx(file, part, 1000);
         advance += plain.advance;
         glyphs += plain.glyphs;
@@ -620,8 +625,9 @@ export function drawShapedTextPx(
   if (!text) return true;
   if (!(sizePx > 0)) return false;
   const sizePt = sizePx * ctx.scale;
-  // Cluster spans, unless the caller reads the text some other way.
-  const layout = layoutShapedText(font, text, sizePt, options, options.actualText === undefined ? (t) => spanOperator(ctx, t) : undefined);
+  // Cluster spans, unless the caller reads the text some other way: a
+  // span of its own, or the line's, open around it (`ctx.readSpans`).
+  const layout = layoutShapedText(font, text, sizePt, options, options.actualText === undefined && !ctx.readSpans ? (t) => spanOperator(ctx, t) : undefined);
   if (!layout) return false;
   const shows = layout.shows;
   // Joining letters are never spaced apart (the canvas ignores
@@ -711,7 +717,7 @@ export function drawStyledWordPx(
   const sizePt = sizePx * ctx.scale;
   const n = base.run.glyphs.length;
   const partOf = base.owner.map((offset) => parts.findIndex((p) => offset >= p.start && offset < p.end));
-  const spanOp = options.actualText === undefined ? (t: string) => spanOperator(ctx, t) : undefined;
+  const spanOp = options.actualText === undefined && !ctx.readSpans ? (t: string) => spanOperator(ctx, t) : undefined;
   const shows: TextShow[] = [];
   const state = { rise: 0 };
   let fill = color;
