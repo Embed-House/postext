@@ -524,7 +524,9 @@ export function ResourceDetail({
               onReset={() => setPlacementKey('align', undefined)}
             />
           )}
-          {!placementInline && !placementRotated && placementSpan === 'column' && (
+          {/* A column float, and a resource set in the text (#729,
+              `layout.inlineCaptionSide`). */}
+          {!placementRotated && placementSpan === 'column' && (
             <ToggleSwitch
               label={labels.resourceTypePlacementCaptionSide}
               tooltip={labels.resourceTypePlacementCaptionSideTooltip}

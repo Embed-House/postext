@@ -238,6 +238,18 @@ export const LayoutSection = memo(function LayoutSection() {
               onReset={() => resetField('sideColumnSide')}
             />
           )}
+          {/* A resource set in the text takes `placement.captionSide` too
+              (#729): only a float-only side column holds captions. */}
+          {showSideCol && layout.sideColumnRole === 'floats' && (
+            <ToggleSwitch
+              label={labels.inlineCaptionSide}
+              checked={layout.inlineCaptionSide}
+              onChange={(v) => updateLayout({ inlineCaptionSide: v })}
+              tooltip={labels.inlineCaptionSideTooltip}
+              isDefault={layout.inlineCaptionSide === D.inlineCaptionSide}
+              onReset={() => resetField('inlineCaptionSide')}
+            />
+          )}
 
           <ToggleSwitch
             label={labels.columnRule}

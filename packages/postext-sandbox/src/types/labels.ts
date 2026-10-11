@@ -1435,6 +1435,8 @@ export interface SandboxLabels {
   sideColumnRoleFloats: string;
   sideColumnSide: string;
   sideColumnSideTooltip: string;
+  inlineCaptionSide: string;
+  inlineCaptionSideTooltip: string;
   sideColumnSideRight: string;
   sideColumnSideLeft: string;
   sideTextStart: string;

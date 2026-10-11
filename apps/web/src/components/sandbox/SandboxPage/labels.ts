@@ -1351,6 +1351,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     sideColumnRoleFloats: t("sideColumnRoleFloats"),
     sideColumnSide: t("sideColumnSide"),
     sideColumnSideTooltip: t("sideColumnSideTooltip"),
+    inlineCaptionSide: t("inlineCaptionSide"),
+    inlineCaptionSideTooltip: t("inlineCaptionSideTooltip"),
     sideColumnSideRight: t("sideColumnSideRight"),
     sideColumnSideLeft: t("sideColumnSideLeft"),
     sideTextStart: t("sideTextStart"),

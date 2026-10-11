@@ -144,6 +144,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'gutterWidthTooltip',
       'hugClosingFloats',
       'hugClosingFloatsTooltip',
+      'inlineCaptionSide',
+      'inlineCaptionSideTooltip',
       'inlineResourceGap',
       'inlineResourceGapAbove',
       'inlineResourceGapAround',

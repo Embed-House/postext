@@ -250,6 +250,12 @@ describe('working configuration', () => {
     // two-row note it may hold breaks where 1.27 broke it (#720).
     expect(configFromExport({ ...legacy, configVersion: 11 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, cjk: { warichu: { minChars: 1 } } });
     expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' } });
+    // And a column-and-a-half layout keeps the caption of a resource set in
+    // the text under it, where 1.27 set it (#729); other layouts take no pin.
+    const sided = { ...legacy, config: { layout: { layoutType: 'oneAndHalf' as const, sideColumnRole: 'floats' as const } } };
+    expect(configFromExport({ ...sided, configVersion: 11 })).toMatchObject({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats', inlineCaptionSide: false } });
+    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual(sided.config);
+    expect(configFromExport({ ...legacy, configVersion: 11 }).layout?.inlineCaptionSide).toBeUndefined();
     expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
   });
   // The applied preset's snapshot hashed the copy as it was stored; once the
