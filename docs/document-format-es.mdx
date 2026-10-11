@@ -896,6 +896,11 @@ El marcado en línea se reconoce dentro de cualquier bloque de texto (encabezado
       <td>Une las palabras de ambos lados, de modo que la línea nunca se corta entre ellas: un número y su unidad (37 °C), una referencia de página (p. 12), un grupo de millares (225 000). El espacio de no separación (U+00A0), el espacio fino de no separación (U+202F) y el espacio de cifra (U+2007) unen —en el cuerpo, los pies, las celdas, los recuadros y las cabeceras— y cada uno conserva su propio ancho: la justificación solo estira los espacios entre palabras. Muchas fuentes no tienen glifo para el espacio fino de no separación ni para el espacio de cifra; entonces se componen como lo hacen los navegadores, igual en canvas, en HTML y en PDF: con la mitad de un espacio entre palabras y con el ancho de una cifra. Prácticamente todas las fuentes tienen U+00A0, así que es la opción segura. Un grupo unido así que es más ancho que toda la línea se corta en su último espacio de no separación antes que dentro de una palabra. El unidor de palabras (U+2060) une sin ocupar sitio. Escribe el propio carácter: una entidad HTML como <code>{'&nbsp;'}</code> se imprime tal como está escrita. Ver <a href="/es/docs/justification#dónde-nunca-se-corta-una-línea">Dónde nunca se corta una línea</a>.</td>
     </tr>
     <tr>
+      <td>Guion blando</td>
+      <td>el propio carácter: U+00AD</td>
+      <td>Un sitio por el que la palabra se puede dividir, con un guion añadido cuando una línea termina ahí: solo entre dos letras o cifras. La palabra que lleva uno no recibe ningún otro corte del diccionario, así que el guion blando es su única división; escrito ante la primera letra de una palabra no divide nada y mantiene entera esa aparición. Junto a un paréntesis, unas comillas o un signo de puntuación no hace nada. Ver <a href="/es/docs/justification#dónde-nunca-se-corta-una-línea">Dónde nunca se corta una línea</a>.</td>
+    </tr>
+    <tr>
       <td>Enlace</td>
       <td><code>[texto](https://…)</code></td>
       <td>El texto visible permanece en el flujo, compuesto exactamente igual que sin el enlace. La URL convierte esas palabras en un enlace activo en la salida HTML y PDF; consulta <a href="#enlaces">Enlaces</a>.</td>

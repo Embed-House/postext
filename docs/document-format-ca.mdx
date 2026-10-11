@@ -896,6 +896,11 @@ El marcatge en línia es reconeix dins de qualsevol bloc de text (encapçalament
       <td>Uneix les paraules de tots dos costats, de manera que la línia mai no es talla entre elles: un nombre i la seva unitat (37 °C), una referència de pàgina (p. 12), un grup de milers (225 000). L'espai de no separació (U+00A0), l'espai fi de no separació (U+202F) i l'espai de xifra (U+2007) uneixen —al cos, als peus, a les cel·les, als requadres i a les capçaleres— i cadascun conserva la seva pròpia amplada: la justificació només estira els espais entre paraules. Moltes fonts no tenen glif per a l'espai fi de no separació ni per a l'espai de xifra; llavors es componen com ho fan els navegadors, igual al canvas, a l'HTML i al PDF: amb la meitat d'un espai entre paraules i amb l'amplada d'una xifra. Pràcticament totes les fonts tenen U+00A0, així que és l'opció segura. Un grup unit així que és més ample que tota la línia es talla al seu últim espai de no separació abans que dins d'una paraula. L'unidor de paraules (U+2060) uneix sense ocupar lloc. Escriu el mateix caràcter: una entitat HTML com <code>{'&nbsp;'}</code> s'imprimeix tal com està escrita. Vegeu <a href="/ca/docs/justification#on-no-es-talla-mai-una-línia">On no es talla mai una línia</a>.</td>
     </tr>
     <tr>
+      <td>Guionet tou</td>
+      <td>el mateix caràcter: U+00AD</td>
+      <td>Un lloc per on la paraula es pot dividir, amb un guionet afegit quan una línia hi acaba: només entre dues lletres o xifres. La paraula que en porta un no rep cap altre tall del diccionari, de manera que el guionet tou n'és l'única divisió; escrit davant de la primera lletra d'una paraula no divideix res i manté sencera aquella aparició. Al costat d'un parèntesi, d'unes cometes o d'un signe de puntuació no fa res. Vegeu <a href="/ca/docs/justification#on-no-es-talla-mai-una-línia">On no es talla mai una línia</a>.</td>
+    </tr>
+    <tr>
       <td>Enllaç</td>
       <td><code>[texto](https://…)</code></td>
       <td>El text visible es manté al flux, compost exactament igual que sense l'enllaç. La URL converteix aquestes paraules en un enllaç actiu a la sortida HTML i PDF; consulta <a href="#enllaços">Enllaços</a>.</td>

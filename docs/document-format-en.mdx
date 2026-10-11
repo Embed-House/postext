@@ -896,6 +896,11 @@ Inline markup is recognised inside any text block (headings, paragraphs, blockqu
       <td>Glues the words on either side, so a line never breaks between them: a number and its unit (37 °C), a page reference (p. 12), a group of thousands (225 000). The no-break space (U+00A0), the narrow no-break space (U+202F) and the figure space (U+2007) all glue — in the body, captions, cells, boxes and running heads — and each keeps its own width: justification stretches the word spaces only. Many faces have no glyph for the narrow no-break space or the figure space; they are then set as browsers set them, in the canvas, the HTML and the PDF alike: half a word space and the width of a digit. Practically every face has U+00A0, so it is the safe choice. A group glued this way that is wider than the whole line breaks at its last no-break space rather than inside a word. The word joiner (U+2060) glues without taking room. Type the character itself: an HTML entity such as <code>{'&nbsp;'}</code> prints as it is written. See <a href="/en/docs/justification#where-a-line-never-breaks">Where a line never breaks</a>.</td>
     </tr>
     <tr>
+      <td>Soft hyphen</td>
+      <td>the character itself: U+00AD</td>
+      <td>A place where the word may be divided, with a hyphen added when a line ends there: between two letters or digits only. A word that carries one gets no other break from the dictionary, so the soft hyphen is its one division; typed before the first letter of a word it divides nothing and keeps that occurrence whole. Next to a bracket, a quotation mark or punctuation it does nothing. See <a href="/en/docs/justification#where-a-line-never-breaks">Where a line never breaks</a>.</td>
+    </tr>
+    <tr>
       <td>Link</td>
       <td><code>[text](https://…)</code></td>
       <td>The visible text is kept in the flow, set exactly as without the link. The URL makes the words a live link in the HTML and PDF output; see <a href="#links">Links</a>.</td>

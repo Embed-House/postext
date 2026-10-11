@@ -895,6 +895,11 @@ A marcação em linha é reconhecida dentro de qualquer bloco de texto (títulos
       <td>Cola as palavras de um lado e do outro, de modo que a linha nunca quebra entre elas: um número e sua unidade (37 °C), uma referência de página (p. 12), um grupo de milhares (225 000). O espaço inseparável (U+00A0), o espaço inseparável estreito (U+202F) e o espaço de algarismo (U+2007) colam todos (no corpo, em legendas, células, boxes e cabeços) e cada um mantém sua própria largura: a justificação estica só os espaços entre palavras. Muitas fontes não têm glifo para o espaço inseparável estreito nem para o espaço de algarismo; nesse caso eles são compostos como os navegadores os compõem, no canvas, no HTML e no PDF igualmente: meio espaço de palavra e a largura de um dígito. Praticamente toda fonte tem U+00A0, então ele é a escolha segura. Um grupo colado assim que seja mais largo que a linha inteira quebra no seu último espaço inseparável, e não dentro de uma palavra. O word joiner (U+2060) cola sem ocupar espaço. Digite o próprio caractere: uma entidade HTML como <code>{'&nbsp;'}</code> sai impressa como foi escrita. Veja <a href="/pt/docs/justification#onde-uma-linha-nunca-quebra">Onde uma linha nunca quebra</a>.</td>
     </tr>
     <tr>
+      <td>Hífen discricionário</td>
+      <td>o próprio caractere: U+00AD</td>
+      <td>Um lugar onde a palavra pode ser dividida, com um hífen acrescentado quando uma linha termina ali: só entre duas letras ou algarismos. A palavra que traz um não recebe nenhuma outra quebra do dicionário, de modo que o hífen discricionário é a sua única divisão; digitado antes da primeira letra de uma palavra, não divide nada e mantém inteira aquela ocorrência. Ao lado de um parêntese, de aspas ou de pontuação não faz nada. Veja <a href="/pt/docs/justification#onde-uma-linha-nunca-quebra">Onde uma linha nunca quebra</a>.</td>
+    </tr>
+    <tr>
       <td>Link</td>
       <td><code>[texto](https://…)</code></td>
       <td>O texto visível fica no fluxo, composto exatamente como seria sem o link. A URL transforma as palavras num link ativo no HTML e no PDF; veja <a href="#links">Links</a>.</td>
