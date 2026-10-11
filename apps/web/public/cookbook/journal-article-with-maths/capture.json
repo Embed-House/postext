@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "journal-article-with-maths.postext",
-        "bytes": 44997,
+        "bytes": 45006,
         "folio": "ba291173"
       },
       "detected": {
@@ -430,7 +430,13 @@
           "share": 0,
           "worst": 1.93
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

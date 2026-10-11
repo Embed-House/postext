@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "fonts-before-layout.postext",
-        "bytes": 422065,
+        "bytes": 422071,
         "folio": "4b67afad"
       },
       "detected": {
@@ -323,7 +323,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

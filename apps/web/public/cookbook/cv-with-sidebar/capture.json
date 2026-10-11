@@ -73,7 +73,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 29193,
+        "bytes": 29200,
         "folio": "4fd007fe"
       },
       "detected": {
@@ -257,7 +257,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -324,7 +330,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 31517,
+        "bytes": 31524,
         "folio": "4fd007fe"
       },
       "detected": {
@@ -508,7 +514,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "endnotes-instead-of-footnotes.postext",
-        "bytes": 78127,
+        "bytes": 78132,
         "folio": "3d3a1e90"
       },
       "detected": {
@@ -337,6 +337,11 @@
           "worst": 1.78
         },
         "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          },
           {
             "check": "sandbox",
             "severity": "info",

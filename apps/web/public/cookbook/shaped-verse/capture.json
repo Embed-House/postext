@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "shaped-verse.postext",
-        "bytes": 19421,
+        "bytes": 19426,
         "folio": "900eced1"
       },
       "detected": {
@@ -225,7 +225,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     },
     "es": {
@@ -333,7 +339,7 @@
       },
       "sandbox": {
         "file": "shaped-verse.postext",
-        "bytes": 19313,
+        "bytes": 19319,
         "folio": "900eced1"
       },
       "detected": {
@@ -444,7 +450,13 @@
           "share": 0,
           "worst": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "locale en-us written into the bundle's configuration: the pen names no language, and the Sandbox would read the document in the interface language"
+          }
+        ]
       }
     }
   }

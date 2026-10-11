@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212085,
+        "bytes": 212082,
         "folio": "a3ceaa8c"
       },
       "detected": {
@@ -280,7 +280,13 @@
           "share": 0,
           "worst": 1.97
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale fr, the document's language: en names its resource types otherwise"
+          }
+        ]
       }
     },
     "es": {
@@ -399,7 +405,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212120,
+        "bytes": 212117,
         "folio": "a3ceaa8c"
       },
       "detected": {
@@ -554,7 +560,13 @@
           "share": 0,
           "worst": 1.97
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "bundle locale fr, the document's language: es names its resource types otherwise"
+          }
+        ]
       }
     }
   }
