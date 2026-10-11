@@ -59,6 +59,43 @@ describe('bandLinePitch', () => {
   });
 });
 
+describe('bandLinePitch, the lines on their lattice', () => {
+  /** Blocks of `lines` 20 px lines each, stacked from `top` with `gap`
+   *  between them. */
+  const stack = (blocks: number, lines: number, gap: number, top = 0): VDTBlock[] => {
+    let y = top;
+    return Array.from({ length: blocks }, () => {
+      const b = block(Array.from({ length: lines }, () => 20));
+      for (const l of b.lines) { l.bbox.y = y; y += 20; }
+      y += gap;
+      return b;
+    });
+  };
+
+  it('keeps the grid for entries a gap apart that is no whole line: their lines share a height and no lattice', () => {
+    // References of three lines, 1.7 px between entries.
+    expect(bandLinePitch([column(stack(10, 3, 1.7)), column(stack(10, 3, 1.7))], 24)).toBe(24);
+    // An index whose groups stand 21.4 px apart (a hand-set margin).
+    expect(bandLinePitch([column(stack(6, 5, 21.4))], 24)).toBe(24);
+  });
+
+  it('counts the band in its lines when the gaps are whole lines, wherever each column starts', () => {
+    expect(bandLinePitch([column(stack(6, 5, 20))], 24)).toBe(20);
+    expect(bandLinePitch([column(stack(6, 5, 0, 33)), column(stack(6, 5, 20, 7.5))], 24)).toBe(20);
+  });
+
+  it('wants four lines in five on the lattice', () => {
+    // Nine lines on it and one 6 px off: still the band's lines.
+    const nine = stack(1, 9, 6);
+    const [off] = stack(1, 1, 0, 9 * 20 + 6);
+    expect(bandLinePitch([column([...nine, off!])], 24)).toBe(20);
+    // Two runs of unequal length, 6 px out of step: 6 of 9 lines on the larger lattice.
+    const six = stack(1, 6, 6);
+    const three = stack(1, 3, 0, 6 * 20 + 6);
+    expect(bandLinePitch([column([...six, ...three])], 24)).toBe(24);
+  });
+});
+
 describe('a cut in lines of the band', () => {
   it('counts the band\'s lines with its pitch', () => {
     // 29 and 21 lines of 20 px: the mean is 25 lines, 21 grid lines of 24 px.
@@ -104,7 +141,7 @@ describe('a cut in lines of the band', () => {
 
 /** Two columns under a page-span H1: `n` one-line entries in a container
  *  whose style sets them on `lead` pt, over a body grid of 13.6 pt. */
-const build = (n: number, lead: number, trailingStep?: 'grid'): VDTDocument => {
+const build = (n: number, lead: number, trailingStep?: 'grid', between = 0): VDTDocument => {
   const entries = Array.from({ length: n }, (_, i) => `Entry number ${i + 1}, ${i + 3}`);
   const md = ['# Index', '', ':::paragraphs{style="entry"}', entries.join('\n\n'), ':::'].join('\n');
   const config: PostextConfig = {
@@ -115,7 +152,7 @@ const build = (n: number, lead: number, trailingStep?: 'grid'): VDTDocument => {
       ...(trailingStep ? { balancing: { trailingStep } } : {}),
       levels: [{ level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' }, marginBottom: pt(0) }],
     },
-    paragraphStyles: [{ id: 'entry', fontSize: pt(8.6), lineHeight: pt(lead), firstLineIndent: pt(0), spaceBetween: pt(0), marginTop: pt(0), marginBottom: pt(0) }],
+    paragraphStyles: [{ id: 'entry', fontSize: pt(8.6), lineHeight: pt(lead), firstLineIndent: pt(0), spaceBetween: pt(between), marginTop: pt(0), marginBottom: pt(0) }],
   };
   return buildDocument({ markdown: md }, config, createMeasurementCache());
 };
@@ -144,6 +181,13 @@ describe('headings.balancing.trailingStep (#711)', () => {
     for (const n of [21, 30, 44, 55, 70]) {
       expect(JSON.stringify(build(n, 13.6).pages)).toBe(JSON.stringify(build(n, 13.6, 'grid').pages));
       expect(apart(build(n, 13.6))).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('cuts on the grid a band whose entries stand a fraction of a line apart', () => {
+    // 1.3 pt between entries: no two lines a whole number of lines apart.
+    for (const n of [21, 30, 44, 55]) {
+      expect(JSON.stringify(build(n, 11.2, undefined, 1.3).pages)).toBe(JSON.stringify(build(n, 11.2, 'grid', 1.3).pages));
     }
   });
 

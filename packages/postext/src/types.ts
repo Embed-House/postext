@@ -4041,7 +4041,9 @@ export interface ColumnBalancingConfig {
    *    own (an index, a list of references, a container of small type) is
    *    cut, and retried, by whole lines of that leading: the height most
    *    lines of the band share. A band of body text has the baseline
-   *    grid for its leading and is cut as before.
+   *    grid for its leading and is cut as before, and so is a band whose
+   *    lines share a height without standing whole lines apart (entries
+   *    with a gap between them, groups on a hand-set margin).
    *  - `'grid'`: every cut is a whole number of baseline-grid lines, as up
    *    to postext 1.27, which let a line more into one column of an
    *    off-grid band and lowered a failed cut by more than one of its

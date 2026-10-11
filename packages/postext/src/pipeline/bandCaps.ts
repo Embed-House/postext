@@ -95,6 +95,13 @@ export function capRetryLimit(pitchPx: number, gridPx: number): number {
   return Math.min(MAX_PITCHED_CAP_RETRIES, Math.ceil((MAX_BAND_CAP_RETRIES * gridPx) / pitchPx - 0.01));
 }
 
+/** The share of a band's lines that must stand on its leading for the band
+ *  to be cut in lines of it ({@link bandLinePitch}). */
+export const PITCHED_BAND_SHARE = 0.8;
+
+/** Two line tops are on one lattice within this many pixels. */
+const LATTICE_EPS = 0.25;
+
 /**
  * The leading a band's own text is set on (#711): over the lines of the
  * flow blocks of `cols` that are not headings, not hidden and not inside a
@@ -102,13 +109,22 @@ export function capRetryLimit(pitchPx: number, gridPx: number): number {
  * the grid's, when no height is shared by more than half of the lines, or
  * when the band holds no such line: a band of body text is cut on the grid
  * as it always was, and so is one that mixes two leadings in equal parts.
+ *
+ * The lines must also stand on that leading: in each column, at least
+ * {@link PITCHED_BAND_SHARE} of them a whole number of lines from one
+ * another. References of three lines with a gap between entries, or an
+ * index whose groups stand a hand-set margin apart, share a line height
+ * and no lattice: a cut counted in their lines falls no better than one on
+ * the grid, and such a band keeps the grid.
  */
 export function bandLinePitch(cols: readonly VDTColumn[], gridPx: number): number {
   // Heights compared to a hundredth of a pixel; the pitch is the exact
   // height (a rounded one drifts by a line over a tall band).
   const counts = new Map<number, { n: number; height: number }>();
   let total = 0;
+  const tops: number[][] = [];
   for (const col of cols) {
+    const colTops: number[] = [];
     for (const block of col.blocks) {
       if (block.type === 'heading' || block.hidden || block.containerId !== undefined) continue;
       for (const line of block.lines) {
@@ -118,15 +134,38 @@ export function bandLinePitch(cols: readonly VDTColumn[], gridPx: number): numbe
         const seen = counts.get(key);
         if (seen) seen.n++;
         else counts.set(key, { n: 1, height });
+        colTops.push(line.bbox.y);
         total++;
       }
     }
+    tops.push(colTops);
   }
   let pitch = gridPx;
   let most = 0;
   for (const { n, height } of counts.values()) if (n > most) { most = n; pitch = height; }
   if (total === 0 || most * 2 <= total || Math.abs(pitch - gridPx) <= 0.01) return gridPx;
-  return pitch;
+  // On the lattice: per column, the largest set of lines whose tops differ
+  // by whole lines of the pitch (a heading above them shifts them all alike).
+  let onLattice = 0;
+  for (const colTops of tops) {
+    const phases = new Map<number, number>();
+    let best = 0;
+    for (const y of colTops) {
+      // Measured from the column's first line, half a line in: the lines on
+      // its lattice fall mid-range, clear of the seam of the modulo.
+      const d = y - colTops[0]! + pitch / 2;
+      const phase = ((d % pitch) + pitch) % pitch;
+      // Quarter-pixel buckets; a phase at the seam of two counts in both.
+      const lo = Math.floor(phase / LATTICE_EPS);
+      for (const k of lo * LATTICE_EPS + LATTICE_EPS / 2 > phase ? [lo, lo - 1] : [lo, lo + 1]) {
+        const n = (phases.get(k) ?? 0) + 1;
+        phases.set(k, n);
+        if (n > best) best = n;
+      }
+    }
+    onLattice += best;
+  }
+  return onLattice >= total * PITCHED_BAND_SHARE ? pitch : gridPx;
 }
 
 /** What a placement pass reports back to the band-cap driver. */
