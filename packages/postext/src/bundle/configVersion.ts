@@ -142,6 +142,9 @@ import { hasCJK } from '../measure/cjk';
  *     side that ends in a bracket or a sign (`cjk.latinSpacingEdge:
  *     'western'`, #721), where up to 1.27 only a side that ends in a
  *     letter or a digit did ({@link pinLegacyLatinSpacingEdge});
+ *   - a resource set in the text takes `placement.captionSide` as a column
+ *     float does (`layout.inlineCaptionSide`, #729), where up to 1.27 its
+ *     caption stayed under it ({@link pinLegacyInlineCaptionSide});
  *   - a reference whose label is words (an anchor's text, a title, a
  *     `text="…"` override) breaks at the spaces of its label
  *     (`crossRefs.breakLabels`, #702), where up to 1.27 every label was
@@ -243,6 +246,8 @@ const NOTE_BREAK_RULES = 12;
 /** The rules that set the Han–Latin space next to the brackets and signs
  *  of a Western word in the Japan region (#721). */
 const LATIN_SPACING_EDGE_RULES = 12;
+/** The rules that set the side caption of a resource set in the text (#729). */
+const INLINE_CAPTION_SIDE_RULES = 12;
 /** The rules that break a reference's label of words at its spaces
  *  (#702). */
 const REF_LABEL_BREAK_RULES = 12;
@@ -762,6 +767,20 @@ export function pinLegacyGridBreakRules<T extends Partial<PostextConfig>>(config
       ...(orphans ? { avoidOrphans: true } : {}),
     },
   };
+}
+
+/**
+ * A configuration written before #729 (postext 1.27 or earlier), pinned to
+ * the caption 1.27 gave a resource set in the text: `layout.inlineCaptionSide:
+ * false` on a `oneAndHalf` layout that does not set the key, so
+ * `placement.captionSide` acts on column floats only and the caption of an
+ * inline embed stays under it, where today it goes to the float-only side
+ * column. Any other configuration is returned as it is (the same object).
+ */
+export function pinLegacyInlineCaptionSide<T extends Partial<PostextConfig>>(config: T): T {
+  const layout: LayoutConfig = isRecord(config.layout) ? config.layout : {};
+  if (layout.layoutType !== 'oneAndHalf' || layout.inlineCaptionSide !== undefined) return config;
+  return { ...config, layout: { ...layout, inlineCaptionSide: false } };
 }
 
 /**
@@ -1519,7 +1538,9 @@ export interface MigrateConfigOptions {
  * configuration shows a note, and the sides of a Western word that take
  * the Han–Latin space in the Japan region by {@link
  * pinLegacyLatinSpacingEdge}, unless `options.content` shows no kana or
- * kanji, and the labels of its cross-references kept whole by {@link
+ * kanji, and the caption of a resource set in the text of a `oneAndHalf`
+ * layout by {@link pinLegacyInlineCaptionSide}, unless `options.content`
+ * shows it embeds no resource, and the labels of its cross-references kept whole by {@link
  * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
@@ -1564,6 +1585,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
+  if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) out = pinLegacyInlineCaptionSide(out);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
   return out;
 }
@@ -1597,6 +1619,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * and `bodyText`, and the breaks inside two-row notes and the sides of a
  * Western word that take the Han–Latin space (in the Japan region, read
  * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
+ * force, the side caption of a resource set in the text on the `layout` in
  * force, and the labels of cross-references on the `crossRefs` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
@@ -1642,6 +1665,7 @@ export function migrateBundleConfig(
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
   if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);
+  if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) merged = pinLegacyInlineCaptionSide(merged);
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
   return merged;
 }

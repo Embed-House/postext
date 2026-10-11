@@ -126,6 +126,10 @@ export interface MeasuredContentBlock {
   /** A table measured in full: its row metrics at this width, from which a
    *  slice is planned (an inline table split across columns, #634). */
   tableRows?: TableRowMetrics;
+  /** A resource measured with its caption beside it (`captionAside`,
+   *  #729): the height of the caption band, which the block's own height
+   *  leaves out. */
+  asideHeight?: number;
   /** Tracking the text was measured with (px per glyph), when column
    *  balancing asked for it — renderers must paint the block with it. */
   letterSpacingPx?: number;
@@ -191,6 +195,13 @@ export interface MeasureContentBlockOptions {
   /** Resource blocks on a vertical page: set upright, the frame at most
    *  this wide (see `ResourceLayoutInput.upright`). */
   uprightMaxLength?: number;
+  /** Resource blocks: set the caption and note beside the body, in a band
+   *  `width` wide whose left edge is `dx` from the column's left (the
+   *  float-only side column, #729), level with the body's top. The
+   *  measured height is then the body's alone, and `asideHeight` the
+   *  caption band's. Never cached: a resource block is laid out afresh on
+   *  every call. */
+  captionAside?: { dx: number; width: number };
   /** Table resources: lay out only these rows, the slice of an inline
    *  table split across columns (#634, `ResourceLayoutInput.slice`). */
   tableSlice?: TableSliceSpec;
@@ -395,7 +406,9 @@ export function measureContentBlock(
     const frac = wrap ? wrap.width : typeof rawFrac === 'number' && rawFrac > 0 && rawFrac < 1 ? rawFrac : 1;
     const align = wrap ? wrap.side : startEndAsLeftRight(kind.resource.placement?.align ?? kind.resourceType?.defaultPlacement?.align ?? 'left');
     const embedWidth = columnWidth * frac;
-    const { resourceBlock, measured, tableRows } = runMeasurement({
+    // Where a narrower embed starts in its column (`placement.align`).
+    const embedDx = frac < 1 ? (columnWidth - embedWidth) * (align === 'center' ? 0.5 : align === 'right' ? 1 : 0) : 0;
+    const { resourceBlock, measured, tableRows, asideHeight } = runMeasurement({
       vdtType,
       rawBlock,
       contentBlock,
@@ -416,15 +429,18 @@ export function measureContentBlock(
       ...(opts?.figureHeightDelta ? { bodyHeightDelta: opts.figureHeightDelta } : {}),
       ...(opts?.uprightMaxLength !== undefined ? { upright: { maxLength: opts.uprightMaxLength } } : {}),
       ...(opts?.tableSlice ? { tableSlice: opts.tableSlice } : {}),
+      // The band is measured from the embed's own left, which the shift
+      // below moves with the rest of the block.
+      ...(opts?.captionAside ? { captionAside: { dx: opts.captionAside.dx - embedDx, width: opts.captionAside.width, alignBottom: false } } : {}),
     });
     if (!resourceBlock) return null;
     if (frac < 1) {
-      const dx = (columnWidth - embedWidth) * (align === 'center' ? 0.5 : align === 'right' ? 1 : 0);
+      const dx = embedDx;
       // An upright block (a vertical page) moves its frame along the flow.
       if (resourceBlock.rotation) resourceBlock.rotation.originX += dx;
       else shiftResourceBlockX(resourceBlock, dx);
     }
-    return { kind, contentBlock, measured, prefixLen: 0, absoluteSourceMap: [], resourceBlock, ...(tableRows ? { tableRows } : {}) };
+    return { kind, contentBlock, measured, prefixLen: 0, absoluteSourceMap: [], resourceBlock, ...(tableRows ? { tableRows } : {}), ...(asideHeight !== undefined ? { asideHeight } : {}) };
   }
 
   // Inline code in the code face (#624, `codeStyle.inline`), before the

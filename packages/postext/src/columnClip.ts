@@ -37,6 +37,27 @@ export function hangingPunctuationOverhang(blocks: readonly VDTBlock[], x1: numb
   return right;
 }
 
+/** How far the caption, the note and the caption bar of the resource
+ *  blocks among `blocks` reach past `x0` on the left and `x1` on the
+ *  right, in px (0 when they stay inside): a resource set in the text
+ *  with its caption in the side column (`placement.captionSide`, #729). */
+export function resourceCaptionOverhang(blocks: readonly VDTBlock[], x0: number, x1: number): [number, number] {
+  let left = 0;
+  let right = 0;
+  const take = (x: number, width: number): void => {
+    left = Math.max(left, x0 - x);
+    right = Math.max(right, x + width - x1);
+  };
+  for (const block of blocks) {
+    const rb = block.resourceBlock;
+    if (!rb || rb.rotation || block.hidden) continue;
+    for (const line of rb.captionLines) take(line.bbox.x, line.bbox.width);
+    for (const line of rb.noteLines ?? []) take(line.bbox.x, line.bbox.width);
+    if (rb.captionBar) take(rb.captionBar.rect.x, rb.captionBar.rect.width);
+  }
+  return [left, right];
+}
+
 /** How far the design overlays of the heading blocks among `blocks` reach
  *  above `y0`, in px (0 when they stay below it). */
 export function headingDesignOverhangAbove(blocks: readonly VDTBlock[], y0: number): number {
@@ -71,7 +92,9 @@ function firstBlockAbove(blocks: readonly VDTBlock[], y0: number): number {
  * design may also reach above the column — a band anchored to the top of
  * the page or of the bleed — and the clip grows up to take that in too
  * (EF-113), and so does the first block of a column under a page-span
- * opener set a little above the column's top (EF-139). A CJK mark hung
+ * opener set a little above the column's top (EF-139). A resource set in
+ * the text with its caption in the side column (#729) widens it to take in
+ * the caption, the note and the caption bar. A CJK mark hung
  * past the end of its line widens it on the right
  * (`cjk.hangingPunctuation`); `hanging` false says no line of the document
  * hangs one (its `cjk.hangingPunctuation` is `'none'`), and the lines are
@@ -87,9 +110,12 @@ function firstBlockAbove(blocks: readonly VDTBlock[], y0: number): number {
  */
 export function columnClipRect(col: VDTColumn, dpi: number, hanging = true): BoundingBox {
   const overhang = dimensionToPx({ value: 2, unit: 'pt' }, dpi);
-  const [left, overlayRight] = designOverlayOverhang(col.blocks, col.bbox.x, col.bbox.x + col.bbox.width);
+  const [overlayLeft, overlayRight] = designOverlayOverhang(col.blocks, col.bbox.x, col.bbox.x + col.bbox.width);
+  const [captionLeft, captionRight] = resourceCaptionOverhang(col.blocks, col.bbox.x, col.bbox.x + col.bbox.width);
+  // The buffer is kept past a side caption too.
+  const left = Math.max(overlayLeft, captionLeft);
   // A mark hung past the measure is shown whole.
-  const right = Math.max(overlayRight, hanging ? hangingPunctuationOverhang(col.blocks, col.bbox.x + col.bbox.width) : 0);
+  const right = Math.max(overlayRight, captionRight, hanging ? hangingPunctuationOverhang(col.blocks, col.bbox.x + col.bbox.width) : 0);
   const [marksAbove, marksBelow] = markInkOverhang(col.blocks, col.bbox.y, col.bbox.y + col.bbox.height);
   const above = Math.max(headingDesignOverhangAbove(col.blocks, col.bbox.y), firstBlockAbove(col.blocks, col.bbox.y), marksAbove);
   return {

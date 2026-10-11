@@ -169,6 +169,7 @@ import {
   floatedResourceIds,
   type PlannedFloat,
   floatColumnCount,
+  resolveResourcePlacement,
 } from './floatPlacement';
 import {
   enumerateCurrentPageSlots,
@@ -559,6 +560,15 @@ export function buildDocumentPass(
     setMeasureUprightDigits(uprightDigits);
     setMeasureDirection(direction);
   }
+}
+
+/** A resource set in the text, measured with its caption in the side
+ *  column of the band of `col` (#729). */
+interface InlineAside {
+  block: MeasuredContentBlock;
+  opts: { captionAside: { dx: number; width: number } };
+  sideCol: VDTColumn;
+  col: VDTColumn;
 }
 
 function placeDocumentPass(
@@ -5383,6 +5393,63 @@ function placeDocumentPass(
     }
   };
 
+  /** Whether a resource set in the text asks for its caption in the side
+   *  column (#729): `placement.captionSide` on a `span: 'column'` embed,
+   *  `layout.inlineCaptionSide` on, a horizontal page, and no text wrapped
+   *  round it. The side column and its room are looked at where the block
+   *  is placed ({@link measureInlineAside}). */
+  const inlineAsideWanted = (resource: Resource | undefined, type: ResourceType | undefined, page: VDTPage): boolean => {
+    if (!resource || !resolved.layout.inlineCaptionSide || pageIsVertical(page)) return false;
+    const placement = resolveResourcePlacement(resource, type);
+    if (!placement.captionSide || placement.span !== 'column') return false;
+    return resolveResourceWrap(resource, type, resolved.layout.wrap) === undefined;
+  };
+  /** Whether the side column `sc` is free over the band a caption
+   *  `asideHeight` tall takes beside an embed placed next in `c`: the side
+   *  stack ends above the embed's top, the band ends inside the side
+   *  column, and no obstacle (a heading design, another embed's caption)
+   *  stands in it or within the float gap of it. */
+  const inlineAsideFree = (c: VDTColumn, sc: VDTColumn, spacing: number, asideHeight: number): boolean => {
+    const top = c.bbox.y + (c.bbox.height - c.availableHeight) + (c.blocks.length === 0 ? 0 : spacing);
+    const bottom = top + asideHeight;
+    if (sideUsedBottom(sc) > top + 0.5) return false;
+    if (bottom > sc.bbox.y + sc.bbox.height + 0.5) return false;
+    return !(sideObstacles.get(sc) ?? []).some((o) => o.bottom + floatGapPx > top + 0.5 && o.top - floatGapPx < bottom - 0.5);
+  };
+  /** The embed measured for column `c` with its caption and note in the
+   *  band's float-only side column, level with the body's top (#729), or
+   *  `null` when the band has no such column or it is not free there: the
+   *  caption then stays under the body. */
+  const measureInlineAside = (
+    raw: ContentBlock,
+    blockIdx: number,
+    c: VDTColumn,
+    page: VDTPage,
+    ctx: BlockMeasureContext,
+    base: MeasureContentBlockOptions,
+    spacing: number,
+  ): InlineAside | null => {
+    if (c.kind === 'span' || c.kind === 'side') return null;
+    const sideCol = sideColumnOf(page, c.band ?? 0);
+    if (!sideCol || sideCol.bbox.width <= 0.5) return null;
+    const opts = { captionAside: { dx: sideCol.bbox.x - c.bbox.x, width: sideCol.bbox.width } };
+    const block = measureContentBlock(raw, blockIdx, c.bbox.width, ctx, { ...base, ...opts });
+    if (!block?.resourceBlock || block.asideHeight === undefined || block.resourceBlock.rotation) return null;
+    if (!inlineAsideFree(c, sideCol, spacing, block.asideHeight)) return null;
+    return { block, opts, sideCol, col: c };
+  };
+  /** The band an embed's side caption takes in the side column, recorded
+   *  as an obstacle of its stack: side floats and side boxes set later go
+   *  above it when they fit there, else under it. */
+  const markInlineAside = (blk: VDTBlock, sideCol: VDTColumn, asideHeight: number): void => {
+    if (!(asideHeight > 0)) return;
+    const mark = { owner: blk, top: blk.bbox.y, bottom: blk.bbox.y + asideHeight };
+    const list = sideObstacles.get(sideCol);
+    if (list) list.push(mark);
+    else sideObstacles.set(sideCol, [mark]);
+    sideObstacleColumn.set(blk, sideCol);
+  };
+
   /**
    * An inline table (`::resource` placed `here`) that does not fit the room
    * left in its column (#634), by its style's `overflow` when
@@ -5399,7 +5466,9 @@ function placeDocumentPass(
    * table is placed as one block by the caller (it fits, or the rule does
    * not apply), `'dropped'`, or `'placed'`: every slice is placed and the
    * cursor sits in the column of the last one, which the caller snaps
-   * under. `blk` is the first slice's block, filled in here.
+   * under. `blk` is the first slice's block, filled in here. With
+   * `asideWanted` the first slice sets its caption in the side column when
+   * that is free beside it (#729); the continuations are set as ever.
    */
   const MIN_HEAD_ROWS = 2;
   const placeInlineTableSlices = (
@@ -5411,6 +5480,7 @@ function placeDocumentPass(
     resource: Resource,
     wholeHeight: number,
     spacingBefore: number,
+    asideWanted = false,
   ): 'whole' | 'dropped' | 'placed' => {
     const style = pickTableStyle(resolved, resource.table?.styleId);
     if (!style.splitInline || pageIsVertical(doc.pages[cursor.pageIndex]!)) return 'whole';
@@ -5453,6 +5523,8 @@ function placeDocumentPass(
     let part = 0;
     let moves = 0;
     let block = blk;
+    /** Columns where the first slice's caption found no room at the side. */
+    const asideRefused = new Set<VDTColumn>();
     for (;;) {
       enterBand(blockIdx, part);
       let col = currentColumn(doc, cursor);
@@ -5464,8 +5536,15 @@ function placeDocumentPass(
       const metrics = metricsAt(width) ?? firstMetrics;
       const spacing = part === 0 && col.blocks.length > 0 ? spacingBefore : 0;
       const avail = col.availableHeight - spacing;
+      // The first slice with its caption in the side column (#729).
+      const asideHere = asideWanted && startRow === 0 && !asideRefused.has(col)
+        ? measureInlineAside(raw, blockIdx, col, doc.pages[cursor.pageIndex]!, ctx, { styleOverride }, spacing)
+        : null;
+      const sliceAt = (s?: TableSliceSpec) => (asideHere
+        ? measureContentBlock(raw, blockIdx, width, ctx, { styleOverride, ...(s ? { tableSlice: s } : {}), ...asideHere.opts })
+        : measureAt(width, s));
       const restSlice: TableSliceSpec | undefined = startRow > 0 ? { startRow, endRow: rowCount, continues: false } : undefined;
-      const rest = measureAt(width, restSlice);
+      const rest = sliceAt(restSlice);
       if (!rest?.resourceBlock) return part === 0 ? 'whole' : 'placed';
       let placed = rest;
       let slice: TableSliceSpec | null = null;
@@ -5478,7 +5557,7 @@ function placeDocumentPass(
           continue;
         }
         const firstBody = startRow > 0 ? Math.max(startRow, headerRows) : headerRows;
-        const probe = measureAt(width, { startRow, endRow: firstBody + 1, continues: true });
+        const probe = sliceAt({ startRow, endRow: firstBody + 1, continues: true });
         const overhead = probe?.resourceBlock ? probe.measured.totalHeight - probe.resourceBlock.bodyRect.height : 0;
         // An empty column of full height (or a run of short ones behind)
         // takes the smallest slice even when it overflows: a fresh page
@@ -5488,7 +5567,7 @@ function placeDocumentPass(
           floor: floorOf(startRow),
           force,
           split: overflow === 'split',
-          fits: (s) => (measureAt(width, s)?.measured.totalHeight ?? Infinity) <= avail + FIT_EPS,
+          fits: (s) => (sliceAt(s)?.measured.totalHeight ?? Infinity) <= avail + FIT_EPS,
         });
         if (!slice) {
           // Not even the head rows fit: the (rest of the) table starts in
@@ -5498,9 +5577,15 @@ function placeDocumentPass(
           advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(minHeightAt(width, startRow)));
           continue;
         }
-        const m = measureAt(width, slice);
+        const m = sliceAt(slice);
         if (!m?.resourceBlock) return part === 0 ? 'whole' : 'placed';
         placed = m;
+      }
+      // The slice's caption (a line longer with its continuation suffix,
+      // perhaps) must still find the side column free.
+      if (asideHere && (placed.asideHeight === undefined || !inlineAsideFree(col, asideHere.sideCol, spacing, placed.asideHeight))) {
+        asideRefused.add(col);
+        continue;
       }
       // The slice's block: the first one is the caller's.
       if (part > 0) {
@@ -5527,6 +5612,7 @@ function placeDocumentPass(
       if (spacing > 0) col.availableHeight -= spacing;
       placeBlockInColumn(block, height, col, cursor);
       offsetResourceBlockToAbsolute(rb, block.bbox.x, block.bbox.y);
+      if (asideHere && placed.asideHeight !== undefined) markInlineAside(block, asideHere.sideCol, placed.asideHeight);
       doc.blocks.push(block);
       enterBand(blockIdx, part);
       if (!slice?.continues) return 'placed';
@@ -6504,6 +6590,17 @@ function placeDocumentPass(
     let measuredBlock = tryLoose
       ? measureLooseParagraph(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, styleOverride, looseLines, trackingLadder, looseOutcome, looseOffGrid)
       : measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, { styleOverride, ...upright, ...figureDelta });
+    // A resource set in the text with `captionSide` (#729): its caption and
+    // note go to the band's side column when that is free beside it, and
+    // the block is as tall as the body alone. Decided again in every
+    // column the block is tried in (see the resource branch below).
+    const asideWanted = measuredBlock?.kind.vdtType === 'resource' && rawBlock.type === 'resourceBlock'
+      && inlineAsideWanted(measuredBlock.kind.resource, measuredBlock.kind.resourceType, blockPage);
+    let inlineAside: InlineAside | null = asideWanted
+      ? measureInlineAside(rawBlock, blockIdx, col, blockPage, blockMeasureCtx, { styleOverride, ...figureDelta }, Math.max(pendingSpacing, floatGapPx))
+      : null;
+    if (inlineAside) measuredBlock = inlineAside.block;
+    const asideOpts = inlineAside?.opts;
     // An inline picture with a safe area a little too tall for the room
     // left in its column is cropped within its safe area to stay there
     // rather than move on and leave the column short (#442).
@@ -6513,7 +6610,7 @@ function placeDocumentPass(
       const over = measuredBlock.measured.totalHeight - room;
       if (over > 0.01 && room > 0 && over <= flex.shrink + 0.01) {
         const cropped = measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, {
-          styleOverride, ...upright, figureHeightDelta: flex.delta - over,
+          styleOverride, ...upright, ...asideOpts, figureHeightDelta: flex.delta - over,
         });
         if (cropped && cropped.measured.totalHeight <= room + 0.01) measuredBlock = cropped;
       }
@@ -6534,7 +6631,7 @@ function placeDocumentPass(
           if (!(scale > 0)) break;
           width = current.bodyRect.width * Math.min(scale, 0.99);
           if (width < rb.bodyRect.width * MIN_INLINE_FIGURE_SCALE) break;
-          const smaller = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, figureMaxBodyWidth: width });
+          const smaller = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, ...asideOpts, figureMaxBodyWidth: width });
           if (!smaller) break;
           measuredBlock = smaller;
           if (smaller.measured.totalHeight <= room + FIT_EPS) break;
@@ -6542,10 +6639,12 @@ function placeDocumentPass(
         // Still too tall at the smallest acceptable size: back to full size
         // and on to the next column, as without the option.
         if (measuredBlock!.measured.totalHeight > room + FIT_EPS) {
-          measuredBlock = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride });
+          measuredBlock = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, ...asideOpts });
         }
       }
     }
+    // The fits above keep the caption at the side: they work on the body.
+    if (inlineAside) inlineAside = measuredBlock?.asideHeight !== undefined ? { ...inlineAside, block: measuredBlock } : null;
     if (tryLoose && budget !== undefined && knownOutcome === undefined && typeof looseOutcome.get(blockIdx) === 'number') {
       looseGained.set(budget.group, (looseGained.get(budget.group) ?? 0) + 1);
     }
@@ -6577,8 +6676,8 @@ function placeDocumentPass(
     // --- Resource blocks (image / svg / table + caption) -----------------
     // Placed atomically (kept-together) — no mid-content split for v1.
     if (vdtType === 'resource') {
-      const resourceBlock = measuredBlock.resourceBlock!;
-      const groupHeight = measured.totalHeight;
+      let resourceBlock = measuredBlock.resourceBlock!;
+      let groupHeight = measured.totalHeight;
       const blk = createVDTBlock(id, 'resource', style.fontString, style.color, style.textAlign);
       blk.contentIndex = blockIdx;
       stampBlockExtras(blk, rawBlock);
@@ -6636,7 +6735,7 @@ function placeDocumentPass(
       // An inline table that does not fit the room left in its column is
       // cut between rows (#634), by the rules of a floated one.
       const sliced = !wraps && !resourceBlock.rotation && resourceBlock.table && kind.resource
-        ? placeInlineTableSlices(rawBlock, blockIdx, blk, blockMeasureCtx, styleOverride, kind.resource, groupHeight, spacingBefore)
+        ? placeInlineTableSlices(rawBlock, blockIdx, blk, blockMeasureCtx, styleOverride, kind.resource, groupHeight, spacingBefore, asideWanted)
         : 'whole';
       if (sliced === 'dropped') {
         flushPendingNumberingAtBoundary();
@@ -6645,6 +6744,40 @@ function placeDocumentPass(
       const columnBefore = col;
       if (sliced === 'whole') {
         enterBand(blockIdx, 0);
+        // A side caption is decided where the block is placed (#729): an
+        // embed that does not fit its column moves on by the rule of
+        // `placeAtomicBlock`, and in each column it reaches its caption
+        // goes to the side when the side column is free there, else under
+        // the body.
+        if (asideWanted) {
+          let decidedFor: VDTColumn = col;
+          let plain: MeasuredContentBlock | null | undefined = inlineAside ? undefined : measuredBlock;
+          for (let guard = 0; ; guard++) {
+            const c = currentColumn(doc, cursor);
+            if (c !== decidedFor) {
+              decidedFor = c;
+              inlineAside = measureInlineAside(rawBlock, blockIdx, c, doc.pages[cursor.pageIndex]!, blockMeasureCtx, { styleOverride, ...figureDelta }, spacingBefore);
+              if (!inlineAside && plain === undefined) {
+                plain = measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, { styleOverride, ...figureDelta });
+              }
+              const next = inlineAside?.block ?? plain;
+              if (next?.resourceBlock) {
+                resourceBlock = next.resourceBlock;
+                groupHeight = next.measured.totalHeight;
+              } else {
+                inlineAside = null;
+              }
+            }
+            const available = c.availableHeight - (c.blocks.length === 0 ? 0 : spacingBefore);
+            if (groupHeight <= available + FIT_EPS) break;
+            if (c.blocks.length === 0 && c.availableHeight >= 0.5 && groupHeight > contentArea.height + FIT_EPS) break;
+            if (guard >= 8) break;
+            advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(groupHeight));
+          }
+          blk.resourceBlock = resourceBlock;
+          blk.lines[0]!.bbox = { x: 0, y: 0, width: resourceBlock.bodyRect.width, height: groupHeight };
+        }
+        const decidedColumn = currentColumn(doc, cursor);
         placeAtomicBlock(
           blk, groupHeight, spacingBefore, cursor, doc, geomResolved,
           contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(groupHeight),
@@ -6662,6 +6795,9 @@ function placeDocumentPass(
         // resource's own caption/table lines live on `resourceBlock` and must be
         // offset to absolute page coordinates here using the placed bbox origin.
         offsetResourceBlockToAbsolute(resourceBlock, blk.bbox.x, blk.bbox.y);
+        if (inlineAside && inlineAside.block.asideHeight !== undefined && currentColumn(doc, cursor) === decidedColumn) {
+          markInlineAside(blk, inlineAside.sideCol, inlineAside.block.asideHeight);
+        }
         const grown = figureGrowPx > 0 ? resourceBlock.bodyFlex?.delta ?? 0 : 0;
         if (grown > 0.01) {
           blk.balancing = { levers: ['flexFigure'], spaceAbove: 0, bodyGrowth: grown };

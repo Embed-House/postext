@@ -106,6 +106,7 @@ export const DEFAULT_LAYOUT_CONFIG: ResolvedLayoutConfig = {
   floatsUnderOpener: true,
   openerFloats: 'allow',
   inlineResourceGap: 'around',
+  inlineCaptionSide: true,
   inlineResourceGapInBoxes: true,
   flowColumns: true,
   boxChildSplitMinLines: 2,
@@ -139,6 +140,7 @@ export function resolveLayoutConfig(partial?: LayoutConfig): ResolvedLayoutConfi
     floatsUnderOpener: partial.floatsUnderOpener ?? DEFAULT_LAYOUT_CONFIG.floatsUnderOpener,
     openerFloats: compositionRuleOf(partial.openerFloats) ?? DEFAULT_LAYOUT_CONFIG.openerFloats,
     inlineResourceGap: partial.inlineResourceGap === 'above' ? 'above' : DEFAULT_LAYOUT_CONFIG.inlineResourceGap,
+    inlineCaptionSide: typeof partial.inlineCaptionSide === 'boolean' ? partial.inlineCaptionSide : DEFAULT_LAYOUT_CONFIG.inlineCaptionSide,
     inlineResourceGapInBoxes: partial.inlineResourceGapInBoxes ?? DEFAULT_LAYOUT_CONFIG.inlineResourceGapInBoxes,
     flowColumns: partial.flowColumns ?? DEFAULT_LAYOUT_CONFIG.flowColumns,
     // A whole number of lines, at least one; anything else is the default.
@@ -236,6 +238,10 @@ export function stripLayoutDefaults(layout?: LayoutConfig): LayoutConfig | undef
   }
   if (layout.inlineResourceGap !== undefined && layout.inlineResourceGap !== DEFAULT_LAYOUT_CONFIG.inlineResourceGap) {
     result.inlineResourceGap = layout.inlineResourceGap;
+    hasOverride = true;
+  }
+  if (layout.inlineCaptionSide !== undefined && layout.inlineCaptionSide !== DEFAULT_LAYOUT_CONFIG.inlineCaptionSide) {
+    result.inlineCaptionSide = layout.inlineCaptionSide;
     hasOverride = true;
   }
   if (layout.inlineResourceGapInBoxes !== undefined && layout.inlineResourceGapInBoxes !== DEFAULT_LAYOUT_CONFIG.inlineResourceGapInBoxes) {

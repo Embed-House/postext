@@ -104,7 +104,12 @@ export interface ResourcePlacement {
    *  a `oneAndHalf` layout (`layout.sideColumnRole: 'floats'`): the body
    *  keeps its column, the caption goes to the margin level with the
    *  figure's top (its bottom for a bottom float). A page without such a
-   *  column keeps the caption under the figure. Column floats only. */
+   *  column keeps the caption under the figure. For a column float, and
+   *  for a resource set where its `::resource` line stands (`position:
+   *  'here'`, #729, `layout.inlineCaptionSide`): there the caption stands
+   *  level with the body's top when the side column is free over its
+   *  band, else under the body. Not for a page-span or rotated resource,
+   *  one inside a box, or one text wraps round. */
   captionSide?: boolean;
   /** Scale a floated picture (bitmap, SVG, a video's poster) down, keeping
    *  its proportions, to the room a slot has, instead of moving it on
@@ -1103,6 +1108,16 @@ export interface LayoutConfig {
    *  when its chapters embed a resource (see `migrateConfig` in
    *  `postext/bundle`). */
   inlineResourceGap?: InlineResourceGap;
+  /** Whether `placement.captionSide` acts on a resource set in the text
+   *  (`position: 'here'`) as it does on a column float (#729): its caption
+   *  and note go to the float-only side column of a `oneAndHalf` layout,
+   *  level with the top of the body, and the block in the text column is
+   *  as tall as the body alone. Default `true`. `false`: `captionSide`
+   *  acts on column floats only, as up to postext 1.27 (a `oneAndHalf`
+   *  configuration stored by an earlier version is read with `false` when
+   *  its chapters embed a resource, see `migrateConfig` in
+   *  `postext/bundle`). */
+  inlineCaptionSide?: boolean;
   /** Whether an inline resource inside a box (`:::callout`) keeps the gap
    *  {@link inlineResourceGap} sets, a line of the box's own text: above
    *  the resource, and below it with `'around'`, the larger of it and the
@@ -1191,6 +1206,7 @@ export interface ResolvedLayoutConfig {
   floatsUnderOpener: boolean;
   openerFloats: CompositionRule;
   inlineResourceGap: InlineResourceGap;
+  inlineCaptionSide: boolean;
   inlineResourceGapInBoxes: boolean;
   flowColumns: boolean;
   boxChildSplitMinLines: number;

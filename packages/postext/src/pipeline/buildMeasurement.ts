@@ -45,6 +45,9 @@ export interface MeasurementInput {
   bodyHeightDelta?: number;
   /** A resource on a vertical page: set upright (`ResourceLayoutInput.upright`). */
   upright?: { maxLength: number };
+  /** An inline resource whose caption goes to the side column (#729,
+   *  `ResourceLayoutInput.captionAside`). */
+  captionAside?: { dx: number; width: number; alignBottom: boolean };
   /** A table: lay out only these rows (`ResourceLayoutInput.slice`, an
    *  inline table split across columns, #634). */
   tableSlice?: TableSliceSpec;
@@ -57,6 +60,8 @@ export interface MeasurementResult {
   resourceBlock?: ResolvedResourceBlock;
   /** A table laid out in full: its row metrics, for slice planning. */
   tableRows?: TableRowMetrics;
+  /** Height of the caption band set beside the body (`captionAside`). */
+  asideHeight?: number;
 }
 
 export function runMeasurement(input: MeasurementInput): MeasurementResult {
@@ -70,7 +75,7 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
       // Unknown resource id — emit nothing (the warnings phase surfaces this).
       return { measured: { lines: [], totalHeight: 0 } };
     }
-    const { block, totalHeight, tableRows } = layoutResourceBlock({
+    const { block, totalHeight, tableRows, asideHeight } = layoutResourceBlock({
       resource: input.resource,
       resourceType: input.resourceType,
       number: input.resourceNumber ?? '',
@@ -84,6 +89,7 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
       ...(input.bodyHeightDelta ? { bodyHeightDelta: input.bodyHeightDelta } : {}),
       ...(input.upright ? { upright: input.upright } : {}),
       ...(input.tableSlice ? { slice: input.tableSlice } : {}),
+      ...(input.captionAside ? { captionAside: input.captionAside } : {}),
     });
     const measured: MeasuredBlock = {
       lines: [{
@@ -97,7 +103,7 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
       }],
       totalHeight,
     };
-    return { measured, resourceBlock: block, ...(tableRows ? { tableRows } : {}) };
+    return { measured, resourceBlock: block, ...(tableRows ? { tableRows } : {}), ...(asideHeight !== undefined ? { asideHeight } : {}) };
   }
 
   // Math display block: bypass text layout entirely. Produce a single
