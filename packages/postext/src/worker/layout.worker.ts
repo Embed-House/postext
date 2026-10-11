@@ -9,12 +9,19 @@ import { createMeasurementCache, evictFontFamilies } from '../measure';
 import type { MeasurementCache } from '../measure';
 import type { RequestMessage, ResponseMessage, FontPayload } from './protocol';
 import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from './fonts';
+import { createFontGenerations, installFontGenerations } from './fontGenerations';
 import type { PostextContent, Resource } from '../types';
 import type { VDTDocument } from '../vdt';
 
 const ctx: DedicatedWorkerGlobalScope = self as unknown as DedicatedWorkerGlobalScope;
 
 const registeredFaces = new Set<string>();
+// Faces may reach the worker after it has measured (#760): a canvas here
+// never looks at the font set again for a shorthand it has resolved, so
+// every `font` set in this worker goes through the families' generations
+// (see ./fontGenerations.ts).
+const fontGenerations = createFontGenerations();
+installFontGenerations(fontGenerations);
 const measurementCache: MeasurementCache = createMeasurementCache();
 let currentBuildId: number | null = null;
 let cancelRequestedFor: number | null = null;
@@ -122,8 +129,10 @@ async function registerFonts(faces: FontPayload[]): Promise<void> {
   // Any build that measured text in these families before their faces
   // landed used fallback metrics: drop those measurements (the widths, the
   // blocks of the measurement cache at its next lookup, pretext's glyph
-  // cache) so the next build re-measures with the real glyphs.
+  // cache) so the next build re-measures with the real glyphs, under a
+  // shorthand the canvas resolves anew (#760).
   if (added.size > 0) {
+    fontGenerations.changed(added);
     evictFontFamilies(added);
     docCache.clear();
     familyAvailable.clear();
@@ -145,7 +154,9 @@ function unregisterFonts(families: string[]): void {
     const family = key.split('|', 1)[0]!;
     if (targets.has(family)) registeredFaces.delete(key);
   }
-  // A dropped face may have been cached against old glyph metrics.
+  // A dropped face may have been cached against old glyph metrics, and
+  // the canvas still holds it for the shorthands it resolved (#760).
+  fontGenerations.changed(families);
   evictFontFamilies(families);
   docCache.clear();
   familyAvailable.clear();
