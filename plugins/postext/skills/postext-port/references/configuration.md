@@ -1883,6 +1883,12 @@ shows the reverse page more than any stock but bible (its coldset ink soaks into
 `debug`: `cursorSync {enabled=true,color}`, `selectionSync {enabled=true,color}`,
 `looseLineHighlight {enabled=false,color,threshold=3}`, `pageNegative {enabled=false}`,
 `warnings { missingFont=true, looseLines=true, headingHierarchy=true, consecutiveHeadings=false, listAfterHeading=false, designIssues=true }`.
+Reading a line's word spacing off the VDT (postext ≥ 1.28): compare `lineWordSpacing(line)` with `minWordSpacing` /
+`maxWordSpacing`, not `line.justifiedSpaceRatio`. The latter is the width every space is painted at over the regular
+face's space, and a line with an italic or a bold space reads a few hundredths under or over the limit it was
+broken within; `line.justifiedSpaceLimitRatio` (present only on such lines) is the number the limits bound, and
+`lineWordSpacing` returns it or the painted ratio. The loose-line highlight, `findLooseLines` and the capture's
+C24 use it.
 `missingFont` also gates the engine's `fontFallback` content warning (≥ 1.25): a face the text was set in
 that the browser's font set could not give when the build ran (`reason` `missing` or `synthesized`, a
 weight or slant the family has no face for, drawn from another of its faces: a 600 set from the 700 as
