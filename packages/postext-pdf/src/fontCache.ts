@@ -1,3 +1,4 @@
+import { cssWeightOrder } from 'postext';
 import { padTrueTypeGlyphs } from './trueTypePadding';
 import { PDFDict, PDFName, PDFRef, PDFStream, type PDFDocument, type PDFFont } from 'pdf-lib';
 import { fontKey, parseFontString } from './fontString';
@@ -209,24 +210,11 @@ interface FaceSpec {
 /** The nine standard weights: the cuts a font provider may have. */
 const STANDARD_WEIGHTS: readonly number[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 
-/** `weights` in the order CSS font matching tries them for `desired`
- *  (CSS Fonts 4 §5.2): from 400 to 500, the weights up to 500 ascending,
- *  then the lighter ones descending, then the heavier ones ascending; below
- *  400, lighter (or equal) descending, then heavier ascending; above 500,
- *  heavier (or equal) ascending, then lighter descending. The browser picks
- *  the same face, so the PDF matches the preview. */
-export function cssWeightOrder(desired: number, weights: readonly number[]): number[] {
-  const asc = [...new Set(weights)].sort((a, b) => a - b);
-  if (desired >= 400 && desired <= 500) {
-    return [
-      ...asc.filter((w) => w >= desired && w <= 500),
-      ...asc.filter((w) => w < desired).reverse(),
-      ...asc.filter((w) => w > 500),
-    ];
-  }
-  if (desired < 400) return [...asc.filter((w) => w <= desired).reverse(), ...asc.filter((w) => w > desired)];
-  return [...asc.filter((w) => w >= desired), ...asc.filter((w) => w < desired).reverse()];
-}
+// The order CSS font matching tries a family's weights in (CSS Fonts 4
+// §5.2) is the engine's: the browser picks the same face, so the PDF
+// matches the preview, and the Sandbox and the command line choose by the
+// same function.
+export { cssWeightOrder };
 
 /** Faces of the same family to try, in order, when the provider rejects
  *  `spec`: every standard weight in the requested style, in CSS matching

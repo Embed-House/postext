@@ -12,6 +12,7 @@ import {
   configFontFaces,
   fontSampleText,
   primaryFontFamily,
+  cssWeightOrderOf,
   resolveBodyTextConfig,
   resolveHeaderFooterConfig,
   resolveHeadingsConfig,
@@ -1275,19 +1276,9 @@ function weightSpan(weight: string): [number, number] {
 }
 
 /** The weight descriptor CSS font matching settles on for `target` among
- *  `weights` (CSS Fonts 4, §5.2): from 400 to 500 the weights up to 500
- *  first, then lighter, then heavier; below 400 lighter first; above 500
- *  heavier first. */
+ *  `weights` (the engine's `cssWeightOrderOf`: CSS Fonts 4, §5.2). */
 function matchWeight(weights: readonly string[], target: number): string | undefined {
-  const spans = [...new Set(weights)].map((weight) => ({ weight, span: weightSpan(weight) }));
-  const exact = spans.find(({ span }) => target >= span[0] && target <= span[1]);
-  if (exact) return exact.weight;
-  const lighter = spans.filter(({ span }) => span[1] < target).sort((a, b) => b.span[1] - a.span[1]);
-  const heavier = spans.filter(({ span }) => span[0] > target).sort((a, b) => a.span[0] - b.span[0]);
-  if (target >= 400 && target <= 500) {
-    return (heavier.find(({ span }) => span[0] <= 500) ?? lighter[0] ?? heavier[0])?.weight;
-  }
-  return (target < 400 ? lighter[0] ?? heavier[0] : heavier[0] ?? lighter[0])?.weight;
+  return cssWeightOrderOf(target, [...new Set(weights)], weightSpan)[0];
 }
 
 /**

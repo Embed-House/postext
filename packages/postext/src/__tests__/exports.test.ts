@@ -627,6 +627,8 @@ describe("package exports", () => {
       "documentFontFamilies",
       "fontFallbacks",
       "defaultFontSet",
+      "cssWeightOrder",
+      "cssWeightOrderOf",
       "evictFontFamilies",
       "measurementGeneration",
       "parseFontString",
