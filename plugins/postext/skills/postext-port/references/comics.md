@@ -430,6 +430,7 @@ take em; `lettering.fontSize`, `lettering.inset`, `gutter.*`,
 | `lettering.inset` | `1.5mm` | room between balloons and the panel border |
 | `lettering.joinSameSpeaker` | `'butt'` | `'connector'` (a neck between bodies), `'none'` |
 | `lettering.maxColumnChars` | `8` | vertical columns, characters at most |
+| `lettering.strictPlacement` | `true` | a balloon reshaped to fit its panel does not part a Chinese word (the placement moves it or changes the order first); `false` letters as 1.27 did, which a book stored before 1.28 is read with (postext ≥ 1.28) |
 | `balloonStyles[]` | the nine built-ins | an entry with a built-in id changes it; another id adds a style (over `speech`) |
 | `cast[]` | none | `{id, name?, balloonStyle?, color?, fill?, fontFamily?}`: a speaker's default style (speech lines only), text colour, balloon fill, face; `name` is printed in the reflowable EPUB and read in the HTML |
 | `runningHeads` | `false` | running heads and folios on comic pages |

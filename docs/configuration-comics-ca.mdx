@@ -275,6 +275,12 @@ const config: PostextConfig = {
       <td><code>8</code></td>
       <td>Retolació vertical: el màxim de caràcters en una columna d'una bafarada. Les onomatopeies es parteixen després de cinc.</td>
     </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Una bafarada que canvia de forma per cabre a la vinyeta no parteix una paraula xinesa per aconseguir-ho: cada paraula que tallen les seves línies noves, i que la forma preferida deixa sencera, costa més que una bafarada llegida fora d'ordre, de manera que abans es mou la bafarada o canvia l'ordre. La retolació japonesa, que es parteix per frases, no canvia. Amb <code>false</code> es retola com a postext 1.27; un document desat abans de la 1.28 que contingui un còmic es llegeix així.</td>
+    </tr>
   </tbody>
 </table>
 

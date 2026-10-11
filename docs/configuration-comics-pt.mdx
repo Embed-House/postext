@@ -275,6 +275,12 @@ const config: PostextConfig = {
       <td><code>8</code></td>
       <td>Letreiramento vertical: o máximo de caracteres numa coluna de um balão. As onomatopeias quebram depois de cinco.</td>
     </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Um balão que muda de forma para caber no quadro não parte uma palavra chinesa para isso: cada palavra que as suas novas linhas cortam, e que a forma preferida deixa inteira, custa mais do que um balão lido fora de ordem, então antes o balão se move ou a ordem muda. O letreiramento japonês, quebrado por frases, não muda. Com <code>false</code>, letreira como o postext 1.27; um documento salvo antes da 1.28 que contenha quadrinhos é lido assim.</td>
+    </tr>
   </tbody>
 </table>
 

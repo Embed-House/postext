@@ -275,6 +275,12 @@ const config: PostextConfig = {
       <td><code>8</code></td>
       <td>竖排嵌字时，对白框中一列最多的字数。拟声词五个字后换列。</td>
     </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>为了放进格子而改变形状的对白框，不会为此拆开中文词语：新的分行每拆开一个词（而首选形状保持完整的词），代价都高于一个读序错乱的对白框，所以排版会先移动对白框或调整顺序。日文嵌字按文节断行，不受影响。设为<code>false</code>时按 postext 1.27 的方式嵌字；1.28 之前保存、含有漫画的文档按这种方式读取。</td>
+    </tr>
   </tbody>
 </table>
 

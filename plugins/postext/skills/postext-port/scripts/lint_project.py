@@ -1149,7 +1149,8 @@ COMICS_KEYS = {"readingDirection", "artDirection", "mirrorArt", "frame", "gutter
                "lettering", "balloonStyles", "cast", "runningHeads"}
 COMICS_PANEL_KEYS = {"borderWidth", "borderColor", "borderRadius", "borderStyle", "background", "fit", "bleed"}
 COMICS_LETTERING_KEYS = {"fontFamily", "fontSize", "lineHeight", "color", "bold", "italic", "letterSpacing", "writingMode",
-                         "textTransform", "dropFinalStop", "doubleDash", "inset", "joinSameSpeaker", "maxColumnChars"}
+                         "textTransform", "dropFinalStop", "doubleDash", "inset", "joinSameSpeaker", "maxColumnChars",
+                         "strictPlacement"}
 COMICS_BALLOON_KEYS = {"id", "name", "shape", "fill", "stroke", "strokeWidth", "dash", "double", "wobble", "roundness",
                        "burstPoints", "burstDepth", "padding", "aspect", "tail", "tailWidth", "tailReach", "target",
                        "position", "butt", "fontFamily", "fontScale", "bold", "italic", "color", "textTransform",

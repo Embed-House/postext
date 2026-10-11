@@ -275,6 +275,12 @@ const config: PostextConfig = {
       <td><code>8</code></td>
       <td>Vertical lettering: the most characters in one column of a balloon. Sound effects break after five.</td>
     </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>A balloon reshaped to fit its panel does not part a Chinese word to do so: each word its new lines cut, which its preferred shape leaves whole, costs more than a balloon read out of order, so the placement moves the balloon or changes the order first. Japanese lettering, broken by phrases, is not touched. <code>false</code> letters as postext 1.27 did; a document stored before 1.28 that holds a comic is read with it.</td>
+    </tr>
   </tbody>
 </table>
 
