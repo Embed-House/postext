@@ -318,6 +318,7 @@ export const OrderedListsSection = memo(function OrderedListsSection() {
         options={[
           { value: 'run', label: labels.orderedListsNumberWidthRun },
           { value: 'level', label: labels.orderedListsNumberWidthLevel },
+          { value: 'item', label: labels.orderedListsNumberWidthItem },
         ]}
         onChange={(v) => updateLists({ numberWidth: v as OrderedListNumberWidth })}
         tooltip={labels.orderedListsNumberWidthTooltip}
