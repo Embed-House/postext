@@ -1134,7 +1134,7 @@ COMIC_SCRIPT_KEYS = {"at", "to", "tail", "join", "break", "rotate", "size", "col
 COMIC_RESERVED_KEYS = {"caption", "sfx", "note"}
 COMIC_BALLOON_STYLES = {"speech", "thought", "whisper", "shout", "radio", "caption", "inner", "note", "sfx"}
 COMIC_POSITIONS = {"top-start", "top-end", "bottom-start", "bottom-end", "top", "bottom"}
-COMIC_TAILS = {"none", "auto", "top", "bottom", "start", "end"}
+COMIC_TAILS = {"none", "auto", "top", "bottom", "start", "end", "left", "right"}
 COMIC_SIDES = {"top", "bottom", "start", "end", "left", "right"}
 COMIC_FENCE_RE = re.compile(r"^:::\s*(page|strip)\s*(?:\{([^}]*)\})?\s*$")
 COMIC_PANEL_RE = re.compile(r"^::panel\s*(?:\{([^}]*)\})?\s*$")
@@ -1149,7 +1149,8 @@ COMICS_KEYS = {"readingDirection", "artDirection", "mirrorArt", "frame", "gutter
                "lettering", "balloonStyles", "cast", "runningHeads"}
 COMICS_PANEL_KEYS = {"borderWidth", "borderColor", "borderRadius", "borderStyle", "background", "fit", "bleed"}
 COMICS_LETTERING_KEYS = {"fontFamily", "fontSize", "lineHeight", "color", "bold", "italic", "letterSpacing", "writingMode",
-                         "textTransform", "dropFinalStop", "doubleDash", "inset", "joinSameSpeaker", "maxColumnChars"}
+                         "textTransform", "dropFinalStop", "doubleDash", "inset", "joinSameSpeaker", "maxColumnChars",
+                         "strictPlacement"}
 COMICS_BALLOON_KEYS = {"id", "name", "shape", "fill", "stroke", "strokeWidth", "dash", "double", "wobble", "roundness",
                        "burstPoints", "burstDepth", "padding", "aspect", "tail", "tailWidth", "tailReach", "target",
                        "position", "butt", "fontFamily", "fontScale", "bold", "italic", "color", "textTransform",
@@ -1340,16 +1341,17 @@ def _rect_problem(r) -> str | None:
 
 
 def check_picture_marks(r: dict, where: str, rep: Report) -> None:
-    """A picture's safe area, speaker anchors and avoid zones (comics.md §9)."""
+    """A picture's safe area, speaker anchors, avoid zones and bystander
+    faces (comics.md §9)."""
     sa = r.get("safeArea")
     if sa is not None:
         p = _rect_problem(sa)
         if p:
             rep.error(where, f"safeArea {p}")
             sa = None
-    anchors, avoid = r.get("anchors"), r.get("avoid")
-    if (anchors or avoid) and r.get("kind") == "table":
-        rep.warn(where, "anchors/avoid are read only on bitmap and SVG pictures placed in comic panels")
+    anchors, avoid, faces = r.get("anchors"), r.get("avoid"), r.get("faces")
+    if (anchors or avoid or faces) and r.get("kind") == "table":
+        rep.warn(where, "anchors/avoid/faces are read only on bitmap and SVG pictures placed in comic panels")
     if anchors is not None:
         if not isinstance(anchors, list):
             rep.error(where, "anchors must be a list of {id, x, y, head?, face?}")
@@ -1389,6 +1391,16 @@ def check_picture_marks(r: dict, where: str, rep: Report) -> None:
                 p = _rect_problem(z)
                 if p:
                     rep.error(f"{where} avoid[{k}]", p)
+    # The faces of people who do not speak (postext >= 1.28): rectangles
+    # like the avoid zones, never covered.
+    if faces is not None:
+        if not isinstance(faces, list):
+            rep.error(where, "faces must be a list of {x, y, width, height} (the faces of people who do not speak)")
+        else:
+            for k, z in enumerate(faces):
+                p = _rect_problem(z)
+                if p:
+                    rep.error(f"{where} faces[{k}]", p)
 
 
 def check_comics_config(cfg: dict, where: str, rep: Report) -> None:
@@ -2286,8 +2298,8 @@ def main() -> None:
     if m.get("version") not in (1, 2):
         rep.error("preset.json", "version must be 1 or 2")
     cv = m.get("configVersion")
-    if isinstance(cv, bool) or not isinstance(cv, (int, float)) or cv < 11:
-        rep.warn("preset.json", "configVersion is missing or below 11: the bundle reads with older rules "
+    if isinstance(cv, bool) or not isinstance(cv, (int, float)) or cv < 12:
+        rep.warn("preset.json", "configVersion is missing or below 12: the bundle reads with older rules "
                  "(up to 1.4: H1 breaks pinned, maths x 1.1312, inline gap 'above'; below 6: heading marks plain, "
                  "drop caps at the 1.4 size, one line of room under a colon line before its list, no gap around "
                  "inline figures in boxes, box cuts that may leave one line of a paragraph; below 7: no line "
@@ -2299,7 +2311,11 @@ def main() -> None:
                  "firstLineIndent dropped when it also hangs, a backslash ending a line printed instead of "
                  "breaking it, a ``` fence's lines read as Markdown; below 10: a line of verse a little too wide "
                  "turned over instead of tightening its word spaces; below 11: a horizontal page on a character "
-                 "grid balanced unless the config says otherwise); set \"configVersion\": 11 for today's rules")
+                 "grid balanced unless the config says otherwise; below 12: the widow rule on a character grid, and "
+                 "the orphan rule too in the Japan region, on unless the config says otherwise, and a :warichu note "
+                 "broken where one of its characters is left alone on a line, and in Japanese text no quarter em next to "
+                 "the brackets and signs of a Western word); "
+                 "set \"configVersion\": 12 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

@@ -82,6 +82,24 @@ Los paréntesis, los corchetes, las llaves y las comillas angulares se reflejan 
 
 Los paréntesis ornamentales de las citas del Corán, ﴿ (U+FD3F) y ﴾ (U+FD3E), no se reflejan: desde Unicode 14, ﴿ es el de apertura y ﴾ el de cierre, y sus glifos están dibujados para texto de derecha a izquierda. Teclea primero ﴿: `﴿بسم الله الرحمن الرحيم﴾` se imprime con ﴿ a la derecha. Tampoco son corchetes emparejados, así que en un párrafo de izquierda a derecha (un versículo árabe citado en un libro en español) los paréntesis junto a una palabra latina toman la dirección del párrafo: ﴿ queda a la izquierda del versículo y el par se lee invertido, como en un navegador. Compón la cita como un aislamiento de derecha a izquierda, `:rtl[﴿بسم الله الرحمن الرحيم﴾]`, y los dos paréntesis van con el versículo, ﴿ a su derecha.
 
+### Palabras sin letras
+
+Una palabra hecha solo de cifras, signos de puntuación o símbolos (`46.`, `1367)`, `».`) no tiene escritura propia, y una fuente puede dibujar sus signos según la escritura. Amiri compone el punto, los paréntesis y las comillas angulares latinos en texto latino y los árabes en el resto: su punto mide 0,20 em frente a 0,32, un paréntesis 0,26 frente a 0,46. Cuando recibe una palabra así aislada, cada motor de composición elige una escritura con su propia regla: una versión de Chrome toma las formas por defecto de la fuente, una posterior las latinas, el PDF las de por defecto. La misma nota cortaba entonces sus líneas de otro modo de un navegador a otro, y su PDF ponía signos de otro ancho en los huecos medidos.
+
+Postext lo decide (`bodyText.scriptContext`, activado por defecto). Una palabra así toma la escritura del texto que la rodea:
+
+- pintada de izquierda a derecha, la de la letra más cercana antes de ella dentro de su aislado, y si no la de la más cercana después: `46.` al final de una nota en inglés es latina, y el `1367` de `(1367)` en una frase árabe es árabe;
+- pintada de derecha a izquierda (un paréntesis o un punto en un nivel de derecha a izquierda), la de la letra de derecha a izquierda más cercana: los paréntesis de `(1367)` en una frase árabe siguen siendo árabes;
+- sin ninguna letra cerca (un párrafo o un aislado de números solos), la escritura de la lengua del documento.
+
+La maquetación mide la palabra en esa escritura, y el canvas, el HTML, el EPUB de maquetación fija y el PDF pintan esas formas con ese ancho, igual en todos los navegadores. Una nota en alfabeto latino, una cita o una entrada de bibliografía en un libro árabe no necesitan un espacio de no separación para que `46.` o `(m. 1367)` conserven sus formas latinas: se escriben con espacios normales. Una palabra compuesta en la escritura árabe no lleva espaciado entre letras, como las palabras árabes que la rodean.
+
+Una palabra que tiene alguna letra es un solo tramo de escritura, y también lo son los trozos en que se pinta. Un DOI o una dirección web pueden acabar la línea en cada una de sus junturas, y una palabra más ancha que su línea se corta donde la línea termina; el trozo que queda sin letras (`10.1006/` y `.2001` de `10.1006/ijhc.2001.0458`) toma la escritura que tiene dentro de su palabra: la de la letra anterior en ella y, si no la hay, la de la primera letra de la palabra. Se mide y se pinta en esa escritura, de modo que la dirección queda compacta en una fuente cuyas cifras cambian con la escritura (Noto Serif SC las dibuja de 0,55 em en texto latino y de 0,47 em en el resto).
+
+En un documento chino o japonés (`locale` `zh` o `ja`), los puntos suspensivos dobles y la raya doble (`……`, `——`, `――`) son el signo propio del documento allí donde se citen. Una palabra sin letras que contiene uno, como `…….` al final de una frase en inglés del colofón, compone el par con las formas del texto han (seis puntos centrados, una raya de dos cuadratines) y lo que lo acompaña, el punto final o una comilla, en la escritura de la frase. No hace falta `:ltr[…]` ni un tramo con otro estilo.
+
+La regla actúa en contextos latino, griego, cirílico, árabe y hebreo, y solo en una fuente cuya puntuación o cuyas cifras cambian con la escritura; cualquier otra se maqueta como antes. Cubre el texto corrido, los encabezados, las listas, los pies, las notas, las celdas de tabla y la línea de puntos de una entrada del índice. Una palabra de derecha a izquierda se mide tal como se pinta, así que un paréntesis o un punto en su borde ocupa lo mismo en todos los navegadores. Una configuración guardada con postext 1.27 o anterior se lee con `scriptContext: false` y conserva las formas que le dio su navegador. Véase [`bodyText.scriptContext`](/es/docs/configuration-text#texto-de-cuerpo).
+
 ## Orden de las páginas y encuadernación por la derecha
 
 Un libro árabe se encuaderna por su borde derecho. Su primera página es una página izquierda, sus pliegos se leen de la página derecha a la izquierda y sus columnas se llenan de derecha a izquierda. Postext compone una página así como una página de izquierda a derecha vista en un espejo: todo lo que está en el flujo del texto (columnas, líneas, sangrías, marcas de lista, flotantes, notas, recuadros, tablas) lo coloca el mismo código que en un libro en español, y después la página se refleja entera, con cada palabra, imagen y fórmula pintada del derecho.
@@ -453,6 +471,7 @@ Los capítulos empiezan con `:::numbering{format="abjad" startAt=1}` antes de la
 - **Verso**: no hay verso seguido dentro de la prosa, ni formas estróficas con un estribillo centrado más allá de líneas centradas sueltas; un hemistiquio más ancho que la medida se parte desde el lado de principio, sin sangría francesa.
 - **Cachida**: el texto que se copia de la salida HTML conserva los tatweels insertados, y nada impide que las cachidas de líneas vecinas se apilen una sobre otra.
 - **Los listados de código** se leen de izquierda a derecha en un libro de derecha a izquierda: cada línea se compone desde el lado opuesto de la caja, como una cita inglesa, con sus números de línea en el margen a su izquierda y su texto copiado en orden lógico. Ver [Listados de código](/es/docs/configuration-styles#listados-de-código).
+- **Las palabras sin letras** toman la escritura de su contexto en el texto corrido, los encabezados, las listas, los pies, las notas y las celdas. El marcador de una lista, el rótulo de una referencia cruzada, la llamada de una nota, el texto de diseño (un folio, una cabecera de números), la rotulación de cómic y un párrafo compuesto por el compositor CJK se componen aislados, como los compone cada navegador.
 
 ## Referencias
 

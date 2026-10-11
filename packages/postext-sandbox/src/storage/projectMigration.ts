@@ -45,12 +45,22 @@ import type { ProjectThumbnail } from './projects';
  *  fences outside a box that were ignored (see {@link
  *  pinLegacyFlowColumns}, #634) and the slots a float found under a
  *  page-span opener (see {@link pinLegacyOpenerHeadFloats}, #639).
+ *  Records saved before 12 keep the order their columns were balanced in,
+ *  every line above a heading before any other lever (see
+ *  `pinLegacyLooseOrder` in `postext/bundle`, #707), and the line a column
+ *  took alone under a figure across several columns (see
+ *  `pinLegacyWideFloatStretch`, #708), the level cuts of their closing
+ *  bands on the baseline grid (see `pinLegacyTrailingStep`, #711), and the
+ *  column breaks between any
+ *  two entries of a group of their indexes (see
+ *  `pinLegacyIndexGroupSplit`, #712).
  *  Records 1 and 2 were numbered by the Sandbox alone, before 1.5; they
  *  are older than 3 on every count. Records 3 to 7 were written by the 1.5
  *  prereleases: 3 before the maths size changed, 4 before the inline gap
  *  did, 5 before the five version-6 rules did, 6 before the two version-7
  *  rules did, 7 before the three version-8 rules did; records 8 by postext
- *  1.5 to 1.22, records 9 by 1.23, records 10 by 1.24. */
+ *  1.5 to 1.22, records 9 by 1.23, records 10 by 1.24, records 11 by
+ *  1.25 to 1.27. */
 export const PROJECT_RECORD_VERSION: number = CONFIG_VERSION;
 
 export interface MigrationDeps {

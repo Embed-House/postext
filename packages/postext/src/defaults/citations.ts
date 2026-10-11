@@ -8,6 +8,7 @@ export const DEFAULT_CITATIONS_CONFIG: ResolvedCitationsConfig = {
   collapseRanges: true,
   notes: 'footnote',
   numbering: 'book',
+  hyphenateNames: true,
   bibliography: {
     scope: 'book',
     auto: true,
@@ -38,6 +39,7 @@ export function resolveCitationsConfig(partial?: CitationsConfig): ResolvedCitat
     collapseRanges: partial?.collapseRanges ?? d.collapseRanges,
     notes: partial?.notes === 'warichu' ? 'warichu' : 'footnote',
     numbering: partial?.numbering === 'chapter' ? 'chapter' : 'book',
+    hyphenateNames: partial?.hyphenateNames !== false,
     bibliography: {
       ...(typeof b?.title === 'string' ? { title: b.title } : {}),
       scope: b?.scope === 'chapter' ? 'chapter' : 'book',
@@ -67,6 +69,7 @@ export function stripCitationsDefaults(c?: CitationsConfig): CitationsConfig | u
   if (c.collapseRanges !== undefined && c.collapseRanges !== d.collapseRanges) out.collapseRanges = c.collapseRanges;
   if (c.notes !== undefined && c.notes !== d.notes) out.notes = c.notes;
   if (c.numbering !== undefined && c.numbering !== d.numbering) out.numbering = c.numbering;
+  if (c.hyphenateNames === false) out.hyphenateNames = false;
   const b = c.bibliography;
   if (b) {
     const db = d.bibliography;

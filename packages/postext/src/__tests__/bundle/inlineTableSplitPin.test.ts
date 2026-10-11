@@ -37,7 +37,9 @@ describe('pinLegacyInlineTableSplit (#634)', () => {
     }
     expect(migrateConfig({} as PostextConfig, 10, { content: 'No embeds here.' }).tableStyle).toBeUndefined();
     const current: PostextConfig = {};
-    expect(migrateConfig(current, 11, { content: EMBED })).toBe(current);
+    // (one stamped 11 gets the pins of rules 12 alone: here the after-float
+    // lever under a wide float, #708, since the text embeds a resource)
+    expect(migrateConfig(current, 11, { content: EMBED }).tableStyle).toBeUndefined();
   });
 
   it('pins a bundle on its merged layers', () => {

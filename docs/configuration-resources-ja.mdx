@@ -49,7 +49,7 @@ interface ResourcePlacement {
   rotate?: 'ccw' | 'cw';                         // a quarter turn: a landscape table on a page of its own
   width?: number;                                // fraction (0 < width < 1) of the column or page width; default: the whole width
   align?: 'left' | 'center' | 'right';           // where a float narrower than its column sits; default 'left'
-  captionSide?: boolean;                         // caption beside the figure, in the side column of a oneAndHalf layout (column floats only)
+  captionSide?: boolean;                         // caption beside the figure, in the side column of a oneAndHalf layout (column floats and resources set in the text)
   columns?: number;                              // 'column'フロートがまたがる隣り合う段の数（1.18以降）
   wrap?: 'none' | 'left' | 'right' | 'start' | 'end'; // リソースの横に本文を組み、リソースは段のその側（1.24以降）
   wrapGap?: Dimension;                           // 回り込むリソースと本文との間隔（1.24以降）
@@ -68,7 +68,7 @@ interface ResourceType {
 }
 ```
 
-`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、本文領域の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートにだけ適用され、そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図版を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図版のキャプションと注を図版の幅で組みます（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。前の2つのドキュメント既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや 1 段幅のフロートを段の片側に置き、`wrapGap`離して本文を横に組みます。既定値は`layout.wrap`にあります（[文書の書式 › 回り込み](/ja/docs/document-format#回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。
+`ResourcePlacement`は、リソースが自身の`placement`に設定するものと同じ形です。`position`はフロートが入れる空き位置の種類を選びます。`auto`（既定値）は最初の参照の後にある最初の空き位置を取り、`top`／`bottom`はその種類の帯に限定し、`here`はリソースをインラインで埋め込みます。`span`はフロートの範囲を、1段、本文領域の全幅、または1段半レイアウトのフロート専用サイド段から決めます。`rotate`はリソースを90度回転させ、独立したページに置くページ幅のフロートにします。`width`はフロートを段の幅（ページ幅のフロートではページの幅）の一部に狭めます。たとえば広い段に置く小さな表です。`align`は、そのように狭めたフロートを置く位置（既定は左、ほかに中央と右）と、空き位置より狭い画像をその中のどこに置くかを決めます。段より小さいビットマップや、`layout.fitFiguresToPage`が縮小した画像が対象です。キャプションと注は空き位置の行長を保ちます（postext 1.4までは、そうした画像は常に左そろえでした）。`captionSide`は、1段半レイアウト（`layout.sideColumnRole: 'floats'`）のフロート専用サイド段で、キャプションを図の横、図の上端（下側のフロートでは下端）の高さに置きます。段幅のフロートに適用され、postext 1.28からは本文中に置いたリソース（`position: 'here'`、1段幅、回り込みなし）にも適用されます。その横でサイド段が空いていればキャプションと注を本体の上端の高さでサイド段に置き、空いていなければ本体の下に置きます（`layout.inlineCaptionSide`、既定でオン。`false`ではサイド段のキャプションは段幅のフロートだけになります）。そうした段のないページではキャプションは図の下のままです。リソースもその種類も配置を設定しない場合、組み込みの既定値は`auto`／`column`です。`shrink`（`'never'`、`'page'`、`'slot'`）と`minScale`（未設定なら0.7）は、フロートの図版を次へ送らずに置き場所の空きまで縮小し、`captionMeasure: 'body'`は置き場所より幅の狭い図版のキャプションと注を図版の幅で組みます（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。前の2つのドキュメント既定値は`layout.floatShrink`で決めます。`wrap`は本文中の埋め込みや 1 段幅のフロートを段の片側に置き、`wrapGap`離して本文を横に組みます。既定値は`layout.wrap`にあります（[文書の書式 › 回り込み](/ja/docs/document-format#回り込み)を参照）。`citingPage`は、`top`または`auto`のフロートを、参照行の後の最初の空き位置ではなく、参照行のあるページまたは段の先頭に置きます。`layout.floatsAtCitingPage`が文書の既定値、`layout.maxTopFraction`がそのフロートの占めてよい段の割合です（[ドキュメント形式 › 配置](/ja/docs/document-format#配置)を参照）。
 
 `columns`（postext 1.18以降）は、複数の段があるページで、`span: 'column'`のフロートを指定した数の隣り合う段にまたがって置きます。新聞の5段のうち2段にまたがる写真などです。幅はそれらの段とその間の段間を合わせたものです。上端のそろった空の段の並びの頭か、引用した段とその後の空の段の足に置かれます。ページの段数以上を指定すると、ページ幅のフロートになります。`'page'`と`'side'`のspan、回転したリソース（`rotate`）、インラインの埋め込み（`here`）では無視され、`captionSide`は1段幅のフロートにだけ効きます。
 
@@ -139,7 +139,8 @@ interface ResourceType {
 `numberingTemplate`は、見出しの番号付けと同じエンジンで表示されます（[見出し](/ja/docs/configuration-text#見出し)を参照）。認識するトークンは2種類です。
 
 - `{n}`：種類ごとのカウンターで、`counterFormat`に従って書式化されます。リソースごとに増え、`resetOn`に従ってリセットされる値です。
-- `{h1}`〜`{h6}`：最初の参照の位置で有効な見出し番号で、常に10進数で表示されます。`{h1}`は現在のレベル1の見出しの番号、`{h2}`はレベル2の番号、以下同様です。
+- `{h1}`〜`{h6}`：最初の参照の位置で有効な見出し番号で、トークンが書式を指定しないかぎり10進数で表示されます。`{h1}`は現在のレベル1の見出しの番号、`{h2}`はレベル2の番号、以下同様です。
+- `{h1:A}`、`{h2:i}`、`{n:i}`：トークンの後にコロンと書式を書くと、その書式で表示されます。見出しのテンプレートで使える書式はどれも使えます。`1`、`01`、`A`、`a`、`I`、`i`、`upper-roman`のような番号書式の名前、`一`や`①`のような1文字のトークン、`Words`のような綴りの書式です。`{n}`に書いた書式は、そのトークンについて`counterFormat`より優先されます。知らない書式は10進数で数えます。postext 1.28以降。
 
 そのほかのテキストは文字どおりに扱われます。バックスラッシュで、文字としての`{`、`}`、`\`をエスケープします。見出しのトークンにその範囲で値がない場合（たとえば最初のレベル1の見出しより前の`{h1}`）は、隣接する区切り文字とともに消えます。そのため`{h1}.{n}`は、カウンターだけの形に自然に縮退します。
 
@@ -169,8 +170,15 @@ interface ResourceType {
       <td><code>2.0.3</code></td>
       <td>節単位。<code>resetOn: 'h2'</code>と組み合わせます。</td>
     </tr>
+    <tr>
+      <td><code>{'{h1:A}.{n}'}</code></td>
+      <td><code>B.3</code></td>
+      <td>アルファベット。付録に使います。<code>resetOn: 'h1'</code>と組み合わせます。</td>
+    </tr>
   </tbody>
 </table>
+
+**付録。** 付録に見出しスタイルでアルファベットを振る本（`numberingTemplate: '付録{1:A}'`、最初の付録に`startAt=1`）では、付録の図表に専用のタイプを用意します。`{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }`です。1つのタイプですべての付録に使え、キャプションと`:ref`に*表A.1*、*A.2*、*B.1*と表示されます。書式のない`{h1}`は、そこでは見出しの番号を10進数で表示します（*表1.1*）。
 
 ### 番号付けと参照
 

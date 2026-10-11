@@ -322,6 +322,7 @@ export const RECIPE_SCHEMA: JsonSchema = {
             pages: { type: "array", items: [ref("page"), ref("page")], minItems: 2, additionalItems: false },
             warnings: idList("Engine warnings demonstrated on purpose."),
             nearEmptyPages: { type: "array", items: ref("page"), uniqueItems: true },
+            raggedLines: { type: "integer", minimum: 0, description: "Justified lines the edition may set ragged (check C34)." },
             console: { type: "array", items: { type: "string", minLength: 1 } },
             defaultSkin: {
               type: "array",
@@ -809,6 +810,9 @@ export function validateRecipeMeta(
   }
   if (Array.isArray(expect.pages) && typeof expect.pages[0] === "number" && typeof expect.pages[1] === "number") {
     if (expect.pages[0] > expect.pages[1]) errors.push(`capture.expect.pages: [min, max] with min ≤ max`);
+  }
+  if (expect.raggedLines !== undefined && !(Number.isInteger(expect.raggedLines) && (expect.raggedLines as number) >= 0)) {
+    errors.push(`capture.expect.raggedLines: a whole number of lines, 0 or more`);
   }
   if (expect.defaultSkin !== undefined && asArray(expect.defaultSkin).length === 0) {
     errors.push(`capture.expect.defaultSkin: omit it rather than leave it empty`);

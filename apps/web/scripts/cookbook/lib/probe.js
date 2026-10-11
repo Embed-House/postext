@@ -127,10 +127,47 @@ export async function settle(quietMs = 500, maxMs = 10000) {
   }
 }
 
-export function frames(count = 2) {
+/** `document.fonts.ready`, with a timer beside it (#743): a font request
+ *  that got no answer keeps the promise pending for ever. */
+export function fontsReady(maxMs = 10000) {
   return new Promise((resolve) => {
-    const step = (left) => (left ? requestAnimationFrame(() => step(left - 1)) : resolve(true));
-    step(count);
+    const timer = setTimeout(() => resolve({ timedOut: true }), maxMs);
+    document.fonts.ready.then(() => {
+      clearTimeout(timer);
+      resolve({});
+    });
+  });
+}
+
+/** Resolves after `count` animation frames, or `fallbackMs` after the last
+ *  one that came (#743): a page the browser is not presenting (a tab behind
+ *  the others of a browser that has just started) gets no frame at all, and
+ *  the capture waited out the protocol timeout on it. */
+export function frames(count = 2, fallbackMs = 500) {
+  return new Promise((resolve) => {
+    let got = 0;
+    let settled = false;
+    let timer;
+    const finish = (fellBack) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(fellBack ? { frames: got, fellBack: true } : { frames: got });
+    };
+    const arm = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => finish(true), fallbackMs);
+    };
+    const next = () => {
+      if (got >= count) return finish(false);
+      arm();
+      requestAnimationFrame(() => {
+        if (settled) return;
+        got++;
+        next();
+      });
+    };
+    next();
   });
 }
 
@@ -789,6 +826,14 @@ export function facts({ select = 'last', hero = [] } = {}) {
       page: w.pageIndex === undefined ? null : nOf(doc, w.pageIndex),
       detail: layoutDetail(w) ?? (w.kind === 'floatShrunk' ? `${w.resourceId} at ${Math.round(w.scale * 100)} %: ${w.overflowPx} px past the text block` : w.kind === 'codeOverflow' ? `${w.mode}: ${w.lines} line(s)${w.lang ? ` of ${w.lang}` : ''}` : w.kind === 'dropCap' ? `${w.reason}${w.handling ? ` (${w.handling})` : ''}: ${w.text}` : w.kind === 'textWrap' ? `${w.resourceId ?? `box ${w.box ?? ''}`.trim()}: ${w.reason}` : w.text ?? (w.kind === 'lineNumberOverlap' ? `line ${w.number}` : w.kind === 'tabInVerticalText' ? ':tab' : comicDetail(w))),
     })));
+  // C34: the justified lines the engine set ragged because their word
+  // spaces would have stretched past 3× (#732), from the builds' own
+  // `raggedLine` warnings, worst first. Not among TEXT_WARNING_KINDS: C5
+  // accepts a kind wholesale, and here a recipe accepts a count.
+  const ragged = docs.flatMap((doc) => (doc.contentWarnings ?? [])
+    .filter((w) => w.kind === 'raggedLine')
+    .map((w) => ({ page: w.pageIndex === undefined ? null : nOf(doc, w.pageIndex), ratio: Math.round(w.ratio * 10) / 10, text: (w.text ?? '').trim() })));
+  out.raggedLines = { count: ragged.length, lines: [...ragged].sort((a, b) => b.ratio - a.ratio).slice(0, 5) };
   // C31: config values the engine replaced (a character grid cut to the
   // page, an unknown numbering format, a key no setting has). Every
   // chapter of a book carries its build's warnings: one entry per value.
@@ -829,7 +874,10 @@ export function facts({ select = 'last', hero = [] } = {}) {
         if (line.cjkLoose) cjkShort.push({ page: n, tracking: emPx > 0 ? round(tracking / emPx, 0.01) : 0, text: (line.text ?? '').trim() });
         continue;
       }
-      const ratio = line.justifiedSpaceRatio;
+      // The word spacing as the limits bound it (#704): on a line that
+      // holds a bold or an italic space the painted ratio reads a little
+      // past the limit the breaker kept (`lineWordSpacing` in the engine).
+      const ratio = line.justifiedSpaceLimitRatio ?? line.justifiedSpaceRatio;
       if (ratio === undefined || line.isLastLine || line.ragged) continue;
       justified++;
       // A line set at the limit (its tracking took the rest) is not past it:
@@ -837,6 +885,26 @@ export function facts({ select = 'last', hero = [] } = {}) {
       if (ratio > max + 1e-6) looseLines.push({ page: n, ratio: round(ratio, 0.01), text: (line.text ?? '').trim() });
       worst = Math.max(worst, ratio);
     }
+  }
+  // C35: the paragraphs set a line short to take up a runt (#733,
+  // `VDTBlock.runtFix`), the ones that needed tracking first. A paragraph
+  // split over two columns is one (same source range).
+  const fixed = new Map();
+  for (const { block, doc, n } of all) {
+    if (!block.runtFix) continue;
+    const key = `${docs.indexOf(doc)}:${block.contentIndex ?? ''}:${block.footnoteNote ?? ''}:${block.calloutPath ?? block.containerId ?? ''}`;
+    // The first words as written: a word divided at a line end is put back.
+    const text = (block.lines ?? []).map((l) => {
+      const t = (l.text ?? '').trim();
+      return l.hyphenated && !l.hardHyphen && t.endsWith('-') ? t.slice(0, -1) : `${t} `;
+    }).join('').replace(/\s+/g, ' ').trim();
+    const cap = Number(doc.config.bodyText.maxRuntTracking) || 0;
+    if (!fixed.has(key)) fixed.set(key, { page: n, tracking: Number(block.runtFix.tracking) || 0, text: text.slice(0, 48), atCap: cap > 0 && block.runtFix.tracking >= cap });
+  }
+  if (fixed.size) {
+    const blocks = [...fixed.values()];
+    const tracked = blocks.filter((b) => b.tracking > 0).sort((a, b) => b.tracking - a.tracking || a.page - b.page);
+    out.runtFixes = { count: blocks.length, tracked: tracked.length, worst: tracked[0]?.tracking ?? 0, atCap: tracked.some((b) => b.atCap), blocks: tracked.slice(0, 5).map(({ page, tracking, text }) => ({ page, tracking, text })) };
   }
   // The loosest lines, for copy-fitting (C24 prints them).
   const loosest = [...looseLines].sort((a, b) => b.ratio - a.ratio).slice(0, 5);
@@ -1053,6 +1121,91 @@ export function renderPages({ select = 'last', pages: wanted, width = 1000, stri
     return { error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`, taint: error?.name === 'SecurityError' };
   }
   return { pages: out };
+}
+
+// ─── A page against its committed image (#734) ─────────────────────────────
+
+/**
+ * How far a page image may be from the committed one and still be kept:
+ * no cell of `cell` × `cell` px whose mean absolute difference, in any
+ * channel, is over `max` of 255. Calibrated on pages at 1000 px wide,
+ * WebP at quality 0.8 on both sides:
+ *
+ *   kept     the same layout painted by Chrome 131 and Chrome 154: worst
+ *            cell 10.2 (product-manual-warnings), 8.0 (balloon-kinds), 0
+ *            (thesis-back-matter); thesis-back-matter en p03 across
+ *            d32b8fbb0 (10 bytes changed under one layout hash): 3.6
+ *   written  one word painted a pixel bolder: 17 to 20; a word moved one
+ *            pixel: 36 to 71; a letter missing: 51; a word in another
+ *            colour: 83; vertical punctuation set higher by Chrome 154
+ *            (bunko-novel-furigana): 88 to 118
+ */
+export const PAGE_DIFFERENCE = { cell: 8, max: 12 };
+
+/** The worst cell of two RGBA images of one size (its mean absolute
+ *  difference in the channel that differs most) and how many cells are
+ *  over the threshold. */
+export function pageDifference(a, b, width, height, { cell = PAGE_DIFFERENCE.cell, max = PAGE_DIFFERENCE.max } = {}) {
+  let worst = 0;
+  let cells = 0;
+  for (let top = 0; top < height; top += cell) {
+    const rows = Math.min(cell, height - top);
+    for (let left = 0; left < width; left += cell) {
+      const cols = Math.min(cell, width - left);
+      let r = 0;
+      let g = 0;
+      let bl = 0;
+      for (let y = top; y < top + rows; y++) {
+        let i = (y * width + left) * 4;
+        for (let x = 0; x < cols; x++, i += 4) {
+          r += Math.abs(a[i] - b[i]);
+          g += Math.abs(a[i + 1] - b[i + 1]);
+          bl += Math.abs(a[i + 2] - b[i + 2]);
+        }
+      }
+      const mean = Math.max(r, g, bl) / (rows * cols);
+      if (mean > worst) worst = mean;
+      if (mean > max) cells++;
+    }
+  }
+  return { worst, cells };
+}
+
+/** Whether a page's pixels changed beyond rendering noise: two RGBA arrays
+ *  of `width` × `height`. Images of different sizes differ. */
+export function pagesDiffer(a, b, width, height) {
+  if (!a || !b || a.length !== b.length || a.length !== width * height * 4) return true;
+  return pageDifference(a, b, width, height).cells > 0;
+}
+
+async function rgbaOf(base64) {
+  const bitmap = await createImageBitmap(new Blob([bytesOfBase64(base64)], { type: 'image/webp' }));
+  const canvas = canvasOf(bitmap.width, bitmap.height);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(bitmap, 0, 0);
+  return { width: bitmap.width, height: bitmap.height, data: ctx.getImageData(0, 0, bitmap.width, bitmap.height).data };
+}
+
+/** Each pair `{ n, committed, fresh }` (two WebP files, base64) decoded and
+ *  compared: `{ n, differ, worst, cells }`, or `{ n, differ: true, error }`
+ *  when one does not decode. */
+export async function comparePages(pairs) {
+  const out = [];
+  for (const { n, committed, fresh } of pairs) {
+    try {
+      const a = await rgbaOf(committed);
+      const b = await rgbaOf(fresh);
+      if (a.width !== b.width || a.height !== b.height) {
+        out.push({ n, differ: true, worst: 255, cells: 0, error: `${a.width} × ${a.height} px committed, ${b.width} × ${b.height} px now` });
+        continue;
+      }
+      const d = pageDifference(a.data, b.data, a.width, a.height);
+      out.push({ n, differ: d.cells > 0, worst: round(d.worst, 0.1), cells: d.cells });
+    } catch (error) {
+      out.push({ n, differ: true, worst: 255, cells: 0, error: `${error?.message ?? error}` });
+    }
+  }
+  return out;
 }
 
 /** Pages whose painting taints the canvas (C15), published or not: each is
@@ -1508,6 +1661,14 @@ export function bundleGroup(picked, name = '', { keep = 0, explicit = false, key
 
 // ─── The bundle, read back (C33) ────────────────────────────────────────────
 
+/** The layout hash of one document: every block, line and running head
+ *  with its place on the page, pages counted from the document's first.
+ *  What C33 compares, what `sandbox.chapters` records and what
+ *  `pnpm cookbook sandbox` computes of the Sandbox's own layout (#736). */
+export function layoutHash(doc) {
+  return shortHash(vdtText([doc], { own: true }));
+}
+
 /** A short hash of a layout text (two rounds of FNV-1a), for the report. */
 function shortHash(text) {
   let a = 0x811c9dc5;
@@ -1534,7 +1695,7 @@ function firstDifference(pen, bundle) {
 }
 
 /** What a warning of a document names, positions aside. */
-function warningsOf(doc) {
+export function warningsOf(doc) {
   const said = (w) => (/^comic[A-Z]/.test(w.kind) ? comicDetail(w)
     : layoutDetail(w) ?? [w.resourceId, w.target, w.term, w.text, w.reason, w.value]
       .filter((x) => typeof x === 'string' || typeof x === 'number').join(' '));
@@ -1833,7 +1994,7 @@ export function bundleLanguage(engine, config, doc) {
  * laid out again against the pen's documents ({@link readBundleBack}), or
  * `error` when a resource's file cannot be found.
  */
-export async function sandboxBundle({ select = 'last', keep = null, id, name, description, locale, thumbnail = null, folio = null } = {}) {
+export async function sandboxBundle({ select = 'last', keep = null, id, name, description, locale, thumbnail = null, folio = null, committed = null } = {}) {
   const cb = record();
   const whole = pick(select);
   if (!whole) return { error: 'no recorded build' };
@@ -1989,9 +2150,17 @@ export async function sandboxBundle({ select = 'last', keep = null, id, name, de
     // The documents the bundle stands for, one per chapter, and the pages
     // of every build the capture publishes.
     const penDocs = held.flatMap((b) => b.docs ?? []);
+    const base64 = base64Of(bytes);
     return {
-      base64: base64Of(bytes), warnings: created.warnings ?? [], notes, warns, files: Object.keys(created.files).sort(),
+      base64, warnings: created.warnings ?? [], notes, warns, files: Object.keys(created.files).sort(),
+      // The committed bundle, when its bytes are others (an earlier
+      // engine wrote it): read back by this engine against the pen's
+      // documents, the C33 comparison on the committed bytes (#734).
+      ...(committed && committed !== base64 ? { committedReadBack: await readBundleBack(engine, bytesOfBase64(committed), penDocs, held) } : {}),
       builds: group ? group.builds.map((i) => i + 1) : null,
+      // The warnings of the builds the bundle holds, as C33 keys them: what
+      // the Sandbox may raise on this bundle without it being news (#736).
+      penWarnings: penDocs.flatMap((doc) => (doc ? warningsOf(doc) : [])),
       pages: penDocs.reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
       allPages: (whole.docs ?? []).reduce((sum, doc) => sum + (doc?.pages?.length ?? 0), 0),
       readBack: await readBundleBack(engine, bytes, penDocs, held),

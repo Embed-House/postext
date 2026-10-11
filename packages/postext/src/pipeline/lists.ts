@@ -280,7 +280,7 @@ const OWN_ZERO = new Set<string>(['simp-chinese-informal', 'trad-chinese-informa
  * Walks content blocks identifying contiguous ordered-list runs per depth,
  * computes each item's formatted number + width, and the max width per run
  * (for right-align; per depth instead with `orderedLists.numberWidth:
- * 'level'`). Also tracks the global max per depth (for level-indent
+ * 'level'`, the item's own with `'item'`). Also tracks the global max per depth (for level-indent
  * cascade in ordered lists).
  */
 export function computeOrderedListRunMetrics(
@@ -408,6 +408,13 @@ export function computeOrderedListRunMetrics(
       const widest = maxNumberByDepth.get(depthOf.get(idx) ?? 1);
       if (widest !== undefined) entry.maxNumberWidthPx = widest;
     }
+  }
+  // `numberWidth: 'item'` (#722): the column of an item is its own
+  // number, so its text starts one gap after its own label. The indents
+  // of the deeper levels keep the widest number of the level above
+  // (`maxWidthByDepth`).
+  if (lists.numberWidth === 'item') {
+    for (const entry of perBlock.values()) entry.maxNumberWidthPx = entry.numberWidthPx;
   }
   return { perBlock, maxWidthByDepth };
 }

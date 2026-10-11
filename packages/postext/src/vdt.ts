@@ -28,6 +28,7 @@ import type {
   ResolvedMathConfig,
   ResolvedPdfGenerationConfig,
   ResolvedPrintConfig,
+  ResolvedContrastConfig,
   ResolvedFolioConfig,
   ResolvedDesignSlot,
   ResolvedPartsConfig,
@@ -127,6 +128,10 @@ export interface ResolvedConfig {
   /** Print production (`PostextConfig.print`), resolved, when the config
    *  sets any. Layout ignores it; postext-pdf and the preflight read it. */
   print?: ResolvedPrintConfig;
+  /** The contrast check's settings (`PostextConfig.contrast`), resolved,
+   *  when the config sets any. Layout ignores them; `contrastDocument`
+   *  reads them. */
+  contrast?: ResolvedContrastConfig;
   /** The Folio 3D viewer settings (`PostextConfig.folio`), resolved, when
    *  the config sets any. Layout ignores them; `postext-folio` reads them. */
   folio?: ResolvedFolioConfig;
@@ -416,6 +421,22 @@ export interface VDTLineSegment {
    *  innermost that names one), a BCP 47 tag as written. Renderers declare
    *  it (HTML `lang`, PDF `/Lang`). Absent otherwise. */
   lang?: string;
+  /** The script this word is shaped in (ISO 15924), when it has no letter
+   *  of its own and its face draws punctuation or digits by script (#725,
+   *  `bodyText.scriptContext`): `46.` ending a Latin sentence set in an
+   *  Arabic face takes `'Latn'`, the brackets of `(1367)` in an Arabic
+   *  sentence `'Arab'`. `width` was measured in that script, and every
+   *  renderer shapes the word in it: the canvas and the HTML by setting it
+   *  beside a hidden character of the script (`scriptMark`), the PDF by
+   *  asking its shaper for it. Left alone, each shaper would choose by a
+   *  rule of its own. A piece with no letter of a word that has one
+   *  (`10.1006/` of a DOI parted at its joints) says the script it has
+   *  inside that word; a doubled ellipsis or dash (`……`, `——`) of a word
+   *  with no letter in a Chinese or Japanese document says `'Hani'`, the
+   *  forms of Han text. Absent on every other segment, and on every segment
+   *  of a face that draws them the same under any script. (The name
+   *  `script` is taken by superscripts and subscripts.) */
+  scriptContext?: import('./measure/script').ScriptContext;
   /** The run's UAX #9 embedding level, when it is more than 1 (a number or
    *  a Latin word inside an Arabic phrase inside an English paragraph) or a
    *  renderer needs it for tagging and `/ActualText`. Absent otherwise:
@@ -679,6 +700,12 @@ export interface VDTLine {
    *  CJK line flagged {@link cjkLoose}, or a line holding a tab stop
    *  ({@link tabbed}). */
   ragged?: boolean;
+  /** The word-space ratio (justified over natural, over 3) the line would
+   *  have needed to reach the measure, when it was set {@link ragged}
+   *  because of it (#732). It marks that fallback and no other: a tabbed
+   *  line, a code line and a CJK line are ragged without it. Reported as a
+   *  `raggedLine` content warning. */
+  raggedSpaceRatio?: number;
   /** A justified CJK line that needed more inter-character spacing than the
    *  cap (½ em, or `bodyText.maxJustifyTracking` when it is set): it is set
    *  with the cap, short of the measure and {@link ragged}, and reported as
@@ -709,12 +736,25 @@ export interface VDTLine {
   plainStart?: number;
   /** Plain-text end offset within the block's plain text (exclusive) */
   plainEnd?: number;
-  /** For justified (non-last) lines: ratio of the applied justified space width
-   *  to the normal space width of the block's font. 1.0 means natural spacing.
-   *  The line's `bbox.width` stays its natural width; painted, each space
-   *  grows by the slack shared among them, and the line ends on the right
-   *  edge of the measure. */
+  /** For justified (non-last) lines: the width every space of the line is
+   *  painted at, over the space of the block's regular face (with the
+   *  block's tracking). 1.0 means the regular space. The line's
+   *  `bbox.width` stays its natural width; painted, the measure the words
+   *  leave is shared among the spaces, all set alike whatever face they
+   *  come from, and the line ends on the right edge of the measure. The
+   *  layout reads this number (the ragged fallback, the runt fix, the
+   *  loose-paragraph lever). */
   justifiedSpaceRatio?: number;
+  /** The word spacing of the line as the breaker bounds it (#704): 1 plus
+   *  the line's slack over its spaces, each counted at its own width, in
+   *  regular spaces. That is the number `bodyText.minWordSpacing` and
+   *  `maxWordSpacing` limit: a space of an italic or a bold run is narrower
+   *  or wider than the regular one, so a line that holds one is painted a
+   *  little under or over the limit it was broken within, and
+   *  {@link justifiedSpaceRatio} alone would read past it. Present only
+   *  when it differs from `justifiedSpaceRatio`; read both through
+   *  `lineWordSpacing`. Reports only: no break and no lever reads it. */
+  justifiedSpaceLimitRatio?: number;
   /** The Chinese marks set on this line (emphasis dots, proper-name and
    *  book-title lines, #193), for renderers to draw as they are; absent on
    *  a line with none. */
@@ -1602,6 +1642,12 @@ export interface VDTBlock {
    *  via canvas `letterSpacing`, CSS `letter-spacing` or PDF `Tc`, adding a
    *  line's own `VDTLine.letterSpacing`. */
   letterSpacing?: number;
+  /** Set one line shorter to take up a runt (`bodyText.tightenRunts`,
+   *  #733): `tracking` is the negative tracking used, in thousandths of an
+   *  em, 0 when the word spaces alone carried the line. Absent when no fix
+   *  was made. The tracking itself is in {@link letterSpacing}, with
+   *  whatever else the style asks for; the renderers do not read this. */
+  runtFix?: { tracking: number };
   /** Column balancing: the levers that fired on this block — space added
    *  above it, the paragraph run a line long — and how much. Absent when
    *  balancing left the block alone. The band caps that cut a band level
@@ -1830,7 +1876,9 @@ export interface VDTColumn {
    *  gap is intentional, so column balancing leaves it alone. */
   forcedBreak?: boolean;
   /** True while a band cap (trailing or before a page-span box) cuts this
-   *  column level with the others of its band. */
+   *  column level with the others of its band. A closing band that ended
+   *  level with no cap carries it too: its columns are cut on the grid line
+   *  under its text when the flow of the page is closed (#713). */
   bandCapped?: boolean;
   /** True when a trailing band cap cut this column so a closing band ends
    *  level: its bottom is the level cut, and column balancing fills the
@@ -2646,6 +2694,15 @@ export type ContentWarning = ContentWarningBase & (
    *  address that cannot break. `text` is the line's text. Found by the
    *  layout, so `collectContentWarnings` never returns it. */
   | { kind: 'cjkLooseLine'; text: string }
+  /** A line of a justified paragraph set ragged because its word spaces
+   *  would have stretched past 3× their width to reach the measure
+   *  (`VDTLine.raggedSpaceRatio`, #732): the first line of a story in a
+   *  narrow column that cannot take the next word, the line before a web
+   *  address that breaks only at its joints. `text` is the line's text and
+   *  `ratio` the stretch it would have needed. Reword the copy or give the
+   *  line a break it can take. Found by the layout, so
+   *  `collectContentWarnings` never returns it. */
+  | { kind: 'raggedLine'; text: string; ratio: number }
   /** A word of a joining script (Arabic, Syriac, N'Ko…) wider than its
    *  line: such a word is never divided (its letters connect, and a piece
    *  would lose its joining forms), so it runs past the measure
@@ -2805,6 +2862,21 @@ export type ContentWarning = ContentWarningBase & (
    *  say). The build reports it instead of dropping it silently. It has a
    *  source range and no page. Found by the layout. */
   | { kind: 'unplaced'; resourceId?: string }
+  /** `shortListSplit` (#749): a list of `items` items, short by
+   *  `bodyText.shortListMaxItems`, cut between two columns or pages. Under
+   *  `bodyText.shortListSplit: 'warn'` every such list is reported; under
+   *  `'avoid'` only the one no column could hold whole (a list taller than
+   *  an empty column, or than the room a float left of one). One per
+   *  list, with the range of the list and the page of its first item.
+   *  Found by the layout. */
+  | { kind: 'shortListSplit'; items: number }
+  /** `openerFloat` (#749): a float set on an opener page (the page a part
+   *  or a heading's own break opens, the first page of a document that
+   *  starts with a heading) under `layout.openerFloats: 'warn'`: a figure,
+   *  a table or a strip (`resourceId`), or a floated box. One per float,
+   *  with the range of the block citing it (of the box) and its page.
+   *  Found by the layout. */
+  | { kind: 'openerFloat'; resourceId?: string }
   /** `designTextTruncated` (#628): a design text element did not fit its
    *  width and lost part of a line: cut by an ellipsis (`mode`
    *  `'ellipsis-*'`, its `overflow`) or clipped with ink past its box

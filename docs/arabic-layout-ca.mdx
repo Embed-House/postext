@@ -82,6 +82,24 @@ Els parèntesis, els claudàtors, les claus i les cometes angulars s'emmirallen 
 
 Els parèntesis ornamentals de les cites de l'Alcorà, ﴿ (U+FD3F) i ﴾ (U+FD3E), no s'emmirallen: des d'Unicode 14, ﴿ és el d'obertura i ﴾ el de tancament, i els seus glifs estan dibuixats per a text de dreta a esquerra. Tecleja primer ﴿: `﴿بسم الله الرحمن الرحيم﴾` s'imprimeix amb ﴿ a la dreta. Tampoc no són claudàtors aparellats, de manera que en un paràgraf d'esquerra a dreta (un verset àrab citat en un llibre en català) els parèntesis al costat d'una paraula llatina prenen la direcció del paràgraf: ﴿ queda a l'esquerra del verset i el parell es llegeix invertit, com en un navegador. Compon la cita com un aïllament de dreta a esquerra, `:rtl[﴿بسم الله الرحمن الرحيم﴾]`, i els dos parèntesis van amb el verset, ﴿ a la seva dreta.
 
+### Paraules sense lletres
+
+Una paraula feta només de xifres, signes de puntuació o símbols (`46.`, `1367)`, `».`) no té escriptura pròpia, i una font pot dibuixar-ne els signes segons l'escriptura. Amiri compon el punt, els parèntesis i les cometes angulars llatins en text llatí i els àrabs a la resta: el seu punt fa 0,20 em davant de 0,32, un parèntesi 0,26 davant de 0,46. Quan rep una paraula així aïllada, cada motor de composició tria una escriptura amb la seva pròpia regla: una versió de Chrome agafa les formes per defecte de la font, una de posterior les llatines, el PDF les de per defecte. La mateixa nota tallava llavors les línies d'una altra manera d'un navegador a un altre, i el seu PDF hi posava signes d'una altra amplada als espais mesurats.
+
+Postext ho decideix (`bodyText.scriptContext`, activat per defecte). Una paraula així agafa l'escriptura del text que l'envolta:
+
+- pintada d'esquerra a dreta, la de la lletra més propera abans d'ella dins del seu aïllat, i si no la de la més propera després: `46.` al final d'una nota en anglès és llatina, i el `1367` de `(1367)` en una frase àrab és àrab;
+- pintada de dreta a esquerra (un parèntesi o un punt en un nivell de dreta a esquerra), la de la lletra de dreta a esquerra més propera: els parèntesis de `(1367)` en una frase àrab continuen sent àrabs;
+- sense cap lletra a prop (un paràgraf o un aïllat de nombres sols), l'escriptura de la llengua del document.
+
+La maquetació mesura la paraula en aquesta escriptura, i el canvas, l'HTML, l'EPUB de maquetació fixa i el PDF pinten aquestes formes amb aquesta amplada, igual a tots els navegadors. Una nota en alfabet llatí, una citació o una entrada de bibliografia en un llibre àrab no necessiten un espai de no separació perquè `46.` o `(m. 1367)` conservin les formes llatines: s'escriuen amb espais normals. Una paraula composta en l'escriptura àrab no porta espaiat entre lletres, com les paraules àrabs que l'envolten.
+
+Una paraula que té alguna lletra és un sol tram d'escriptura, i també ho són els trossos en què es pinta. Un DOI o una adreça web poden acabar la línia a cadascuna de les seves juntures, i una paraula més ampla que la línia es talla on la línia s'acaba; el tros que queda sense lletres (`10.1006/` i `.2001` de `10.1006/ijhc.2001.0458`) agafa l'escriptura que té dins de la seva paraula: la de la lletra anterior i, si no n'hi ha, la de la primera lletra de la paraula. Es mesura i es pinta en aquesta escriptura, de manera que l'adreça queda compacta en una font les xifres de la qual canvien amb l'escriptura (Noto Serif SC les dibuixa de 0,55 em en text llatí i de 0,47 em a la resta).
+
+En un document xinès o japonès (`locale` `zh` o `ja`), els punts suspensius dobles i el guió llarg doble (`……`, `——`, `――`) són el signe propi del document allà on se citin. Una paraula sense lletres que en conté un, com `…….` al final d'una frase en anglès del colofó, compon el parell amb les formes del text han (sis punts centrats, un guió de dos quadratins) i el que l'acompanya, el punt final o una cometa, en l'escriptura de la frase. No cal `:ltr[…]` ni un tram amb un altre estil.
+
+La regla actua en contextos llatí, grec, ciríl·lic, àrab i hebreu, i només en una font la puntuació o les xifres de la qual canvien amb l'escriptura; qualsevol altra es maqueta com abans. Cobreix el text corregut, els encapçalaments, les llistes, els peus, les notes, les cel·les de taula i la línia de punts d'una entrada de l'índex. Una paraula de dreta a esquerra es mesura tal com es pinta, de manera que un parèntesi o un punt a la seva vora ocupa el mateix a tots els navegadors. Una configuració desada amb postext 1.27 o anterior es llegeix amb `scriptContext: false` i conserva les formes que li va donar el seu navegador. Vegeu [`bodyText.scriptContext`](/ca/docs/configuration-text#text-de-cos).
+
 ## Ordre de les pàgines i enquadernació per la dreta
 
 Un llibre àrab s'enquaderna per la vora dreta. La primera pàgina és una pàgina esquerra, els plecs es llegeixen de la pàgina dreta a l'esquerra i les columnes s'omplen de dreta a esquerra. Postext compon una pàgina així com una pàgina d'esquerra a dreta vista en un mirall: tot el que és al flux del text (columnes, línies, sagnats, marques de llista, flotants, notes, requadres, taules) ho col·loca el mateix codi que en un llibre en català, i després la pàgina s'emmiralla sencera, amb cada paraula, imatge i fórmula pintada del dret.
@@ -453,6 +471,7 @@ Els capítols comencen amb `:::numbering{format="abjad" startAt=1}` abans de la 
 - **Vers**: no hi ha vers seguit dins de la prosa, ni formes estròfiques amb una tornada centrada més enllà de línies centrades soltes; un hemistiqui més ample que la mesura es parteix des del costat d'inici, sense sagnat francès.
 - **Caixida**: el text que es copia de la sortida HTML conserva els tatweels inserits, i res no impedeix que les caixides de línies veïnes s'apilin l'una sobre l'altra.
 - **Els llistats de codi** es llegeixen d'esquerra a dreta en un llibre de dreta a esquerra: cada línia es compon des del costat més allunyat de la caixa, com una cita en anglès, amb els seus números de línia al marge de l'esquerra i el text copiat en ordre lògic. Vegeu [Llistats de codi](/ca/docs/configuration-styles#llistats-de-codi).
+- **Les paraules sense lletres** agafen l'escriptura del seu context en el text corregut, els encapçalaments, les llistes, els peus, les notes i les cel·les. El marcador d'una llista, el rètol d'una referència creuada, la crida d'una nota, el text de disseny (un foli, una capçalera de nombres), la retolació de còmic i un paràgraf compost pel compositor CJK es componen aïllats, com els compon cada navegador.
 
 ## Referències
 

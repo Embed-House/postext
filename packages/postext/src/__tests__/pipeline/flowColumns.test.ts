@@ -233,6 +233,108 @@ describe('main-flow :::columns (#634)', () => {
   });
 });
 
+describe(':::columns marginTop and marginBottom (#714)', () => {
+  // 72 dpi (1 pt = 1 px), 13 pt lines from y = 20, a line of space between
+  // paragraphs. A one-line group after a one-line paragraph stands at 46.
+  const cfg = (layoutType: 'single' | 'double', paragraphSpacing = true): PostextConfig => ({
+    page: { dpi: 72, width: pt(400), height: pt(300), margins: { top: pt(20), bottom: pt(20), left: pt(20), right: pt(20) } },
+    layout: { layoutType, gutterWidth: pt(12) },
+    bodyText: { fontSize: pt(10), lineHeight: pt(13), paragraphSpacing, firstLineIndent: pt(0) },
+    headings: { balancing: { enabled: false } },
+    calloutStyles: [
+      // A frameless box: no padding, no margins.
+      { id: 'plain', title: '', padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) }, border: { enabled: false }, backgroundEnabled: false, stripe: { enabled: false }, icon: { kind: 'none' }, marginTop: pt(0), marginBottom: pt(0) },
+      // The same with the default margins of a box.
+      { id: 'grid', title: '', span: 'page', padding: { top: pt(0), right: pt(0), bottom: pt(0), left: pt(0) }, border: { enabled: false }, backgroundEnabled: false, stripe: { enabled: false }, icon: { kind: 'none' } },
+    ],
+    header: { elements: [] },
+    footer: { elements: [] },
+  } as PostextConfig);
+  const group = (attrs: string, n = 2): string =>
+    `Intro paragraph.\n\n:::columns{count=2${attrs}}\n${Array.from({ length: n }, (_, i) => `G${i} one.`).join('\n\n')}\n:::\n\nAfter the group.`;
+  const yOf = (doc: VDTDocument, text: string): number => textBlocks(doc).find((t) => startsWith(t.block, text))!.block.bbox.y;
+  /** Where every block and line stands (the fences differ in length, so
+   *  the source offsets do). */
+  const shape = (cols: VDTDocument['pages'][number]['columns']): string =>
+    JSON.stringify(cols.map((c) => [c.bbox, c.blocks.map((b) => [b.type, b.bbox, b.lines.map((l) => [l.text, l.bbox])])]));
+  const shapeOf = (doc: VDTDocument): string => doc.pages.map((p) => shape(p.columns)).join('\n');
+  const at = (attrs: string, layoutType: 'single' | 'double' = 'single', spacing = true) => {
+    const doc = build(group(attrs), cfg(layoutType, spacing));
+    return { group: yOf(doc, 'G0'), after: yOf(doc, 'After') };
+  };
+
+  it('marginBottom sets the space under a group in the text, a minimum on the grid', () => {
+    // Without it: the body's paragraph spacing, a line.
+    expect(at('')).toEqual({ group: 46, after: 72 });
+    expect(at(' marginBottom="0"')).toEqual({ group: 46, after: 59 });
+    // Less than a line is rounded up by the snap; two lines are two lines.
+    expect(at(' marginBottom="0.75em"')).toEqual({ group: 46, after: 72 });
+    expect(at(' marginBottom="26pt"')).toEqual({ group: 46, after: 85 });
+    // With no paragraph spacing the text followed the group with no space.
+    expect(at('', 'single', false)).toEqual({ group: 33, after: 46 });
+    expect(at(' marginBottom="13pt"', 'single', false)).toEqual({ group: 33, after: 59 });
+  });
+
+  it('holds for a group across a two-column page', () => {
+    expect(at(' span="page"', 'double')).toEqual({ group: 46, after: 72 });
+    expect(at(' span="page" marginBottom="0"', 'double')).toEqual({ group: 46, after: 59 });
+    expect(at(' span="page" marginBottom="26pt"', 'double')).toEqual({ group: 46, after: 85 });
+    expect(at(' span="page" marginTop="26pt"', 'double')).toEqual({ group: 59, after: 85 });
+    // 0.75 em under the group is what a frameless box round it leaves.
+    const boxed = build(`Intro paragraph.\n\n:::callout{type="grid"}\n:::columns{count=2}\nG0 one.\n\nG1 one.\n:::\n:::\n\nAfter the group.`, cfg('double'));
+    expect(at(' span="page" marginBottom="0.75em"', 'double').after).toBe(yOf(boxed, 'After'));
+  });
+
+  it('marginTop merges with the space pending above the group, and gives way at a column head', () => {
+    expect(at(' marginTop="6pt"')).toEqual({ group: 46, after: 72 });
+    expect(at(' marginTop="26pt"')).toEqual({ group: 59, after: 85 });
+    const head = (attrs: string) => yOf(build(`:::columns{count=2${attrs}}\nG0 one.\n\nG1 one.\n:::\n\nAfter.`, cfg('single')), 'G0');
+    expect(head(' marginTop="26pt"')).toBe(head(''));
+    expect(head('')).toBe(20);
+  });
+
+  it('works on a group inside a box', () => {
+    const box = (attrs: string) => {
+      const doc = build(`:::callout{type="plain"}\nIntro.\n\n:::columns{count=2${attrs}}\nG0 one.\n\nG1 one.\n:::\n\nAfter.\n:::\n\nUnder the box.`, cfg('single'));
+      return { group: yOf(doc, 'G0'), after: yOf(doc, 'After'), box: frames(doc)[0]!.block.bbox.height };
+    };
+    // Without them: the space pending above (a line), none under.
+    expect(box('')).toEqual({ group: 46, after: 59, box: 52 });
+    expect(box(' marginTop="20pt" marginBottom="9pt"')).toEqual({ group: 53, after: 75, box: 68 });
+    // A top margin smaller than the space pending changes nothing above.
+    expect(box(' marginTop="5pt" marginBottom="30pt"')).toEqual({ group: 46, after: 89, box: 82 });
+    // The box's only child: no space above, and its bottom margin is
+    // dropped at the box's foot.
+    const alone = (attrs: string) => shapeOf(build(`:::callout{type="plain"}\n:::columns{count=2${attrs}}\nG0 one.\n\nG1 one.\n:::\n:::\n\nUnder the box.`, cfg('single')));
+    expect(alone(' marginTop="20pt" marginBottom="9pt"')).toBe(alone(''));
+  });
+
+  it('a group that splits keeps its cuts, and its last part takes the space under', () => {
+    const split = (attrs: string) => build(group(attrs, 60), cfg('single'));
+    const plain = split('');
+    const none = split(' marginBottom="0"');
+    expect(none.pages).toHaveLength(plain.pages.length);
+    const last = plain.pages.length - 1;
+    for (let p = 0; p < last; p++) expect(shape(none.pages[p]!.columns)).toBe(shape(plain.pages[p]!.columns));
+    expect(yOf(plain, 'After')).toBe(46);
+    expect(yOf(none, 'After')).toBe(33);
+    // A top margin moves the first part only: the parts that go on open
+    // their pages at the head.
+    const top = split(' marginTop="39pt"');
+    expect(yOf(top, 'G0')).toBe(72);
+    for (const page of top.pages.slice(1)) expect(page.columns[0]!.blocks[0]!.bbox.y).toBe(20);
+  });
+
+  it('ignores a value that does not parse and a negative one', () => {
+    const plain = shapeOf(build(group(''), cfg('single')));
+    for (const attrs of [' marginBottom="wide"', ' marginBottom="-6pt"', ' marginTop="-1em"', ' marginTop=""']) {
+      expect(shapeOf(build(group(attrs), cfg('single'))), attrs).toBe(plain);
+    }
+    // And the two that parse do move it.
+    expect(shapeOf(build(group(' marginBottom="0"'), cfg('single')))).not.toBe(plain);
+  });
+});
+
 describe('wrapFlowColumns', () => {
   it('boxes a group outside a box and leaves one inside a box alone', () => {
     const blocks = parseMarkdown(':::columns{count=2 span="page"}\nA.\n:::\n\n:::callout\n:::columns{count=2}\nB.\n:::\n:::');
@@ -241,6 +343,12 @@ describe('wrapFlowColumns', () => {
     const boxes = out.blocks.filter((b) => b.type === 'containerStart' && b.containerName === 'callout');
     expect(boxes.map((b) => b.containerAttrs?.type)).toEqual([FLOW_COLUMNS_PAGE_STYLE_ID, undefined]);
     expect(wrapFlowColumns(parseMarkdown('No groups.')).wrapped).toBe(false);
+  });
+
+  it('hands the fence\'s margins to the group\'s box, and nothing else (#714)', () => {
+    const boxOf = (md: string) => wrapFlowColumns(parseMarkdown(md)).blocks.find((b) => b.type === 'containerStart' && b.containerName === 'callout')!.containerAttrs;
+    expect(boxOf(':::columns{count=3 gap="2em" marginTop="1em" marginBottom="0"}\nA.\n:::')).toEqual({ type: FLOW_COLUMNS_STYLE_ID, span: 'column', placement: 'here', marginTop: '1em', marginBottom: '0' });
+    expect(boxOf(':::columns{count=3 gap="2em"}\nA.\n:::')).toEqual({ type: FLOW_COLUMNS_STYLE_ID, span: 'column', placement: 'here' });
   });
 });
 

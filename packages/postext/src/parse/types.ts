@@ -281,6 +281,12 @@ export interface InlineSpan {
     /** Optional letter-case transform for the label part (`Fig.` /
      *  `Figure`) of the computed label. Ignored when `text` is set. */
     case?: RefCase;
+    /** Set by the pipeline once the label is resolved (#702): the label is
+     *  words (a `text` override, the title of a heading, an anchor or a
+     *  box) with a space between two of them, so a line may break there
+     *  (`crossRefs.breakLabels`). A label with a number or a page never
+     *  is, and a number in a label of words keeps to the word before it. */
+    breakable?: true;
   };
   /** Emphasis dots (着重号, `:dots[text]{style fill pos}`, #193): one mark
    *  under each character in horizontal text, to its right in vertical
@@ -640,6 +646,13 @@ export interface IndexBlockInfo {
    *  and its sub-entry above a sub-sub-entry), printed above it in the
    *  same block for the same reason, outermost first. */
   leads?: { level: number; spans: InlineSpan[] }[];
+  /** Which group of the index the entry is in (0 for the first), its place
+   *  among the entry blocks of that group (0 for the one under the head)
+   *  and how many they are: what the keep rule of a group divided between
+   *  two columns reads (`index.groups.splitMinEntries`, #712). */
+  groupIndex?: number;
+  groupPlace?: number;
+  groupSize?: number;
 }
 
 export interface ContentBlock {

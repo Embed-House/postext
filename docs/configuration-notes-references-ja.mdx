@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Note leading; em is the note size.
   color?: ColorValue;         // Note colour; the body colour when unset.
   textAlign?: TextAlign;      // The body alignment when unset.
+  wordBreak?: 'normal' | 'keep-all'; // The document's cjk.wordBreak when unset.
   hangingIndent?: Dimension;  // Indent of a note's turnover lines.
   spaceBetween?: Dimension;   // Space between two notes.
   spaceAbove?: Dimension;     // Space between the text and the rule; em is the body size.
@@ -139,6 +140,12 @@ interface FootnotesConfig {
       <td><code>TextAlign</code></td>
       <td>本文の行そろえ</td>
       <td>注の文字の行そろえです。</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>注が、本文とは別に、中国語・日本語・韓国語の文字の間のどこで改行できるかです（<a href="/ja/docs/configuration-east-asian#東アジアの組版"><code>cjk.wordBreak</code></a>を参照）。<code>'keep-all'</code>は、こうした文字の連なりを分けずに保ちます。英語の注が引用する異文（<code>看月光</code>）は、2文字ごとに単語結合子をはさむ必要がなくなり、ページの詩はこれまでどおりどの2文字の間でも改行します。<code>'normal'</code>は、<code>'keep-all'</code>を設定した文書でその逆の働きをします。段の下端の注、章の後の注、見開きの本文の脇の注に適用されます。postext 1.28以降。</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -400,6 +407,7 @@ interface CrossRefsConfig {
   section?: string;  // Around any other heading's number: "section {n}".
   page?: string;     // Around a page number: "p. {n}".
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // A :ref without style=.
+  breakLabels?: boolean; // A label of words breaks at its spaces.
 }
 ```
 
@@ -437,6 +445,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td><code>style=</code>を指定しない、見出しまたはアンカーへの<code>:ref</code>が印字する内容です。<code>'default'</code>：番号付きの見出しはその語と番号、番号のない見出しはタイトル、アンカーはそのテキストを印字します。<code>style</code>を指定した参照はその指定を保ち、図と表への参照には影響しません。</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>ラベルが語である参照の、スペースの位置での改行を許します。対象は、<code>[語]{'{#id}'}</code>アンカーのテキスト、見出しや囲みのタイトル、<code>text="…"</code>による上書き（図や表への参照でも同じ）です。ラベルのスペースは行に合わせて伸縮し、参照は1つのリンクのままです。語はハイフネーションされません。このようなラベルの中では、数字、ローマ数字、1文字だけの語は前の語から離れません（<code>Fig. 1a</code>、<code>plate IV</code>）。番号やページを含むラベル（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）は、テンプレートに通常のスペースがあっても改行されません。<code>false</code>は、postext 1.27までと同じく、すべてのラベルを内側で改行しない1語として組みます。<code>configVersion</code> 12より前に保存した設定で、テキストに参照があるものは<code>false</code>で読み込まれるので、行の位置は変わりません（<a href="/ja/docs/configuration-programmatic-usage#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -456,6 +470,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +545,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>引用を本全体で通して扱うか、章ごとに扱うか（各文書、および引用のあとの各レベル1見出し）。章ごとでは、番号方式のスタイルは各章を 1 から数え、二つの章で引用された文献はそれぞれの章の番号を取ります。注のスタイルは各章の最初の引用で文献を完全な形で書きます。<code>bibliography.scope: 'chapter'</code>と組み合わせて使い、章の一覧はその章の番号になります。</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>引用した著者の名前を辞書で分割できるようにします。<code>false</code>にすると、参考文献に現れるすべての人物（著者、編者、訳者）の姓と、1つの文字列で指定した名前を、大文字で始まる形で現れるかぎり、どこでも分割しません。引用の中でも、本文でも、一覧でも同じなので、行が<code>(Lup-</code>で終わることはありません。二重姓は部分ごとに扱います。著者の姓がBakerでも、<code>baker</code>という語が分割されなくなることはありません。<a href="/ja/docs/configuration-text#分割しない語">分割しない語</a>を参照してください。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -814,6 +835,12 @@ const config: PostextConfig = {
       <td><code>Dimension</code></td>
       <td>索引の1行分</td>
       <td>各グループの上のアキです。見出しの有無にかかわらず適用します。最初のグループの上には付かず（見出しからの距離は見出し側のアキで決まります）、段の先頭にも付きません。</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>段やページがグループの途中で終わるとき、段の末尾に残すそのグループの項目数と、次の段の頭に送る項目数の下限です。<code>2</code>では、段の末尾でグループ見出しの下に項目が1つだけ残ることも、次のグループの前に1項目だけが段の頭に来ることもありません。2項目または3項目のグループはまとめて次の段に移り、4項目以上のグループは、前後に2項目ずつ残る位置でだけ分かれます。1項目は項目ブロック1つ（主項目または副項目。その上に組まれる見出しとページのない上位項目を含みます）です。1段より高いグループは、やむを得ない位置で分かれます。最後の帯の高さをそろえる切り方もこの規則に従うので、分けられない最後のグループがあると、段の高さがその行数だけそろわないことがあります。<code>1</code>にすると、postext 1.27までと同じく、どの項目のあいだでも段を改められます。postext 1.28以降。それより前に保存された、索引を出力する文書は<code>1</code>のままです（<code>pinLegacyIndexGroupSplit</code>）。</td>
     </tr>
     <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>

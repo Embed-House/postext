@@ -5,10 +5,10 @@ export const metadata = {
   sidebarTitle: 'Architecture',
   description: 'Technical architecture of the Postext layout engine',
   lang: 'en',
-  lastUpdated: '2026-10-10',
-  readingTime: '38 min',
+  lastUpdated: '2026-10-11',
+  readingTime: '45 min',
   order: 2,
-  plainSummary: "This page explains how Postext works inside, and it is written for programmers. First, Postext measures every word without drawing anything on screen, which makes it very fast. Then it works out where every line, picture and column goes, and keeps that plan in memory. It repeats the work until nothing moves any more. Last, it draws the finished pages as a web page, a canvas image or a PDF file. When you change a word, only the parts that changed are worked out again.",
+  plainSummary: "This page explains how Postext works inside, and it is written for programmers. First, Postext measures every word without drawing anything on screen, which makes it very fast. Then it works out where every line, picture and column goes, and keeps that plan in memory. It repeats the work until nothing moves any more. Last, it draws the finished pages as a web page, a canvas image or a PDF file. When you change a word, it lays the pages out again and reuses the measurements of the paragraphs that did not change.",
 };
 
 # Postext Architecture
@@ -83,7 +83,7 @@ has gone fuzzy.
     </tr>
     <tr>
       <td><strong>Demerits</strong></td>
-      <td>The total cost of a candidate line break in Knuth-Plass: badness plus penalties (hyphenation, widow/orphan/runt, fitness-class mismatch). The algorithm picks the break set with the lowest total demerits.</td>
+      <td>The total cost of a candidate line break in Knuth-Plass: badness plus penalties (hyphenation, a runt last line, fitness-class mismatch). The algorithm picks the break set with the lowest total demerits. The split of a paragraph between two columns is chosen the same way, by the lowest sum of widow, orphan and slack costs.</td>
     </tr>
     <tr>
       <td><strong>Fitness Class</strong></td>
@@ -91,19 +91,19 @@ has gone fuzzy.
     </tr>
     <tr>
       <td><strong>Slack</strong></td>
-      <td>Unused vertical space left at the bottom of a column. A squared slack cost (weighted by <code>slackWeight</code>) nudges the line breaker toward break sets that fill columns tightly.</td>
+      <td>Lines left empty at the bottom of a column when a paragraph is split there or moved on whole. A squared slack cost (weighted by <code>slackWeight</code>) is weighed against the widow and orphan penalties when the engine chooses the split.</td>
     </tr>
     <tr>
       <td><strong>Backend</strong></td>
-      <td>A rendering target that consumes the converged VDT. Three are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading) and <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>). All three share the same measurement (the measure module over Pretext). A fourth, <strong>EPUB</strong> (<code>postext-epub</code>), writes the book as an e-book from the same documents.</td>
+      <td>A rendering target that consumes the finished VDT. Four are shipping today: <strong>canvas</strong> (bitmap preview), <strong>HTML</strong> (DOM-based screen reading), <strong>PDF</strong> (print-ready output via <code>postext-pdf</code>) and <strong>EPUB</strong> (<code>postext-epub</code>, the book as an e-book). All four render from the same measurement (the measure module over Pretext).</td>
     </tr>
     <tr>
-      <td><strong>Pass</strong></td>
-      <td>One stage of the layout pipeline. Each pass reads and mutates the VDT with a single responsibility.</td>
+      <td><strong>Placement Pass</strong></td>
+      <td>One walk of the content, from the first block to the last, that builds a whole VDT: it parses, measures through the cache, places text, floats and boxes, and applies the break and keep rules.</td>
     </tr>
     <tr>
-      <td><strong>Convergence Loop</strong></td>
-      <td>The outer loop that re-runs layout passes when later passes invalidate earlier decisions. Bounded to a maximum of 5 iterations.</td>
+      <td><strong>Round</strong></td>
+      <td>A re-run of the placement pass with hints from the previous one: a band cap, balancing levers, settled page labels or note numbers. Each kind of round has its own limit (see <a href="#the-pass-driver">The Pass Driver</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -111,15 +111,15 @@ has gone fuzzy.
 
 ## System Architecture
 
-<Illustration name="SystemArchitecture" data='{"title": "Postext system architecture", "desc": "Enriched markdown and PostextConfig enter a parser that builds the Virtual Document Tree. Pretext measures text. Seven layout passes mutate the VDT inside a convergence loop. A backend renders the final VDT to HTML or PDF.", "caption": "Parser → VDT ↔ Pretext → seven layout passes → backend → output.", "markdown": "Enriched Markdown", "configTitle": "PostextConfig", "configSubtitle": "(columns, rules, spacing)", "engine": "Layout Engine", "parser": "Parser", "pass1": "Pass 1", "vdtLine1": "Virtual Document", "vdtLine2": "Tree (VDT)", "vdtAttr1": "mutable, in-place", "vdtAttr2": "pages > columns > blocks", "vdtAttr3": "every node has a bbox", "vdtAttr4": "dirty-flag tracking", "pretext": "Pretext", "pretextSubtitle": "text measurement", "passesTitle": "Layout Passes (read &amp; mutate the VDT)", "passes": [{"num": "Pass 2", "name": "Text Measurement (via Pretext)"}, {"num": "Pass 3", "name": "Page &amp; Column Placement"}, {"num": "Pass 4", "name": "Resource Placement"}, {"num": "Pass 5", "name": "Typographic Refinement"}, {"num": "Pass 6", "name": "Column Balancing"}, {"num": "Pass 7", "name": "Vertical Rhythm Alignment"}], "convergence": "convergence (max 5)", "backend": "Backend", "backendSubtitle": "(unified interface)", "backendItems": ["Canvas / Browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "rendered output"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Postext system architecture", "desc": "Enriched markdown and PostextConfig enter the parser. The placement pass measures text through Pretext and fills the Virtual Document Tree; buildDocument runs the pass again with hints until the layout settles. A backend renders the finished VDT to HTML or PDF.", "caption": "Parser → placement pass ↔ Pretext → VDT → backend → output.", "markdown": "Enriched Markdown", "configTitle": "PostextConfig", "configSubtitle": "(columns, rules, spacing)", "engine": "Layout Engine", "parser": "Parser", "pass1": "markdown → blocks", "vdtLine1": "Virtual Document", "vdtLine2": "Tree (VDT)", "vdtAttr1": "filled in place by a pass", "vdtAttr2": "pages > columns > blocks", "vdtAttr3": "every node has a bbox", "vdtAttr4": "a new tree for every pass", "pretext": "Pretext", "pretextSubtitle": "text measurement", "passesTitle": "Placement pass (one walk of the content)", "passes": [{"num": "Measure", "name": "lines, through the cache"}, {"num": "Place", "name": "blocks into columns and pages"}, {"num": "Float", "name": "resources into page bands"}, {"num": "Break", "name": "paragraphs at column ends"}, {"num": "Keep", "name": "headings and lists with their text"}, {"num": "Snap", "name": "the flow back onto the grid"}], "convergence": "re-run with hints", "backend": "Backend", "backendSubtitle": "(unified interface)", "backendItems": ["Canvas / Browser", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "rendered output"}' />
 
 **Here is the journey your content takes through the engine:**
 
-1. The **Parser** reads your enriched markdown and config, building the initial VDT — a tree of typed blocks with no positions yet, just content and structure
-2. **Layout passes** take over, mutating the VDT in sequence: measuring text via Pretext, flowing blocks into pages and columns, refining typography until it meets professional standards
-3. The **Convergence loop** watches for trouble — when a later pass (say, fixing a widow) invalidates an earlier decision (say, column heights), the engine loops back and re-runs from the affected point. Up to 5 iterations, until everything settles
+1. The **parser** reads your enriched markdown and turns it into a flat list of typed content blocks: content and structure, no positions yet
+2. A **placement pass** walks that list once and builds the VDT. It measures each block through Pretext at the width of the column the block is about to enter, places text, floats and boxes into pages and columns, and applies the break and keep rules as it goes
+3. The **driver** (`buildDocument`) runs the pass again when a decision needs the result of a whole layout: a table of contents that prints page numbers, a page-span box that has to cut the columns above it level, a column that ended short. Each re-run takes hints from the pass before it, and each kind of re-run has its own limit
 4. The **final VDT** is the complete layout geometry: every element knows its page number, column assignment, position, and bounding box. The document is fully "typeset" before any rendering happens
-5. A **backend** walks the finished VDT and renders it to the target format — a rasterized canvas bitmap, a DOM tree of positioned HTML elements, or a PDF document with embedded fonts. The same VDT feeds all three; picking a backend is purely an output decision
+5. A **backend** walks the finished VDT and renders it to the target format: a rasterized canvas bitmap, a DOM tree of positioned HTML elements, a PDF document with embedded fonts, or an EPUB. The same VDT feeds all four; picking a backend is purely an output decision
 
 
 ## Input Layer
@@ -204,24 +204,24 @@ Every aspect of the layout pipeline is controlled by `PostextConfig`. The full s
     <tr>
       <th style={{ width: '200px' }}>Config</th>
       <th>Controls</th>
-      <th style={{ width: '120px' }}>Used in</th>
+      <th style={{ width: '200px' }}>Used in</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code>bodyText</code> / <code>headings</code></td>
       <td>Per-field widow/orphan/runt penalties, keep-together rules, justification limits, hyphenation — see <a href="/en/docs/configuration-text#body-text">Configuration → Body Text</a></td>
-      <td>Pass 2, Pass 5</td>
+      <td>Measurement, breaks and keep rules, balancing</td>
     </tr>
     <tr>
       <td><code>tableStyle</code></td>
       <td>Cell typography, borders, corner radius, header/body fills for <code>kind: 'table'</code> resources, plus the named variants of <code>tableStyles</code> a table picks with <code>table.styleId</code> — see <a href="/en/docs/configuration-resources#table-style">Configuration → Table style</a></td>
-      <td>Pass 4</td>
+      <td>Resource placement</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
       <td>Typography of resource captions: the numbered label and the description text — see <a href="/en/docs/configuration-resources#caption-style">Configuration → Caption style</a></td>
-      <td>Pass 4</td>
+      <td>Resource placement</td>
     </tr>
     <tr>
       <td><code>diagramStyle</code></td>
@@ -231,38 +231,35 @@ Every aspect of the layout pipeline is controlled by `PostextConfig`. The full s
     <tr>
       <td><code>resourceTypes</code></td>
       <td>Typed resource numbering: templates, counter formats, reset scopes, default float placement — see <a href="/en/docs/configuration-resources#resource-types">Configuration → Resource types</a></td>
-      <td>Pass 1, Pass 4</td>
-    </tr>
-    <tr>
-      <td><code>TypographyConfig</code>, <code>ColumnConfig</code>, <code>ResourcePlacementConfig</code>, <code>ReferenceConfig</code>, <code>PostextSectionOverride</code></td>
-      <td><strong>Legacy.</strong> Declared in <code>types.ts</code> but never wired into the pipeline; their responsibilities were absorbed by the sections above. Kept for reference only.</td>
-      <td>—</td>
+      <td>Content structuring, resource placement</td>
     </tr>
   </tbody>
 </table>
 
 ### Parsing Strategy
 
-Parsing is deliberately the simplest step in the pipeline. Markdown goes in, gets parsed into an AST, and each node becomes a `VDTBlock`. Resource references are resolved against the `resources[]` array by ID. Footnote definitions (paragraphs that open with `[^id]:`) leave the flow and are kept by id for the markers that cite them; the `notes[]` array is not read. The output is a flat list of typed, content-filled blocks — but with no page assignment, no column, no position.
+Parsing is deliberately the simplest step in the pipeline. Markdown goes in and comes out as a flat list of typed content blocks (`ContentBlock`, in `packages/postext/src/parse/`): a heading, a paragraph with its inline spans, a list item, a directive. The result is memoized (`parseMarkdownMemo`), so the passes of one build parse once, and so does a later build of the same text. Resource references are resolved against the `resources[]` array by ID at the start of each placement pass. Footnote definitions (paragraphs that open with `[^id]:`) leave the flow there too and are kept by id for the markers that cite them; the `notes[]` array is not read.
 
-Think of it as a manifest: "there is a heading, then a paragraph with 200 words, then a figure reference, then another paragraph." No measurements. No positioning. No layout decisions at all. The heavy work starts in Pass 2.
+Think of it as a manifest: "there is a heading, then a paragraph with 200 words, then a figure reference, then another paragraph." No measurements. No positioning. No layout decisions at all. A `VDTBlock` exists only once the placement pass has measured a block and given it a place.
 
 
 ## Virtual Document Tree (VDT)
 
 Imagine you asked a professional typesetter to lay out an entire book, but instead of handing you printed pages, they handed you a spreadsheet. Every row is an element. Every cell is a precise measurement: "the heading is at (40, 30), the first paragraph starts at (40, 78) and is 144px tall, the image goes at the top of column 2 on page 3..." That spreadsheet is the VDT.
 
-The Virtual Document Tree is the central data structure of Postext — a mutable, in-place tree representing every page, column, block, and line, each carrying a precise bounding box. Once the layout pipeline converges, the VDT *is* the answer. You can query "what is on page 72, column 2?" without rendering a single pixel.
+The Virtual Document Tree is the central data structure of Postext — a mutable, in-place tree representing every page, column, block, and line, each carrying a precise bounding box. Once `buildDocument` returns, the VDT *is* the answer. You can query "what is on page 72, column 2?" without rendering a single pixel.
 
 ### Why Mutable
 
 This is the same approach used in game engine render pipelines, where a shared mutable world state is updated by successive systems on a tight loop. And for the same reason.
 
-Immutable trees (like React's virtual DOM) allocate new objects on every change. That is fine for a UI with a few hundred components. But in a convergence loop that may run up to 5 iterations across 7 passes, potentially touching thousands of blocks, allocation pressure and garbage collection pauses become very real. The VDT uses in-place mutation with a `dirty` flag pattern instead: passes mark nodes dirty, and subsequent passes know exactly which nodes to re-examine. The engine remembers what changed so it does not redo valid work.
+A placement pass fills the tree in place. It opens a page, appends columns to it, takes a block's height off the `availableHeight` of the column the block lands in, and closes the columns of a band where a page-span box cuts it. A book has thousands of blocks, and an immutable tree (like React's virtual DOM) would allocate a new object for every one of those steps. So the nodes are plain objects and the pass writes to them.
+
+A finished pass is not patched. When `buildDocument` needs another attempt (a band cap, a balancing lever), it runs the pass again from the content and gets a new tree. The tree of the pass before is left as it was, so the driver can compare the two, keep the better one, or take some pages from each. The measurement cache makes the re-run affordable: a paragraph whose text, fonts and width did not change is read from the cache instead of being measured again.
 
 ### Structure
 
-<Illustration name="VdtStructure" data='{"title": "Virtual Document Tree structure", "desc": "Hierarchical VDT: document contains pages, each page contains columns, each column contains blocks (heading, paragraph, resource), each text block contains measured lines. Every node carries a bounding box, a dirty flag, and page/column indices.", "caption": "Every node carries bbox, dirty flag, and page/column indices.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["heading", "paragraph", "resource"], "lineLabels": ["line 0", "line 1"], "legendHeader": "Every node carries:", "legendAttrs": ["bbox: { x, y, w, h }", "dirty: boolean", "pageIndex: number", "columnIndex: number"], "linesHeader": "Lines also carry:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Virtual Document Tree structure", "desc": "Hierarchical VDT: document contains pages, each page contains columns, each column contains blocks (heading, paragraph, resource), each text block contains measured lines. Every block carries a bounding box, its type, and page/column indices.", "caption": "Every block carries its bbox, its type, and page/column indices.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["heading", "paragraph", "resource"], "lineLabels": ["line 0", "line 1"], "legendHeader": "Every block carries:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Lines also carry:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Type Definitions
 
@@ -277,8 +274,8 @@ interface VDTDocument {
   blocks: VDTBlock[];         // flat view of the same block objects
   config: ResolvedConfig;     // every sub-config resolved to non-optional
   baselineGrid: number;       // baseline increment in px (e.g. 24 for 16px/1.5)
-  converged: boolean;
-  iterationCount: number;
+  converged: boolean;         // every balancing segment ended flush or out of levers
+  iterationCount: number;     // placement passes behind this layout (see The Pass Driver)
   metadata: DocumentMetadata;
 }
 
@@ -303,24 +300,26 @@ interface VDTColumn {
   availableHeight: number;    // remaining vertical space
   baselineOffset: number;     // current baseline y-position
   band?: number;              // column band (0 unless a span block split the page)
-  kind?: 'text' | 'span';     // 'span' = full-width column holding a page-span block
+  kind?: 'text' | 'span' | 'side'; // 'span' = full-width column holding a page-span block,
+                              // 'side' = the float-only side column of a one-and-a-half layout
 }
 
 // A content block (paragraph, heading, resource, etc.)
 type VDTBlockType =
   | 'paragraph' | 'heading' | 'resource' | 'blockquote'
-  | 'listItem' | 'footnoteRef' | 'mathDisplay';
+  | 'listItem' | 'footnoteRef' | 'mathDisplay' | 'callout' | 'code';
 
 interface VDTBlock {
   id: string;
   type: VDTBlockType;
   bbox: BoundingBox;
-  lines: VDTLine[];           // for text blocks (populated by Pass 2)
+  lines: VDTLine[];           // for text blocks: the measured lines
   resourceBlock?: ResolvedResourceBlock; // for resource blocks
   pageIndex: number;
   columnIndex: number;
-  dirty: boolean;             // needs re-layout
-  snappedToGrid: boolean;     // baseline aligned to grid
+  dirty: boolean;             // not used: cleared when the block is placed, read by nothing
+  snappedToGrid: boolean;     // the flow went back to the baseline grid under this block
+  balancing?: VDTBalancing;   // the column-balancing levers applied to this block
 }
 
 // A measured line of text
@@ -333,7 +332,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // opens with that hyphen repeated ("vencer-" | "-se"), not in the source
   segments?: VDTLineSegment[];  // word/space/math runs for justified rendering
   isLastLine?: boolean;         // last line of its paragraph
-  justifiedSpaceRatio?: number; // applied space width ÷ normal space width
+  justifiedSpaceRatio?: number; // width every space is painted at ÷ the regular face's space
+  justifiedSpaceLimitRatio?: number; // the spacing the limits bound, when the line's own spaces are not regular (lineWordSpacing reads both)
   sourceStart?: number;         // markdown source map (char offsets; a line opening with `\$` starts at the backslash)
   sourceEnd?: number;
   plainStart?: number;          // plain-text source map
@@ -368,45 +368,39 @@ A few of these fields deserve a note:
 - **`isLastLine`** drives justified rendering: final lines render ragged even when the paragraph is justified — except *overfull* final lines, whose inter-word spaces compress to fit the measure (TeX glue-setting semantics).
 - **`sourceStart`/`sourceEnd` and `plainStart`/`plainEnd`** are source maps from each line back to the original markdown and to the block's plain text — they power cursor and selection sync in editor integrations.
 - **`VDTResourceTableLayout`** (with its `VDTResourceTableCell` entries) carries the full laid-out geometry of a table resource: column x-edges, row y-edges, and per-cell rects with their measured content lines, so every backend draws the same table.
+- **`dirty` and `snappedToGrid`** are written when a block is placed and read by no stage and no backend. `dirty` starts `true` on a new block and is set to `false` as the block is placed; the engine does not track changes on the tree, it runs the placement pass again (see [The Pass Driver](#the-pass-driver)). `snappedToGrid` is `true` on the first part of a text block that the flow returns to the grid after (see [Vertical Rhythm System](#vertical-rhythm-system)).
+- **`balancing`** says which column-balancing levers moved or stretched the block; a block the balancing left alone has none (see [Column Balancing](#column-balancing)).
 - **`computePageTextExtent(page)`** is a small public helper that returns the vertical extent actually covered by text on a page (including float captions). Debug overlays use it so the baseline-grid lines span only real text, not empty page bottom.
-
-### Dirty Tracking
-
-Dirty tracking is how the engine avoids redoing work it has already done correctly. When a pass moves or resizes a block, it sets `dirty = true` on that block and on every downstream block in the same column — because their positions all depend on the changed block. The convergence loop can then skip unchanged subtrees entirely.
-
-Here is a concrete example. Pass 5 inserts a hyphen into a paragraph on page 12, causing it to lose one line of height. That paragraph gets marked dirty. So do all blocks below it in the same column — they all need to shift up by one line. But the blocks on page 11 and earlier? Untouched. Passes skip them completely on the next iteration.
-
-The `dirty` flag doubles as the convergence signal: if no blocks are dirty after passes 5–7, the layout has converged and the engine stops iterating. Done.
 
 
 ## Layout Pipeline
 
-Seven passes, each with one job. That is the entire layout pipeline.
+One placement pass, run as many times as the layout needs. That is the entire layout pipeline.
 
-The design borrows from game engine render pipelines — shadow pass, lighting pass, post-processing pass — where each system reads and mutates a shared world state and trusts that previous systems did their part. This makes individual passes easy to understand, test, and optimize in isolation. You can benchmark Pass 5 without thinking about Pass 3.
+The pass (`placeDocumentPass`, in `packages/postext/src/pipeline/build.ts`) walks the content from the first block to the last. For each block it does everything it takes to set it: measure it at the width of the column it is about to enter, see whether it fits, split it or move it on under the break and keep rules, offer the floats it cites a slot, and put the flow back on the baseline grid (see [Vertical Rhythm System](#vertical-rhythm-system)). Floats, widows and the grid have no pass of their own: they are settled as each block lands.
 
-The key difference from a game engine is that a game renders each frame once and moves on. Postext cannot. Typographic decisions are deeply interdependent — fixing a widow might change column heights, which affects balancing, which might create a new orphan — so the pipeline may need to loop. Passes 3–7 run inside a convergence loop, iterating up to 5 times until the layout settles into a stable result.
+Some decisions cannot be taken inside one walk, because they depend on where the walk ends up: the page numbers a table of contents prints, the height at which a page-span box cuts the columns above it, the lines a short column still needs. For those, `buildDocument` runs the pass again with *hints* taken from the result of the pass before. The five stages below follow a block through the pass; [The Pass Driver](#the-pass-driver) and [Column Balancing](#column-balancing) cover the re-runs.
 
-### Pass 1: Content Structuring
+### Stage 1: Content Structuring
 
 - **Input:** Raw `PostextContent`
-- **Action:** Parse markdown into an AST, resolve resource references against `resources[]` by ID, take the footnote definitions (`[^id]:`) out of the flow and number their markers in citation order, create initial `VDTBlock` nodes (`notes[]` is not read)
-- **Output:** Flat `VDTBlock[]` (typed and content-filled, but with no page or column assignment)
-- **Runs once** (not part of the convergence loop)
+- **Action:** Parse the markdown into content blocks, resolve resource references against `resources[]` by ID, take the footnote definitions (`[^id]:`) out of the flow and number their markers in citation order, number the headings, and plan the floats: which resources float, and after which block (`notes[]` is not read)
+- **Output:** A flat list of content blocks (typed and content-filled, but with no page or column assignment) and the float plan
+- **Runs:** at the start of every placement pass. The parse is read from its memo after the first pass; the rest is worked out again
 
-### Pass 2: Text Measurement
+### Stage 2: Text Measurement
 
-- **Input:** `VDTBlock[]` with text content
-- **Action:** For each text block, measure lines at the target column width through the dedicated **measure module** (`packages/postext/src/measure/`), which layers hyphenation, justification, rich inline runs, and Knuth-Plass line breaking on top of Pretext. Store measured `VDTLine[]` and total height in each block
+- **Input:** A content block with text, and the width of the column it is about to enter
+- **Action:** Measure the block's lines at that width through the dedicated **measure module** (`packages/postext/src/measure/`), which layers hyphenation, justification, rich inline runs, and Knuth-Plass line breaking on top of Pretext. The result is the block's `VDTLine[]` and its total height
 - **Key detail:** Measurement is cached. `cachedMeasureBlock` / `cachedMeasureRichBlock` (in `measure/cache.ts`) key on the text, fonts, width, and every layout-affecting option, so re-measuring an unchanged paragraph is a map lookup
-- **Output:** Every text block has precise pixel dimensions
-- **Re-runs when:** Column widths change or text content changes (e.g., hyphenation inserted)
+- **Output:** The block's lines, with precise pixel dimensions
+- **Runs:** as the walk reaches the block, not ahead of it, because the width depends on where the block lands: a column beside a side column, the lines beside a wrapped figure, the sub-columns of a `:::columns` group. A block that moves on to a column of another width is measured again at that width
 
 The module splits cleanly by responsibility: `plain.ts` measures plain runs, `rich.ts` measures mixed bold/italic/math spans, `font.ts` builds font strings and owns cache lifecycle, and `canvas.ts` wraps the raw canvas text-width primitives. One lifecycle detail matters in practice: glyph widths measured against a fallback font must not outlive the real font's arrival. `canvas.ts` keeps its widths per font string and a measurement generation; `evictFontFamilies` (called when a build finds that a family's faces changed, by `watchFonts`, `prepareFonts` and `loadBundleFonts`) drops the widths of those families and clears Pretext's cache, and a `MeasurementCache` filled under an older generation drops its blocks in those families at its next lookup. `clearMeasurementCache()` does the same for every family. The faces themselves are loaded before layout by `fonts/prepare.ts` (`prepareFonts`), and `fonts/faces.ts` reads back the faces a laid-out document used, for the `fontFallback` warnings.
 
 Chinese, Japanese and Korean paragraphs take another route through the same module. A paragraph with more CJK characters than word spaces goes to the **CJK composer** (`cjkCompose.ts`). It cuts the text into units (a character, a run of Latin text, a two-em dash or ellipsis, an atomic box such as a chip or a note marker), measures each unit once, and fills the lines first-fit under the line-start and line-end rules of `cjkClasses.ts`: a line takes in a mark that may not open the next line by giving up punctuation blank (`cjkPunctuation.ts`) before it carries a character down. A justified line is then spread between its characters. The output is ordinary `VDTLine`s whose segments carry what the renderers need to paint them exactly as measured: `tracking` (pixels after each character, already in the segment's width), `inkOffset` for a mark that gave up blank, `hangs`, the Han–Latin spaces as `autospace` segments, and the marks, ruby readings and warichu rows of Chinese annotations. In a Japanese document the same composer follows JLReq: the kinsoku classes of the Japanese levels are read from the edge characters of each unit at break time, the punctuation blanks are compressed and given back in the JLReq order, furigana are laid out by `rubyJis.ts` (1:2:1 spacing, overhang onto kana, jukugo words), and kanbun marks widen the unit of their character. The cost is linear in the paragraph's length: chapter 1 of 紅樓夢 (6,949 characters) is set by measuring 1,298 characters, each distinct character once, where measuring prefixes of the paragraph took 636,948. See [Chinese layout](/en/docs/chinese-layout).
 
-Underneath, this is where Pretext earns its keep. The `prepare()` call is the expensive part — it analyzes the text using the canvas font engine and caches the result. But the `layout()` call? Pure arithmetic, nearly free. That split is everything. Once text is prepared, the engine can re-layout at different widths — trying column configurations, testing what happens if a paragraph gains a hyphen — all with negligible cost. Prepare once, layout as many times as you need.
+Underneath, this is where Pretext earns its keep. The `prepare()` call is the expensive part — it analyzes the text using the canvas font engine and caches the result. But the `layout()` call? Pure arithmetic, nearly free. That split is everything. Once text is prepared, the engine can break it again at negligible cost: at another width, for a paragraph that continues in a narrower column, or one line longer, for a paragraph that column balancing loosens. Prepare once, layout as many times as you need.
 
 ```typescript
 // Simplified: how the measure module uses pretext internally
@@ -415,25 +409,26 @@ const { height } = layout(prepared, columnWidth, 24); // 24px line-height
 // => "This paragraph is 168px tall at 320px column width — that's 7 lines."
 ```
 
-### Pass 3: Page and Column Placement
+### Stage 3: Page and Column Placement
 
-- **Input:** Measured blocks
-- **Action:** Flow blocks into pages and columns sequentially. Create `VDTPage` and `VDTColumn` nodes. Track `availableHeight` per column. When a block does not fit, advance to the next column or page
+- **Input:** A measured block
+- **Action:** Set the block in the current column. Create `VDTPage` and `VDTColumn` nodes as the flow needs them. Track `availableHeight` per column. When a block does not fit, split it (Stage 5) or advance to the next column or page
 - **Strategy:** Greedy first-fit placement. Column and page breaks follow the simplest valid assignment
-- **Output:** Every block has `pageIndex`, `columnIndex`, and `bbox` assigned
+- **Output:** The block has `pageIndex`, `columnIndex`, and `bbox` assigned
 
-This is the moment the VDT becomes a real document. Before this pass, blocks are just a flat list with dimensions but no address. Pass 3 walks through them and assigns each one to a page and column, like pouring water into a grid of containers: fill column 1 until it overflows, spill into column 2, when the page is full start a new one.
+This is the moment the VDT becomes a real document. Before this stage a block is an entry in a flat list, with no address. Placement assigns each one to a page and column, like pouring water into a grid of containers: fill column 1 until it overflows, spill into column 2, when the page is full start a new one.
 
-Before any content blocks land, the pass reserves space for structural elements — running headers and footers (laid out as design slots from `config.header` / `config.footer`) and any float bands already pending for the freshly opened page. These reservations reduce the `availableHeight` of each column, so when content blocks start flowing in, the engine already knows exactly how much room is available.
+Before any content blocks land on a page, the pass reserves space for structural elements — running headers and footers (laid out as design slots from `config.header` / `config.footer`) and any float bands already pending for the freshly opened page. These reservations reduce the `availableHeight` of each column, so when content blocks start flowing in, the engine already knows exactly how much room is available.
 
-**Column bands and span columns.** `page.columns` is a flat array in reading order, but a page is not always a single row of columns. A page-span inline block — today a `:::callout` with `span: 'page'` in a multi-column layout — cuts the page into stacked *bands*: the text columns of the current band are closed at the cut line (their height clamped, `availableHeight` zero), the block gets its own full-width column with `kind: 'span'`, and a fresh band of text columns (`band + 1`, same x and width, same bottom as the band it replaces) is appended below it. Columns are only ever appended, so `columnIndex` keeps addressing `page.columns[i]`, and renderers need no special drawing: each column clips to its own bbox (widened by `columnClipRect` — 2pt for glyph ink plus however far the column's design overlays, such as a heading tab or a callout badge, hang past its sides, and however far a heading's design reaches above its top; its foot stays the edge — the same rectangle in the canvas and PDF backends), and the column rule is drawn per band between adjacent text columns, starting under the band a page-span heading holds at the head of the page (`columnRuleSegments`), in the page's own rule when a styled section sets one (`VDTPage.columnRule`, read through `pageColumnRule`). Column balancing ignores span columns and zero-height bands. A span block cuts directly where the band is level (page top, right after an opener heading, another span block or a top float band); arriving in an uneven band it proposes a *band cap* instead (`packages/postext/src/pipeline/bandCaps.ts`) — the columns of the band that opens with a given content block are shortened to `ceil(Σ used / N / grid)` lines — and `buildDocument` re-runs the placement pass with the cap (growing it one line at a time when the capped band overflows, at most a few extra passes, then falling back to the next page), so the text fills the shortened columns under every placement rule, ends level at the cut, and the closed columns keep whatever slack remains as `availableHeight` for balancing to absorb. The same mechanism levels the *closing* band of a chapter and of the document (`headings.balancing.trailing`): a chapter opener, a `:::part`, a chapter-closing `placement: 'fixed'` callout or the end of the document reached with the current band's columns uneven proposes a `kind: 'trailing'` cap, keyed by the boundary block; because a cap is keyed by the block that opens its band — and that block moves whenever an earlier page absorbs extra balancing lines — trailing caps are resolved *after* column balancing has settled, with the balancing hints frozen, and a short polish round then lets the levers fill what the cut left short. `placement: 'fixed'` callouts leave the flow: the box is anchored to the page content area / trim box / bleed box, the text columns it covers give up that zone (cut from the bottom or the top like a float band, moving to the next page on a conflict), and frame plus children go to `page.floats`.
+**Column bands and span columns.** `page.columns` is a flat array in reading order, but a page is not always a single row of columns. In a multi-column layout a page-span inline block cuts the page into stacked *bands*. Four things count as one: a `:::callout` whose style or fence sets `span: 'page'`, a `:::columns{span="page"}` group in the running text, an inline `::resource` whose placement resolves to `{ position: 'here', span: 'page' }`, and a comic strip set across the page where it is written (`:::strip{span=page}`). The last three are wrapped in a frameless page-span box before placement (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), so one mechanism sets all four. At the cut, the text columns of the current band are closed at the cut line (their height clamped, `availableHeight` zero), the block gets its own full-width column with `kind: 'span'`, and a fresh band of text columns (`band + 1`, same x and width, same bottom as the band it replaces) is appended below it. Columns are only ever appended, so `columnIndex` keeps addressing `page.columns[i]`, and renderers need no special drawing: each column clips to its own bbox (widened by `columnClipRect` — 2pt for glyph ink plus however far the column's design overlays, such as a heading tab or a callout badge, hang past its sides, and however far a heading's design reaches above its top; its foot stays the edge — the same rectangle in the canvas and PDF backends), and the column rule is drawn per band between adjacent text columns, starting under the band a page-span heading holds at the head of the page (`columnRuleSegments`), in the page's own rule when a styled section sets one (`VDTPage.columnRule`, read through `pageColumnRule`). Column balancing ignores span columns, side columns and zero-height bands. A span block cuts directly where the band is level (page top, right after an opener heading, another span block or a top float band); arriving in an uneven band it proposes a *band cap* instead (`packages/postext/src/pipeline/bandCaps.ts`) — the columns of the band that opens with a given content block are shortened to `ceil(Σ used / N / grid)` lines — and `buildDocument` re-runs the placement pass with the cap (growing it one line at a time when the capped band overflows, up to `MAX_BAND_CAP_RETRIES` = 3 times, then dropping it, so the block falls back to the top of the next page), so the text fills the shortened columns under every placement rule, ends level at the cut, and the closed columns keep whatever slack remains as `availableHeight` for balancing to absorb. The same mechanism levels the *closing* band of a chapter and of the document (`headings.balancing.trailing`): a chapter opener, a `:::part`, a chapter-closing `placement: 'fixed'` callout or the end of the document reached with the current band's columns uneven proposes a `kind: 'trailing'` cap, keyed by the boundary block; because a cap is keyed by the block that opens its band — and that block moves whenever an earlier page absorbs extra balancing lines — trailing caps are resolved *after* column balancing has settled, with the balancing hints frozen, and a short polish round then lets the levers fill what the cut left short. `placement: 'fixed'` callouts leave the flow: the box is anchored to the page content area / trim box / bleed box, the text columns it covers give up that zone (cut from the bottom or the top like a float band, moving to the next page on a conflict), and frame plus children go to `page.floats`.
 
 **Vertical pages.** With `layout.writingMode: 'vertical-rl'` the pass lays out a horizontal page turned a quarter turn clockwise. On such a page the content area, columns, blocks, lines, floats and footnote areas are in **flow coordinates**, and `VDTPage.flow` carries the rotation that takes them to the sheet: a flow point (x, y) lands at (page width − y, x). Nothing downstream needs to know: breaking, floats, keep-together rules and balancing work in the flow frame as on any page, a column of the flow is a tier on the sheet, and each backend applies the rotation when it paints (`flowToPage` and `pageToFlow` map points both ways). Running heads, folios, crop marks and the background stay in sheet coordinates. Figures and tables are laid out as upright blocks turned back inside the frame, and characters that stand upright are turned back one by one at paint time.
 
-### Pass 4: Resource Placement
+### Stage 4: Resource Placement
 
-- **Input:** VDT with blocks placed in columns
-- **Action:** Float each referenced resource into the first free slot after its first reference — the bottom of the referencing column, the top / bottom of the next empty column, or a band of the next page (`packages/postext/src/pipeline/floatPlacement.ts` plans the floats, `pipeline/floatSlots.ts` enumerates and measures the slots; the build pipeline reserves the bands)
+- **Input:** The float plan of Stage 1, and the pages as placed so far
+- **Action:** Float each referenced resource into the first free slot after its first reference — the bottom of the referencing column, the top / bottom of the next empty column, or a band of the next page (`packages/postext/src/pipeline/floatPlacement.ts` plans the floats, `pipeline/floatSlots.ts` enumerates and measures the slots; the placement pass reserves the bands as it walks)
+- **Runs:** as soon as the block holding the first reference has landed, inside the same walk; the text placed after that flows past the band
 - **Placement resolution:** Per resource, the engine resolves `resource.placement` → the type's `resourceType.defaultPlacement` → the built-in default `{ position: 'auto', span: 'column' }`
 
 <table>
@@ -468,8 +463,14 @@ Before any content blocks land, the pass reserves space for structural elements 
       <td><code>span: 'page'</code></td>
       <td>The band spans the full content width across all columns, breaking the column flow — full-width bands are reserved first, so column-span floats nest inside the remaining space</td>
     </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>The resource is set in the side column of a one-and-a-half layout that keeps that column for floats (<code>layout.sideColumnRole: 'floats'</code>), stacked beside the paragraph that first cites it. On a page without such a column it behaves as <code>'column'</code></td>
+    </tr>
   </tbody>
 </table>
+
+`ResourcePlacement` has more fields than these two: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` and `citingPage`. [Configuration → Resource types](/en/docs/configuration-resources#resource-types) and [Document format › Placement](/en/docs/document-format#placement) say what each one does.
 
 - **Deferred placement:** A float that fits in no slot of the current page waits for the next page the flow opens and, at a chapter boundary, is drained onto pages opened ahead of the boundary. A picture keeps its size unless `placement.shrink` (or the document's `layout.floatShrink`) lets it scale down to the room a slot has. A table too tall for a fresh page is cut between rows and continues on the following pages with its header rows repeated (`tableStyle.overflow: 'split'`, the default)
 - **Output:** Resources positioned in page bands (`page.floats`), with the affected columns' heights reduced so text flows around the bands
@@ -487,13 +488,13 @@ Resource placement is where things get interesting, because floats do not just o
 
 **Typed first-reference numbering.** Resources are *not* numbered in the markdown. `pipeline/resourceNumbering.ts` assigns each resource its number the first time it is referenced in reading order, using the resource's `ResourceType`: the `numberingTemplate` combines the per-type counter `{n}` with the heading counters `{h1}`..`{h6}` in effect at the reference (e.g. `'{h1}.{n}'` → "1.7"), `resetOn` controls when the counter restarts (`'never'` or at any heading level), and `counterFormat` picks decimal, roman, or alphabetic numerals. The built-in *Figure* and *Table* types come from `defaultResourceTypes(locale)`, localized to the document's language. Because numbering follows first-reference order, inserting a new figure mid-document renumbers everything after it automatically — no source edits required.
 
-### Pass 5: Typographic Refinement
+### Stage 5: Breaks and Keep Rules
 
-This is the pass that separates a layout engine from a text dumper. It enforces the editorial quality rules that professional typesetters have applied by hand for centuries — and that naive text rendering completely ignores.
+This is the stage that separates a layout engine from a text dumper. It enforces the editorial quality rules that professional typesetters have applied by hand for centuries — and that naive text rendering completely ignores.
 
-Pass 5 operates at two levels: **penalty-based line breaking** inside each paragraph, and **structural keep-together enforcement** between blocks. They work together, but they are distinct mechanisms.
+Three mechanisms share the work, each acting where the information it needs exists: a **runt penalty** inside the line breaker, a **scored split** where a paragraph meets the end of a column, and **structural keep-together rules** between blocks.
 
-#### Penalty-based widow/orphan/runt avoidance
+#### Widows, orphans and runts
 
 **Widows and orphans** are the most visible signs of amateur typesetting:
 
@@ -505,74 +506,133 @@ Pass 5 operates at two levels: **penalty-based line breaking** inside each parag
   context).
 - A **runt** is a paragraph whose last line is a single short word (or two) — visually far too short to feel like a proper line of text. Less structurally severe than a widow, but just as jarring to a careful reader.
 
-All three are handled by injecting **demerits** into the Knuth-Plass line-breaking algorithm. Rather than laying out a paragraph and then trying to repair a bad break after the fact, the engine teaches the line breaker that certain break sets are more expensive than others. The algorithm then picks the globally optimal break set that naturally avoids widows, orphans, and runts whenever possible.
+**Runts are settled in the line breaker.** A runt belongs to the paragraph alone: its last line is as short wherever the paragraph lands. So it is the one rule of the three that the Knuth-Plass line breaker sees. When a set of breaks would end the paragraph on a line whose content is narrower than `runtMinCharacters × normalSpaceWidth` (default `runtMinCharacters` 20: twenty word spaces of content, about 8 to 12 letters), the breaker adds `runtPenalty` (default 1000) to that line's badness inside the squared demerit formula, so it competes on the same scale as line badness (which saturates at 10000) rather than being dwarfed by it. The penalty sits alongside the usual demerits (badness, hyphenation cost, fitness-class mismatch) in a single global optimisation, and the breaker almost always finds a set of breaks without a runt. Where it does not, `bodyText.tightenRunts` sets the paragraph one line shorter when its word spaces, and a little negative tracking, can take up the difference. The measure module hands the penalty to the breaker (`measure/plain.ts`, `measure/rich.ts`) and `knuthPlass/breakpoints.ts` applies it.
 
-Concretely, for every candidate break node in a paragraph:
+**Widows and orphans are settled at the column end.** The line breaker breaks a paragraph for a width. It does not know where on the page the paragraph will sit, so it cannot know which of its lines will close a column. The placement pass does. When the lines of a paragraph do not all fit in what is left of the column, `chooseParagraphSplit` (in `pipeline/orphanWidow.ts`) tries every split `k` of the lines already broken, from 0 to the number that fit: `k` lines stay and the rest open the next column. Each candidate is scored:
 
-- If choosing this break would leave fewer than `orphanMinLines` lines at the top of the next column, add `orphanPenalty` (default 1000) to the node's demerits.
-- If choosing this break would leave fewer than `widowMinLines` lines at the bottom of the current column, add `widowPenalty` (default 1000).
-- If the final line produced from this break would have a content width below `runtMinCharacters × normalSpaceWidth` (default `runtMinCharacters` 20 — roughly twenty characters' worth of space-width content), inject `runtPenalty` (default 1000) as equivalent badness into the squared demerit formula — so it competes on the same scale as line badness (which saturates at 10000) rather than being dwarfed by it.
+- `slackWeight · slack²` for the lines it leaves empty at the foot of the column, `slack` being the lines that fit minus `k` (default `slackWeight` 10);
+- plus `widowPenalty` (default 1000) when it leaves fewer than `widowMinLines` lines at the bottom of the column;
+- plus `orphanPenalty` (default 1000) when it carries fewer than `orphanMinLines` lines to the top of the next one.
 
-These penalties sit alongside the usual demerits — badness (squared adjustment ratio), hyphenation cost, and fitness-class mismatch — in a single global optimisation. One rendering detail completes the picture: in justified paragraphs, final lines render ragged — except *overfull* final lines, whose inter-word spaces compress to fit the measure per TeX glue-setting semantics, applied identically in the canvas, HTML, and PDF backends. The algorithm is free to accept one of them if the alternative is worse (a paragraph with no legal break that satisfies every rule), but it will almost always find a break set that avoids them. List items opt into the same protection via `avoidOrphansInLists`, `avoidWidowsInLists`, `avoidRuntsInLists` (all `true` by default).
-
-A fourth soft pressure, `slackWeight`, weights a squared "unused column space" cost so the algorithm prefers break sets that fill columns tightly. Together these demerits make Pass 5 a *line-breaking* refinement: most widow/orphan/runt cases are resolved inside the Knuth-Plass solver, not by letter-spacing tweaks after the fact.
+The split with the lowest score wins, and `k = 0` moves the paragraph whole. The rules are soft, and the numbers say how soft: a penalty of 1000 is the slack cost of ten empty lines (10 · 10² = 1000), so with the defaults a split that honours both rules wins whenever it leaves fewer than ten lines of the column empty. Past that, a widow or an orphan can be the cheaper choice. The split chooses among the lines the line breaker already made; it does not break the paragraph again. List items go through the same split via `avoidOrphansInLists` and `avoidWidowsInLists`, and take the runt penalty via `avoidRuntsInLists` (all `true` by default).
 
 All of this is tunable on `BodyTextConfig` — see [Configuration → Orphans, widows, runts, and keep-together rules](/en/docs/configuration-text#orphans-widows-runts-and-keep-together-rules). Setting any `*Penalty` to `0` effectively disables that rule.
 
 #### Structural keep-together rules
 
-Some groupings are bigger than a single paragraph — they span adjacent blocks and cannot be addressed by line-breaking alone. Pass 5 enforces these at the block-placement level, moving entire groups forward when they would otherwise split across a column or page break:
+Some groupings are bigger than a single paragraph — they span adjacent blocks and cannot be addressed by line-breaking alone. The placement pass enforces these as each block lands, moving entire groups forward when they would otherwise split across a column or page break:
 
 - **Heading with its first paragraph.** A heading must never appear at the bottom of a column if the paragraph it introduces would start in the next column. Enforced by `headings.keepWithNext` (default `true`): if there is not room for the heading *plus* the body's widow minimum (`bodyText.widowMinLines`, default `2`) of the next block — or just one line when `avoidWidows` is off — the heading is pushed forward to travel with its text.
 - **Consecutive headings.** When multiple headings appear in sequence (e.g., an h2 followed by an h3 followed by a paragraph), the entire group must stay together. None of the headings can be left stranded at the bottom of a column without the content they introduce.
-- **Colon-introduced lists.** When a paragraph ends with a colon that directly introduces a list, the colon-bearing line must stay with the start of the list. Enforced by `bodyText.keepColonWithList` (default `true`): if placing the paragraph would leave no room for the first list item to start (all of it when the orphan and widow rules for lists keep it whole; one line with `bodyText.colonListRoom: 'line'`, as up to postext 1.4), the colon-bearing last line (or the whole paragraph, if it is one line) moves forward together with the list. Whenever this rule has to push the whole paragraph and a run of headings immediately precedes it in the column, those headings are pulled forward too so `keepWithNext` is not silently violated; the only exception is when the column contains just the heading(s) that a previous iteration already moved forward, in which case the engine keeps the paragraph with the heading and accepts the softer colon/list separation to avoid looping.
+- **Colon-introduced lists.** When a paragraph ends with a colon that directly introduces a list, the colon-bearing line must stay with the start of the list. Enforced by `bodyText.keepColonWithList` (default `true`): if placing the paragraph would leave no room for the first list item to start (all of it when the orphan and widow rules for lists keep it whole; one line with `bodyText.colonListRoom: 'line'`, as up to postext 1.4), the colon-bearing last line (or the whole paragraph, if it is one line) moves forward together with the list. Whenever this rule has to push the whole paragraph and a run of headings immediately precedes it in the column, those headings are pulled forward too so `keepWithNext` is not silently violated; the only exception is when the column contains just the heading(s) that an earlier move already brought forward, in which case the engine keeps the paragraph with the heading and accepts the softer colon/list separation to avoid looping.
 - **Figure with its caption.** A figure and its caption are an inseparable unit. They always move together.
 
-When a keep-together violation is detected, the engine pushes the entire group to the next column or page. The vacated space is handled by the normal column-filling mechanism (the line breaker has already chosen a break set that fits; if the resulting column is a little short, Pass 7 redistributes vertical space around grid-breaking elements to keep the baseline grid honest).
-
-#### Output
-
-Blocks whose measurements or placements changed are marked `dirty` for the next iteration of the convergence loop. In practice, because the heavy lifting is done inside Knuth-Plass rather than by post-hoc adjustments, most documents stabilize quickly — the line breaker picks a good set of breaks the first time and subsequent iterations only have to deal with downstream effects of block movement and column balancing.
+When a keep-together violation is detected, the engine pushes the entire group to the next column or page. The column it left then ends short, by the lines the group would have taken. Filling it is the job of [Column Balancing](#column-balancing).
 
 These corrections are invisible when done well (a reader should never notice them). But their *absence* is immediately obvious to anyone who reads carefully: that awkward single line at the top of a column, those uneven gaps where the engine gave up trying to make text fit. Professional publishers have entire style guides about preventing exactly these problems. Postext automates them.
 
-### Pass 6: Column Balancing
+### The Pass Driver
 
-- **Input:** VDT with refined typography
-- **Action:** Equalize column heights on each page by moving blocks between columns to minimize the height difference (on by default; `headings.balancing.enabled: false` turns it off, see [Configuration → Column balancing](/en/docs/configuration-text#column-balancing))
-- **Constraint:** Must not violate widow/orphan rules established in Pass 5
-- **Output:** Blocks may have moved between columns, marked `dirty`
+<Illustration name="ConvergenceLoop" data='{"title": "The placement pass and its re-runs", "desc": "One placement pass takes the content through five stages: structure, measure, place, floats, and breaks and keep rules. buildDocument runs the whole pass again with hints from the pass before: a band cap, balancing levers, a closing-band cut, settled page labels or note numbers.", "caption": "One pass places the whole document. buildDocument runs it again with hints until each round settles or reaches its limit.", "passBadges": [{"num": "Stage 1", "name": "structure"}, {"num": "Stage 2", "name": "measure"}, {"num": "Stage 3", "name": "place"}, {"num": "Stage 4", "name": "floats"}, {"num": "Stage 5", "name": "breaks, keep rules"}], "loopBadge": "one placement pass", "loopCondition": "run again with hints: band caps, balancing levers, closing-band cuts"}' />
 
-You notice unbalanced columns immediately, especially on the last page of a chapter. A full left column and a nearly empty right column looks unfinished — like the layout gave up halfway through. Balancing redistributes content so both columns land at roughly the same height, giving the spread a polished, intentional appearance.
+`buildDocument` is a driver around the placement pass (`buildDocumentGen` and `buildDocumentBalanced`, in `pipeline/build.ts`). It runs the pass once. Then it reads what the pass reported, and where a decision needs a second look it runs the pass again, whole, with hints (`PassHints`): the caps, extra lines and numbers the next pass is to apply. When none of the conditions in the table below arises, that first pass is the whole build.
 
-The algorithm computes the total content height for all blocks on a page, divides by the number of columns to find the target height, and searches for the best column-break point that gets each column closest to that target. But it is not a simple split. This is a constraint satisfaction problem: the algorithm must respect `keepTogether` rules (a heading must stay with its first paragraph), honor minimum line counts, and — crucially — not undo the widow and orphan fixes that Pass 5 just worked so hard to establish.
+The re-runs come in rounds, one kind of decision each, in this order:
 
-### Pass 7: Vertical Rhythm Alignment
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '150px' }}>Round</th>
+      <th>Runs when</th>
+      <th>The next pass is told</th>
+      <th style={{ width: '230px' }}>Limit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Contents</strong></td>
+      <td>The document prints page numbers the host did not supply: a <code>:::toc</code> or an <code>:::index</code> with no <code>outline</code> in the content, or a reference that prints the page of an anchor</td>
+      <td>The outline with the page labels of the build before</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 builds beyond the first</td>
+    </tr>
+    <tr>
+      <td><strong>2. Note numbers</strong></td>
+      <td><code>footnotes.numbering</code> is <code>'page'</code>, <code>'column'</code> or <code>'spread'</code> and the notes stand at the foot of the column or of the spread, so the number of a note depends on where the layout sets it</td>
+      <td>The number each note got in the build before (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 builds beyond the first</td>
+    </tr>
+    <tr>
+      <td><strong>3. Side captions</strong></td>
+      <td>A side box or a side float ran over the caption a figure set in the side column (<code>placement.captionSide</code>)</td>
+      <td>Those captions go under their figures (<code>captionUnder</code>)</td>
+      <td>3 passes</td>
+    </tr>
+    <tr>
+      <td><strong>4. Floats at the citing page</strong></td>
+      <td>A float with <code>placement.citingPage</code> landed on a page or column after the line that cites it</td>
+      <td>That page, or column, opens with the float at its head (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 rounds of proposals, then a pass for each batch of floats a pass could not keep there</td>
+    </tr>
+    <tr>
+      <td><strong>5. Band caps</strong></td>
+      <td>A page-span block arrived in a band whose columns are uneven (see <a href="#stage-3-page-and-column-placement">Stage 3</a>)</td>
+      <td>The height to cut that band at (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passes of proposals and retries. A cap grows by a line up to 3 times (<code>MAX_BAND_CAP_RETRIES</code>), then it is dropped</td>
+    </tr>
+    <tr>
+      <td><strong>6. Column balancing</strong></td>
+      <td><code>headings.balancing.enabled</code> is on and a balanceable column ends short</td>
+      <td>Extra grid lines per block and the paragraphs to break a line longer (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 attempts per segment. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 passes per document</td>
+    </tr>
+    <tr>
+      <td><strong>7. Closing bands</strong></td>
+      <td>Balancing is on with <code>headings.balancing.trailing</code>, and a chapter or the document ends in a band whose columns are uneven</td>
+      <td>A trailing cap for that band, with the balancing hints frozen</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passes of proposals and retries, each cap with its 3 retries</td>
+    </tr>
+    <tr>
+      <td><strong>8. Polish</strong></td>
+      <td>Round 7 kept a trailing cap</td>
+      <td>Column balancing once more, on the capped layout, with new segments</td>
+      <td>10 attempts per segment and 30 passes, counted afresh</td>
+    </tr>
+  </tbody>
+</table>
 
-- **Input:** VDT with balanced columns
-- **Action:** Snap baselines to the baseline grid by distributing spacing adjustments around headings, images, and other grid-breaking elements
-- **Output:** Adjusted spacing values; baselines aligned across columns
-- **See:** [Vertical Rhythm System](#vertical-rhythm-system) for the full algorithm
+Rounds 3 to 8 run one after another inside one build (`buildDocumentBalanced`). Rounds 1 and 2 are outside it: a contents round or a note-number round is a whole build, with its own rounds 3 to 8. There is no limit on a build as a whole, only these.
 
-### Convergence Loop
+**Every re-run is a full placement.** A hint does not patch the tree of the pass before. The pass places the document again with the hint in force, so a heading with two more lines above it, or a band cut six lines up, goes through the same break and keep rules as everything else. The driver then checks the result: a band cap whose box did not land on the cut is grown or dropped, and a balancing pass that did not improve a segment is discarded for that segment. What the driver returns is made of pages that a pass placed: the whole of one pass, or, after column balancing, the pages of each segment from the best pass that segment had.
 
-<Illustration name="ConvergenceLoop" data='{"title": "Convergence loop", "desc": "Pass 1 parses, Pass 2 measures, then passes 3 through 7 run inside a convergence loop. If any block remains dirty and the iteration count is under five, the loop re-runs from Pass 3.", "caption": "The engine loops back to Pass 3 until no dirty blocks remain (max 5 iterations).", "passBadges": [{"num": "Pass 1", "name": "parse"}, {"num": "Pass 2", "name": "measure"}, {"num": "Pass 3", "name": "place"}, {"num": "Pass 4", "name": "resources"}, {"num": "Pass 5", "name": "typography"}, {"num": "Pass 6", "name": "balance"}, {"num": "Pass 7", "name": "rhythm"}], "loopBadge": "convergence loop (max 5 iterations)", "loopCondition": "if dirty blocks exist &amp;&amp; iterations < 5"}' />
+**What the document reports.** `doc.iterationCount` counts the placement passes behind the returned layout: the first one and those of the band-cap, balancing and closing-band rounds. The side-caption and citing-page passes are not in it, and neither are the earlier builds of a contents or note-number round; `BuildDocumentOptions.onPass` is called for every pass, with its wall time. `doc.converged` is about column balancing alone. It is `true` when every segment ended with no empty line in its balanceable columns or with no lever left to propose, and `false` when a segment stopped on a pass that did not improve it, or ran out of attempts, with a gap still open. With balancing off it is `true`. A document with `converged: false` is complete: it holds the best layout the driver found, and some column of it ends short.
 
-Think of the convergence loop as the engine arguing with itself. Pass 5 picks a break set that avoids a widow inside paragraph A — but doing so shortens paragraph A by a line, which leaves a gap at the bottom of column 2. Pass 6 re-balances the columns to compensate, which pushes a heading to a new column, which triggers `keepWithNext` and forces the heading back to the next column entirely. Pass 7 adjusts vertical rhythm, which might just create a new runt where the heading used to sit. So the engine loops back to Pass 3, re-places blocks with the updated measurements, and runs through the whole sequence again. Each iteration resolves more problems than it creates — until eventually, nothing is dirty anymore.
+### Column Balancing
 
-Because most widow/orphan/runt cases are resolved *inside* the Knuth-Plass solver in a single pass of line breaking, typical documents now converge in 1–2 iterations. The loop is still needed when block-level events (a heading pushed forward by `keepWithNext`, a figure deferred by placement, or column balancing equalising heights) shift the column boundaries that Pass 5 measured against. When that happens, Pass 3 re-places, Pass 5 re-breaks with the new constraints, and the loop settles.
+- **Runs:** as rounds 6 and 8 of the driver (on by default; `headings.balancing.enabled: false` turns it off, and it is off by default in vertical text and on a character grid, see [Configuration → Column balancing](/en/docs/configuration-text#column-balancing))
+- **Input:** The best layout so far and the empty grid lines at the foot of each balanceable column (`collectColumnGaps`, in `pipeline/columnBalancing.ts`)
+- **Action:** Propose levers that fill each short column in place, run the placement pass with them, and keep the result for a segment when its gap score fell
+- **Output:** Columns that end on the last grid line of the page, with every lever recorded on the block it was applied to (`VDTBlock.balancing`)
 
-After passes 5–7 complete, the engine checks whether any blocks are marked `dirty`. If dirty blocks exist and the iteration count is below 5, the pipeline re-runs from **Pass 3**.
+You notice unbalanced columns immediately. Break rules leave them all the time: a heading moved on to stay with its text, a paragraph moved whole to avoid a widow, a figure that did not fit. A column that stops two lines above the one beside it looks unfinished — like the layout gave up halfway through.
 
-**Convergence criteria:**
-- No dirty blocks after passes 5–7, **or**
-- Maximum of 5 iterations reached (accept the best result so far)
+No block changes column to fix that. A column break is bound to the element that did not fit: the block that opens the next column was too tall for the room that was left, and it is still too tall for a smaller room. So a short column can be filled from inside, by at most its gap, and nothing crosses into the next column. The adjustment is local, which is what a compositor does by hand: add a line of space where the eye accepts it. A column is balanceable when content flowed past it into a later column of the same page, or, for the last column of a page, when the page flows on into the next one. The last page of a chapter may end short; its closing band is cut level by a trailing cap instead (see [Stage 3](#stage-3-page-and-column-placement)).
 
-The engine tracks a **typographic violation score** at each iteration — a weighted sum of remaining problems: widows, orphans, unbalanced columns, baseline grid misalignment. Each type of violation carries a weight reflecting its visual severity (a widow is far more noticeable than a 2px grid drift). If the 5-iteration limit is reached without full convergence, the engine picks the iteration that produced the lowest violation score. Not necessarily the last one — later iterations can sometimes overcorrect, fixing one problem while creating another.
+For each gap the levers are proposed in editorial priority order, the same order [Configuration → Column balancing](/en/docs/configuration-text#column-balancing) gives them:
 
-**Balancing converges per segment.** The pages between explicit breaks — a chapter opener, a `:::pagebreak` — are laid out independently of one another: nothing flows across such a break, so a balancing lever inside one run of pages can never move a line of another. The column-balancing loop therefore judges every such *segment* on its own. A pass still places the whole document, but each segment keeps or rejects its share of the levers by its own gap score, blacklists its own cascades, plateaus on its own and spends its own budget of attempts; a segment whose retry regressed gets its pages back from the best pass it had while the others move on. A book of thirty chapters thus balances exactly as its chapters would one by one — the whole-book PDF and the single-chapter PDF of the same chapter are identical — instead of one cascade anywhere costing every page of the book a pass.
+1. **A box closing the column** takes the room under its foot as space above it, so its foot lands on the last grid line of the page, level with the last line of the column beside it. Recorded as `trailingCallout`.
+2. **A picture with a safe area** (`Resource.safeArea`), set inline in the column or floated at its head or foot over that column alone, grows by whole grid lines, cropped within its safe area. A taller picture leaves no hole on the page, so this runs before any space is added. Recorded as `flexFigure`.
+3. **Headings** take whole grid lines above them, one line at a time in turn, the most important heading (the lowest level) first, so it gets the largest share. A heading at the very top of a column takes none, so columns keep starting at the page top. A heading takes only its first lines this way before the levers below are tried, and more, up to its cap, when those have nothing left to give. Recorded as `heading`.
+4. **List ends** take a grid line where a list ends. Recorded as `listEnd`.
+5. **Formulas, boxes and top floats** take a grid line under them: under a display formula or a callout box the text resumes after (`afterDisplay`), and between a figure or table at the head of the column and the text under it (`afterFloat`).
+6. **Loose paragraphs** are the last resort. Paragraphs of the column, the longest first, are each broken one line longer (TeX's `\looseness=+1`, through the `looseness` option of the Knuth-Plass breaker), and the longer setting is accepted only while every line stays within `bodyText.maxWordSpacing`. When word spacing alone cannot gain the line, the paragraph may also take the smallest positive tracking that does, under a cap. Recorded as `looseParagraph`.
 
-The 5-iteration cap is a pragmatic safety valve: perfection is the enemy of done. Some pathological cases — a page where every paragraph is exactly the wrong length to create widows no matter how you balance the columns — will never fully converge. The engine accepts "best effort" and moves on.
+The caps, the switches and the exceptions (a character grid, the closing pages, a float over several columns) are keys of `headings.balancing`. The Configuration page lists them and is kept up to date with them; this page does not repeat them.
+
+A proposal is checked by placing it. The pass that applies the levers is a full placement, and now and then a lever does move content across a column break after all: a split paragraph whose head no longer fits, a float that lost its slot. The pages after that point flow differently and gaps open elsewhere. The driver sees it in the score, discards the pass for that segment, and blacklists the levers newly applied in the first column that changed, so the next proposal keeps the levers that worked and leaves out the one that cascaded.
+
+**Balancing converges per segment.** The pages between explicit breaks — a chapter opener, a `:::pagebreak` — are laid out independently of one another: nothing flows across such a break, so a balancing lever inside one run of pages can never move a line of another. The column-balancing loop therefore judges every such *segment* on its own. Its gap score is the number of empty grid lines at the foot of its balanceable columns. A pass still places the whole document, but each segment keeps or rejects its share of the levers by its own gap score, blacklists its own cascades, plateaus on its own and spends its own budget of attempts; a segment whose retry regressed gets its pages back from the best pass it had while the others move on. A book of thirty chapters thus balances exactly as its chapters would one by one — the whole-book PDF and the single-chapter PDF of the same chapter are identical — instead of one cascade anywhere costing every page of the book a pass.
+
+The limits are a safety valve. Some columns cannot be closed: one that holds only short paragraphs has no lever to pull, and one whose levers each push a block across the column break has none that can be kept. The engine keeps the best layout it found and leaves that column short. Because the levers are recorded on the blocks, a proof sheet or a test can list the columns that nothing closed (see [Configuration → Which lever fired](/en/docs/configuration-text#which-lever-fired)).
 
 
 ## Vertical Rhythm System
@@ -597,44 +657,47 @@ Some elements inevitably break the grid because their height is not a multiple o
 - **Block quotes** (may use different font size or padding)
 - **Footnote areas** (the notes at a column's foot and their rule: the column's text area ends above them)
 
-### Spacing Adjustment Algorithm
+### How the Flow Returns to the Grid
 
-<Illustration name="VerticalRhythm" data='{"title": "Vertical rhythm alignment", "desc": "Column 1 contains a heading that breaks the baseline grid by 12 pixels. The engine adds 12 pixels of spacing after the heading so the next body line falls back on the grid. Column 2 remains aligned throughout.", "caption": "Spacing is adjusted after grid-breaking elements so baselines across columns stay in sync.", "column1": "Column 1", "column2": "Column 2", "bodyLine": "Body text line", "bodyBaseline": "Body text line (baseline: 24px)", "heading": "Heading (36px tall)", "adjustment": "+12px spacing adjustment", "backOnGrid": "Body text (back on grid)", "aligned": "aligned", "legendTitle": "Spacing Adjustment Algorithm", "legendSteps": ["1. Walk each column top to bottom", "2. Track gridDrift = actualY - nearestGridLine(actualY)", "3. At each adjustable gap (heading space, figure space):", "   compute correction needed to zero the drift", "4. Distribute correction — prefer expanding over compressing", "5. Clamp to min/max values from TypographyConfig.spacing"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "Vertical rhythm alignment", "desc": "Column 1 contains a heading that breaks the baseline grid by 12 pixels. As the heading is placed, the engine rounds the height used in the column up to the next grid line, which adds 12 pixels under the heading, so the next body line falls back on the grid. Column 2 remains aligned throughout.", "caption": "The space under a grid-breaking element is rounded up to the grid as the element is placed, so baselines across columns stay in sync.", "column1": "Column 1", "column2": "Column 2", "bodyLine": "Body text line", "bodyBaseline": "Body text line (baseline: 24px)", "heading": "Heading (36px tall)", "adjustment": "+12px spacing adjustment", "backOnGrid": "Body text (back on grid)", "aligned": "aligned", "legendTitle": "Grid snap, at placement", "legendSteps": ["1. Set the block: its lines, then its space below (marginBottom)", "2. Round the height used in the column up to the next grid line", "3. The next block starts there, so the space below is a minimum", "4. snapToGrid: false keeps the exact space until the next block that snaps"]}' />
 
-After adjusting spacing in each column independently, the engine verifies **cross-column alignment**: baselines at the same vertical position across columns should match. If they diverge — because different columns have different grid-breaking elements — a second alignment pass adjusts gaps in both columns to find a common rhythm.
+The grid is kept at placement, block by block. No later pass walks the columns looking for drift. Body lines are one grid line tall, so a run of body text that starts on the grid stays on it. When the placement pass has set a block that can leave the grid, it rounds the height used in the column up to the next grid line before the next block starts. The blocks that snap this way are:
 
-Here is a concrete example. Column 1 has a 36px heading (1.5x the 24px grid). Column 2 has no heading. After the heading, column 1 has drifted 12px off the grid. The algorithm adds 12px of extra space after the heading — bumping "space after heading" from 16px to 28px. Now the next body text line in column 1 falls on a grid line again, and its baseline matches the corresponding line in column 2. Harmony restored.
+- the last heading of a run of headings (consecutive headings follow each other without a snap, and the last one realigns the text after them);
+- the last item of a list, whatever the spacing between items;
+- a display formula;
+- a callout box, a code listing, and a figure or table embedded inline;
+- the last paragraph of a `:::paragraphs` container and a `:::verse` poem, whose leading is their own.
 
-**Edge cases:**
-- A column with more grid-breaking elements than adjustable gaps accepts partial alignment (the
-  algorithm does its best but cannot guarantee perfect grid alignment if there are too many
-  disruptions and too few places to absorb the error)
-- An image taller than the column spans columns or pages (handled separately in Pass 4)
-- When the adjustment required would create visibly awkward spacing (e.g., 40px of space after a
-  heading when the norm is 16px), the algorithm distributes the error across multiple gaps rather
-  than concentrating it in one place
+The block's space below (`marginBottom`) is counted before the rounding, so the margin is a minimum and the grid decides the rest. In the figure, column 1 holds a heading 36px tall on a 24px grid, with no margin below it. Its foot falls 12px past a grid line, the snap adds 12px, and the next body line starts on the grid, level with the line beside it in column 2. With a `marginBottom` of 16px the foot would be at 52px, and the snap would round that up to 72px.
+
+Float bands keep the grid in their own way, described under [Stage 4](#stage-4-resource-placement): a top band is rounded up to whole grid lines, and a bottom float is anchored so the last baseline of its caption sits on the grid. Column balancing adds its space in whole grid lines, so it keeps the grid as well.
+
+Nothing compares one column with another. Every column starts on the grid and every snap returns to it, so the lines of adjacent columns, and of facing pages, meet without a second pass.
+
+**Opting out.** `snapToGrid: false` keeps the exact space under a block instead. It can be set on `headings` (for every level, for one level or for one heading style), on a paragraph style, on a callout style and on `codeStyle`. The text after such a block may sit off the grid until the next block that snaps. The text inside a callout box follows the box's own leading and has no grid.
 
 
 ## Backend Interface
 
-There is exactly one source of truth for text measurement — the measure module over Pretext's canvas font metrics — and every backend renders from the same converged VDT it produced.
+There is exactly one source of truth for text measurement — the measure module over Pretext's canvas font metrics — and every backend renders from the same finished VDT it produced.
 
 That is a deliberate choice, and it exists for a critical reason: **the way you measure text must exactly match the way you render it.** Imagine measurement used canvas font metrics, but a rendering backend used a PDF library with slightly different kerning tables. The layout would not match the output. Lines that the engine measured as fitting in 320px might overflow or underflow when rendered. Every pixel of drift is a lie. By measuring once and rendering everywhere from the resulting geometry, the backends cannot disagree: line breaks, column heights, and resource placement are frozen into the VDT before any backend runs.
 
-This is why the PDF backend, for example, does not re-measure text: it consumes an already-converged VDT and translates its pixel coordinates into PDF points. The canvas metrics are the source of truth; PDF is a transport. Users of `renderToPdf` (from the `postext-pdf` package) pass the same VDT they would hand to `renderToCanvas` or `renderToHtml`, and the three outputs are guaranteed to agree.
+This is why the PDF backend, for example, does not re-measure text: it consumes a finished VDT and translates its pixel coordinates into PDF points. The canvas metrics are the source of truth; PDF is a transport. Users of `renderToPdf` (from the `postext-pdf` package) pass the same VDT they would hand to `renderToCanvas` or `renderToHtml`, and the three outputs are guaranteed to agree.
 
 ### API Surface
 
-The backends are plain functions over `VDTDocument`, not a class hierarchy. There is no `PostextBackend` interface — just three rendering entry points and the helpers each output target needs:
+The backends are plain functions over `VDTDocument`, not a class hierarchy. There is no `PostextBackend` interface — just the rendering entry points of each output and the helpers it needs:
 
 ```typescript
 // Canvas (from 'postext')
-renderToCanvas(doc): HTMLCanvasElement[];               // one canvas per page
-renderPage(page, doc): HTMLCanvasElement;               // a single page
+renderToCanvas(doc, options?): HTMLCanvasElement[];     // one canvas per page
+renderPage(page, doc, options?): HTMLCanvasElement;     // a single page
 renderPageToCanvas(page, doc, canvas, options?): void;  // draw into an existing canvas
 
 // Canvas resource-image registry — decoded images keyed by Resource fileId
-registerResourceImage(fileId, image): void;
+registerResourceImage(fileId, image, options?): void;   // options: { vector?, singleInk? }
 unregisterResourceImage(fileId): void;
 clearResourceImages(): void;
 
@@ -700,25 +763,30 @@ Because binary resource payloads live out-of-band, each backend resolves `fileId
 
 All four shipping backends consume the same `VDTDocument`. The split between `postext` (which exports the canvas and HTML backends) and `postext-pdf` (which exports the PDF backend) is purely about dependencies: the PDF path pulls in `pdf-lib` and `@pdf-lib/fontkit`, and most web integrations do not need them. Install `postext-pdf` only when you actually want to emit PDF bytes. `postext-epub` is a package of its own for the same reason, and is needed only for e-books. The command line is not a fifth backend: `postext-cli` runs these same writers where there is no browser.
 
-**Where layout runs:** The engine measures text on a canvas, so it runs wherever it is given one. In a browser the pipeline runs either on the main thread (`buildDocument`) or inside a dedicated Web Worker (`createLayoutWorker` from `postext/worker`) — the worker path is the recommended integration for UI-driven apps because it keeps measurement and the convergence loop off the main thread, supports last-wins cancellation via `AbortSignal`, and owns its own measurement cache and math raster cache so successive rebuilds stay cheap. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the full integration pattern. Outside a browser, the [command line](/en/docs/command-line) runs the same pipeline with Skia standing in for the browser's canvas, so a book breaks into the same pages in a terminal, a script or a build server.
+**Where layout runs:** The engine measures text on a canvas, so it runs wherever it is given one. In a browser the pipeline runs either on the main thread (`buildDocument`) or inside a dedicated Web Worker (`createLayoutWorker` from `postext/worker`) — the worker path is the recommended integration for UI-driven apps because it keeps measurement and the placement passes off the main thread, supports last-wins cancellation via `AbortSignal`, and owns its own measurement cache and math raster cache so successive rebuilds stay cheap. See [Configuration → Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker) for the full integration pattern. Outside a browser, the [command line](/en/docs/command-line) runs the same pipeline with Skia standing in for the browser's canvas, so a book breaks into the same pages in a terminal, a script or a build server.
 
 
 ## Performance Strategy
 
-The difference between a sluggish tool and a magical one is about 10x. A 500ms layout means the user sees a visible stutter every time they resize the window. A 50ms layout feels instantaneous — like the document was always there. That factor cannot be patched in later. It has to be designed in from day one.
+The difference between a sluggish tool and a magical one is about 10x. A 500ms layout means the user sees a visible stutter every time they change a word. A 50ms layout feels instantaneous — like the document was always there. That factor cannot be patched in later. It has to be designed in from day one.
 
-Consider what the engine is up against: thousands of text blocks across hundreds of pages, with the entire layout potentially recomputed on every viewport resize. This is the same class of problem that game engines face — processing thousands of objects (geometry, physics, lighting, AI) 60 times per second. They solve it with a pipeline architecture (multiple passes over shared mutable state, each pass doing one thing fast) and aggressive avoidance of unnecessary work (culling, dirty flags, spatial partitioning). Postext borrows every one of these ideas.
+Consider what the engine is up against: thousands of text blocks across hundreds of pages, laid out again on every edit, and several times over when the layout needs its rounds. Game engines face the same class of problem — processing thousands of objects (geometry, physics, lighting, AI) 60 times per second — and they solve it by not repeating work they have already done. Postext applies that to what costs it most, which is measuring text.
 
 ### Principles
 
 1. **In-memory computation.** The entire VDT fits in memory. No DOM reads during layout. The DOM
    is only touched at the very end, during rendering.
 
-2. **Dirty tracking.** Blocks carry a `dirty` flag. Passes skip clean subtrees. The convergence
-   loop only re-runs from the earliest dirty point.
+2. **Whole passes over cached measurements.** A re-run of the placement pass does not look for
+   what changed: it places the document again from the first block. That is affordable because
+   measuring, the expensive part, is cached per paragraph (principle 5). A pass that changes
+   nothing about a paragraph's text, fonts or width reads its lines from the cache.
 
-3. **Bounded convergence.** Maximum 5 iterations is a hard guarantee. Worst-case performance
-   is predictable and measurable.
+3. **Bounded rounds.** Every kind of re-run has a fixed limit (see
+   [The Pass Driver](#the-pass-driver)), and column balancing has one per document as well as one
+   per segment, so a book of many chapters cannot spend passes without end. The cost of a build
+   can be measured pass by pass: `BuildDocumentOptions.onPass` reports each pass and its wall time.
+
 
 4. **Pretext speed.** Text measurement at 300–600x DOM speed means the engine can afford to
    re-measure text speculatively (trying different column widths, hyphenation points, tracking
@@ -740,47 +808,53 @@ Consider what the engine is up against: thousands of text blocks across hundreds
 7. **Off-main-thread builds.** The `postext/worker` entry point runs the entire pipeline
    inside a dedicated Web Worker. The main thread posts `{ content, config }` and an
    `AbortSignal`; the worker registers fonts (transferred as `ArrayBuffer`s), runs the
-   convergence loop, and posts back the finished `VDTDocument`. A newer `build()` call
-   cancels the previous one cooperatively — the worker checks a per-block cancellation hook
-   inside `buildDocument` and throws `BuildCancelledError`, so a user typing into an editor
+   placement passes, and posts back the finished `VDTDocument`. A newer `build()` call
+   cancels the previous one cooperatively — the worker runs `buildDocumentAsync`, which polls a
+   cancellation hook once per block and between passes and throws `BuildCancelledError`, so a user typing into an editor
    never waits on a superseded layout. The worker also maintains its own persistent
    measurement cache and a content-keyed math raster cache so that structured-cloned
    `MathRender` objects survive across rebuilds without re-rasterising.
 
-8. **Flat numeric fields.** Bounding boxes are stored as flat `x, y, width, height` fields on
-   each node, not as nested objects. This avoids pointer chasing and is more cache-friendly.
+8. **Dual-access VDT.** The tree (`pages > columns > blocks`) gives hierarchical access for
+   work that goes page by page or column by column (column balancing measures the gap at the
+   foot of each column). A parallel flat `blocks[]` array gives direct access to every block
+   wherever it sits (the note-number round reads the marker each note printed from it). Both
+   views reference the same block objects (there is no duplication, just two ways to traverse
+   the same data).
 
-9. **Dual-access VDT.** The tree (`pages > columns > blocks`) gives hierarchical access for
-   passes that need to work page-by-page or column-by-column (like Pass 6, column balancing).
-   A parallel flat `blocks[]` array gives O(1) indexed access for passes that need to iterate
-   all blocks regardless of their location (like Pass 5, widow/orphan detection). Both views
-   reference the same block objects (there is no duplication, just two ways to traverse the
-   same data).
+### Laying Out Again
 
-### Resize Handling
+There is no incremental entry point: no call takes a finished VDT and updates it. When the content or the configuration changes (a keystroke, another page size), the host calls `buildDocument` again and gets a new document.
 
-When the user resizes the viewport, the engine does not rebuild from scratch. It updates column widths in the VDT, marks all text blocks as dirty, and re-runs the pipeline from Pass 2. Page and column structures are reused.
+What carries over from one build to the next is the measuring. Create a `MeasurementCache` once with `createMeasurementCache()` and pass it as the third argument of every `buildDocument` call. A paragraph whose text, fonts, width and breaking options did not change is read from it, so an editor that lays the document out on every keystroke measures only the paragraph being typed in. A change of page size or of column count changes the widths, and those paragraphs are measured again; Pretext's `prepare()` results still hold, since they depend on the font and the text and not on the width, so only the cheap `layout()` arithmetic runs. The parse is memoized too.
 
-This is the mutable VDT paying dividends. Instead of discarding the entire layout and starting from zero, the engine reuses as much work as possible. The Pretext `prepare()` results are still valid — they depend on font and text content, not width — so only the cheap `layout()` calls need to re-run. A 50-page document can be fully re-laid-out by re-measuring all text blocks (fast, because `prepare()` is cached) and re-running passes 3–7, without re-parsing the markdown or re-resolving references. The user drags the window edge and the layout follows in real time.
+For a live editor, `createLayoutWorker` (from `postext/worker`) does all of this off the main thread: the worker owns a measurement cache that lives as long as it does, and a newer `build()` cancels the one in flight. See [Configuration → Measurement cache](/en/docs/configuration-programmatic-usage#measurement-cache) and [Running layout in a Web Worker](/en/docs/configuration-programmatic-usage#running-layout-in-a-web-worker).
 
-### Benchmarking from Day One
+### Benchmarks
 
-Every pass is independently benchmarkable in isolation, using vitest's `bench` API:
+Two benchmarks live in `packages/postext/src/__bench__/`. `pnpm test` skips them; `pnpm bench`, run in `packages/postext`, runs them. `chapter.bench.test.ts` lays out one textbook-sized chapter (forty sections of headings, paragraphs and lists) five times against an empty measurement cache and five times against a warm one, and reports both medians and the number of passes. `cjkChapter.bench.test.ts` lays out chapter 1 of 红楼梦 and counts the characters sent to `measureText`, to hold the CJK composer to a cost linear in the length of the paragraph.
 
 ```typescript
-// Example benchmark
-bench('layout 50-page document', () => {
-  const vdt = createVDT(fiftyPageContent, config);
-  runPipeline(vdt);
-}, { time: 100 }); // sample for 100ms and report ops/sec
+// From packages/postext/src/__bench__/chapter.bench.test.ts
+const cold: number[] = [];
+for (let i = 0; i < ROUNDS; i++) cold.push(time(() => buildDocument({ markdown }, config, createMeasurementCache())));
+
+const warmCache = createMeasurementCache();
+buildDocument({ markdown }, config, warmCache);
+const warm: number[] = [];
+for (let i = 0; i < ROUNDS; i++) warm.push(time(() => buildDocument({ markdown }, config, warmCache)));
+
+const passes: BuildPassInfo[] = [];
+const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPass: (p) => passes.push(p) });
+// [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-A caveat for honesty: `{ time: 100 }` is how long vitest *samples* the benchmark, not a pass/fail threshold — benchmarks report numbers, they do not break the build. Regressions are caught by comparing those numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite), not by an automated CI gate. Performance is a feature, not a hope — but the enforcement today is measurement and review, not a failing pipeline.
+A caveat for honesty: there is no canvas in Node, so both benchmarks stub text measurement and their absolute times are not the browser's. The ratio of cold to warm and the number of passes are, and a regression in either shows here before it shows in the Sandbox. The chapter benchmark reports numbers and does not break the build; the Chinese one asserts that the characters measured stay under three times the length of the longest paragraph. Neither runs in CI: regressions are caught by comparing the numbers across runs when a hot path changes (as was done for the Knuth-Plass active-node rewrite). Performance is a feature, not a hope — but the enforcement today is measurement and review, not a failing pipeline.
 
 
 ## Data Flow
 
-<Illustration name="DataFlow" data='{"title": "Data flow through the engine", "desc": "Content and config enter Pass 1 (parse) and Pass 2 (measure). Passes 3 through 7 run inside the convergence loop. Once converged, the VDT is handed to the backend, which renders HTML or PDF.", "caption": "End-to-end data flow: parse, measure, converge, render.", "input": ["Content +", "Config"], "parse": "1 Parse", "measure": "2 Measure", "loopBadge": "convergence loop (max 5)", "passesInLoop": [{"num": "3", "name": "place"}, {"num": "4", "name": "resources"}, {"num": "5", "name": "typo"}, {"num": "6", "name": "balance"}, {"num": "7", "name": "rhythm"}], "loopCondition": "if dirty &amp;&amp; iterations < 5", "convergedLabel": "VDT (converged)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Data flow through the engine", "desc": "Content and config enter the placement pass, which structures, measures and places every block, floats the resources and applies the break and keep rules. buildDocument runs the pass again with hints until every round settles. The finished VDT is handed to the backend, which renders HTML or PDF.", "caption": "End-to-end data flow: one placement pass, run again with hints, then render.", "input": ["Content +", "Config"], "loopBadge": "placement pass", "passesInLoop": [{"num": "1", "name": "structure"}, {"num": "2", "name": "measure"}, {"num": "3", "name": "place"}, {"num": "4", "name": "floats"}, {"num": "5", "name": "keep rules"}], "loopCondition": "run again with hints, each round up to its limit", "convergedLabel": "VDT (finished)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
 
 
 ## Non-Goals
@@ -809,23 +883,23 @@ Here is how the main types defined in `packages/postext/src/types.ts` map to the
   <tbody>
     <tr>
       <td><code>PostextContent</code></td>
-      <td>Entry point: the input to the engine (Pass 1)</td>
+      <td>Entry point: the input to the engine (content structuring)</td>
     </tr>
     <tr>
       <td><code>PostextConfig</code></td>
-      <td>Controls all pipeline behavior across every pass</td>
+      <td>Controls every stage of the placement pass and the rounds around it</td>
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>A typed bitmap/SVG/table/video resource. Becomes a <code>ResolvedResourceBlock</code> during measurement and either an inline <code>VDTBlock</code> of type <code>'resource'</code> (placement <code>'here'</code>) or a page-band float (Pass 4)</td>
+      <td>A typed bitmap/SVG/table/video resource. Becomes a <code>ResolvedResourceBlock</code> during measurement and either an inline <code>VDTBlock</code> of type <code>'resource'</code> (placement <code>'here'</code>) or a page-band float (resource placement)</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>
-      <td>Drives typed numbering, caption prefixes, reference labels, and default float placement (Pass 1, Pass 4)</td>
+      <td>Drives typed numbering, caption prefixes, reference labels, and default float placement (content structuring, resource placement)</td>
     </tr>
     <tr>
       <td><code>ResourcePlacement</code></td>
-      <td>Per-resource float override: <code>position</code> (<code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) and <code>span</code> (<code>'column'</code> / <code>'page'</code>), resolved in Pass 4</td>
+      <td>Per-resource float override: <code>position</code> (<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) and <code>span</code> (<code>'column'</code> / <code>'page'</code> / <code>'side'</code>), plus <code>rotate</code>, <code>width</code>, <code>align</code>, <code>columns</code>, <code>captionSide</code>, <code>shrink</code>, <code>minScale</code>, <code>captionMeasure</code>, <code>wrap</code>, <code>wrapGap</code> and <code>citingPage</code>; each field falls back to the type's <code>defaultPlacement</code>, resolved during resource placement</td>
     </tr>
     <tr>
       <td><code>PostextNote</code></td>
@@ -835,13 +909,9 @@ Here is how the main types defined in `packages/postext/src/types.ts` map to the
       <td><code>PostextResource</code></td>
       <td><strong>Deprecated.</strong> The legacy content-model resource, retained only until the last renderer reference (<code>VDTBlock.resource</code>) migrates to the <code>Resource</code> model</td>
     </tr>
-    <tr>
-      <td><code>PlacementStrategy</code>, <code>ColumnConfig</code>, <code>TypographyConfig</code>, <code>ResourcePlacementConfig</code>, <code>ReferenceConfig</code>, <code>PostextSectionOverride</code></td>
-      <td><strong>Legacy.</strong> Declared but never wired into the pipeline; superseded by <code>bodyText</code>/<code>headings</code> (typography), <code>layout</code> (columns), and the <code>Resource</code> float model (placement)</td>
-    </tr>
   </tbody>
 </table>
 
 ### Where the VDT Types Live
 
-The VDT types (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox`, and friends) live in `packages/postext/src/vdt.ts`, alongside the factory helpers (`createVDTDocument`, `createVDTPage`, `createVDTBlock`, …) and `computePageTextExtent`. There is no separate backend interface module — the rendering entry points described in [Backend Interface](#backend-interface) are exported directly from `postext` (canvas, HTML) and `postext-pdf` (PDF).
+The VDT types (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox`, and friends) live in `packages/postext/src/vdt.ts`, alongside the factory helpers (`createVDTDocument`, `createVDTPage`, `createVDTBlock`, …) and `computePageTextExtent`. There is no separate backend interface module — the rendering entry points described in [Backend Interface](#backend-interface) are exported directly from `postext` (canvas, HTML), `postext-pdf` (PDF) and `postext-epub` (EPUB).

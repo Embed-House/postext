@@ -129,4 +129,23 @@ describe("captures (public/cookbook/<slug>/capture.json)", () => {
     });
     expect(problems).toEqual([]);
   });
+
+  // #735: `verified` is the newest release that found the capture unchanged,
+  // so it is newer than the run that wrote the files, and no newer than the
+  // released engine.
+  it("are verified on a release newer than the one that wrote them", () => {
+    const problems = each(({ slug }, out) => {
+      const { engine, verified } = getCapture(slug)!;
+      if (!verified) return;
+      if (compareSemVer(verified.postext, engine.postext) <= 0) {
+        out.push(`${slug}: verified on postext ${verified.postext}, which is not newer than the capture's ${engine.postext}`);
+      }
+      if (released.postext && compareSemVer(verified.postext, released.postext) > 0) {
+        out.push(`${slug}: verified on postext ${verified.postext}, newer than the released ${released.postext}`);
+      }
+      if (!!verified.postextPdf !== !!engine.postextPdf) out.push(`${slug}: verified ${verified.postextPdf ? "with" : "without"} postext-pdf, captured ${engine.postextPdf ? "with" : "without"} it`);
+      if (Number.isNaN(Date.parse(verified.at))) out.push(`${slug}: verified.at is not a date: ${verified.at}`);
+    });
+    expect(problems).toEqual([]);
+  });
 });

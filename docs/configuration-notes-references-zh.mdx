@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // 注释行距；em为注释字号。
   color?: ColorValue;         // 注释颜色；未设置时为正文颜色。
   textAlign?: TextAlign;      // 未设置时为正文的对齐方式。
+  wordBreak?: 'normal' | 'keep-all'; // 未设置时为文档的 cjk.wordBreak。
   hangingIndent?: Dimension;  // 注释转行的缩进。
   spaceBetween?: Dimension;   // 两条注释之间的间距。
   spaceAbove?: Dimension;     // 正文与分隔线之间的间距；em为正文字号。
@@ -139,6 +140,12 @@ interface FootnotesConfig {
       <td><code>TextAlign</code></td>
       <td>正文的对齐方式</td>
       <td>注释文字的对齐方式。</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>注释在中日韩文字符之间的断开方式，与正文分开设置（见<a href="/zh/docs/configuration-east-asian#东亚排版"><code>cjk.wordBreak</code></a>）。<code>'keep-all'</code>让一串这样的字符保持完整：英文注释里引用的异文（<code>看月光</code>）不再需要在每两个字符之间加词连接符，而页面上的诗仍在任意两个字符之间断开。文档设置了<code>'keep-all'</code>时，<code>'normal'</code>的作用正相反。栏底的注释、章末的注释和跨页正文旁的注释都采用它。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -400,6 +407,7 @@ interface CrossRefsConfig {
   section?: string;  // Around any other heading's number: "section {n}".
   page?: string;     // Around a page number: "p. {n}".
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // A :ref without style=.
+  breakLabels?: boolean; // A label of words breaks at its spaces.
 }
 ```
 
@@ -437,6 +445,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>指向标题或锚点、未设<code>style=</code>的<code>:ref</code>印出的内容。<code>'default'</code>：有编号的标题印名称和编号，无编号的印标题，锚点印其文字。已设<code>style</code>的引用保持不变，指向图表的引用不受影响。</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>允许行在以文字印出的引用内部的空格处断开：<code>[文字]{'{#id}'}</code>锚点的文字、标题或框的标题、自定的<code>text="…"</code>（指向图或表的引用也一样）。引用文字中的空格随行拉伸和压缩，引用仍是一个链接；其中的词不断词。在这样的引用文字里，数字、罗马数字或单个字母与它前面的词不分开（<code>Fig. 1a</code>、<code>plate IV</code>）。带编号或页码的引用文字（<em>section 3.2</em>、<em>p. 112</em>、<em>Fig. 1.7</em>、<em>Theorem 2</em>）从不断开，即使模板里是普通空格。<code>false</code>把每个引用文字排成一个词，中间不换行，与postext 1.27及更早版本相同。在<code>configVersion</code> 12之前保存、正文含有引用的配置，读取时采用<code>false</code>，各行留在原处（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -456,6 +470,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +545,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>引用在全书连续处理，或每章单独处理（每个文档，以及引用之后的每个一级标题）：顺序编码制每章从 1 编号，两章都引用的文献在各章取各自的编号；注释样式在每章第一次引用时写出完整著录。与<code>bibliography.scope: 'chapter'</code>配合使用，章内列表随之采用本章的编号。</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>允许词典拆分所引作者的姓名。设为<code>false</code>时，参考文献中每个人（作者、编者、译者）的姓氏，以及以单个字符串给出的每个名称，只要以大写字母开头出现，都保持完整：在引用中、正文中和文献表中都一样，所以不会有哪一行以<code>(Lup-</code>结束。复姓逐个部分处理；作者姓Baker，并不会让<code>baker</code>这个词保持完整。见<a href="/zh/docs/configuration-text#不拆分的词">不拆分的词</a>。</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -814,6 +835,12 @@ const config: PostextConfig = {
       <td><code>Dimension</code></td>
       <td>索引的一行</td>
       <td>每组上方的空白，不论有没有组标题；第一组上方没有（它与标题的距离由标题决定），栏顶也没有。</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>一栏或一页在某一组中间结束时，该组留在栏尾的条目数和转到下一栏栏首的条目数的下限。取<code>2</code>时，不会有条目单独留在栏尾的组标题之下，也不会有条目单独排在下一栏栏首、后面紧接下一组：两条或三条的组整组移到下一栏，四条及以上的组只在两边各留两条的位置分开。一条指一个条目块（主条目或子条目，连同排在它上方的组标题和无页码的上级条目）；比一栏还高的组只能在必要处分开。收尾区段的截平也遵守这条规则，因此最后一组无法分摊时，各栏可能相差这一组的行数。取<code>1</code>时，可以在任意两条之间换栏，与postext 1.27及之前相同。自postext 1.28起；此前保存且印有索引的文档保持<code>1</code>（<code>pinLegacyIndexGroupSplit</code>）。</td>
     </tr>
     <tr>
       <td><code>groups.symbolsLabel</code>、<code>numbersLabel</code></td>

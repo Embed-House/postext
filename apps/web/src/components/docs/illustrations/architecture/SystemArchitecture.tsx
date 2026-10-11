@@ -10,7 +10,7 @@ export interface SystemArchitectureLabels {
   configSubtitle: string;
   engine: string;
   parser: string;
-  pass1: string;
+  pass1: string; // what the parser turns into what, under its name
   vdtLine1: string;
   vdtLine2: string;
   vdtAttr1: string;
@@ -20,8 +20,8 @@ export interface SystemArchitectureLabels {
   pretext: string;
   pretextSubtitle: string;
   passesTitle: string;
-  passes: { num: string; name: string }[];
-  convergence: string;
+  passes: { num: string; name: string }[]; // what one placement pass does: a verb, then its object
+  convergence: string; // the re-run arrow: the first word on one line, the rest under it
   backend: string;
   backendSubtitle: string;
   backendItems: string[];
@@ -32,19 +32,20 @@ export interface SystemArchitectureLabels {
 /**
  * Postext system architecture.
  *
- * One idea made obvious: the VDT is the single mutable artifact at the center
- * of the engine — the parser builds it, the layout passes read & mutate it
- * inside a convergence loop, and a backend renders the converged result.
+ * One idea made obvious: the VDT is the single artifact at the center of the
+ * engine — the parser feeds it, the placement pass fills it in place (and is
+ * run again with hints when the layout needs it), and a backend renders the
+ * finished result.
  *
  * Color semantics (restrained):
  *   blue   = inputs entering the system
- *   yellow = engine machinery (parser = pass 1, layout passes, convergence loop)
- *   green  = the VDT itself (and the converged VDT flowing to the backend)
+ *   yellow = engine machinery (parser, placement pass, its re-runs)
+ *   green  = the VDT itself (and the finished VDT flowing to the backend)
  *   teal   = output side (backend + rendered output)
  *   neutral= Pretext, an external measurement service
  */
 export function SystemArchitecture({ labels }: { labels: SystemArchitectureLabels }) {
-  // "convergence (max 5)" / "convergencia (máx 5)" → two stacked lines
+  // "re-run with hints" → two stacked lines: "re-run" / "with hints"
   const convWords = labels.convergence.split(" ");
   const convLine1 = convWords[0] ?? labels.convergence;
   const convLine2 = convWords.slice(1).join(" ");
@@ -89,7 +90,7 @@ export function SystemArchitecture({ labels }: { labels: SystemArchitectureLabel
       <path d="M212 110 H240 V124 H270" fill="none" stroke="var(--svg-stroke)" strokeWidth={2} markerEnd="url(#sa-arrow)" />
       <path d="M212 194 H240 V140 H270" fill="none" stroke="var(--svg-stroke)" strokeWidth={2} markerEnd="url(#sa-arrow)" />
 
-      {/* ── Parser = pass 1 (yellow: engine machinery) ─────────── */}
+      {/* ── Parser (yellow: engine machinery) ──────────────────── */}
       <Box x={272} y={104} width={124} height={56} color="yellow" filter="url(#sa-shadow)" />
       <Label x={334} y={127} anchor="middle" size={11} bold color="yellow">{labels.parser}</Label>
       <Label x={334} y={145} anchor="middle" size={9} color="yellow">{labels.pass1}</Label>
@@ -118,7 +119,7 @@ export function SystemArchitecture({ labels }: { labels: SystemArchitectureLabel
       <line x1={536} y1={236} x2={536} y2={270} stroke={colorTokens.yellow.stroke} strokeWidth={1.5} markerEnd="url(#sa-arrow-yellow)" />
       <line x1={556} y1={272} x2={556} y2={238} stroke={colorTokens.yellow.stroke} strokeWidth={1.5} markerEnd="url(#sa-arrow-yellow)" />
 
-      {/* ── Layout passes (yellow) ─────────────────────────────── */}
+      {/* ── Placement pass (yellow) ────────────────────────────── */}
       <Box x={340} y={272} width={304} height={152} color="yellow" filter="url(#sa-shadow)" />
       <Label x={492} y={296} anchor="middle" size={10} bold color="yellow">{labels.passesTitle}</Label>
       {labels.passes.map((p, i) => (
@@ -128,12 +129,12 @@ export function SystemArchitecture({ labels }: { labels: SystemArchitectureLabel
         </g>
       ))}
 
-      {/* convergence loop: passes re-run until the VDT settles */}
+      {/* the pass run again with hints, until the layout settles */}
       <path d="M644 396 C690 396 690 304 644 304" fill="none" stroke={colorTokens.yellow.stroke} strokeWidth={2} markerEnd="url(#sa-arrow-yellow)" />
       <Label x={690} y={340} size={9} color="yellow">{convLine1}</Label>
       {convLine2 ? <Label x={690} y={354} size={9} color="yellow">{convLine2}</Label> : null}
 
-      {/* ── Converged VDT exits the engine (green) ─────────────── */}
+      {/* ── Finished VDT exits the engine (green) ──────────────── */}
       <line x1={644} y1={130} x2={796} y2={130} stroke={colorTokens.green.stroke} strokeWidth={2} markerEnd="url(#sa-arrow-green)" />
 
       {/* ── Backend + output (teal) ────────────────────────────── */}

@@ -8,6 +8,10 @@
  *   api.fontsource.org                                 → the network, through a disk cache
  *   anything else                                      → aborted, FAIL "host not allowed"
  *
+ * The Sandbox check (`pnpm cookbook sandbox`, profile "sandbox") also
+ * reaches fonts.googleapis.com, fonts.gstatic.com and Fontsource's own
+ * files on jsDelivr through the cache: where the Sandbox takes its faces.
+ *
  * Interception disables Chrome's own cache, so the allowed hosts are fetched
  * by Node and kept in apps/web/.cache/cookbook-net/ (gitignored), keyed by
  * URL: a second capture of the same engine runs offline. `--refresh-net`
@@ -68,6 +72,13 @@ export function safeFile(base: string, rel: string): string | null {
   return fs.existsSync(file) && fs.statSync(file).isFile() ? file : null;
 }
 
+/** Who is asking. A pen may reach esm.sh and Fontsource, nothing else. The
+ *  Sandbox check (`pnpm cookbook sandbox`, #736) also reaches Google Fonts,
+ *  where the Sandbox takes its style sheets and font files from. */
+export type NetProfile = "pen" | "sandbox";
+
+const GOOGLE_FONTS = new Set(["fonts.googleapis.com", "fonts.gstatic.com"]);
+
 /** What a request URL maps to. */
 export type Route =
   | { kind: "repo"; rel: string }
@@ -77,7 +88,7 @@ export type Route =
 
 const JSDELIVR_REPO = /^\/gh\/drnachio\/postext(?:@[^/]+)?\/(.+)$/;
 
-export function routeFor(url: string): Route {
+export function routeFor(url: string, profile: NetProfile = "pen"): Route {
   const u = new URL(url);
   const repo = u.hostname === "cdn.jsdelivr.net" ? JSDELIVR_REPO.exec(u.pathname) : null;
   if (repo) return { kind: "repo", rel: repo[1] };
@@ -89,6 +100,9 @@ export function routeFor(url: string): Route {
     u.hostname === "api.fontsource.org" ||
     (u.hostname === "cdn.jsdelivr.net" && u.pathname.startsWith("/npm/@fontsource/"))
   ) {
+    return { kind: "network" };
+  }
+  if (profile === "sandbox" && (GOOGLE_FONTS.has(u.hostname) || (u.hostname === "cdn.jsdelivr.net" && u.pathname.startsWith("/fontsource/")))) {
     return { kind: "network" };
   }
   return { kind: "blocked", host: u.host };
@@ -175,6 +189,8 @@ export interface InterceptorOptions {
   onIssue(issue: NetIssue): void;
   /** Counts cache hits and network fetches, for the report. */
   stats?: { cached: number; fetched: number };
+  /** Default "pen". */
+  profile?: NetProfile;
 }
 
 const CORS = { "access-control-allow-origin": "*" };
@@ -189,7 +205,7 @@ export function interceptor(opts: InterceptorOptions): (request: HTTPRequest) =>
         await request.continue();
         return;
       }
-      const route = routeFor(url);
+      const route = routeFor(url, opts.profile);
       if (route.kind === "blocked") {
         opts.onIssue({ severity: "fail", url, detail: `host not allowed: ${route.host} (${url})` });
         await request.abort("blockedbyclient");

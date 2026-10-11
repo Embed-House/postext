@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { pinLegacyScriptContext } from '../bundle/configVersion';
 import { zipSync } from 'fflate';
 import {
   bitmapSize,
@@ -672,7 +673,7 @@ describe('bundles written by postext 1.4 or earlier', () => {
 
   it('stamps every manifest it writes with the configuration rules', async () => {
     const { manifest } = await sample();
-    expect(CONFIG_VERSION).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
     expect(manifest.configVersion).toBe(CONFIG_VERSION);
   });
 
@@ -693,8 +694,9 @@ describe('bundles written by postext 1.4 or earlier', () => {
     // so does one stamped 3 (a 1.5 prerelease, heading rules already
     // today's). The lantern sets no maths: its config gains no maths size.
     const v3 = await openBundle(zipManifest({ ...lantern14, configVersion: 3 }));
-    // (a version-8 pin keeps its split under a heading as it was)
-    expect(v3.config.headings).toEqual({ ...lantern14.config.headings, keepWithNextSplit: 'fill' });
+    // (a version-8 pin keeps its split under a heading as it was, and a
+    // version-12 one the order of its balancing levers, #707)
+    expect(v3.config.headings).toEqual({ ...lantern14.config.headings, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
     expect(v3.config.math).toBeUndefined();
     const today = await openBundle(zipManifest({ ...lantern14, configVersion: CONFIG_VERSION }));
     expect(today.config.headings).toEqual(lantern14.config.headings);
@@ -729,12 +731,12 @@ describe('bundles written by postext 1.4 or earlier', () => {
     const old: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { parity: 'odd' } }] } };
     expect(migrateConfig(old, CONFIG_VERSION)).toBe(old);
     expect(migrateConfig(old, 99)).toBe(old);
-    expect(migrateConfig(old, 3, prose)).toBe(old);
+    expect(migrateConfig(old, 3, prose)).toEqual(pinLegacyScriptContext(old));
     expect(migrateConfig(old, undefined, prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     expect(migrateConfig(old, '3', prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
-    expect(migrateConfig(plain, undefined, prose)).toBe(plain);
+    expect(migrateConfig(plain, undefined, prose)).toEqual(pinLegacyScriptContext(plain));
     const full: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { enabled: true, parity: 'odd' } }] } };
-    expect(migrateConfig(full, undefined, prose)).toBe(full);
+    expect(migrateConfig(full, undefined, prose)).toEqual(pinLegacyScriptContext(full));
   });
 });

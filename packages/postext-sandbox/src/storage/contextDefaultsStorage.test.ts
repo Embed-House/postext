@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { balancingOnByDefault, type PostextConfig } from 'postext';
+import { avoidOrphansByDefault, avoidWidowsByDefault, balancingOnByDefault, type PostextConfig } from 'postext';
 import { configKeyOf } from '../book/layoutKeys';
 import { hashConfig, isDocumentUntouched } from '../presets/hash';
 import { snapshotForApply } from '../presets/apply';
@@ -105,6 +105,64 @@ describe('"Balance columns" survives a save and a reload (#651)', () => {
     expect(loadConfig()!.headings?.balancing?.gridLines).toBe('off');
   });
 
+  it('keeps "Stretch under formulas and boxes" switched off, and stores nothing for on (#710)', () => {
+    const map = installStorage();
+    const off: PostextConfig = { headings: { balancing: { stretchAfterDisplays: false } } };
+    saveConfig(off);
+    expect(loadConfig()).toEqual(off);
+    saveConfig({ headings: { balancing: { stretchAfterDisplays: true } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
+  it('keeps "Level cut counted in" set to grid lines (#711)', () => {
+    const map = installStorage();
+    const grid: PostextConfig = { headings: { balancing: { trailingStep: 'grid' } } };
+    saveConfig(grid);
+    expect(loadConfig()).toEqual(grid);
+    saveConfig({ headings: { balancing: { trailingStep: 'lines' } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
+  it('keeps "Entries kept together at a column end" when it is not 2 (#712)', () => {
+    const map = installStorage();
+    for (const splitMinEntries of [1, 3]) {
+      const config: PostextConfig = { index: { groups: { splitMinEntries } } };
+      saveConfig(config);
+      expect(loadConfig()).toEqual(config);
+    }
+    saveConfig({ index: { groups: { splitMinEntries: 2 } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
+  it('keeps "Heading that opens a column" set close to its text (#706)', () => {
+    const map = installStorage();
+    const close: PostextConfig = { headings: { columnHeadSpace: 'remainder' } };
+    saveConfig(close);
+    expect(loadConfig()).toEqual(close);
+    saveConfig({ headings: { columnHeadSpace: 'none' } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
+  it('keeps "Under a figure across columns" set to as under any figure (#708)', () => {
+    const map = installStorage();
+    const always: PostextConfig = { headings: { balancing: { stretchAfterWideFloats: 'always' } } };
+    saveConfig(always);
+    expect(loadConfig()).toEqual(always);
+    saveConfig({ headings: { balancing: { stretchAfterWideFloats: 'flush' } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
+  it('keeps "Lines per heading before other levers" when it is not 2 (#707)', () => {
+    const map = installStorage();
+    for (const maxLinesBeforeLoose of [0, 4]) {
+      const config: PostextConfig = { headings: { balancing: { maxLinesBeforeLoose } } };
+      saveConfig(config);
+      expect(loadConfig()).toEqual(config);
+    }
+    saveConfig({ headings: { balancing: { maxLinesBeforeLoose: 2 } } });
+    expect(map.get('postext-sandbox-config')).toBe('{}');
+  });
+
   it('stores nothing for the default of a plain page, and keeps it switched off', () => {
     const map = installStorage();
     saveConfig(toggled({}, true));
@@ -176,7 +234,8 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
   it('in the working configuration', () => {
     const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '10' });
     const migrated = loadConfig()!;
-    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true } });
+    // (with the balancing pins of a copy stamped before 12, #707 and #708)
+    expect(migrated.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } });
     saveConfig(migrated);
     expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
     // Stamped current, it is read as stored: the value has to be there.
@@ -192,12 +251,86 @@ describe('the grid pin of a document stored by 1.24 survives its first save (#65
     await putProject(migrated);
     const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
     expect(raw.version).toBe(PROJECT_RECORD_VERSION);
-    expect(raw.config.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true } });
+    expect(raw.config.headings).toEqual({ fontFamily: 'Noto Serif SC', balancing: { enabled: true, maxLinesBeforeLoose: 4 } });
     expect(balanced((await getProject('old'))!.config)).toBe(true);
   });
 
   it('in an exported configuration read back', () => {
     const migrated = configFromExport({ type: 'postext-config', version: 1, configVersion: 10, config: stored });
     expect(balanced(migrated)).toBe(true);
+  });
+});
+
+// #717: the widow and orphan rules are off by default on a character
+// grid. A grid document stored by 1.27 or earlier is pinned to the rules
+// it laid out with, and the pin has to survive the strip of the first
+// save; a switch turned on in a new grid document has to survive it too.
+describe('the break rules of a character grid survive a save (#717)', () => {
+  const japanese = (extra: PostextConfig = {}): PostextConfig => ({ locale: 'ja', cjk: { grid: GRID }, ...extra });
+  /** The two rules as the layout applies them and the Body text panel
+   *  shows them: what the configuration says, else the default of the
+   *  document. */
+  const laidOut = (config: PostextConfig) => ({
+    avoidWidows: config.bodyText?.avoidWidows ?? avoidWidowsByDefault(config),
+    avoidOrphans: config.bodyText?.avoidOrphans ?? avoidOrphansByDefault(config),
+  });
+  const ON = { avoidWidows: true, avoidOrphans: true };
+  const OFF = { avoidWidows: false, avoidOrphans: false };
+
+  it('a new Japanese grid document reads both switches off', () => {
+    expect(laidOut(japanese())).toEqual(OFF);
+    expect(laidOut(grid())).toEqual({ avoidWidows: false, avoidOrphans: true });
+    expect(laidOut({ locale: 'ja' })).toEqual(ON);
+  });
+
+  it('a switch turned on there survives a reload of the working configuration', () => {
+    installStorage();
+    saveConfig(japanese({ bodyText: ON }));
+    const reloaded = loadConfig()!;
+    expect(reloaded.bodyText).toEqual(ON);
+    expect(laidOut(reloaded)).toEqual(ON);
+    // Turned off again it restates the default and is not stored.
+    saveConfig(japanese({ bodyText: OFF }));
+    expect(loadConfig()!.bodyText).toBeUndefined();
+    expect(laidOut(loadConfig()!)).toEqual(OFF);
+  });
+
+  it('the working configuration of a grid document stored by 1.27 keeps both rules', () => {
+    for (const stored of [japanese(), grid()]) {
+      const map = installStorage({ 'postext-sandbox-config': JSON.stringify(stored), 'postext-sandbox-config-version': '11' });
+      const migrated = loadConfig()!;
+      expect(laidOut(migrated), stored.locale).toEqual(ON);
+      saveConfig(migrated);
+      expect(map.get('postext-sandbox-config-version')).toBe(String(PROJECT_RECORD_VERSION));
+      const reloaded = loadConfig()!;
+      expect(reloaded, stored.locale).toEqual(migrated);
+      expect(laidOut(reloaded), stored.locale).toEqual(ON);
+    }
+  });
+
+  it('a project record stored by 1.27 keeps both rules', async () => {
+    rows.set(PROJECTS_STORE, new Map([['old', { version: 11, id: 'old', name: 'Old', createdAt: 1, updatedAt: 1, chapters, activeChapterId: 'c1', config: japanese(), resources: [] }]]));
+    const migrated = (await getProject('old'))!;
+    expect(laidOut(migrated.config)).toEqual(ON);
+    await putProject(migrated);
+    const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
+    expect(raw.version).toBe(PROJECT_RECORD_VERSION);
+    // (With the pin every record stored before 12 takes, #725.)
+    expect(raw.config.bodyText).toEqual({ ...ON, scriptContext: false });
+    expect(laidOut((await getProject('old'))!.config)).toEqual(ON);
+  });
+
+  it('an exported configuration stamped 11 is read back with both rules', () => {
+    const migrated = configFromExport({ type: 'postext-config', version: 1, configVersion: 11, config: japanese() });
+    expect(laidOut(migrated)).toEqual(ON);
+    // One exported today is read as it is.
+    const current = configFromExport({ type: 'postext-config', version: 1, configVersion: 12, config: japanese() });
+    expect(laidOut(current)).toEqual(OFF);
+  });
+
+  it('the layout key sees a rule turned on where it is off by default', () => {
+    expect(configKeyOf(japanese({ bodyText: ON }))).not.toBe(configKeyOf(japanese()));
+    expect(configKeyOf(japanese({ bodyText: OFF }))).toBe(configKeyOf(japanese()));
+    expect(configKeyOf({ bodyText: ON })).toBe(configKeyOf({}));
   });
 });

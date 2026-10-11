@@ -29,7 +29,7 @@ export async function openBook(ctx: CommandContext): Promise<Session> {
 
 export async function openAndLayOut(ctx: CommandContext, cache?: MeasurementCache): Promise<Session & { layout: Layout }> {
   const session = await openBook(ctx);
-  const layout = await layOut(session.book, ctx.opts, ctx.reporter, cache);
+  const layout = await layOut(session.book, ctx.opts, ctx.reporter, cache, session.fonts);
   ctx.reporter.info(`${session.book.name}: ${layout.pageCount} pages in ${layout.chapters.length} chapter${layout.chapters.length === 1 ? '' : 's'} (${Math.round(ctx.reporter.timings.layout ?? 0)} ms)`);
   return { ...session, layout };
 }

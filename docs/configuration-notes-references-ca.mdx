@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Interlineat de la nota; em és el cos de la nota.
   color?: ColorValue;         // Color de la nota; sense valor, el del cos.
   textAlign?: TextAlign;      // Sense valor, l'alineació del cos.
+  wordBreak?: 'normal' | 'keep-all'; // Sense valor, el cjk.wordBreak del document.
   hangingIndent?: Dimension;  // Sagnat de les línies següents d'una nota.
   spaceBetween?: Dimension;   // Espai entre dues notes.
   spaceAbove?: Dimension;     // Espai entre el text i el filet; em és el cos del text.
@@ -139,6 +140,12 @@ interface FootnotesConfig {
       <td><code>TextAlign</code></td>
       <td>alineació del cos</td>
       <td>Alineació del text de les notes.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>On es tallen les notes entre caràcters xinesos, japonesos i coreans, amb independència del cos (vegeu <a href="/ca/docs/configuration-east-asian#tipografia-de-làsia-oriental"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> manté sencera una sèrie d'aquests caràcters: les variants que cita una nota en anglès (<code>看月光</code>) ja no necessiten un unidor de paraules entre cada dos caràcters, mentre que els poemes de la pàgina es continuen tallant entre dos qualssevol. <code>'normal'</code> fa el contrari en un document que fixa <code>'keep-all'</code>. El prenen les notes al peu de la columna, les del final del capítol i les que van al costat del text d'un plec. Des de postext 1.28.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -400,6 +407,7 @@ interface CrossRefsConfig {
   section?: string;  // Around any other heading's number: "section {n}".
   page?: string;     // Around a page number: "p. {n}".
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // A :ref without style=.
+  breakLabels?: boolean; // A label of words breaks at its spaces.
 }
 ```
 
@@ -437,6 +445,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>El que imprimeix un <code>:ref</code> a un títol o a una àncora sense <code>style=</code>. <code>'default'</code>: un títol numerat amb la seva paraula i el seu número, un sense número amb el seu títol, una àncora amb el seu text. Una referència que indica <code>style</code> el conserva, i les referències a figures i taules no canvien.</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Deixa que una línia es talli pels espais d'una referència el rètol de la qual són paraules: el text d'una àncora <code>[paraules]{'{#id}'}</code>, el text d'un títol o el títol d'una caixa, un <code>text="…"</code> propi (també en una referència a una figura o a una taula). Els espais del rètol s'estiren i s'encongeixen llavors amb la línia, i la referència continua sent un sol enllaç; les seves paraules no es parteixen amb guionet. Dins d'un rètol així, un número, un nombre romà o una lletra sola no se separen de la paraula anterior (<code>Fig. 1a</code>, <code>làmina IV</code>). Un rètol amb un número o una pàgina (<em>secció 3.2</em>, <em>pàg. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) no es talla mai, ni tan sols quan la seva plantilla porta un espai normal. <code>false</code> compon cada rètol com una sola paraula, sense cap tall de línia a dins, com fins a postext 1.27. Una configuració desada abans de <code>configVersion</code> 12 el text de la qual conté una referència es llegeix amb <code>false</code>, així que les seves línies es queden on eren (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -456,6 +470,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +545,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>Les citacions al llarg del llibre, o cada capítol pel seu compte (cada document, i cada encapçalament de nivell 1 després d'una citació): un estil numèric numera cada capítol des d'1 i una obra citada en dos capítols pren el número de cadascun; un estil de notes escriu l'obra completa a la seva primera citació de cada capítol. Pensat per a <code>bibliography.scope: 'chapter'</code>, les llistes del qual prenen llavors els números del capítol.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permet que el diccionari divideixi els noms dels autors citats. <code>false</code> deixa sencer el cognom de cada persona de les referències (autors, editors, traductors) i tot nom donat com una sola cadena, allà on aparegui amb la seva majúscula: en una citació, en el text corregut i a la llista, de manera que cap línia no acaba en <code>(Lup-</code>. Un cognom doble es llegeix part per part, i un autor que es diu Baker no deixa sencera la paraula <code>baker</code>. Vegeu <a href="/ca/docs/configuration-text#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -813,6 +834,12 @@ const config: PostextConfig = {
       <td><code>Dimension</code></td>
       <td>una línia de l'índex</td>
       <td>Espai sobre cada grup, amb lletra de capçalera o sense; cap sobre el primer grup, la distància del qual a l'encapçalament la fixa l'encapçalament, ni a dalt de tot d'una columna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Quan una columna o una pàgina acaba dins d'un grup, el mínim d'entrades del grup que queden al peu de la columna i el mínim que passen al cap de la següent. Amb <code>2</code>, cap entrada no queda sola sota la seva lletra de capçalera al peu d'una columna i cap no obre sola una columna abans del grup següent: un grup de dues o tres entrades passa sencer, i un de quatre o més només es divideix on en queden dues i en passen dues. Una entrada és un bloc d'entrada (una entrada principal o una subentrada, amb la capçalera i les entrades sense pàgina que van al damunt); un grup més alt que una columna es divideix on no hi ha més remei. El tall a nivell d'una banda de tancament també segueix la regla, de manera que un últim grup que no es pot repartir pot deixar les columnes desiguals per les seves línies. Amb <code>1</code>, una columna pot acabar entre dues entrades qualssevol, com fins a postext 1.27. Des de postext 1.28; els documents desats abans que imprimeixen un índex conserven <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
     </tr>
     <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>

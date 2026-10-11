@@ -2,8 +2,8 @@
 
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
-import type { BodyTextConfig, ColonListRoom, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
+import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, avoidOrphansByDefault, avoidWidowsByDefault, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
+import type { BodyTextConfig, ColonListRoom, CompositionRule, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
 import { ChevronRight } from 'lucide-react';
 import {
   CollapsibleSection,
@@ -18,7 +18,7 @@ import {
   useFieldIds,
 } from '../../../controls';
 import { documentLocaleLabel, TEXT_SIZE_UNITS, LINE_HEIGHT_UNITS, INDENT_UNITS } from './constants';
-import { defaultDocumentLocale } from '../../../controls/hyphenation';
+import { defaultDocumentLocale, withHyphenationLocale } from '../../../controls/hyphenation';
 import { useOpenSettingsGroup } from '../../../context/settingsNavigation';
 import { JustificationSubsection, KashidaFields, RaggedBreakingSubsection } from './JustificationSubsection';
 import { BlockquoteSubsection } from './BlockquoteSubsection';
@@ -48,7 +48,17 @@ export const BodyTextSection = memo(function BodyTextSection() {
   // A Chinese interface reads an unnamed document as Chinese, which sets
   // it without hyphenation: the switch shows what the previews do.
   const resolvingLocale = documentLocale ?? (isCjkLanguage(defaultLocale) ? defaultLocale : undefined);
-  const bodyText = resolveBodyTextConfig(raw, resolvingLocale);
+  // The widow and orphan rules are off by default on a character grid
+  // (#717): the switches show what the layout does, and Reset returns to
+  // the default of this document, read with the language the previews
+  // give a document that names none.
+  const avoidWidowsDefault = useSandboxSelector((s) => avoidWidowsByDefault(s.config));
+  const avoidOrphansDefault = useSandboxSelector((s) => avoidOrphansByDefault(withHyphenationLocale(s.config, s.locale)));
+  const bodyText = {
+    ...resolveBodyTextConfig(raw, resolvingLocale),
+    avoidWidows: raw?.avoidWidows ?? avoidWidowsDefault,
+    avoidOrphans: raw?.avoidOrphans ?? avoidOrphansDefault,
+  };
 
   const updateBodyText = (partial: Partial<BodyTextConfig>) => {
     dispatch({
@@ -128,11 +138,11 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const isMaxWordSpacingDefault = bodyText.maxWordSpacing === D.maxWordSpacing;
   const isMinWordSpacingDefault = bodyText.minWordSpacing === D.minWordSpacing;
   const isOptimalLineBreakingDefault = bodyText.optimalLineBreaking === D.optimalLineBreaking;
-  const isAvoidOrphansDefault = bodyText.avoidOrphans === D.avoidOrphans;
+  const isAvoidOrphansDefault = bodyText.avoidOrphans === avoidOrphansDefault;
   const isOrphanMinLinesDefault = bodyText.orphanMinLines === D.orphanMinLines;
   const isOrphanPenaltyDefault = bodyText.orphanPenalty === D.orphanPenalty;
   const isAvoidOrphansInListsDefault = bodyText.avoidOrphansInLists === D.avoidOrphansInLists;
-  const isAvoidWidowsDefault = bodyText.avoidWidows === D.avoidWidows;
+  const isAvoidWidowsDefault = bodyText.avoidWidows === avoidWidowsDefault;
   const isWidowMinLinesDefault = bodyText.widowMinLines === D.widowMinLines;
   const isWidowPenaltyDefault = bodyText.widowPenalty === D.widowPenalty;
   const isAvoidWidowsInListsDefault = bodyText.avoidWidowsInLists === D.avoidWidowsInLists;
@@ -143,6 +153,8 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const isAvoidRuntsInListsDefault = bodyText.avoidRuntsInLists === D.avoidRuntsInLists;
   const isKeepColonWithListDefault = bodyText.keepColonWithList === D.keepColonWithList;
   const isColonListRoomDefault = bodyText.colonListRoom === D.colonListRoom;
+  const isShortListSplitDefault = bodyText.shortListSplit === D.shortListSplit;
+  const isShortListMaxItemsDefault = bodyText.shortListMaxItems === D.shortListMaxItems;
 
   // `*…*` is set in bold by default in a language written in Arabic script
   // (the engine's `defaultEmphasisFor`): Auto names what it gives.
@@ -167,6 +179,13 @@ export const BodyTextSection = memo(function BodyTextSection() {
   const COLON_LIST_ROOM_OPTIONS = [
     { value: 'item', label: labels.bodyColonListRoomItem },
     { value: 'line', label: labels.bodyColonListRoomLine },
+  ];
+
+  // The three levels of a composition rule (#749).
+  const COMPOSITION_RULE_OPTIONS = [
+    { value: 'allow', label: labels.compositionRuleAllow },
+    { value: 'warn', label: labels.compositionRuleWarn },
+    { value: 'avoid', label: labels.compositionRuleAvoid },
   ];
 
   // In a right-to-left book `left` is the start: flush right, ragged left.
@@ -337,6 +356,17 @@ export const BodyTextSection = memo(function BodyTextSection() {
           tooltip={labels.bodyHardLineBreaksTooltip}
           isDefault={bodyText.hardLineBreaks === D.hardLineBreaks}
           onReset={() => resetField('hardLineBreaks')}
+        />
+        {/* A word with no letter takes the script of the text around it
+            (#725): on unless the configuration says no (a stored one from
+            before the rule is read with it off). */}
+        <ToggleSwitch
+          label={labels.bodyScriptContext}
+          checked={bodyText.scriptContext !== false}
+          onChange={(checked) => updateBodyText({ scriptContext: checked })}
+          tooltip={labels.bodyScriptContextTooltip}
+          isDefault={bodyText.scriptContext !== false}
+          onReset={() => resetField('scriptContext')}
         />
         <ToggleSwitch
           label={labels.bodyRepeatHyphen}
@@ -522,6 +552,29 @@ export const BodyTextSection = memo(function BodyTextSection() {
             tooltip={labels.bodyColonListRoomTooltip}
             isDefault={isColonListRoomDefault}
             onReset={() => resetField('colonListRoom')}
+          />
+        )}
+        {/* A short list kept whole (#749): off, reported, or applied. */}
+        <SelectInput
+          label={labels.bodyShortListSplit}
+          value={bodyText.shortListSplit}
+          options={COMPOSITION_RULE_OPTIONS}
+          onChange={(value) => updateBodyText({ shortListSplit: value as CompositionRule })}
+          tooltip={labels.bodyShortListSplitTooltip}
+          isDefault={isShortListSplitDefault}
+          onReset={() => resetField('shortListSplit')}
+        />
+        {bodyText.shortListSplit !== 'allow' && (
+          <NumberInput
+            label={labels.bodyShortListMaxItems}
+            value={bodyText.shortListMaxItems}
+            onChange={(v) => updateBodyText({ shortListMaxItems: Math.max(1, Math.round(v)) })}
+            min={1}
+            max={20}
+            step={1}
+            tooltip={labels.bodyShortListMaxItemsTooltip}
+            isDefault={isShortListMaxItemsDefault}
+            onReset={() => resetField('shortListMaxItems')}
           />
         )}
       </CollapsibleSection>

@@ -238,6 +238,18 @@ export const LayoutSection = memo(function LayoutSection() {
               onReset={() => resetField('sideColumnSide')}
             />
           )}
+          {/* A resource set in the text takes `placement.captionSide` too
+              (#729): only a float-only side column holds captions. */}
+          {showSideCol && layout.sideColumnRole === 'floats' && (
+            <ToggleSwitch
+              label={labels.inlineCaptionSide}
+              checked={layout.inlineCaptionSide}
+              onChange={(v) => updateLayout({ inlineCaptionSide: v })}
+              tooltip={labels.inlineCaptionSideTooltip}
+              isDefault={layout.inlineCaptionSide === D.inlineCaptionSide}
+              onReset={() => resetField('inlineCaptionSide')}
+            />
+          )}
 
           <ToggleSwitch
             label={labels.columnRule}
@@ -396,6 +408,20 @@ export const LayoutSection = memo(function LayoutSection() {
         tooltip={labels.floatsUnderOpenerTooltip}
         isDefault={layout.floatsUnderOpener === D.floatsUnderOpener}
         onReset={() => resetField('floatsUnderOpener')}
+      />
+      {/* Floats on opener pages (#749): off, reported, or kept off them. */}
+      <SelectInput
+        label={labels.openerFloats}
+        value={layout.openerFloats}
+        options={[
+          { value: 'allow', label: labels.compositionRuleAllow },
+          { value: 'warn', label: labels.compositionRuleWarn },
+          { value: 'avoid', label: labels.compositionRuleAvoid },
+        ]}
+        onChange={(v) => updateLayout({ openerFloats: v as LayoutConfig['openerFloats'] })}
+        tooltip={labels.openerFloatsTooltip}
+        isDefault={layout.openerFloats === D.openerFloats}
+        onReset={() => resetField('openerFloats')}
       />
       {/* Text wrap round pictures and boxes (#627): the defaults a
           resource, a resource type or a box may set aside. */}

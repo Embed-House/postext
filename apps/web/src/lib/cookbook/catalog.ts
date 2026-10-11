@@ -13,6 +13,7 @@ import { getComposed, getVisibleRecipes, recipeHref, writeupFor } from "./recipe
 import { loadRegistry } from "./registry.ts";
 import { readRecipeSources } from "./sources.ts";
 import { stepTitles } from "./sections.ts";
+import { testedOn } from "./tested.ts";
 import type { Catalog, CatalogRecipe, ComposedPen, Locale, Recipe, Registry } from "./types.ts";
 import { compareSemVer, shownGotchas } from "./validate.ts";
 import { packCatalog, type PackedCatalog } from "./wire.ts";
@@ -168,7 +169,8 @@ export function buildCatalog(locale: Locale): Catalog {
       .map(([kind, w]) => ({ kind, label: w.label[locale] })),
     collections: collectionIds.filter((id) => collections.has(id)).map((id) => ({ id, title: registry.collections[id].title[locale] })),
   };
-  const versions = recipes.map((r) => r.capture?.engine.postext).filter((v): v is NonNullable<typeof v> => Boolean(v));
+  // The lowest release a recipe was last tested with (#735).
+  const versions = recipes.map((r) => (r.capture ? testedOn(r.capture).postext : undefined)).filter((v): v is NonNullable<typeof v> => Boolean(v));
   catalog.testedWith = versions.sort(compareSemVer)[0] ?? "";
   catalog.gaps = Object.entries(registry.gaps).filter(([, gap]) => !gap.fixedIn).map(([id, gap]) => ({
     id,

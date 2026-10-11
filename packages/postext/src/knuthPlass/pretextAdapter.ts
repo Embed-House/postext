@@ -4,6 +4,7 @@
  * optimal breakpoint sequence.
  */
 
+import { justifiedSpaceRatios } from '../measure/spaceRatios';
 import { graphemeCount } from '../measure/graphemes';
 import type { PreparedTextWithSegments } from '@chenglou/pretext';
 import type { VDTLine, VDTLineSegment } from '../vdt';
@@ -294,20 +295,8 @@ export function reconstructPretextLines(
     if (tracking !== 0) trackSegments(lineSegments, tracking);
     const contentWidth = lineSegments.reduce((s, seg) => s + seg.width, 0);
 
-    // Compute justifiedSpaceRatio
-    let justifiedSpaceRatio: number | undefined;
-    if (textAlign === 'justify' && !isLastLine && normalSpaceWidth > 0) {
-      let wordWidth = 0;
-      let spaceCount = 0;
-      for (const seg of lineSegments) {
-        if (seg.kind === 'space') spaceCount++;
-        else wordWidth += seg.width;
-      }
-      if (spaceCount > 0) {
-        const justifiedSpaceWidth = (lineMaxWidth - wordWidth) / spaceCount;
-        justifiedSpaceRatio = justifiedSpaceWidth / normalSpaceWidth;
-      }
-    }
+    // The line's word spacing: as painted, and as the breaker bounds it.
+    const spaceRatios = textAlign === 'justify' && !isLastLine ? justifiedSpaceRatios(lineSegments, lineMaxWidth, normalSpaceWidth) : {};
 
     lines.push({
       text: lineText,
@@ -318,7 +307,7 @@ export function reconstructPretextLines(
       ...(hyphenated && bareBreak ? { hardHyphen: true } : {}),
       segments: lineSegments,
       isLastLine,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
       ...(tracking !== 0 ? { letterSpacing: tracking } : {}),
     });
 

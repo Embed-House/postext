@@ -197,8 +197,10 @@ layout
 ├─ maxTopFraction     number                                 default 0.7    ≥ 1.25 largest share of the column a float heading its citing page takes (with the floats already there)
 ├─ hugClosingFloats   boolean                                default true   closing page: page-wide floats below the last text move up under it
 ├─ floatsUnderOpener  boolean                                default true   ≥ 1.25 under a span:'page' opener over 2+ text columns, the head of column 1 is a top slot; false = floats land from column 2, as ≤ 1.24 (a preset below configVersion 11 that sets a page-span heading reads false)
+├─ openerFloats       'allow' | 'warn' | 'avoid'             default 'allow'  ≥ 1.28 floats on an opener page (a part's page, the page a heading opens with breakBefore or span:'page', the first page of a document that starts with a heading): 'warn' = same layout + one `openerFloat` warning per float; 'avoid' = the page takes no float, each goes to the first slot after it (inline 'here' resources, 'fixed' and span:'side' boxes stay)
 ├─ inlineResourceGap  'around' | 'above'                     default 'around'  (a preset without configVersion ≥ 5 reads 'above')
 ├─ inlineResourceGapInBoxes boolean                          default true  (a preset below configVersion 6 reads false)
+├─ inlineCaptionSide  boolean                                default true  ≥ 1.28 a 'here' resource takes placement.captionSide: caption + note in the float-only side column, level with the body's top, where that column is free beside it (else under the body); false = column floats only (a oneAndHalf preset below configVersion 12 whose chapters embed a ::resource reads false)
 ├─ boxChildSplitMinLines number                              default 2  lines of a paragraph/item a box cut leaves per side (a preset below configVersion 6 with a :::callout reads 1)
 ├─ flowColumns        boolean                                default true   ≥ 1.25 :::columns outside a box sets sub-columns in the text (span="page" across a multi-column page), and a group, in a box or in the text, is cut across columns/pages; false = 1.24 (fence ignored outside a box, group never cut; a preset below configVersion 11 with a :::columns fence reads false)
 └─ writingMode        'horizontal-tb' | 'vertical-rl'         default 'horizontal-tb'   postext ≥ 1.9; a heading style's layout may set its own
@@ -260,7 +262,7 @@ Geometry:
 Typography
 ```
 bodyText
-├─ fontFamily        string          'EB Garamond'   Google Font name or a customFonts family name
+├─ fontFamily        string          'EB Garamond'   a customFonts family, or one on Google Fonts / Fontsource
 ├─ fontSize          Dimension(abs)  8 pt
 ├─ lineHeight        Dimension       1.5 em          em = × fontSize; pt = absolute leading → BASELINE GRID PITCH
 ├─ fontWeight        number          400
@@ -282,7 +284,7 @@ bodyText
 ├─ verse             { layout='auto', indentStep=0.5em, turnover='hang', hang=2em, turnoverMark='[', stanzaSpace=1, keepStanzas=0, tighten=true }   (≥ 1.23) defaults of `:::verse` poems set line by line; the fence's attributes of the same name win. layout 'bayt' = 1.22's centred single hemistichs for poems with no `||` (stored configs < 9 get it); stanzaSpace in lines of the poem's leading; tighten (≥ 1.24) = a line a little wider than the measure shrinks its word spaces down to minWordSpacing and stays on one line, only a line still too wide turns over (false = 1.23: every overlong line turns over; stored configs < 10 with a line-by-line poem get false)
 ├─ tabStops          TabStop[]       unset           (≥ 1.23, §4a) tab stops of every paragraph, list item and quotation; a paragraph style or a callout body that sets its own replaces them
 ├─ tabInterval       Dimension       unset           (≥ 1.23, §4a) default stops every interval past the last stop, from the start of the measure; unset = a tab past the last stop is a word space
-└─ hyphenation       { enabled=true, locale=<config.locale ?? 'en-us'>, ragged=false, zone=3em, compounds=true }
+└─ hyphenation       { enabled=true, locale=<config.locale ?? 'en-us'>, ragged=false, zone=3em, compounds=true, exceptions=none, capitalized=true }
                       locale: any BCP 47 tag; patterns for 'en-us'|'es'|'fr'|'de'|'it'|'pt'|'ca'|'nl' (region ignored; other languages → en-us + console warning)
                       ragged: also hyphenate ragged text, only where the word does not fit and sending it down would leave a gap wider than zone (em = text size); line by line ≤ 2 hyphenated lines in a row, with optimalRagged two in a row are only discouraged
                       compounds: false = the dictionary leaves a word with a hyphen between two letters whole; it breaks only after that hyphen (TeX; after- | dinner, never af- | ter-dinner)
@@ -299,10 +301,25 @@ H&J / Knuth–Plass
 ├─ repeatHyphen         boolean  false  the line after a break at a compound's hyphen opens with a hyphen too (vencer- | -se; Portuguese, Spanish RAE 2010); line.repeatedHyphen; never in a URL
 ├─ hardLineBreaks       boolean  true   (≥ 1.23) a backslash ending a source line, or `\\` + space, is a forced line break in paragraphs, quotes, list items;
 │                        false = 1.22: the backslashes print (a preset below configVersion 9 whose chapters end a line with `\` reads false)
+├─ scriptContext        boolean  true   (≥ 1.28) a word with no letter (`46.`, `1367)`, `».`) is shaped in the script of the text around it: nearest letter
+│                        before it in its isolate, else after; nearest right-to-left letter when painted right to left; the document's language with
+│                        no letter near. Acts only in a face that draws punctuation or digits by script (Amiri: Latin stop and brackets in Latin
+│                        text, Arabic ones otherwise) and in Latin/Greek/Cyrillic/Arabic/Hebrew contexts; `seg.scriptContext` ('Latn', 'Arab'…) says so,
+│                        and canvas, HTML, fixed EPUB and PDF paint those forms at the measured width in every browser. Do NOT glue `46.` or
+│                        `(d. 1367)` to the word before with a no-break space to keep Latin forms in an Arabic book: write ordinary spaces.
+│                        A piece with no letter of a word that has one (`10.1006/`, `.2001` of a DOI broken at its joints, the rest of a word
+│                        cut at the line end) takes the script it has inside the word, so a DOI sets solid in Noto Serif SC. In a zh/ja document
+│                        a doubled ellipsis or dash (`……`, `——`, `――`) cited in a Latin sentence (`are marked …….`) keeps its Han forms
+│                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
+│                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
+│                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
 │                        runtMinCharacters counts word spaces, not letters (a space ≈ ½ letter): 2 × N for a last line of N letters
+│                        CJK: a paragraph does not end on one character (孤字, 泣き別れ): the line above gives one up and is spread to the measure.
+│                        A line set left/right/center gives it up too and stands one character short. Manuscript paper (原稿用紙):
+│                        cjk.grid.fullLines: true (≥ 1.28) keeps every square of such a line, and the paragraph may end on one character
 ├─ gradedRuntPenalty    false  true = a runt costs runtPenalty × (1 − width/threshold): a two-word ending costs less than one word
 ├─ tightenRunts         true   re-set a runt paragraph one line shorter (tighter spaces, ≤ maxRuntTracking; refused if a justified line passes max(maxWordSpacing, the paragraph's loosest justified line) or more lines go ragged)
 ├─ maxRuntTracking      10     thousandths of an em (10 = 0.01em), applied negatively
@@ -313,12 +330,18 @@ H&J / Knuth–Plass
 ├─ maxJustifyTracking   0      thousandths of an em, either way: a justified line past maxWordSpacing (or under minWordSpacing) takes letter spacing instead (0 = off; 10 is plenty; needs optimalLineBreaking)
 ├─ avoidOrphans         true;  orphanMinLines 2;  orphanPenalty 1000;  avoidOrphansInLists true
 ├─ avoidWidows          true;  widowMinLines 2;   widowPenalty 1000;   avoidWidowsInLists true
+│                        on a character grid (cjk.grid.enabled, ≥ 1.28) avoidWidows defaults to false, and avoidOrphans too in the
+│                        japan region: the page holds the lines its grid counts (a Chinese grid keeps avoidOrphans, 孤行). Set a key
+│                        to choose otherwise; a preset below configVersion 12 on a grid reads avoidWidows true (and avoidOrphans true in Japan).
+│                        avoidWidows = first lines at a column's foot, avoidOrphans = last lines at the next one's head (CSS names them the other way)
+├─ shortListSplit       'allow'  ≥ 1.28 a list of ≤ shortListMaxItems items cut between columns: 'warn' = same layout + a `shortListSplit` warning per list cut; 'avoid' = the list moves whole to the next column (headings right above it and its colon line go with it; one taller than an empty column is cut and reported). The list orphan/widow flags only keep the LINES of one item together
+├─ shortListMaxItems    3        most items (nested ones included) a list has to count as short
 ├─ slackWeight          10     pressure to fill columns (0 = off)
 ├─ keepColonWithList    true   paragraph ending in ':' stays with the list it introduces
 ├─ colonListRoom        'item' room kept under the colon line: 'item' = what the first item needs by the list orphan/widow rules
 │                        (a 2-line item kept whole needs 2 lines); 'line' = one line (1.4; a preset without configVersion 6 reads 'line'
 │                        when a chapter has a list after a line ending in ':')
-├─ hyphenateAcrossColumns true false = re-break a paragraph so the last line of a column (or page) ends on a whole word, within the word-spacing limits (InDesign's Hyphenate Across Column); ragged text set with optimalRagged too (only its line ends move)
+├─ hyphenateAcrossColumns true false = re-break a paragraph so the last line of a column (or page) ends on a whole word, within the word-spacing limits (InDesign's Hyphenate Across Column); ragged text set with optimalRagged too (only its line ends move). 'withinPage' (≥ 1.28) = guard the page ends only: a word may be divided between two columns of one page, never (where the limits allow) at the foot of a page; fewer lines move than with false, the value to prefer in 2+ columns when the source only avoids hyphens at page ends; same lines as false in one column
 └─ paragraphContainerSpacing 'collapse'  space under a :::paragraphs container: 'collapse' = max(spaceBetween, marginBottom,
                          the text's paragraph spacing) merged with the next block's own space above (a heading's marginTop);
                          'add' = 1.4 (style space baked into the grid snap, next block's space added under it; a preset
@@ -327,6 +350,7 @@ H&J / Knuth–Plass
 Gotchas
 - Hyphenation only applies when `textAlign: 'justify'`, unless `hyphenation.ragged: true` (ragged text too, within `zone`). Words < 5 chars never break (2 before / 3 after).
 - For a Spanish book set top-level `locale: 'es'` (hyphenation follows unless `hyphenation.locale` is set).
+- **Keeping words whole (postext ≥ 1.28).** `hyphenation.exceptions: ['Alice', 'You-Tube']`: a word without a hyphen is never divided, one with hyphens only there (TeX's `\hyphenation`). An entry matches a run of letters (`(Alice,`, `Alice’s`, each part of a compound); an inflected form is another entry; lower case matches any case, an initial capital only capitalised occurrences (`'Rose'` leaves `rose` alone). `hyphenation.capitalized: false` keeps every capitalised word whole, sentence openers included (InDesign's "Hyphenate Capitalized Words" off; useless in German, where every noun has a capital). `citations.hyphenateNames: false` keeps the family names of the cited authors whole (`(Lup-` | `ton, 2010)` never happens). All three reach captions, cells, notes and design text too. Port the source's hyphenation exception list and its "capitalized words" switch to these; for one occurrence, a soft hyphen before the word (references/document-format.md §3.3). Up to 1.27 the only ways were a `hyphenation: false` paragraph style, a soft hyphen typed inside the word, or rewording.
 - All widow/orphan/runt rules are soft penalties, never hard.
 - No-break spaces (U+00A0, U+202F, U+2007) and the word joiner (U+2060) glue their neighbours on every breaker; type the character, not `&nbsp;`. U+00A0 is in practically every face; a face without U+202F/U+2007 gets half a word space / a digit width.
 
@@ -486,6 +510,11 @@ headings
 │                                  'fill' = as many lines as fit, however few go on (1.4; a preset without
 │                                  configVersion 8 whose chapters have a heading reads 'fill')
 ├─ snapToGrid    true              false = keep exact marginBottom (text may sit off-grid until next snap point)
+├─ columnHeadSpace 'none'          ('none' | 'remainder', ≥ 1.28) a snapping heading that opens a column: 'none' sets it on
+│                                  the column's first line and the snap adds the part of a line under it (its text then stands
+│                                  further from it than after a paragraph); 'remainder' keeps that part of a line above it, so
+│                                  the text follows as closely as mid-column. Set 'remainder' for one-column books; keep 'none'
+│                                  in several columns, where it would lower one column's head against its neighbour
 ├─ inlineMarks   true              *it* **b** ^sup^ ~sub~ :smallcaps[] and links print in headings (italic flips:
 │                                  upright in an italic heading); false = plain, as 1.4 (a preset without
 │                                  configVersion 6 whose headings carry marks reads false)
@@ -606,17 +635,36 @@ headings
 ### 5.2 `headings.balancing` — ColumnBalancingConfig (vertical justification)
 Defaults:
 ```
-enabled true | maxLinesPerHeading 4 | stretchAfterLists true | maxLinesAfterList 1
-stretchAfterFloats true | maxLinesAfterFloat 1 | looseParagraphs true | maxLooseParagraphs 2
+enabled true | maxLinesPerHeading 4 | maxLinesBeforeLoose 2 (≥ 1.28) | stretchAfterLists true | maxLinesAfterList 1
+stretchAfterDisplays true (≥ 1.28) | stretchAfterFloats true | maxLinesAfterFloat 1
+stretchAfterWideFloats 'flush' ('flush' | 'always', ≥ 1.28) | trailingStep 'lines' ('lines' | 'grid', ≥ 1.28)
+looseParagraphs true | maxLooseParagraphs 2
 trackParagraphs true | maxTracking 10 (‰ em) | trailing true | beforeSpan true
 closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'off', ≥ 1.25)
 ```
 `enabled` is off by default in vertical text and on a character grid (`cjk.grid.enabled`, ≥ 1.25);
 `true` turns it on there.
 Levers in order: box closing a short column pushed to the foot → extra grid lines above headings
-(favouring lower level numbers) → after list ends → under top floats → loose paragraphs
-(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking).
+(favouring lower level numbers; at most `maxLinesBeforeLoose` each at this point, ≥ 1.28) → after list ends → under display formulas and boxes (one line;
+`stretchAfterDisplays: false` skips it, ≥ 1.28, for a paper whose formulas should keep their own
+margins) → under top floats (under a float over several columns, ≥ 1.28, the columns under it move
+down together, or one alone only when the line ends it flush: `stretchAfterWideFloats: 'always'` is
+the 1.27 lever, which could lower one head and still leave its column short) → loose paragraphs
+(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking)
+→ the headings' further lines up to `maxLinesPerHeading`, only when the loose paragraphs have
+nothing left to give (≥ 1.28; up to 1.27 a heading took all its lines first, which opened four
+lines above the one heading of a page: do not lower `maxLinesPerHeading` against that any more,
+and set `maxLinesBeforeLoose` = `maxLinesPerHeading` only to reproduce a 1.27 layout).
 `trailing`: level the closing band of a chapter (short last page → equal-height columns).
+`trailingStep 'lines'` (≥ 1.28; `'grid'` = 1.27): the cut counts lines of the band's own text, so an
+index or a list of references set on a leading of its own ends its columns within a line. Only when the
+band's lines stand whole lines apart (4 in 5 per column): entries with a fractional gap between them
+(`spaceBetween`, a hand-set group margin) keep the grid cut. Do not add
+space above index groups (`index.groups.marginTop`) to make an off-grid closing band end level.
+A closing band keeps its column heads level: no lever lowers the block that opens a column under a
+float, nor (≥ 1.28) the heading right under a `span:'page'` opener in the opener's own column; the
+lines go to a heading further down or the column ends short. Its columns, and the column rule, end
+on the grid line under its text, also when the band was level and took no cut (≥ 1.28).
 `beforeSpan`: level the columns a `span:'page'` callout interrupts. `closingBox: 'last'` runs the
 box lever after the spacing levers (the box takes only the fraction of a line they leave, so a
 box annotating the paragraph above it stays close to it); `'off'` never moves the box. Disable
@@ -735,7 +783,9 @@ bottom folio only there). Parity/pages are ignored inside heading slots.
     lineHeight=1.2 (number × fontSize),
   letterSpacing?: Dimension (negative tightens, em = font size; the tracking after a line's last glyph
     counts neither for centre/right alignment nor for an auto width, and a justified line's last glyph
-    ends on the edge), textTransform?: 'none'|'uppercase',
+    ends on the edge; it never changes the glyphs: ligatures stay on canvas, HTML, EPUB and PDF, so a
+    tracked running head or callout title is as wide as measured; a Hebrew run is tracked, only a
+    text with Arabic letters is not), textTransform?: 'none'|'uppercase',
   hyphenate?: boolean (wrap only), box?: ElementBoxStyle,
   dropCap?: { lines=2, fontFamily?, fontWeight?, fontSize?, color?, gap? }   (design text only; a chapter's
             first PARAGRAPH takes a body drop cap instead, §4b; capitals fixed at 0.72; the text wraps whatever its
@@ -892,7 +942,10 @@ prefix = ''   (≥ 1.9) text before the number, in the separator's style: prefix
 separator = '.', numberFontSize = 1em, gap = 0.5em, indent = 0em, numberVerticalOffset = 0em
 marginTop/Bottom = 1.5em, itemSpacing = 0em, hangingIndent = true, snapTopToGrid = false
 numberWidth = 'run'  ('run' = text after the widest number of the item's own run, so a list broken by a figure or
-                      a paragraph can shift its text; 'level' = widest number at that depth in the chapter)
+                      a paragraph can shift its text; 'level' = widest number at that depth in the chapter;
+                      'item' (≥ 1.28) = after the item's own number: each text one `gap` after its own label, 第九條 and
+                      第十一條 followed by the same space, texts starting at different places (Japanese statutes);
+                      turnovers by hangingIndent: false = back at the list indent, true = under the item's own text)
 numberAlign = 'end'  (≥ 1.26; 'end' = numbers flush against the text, 9. and 10. end together; 'start' = numbers at
                       the start of the column, so 第九條 and 第十一條 begin together; the text starts at the same place)
 separatorFontFamily / separatorFontWeight / separatorItalic / separatorColor  → inherit number style
@@ -909,7 +962,8 @@ GB/T 15834 list hierarchy for Chinese: levels 一、 / （一） / 1. / （1） 
 `[{level:1,numberFormat:'arabic',separator:'.'}, {level:2,numberFormat:'arabic',prefix:'（',separator:'）'},
 {level:3,numberFormat:'katakana',separator:''}, {level:4,numberFormat:'katakana',prefix:'（',separator:'）'}, {level:5,numberFormat:'circled-decimal',separator:''}]`.
 Numbers are right-aligned within a run (within the depth with `numberWidth: 'level'`); `numberAlign: 'start'` sets
-them at the start of the column instead (statute articles, any label of varying length). Around a list nested
+them at the start of the column instead (statute articles, any label of varying length), and `numberWidth: 'item'`
+(≥ 1.28) drops the column: each text follows its own label by `gap` (numberAlign then changes nothing). Around a list nested
 in another the outer list's `itemSpacing` applies on both sides. List margins of 1.5em are large — books usually want
 `{0.5,'em'}` or a pt value. Nested list depth in markdown = 2 spaces per level (max 5).
 
@@ -935,8 +989,13 @@ in another the outer list's `itemSpacing` applies on both sides. List margins of
                                  indent + hangingIndent); an inherited one gives way and line 1 starts at indent)
   spaceBetween = 0, marginTop = 0, marginBottom = 0 (minimum; flow snaps back to grid after)
   snapToGrid = true              (false = exact space under the container, flow stays off the grid)
+  containerSpacing?: 'collapse'|'add' (≥ 1.28; unset = bodyText.paragraphContainerSpacing; the rule under THIS
+                                 style's containers, in the text and in a box: 'add' on a big figure or a
+                                 reference list ends its groups on the style's own space, no paragraph-spacing
+                                 line added, while the document stays on 'collapse')
   textTransform = 'none'         ('uppercase' = capitals, chip words and :ref labels too, length-preserving; maths untouched)
-  wordBreak?: 'normal'|'keep-all' (≥ 1.16; unset = cjk.wordBreak; CJK lines only)
+  wordBreak?: 'normal'|'keep-all' (≥ 1.16; unset = cjk.wordBreak; between CJK characters; ≥ 1.28 also holds
+                                 for the characters a Latin paragraph quotes)
   lineNumbers?: boolean          (≥ 1.23, §19f; unset = counted when lineNumbers.count is 'all', and a poem
                                  set in the style counts under 'verse'; true = counted under 'verse' too and
                                  inside a callout; false = never)
@@ -947,7 +1006,7 @@ in another the outer list's `itemSpacing` applies on both sides. List margins of
 ```
 Inside the container the flow leaves the baseline grid. When it closes on a paragraph, the space under it merges
 with the next block's own (a heading's `marginTop`) and is at least the text's paragraph spacing
-(`bodyText.paragraphContainerSpacing`); when it closes on a list, the list keeps its own space and `marginBottom` follows. Unknown keys in a style raise `unknownConfigKey`. The style applies inside callouts too,
+(`bodyText.paragraphContainerSpacing`, or the style's own `containerSpacing`); when it closes on a list, the list keeps its own space and `marginBottom` follows. Unknown keys in a style raise `unknownConfigKey`. The style applies inside callouts too,
 margins included (they collapse with the neighbours' spacing; none at the top of the box); its
 unset fields inherit the document body text, not the box's `body`.
 
@@ -1102,6 +1161,8 @@ Inline `:chip[text]{style="id"}` (word banks, keys, tags). Chip without style �
 { id: string (REQUIRED; resource.typeId), name: string, namePlural?: string,
   shortLabel: string          used by :ref default style ("Fig. 1.7")
   numberingTemplate: string   tokens {n} (counter, per counterFormat), {h1}…{h6} (heading counters, decimal); '' = unnumbered
+                              ≥ 1.28 a token takes a heading template's style suffix: '{h1:A}.{n}' = A.1 in a lettered appendix,
+                              '{h1:I}.{n}' = II.3, '{n:i}' over counterFormat; unknown style = decimal; ≤ 1.27 printed '{h1:A}' as text
                               (≥ 1.5: caption "<prefix>. <caption>", no second stop after a prefix ending in . : ! ? …,
                               :ref prints the label alone; 1.4 printed "Do .Caption" / "Do ")
   resetOn: 'never'|'h1'|…|'h6'
@@ -1117,7 +1178,8 @@ span:     'column' (default) | 'page' | 'side' (float-only side column; else beh
 rotate?:  'ccw' | 'cw'   (landscape: page-span float on its own page)
 width?:   0 < w < 1 fraction of column/page width (default whole)
 align?:   'left' (default) | 'center' | 'right'
-captionSide?: boolean    caption in the float-only side column, level with the figure (column floats, oneAndHalf+floats)
+captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
+                         ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
                          ≥ the page's column count = page-wide; ignored for page/side spans, rotate, here;
                          captionSide only on 1-column floats
@@ -1158,6 +1220,10 @@ Gotchas
   `localized.<lang>.config.resourceTypes` in preset.json).
 - Numbering follows first `:ref` in reading order; `{h1}` is the chapter number (continues across chapters in book mode).
 - Pair `{h1}.{n}` with `resetOn:'h1'`.
+- Lettered appendices (heading style `numberingTemplate: 'Appendix {1:A}'`, `startAt=1` on the first): ONE extra type for all of them,
+  `{ ...table, id: 'table-a', numberingTemplate: '{h1:A}.{n}', resetOn: 'h1' }` (≥ 1.28). Do not write the letter into the template
+  (`'A.{n}'`, one type per appendix): that was the ≤ 1.27 workaround. Numbered boxes (`calloutStyles[].numbering.numberingTemplate`) and
+  `equationNumbering.numberingTemplate` take the same suffix.
 
 ---------------------------------------------------------------------------------
 
@@ -1303,6 +1369,7 @@ Notes cited with `[^id]` (document-format.md §10.4).
 | `fontSize` | `0.8em` | em/rem = body size; body family and weights |
 | `lineHeight` | `1.25em` | em = note size; notes are **off the baseline grid** (stack up from the column foot) |
 | `color` / `textAlign` | body | |
+| `wordBreak` | `cjk.wordBreak` | ≥ 1.28; `'keep-all'` / `'normal'` for the notes alone: `'keep-all'` keeps the Chinese or Japanese readings an English or Spanish note quotes whole (`看月光`) in a book whose body breaks between any two characters. Use it instead of word joiners (U+2060) between the characters |
 | `hangingIndent` | `0` | turnover lines align past the number |
 | `spaceBetween` | `0` | between two notes |
 | `spaceAbove` | `0.5em` | text → rule; em = body size |
@@ -1338,8 +1405,21 @@ crossRefs: {
   section?: string;   // levels 2–6: "section {n}", "§ {n}"
   page?: string;      // style=page: "p. {n}"
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // a :ref to an anchor without style=
+  breakLabels?: boolean; // ≥ 1.28, default true: a label of words breaks at its spaces; false = one word, as ≤ 1.27
 }
 ```
+
+**Labels that break (postext ≥ 1.28).** A reference that prints words (the text of a `[words]{#id}` anchor, a
+heading's or a box's title under `style=title` or on an unnumbered target, a `text="…"` override, on a figure or
+table reference too) is set word by word: lines break at its spaces, the spaces stretch on a justified line, the
+words are never hyphenated, and it stays one link (one per line in the PDF, one `<a>` in the reflowable EPUB). A
+label with a number or a page (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`) never breaks. In a label of words a number, a Roman
+numeral or a single letter keeps to the word before it, so `text="Fig. 1a"`, `text="plate IV"` and `text="Appendix A"`
+stay whole and `text="the map in Fig. 1a"` breaks only between its words. So anchor the
+whole phrase the source refers to (`[close the lever so that it points backwards]{#step}`): up to 1.27 a long
+label could not come up to the line before and ports shortened the anchored phrase to two or three words. Glue
+words of a label that must stay together with U+00A0. A preset below `configVersion` 12 with a reference in a
+chapter reads `breakLabels: false`.
 
 ## 19a3. `citations` — CitationsConfig (postext ≥ 1.12)
 
@@ -1354,6 +1434,7 @@ citations: {
   marker?: 'style' | 'brackets' | 'parentheses' | 'superscript' | 'corner'; // numbered styles; 'corner' = 〔1〕
   collapseRanges?: boolean;  // 1–3 (default true)
   notes?: 'footnote' | 'warichu'; // note styles
+  hyphenateNames?: boolean;  // false: family names of the cited authors are never divided (≥ 1.28; default true)
   bibliography?: { title?, scope?: 'book' | 'chapter', auto?, fontSize?, lineHeight?, hangingIndent?, entrySpacing?, labelWidth?, labelAlign?: 'left' | 'right', doi?: 'link' | 'text' | 'hide', includeUncited?, groupByLanguage? };
 }
 ```
@@ -1385,6 +1466,7 @@ What `:::index` prints from the `:index` marks (document-format.md §10.5). An e
 | `groups.enabled` | `true` | letter heads (A, B…, `0–9`, Symbols; 数字 / 數字 and 符号 / 符號 in Chinese) |
 | `groups.fontFamily/fontSize/fontWeight/italic/color` | entries', 700 | set on the entries' pitch |
 | `groups.marginTop` | one index line | above each group; none above the first or at a column top |
+| `groups.splitMinEntries` | `2` (≥ 1.28) | entries of a group kept on each side of a column break: no entry alone under its head at a column foot, none alone at a column head; a group of 2–3 moves whole. `1` = any break (1.27; a preset without `configVersion` 12 that prints an index reads `1`). A last group that cannot be shared can leave the closing columns uneven |
 | `groups.symbolsLabel` / `numbersLabel` | by language / `'0–9'` (数字 / 數字 in Chinese) | |
 
 Two columns come from the **heading style** of the index chapter, not from `index`:
@@ -1417,24 +1499,26 @@ CJK keeps Knuth–Plass. The guide is docs/chinese-layout-en.mdx (postext.dev/en
 | `hangingPunctuation` | `'auto'`: none / none / none / allow | `'none'` \| `'allow'` \| `'force'`: one 、，。． (mainland also ；：？！) past the line end; `'allow'` never in horizontal TW/HK, `'force'` there too. Japan hangs 、，。． only, in both directions, only when the mark would otherwise open the next line (ぶら下げ) |
 | `spaceAfterQuestion` | `'auto'`: off / off / off / on | ≥ 1.16; one em after ？！ inside a paragraph unless a closing bracket or another mark follows; a typed U+3000 there becomes that space; none at a line end |
 | `paragraphStartBracket` | `'auto'`: as any line start (Chinese) / `half` (Japan) | ≥ 1.16; a paragraph whose first-line indent meets an opening bracket: `'indent'` (JLReq ①, indent then 「), `'half'` (③, the bracket fills the indent cell, text at 1 em: Japanese novels), `'flush'` (天付き) |
-| `wordBreak` | `'normal'` | ≥ 1.16; `'keep-all'`: lines break only at spaces (U+0020, U+3000) and next to punctuation the level allows, never between two letters (kana, kanji, hangul, Latin): kana written with a space between phrases (分かち書き: picture books, primers) and Korean; a phrase longer than the line breaks inside. Replaces word joiners (U+2060) between kana. A paragraph style may set its own `wordBreak` |
+| `wordBreak` | `'normal'` | ≥ 1.16; `'keep-all'`: lines break only at spaces (U+0020, U+3000) and next to punctuation the level allows, never between two letters (kana, kanji, hangul, Latin): kana written with a space between phrases (分かち書き: picture books, primers) and Korean; a phrase longer than the line breaks inside. Replaces word joiners (U+2060) between kana. A paragraph style may set its own `wordBreak`, and the notes theirs (`footnotes.wordBreak`). ≥ 1.28: the rule also holds in a Latin paragraph that quotes CJK characters (up to 1.27 only paragraphs of CJK text obeyed it, and a quotation needed U+2060 between its characters) |
 | `titleMinChars` | `2` | ≥ 1.25; a line breaks inside a 《…》/〈…〉 title (typed or added by `bookTitleMark`, also 『』 round a Japanese `:book[…]`) or a wavy/bare `:book[…]` only with this many title characters on either side: no `《說` / `文》` split, titles of ≤ 3 characters stay whole; gives way when the line has no other break. `1` = break anywhere the level allows (pre-1.25). Do not cut or reword a source to dodge a title break |
 | `circledNumbers` | `'cjk'` | ≥ 1.25; ①–⑳, ⑴, ⒈, ⓐ, ❶, ➀ (U+2460–24FF, U+2776–2793) are CJK characters: one cell, no Han–Latin space, never at a line end (every level but `none` / `ja-loose`), so `**①**天也` needs no word joiner. `'western'` = pre-1.25 (Latin letters, ¼ em each side, may end a line). Vertical: upright either way |
 | `composeDesignText` | `true` | ≥ 1.25; design text (openers, heading designs, running heads, page designs, part pages) whose row has more CJK letters than word spaces takes the body's `lineBreak`, mark widths, `latinSpacing`, hanging and title rule (ragged; ruby/warichu/dots print plain). A note may be one sentence with `，；、`: no `\n` per clause to dodge full-width marks. `false` = pre-1.25 (wrapped at spaces, marks at the font's width) |
 | `latinSpacing` | `{0.25, em}` | Han ↔ Latin letter/digit; replaces a typed space; `0` off |
+| `latinSpacingEdge` | `'auto'` | ≥ 1.28; which side of a Western word takes `latinSpacing`. `'letters'` (Chinese regions): a side ending in a letter or a digit. `'western'` (Japan): any side of a word holding a letter or a digit, so `normalize()関数`, `(abc)関数`, `100%関数` get the quarter em with no typed space; solid after an opening bracket/prefix sign that ends the word and before a closing bracket/comma/stop/postfix sign that opens it; a lone `(` `!` `+` between kana takes none. Do not type spaces after inline code in Japanese text. A Japanese preset below configVersion 12 reads `'letters'` |
 | `uprightDigits` | `2` | vertical text: numbers of ≤ N digits in one upright cell (0, 2, 3, 4), but not inside a Latin sentence (a Latin word on both sides, past spaces, numbers and marks), where they run sideways with it; `:tcy[…]` / `:sideways[…]` by hand |
-| `grid` | off | `{enabled, charsPerLine, linesPerPage, show}`: rewrites margins so columns are whole ems and the type area whole lines; configured margins are minimums; warning `cjkGridClamped`. Column balancing is off on a grid unless `headings.balancing.enabled` (≥ 1.25, §5.2) |
+| `grid` | off | `{enabled, charsPerLine, linesPerPage, show, fullLines}`: rewrites margins so columns are whole ems and the type area whole lines; configured margins are minimums; warning `cjkGridClamped`. Column balancing is off on a grid unless `headings.balancing.enabled` (≥ 1.25, §5.2). On a grid `bodyText.avoidWidows` defaults to `false`, and `bodyText.avoidOrphans` too in the `japan` region (≥ 1.28, §4): a page holds every line its grid counts. `fullLines: true` (≥ 1.28, default off) is manuscript paper: a paragraph that is not justified keeps every square of its full lines under `avoidRunts` and may end on one character; without it such a paragraph gives the character up and the line above stands one square short, as on any page |
 | `emphasis` | `'dots'` in a Chinese or Japanese document | what `*…*` does to CJK characters (`'italic'` fakes a slant) |
 | `emphasisMark` | `{style: 'auto', fill: 'auto', position: 'auto'}` | ≥ 1.16; the shape of `*…*` dots and of `:dots` without attributes: `style` `'dot'\|'circle'\|'sesame'`, `fill` `'filled'\|'open'`, `position` `'over'\|'under'` (over = right in vertical text). Auto: Chinese dot under (right in vertical); Japan sesame ﹅ over / right in both directions. Dots go outside a ruby reading on the same side |
 | `bookTitleMark` | brackets / wavy / wavy / brackets | `:book[…]` prints its brackets, a wavy line under it, or `'none'` |
 | `bookTitleBrackets` | `'auto'`: 《》〈〉 (Chinese) / 『』「」 (Japan) | ≥ 1.16; `[{open, close}, …]` outermost first, a deeper title takes the last pair |
 | `annotationColor` | text colour | dots and name/title lines |
 | `ruby` | `{fontSize: 0.5em, position: 'auto', overhang: 'auto', align: 'auto', smallKana: 'keep'}` | `fontFamily`, `fontSize`, `color`, `position`: zhuyin right of each character, pinyin over (right in vertical); `overhang` `'none'\|'kana'\|'any'` (auto: `kana` in Japan = ≤ 1 ruby character onto kana and mark blanks, ½ onto 「, never onto kanji; elsewhere ¼ ruby em onto any neighbour); `align` `'center'\|'jis'\|'start'` (auto: `jis` 1:2:1 in Japan, centred elsewhere); `smallKana: 'full'` paints ゃっ full size (≥ 1.16) |
-| `warichu` | `{fontSize: 0.5em}` | `fontSize`, `color`, `open`, `close` (brackets around each note; none in Chinese, （） in Japan, `''` = none) |
+| `warichu` | `{fontSize: 0.5em, minChars: 2}` | `fontSize`, `color`, `open`, `close` (brackets around each note; none in Chinese, （） in Japan, `''` = none), `minChars` (≥ 1.28: characters of a note a line break leaves on each side, marks not counted, so no line or page opens on `異。`; a note of ≤ 3 characters never divides; `1` = 1.27, and a preset below configVersion 12 with a `:warichu[` or `citations.notes: 'warichu'` reads `1`). From 1.28 a part whose last characters may not open the lower row folds at the nearest fold (`本名。` = `本` over `名。`, not one row) |
 | `kunten` | `{fontSize: 0.5em, placement: 'inline'}` | ≥ 1.16, `:kunten[…]` kanbun marks: `fontSize`, `color` (else `annotationColor`), `placement` `'inline'` (JIS X 4051: 返り点 take half an em after the character) \| `'interlinear'` (in the line gap, no advance) |
 
 Content warnings to expect: `cjkLooseLine` (a justified line needing more than ½ em between characters, set
-short), `cjkMarksExceedLeading` / `rubyExceedsLeading` (line gap under ½ em with marks on one side, ⅝ with both;
+short; its Latin counterpart is `raggedLine`, ≥ 1.28.0: a justified line set ragged because its word spaces
+would pass 3×), `cjkMarksExceedLeading` / `rubyExceedsLeading` (line gap under ½ em with marks on one side, ⅝ with both;
 give annotated text more leading), `kuntenExceedsLeading` (送り仮名 need half an em on the reading side),
 `indexReadingMissing` (a Japanese index entry with kanji and no `yomi`), `arabicMarksExceedLeading` (vowel marks of vocalised Arabic touch the line above; raise `lineHeight`, 1.7–2.1 em), `fullwidthMarkup`, `attributeKeyInvalid`, `rotateIgnoredVertical`, `textWrap` (≥ 1.24: a resource or box with wrap kept its band: `tooNarrow`, `fewLines`, `verticalText`, or an inline one `moved` to the next column), `floatShrunk` (≥ 1.24: a picture scaled to its slot; `overflowPx` when even `minScale` runs past the text block), `columnsFlowUnknown` (≥ 1.25: a `:::columns` flow other than snake/parallel; the default applies), `columnsTooNarrow` (≥ 1.25: sub-columns under six ems of their text: fewer columns or a smaller `gap`), `afterText` (≥ 1.25: a `span: 'side'` box or side figure set on a page with no text, because its chapter ended while it waited for the channel: fence it earlier or shorten it) and `unplaced` (≥ 1.25: a box or float no page could take, e.g. a side box in a section with no side column; it is on no page); config
 warning `cjkGridClamped`; PDF warnings `missingGlyph`, `variableFontDefaultInstance`, `cffEmbeddedWhole`.
@@ -1473,6 +1557,7 @@ Guide: https://postext.dev/en/docs/japanese-layout. Everything below follows fro
 | `:book[…]` | `cjk.bookTitleMark`, `bookTitleBrackets` | 『』, a title inside one 「」 |
 | furigana | `cjk.ruby.overhang` / `align` / `smallKana` | `kana` (≤ 1 ruby character onto kana, never onto kanji) / `jis` (1:2:1) / `keep`; `{東京\|とう\|きょう}` is jukugo, `{東京\|とうきょう}` group |
 | warichu | `cjk.warichu.open/close` | （） |
+| Western words | `cjk.latinSpacingEdge` | `western` (≥ 1.28): the quarter em also next to a word's brackets and signs |
 | vertical text | `cjk.uprightDigits` | 2 digits and `!!` `!?` `?!` `??` upright in one cell; small kana, ー, 〝〟 (for “”), ：； take vertical forms |
 | headings | `headings.levels[].lineSpan` / `indent` / `jidori`, `headings.keepWithNextSpread` | not set: 3行取り = `lineSpan: 3`, 5字下げ = `indent: {value: 5, unit: 'em'}` (body ems), 序　章 = `jidori: 3` |
 | numbering | `第{1:一}章`, list `numberFormat` | 一 → japanese-informal (百一, 六千一); 壱 あ ア い イ tokens; `numberToWords` 二十一 / 第二十一 |
@@ -1486,7 +1571,8 @@ Guide: https://postext.dev/en/docs/japanese-layout. Everything below follows fro
 | kanbun | `:kunten[字]{kaeri="レ" okuri="ヲ"}`, `cjk.kunten` | 返り点 small at the lower left, 送り仮名 at the right (vertical) |
 
 Vertical multi-tier pages run on at a chapter end (nariyuki) by default: balancing is off in vertical
-text (and on a character grid, ≥ 1.25) unless `headings.balancing.enabled: true`. Fonts: Noto Serif JP (body), Noto Sans JP (headings, gothic emphasis), or Shippori
+text (and on a character grid, ≥ 1.25) unless `headings.balancing.enabled: true`. On a character grid a Japanese page
+runs both break rules off (`bodyText.avoidWidows`, `bodyText.avoidOrphans`, ≥ 1.28): do not write them `false` by hand. Fonts: Noto Serif JP (body), Noto Sans JP (headings, gothic emphasis), or Shippori
 Mincho / B1 for a bunko look (it has no ō ū: rōmaji with macrons needs another face for that text).
 
 ```json
@@ -1643,9 +1729,14 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 ## 20. Fonts — `customFonts` and what goes in preset.json
 
 `CustomFontFamily = { name, variants: [{ weight 100–900, style 'normal'|'italic', fileId, format 'woff2'|'woff'|'ttf'|'otf', fileName? }], redistributable?: boolean (default true) }`.
-- Any `fontFamily` string resolves against customFonts first, then Google Fonts.
+- Any `fontFamily` string resolves against customFonts first, then Google Fonts, then Fontsource
+  for a family Google Fonts does not have (Commit Mono, FiraGO). The Sandbox and the `postext`
+  command line fetch them; `render.mjs` does not, and measures an unbundled family with a stand-in face.
 - Needed variants: at least 400/700 normal+italic (else "missing variant" warning); if the book
-  uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`.
+  uses semibold for bold, provide 600 and set `bodyText.boldFontWeight: 600`. The `postext` command
+  line (≥ 1.28.0) fetches the bold weight the configuration names, and `postext check` reports a
+  `fontFallback` when a weight the family ships is missing and another face stood in (lines then
+  break otherwise than in the Sandbox): add the file, or run once online so it is cached.
 - `.woff` is rejected by the PDF backend and skipped by the preset loader — use woff2/ttf/otf.
 - Chinese faces: one static file per weight (a variable font embeds its default instance), TrueType
   outlines (CFF files are embedded whole), subset to the book's characters with layout features and
@@ -1654,7 +1745,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 
 **preset.json** — `version: 2` manifest (full reference: project-format.md):
 ```
-{ version: 2, configVersion: 11, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
+{ version: 2, configVersion: 12, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
   default?, view?: { canvasScope?: 'book'|'chapter' },
   start?: { pageIndexOffset?, pageNumbering?: { startAt?, format? }, headings?: { h1..h6 }, part?: { number, title, palette? },
             resourceCounters?, resourceNumbers?, statementCounters?, footnoteNumber?, lineNumber?, afterPartPage? },
@@ -1669,7 +1760,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 11` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
+`configVersion: 12` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
 the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`
 when one is embedded inside a `:::callout`, `headings.inlineMarks: false` when a heading carries `*`, `_`, `^`,
@@ -1690,7 +1781,13 @@ on every text element of a heading design or a part page (`parts.design`, `parts
 (in `htmlViewer.overrides` too); one stamped 10 (postext 1.24), that of rules 11:
 `headings.balancing.enabled: true` on a horizontal `cjk.grid` config that does not set it, `tableStyle.splitInline: false`
 when a chapter embeds a resource, `layout.flowColumns: false` when a chapter opens a `:::columns` fence (#634) and
-`layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639). The pins keep what those rules changed, not
+`layout.floatsUnderOpener: false` when the config sets a `span: 'page'` heading (#639); one stamped 11 (postext 1.25 to 1.27),
+those of rules 12: `bodyText.avoidWidows: true` on a `cjk.grid` config that does not set it, and `bodyText.avoidOrphans: true`
+too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter sets a `:warichu[` note or the config sets
+`citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
+kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
+reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
+no letter shaped alone). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —
@@ -1706,6 +1803,10 @@ metadata (front matter of chapter 1), `view` (top-level of the manifest, not con
 `pdfGeneration`: `{ outlines = true, forceColorSpace = false, colorSpace = 'cmyk'|'rgb'|'grayscale' ('cmyk'), accessible = true (tagged PDF/UA-1, lang = config.locale) }`.
 `renderToPdf` takes each setting from its own options, else from the first document's `pdfGeneration`
 (`colorSpace` only while `forceColorSpace` is on), else the defaults (bookmarks, tagged, RGB).
+`renderToPdf(docs, { date })` (postext-pdf ≥ 1.28.0; a `Date`, milliseconds or a date string) fixes
+the file's creation and modification dates (and a PDF/X file's XMP dates and document id): the same
+document and `date` give the same bytes, so a regenerated PDF with an unchanged layout does not show
+as a change. Left out, the file is stamped with the time of the call.
 
 `print` (postext ≥ 1.22; layout ignores it, postext-pdf / the preflight / the print preview read it):
 
@@ -1816,6 +1917,12 @@ shows the reverse page more than any stock but bible (its coldset ink soaks into
 `debug`: `cursorSync {enabled=true,color}`, `selectionSync {enabled=true,color}`,
 `looseLineHighlight {enabled=false,color,threshold=3}`, `pageNegative {enabled=false}`,
 `warnings { missingFont=true, looseLines=true, headingHierarchy=true, consecutiveHeadings=false, listAfterHeading=false, designIssues=true }`.
+Reading a line's word spacing off the VDT (postext ≥ 1.28): compare `lineWordSpacing(line)` with `minWordSpacing` /
+`maxWordSpacing`, not `line.justifiedSpaceRatio`. The latter is the width every space is painted at over the regular
+face's space, and a line with an italic or a bold space reads a few hundredths under or over the limit it was
+broken within; `line.justifiedSpaceLimitRatio` (present only on such lines) is the number the limits bound, and
+`lineWordSpacing` returns it or the painted ratio. The loose-line highlight, `findLooseLines` and the capture's
+C24 use it.
 `missingFont` also gates the engine's `fontFallback` content warning (≥ 1.25): a face the text was set in
 that the browser's font set could not give when the build ran (`reason` `missing` or `synthesized`, a
 weight or slant the family has no face for, drawn from another of its faces: a 600 set from the 700 as

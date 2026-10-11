@@ -295,8 +295,10 @@ desconocidos, cajas que la maquetación tuvo que forzar, fuentes que faltan,
 ajustes que el motor tuvo que sustituir y, en un libro preparado para imprenta
 (o con `--preflight`), el preflight: imágenes de baja resolución, filetes
 finos, texto pequeño en varias tintas, tinta por encima del límite, texto
-cerca del corte. Cada problema indica el archivo del capítulo, la línea y la
-página. El código de salida es 3 cuando se encuentra un error, o cualquier
+cerca del corte. También enumera el texto que no se lee sobre su fondo
+(`contrast`), una vez por par de colores, con la ratio en pantalla y, para
+imprenta, sobre el papel del perfil de salida. Cada problema indica el archivo
+del capítulo, la línea y la página. El código de salida es 3 cuando se encuentra un error, o cualquier
 aviso con `--strict`.
 
 ### build y --watch
@@ -354,6 +356,15 @@ Un peso o una inclinación que la familia no trae se compone con su fuente más
 cercana tal cual, en las imágenes de página igual que en el PDF: una familia
 de rotulación con un solo peso conserva sus letras en la negrita, y una
 familia sin cursiva, las redondas.
+
+Se descargan los pesos que nombra la configuración: redonda, negrita y sus
+cursivas para cada familia, y cualquier otro peso que dé un ajuste, incluido el
+de la negrita (`bodyText.boldFontWeight: 600` pide la fuente de peso 600). Si
+un peso que la familia sí trae no se pudo cargar (sin conexión y sin archivo en
+la caché, una descarga fallida, una carpeta de fuentes sin el archivo), el
+texto se compone con la fuente más cercana de la familia y `postext check` lo
+lista como advertencia `fontFallback`: sus líneas pueden partir de otro modo
+que en el Sandbox.
 
 La caché está en `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` en
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la cambian de sitio.
@@ -439,6 +450,7 @@ este ordenador en `packages/postext-cli/bin/`.
   HTML del Sandbox vuelve a componer el texto para la ventana.
 - **`--chapters`** compone los capítulos por separado: sus números de página
   empiezan de nuevo, mientras que el Sandbox continúa la numeración del libro.
-- **Las fuentes** salen del libro, de tus carpetas, del ejecutable o de Google
-  Fonts, nunca de las fuentes instaladas en el ordenador, así que un libro sale
-  igual en cualquier máquina.
+- **Las fuentes** salen del libro, de tus carpetas, del ejecutable, de Google
+  Fonts o de Fontsource (para una familia que Google Fonts no tiene), nunca de
+  las fuentes instaladas en el ordenador, así que un libro sale igual en
+  cualquier máquina.

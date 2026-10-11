@@ -27,6 +27,7 @@ export type SettingsSectionId =
   | 'layout'
   | 'writing'
   | 'color-palette'
+  | 'contrast'
   | 'headerFooter'
   | 'parts'
   | 'bodyText'
@@ -108,6 +109,7 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'writing', group: 'writing', labelKey: 'writingSection', configKeys: ['locale', 'layout', 'page'] },
   { id: 'cjk', group: 'writing', labelKey: 'cjkSection', configKeys: ['cjk'] },
   { id: 'color-palette', group: 'colors', labelKey: 'colorPalette', configKeys: ['colorPalette'] },
+  { id: 'contrast', group: 'colors', labelKey: 'contrastSection', configKeys: ['contrast'] },
   { id: 'bodyText', group: 'text', labelKey: 'bodyText', configKeys: ['bodyText'] },
   { id: 'paragraphStyles', group: 'text', labelKey: 'paragraphStylesSection', configKeys: ['paragraphStyles'] },
   { id: 'chipStyles', group: 'text', labelKey: 'chipStylesSection', configKeys: ['chipStyles'] },

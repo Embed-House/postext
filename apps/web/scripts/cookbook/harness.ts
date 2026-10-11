@@ -25,6 +25,7 @@ import type { NetIssue } from "./net.ts";
 import { interceptor, routeFor } from "./net.ts";
 import type { PenServer } from "./serve.ts";
 import { startPenServer } from "./serve.ts";
+import { step } from "./steps.ts";
 
 // ─── Chrome ─────────────────────────────────────────────────────────────────
 
@@ -76,12 +77,15 @@ export interface HarnessBrowser {
   userAgent: string;
 }
 
-export async function launchBrowser({ headed = false }: { headed?: boolean } = {}): Promise<HarnessBrowser> {
+/** `protocolTimeout`: how long one CDP call may stay unanswered
+ *  (steps.ts `protocolTimeoutFor`; Puppeteer's own default is 180 s). */
+export async function launchBrowser({ headed = false, protocolTimeout }: { headed?: boolean; protocolTimeout?: number } = {}): Promise<HarnessBrowser> {
   const browser = await puppeteer.launch({
     executablePath: findChrome(),
     headless: !headed,
     args: ["--no-sandbox", "--hide-scrollbars", "--mute-audio", "--no-first-run", "--no-default-browser-check"],
     defaultViewport: null,
+    ...(protocolTimeout ? { protocolTimeout } : {}),
   });
   const version = await browser.version();
   return {
@@ -124,6 +128,9 @@ export interface VariantRun {
   net: NetIssue[];
   failedRequests: string[];
   settle: { waitedMs: number; timedOut?: boolean } | null;
+  /** Waits that ended on their timer instead of their event (#743): the
+   *  fonts that never settled, the animation frame that never came. */
+  fallbacks: string[];
   /** `data-postext` and the status line once the pen settled, before the PDF. */
   kit: { state: string | null; status: string | null } | null;
   facts: ProbeFacts | null;
@@ -136,6 +143,9 @@ export interface VariantRun {
   publishError: string | null;
   cardErrors: string[];
   pages: RenderedPage[];
+  /** The published pages that differ from the committed images; null when
+   *  there was no committed folder to compare with. */
+  pageChanges: PageChange[] | null;
   card: CardImages | null;
   renderError: { message: string; taint: boolean } | null;
   timings: { totalMs: number; runMs: number };
@@ -158,12 +168,27 @@ export interface SandboxBundle {
   /** Builds left out because their configuration is another and the recipe
    *  did not say which to keep (`capture.sandbox`). */
   warns: string[];
+  /** The warnings of the pen's builds the bundle holds (kind and what it
+   *  names, positions aside): `sandbox.warnings` in capture.json (#736). */
+  penWarnings: string[];
   /** The pages of the builds the bundle holds, and of every build the
    *  capture publishes. */
   pages: number;
   allPages: number;
   /** The bundle opened and laid out again against the pen's documents (C33). */
   readBack: BundleReadBack | null;
+  /** The committed bundle, when its bytes are not the run's, read back the
+   *  same way by the run's engine (#734); null when the bytes are equal or
+   *  no committed bundle was given. */
+  committedReadBack: BundleReadBack | null;
+}
+
+/** A published page whose image is not the committed one beyond rendering
+ *  noise (#734, lib/probe.js `PAGE_DIFFERENCE`). */
+export interface PageChange {
+  n: number;
+  /** "worst cell 36.2 of 255, 14 cells over 12", "no committed image". */
+  detail: string;
 }
 
 /** What the bundle is called: `recipe-<slug>`, the write-up's title. */
@@ -190,6 +215,10 @@ export interface RunOptions {
   sandbox?: SandboxMeta;
   /** Only the facts and the Sandbox bundle: no PDF, pages or card. */
   sandboxOnly?: boolean;
+  /** The edition's committed folder, when its sources are the capture's:
+   *  the new pages are compared with its images and its bundle is read
+   *  back by the run's engine, so files that say nothing new stay (#734). */
+  committedDir?: string;
 }
 
 const PROBE = "/__cb/probe.js";
@@ -213,6 +242,15 @@ function dataUrlBytes(url: string): Buffer {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Past a step's own timeout, so Puppeteer's error (which names what it
+ *  waited for) arrives before the step's bound does. */
+const STEP_GRACE_MS = 5_000;
+/** `document.fonts.ready` settles when the pen says it is done; a font
+ *  request left without an answer would keep it pending for ever. */
+const FONTS_BOUND_MS = 10_000;
+/** A presented tab paints a frame every 16 ms. */
+const FRAME_BOUND_MS = 500;
+
 export async function runVariant(opts: RunOptions): Promise<VariantRun> {
   const { hb, meta } = opts;
   const timeout = meta.capture.timeoutMs ?? 60_000;
@@ -235,6 +273,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     net: [],
     failedRequests: [],
     settle: null,
+    fallbacks: [],
     kit: null,
     facts: null,
     tainted: [],
@@ -244,6 +283,7 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     publishError: null,
     cardErrors: [],
     pages: [],
+    pageChanges: null,
     card: null,
     renderError: null,
     timings: { totalMs: 0, runMs: 0 },
@@ -254,18 +294,33 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
   };
   const flagged = new Set<string>();
   const t0 = Date.now();
-  const page = await hb.browser.newPage();
+  // Every step is named and bounded by the recipe's own timeout (#743): a
+  // call that never answers says which step of which edition it was.
+  const edition = `${opts.slug} ${opts.variant}`;
+  const within = <T>(name: string, run: () => Promise<T>, timeoutMs: number = timeout) => step(name, { edition, timeoutMs }, run);
+  let page: Page;
+  try {
+    // A window of its own (#743). As tabs of one window only the last one
+    // opened is presented: the others get no animation frame, and
+    // `document.fonts.ready` and whatever a pen awaits before it paints stay
+    // pending until Chrome happens to bring them forward. With three
+    // editions at a time the first one opened could wait for the whole run.
+    page = await within("newPage", () => hb.browser.newPage({ type: "window" }));
+  } catch (error) {
+    await server.close();
+    throw error;
+  }
   try {
     const screenshot = meta.capture.card === "screenshot";
     const viewport = meta.capture.viewport ?? { width: 1280, height: 900 };
-    await page.setViewport({ ...viewport, deviceScaleFactor: screenshot ? 2 : 1 });
+    await within("viewport", () => page.setViewport({ ...viewport, deviceScaleFactor: screenshot ? 2 : 1 }));
     const localOrigin = server.url.replace(/\/$/, "");
     const onIssue = (issue: NetIssue) => {
       flagged.add(issue.url);
       run.net.push(issue);
     };
     if (!passive) {
-      await page.setRequestInterception(true);
+      await within("intercept", () => page.setRequestInterception(true));
       page.on("request", interceptor({ localOrigin, userAgent: hb.userAgent, refresh: opts.refreshNet, stats: netStats, onIssue }));
     } else {
       page.on("request", (request) => {
@@ -288,51 +343,62 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
       }
     });
 
-    await page.goto(server.url, { waitUntil: "domcontentloaded", timeout });
+    await within("goto", () => page.goto(server.url, { waitUntil: "domcontentloaded", timeout }), timeout + STEP_GRACE_MS);
     try {
-      await page.waitForFunction("window.__done !== undefined", { timeout: Math.max(1000, timeout - (Date.now() - t0)), polling: 100 });
+      const left = Math.max(1000, timeout - (Date.now() - t0));
+      await within("done", () => page.waitForFunction("window.__done !== undefined", { timeout: left, polling: 100 }), left + STEP_GRACE_MS);
     } catch {
       run.done = "timeout";
     }
-    const state = (await page.evaluate(
+    const state = await within("state", () => page.evaluate(
       "({ done: window.__done ?? null, err: window.__err ?? null, errors: window.__cbErrors ?? [] })",
-    )) as { done: "ok" | "error" | null; err: string | null; errors: string[] };
+    ) as Promise<{ done: "ok" | "error" | null; err: string | null; errors: string[] }>);
     if (state.done) run.done = state.done;
     run.err = state.err;
     run.loaderErrors = state.errors;
     if (run.done === "timeout") return run;
 
-    // Fonts, then no new build for 500 ms (H10), then two frames.
-    await page.evaluate("document.fonts.ready.then(() => true)");
-    run.settle = await probe(page, "settle", 500, 10_000);
-    await probe(page, "frames", 2);
+    // Fonts, then no new build for 500 ms (H10), then two frames. The
+    // fonts and the frames wait on the browser, so each has a timer beside
+    // it in the page (#743): a tab the browser is not presenting gets no
+    // animation frame. No picture is taken of a `sandboxOnly` run, which
+    // needs no frame at all.
+    const fonts = await within("fonts", () => probe<{ timedOut?: boolean }>(page, "fontsReady", FONTS_BOUND_MS));
+    if (fonts.timedOut) run.fallbacks.push(`fonts: document.fonts.ready did not settle in ${FONTS_BOUND_MS / 1000} s`);
+    run.settle = await within("settle", () => probe(page, "settle", 500, 10_000));
+    {
+      const painted = await within("frames", () => probe<{ frames: number; fellBack?: boolean }>(page, "frames", 2, FRAME_BOUND_MS));
+      if (painted.fellBack) run.fallbacks.push(`frames: no animation frame in ${FRAME_BOUND_MS} ms after ${painted.frames} of 2`);
+    }
     run.timings.runMs = Date.now() - t0;
-    run.kit = await probe(page, "kitState");
-    run.epubs = await probe<EpubRecord[]>(page, "epubState");
+    run.kit = await within("kit", () => probe(page, "kitState"));
+    run.epubs = await within("epubs", () => probe<EpubRecord[]>(page, "epubState"));
 
     if (meta.downloads?.pdf && !opts.sandboxOnly) {
-      const button = await page.$("[data-postext-pdf]");
+      const button = await within("pdfButton", () => page.$("[data-postext-pdf]"));
       const pdf: NonNullable<VariantRun["pdf"]> = {
         wanted: true, button: !!button, timedOut: false, error: null, fontFailures: [], ms: 0, bytes: null,
       };
       run.pdf = pdf;
       if (button) {
-        await page.evaluate("window.scrollTo(0, 0)");
-        await button.click();
+        await within("pdfClick", async () => {
+          await page.evaluate("window.scrollTo(0, 0)");
+          await button.click();
+        });
         try {
-          await page.waitForFunction(
+          await within("pdf", () => page.waitForFunction(
             "!!(window.__cb && (window.__cb.pdf || window.__cb.pdfError)) || document.documentElement.dataset.postext === 'error'",
             { timeout, polling: 100 },
-          );
+          ), timeout + STEP_GRACE_MS);
         } catch {
           pdf.timedOut = true;
         }
-        const pdfState = await probe<{ bytes: number; error: string | null; fontFailures: string[]; ms: number }>(page, "pdfState");
+        const pdfState = await within("pdfState", () => probe<{ bytes: number; error: string | null; fontFailures: string[]; ms: number }>(page, "pdfState"));
         pdf.error = pdfState.error;
         pdf.fontFailures = pdfState.fontFailures;
         pdf.ms = pdfState.ms;
         if (pdfState.bytes) {
-          const base64 = await probe<string | null>(page, "pdfBase64");
+          const base64 = await within("pdfBytes", () => probe<string | null>(page, "pdfBase64"));
           if (base64) pdf.bytes = Buffer.from(base64, "base64");
         }
       }
@@ -340,41 +406,47 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
 
     const hero = heroPages(meta);
     const select = meta.capture.doc ?? "last";
-    run.facts = await probe<ProbeFacts>(page, "facts", { select, hero });
+    run.facts = await within("facts", () => probe<ProbeFacts>(page, "facts", { select, hero }));
     const all = (run.facts.pages ?? []).map((p) => p.n);
     if (run.facts.selected < 0 || all.length === 0) return run;
     const keep = meta.capture.sandbox ?? null;
     if (opts.sandboxOnly) {
-      if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, keep, opts.variant, opts.sandbox, opts.sandbox.thumbnail ?? null);
+      const sandbox = opts.sandbox;
+      if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, sandbox.thumbnail ?? null, null));
       return run;
     }
 
-    run.tainted = await probe<number[]>(page, "taintedPages", { select });
+    run.tainted = await within("tainted", () => probe<number[]>(page, "taintedPages", { select }));
     const published = publishedPages(meta, all);
     run.published = published.list;
     run.publishError = published.error;
     run.cardErrors = cardProblems(meta, all, new Map((run.facts.pages ?? []).map((p) => [p.n, p.book])));
 
-    const rendered = await probe<{ pages?: { n: number; w: number; h: number; full: string; strip: string; png: string | null }[]; error?: string; taint?: boolean }>(
+    const rendered = await within("pages", () => probe<{ pages?: { n: number; w: number; h: number; full: string; strip: string; png: string | null }[]; error?: string; taint?: boolean }>(
       page, "renderPages", { select, pages: run.published, png: !!opts.png },
-    );
+    ));
     if (rendered.error) run.renderError = { message: rendered.error, taint: !!rendered.taint };
     run.pages = (rendered.pages ?? []).map((p) => ({
       n: p.n, w: p.w, h: p.h, full: dataUrlBytes(p.full), strip: dataUrlBytes(p.strip), png: p.png ? dataUrlBytes(p.png) : null,
     }));
 
+    if (opts.committedDir && !run.renderError) {
+      const dir = opts.committedDir;
+      run.pageChanges = await within("compare", () => changedPages(page, dir, run.pages));
+    }
+
     let shot: string | null = null;
     if (screenshot && !run.cardErrors.length) {
       try {
-        shot = await screenshotOf(page, meta.capture.selector ?? "#pages");
+        shot = await within("screenshot", () => screenshotOf(page, meta.capture.selector ?? "#pages"));
       } catch (error) {
         run.cardErrors.push((error as Error).message);
       }
     }
     if (!run.cardErrors.length && !run.renderError) {
-      const card = await probe<{ card?: string; card480?: string; og?: string; png?: string | null; ogPng?: string | null; magnification?: number | null; error?: string; taint?: boolean }>(
+      const card = await within("card", () => probe<{ card?: string; card480?: string; og?: string; png?: string | null; ogPng?: string | null; magnification?: number | null; error?: string; taint?: boolean }>(
         page, "composeCard", { select, mode: meta.capture.card, hero, focus: meta.capture.focus ?? null, screenshot: shot, png: !!opts.png },
-      );
+      ));
       if (card.error || !card.card || !card.card480 || !card.og) {
         run.renderError = { message: `card: ${card.error ?? "no image"}`, taint: !!card.taint };
       } else {
@@ -388,7 +460,10 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
         };
       }
     }
-    if (opts.sandbox) run.sandbox = await sandboxBundle(page, select, keep, opts.variant, opts.sandbox, run.card?.card480 ?? null);
+    const sandbox = opts.sandbox;
+    const committedBundle = opts.committedDir ? path.join(opts.committedDir, `${opts.slug}.postext`) : null;
+    const committed = committedBundle && fs.existsSync(committedBundle) ? fs.readFileSync(committedBundle) : null;
+    if (sandbox) run.sandbox = await within("bundle", () => sandboxBundle(page, select, keep, opts.variant, sandbox, run.card?.card480 ?? null, committed));
     return run;
   } finally {
     run.timings.totalMs = Date.now() - t0;
@@ -411,12 +486,13 @@ async function sandboxBundle(
   locale: SampleLocale,
   meta: SandboxMeta,
   thumbnail: Buffer | null,
+  committed: Buffer | null,
 ): Promise<SandboxBundle> {
-  const none = { warnings: [], notes: [], warns: [], pages: 0, allPages: 0, readBack: null };
+  const none = { warnings: [], notes: [], warns: [], penWarnings: [], pages: 0, allPages: 0, readBack: null, committedReadBack: null };
   try {
     const out = await probe<{
       base64?: string; error?: string; warnings?: string[]; notes?: string[]; warns?: string[];
-      pages?: number; allPages?: number; readBack?: BundleReadBack;
+      pages?: number; allPages?: number; readBack?: BundleReadBack; committedReadBack?: BundleReadBack; penWarnings?: string[];
     }>(page, "sandboxBundle", {
       select,
       keep,
@@ -426,6 +502,7 @@ async function sandboxBundle(
       locale,
       thumbnail: thumbnail ? thumbnail.toString("base64") : null,
       folio: meta.folio ?? null,
+      committed: committed ? committed.toString("base64") : null,
     });
     return {
       bytes: out.base64 ? Buffer.from(out.base64, "base64") : null,
@@ -433,13 +510,40 @@ async function sandboxBundle(
       warnings: out.warnings ?? [],
       notes: out.notes ?? [],
       warns: out.warns ?? [],
+      penWarnings: out.penWarnings ?? [],
       pages: out.pages ?? 0,
       allPages: out.allPages ?? 0,
       readBack: out.readBack ?? null,
+      committedReadBack: out.committedReadBack ?? null,
     };
   } catch (error) {
     return { ...none, bytes: null, error: String((error as Error).message ?? error) };
   }
+}
+
+/** The published pages whose image is not the committed one (#734): equal
+ *  bytes pass at once; the rest are decoded in the page, both sides, and
+ *  compared cell by cell (lib/probe.js `comparePages`). */
+async function changedPages(page: Page, dir: string, pages: RenderedPage[]): Promise<PageChange[]> {
+  const changes: PageChange[] = [];
+  const pairs: { n: number; committed: string; fresh: string }[] = [];
+  for (const p of pages) {
+    const file = path.join(dir, `p${String(p.n).padStart(2, "0")}.webp`);
+    if (!fs.existsSync(file)) {
+      changes.push({ n: p.n, detail: "no committed image" });
+      continue;
+    }
+    const committed = fs.readFileSync(file);
+    if (!committed.equals(p.full)) pairs.push({ n: p.n, committed: committed.toString("base64"), fresh: p.full.toString("base64") });
+  }
+  // A few at a time: each pair is two images through the protocol.
+  for (let i = 0; i < pairs.length; i += 4) {
+    const compared = await probe<{ n: number; differ: boolean; worst: number; cells: number; error?: string }[]>(page, "comparePages", pairs.slice(i, i + 4));
+    for (const c of compared) {
+      if (c.differ) changes.push({ n: c.n, detail: c.error ?? `worst cell ${c.worst} of 255, ${c.cells} cell${c.cells === 1 ? "" : "s"} over the threshold` });
+    }
+  }
+  return changes.sort((a, b) => a.n - b.n);
 }
 
 /** The DOM card (`capture.card: 'screenshot'`): the element's top 4:3, at

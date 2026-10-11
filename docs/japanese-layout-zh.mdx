@@ -37,6 +37,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
     <tr><td>断行（<code>lineBreak</code>）</td><td><code>ja-very-strict</code>：小假名、ー、々和〜从不出现在行首</td><td><code>gb</code></td></tr>
     <tr><td>标点宽度（<code>punctuationWidth</code>）</td><td><code>fullwidth</code>，加上JLReq的相邻标点挤压；行尾的后括号类标点保留半个字宽，直到本行需要它</td><td><code>kaiming</code></td></tr>
     <tr><td>段落中的？和！（<code>spaceAfterQuestion</code>）</td><td>其后加一个字宽的空白</td><td>不加空白</td></tr>
+    <tr><td>西文单词旁的四分之一字宽（<code>latinSpacingEdge</code>）</td><td><code>western</code>：以括号或符号结尾的一侧也加，如<code>normalize()関数</code></td><td><code>letters</code>：只加在字母或数字旁边</td></tr>
     <tr><td>段首的括号（<code>paragraphStartBracket</code>）</td><td><code>half</code>：占缩进的后半个字宽</td><td>与一般行首相同</td></tr>
     <tr><td>悬挂（<code>hangingPunctuation</code>）</td><td><code>allow</code>，仅限、。，．</td><td><code>none</code></td></tr>
     <tr><td><code>&#42;…&#42;</code>（<code>emphasis</code>、<code>emphasisMark</code>）</td><td>文字上方加芝麻点，竖排时在右侧</td><td>文字下方加圆点</td></tr>
@@ -58,7 +59,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 ### 汉字、假名与罗马字
 
-一行日文里有汉字、平假名、片假名，还有拉丁字母和数字，即罗马字。Postext不需要任何设置来区分它们：CJK字符（汉字和假名都算）多于词间空格的段落由CJK排版器逐字排版，其中的拉丁单词或数字是一个单元，行不会在单元内部断开。日文与拉丁文字之间，排版器加四分之一个字宽（`cjk.latinSpacing`），两端对齐的行可以把它拉宽到半个字宽（JLReq §3.2.2）；作者在那里输入的空格会被它替换，而不是叠加。日文正文的词与词之间没有空格，所以两个日文词之间输入的空格仍是空格。
+一行日文里有汉字、平假名、片假名，还有拉丁字母和数字，即罗马字。Postext不需要任何设置来区分它们：CJK字符（汉字和假名都算）多于词间空格的段落由CJK排版器逐字排版，其中的拉丁单词或数字是一个单元，行不会在单元内部断开。日文与拉丁文字之间，排版器加四分之一个字宽（`cjk.latinSpacing`），两端对齐的行可以把它拉宽到半个字宽（JLReq §3.2.2）；作者在那里输入的空格会被它替换，而不是叠加。西文单词以括号或符号结尾的一侧也加这个间距（`normalize()関数`、`(abc)関数`、`100%関数`；`cjk.latinSpacingEdge: 'western'`，日本地区的默认值，JLReq §3.2.6），但单独夹在日文字符之间的括号或符号不加（`関数(かんすう)は`）。日文正文的词与词之间没有空格，所以两个日文词之间输入的空格仍是空格。
 
 修订黑本式拼写的罗马字带长音符号（<span lang="ja" className="font-body">Tōkyō</span>、<span lang="ja" className="font-body">Sōseki</span>），字体必须有这些字形：Postext不会向另一个字体族借缺少的字形。其他语言的词可以用隔离标记标注，`:ltr[the Meiji era]{lang=en}`：HTML把它标为`lang="en"`，PDF把它放进带自己`/Lang`的`/Span`，并按该语言的字形整形。全角字母和数字（Ｋ、１２）是日文字符：竖排时直立，各占一个字宽。
 
@@ -136,7 +137,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 
 ### 两端对齐与段落末行
 
-日文正文两端对齐，段落最后一行密排。字与字之间需要超过半个字宽的行，按不足行长排出，并报为`cjkLooseLine`（见[断词与两端对齐](/zh/docs/justification#中文日文和韩文)）。`bodyText.avoidRunts`打开时（默认如此），段落不会以只有一个字的行结束（泣き別れ）：上一行先尝试放弃标点空白把这个字挤进来，前提是不让任何一行变松；不行，才让出一个字给最后一行。
+日文正文两端对齐，段落最后一行密排。字与字之间需要超过半个字宽的行，按不足行长排出，并报为`cjkLooseLine`（见[断词与两端对齐](/zh/docs/justification#中文日文和韩文)）。`bodyText.avoidRunts`打开时（默认如此），段落不会以只有一个字的行结束（泣き別れ）：上一行先尝试放弃标点空白把这个字挤进来，前提是不让任何一行变松；不行，才让出一个字给最后一行。JLReq §3.5.4并不看重这项调整，孤字往往也可以接受，但仍会留意避免；不两端对齐的段落同样让出一个字，上一行少一个字。原稿用纸（原稿用紙）则不同：设置`cjk.grid.fullLines`后，不两端对齐的段落不让出字，因为上一行无法拉开，最后一格会空着。标点有空白可让时，仍会把这个字收进上一行。
 
 ## 竖排
 
@@ -161,6 +162,8 @@ Postext用同一份Markdown源文件和同一套配置，既能横排日文，�
 ### 页面、栏与页码
 
 竖排日文书通常在页面下端用阿拉伯数字印页码；如果设计要在切口竖排页码，则用汉字：`page.pageNumbering.format: 'cjk-decimal'`把第105页写成一〇五，这是页码所用的逐位写法（JLReq §2.6）。章从右页（recto）开始，在右侧装订的书中就是左手边的页面：`breakBefore: { enabled: true, parity: 'odd' }`。[竖排文本元素](/zh/docs/configuration-page-layout#竖排文本元素)中的切口书眉不加改动即可用于日文书。
+
+在字符网格（`cjk.grid`）上，日文页面排满网格所数的每一行：`bodyText.avoidWidows`和`bodyText.avoidOrphans`在那里默认都关闭。JLReq §3.5.4计的是段落末行的字数，没有规定换页处要留几行，所以段落可以在页末留下一行，也可以带一行到下一页。把其中任一键设为`true`即可恢复该规则。不设网格的文档两条规则都保持开启。
 
 ## 振假名
 

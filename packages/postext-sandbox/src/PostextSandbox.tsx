@@ -31,6 +31,7 @@ import { LargeTargetsToggle } from './ui/LargeTargetsToggle';
 import { FolioLoading } from './viewport/FolioLoading';
 import type { PanelId } from './types';
 import { setOutputProfileBaseUrl } from './print/printSetup';
+import { SandboxWebMcp } from './webmcp/SandboxWebMcp';
 
 // three.js loads with the Folio tab, not with the sandbox.
 const FolioViewport = lazy(() => import('./viewport/FolioViewport').then((m) => ({ default: m.FolioViewport })));
@@ -359,6 +360,7 @@ export function PostextSandbox({
   languageSwitcher,
   homeUrl,
   homeLink,
+  webmcp = true,
 }: PostextSandboxProps) {
   // Before any child asks for a profile.
   setOutputProfileBaseUrl(outputProfileBaseUrl);
@@ -383,6 +385,7 @@ export function PostextSandbox({
         onConfigChange={onConfigChange}
         onMarkdownChange={onMarkdownChange}
       >
+        {webmcp && <SandboxWebMcp />}
         <PortalProvider>
         <TooltipProvider>
           <SandboxLayout

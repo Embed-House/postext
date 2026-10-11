@@ -435,25 +435,44 @@ export interface ColumnsSpec {
   rule: boolean;
   flow: 'snake' | 'parallel';
   breaks?: number[];
+  /** The space the fence asks for above and under the group (`marginTop`,
+   *  `marginBottom`, #714). Absent: none of its own. */
+  marginTopPx?: number;
+  marginBottomPx?: number;
+}
+
+/** A `marginTop` / `marginBottom` of a `:::columns` fence (#714): a length
+ *  as `gap` writes it, in pixels. A value that does not parse, or a
+ *  negative one, is ignored. */
+export function fenceMarginPx(value: string | undefined, emPx: number, dpi: number): number | undefined {
+  const d = value !== undefined ? parseLengthText(value) : undefined;
+  if (!d) return undefined;
+  const v = dimensionToPx(d, dpi, emPx);
+  return Number.isFinite(v) && v >= 0 ? v : undefined;
 }
 
 /** Read a `:::columns` fence: `count` (2 by default, at most 6), `gap` (a
  *  length; else `defaultGapPx`), `rule` (a rule down each gutter), `breaks`
  *  (the children that open each column after the first) and `flow`
  *  (`'parallel'` by default with `breaks`, `'snake'` without; an unknown
- *  value takes the default). */
+ *  value takes the default), and the space above and under the group
+ *  (`marginTop`, `marginBottom`, #714). */
 export function columnsSpecOf(attrs: DirectiveAttrs, defaultGapPx: number, emPx: number, dpi: number): ColumnsSpec {
   const count = Number.parseInt(attrs.count ?? '2', 10);
   const breaks = (attrs.breaks ?? '').split(',').map((v) => Number.parseInt(v.trim(), 10)).filter((v) => Number.isFinite(v) && v > 1);
   const gap = attrs.gap !== undefined ? parseLengthText(attrs.gap) : undefined;
   const gapPx = gap ? dimensionToPx(gap, dpi, emPx) : defaultGapPx;
   const flow = attrs.flow === 'snake' || attrs.flow === 'parallel' ? attrs.flow : breaks.length > 0 ? 'parallel' : 'snake';
+  const marginTopPx = fenceMarginPx(attrs.marginTop, emPx, dpi);
+  const marginBottomPx = fenceMarginPx(attrs.marginBottom, emPx, dpi);
   return {
     count: Number.isFinite(count) ? count : 2,
     gapPx: Number.isFinite(gapPx) && gapPx >= 0 ? gapPx : defaultGapPx,
     rule: attrs.rule !== undefined && attrs.rule !== 'false',
     flow,
     ...(breaks.length > 0 ? { breaks } : {}),
+    ...(marginTopPx !== undefined ? { marginTopPx } : {}),
+    ...(marginBottomPx !== undefined ? { marginBottomPx } : {}),
   };
 }
 
@@ -567,6 +586,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
 
   const { span, placement, title: rawTitle, label: labelText } = resolveCalloutAttrs(style, attrs);
   const isAuto = style.width === 'auto';
+  /** The frameless box of a `:::columns` group in the running text. */
+  const flowGroupBox = isFlowColumnsStyle(style.id);
   // The title, the continuation marker and the label are design text set
   // here by hand: in a right-to-left document their lines are ordered at
   // that base direction, for the mirrored flow the box is painted in.
@@ -917,7 +938,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ?? (lineCut ? undefined : measureFirstChildAcrossWidths(raw, blockIdx, k, width, styleOverride))
       ?? measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride });
     if (!measuredBlock) return undefined;
-    const { kind, measured, prefixLen, absoluteSourceMap, mathDisplayRender, resourceBlock, letterSpacingPx, code } = measuredBlock;
+    const { kind, measured, prefixLen, absoluteSourceMap, mathDisplayRender, resourceBlock, letterSpacingPx, runtTracking, code } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;
     // A structural heading (`hidden`) keeps its lines' text but prints
     // nothing and takes no room: no line height, no margins, and the
@@ -958,6 +979,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // shorter, a heading level's `letterSpacing`): painted as measured,
     // as in the flow (EF-111).
     if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+    if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
     blk.contentIndex = blockIdx;
     blk.containerId = containerId;
     const paragraphStyleId = paragraphStyleIdOf(raw, container, derivedCtx.resolved);
@@ -1095,7 +1117,8 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const pc = input.paragraphContainers?.byId.get(raw.containerId);
     if (!pc || st.first) return;
     if (raw.type === 'containerEnd' && children[k - 1]?.type === 'paragraph') {
-      if (input.resolved.bodyText.paragraphContainerSpacing === 'collapse' && !st.pull && bodyStyle.marginBottomPx > st.prevMarginBottom) {
+      // (The container's style may set the rule itself, #715.)
+      if ((pc.spacing ?? input.resolved.bodyText.paragraphContainerSpacing) === 'collapse' && !st.pull && bodyStyle.marginBottomPx > st.prevMarginBottom) {
         st.prevMarginBottom = bodyStyle.marginBottomPx;
       }
       return;
@@ -1367,8 +1390,12 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const cols = Math.max(1, Math.min(6, spec.count));
     const gap = spec.gapPx;
     const colW = Math.max(1, (innerWidth - gap * (cols - 1)) / cols);
-    // Spacing above the group: as a block with no margin of its own.
-    const groupTop = st.cursorY + st.prevMarginBottom;
+    // Spacing above the group: as a block with no margin of its own, or
+    // with the one its fence asks for (`marginTop`, #714: merged with the
+    // space pending, none when the group opens the box; a part of a group
+    // that goes on from an earlier fragment takes none).
+    const ownTop = cut.from || st.first ? 0 : spec.marginTopPx ?? 0;
+    const groupTop = st.cursorY + Math.max(st.prevMarginBottom, ownTop);
     const childMin = Math.min(Math.max(1, style.splitMinLines), input.resolved.layout.boxChildSplitMinLines);
     const parallel = spec.flow === 'parallel' && (spec.breaks?.length ?? 0) > 0;
     let groupHeight = 0;
@@ -1473,7 +1500,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       }
     }
     st.cursorY = groupTop + groupHeight;
-    st.prevMarginBottom = 0;
+    // The fence's `marginBottom` is the space pending after the group
+    // (#714): it merges with the next block's own and is dropped at the
+    // box's foot, like any last child's. A part that goes on leaves none.
+    st.prevMarginBottom = cut.to ? 0 : spec.marginBottomPx ?? 0;
     st.pull = false;
     st.prevWasListItem = false;
     st.first = false;
@@ -1512,7 +1542,14 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         while (e < children.length && !(children[e]!.type === 'containerEnd' && children[e]!.containerName === 'columns' && children[e]!.containerId === raw.containerId)) e++;
         // A fragment that opens inside the group (it is then the first
         // child) or ends inside it (the last) sets its part (#634).
-        placeColumnsGroup(k + 1, e, columnsSpecOf(raw.containerAttrs ?? {}, columnGapPx, em, dpi), st, {
+        // (The margins of a main-flow group's fence are its synthetic
+        // box's, returned below: the group does not take them again, #714.)
+        const groupSpec = columnsSpecOf(raw.containerAttrs ?? {}, columnGapPx, em, dpi);
+        if (flowGroupBox) {
+          delete groupSpec.marginTopPx;
+          delete groupSpec.marginBottomPx;
+        }
+        placeColumnsGroup(k + 1, e, groupSpec, st, {
           ...(k === 0 && input.groupFrom ? { from: input.groupFrom } : {}),
           ...(e === children.length - 1 && input.groupTo ? { to: input.groupTo } : {}),
         });
@@ -1814,8 +1851,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     units,
     width,
     totalHeight: frameHeight,
-    marginTopPx: px(style.marginTop),
-    marginBottomPx: px(style.marginBottom),
+    // A main-flow group's box takes the space its fence asks for in place
+    // of its style's (`wrapFlowColumns` copies the attributes, #714).
+    marginTopPx: (flowGroupBox ? fenceMarginPx(attrs.marginTop, em, dpi) : undefined) ?? px(style.marginTop),
+    marginBottomPx: (flowGroupBox ? fenceMarginPx(attrs.marginBottom, em, dpi) : undefined) ?? px(style.marginBottom),
     continuesMarkerPx,
     ...(groupLayouts.length > 0 ? { groups: groupLayouts } : {}),
   };

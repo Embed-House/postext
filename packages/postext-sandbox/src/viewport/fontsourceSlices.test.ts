@@ -4,6 +4,9 @@ import { parseFontsourceCss, parseUnicodeRange, pickSlices } from './fontsourceS
 vi.mock('../controls/fontLoader', () => ({
   getCustomFontFamily: () => undefined,
   loadFont: async () => undefined,
+  // The catalogue's record of the family, which the loader keeps (#753).
+  fontFamilyWeights: async () => [400, 700],
+  isUncataloguedFontFamily: () => false,
 }));
 vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
@@ -99,7 +102,6 @@ describe('createPdfFontProvider (#196)', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubGlobal('fetch', async (url: string) => {
       fetched.push(url);
-      if (url.startsWith('https://api.fontsource.org/')) return new Response(JSON.stringify({ weights: [400, 700] }));
       if (unreachable.delete(url)) throw new TypeError('Failed to fetch');
       if (url.endsWith('/400.css')) return new Response(CSS);
       if (url.endsWith('.css')) return new Response('', { status: 404 });

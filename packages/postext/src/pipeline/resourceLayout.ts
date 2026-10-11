@@ -32,7 +32,7 @@
  */
 
 import { bitmapLayoutSize } from '../bitmapResolution';
-import { findAnchorTarget, resolveAnchorRefLabel, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
+import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
 import { measuringVertically, withMeasureWritingMode } from '../measure/vertical';
 import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import type { InlineSpan, RefCase } from '../parse';
@@ -70,7 +70,7 @@ import { createBoundingBox } from '../vdt';
 import { measureRichBlock, measureTextWidth, buildFontString } from '../measure';
 import type { MeasureBlockOptions } from '../measure';
 import { isSwatchFill, measureRichSnippet } from '../measure/rich';
-import { isBlankText } from '../measure/spaces';
+import { isBlankText, refLabelPieces } from '../measure/spaces';
 import { linkSegments } from '../measure/links';
 import { graphemeCount } from '../measure/graphemes';
 import { dimensionToPx } from '../units';
@@ -330,28 +330,51 @@ export function resolveRefSpans(
   resourceNumbering: ResourceNumberingMap,
   resourceTypes: ResourceType[],
   resources: Resource[],
-  refStyle?: { bold: boolean; italic: boolean; labelNumberGap?: string; anchors?: AnchorRefContext },
+  refStyle?: {
+    bold: boolean;
+    italic: boolean;
+    labelNumberGap?: string;
+    anchors?: AnchorRefContext;
+    /** `crossRefs.breakLabels` (#702): a label of words with a space
+     *  between two of them is marked `ref.breakable`, and a line may break
+     *  there (`refLabelPieces`). */
+    breakLabels?: boolean;
+  },
 ): InlineSpan[] {
   if (!spans.some((s) => s.ref)) return spans;
   const isResource = (id: string): boolean => resourceNumbering[id] !== undefined || resources.some((r) => r.id === id);
   return spans.map((span) => {
     if (!span.ref) return span;
     let ref = span.ref;
-    let text: string | undefined;
+    let label: { text: string; words: boolean } | undefined;
     if (!isResource(ref.resourceId)) {
       const target = findAnchorTarget(refStyle?.anchors?.targets, ref.resourceId);
       const bare = unprefixedId(ref.resourceId);
       if (target && refStyle?.anchors) {
         ref = { ...ref, resourceId: target.id, anchor: true, ...(target.pageIndex !== undefined ? { pageIndex: target.pageIndex } : {}) };
-        text = resolveAnchorRefLabel(ref, target, refStyle.anchors.strings);
+        label = anchorRefLabel(ref, target, refStyle.anchors.strings);
       } else if (bare !== undefined && isResource(bare)) {
         ref = { ...ref, resourceId: bare };
       }
     }
+    // A reference to a resource is words only under a `text` override: its
+    // own label carries a number ("Fig. 1.7").
+    label ??= {
+      text: resolveRefLabel(ref, resourceNumbering, resourceTypes, resources, refStyle?.labelNumberGap),
+      words: ref.text !== undefined && ref.text.length > 0,
+    };
+    // Spans resolved twice (a block measured again) are marked afresh.
+    if (ref.breakable) {
+      ref = { ...ref };
+      delete ref.breakable;
+    }
+    // Words only: a number keeps to the word before it (`Fig. 1a`), so a
+    // label of a word and a number has no break either.
+    if (label.words && refStyle?.breakLabels === true && refLabelPieces(label.text)) ref = { ...ref, breakable: true };
     return {
       ...span,
       ref,
-      text: text ?? resolveRefLabel(ref, resourceNumbering, resourceTypes, resources, refStyle?.labelNumberGap),
+      text: label.text,
       // Reference labels keep the emphasis of the run they sit in, and the
       // reference style adds its own on top where it sets it (#531), so the
       // measurer selects the matching font; colour is applied by renderers
@@ -902,7 +925,7 @@ function layoutTable(
   resourceNumbering: ResourceNumberingMap,
   resourceTypes: ResourceType[],
   resources: Resource[],
-  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string },
+  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean },
   selection?: readonly number[],
   /** The table's own direction (`Resource.table.direction`), when it
    *  opposes its frame's: its cells are measured in it, its first column
@@ -930,7 +953,7 @@ function layoutTableIn(
   resourceNumbering: ResourceNumberingMap,
   resourceTypes: ResourceType[],
   resources: Resource[],
-  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string },
+  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean },
   selection: readonly number[] | undefined,
   opposite: boolean,
 ): { layout: VDTResourceTableLayout; height: number; metrics?: TableRowMetrics } {
@@ -1249,7 +1272,7 @@ export function layoutCaptionText(input: CaptionTextInput): CaptionTextLayout {
   const lineHeightRatio = bodyStyle.lineHeightPx / bodyStyle.fontSizePx;
   const normalWeight = resolved.bodyText.fontWeight.toString();
   const boldWeight = resolved.bodyText.boldFontWeight.toString();
-  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap };
+  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
   const cs: ResolvedCaptionStyleConfig = mergeCaptionStyle(
     resolved.captionStyle,
     resourceType?.captionStyle,
@@ -1384,7 +1407,7 @@ export function layoutResourceBlock(input: ResourceLayoutInput): {
   // previous heights exactly when the size is left at the body default).
   const lineHeightRatio = bodyStyle.lineHeightPx / bodyStyle.fontSizePx;
   // Inline `:ref` emphasis (bold/italic), applied to refs in captions + cells.
-  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap };
+  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
 
   // --- Figure body -------------------------------------------------------
   let bodyWidth = columnWidth;

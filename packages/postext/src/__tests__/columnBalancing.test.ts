@@ -529,6 +529,45 @@ describe('list-end and loose-paragraph levers', () => {
     expect(headingLever(capped, NO_FORCED)).toBeUndefined();
   });
 
+  it('keeps the heading right under a page-span opener at its column\'s head in a closing band (#709)', () => {
+    // The opener stays in its own column as a hidden block, so the headline
+    // under it is block 1: on a page that flows on it is a heading lever
+    // like any other; in a closing band it is the column's head, and only
+    // the heading further down is offered.
+    const build = (): VDTDocument => {
+      const opener = fakeBlock({ type: 'heading', headingLevel: 1, contentIndex: 80, hidden: true });
+      const full = fakeBlock({ type: 'paragraph', bbox: { x: 500, y: 0, width: 480, height: 900 } });
+      return fakeDoc([
+        [
+          { blocks: [opener, heading(81, 2), para(), heading(82, 2), para()], availableHeight: 2 * 24 },
+          { blocks: [full], availableHeight: 0 },
+        ],
+        [{ blocks: [para()], availableHeight: 0 }],
+      ]);
+    };
+    const headingLevers = (doc: VDTDocument, forced: ReadonlySet<number>) =>
+      collectColumnGaps(doc, forced).flatMap((g) => g.candidates).filter((c) => c.kind === 'heading').map((c) => c.contentIndex);
+
+    expect(headingLevers(build(), NO_FORCED)).toEqual([81, 82]);
+    expect(headingLevers(build(), new Set([0]))).toEqual([82]);
+    const capped = build();
+    for (const c of capped.pages[0]!.columns) c.trailingCap = true;
+    expect(headingLevers(capped, NO_FORCED)).toEqual([82]);
+    // The lines the column needs go to the heading that is left.
+    const proposal = proposeBalanceLines(build(), new Set([0]), emptyState(), baseOptions());
+    expect(proposal.lines.get(81)).toBeUndefined();
+    expect(proposal.lines.get(82)).toBe(2);
+
+    // A structural hidden heading before it counts the same way, and a
+    // visible block before it makes it a mid-column heading again.
+    const structural = build();
+    structural.pages[0]!.columns[0]!.blocks.unshift(fakeBlock({ type: 'heading', headingLevel: 1, contentIndex: 79, hidden: true }));
+    expect(headingLevers(structural, new Set([0]))).toEqual([82]);
+    const mid = build();
+    mid.pages[0]!.columns[0]!.blocks.splice(1, 0, para());
+    expect(headingLevers(mid, new Set([0]))).toEqual([81, 82]);
+  });
+
   it('exhausts heading capacity before touching list ends', () => {
     const doc = fakeDoc([
       [
@@ -672,6 +711,175 @@ describe('list-end and loose-paragraph levers', () => {
   });
 });
 
+describe('headings hold their further lines for the levers after them (#707)', () => {
+  const heading = (contentIndex: number, level = 2) => fakeBlock({ type: 'heading', headingLevel: level, contentIndex });
+  const para = (contentIndex: number) => fakeBlock({ type: 'paragraph', contentIndex });
+  const justified = (contentIndex: number) =>
+    fakeBlock({ type: 'paragraph', contentIndex, textAlign: 'justify', lines: [fakeLine(), fakeLine(), fakeLine()] });
+  /** One short column of `blocks` with `gap` empty lines, on a page that flows on. */
+  const column = (blocks: VDTBlock[], gap: number): VDTDocument => fakeDoc([
+    [
+      { blocks, availableHeight: gap * 24 },
+      { blocks: [para(90)], availableHeight: 0 },
+    ],
+    [{ blocks: [para(91)], availableHeight: 0 }],
+  ]);
+  const options = (over?: Partial<BalanceProposalOptions>) => baseOptions({ maxLinesPerHeading: 4, maxLinesBeforeLoose: 2, maxLooseParagraphs: 2, ...over });
+  const oneHeading = (gap = 4): VDTDocument => column([para(1), heading(2), justified(3), justified(4), para(5)], gap);
+
+  it('gives one heading two lines and offers the paragraphs the rest', () => {
+    const proposal = proposeBalanceLines(oneHeading(), new Set(), emptyState(), options());
+    expect(proposal.lines.get(2)).toBe(2);
+    expect([...proposal.loose.keys()].sort()).toEqual([3, 4]);
+    // Two lines are left: both paragraphs are needed.
+    expect(proposal.looseBudget.get(3)!.need).toBe(2);
+  });
+
+  it('gives the heading its further lines once the paragraphs have nothing left', () => {
+    // Both failed: the heading takes the four lines, as up to 1.27.
+    const failed = proposeBalanceLines(oneHeading(), new Set(), emptyState(), options({ failedLoose: new Set([3, 4]) }));
+    expect(failed.lines.get(2)).toBe(4);
+    expect(failed.loose.size).toBe(0);
+    // The next pass after the paragraphs gained their lines: two lines went
+    // above the heading, both paragraphs are loose, one line is still open.
+    const state: BalanceState = { lines: new Map([[2, 2]]), loose: new Map([[3, 1], [4, 1]]) };
+    const after = proposeBalanceLines(oneHeading(1), new Set(), state, options());
+    expect(after.lines.get(2)).toBe(3);
+    // One gained, one failed, two lines open: the heading closes them.
+    const mixed = proposeBalanceLines(oneHeading(2), new Set(), { lines: new Map([[2, 2]]), loose: new Map([[3, 1]]) }, options({ failedLoose: new Set([4]) }));
+    expect(mixed.lines.get(2)).toBe(4);
+    // A candidate is still untried: the heading waits for it.
+    const waiting = proposeBalanceLines(oneHeading(2), new Set(), { lines: new Map([[2, 2]]), loose: new Map([[3, 1]]) }, options());
+    expect(waiting.lines.get(2)).toBe(2);
+    expect(waiting.loose.has(4)).toBe(true);
+  });
+
+  it('gives the headings all their lines at once when the loose lever is off', () => {
+    for (const over of [{ looseParagraphs: false }, { optimalLineBreaking: false }, { maxLooseParagraphs: 0 }]) {
+      const proposal = proposeBalanceLines(oneHeading(), new Set(), emptyState(), options(over));
+      expect(proposal.lines.get(2), JSON.stringify(over)).toBe(4);
+      expect(proposal.loose.size).toBe(0);
+    }
+  });
+
+  it('tries the list ends and the displays before a heading\'s third line', () => {
+    const item = (contentIndex: number) => fakeBlock({ type: 'listItem', contentIndex });
+    const doc = column([para(1), heading(2), para(3), item(4), para(5), fakeBlock({ type: 'mathDisplay', contentIndex: 6 }), para(7)], 4);
+    const proposal = proposeBalanceLines(doc, new Set(), emptyState(), options({ looseParagraphs: false }));
+    expect(proposal.lines.get(2)).toBe(2);
+    expect(proposal.lines.get(5)).toBe(1); // after the list
+    expect(proposal.lines.get(7)).toBe(1); // under the formula
+    // A line more than they can take goes above the heading.
+    const five = proposeBalanceLines(column([para(1), heading(2), para(3), item(4), para(5), fakeBlock({ type: 'mathDisplay', contentIndex: 6 }), para(7)], 5), new Set(), emptyState(), options({ looseParagraphs: false }));
+    expect([five.lines.get(2), five.lines.get(5), five.lines.get(7)]).toEqual([3, 1, 1]);
+  });
+
+  it('counts the first cap per heading: six lines over two headings', () => {
+    const two = (): VDTDocument => column([para(1), heading(2), justified(3), heading(4, 3), justified(5), para(6)], 6);
+    const first = proposeBalanceLines(two(), new Set(), emptyState(), options());
+    expect([first.lines.get(2), first.lines.get(4)]).toEqual([2, 2]);
+    expect(first.loose.size).toBe(2);
+    const later = proposeBalanceLines(two(), new Set(), emptyState(), options({ failedLoose: new Set([3, 5]) }));
+    expect([later.lines.get(2), later.lines.get(4)]).toEqual([3, 3]);
+  });
+
+  it('is the order of postext 1.27 with maxLinesBeforeLoose at or above the cap, or left out', () => {
+    for (const maxLinesBeforeLoose of [4, 9, undefined]) {
+      const proposal = proposeBalanceLines(oneHeading(), new Set(), emptyState(), options({ maxLinesBeforeLoose }));
+      expect(proposal.lines.get(2)).toBe(4);
+      expect(proposal.loose.size).toBe(0);
+    }
+    // 0: the other levers before any line above a heading.
+    const zero = proposeBalanceLines(oneHeading(), new Set(), emptyState(), options({ maxLinesBeforeLoose: 0 }));
+    expect(zero.lines.get(2)).toBeUndefined();
+    expect(zero.loose.size).toBe(2);
+  });
+});
+
+describe('under a float over several columns (#708)', () => {
+  const para = (contentIndex: number) => fakeBlock({ type: 'paragraph', contentIndex });
+  /** Page 0: two columns that start at y=300 under one float; `gaps` are
+   *  the empty lines of each. `width` is the float's: 980 stands over both
+   *  columns, 480 over the first alone. Page 1 follows, so page 0 flows on. */
+  const under = (gaps: [number, number], width = 980, firstBlocks?: VDTBlock[]): VDTDocument => {
+    const doc = fakeDoc([
+      [
+        { blocks: firstBlocks ?? [para(1), para(2)], availableHeight: gaps[0] * 24 },
+        { blocks: [para(3), para(4)], availableHeight: gaps[1] * 24 },
+      ],
+      [{ blocks: [para(9)], availableHeight: 0 }],
+    ]);
+    for (const col of doc.pages[0]!.columns) col.bbox = { ...col.bbox, y: 300, height: 600 };
+    doc.pages[0]!.floats = [fakeBlock({ type: 'resource', bbox: { x: 0, y: 0, width, height: 280 } })];
+    return doc;
+  };
+  const flush = (over?: Partial<BalanceProposalOptions>) => baseOptions({ looseParagraphs: false, stretchAfterWideFloats: 'flush', ...over });
+  const propose = (doc: VDTDocument, options: BalanceProposalOptions) => {
+    const p = proposeBalanceLines(doc, NO_FORCED, emptyState(), options);
+    return [p.lines.get(1), p.lines.get(3)];
+  };
+
+  it('marks the after-float point of a column under a float that stands over another column too', () => {
+    const wide = collectColumnGaps(under([2, 1]), NO_FORCED).map((g) => g.candidates.find((c) => c.kind === 'afterFloat')?.wideFloat);
+    expect(wide).toEqual([{ key: '0:0', under: 2 }, { key: '0:0', under: 2 }]);
+    const narrow = collectColumnGaps(under([2, 1], 480), NO_FORCED)[0]!.candidates.find((c) => c.kind === 'afterFloat');
+    expect(narrow).toBeDefined();
+    expect(narrow!.wideFloat).toBeUndefined();
+  });
+
+  it('adds no line that lowers one head and leaves its column short (case A)', () => {
+    // The first column needs two lines and may take one; the second is flush.
+    expect(propose(under([2, 0]), flush())).toEqual([undefined, undefined]);
+    // Up to 1.27, and with 'always': the first column moves down alone.
+    expect(propose(under([2, 0]), flush({ stretchAfterWideFloats: 'always' }))).toEqual([1, undefined]);
+    expect(propose(under([2, 0]), baseOptions({ looseParagraphs: false }))).toEqual([1, undefined]);
+  });
+
+  it('moves the columns under the float together (case B)', () => {
+    // Four lines short and one line short: both take one, the second ends flush.
+    expect(propose(under([4, 1]), flush())).toEqual([1, 1]);
+    expect(propose(under([4, 1]), flush({ stretchAfterWideFloats: 'always' }))).toEqual([1, 1]);
+    // The smallest number any of them can take, then more only to close a gap.
+    expect(propose(under([3, 2]), flush({ maxLinesAfterFloat: 3 }))).toEqual([3, 2]);
+    expect(propose(under([5, 2]), flush({ maxLinesAfterFloat: 3 }))).toEqual([2, 2]);
+  });
+
+  it('lets a column take its line alone when that ends it flush', () => {
+    expect(propose(under([1, 0]), flush())).toEqual([1, undefined]);
+    expect(propose(under([0, 1]), flush())).toEqual([undefined, 1]);
+    // Two lines within the cap close the gap too.
+    expect(propose(under([2, 0]), flush({ maxLinesAfterFloat: 2 }))).toEqual([2, undefined]);
+  });
+
+  it('counts a column with no after-float point as taking nothing', () => {
+    // A heading opens the first column: it is a heading lever, so the
+    // second has no neighbour to move with and three lines to close.
+    const headed = (): VDTDocument => under([3, 3], 980, [fakeBlock({ type: 'heading', headingLevel: 2, contentIndex: 1 }), para(2)]);
+    const p = proposeBalanceLines(headed(), NO_FORCED, emptyState(), flush());
+    expect(p.lines.get(3)).toBeUndefined();
+    // A point that may take no more lines stops the group as well.
+    expect(propose(under([4, 1]), flush({ failedLines: new Set([1]) }))).toEqual([undefined, 1]);
+    expect(propose(under([4, 2]), flush({ failedLines: new Set([1]) }))).toEqual([undefined, undefined]);
+  });
+
+  it('leaves a float over one column as it was', () => {
+    expect(propose(under([2, 0], 480), flush())).toEqual([1, undefined]);
+    expect(propose(under([2, 0], 480), flush({ stretchAfterFloats: false }))).toEqual([undefined, undefined]);
+    expect(propose(under([4, 1]), flush({ stretchAfterFloats: false }))).toEqual([undefined, undefined]);
+  });
+
+  it('closes the last line alone once a loose paragraph gained one', () => {
+    // Case A with a justified paragraph: the proposal offers it and adds no
+    // after-float line; in the next pass one line is left, and it closes.
+    const justified = fakeBlock({ type: 'paragraph', contentIndex: 2, textAlign: 'justify', lines: [fakeLine(), fakeLine(), fakeLine()] });
+    const first = proposeBalanceLines(under([2, 0], 980, [para(1), justified]), NO_FORCED, emptyState(), flush({ looseParagraphs: true }));
+    expect(first.lines.get(1)).toBeUndefined();
+    expect([...first.loose.keys()]).toEqual([2]);
+    const next = proposeBalanceLines(under([1, 0], 980, [para(1), justified]), NO_FORCED, { lines: new Map(), loose: new Map([[2, 1]]) }, flush({ looseParagraphs: true }));
+    expect(next.lines.get(1)).toBe(1);
+  });
+});
+
 describe('cascade containment', () => {
   const para = (contentIndex: number, cont = false) =>
     fakeBlock({ type: 'paragraph', contentIndex, id: cont ? `p-${contentIndex}-cont-1` : `p-${contentIndex}` });
@@ -793,6 +1001,35 @@ describe('after-display lever and the level of a closing band', () => {
     const proposal = proposeBalanceLines(doc, new Set(), emptyState(), baseOptions());
     expect(proposal.lines.get(3)).toBe(1);
     expect(proposal.lines.get(5)).toBe(1);
+  });
+
+  it('adds no line under a formula or a box with stretchAfterDisplays off (#710)', () => {
+    const justified = (contentIndex: number) =>
+      fakeBlock({ type: 'paragraph', contentIndex, textAlign: 'justify', lines: [fakeLine(), fakeLine(), fakeLine()] });
+    const build = (): VDTDocument => fakeDoc([
+      [
+        { blocks: [justified(1), math(2), para(3), boxChild(4), para(5)], availableHeight: 2 * 24 },
+        { blocks: [para(6)], availableHeight: 0 },
+      ],
+      [{ blocks: [para(10)], availableHeight: 0 }],
+    ]);
+    // The candidates are offered either way: the switch acts on the proposal.
+    const kinds = collectColumnGaps(build(), new Set())[0]!.candidates.map((c) => `${c.kind}:${c.contentIndex}`);
+    expect(kinds).toEqual(expect.arrayContaining(['afterDisplay:3', 'afterDisplay:5', 'looseParagraph:1']));
+
+    // On (and unset): one line under each, and nothing left for the loose lever.
+    for (const options of [baseOptions(), baseOptions({ stretchAfterDisplays: true })]) {
+      const on = proposeBalanceLines(build(), new Set(), emptyState(), options);
+      expect([on.lines.get(3), on.lines.get(5)]).toEqual([1, 1]);
+      expect(on.loose.size).toBe(0);
+    }
+    // Off: nothing under the displays; the gap goes on to the paragraph.
+    const off = proposeBalanceLines(build(), new Set(), emptyState(), baseOptions({ stretchAfterDisplays: false }));
+    expect(off.lines.size).toBe(0);
+    expect([...off.loose.keys()]).toEqual([1]);
+    // With no lever after it, the column ends short.
+    const short = proposeBalanceLines(build(), new Set(), emptyState(), baseOptions({ stretchAfterDisplays: false, looseParagraphs: false }));
+    expect(short.changed).toBe(false);
   });
 
   it('never stretches a column of a closing page past the tallest column beside it', () => {

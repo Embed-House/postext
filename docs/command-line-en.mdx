@@ -283,8 +283,10 @@ Markdown that does not close, unknown resources, directives and styles, boxes
 the layout had to force, fonts that are missing, settings the engine had to
 replace, and, for a book set up for print (or with `--preflight`), the
 preflight: low-resolution pictures, hairlines, small text in several inks, ink
-over the limit, text near the trim. Each problem names the chapter file, the
-line and the page. The exit code is 3 when an error is found, or any warning
+over the limit, text near the trim. It also lists the text that does not read
+on its ground (`contrast`), once per pair of colours, with the ratio on screen
+and, for print, on the paper of the output profile. Each problem names the
+chapter file, the line and the page. The exit code is 3 when an error is found, or any warning
 with `--strict`.
 
 ### build and --watch
@@ -341,6 +343,14 @@ the book does not carry, `postext` looks, in order:
 A weight or a slant a family does not ship is set in its nearest face as it
 is, in the page images as in the PDF: a display face with one weight keeps its
 own letters for a bold, and an upright family for an italic.
+
+The weights the configuration names are the ones fetched: regular, bold and
+their italics for every family, and any other weight a setting gives, the
+bold's included (`bodyText.boldFontWeight: 600` asks for the 600 face). When a
+weight the family ships could not be loaded (offline with no cached file, a
+download that failed, a font folder without the file), the text is set in the
+family's nearest face and `postext check` lists it as a `fontFallback`
+warning: its lines may break otherwise than in the Sandbox.
 
 The cache is `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows);
 `POSTEXT_CACHE_DIR` or `--cache-dir` moves it. `--offline` skips the download.
@@ -423,6 +433,6 @@ executable to `packages/postext-cli/bin/`.
   lays the text out again for the window.
 - **`--chapters`** lays out the chapters on their own: their page numbers start
   again, where the Sandbox continues the book's numbering.
-- **Fonts** come from the book, your folders, the executable or Google Fonts,
-  never from the fonts installed on the computer, so a book comes out the same
-  on every machine.
+- **Fonts** come from the book, your folders, the executable, Google Fonts or
+  Fontsource (for a family Google Fonts does not have), never from the fonts
+  installed on the computer, so a book comes out the same on every machine.

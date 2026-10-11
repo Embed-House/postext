@@ -4,8 +4,22 @@ import { DEFAULT_DEBUG_CONFIG } from './defaults/debug';
 const FONT_SIZE_RE = /(\d*\.?\d+)px/;
 
 /**
- * How loosely a line is set, as a word-space ratio: its
- * `justifiedSpaceRatio`, or, for a CJK line spread between its characters
+ * The word spacing of a justified line in the units of
+ * `bodyText.minWordSpacing` and `maxWordSpacing` (#704): the ratio the
+ * breaker bounds (`justifiedSpaceLimitRatio`) when the line carries one,
+ * else `justifiedSpaceRatio`, which is the same number on a line whose
+ * spaces all come from the regular face. Undefined for a line that is not
+ * justified. Compare this with the limits, not `justifiedSpaceRatio`: a
+ * line that holds a bold or an italic space is painted a little over or
+ * under the limit it was broken within.
+ */
+export function lineWordSpacing(line: Pick<VDTLine, 'justifiedSpaceRatio' | 'justifiedSpaceLimitRatio'>): number | undefined {
+  return line.justifiedSpaceLimitRatio ?? line.justifiedSpaceRatio;
+}
+
+/**
+ * How loosely a line is set, as a word-space ratio: its word spacing
+ * ({@link lineWordSpacing}), or, for a CJK line spread between its characters
  * (segment `tracking`), `1 + tracking / (⅛ em)` — at the default threshold
  * of 3, a line whose characters are spread by more than ¼ em is loose. The
  * larger of the two when a line has both; undefined when it has neither.
@@ -15,7 +29,7 @@ export function lineLooseness(line: VDTLine, fontSizePx: number): number | undef
   let tracking = 0;
   for (const seg of line.segments ?? []) if (seg.tracking !== undefined && seg.tracking > tracking) tracking = seg.tracking;
   const cjk = tracking > 0 && fontSizePx > 0 ? 1 + tracking / (fontSizePx / 8) : undefined;
-  const spaces = line.justifiedSpaceRatio;
+  const spaces = lineWordSpacing(line);
   if (cjk === undefined) return spaces;
   return spaces === undefined ? cjk : Math.max(spaces, cjk);
 }
@@ -25,8 +39,8 @@ export function lineLooseness(line: VDTLine, fontSizePx: number): number | undef
 export interface LooseLine {
   block: VDTBlock;
   line: VDTLine;
-  /** Applied word-space width over the font's normal space
-   *  (`line.justifiedSpaceRatio`); for a CJK line spread between its
+  /** The line's word spacing as the limits bound it
+   *  ({@link lineWordSpacing}); for a CJK line spread between its
    *  characters, the ratio {@link lineLooseness} gives. */
   ratio: number;
   /** The highlight band, in page pixels: the block's full width across the
@@ -65,7 +79,7 @@ export function findLooseLines(doc: VDTDocument, options: FindLooseLinesOptions 
     if (options.pageIndex !== undefined && block.pageIndex !== options.pageIndex) continue;
     let fontSizePx: number | undefined;
     for (const line of block.lines) {
-      let ratio = line.justifiedSpaceRatio;
+      let ratio = lineWordSpacing(line);
       if (line.segments?.some((s) => s.tracking !== undefined)) {
         fontSizePx ??= Number(FONT_SIZE_RE.exec(block.fontString ?? '')?.[1] ?? 16);
         ratio = lineLooseness(line, fontSizePx);

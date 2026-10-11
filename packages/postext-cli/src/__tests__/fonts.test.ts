@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import { GlobalFonts, createCanvas } from '@napi-rs/canvas';
 import { EMBEDDED_FACES, readEmbedded } from '../assets';
-import { fontsourceFiles, nearestVariants, readFontMeta, restyleFace, type FamilyMeta } from '../fonts';
+import { fontsourceFiles, nearestVariants, readFontMeta, restyleFace, wantedVariants, type FamilyMeta } from '../fonts';
 
 const regular = () => readEmbedded(EMBEDDED_FACES.find((f) => f.family === 'Open Sans' && f.weight === 400 && f.style === 'normal')!.path);
 
@@ -15,6 +15,24 @@ describe('nearestVariants', () => {
     const meta: FamilyMeta = { available: true, weights: [300, 400, 700], styles: ['normal', 'italic'], checkedAt: 0 };
     expect(nearestVariants([{ weight: 800, style: 'italic' }, { weight: 700, style: 'italic' }, { weight: 500, style: 'normal' }], meta))
       .toEqual([{ weight: 700, style: 'italic' }, { weight: 400, style: 'normal' }]);
+  });
+});
+
+describe('wantedVariants (#741)', () => {
+  const chapters = [{ title: 'One', markdown: '# One\n\nSome **bold** text.' }];
+  it('wants the bold weight the book names, upright and italic, beside the standard four', () => {
+    const wanted = wantedVariants({ config: { bodyText: { fontFamily: 'Red Hat Text', boldFontWeight: 600 } }, chapters });
+    const body = wanted.get('Red Hat Text')!;
+    expect(body).toContainEqual({ weight: 600, style: 'normal' });
+    expect(body).toContainEqual({ weight: 600, style: 'italic' });
+    for (const weight of [400, 700]) for (const style of ['normal', 'italic'] as const) expect(body).toContainEqual({ weight, style });
+    // The family ships it, so the nearest file is the file itself.
+    const meta: FamilyMeta = { available: true, weights: [300, 400, 500, 600, 700], styles: ['normal', 'italic'], checkedAt: 0 };
+    expect(nearestVariants(body, meta)).toContainEqual({ weight: 600, style: 'normal' });
+  });
+  it('wants nothing more when the bold is 700', () => {
+    const wanted = wantedVariants({ config: { bodyText: { fontFamily: 'Red Hat Text' } }, chapters });
+    expect(wanted.get('Red Hat Text')!.map((v) => v.weight).every((w) => w === 400 || w === 700)).toBe(true);
   });
 });
 

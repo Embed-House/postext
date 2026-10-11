@@ -156,6 +156,7 @@ export function resolveFootnotesConfig(
     lineHeight: p.lineHeight ?? d.lineHeight,
     ...(p.color ? { color: p.color } : {}),
     ...(p.textAlign ? { textAlign: startEndAsLeftRight(p.textAlign) } : {}),
+    ...(p.wordBreak === 'normal' || p.wordBreak === 'keep-all' ? { wordBreak: p.wordBreak } : {}),
     hangingIndent: p.hangingIndent ?? doc.hangingIndent ?? d.hangingIndent,
     ...(numberGap === 'em' ? { numberGap } : {}),
     spaceBetween: p.spaceBetween ?? d.spaceBetween,
@@ -198,6 +199,9 @@ export function stripFootnotesDefaults(
   if (footnotes.lineHeight && !dimensionsEqual(footnotes.lineHeight, d.lineHeight)) result.lineHeight = footnotes.lineHeight;
   if (footnotes.color) result.color = footnotes.color;
   if (footnotes.textAlign) result.textAlign = footnotes.textAlign;
+  // Kept whenever set: its default is the document's `cjk.wordBreak`, so
+  // `'normal'` under a `keep-all` document says something (#705).
+  if (footnotes.wordBreak === 'normal' || footnotes.wordBreak === 'keep-all') result.wordBreak = footnotes.wordBreak;
   if (footnotes.hangingIndent && !dimensionsEqual(footnotes.hangingIndent, doc.hangingIndent ?? d.hangingIndent)) result.hangingIndent = footnotes.hangingIndent;
   if (footnotes.numberGap !== undefined && footnotes.numberGap !== (doc.numberGap ?? 'en')) result.numberGap = footnotes.numberGap;
   if (footnotes.spaceBetween && !dimensionsEqual(footnotes.spaceBetween, d.spaceBetween)) result.spaceBetween = footnotes.spaceBetween;

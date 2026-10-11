@@ -14,6 +14,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
   switch (section) {
     case 'color-palette':
       return !isDefaultColorPalette(config.colorPalette);
+    case 'contrast':
+      return hasKeys(config.contrast);
     case 'headerFooter':
       return config.header !== undefined || config.footer !== undefined;
     case 'paragraphStyles':

@@ -44,12 +44,11 @@
  */
 
 import type { Dispatch, MutableRefObject } from 'react';
-import { pageComics, type BoundingBox, type Resource, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter, type VDTDocument, type VDTPoint } from 'postext';
+import { pageComics, type Resource, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter, type VDTDocument, type VDTPoint } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
 import type { SandboxLabels } from '../../types/labels';
-import { segmentAtOffset } from '../../book/compose';
-import { shiftTextChanges, type TextChange } from '../../book/textChanges';
+import type { TextChange } from '../../book/textChanges';
 import { applyViewerEdit } from '../../editor/viewerEdits';
 import {
   SPLITTER_HIT_MIN_SCREEN_PX,
@@ -62,7 +61,7 @@ import {
   splitterLine,
   type SplitterPosition,
 } from './comicDrag';
-import { canMergeNext, canSplitPanel, mergePanelChanges, moveSplitterChanges, splitPanelChanges } from './comicSource';
+import { canMergeNext, canSplitPanel } from './comicSource';
 import { comicBySource, comicHitAt, comicPressAt, panelKeyAction, type ArtOpacity, type ComicHit, type ComicPress } from './comicHit';
 import { balloonTextNearest, type TextMeasure } from './balloonText';
 import { registryArtOpacity } from './artAlpha';
@@ -70,27 +69,35 @@ import {
   BALLOON_NUDGE_PERCENT,
   BALLOON_NUDGE_SHIFT_PERCENT,
   TAIL_HIT_SCREEN_PX,
-  balloonDropIssues,
-  balloonEm,
   balloonGhost,
-  balloonGrabCentre,
   balloonGroup,
-  balloonKeepOut,
-  balloonPanel,
   boxCentre,
   dragBalloon,
   ellipseExit,
-  groupBox,
   nudgeDelta,
   pageToTailTarget,
   pinAfterMove,
-  pinToPage,
   rotateAbout,
-  tailTargetNow,
   turnAngle,
   type BalloonDropIssues,
 } from './balloonDrag';
-import { comicBalloonItem, pinLineChanges, rotateLineChanges, tailLineChanges, unpinLineChanges, untailLineChanges } from './balloonSource';
+import {
+  balloonMoveChanges,
+  balloonMoveOf,
+  chapterEditOf,
+  isSoundEffect,
+  moveDropIssues,
+  panelEditChanges,
+  splitterMoveChanges,
+  tailHandlePointOf,
+  tailMoveChanges,
+  tailMoveOf,
+  tailTargetAt,
+  unpinGroupChanges,
+  untailChanges,
+  type BalloonMove,
+  type TailMove,
+} from './comicEdits';
 
 /** A shape the tools draw over a page (sheet px; `width` and `dash` in
  *  CSS px, whatever the zoom). */
@@ -232,47 +239,12 @@ interface KeyState {
   pos: SplitterPosition;
 }
 
-/** A balloon group held by the pointer, or moved from the keyboard. */
-interface BalloonMove {
-  page: number;
-  comic: VDTComicPage;
-  /** The group, its first balloon (whose line is pinned) first. */
-  members: VDTComicBalloon[];
-  panel: VDTComicPanel;
-  /** The centre the move carries (the written pin, else the first
-   *  balloon's box centre). */
-  centre: VDTPoint;
-  /** The box round the group (kept inside the panel). */
-  box: BoundingBox;
-  /** Sheet travel so far. */
-  delta: VDTPoint;
-  /** A sound effect's rotation now, and as laid out (degrees). */
-  rotate: number;
-  rotate0: number;
-  /** What the panel's picture keeps clear (faces, avoid zones). */
-  keepOut: { faces: BoundingBox[]; avoid: BoundingBox[] };
-  /** The line is written with `break`: it may cross the border. */
-  breakBorder: boolean;
-}
-
 interface BalloonDrag extends BalloonMove {
   grab: VDTPoint;
   pointerId: number;
   moved: boolean;
   /** Alt on a sound effect: the drag turns it. */
   turning: boolean;
-}
-
-/** A tail on the move: the balloon that carries it, its panel, and the
- *  point it would aim at (sheet px). */
-interface TailMove {
-  page: number;
-  comic: VDTComicPage;
-  balloon: VDTComicBalloon;
-  panel: VDTComicPanel;
-  /** Where it aims as laid out, and where it would aim now. */
-  from: VDTPoint;
-  target: VDTPoint;
 }
 
 interface TailDrag extends TailMove {
@@ -297,8 +269,6 @@ const panelKey = (comic: VDTComicPage, panel: Pick<VDTComicPanel, 'index'>): str
 function ring(c: VDTPoint, r: number, n = 20): VDTPoint[] {
   return Array.from({ length: n }, (_, i) => ({ x: c.x + r * Math.cos((2 * Math.PI * i) / n), y: c.y + r * Math.sin((2 * Math.PI * i) / n) }));
 }
-
-const isSoundEffect = (b: VDTComicBalloon) => (b.kind ?? (b.style === 'sfx' ? 'sfx' : 'balloon')) === 'sfx';
 
 /** A balloon's text, for its handle's name. */
 function balloonText(members: readonly VDTComicBalloon[]): string {
@@ -427,7 +397,6 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   /** The splitter of the current document at the same place in the tree. */
   const current = (page: number, comicStart: number, s: Pick<VDTComicSplitter, 'path' | 'boundary'>): VDTComicSplitter | null =>
     comicOf(page, comicStart)?.splitters.find((o) => o.boundary === s.boundary && samePath(o.path, s.path)) ?? null;
-  const resourceOf = (id: string | undefined): Resource | undefined => (id ? opts.resourcesRef?.current?.find((r) => r.id === id) : undefined);
 
   // ---------------------------------------------------------------- marks
 
@@ -461,11 +430,7 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
 
   /** What is wrong where a group on the move would land (nothing while it
    *  only turns). */
-  const dropIssues = (m: BalloonMove): BalloonDropIssues | null => {
-    if (m.rotate !== m.rotate0) return null;
-    const issues = balloonDropIssues(m.members, m.delta, m.panel, m.keepOut, { breakBorder: m.breakBorder, slack: surface.sheetPxPerCssPx(m.page) });
-    return issues.face || issues.avoid || issues.outside ? issues : null;
-  };
+  const dropIssues = (m: BalloonMove): BalloonDropIssues | null => moveDropIssues(m, surface.sheetPxPerCssPx(m.page));
 
   /** A group on the move: where it was, dashed, and its ghost where it
    *  would go (turned, for a sound effect; orange where it would cover a
@@ -718,109 +683,58 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   /** Hand a source edit of a page to the chapter it belongs to. */
   const commit = (page: number, comic: VDTComicPage, changes: TextChange[] | null): void => {
     if (!changes || changes.length === 0) return;
-    const book = opts.sourceOfPage(page);
-    if (!book || book.segments.length === 0) return;
-    const seg = segmentAtOffset(book, comic.sourceStart);
-    if (changes.some((c) => c.from < seg.start || c.to > seg.end)) return;
-    applyViewerEdit(dispatchRef.current, seg.chapterId, shiftTextChanges(changes, -seg.start), seg.end - seg.start);
+    const edit = chapterEditOf(opts.sourceOfPage(page), comic, changes);
+    if (edit) applyViewerEdit(dispatchRef.current, edit.chapterId, edit.changes, edit.baseLength);
   };
 
   const commitLine = (page: number, comicStart: number, s: VDTComicSplitter, pos: SplitterPosition): void => {
     const comic = comicOf(page, comicStart);
     const book = opts.sourceOfPage(page);
     if (!comic || !book) return;
-    if (Math.abs(pos.start - s.startPercent) < 0.05 && Math.abs(pos.end - s.endPercent) < 0.05) return;
-    const slanted = Math.abs(pos.end - pos.start) > 0.05 || Math.abs(s.endPercent - s.startPercent) > 0.05;
-    commit(page, comic, moveSplitterChanges(book.markdown, comic, s, pos.start, slanted ? pos.end : undefined));
-  };
-
-  /** The script line of a group's first balloon in its page's source. */
-  const balloonLine = (page: number, comic: VDTComicPage, first: VDTComicBalloon) => {
-    const book = opts.sourceOfPage(page);
-    if (!book) return null;
-    const item = comicBalloonItem(book.markdown, comic, first.sourceStart);
-    return item ? { book, item } : null;
+    commit(page, comic, splitterMoveChanges(book.markdown, comic, s, pos));
   };
 
   /** A group to move: its members, its panel and the centre the move
    *  carries; null when its line cannot be found in the source. */
   const balloonMove = (page: number, comic: VDTComicPage, b: VDTComicBalloon): BalloonMove | null => {
-    const members = balloonGroup(comic, b);
-    const first = members[0];
-    const panel = first ? balloonPanel(comic, first) : null;
-    if (!first || !panel) return null;
-    const line = balloonLine(page, comic, first);
-    if (!line) return null;
-    const rotate = first.rotate ?? 0;
-    const keepOut = balloonKeepOut(panel, resourceOf(panel.art?.resourceId), balloonEm(first));
-    return {
-      page, comic, members, panel,
-      centre: balloonGrabCentre(panel, first, line.item.at),
-      box: groupBox(members),
-      delta: { x: 0, y: 0 },
-      rotate,
-      rotate0: rotate,
-      keepOut,
-      breakBorder: line.item.break === true,
-    };
+    const book = opts.sourceOfPage(page);
+    return book ? balloonMoveOf(book.markdown, opts.resourcesRef?.current, page, comic, b) : null;
   };
 
   /** Write where a group was moved (or how far it was turned). */
   const commitBalloon = (m: BalloonMove): void => {
     const comic = comicOf(m.page, m.comic.sourceStart);
-    if (!comic) return;
-    const line = balloonLine(m.page, comic, m.members[0]!);
-    if (!line) return;
-    if (Math.abs(m.rotate - m.rotate0) >= 0.05) {
-      commit(m.page, comic, rotateLineChanges(line.book.markdown, line.item, m.rotate));
-      return;
-    }
-    if (Math.hypot(m.delta.x, m.delta.y) < 1e-6) return;
-    commit(m.page, comic, pinLineChanges(line.book.markdown, line.item, pinAfterMove(m.panel, m.centre, m.delta)));
+    const book = opts.sourceOfPage(m.page);
+    if (!comic || !book) return;
+    commit(m.page, comic, balloonMoveChanges(book.markdown, comic, m));
   };
 
   /** Where a balloon's tail handle goes: its tip, else (a target the
    *  lettering drew no tail to, too close to the body) its written `to`;
    *  undefined for a balloon with neither. */
-  const tailHandlePoint = (page: number, comic: VDTComicPage, b: VDTComicBalloon): VDTPoint | undefined => {
-    if (b.tailTip) return b.tailTip;
-    const panel = balloonPanel(comic, b);
-    const to = panel ? balloonLine(page, comic, b)?.item.to : undefined;
-    return panel && to ? pinToPage(panel, to) : undefined;
-  };
+  const tailHandlePoint = (page: number, comic: VDTComicPage, b: VDTComicBalloon): VDTPoint | undefined =>
+    tailHandlePointOf(opts.sourceOfPage(page)?.markdown ?? null, comic, b);
 
   /** A tail to move: the balloon that carries it, its panel and where it
    *  aims now (its `to`, else its speaker's mouth, else its tip). */
   const tailMove = (page: number, comic: VDTComicPage, b: VDTComicBalloon): TailMove | null => {
-    const panel = balloonPanel(comic, b);
-    const line = panel ? balloonLine(page, comic, b) : null;
-    if (!panel || !line) return null;
-    const tip = b.tailTip ?? (line.item.to ? pinToPage(panel, line.item.to) : undefined);
-    if (!tip) return null;
-    const anchor = line.item.speaker ? resourceOf(panel.art?.resourceId)?.anchors?.find((a) => a.id === line.item.speaker) : undefined;
-    const from = tailTargetNow(panel, tip, line.item.to, anchor ? { x: anchor.x, y: anchor.y } : undefined);
-    return { page, comic, balloon: b, panel, from, target: from };
+    const book = opts.sourceOfPage(page);
+    return book ? tailMoveOf(book.markdown, opts.resourcesRef?.current, page, comic, b) : null;
   };
-
-  /** Where a tail would aim at a sheet point: on its panel's picture (or
-   *  cell), as written. */
-  const tailTargetAt = (panel: VDTComicPanel, p: VDTPoint): VDTPoint => pinToPage(panel, pageToTailTarget(panel, p));
 
   /** Write where a tail aims. */
   const commitTail = (m: TailMove): void => {
     const comic = comicOf(m.page, m.comic.sourceStart);
-    if (!comic) return;
-    if (Math.hypot(m.target.x - m.from.x, m.target.y - m.from.y) < 1e-6) return;
-    const line = balloonLine(m.page, comic, m.balloon);
-    if (!line) return;
-    commit(m.page, comic, tailLineChanges(line.book.markdown, line.item, pageToTailTarget(m.panel, m.target)));
+    const book = opts.sourceOfPage(m.page);
+    if (!comic || !book) return;
+    commit(m.page, comic, tailMoveChanges(book.markdown, comic, m));
   };
 
   /** Point a tail back at its speaker (`to` taken off); false when its
    *  line has none. */
   const untail = (page: number, comic: VDTComicPage, b: VDTComicBalloon): boolean => {
-    const line = balloonLine(page, comic, b);
-    const changes = line ? untailLineChanges(line.book.markdown, line.item) : null;
+    const book = opts.sourceOfPage(page);
+    const changes = book ? untailChanges(book.markdown, comic, b) : null;
     if (!changes) return false;
     commit(page, comic, changes);
     return true;
@@ -828,9 +742,8 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
 
   /** Take a group's pin off; false when its line has none. */
   const unpinBalloon = (page: number, comic: VDTComicPage, b: VDTComicBalloon): boolean => {
-    const first = balloonGroup(comic, b)[0] ?? b;
-    const line = balloonLine(page, comic, first);
-    const changes = line ? unpinLineChanges(line.book.markdown, line.item) : null;
+    const book = opts.sourceOfPage(page);
+    const changes = book ? unpinGroupChanges(book.markdown, comic, b) : null;
     if (!changes) return false;
     commit(page, comic, changes);
     return true;
@@ -841,10 +754,7 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   const panelEdit = (target: { page: number; panel: VDTComicPanel; comic: VDTComicPage }, kind: 'rows' | 'columns' | 'merge', focusAfter = false): void => {
     const book = opts.sourceOfPage(target.page);
     if (!book) return;
-    if (kind === 'merge' && !canMergeNext(book.markdown, target.comic, target.panel.index)) return;
-    const changes = kind === 'merge'
-      ? mergePanelChanges(book.markdown, target.comic, target.panel.index)
-      : splitPanelChanges(book.markdown, target.comic, target.panel.index, kind);
+    const changes = panelEditChanges(book.markdown, target.comic, target.panel.index, kind);
     if (focusAfter && changes && changes.length > 0) refocus = { key: panelKey(target.comic, target.panel), until: Date.now() + 8000 };
     commit(target.page, target.comic, changes);
   };

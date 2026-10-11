@@ -296,8 +296,10 @@ desconeguts, requadres que la maquetació ha hagut de forçar, fonts que falten,
 ajustos que el motor ha hagut de substituir i, en un llibre preparat per a
 impremta (o amb `--preflight`), el preflight: imatges de baixa resolució,
 filets fins, text petit en diverses tintes, tinta per sobre del límit, text a
-prop del tall. Cada problema indica el fitxer del capítol, la línia i la
-pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
+prop del tall. També llista el text que no es llegeix sobre el seu fons
+(`contrast`), un cop per parell de colors, amb la ràtio en pantalla i, per a
+impremta, sobre el paper del perfil de sortida. Cada problema indica el fitxer
+del capítol, la línia i la pàgina. El codi de sortida és 3 quan troba un error, o qualsevol avís amb
 `--strict`.
 
 ### build i --watch
@@ -355,6 +357,15 @@ Un pes o una inclinació que la família no porta es compon amb la seva font mé
 propera tal com és, a les imatges de pàgina igual que al PDF: una família de
 retolació amb un sol pes conserva les seves lletres a la negreta, i una
 família sense cursiva, les rodones.
+
+Es baixen els pesos que anomena la configuració: rodona, negreta i les seves
+cursives per a cada família, i qualsevol altre pes que doni un ajust, inclòs el
+de la negreta (`bodyText.boldFontWeight: 600` demana la font de pes 600). Si
+un pes que la família sí que porta no s'ha pogut carregar (sense connexió i
+sense fitxer a la memòria cau, una baixada fallida, una carpeta de fonts sense
+el fitxer), el text es compon amb la font més propera de la família i
+`postext check` el llista com a avís `fontFallback`: les seves línies poden
+partir d'una altra manera que al Sandbox.
 
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la canvien de lloc. `--offline`
@@ -441,6 +452,7 @@ d'aquest ordinador a `packages/postext-cli/bin/`.
 - **`--chapters`** compon els capítols per separat: la numeració de les seves
   pàgines torna a començar, mentre que el Sandbox continua la numeració del
   llibre.
-- **Les fonts** surten del llibre, de les teves carpetes, de l'executable o de
-  Google Fonts, mai de les fonts instal·lades a l'ordinador, així que un llibre
-  surt igual a qualsevol màquina.
+- **Les fonts** surten del llibre, de les teves carpetes, de l'executable, de
+  Google Fonts o de Fontsource (per a una família que Google Fonts no té), mai
+  de les fonts instal·lades a l'ordinador, així que un llibre surt igual a
+  qualsevol màquina.

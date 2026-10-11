@@ -7801,13 +7801,13 @@
       "pt": "Legendas laterais"
     },
     "definition": {
-      "en": "The figure stays in the main column while its caption sits in the margin channel, level with its top.",
-      "es": "La figura se queda en la columna principal mientras su pie va al canal del margen, a la altura de su borde superior.",
-      "ca": "La figura es queda a la columna principal mentre el seu peu va al canal del marge, a l'altura de la seva vora superior.",
-      "zh": "图留在主栏中，题注放在页边通道里，与图顶平齐。",
-      "ar": "يبقى الشكل في العمود الرئيسي بينما يوضع تعليقه في قناة الهامش، بمحاذاة أعلاه.",
-      "ja": "図は主段に置いたまま、キャプションを余白のチャネルに、図の上端と高さをそろえて置きます。",
-      "pt": "A figura fica na coluna principal e a legenda vai para o canal da margem, alinhada com o topo da figura."
+      "en": "The figure stays in the main column while its caption sits in the margin channel, level with its top. A column float and, from postext 1.28, a figure set in the text.",
+      "es": "La figura se queda en la columna principal mientras su pie va al canal del margen, a la altura de su borde superior. Vale para un flotante de columna y, desde postext 1.28, para una figura puesta en el texto.",
+      "ca": "La figura es queda a la columna principal mentre el seu peu va al canal del marge, a l'altura de la seva vora superior. Val per a un flotant de columna i, des de postext 1.28, per a una figura posada en el text.",
+      "zh": "图留在主栏中，题注放在页边通道里，与图顶平齐。栏内浮动体适用，自postext 1.28起随文放置的图也适用。",
+      "ar": "يبقى الشكل في العمود الرئيسي بينما يوضع تعليقه في قناة الهامش، بمحاذاة أعلاه. يسري على العنصر العائم بعرض العمود، ومنذ postext 1.28 على الشكل الموضوع في النص.",
+      "ja": "図は主段に置いたまま、キャプションを余白のチャネルに、図の上端と高さをそろえて置きます。段幅のフロートに使え、postext 1.28からは本文中に置いた図にも使えます。",
+      "pt": "A figura fica na coluna principal e a legenda vai para o canal da margem, alinhada com o topo da figura. Vale para um flutuante de coluna e, desde o postext 1.28, para uma figura posta no texto."
     },
     "aliases": {
       "en": [

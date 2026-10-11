@@ -111,7 +111,7 @@ Each variant's binary is **not** embedded in the config itself. The config only 
 
 ### Managing custom fonts in the sandbox
 
-Open the **Fonts** panel from the left activity bar (between Resources and Design). Its **Typefaces in this book** list shows every family the design uses, with its role and whether it comes from Google Fonts or from your file. Under **Your font files**, for each family:
+Open the **Fonts** panel from the left activity bar (between Resources and Design). Its **Typefaces in this book** list shows every family the design uses, with its role and where it comes from: Google Fonts, Fontsource (for a family Google Fonts does not have), your file, or nowhere (*Not found*). Under **Your font files**, for each family:
 
 1. **Add font family** — creates an empty family; rename it inline.
 2. **Upload variant(s)** — pick a weight (100–900) and style (normal / italic), then choose one *or many* `.woff2`, `.woff`, `.ttf`, or `.otf` files. Each file becomes its own variant bound to the currently-selected (weight, style); the uploaded filename is remembered and shown in the row so you can tell variants apart. Re-tune a variant's weight or style from its dropdowns at any time.
@@ -708,6 +708,116 @@ The colour management postext uses is exported for your own tools. It reads ICC 
 The resolver and stripper match the other sections: `resolvePrintConfig`, `stripPrintDefaults` and `profileInkLimit(config)` (the limit of the profile a config names, before any `inkLimit` override), with `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` and `DEFAULT_RICH_BLACK`.
 
 
+## Contrast check (config)
+
+The `contrast` property sets the check that says whether the text of a book can be read: every text colour against the ground it is set on. Layout ignores it, so changing it never moves a line. `contrastDocument` reads it when it checks a laid-out document, the Sandbox lists the findings in Checks and shows the ratio beside each colour field, and `postext check` prints them.
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Property</th>
+      <th style={{ width: '110px' }}>Type</th>
+      <th style={{ width: '100px' }}>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Run the check.</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>The WCAG 2 level the ratios are held to. See [Thresholds](#thresholds).</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>The rendition read: `'screen'`, `'print'`, `'both'`, or `'auto'`, which reads the screen always and print as well for a book set up for print (a PDF/X standard in `print.standard`, a CMYK PDF in `pdfGeneration`, or crop marks in `page.cutLines`).</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Report reversed text in the print check.</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Reversed text under this size is reported.</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>The same for italics and light weights, whose strokes are thinner.</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>A weight at or under this one counts as light.</td></tr>
+  </tbody>
+</table>
+
+A `level` or a `mode` written any other way reads as the default and is reported as an unknown setting value (see [Configuration warnings](#configuration-warnings)).
+
+### Thresholds
+
+The ratio a text must reach follows its size and weight, as in WCAG 2.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Level</th>
+      <th style={{ width: '120px' }}>Text</th>
+      <th>Large text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4.5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4.5:1</td></tr>
+  </tbody>
+</table>
+
+Large text is 18 pt and over, or 14 pt and over at a weight of 700 or more. The sizes are the printed ones, in points. A superscript or a subscript is judged at the size of the text it belongs to.
+
+### Screen and print
+
+Postext sets the same pages for a screen and for a press, and a colour does not read the same on both.
+
+- **Screen** is the WCAG 2 contrast ratio of the sRGB colours, `(L1 + 0.05) / (L2 + 0.05)` over their relative luminances: what the canvas, the HTML viewer, an EPUB and an RGB PDF show.
+- **Print** is the same formula over the luminance each colour has on paper. The colour is separated through the job's output profile (one authored in CMYK keeps its values), the separation is read back through the profile, and its luminance is taken relative to the bare paper, which is the white of a printed page as the display's white is the white of a screen. Ink is never a perfect black: solid black on white comes to about 14:1 on coated paper (FOGRA39, FOGRA51), 8:1 on uncoated paper (FOGRA47, FOGRA52) and 5:1 on newsprint (IFRA26, SNAP), where a screen gives 21:1. A grey that passes on screen can fail on paper: `#767676` on white is 4.54:1 on screen and about 3.3:1 on coated paper.
+
+The print ratio needs the transform of the output profile (`options.transform`, built with `outputTransform`). Without it only the reversed text is checked for print.
+
+### Reversed text
+
+Light text knocked out of an inked ground fills in on press when it is small or its strokes are thin: the ink of the ground spreads into the letters, and a ground built of several inks also depends on the plates staying in register. The ratio does not show it, since white on dark blue is over 10:1. The print check reports such text on its own (`reversedText`) when it is under `minSize`, or under `minFineSize` while italic or at a weight of `lightWeight` or less. Each finding says how many of the four inks the ground is built of.
+
+### What is read
+
+The check reads the lines of every block with their inline colours (bold, italic, references, chips), list markers, drop caps, captions, notes and table cells, and the text of design slots: running heads, openers, heading designs, box titles. The ground is the topmost fill under the text: a design box, a callout, a caption bar, a table cell, a chip, or else the page colour (`page.backgroundColor`, or the paper a part's palette gives its pages). A translucent colour is blended with what is under it. Text over a picture is skipped, since its ground is not one colour, and so are comic lettering, ruby readings and formulas.
+
+### Running the check
+
+`contrastDocument(doc, options)` returns the findings of a laid-out document, lowest ratio first. Each one has the book-absolute `pageIndex`, the `rect` on the sheet (page px) and the source range of its first occurrence, the two colours as painted (`color`, `background`), the smallest `sizePt` it is set at with its `weight` and `italic`, a `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` or `'marker'`), the first run's `text` and the `count` of runs set so. A pair is reported once per threshold, however many lines use it.
+
+- `lowContrast` adds `level`, `large`, `required`, the ratio in each rendition checked (`screen`, `print`) and `failing`, the renditions under `required`.
+- `reversedText` adds `reasons` (`'small'`, `'italic'`, `'light'`), `minimumPt` and `inks`.
+
+The options are `contrast` (the resolved settings, when they are not the document's), `media` (the renditions, whatever `mode` says) and `transform`.
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)` returns every text and ground pair the document sets, passing or not, with its `screen` ratio, its `print` ratio when the transform is given, the ratio `required` and the colours as the configuration writes them (`textColor`, `groundColor`): what a design tool shows beside a colour field. It runs whatever `enabled` says.
+
+The measures are exported for your own tools:
+
+- `contrastRatio(a, b)` and `relativeLuminance(color)` give the WCAG 2 ratio and luminance of sRGB colours.
+- `isLargeText(sizePt, weight)` and `contrastThreshold(level, large)` give the threshold of a size and weight.
+- `blendColors(top, under)` gives a translucent colour over another, as `#rrggbb`.
+- `printContrastRatio(a, b, context)`, `printLuminance(color, context)` and `printSeparation(color, context)` give the same on paper. The context holds the `transform` and, as `authored`, the result of `authoredCmykColors(config)`.
+- `contrastMedia(doc.config, contrast)` gives the renditions `mode` resolves to for a document.
+
+The resolver and stripper match the other sections: `resolveContrastConfig` and `stripContrastDefaults`, with `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` and `CONTRAST_MODES`.
+
+
 ## Folio viewer (config)
 
 The `folio` property sets how the Folio viewer (`postext-folio`) presents the printed book in 3D: the angle of the view, the paper, the binding, the surface the book lies on and the light. Layout ignores it, and so do the canvas, HTML and PDF output. `buildDocument` carries the resolved settings in the VDT as `doc.config.folio` when the config sets any, so a document without them keeps its layout hash.
@@ -1077,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`** returns every justified line whose `justifiedSpaceRatio` exceeds `threshold`, in reading order: `{ block, line, ratio, x, y, width, height }`. The rectangle, in page pixels, is the band the highlight covers: the block's full width across the line. These are the lines the Sandbox highlights and reports as `looseLine` in its Checks panel.
+- **`findLooseLines(doc, { threshold?, pageIndex? })`** returns every justified line whose word spacing exceeds `threshold`, in reading order: `{ block, line, ratio, x, y, width, height }`. `ratio` is `lineWordSpacing(line)`: the spacing as `minWordSpacing` and `maxWordSpacing` bound it (`justifiedSpaceLimitRatio` when the line holds spaces of another face, else `justifiedSpaceRatio`), so a line set at the limit with a bold space in it is not reported at a threshold equal to `maxWordSpacing`. The rectangle, in page pixels, is the band the highlight covers: the block's full width across the line. These are the lines the Sandbox highlights and reports as `looseLine` in its Checks panel.
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`** fills those bands for one page and returns the lines it painted. It draws in page pixels under the context's current transform, so call it right after `renderPage` or `renderPageToCanvas` on the same canvas: both leave the context scaled to the page. `color` is any canvas fill style.
 - **Defaults.** Both helpers use the default threshold (3) and colour (`#ff000040`), not the document's `debug.looseLineHighlight`: that setting belongs to the Sandbox. To follow a configuration, pass `resolveDebugConfig(config.debug).looseLineHighlight.threshold` and `.color.hex`.
 
@@ -1172,7 +1282,7 @@ Eight mistakes in the configuration itself are never silent, and no toggle hides
 - **Column count out of range** — a `'multiple'` layout's `columnCount` (the document's, or a heading style's own `layout`) that is not a whole number from 3 to 8. The page is cut into the nearest count that is (3 for a value that is not a number), and `used` names it (`columnCountClamped`; see the [`'multiple'` layout](/en/docs/configuration-page-layout#layout-types)).
 - **Character grid too large** — a `cjk.grid` with more characters per line or lines per page than the margins leave room for. The grid is set with the most that fit, and `used` names the number (`cjkGridClamped`; see [Character grid](/en/docs/configuration-east-asian#character-grid)).
 - **Unknown heading setting** — a key that `headings`, `headings.balancing`, a heading level, a heading style or a paragraph style does not have: a misspelt `letterSpacng`, a `tracking` borrowed from another tool, a `level` on a heading style, a `fontStyle: 'italic'` on a paragraph style (which takes `italic: true`). A tab stop is checked the same way (a `leaders` for `leader`). The engine ignores it (up to postext 1.4 it did so without a word). `value` is the key, `used` is empty, and `suggestion` names the setting it is closest to, when one is a letter or two away or differs only in case (`unknownConfigKey`).
-- **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close.
+- **Unknown setting value** — a setting that takes one of a few words holding another, such as `direction: 'right'` (it takes `auto`, `ltr` or `rtl`). The engine reads the default instead, and `used` names what that came to: for `direction`, the direction of the document language (`unknownConfigValue`). A tab stop's `align` that is none of its four words is read as `'start'`, and a `position` that is no length, `'end'` or percentage leaves the stop out (`used` is `'none'`). The words of the comics settings are checked too ([Comics › Comic warnings](/en/docs/comics#comic-warnings)): `used` is the value the setting resolved to (a balloon style's own default, for a built-in style), and `suggestion` names the word the value is closest to, when one is close. The `level` and `mode` of the contrast check are checked the same way: `used` is `'AA'` or `'auto'`.
 - **Line numbers in vertical text** — `lineNumbers.enabled: true` in a document set vertically (`layout.writingMode: 'vertical-rl'`). Vertical pages get no line numbers, and `used` is `false` (`lineNumbersUnsupported`; see [Line numbers](/en/docs/configuration-notes-references#line-numbers)).
 - **Text wrap in vertical text** — a resource type's `defaultPlacement.wrap` in a document set vertically. Vertical pages set no text beside a figure, and `used` is `none` (`wrapUnsupported`; see [Document format › Text wrap](/en/docs/document-format#text-wrap)). A `wrap` that names no side is an unknown setting value.
 

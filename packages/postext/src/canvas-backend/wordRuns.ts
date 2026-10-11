@@ -2,6 +2,8 @@ import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
 import { fillTrackedWord } from './trackedText';
+import { fillScriptWord } from './scriptText';
+import { scriptContextUntracked } from '../measure/script';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -28,11 +30,20 @@ const MARK_RE = /\p{M}/u;
  *   the segment's style, then once more in each other run's style, clipped
  *   to that run's stretch of the word ({@link paintWordRuns}).
  *
- * A left-to-right word of a tracked line that the browser would shape
- * without its ligatures under letter-spacing is painted with them, as it
- * was measured (`fillTrackedWord`, #663): in pieces, which a mirrored page
- * turns back as one run (#685). A right-to-left word and a word of a
- * joining script are never painted in pieces.
+ * A word of a tracked line that the browser would shape without its
+ * ligatures under letter-spacing is painted with them, as it was measured
+ * (`fillTrackedWord`, #663): in pieces, which a mirrored page turns back
+ * as one run (#685). A right-to-left word of a script that does not join
+ * (Hebrew) too, its pieces from the right end of its box (#703). A word of
+ * a joining script and a word set in several styles are never painted in
+ * pieces.
+ *
+ * A word with no letter that the layout gave a script
+ * (`VDTLineSegment.scriptContext`, #725) is painted in it, beside a mark
+ * of the script that is clipped away (`fillScriptWord`), whole: where it
+ * could also be painted in pieces (a face that ligates `!=`), the script
+ * takes it. In the Arabic script it is painted with no letter-spacing, as
+ * it was measured (`scriptContextUntracked`).
  */
 export function fillSegmentWord(
   ctx: CanvasRenderingContext2D,
@@ -43,7 +54,7 @@ export function fillSegmentWord(
   paint: (text: string, x: number, y: number) => void,
   runStyle: (run: WordRun) => { font: string; fill: string },
 ): void {
-  const untracked = tracking !== 0 && joiningScriptIn(seg.text);
+  const untracked = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext));
   if (untracked) ctx.letterSpacing = '0px';
   const rtl = seg.rtl === true && 'direction' in ctx;
   const direction = rtl ? ctx.direction : undefined;
@@ -52,7 +63,8 @@ export function fillSegmentWord(
     ctx.direction = 'rtl';
     ctx.textAlign = 'left';
   }
-  if (tracking !== 0 && !untracked && !rtl && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
+  if (seg.scriptContext !== undefined && !seg.runs) fillScriptWord(ctx, seg.text, seg.scriptContext, rtl, x, y, paint);
+  else if (tracking !== 0 && !untracked && !seg.runs) fillTrackedWord(ctx, seg.text, x, y, tracking, paint);
   else paint(seg.text, x, y);
   if (seg.runs) paintWordRuns(ctx, seg, x, y, paint, runStyle);
   if (rtl) {

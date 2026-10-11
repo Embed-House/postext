@@ -32,7 +32,7 @@ function project(config: object, text = CHAPTER, withFont = false): string {
     fonts.push({ name: "Noto Serif TC", variants: [{ weight: 400, style: "normal", file: "fonts/NotoSerifTC-Regular.woff2" }] });
   }
   const manifest = {
-    version: 2, configVersion: 11, id: "t", name: "T", locale: "zh-Hant",
+    version: 2, configVersion: 12, id: "t", name: "T", locale: "zh-Hant",
     chapters: { "zh-Hant": [{ title: "第一回", file: "chapters/zh-Hant/01-hui.md" }] },
     config: { header: { elements: [] }, layout: { layoutType: "single" }, ...config },
     resources: [], fonts,
@@ -85,7 +85,7 @@ describe.skipIf(!python)("postext-port lint on Chinese text", () => {
       extra,
     ].join("\n");
     const manifest = {
-      version: 2, configVersion: 11, id: "t", name: "T", locale: "en",
+      version: 2, configVersion: 12, id: "t", name: "T", locale: "en",
       chapters: { en: [{ title: "One", file: "chapters/01.md" }] },
       config: {
         locale: "en", header: { elements: [] }, layout: { layoutType: "single" },
@@ -353,7 +353,7 @@ function arabicProject(config: object, text?: string, fonts: object[] = []): str
     "",
   ].join("\n"));
   const manifest = {
-    version: 2, configVersion: 11, id: "t", name: "T", locale: "ar",
+    version: 2, configVersion: 12, id: "t", name: "T", locale: "ar",
     chapters: { ar: [{ title: "الفصل الأول", file: "chapters/ar/01.md" }] },
     config: { header: { elements: [] }, layout: { layoutType: "single" }, ...config },
     resources: [], fonts,
@@ -430,7 +430,7 @@ function japaneseProject(config: object, text = JA_CHAPTER): string {
   mkdirSync(path.join(dir, "chapters/ja"), { recursive: true });
   writeFileSync(path.join(dir, "chapters/ja/01.md"), text);
   const manifest = {
-    version: 2, configVersion: 11, id: "t", name: "T",
+    version: 2, configVersion: 12, id: "t", name: "T",
     chapters: { ja: [{ title: "上", file: "chapters/ja/01.md" }] },
     config: { header: { elements: [] }, layout: { layoutType: "single" }, ...config },
     resources: [], fonts: [],
@@ -556,7 +556,7 @@ function comicProject(config: object, chapters: Record<string, string>, resource
     anchors: [{ id: "ana", x: 0.3, y: 0.5, face: { x: 0.2, y: 0.3, width: 0.2, height: 0.2 } }, { id: "ben", x: 0.7, y: 0.5 }],
   }));
   const manifest = {
-    version: 2, configVersion: 11, id: "t", name: "T", locale: Object.keys(chapters)[0],
+    version: 2, configVersion: 12, id: "t", name: "T", locale: Object.keys(chapters)[0],
     chapters: specs,
     config: { header: { elements: [] }, layout: { layoutType: "single" }, locale: "en", ...config },
     resources: pictures, fonts,
@@ -640,6 +640,26 @@ describe.skipIf(!python)("postext-port lint on comics", () => {
     expect(out).toContain("not a script line (key: text)");
     expect(out).toContain("::panel outside a :::page or :::strip block prints as text");
     expect(status).toBe(1);
+  });
+
+  it("knows the sides a tail may name, left and right among them (#727)", () => {
+    const page = (tail: string) => [":::page", "::panel{art=p1}", `ben{tail=${tail}}: Over here!`, ":::", ""].join("\n");
+    for (const side of ["none", "auto", "top", "bottom", "start", "end", "left", "right"]) {
+      expect(lint(comicProject(letters, { en: page(side) })).out).not.toContain("tail=");
+    }
+    expect(lint(comicProject(letters, { en: page("up") })).out).toContain("tail='up' is ignored");
+  });
+
+  it("reads the faces of people who do not speak, and checks their rectangles (#726)", () => {
+    const picture = (faces: unknown) => [
+      { id: "p1", typeId: "figure", kind: "bitmap", anchors: [{ id: "ana", x: 0.3, y: 0.5 }, { id: "ben", x: 0.7, y: 0.5 }], faces },
+      { id: "p2", typeId: "figure", kind: "bitmap" }, { id: "p3", typeId: "figure", kind: "bitmap" },
+    ];
+    const good = lint(comicProject(letters, { en: COMIC }, picture([{ x: 0.5, y: 0.1, width: 0.1, height: 0.2 }])));
+    expect(good.out).not.toMatch(/faces/);
+    const bad = lint(comicProject(letters, { en: COMIC }, picture([{ x: 0.5, y: 0.1, width: 0, height: 0.2 }]))).out;
+    expect(bad).toMatch(/faces\[0\]/);
+    expect(lint(comicProject(letters, { en: COMIC }, picture({ x: 0.5, y: 0.1, width: 0.1, height: 0.2 }))).out).toContain("faces must be a list");
   });
 
   it("knows strips and their attributes, and flags an unclosed block", () => {

@@ -113,6 +113,7 @@ export const JAPANESE_RULE_FIELDS = [
   'trimLineStart',
   'hangingPunctuation',
   'paragraphStartBracket',
+  'latinSpacingEdge',
   'spaceAfterQuestion',
   'emphasis',
   'emphasisMark',

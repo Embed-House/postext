@@ -125,6 +125,42 @@ describe('postext cli', () => {
     expect(families()).not.toContain('Dela Gothic One');
   }, 60_000);
 
+  // #741: a bold weight the configuration names is asked of the family, and
+  // a weight the family ships that the set does not hold is reported (the
+  // canvas measured the text with another face of the family).
+  it('reports a weight the family ships when another face stood in for it', () => {
+    const dir = book();
+    const embeddedFace = (weight: number | string) => readFileSync(resolve(import.meta.dir, '..', '..', 'fonts', `OpenSans-${weight}.ttf`));
+    mkdirSync(join(dir, 'fd'));
+    for (const face of [400, '400i', 700]) writeFileSync(join(dir, 'fd', `OpenSans-${face}.ttf`), embeddedFace(face));
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({ bodyText: { fontFamily: 'Open Sans', boldFontWeight: 600 }, headings: { fontFamily: 'Open Sans' } }));
+    const check = () => JSON.parse(run(['check', 'ch', '--config', 'config.json', '--font-dir', 'fd', '--offline', '--json'], dir).stdout) as { warnings: { kind: string; message: string }[] };
+    // The folder holds 400, its italic and 700, and nothing says the family has more: a
+    // weight a family does not ship is set in its nearest face on purpose.
+    expect(check().warnings.filter((w) => w.kind === 'fontFallback')).toEqual([]);
+    // The cache's record says the family ships a 600.
+    mkdirSync(join(dir, '.cache', 'fonts', 'open-sans'), { recursive: true });
+    writeFileSync(join(dir, '.cache', 'fonts', 'open-sans', 'meta.json'), JSON.stringify({ available: true, weights: [300, 400, 600, 700, 800], styles: ['normal', 'italic'], checkedAt: Date.now(), v: 2 }));
+    const fallbacks = check().warnings.filter((w) => w.kind === 'fontFallback');
+    expect(fallbacks).toHaveLength(1);
+    expect(fallbacks[0]!.message).toContain('Open Sans 600');
+    expect(fallbacks[0]!.message).toContain('set in its 700');
+    // With the file in the folder the face is there and nothing is said.
+    writeFileSync(join(dir, 'fd', 'OpenSans-600.ttf'), embeddedFace(600));
+    expect(check().warnings.filter((w) => w.kind === 'fontFallback')).toEqual([]);
+  }, 60_000);
+
+  it('raises no fallback for a bold a one-weight family does not ship', () => {
+    const dir = book();
+    mkdirSync(join(dir, 'fd'));
+    writeFileSync(join(dir, 'fd', 'OpenSans-400.ttf'), readFileSync(resolve(import.meta.dir, '..', '..', 'fonts', 'OpenSans-400.ttf')));
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({ bodyText: { fontFamily: 'Open Sans' }, headings: { fontFamily: 'Open Sans' } }));
+    mkdirSync(join(dir, '.cache', 'fonts', 'open-sans'), { recursive: true });
+    writeFileSync(join(dir, '.cache', 'fonts', 'open-sans', 'meta.json'), JSON.stringify({ available: true, weights: [400], styles: ['normal'], checkedAt: Date.now(), v: 2 }));
+    const report = JSON.parse(run(['check', 'ch', '--config', 'config.json', '--font-dir', 'fd', '--offline', '--json'], dir).stdout) as { warnings: { kind: string }[] };
+    expect(report.warnings.filter((w) => w.kind === 'fontFallback')).toEqual([]);
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');

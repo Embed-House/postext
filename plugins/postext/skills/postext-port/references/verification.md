@@ -86,9 +86,10 @@ Differences from `render.mjs`: `--chapters` is 1-based (`--chapters 3`
 is the third chapter file) and lays those chapters out as a short book;
 `check` reports the engine's warnings and the print preflight but not the
 Sandbox's extra checks that `render.mjs` adds with `SANDBOX-WARN`; a font
-family the project does not bundle is downloaded from Google Fonts (and
-cached) as the browser would, where `render.mjs` measures it with a
-stand-in face; `--offline` keeps it from downloading.
+family the project does not bundle is downloaded and cached, from Google
+Fonts or, for a family Google Fonts does not have, from Fontsource, as the
+Sandbox loads it, where `render.mjs` downloads nothing and measures the
+family with a stand-in face; `--offline` keeps it from downloading.
 
 ### `render.mjs` (Node)
 
@@ -141,6 +142,14 @@ renderPageToCanvas(doc.pages[11], doc, canvas, { scale: 100 / doc.config.page.dp
 writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
 ```
 
+An SVG decoded with `loadImage` is a bitmap of the size the SVG declares,
+and `drawImage` stretches it: a figure placed larger than its file says
+comes out soft. `render.mjs` gives each SVG image the size it is drawn at
+before every draw (`sizeSvgImage` and `drawsSvgAtSize` in its `--jpeg`
+block, wrapped around both canvases above), recolours the markup of a
+book with `diagramStyle.singleInk` and registers a video's poster: copy
+those lines, or run the script.
+
 ### What the log says
 
 - `layout: N pages, converged=true`: `converged=false` means the TOC or page
@@ -154,6 +163,12 @@ writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
   for room in the side column. Fence it earlier or shorten it.
   `WARN unplaced`: a box or float is on no page (a side box in a section
   whose layout has no side column): change its span or the section's layout.
+- `WARN shortListSplit` / `WARN openerFloat` (postext ≥ 1.28): the two
+  composition rules set to report. A short list is cut between columns
+  (`bodyText.shortListSplit`), or a float stands on a chapter or part
+  opener page (`layout.openerFloats`). Set the rule to `"avoid"` to have
+  the engine keep the list whole or move the float past the opener page;
+  a `shortListSplit` left under `"avoid"` is a list taller than a column.
 - `WARN unknownResourceId|unknownDirective|malformedEmbed|unknown…Style|raggedTableGrid`
   (releases with engine content warnings): a reference, `:::` line, `::resource`
   line or style id the engine could not resolve, or a table whose merged cells
@@ -164,6 +179,12 @@ writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
   `＊＊…＊＊`) is set as text, and an attribute key outside ASCII (`作者=曹雪芹`) is
   dropped. Retype the ASCII form the warning names; keys are ASCII, values any script.
 - `PROBLEM font families used but not bundled`: add the files to `fonts[]`.
+- `WARN raggedLine` (postext ≥ 1.28.0): a line of a justified paragraph was set ragged because its word
+  spaces would have stretched past 3× (the message gives the ratio). The line that cannot take the next word
+  has too few spaces: reword it, or give the long word or address after it a place to break (a soft hyphen,
+  U+200B in an address). `VDTLine.raggedSpaceRatio` marks the line. A paragraph the engine set one line
+  shorter to take up a runt is not a warning: its block carries `runtFix: { tracking }` (thousandths of an
+  em; at `bodyText.maxRuntTracking` the paragraph reads tight, so cut or add a few words).
 - `WARN cjkLooseLine` (Chinese): a justified line could not be spread to the measure without more than half
   an em between its characters and was set short. Usually a long Latin word or URL: reword, or let it be.
 - `WARN cjkMarksExceedLeading|rubyExceedsLeading|kuntenExceedsLeading`: emphasis dots, side lines, name lines,
@@ -189,7 +210,7 @@ writeFileSync('/tmp/p12.jpg', await canvas.encode('jpeg', 85));
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
   compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 11` and check the pages again when the config is meant for today's rules.
+  Set `"configVersion": 12` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page
@@ -316,7 +337,7 @@ the page images instead of claiming the port is visually verified.
 | Over-stretched justified lines (URLs, long compounds) | the engine sets those lines ragged; break URLs with `/`; add soft hyphens (U+00AD) |
 | Word overflowing a table cell | the engine divides it; widen `columnWidths` |
 | Numbered list drifting off the grid | restate list margins in pt/grid units for both list types |
-| Text in a figure in the wrong font | the bundle (or Google) must hold the family its `font-family` names, spelt the same; Checks shows `svgFontUnavailable` (≥ 1.25 embeds the faces itself) |
+| Text in a figure in the wrong font | the bundle must hold the family its `font-family` names, spelt the same (or Google Fonts or Fontsource must have it, for the Sandbox and the command line); Checks shows `svgFontUnavailable` (≥ 1.25 embeds the faces itself) |
 | Blank figure in the browser | too many nested SVG filters: flatten |
 | Page count differs by one per chapter | a copy-fitted source (`compact` style), or accept it and note it |
 | Chinese lines a character longer or shorter than the source's | `cjk.grid` `charsPerLine`; the region's `punctuationWidth` (Kaiming vs full width) and `compressAdjacent` |

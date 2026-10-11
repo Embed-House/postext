@@ -170,8 +170,20 @@ function numberIsWorded(number: string, template: string): boolean {
 /** What a page reference prints before the target is laid out. */
 export const UNKNOWN_PAGE = '?';
 
+/** A cross-reference's label and whether it is words (#702): the text of
+ *  a `text="…"` override or the title of its target, which a line may
+ *  break at its spaces; a number, a page or a counted label is not. */
+export interface RefLabel {
+  text: string;
+  words: boolean;
+}
+
+const words = (text: string): RefLabel => ({ text, words: true });
+const whole = (text: string): RefLabel => ({ text, words: false });
+
 /**
- * The label of a cross-reference to an anchor target:
+ * The label of a cross-reference to an anchor target, and whether it is
+ * words:
  * - `default` / `full`: a numbered heading as "chapter 3" / "section 3.2",
  *   an unnumbered one by its title, an anchor by its text, else its page;
  * - `number`: the bare number (the title when there is none);
@@ -179,12 +191,12 @@ export const UNKNOWN_PAGE = '?';
  * - `page`: "p. 112"; `pageNumber`: "112".
  * `text="…"` overrides it all.
  */
-export function resolveAnchorRefLabel(
+export function anchorRefLabel(
   ref: NonNullable<InlineSpan['ref']>,
   target: AnchorTarget,
   strings: CrossRefStrings,
-): string {
-  if (ref.text !== undefined && ref.text.length > 0) return ref.text;
+): RefLabel {
+  if (ref.text !== undefined && ref.text.length > 0) return words(ref.text);
   const page = target.pageLabel !== undefined && target.pageLabel.length > 0 ? target.pageLabel : UNKNOWN_PAGE;
   const title = target.title;
   // A labelled equation or a numbered statement (#530) prints its label —
@@ -192,37 +204,47 @@ export function resolveAnchorRefLabel(
   if (target.numberLabel !== undefined) {
     switch (ref.style ?? strings.defaultStyle) {
       case 'page':
-        return fill(strings.page, page, ref.case);
+        return whole(fill(strings.page, page, ref.case));
       case 'pageNumber':
-        return page;
+        return whole(page);
       case 'number':
-        return target.number;
+        return whole(target.number);
       case 'title':
-        return title.length > 0 ? title : applyCase(target.numberLabel, ref.case);
+        return title.length > 0 ? words(title) : whole(applyCase(target.numberLabel, ref.case));
       default:
-        return applyCase(target.numberLabel, ref.case);
+        return whole(applyCase(target.numberLabel, ref.case));
     }
   }
   const number = bareNumber(target.number);
   switch (ref.style ?? strings.defaultStyle) {
     case 'page':
-      return fill(strings.page, page, ref.case);
+      return whole(fill(strings.page, page, ref.case));
     case 'pageNumber':
-      return page;
+      return whole(page);
     case 'title':
-      return title.length > 0 ? title : fill(strings.page, page, ref.case);
+      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case));
     case 'number':
-      return number.length > 0 ? number : title.length > 0 ? title : page;
+      return number.length > 0 ? whole(number) : title.length > 0 ? words(title) : whole(page);
     default: {
       if (target.kind === 'heading' && number.length > 0) {
         const template = target.level === 1 ? strings.chapter : strings.section;
         // A number its template already words ("Chapter 3", "第三章")
         // prints as is.
-        return numberIsWorded(number, template) ? number : fill(template, number, ref.case);
+        return whole(numberIsWorded(number, template) ? number : fill(template, number, ref.case));
       }
-      return title.length > 0 ? title : fill(strings.page, page, ref.case);
+      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case));
     }
   }
+}
+
+/** The label of a cross-reference to an anchor target (see
+ *  {@link anchorRefLabel}). */
+export function resolveAnchorRefLabel(
+  ref: NonNullable<InlineSpan['ref']>,
+  target: AnchorTarget,
+  strings: CrossRefStrings,
+): string {
+  return anchorRefLabel(ref, target, strings).text;
 }
 
 /** Whether a reference prints its target's page, so its label moves with

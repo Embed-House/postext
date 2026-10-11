@@ -115,14 +115,20 @@ findings; they exit 0 when green, 1 on any failure, 2 on a usage error.
 | `pnpm cookbook capture [slug…]` | Runs the pen in Chrome against the released engine, verifies it (§11) and writes the pages, card, social image, PDF and `capture.json`. With no slug: every recipe whose capture is missing or stale. |
 | `pnpm cookbook capture <slug> --check` | Runs and verifies, writes nothing (a regression run). |
 | `pnpm cookbook capture <slug> --preview-dir <dir>` | Also writes PNG copies of every page, the card and the social image, and the PDF the pen builds, to `<dir>/<slug>/<lang>/`, with the `capture.json` entry the edition would get. |
-| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships, whichever of the two wrote `dist`) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
+| `pnpm cookbook dev <slug> --engine local`, `pnpm cookbook capture <slug> --engine local --preview-dir <dir>` | Run the pen on the workspace engine (`packages/postext/dist` and `packages/postext-pdf/dist`, and the `dist` of `postext-folio` or `postext-epub` when the pen imports it; run `npx tsc` in each first; MathJax is served as the one module `pnpm build` ships and HarfBuzz as the binary it copies, whichever of the two wrote `dist`; a worker recipe starts its layout worker on the same files) instead of the released one, to preview a recipe that needs an unreleased feature. The capture only checks: a published recipe is captured from npm once the engine is released. |
 | `pnpm cookbook capture [slug…] --sandbox-only` | Writes only each edition's `<slug>.postext`, its `sandbox` entry in `capture.json` and the bundle's own findings there (`sandbox`, C33), running the pen on the engine version `capture.json` records. Pages, card, social image and PDF are left alone. With no slug: every captured recipe; with `--check`, nothing is written and the bundles are only verified. It is all a change of `folio` or `capture.sandbox` needs. |
+| `pnpm cookbook capture [slug…] --verify` | For after a release: runs as a capture does and writes only the record that this release left the capture unchanged (`verified` in `capture.json`, §11), which the recipe page, its Markdown page and the gallery print as "tested with". A recipe whose files would change is listed as needing a recapture, with the reason (layout hash, pixels, PDF, bundle), and the command exits 1. The round after a release is `pnpm cookbook capture --all --verify`, a look at what it lists, and `pnpm cookbook capture <those>`. |
+| `pnpm cookbook sandbox [slug…] [--lang en,es] [--strict]` | Lays out each captured edition's `<slug>.postext` the way the Sandbox does, on the working tree: its font loader (Google Fonts and Fontsource, by family name), its layout service and its worker, built with bun from `packages/postext-sandbox` (build the packages first: `pnpm turbo run build --filter=postext-sandbox...`). It compares what comes back with `capture.json` (§11). With no slug: every captured recipe. `--concurrency`, `--timeout <s>` (60 per edition) and `--report <out.json>` as for a capture. |
+| `pnpm cookbook sandbox [slug…] --site https://postext.dev` | The same comparison on a deployed site: the Sandbox route a recipe page links to, one browser context per edition, the layout worker's documents read from the page. It also fails when the page fetched another edition's bundle. Page differences fail here (`--no-strict` makes them warnings). |
 | `pnpm cookbook capture --all --sheet <out.webp>` | A contact sheet of every card and first spread, for the design review. |
 | `pnpm cookbook schema` | Regenerates `cookbook/recipe.schema.json` (editors use it through `$schema`). |
 | `pnpm cookbook coverage` | Questions, features, warnings and gaps that no recipe covers yet, and the planned recipes that have no folder: the contributors' roadmap. |
 
-The capture skips rewriting images when the layout and the card inputs did not change; pass
-`--force` to rewrite them anyway. Drafts show on the site in development
+A capture writes only the files that say something new (§11): a recipe whose layout did not
+change keeps its folder byte for byte, also on a new release; pass `--force` to rewrite
+everything anyway. `COOKBOOK_CAPTURE_DIR=<dir>` reads and writes captures in another folder (a
+copy of `apps/web/public/cookbook`), to try a capture or a `--verify` round without touching
+the committed files. Drafts show on the site in development
 (`next dev`) or with `COOKBOOK_DRAFTS=1`; production lists published recipes only.
 
 **Recipes for the next release.** A recipe that shows a feature not yet on npm is written as a
@@ -160,7 +166,7 @@ The TypeScript source of truth is `RecipeMeta` in `apps/web/src/lib/cookbook/typ
 | `engine` | `postext` minimum version (≤ the released one, or the next release in a preview draft, §3); `postextPdf` for PDF recipes; `math`, `worker` flags. |
 | `kit` | Blocks to inline: always `core`, `fonts`, `viewer`; plus `pdf`, `images`, `cjk`, `arabic`, `book` and `comics` when used (`book` or `cjk`, never both: each declares `showBook`). |
 | `sample.locales` | Languages with a `content.<lang>.md`; `[0]` is the fallback edition. Usually `en` and `es`; any site locale may have an edition of its own (a comic re-lettered per language writes all six), and a page shows its own edition, else the Spanish one for Catalan, else `[0]`. A value that changes with the edition is written `t({ en: 'en', ja: 'ja', … })`; the lint reads `config.locale` written so for each edition. |
-| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect`, `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079), and `sandbox`, which of the builds of such a list the Sandbox bundle is made from: `first` (the default), `last` or an index from 0 into the list (§11; the lint fails an index the list does not have, and the field without a list). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks and the detected features read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
+| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect` (what the recipe means to show: `pages`, `warnings`, `nearEmptyPages`, `console`, `defaultSkin`, and `raggedLines`, the number of justified lines the edition may set ragged, check C34, 0 by default), `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079), and `sandbox`, which of the builds of such a list the Sandbox bundle is made from: `first` (the default), `last` or an index from 0 into the list (§11; the lint fails an index the list does not have, and the field without a list). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks and the detected features read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
 | `downloads.pdf` | Keep and serve the PDF the pen builds. |
 | `folio` | How the Sandbox's Folio view shows the publication in 3D: `paper` (stock `type`, `grammage`, `texture`, `shade`, `showThrough`…), `binding` (`type`, `cover`, `coverMaterial`, `coverColor`), `surface` and `lighting`, as `PostextConfig.folio` with colours written `#rrggbb`. Only the `.postext` bundle carries it (over the pen's own `config.folio`); it never changes the pages, so editing it needs `pnpm cookbook capture <slug> --sandbox-only`, not a recapture. Pick the object the recipe sets: a novel on book wove in a cloth case, a magazine saddle-stitched on gloss, a menu on card. Use `cover: "pages"` only when the document has an even page count, so the last page closes the book as its back; otherwise a `case` in a palette colour. When the page paints its own paper colour, give a light `shade` (about the page colour 60 % of the way to white) so the stock does not tint it twice. |
 | `credits` | Authors; text, image and font credits (§8). |
@@ -794,10 +800,81 @@ Run `pnpm exec vitest run src/lib/cookbook` from `apps/web` after any registry c
 released engine, opens it in Chrome (`COOKBOOK_CHROME`, else the Puppeteer cache), waits for
 the module to settle and the fonts to load, verifies, then paints every page with the
 engine's own renderer and writes the files atomically. A failure writes nothing to the site
-(`--preview-dir` still gets its PNGs, so you can see what failed).
+(`--preview-dir` still gets its PNGs, so you can see what failed). Each edition runs in a
+browser window of its own, and every step of the run is named: one that never answers fails
+within the recipe's timeout as `harness step <name> of <slug> <lang>`.
+
+**What a recapture keeps.** With the same sources (the source hash), each kind of file is
+judged on its own, whatever release the run used:
+
+- **Pages, card and social image** stay when the layout hash and the file names are the same
+  and every published page is within rendering noise of its committed image. Equal bytes pass
+  at once; otherwise both images are decoded and compared in cells of 8 × 8 px, and the page
+  stays when no cell's mean difference in a channel is over 12 of 255 (`PAGE_DIFFERENCE` in
+  `apps/web/scripts/cookbook/lib/probe.js`, with the measurements it was set on: another
+  Chrome's glyph edges stay under it, a word painted one pixel bolder does not).
+- **The PDF** stays when its bytes are the same. The capture dates a PDF the day its recipe
+  was written (`created` in `recipe.json`, at 00:00 UTC, through `renderToPdf`'s `date`), so
+  the same pages give the same file; a pen that sets a `date` of its own keeps it, and a run
+  on a postext-pdf before 1.28.0 (`--engine npm@1.27.1`), which has no such option, gets a new
+  PDF every time.
+- **The bundle** stays when its bytes are the same, or when a run on another release than the
+  recorded one reads the committed bundle back as the pen's documents (the C33 comparison, on
+  the committed bytes).
+
+`engine`, `chrome`, `capturedAt`, `hash8` and the timings in `capture.json` name the run that
+wrote files and change only when one is written; the run's line says which (`PDF written,
+images and bundle kept`). On the recorded release the rest of `capture.json` (detection,
+diagnostics, alt text) still follows the tooling.
+
+**The bundle in the Sandbox (`pnpm cookbook sandbox`).** C33 reads a bundle back with the
+pen's engine and the pen's fonts. The Sandbox does not have the pen's fonts: it asks Google
+Fonts and Fontsource for each family by name and sends the files to a layout worker. Four
+defects lived on that path with every capture check green (a bold drawn by the browser, one
+family's failed request costing every family its faces, a bundle keeping one configuration
+of several, a configuration that changed when stripped), and each showed as a warning the
+Sandbox raised and the pen did not. So the `sandbox` entry of `capture.json` also records
+what the Sandbox may give back: `chapters`, each chapter's pages and layout hash as the
+bundle reads back (the hash C33 compares), and `warnings`, the warnings of the pen's builds
+the bundle holds, kind and what each names, left out when there are none. `--sandbox-only`
+writes both without touching a picture.
+
+`pnpm cookbook sandbox` lays the bundle out with the Sandbox package's own functions
+(`packages/postext-sandbox/src/headless/layOutBundle.ts`: the bundle read as a project
+import reads it, the font steps of a preview, every chapter through the layout service and
+its worker, each continuing the one before) and compares:
+
+- **Failures**: the bundle does not open, the layout throws, the page or the worker reports
+  an error, nothing comes within the timeout, or the Sandbox raises a warning that is not in
+  `sandbox.warnings`. For a `fontFallback` the line names the family's faces on the page and
+  in the worker, which is where the four defects were read.
+- **Warnings, failures with `--strict`**: another chapter count, another page count, or, on
+  the release `capture.json` records, another layout hash than `sandbox.chapters`. A pull
+  request that moves lines on purpose cannot capture the recipe again before its release, so
+  on the working tree these only warn; on a site (`--site`) they fail.
+- An edition whose `capture.json` has no `sandbox.chapters` yet is compared on its page
+  total, and its warnings are printed as notes.
+
+The network goes through the capture's cache (`apps/web/.cache/cookbook-net/`), with Google
+Fonts allowed for this command only: pens stay barred from it. Two workflows run it:
+`cookbook-sandbox.yml` on pull requests that touch the Sandbox, the engine or the Cookbook,
+and `sandbox-probe.yml` on the deployed site after each release.
+
+**Tested with.** A run on a newer release that finds every edition of a recipe unchanged
+writes one record, `verified: { postext, postextPdf?, chrome, at }`, and nothing else: the
+newest release on which the committed pages, PDF and bundle are still what the pen gives. The
+site prints it as the release the recipe was tested with (`lib/cookbook/tested.ts`); the
+tombstone under the pages keeps `engine`, the release that laid out what is pictured. A run
+that writes a file removes the record (the files then say it themselves), and so does
+`--sandbox-only` when it rewrites a bundle; a run on a release that is not newer, a run of
+some of the editions and a local-engine run leave it alone. `--verify` writes these records
+and no file.
 
 The capture also writes the document it pictured as a `.postext` bundle, `<slug>.postext`
-in each edition's folder, which the recipe page's Open in Sandbox button loads. The pen's
+in each edition's folder, which the recipe page's Open in Sandbox button loads. The button
+opens the page's own edition (the Chinese page reads `zh/<slug>.postext`); from a language the
+recipe has no edition in, the Sandbox falls back on English and Spanish, Spanish first for
+Catalan. The pen's
 own engine writes it with `createBundle`: the markdown (or the chapters of a `buildBundle`
 book), the configuration, the resources and the files they name, and the card as its
 thumbnail. Drawings go in as SVG; photos keep the bytes they were decoded from; font files
@@ -884,7 +961,21 @@ a small red box and takes the room of one, so the pages after it are not the rec
 names the formula, its page and MathJax's message, one line per message. A Sandbox bundle that
 does not lay out as the pen's documents fails as well (C33, above): another page count,
 another layout, a warning the pen's builds did not raise, another hyphenation language, or no
-language named.
+language named. A justified line set ragged fails too (C34): where the word spaces of a line
+would stretch past 3× their width the engine leaves the line short and raises a `raggedLine`
+warning, and the check names up to five of them with their page and the stretch they would have
+needed (`p. 3 4.1× “Marrow Mutual will pay”`). Reword the copy or give the line a break it can
+take; a recipe that means the line accepts a count with `capture.expect.raggedLines` (part of
+the source hash, so the recipe is captured again). `capture.json` records the count as
+`diagnostics.raggedLines`.
+
+**Notes** are printed and kept for whoever fits the copy. C35 lists the paragraphs the engine
+set one line shorter to take up a runt with negative tracking (`VDTBlock.runtFix`), most
+tracked first, with their page, the amount and their first words:
+`2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “…”`. A paragraph
+at the cap (`bodyText.maxRuntTracking`) reads tight beside its neighbours: cut or add a few
+words there and it sets without tracking. `capture.json` records `diagnostics.runtFixes`
+(`count`, `tracked`, `worst`) when a paragraph was fixed.
 
 **Warnings** go into `capture.json` for the reviewer: blank-page cascades (C22), near-empty
 pages not listed in `expect.nearEmptyPages` (C23), loose lines over 2 % (C24; a Chinese,

@@ -91,8 +91,19 @@ describe('a Latin chip in Japanese text (#462)', () => {
     expect(flat(lay('これは:chip[図A]{style=code}です。'))).toEqual(['これは', '[図A]', '␣', 'です。']);
     // Full-width letters are CJK characters.
     expect(flat(lay('これは:chip[ＡＢＣ]{style=code}です。'))).toEqual(['これは', '[ＡＢＣ]', 'です。']);
-    // A sign is neither: no space on that side.
-    expect(flat(lay('これは:chip[#tag]{style=code}です。'))).toEqual(['これは', '[#tag]', '␣', 'です。']);
+    // A sign that opens a chip of Western words is a Western character in
+    // Japanese text (#721): the chip takes the space on that side too.
+    expect(flat(lay('これは:chip[#tag]{style=code}です。'))).toEqual(['これは', '␣', '[#tag]', '␣', 'です。']);
+    // Under `'letters'`, and in Chinese text, a sign is neither Han nor
+    // Latin: no space on that side.
+    expect(flat(lay('これは:chip[#tag]{style=code}です。', 'ja', false, { latinSpacingEdge: 'letters' }))).toEqual(['これは', '[#tag]', '␣', 'です。']);
+    expect(flat(lay('这是:chip[#tag]{style=code}标签。', 'zh-Hans'))).toEqual(['这是', '[#tag]', '␣', '标签。']);
+    // A chip that ends in a bracket, and one of signs alone.
+    expect(flat(lay('この:chip[normalize()]{style=code}関数です。'))).toEqual(['この', '␣', '[normalize()]', '␣', '関数です。']);
+    expect(flat(lay('これは:chip[→]{style=code}です。'))).toEqual(['これは', '[→]', 'です。']);
+    // The two sides a mark binds across stay solid.
+    expect(flat(lay('これは:chip[abc(]{style=code}です。'))).toEqual(['これは', '␣', '[abc(]', 'です。']);
+    expect(flat(lay('これは:chip[)abc]{style=code}です。'))).toEqual(['これは', '[)abc]', '␣', 'です。']);
     // Two chips: a Han one and a Latin one.
     expect(flat(lay('これは:chip[漢字]{style=code}:chip[abc]{style=code}です。'))).toEqual(['これは', '[漢字]', '␣', '[abc]', '␣', 'です。']);
   });

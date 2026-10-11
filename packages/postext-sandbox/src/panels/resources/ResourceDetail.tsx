@@ -30,6 +30,7 @@ import { VideoEditor } from './VideoEditor';
 import { SvgSourceEditor, type SvgSourceCommit } from './SvgSourceEditor';
 import { TableEditor, type TableFocusRequest } from './TableEditor/TableEditor';
 import { slugify } from './slugify';
+import { bitmapReplaced, placementWith, svgReplaced, svgSourceSaved, tableWithDirection, tableWithStyle } from './resourceEdits';
 import type { TableCellPos, TableModel } from 'postext';
 import { flowSideLabels, useRightToLeftFlow } from '../../sidebar/settings/flowSides';
 import { hasSeveralColumns } from '../../sidebar/settings/multiColumnBook';
@@ -138,10 +139,7 @@ export function ResourceDetail({
   /** Merge one placement key; `undefined` drops it so the resource falls
    *  back to its type's default placement. */
   const setPlacementKey = <K extends keyof ResourcePlacement>(key: K, value: ResourcePlacement[K] | undefined) => {
-    const next: ResourcePlacement = { ...currentPlacement };
-    if (value === undefined) delete next[key];
-    else next[key] = value;
-    onChange(touch({ placement: Object.keys(next).length > 0 ? next : undefined }));
+    onChange(touch({ placement: placementWith(currentPlacement, key, value) }));
   };
   // How many columns a column float takes (#505): offered when a page of
   // the book has more than one, or when the resource sets it.
@@ -177,10 +175,7 @@ export function ResourceDetail({
   const tableStyles = useSandboxSelector((s) => s.config.tableStyles) ?? [];
   const tableStyleId = resource.table?.styleId;
   const setTableStyleId = (styleId: string | undefined) => {
-    const table: NonNullable<Resource['table']> = { ...(resource.table ?? { model: { rows: [] } }) };
-    if (styleId) table.styleId = styleId;
-    else delete table.styleId;
-    onChange(touch({ table }));
+    onChange(touch({ table: tableWithStyle(resource, styleId) }));
   };
   // `start` / `end` are synonyms of left / right for a float (#371).
   const rawAlign = currentPlacement.align ?? typePlacement.align;
@@ -193,10 +188,7 @@ export function ResourceDetail({
   const tableDirection = resource.table?.direction;
   const tableRtl = tableDirection ? tableDirection === 'rtl' : rtlBook;
   const setTableDirection = (direction: string) => {
-    const table: NonNullable<Resource['table']> = { ...(resource.table ?? { model: { rows: [] } }) };
-    if (direction === 'ltr' || direction === 'rtl') table.direction = direction;
-    else delete table.direction;
-    onChange(touch({ table }));
+    onChange(touch({ table: tableWithDirection(resource, direction) }));
   };
 
   // The id is edited locally and committed (renamed) on blur / Enter so the
@@ -216,36 +208,11 @@ export function ResourceDetail({
   };
 
   const applyBitmap = (r: BitmapUploadResult) => {
-    onChange(
-      touch({
-        kind: 'bitmap',
-        // A declared resolution is the author's and stays; the file's is
-        // the new file's (#631).
-        bitmap: {
-          fileId: r.fileId, format: r.format, width: r.width, height: r.height,
-          ...(resource.bitmap?.resolution ? { resolution: resource.bitmap.resolution } : {}),
-          ...(r.fileResolution ? { fileResolution: r.fileResolution } : {}),
-        },
-        svg: undefined,
-        table: undefined,
-        video: undefined,
-      }),
-    );
+    onChange(touch(bitmapReplaced(resource, r)));
   };
 
   const applySvg = (r: SvgUploadResult) => {
-    onChange(
-      touch({
-        kind: 'svg',
-        // A replaced SVG keeps its print master (the master is the
-        // publisher's original and outlives screen-side re-exports) and its
-        // font opt-out (#630).
-        svg: { fileId: r.fileId, width: r.width, height: r.height, pdfFileId: resource.svg?.pdfFileId, ...(resource.svg?.inlineFonts === false ? { inlineFonts: false } : {}) },
-        bitmap: undefined,
-        table: undefined,
-        video: undefined,
-      }),
-    );
+    onChange(touch(svgReplaced(resource, r)));
   };
 
   const applyPdfMaster = (pdfFileId: string | undefined) => {
@@ -253,23 +220,10 @@ export function ResourceDetail({
     onChange(touch({ svg: { ...resource.svg, pdfFileId } }));
   };
 
-  // A source edit saved as a new blob: swap the id, keep the declared size
-  // unless the source now says otherwise. The print master (if any) was made
-  // for the source as it was, so it is detached: the PDF export follows the
-  // edited SVG from here on instead of silently printing the old figure.
+  // A source edit saved as a new blob (see `svgSourceSaved`).
   const applySvgSource = useCallback(
     (c: SvgSourceCommit) => {
-      onChange(
-        touch({
-          svg: {
-            ...resource.svg,
-            fileId: c.fileId,
-            width: c.width ?? resource.svg?.width,
-            height: c.height ?? resource.svg?.height,
-            pdfFileId: undefined,
-          },
-        }),
-      );
+      onChange(touch(svgSourceSaved(resource, c)));
     },
     // `touch` closes over `resource`, which is already a dependency.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -313,7 +267,7 @@ export function ResourceDetail({
       <PanelBody padded>
       <div className="flex flex-col gap-4">
         <Field
-          label={labels.idLabel} tooltip={labels.styleIdHelp}
+          label={labels.idLabel} tooltip={labels.resourceIdHelp}
           hint={
             idEmpty
               ? labels.resourceIdHintSuggested.replace('__id__', suggestedId)
@@ -524,7 +478,9 @@ export function ResourceDetail({
               onReset={() => setPlacementKey('align', undefined)}
             />
           )}
-          {!placementInline && !placementRotated && placementSpan === 'column' && (
+          {/* A column float, and a resource set in the text (#729,
+              `layout.inlineCaptionSide`). */}
+          {!placementRotated && placementSpan === 'column' && (
             <ToggleSwitch
               label={labels.resourceTypePlacementCaptionSide}
               tooltip={labels.resourceTypePlacementCaptionSideTooltip}

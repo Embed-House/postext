@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyHeadingSplit } from '../../bundle/configVersion';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyHeadingSplit, pinLegacyScriptContext } from '../../bundle/configVersion';
 import type { BodyTextConfig, KeepWithNextSplit, PostextConfig, VDTBlock, VDTDocument } from '../../index';
 
 // Deterministic text measurement stub (no DOM in the node test env).
@@ -112,15 +112,16 @@ describe('a paragraph kept with the heading above it splits by the orphan rule t
     }
     // Stored under today's rules, it is read as it is.
     expect(migrateConfig(stored, CONFIG_VERSION, { content: markdown })).toBe(stored);
-    expect(CONFIG_VERSION).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
   });
 
   it('pins only what the setting changes', () => {
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     // No heading in the text: nothing is kept with one.
-    expect(migrateConfig(plain, 7, { content: 'Prose only, no heading.' })).toBe(plain);
+    expect(migrateConfig(plain, 7, { content: 'Prose only, no heading.' })).toEqual(pinLegacyScriptContext(plain));
     // Unknown content may hold one.
-    expect(migrateConfig(plain, 7).headings).toEqual({ keepWithNextSplit: 'fill' });
+    // (with the version-12 pins of column balancing, #707, #708 and #711)
+    expect(migrateConfig(plain, 7).headings).toEqual({ keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } });
     // Keep-with-next or orphan control off: the setting changes nothing.
     const noKeep: PostextConfig = { headings: { keepWithNext: false } };
     expect(pinLegacyHeadingSplit(noKeep)).toBe(noKeep);
@@ -131,7 +132,7 @@ describe('a paragraph kept with the heading above it splits by the orphan rule t
     expect(pinLegacyHeadingSplit(named)).toBe(named);
     // A bundle pins the `headings` its layers leave in force.
     const merged = migrateBundleConfig({ headings: { fontFamily: 'Georgia' } }, [{ bodyText: { fontSize: pt(11) } }], undefined, { content: '# T\n\nText.' });
-    expect(merged.headings).toEqual({ fontFamily: 'Georgia', keepWithNextSplit: 'fill' });
+    expect(merged.headings).toEqual({ fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4 } });
   });
 
   it('resolves and strips the setting', () => {

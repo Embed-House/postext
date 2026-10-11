@@ -355,6 +355,23 @@ function panelAnchors(panel: VDTComicPanel, resource: Resource | undefined): Let
   });
 }
 
+/** The faces a panel's picture marks for people who do not speak
+ *  (`Resource.faces`, #726), on the page: through the crop and the mirror,
+ *  as an anchor's face is. */
+function bystanderFaces(panel: VDTComicPanel, resource: Resource | undefined): BoundingBox[] {
+  const art = panel.art;
+  if (!art || !resource?.faces) return [];
+  return resource.faces.map((r) => comicArtRectToPage(art, r));
+}
+
+/** The guard over a marked face: the box grown upward by 0.4 of its
+ *  height and outward by a fifth of its width (hair, a hat brim). */
+function faceGuard(f: BoundingBox): BoundingBox {
+  const up = 0.4 * f.height;
+  const side = 0.2 * f.width;
+  return { x: f.x - side, y: f.y - up, width: f.width + 2 * side, height: f.height + up };
+}
+
 function overlaps(a: BoundingBox, b: BoundingBox): boolean {
   return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 }
@@ -363,9 +380,9 @@ function overlaps(a: BoundingBox, b: BoundingBox): boolean {
  * Guards over the head of every speaker, so that balloons do not land on a
  * hat or a head of hair. Each is an avoid zone (a balloon may still cover
  * it as a last resort; tails run to the mouth as usual):
- * - a marked `face` grown upward by 0.4 of its height and outward by a
- *   fifth of its width (hair, a hat brim; the face itself stays a hard
- *   no-go);
+ * - a marked `face` (a speaker's, or a bystander's from `Resource.faces`,
+ *   #726) grown upward by 0.4 of its height and outward by a fifth of its
+ *   width (hair, a hat brim; the face itself stays a hard no-go);
  * - with no face, a box of a few ems about the mouth (and the head point),
  *   mostly above it, sized from the mouth-to-head distance when the head
  *   is marked.
@@ -374,14 +391,9 @@ function overlaps(a: BoundingBox, b: BoundingBox): boolean {
  */
 function headGuards(panel: VDTComicPanel, resource: Resource | undefined, em: number): BoundingBox[] {
   const art = panel.art;
-  if (!art || !resource?.anchors) return [];
-  return resource.anchors.filter((a) => a.id !== 'sfx').map((a) => {
-    if (a.face) {
-      const f = comicArtRectToPage(art, a.face);
-      const up = 0.4 * f.height;
-      const side = 0.2 * f.width;
-      return { x: f.x - side, y: f.y - up, width: f.width + 2 * side, height: f.height + up };
-    }
+  if (!art || !resource) return [];
+  const speakers = (resource.anchors ?? []).filter((a) => a.id !== 'sfx').map((a) => {
+    if (a.face) return faceGuard(comicArtRectToPage(art, a.face));
     const mouth = comicArtPointToPage(art, a.x, a.y);
     const head = a.head ? comicArtPointToPage(art, a.head.x, a.head.y) : mouth;
     const d = Math.hypot(head.x - mouth.x, head.y - mouth.y);
@@ -392,6 +404,7 @@ function headGuards(panel: VDTComicPanel, resource: Resource | undefined, em: nu
     const y1 = Math.max(mouth.y, head.y) + 0.7 * em;
     return { x: cx - half, y: y0, width: 2 * half, height: y1 - y0 };
   });
+  return [...speakers, ...bystanderFaces(panel, resource).map(faceGuard)];
 }
 
 /** The head a speaker with no marked face may have in a closer shot (a
@@ -412,23 +425,27 @@ function headZones(panel: VDTComicPanel, resource: Resource | undefined): (Bound
  *  hugging characters), as a region better left uncovered: a balloon goes
  *  over the background before it goes over the action. A cost per area,
  *  never a fault; each zone names its figure (`owner`), so that a balloon
- *  costs more over another character than over its own speaker. */
+ *  costs more over another character than over its own speaker. The
+ *  figure under a bystander's face (`Resource.faces`, #726) is nobody's
+ *  own: its owner is a name no script key can be (a key holds no space),
+ *  so every balloon pays for it as for another character's. */
 function bodyZones(panel: VDTComicPanel, resource: Resource | undefined): (BoundingBox & { weight: number; owner: string })[] {
   const art = panel.art;
-  if (!art || !resource?.anchors) return [];
-  return resource.anchors.filter((a) => a.id !== 'sfx' && a.face).map((a) => {
-    const f = comicArtRectToPage(art, a.face!);
-    return { x: f.x - 0.3 * f.width, y: f.y + f.height, width: 1.6 * f.width, height: 2 * f.height, weight: 1.5, owner: a.id };
-  });
+  if (!art || !resource) return [];
+  const under = (f: BoundingBox, owner: string) => ({ x: f.x - 0.3 * f.width, y: f.y + f.height, width: 1.6 * f.width, height: 2 * f.height, weight: 1.5, owner });
+  return [
+    ...(resource.anchors ?? []).filter((a) => a.id !== 'sfx' && a.face).map((a) => under(comicArtRectToPage(art, a.face!), a.id)),
+    ...bystanderFaces(panel, resource).map((f, i) => under(f, `bystander face ${i}`)),
+  ];
 }
 
 /** The picture's safe area as a region better left uncovered, when the art
- *  marks no face and no avoid zone (nothing else tells the lettering what
- *  matters in it). */
+ *  marks no face (a speaker's or a bystander's) and no avoid zone (nothing
+ *  else tells the lettering what matters in it). */
 function softSafeArea(panel: VDTComicPanel, resource: Resource | undefined): BoundingBox[] {
   const art = panel.art;
   if (!art || !resource?.safeArea) return [];
-  if ((resource.avoid?.length ?? 0) > 0 || (resource.anchors ?? []).some((a) => a.face)) return [];
+  if ((resource.avoid?.length ?? 0) > 0 || (resource.faces?.length ?? 0) > 0 || (resource.anchors ?? []).some((a) => a.face)) return [];
   return [comicArtRectToPage(art, resource.safeArea)];
 }
 
@@ -471,6 +488,16 @@ function drawnTail(b: VDTComicBalloon): [VDTPoint, VDTPoint] | undefined {
   const k = Math.hypot(dx / (b.bbox.width / 2 || 1), dy / (b.bbox.height / 2 || 1));
   if (!(k > 1)) return undefined;
   return [{ x: c.x + dx / k, y: c.y + dy / k }, { x: b.tailTip.x, y: b.tailTip.y }];
+}
+
+/** A script's `tail=` as the lettering reads it. `left` and `right` name
+ *  a side of the panel's picture as stored (#727), as `at=` and `to=`
+ *  name points of it: on the page that is the same side of the panel, and
+ *  the other one when the picture is mirrored. A panel with no picture
+ *  reads them as the page's. The other values pass through. */
+function tailSideOnPage(tail: ComicScriptItem['tail'], panel: VDTComicPanel): ComicScriptItem['tail'] {
+  if ((tail === 'left' || tail === 'right') && panel.art?.mirrored) return tail === 'left' ? 'right' : 'left';
+  return tail;
 }
 
 /** What {@link letterPanels} needs. */
@@ -547,6 +574,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
       ({ rect, kind, ...(guard ? { guard } : {}), within: panel.polygon, ...(under.length > 0 ? { under } : {}) });
     return [
       ...(resource.anchors ?? []).filter((a) => a.id !== 'sfx' && a.face).map((a) => entry(comicArtRectToPage(panel.art!, a.face!), 'face')),
+      ...bystanderFaces(panel, resource).map((f) => entry(f, 'face')),
       ...(resource.avoid ?? []).map((r) => entry(comicArtRectToPage(panel.art!, r), 'avoid')),
       ...headGuards(panel, resource, em).map((g) => entry(g, 'avoid', true)),
     ].filter((e) => shown(e.rect));
@@ -575,6 +603,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
       writingMode: vertical ? 'vertical' : 'horizontal',
       locale,
       anchors: panelAnchors(panel, resource),
+      ...(resource?.faces?.length && panel.art ? { faces: bystanderFaces(panel, resource) } : {}),
       avoid: [
         ...(panel.art ? (resource?.avoid ?? []).map((r) => comicArtRectToPage(panel.art!, r)) : []),
         ...headGuards(panel, resource, em).map((g) => ({ ...g, guard: true })),
@@ -598,7 +627,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
       const own = pickBalloonStyle(comics, it.style?.trim());
       const st = own ?? pickBalloonStyle(comics, it.role === 'speech' ? cast?.balloonStyle : undefined)
         ?? pickBalloonStyle(comics, roleStyleId(it.role)) ?? pickBalloonStyle(comics, 'speech')!;
-      const tail = it.tail;
+      const tail = tailSideOnPage(it.tail, panel);
       return {
         id: `${panel.index}:${k}`,
         order: k,
@@ -621,7 +650,7 @@ export function letterPanels(input: LetterPanelsInput): { balloons: VDTComicBall
         ...(it.writingMode ? { writingMode: it.writingMode } : {}),
       };
     });
-    const r = letterPanelDetailed(lp, items, { joinSameSpeaker: L.joinSameSpeaker, groupBase: pi * 1000 });
+    const r = letterPanelDetailed(lp, items, { joinSameSpeaker: L.joinSameSpeaker, groupBase: pi * 1000, ...(L.strictPlacement ? { strictPlacement: true } : {}) });
     balloons.push(...r.balloons);
     for (const d of r.diagnostics) {
       warnings.push({

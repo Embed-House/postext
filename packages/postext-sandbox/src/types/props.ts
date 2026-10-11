@@ -39,6 +39,13 @@ export interface PostextSandboxProps {
   hashBundles?: Record<string, HashBundleResolver>;
   onConfigChange?: (config: PostextConfig) => void;
   onMarkdownChange?: (markdown: string) => void;
+  /** Hand an agent in the browser the Sandbox's own tools through WebMCP
+   *  (`document.modelContext`): read and edit the book, change its design,
+   *  get any page as a picture, turn pages, switch viewer, export. On by
+   *  default; nothing is registered where the browser has no WebMCP, bar
+   *  the same tools on `window.postextWebMcp` for an agent that runs
+   *  script in the page. */
+  webmcp?: boolean;
   themeToggle?: ReactNode;
   languageSwitcher?: ReactNode;
   homeUrl?: string;

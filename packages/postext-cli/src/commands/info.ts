@@ -22,7 +22,7 @@ function describeStart(start: BundleStart): string {
 export default async function info(ctx: CommandContext): Promise<void> {
   const { opts, reporter } = ctx;
   const { book, fonts } = await openBook(ctx);
-  const layout = opts.flag('pages') ? await layOut(book, opts, reporter) : undefined;
+  const layout = opts.flag('pages') ? await layOut(book, opts, reporter, undefined, fonts) : undefined;
   const kinds: Record<string, number> = {};
   for (const r of book.resources) kinds[r.kind] = (kinds[r.kind] ?? 0) + 1;
   const families = [...fonts.families].map((family) => {

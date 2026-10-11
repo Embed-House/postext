@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { AlertTriangle, ChevronRight, CircleCheck, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
+import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid } from 'lucide-react';
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from 'postext';
 import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, ListRow, PanelBody, PanelHeader, cn } from '../ui';
@@ -9,6 +9,7 @@ import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '.
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
 import { preflightDetail, preflightTitle } from '../print/preflightText';
+import { contrastDetail, contrastTitle } from '../contrast/contrastText';
 import { fill } from '../print/fillTokens';
 import { readViewHash, viewHashFragment } from '../storage/viewHash';
 
@@ -34,6 +35,8 @@ function iconFor(kind: WarningPayload['kind']) {
   switch (kind) {
     case 'preflight':
       return Printer;
+    case 'contrast':
+      return Contrast;
     case 'missingFont':
     case 'missingFontFamily':
     case 'missingFontVariant':
@@ -42,6 +45,7 @@ function iconFor(kind: WarningPayload['kind']) {
       return Type;
     case 'looseLine':
     case 'cjkLooseLine':
+    case 'raggedLine':
     case 'unbreakableWordOverflow':
     case 'joiningScriptLetterSpacing':
     case 'cjkMarksExceedLeading':
@@ -54,6 +58,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'columnsTooNarrow':
     case 'afterText':
     case 'unplaced':
+    case 'shortListSplit':
+    case 'openerFloat':
       return FileWarning;
     case 'headingHierarchy':
       return Heading;
@@ -165,10 +171,13 @@ function iconFor(kind: WarningPayload['kind']) {
   }
 }
 
-function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
+/** A warning's one-line title, as the panel shows it. */
+export function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightTitle(payload.check, labels);
+    case 'contrast':
+      return contrastTitle(payload.check, labels);
     case 'missingFont':
       return labels.warningsMissingFontTitle;
     case 'missingFontFamily':
@@ -183,6 +192,8 @@ function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
       return labels.warningsLooseLineTitle;
     case 'cjkLooseLine':
       return labels.warningsCjkLooseLineTitle;
+    case 'raggedLine':
+      return labels.warningsRaggedLineTitle;
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowTitle;
     case 'joiningScriptLetterSpacing':
@@ -348,6 +359,10 @@ function titleFor(payload: WarningPayload, labels: SandboxLabels): string {
       return labels.warningsAfterTextTitle;
     case 'unplaced':
       return labels.warningsUnplacedTitle;
+    case 'shortListSplit':
+      return labels.warningsShortListSplitTitle;
+    case 'openerFloat':
+      return labels.warningsOpenerFloatTitle;
     case 'unknownConfigKey':
       return labels.warningsUnknownConfigKeyTitle;
     case 'unknownConfigValue':
@@ -416,10 +431,13 @@ function formatVariantList(
   return variants.map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''}`).join(', ');
 }
 
-function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
+/** What the panel says under a warning's title. */
+export function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
   switch (payload.kind) {
     case 'preflight':
       return preflightDetail(payload.check, labels);
+    case 'contrast':
+      return contrastDetail(payload.check, labels);
     case 'missingFont':
       return `"${payload.family}" — ${labels.warningsMissingFontDetail}`;
     case 'missingFontFamily':
@@ -439,6 +457,8 @@ function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
       return `${payload.ratio.toFixed(2)}× · ${labels.warningsThresholdLabel} ${payload.threshold.toFixed(2)}×`;
     case 'cjkLooseLine':
       return labels.warningsCjkLooseLineDetail.replace('__text__', payload.text);
+    case 'raggedLine':
+      return labels.warningsRaggedLineDetail.replace('__text__', payload.text.trim()).replace('__ratio__', payload.ratio.toFixed(1));
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowDetail.replace('__text__', payload.text);
     case 'joiningScriptLetterSpacing':
@@ -644,6 +664,10 @@ function detailFor(payload: WarningPayload, labels: SandboxLabels): string {
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsAfterTextDetail.replace('__page__', String(payload.page))}`;
     case 'unplaced':
       return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsUnplacedDetail}`;
+    case 'shortListSplit':
+      return labels.warningsShortListSplitDetail.replace('__page__', String(payload.page)).replace('__items__', String(payload.items));
+    case 'openerFloat':
+      return `${payload.resourceId !== undefined ? `#${payload.resourceId} — ` : ''}${labels.warningsOpenerFloatDetail.replace('__page__', String(payload.page))}`;
     case 'codeOverflow': {
       const detail = payload.mode === 'wrap' ? labels.warningsCodeOverflowWrap
         : payload.mode === 'clip' ? labels.warningsCodeOverflowClip
@@ -743,9 +767,9 @@ function WarningItem({
   onClick: (w: Warning) => void;
 }) {
   const Icon = iconFor(warning.payload.kind);
-  // A preflight finding, or a design text cut on a page (#628), names its
-  // book page.
-  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
+  // A preflight or contrast finding, or a design text cut on a page
+  // (#628), names its book page.
+  const preflightPage = warning.payload.kind === 'preflight' || warning.payload.kind === 'contrast' || warning.payload.kind === 'designTextTruncated' ? warning.payload.page : undefined;
   const critical = warning.payload.kind === 'preflight' && warning.payload.check.severity === 'critical';
   const clickable = warning.sourceStart !== undefined || isFontWarning(warning.payload.kind) || preflightPage !== undefined;
   const title = titleFor(warning.payload, labels);
@@ -792,6 +816,9 @@ export function WarningsPanel() {
     // A cut design text opens its page; one that prints a heading or a
     // frontmatter field also selects it in the editor.
     if (w.payload.kind === 'designTextTruncated') goToBookPage(w.payload.page);
+    // A contrast finding opens the page of its first occurrence, and
+    // selects its text when it has a place in the source.
+    if (w.payload.kind === 'contrast' && w.payload.page !== undefined) goToBookPage(w.payload.page);
     if (isFontWarning(w.payload.kind)) {
       // Surface the custom-font manager so the user can upload the missing
       // variant, re-add the family, or disambiguate duplicates.
@@ -840,6 +867,7 @@ function categoryLabel(category: WarningCategory, labels: SandboxLabels): string
     case 'figures': return labels.warningsGroupFigures;
     case 'markup': return labels.warningsGroupMarkup;
     case 'design': return labels.warningsGroupDesign;
+    case 'contrast': return labels.contrastSection;
     case 'typesetting': return labels.warningsGroupTypesetting;
     case 'preflight': return labels.warningsGroupPreflight;
     case 'system': return labels.warningsGroupSystem;

@@ -578,6 +578,58 @@ describe('engine content warnings', () => {
     expect(warningCategory('unplaced')).toBe('typesetting');
   });
 
+  it('reports a short list cut between columns and a float on an opener page (#749)', () => {
+    const g = globalThis as unknown as { OffscreenCanvas?: unknown };
+    g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };
+    const mm = (value: number) => ({ value, unit: 'mm' as const });
+    const pt = (value: number) => ({ value, unit: 'pt' as const });
+    // Eight lines a page: the heading, six lines of text, then a list of three.
+    const config: PostextConfig = {
+      page: { width: mm(100), height: mm(60), dpi: 150, margins: { top: mm(10), bottom: mm(10.48), left: mm(10), right: mm(10) } },
+      layout: { layoutType: 'single' },
+      bodyText: { fontSize: pt(10), lineHeight: pt(14), textAlign: 'left', firstLineIndent: pt(0), shortListSplit: 'warn' },
+      unorderedLists: { marginTop: pt(0), marginBottom: pt(0) },
+      headings: { levels: [{ level: 1, fontSize: pt(10), lineHeight: pt(14), marginTop: pt(0), marginBottom: pt(0), breakBefore: { enabled: true, parity: 'any' } }] },
+      header: { elements: [] },
+      footer: { elements: [] },
+    };
+    const list = '- one\n- two\n- three';
+    const md = ['# Title', ...Array.from({ length: 6 }, (_, i) => `Line ${i + 1}.`), list].join('\n\n');
+    const doc = buildDocument({ markdown: md }, config);
+    const cut = computeWarnings({ markdown: md, config, doc }).filter((w) => w.payload.kind === 'shortListSplit');
+    expect(cut.map((w) => w.payload)).toEqual([{ kind: 'shortListSplit', page: 1, items: 3 }]);
+    expect(md.slice(cut[0]!.sourceStart, cut[0]!.sourceEnd)).toBe(list);
+    expect(cut[0]!.line).toBe(15);
+    expect(warningCategory('shortListSplit')).toBe('typesetting');
+    // Applied, the rule leaves nothing to report.
+    const kept: PostextConfig = { ...config, bodyText: { ...config.bodyText, shortListSplit: 'avoid' } };
+    expect(computeWarnings({ markdown: md, config: kept, doc: buildDocument({ markdown: md }, kept) })
+      .filter((w) => w.payload.kind === 'shortListSplit')).toEqual([]);
+
+    // A figure cited on the page its chapter opens.
+    const figure: Resource = {
+      id: 'fig', typeId: 'figure', kind: 'bitmap', caption: 'A figure.', createdAt: 0, updatedAt: 0,
+      bitmap: { fileId: 'fig.png', format: 'png', width: 400, height: 60 },
+    };
+    const floats = (openerFloats: 'warn' | 'avoid'): PostextConfig => ({
+      ...config,
+      page: { ...config.page, height: mm(120) },
+      layout: { layoutType: 'single', openerFloats },
+      bodyText: { ...config.bodyText, shortListSplit: 'allow' },
+    });
+    const cited = ['# Title', 'See :ref{id="fig"}.', ...Array.from({ length: 30 }, (_, i) => `Line ${i + 1}.`)].join('\n\n');
+    const warned = buildDocument({ markdown: cited, resources: [figure] }, floats('warn'));
+    const found = computeWarnings({ markdown: cited, config: floats('warn'), doc: warned, resources: [figure] })
+      .filter((w) => w.payload.kind === 'openerFloat');
+    expect(found.map((w) => w.payload)).toEqual([{ kind: 'openerFloat', page: 1, resourceId: 'fig' }]);
+    expect(found[0]!.line).toBe(3);
+    expect(warningCategory('openerFloat')).toBe('typesetting');
+    const moved = buildDocument({ markdown: cited, resources: [figure] }, floats('avoid'));
+    expect(moved.pages[0]!.floats ?? []).toEqual([]);
+    expect(computeWarnings({ markdown: cited, config: floats('avoid'), doc: moved, resources: [figure] })
+      .filter((w) => w.payload.kind === 'openerFloat')).toEqual([]);
+  });
+
   it('flags an image the previews cannot read, unless storage itself is out', () => {
     const md = 'Look :ref{id="photo"}.';
     const found = computeWarnings({ markdown: md, config: {}, doc: null, resources: [photo], unavailableImages: new Set(['file-photo']) })

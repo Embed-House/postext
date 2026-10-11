@@ -157,7 +157,7 @@ export const metadata = {
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>两端对齐文字中词间距的下限，以正常空格宽度的倍数表示。</td>
+      <td>两端对齐文字中词间距的下限，以正常空格宽度的倍数表示。上下限约束的都是每个空格相对于自身宽度的变化，以正体空格为单位计算：含有斜体或粗体空格的行，这种空格比正体的窄一些或宽一些，绘制出来会比断行时守住的那个限值低或高百分之几个空格宽度。<code>lineWordSpacing(line)</code>给出上下限所约束的那个数；见<a href="/zh/docs/justification#postext的实现">断词与两端对齐</a>。</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>
@@ -224,6 +224,12 @@ export const metadata = {
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>把源文本行末的反斜杠，以及后跟空格的<code>{'\\\\'}</code>，读作段落、引文或列表项内部的强制换行（CommonMark的硬换行）：后面的文字在同一段落中另起一行，换行前的一行按自然宽度排，与末行相同。段落末尾的反斜杠照样印出，行末两个空格不算换行（见<a href="/zh/docs/document-format#段落内的换行">文档格式 › 段落内的换行</a>）。<code>false</code>保留1.22的读法：反斜杠照样印出，各行用空格连接；更早保存、文字中有这种反斜杠的配置按此读取（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。标题、图注、注释和表格单元格在两种设置下都在<code>{'\\\\'}</code>处换行。</td>
+    </tr>
+    <tr>
+      <td><code>scriptContext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>让没有字母的词（<code>46.</code>、<code>1367)</code>、<code>».</code>：只有数字、标点或符号）按周围文字的书写系统成形。字体可以按书写系统绘制这些符号（Amiri在拉丁文中用拉丁字形的句点和括号，其他情况下用阿拉伯字形，宽度不同），而排版引擎单独拿到这个词时各按自己的规则选书写系统，浏览器的不同版本和PDF并不一致。开启后，该词取所在隔离段内前面最近字母的书写系统（没有则取后面的）；从右到左绘制时取最近的从右到左字母的书写系统；附近没有字母时取文档语言的书写系统。排版按这个书写系统测量，Canvas、HTML、固定版式EPUB和PDF以这个宽度绘制这些字形。它作用于拉丁文、希腊文、西里尔文、阿拉伯文和希伯来文的上下文，并且只对标点或数字随书写系统变化的字体起作用；按阿拉伯文成形的词不加字距。含有字母的词里不含字母的一段（在连接处换行的DOI中的<code>10.1006/</code>和<code>.2001</code>）取它在词内的书写系统。在中文或日文文档里，在其他书写系统的句子中被引用的连用省略号和破折号（<code>……</code>、<code>——</code>）保持汉字文本的字形。列表标记、交叉引用的标签、设计文本、漫画文字和CJK排版器排的段落不受影响。<code>false</code>让这类词单独成形，与postext 1.27及更早版本相同；在<code>configVersion</code> 12之前保存的配置按此读取（<code>pinLegacyScriptContext</code>）。参见<a href="/zh/docs/arabic-layout#没有字母的词">没有字母的词</a>。</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
@@ -593,6 +599,18 @@ bodyText: { fontFamily: "'EB Garamond', Georgia, serif" } // 用EB Garamond排�
       <td><code>true</code></td>
       <td>允许词典拆分复合词（两个字母之间带连字符的词，如<code>af-ter-dinner</code>）中的各个词。设为<code>false</code>时，这样的词除了自带的连字符外保持完整，行仍然可以在那个连字符处结束（<code>after-</code> · <code>dinner</code>），与TeX的做法相同。词中手动输入的软连字符照样断开，比整行还宽的复合词也照样拆分。它作用于连续正文、标题、列表、引用块和框；题注、注释、表格单元格和目录继续拆分复合词。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>无</td>
+      <td>词典不得拆分的词，或只能在条目标明的位置拆分的词：<code>'Alice'</code>绝不拆分，<code>'You-Tube'</code>只在连字符处拆分。见<a href="#不拆分的词">不拆分的词</a>。</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>首字母大写的词与其他词一样拆分。设为<code>false</code>时，凡以大写字母开头的词都保持完整（<code>Alice</code>、<code>Ámsterdam</code>、<code>UNESCO</code>），句首的词也不例外。见<a href="#不拆分的词">不拆分的词</a>。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +627,27 @@ matchHyphenationLocale('sv');    // undefined：用'en-us'断词，并在控制�
 ```
 
 少于5个字符的词从不断词。引擎要求断点前至少有2个字符，断点后至少有3个字符。
+
+#### 不拆分的词
+
+词典拆分专名，与拆分其他词没有两样：`Al-ice`、`Áms-ter-dam`、`You-Tu-be`。有三项设置可以让词保持完整，三者的默认值都是照词典的做法处理。
+
+`hyphenation.exceptions`是一个词表，相当于TeX的`\hyphenation{…}`。不带连字符写出的条目绝不拆分；带连字符写出的条目只在连字符处拆分，所以`'You-Tube'`得到`You-` · `Tube`，没有别的断点。条目匹配一串连续的字母，不管前后是什么：`'Alice'`涵盖`(Alice,`和`Alice’s`，复合词则逐个部分匹配（`Blender-based`匹配`'Blender'`）。词形变化后的形式是另一个词，需要单独的条目。小写的条目匹配这个词的任何大小写写法（`'blender'`涵盖`Blender`和`BLENDER`）；首字母大写的条目只匹配以大写字母开头的出现，所以`'Rose'`让这个名字保持完整，而`rose`仍交给词典。条目只能包含字母和连字符，其余字符一律丢弃。
+
+`hyphenation.capitalized: false`让所有以大写字母开头的词保持完整：专名、首字母缩略词，还有每句的第一个词。这相当于关闭InDesign的“Hyphenate Capitalized Words”开关，也相当于TeX的`\uchyph=0`。`exceptions`中带连字符的条目仍在连字符处拆分它的词。德语的名词都以大写字母开头，这个开关会让德语文本几乎无词可拆：这时请在`exceptions`中列出要保留的词，或使用`citations.hyphenateNames`。
+
+`citations.hyphenateNames: false`让文档所引作者的姓氏保持完整，无论出现在哪里：引用中、正文中，还是参考文献表中。见[引用](/zh/docs/configuration-notes-references#引用)。
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+这三项设置对词典拆分的所有文字都有效：正文、标题、列表、标注框、题注、表格单元格、注释、书眉和其他设计文字。范围比`compounds`更广，后者不作用于题注、注释、单元格和目录。有两点保持不变。在某个词的某一处手动输入的软连字符仍然决定这一处的断法，输入在首字母之前的软连字符不用词表就能让这一处保持完整（见[行从不断开的地方](/zh/docs/justification#行从不断开的地方)）。比整个行长还宽的词也照样拆分：条目标了断点就在那些断点处拆分，否则在词典的音节处拆分。拆分的词少了，两端对齐的窄栏填满各行的办法也就少了，所以在三栏页面上关闭`capitalized`之后，要看一看词间距。流式EPUB把断词交给阅读系统，而阅读系统并不知道这些规则。
 
 #### 不齐行文字
 
@@ -770,7 +809,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落在下一栏顶部只剩不足<code>orphanMinLines</code>行就结束。</td>
+      <td>避免段落在下一栏顶部只剩不足<code>orphanMinLines</code>行就结束。在<code>japan</code>地区的字符网格（<code>cjk.grid</code>）上默认为<code>false</code>。</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +833,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落在当前栏底部只有不足<code>widowMinLines</code>行就开始。</td>
+      <td>避免段落在当前栏底部只有不足<code>widowMinLines</code>行就开始。在字符网格（<code>cjk.grid</code>）上默认为<code>false</code>：页面排满网格所数的行数。</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -815,10 +854,22 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td>为<code>true</code>时，列表项也受段首孤行保护。仅在<code>avoidWidows</code>为<code>true</code>时有效。</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>短列表被拆在两栏或两页之间：正文中不超过<code>shortListMaxItems</code>项的列表，例如三项的列表排成1 + 2。<code>avoidOrphansInLists</code>和<code>avoidWidowsInLists</code>让同一列表项的各行保持在一起，这条规则让同一列表的各项保持在一起。<code>'allow'</code>：这类列表和其他列表一样，在栏结束处拆开。<code>'warn'</code>：排法相同，并报告每个被拆开的列表（一条<code>shortListSplit</code>警告，见<a href="/zh/docs/configuration-programmatic-usage#文档中的警告">文档中的警告</a>）。<code>'avoid'</code>：列表整体排出；栏中已有内容的下方放不下时，它移到下一栏，紧挨在它上面的标题和引出它的冒号行（<code>keepColonWithList</code>）随它一起移走。比空栏还高的列表和其他列表一样拆开，并报告。<code>:::callout</code>内的列表遵循框自己的拆分规则，<code>:::toc</code>和<code>:::index</code>的条目不算列表。postext 1.28起。</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>对<code>shortListSplit</code>而言，列表最多有多少项才算短列表，嵌套列表的项也计算在内。取整数，至少为1。postext 1.28起。</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>避免段落以很短的末行结束，即<em>孤字</em>，例如单独一个短词。配合<code>optimalRagged</code>，不齐行文字也适用。中文、日文或韩文段落不会以只有一个字符（单独或连同其后的收尾标点）的行结束（孤字）：只要上一行在字距上限之内仍能两端对齐，就把最后一个字符让给这一行。</td>
+      <td>避免段落以很短的末行结束，即<em>孤字</em>，例如单独一个短词。配合<code>optimalRagged</code>，不齐行文字也适用。中文、日文或韩文段落不会以只有一个字符（单独或连同其后的收尾标点）的行结束（孤字）：只要上一行在字距上限之内仍能两端对齐，就把最后一个字符让给这一行。左对齐、右对齐或居中的行同样让出这个字，因此少一个字；设置<code>cjk.grid.fullLines</code>（稿纸）后，这样的行每个格子都填满，段落可以以一个字结尾。</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>
@@ -876,15 +927,15 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
     </tr>
     <tr>
       <td><code>hyphenateAcrossColumns</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
       <td><code>true</code></td>
-      <td>允许一栏或一页以断词结束（InDesign的<em>Hyphenate Across Column</em>）。设为<code>false</code>时，跨越分栏处的段落会重新断行，使它在本栏的最后一行以完整的词结束；差额由上面各行的词间距在<code>maxWordSpacing</code>和<code>minWordSpacing</code>范围内吸收。这是一种偏好：如果在这些范围内找不到能避免断词的断点，连字符就保留。它会尝试段落的每一个分栏点：第一个分栏点，以及之后落在整栏结束处的分栏点，在一次重新断行中处理；之后落在其他位置的分栏点（遵守段首孤行规则、在截齐的分栏带处）则从那一栏开始另做一次重新断行，前面各栏已排好的行保持原有断点，只重排其余部分。框的正文不受影响。开启<code>optimalRagged</code>时，不齐行段落也同样重新断行：它的词间距保持原宽，所以只有行尾移动。每次重新断行都要再测量一遍段落，因此栏尾断词很多的书排版会稍慢一些。需要开启<code>optimalLineBreaking</code>，不齐行文字还需要<code>optimalRagged</code>。</td>
+      <td>允许一栏或一页以断词结束（InDesign的<em>Hyphenate Across Column</em>）。设为<code>false</code>时，跨越分栏处的段落会重新断行，使它在本栏的最后一行以完整的词结束；差额由上面各行的词间距在<code>maxWordSpacing</code>和<code>minWordSpacing</code>范围内吸收。这是一种偏好：如果在这些范围内找不到能避免断词的断点，连字符就保留。它会尝试段落的每一个分栏点：第一个分栏点，以及之后落在整栏结束处的分栏点，在一次重新断行中处理；之后落在其他位置的分栏点（遵守段首孤行规则、在截齐的分栏带处）则从那一栏开始另做一次重新断行，前面各栏已排好的行保持原有断点，只重排其余部分。<code>'withinPage'</code>只守护结束一页的那些行，别的行不管：一个词可以断在同一页的两栏之间，而一页的最后一行只要范围允许就以完整的词结束。它改动的行比<code>false</code>少，这在三栏及以上的版式里有分量，因为每三个栏尾中有两个在页内；单栏时两个值排出的行相同。如果一页中某栏之后再没有接收文字的栏，这一栏就算结束它所在的页：专放浮动体的边栏不接收文字，被表格或图片占满的栏也不接收。框的正文不受影响。开启<code>optimalRagged</code>时，不齐行段落也同样重新断行：它的词间距保持原宽，所以只有行尾移动。每次重新断行都要再测量一遍段落，因此栏尾断词很多的书排版会稍慢一些。需要开启<code>optimalLineBreaking</code>，不齐行文字还需要<code>optimalRagged</code>。</td>
     </tr>
     <tr>
       <td><code>paragraphContainerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td><code>'collapse'</code></td>
-      <td>以段落收尾的<code>:::paragraphs</code>容器下方、即该段落与其后块之间的间距（见<a href="/zh/docs/configuration-styles#paragraphs容器"><code>:::paragraphs</code>容器</a>）。<code>'collapse'</code>：取样式的<code>spaceBetween</code>和<code>marginBottom</code>以及容器周围文字的段间距（开启<code>paragraphSpacing</code>时为一行；在框内则取框的段间距）中的较大者，再与下一个块自己在上方保留的间距合并，与连续正文中两个段落之间的处理相同：参考文献下面的标题与它相距自己的<code>marginTop</code>，而不是这个外边距再加上条目的间距。<code>'add'</code>：与postext 1.4及更早版本相同，在网格对齐前只在最后一行下面放样式自身的间距，再加上下一个块自己的上方间距，不计段间距，所以容器之后的段落可能比其他任何段落都更贴近它。在<code>configVersion</code> 8之前保存、声明了段落样式、且书中含有这种容器的配置，读取时采用<code>'add'</code>（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。无论哪种方式，负的<code>marginBottom</code>都会把下一个块往上拉。</td>
+      <td>以段落收尾的<code>:::paragraphs</code>容器下方、即该段落与其后块之间的间距（见<a href="/zh/docs/configuration-styles#paragraphs容器"><code>:::paragraphs</code>容器</a>）。<code>'collapse'</code>：取样式的<code>spaceBetween</code>和<code>marginBottom</code>以及容器周围文字的段间距（开启<code>paragraphSpacing</code>时为一行；在框内则取框的段间距）中的较大者，再与下一个块自己在上方保留的间距合并，与连续正文中两个段落之间的处理相同：参考文献下面的标题与它相距自己的<code>marginTop</code>，而不是这个外边距再加上条目的间距。<code>'add'</code>：与postext 1.4及更早版本相同，在网格对齐前只在最后一行下面放样式自身的间距，再加上下一个块自己的上方间距，不计段间距，所以容器之后的段落可能比其他任何段落都更贴近它。在<code>configVersion</code> 8之前保存、声明了段落样式、且书中含有这种容器的配置，读取时采用<code>'add'</code>（见<a href="/zh/docs/configuration-programmatic-usage#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。无论哪种方式，负的<code>marginBottom</code>都会把下一个块往上拉。段落样式可以为自己的容器另定规则（<code>containerSpacing</code>，自postext 1.28起）。</td>
     </tr>
   </tbody>
 </table>
@@ -944,7 +995,7 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>标题上方的间距。</td>
+      <td>标题上方的间距。开栏的标题会去掉这段间距（见<code>columnHeadSpace</code>）。</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -975,6 +1026,12 @@ Postext能排从左到右书写的拼音文字，以及横排和竖排的中文�
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>标题之下的文字流是否重新对齐基线网格。为<code>true</code>时，标题的<code>marginBottom</code>向上取整为整数个网格行；为<code>false</code>时保留精确的间距，标题下的文字可能偏离网格，直到下一个对齐点（列表结束处、<code>:::paragraphs</code>的末尾、行间公式）。许多书在标题下留一行半，就是这种排法。级别（<code>levels[].snapToGrid</code>）或标题样式可以设置自己的值，这里的值是它们继承的默认值。</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>对齐网格的标题在开栏时（位于页首，或位于栏首的图或表之下）保留多少上方空白。<code>'none'</code>：去掉全部空白，标题排在该栏第一行，与旁边一栏的栏首平齐；对齐网格时所需的不足一行的空白放在标题下方，因此正文与它的距离可能比段落之后的标题更远。<code>'remainder'</code>：只去掉整数个网格行的空白，剩下不足一行的部分留在标题上方，正文与它的距离同段落之后的标题一样；标题比栏首略低一些开始，正文各行都不移动。适合单栏的书，因为旁边没有栏首可以比出差别。其他取值都按<code>'none'</code>处理。不用于通栏章首之下的栏，也不用于<code>span: 'page'</code>、带<code>lineSpan</code>、隐藏或带设计（<code>advancedDesign</code>）的标题。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>
@@ -1008,13 +1065,14 @@ headings: {
 
 1. **收尾的框**：结束一个短栏的标注框整体下移，下移量正好等于其底部下方的空余，使它的下边缘落在页面最后一个网格位置上，与相邻栏的最后一行平齐。即使空余不足一行，只要没有内容移入另一栏，它也会占满这段空余。默认情况下这一手段先于其他所有手段执行，并占用整段空余，所以一个注释上方段落的框可能最后落在该段落下方好几行处；`closingBox: 'last'`让标题、列表结尾和其他间距手段先占用整行，框只占它们剩下的部分；`closingBox: 'off'`则从不移动它。
 2. **有安全区的图片**：设了安全区（`Resource.safeArea`，见[文档格式 › 安全区](/zh/docs/document-format#安全区)）的图片，如果以行内方式排在短栏里，或者作为只占这一栏的浮动体排在栏顶或栏底，就按整数个网格行增高，在安全区以内裁切，直到这一栏排满，或者裁切到了安全区为止。图片变高不会在页面上留下空洞，所以这一手段在增加任何空白之前执行；在栏首要保持平齐的页面或区段上（见下文），位于栏顶的浮动体不会增高。记录为`flexFigure`。这一手段没有单独的设置：只有资源标出了安全区的图片才会增高。
-3. **标题**：在短栏内各标题的上外边距中增加整数个网格行。需要多行且栏内有多个标题时，这些行分配给各个标题，最重要的标题总是分得最多（`h2`比`h3`多）。位于栏顶的标题从不加空，因此各栏始终从页面顶部开始。唯一的例外是：在文字流继续到下一页的页面上，紧接在栏首图或表下方的标题，空间会加在这个标题上方、图的下方。
+3. **标题**：在短栏内各标题的上外边距中增加整数个网格行。需要多行且栏内有多个标题时，这些行分配给各个标题，最重要的标题总是分得最多（`h2`比`h3`多）。位于栏顶的标题从不加空，因此各栏始终从页面顶部开始。唯一的例外是：在文字流继续到下一页的页面上，紧接在栏首图或表下方的标题，空间会加在这个标题上方、图的下方。一个标题这样最多先加`maxLinesBeforeLoose`行（默认两行），然后轮到后面的手段；只有它们再也补不了时，标题才继续加行，直到`maxLinesPerHeading`。
 4. **列表结尾**：标题无法吸收全部空余时，在列表或编号列表结束处增加一个网格行（列表后的空白读起来很自然），每个列表结尾有上限。
-5. **放松段落**：作为最后手段，把栏内某一段重新断行，使其多出一行（即TeX的`\looseness=+1`），并选最长的段落，让增加的词间距分散得看不出来。只有每一行都保持在<strong>`bodyText.maxWordSpacing`以下</strong>时，放松后的方案才会被采用，文字灰度绝不超出你已配置的限度。需要启用`bodyText.optimalLineBreaking`。
+5. **公式、框和图的下方**：接着，在独立公式或标注框之下、文字接续之处增加一个网格行（`stretchAfterDisplays`；读起来像该元素自己的边距），再在栏首的图或表之下增加（`stretchAfterFloats`，上限为`maxLinesAfterFloat`）。
+6. **放松段落**：作为最后手段，把栏内某一段重新断行，使其多出一行（即TeX的`\looseness=+1`），并选最长的段落，让增加的词间距分散得看不出来。只有每一行都保持在<strong>`bodyText.maxWordSpacing`以下</strong>时，放松后的方案才会被采用，文字灰度绝不超出你已配置的限度。需要启用`bodyText.optimalLineBreaking`。
 
 在字符网格上（`cjk.grid`，见[中文排版 › 字符网格](/zh/docs/chinese-layout#字符网格)），每个字占一个一em宽的格子，每一行都落在网格的行距上，这个行距同时也是基线网格。和竖排一样，网格上默认不做齐底：在网格上逐行排的页面，就像GB/T 9704按每页22行、每行28字计数那样，短栏就保持短栏。配置中设了`enabled: true`时，使用的是保持网格的手段：标题、列表结尾、行间公式和图都按整数个网格行加空，其下的文字整行下移；对于没有空行可让的标准，`gridLines: 'off'`把这些手段排除在外。中文或日文段落只有在任意两个字之间的间距都不超过`maxTracking`时才多排一行，也不对其中的字符另加字距：少一个字的行要把一个em分摊到各个字间，远超默认的0.01 em，所以在由整格组成的网格上，放松段落的手段通常找不到可用的段落。结束一栏的框和有安全区的图片本来就不受网格约束，在这里与在别处一样起作用。
 
-只有当页面自然延续到下一页时，才会对该页最后一栏做齐底；一章的末页本来就可以短一截。这样的页面，以及由`trailing`截平的收尾区段，还会让各栏的栏首保持平齐：栏首为图或表时，不会在其下方加行（浮动体后手段）；在这样的图下方开栏的标题或框，无论`stretchAfterFloats`如何设置，都留在栏首。这样就不会为了让栏底对齐而让某一栏比旁边一栏起得更低。
+只有当页面自然延续到下一页时，才会对该页最后一栏做齐底；一章的末页本来就可以短一截。这样的页面，以及由`trailing`截平的收尾区段，还会让各栏的栏首保持平齐：栏首为图或表时，不会在其下方加行（浮动体后手段）；在这样的图下方开栏的标题或框，无论`stretchAfterFloats`如何设置，都留在栏首；紧接在`span: 'page'`章首标题之下、与它同处一栏的标题也是如此。这样就不会为了让栏底对齐而让某一栏比旁边一栏起得更低。
 
 <table>
   <thead>
@@ -1039,6 +1097,12 @@ headings: {
       <td>单个标题上方最多可增加的网格行数。</td>
     </tr>
     <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>在尝试后面的手段（列表结尾、公式和框、图、放松段落）之前，一个标题上方最多先加的网格行数。只有这些手段再也补不了时，标题才继续加行，直到<code>maxLinesPerHeading</code>；这样，只有一个标题的页面不会在段落还能多排一行时就在标题上方空出四行。取值不小于<code>maxLinesPerHeading</code>时，标题先加满全部行，与postext 1.27及之前相同；<code>0</code>表示先试其他手段，再在标题上方加行。自postext 1.28起；此前保存的文档保持原来的顺序（<code>pinLegacyLooseOrder</code>）。</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
@@ -1051,16 +1115,28 @@ headings: {
       <td>单个列表结尾之后最多增加的网格行数。</td>
     </tr>
     <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>在列表结尾手段之后，允许在短栏内的独立公式之下、标注框之下各增加一个网格行：其后的块下移一行。设为<code>false</code>时，公式和框下方的空白只由它们自己的边距决定；空余交给后面的手段，若仍补不满，该栏就短一截结束。自postext 1.28起。</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>在列表结尾手段之后，允许在短栏栏首的图或表（顶部浮动体）下方增加网格行，让其下的文字下移，而不是让该栏短一截结束。在不延续到下一页的页面（一章的末页）上，以及由<code>trailing</code>截平的收尾区段中，从不这样做：那里各栏栏首保持平齐，最后一栏可以短一行结束。图下方的第一个块可能是前一页开始的段落的余下部分：它同样会下移，下移量是分页规则在栏底留出的那一行（段首孤行（widow）规则留空的一行，或者一个段落间距，其后已放不下文字）。设为<code>false</code>可让文字紧贴在图下方。</td>
+      <td>在列表结尾手段之后，允许在短栏栏首的图或表（顶部浮动体）下方增加网格行，让其下的文字下移，而不是让该栏短一截结束。在不延续到下一页的页面（一章的末页）上，以及由<code>trailing</code>截平的收尾区段中，从不这样做：那里各栏栏首保持平齐，最后一栏可以短一行结束。图下方的第一个块可能是前一页开始的段落的余下部分：它同样会下移，下移量是分页规则在栏底留出的那一行（段首孤行（widow）规则留空的一行，或者一个段落间距，其后已放不下文字）。设为<code>false</code>可让文字紧贴在图下方。浮动体跨多栏时，其下各栏要么一起下移，要么都不动，见<code>stretchAfterWideFloats</code>。</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>单个顶部浮动体下方最多增加的网格行数。</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>用于跨两个及以上文字栏的图或表之下。取<code>'flush'</code>时，只有该浮动体下方的每个文字栏都加上同样的行数（各栏栏首因此保持平齐），或者所加的行正好补满该栏时，才让一栏下移；会让某一栏栏首下移、而该栏仍然短一截的行不会加上，空余交给放松段落。<code>'always'</code>把这样的栏当作任何浮动体下方的栏来处理，与postext 1.27及之前相同。其他取值都按<code>'flush'</code>处理。自postext 1.28起；此前保存的文档保持<code>'always'</code>（<code>pinLegacyWideFloatStretch</code>）。</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>
@@ -1091,6 +1167,12 @@ headings: {
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>截平一章和整个文档的收尾区段：当文字流在页面排满之前结束（遇到章首页、<code>:::part</code>、结束一章的<code>placement: 'fixed'</code>框或文档结尾），且各栏长短不齐时，把它们截成一样高。区段上限为<code>ceil(Σ used / N / grid)</code>行，在上述手段处理完前面各页之后才计算。这样，一份较短的参考文献在每一栏都结束于同一高度，而不是排满第一栏、让最后一栏空一半。截平时遵守未截平区段所遵守的规则：如果一个不能跨越截线拆分的块（段首孤行和段末孤行最小行数要求保持完整的段落尾部、不可拆分的框）会越过截线（而渲染器会按栏框裁切，于是丢掉最后几行），或者某个标题会落在栏末而其正文却在下一栏开头（启用<code>headings.keepWithNext</code>时，即默认情况），截线就下移一行，最多三次，否则放弃截平。如果某个块无法在栏首图下方截线留出的行中开始（段落在那里需要满足段末孤行（orphan）最小行数），它会转入该区段的下一栏，与未截平的栏一样，图则单独占一栏。栏底相差不超过一个网格行的各栏保持原样：最后一栏短一行结束是常见的收尾，截平只会挪动一行。截平作用于测量时所在的区段，页中由通栏框要求的截平也一样。postext 1.4及以前，如果末页的第一段文字曾先被分配给一个放不下它的区段（被浮动体整页占据的页面，或通栏框在前一页底部留下的窄区段），截平就耗在那个区段上，末页的所有行都留在第一栏。宽度不同的栏（两栏都有文字的一栏半版式）按面积截平，每栏的高度按其宽度加权，因为窄栏的一行容纳的文字更少。仅在<code>enabled</code>为true时生效。</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td><code>trailing</code>截平收尾区段时所用的单位（<code>beforeSpan</code>在移到下一页的框后面截平时也用它）。<code>'lines'</code>：文字采用自身行距的区段（索引、参考文献表、小字号的容器）按该行距的整行截平和重试；这个行距取区段内多数行共有的行高，不计标题和框。这样各栏最多相差一行，与正文区段一样。正文区段，以及两种行距各占一半的区段，仍像以前一样截在基线网格上。行高相同、行与行却相隔不足整行的区段（条目之间留空的参考文献、手工设了边距的索引分组）也是如此：每栏要有五分之四的行彼此相隔整数行。<code>'grid'</code>：每次截平都是整数个基线网格行，与postext 1.27及之前相同；那时截在网格上会让不在网格上的区段某一栏多进一行，截平失败后下移的距离又超过该区段的一行（各栏最多相差三行）。其他取值都按<code>'lines'</code>处理。自postext 1.28起；此前保存的文档保持<code>'grid'</code>（<code>pinLegacyTrailingStep</code>）。</td>
     </tr>
     <tr>
       <td><code>beforeSpan</code></td>
@@ -1266,7 +1348,7 @@ headings: { fontFamily: 'Merriweather', levels: [{ level: 1, breakBefore: { enab
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>标题每个字形之后的字距，包括空格和编号前缀，等同于CSS的<code>letter-spacing</code>。正值拉开字母（用<code>textTransform: 'uppercase'</code>排的大写字母通常需要一点：<code>&#123; value: 0.12, unit: 'em' &#125;</code>），负值收紧大字号标题。<code>em</code>值相对于该级别的<code>fontSize</code>。标题各行按加了字距的文字测量，所以在加字距后的文字结束处换行，Canvas、HTML和PDF的绘制结果相同。居中或齐右的行按字母定位：像设计文本一样不计最后一个字形后的字距，因此居中标题与<code>span: 'page'</code>标题的默认章首区段对齐。由<code>advancedDesign</code>绘制的级别会忽略它，与此处其他排版字段一样：每个设计文本元素有自己的<code>letterSpacing</code>。<a href="/zh/docs/configuration-styles#标题样式">标题样式</a>也可以设置它，作用于使用该样式的标题。postext 1.4及以前标题没有字距设置，这个键会被悄悄丢弃。</td>
+      <td>标题每个字形之后的字距，包括空格和编号前缀，等同于CSS的<code>letter-spacing</code>。正值拉开字母（用<code>textTransform: 'uppercase'</code>排的大写字母通常需要一点：<code>&#123; value: 0.12, unit: 'em' &#125;</code>），负值收紧大字号标题。<code>em</code>值相对于该级别的<code>fontSize</code>。标题各行按加了字距的文字测量，所以在加字距后的文字结束处换行，Canvas、HTML和PDF的绘制结果相同。字距从不改变字形：字体的合字（fi、fl）在所有输出中都保留。居中或齐右的行按字母定位：像设计文本一样不计最后一个字形后的字距，因此居中标题与<code>span: 'page'</code>标题的默认章首区段对齐。由<code>advancedDesign</code>绘制的级别会忽略它，与此处其他排版字段一样：每个设计文本元素有自己的<code>letterSpacing</code>。<a href="/zh/docs/configuration-styles#标题样式">标题样式</a>也可以设置它，作用于使用该样式的标题。postext 1.4及以前标题没有字距设置，这个键会被悄悄丢弃。</td>
     </tr>
     <tr>
       <td><code>lineSpan</code></td>
@@ -1931,15 +2013,15 @@ unorderedLists: {
     </tr>
     <tr>
       <td><code>numberWidth</code></td>
-      <td><code>'run' | 'level'</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
       <td><code>'run'</code></td>
-      <td>列表项编号栏的宽度，它决定文字从哪里开始；编号在这一栏里右对齐。<code>'run'</code>：取该项所在连续段中最宽的编号。连续段指同一层级的若干项，它们之间只隔着更深层级的项。两项之间出现图、段落或框，就开始一个新的连续段，所以表后面的<code>ii)</code>的文字可能比表前面的<code>i)</code>稍微靠右，九项的列表的文字也比十二项的列表靠左。<code>'level'</code>：取整个文档（在书中是整章）里该层级最宽的编号，这样每个列表，以及被打断的列表的每一部分，文字都从同一位置开始，与更深层级的缩进已有的做法一致。</td>
+      <td>列表项编号栏的宽度，它决定文字从哪里开始；编号在这一栏里右对齐。<code>'run'</code>：取该项所在连续段中最宽的编号。连续段指同一层级的若干项，它们之间只隔着更深层级的项。两项之间出现图、段落或框，就开始一个新的连续段，所以表后面的<code>ii)</code>的文字可能比表前面的<code>i)</code>稍微靠右，九项的列表的文字也比十二项的列表靠左。<code>'level'</code>：取整个文档（在书中是整章）里该层级最宽的编号，这样每个列表，以及被打断的列表的每一部分，文字都从同一位置开始，与更深层级的缩进已有的做法一致。<code>'item'</code>：取该项自己的编号，每项文字从自己的编号之后隔一个<code>gap</code>开始：<span lang="ja" className="font-body">第九條</span>和<span lang="ja" className="font-body">第十一條</span>后面的空白相同，文字的起点各不相同，日本《官报》刊印法律条文就是这样排的。转行遵循<code>hangingIndent</code>：<code>false</code>时回到列表的缩进，<code>true</code>时悬挂在该项自己的文字之下。更深层级的缩进仍然每级只有一个值。自postext 1.28起。</td>
     </tr>
     <tr>
       <td><code>numberAlign</code></td>
       <td><code>'end' | 'start'</code></td>
       <td><code>'end'</code></td>
-      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自 postext 1.26 起提供。</td>
+      <td>编号在编号栏中的位置。<code>'end'</code>：靠正文一侧，同一连续段的编号末端对齐，<code>9.</code>与<code>10.</code>的圆点对齐。<code>'start'</code>：靠编号栏的起始一侧（从左到右的页面是左侧，从右到左的页面是右侧，竖排时是行首），长短不同的编号都从同一位置开始，如法规的条文编号（<span lang="ja" className="font-body">第九條</span>、<span lang="ja" className="font-body">第十一條</span>）。编号栏仍按<code>numberWidth</code>取宽度，所以两种情况下列表项的文字都从同一位置开始；分隔符另设样式时，分隔符紧跟在自己的编号之后。自 postext 1.26 起提供。设<code>numberWidth: 'item'</code>时，编号栏就是编号本身，两个值排出的列表相同。</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -2077,7 +2159,7 @@ interface MathConfig {
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>、<code>'&#123;n&#125;'</code>、<code>'never'</code>、<code>'decimal'</code>、<code>'(&#123;n&#125;)'</code></td>
-      <td>带<code>\label</code>的独立公式如何编号（见下文的<em>带编号的公式</em>）。<code>numberingTemplate</code>、<code>resetOn</code>和<code>counterFormat</code>与资源类型中的同名字段作用相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为(2.1)、(2.2)……，<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。<code>format</code>是公式和<code>\eqref</code>印出编号的形式，其中<code>&#123;n&#125;</code>代表编号：<code>'[&#123;n&#125;]'</code>排出[3]。<code>enabled: false</code>时不为任何公式编号：<code>\label</code>被舍弃，对它的引用印出它所在的页码。</td>
+      <td>带<code>\label</code>的独立公式如何编号（见下文的<em>带编号的公式</em>）。<code>numberingTemplate</code>、<code>resetOn</code>和<code>counterFormat</code>与资源类型中的同名字段作用相同：<code>'&#123;h1&#125;.&#123;n&#125;'</code>配合<code>resetOn: 'h1'</code>按章编号为(2.1)、(2.2)……，<code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code>配合<code>'h2'</code>按节编号。<code>format</code>是公式和<code>\eqref</code>印出编号的形式，其中<code>&#123;n&#125;</code>代表编号：<code>'[&#123;n&#125;]'</code>排出[3]。<code>enabled: false</code>时不为任何公式编号：<code>\label</code>被舍弃，对它的引用印出它所在的页码。标记同样可以在冒号后写样式（<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>：在字母编号的附录里是(A.1)）。</td>
     </tr>
   </tbody>
 </table>

@@ -4,6 +4,7 @@ import type { PostextConfig } from '../../types';
 import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
 import { installSizedStub } from '../vertical/stub';
 import { createMeasurementCache } from '../../measure';
+import { splitNote } from '../../measure/cjkAnnotate';
 
 // Emphasis dots and the proper-name and book-title marks (#193), ruby
 // (#194) and warichu notes (#195), laid out with passages of 红楼梦. The stub
@@ -333,6 +334,233 @@ describe('warichu (:warichu)', () => {
     expect(seg.warichu!.color).toBe('#b22222');
     const brackets = segments(doc).filter((s) => s.inserted);
     expect(brackets.map((b) => [b.text, b.color])).toEqual([['（', '#b22222'], ['）', '#b22222']]);
+  });
+});
+
+// #719: a part of two characters or more closed by a mark came out as one
+// row, since the only fold with the upper row at least half the part would
+// open the lower row with the mark. The nearest fold before the half point
+// is taken, the lower row the longer.
+describe('warichu: the nearest fold wins over a single row (#719)', () => {
+  it('splitNote chooses among the folds that keep both rules', () => {
+    // 本 名 。 and the same with a half-width stop.
+    expect(splitNote([10, 10, 10], [false, false, true])).toBe(1);
+    expect(splitNote([10, 10, 5], [false, false, true])).toBe(1);
+    // 甲 乙 丙 。 」
+    expect(splitNote([10, 10, 10, 10, 10], [false, false, false, true, true])).toBe(2);
+    // 廢 。: one character with its mark has no fold.
+    expect(splitNote([10, 10], [false, true])).toBe(2);
+    expect(splitNote([10], [false])).toBe(1);
+    expect(splitNote([], [])).toBe(0);
+    // An opening bracket may not end the upper row: 「 甲 。
+    expect(splitNote([10, 10, 10], [false, false, true], [true, false, false])).toBe(3);
+    // 甲 「 乙 。: the fold before the bracket.
+    expect(splitNote([10, 10, 10, 10], [false, false, false, true], [false, true, false, false])).toBe(1);
+  });
+
+  it('folds as before whenever a fold at or after the half point keeps the rules', () => {
+    // 要 緊 句 。, 甲 戌 側 批 。, and twenty equal units.
+    expect(splitNote([10, 10, 10, 10], [false, false, false, true])).toBe(2);
+    expect(splitNote([10, 10, 10, 10, 10], [false, false, false, false, true])).toBe(3);
+    expect(splitNote(Array(20).fill(10), Array(20).fill(false))).toBe(10);
+    expect(splitNote(Array(21).fill(10), Array(21).fill(false))).toBe(11);
+    // The half point falls before a mark: the upper row takes it.
+    expect(splitNote([10, 10, 10, 10], [false, true, false, false])).toBe(2);
+    expect(splitNote([10, 10, 10, 10, 10, 10], [false, false, false, true, false, false])).toBe(4);
+  });
+
+  const rows = (doc: VDTDocument): string[] => segments(doc).filter((s) => s.warichu).map((s) => `${s.warichu!.upper}/${s.warichu!.lower}`);
+  const vertical = { layout: { layoutType: 'single' as const, writingMode: 'vertical-rl' as const } };
+  for (const locale of ['zh-Hant', 'ja']) {
+    for (const [mode, extra] of [['horizontal', {}], ['vertical', vertical]] as const) {
+      it(`${locale}, ${mode}: a note closed by a mark folds with the mark in the lower row`, () => {
+        const set = (note: string): VDTDocument => buildDocument({ markdown: `寶玉:warichu[${note}]道` }, config({}, { locale, ...extra }), createMeasurementCache());
+        expect(rows(set('本名。'))).toEqual(['本/名。']);
+        expect(rows(set('豈敢。'))).toEqual(['豈/敢。']);
+        expect(rows(set('甲乙丙。」'))).toEqual(['甲乙/丙。」']);
+        // Two note characters wide: the lower row, 名 and its stop.
+        const seg = segments(set('本名。')).find((s) => s.warichu)!;
+        expect(seg.width - (seg.tracking ?? 0)).toBeCloseTo(20, 9);
+        expect(seg.text).toBe('本名。');
+        // One character with its mark is one row; the folds of before stay.
+        expect(rows(set('廢。'))).toEqual(['廢。/']);
+        expect(rows(set('要緊句。'))).toEqual(['要緊/句。']);
+        expect(rows(set('甲戌側批。'))).toEqual(['甲戌側/批。']);
+        expect(rows(set('本名'))).toEqual(['本/名']);
+      });
+    }
+
+    it(`${locale}: the remainder of a note at the head of a line folds too`, () => {
+      // Ten characters to the line, the note pushed along it one character
+      // at a time: wherever it is cut, no part of two characters or more
+      // is left in one row.
+      const tails = new Set<string>();
+      for (let lead = 3; lead <= 10; lead++) {
+        const md = `${'一二三四五六七八九十'.slice(0, lead)}:warichu[豈敢豈敢豈敢。]道一二三四五六七八九十`;
+        const doc = buildDocument({ markdown: md }, config({}, { locale }, 10), createMeasurementCache());
+        const parts = rows(doc);
+        expect(parts.map((p) => p.replace('/', '')).join(''), String(lead)).toBe('豈敢豈敢豈敢。');
+        for (const part of parts) {
+          const [upper, lower] = part.split('/') as [string, string];
+          if ([...upper].filter((c) => c !== '。').length > 1) expect(lower, `${lead}: ${parts.join(' | ')}`).not.toBe('');
+          expect(lower.startsWith('。'), part).toBe(false);
+        }
+        if (parts.length > 1) tails.add(parts.at(-1)!);
+      }
+      // The two-character remainder, which was `豈敢。` in one row.
+      expect([...tails]).toContain('豈/敢。');
+    });
+  }
+
+  it('a Latin note of two words folds between them', () => {
+    const doc = buildDocument({ markdown: 'The text :warichu[see Encyclopaedia] goes on.' }, config({}, { locale: 'en' }, 30), createMeasurementCache());
+    const w = segments(doc).find((s) => s.warichu)!.warichu!;
+    expect(w.upper.trim()).toBe('see');
+    expect(w.lower).toBe('Encyclopaedia');
+  });
+});
+
+// #720: a note that runs over a line end left one of its characters alone,
+// at the end of a line or at the head of the next (and so of a column or a
+// page). A line now breaks inside a note only where `cjk.warichu.minChars`
+// of its characters (2 by default) stand on either side.
+describe('warichu: two characters on either side of a line break (#720)', () => {
+  const K = '一二三四五六七八九十';
+  const parts = (doc: VDTDocument): string[] => segments(doc).filter((s) => s.warichu).map((s) => `${s.warichu!.upper}/${s.warichu!.lower}`);
+  /** The counted characters of a part: its marks do not count. */
+  const letters = (part: string): number => [...part.replace('/', '')].filter((c) => !'。，、」』）'.includes(c) && c !== ' ').length;
+  const cjkOf = (minChars?: number): PostextConfig['cjk'] => (minChars === undefined ? {} : { warichu: { minChars } });
+  const overflowOf = (doc: VDTDocument): number => Math.max(0, ...paragraphs(doc).flatMap((b) => b.lines.map((l) => {
+    let w = 0;
+    for (const s of l.segments ?? []) if (!s.hangs) w += s.width;
+    return w - (b.bbox.width - (l.bbox.x - b.bbox.x));
+  })));
+
+  it('the tail of a note is never one character at the head of a line', () => {
+    // Ten characters to the line, nine before the note: 豈敢 / 豈 fits the
+    // line and 敢。 would open the next one.
+    for (const locale of ['zh-Hant', 'ja']) {
+      const md = `${K.slice(0, 9)}:warichu[豈敢豈敢。]道${K}`;
+      const before = parts(buildDocument({ markdown: md }, config(cjkOf(1), { locale }, 10), createMeasurementCache()));
+      const after = parts(buildDocument({ markdown: md }, config({}, { locale }, 10), createMeasurementCache()));
+      for (const part of after) expect(letters(part), `${locale}: ${after.join(' | ')}`).toBeGreaterThanOrEqual(2);
+      expect(after.map((p) => p.replace('/', '')).join('')).toBe('豈敢豈敢。');
+      // Under `minChars: 1` the lines of postext 1.27.
+      if (locale === 'zh-Hant') expect(before).toEqual(['豈敢/豈', '敢。/']);
+    }
+  });
+
+  it('sweeps a note along the line: no part of one character, no line past its measure', () => {
+    const note = '此是第一首標題詩大有可異。';
+    for (const locale of ['zh-Hant', 'ja']) {
+      for (const vertical of [false, true]) {
+        for (let lead = 0; lead <= 12; lead++) {
+          const md = `${(K + K).slice(0, lead)}:warichu[${note}]道${K}`;
+          const extra = { locale, ...(vertical ? { layout: { layoutType: 'single' as const, writingMode: 'vertical-rl' as const } } : {}) };
+          const doc = buildDocument({ markdown: md }, config({}, extra, 10), createMeasurementCache());
+          const set = parts(doc);
+          const label = `${locale} ${vertical ? 'V' : 'H'} ${lead}: ${set.join(' | ')}`;
+          expect(set.map((p) => p.replace('/', '')).join(''), label).toBe(note);
+          for (const part of set) expect(letters(part), label).toBeGreaterThanOrEqual(2);
+          expect(overflowOf(doc), label).toBeLessThan(1e-6);
+        }
+      }
+    }
+  });
+
+  it('the head of a note is never one character at the end of a line', () => {
+    // Two cells, one cell and none left on the line: the line takes two
+    // characters of the note or more, or the whole note opens the next.
+    for (let lead = 8; lead <= 10; lead++) {
+      const md = `${K.slice(0, lead)}:warichu[甲乙丙丁戊己庚辛]道${K}`;
+      const doc = buildDocument({ markdown: md }, config({}, { locale: 'zh-Hant' }, 10), createMeasurementCache());
+      const set = parts(doc);
+      for (const part of set) expect(letters(part), `${lead}: ${set.join(' | ')}`).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('a note of two or three characters is never divided', () => {
+    for (const note of ['本名', '本名。', '要緊句', '要緊句。']) {
+      for (let lead = 6; lead <= 10; lead++) {
+        const md = `${K.slice(0, lead)}:warichu[${note}]道${K}`;
+        const set = parts(buildDocument({ markdown: md }, config({}, { locale: 'zh-Hant' }, 10), createMeasurementCache()));
+        expect(set.map((p) => p.replace('/', '')), `${note} ${lead}`).toEqual([note]);
+      }
+    }
+  });
+
+  it('a note longer than two lines still fills each line', () => {
+    const note = '甲戌側批此是第一首標題詩也本回有夢幻之說一二三四五六七八九十'.repeat(2);
+    const doc = buildDocument({ markdown: `此開卷第一回也:warichu[${note}]道` }, config({}, { locale: 'zh-Hant' }, 10), createMeasurementCache());
+    const ls = lines(doc);
+    expect(parts(doc).length).toBeGreaterThanOrEqual(3);
+    // Every line but the last is set to the measure.
+    for (const l of ls.slice(0, -1)) expect(l.segments!.reduce((w, x) => w + x.width, 0)).toBeCloseTo(200, 6);
+    expect(overflowOf(doc)).toBeLessThan(1e-6);
+  });
+
+  it('a Latin note counts its words', () => {
+    const gloss = 'a long English gloss on the passage that runs on for many words and keeps going';
+    for (let lead = 0; lead < 12; lead++) {
+      const doc = buildDocument({ markdown: `${'x'.repeat(lead)} says :warichu[${gloss}] and the text goes on.` }, config({}, { locale: 'en' }, 20), createMeasurementCache());
+      const set = segments(doc).filter((s) => s.warichu).map((s) => s.text.trim());
+      expect(set.join(' ')).toBe(gloss);
+      for (const part of set) expect(part.split(' ').length, `${lead}: ${set.join(' | ')}`).toBeGreaterThanOrEqual(2);
+      expect(overflowOf(doc)).toBeLessThan(1e-6);
+    }
+  });
+
+  it('falls back on the level\'s breaks when the line has no other', () => {
+    // Three characters to the line and a note of five: no break leaves two
+    // of its characters on each side of every line, and no line may run
+    // past the measure.
+    const doc = buildDocument({ markdown: ':warichu[甲乙丙丁戊己庚辛壬癸子丑寅]' }, config({}, { locale: 'zh-Hant' }, 3), createMeasurementCache());
+    expect(parts(doc).map((p) => p.replace('/', '')).join('')).toBe('甲乙丙丁戊己庚辛壬癸子丑寅');
+    expect(overflowOf(doc)).toBeLessThan(1e-6);
+  });
+
+  it('a note across a page turn carries two characters with its stop', () => {
+    // A vertical grid of ten characters and two lines to the page: 17
+    // characters, then a note whose last character and stop went over.
+    const note = '此是第一首標題詩大有可異。';
+    const page = { width: pt(2 * 30 + 40), height: pt(10 * 20 + 40), dpi: 72, margins: { top: pt(20), bottom: pt(20), left: pt(20), right: pt(20) } };
+    const build = (minChars?: number): VDTDocument => buildDocument(
+      { markdown: `${(K + K).slice(0, 17)}:warichu[${note}]道${K}` },
+      config({ grid: { enabled: true, charsPerLine: 10, linesPerPage: 2 }, ...cjkOf(minChars) }, { locale: 'zh-Hant', layout: { layoutType: 'single', writingMode: 'vertical-rl' }, page }, 10),
+      createMeasurementCache(),
+    );
+    const byPage = (doc: VDTDocument): string[][] => {
+      const out: string[][] = [];
+      for (const b of paragraphs(doc)) {
+        for (const l of b.lines) for (const s of l.segments ?? []) if (s.warichu) (out[b.pageIndex] ??= []).push(`${s.warichu.upper}/${s.warichu.lower}`);
+      }
+      return out;
+    };
+    // 1.27: page 2 opens with 異。 in one row.
+    expect(byPage(build(1))[1]).toEqual(['異。/']);
+    const after = byPage(build());
+    expect(after[1]).toEqual(['可/異。']);
+    expect(after[0]!.join('').replace('/', '')).toBe('此是第一首標題詩大有');
+  });
+
+  it('resolves, strips and keys the setting', async () => {
+    const { resolveCjkConfig, stripCjkDefaults } = await import('../../defaults/cjk');
+    const { cjkCompositionKey, cjkCompositionOf } = await import('../../measure/cjkPunctuation');
+    const resolved = (minChars: unknown): number => resolveCjkConfig({ warichu: { minChars: minChars as number } }, 'zh-Hant').warichu.minChars;
+    expect(resolveCjkConfig({}, 'zh-Hant').warichu.minChars).toBe(2);
+    expect(resolveCjkConfig({}, 'ja').warichu.minChars).toBe(2);
+    expect(resolved(1)).toBe(1);
+    expect(resolved(3.9)).toBe(3);
+    expect(resolved('4')).toBe(4);
+    for (const bad of [0, -1, NaN, Infinity, 'two', null, true]) expect(resolved(bad), String(bad)).toBe(2);
+    expect(stripCjkDefaults({ warichu: { minChars: 2 } })).toBeUndefined();
+    expect(stripCjkDefaults({ warichu: { minChars: 1 } })).toEqual({ warichu: { minChars: 1 } });
+    expect(stripCjkDefaults({ warichu: { minChars: 3, open: '〔' } })).toEqual({ warichu: { minChars: 3, open: '〔' } });
+    const key = (cjk: PostextConfig['cjk']): string => cjkCompositionKey(cjkCompositionOf(resolveCjkConfig(cjk, 'zh-Hant'), 72, 'zh-Hant'));
+    expect(cjkCompositionOf(resolveCjkConfig({}, 'zh-Hant'), 72, 'zh-Hant').noteMinChars).toBeUndefined();
+    expect(key({ warichu: { minChars: 2 } })).toBe(key({}));
+    expect(key({ warichu: { minChars: 1 } })).toBe(`${key({})}:n1`);
+    expect(key({ warichu: { minChars: 3 } })).toBe(`${key({})}:n3`);
   });
 });
 

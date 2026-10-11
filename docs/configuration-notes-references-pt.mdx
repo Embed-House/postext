@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Entrelinha das notas; em é o tamanho da nota.
   color?: ColorValue;         // Cor das notas; a cor do corpo quando não definida.
   textAlign?: TextAlign;      // O alinhamento do corpo quando não definido.
+  wordBreak?: 'normal' | 'keep-all'; // O cjk.wordBreak do documento quando não definido.
   hangingIndent?: Dimension;  // Recuo das linhas seguintes de uma nota.
   spaceBetween?: Dimension;   // Espaço entre duas notas.
   spaceAbove?: Dimension;     // Espaço entre o texto e o fio; em é o tamanho do corpo.
@@ -139,6 +140,12 @@ interface FootnotesConfig {
       <td><code>TextAlign</code></td>
       <td>alinhamento do corpo</td>
       <td>Alinhamento do texto das notas.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Onde as notas quebram entre caracteres chineses, japoneses e coreanos, à parte do corpo (veja <a href="/pt/docs/configuration-east-asian#tipografia-do-leste-asiático"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> mantém inteira uma sequência desses caracteres: as variantes que uma nota em inglês cita (<code>看月光</code>) deixam de precisar de um word joiner entre cada dois caracteres, enquanto os poemas da página continuam quebrando entre dois quaisquer. <code>'normal'</code> faz o contrário num documento que define <code>'keep-all'</code>. Vale para as notas no pé da coluna, no fim do capítulo e ao lado do texto de uma página dupla. Desde o postext 1.28.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -400,6 +407,7 @@ interface CrossRefsConfig {
   section?: string;  // Em volta do número de qualquer outro título: "section {n}".
   page?: string;     // Em volta de um número de página: "p. {n}".
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // Um :ref sem style=.
+  breakLabels?: boolean; // Um rótulo de palavras quebra nos seus espaços.
 }
 ```
 
@@ -437,6 +445,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>O que um <code>:ref</code> a um título ou a uma âncora imprime sem <code>style=</code>. <code>'default'</code>: um título numerado, pela sua palavra e número; um não numerado, pelo seu título; uma âncora, pelo seu texto. Uma referência que define <code>style</code> o mantém, e as referências a figuras e tabelas não são afetadas.</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Deixa uma linha quebrar nos espaços de uma referência cujo rótulo são palavras: o texto de uma âncora <code>[palavras]{'{#id}'}</code>, o texto de um título ou o título de um boxe, um <code>text="…"</code> próprio (também numa referência a uma figura ou a uma tabela). Os espaços do rótulo então esticam e encolhem com a linha, e a referência continua sendo um só link; as suas palavras não são hifenizadas. Dentro de um rótulo assim, um número, um numeral romano ou uma letra sozinha não se separam da palavra anterior (<code>Fig. 1a</code>, <code>lâmina IV</code>). Um rótulo com um número ou uma página (<em>seção 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Teorema 2</em>) nunca quebra, mesmo quando o seu modelo traz um espaço comum. <code>false</code> compõe todo rótulo como uma só palavra, sem quebra de linha dentro, como até o postext 1.27. Uma configuração salva antes do <code>configVersion</code> 12 cujo texto contém uma referência é lida com <code>false</code>, de modo que as suas linhas ficam onde estavam (veja <a href="/pt/docs/configuration-programmatic-usage#pacotes-gravados-pelo-postext-14-ou-anterior">Pacotes gravados pelo postext 1.4 ou anterior</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -456,6 +470,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: os nomes dos autores citados nunca são divididos
   bibliography?: {
     title?: string;        // não definido: a palavra do idioma do documento; '' ou ' ': nenhum
     scope?: 'book' | 'chapter';
@@ -530,6 +545,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>Citações ao longo do livro, ou cada capítulo por si (cada documento, e cada título de nível 1 depois de uma citação): um estilo numérico numera cada capítulo a partir de 1, e uma obra citada em dois capítulos recebe o número de cada capítulo; um estilo de notas escreve uma obra por completo na primeira citação em cada capítulo. Pensado para <code>bibliography.scope: 'chapter'</code>, cujas listas então recebem os números do capítulo.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Deixa o dicionário dividir os nomes dos autores citados. <code>false</code> mantém inteiro o sobrenome de cada pessoa das referências (autores, organizadores, tradutores) e todo nome informado como uma única string, onde quer que apareça com a sua maiúscula: numa citação, no texto corrido e na lista, de modo que nenhuma linha termina em <code>(Lup-</code>. Um sobrenome duplo é lido parte por parte, e um autor chamado Baker não mantém inteira a palavra <code>baker</code>. Veja <a href="/pt/docs/configuration-text#palavras-que-não-se-dividem">Palavras que não se dividem</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -814,6 +835,12 @@ const config: PostextConfig = {
       <td><code>Dimension</code></td>
       <td>uma linha do índice</td>
       <td>Espaço acima de cada grupo, com ou sem cabeça; nenhum acima do primeiro grupo, cuja distância do título é a do título, e nenhum no topo de uma coluna.</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Quando uma coluna ou uma página termina dentro de um grupo, o mínimo de entradas do grupo que ficam no pé da coluna e o mínimo que passam para o alto da seguinte. Com <code>2</code>, nenhuma entrada fica sozinha sob a cabeça do grupo no pé de uma coluna e nenhuma abre sozinha uma coluna antes do grupo seguinte: um grupo de duas ou três entradas passa inteiro, e um de quatro ou mais só é dividido onde ficam duas e passam duas. Uma entrada é um bloco de entrada (uma entrada principal ou uma subentrada, com a cabeça e as entradas sem página postas acima dela); um grupo mais alto que uma coluna é dividido onde for preciso. O corte por igual de uma faixa de fechamento também segue a regra, de modo que um último grupo que não pode ser repartido pode deixar as colunas desiguais pelas linhas dele. Com <code>1</code>, a coluna pode terminar entre quaisquer duas entradas, como até o postext 1.27. Desde o postext 1.28; os documentos salvos antes que imprimem um índice mantêm <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
     </tr>
     <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>

@@ -231,7 +231,7 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espai extra entre lletres; <code>em</code> és relatiu al cos del text. No s'aplica mai a l'àrab.</td>
+      <td>Espai extra entre lletres; <code>em</code> és relatiu al cos del text. No s'aplica mai a l'àrab. No canvia els glifs: les lligadures es conserven.</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -274,6 +274,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>8</code></td>
       <td>Retolació vertical: el màxim de caràcters en una columna d'una bafarada. Les onomatopeies es parteixen després de cinc.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Una bafarada que canvia de forma per cabre a la vinyeta no parteix una paraula xinesa per aconseguir-ho: cada paraula que tallen les seves línies noves, i que la forma preferida deixa sencera, costa més que una bafarada llegida fora d'ordre, de manera que abans es mou la bafarada o canvia l'ordre. La retolació japonesa, que es parteix per frases, no canvia. Amb <code>false</code> es retola com a postext 1.27; un document desat abans de la 1.28 que contingui un còmic es llegeix així.</td>
     </tr>
   </tbody>
 </table>

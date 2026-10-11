@@ -55,7 +55,7 @@ function config(extra: PostextConfig = {}): PostextConfig {
   };
 }
 
-async function render(print: PrintConfig | undefined, opts: { colorSpace?: 'cmyk'; accessible?: boolean } = {}) {
+async function render(print: PrintConfig | undefined, opts: { colorSpace?: 'cmyk'; accessible?: boolean; date?: Date | number | string } = {}) {
   const doc = buildDocument({ markdown: 'Black text on the page, and a [link](https://example.com).\n\n::resource{id="pic"}', resources }, config());
   const warnings: PdfWarning[] = [];
   const bytes = await renderToPdf(doc, {
@@ -66,6 +66,7 @@ async function render(print: PrintConfig | undefined, opts: { colorSpace?: 'cmyk
     onWarning: (w) => warnings.push(w),
     ...(print ? { print } : {}),
     ...(opts.colorSpace ? { colorSpace: opts.colorSpace } : {}),
+    ...(opts.date !== undefined ? { date: opts.date } : {}),
   });
   const pdf = await PDFDocument.load(bytes);
   const page = pdf.getPage(0);
@@ -242,5 +243,41 @@ describe('inspectPrintMaster', () => {
     const clean = await PDFDocument.create();
     clean.addPage([200, 200]).drawRectangle({ x: 10, y: 10, width: 50, height: 50, color: cmyk(0, 1, 0, 0) });
     expect(await inspectPrintMaster(await clean.save())).toEqual({ nonEmbeddedFonts: [], rgb: false, transparency: false });
+  });
+});
+
+// #734: a PDF/X file also carries the dates in its XMP packet, and took its
+// trailer /ID and XMP DocumentID from a random source: no two renders of
+// one document were the same file.
+describe('a dated PDF/X render repeats byte for byte (#734)', () => {
+  const date = '2026-09-27T00:00:00Z';
+  const id = (raw: string) => /\/ID\s*\[\s*<([0-9a-fA-F]+)>/.exec(raw)?.[1];
+
+  it('gives the same bytes for the same document and date', async () => {
+    for (const standard of ['pdfx4', 'pdfx1a'] as const) {
+      const a = await render({ standard }, { date });
+      const b = await render({ standard }, { date });
+      expect(Buffer.from(a.bytes).equals(Buffer.from(b.bytes)), standard).toBe(true);
+      expect(a.raw).toContain('<xmp:CreateDate>2026-09-27T00:00:00Z</xmp:CreateDate>');
+      expect(a.raw).toContain('<xmp:ModifyDate>2026-09-27T00:00:00Z</xmp:ModifyDate>');
+      // (`render` loads the file with pdf-lib's default, which stamps /ModDate again.)
+      const info = await PDFDocument.load(a.bytes, { updateMetadata: false });
+      expect(info.getCreationDate()?.toISOString()).toBe('2026-09-27T00:00:00.000Z');
+      expect(info.getModificationDate()?.toISOString()).toBe('2026-09-27T00:00:00.000Z');
+      // The XMP DocumentID is the trailer id, as in an undated render.
+      const hexId = id(a.raw)!;
+      expect(hexId).toHaveLength(32);
+      expect(a.raw).toContain(`<xmpMM:DocumentID>uuid:${hexId.slice(0, 8)}-${hexId.slice(8, 12)}-`);
+    }
+  });
+
+  it('takes the id from the date: another date is another file, and no date a random one', async () => {
+    const a = await render({ standard: 'pdfx4' }, { date });
+    const later = await render({ standard: 'pdfx4' }, { date: '2026-09-28T00:00:00Z' });
+    expect(id(later.raw)).not.toBe(id(a.raw));
+    const one = await render({ standard: 'pdfx4' });
+    const two = await render({ standard: 'pdfx4' });
+    expect(id(one.raw)).not.toBe(id(two.raw));
+    expect(id(one.raw)).not.toBe(id(a.raw));
   });
 });

@@ -1,12 +1,11 @@
 import type { PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
-import { getCustomFontFamily, loadFont } from '../controls/fontLoader';
+import { fontFamilyWeights, getCustomFontFamily, isUncataloguedFontFamily, loadFont } from '../controls/fontLoader';
 import { getFontFile } from '../storage/fontStorage';
 import { parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
 
 const bytesCache = new Map<string, Promise<Uint8Array>>();
-const weightsCache = new Map<string, Promise<number[] | null>>();
 const slicesCache = new Map<string, Promise<FontSlice[] | null>>();
 
 /** Files fetched at once for one face: a Chinese chapter touches 50 to 90
@@ -19,22 +18,8 @@ function fontsourceId(family: string): string {
   return family.toLowerCase().replace(/\s+/g, '-');
 }
 
-async function fetchAvailableWeights(family: string): Promise<number[] | null> {
-  const cached = weightsCache.get(family);
-  if (cached) return cached;
-  const promise = (async (): Promise<number[] | null> => {
-    try {
-      const res = await fetch(`https://api.fontsource.org/v1/fonts/${fontsourceId(family)}`);
-      if (!res.ok) return null;
-      const data = (await res.json()) as { weights?: number[] };
-      const weights = (data.weights ?? []).filter((w): w is number => typeof w === 'number');
-      return weights.length > 0 ? weights : null;
-    } catch {
-      return null;
-    }
-  })();
-  weightsCache.set(family, promise);
-  return promise;
+function noFiles(family: string): Error {
+  return new Error(`Fontsource has no files for the family "${family}"`);
 }
 
 function nearestWeight(target: number, available: number[]): number {
@@ -215,9 +200,16 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
       return await loadCustomFontBytes(custom, weight, style, raw);
     }
 
+    // A system font named in a `font-family` list, or a name the catalogue
+    // answered it does not have: its style sheets and files are not there
+    // to ask for, weight by weight and style by style (#753). Known before
+    // the family is loaded for the first, once its lookup answers for the
+    // second.
+    if (isUncataloguedFontFamily(family)) throw noFiles(family);
     await loadFont(family);
+    if (isUncataloguedFontFamily(family)) throw noFiles(family);
 
-    const available = await fetchAvailableWeights(family);
+    const available = await fontFamilyWeights(family);
     const targetWeight = available ? nearestWeight(weight, available) : weight;
 
     // The files that hold the text; a family with no italic sets its

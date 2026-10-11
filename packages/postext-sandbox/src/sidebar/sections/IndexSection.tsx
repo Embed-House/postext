@@ -342,6 +342,17 @@ export const IndexSection = memo(function IndexSection() {
           isDefault={groupUnset('marginTop')}
           onReset={() => resetGroups('marginTop')}
         />
+        <NumberInput
+          label={labels.indexGroupsSplitMinEntries}
+          value={g.splitMinEntries}
+          onChange={(v) => updateGroups({ splitMinEntries: v })}
+          min={1}
+          max={6}
+          step={1}
+          tooltip={labels.indexGroupsSplitMinEntriesTooltip}
+          isDefault={groupUnset('splitMinEntries')}
+          onReset={() => resetGroups('splitMinEntries')}
+        />
         {g.enabled && (
           <>
             <FontPicker

@@ -6,7 +6,7 @@ import { uprightArabicSpans, uprightFace } from '../uprightArabic';
 import { createBoundingBox } from '../vdt';
 import type { MathRender } from '../math/types';
 import type { InlineSpan } from '../parse';
-import { hyphenateText, withoutSlashJoints } from '../hyphenate';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate';
 import {
   richTokensToItems,
   computeBreakpoints,
@@ -16,25 +16,28 @@ import { SOFT_HYPHEN } from './types';
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
 import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import { isRuntLastLine } from './runts';
-import { computeJustifiedSpaceRatio, hasOverfullLine } from './plain';
+import { hasOverfullLine } from './plain';
+import { justifiedSpaceRatios } from './spaceRatios';
 import { quoteFamily } from './font';
 import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
 import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose';
+import { getCjkComposition } from './cjkPunctuation';
 import { graphemeCount, graphemesOf } from './graphemes';
 import { CENTRAL, sideMarkerRun } from './cjkAnnotate';
 import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, mayHoldVerticalCell, measuringVertically, verticalTextWidth, withMeasureWritingMode } from './vertical';
 import { latinReader, uprightDigitCandidates } from '../writingMode';
 import { sliceSpan } from '../parse/links';
 import type { CjkRegion } from '../types';
-import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isBreakingSpaceRun } from './spaces';
+import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isBreakingSpaceRun, refLabelPieces } from './spaces';
 import { breaksAfterDash, breaksAfterHardHyphen, hasCompound, isDash, raggedStretchPx } from './breakRules';
 import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate';
 import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining';
 import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines';
 import { TATWEEL, justifyLinesWithKashida, kashidaCapacity } from './kashida';
-import { needsBidi, resolveParagraph, spanIsolates, type BidiParagraph } from '../bidi';
+import { needsBidi, resolveParagraph, spanIsolates, type BidiIsolate, type BidiParagraph } from '../bidi';
+import { cutDoubledMarks, faceReadsScript, getMeasureScriptContext, isDoubledMark, isLetterless, pieceScriptContext, resolveScriptContext, rtlTextWidth, scriptAt, scriptContextUntracked, scriptTextWidth, wordPieceScript, type ScriptContext } from './script';
 
 export interface RichBreakPoint {
   charIndex: number;
@@ -107,6 +110,10 @@ export interface RichToken {
   refAnchor?: true;
   /** The book page index the anchor landed on, when known. */
   refPageIndex?: number;
+  /** A later piece of a reference whose label breaks at its spaces (#702,
+   *  {@link refLabelTokens}): a word after the first, or a space between
+   *  two of them. Its segment is flagged `refContinues`. */
+  refContinues?: true;
   /** A footnote marker (`[^id]`): atomic like a reference; the id flows
    *  onto the segment. */
   footnoteId?: string;
@@ -167,6 +174,20 @@ export interface RichToken {
    *  leader (see {@link setTabbedLine}). */
   tabPlaced?: { align: TabStopAlign; at: number };
   tabLeader?: TabLeaderPlacement;
+  /** A word with no letter, in a face that draws punctuation by script
+   *  (#725, `measure/script.ts`): the script it was measured in and is
+   *  painted in (`VDTLineSegment.scriptContext`); `scriptRtl` when it was
+   *  measured as a right-to-left word (its bidi level is odd). `scriptRtl`
+   *  alone: a right-to-left word with letters in such a face, measured in
+   *  a context set right to left, as it is painted (`rtlTextWidth`).
+   *  Absent on every other token. */
+  scriptContext?: ScriptContext;
+  scriptRtl?: true;
+  /** A word with a letter that may be painted in pieces with none
+   *  (`10.1006/ijhc.2001`): the script in force where its text starts,
+   *  which such a piece takes when no letter stands before it in the text
+   *  (`pieceScriptContext`). */
+  wordScript?: ScriptContext;
 }
 
 /** Whether a resolved swatch colour can fill the square: a six- or
@@ -275,14 +296,52 @@ function tokenFont(
 
 /** The script, small-caps and Chinese-mark fields a token derived from
  *  another (a split, a hyphenated head) carries on. */
-function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShift?: number; faceFont?: string; smallCaps?: boolean; cjkMarks?: VDTSegmentMarks; inserted?: boolean }): Pick<RichToken, 'script' | 'scriptFont' | 'baselineShift' | 'faceFont' | 'smallCaps' | 'cjkMarks' | 'inserted'> {
+function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShift?: number; faceFont?: string; smallCaps?: boolean; cjkMarks?: VDTSegmentMarks; inserted?: boolean; scriptContext?: ScriptContext; scriptRtl?: true }): Pick<RichToken, 'script' | 'scriptFont' | 'baselineShift' | 'faceFont' | 'smallCaps' | 'cjkMarks' | 'inserted' | 'scriptContext' | 'scriptRtl'> {
   return {
     ...(t.script ? { script: t.script, scriptFont: t.scriptFont, baselineShift: t.baselineShift } : {}),
     ...(t.faceFont ? { faceFont: t.faceFont } : {}),
     ...(t.smallCaps ? { smallCaps: true } : {}),
     ...(t.cjkMarks ? { cjkMarks: t.cjkMarks } : {}),
     ...(t.inserted ? { inserted: true } : {}),
+    // The pieces of a word with no letter are shaped in its script (#725).
+    ...(t.scriptContext ? { scriptContext: t.scriptContext } : {}),
+    ...(t.scriptRtl ? { scriptRtl: true as const } : {}),
   };
+}
+
+/** The script fields of the piece `[from, to)` of `token`, a head or a
+ *  tail of it: the token's own when it is a word with no letter, or one
+ *  measured right to left; else, for a word with a letter that may have
+ *  pieces with none (`RichToken.wordScript`), the script of the piece when
+ *  it holds no letter (it is then measured and painted in it), or the
+ *  script in force where it starts, for the pieces cut from it later. */
+function pieceScriptFields(token: Pick<RichToken, 'text' | 'scriptContext' | 'scriptRtl' | 'wordScript'>, from: number, to: number): Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'wordScript'> {
+  if (token.wordScript === undefined) return {};
+  const script = pieceScriptContext(token.text, from, to, token.wordScript);
+  if (script) return { scriptContext: script };
+  const start = scriptAt(token.text, from, token.wordScript);
+  return start ? { wordScript: start } : {};
+}
+
+/** The width of a word of a joining script (Arabic…), always painted
+ *  right to left: measured so too in a face that draws its punctuation by
+ *  script (#725, `rtlTextWidth`), so the bracket or the stop at its edge
+ *  takes the forms it is painted in; as any text otherwise. */
+function rtlWordWidth(text: string, font: string): number {
+  return getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) ? rtlTextWidth(text, font) : textWidth(text, font, false);
+}
+
+/** How a token's text is measured: in its script when it is a word with
+ *  no letter given one (#725), else as any text (`textWidth`). */
+function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps' | 'wordScript'>, font: string): (text: string) => number {
+  const script = token.scriptContext;
+  if (script) return (text) => (text === '' ? 0 : scriptTextWidth(text, font, script, token.scriptRtl === true));
+  // A right-to-left word of a face that draws punctuation by script.
+  if (token.scriptRtl) return (text) => (text === '' ? 0 : rtlTextWidth(text, font));
+  // What opens a word before its first letter is measured in its script.
+  const word = token.wordScript;
+  if (word) return (text) => (isLetterless(text) ? scriptTextWidth(text, font, word, false) : textWidth(text, font, token.smallCaps));
+  return (text) => textWidth(text, font, token.smallCaps);
 }
 
 /** Small capitals are synthesised, the same way on every backend: a
@@ -617,16 +676,18 @@ interface SoftBreak {
 /**
  * A word as laid out (its soft hyphens removed) and the breaks its soft
  * hyphens mark: the dictionary's when `hyphenate` is on, and the author's
- * own — the U+00AD the source carries, which the dictionary leaves as they
- * are (it does not hyphenate a word that already has them). The zero-width
+ * own — the U+00AD the source carries between two letters or digits
+ * (`softHyphenBreaks`), which the dictionary leaves as they are (it does not
+ * hyphenate a word that already has them). The zero-width
  * space the dictionary puts after a slash is dropped: the rich breaker does
- * not break there, and it must not reach the line text.
+ * not break there, and it must not reach the line text. `byDictionary`
+ * leaves the document's rules out (#699): every point of the patterns.
  */
-function syllabify(word: string, hyphenate: boolean): { clean: string; soft: SoftBreak[] } {
+function syllabify(word: string, hyphenate: boolean, byDictionary = false): { clean: string; soft: SoftBreak[] } {
   // A word of a joining script is never divided, not even at a soft hyphen
   // its author typed: its letters connect (`measure/joining.ts`).
   if (joiningScriptIn(word)) return { clean: word.includes(SOFT_HYPHEN) ? word.split(SOFT_HYPHEN).join('') : word, soft: [] };
-  const hyphenated = hyphenate ? withoutSlashJoints(word, hyphenateText(word)) : word;
+  const hyphenated = hyphenate ? withoutSlashJoints(word, byDictionary ? hyphenateByDictionary(word) : hyphenateText(word)) : word;
   if (!hyphenated.includes(SOFT_HYPHEN)) return { clean: hyphenated, soft: [] };
   let clean = '';
   const soft: SoftBreak[] = [];
@@ -636,8 +697,10 @@ function syllabify(word: string, hyphenate: boolean): { clean: string; soft: Sof
     // A soft hyphen the dictionary inserted is not the source's character.
     const fromSource = j < word.length && ch === word[j];
     if (fromSource) j++;
-    if (ch === SOFT_HYPHEN) soft.push({ index: clean.length, author: fromSource });
-    else clean += ch;
+    if (ch !== SOFT_HYPHEN) clean += ch;
+    // One the author typed at the word's edge or next to punctuation is no
+    // break (#700).
+    else if (!fromSource || softHyphenBreaks(word, j - 1)) soft.push({ index: clean.length, author: fromSource });
   }
   return { clean, soft };
 }
@@ -666,10 +729,13 @@ function wordBreakPoints(
   dashBreaks = false,
   touching?: string,
   cjk?: CjkWordBreaks,
+  /** How the word's pieces are measured when not as any text: in the
+   *  script of a word with no letter (#725). */
+  measure?: (text: string) => number,
 ): RichBreakPoint[] {
   const widthBefore = cjk
     ? cjk.widthBefore
-    : (idx: number): number => textWidth(clean.slice(0, idx), font, smallCaps) + (letterSpacingPx === 0 ? 0 : letterSpacingPx * graphemeCount(clean.slice(0, idx)));
+    : (idx: number): number => (measure ? measure(clean.slice(0, idx)) : textWidth(clean.slice(0, idx), font, smallCaps)) + (letterSpacingPx === 0 ? 0 : letterSpacingPx * graphemeCount(clean.slice(0, idx)));
   const byIndex = new Map<number, RichBreakPoint>();
   const add = (bp: Omit<RichBreakPoint, 'widthBefore'>): void => {
     if (bp.charIndex <= 0 || bp.charIndex >= clean.length) return;
@@ -729,9 +795,11 @@ export function emergencySplit(
   if (token.runs) return null;
   const joining = joiningScriptIn(text);
   // The word was measured untracked (`wordLetterSpacing`): its pieces too.
-  const spacing = joining ? 0 : letterSpacingPx;
+  // So was a word with no letter shaped in the Arabic script (#725).
+  const spacing = joining || scriptContextUntracked(token.scriptContext) ? 0 : letterSpacingPx;
   const hyphenW = measureTextWidth('-', font) + spacing;
-  const widthBefore = (idx: number): number => textWidth(text.slice(0, idx), font, token.smallCaps) + (spacing === 0 ? 0 : spacing * graphemeCount(text.slice(0, idx)));
+  const measure = tokenTextWidth(token, font);
+  const widthBefore = (idx: number): number => measure(text.slice(0, idx)) + (spacing === 0 ? 0 : spacing * graphemeCount(text.slice(0, idx)));
   const flags = { bold: token.bold, italic: token.italic, captionLabel: token.captionLabel, ...scriptOf(token) };
   // A group glued by no-break spaces too wide for any line: the space is
   // the least bad place to part it (EF-66). The line ends before it and the
@@ -741,8 +809,8 @@ export function emergencySplit(
     const headWidth = widthBefore(idx);
     if (headWidth > lineMaxWidth) continue;
     return {
-      head: { ...flags, text: text.slice(0, idx), kind: 'text', width: headWidth },
-      tail: { ...tailAfter(token, idx + 1, widthBefore(idx + 1)), ...flags },
+      head: { ...flags, ...pieceScriptFields(token, 0, idx), text: text.slice(0, idx), kind: 'text', width: headWidth },
+      tail: { ...tailAfter(token, idx + 1, widthBefore(idx + 1)), ...flags, ...pieceScriptFields(token, idx + 1, text.length) },
     };
   }
   // No hyphen where the cut falls next to an ideograph, or right after a
@@ -777,6 +845,17 @@ export function emergencySplit(
       if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
     }
   }
+  // A word the document keeps whole (`hyphenation.exceptions`, capitalised
+  // words, cited names) is still divided when it is wider than its measure:
+  // at its entry's points above, else at the dictionary's syllables (#699).
+  if (at === 0 && getHyphenationRulesKey() !== '') {
+    const whole = syllabify(text, true, true);
+    if (whole.clean === text) {
+      for (const s of whole.soft) {
+        if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
+      }
+    }
+  }
   if (at === 0 && !syllablesOnly) {
     for (let idx = reach; idx >= 1; idx--) {
       // Not right before a hyphen of the text: the next line would open
@@ -794,8 +873,8 @@ export function emergencySplit(
   return {
     head: geminate
       ? { ...flags, text: withLineEndHyphen(text.slice(0, at)), kind: 'text', width: widthBefore(at - 1) + markW(at) }
-      : { ...flags, text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
-    tail: { ...tailAfter(token, at, widthBefore(at)), ...flags },
+      : { ...flags, ...pieceScriptFields(token, 0, at), text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
+    tail: { ...tailAfter(token, at, widthBefore(at)), ...flags, ...pieceScriptFields(token, at, text.length) },
     ...(afterHyphen(at) ? { hard: true } : {}),
   };
 }
@@ -1025,6 +1104,46 @@ export function atomicSpanToken(
 }
 
 /**
+ * The tokens of a reference whose label is words (`ref.breakable`, #702):
+ * one per piece of the label (`refLabelPieces`: a word, with the number that
+ * keeps to it, or a run of breaking spaces), or undefined for a label that
+ * is one token ({@link atomicSpanToken}). A word is built as the whole
+ * label is — the reference's font, no dictionary points, never divided —
+ * and a space is an ordinary space of the line: a legal break, stretched
+ * and shrunk with the others. Every piece carries the reference, so the
+ * link has no holes; every piece after the first is flagged
+ * `refContinues`, so the reference stays one position in the source. A
+ * no-break space inside the label glues, as anywhere.
+ */
+export function refLabelTokens(
+  span: InlineSpan,
+  normalFont: string,
+  boldFont: string,
+  italicFont: string,
+  boldItalicFont: string,
+  letterSpacingPx: number,
+): RichToken[] | undefined {
+  if (!span.ref?.breakable || span.footnote) return undefined;
+  // A number, a Roman numeral or a single letter keeps to the word before
+  // it: `Fig. 1a` is one piece, its space set as text.
+  const parts = refLabelPieces(span.text);
+  if (!parts) return undefined;
+  const tokens: RichToken[] = [];
+  for (const part of parts) {
+    const token = atomicSpanToken({ ...span, text: part }, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
+    if (!token) return undefined;
+    if (isBreakingSpaceRun(part)) {
+      token.kind = 'space';
+      // A space has no capitals to shrink.
+      delete token.smallCaps;
+    }
+    if (tokens.length > 0) token.refContinues = true;
+    tokens.push(token);
+  }
+  return tokens;
+}
+
+/**
  * A footnote marker set apart from the text (`footnotes.markerPosition`,
  * JLReq §4.2.3), at its size (`span.footnote.scale` of `font`, the text's):
  * - `'side'`: an interlinear 合印 in the line gap over the text before it,
@@ -1069,7 +1188,7 @@ export function tokenSegment(t: RichToken): PendingSegment {
     ...(t.mathRender ? { mathRender: t.mathRender } : {}),
     ...(t.swatch ? { swatch: t.swatch } : {}),
     ...(t.chip ? { chip: t.chip } : {}),
-    ...(t.refResourceId !== undefined ? { refResourceId: t.refResourceId, ...(t.refAnchor ? { refAnchor: true as const } : {}), ...(t.refPageIndex !== undefined ? { refPageIndex: t.refPageIndex } : {}) } : {}),
+    ...(t.refResourceId !== undefined ? { refResourceId: t.refResourceId, ...(t.refAnchor ? { refAnchor: true as const } : {}), ...(t.refPageIndex !== undefined ? { refPageIndex: t.refPageIndex } : {}), ...(t.refContinues ? { refContinues: true } : {}) } : {}),
     ...(t.footnoteId !== undefined ? { footnoteId: t.footnoteId } : {}),
     ...(t.captionLabel ? { captionLabel: true } : {}),
     ...(t.labelTab || t.tab ? { labelTab: true as const } : {}),
@@ -1087,6 +1206,7 @@ export function tokenSegment(t: RichToken): PendingSegment {
   if (t.cjkMarks) seg.cjkMarks = t.cjkMarks;
   if (t.inserted) seg.inserted = true;
   if (t.runs) seg.runs = t.runs;
+  if (t.scriptContext) seg.scriptContext = t.scriptContext;
   return seg;
 }
 
@@ -1135,6 +1255,10 @@ function tokenizeSpans(
    *  `و١٤٤٥`, `(API)` in Arabic) is cut there into words that touch, each
    *  measured as it is painted, as a run of its own direction. */
   bidi?: BidiParagraph,
+  /** `keep-all` is in force for the block (its own `cjkWordBreak`, else
+   *  the document's `cjk.wordBreak`): a word that holds CJK characters does
+   *  not break between two letters (#705). */
+  keepAll = false,
 ): RichToken[] {
   const tokens: RichToken[] = [];
   // Which characters of the joined text sit in a compound, a word (across
@@ -1159,6 +1283,60 @@ function tokenizeSpans(
     return { script: span.script, scriptFont: m.font, baselineShift: m.baselineShift };
   };
   const spanFont = (span: InlineSpan): string => scriptFieldsOf(span).scriptFont ?? faceOf(span);
+  // A word with no letter takes the script of the text around it (#725),
+  // in a face that draws its punctuation by script; the paragraph's text
+  // and isolates are read when the first such word turns up.
+  const scriptState = getMeasureScriptContext();
+  let paragraphText: string | undefined;
+  let isolates: BidiIsolate[] | undefined;
+  // `script` undefined: a word with letters. Right to left, it is measured
+  // as it is painted (`rtlTextWidth`); left to right, the pieces of it
+  // that hold no letter are measured and painted in `pieces`, the script
+  // they have inside it (`wordPieceScript`).
+  const contextOf = !scriptState.enabled || measuringVertically()
+    ? undefined
+    : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean; pieces?: ScriptContext } | undefined => {
+        if (!faceReadsScript(font) || hasCJK(word)) return undefined;
+        const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
+        if (!isLetterless(word)) {
+          if (rtl) return { script: undefined, rtl };
+          const pieces = wordPieceScript(word);
+          return pieces ? { script: undefined, rtl, pieces } : undefined;
+        }
+        // The Chinese or Japanese document's own ellipsis and dash.
+        if (!rtl && scriptState.hanMarks && isDoubledMark(word)) return { script: 'Hani', rtl };
+        paragraphText ??= bidi?.text ?? spans.map((sp) => sp.text).join('');
+        isolates ??= spans.some((sp) => sp.direction) ? spanIsolates(spans) : [];
+        const script = resolveScriptContext(paragraphText, at, at + length, rtl, isolates, scriptState.script);
+        return script ? { script, rtl } : rtl ? { script: undefined, rtl } : undefined;
+      };
+
+  /** How a word in the context `contextOf` gave it is measured: whole
+   *  (`whole`, undefined: as any text) and up to one of its breaks
+   *  (`upTo`), the tracking it takes, and the fields its token carries. */
+  const scriptMeasure = (context: ReturnType<NonNullable<typeof contextOf>>, font: string, sc: boolean): {
+    whole?: (text: string) => number;
+    upTo?: (text: string) => number;
+    untracked: boolean;
+    fields: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'wordScript'>;
+  } => {
+    if (!context) return { untracked: false, fields: {} };
+    const { script, rtl, pieces } = context;
+    const whole = script ? (text: string): number => (text === '' ? 0 : scriptTextWidth(text, font, script, rtl))
+      : rtl ? (text: string): number => (text === '' ? 0 : rtlTextWidth(text, font))
+      : undefined;
+    // What stands before the word's first letter is measured in its
+    // script; from that letter on, a shaper gives the text that script.
+    const upTo = pieces
+      ? (text: string): number => (text === '' ? 0 : isLetterless(text) ? scriptTextWidth(text, font, pieces, false) : textWidth(text, font, sc))
+      : whole;
+    return {
+      ...(whole ? { whole } : {}),
+      ...(upTo ? { upTo } : {}),
+      untracked: scriptContextUntracked(script),
+      fields: { ...(script ? { scriptContext: script } : {}), ...(rtl ? { scriptRtl: true as const } : {}), ...(pieces ? { wordScript: pieces } : {}) },
+    };
+  };
 
   for (const span of spans) {
     const spanBase = spanStart;
@@ -1171,6 +1349,12 @@ function tokenizeSpans(
       for (let k = 0; k < Math.max(1, span.tab.count ?? 1); k++) {
         tokens.push({ text: k === 0 ? span.text : '', bold: span.bold, italic: span.italic, kind: 'space', width: 0, tab });
       }
+      continue;
+    }
+    // A reference whose label is words: one token per word and space (#702).
+    const label = refLabelTokens(span, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
+    if (label) {
+      tokens.push(...label);
       continue;
     }
     const atomic = atomicSpanToken(span, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
@@ -1205,7 +1389,13 @@ function tokenizeSpans(
     // ("37 °C"), which the line then never breaks at (EF-66).
     const matched = span.text.match(WORDS_AND_SPACES_RE);
     if (!matched) continue;
-    const parts = bidi ? cutAtLevels(matched, spanBase, bidi) : matched;
+    const levelled = bidi ? cutAtLevels(matched, spanBase, bidi) : matched;
+    // In a Chinese or Japanese document a word with no letter is cut
+    // around its doubled ellipses and dashes: the document's own marks,
+    // set as Han text whatever sentence cites them (`cutDoubledMarks`).
+    const parts = contextOf && scriptState.hanMarks && faceReadsScript(font)
+      ? levelled.flatMap((part) => (isBreakingSpaceRun(part) ? undefined : cutDoubledMarks(part)) ?? [part])
+      : levelled;
 
     let partStart = spanBase;
     for (const part of parts) {
@@ -1214,9 +1404,15 @@ function tokenizeSpans(
       const isSpace = isBreakingSpaceRun(part);
       if (!isSpace && URL_LIKE_RE.test(part.replace(/\u00AD/g, '')) && !(letterSpacingPx !== 0 && joiningScriptIn(part))) {
         const clean = part.replace(/\u00AD/g, '');
+        // An address is one script run: its pieces with no letter
+        // (`10.1006/`, `.2001`) are measured in the script they have in
+        // it, and an address with no letter at all in its context's (#725).
+        const inScript = scriptMeasure(contextOf?.(clean, partAt, part.length, font), font, sc);
+        const spacing = inScript.untracked ? 0 : letterSpacingPx;
+        const upTo = inScript.upTo ?? ((text: string): number => textWidth(text, font, sc));
         const breakPoints: RichBreakPoint[] = urlBreakIndices(clean).map((charIndex) => ({
           charIndex,
-          widthBefore: textWidth(clean.slice(0, charIndex), font, sc) + (letterSpacingPx === 0 ? 0 : letterSpacingPx * graphemeCount(clean.slice(0, charIndex))),
+          widthBefore: upTo(clean.slice(0, charIndex)) + (spacing === 0 ? 0 : spacing * graphemeCount(clean.slice(0, charIndex))),
         }));
         tokens.push({
           text: clean,
@@ -1225,8 +1421,9 @@ function tokenizeSpans(
           captionLabel: span.captionLabel,
           ...scriptFields,
           ...scFields,
+          ...inScript.fields,
           kind: 'text',
-          width: textWidth(clean, font, sc) + track(clean),
+          width: (inScript.whole ? inScript.whole(clean) : textWidth(clean, font, sc)) + (inScript.untracked ? 0 : track(clean)),
           ...(breakPoints.length > 0 ? { breakPoints, hyphenWidth: 0, bareBreaks: true } : {}),
         });
         continue;
@@ -1240,11 +1437,20 @@ function tokenizeSpans(
         ? before.text.slice(-2)
         : undefined;
       // A word that holds CJK characters: measured unit by unit, once each.
-      const cjk = cjkText && !isSpace && hasCJK(clean) ? cjkWordBreaks(clean, font, sc, letterSpacingPx) : undefined;
+      const cjk = cjkText && !isSpace && hasCJK(clean) ? cjkWordBreaks(clean, font, sc, letterSpacingPx, undefined, keepAll) : undefined;
       // A word of a joining script is measured untracked, its break points
       // (after a hyphen or a dash it carries) too.
-      const wordSpacing = isSpace ? letterSpacingPx : wordLetterSpacing(clean, letterSpacingPx);
-      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk);
+      // A word with no letter: measured in the script of its context, its
+      // pieces at a break too (#725). In the Arabic script it takes no
+      // tracking, as the Arabic words around it take none.
+      // A word with a letter: its pieces with no letter (`COVID-` | `19`)
+      // in the script they have inside it.
+      const measured = scriptMeasure(contextOf && !isSpace && !cjk ? contextOf(clean, partAt, part.length, font) : undefined, font, sc);
+      const untracked = measured.untracked;
+      const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
+      const inScript = measured.whole;
+      const contextFields = measured.fields;
+      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo);
       if (breakPoints.length > 0) {
         tokens.push({
           text: clean,
@@ -1253,8 +1459,9 @@ function tokenizeSpans(
           captionLabel: span.captionLabel,
           ...scriptFields,
           ...scFields,
+          ...contextFields,
           kind: 'text',
-          width: cjk ? cjk.width : textWidth(clean, font, sc) + track(clean),
+          width: cjk ? cjk.width : (inScript ? inScript(clean) : textWidth(clean, font, sc)) + (untracked ? 0 : track(clean)),
           breakPoints,
           hyphenWidth: measureTextWidth('-', font) + letterSpacingPx,
         });
@@ -1269,8 +1476,9 @@ function tokenizeSpans(
           captionLabel: span.captionLabel,
           ...scriptFields,
           ...(isSpace ? {} : scFields),
+          ...contextFields,
           kind: isSpace ? 'space' : 'text',
-          width: textWidth(word, font, sc && !isSpace) + track(word),
+          width: (inScript ? inScript(word) : textWidth(word, font, sc && !isSpace)) + (untracked ? 0 : track(word)),
         });
       }
     }
@@ -1353,7 +1561,7 @@ function joinStyledRuns(
       italic: dominant.italic,
       ...(parts[0]!.captionLabel ? { captionLabel: true } : {}),
       kind: 'text',
-      width: textWidth(text, tokenFont(dominant, normalFont, boldFont, italicFont, boldItalicFont), false),
+      width: rtlWordWidth(text, tokenFont(dominant, normalFont, boldFont, italicFont, boldItalicFont)),
       ...(dominant.faceFont ? { faceFont: dominant.faceFont } : {}),
       ...(runs.length > 1 ? { runs } : {}),
       ...(parts[parts.length - 1]!.dashJoin ? { dashJoin: true } : {}),
@@ -1483,9 +1691,10 @@ function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidt
   return {
     head: mark !== '' && bp.replacesWidth !== undefined
       ? { ...flags, text: withLineEndHyphen(token.text.slice(0, bp.charIndex)), kind: 'text', width: bp.widthBefore - bp.replacesWidth + markWidth }
-      : { ...flags, text: token.text.slice(0, bp.charIndex) + mark, kind: 'text', width: bp.widthBefore + markWidth },
+      : { ...flags, ...pieceScriptFields(token, 0, bp.charIndex), text: token.text.slice(0, bp.charIndex) + mark, kind: 'text', width: bp.widthBefore + markWidth },
     tail: {
       ...flags,
+      ...pieceScriptFields(token, bp.charIndex, token.text.length),
       text: token.text.slice(bp.charIndex),
       kind: 'text',
       width: token.width - bp.widthBefore,
@@ -1669,7 +1878,10 @@ function measureRichText(
   // The languages the paragraph's isolates name (`:ltr[…]{lang=en}`), set
   // on the segments of their text (`VDTLineSegment.lang`).
   const languages = spans.some((sp) => sp.direction?.lang !== undefined || sp.direction?.outer !== undefined) ? spanLanguages(spans) : [];
-  const tokens = tokenizeSpans(spans, normalFont, boldFont, italicFont, boldItalicFont, shouldHyphenate, letterSpacingPx, options?.breakAfterDashes === true, options?.hyphenateCompounds === false, cjkText, bidi);
+  // `keep-all` holds in a Latin paragraph that quotes CJK characters as it
+  // does in one the composer sets (#705).
+  const keepAll = cjkText && (options?.cjkWordBreak !== undefined ? options.cjkWordBreak === 'keep-all' : (options?.cjkComposition ?? getCjkComposition()).keepAll === true);
+  const tokens = tokenizeSpans(spans, normalFont, boldFont, italicFont, boldItalicFont, shouldHyphenate, letterSpacingPx, options?.breakAfterDashes === true, options?.hyphenateCompounds === false, cjkText, bidi, keepAll);
   if (options?.labelColumnPx !== undefined) setLabelTabs(tokens, (t) => t.labelTab, options.labelColumnPx, (t, w) => { t.width = w; });
   const repeatHyphen = options?.repeatHyphen === true;
   const hasSmallCaps = tokens.some((t) => t.smallCaps);
@@ -1687,7 +1899,7 @@ function measureRichText(
     if (!kashida) return;
     justifyLinesWithKashida(lines, (li) => {
       return lineWidthAt(maxWidthPx, options, li);
-    }, normalSpaceWidth, kashida, (seg, text) => textWidth(text, fontOf(seg), false));
+    }, normalSpaceWidth, kashida, (seg, text) => rtlWordWidth(text, fontOf(seg)));
   };
 
   // Knuth-Plass optimal line breaking path. A Latin paragraph quoting CJK
@@ -2047,13 +2259,7 @@ function measureRichText(
     const contentWidth = segments.reduce((sum, t) => sum + t.width, 0);
 
     // A tabbed line is set as measured: its widths are final.
-    const justifiedSpaceRatio = lineTabbed ? undefined : computeJustifiedSpaceRatio(
-      segments,
-      lineMaxWidth,
-      normalSpaceWidth,
-      textAlign,
-      isLastLine,
-    );
+    const spaceRatios = lineTabbed || textAlign !== 'justify' || isLastLine ? {} : justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth);
 
     lines.push({
       text: lineText,
@@ -2064,7 +2270,7 @@ function measureRichText(
       ...(lineRepeated && lineText.startsWith('-') ? { repeatedHyphen: true } : {}),
       segments,
       isLastLine,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
       ...(lineWordOverflow ? { wordOverflow: true as const } : {}),
       ...(lineTabbed ? { tabbed: true as const, ...(textAlign === 'justify' ? { ragged: true } : {}) } : {}),
     });

@@ -287,7 +287,11 @@ function parseSpelledStyle(token: string): SpelledStyle | undefined {
   };
 }
 
-function counterStyleOf(raw: string | undefined, locale?: string): CounterStyle {
+/** The style a template token names after its colon (`{1:A}`, `{h1:A}`,
+ *  `{n:i}`): the short aliases, any numbering-format name or one-character
+ *  token, a spelled style. None, or one the engine does not know, counts
+ *  in decimal. Heading templates and resource templates share it (#730). */
+export function counterStyleOf(raw: string | undefined, locale?: string): CounterStyle {
   if (!raw) return 'decimal';
   const key = raw.trim();
   if (parseSpelledStyle(key)) return key as SpelledNumeralStyle;

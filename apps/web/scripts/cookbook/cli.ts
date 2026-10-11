@@ -2,7 +2,7 @@
  * The Cookbook CLI: `pnpm cookbook <command>` (from the repo root or
  * apps/web; it runs in apps/web with Node's type stripping).
  *
- *   new · dev · capture · lint · schema · coverage · help
+ *   new · dev · capture · sandbox · lint · schema · coverage · help
  *
  * Exit codes: 0 when everything is green, 1 on any failure, 2 on a usage
  * error. Heavy modules (the capture harness, the pen server) load only for
@@ -22,6 +22,7 @@ import { COVERAGE_USAGE, runCoverage } from "./coverage.ts";
 import { DEV_USAGE, ENGINE_PATTERN, runDev } from "./dev.ts";
 import { LINT_USAGE, runLint } from "./lint.ts";
 import { NEW_USAGE, runNew } from "./new.ts";
+import { SANDBOX_USAGE } from "./sandbox-usage.ts";
 import { SCHEMA_USAGE, runSchema } from "./schema.ts";
 
 // ─── capture ────────────────────────────────────────────────────────────────
@@ -45,6 +46,13 @@ const CAPTURE_USAGE = `pnpm cookbook capture [slug…] [options]
   --engine <spec>        npm (default: packages/postext's version), npm@x.y.z, or local
                          (the workspace packages' dist; checks only, writes no capture)
   --preview-dir <dir>    Also write every page image, the card and the edition's capture.json here for inspection
+  --verify               After a release: run as a capture does and write only the
+                         record that the recipe was found unchanged on this release
+                         (capture.json \`verified\`: the recipe page then prints it as
+                         "tested with"). A recipe whose files would change is listed
+                         as needing a recapture, with the reason, and the command
+                         exits 1. Not with --force, --check, --sandbox-only or
+                         --engine local
   --sandbox-only         Write only each edition's <slug>.postext (and its entry
                          and findings in capture.json), with the engine capture.json
                          records; pages, card, OG image and PDF stay as they are.
@@ -96,6 +104,7 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
       engine: { type: "string", value: "spec" },
       "preview-dir": { type: "string", value: "dir" },
       "sandbox-only": { type: "boolean" },
+      verify: { type: "boolean" },
     },
     "capture",
   );
@@ -108,6 +117,11 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
   const sandboxOnly = flag(args, "sandbox-only");
   if (sandboxOnly && (engine || flag(args, "force") || str(args, "sheet") || str(args, "preview-dir"))) {
     throw new UsageError("--sandbox-only uses the engine capture.json records and writes no images: drop --engine, --force, --sheet and --preview-dir", "capture");
+  }
+
+  const verify = flag(args, "verify");
+  if (verify && (flag(args, "force") || flag(args, "check") || sandboxOnly || engine === "local")) {
+    throw new UsageError("--verify records that a release left a capture unchanged: drop --force, --check, --sandbox-only and --engine local", "capture");
   }
 
   const entries = loadRecipes();
@@ -147,7 +161,8 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
   }
 
   const langs = list(args, "lang") as SampleLocale[] | undefined;
-  const mode = (sandboxOnly ? " · Sandbox bundles only" : "") + (flag(args, "check") ? " · check only, nothing written" : "");
+  const mode = (sandboxOnly ? " · Sandbox bundles only" : "") + (flag(args, "check") ? " · check only, nothing written" : "")
+    + (verify ? " · verify: only the record of an unchanged capture is written" : "");
   const names = selected.map((entry) => {
     const reason = reasons.get(entry.slug);
     return reason ? `${entry.slug} ${c.dim(`(${reason})`)}` : entry.slug;
@@ -176,6 +191,7 @@ async function runCaptureCommand(argv: readonly string[]): Promise<number> {
     refreshNet: flag(args, "refresh-net"),
     engine,
     previewDir: previewDir && userPath(previewDir),
+    verify,
   });
   const code = printResults(results);
   return broken.length ? Math.max(code, 1) : code;
@@ -201,6 +217,12 @@ const COMMANDS: Record<string, Command> = {
     usage: CAPTURE_USAGE,
     summary: "Capture and verify pages, cards and PDFs (default: stale recipes)",
   },
+  sandbox: {
+    // The check pulls in puppeteer: loaded only for this command.
+    run: async (argv) => (await import("./sandbox.ts")).runSandbox(argv),
+    usage: SANDBOX_USAGE,
+    summary: "Lay every bundle out as the Sandbox does and compare it with capture.json",
+  },
   lint: { run: runLint, usage: LINT_USAGE, summary: "Static checks, grouped by recipe (default: all)" },
   schema: { run: runSchema, usage: SCHEMA_USAGE, summary: "Regenerate cookbook/recipe.schema.json" },
   coverage: {
@@ -214,6 +236,7 @@ const SYNOPSES: Record<string, string> = {
   new: "new <slug> --chapter <id> [--from <slug>]",
   dev: "dev <slug> [--lang es] [--port 4400]",
   capture: "capture [slug…] [--all] [--check] [--force] …",
+  sandbox: "sandbox [slug…] [--site <url>] [--strict] …",
   lint: "lint [slug…]",
   schema: "schema [--check]",
   coverage: "coverage [--json] [--catalog <file>]",

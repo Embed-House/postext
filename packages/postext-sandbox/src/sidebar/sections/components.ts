@@ -32,6 +32,7 @@ import { ResourceTypesSection } from './ResourceTypesSection';
 import { HtmlViewerSection } from './HtmlViewerSection';
 import { PdfGenerationSection } from './PdfGenerationSection';
 import { PrintSection } from './PrintSection';
+import { ContrastSection } from './ContrastSection';
 import { FolioSection } from './FolioSection';
 import { DebugSection } from './DebugSection';
 import { WarningsConfigSection } from './WarningsConfigSection';
@@ -82,6 +83,7 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'folio': FolioSection,
   'pdfGeneration': PdfGenerationSection,
   'print': PrintSection,
+  'contrast': ContrastSection,
   'debug': DebugSection,
   'warnings': WarningsConfigSection,
 };

@@ -3,8 +3,11 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig } from '../types';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
+import { avoidOrphansByDefault } from '../defaults/bodyText';
+import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
+import { cjkRegionOfConfig } from '../defaults/cjk';
 import { dimensionsEqual } from '../defaults/shared';
 import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
 import { DEFAULT_PAGE_CONFIG } from '../defaults/page';
@@ -14,8 +17,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 11 since #632 (10 from
- * postext 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 12 since #747 (11 from
+ * postext 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -118,6 +121,51 @@ import { hasCJK } from '../measure/cjk';
  *     the opener's own column is a slot for a top float
  *     (`layout.floatsUnderOpener`, #639), where up to 1.24 such a float
  *     landed from the second column on ({@link pinLegacyOpenerHeadFloats}).
+ * - 12 (#747), the rules of postext 1.28, each listed with its pin below.
+ *   - column balancing tries the list ends, the displays, the float bands
+ *     and the loose paragraphs before a heading takes a third line
+ *     (`headings.balancing.maxLinesBeforeLoose: 2`, #707), where up to 1.27
+ *     a heading took all its lines first ({@link pinLegacyLooseOrder});
+ *   - under a float that stands over several text columns, column
+ *     balancing lowers a column only with the others under it or to end it
+ *     flush (`headings.balancing.stretchAfterWideFloats: 'flush'`, #708),
+ *     where up to 1.27 a column took its after-float line as under any
+ *     float ({@link pinLegacyWideFloatStretch});
+ *   - the level cut of a closing band counts lines of the band's own text
+ *     when it is off the baseline grid (`headings.balancing.trailingStep:
+ *     'lines'`, #711), where up to 1.27 every cut stood on a grid line
+ *     ({@link pinLegacyTrailingStep});
+ *   - a group of an index divided between two columns keeps two entries
+ *     on each side (`index.groups.splitMinEntries: 2`, #712), where up to
+ *     1.27 a column could end between any two entries ({@link
+ *     pinLegacyIndexGroupSplit});
+ *   - a page on a character grid (`cjk.grid.enabled`) holds its lines:
+ *     `bodyText.avoidWidows` is off by default there, and
+ *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
+ *     1.27 both were on ({@link pinLegacyGridBreakRules});
+ *   - a line breaks inside a two-row note only where two of its characters
+ *     stand on either side (`cjk.warichu.minChars: 2`, #720), where up to
+ *     1.27 it could leave one ({@link pinLegacyNoteBreaks});
+ *   - in the Japan region a Western word takes the Han–Latin space on a
+ *     side that ends in a bracket or a sign (`cjk.latinSpacingEdge:
+ *     'western'`, #721), where up to 1.27 only a side that ends in a
+ *     letter or a digit did ({@link pinLegacyLatinSpacingEdge});
+ *   - a resource set in the text takes `placement.captionSide` as a column
+ *     float does (`layout.inlineCaptionSide`, #729), where up to 1.27 its
+ *     caption stayed under it ({@link pinLegacyInlineCaptionSide});
+ *   - a reference whose label is words (an anchor's text, a title, a
+ *     `text="…"` override) breaks at the spaces of its label
+ *     (`crossRefs.breakLabels`, #702), where up to 1.27 every label was
+ *     one unbreakable word ({@link pinLegacyRefLabelBreaks});
+ *   - a comic balloon reshaped to fit its panel does not part a Chinese
+ *     word to do so (`comics.lettering.strictPlacement`, #728), where up
+ *     to 1.27 a narrow shape that cut one could win over a balloon read
+ *     out of order ({@link pinLegacyBalloonPlacement});
+ *   - a word with no letter (`46.`, `1367)`) is shaped in the script of
+ *     the text around it, in a face that draws its punctuation by script
+ *     (`bodyText.scriptContext`, #725), where up to 1.27 it was shaped
+ *     alone, in the script each browser and the PDF picked ({@link
+ *     pinLegacyScriptContext});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -130,9 +178,11 @@ import { hasCJK } from '../measure/cjk';
  * older one gets too); one stored under 9 was written by postext 1.23 and
  * gets the version-10 pins (which every older one gets too); one stored
  * under 10 was written by postext 1.24 and gets the version-11 pins (which
- * every older one gets too).
+ * every older one gets too); one stored under 11 was written by postext
+ * 1.25 to 1.27 and gets the version-12 pins (which every older one gets
+ * too).
  */
-export const CONFIG_VERSION = 11;
+export const CONFIG_VERSION = 12;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -196,6 +246,39 @@ const FLOW_COLUMNS_RULES = 11;
 /** The rules that offer a float the head of a page-span opener's own
  *  column. */
 const OPENER_HEAD_FLOAT_RULES = 11;
+
+/** The rules that try the other balancing levers before a heading takes a
+ *  third line (#707). */
+const LOOSE_ORDER_RULES = 12;
+/** The rules that keep the heads level under a float over several columns
+ *  (#708). */
+const WIDE_FLOAT_STRETCH_RULES = 12;
+/** The rules that cut a closing band in lines of its own text (#711). */
+const TRAILING_STEP_RULES = 12;
+/** The rules that keep two entries of an index group on each side of a
+ *  column break (#712). */
+const INDEX_GROUP_SPLIT_RULES = 12;
+
+/** The rules that turn the widow rule off on a character grid, and the
+ *  orphan rule too in the Japan region (#717). */
+const GRID_BREAK_RULES = 12;
+/** The rules that keep two characters of a two-row note on either side of
+ *  a line break (#720). */
+const NOTE_BREAK_RULES = 12;
+/** The rules that set the Han–Latin space next to the brackets and signs
+ *  of a Western word in the Japan region (#721). */
+const LATIN_SPACING_EDGE_RULES = 12;
+/** The rules that set the side caption of a resource set in the text (#729). */
+const INLINE_CAPTION_SIDE_RULES = 12;
+/** The rules that break a reference's label of words at its spaces
+ *  (#702). */
+const REF_LABEL_BREAK_RULES = 12;
+/** The rules that keep a reshaped comic balloon from parting a Chinese
+ *  word (#728). */
+const BALLOON_PLACEMENT_RULES = 12;
+/** The rules that shape a word with no letter in the script of its
+ *  context (#725). */
+const SCRIPT_CONTEXT_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -630,6 +713,155 @@ export function pinLegacyGridBalancing<T extends Partial<PostextConfig>>(config:
   const balancing = isRecord(headings.balancing) ? headings.balancing : {};
   if (balancing.enabled !== undefined) return config;
   return { ...config, headings: { ...headings, balancing: { ...balancing, enabled: true } } };
+}
+
+/** Whether `config` balances its columns: what it says, else the default
+ *  of its document ({@link balancingOnByDefault}). */
+function balancesColumns(config: Partial<PostextConfig>): boolean {
+  const balancing = isRecord(config.headings) && isRecord(config.headings.balancing) ? config.headings.balancing : {};
+  if (balancing.enabled !== undefined) return balancing.enabled === true;
+  return balancingOnByDefault(config as PostextConfig);
+}
+
+/**
+ * A configuration written before #707 (postext 1.27 or earlier), pinned to
+ * the order its columns were balanced in: `headings.balancing.
+ * maxLinesBeforeLoose` gets the configuration's own `maxLinesPerHeading`
+ * (4 when it sets none), so a heading takes all its lines before the list
+ * ends, the displays, the float bands and the loose paragraphs are tried,
+ * where today it takes two. A configuration that does not balance its
+ * columns, that sets the key, or whose headings take two lines or fewer
+ * (the order then changes nothing) is returned as it is (the same object).
+ */
+export function pinLegacyLooseOrder<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.maxLinesBeforeLoose !== undefined) return config;
+  const cap = typeof balancing.maxLinesPerHeading === 'number' ? balancing.maxLinesPerHeading : DEFAULT_COLUMN_BALANCING.maxLinesPerHeading;
+  if (cap <= DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, maxLinesBeforeLoose: cap } } };
+}
+
+/**
+ * A configuration written before #708 (postext 1.27 or earlier), pinned to
+ * the way 1.27 stretched a column under a float that stands over several
+ * columns: `headings.balancing.stretchAfterWideFloats: 'always'`, so the
+ * column takes its after-float line as under any float, where today it
+ * moves only with the others under the float or to end flush. A
+ * configuration that does not balance its columns, that turns
+ * `stretchAfterFloats` off or that sets the key is returned as it is (the
+ * same object).
+ */
+export function pinLegacyWideFloatStretch<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.stretchAfterWideFloats !== undefined || balancing.stretchAfterFloats === false) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, stretchAfterWideFloats: 'always' } } };
+}
+
+/**
+ * A configuration written before #711 (postext 1.27 or earlier), pinned to
+ * the way 1.27 cut a closing band level: `headings.balancing.trailingStep:
+ * 'grid'`, every cut a whole number of baseline-grid lines, where today a
+ * band whose text is set on a leading of its own is cut by lines of that
+ * leading. A configuration that does not balance its columns, that turns
+ * `trailing` and `beforeSpan` both off or that sets the key is returned as
+ * it is (the same object).
+ */
+export function pinLegacyTrailingStep<T extends Partial<PostextConfig>>(config: T): T {
+  if (!balancesColumns(config)) return config;
+  const headings: HeadingsConfig = isRecord(config.headings) ? config.headings : {};
+  const balancing = isRecord(headings.balancing) ? headings.balancing : {};
+  if (balancing.trailingStep !== undefined || (balancing.trailing === false && balancing.beforeSpan === false)) return config;
+  return { ...config, headings: { ...headings, balancing: { ...balancing, trailingStep: 'grid' } } };
+}
+
+/** Whether markdown may set text off the body's leading in the flow, which
+ *  is all the unit of a level cut changes: a container, a directive or a
+ *  code fence, a quotation, a list, a display formula, a citation (its
+ *  list of references). Prose under headings is on the grid. Unknown
+ *  content (undefined) may. */
+function mayHaveOffGridLines(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  const test = (text: string): boolean => /^[^\S\n]*(?::::|```|~~~|>|[-*+][^\S\n]|\d+[.)][^\S\n]|\$\$)|\[@/m.test(text);
+  return typeof content === 'string' ? test(content) : content.some(test);
+}
+
+/**
+ * A configuration written before #712 (postext 1.27 or earlier), pinned to
+ * the way 1.27 broke an index between columns: `index.groups.
+ * splitMinEntries: 1`, so a column may end between any two entries of a
+ * group, where today two of them stay and two go on. A configuration that
+ * sets the key is returned as it is (the same object).
+ */
+export function pinLegacyIndexGroupSplit<T extends Partial<PostextConfig>>(config: T): T {
+  const index: IndexConfig = isRecord(config.index) ? config.index : {};
+  const groups = isRecord(index.groups) ? index.groups : {};
+  if (groups.splitMinEntries !== undefined) return config;
+  return { ...config, index: { ...index, groups: { ...groups, splitMinEntries: 1 } } };
+}
+
+/** An `:::index` fence on a line of its own, as the block parser reads one
+ *  (the line trimmed). */
+const INDEX_FENCE_LINE_RE = /^[^\S\n]*:::[^\S\n]*index[^\S\n]*(?:\{[^}\n]*\})?[^\S\n]*$/m;
+
+/** Whether markdown may print an index. Unknown content (undefined) may. */
+function mayHaveIndexes(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  if (typeof content === 'string') return INDEX_FENCE_LINE_RE.test(content);
+  return content.some((text) => INDEX_FENCE_LINE_RE.test(text));
+}
+
+/** Whether markdown may set a float: a resource embedded on its own line
+ *  (as {@link mayEmbedResources} reads one) or cited (`:ref`, LaTeX's
+ *  `\ref`), or a box floated by its fence (`placement=`). Unknown content
+ *  (undefined) may. */
+function mayHaveFloats(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined || mayEmbedResources(content)) return true;
+  const test = (text: string): boolean => /:ref\s*[[{]|\\(?:eq)?ref\{|placement\s*=/.test(text);
+  return typeof content === 'string' ? test(content) : content.some(test);
+}
+
+/**
+ * A configuration written before #717 (postext 1.27 or earlier), pinned to
+ * the break rules it laid out with on a character grid: a config with
+ * `cjk.grid.enabled` gets `bodyText.avoidWidows: true`, and in the Japan
+ * region `bodyText.avoidOrphans: true` too, each where it does not set the
+ * key, where today the first is off by default on a grid and the second
+ * in the Japan region ({@link avoidOrphansByDefault}; a Chinese grid keeps
+ * it on, so nothing is written there). Any other configuration is
+ * returned as it is (the same object).
+ */
+export function pinLegacyGridBreakRules<T extends Partial<PostextConfig>>(config: T): T {
+  if (!isRecord(config.cjk) || !isRecord(config.cjk.grid) || config.cjk.grid.enabled !== true) return config;
+  const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
+  const widows = bodyText.avoidWidows === undefined;
+  const orphans = bodyText.avoidOrphans === undefined && !avoidOrphansByDefault(config as PostextConfig);
+  if (!widows && !orphans) return config;
+  return {
+    ...config,
+    bodyText: {
+      ...bodyText,
+      ...(widows ? { avoidWidows: true } : {}),
+      ...(orphans ? { avoidOrphans: true } : {}),
+    },
+  };
+}
+
+/**
+ * A configuration written before #729 (postext 1.27 or earlier), pinned to
+ * the caption 1.27 gave a resource set in the text: `layout.inlineCaptionSide:
+ * false` on a `oneAndHalf` layout that does not set the key, so
+ * `placement.captionSide` acts on column floats only and the caption of an
+ * inline embed stays under it, where today it goes to the float-only side
+ * column. Any other configuration is returned as it is (the same object).
+ */
+export function pinLegacyInlineCaptionSide<T extends Partial<PostextConfig>>(config: T): T {
+  const layout: LayoutConfig = isRecord(config.layout) ? config.layout : {};
+  if (layout.layoutType !== 'oneAndHalf' || layout.inlineCaptionSide !== undefined) return config;
+  return { ...config, layout: { ...layout, inlineCaptionSide: false } };
 }
 
 /**
@@ -1167,6 +1399,124 @@ export function pinLegacyDesignText<T extends Partial<PostextConfig>>(config: T)
   return { ...config, cjk: { ...cjk, composeDesignText: false } };
 }
 
+/**
+ * A configuration written before #720 (postext 1.27 or earlier), pinned to
+ * the way 1.27 broke a line inside a two-row note: `cjk.warichu.minChars:
+ * 1`, so a break may leave one character of the note at the end of a line
+ * or at the head of the next, where today two stand on either side. A
+ * configuration that sets `warichu.minChars` is returned as it is (the
+ * same object).
+ */
+export function pinLegacyNoteBreaks<T extends Partial<PostextConfig>>(config: T): T {
+  const cjk = cjkOf(config);
+  const warichu = isRecord(cjk.warichu) ? cjk.warichu : {};
+  if (warichu.minChars !== undefined) return config;
+  return { ...config, cjk: { ...cjk, warichu: { ...warichu, minChars: 1 } } };
+}
+
+/**
+ * A configuration written before #721 (postext 1.27 or earlier), pinned to
+ * the sides of a Western word 1.27 set the Han–Latin space on:
+ * `cjk.latinSpacingEdge: 'letters'` on a configuration that resolves to
+ * the Japan region ({@link cjkRegionOfConfig}) and does not set the key,
+ * where today such a document also sets the space on a side that ends in
+ * a bracket or a sign (`normalize()関数`). A Chinese document keeps
+ * `'letters'` by default, and any other configuration is returned as it is
+ * (the same object).
+ */
+export function pinLegacyLatinSpacingEdge<T extends Partial<PostextConfig>>(config: T): T {
+  const cjk = cjkOf(config);
+  if (cjk.latinSpacingEdge !== undefined || cjkRegionOfConfig(config as PostextConfig) !== 'japan') return config;
+  return { ...config, cjk: { ...cjk, latinSpacingEdge: 'letters' } };
+}
+
+/**
+ * A configuration written before #702 (postext 1.27 or earlier), pinned to
+ * the way it set a cross-reference: `crossRefs.breakLabels: false`, every
+ * label one word no line breaks inside, where today a label of words (the
+ * text of a `[words]{#id}` anchor, a title, a `text="…"` override) breaks
+ * at its spaces and those spaces stretch with the line. A configuration
+ * that names the setting already is returned as it is (the same object).
+ */
+export function pinLegacyRefLabelBreaks<T extends Partial<PostextConfig>>(config: T): T {
+  const crossRefs: NonNullable<PostextConfig['crossRefs']> = isRecord(config.crossRefs) ? config.crossRefs : {};
+  if (crossRefs.breakLabels !== undefined) return config;
+  return { ...config, crossRefs: { ...crossRefs, breakLabels: false } };
+}
+
+/** A reference typed in the text: `:ref{…}`, LaTeX's `\ref{…}` and
+ *  `\eqref{…}`, or a pandoc-crossref `@id` (an `@` that opens a word). */
+const REF_RE = /:ref\{|\\(?:eq)?ref\{|(?:^|[^\p{L}\p{N}])@[\p{L}\p{N}_]/mu;
+
+/** Whether markdown may hold a cross-reference. Unknown content
+ *  (undefined) may. */
+function mayHaveRefs(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? REF_RE.test(content) : content.some((text) => REF_RE.test(text));
+}
+
+/**
+ * A configuration written before #728 (postext 1.27 or earlier), pinned to
+ * the way it placed its comic balloons: `comics.lettering.strictPlacement:
+ * false`, so a balloon reshaped to fit its panel may part a Chinese word
+ * as it did, where today such a shape pays for the cut and the placement
+ * looks elsewhere first. A configuration that names the setting already is
+ * returned as it is (the same object).
+ */
+export function pinLegacyBalloonPlacement<T extends Partial<PostextConfig>>(config: T): T {
+  const comics: NonNullable<PostextConfig['comics']> = isRecord(config.comics) ? config.comics : {};
+  const lettering: NonNullable<NonNullable<PostextConfig['comics']>['lettering']> = isRecord(comics.lettering) ? comics.lettering : {};
+  if (lettering.strictPlacement !== undefined) return config;
+  return { ...config, comics: { ...comics, lettering: { ...lettering, strictPlacement: false } } };
+}
+
+/**
+ * A configuration written before #725 (postext 1.27 or earlier), pinned to
+ * the way it shaped a word with no letter (`46.`, `1367)`):
+ * `bodyText.scriptContext: false`, each such word shaped alone, in the
+ * script the browser that measures it and the PDF's shaper pick, where
+ * today it takes the script of the text around it. Every such
+ * configuration gets it: the rule acts in a face that draws its
+ * punctuation by script, and which faces a document loads is not known
+ * here. A configuration that names the setting already is returned as it
+ * is (the same object).
+ */
+export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.scriptContext !== undefined) return config;
+  return { ...config, bodyText: { ...bodyText, scriptContext: false } };
+}
+
+/** A line that opens a comic: a `:::page` or a `:::strip` fence. */
+const COMIC_FENCE_LINE_RE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;
+
+/** Whether markdown may hold a comic page or strip. Unknown content
+ *  (undefined) may. */
+function mayHaveComics(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? COMIC_FENCE_LINE_RE.test(content) : content.some((text) => COMIC_FENCE_LINE_RE.test(text));
+}
+
+/** Whether markdown may hold kana or kanji. Unknown content (undefined)
+ *  may. */
+function mayHaveCjkText(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? hasCJK(content) : content.some(hasCJK);
+}
+
+/** A two-row note typed in the text. */
+const NOTE_RE = /:warichu\[/;
+
+/** Whether a document may set a two-row note: a `:warichu[…]` in its
+ *  markdown, or citations set as notes (`citations.notes: 'warichu'`).
+ *  Unknown content (undefined) may. */
+function mayHaveNotes(content: string | readonly string[] | undefined, config: Partial<PostextConfig>): boolean {
+  if (content === undefined) return true;
+  if (isRecord(config.citations) && config.citations.notes === 'warichu') return true;
+  if (typeof content === 'string') return NOTE_RE.test(content);
+  return content.some((text) => NOTE_RE.test(text));
+}
+
 /** A book title in brackets (《》 〈〉), or a `:book[…]` title. */
 const BOOK_TITLE_RE = /[《〈︽︿]|:book\[/;
 /** A circled, parenthesized or full-stop number or letter (①, ⑴, ⒈, ⓐ, ❶,
@@ -1298,7 +1648,33 @@ export interface MigrateConfigOptions {
  * `options.content` nor the configuration holds CJK text, and the slots
  * under its page-span openers by {@link pinLegacyOpenerHeadFloats}, when
  * it sets a heading level or style with `span: 'page'`, unless
- * `options.content` shows no heading. A current one is returned as it is (the same object).
+ * `options.content` shows no heading; one older than 12 has the order of
+ * its balancing levers pinned by {@link pinLegacyLooseOrder}, when it
+ * balances its columns and lets a heading take more than two lines, unless
+ * `options.content` shows no heading, and the after-float lever under a
+ * float over several columns by {@link pinLegacyWideFloatStretch}, when it
+ * balances its columns, unless `options.content` shows no float, the unit
+ * of the level cut of its closing bands by {@link pinLegacyTrailingStep},
+ * when it balances its columns, unless `options.content` shows prose and
+ * headings only, and the
+ * breaks inside the groups of its indexes by {@link
+ * pinLegacyIndexGroupSplit}, unless `options.content` shows no `:::index`;
+ * it also has the widow and
+ * orphan rules of a page on a character grid pinned by {@link
+ * pinLegacyGridBreakRules}, the breaks inside its two-row notes by
+ * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
+ * configuration shows a note, and the sides of a Western word that take
+ * the Han–Latin space in the Japan region by {@link
+ * pinLegacyLatinSpacingEdge}, unless `options.content` shows no kana or
+ * kanji, and the caption of a resource set in the text of a `oneAndHalf`
+ * layout by {@link pinLegacyInlineCaptionSide}, unless `options.content`
+ * shows it embeds no resource, and the labels of its cross-references kept whole by {@link
+ * pinLegacyRefLabelBreaks}, unless `options.content` shows no reference,
+ * and its comic balloons placed as 1.27 placed them by {@link
+ * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
+ * or strip, and its words with no letter shaped alone by {@link
+ * pinLegacyScriptContext}.
+ * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
  * read twice under its old number would grow twice.
@@ -1336,6 +1712,17 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) out = pinLegacyInlineTableSplit(out);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) out = pinLegacyFlowColumns(out);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
+  if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) out = pinLegacyLooseOrder(out);
+  if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) out = pinLegacyWideFloatStretch(out);
+  if (rules < TRAILING_STEP_RULES && mayHaveOffGridLines(content)) out = pinLegacyTrailingStep(out);
+  if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) out = pinLegacyIndexGroupSplit(out);
+  if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
+  if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
+  if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) out = pinLegacyLatinSpacingEdge(out);
+  if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) out = pinLegacyInlineCaptionSide(out);
+  if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
+  if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) out = pinLegacyBalloonPlacement(out);
+  if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   return out;
 }
 
@@ -1360,7 +1747,19 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * inline tables on the `tableStyle` in force, the `:::columns` groups and
  * the slots under a page-span opener on the `layout` in force (the slots
  * when the merged configuration sets a page-span heading), and the book
- * titles, the circled numbers and the design text on the `cjk` in force.
+ * titles, the circled numbers and the design text on the `cjk` in force,
+ * the order of the balancing levers and the after-float lever under a
+ * float over several columns on the `headings` in force (when the
+ * merged configuration balances its columns), with the unit of the level
+ * cut of a closing band, the breaks inside the groups
+ * of an index on the `index` in force,
+ * and the widow and orphan rules of a character grid on the merged `cjk`
+ * and `bodyText`, and the breaks inside two-row notes and the sides of a
+ * Western word that take the Han–Latin space (in the Japan region, read
+ * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
+ * force, the side caption of a resource set in the text on the `layout` in
+ * force, and the labels of cross-references on the `crossRefs` in force,
+ * and the shaping of words with no letter on the `bodyText` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1400,5 +1799,16 @@ export function migrateBundleConfig(
   if (rules < INLINE_TABLE_SPLIT_RULES && mayEmbedResources(content)) merged = pinLegacyInlineTableSplit(merged);
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) merged = pinLegacyFlowColumns(merged);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
+  if (rules < LOOSE_ORDER_RULES && mayHaveHeadings(content)) merged = pinLegacyLooseOrder(merged);
+  if (rules < WIDE_FLOAT_STRETCH_RULES && mayHaveFloats(content)) merged = pinLegacyWideFloatStretch(merged);
+  if (rules < TRAILING_STEP_RULES && mayHaveOffGridLines(content)) merged = pinLegacyTrailingStep(merged);
+  if (rules < INDEX_GROUP_SPLIT_RULES && mayHaveIndexes(content)) merged = pinLegacyIndexGroupSplit(merged);
+  if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
+  if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
+  if (rules < LATIN_SPACING_EDGE_RULES && mayHaveCjkText(content)) merged = pinLegacyLatinSpacingEdge(merged);
+  if (rules < INLINE_CAPTION_SIDE_RULES && mayEmbedResources(content)) merged = pinLegacyInlineCaptionSide(merged);
+  if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
+  if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) merged = pinLegacyBalloonPlacement(merged);
+  if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   return merged;
 }

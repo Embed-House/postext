@@ -110,7 +110,7 @@ El binari de cada variant **no** s'incrusta a la configuració mateixa. La confi
 
 ### Gestionar fonts personalitzades al sandbox
 
-Obre el tauler **Fonts** des de la barra d'activitat de l'esquerra (entre Recursos i Disseny). La seva llista **Tipus de lletra d'aquest llibre** mostra cada família que fa servir el disseny, amb la seva funció i si ve de Google Fonts o d'un fitxer propi. A **Els teus fitxers de font**, per a cada família:
+Obre el tauler **Fonts** des de la barra d'activitat de l'esquerra (entre Recursos i Disseny). La seva llista **Tipus de lletra d'aquest llibre** mostra cada família que fa servir el disseny, amb la seva funció i d'on ve: Google Fonts, Fontsource (si Google Fonts no té la família), un fitxer propi, o d'enlloc (*No trobada*). A **Els teus fitxers de font**, per a cada família:
 
 1. **Afegir família** — crea una família buida; canvia-li el nom en línia.
 2. **Pujar variant(s)** — tria un pes (100–900) i un estil (normal / italic), i selecciona un *o diversos* fitxers `.woff2`, `.woff`, `.ttf` o `.otf`. Cada fitxer es converteix en una variant pròpia associada a la combinació (pes, estil) seleccionada; el nom del fitxer queda desat i es mostra a la fila per diferenciar les variants. Pots retocar el pes o l'estil d'una variant des dels seus desplegables en qualsevol moment.
@@ -707,6 +707,116 @@ La gestió de color que fa servir postext s'exporta per a les teves pròpies ein
 El resolver i l'stripper segueixen el patró de les altres seccions: `resolvePrintConfig`, `stripPrintDefaults` i `profileInkLimit(config)` (el límit del perfil que anomena una configuració, abans que cap `inkLimit` el substitueixi), amb `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` i `DEFAULT_RICH_BLACK`.
 
 
+## Comprovació del contrast (configuració)
+
+La propietat `contrast` fixa la comprovació que diu si el text d'un llibre es pot llegir: cada color de text davant del fons sobre el qual es compon. La composició la ignora, així que canviar-la no mou mai cap línia. `contrastDocument` la llegeix quan revisa un document compost, el Sandbox llista les incidències a Revisió i mostra la ràtio al costat de cada camp de color, i `postext check` les imprimeix.
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Propietat</th>
+      <th style={{ width: '110px' }}>Tipus</th>
+      <th style={{ width: '100px' }}>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Executa la comprovació.</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>El nivell de WCAG 2 que s'exigeix a les ràtios. Vegeu [Llindars](#llindars).</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>El mitjà que es comprova: `'screen'`, `'print'`, `'both'` o `'auto'`, que comprova sempre la pantalla i també la impremta en un llibre preparat per a impremta (una norma PDF/X a `print.standard`, un PDF en CMYK a `pdfGeneration` o marques de tall a `page.cutLines`).</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Informa del text calat a la comprovació per a impremta.</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>S'avisa del text calat per sota d'aquest cos.</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>El mateix per a cursives i pesos fins, de traç més prim.</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un pes igual o inferior a aquest compta com a fi.</td></tr>
+  </tbody>
+</table>
+
+Un `level` o un `mode` escrit de qualsevol altra manera es llegeix com el valor per defecte i s'assenyala com a valor d'ajust desconegut (vegeu [Avisos de configuració](#avisos-de-configuració)).
+
+### Llindars
+
+La ràtio a què ha d'arribar un text depèn del seu cos i del seu pes, com a WCAG 2.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Nivell</th>
+      <th style={{ width: '120px' }}>Text</th>
+      <th>Text gran</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4,5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4,5:1</td></tr>
+  </tbody>
+</table>
+
+És text gran el de 18 pt o més, o el de 14 pt o més amb un pes de 700 o superior. Els cossos són els impresos, en punts. Un superíndex o un subíndex es jutja amb el cos del text al qual pertany.
+
+### Pantalla i impremta
+
+Postext compon les mateixes pàgines per a una pantalla i per a una màquina d'imprimir, i un color no es llegeix igual en totes dues.
+
+- **Pantalla** és la ràtio de contrast de WCAG 2 dels colors sRGB, `(L1 + 0.05) / (L2 + 0.05)` sobre les seves luminàncies relatives: el que mostren el canvas, el visor HTML, un EPUB i un PDF en RGB.
+- **Impremta** és la mateixa fórmula sobre la luminància que cada color té sobre el paper. El color se separa amb el perfil de sortida del treball (un de definit en CMYK conserva els seus valors), la separació es torna a llegir a través del perfil i la seva luminància es pren en relació amb el paper sense imprimir, que és el blanc d'una pàgina impresa com el blanc del monitor és el d'una pantalla. La tinta no és mai un negre perfecte: el negre massís sobre blanc dona uns 14:1 en paper estucat (FOGRA39, FOGRA51), 8:1 en paper sense estucar (FOGRA47, FOGRA52) i 5:1 en paper de diari (IFRA26, SNAP), on una pantalla dona 21:1. Un gris que passa en pantalla pot fallar sobre el paper: `#767676` sobre blanc fa 4,54:1 en pantalla i uns 3,3:1 en paper estucat.
+
+La ràtio d'impremta necessita la transformació del perfil de sortida (`options.transform`, construïda amb `outputTransform`). Sense aquesta transformació, per a impremta només es comprova el text calat.
+
+### Text calat
+
+El text clar calat sobre un fons de tinta s'empasta a màquina quan és petit o de traç fi: la tinta del fons s'escampa cap a dins de les lletres, i un fons fet de diverses tintes depèn també del registre de les planxes. La ràtio no ho mostra, perquè el blanc sobre blau fosc passa de 10:1. La comprovació per a impremta informa d'aquest text a part (`reversedText`) quan és per sota de `minSize`, o per sota de `minFineSize` si va en cursiva o amb un pes igual o inferior a `lightWeight`. Cada incidència diu amb quantes de les quatre tintes està fet el fons.
+
+### Què es llegeix
+
+La comprovació llegeix les línies de cada bloc amb els seus colors en línia (negreta, cursiva, referències, xips), els marcadors de llista, les caplletres, els peus, les notes i les cel·les de taula, i el text de les ranures de disseny: capçaleres, obertures, dissenys d'encapçalament, títols de requadre. El fons és l'emplenament que hi ha immediatament sota el text: una caixa de disseny, un requadre, una barra de peu, una cel·la de taula, un xip o, si no n'hi ha cap, el color de la pàgina (`page.backgroundColor`, o el paper que la paleta d'una part dona a les seves pàgines). Un color translúcid es barreja amb el que té a sota. El text sobre una imatge se salta, perquè el seu fons no és un sol color, i també la retolació dels còmics, les lectures ruby i les fórmules.
+
+### Executar la comprovació
+
+`contrastDocument(doc, options)` retorna les incidències d'un document compost, de la ràtio més baixa a la més alta. Cadascuna porta el `pageIndex` absolut dins del llibre, el `rect` al full (px de pàgina) i l'interval al text font de la primera aparició, els dos colors tal com es pinten (`color`, `background`), el `sizePt` més petit en què es compon amb el seu `weight` i el seu `italic`, un `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` o `'marker'`), el `text` del primer fragment i el `count` de fragments compostos així. Un parell s'assenyala una vegada per llindar, sigui quin sigui el nombre de línies que el fan servir.
+
+- `lowContrast` afegeix `level`, `large`, `required`, la ràtio a cada mitjà comprovat (`screen`, `print`) i `failing`, els mitjans que queden per sota de `required`.
+- `reversedText` afegeix `reasons` (`'small'`, `'italic'`, `'light'`), `minimumPt` i `inks`.
+
+Les opcions són `contrast` (els ajustos resolts, quan no són els del document), `media` (els mitjans, digui el que digui `mode`) i `transform`.
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)` retorna tots els parells de text i fons que compon el document, passin o no, amb la seva ràtio `screen`, la ràtio `print` quan rep la transformació, la ràtio `required` i els colors tal com els escriu la configuració (`textColor`, `groundColor`): el que una eina de disseny mostra al costat d'un camp de color. S'executa digui el que digui `enabled`.
+
+Les mesures s'exporten per a les teves pròpies eines:
+
+- `contrastRatio(a, b)` i `relativeLuminance(color)` donen la ràtio i la luminància de WCAG 2 de colors sRGB.
+- `isLargeText(sizePt, weight)` i `contrastThreshold(level, large)` donen el llindar d'un cos i un pes.
+- `blendColors(top, under)` dona un color translúcid sobre un altre, com a `#rrggbb`.
+- `printContrastRatio(a, b, context)`, `printLuminance(color, context)` i `printSeparation(color, context)` donen el mateix sobre el paper. El context porta el `transform` i, com a `authored`, el resultat d'`authoredCmykColors(config)`.
+- `contrastMedia(doc.config, contrast)` dona els mitjans en què es resol `mode` per a un document.
+
+El resolver i l'stripper segueixen el patró de les altres seccions: `resolveContrastConfig` i `stripContrastDefaults`, amb `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` i `CONTRAST_MODES`.
+
+
 ## Visor Folio (configuració)
 
 La propietat `folio` decideix com presenta el visor Folio (`postext-folio`) el llibre imprès en 3D: l'angle de la vista, el paper, l'enquadernació, la superfície sobre la qual reposa el llibre i la llum. La composició la ignora, igual que la sortida canvas, HTML i PDF. `buildDocument` porta els ajustos resolts al VDT, com a `doc.config.folio`, quan la configuració en fixa algun, així que un document sense ajustos conserva el hash de la seva composició.
@@ -1075,7 +1185,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`** retorna, en ordre de lectura, cada línia justificada amb un `justifiedSpaceRatio` que supera `threshold`: `{ block, line, ratio, x, y, width, height }`. El rectangle, en píxels de pàgina, és la franja que cobreix el ressaltat: tota l'amplada del bloc a l'alçada de la línia. Són les línies que el Sandbox ressalta i que el seu tauler Revisió assenyala com a `looseLine`.
+- **`findLooseLines(doc, { threshold?, pageIndex? })`** retorna, en ordre de lectura, cada línia justificada amb un espaiat entre paraules que supera `threshold`: `{ block, line, ratio, x, y, width, height }`. `ratio` és `lineWordSpacing(line)`: l'espaiat tal com el fiten `minWordSpacing` i `maxWordSpacing` (`justifiedSpaceLimitRatio` quan la línia conté espais d'un altre estil, i si no `justifiedSpaceRatio`), de manera que una línia composta al límit amb un espai en negreta no surt amb un llindar igual a `maxWordSpacing`. El rectangle, en píxels de pàgina, és la franja que cobreix el ressaltat: tota l'amplada del bloc a l'alçada de la línia. Són les línies que el Sandbox ressalta i que el seu tauler Revisió assenyala com a `looseLine`.
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`** omple aquestes franges en una pàgina i retorna les línies que ha pintat. Dibuixa en píxels de pàgina amb la transformació actual del context, així que crida-la just després de `renderPage` o `renderPageToCanvas` sobre el mateix canvas: totes dues deixen el context escalat a la pàgina. `color` és qualsevol estil d'emplenament del canvas.
 - **Valors per defecte.** Les dues funcions fan servir el llindar (3) i el color (`#ff000040`) per defecte, no el `debug.looseLineHighlight` del document: aquest ajust és del Sandbox. Per seguir una configuració, passa `resolveDebugConfig(config.debug).looseLineHighlight.threshold` i `.color.hex`.
 
@@ -1170,7 +1280,7 @@ Vuit errors de la configuració mateixa no passen mai en silenci, i cap interrup
 - **Nombre de columnes fora de rang**: un `columnCount` d'una disposició `'multiple'` (la del document, o el `layout` propi d'un estil d'encapçalament) que no és un nombre enter de 3 a 8. La pàgina es divideix en el nombre vàlid més proper (3 si el valor no és un nombre), i `used` l'indica (`columnCountClamped`; vegeu la [disposició `'multiple'`](/ca/docs/configuration-page-layout#tipus-de-disposició)).
 - **Retícula de caràcters massa gran**: un `cjk.grid` amb més caràcters per línia o més línies per pàgina dels que caben entre els marges. La retícula es compon amb els que hi caben, i `used` n'indica el nombre (`cjkGridClamped`; vegeu [Retícula de caràcters](/ca/docs/configuration-east-asian#retícula-de-caràcters)).
 - **Ajust d'encapçalament desconegut**: una clau que no existeix a `headings`, `headings.balancing`, un nivell d'encapçalament, un estil d'encapçalament o un estil de paràgraf: un `letterSpacng` mal escrit, un `tracking` pres d'una altra eina, un `level` en un estil d'encapçalament, un `fontStyle: 'italic'` en un estil de paràgraf (que porta `italic: true`). Una tabulació es comprova igual (un `leaders` per `leader`). El motor la ignora (fins a postext 1.4 ho feia sense dir res). `value` és la clau, `used` va buit i `suggestion` anomena l'ajust al qual s'assembla més, quan en dista una o dues lletres o només canvia en majúscules (`unknownConfigKey`).
-- **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera.
+- **Valor d'ajust desconegut**: un ajust que admet unes poques paraules en porta una altra, com ara `direction: 'right'` (admet `auto`, `ltr` o `rtl`). El motor llegeix en el seu lloc el valor per defecte, i `used` diu en què ha quedat: per a `direction`, la direcció de la llengua del document (`unknownConfigValue`). L'`align` d'una tabulació que no és cap de les seves quatre paraules es llegeix com a `'start'`, i una `position` que no és una longitud, `'end'` ni un percentatge deixa fora la tabulació (`used` és `'none'`). També es comproven les paraules dels ajustos de còmic ([Còmics › Avisos de còmic](/ca/docs/comics#avisos-de-còmic)): `used` és el valor en què s'ha resolt l'ajust (el valor per defecte propi d'un estil de bafarada, si és un estil integrat), i `suggestion` anomena la paraula a què més s'assembla el valor, quan n'hi ha una de propera. El `level` i el `mode` de la comprovació del contrast es comproven igual: `used` és `'AA'` o `'auto'`.
 - **Números de línia en text vertical**: `lineNumbers.enabled: true` en un document compost en vertical (`layout.writingMode: 'vertical-rl'`). Les pàgines verticals no porten números de línia, i `used` és `false` (`lineNumbersUnsupported`; vegeu [Numeració de línies](/ca/docs/configuration-notes-references#numeració-de-línies)).
 - **Ajust del text en escriptura vertical** — el `defaultPlacement.wrap` d'un tipus de recurs en un document compost en vertical. Les pàgines verticals no componen text al costat d'una figura, i `used` és `none` (`wrapUnsupported`; vegeu [Format del document › Ajust del text](/ca/docs/document-format#ajust-del-text)). Un `wrap` que no anomena cap costat és un valor d'ajust desconegut.
 

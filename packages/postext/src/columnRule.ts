@@ -46,9 +46,12 @@ function ruleTop(col: VDTColumn): number {
  * left beside a closing page's text, the grid line a page-span opener
  * leaves under its band before a page-span box) is not ruled; a zero-height column
  * (one a float filled) still bounds its gutters, which then run the length
- * of its neighbour — beside the float, never through it (#505). Bands are
- * visited in column order, which is band order because bands are always
- * appended.
+ * of its neighbour — beside the float, never through it (#505). A closing
+ * band ends its columns on the grid line under its text, cut level by a
+ * trailing cap or closed where it stood when it was level already (#713):
+ * the rule ends there, and runs on only beside the notes at a column's
+ * foot. Bands are visited in column order, which is band order because
+ * bands are always appended.
  */
 export function columnRuleSegments(
   columns: readonly VDTColumn[],

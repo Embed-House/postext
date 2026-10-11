@@ -234,7 +234,7 @@ ana{thought}: First line,\
 | `at` | `"x% y%"` | pins the balloon's centre, in fractions of the panel's **picture** (so it survives crops, splitter drags and other page sizes); of the cell when the panel has no picture |
 | `at` | `top-start` `top-end` `bottom-start` `bottom-end` `top` `bottom` | a corner or edge of the panel, butted to the border for captions |
 | `to` | `"x% y%"` | where the tail points (picture fractions) |
-| `tail` | `none` \| `auto` \| `top` \| `bottom` \| `start` \| `end` | no tail, or a speaker off the panel on that side |
+| `tail` | `none` \| `auto` \| `top` \| `bottom` \| `start` \| `end` \| `left` \| `right` | no tail, or a speaker off the panel on that side. `start`/`end` follow the page's reading direction; `left`/`right` are sides of the picture as stored (they turn over with a mirrored picture), so one line is right in every edition of a comic whose art is kept as drawn |
 | `join` / `join=false` | flag | force or forbid joining with the speaker's previous balloon |
 | `break` | flag | the balloon may cross the panel border into the gutter or the next panel (no `comicBalloonOverflow` for the crossing itself; what it covers there, a face or another panel's balloon, is still reported; its centre stays in its panel; never off the trim) |
 | `rotate` | degrees, clockwise | sound effects |
@@ -346,7 +346,7 @@ cross the spine (its picture spans both pages).
   pin there slides off to the nearer side). Draw spread art with no face
   or key object in its middle.
 
-## 9. Pictures: anchors, avoid zones, safe areas
+## 9. Pictures: anchors, avoid zones, bystander faces, safe areas
 
 All in fractions (0–1) of the stored picture, top-left origin, the same
 in every edition.
@@ -359,7 +359,8 @@ in every edition.
     "face": { "x": 0.41, "y": 0.3, "width": 0.19, "height": 0.22 } },  // never covered
   { "id": "sfx", "x": 0.8, "y": 0.2 }                    // where an `sfx` line without `at` goes
 ],
-"avoid": [ { "x": 0.0, "y": 0.72, "width": 0.4, "height": 0.1 } ]       // hands, key objects
+"avoid": [ { "x": 0.0, "y": 0.72, "width": 0.4, "height": 0.1 } ],      // hands, key objects
+"faces": [ { "x": 0.78, "y": 0.3, "width": 0.1, "height": 0.16 } ]      // someone who does not speak (postext ≥ 1.28)
 ```
 
 - **Anchors**: one per speaker the picture shows, `id` = the script key.
@@ -369,6 +370,18 @@ in every edition.
   is bigger than that.
 - **Avoid zones**: regions balloons do not cover (they may cover them as a
   last resort; never a face). Tails may cross them.
+- **Bystander faces** (`faces`, postext ≥ 1.28): the faces of people who do
+  not speak (a passer-by, the crowd behind the speakers), as rectangles
+  round the face itself; the layout adds the guard over the hair or the
+  hat. Each has the rule of a speaker's `face`: no balloon covers it at
+  any fallback, a balloon that still does (a pinned one) is reported as
+  `comicBalloonOverflow` with `face`, and no tail is drawn across it or
+  the figure under it when another route exists. Use `faces` for a face
+  and `avoid` for anything else (a pose, a building, a sign): an avoid
+  zone is covered in silence when the panel has no other room, a face
+  never. An anchor no line speaks from protects its `face` too, but it is
+  a speaker in every other way (its mouth is kept clear, the safe-area
+  check applies), so do not invent an id for a bystander.
 - **Safe area**: what every crop keeps. A panel cell can show the safe area
   whole only when its aspect ratio (width/height) lies within
   `[sw·W/H, W/(sh·H)]` (W×H the picture in px, sw×sh the safe area in
@@ -417,6 +430,7 @@ take em; `lettering.fontSize`, `lettering.inset`, `gutter.*`,
 | `lettering.inset` | `1.5mm` | room between balloons and the panel border |
 | `lettering.joinSameSpeaker` | `'butt'` | `'connector'` (a neck between bodies), `'none'` |
 | `lettering.maxColumnChars` | `8` | vertical columns, characters at most |
+| `lettering.strictPlacement` | `true` | a balloon reshaped to fit its panel does not part a Chinese word (the placement moves it or changes the order first); `false` letters as 1.27 did, which a book stored before 1.28 is read with (postext ≥ 1.28) |
 | `balloonStyles[]` | the nine built-ins | an entry with a built-in id changes it; another id adds a style (over `speech`) |
 | `cast[]` | none | `{id, name?, balloonStyle?, color?, fill?, fontFamily?}`: a speaker's default style (speech lines only), text colour, balloon fill, face; `name` is printed in the reflowable EPUB and read in the HTML |
 | `runningHeads` | `false` | running heads and folios on comic pages |
@@ -540,7 +554,9 @@ sfx{plate at="77.3% 14.4%" rotate=-11 skew=-8}: Incantations\
   HTML and EPUB.
 - **Fonts**: the lettering face, the SFX face and every face a style, cast
   entry or `font=` names must be in the manifest's `fonts` for headless
-  renders and the PDF (the browser alone can fetch Google Fonts).
+  renders and the PDF (`render.mjs` downloads nothing; the Sandbox and the
+  `postext` command line fetch a missing face from Google Fonts, or from
+  Fontsource when Google Fonts does not have it).
   `lint_project.py` lists the default faces of the book's language that
   are missing. The built-in styles ask for bold (`shout`, `sfx`) and
   italic (`inner`): bundle 400, 700 and italic variants, or list a

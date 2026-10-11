@@ -47,6 +47,8 @@ function resolveParagraphStyleConfig(
     marginTop: partial.marginTop ?? ZERO,
     marginBottom: partial.marginBottom ?? ZERO,
     snapToGrid: partial.snapToGrid ?? true,
+    // Kept as written; absent, the containers follow the document (#715).
+    ...(partial.containerSpacing === 'collapse' || partial.containerSpacing === 'add' ? { containerSpacing: partial.containerSpacing } : {}),
     textTransform: partial.textTransform === 'uppercase' ? 'uppercase' : 'none',
     // Absent unless set: line numbers follow `lineNumbers.count` (#621).
     ...(typeof partial.lineNumbers === 'boolean' ? { lineNumbers: partial.lineNumbers } : {}),
@@ -99,6 +101,8 @@ export function stripParagraphStylesDefaults(
     if (s.marginTop !== undefined && !isZero(s.marginTop)) r.marginTop = s.marginTop;
     if (s.marginBottom !== undefined && !isZero(s.marginBottom)) r.marginBottom = s.marginBottom;
     if (s.snapToGrid === false) r.snapToGrid = false;
+    // Kept even when it equals the document's value, which can change (#715).
+    if (s.containerSpacing === 'collapse' || s.containerSpacing === 'add') r.containerSpacing = s.containerSpacing;
     if (s.textTransform !== undefined && s.textTransform !== 'none') r.textTransform = s.textTransform;
     if (s.wordBreak !== undefined) r.wordBreak = s.wordBreak;
     if (s.lineNumbers !== undefined) r.lineNumbers = s.lineNumbers;

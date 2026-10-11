@@ -231,7 +231,7 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espacio extra entre letras; <code>em</code> es relativo al tamaño del texto. Nunca se aplica al árabe.</td>
+      <td>Espacio extra entre letras; <code>em</code> es relativo al tamaño del texto. Nunca se aplica al árabe. No cambia los glifos: las ligaduras se conservan.</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -274,6 +274,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>8</code></td>
       <td>Rotulación vertical: el máximo de caracteres en una columna de un bocadillo. Las onomatopeyas se cortan tras cinco.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Un bocadillo que cambia de forma para caber en su viñeta no parte una palabra china para lograrlo: cada palabra que cortan sus nuevas líneas, y que su forma preferida deja entera, cuesta más que un bocadillo leído fuera de orden, así que antes se mueve el bocadillo o cambia el orden. La rotulación japonesa, que se parte por frases, no cambia. Con <code>false</code> se rotula como en postext 1.27; un documento guardado antes de la 1.28 que contenga un cómic se lee así.</td>
     </tr>
   </tbody>
 </table>

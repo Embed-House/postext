@@ -15,8 +15,10 @@ export const KIT_DIR = path.join(COOKBOOK_DIR, "_kit");
 export const TEMPLATE_DIR = path.join(COOKBOOK_DIR, "_template");
 export const DOCS_DIR = path.join(REPO_DIR, "docs");
 /** Generated media: `public/cookbook/<slug>/{capture.json,<variant>/…}`.
- *  Every file name has a dot, so these URLs skip the locale proxy. */
-export const PUBLIC_COOKBOOK_DIR = path.join(WEB_DIR, "public", "cookbook");
+ *  Every file name has a dot, so these URLs skip the locale proxy.
+ *  `COOKBOOK_CAPTURE_DIR` names another folder: a copy of it, to try a
+ *  capture or a `--verify` round without touching the committed files. */
+export const PUBLIC_COOKBOOK_DIR = process.env.COOKBOOK_CAPTURE_DIR ?? path.join(WEB_DIR, "public", "cookbook");
 /** URL prefix of the generated media. */
 export const PUBLIC_COOKBOOK_URL = "/cookbook";
 

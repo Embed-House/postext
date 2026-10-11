@@ -231,7 +231,7 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>文字と文字の間に加える間隔です。<code>em</code>は文字サイズに対する値です。アラビア語には適用しません。</td>
+      <td>文字と文字の間に加える間隔です。<code>em</code>は文字サイズに対する値です。アラビア語には適用しません。グリフは変わらず、合字は保たれます。</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -274,6 +274,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>8</code></td>
       <td>縦書きの写植で、吹き出しの1行に入れる最大の字数です。描き文字は5字で改行します。</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>コマに収めるために形を変えた吹き出しが、そのために中国語の単語を分けることはありません。新しい行分けが単語を一つ切るごとに（望ましい形では切れていない単語です）、読む順序が乱れた吹き出しより高いコストがかかるので、先に吹き出しを動かすか順序を変えます。文節で改行する日本語の写植には影響しません。<code>false</code>にするとpostext 1.27と同じ写植になります。1.28より前に保存された、マンガを含む文書はこの値で読み込まれます。</td>
     </tr>
   </tbody>
 </table>

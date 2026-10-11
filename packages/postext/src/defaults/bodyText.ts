@@ -1,7 +1,9 @@
-import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
+import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
 import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
-import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
+import { cjkRegionOfConfig } from './cjk';
+import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
+import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
 
 export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] = {
   enabled: true,
@@ -9,7 +11,35 @@ export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] =
   ragged: false,
   zone: { value: 3, unit: 'em' },
   compounds: true,
+  capitalized: true,
 };
+
+/**
+ * Whether a paragraph keeps `widowMinLines` lines at the foot of a column
+ * when `config` does not set `bodyText.avoidWidows` itself. Off on a
+ * character grid (`cjk.grid`, #717): the grid counts the lines of a page,
+ * and a paragraph moved on whole leaves the page a line short. clreq
+ * §7.1.2 and JLReq §3.5.4 have no rule for a paragraph's first line at
+ * the foot of a page.
+ */
+export function avoidWidowsByDefault(config: PostextConfig | undefined): boolean {
+  return config?.cjk?.grid?.enabled !== true;
+}
+
+/**
+ * Whether a paragraph keeps `orphanMinLines` lines at the head of the next
+ * column when `config` does not set `bodyText.avoidOrphans` itself. Off on
+ * a character grid in the Japan region (#717): JLReq §3.5.4 counts the
+ * characters of a paragraph's last line, never its lines at a page break.
+ * A Chinese grid keeps the rule: 孤行, the last line of a paragraph alone
+ * at the head of a page, is the one clreq §7.1.2 names. The region is
+ * `cjk.region`, or under `'auto'` the one of the document language as
+ * `resolveAllConfig` reads it (`locale`, else the hyphenation locale).
+ */
+export function avoidOrphansByDefault(config: PostextConfig | undefined): boolean {
+  if (config?.cjk?.grid?.enabled !== true) return true;
+  return cjkRegionOfConfig(config) !== 'japan';
+}
 
 /** Blockquotes as postext 1.4 set them: grey, italic, the body's
  *  first-line indent, no side indent. */
@@ -18,6 +48,12 @@ export const DEFAULT_BLOCKQUOTE_CONFIG: ResolvedBlockquoteConfig = {
   italic: true,
   indent: { value: 0, unit: 'em' },
 };
+
+/** A `shortListMaxItems` as written (#749): a whole number of items, one
+ *  or more, else `undefined`. */
+export function shortListMaxItemsOf(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 ? value : undefined;
+}
 
 export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   fontFamily: 'EB Garamond',
@@ -65,6 +101,8 @@ export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   widowMinLines: 2,
   widowPenalty: 1000,
   avoidWidowsInLists: true,
+  shortListSplit: 'allow',
+  shortListMaxItems: 3,
   slackWeight: 10,
   avoidRunts: true,
   runtMinCharacters: 20,
@@ -87,7 +125,10 @@ export function hyphenationEqual(a: HyphenationConfig | undefined, b: Hyphenatio
     && (a.locale ?? D.locale) === (b.locale ?? D.locale)
     && (a.ragged ?? D.ragged) === (b.ragged ?? D.ragged)
     && dimensionsEqual(a.zone ?? D.zone, b.zone ?? D.zone)
-    && (a.compounds ?? D.compounds) === (b.compounds ?? D.compounds);
+    && (a.compounds ?? D.compounds) === (b.compounds ?? D.compounds)
+    && (a.capitalized ?? D.capitalized) === (b.capitalized ?? D.capitalized)
+    // A list that names no valid word is no list.
+    && (normalizeHyphenationExceptions(a.exceptions) ?? []).join('\x00') === (normalizeHyphenationExceptions(b.exceptions) ?? []).join('\x00');
 }
 
 /** Tags of languages set without hyphenation (CJK, right-to-left scripts)
@@ -124,6 +165,7 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
     ? false
     : partial?.enabled ?? (isUnhyphenatedLanguage(documentLocale) ? false : D.enabled);
   const locale = hyphenationLocaleFor(requested, enabled);
+  const exceptions = normalizeHyphenationExceptions(partial?.exceptions);
   return {
     enabled,
     locale,
@@ -131,6 +173,8 @@ function resolveHyphenation(partial: HyphenationConfig | undefined, documentLoca
     ragged: partial?.ragged ?? D.ragged,
     zone: partial?.zone ?? D.zone,
     compounds: partial?.compounds ?? D.compounds,
+    ...(exceptions ? { exceptions } : {}),
+    capitalized: partial?.capitalized ?? D.capitalized,
   };
 }
 
@@ -299,6 +343,9 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     breakAfterDashes: partial.breakAfterDashes ?? DEFAULT_BODY_TEXT_CONFIG.breakAfterDashes,
     breakAfterHyphens: partial.breakAfterHyphens ?? DEFAULT_BODY_TEXT_CONFIG.breakAfterHyphens,
     hardLineBreaks: partial.hardLineBreaks ?? DEFAULT_BODY_TEXT_CONFIG.hardLineBreaks,
+    // Present only when off (#725): a document that shapes its words with
+    // no letter in the script of their context resolves as before.
+    ...(partial.scriptContext === false ? { scriptContext: false as const } : {}),
     // Absent unless set, so a document without tab stops resolves as before (#622).
     ...(Array.isArray(partial.tabStops) ? { tabStops: partial.tabStops } : {}),
     ...(partial.tabInterval ? { tabInterval: partial.tabInterval } : {}),
@@ -313,6 +360,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     widowMinLines: partial.widowMinLines ?? DEFAULT_BODY_TEXT_CONFIG.widowMinLines,
     widowPenalty: partial.widowPenalty ?? DEFAULT_BODY_TEXT_CONFIG.widowPenalty,
     avoidWidowsInLists: partial.avoidWidowsInLists ?? DEFAULT_BODY_TEXT_CONFIG.avoidWidowsInLists,
+    shortListSplit: compositionRuleOf(partial.shortListSplit) ?? DEFAULT_BODY_TEXT_CONFIG.shortListSplit,
+    shortListMaxItems: shortListMaxItemsOf(partial.shortListMaxItems) ?? DEFAULT_BODY_TEXT_CONFIG.shortListMaxItems,
     slackWeight: partial.slackWeight ?? DEFAULT_BODY_TEXT_CONFIG.slackWeight,
     avoidRunts: partial.avoidRunts ?? DEFAULT_BODY_TEXT_CONFIG.avoidRunts,
     runtMinCharacters: partial.runtMinCharacters ?? DEFAULT_BODY_TEXT_CONFIG.runtMinCharacters,
@@ -325,7 +374,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     colonListRoom: partial.colonListRoom === 'line' || partial.colonListRoom === 'item'
       ? partial.colonListRoom
       : DEFAULT_BODY_TEXT_CONFIG.colonListRoom,
-    hyphenateAcrossColumns: partial.hyphenateAcrossColumns ?? DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns,
+    // `false` and `'withinPage'` (#701) are kept; anything else reads `true`.
+    hyphenateAcrossColumns: partial.hyphenateAcrossColumns === false || partial.hyphenateAcrossColumns === 'withinPage' ? partial.hyphenateAcrossColumns : DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns,
     paragraphContainerSpacing: partial.paragraphContainerSpacing === 'add' || partial.paragraphContainerSpacing === 'collapse'
       ? partial.paragraphContainerSpacing
       : DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing,
@@ -346,8 +396,18 @@ function namesOtherPatterns(hyphenation: HyphenationConfig, documentLocale: Loca
 /** `bodyText` without the fields that hold their default. `documentLocale`
  *  (the config's `locale`) matters to hyphenation only: in a Chinese,
  *  Japanese or Korean document its default is off, and the patterns of a
- *  document that names its language are that language's. */
-export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?: LocaleTag): BodyTextConfig | undefined {
+ *  document that names its language are that language's. `avoidWidowsOn`
+ *  and `avoidOrphansOn` are the document's defaults for the two break
+ *  rules (`avoidWidowsByDefault(config)`, `avoidOrphansByDefault(config)`,
+ *  #717): each rule is dropped when it restates its own, so `true` is
+ *  kept on a character grid where the rule is off, and `false` dropped
+ *  there. */
+export function stripBodyTextDefaults(
+  bodyText?: BodyTextConfig,
+  documentLocale?: LocaleTag,
+  avoidWidowsOn: boolean = DEFAULT_BODY_TEXT_CONFIG.avoidWidows,
+  avoidOrphansOn: boolean = DEFAULT_BODY_TEXT_CONFIG.avoidOrphans,
+): BodyTextConfig | undefined {
   if (!bodyText) return undefined;
 
   const result: BodyTextConfig = {};
@@ -479,6 +539,11 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.hardLineBreaks = bodyText.hardLineBreaks;
     hasOverride = true;
   }
+  // On by default, and resolved only when off (#725).
+  if (bodyText.scriptContext === false) {
+    result.scriptContext = false;
+    hasOverride = true;
+  }
   if (Array.isArray(bodyText.tabStops)) {
     result.tabStops = bodyText.tabStops;
     hasOverride = true;
@@ -501,7 +566,9 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.verse = verse;
     hasOverride = true;
   }
-  if (bodyText.avoidOrphans !== undefined && bodyText.avoidOrphans !== DEFAULT_BODY_TEXT_CONFIG.avoidOrphans) {
+  // The break rules are compared with the default of the document (#717):
+  // on a character grid `true` is kept and `false` dropped.
+  if (bodyText.avoidOrphans !== undefined && bodyText.avoidOrphans !== avoidOrphansOn) {
     result.avoidOrphans = bodyText.avoidOrphans;
     hasOverride = true;
   }
@@ -509,7 +576,7 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.orphanMinLines = bodyText.orphanMinLines;
     hasOverride = true;
   }
-  if (bodyText.avoidWidows !== undefined && bodyText.avoidWidows !== DEFAULT_BODY_TEXT_CONFIG.avoidWidows) {
+  if (bodyText.avoidWidows !== undefined && bodyText.avoidWidows !== avoidWidowsOn) {
     result.avoidWidows = bodyText.avoidWidows;
     hasOverride = true;
   }
@@ -531,6 +598,14 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
   }
   if (bodyText.avoidWidowsInLists !== undefined && bodyText.avoidWidowsInLists !== DEFAULT_BODY_TEXT_CONFIG.avoidWidowsInLists) {
     result.avoidWidowsInLists = bodyText.avoidWidowsInLists;
+    hasOverride = true;
+  }
+  if (bodyText.shortListSplit !== undefined && bodyText.shortListSplit !== DEFAULT_BODY_TEXT_CONFIG.shortListSplit) {
+    result.shortListSplit = bodyText.shortListSplit;
+    hasOverride = true;
+  }
+  if (bodyText.shortListMaxItems !== undefined && bodyText.shortListMaxItems !== DEFAULT_BODY_TEXT_CONFIG.shortListMaxItems) {
+    result.shortListMaxItems = bodyText.shortListMaxItems;
     hasOverride = true;
   }
   if (bodyText.slackWeight !== undefined && bodyText.slackWeight !== DEFAULT_BODY_TEXT_CONFIG.slackWeight) {
@@ -573,7 +648,7 @@ export function stripBodyTextDefaults(bodyText?: BodyTextConfig, documentLocale?
     result.colonListRoom = bodyText.colonListRoom;
     hasOverride = true;
   }
-  if (bodyText.hyphenateAcrossColumns !== undefined && bodyText.hyphenateAcrossColumns !== DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns) {
+  if (bodyText.hyphenateAcrossColumns === false || bodyText.hyphenateAcrossColumns === 'withinPage') {
     result.hyphenateAcrossColumns = bodyText.hyphenateAcrossColumns;
     hasOverride = true;
   }

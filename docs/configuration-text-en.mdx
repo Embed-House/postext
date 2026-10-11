@@ -157,7 +157,7 @@ The `bodyText` property controls the typography of all paragraph text.
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Lower bound for word spacing in justified text, as a multiplier of the normal space width.</td>
+      <td>Lower bound for word spacing in justified text, as a multiplier of the normal space width. Both limits bound the change of each space from its own width, counted in spaces of the regular face: a line that holds an italic or a bold space, narrower or wider than the regular one, is painted a few hundredths of a space under or over the limit it was broken within. <code>lineWordSpacing(line)</code> gives the number the limits bound; see <a href="/en/docs/justification#postexts-implementation">Justification</a>.</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>
@@ -224,6 +224,12 @@ The `bodyText` property controls the typography of all paragraph text.
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Read a backslash that ends a source line, and <code>{'\\\\'}</code> before a space, as a forced line break inside a paragraph, a quotation or a list item (CommonMark's hard break): the next words start a new line of the same paragraph, and the line before is set at its natural width, as a last line is. A backslash ending the paragraph prints, and two spaces at the end of a line are no break (see <a href="/en/docs/document-format#line-breaks">Document format › Line breaks</a>). <code>false</code> keeps the 1.22 reading: the backslashes print and the lines join with a space; configurations stored earlier whose text has such a backslash read with it (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). Titles, captions, notes and table cells break at <code>{'\\\\'}</code> either way.</td>
+    </tr>
+    <tr>
+      <td><code>scriptContext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Shape a word with no letter (<code>46.</code>, <code>1367)</code>, <code>».</code>: digits, punctuation or symbols alone) in the script of the text around it. A face may draw such marks by script (Amiri sets a Latin full stop and brackets in Latin text and Arabic ones otherwise, of other widths), and a shaper handed the word alone picks a script by a rule of its own, which differs between browser versions and the PDF. With this on, the word takes the script of the nearest letter before it in its isolate (else after it), of the nearest right-to-left letter when it is painted right to left, and of the document's language with no letter near; the layout measures it in that script, and the canvas, the HTML, the fixed-layout EPUB and the PDF paint those forms at that width. It acts in Latin, Greek, Cyrillic, Arabic and Hebrew contexts, and only in a face whose punctuation or digits change with the script; a word shaped in the Arabic script takes no letter-spacing. A piece with no letter of a word that has one (<code>10.1006/</code> and <code>.2001</code> of a DOI that ends a line at its joints) takes the script it has inside the word. In a Chinese or Japanese document a doubled ellipsis or dash (<code>……</code>, <code>——</code>) cited in a sentence of another script keeps the forms of Han text. List markers, the labels of cross-references, design text, comic lettering and paragraphs set by the CJK composer are not touched. <code>false</code> shapes such a word alone, as up to postext 1.27; a configuration stored before <code>configVersion</code> 12 is read with it (<code>pinLegacyScriptContext</code>). See <a href="/en/docs/arabic-layout#words-with-no-letter">Words with no letter</a>.</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
@@ -593,6 +599,18 @@ When text alignment is set to `'justify'`, hyphenation prevents excessive word s
       <td><code>true</code></td>
       <td>Let the dictionary divide the words of a compound, a word with a hyphen between two letters (<code>af-ter-dinner</code>). <code>false</code> keeps such a word whole but for its own hyphen, where the line may still end (<code>after-</code> · <code>dinner</code>), as TeX does. A soft hyphen typed in the word still breaks, and a compound wider than the whole line is still divided. It applies to the running text, headings, lists, blockquotes and boxes; captions, notes, table cells and the contents keep dividing compounds. See <a href="/en/docs/justification#compound-words">Compound words</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>none</td>
+      <td>Words the dictionary must not divide, or may divide only where the entry says: <code>'Alice'</code> is never divided, <code>'You-Tube'</code> only at its hyphen. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divide capitalised words like any other. <code>false</code> keeps every word that starts with a capital whole (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), the first word of a sentence included. See <a href="#words-kept-whole">Words kept whole</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -609,6 +627,27 @@ matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a c
 ```
 
 Words shorter than 5 characters are never hyphenated. The engine requires at least 2 characters before and 3 characters after a break point.
+
+#### Words kept whole
+
+A dictionary divides a name as it divides any word: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Three settings keep words whole, and all three default to what the dictionary does.
+
+`hyphenation.exceptions` is a list of words, as in TeX's `\hyphenation{…}`. An entry written without a hyphen is never divided; an entry written with hyphens is divided only there, so `'You-Tube'` gives `You-` · `Tube` and nothing else. An entry matches a run of letters, whatever stands around it: `'Alice'` covers `(Alice,` and `Alice’s`, and a compound is matched part by part (`Blender-based` matches `'Blender'`). An inflected form is another word and needs its own entry. An entry in lower case matches the word in any case (`'blender'` covers `Blender` and `BLENDER`); an entry with an initial capital matches only the occurrences that start with a capital, so `'Rose'` keeps the name whole and leaves `rose` to the dictionary. Entries hold letters and hyphens only; anything else is dropped.
+
+`hyphenation.capitalized: false` keeps every word that starts with a capital whole: names, acronyms, and the first word of each sentence too. It is the "Hyphenate Capitalized Words" switch of InDesign turned off, and TeX's `\uchyph=0`. An entry of `exceptions` with hyphens still divides its word at them. German capitalises every noun, so the switch would leave a German text with hardly a word to divide: name the words in `exceptions` there, or use `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` keeps the family names of the authors the document cites whole, wherever they stand: in a citation, in the running text and in the list of references. See [Citations](/en/docs/configuration-notes-references#citations).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+The three reach every text the dictionary divides: body, headings, lists, boxes, captions, table cells, notes, running heads and the other design text. That is wider than `compounds`, which the captions, notes, cells and contents ignore. Two things stay as they are. A soft hyphen typed in an occurrence of a word still decides that occurrence, and a soft hyphen before the first letter keeps one occurrence whole without a list (see [Where a line never breaks](/en/docs/justification#where-a-line-never-breaks)). And a word wider than its whole measure is still divided: at the points of its entry when it has some, else at the dictionary's syllables. Fewer divided words leave a narrow justified column fewer ways to fill its lines, so look at the word spacing after switching `capitalized` off in a three-column page. The reflowable EPUB leaves hyphenation to the reading system, which knows nothing of these rules.
 
 #### Ragged text
 
@@ -770,7 +809,7 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Discourage a paragraph from ending with fewer than <code>orphanMinLines</code> lines at the top of the next column.</td>
+      <td>Discourage a paragraph from ending with fewer than <code>orphanMinLines</code> lines at the top of the next column. On a character grid (<code>cjk.grid</code>) in the <code>japan</code> region the default is <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -794,7 +833,7 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Discourage a paragraph from starting with fewer than <code>widowMinLines</code> lines at the bottom of the current column.</td>
+      <td>Discourage a paragraph from starting with fewer than <code>widowMinLines</code> lines at the bottom of the current column. On a character grid (<code>cjk.grid</code>) the default is <code>false</code>: the page holds the lines its grid counts.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -815,10 +854,22 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
       <td>When <code>true</code>, list items also receive widow protection. Only effective when <code>avoidWidows</code> is <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>A short list cut between two columns or pages: a list of up to <code>shortListMaxItems</code> items in the running text, such as one of three items set 1 + 2. <code>avoidOrphansInLists</code> and <code>avoidWidowsInLists</code> keep the lines of one item together; this rule keeps the items of one list together. <code>'allow'</code> cuts such a list where the column ends, as any other. <code>'warn'</code> lays it out the same and reports each list cut (a <code>shortListSplit</code> warning, see <a href="/en/docs/configuration-programmatic-usage#warnings-in-the-document">Warnings in the document</a>). <code>'avoid'</code> sets the list whole: when it does not fit under what the column holds it opens the next column, and the headings right above it and the colon line that introduces it (<code>keepColonWithList</code>) go with it. A list taller than an empty column is cut as any other, and reported. Lists inside a <code>:::callout</code> follow the box's own cut rules, and the entries of <code>:::toc</code> and <code>:::index</code> are not lists. Since postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>The most items a list has to count as short for <code>shortListSplit</code>, the items of its nested lists included. A whole number, at least 1. Since postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Discourage paragraphs from ending with a very short last line — a <em>runt</em>, e.g. a single short word alone. Ragged text too, with <code>optimalRagged</code>. A Chinese, Japanese or Korean paragraph does not end on a line holding one character, alone or with its closing marks (孤字): the line above gives it its last character when that line can still be justified within the tracking cap.</td>
+      <td>Discourage paragraphs from ending with a very short last line — a <em>runt</em>, e.g. a single short word alone. Ragged text too, with <code>optimalRagged</code>. A Chinese, Japanese or Korean paragraph does not end on a line holding one character, alone or with its closing marks (孤字): the line above gives it its last character when that line can still be justified within the tracking cap. A line set left, right or centred gives the character up too and stands one character short; with <code>cjk.grid.fullLines</code> (manuscript paper) it keeps every square, and the paragraph may end on one character.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>
@@ -876,15 +927,15 @@ Beyond hyphenation and spacing bounds, the body-text configuration exposes the s
     </tr>
     <tr>
       <td><code>hyphenateAcrossColumns</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
       <td><code>true</code></td>
-      <td>Let a column or a page end on a hyphenated word (InDesign's <em>Hyphenate Across Column</em>). <code>false</code> breaks the paragraph that crosses the column break again, so that its last line in the column ends on a whole word; the word spaces of the lines above take up the difference, within <code>maxWordSpacing</code> and <code>minWordSpacing</code>. It is a preference: where no break within those limits avoids it, the hyphen stays. It tries every column break of a paragraph: the first, and the later ones that fall where a full column ends, in one re-break; and a later break that falls elsewhere (a widow kept, a band cut level) in another, from that column, which keeps the lines already set in the columns before at their breaks and breaks only the rest. Box bodies are not affected. With <code>optimalRagged</code>, a ragged paragraph is broken again the same way: its word spaces keep their width, so only the ends of its lines move. Each re-break measures the paragraph once more, so a book with many column-end hyphens lays out a little slower. Needs <code>optimalLineBreaking</code>, and <code>optimalRagged</code> for ragged text.</td>
+      <td>Let a column or a page end on a hyphenated word (InDesign's <em>Hyphenate Across Column</em>). <code>false</code> breaks the paragraph that crosses the column break again, so that its last line in the column ends on a whole word; the word spaces of the lines above take up the difference, within <code>maxWordSpacing</code> and <code>minWordSpacing</code>. It is a preference: where no break within those limits avoids it, the hyphen stays. It tries every column break of a paragraph: the first, and the later ones that fall where a full column ends, in one re-break; and a later break that falls elsewhere (a widow kept, a band cut level) in another, from that column, which keeps the lines already set in the columns before at their breaks and breaks only the rest. <code>'withinPage'</code> guards the lines that close a page and no other: a word may be divided between two columns of one page, and the last line of a page ends on a whole word wherever the limits allow it. It changes fewer lines than <code>false</code>, which matters in three or more columns, where two column ends in three stand inside the page; in a single column the two values give the same lines. A column closes its page when no later column of the page takes text: a side column kept for floats does not, nor does a column a table or a figure has filled. Box bodies are not affected. With <code>optimalRagged</code>, a ragged paragraph is broken again the same way: its word spaces keep their width, so only the ends of its lines move. Each re-break measures the paragraph once more, so a book with many column-end hyphens lays out a little slower. Needs <code>optimalLineBreaking</code>, and <code>optimalRagged</code> for ragged text.</td>
     </tr>
     <tr>
       <td><code>paragraphContainerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td><code>'collapse'</code></td>
-      <td>The space under a <code>:::paragraphs</code> container that closes on a paragraph, between that paragraph and the block after it (see <a href="/en/docs/configuration-styles#the-paragraphs-container">The <code>:::paragraphs</code> container</a>). <code>'collapse'</code>: the larger of the style's <code>spaceBetween</code> and <code>marginBottom</code> and the paragraph spacing of the text around the container (a line with <code>paragraphSpacing</code>; in a box, the box's), merged with the space the next block keeps above itself, as between two paragraphs of running text: a heading under a bibliography sits its own <code>marginTop</code> below it, not that margin plus the entries' spacing. <code>'add'</code>: as up to postext 1.4, the style's space alone is set under the last line before the grid snap, the next block's own space above is added under it, and the paragraph spacing is left out, so the paragraph after the container could sit closer to it than to any other. A configuration stored before <code>configVersion</code> 8 that declares a paragraph style, in a book that holds such a container, reads with <code>'add'</code> (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). A negative <code>marginBottom</code> pulls the next block up either way.</td>
+      <td>The space under a <code>:::paragraphs</code> container that closes on a paragraph, between that paragraph and the block after it (see <a href="/en/docs/configuration-styles#the-paragraphs-container">The <code>:::paragraphs</code> container</a>). <code>'collapse'</code>: the larger of the style's <code>spaceBetween</code> and <code>marginBottom</code> and the paragraph spacing of the text around the container (a line with <code>paragraphSpacing</code>; in a box, the box's), merged with the space the next block keeps above itself, as between two paragraphs of running text: a heading under a bibliography sits its own <code>marginTop</code> below it, not that margin plus the entries' spacing. <code>'add'</code>: as up to postext 1.4, the style's space alone is set under the last line before the grid snap, the next block's own space above is added under it, and the paragraph spacing is left out, so the paragraph after the container could sit closer to it than to any other. A configuration stored before <code>configVersion</code> 8 that declares a paragraph style, in a book that holds such a container, reads with <code>'add'</code> (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). A negative <code>marginBottom</code> pulls the next block up either way. A paragraph style can set its own rule for its containers (<code>containerSpacing</code>, since postext 1.28).</td>
     </tr>
   </tbody>
 </table>
@@ -944,7 +995,7 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Space above headings.</td>
+      <td>Space above headings. Dropped for a heading that opens a column (see <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -975,6 +1026,12 @@ The `headings` property controls typography for all heading levels (H1–H6). Yo
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Whether the flow snaps back onto the baseline grid under a heading. With <code>true</code> the heading's <code>marginBottom</code> is rounded up to whole grid lines; with <code>false</code> the exact margin is kept and the text under the heading may sit off the grid until the next snap point (the end of a list, a <code>:::paragraphs</code> tail, display math) — the way many books set a line and a half under a heading. A level (<code>levels[].snapToGrid</code>) or a heading style can set its own value; this one is what they inherit.</td>
+    </tr>
+    <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>What a heading that snaps to the grid keeps of its space above when it opens a column, at the page's head or under a figure or table that heads the column. <code>'none'</code>: the whole space is dropped and the heading stands on the column's first line, level with the column beside it; the grid snap then puts the part of a line it needs under the heading, so its text can stand further from it than after a paragraph. <code>'remainder'</code>: the space is dropped in whole grid lines only and the part of a line that is left stays above the heading, so the text under it starts at the distance it starts at after a paragraph; the heading starts a little lower than the column's head and no line of body text moves. It suits a book in one column, where no column head beside it shows the difference. Any other value reads as <code>'none'</code>. Not under a page-span opener, and not for a <code>span: 'page'</code>, <code>lineSpan</code>, hidden or designed (<code>advancedDesign</code>) heading. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>inlineMarks</code></td>
@@ -1008,13 +1065,14 @@ Publishers expect every column to start at the top of the page and end flush wit
 
 1. **A box closing the column** — a callout that ends a short column is pushed down by the exact room under its foot, so its bottom edge lands on the last grid slot of the page, level with the last line of the column beside it. It takes that room even when it is less than a line, as long as nothing moves into another column. By default it runs before every other lever and takes the whole gap, so a box that annotates the paragraph above it can end up several lines below it; `closingBox: 'last'` lets the headings, the list ends and the other spacing levers take the whole lines first, and the box only what they leave, and `closingBox: 'off'` never moves it.
 2. **Pictures with a safe area** — a picture with a safe area (`Resource.safeArea`, see [Document format › Safe area](/en/docs/document-format#safe-area)) set inline in the short column, or floated at its head or its foot over that column alone, grows by whole grid lines, cropped within its safe area, until the column is full or the crop reaches the safe area. A taller picture leaves no hole on the page, so it runs before any space is added; a float at the head of a column on a page or band whose column heads stay level (see below) does not grow. Recorded as `flexFigure`. It has no setting of its own: only a picture whose resource marks a safe area can grow.
-3. **Headings** — whole grid lines are added to the top margin of the headings inside the short column. When several lines are needed and the column holds several headings, the lines are distributed among them, always giving the largest share to the most important heading (an `h2` receives more than an `h3`). Headings sitting at the very top of a column never receive extra space, so columns keep starting at the page top — except a heading right under a figure or table that heads its column on a page that flows on: the room goes above that heading, under the figure.
+3. **Headings** — whole grid lines are added to the top margin of the headings inside the short column. When several lines are needed and the column holds several headings, the lines are distributed among them, always giving the largest share to the most important heading (an `h2` receives more than an `h3`). Headings sitting at the very top of a column never receive extra space, so columns keep starting at the page top — except a heading right under a figure or table that heads its column on a page that flows on: the room goes above that heading, under the figure. A heading takes at most `maxLinesBeforeLoose` lines this way (two by default) before the levers below are tried, and its further lines, up to `maxLinesPerHeading`, only when they have nothing left to give.
 4. **List ends** — when the headings cannot absorb the whole gap, a grid line is added where a list/enumeration ends (space after a list reads naturally), capped per list end.
-5. **Loose paragraphs** — as a last resort, one paragraph of the column is re-broken one line longer (TeX's `\looseness=+1`), choosing the longest paragraph so the extra word spacing dilutes invisibly. The loose solution is only accepted when every line stays **below `bodyText.maxWordSpacing`** — type colour never exceeds the limit you already configured. Requires `bodyText.optimalLineBreaking`.
+5. **Under formulas, boxes and figures** — then one grid line goes under a display formula or a callout box the text resumes after (`stretchAfterDisplays`; it reads as the element's own margin), and under a figure or table that heads the column (`stretchAfterFloats`, capped by `maxLinesAfterFloat`).
+6. **Loose paragraphs** — as a last resort, one paragraph of the column is re-broken one line longer (TeX's `\looseness=+1`), choosing the longest paragraph so the extra word spacing dilutes invisibly. The loose solution is only accepted when every line stays **below `bodyText.maxWordSpacing`** — type colour never exceeds the limit you already configured. Requires `bodyText.optimalLineBreaking`.
 
 On a character grid (`cjk.grid`, see [Chinese layout › The character grid](/en/docs/chinese-layout#the-character-grid)) every character stands in a cell one em wide and every line on the grid's line pitch, which is also the baseline grid. Balancing is off there by default, as in vertical text: a page set line by line on a grid, the way GB/T 9704 counts 22 lines of 28 characters, leaves a short column short. A configuration that sets `enabled: true` gets levers that keep the grid: headings, list ends, displays and figures take whole grid lines, so the text below them moves by whole rows, and `gridLines: 'off'` keeps those out for a standard that has no empty row to give. A Chinese or Japanese paragraph runs a line long only when no gap between two of its characters spreads past `maxTracking`, and takes no tracking on its letters: a line a character short spreads an em over its gaps, far past the default 0.01 em, so on a grid of whole cells the loose lever usually finds nothing. The box closing a column and the pictures with a safe area are off the grid by design and work as anywhere.
 
-The last column of a page is only balanced when the page flows naturally into the next one — a chapter's closing page legitimately ends short. Such a page, and a closing band cut level by `trailing`, also keeps its column heads level: no line is added under a figure or table heading one of its columns (the after-float lever), and a heading or a box that opens a column under such a figure stays at its head, whatever `stretchAfterFloats` says, so a column never starts lower than the one beside it just to line the feet up.
+The last column of a page is only balanced when the page flows naturally into the next one — a chapter's closing page legitimately ends short. Such a page, and a closing band cut level by `trailing`, also keeps its column heads level: no line is added under a figure or table heading one of its columns (the after-float lever), and a heading or a box that opens a column under such a figure stays at its head, whatever `stretchAfterFloats` says, as does the heading set right under a `span: 'page'` opener in the opener's own column, so a column never starts lower than the one beside it just to line the feet up.
 
 <table>
   <thead>
@@ -1039,6 +1097,12 @@ The last column of a page is only balanced when the page flows naturally into th
       <td>Maximum extra grid lines that may be added above a single heading.</td>
     </tr>
     <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Grid lines a heading may take before the levers after it are tried: the list ends, the formulas and boxes, the figures and the loose paragraphs. A heading gets its further lines, up to <code>maxLinesPerHeading</code>, only when those have nothing left to give, so a page with one heading does not open four lines above it while its paragraphs could run a line long. A value at or above <code>maxLinesPerHeading</code> gives the headings all their lines first, as up to postext 1.27; <code>0</code> tries the other levers before any line goes above a heading. Since postext 1.28; documents stored earlier keep the old order (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
@@ -1051,16 +1115,28 @@ The last column of a page is only balanced when the page flows naturally into th
       <td>Maximum extra grid lines after a single list end.</td>
     </tr>
     <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Allow one extra grid line under a display formula, and under a callout box, in the short column, after the list-end lever: the block after it moves down a line. Set it to <code>false</code> to leave the space under formulas and boxes as their own margins set it; the gap goes on to the levers after this one, and the column ends short if they do not close it. Since postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Allow extra grid lines under a figure or table that heads the short column (a top float), after the list-end lever, so the text below it moves down instead of the column ending short. Never on a page that does not flow on (a chapter's closing page) nor in a closing band cut level by <code>trailing</code>: there the column heads stay level and the last column may end a line short. The first block under the figure may be the rest of a paragraph begun on the page before: it moves down all the same, by the line the break rules left free at the column's foot (a line the widow rule kept empty, or a paragraph space with no room for text after it). Set it to <code>false</code> to keep the text right under the figure.</td>
+      <td>Allow extra grid lines under a figure or table that heads the short column (a top float), after the list-end lever, so the text below it moves down instead of the column ending short. Never on a page that does not flow on (a chapter's closing page) nor in a closing band cut level by <code>trailing</code>: there the column heads stay level and the last column may end a line short. The first block under the figure may be the rest of a paragraph begun on the page before: it moves down all the same, by the line the break rules left free at the column's foot (a line the widow rule kept empty, or a paragraph space with no room for text after it). Set it to <code>false</code> to keep the text right under the figure. Under a float over several columns the columns move together or not at all, see <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Maximum extra grid lines under a single top float.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Under a figure or table that stands over two or more text columns. With <code>'flush'</code> a column moves down under it only when every text column under the float takes the same lines, so their heads stay level, or when the lines end that column flush; a line that would lower one column's head and still leave it short is not added, and the gap goes on to the loose paragraphs. <code>'always'</code> stretches such a column as under any float, as up to postext 1.27. Any other value reads as <code>'flush'</code>. Since postext 1.28; documents stored earlier keep <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>
@@ -1091,6 +1167,12 @@ The last column of a page is only balanced when the page flows naturally into th
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Level the closing band of a chapter and of the document: when the flow ends before the page is full (at a chapter opener, a <code>:::part</code>, a chapter-closing <code>placement: 'fixed'</code> box or the end of the document) with its columns uneven, they are cut level — a band cap of <code>ceil(Σ used / N / grid)</code> lines, resolved after the levers above have settled the earlier pages — so a short bibliography ends at the same height in every column instead of filling the first column and leaving the last one half empty. The cut keeps the rules an uncut band keeps: when a block that cannot split across it (a paragraph tail the orphan and widow minimums keep whole, a keep-together box) would run past it — and lose its last lines, since the renderers clip a column to its box — or a heading would close a column while its text opens the next (with <code>headings.keepWithNext</code>, the default), the cut is taken a line lower, up to three times, and otherwise dropped. A block that cannot start in the lines the cut leaves under a figure heading a column (a paragraph needs its orphan minimum there) goes on to the next column of the band instead, as it would from an uncut column, and the figure stands alone in its column. Columns whose feet differ by one grid line or less are left as they are: a closing band whose last column ends a line short is the usual finish, and cutting it would only move a line. The cut goes to the band it was measured in, and so does the cut a page-span box asks for mid-page: up to postext 1.4, when the first text of the closing page had first been offered to a band with no room for it (a page a float takes whole, the thin band a page-span box leaves at the foot of the page before), the cut was spent on that band and the closing page kept every line in its first column. Columns of different widths (a one-and-a-half layout with text in both) are cut by area, each column's height weighted by its width, since a line of the narrow column holds less of the text. Only active when <code>enabled</code> is true.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>The unit of the level cut <code>trailing</code> takes (and of the cut <code>beforeSpan</code> takes behind a box that moves on). <code>'lines'</code>: a band whose text is set on a leading of its own (an index, a list of references, a container of small type) is cut, and retried, by whole lines of that leading: the height most lines of the band share, headings and boxes aside. Its columns then end within a line of each other, as a band of body text does. A band of body text, and one that mixes two leadings in equal parts, is cut on the baseline grid as before. So is a band whose lines share a height and stand a fraction of a line apart (references with a gap between entries, index groups on a hand-set margin): four lines in five of each column must be a whole number of lines from one another. <code>'grid'</code>: every cut is a whole number of baseline-grid lines, as up to postext 1.27, where a cut on the grid let one line more into a column of an off-grid band and a failed cut was lowered by more than one of its lines (columns up to three lines apart). Any other value reads as <code>'lines'</code>. Since postext 1.28; documents stored earlier keep <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
     </tr>
     <tr>
       <td><code>beforeSpan</code></td>
@@ -1266,7 +1348,7 @@ Per-level overrides support the same properties as the general defaults — `fon
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Tracking after every glyph of the heading — spaces and the numbering prefix included — as CSS <code>letter-spacing</code>. Positive spreads the letters (capitals set with <code>textTransform: 'uppercase'</code> usually want a little: <code>&#123; value: 0.12, unit: 'em' &#125;</code>), negative tightens a display size. An <code>em</code> value is relative to the level's <code>fontSize</code>. The heading's lines are measured with it, so they wrap where the tracked text ends, and canvas, HTML and PDF paint it the same. A centred or right-aligned line is placed by its letters: the tracking after its last glyph is left out, as in design text, so a centred heading lines up with the default opener of a <code>span: 'page'</code> heading. A level drawn from its <code>advancedDesign</code> ignores it, like the other typography fields here: each design text element has its own <code>letterSpacing</code>. A <a href="/en/docs/configuration-styles#heading-styles">heading style</a> sets it too, for the headings that use it. Up to postext 1.4 headings had no tracking, and the key was dropped without a word.</td>
+      <td>Tracking after every glyph of the heading — spaces and the numbering prefix included — as CSS <code>letter-spacing</code>. Positive spreads the letters (capitals set with <code>textTransform: 'uppercase'</code> usually want a little: <code>&#123; value: 0.12, unit: 'em' &#125;</code>), negative tightens a display size. An <code>em</code> value is relative to the level's <code>fontSize</code>. The heading's lines are measured with it, so they wrap where the tracked text ends, and canvas, HTML and PDF paint it the same. Letter-spacing never changes the glyphs: the face's ligatures (fi, fl) stay, on every output. A centred or right-aligned line is placed by its letters: the tracking after its last glyph is left out, as in design text, so a centred heading lines up with the default opener of a <code>span: 'page'</code> heading. A level drawn from its <code>advancedDesign</code> ignores it, like the other typography fields here: each design text element has its own <code>letterSpacing</code>. A <a href="/en/docs/configuration-styles#heading-styles">heading style</a> sets it too, for the headings that use it. Up to postext 1.4 headings had no tracking, and the key was dropped without a word.</td>
     </tr>
     <tr>
       <td><code>lineSpan</code></td>
@@ -1931,15 +2013,15 @@ The `orderedLists` property controls numbered lists (`1.`, `2)`, etc.). Up to fi
     </tr>
     <tr>
       <td><code>numberWidth</code></td>
-      <td><code>'run' | 'level'</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
       <td><code>'run'</code></td>
-      <td>How wide the number column of an item is, which sets where its text starts; the numbers are set flush right in it. <code>'run'</code>: the widest number of the item's own run, the items of one depth with nothing but deeper items between them. A figure, a paragraph or a box between two items starts a new run, so <code>ii)</code> after a table can start its text a little further right than <code>i)</code> before it, and a list of nine items sets its text left of a list of twelve. <code>'level'</code>: the widest number at the item's depth in the whole document (the chapter, in a book), so every list, and every part of an interrupted one, starts its text at the same place, as the indents of the deeper levels already do.</td>
+      <td>How wide the number column of an item is, which sets where its text starts; the numbers are set flush right in it. <code>'run'</code>: the widest number of the item's own run, the items of one depth with nothing but deeper items between them. A figure, a paragraph or a box between two items starts a new run, so <code>ii)</code> after a table can start its text a little further right than <code>i)</code> before it, and a list of nine items sets its text left of a list of twelve. <code>'level'</code>: the widest number at the item's depth in the whole document (the chapter, in a book), so every list, and every part of an interrupted one, starts its text at the same place, as the indents of the deeper levels already do. <code>'item'</code>: the item's own number, so the text of each item starts one <code>gap</code> after its own label: <span lang="ja" className="font-body">第九條</span> and <span lang="ja" className="font-body">第十一條</span> are each followed by the same space and their texts start at different places, as the Japanese Official Gazette prints the articles of a law. Turnover lines follow <code>hangingIndent</code>: <code>false</code> returns them to the list's indent, <code>true</code> hangs them under the item's own text. The indent of a deeper level stays one value per level. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>numberAlign</code></td>
       <td><code>'end' | 'start'</code></td>
       <td><code>'end'</code></td>
-      <td>How a number sits in its column. <code>'end'</code>: against the text, so the numbers of a run end together and <code>9.</code> and <code>10.</code> line up on their full stops. <code>'start'</code>: at the start of the column (the left on a left-to-right page, the right on a right-to-left one, the head of the line in vertical text), so labels of different lengths begin together, as the articles of a statute do (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). The column keeps the width <code>numberWidth</code> gives it, so the text of the items starts at the same place either way; with a separator in a style of its own, the separator follows its number. Since postext 1.26.</td>
+      <td>How a number sits in its column. <code>'end'</code>: against the text, so the numbers of a run end together and <code>9.</code> and <code>10.</code> line up on their full stops. <code>'start'</code>: at the start of the column (the left on a left-to-right page, the right on a right-to-left one, the head of the line in vertical text), so labels of different lengths begin together, as the articles of a statute do (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). The column keeps the width <code>numberWidth</code> gives it, so the text of the items starts at the same place either way; with a separator in a style of its own, the separator follows its number. Since postext 1.26. Under <code>numberWidth: 'item'</code> the column is the number itself, so both values set the same list.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -2077,7 +2159,7 @@ interface MathConfig {
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
-      <td>How the display formulas that carry a <code>\label</code> are numbered (see <em>Numbered equations</em> below). <code>numberingTemplate</code>, <code>resetOn</code> and <code>counterFormat</code> work as a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers (2.1), (2.2)… by chapter, <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. <code>format</code> is the number as the formula and <code>\eqref</code> print it, <code>&#123;n&#125;</code> standing for the number: <code>'[&#123;n&#125;]'</code> sets [3]. <code>enabled: false</code> numbers nothing: a <code>\label</code> is dropped and a reference to it prints its page.</td>
+      <td>How the display formulas that carry a <code>\label</code> are numbered (see <em>Numbered equations</em> below). <code>numberingTemplate</code>, <code>resetOn</code> and <code>counterFormat</code> work as a resource type's: <code>'&#123;h1&#125;.&#123;n&#125;'</code> with <code>resetOn: 'h1'</code> numbers (2.1), (2.2)… by chapter, <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> with <code>'h2'</code> by section. <code>format</code> is the number as the formula and <code>\eqref</code> print it, <code>&#123;n&#125;</code> standing for the number: <code>'[&#123;n&#125;]'</code> sets [3]. <code>enabled: false</code> numbers nothing: a <code>\label</code> is dropped and a reference to it prints its page. A token takes a style after a colon too (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) in a lettered appendix).</td>
     </tr>
   </tbody>
 </table>

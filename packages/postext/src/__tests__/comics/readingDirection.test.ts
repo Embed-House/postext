@@ -4,7 +4,7 @@ import { resolveAllConfig } from '../../pipeline/config';
 import { comicReadingDirection, resolvedComics } from '../../defaults/comics';
 import { comicPageDirection } from '../../comics/layoutPage';
 import { comicsLocaleDirection } from '../../locale';
-import type { ComicsConfig, PostextConfig } from '../../types';
+import type { ComicsConfig, PostextConfig, Resource } from '../../types';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -106,5 +106,63 @@ describe('comics reading direction and binding by language (#593)', () => {
     const en = buildDocument({ markdown: md }, { page: { sizePreset: '17x24' }, locale: 'en', comics: western });
     expect(en.pages.find((p) => p.comic)!.comic!.direction).toBe('ltr');
     expect(en.binding).toBeUndefined();
+  });
+});
+
+// #727: `tail=left` and `tail=right` name a side of the panel's picture
+// as stored, so one script line is right in every edition of a comic;
+// `start` and `end` follow the reading direction of the page.
+describe('the side an off-panel tail runs to (#727)', () => {
+  // The keeper speaks from off the panel; his light is on the right of
+  // the picture.
+  const sea: Resource = {
+    id: 'sea', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+    bitmap: { fileId: 'sea', format: 'png', width: 1200, height: 800 },
+    anchors: [{ id: 'skipper', x: 0.28, y: 0.63 }],
+  };
+  /** The border the tail ends on, and whether the picture is mirrored. */
+  function tailOf(tail: string, direction: 'ltr' | 'rtl', o: { comics?: ComicsConfig; panel?: string } = {}) {
+    const markdown = `:::page{direction=${direction}}\n::panel${o.panel ?? '{art=sea}'}\ntomas{tail=${tail}}: Easy now. Bring her round slow.\n:::\n`;
+    const doc = buildDocument({ markdown, resources: [sea] }, { page: { sizePreset: '17x24' }, comics: o.comics ?? {} });
+    const comic = doc.pages.find((p) => p.comic)!.comic!;
+    const panel = comic.panels[0]!;
+    const tip = comic.balloons[0]!.tailTip!;
+    const side = Math.abs(tip.x - panel.bbox.x) < 1 ? 'left' : Math.abs(tip.x - panel.bbox.x - panel.bbox.width) < 1 ? 'right' : 'neither';
+    return { side, mirrored: panel.art?.mirrored === true, tip };
+  }
+  const mirroring: ComicsConfig = { artDirection: 'ltr', mirrorArt: true };
+
+  it('right is the right border on a left-to-right and on a right-to-left page, the picture as drawn', () => {
+    expect(tailOf('right', 'ltr')).toMatchObject({ side: 'right', mirrored: false });
+    expect(tailOf('right', 'rtl')).toMatchObject({ side: 'right', mirrored: false });
+    expect(tailOf('left', 'ltr').side).toBe('left');
+    expect(tailOf('left', 'rtl').side).toBe('left');
+  });
+
+  it('turns over with a mirrored picture', () => {
+    expect(tailOf('right', 'rtl', { comics: mirroring })).toMatchObject({ side: 'left', mirrored: true });
+    expect(tailOf('left', 'rtl', { comics: mirroring })).toMatchObject({ side: 'right', mirrored: true });
+    // One panel of a mirrored book kept as drawn.
+    expect(tailOf('right', 'rtl', { comics: mirroring, panel: '{art=sea mirror=false}' })).toMatchObject({ side: 'right', mirrored: false });
+    // And one panel mirrored by hand.
+    expect(tailOf('right', 'ltr', { panel: '{art=sea mirror}' })).toMatchObject({ side: 'left', mirrored: true });
+  });
+
+  it('is the page\'s right in a panel with no picture', () => {
+    expect(tailOf('right', 'rtl', { panel: '' }).side).toBe('right');
+    expect(tailOf('right', 'rtl', { comics: mirroring, panel: '' }).side).toBe('right');
+    expect(tailOf('left', 'ltr', { panel: '' }).side).toBe('left');
+  });
+
+  it('start and end keep following the page', () => {
+    expect(tailOf('end', 'ltr').side).toBe('right');
+    expect(tailOf('end', 'rtl').side).toBe('left');
+    expect(tailOf('start', 'rtl').side).toBe('right');
+    expect(tailOf('end', 'rtl', { comics: mirroring })).toMatchObject({ side: 'left', mirrored: true });
+  });
+
+  it('gives the tail start or end gave where the two name the same border', () => {
+    expect(tailOf('right', 'ltr').tip).toEqual(tailOf('end', 'ltr').tip);
+    expect(tailOf('right', 'rtl').tip).toEqual(tailOf('start', 'rtl').tip);
   });
 });

@@ -14,6 +14,14 @@ export type { ReadBundleOptions, ReadBundleResult, BundleMeta, BundleContent, Bu
 export { openBundleZip, zipBundle, POSTEXT_EXTENSION, POSTEXT_MIME, MANIFEST_FILE } from './zip';
 export type { OpenedBundleZip, ZipBundleOptions } from './zip';
 export { CONFIG_VERSION, LEGACY_MATH_SIZE, migrateConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats, pinLegacyTitleBreaks, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking } from './configVersion';
+export { pinLegacyIndexGroupSplit, pinLegacyLooseOrder, pinLegacyTrailingStep, pinLegacyWideFloatStretch } from './configVersion';
+export { pinLegacyGridBreakRules } from './configVersion';
+export { pinLegacyNoteBreaks } from './configVersion';
+export { pinLegacyLatinSpacingEdge } from './configVersion';
+export { pinLegacyInlineCaptionSide } from './configVersion';
+export { pinLegacyRefLabelBreaks } from './configVersion';
+export { pinLegacyScriptContext } from './configVersion';
+export { pinLegacyBalloonPlacement } from './configVersion';
 export type { MigrateConfigOptions } from './configVersion';
 export {
   isBundleManifest,

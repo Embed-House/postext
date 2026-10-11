@@ -104,7 +104,12 @@ export interface ResourcePlacement {
    *  a `oneAndHalf` layout (`layout.sideColumnRole: 'floats'`): the body
    *  keeps its column, the caption goes to the margin level with the
    *  figure's top (its bottom for a bottom float). A page without such a
-   *  column keeps the caption under the figure. Column floats only. */
+   *  column keeps the caption under the figure. For a column float, and
+   *  for a resource set where its `::resource` line stands (`position:
+   *  'here'`, #729, `layout.inlineCaptionSide`): there the caption stands
+   *  level with the body's top when the side column is free over its
+   *  band, else under the body. Not for a page-span or rotated resource,
+   *  one inside a box, or one text wraps round. */
   captionSide?: boolean;
   /** Scale a floated picture (bitmap, SVG, a video's poster) down, keeping
    *  its proportions, to the room a slot has, instead of moving it on
@@ -212,7 +217,11 @@ export interface ResourceType {
   /** Compact label used in inline references (e.g. "Fig."). */
   shortLabel: string;
   /** Template for the computed number. Placeholders: `{n}` (the counter),
-   *  `{h1}`..`{h6}` (current heading numbers). E.g. `'{h1}.{n}'`. `''`
+   *  `{h1}`..`{h6}` (current heading numbers). E.g. `'{h1}.{n}'`. A token
+   *  takes the style a heading template's does after a colon (#730):
+   *  `'{h1:A}.{n}'` prints "A.1" under a lettered appendix, `'{h1:I}.{n}'`
+   *  "II.3", and `{n:i}` wins over `counterFormat` for that token. Without
+   *  one a heading number is decimal and `{n}` follows `counterFormat`. `''`
    *  prints no number: the caption reads "Do. Caption" and a reference the
    *  label alone, though the counter still counts. */
   numberingTemplate: string;
@@ -555,6 +564,11 @@ export interface Resource {
   /** Regions of a comic panel's picture no balloon covers (a hand, a key
    *  object), in fractions of the picture. Only comic panels read them. */
   avoid?: ResourceSafeArea[];
+  /** The faces of people in a comic panel's picture who do not speak
+   *  (#726): no balloon covers them, at any fallback, as it covers no
+   *  speaker's `face`; a balloon that still does is reported. In fractions
+   *  of the picture. Only comic panels read them. */
+  faces?: ResourceSafeArea[];
   /** Optional per-resource placement override. When unset, the resource's
    *  type default (then `top` / `column`) applies. A `position` of `'top'` or
    *  `'bottom'` floats the resource to a band on the page near its first
@@ -1070,6 +1084,20 @@ export interface LayoutConfig {
    *  read with `false` when it sets a page-span heading (see
    *  `migrateConfig` in `postext/bundle`). */
   floatsUnderOpener?: boolean;
+  /** Floats on an opener page (#749): the page a part opens, the page a
+   *  heading opens with its own break (`breakBefore`, or a `span: 'page'`
+   *  heading that opens a page), and the first page of a document that
+   *  starts with a heading. A float is a figure, a table or a comic strip
+   *  with a floating placement, or a `:::callout` floated to the head or
+   *  foot (`placement: 'top' | 'bottom' | 'auto'`), in a column, across
+   *  the page or in the side column; an inline (`'here'`) resource, a
+   *  `'fixed'` box and a `span: 'side'` box are not. `'allow'` (the
+   *  default) sets floats there as on any page. `'warn'` lays the page out
+   *  the same and reports each float on it (an `openerFloat` content
+   *  warning). `'avoid'` keeps the opener page clear: a float that would
+   *  land there takes the first free slot after it, so the page holds the
+   *  opener and text alone. */
+  openerFloats?: CompositionRule;
   /** Where an inline resource (`placement.position: 'here'`, embedded with
    *  `::resource`) keeps the float gap, a line: `'around'` keeps it above
    *  and below the resource, and the text after it goes back onto the
@@ -1080,6 +1108,16 @@ export interface LayoutConfig {
    *  when its chapters embed a resource (see `migrateConfig` in
    *  `postext/bundle`). */
   inlineResourceGap?: InlineResourceGap;
+  /** Whether `placement.captionSide` acts on a resource set in the text
+   *  (`position: 'here'`) as it does on a column float (#729): its caption
+   *  and note go to the float-only side column of a `oneAndHalf` layout,
+   *  level with the top of the body, and the block in the text column is
+   *  as tall as the body alone. Default `true`. `false`: `captionSide`
+   *  acts on column floats only, as up to postext 1.27 (a `oneAndHalf`
+   *  configuration stored by an earlier version is read with `false` when
+   *  its chapters embed a resource, see `migrateConfig` in
+   *  `postext/bundle`). */
+  inlineCaptionSide?: boolean;
   /** Whether an inline resource inside a box (`:::callout`) keeps the gap
    *  {@link inlineResourceGap} sets, a line of the box's own text: above
    *  the resource, and below it with `'around'`, the larger of it and the
@@ -1166,7 +1204,9 @@ export interface ResolvedLayoutConfig {
   maxTopFraction: number;
   hugClosingFloats: boolean;
   floatsUnderOpener: boolean;
+  openerFloats: CompositionRule;
   inlineResourceGap: InlineResourceGap;
+  inlineCaptionSide: boolean;
   inlineResourceGapInBoxes: boolean;
   flowColumns: boolean;
   boxChildSplitMinLines: number;
@@ -1254,6 +1294,31 @@ export interface HyphenationConfig {
    *  and boxes; captions, notes, table cells and the contents keep dividing
    *  compounds. */
   compounds?: boolean;
+  /** Words the dictionary must not divide, or may divide only where the
+   *  entry says (#699), as in TeX's `\hyphenation{…}`. An entry is one word:
+   *  written without a hyphen (`'Alice'`) it is never divided; written with
+   *  hyphens (`'You-Tube'`) it is divided only at those points. It matches a
+   *  run of letters inside a word as written, so `(Alice,` and `Alice’s`
+   *  match `Alice` and a compound is matched part by part; an inflected form
+   *  is another entry. An entry in lower case matches the word in any case
+   *  (`'blender'` covers `Blender` and `BLENDER`); one with an initial
+   *  capital matches only the occurrences that start with a capital, so
+   *  `'Rose'` keeps the name whole and leaves `rose` to the dictionary. A
+   *  soft hyphen typed in an occurrence still decides that occurrence, and a
+   *  word wider than its whole measure is still divided. Applies wherever
+   *  the dictionary runs: body, headings, lists, boxes, captions, table
+   *  cells, notes, running heads and the other design text. Default none. */
+  exceptions?: string[];
+  /** Divide capitalised words like any other. Default `true`. `false`: the
+   *  dictionary adds no break inside a run of letters that starts with a
+   *  capital (`Alice`, `Ámsterdam`, `UNESCO`, the `Alembert` of
+   *  `d’Alembert`), the first word of a sentence included: InDesign's
+   *  "Hyphenate Capitalized Words" switched off, TeX's `\uchyph=0`. Of no
+   *  use in German, which capitalises every noun: name the words in
+   *  {@link exceptions}, or keep the cited authors whole with
+   *  `citations.hyphenateNames`. An entry of `exceptions` with points still
+   *  divides its word there. */
+  capitalized?: boolean;
 }
 
 export interface ResolvedHyphenationConfig {
@@ -1267,6 +1332,10 @@ export interface ResolvedHyphenationConfig {
   ragged: boolean;
   zone: Dimension;
   compounds: boolean;
+  /** The words of `HyphenationConfig.exceptions`, trimmed, checked, without
+   *  duplicates and sorted; absent when the document names none. */
+  exceptions?: string[];
+  capitalized: boolean;
 }
 
 /** `BodyTextConfig.kashida`. */
@@ -1433,6 +1502,41 @@ export interface BodyTextConfig {
    *  `pinLegacyHardBreaks`). Titles (`\\` in a heading), captions, notes
    *  and table cells break at `\\` either way. */
   hardLineBreaks?: boolean;
+  /** Shape a word with no letter (`46.`, `1367)`, `».`: digits,
+   *  punctuation or symbols alone) in the script of the text around it
+   *  (#725). Such a word has no script of its own, and a face may draw its
+   *  marks by script: Amiri sets a Latin full stop, brackets and guillemets
+   *  under Latin and Arabic ones otherwise, of other widths. Left alone,
+   *  each shaper picks a script by its own rule (one version of a browser
+   *  the font's default, the next Latin, the PDF the default), so a
+   *  document broke its lines otherwise from one browser to another and
+   *  its PDF set glyphs of another width in the measured places. With
+   *  this on, a word painted left to right takes the script of the nearest
+   *  letter before it in its isolate, else after it; one painted right to
+   *  left (a bracket or a full stop at a right-to-left level) the script
+   *  of the nearest right-to-left letter; with no letter near, the script
+   *  of the document's language. A piece with no letter of a word that
+   *  has one (`10.1006/` and `.2001` of a DOI that ends a line at its
+   *  joints, what a cut leaves of a word wider than its line) takes the
+   *  script it has inside the word. In a Chinese or Japanese document a
+   *  doubled ellipsis or dash (`……`, `——`) in a word with no letter is
+   *  the document's own mark, set in the forms of Han text whatever
+   *  sentence cites it. The layout measures it in that script
+   *  and says so on its segment (`VDTLineSegment.scriptContext`), and the
+   *  canvas, the HTML, the fixed-layout EPUB and the PDF paint those
+   *  forms at that width. It acts on Latin, Greek, Cyrillic, Arabic and
+   *  Hebrew contexts, and only in a face whose punctuation or digits
+   *  change with the script (asked once a face): every other face is laid
+   *  out and painted as before. It governs the running text, headings,
+   *  lists, captions, notes and table cells, and the leader of dots of a
+   *  contents entry (in the script of the document's language); in such a
+   *  face a right-to-left word is also measured as it is painted, right to
+   *  left, so a bracket or a stop at its edge takes one width in every
+   *  browser. Design text (running heads, openers), list markers, comic
+   *  lettering and paragraphs set by the CJK composer are not touched. Default `true`. `false` shapes such a word alone, as up
+   *  to postext 1.27 (configurations stored before `configVersion` 12
+   *  read with it, see `pinLegacyScriptContext` in `postext/bundle`). */
+  scriptContext?: boolean;
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
    *  it. A paragraph style or a callout body that sets its own replaces
@@ -1462,7 +1566,9 @@ export interface BodyTextConfig {
    *  attribute of the same name overrides the setting for its poem. */
   verse?: VerseConfig;
   /** When true, discourage a paragraph from ending with fewer than `orphanMinLines`
-   *  lines at the top of the next column. Soft (penalty-based). Default true. */
+   *  lines at the top of the next column. Soft (penalty-based). Default true;
+   *  false on a character grid (`cjk.grid`) in the Japan region, where a
+   *  page holds the lines its grid counts (#717, `avoidOrphansByDefault`). */
   avoidOrphans?: boolean;
   /** Minimum lines required at the top of the next column when a paragraph is split.
    *  Only effective when `avoidOrphans` is true. Default 2. */
@@ -1476,7 +1582,8 @@ export interface BodyTextConfig {
    *  Only effective when `avoidOrphans` is true. Default true. */
   avoidOrphansInLists?: boolean;
   /** When true, discourage a paragraph from starting with fewer than `widowMinLines`
-   *  lines at the bottom of the current column. Soft (penalty-based). Default true. */
+   *  lines at the bottom of the current column. Soft (penalty-based). Default true;
+   *  false on a character grid (`cjk.grid`, #717, `avoidWidowsByDefault`). */
   avoidWidows?: boolean;
   /** Minimum lines required at the bottom of the current column when a paragraph is
    *  split. Only effective when `avoidWidows` is true. Default 2. */
@@ -1487,6 +1594,25 @@ export interface BodyTextConfig {
   /** When true, list items also receive widow protection (not just paragraphs).
    *  Only effective when `avoidWidows` is true. Default true. */
   avoidWidowsInLists?: boolean;
+  /** A short list cut between two columns or pages (#749): one of up to
+   *  `shortListMaxItems` items, in the running text. `avoidOrphansInLists`
+   *  and `avoidWidowsInLists` keep the lines of one item together; this
+   *  rule keeps the items of one list together. `'allow'` (the default)
+   *  cuts such a list wherever the column ends, as any other. `'warn'`
+   *  lays it out the same and reports each list cut (a `shortListSplit`
+   *  content warning). `'avoid'` sets the list whole: when it does not fit
+   *  under what the column holds it opens the next column, the headings
+   *  right above it and the colon line that introduces it
+   *  (`keepColonWithList`) going with it. A float offered the foot of the
+   *  column the list stands whole in takes its next slot instead, and the
+   *  colon line counts the room a figure it cites will take there. A list
+   *  taller than an empty column is cut as any other, and reported. Lists inside a `:::callout`
+   *  follow the box's own cut rules, and the entries of `:::toc` and
+   *  `:::index` are not lists. */
+  shortListSplit?: CompositionRule;
+  /** The most items a list has to count as short for `shortListSplit`,
+   *  the items of its nested lists included. Default 3. */
+  shortListMaxItems?: number;
   /** Weight applied to the squared "unused column space" cost. Higher values make
    *  the layout prefer filling columns tightly; 0 disables the slack pressure.
    *  Default 10. */
@@ -1497,7 +1623,11 @@ export interface BodyTextConfig {
    *  Knuth–Plass. A Chinese, Japanese or Korean paragraph does not end on a
    *  line holding one character, alone or with its closing marks (孤字): the
    *  line above gives it its last character when that line can still be
-   *  justified within the tracking cap. Default true. */
+   *  justified within the tracking cap; a line set left, right or centred
+   *  gives it up too and stands one character short. On manuscript paper
+   *  (`cjk.grid.fullLines`, #718) only a justified line gives it up: the
+   *  others keep every cell and the paragraph may end on one character.
+   *  Default true. */
   avoidRunts?: boolean;
   /** Approximate minimum character count for the last line of a paragraph.
    *  Interpreted internally as `runtMinCharacters * normalSpaceWidth` pixels, so
@@ -1565,8 +1695,17 @@ export interface BodyTextConfig {
    *  A ragged paragraph set with `optimalRagged` is broken again the same
    *  way; its word spaces keep their width, so only its line ends move.
    *  Needs `optimalLineBreaking` (and `optimalRagged` for ragged text).
-   *  Running text only (not box bodies). */
-  hyphenateAcrossColumns?: boolean;
+   *  Running text only (not box bodies).
+   *
+   *  `'withinPage'` (#701) guards the lines that close a page and no
+   *  other: a word may be divided between two columns of one page, and the
+   *  last line of a page ends on a whole word wherever the word-spacing
+   *  limits allow it. A column closes its page when the text that leaves it
+   *  goes on to another page (no later column of the page takes text: a
+   *  float-only side column does not, nor does a column the floats have
+   *  filled). It moves fewer lines than
+   *  `false`; in a single-column layout the two give the same lines. */
+  hyphenateAcrossColumns?: boolean | 'withinPage';
   /** The space under a `:::paragraphs` container that closes on a
    *  paragraph, between that paragraph and the block after it:
    *  - `'collapse'` (default): the larger of the style's `spaceBetween` and
@@ -1629,6 +1768,13 @@ export type TashkilMode = 'keep' | 'strip' | 'strip-vowels';
 /** The room kept for a list under the colon line that introduces it
  *  (`BodyTextConfig.colonListRoom`). */
 export type ColonListRoom = 'item' | 'line';
+
+/** How far a composition rule goes (`BodyTextConfig.shortListSplit`,
+ *  `LayoutConfig.openerFloats`, #749): `'allow'` leaves the rule off (the
+ *  layout is not changed and nothing is reported), `'warn'` leaves the
+ *  layout as it is and reports each case in
+ *  `VDTDocument.contentWarnings`, `'avoid'` applies the rule. */
+export type CompositionRule = 'allow' | 'warn' | 'avoid';
 
 /** How the space under a `:::paragraphs` container is worked out
  *  (`BodyTextConfig.paragraphContainerSpacing`). */
@@ -2054,6 +2200,9 @@ export interface ResolvedBodyTextConfig {
   breakAfterDashes: boolean;
   breakAfterHyphens: boolean;
   hardLineBreaks: boolean;
+  /** Present only when switched off (see
+   *  {@link BodyTextConfig.scriptContext}). */
+  scriptContext?: false;
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */
@@ -2069,6 +2218,8 @@ export interface ResolvedBodyTextConfig {
   widowMinLines: number;
   widowPenalty: number;
   avoidWidowsInLists: boolean;
+  shortListSplit: CompositionRule;
+  shortListMaxItems: number;
   slackWeight: number;
   avoidRunts: boolean;
   runtMinCharacters: number;
@@ -2079,7 +2230,7 @@ export interface ResolvedBodyTextConfig {
   maxRuntTracking: number;
   keepColonWithList: boolean;
   colonListRoom: ColonListRoom;
-  hyphenateAcrossColumns: boolean;
+  hyphenateAcrossColumns: boolean | 'withinPage';
   paragraphContainerSpacing: ParagraphContainerSpacing;
   /** `emphasis` resolved; absent when `*…*` is set in italics. */
   emphasis?: Exclude<EmphasisStyle, 'italic'>;
@@ -2702,6 +2853,13 @@ export interface ParagraphStyleConfig {
    *  that runs off the grid, or a group whose leading is its own. Inside a
    *  callout, which has no grid, it changes nothing. Default `true`. */
   snapToGrid?: boolean;
+  /** How the space under the `:::paragraphs` containers that name this
+   *  style is worked out (#715): `'collapse'` or `'add'`, with the meaning
+   *  of `bodyText.paragraphContainerSpacing`, in the running text and
+   *  inside a box. Unset, the document's. `'add'` on a style ends its
+   *  groups on the style's own space, with no line of paragraph spacing
+   *  under them, while the rest of the document keeps the default. */
+  containerSpacing?: ParagraphContainerSpacing;
   /** Letter case of the paragraphs: `'uppercase'` sets them in capitals,
    *  the words of a chip and the label of a `:ref` included.
    *  Length-preserving, so source maps stay 1:1: a character whose capital
@@ -2799,6 +2957,9 @@ export interface ResolvedParagraphStyleConfig {
   marginTop: Dimension;
   marginBottom: Dimension;
   snapToGrid: boolean;
+  /** Absent when the style sets none: its containers follow
+   *  `bodyText.paragraphContainerSpacing`. */
+  containerSpacing?: ParagraphContainerSpacing;
   textTransform: ParagraphTextTransform;
   /** Absent when the style sets none (the document's `cjk.wordBreak`). */
   wordBreak?: CjkWordBreak;
@@ -3213,8 +3374,9 @@ export interface CalloutNumberingConfig {
    *  prints the label with no number ("Proof."). Default: the style's id. */
   counter?: string | false;
   /** Template of the number: `{n}` (the counter) and `{h1}`..`{h6}`
-   *  (heading numbers), as a resource type's. Default `'{n}'`;
-   *  `'{h1}.{n}'` numbers by chapter (with `resetOn: 'h1'`). */
+   *  (heading numbers), as a resource type's, with the same style suffix
+   *  (`'{h1:A}.{n}'`, #730). Default `'{n}'`; `'{h1}.{n}'` numbers by
+   *  chapter (with `resetOn: 'h1'`). */
   numberingTemplate?: string;
   /** When the counter starts again at 1. Default `'never'`. */
   resetOn?: ResourceCounterReset;
@@ -3752,6 +3914,25 @@ export interface HeadingsConfig {
    *  tail, display math). A level overrides it with
    *  {@link HeadingLevelConfig.snapToGrid}. */
   snapToGrid?: boolean;
+  /** What a heading that snaps to the grid keeps of its space above when
+   *  it opens a column (at the page's head, or under a float that heads
+   *  the column), where its `marginTop` is dropped (#706):
+   *  - `'none'` (default): the whole space is dropped, the heading stands
+   *    on the column's first line, level with the head of the column
+   *    beside it, and the grid snap gives the part of a line it needs back
+   *    under the heading, so its text can stand further from it than
+   *    after a paragraph.
+   *  - `'remainder'`: the space is dropped in whole grid lines only. The
+   *    part of a line that is left stays above the heading, so the text
+   *    under it starts at the distance it starts at under the same heading
+   *    set after a paragraph. The heading no longer stands on the column's
+   *    first line; no line of body text moves. For a book in one column,
+   *    where no column head beside it shows the difference.
+   *  Any other value reads as `'none'`. `'remainder'` does not apply under
+   *  a page-span opener band, nor to a `span: 'page'`, `lineSpan` or hidden
+   *  heading, nor to one painted from its `advancedDesign` (its band is
+   *  the design's). */
+  columnHeadSpace?: ColumnHeadSpace;
   /** Vertical column balancing — editorial bottom alignment. When a column
    *  ends short of its bottom, extra baseline-grid lines are added above the
    *  column's headings so every column ends flush with the page bottom.
@@ -3785,11 +3966,28 @@ export interface ColumnBalancingConfig {
   enabled?: boolean;
   /** Maximum extra grid lines that may be added above a single heading. */
   maxLinesPerHeading?: number;
+  /** Grid lines a heading may take before the levers after it are tried
+   *  (#707): each heading of a short column takes up to this many, then the
+   *  list ends, the displays, the float bands and the loose paragraphs take
+   *  what they can, and a heading gets its further lines, up to
+   *  `maxLinesPerHeading`, only when those have nothing left to give. A
+   *  value at or above `maxLinesPerHeading` gives the headings all their
+   *  lines first, as up to postext 1.27; `0` tries the other levers before
+   *  any line goes above a heading. Default 2; configurations stored
+   *  earlier keep the old order (see `migrateConfig` in `postext/bundle`). */
+  maxLinesBeforeLoose?: number;
   /** Allow extra grid lines where a list/enumeration ends, when the column's
    *  headings cannot absorb the whole gap. Default true. */
   stretchAfterLists?: boolean;
   /** Maximum extra grid lines after a single list end. Default 1. */
   maxLinesAfterList?: number;
+  /** Allow one extra grid line under a display formula, and under a callout
+   *  box, in the short column (the block after it moves down a line), after
+   *  the headings and the list ends have been tried. `false` leaves the
+   *  space under formulas and boxes as their own margins set it: the gap
+   *  goes on to the levers after this one and the column ends short if they
+   *  do not close it (#710). Default true. */
+  stretchAfterDisplays?: boolean;
   /** Allow extra grid lines between a top float (figure / table band) and
    *  the text under it in the same column, after headings and list ends
    *  have been tried. Never on a page that does not flow on (a chapter's
@@ -3805,6 +4003,16 @@ export interface ColumnBalancingConfig {
   stretchAfterFloats?: boolean;
   /** Maximum extra grid lines under a single float band. Default 1. */
   maxLinesAfterFloat?: number;
+  /** Under a float that stands over two or more text columns (#708):
+   *  `'flush'` (default) moves a column down under it only when every text
+   *  column under the float takes the same lines, so their heads stay
+   *  level, or when the lines end that column flush; a line that would
+   *  lower one head and still leave its column short is not added.
+   *  `'always'` treats such a float as any other, as up to postext 1.27.
+   *  Any other value reads as `'flush'`. `stretchAfterFloats: false` turns
+   *  the lever off under every float. Configurations stored earlier keep
+   *  `'always'` (see `migrateConfig` in `postext/bundle`). */
+  stretchAfterWideFloats?: StretchAfterWideFloats;
   /** Last resort: re-break one paragraph per short column one line looser
    *  (TeX \looseness=+1), within the configured `bodyText.maxWordSpacing`.
    *  Requires `bodyText.optimalLineBreaking`. Default true. */
@@ -3833,6 +4041,22 @@ export interface ColumnBalancingConfig {
    *  grid line or less are left as they are: a last column a line short is
    *  the usual finish of a closing band. Default true. */
   trailing?: boolean;
+  /** The unit of the level cut of a closing band (`trailing`, and the cut
+   *  `beforeSpan` takes behind a box that moves on), #711:
+   *  - `'lines'` (default): a band whose text is set on a leading of its
+   *    own (an index, a list of references, a container of small type) is
+   *    cut, and retried, by whole lines of that leading: the height most
+   *    lines of the band share. A band of body text has the baseline
+   *    grid for its leading and is cut as before, and so is a band whose
+   *    lines share a height without standing whole lines apart (entries
+   *    with a gap between them, groups on a hand-set margin).
+   *  - `'grid'`: every cut is a whole number of baseline-grid lines, as up
+   *    to postext 1.27, which let a line more into one column of an
+   *    off-grid band and lowered a failed cut by more than one of its
+   *    lines.
+   *  Any other value reads as `'lines'`. Configurations stored earlier
+   *  keep `'grid'` (see `migrateConfig` in `postext/bundle`). */
+  trailingStep?: TrailingStep;
   /** Balance the band a page-span block leaves behind: when a `span: 'page'`
    *  callout does not fit under the current columns and has to move to the
    *  next page (or split, see `CalloutStyleConfig.keepTogether`), the
@@ -3871,6 +4095,15 @@ export interface ColumnBalancingConfig {
  *  (`ColumnBalancingConfig.closingBox`). */
 export type ClosingBoxLever = 'first' | 'last' | 'off';
 
+/** How the after-float lever of column balancing treats a float that stands
+ *  over several text columns (`headings.balancing.stretchAfterWideFloats`,
+ *  #708). */
+export type StretchAfterWideFloats = 'flush' | 'always';
+
+/** The unit of the level cut of a closing band
+ *  (`headings.balancing.trailingStep`, #711). */
+export type TrailingStep = 'lines' | 'grid';
+
 /** Whether the whole-line balancing levers run on a character grid
  *  (`ColumnBalancingConfig.gridLines`). */
 export type GridLinesLever = 'allow' | 'off';
@@ -3878,6 +4111,10 @@ export type GridLinesLever = 'allow' | 'off';
 /** How a paragraph kept with the heading above it splits at a column's foot
  *  (`HeadingsConfig.keepWithNextSplit`). */
 export type KeepWithNextSplit = 'rules' | 'fill';
+
+/** What a snapping heading keeps of its space above at a column's head
+ *  (`HeadingsConfig.columnHeadSpace`, #706). */
+export type ColumnHeadSpace = 'remainder' | 'none';
 
 export interface ResolvedHeadingsConfig {
   fontFamily: string;
@@ -3892,19 +4129,24 @@ export interface ResolvedHeadingsConfig {
   keepWithNextSpread?: boolean;
   keepWithNextSplit: KeepWithNextSplit;
   snapToGrid: boolean;
+  columnHeadSpace: ColumnHeadSpace;
   inlineMarks: boolean;
   balancing: {
     enabled: boolean;
     maxLinesPerHeading: number;
+    maxLinesBeforeLoose: number;
     stretchAfterLists: boolean;
     maxLinesAfterList: number;
+    stretchAfterDisplays: boolean;
     stretchAfterFloats: boolean;
     maxLinesAfterFloat: number;
+    stretchAfterWideFloats: StretchAfterWideFloats;
     looseParagraphs: boolean;
     maxLooseParagraphs: number;
     trackParagraphs: boolean;
     maxTracking: number;
     trailing: boolean;
+    trailingStep: TrailingStep;
     beforeSpan: boolean;
     closingBox: ClosingBoxLever;
     /** Present only when `'off'` (#632): every other configuration
@@ -4086,7 +4328,14 @@ export interface OrderedListsConfig {
    *  - `'level'`: the widest number at the item's depth in the whole
    *    document (the chapter, in a book), so every list and every part of
    *    an interrupted one starts its text at the same place, as the
-   *    indents of the deeper levels already do. */
+   *    indents of the deeper levels already do;
+   *  - `'item'` (#722): the item's own number, so the text of each item
+   *    starts one `gap` after its own label and 第九條 and 第十一條 are
+   *    each followed by the same space, their texts starting at different
+   *    places (the articles of a law in the Japanese Official Gazette).
+   *    Turnover lines follow `hangingIndent`: `false` returns them to the
+   *    list's indent, `true` hangs them under the item's own text. The
+   *    indent of a deeper level stays one value per level. */
   numberWidth?: OrderedListNumberWidth;
   /** How a number sits in its column (#682):
    *  - `'end'` (default): against the text, so `9.` and `10.` end
@@ -4095,7 +4344,10 @@ export interface OrderedListsConfig {
    *    page, the right on a right-to-left one, the head of the line in
    *    vertical text), so 第九條 and 第十一條 begin together. The column
    *    keeps its width ({@link numberWidth}): the text of the items still
-   *    starts at one place. */
+   *    starts at one place.
+   *
+   *  Under `numberWidth: 'item'` the column is the number itself, so the
+   *  two values set the same list. */
   numberAlign?: OrderedListNumberAlign;
   hangingIndent?: boolean;
   levels?: OrderedListLevelConfig[];
@@ -4113,7 +4365,7 @@ export interface OrderedListsConfig {
 
 /** The number column of an ordered list item
  *  (`OrderedListsConfig.numberWidth`). */
-export type OrderedListNumberWidth = 'run' | 'level';
+export type OrderedListNumberWidth = 'run' | 'level' | 'item';
 
 /** Where a number stands in the number column of an ordered list
  *  (`OrderedListsConfig.numberAlign`). */
@@ -4431,8 +4683,9 @@ export interface EquationNumberingConfig {
    *  and a reference prints the equation's page. */
   enabled?: boolean;
   /** Template of the number: `{n}` (the counter) and `{h1}`..`{h6}`
-   *  (heading numbers), as a resource type's. Default `'{n}'`;
-   *  `'{h1}.{n}'` numbers by chapter (with `resetOn: 'h1'`). */
+   *  (heading numbers), as a resource type's, with the same style suffix
+   *  (`'{h1:A}.{n}'`, #730). Default `'{n}'`; `'{h1}.{n}'` numbers by
+   *  chapter (with `resetOn: 'h1'`). */
   numberingTemplate?: string;
   /** When the counter starts again at 1. Default `'never'`. */
   resetOn?: ResourceCounterReset;
@@ -4575,6 +4828,16 @@ export interface CitationsConfig {
    *  (`bibliography.scope: 'chapter'`): the proceedings, the bulletin, the
    *  edited volume. */
   numbering?: 'book' | 'chapter';
+  /** Let the dictionary divide the names of the authors the document cites.
+   *  Default `true`. `false` (#699): the family names and the `literal`
+   *  names of every work of the references are never divided where they
+   *  start with a capital, in a citation, in the running text and in the
+   *  bibliography, so no line ends on `(Lup-`. Each name is read run of
+   *  letters by run of letters (`García-Márquez` gives two), and an author
+   *  called Baker does not keep `baker` whole. A bibliography cannot be
+   *  typed into `bodyText.hyphenation.exceptions`, and a German book cannot
+   *  use `hyphenation.capitalized: false`. */
+  hyphenateNames?: boolean;
   /** The list of works cited. */
   bibliography?: {
     /** Title printed above the list (a bold paragraph). Unset: the
@@ -4626,6 +4889,7 @@ export interface ResolvedCitationsConfig {
   collapseRanges: boolean;
   notes: 'footnote' | 'warichu';
   numbering: 'book' | 'chapter';
+  hyphenateNames: boolean;
   bibliography: {
     title?: string;
     scope: 'book' | 'chapter';
@@ -4658,6 +4922,16 @@ export interface CrossRefsConfig {
    *  `'default'`: a numbered heading by its label and number, an
    *  unnumbered one by its title, an anchor by its text. */
   defaultStyle?: 'default' | 'number' | 'title' | 'page';
+  /** Let a line break at the spaces of a reference whose label is words
+   *  (#702): the text of a `[words]{#id}` anchor, the title of a heading or
+   *  a box, a `text="…"` override. The label's spaces then take part in
+   *  justification like the others of the line, and the reference stays
+   *  one link. A label with a number or a page (`section 3.2`, `p. 112`,
+   *  `Fig. 1.7`, `Theorem 2`) never breaks, whatever space its template
+   *  holds. Default `true`. `false`: every label is one unbreakable word,
+   *  as up to postext 1.27; configurations stored before `configVersion`
+   *  12 read with it (see `pinLegacyRefLabelBreaks` in `postext/bundle`). */
+  breakLabels?: boolean;
 }
 
 /** {@link CrossRefsConfig} with every value resolved. */
@@ -4666,6 +4940,7 @@ export interface ResolvedCrossRefsConfig {
   section: string;
   page: string;
   defaultStyle: 'default' | 'number' | 'title' | 'page';
+  breakLabels: boolean;
 }
 
 /** Footnotes. A Japanese document (`locale: 'ja'`) resolves the fields it
@@ -4734,6 +5009,15 @@ export interface FootnotesConfig {
   color?: ColorValue;
   /** Alignment of the note text. Defaults to the body alignment. */
   textAlign?: TextAlignKeyword;
+  /** How the notes break their lines between Chinese, Japanese and Korean
+   *  characters (#705). Unset: the document's `cjk.wordBreak`, as on a
+   *  paragraph style. `'keep-all'` keeps a run of such characters whole, so
+   *  a book whose body breaks between any two characters can keep the
+   *  short quotations of its Latin notes whole without word joiners;
+   *  `'normal'` breaks the notes of a `keep-all` document between
+   *  characters. Notes at the foot of the column, at the end of the
+   *  chapter and beside a spread take it. */
+  wordBreak?: CjkWordBreak;
   /** Indent of the turnover lines of a note, so they align past its
    *  number. Default `0` (the lines run flush under the number). */
   hangingIndent?: Dimension;
@@ -4773,6 +5057,8 @@ export interface ResolvedFootnotesConfig {
   lineHeight: Dimension;
   color?: ColorValue;
   textAlign?: TextAlign;
+  /** Set only when the notes take a rule of their own. */
+  wordBreak?: CjkWordBreak;
   hangingIndent: Dimension;
   /** Set when it is `'em'`. */
   numberGap?: 'em';
@@ -4934,6 +5220,11 @@ export interface CjkConfig {
    *  before characters are spread, and shrinks down to ⅛ em when the line
    *  takes one more character. */
   latinSpacing?: Dimension;
+  /** Which side of a Western word takes `latinSpacing` (#721, see
+   *  {@link CjkLatinSpacingEdge}). `'auto'` (the default): `'western'` in
+   *  the Japan region, `'letters'` elsewhere. An unknown value reads as
+   *  `'auto'`. */
+  latinSpacingEdge?: 'auto' | CjkLatinSpacingEdge;
   /** Tate-chu-yoko (縱中橫) in vertical text: a number of at most this many
    *  ASCII digits is set side by side in one upright cell (`2026年9月28日`:
    *  `9` and `28` upright, `2026` sideways). `0` turns it off; default
@@ -5116,6 +5407,16 @@ export interface CjkWarichuConfig {
    *  own `open` / `close` attributes win. */
   open?: string;
   close?: string;
+  /** How many characters of a note a line break leaves on either side of
+   *  it at least (#720): a note that runs over a line end never leaves one
+   *  of its characters alone at the end of a line or at the head of the
+   *  next, so no column or page opens on a single small character and its
+   *  stop. A character is a CJK character, a Western word or an inline
+   *  box; marks and the note's word spaces do not count. A note of fewer
+   *  than twice the number is never divided; a line with no other break
+   *  falls back on the breaks the level allows. Default 2; `1` lets a line
+   *  break anywhere in a note the level allows, as up to postext 1.27. */
+  minChars?: number;
 }
 
 /** Where the 返り点 of a kanbun text go (see {@link CjkKuntenConfig}):
@@ -5169,6 +5470,7 @@ export interface ResolvedCjkWarichuConfig {
   color?: ColorValue;
   open: string;
   close: string;
+  minChars: number;
 }
 
 /** Punctuation width styles (clreq §6.3.2.1): each full-width mark is
@@ -5216,6 +5518,22 @@ export type CjkParagraphStartBracket = 'indent' | 'half' | 'flush';
  *    line is broken inside it anyway, where `normal` would break it. */
 export type CjkWordBreak = 'normal' | 'keep-all';
 
+/** Where a Western word takes the Han–Latin space (`cjk.latinSpacingEdge`):
+ *  - `letters` (clreq §6.3.3, CSS `text-autospace`): on a side that ends
+ *    in a letter or a digit, so `abc関数` takes it and `normalize()関数`
+ *    does not;
+ *  - `western` (JLReq §3.2.6: the space stands between Japanese text and
+ *    Western characters, the marks of a Western word among them, §3.9.2):
+ *    a Western word that holds a letter or a digit takes it on a side that
+ *    ends in a bracket or a sign too, so `normalize()関数`, `(abc)関数`,
+ *    `A+関数` and `100%関数` are set like `abc関数`. Two sides stay solid,
+ *    where the mark binds to what follows or precedes it: after an opening
+ *    bracket or a prefix sign that ends the word (`abc(関数`), and before
+ *    a closing bracket, a pause, a stop or a postfix sign that opens it
+ *    (`関数)abc`). A bracket or a sign with no letter or digit in its word
+ *    (`関数(かんすう)は`) stands in Japanese context and takes none. */
+export type CjkLatinSpacingEdge = 'letters' | 'western';
+
 /** The character grid of `cjk.grid`: the type area is derived from the
  *  body size, not authored as margins. Each column is `charsPerLine` ems
  *  wide and holds `linesPerPage` lines of the body's line height; with two
@@ -5234,6 +5552,16 @@ export interface CjkGridConfig {
   linesPerPage?: number;
   /** Draw the grid (稿纸) over the type area on screen. Default `false`. */
   show?: boolean;
+  /** Manuscript paper (原稿用紙), where every square of a full line is
+   *  written in: a paragraph that is not justified keeps its full lines
+   *  full, so the runt rule (`bodyText.avoidRunts`) carries no character
+   *  down from a line it cannot spread, and such a paragraph may end on
+   *  one character. A justified paragraph still gives the character up,
+   *  its line spread to the measure. Default `false`: a paragraph does
+   *  not end on a single character (clreq §7.1.2, 孤字不成行; JLReq §3.5.4
+   *  takes the same care), and the line above it stands one cell short
+   *  when it is not justified (#718). */
+  fullLines?: boolean;
 }
 
 export interface ResolvedCjkGridConfig {
@@ -5244,6 +5572,8 @@ export interface ResolvedCjkGridConfig {
   /** The lines per column in use; 0 when off. */
   linesPerPage: number;
   show: boolean;
+  /** `false` when the grid is off. */
+  fullLines: boolean;
 }
 
 export interface ResolvedCjkConfig {
@@ -5270,6 +5600,7 @@ export interface ResolvedCjkConfig {
   /** Set (false) only when off: absent, CJK design text is composed. */
   composeDesignText?: false;
   latinSpacing: Dimension;
+  latinSpacingEdge: CjkLatinSpacingEdge;
   uprightDigits: 0 | 2 | 3 | 4;
   grid: ResolvedCjkGridConfig;
   emphasis: CjkEmphasis;
@@ -5366,6 +5697,58 @@ export interface ResolvedPrintPreflightConfig {
   safeZone: Dimension;
   bleedSnap: Dimension;
   checkFonts: boolean;
+}
+
+/** The conformance level a contrast ratio is held to (WCAG 2): `'AA'`
+ *  asks 4.5:1 of text and 3:1 of large text, `'AAA'` 7:1 and 4.5:1. */
+export type ContrastLevel = 'AA' | 'AAA';
+
+/** Which rendition the contrast check reads: `'screen'` (the sRGB colours,
+ *  as the canvas, the HTML and an RGB PDF show them), `'print'` (the inks
+ *  on the paper of the output profile), `'both'`, or `'auto'`: the screen
+ *  always, and print as well for a book set up for print (a PDF/X
+ *  standard, a CMYK PDF, or crop marks). */
+export type ContrastMode = 'auto' | 'screen' | 'print' | 'both';
+
+/** Reversed text (light text knocked out of an inked ground) fills in on
+ *  press when it is small or its strokes are thin, whatever its contrast
+ *  ratio: the sizes under which the print check reports it. */
+export interface ContrastReversedTextConfig {
+  /** Report reversed text. Defaults to true. */
+  enabled?: boolean;
+  /** Reversed text smaller than this is reported. Defaults to 8 pt. */
+  minSize?: Dimension;
+  /** The same for italics and light weights, whose strokes are thinner.
+   *  Defaults to 12 pt. */
+  minFineSize?: Dimension;
+  /** A weight at or under this counts as light. Defaults to 300. */
+  lightWeight?: number;
+}
+
+export interface ResolvedContrastReversedTextConfig {
+  enabled: boolean;
+  minSize: Dimension;
+  minFineSize: Dimension;
+  lightWeight: number;
+}
+
+/** The contrast check (`contrastDocument`): the text of the laid-out pages
+ *  against the ground it is set on. Layout ignores it. */
+export interface ContrastConfig {
+  /** Run the check. Defaults to true. */
+  enabled?: boolean;
+  /** Defaults to `'AA'`. */
+  level?: ContrastLevel;
+  /** Defaults to `'auto'`. */
+  mode?: ContrastMode;
+  reversedText?: ContrastReversedTextConfig;
+}
+
+export interface ResolvedContrastConfig {
+  enabled: boolean;
+  level: ContrastLevel;
+  mode: ContrastMode;
+  reversedText: ResolvedContrastReversedTextConfig;
 }
 
 /** An ICC output profile the user uploaded (their printer's), stored
@@ -6304,6 +6687,17 @@ export interface IndexGroupsConfig {
   /** Space above each group (letter head or not), except at the top of a
    *  column. Default one body line. */
   marginTop?: Dimension;
+  /** The fewest entries of a group left at the foot of a column, and the
+   *  fewest carried to the head of the next, when a column or a page ends
+   *  inside the group (#712). An entry is one entry block: a main entry or
+   *  a sub-entry, with the head and the page-less entries set above it. A
+   *  group too short to leave that many on each side moves whole to the
+   *  next column; one taller than a column is divided where it must be.
+   *  `1` lets a column end between any two entries, as up to postext 1.27.
+   *  A whole number of 1 or more. Default `2`; configurations stored
+   *  earlier whose text sets an index read with `1` (see `migrateConfig` in
+   *  `postext/bundle`). */
+  splitMinEntries?: number;
   /** Head of the entries that start with a symbol. Default `Symbols` /
    *  `Símbolos` in the document language. */
   symbolsLabel?: string;
@@ -6427,6 +6821,7 @@ export interface ResolvedIndexConfig {
     italic: boolean;
     color: ColorValue;
     marginTop: Dimension;
+    splitMinEntries: number;
     symbolsLabel?: string;
     numbersLabel?: string;
   };
@@ -6544,6 +6939,15 @@ export interface LetteringConfig {
   joinSameSpeaker?: 'butt' | 'connector' | 'none';
   /** Vertical lettering: the most characters in a column. Default `8`. */
   maxColumnChars?: number;
+  /** A balloon reshaped to fit its panel does not part a Chinese word to
+   *  do so (#728): each word its new lines cut, which its preferred shape
+   *  leaves whole, costs more than a balloon read out of order, so the
+   *  placement moves or reorders before it cuts 其|实. Japanese lettering
+   *  is not touched (its breaks go by phrases). Default `true`; `false`
+   *  letters as postext 1.27 did, which a configuration stored under
+   *  `configVersion` 11 or lower is read with when its text may hold a
+   *  comic (see `pinLegacyBalloonPlacement` in `postext/bundle`). */
+  strictPlacement?: boolean;
 }
 
 export interface ResolvedLetteringConfig {
@@ -6561,6 +6965,7 @@ export interface ResolvedLetteringConfig {
   inset: Dimension;
   joinSameSpeaker: 'butt' | 'connector' | 'none';
   maxColumnChars: number;
+  strictPlacement: boolean;
 }
 
 /** The outline of a balloon body. */
@@ -6880,6 +7285,9 @@ export interface PostextConfig {
 
   /** Print production: PDF/X, output profile, black, preflight. */
   print?: PrintConfig;
+
+  /** The contrast check: level, rendition, reversed text. */
+  contrast?: ContrastConfig;
 
   colorPalette?: ColorPaletteEntry[];
 

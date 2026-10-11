@@ -253,6 +253,24 @@ describe('where a dragged balloon would land (#580)', () => {
     expect(balloonKeepOut(panel(false, false), resource, 10)).toEqual({ faces: [], avoid: [] });
   });
 
+  it('counts the face of someone who does not speak as a face (#726)', () => {
+    const by = { x: 0.1, y: 0.2, width: 0.12, height: 0.2 };
+    const marked = balloonKeepOut(p, { ...resource, faces: [by] }, 10);
+    expect(marked.faces).toHaveLength(3);
+    expect(marked.avoid).toEqual(zones.avoid);
+    const f = marked.faces[2]!;
+    const corner = comicArtPointToPage(p.art!, by.x, by.y);
+    const far = comicArtPointToPage(p.art!, by.x + by.width, by.y + by.height);
+    expect(f.x).toBeCloseTo(Math.min(corner.x, far.x), 6);
+    expect(f.width).toBeCloseTo(Math.abs(far.x - corner.x), 6);
+    // A balloon dragged over it turns the warning colour, as over a speaker's.
+    const over = { x: f.x + f.width / 2 - 160, y: f.y + f.height / 2 - 230 };
+    expect(balloonDropIssues([b], over, p, zones).face).toBe(false);
+    expect(balloonDropIssues([b], over, p, marked).face).toBe(true);
+    // A picture with faces and no speakers.
+    expect(balloonKeepOut(p, { faces: [by] }, 10).faces).toHaveLength(1);
+  });
+
   it('flags a ghost over a face, over an avoid zone, or out of the panel', () => {
     expect(balloonDropIssues([b], { x: 0, y: 0 }, p, zones)).toEqual({ face: false, avoid: false, outside: false });
     const f = zones.faces[0]!;

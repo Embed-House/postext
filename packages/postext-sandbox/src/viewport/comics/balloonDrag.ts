@@ -331,10 +331,11 @@ export function ellipseExit(box: BoundingBox, target: VDTPoint): VDTPoint {
 // ---------------------------------------------------------------------------
 
 /** The regions of a panel no balloon should cover, on the page: the faces
- *  its picture marks, a guard over each speaker whose anchor marks none
- *  (the engine's: a few `em` round the mouth, mostly above it), and the
- *  picture's avoid zones. */
-export function balloonKeepOut(panel: Pick<VDTComicPanel, 'art'>, resource: Pick<Resource, 'anchors' | 'avoid'> | undefined, em: number): { faces: BoundingBox[]; avoid: BoundingBox[] } {
+ *  its picture marks (its speakers', and those of the people who do not
+ *  speak, `Resource.faces`, #726), a guard over each speaker whose anchor
+ *  marks none (the engine's: a few `em` round the mouth, mostly above it),
+ *  and the picture's avoid zones. */
+export function balloonKeepOut(panel: Pick<VDTComicPanel, 'art'>, resource: Pick<Resource, 'anchors' | 'avoid' | 'faces'> | undefined, em: number): { faces: BoundingBox[]; avoid: BoundingBox[] } {
   const art = panel.art;
   if (!art || !resource) return { faces: [], avoid: [] };
   const faces: BoundingBox[] = [];
@@ -352,6 +353,7 @@ export function balloonKeepOut(panel: Pick<VDTComicPanel, 'art'>, resource: Pick
     const y1 = Math.max(mouth.y, head.y) + 0.7 * em;
     faces.push({ x: x0, y: y0, width: x1 - x0, height: y1 - y0 });
   }
+  for (const r of resource.faces ?? []) faces.push(comicArtRectToPage(art, r));
   return { faces, avoid: (resource.avoid ?? []).map((r) => comicArtRectToPage(art, r)) };
 }
 

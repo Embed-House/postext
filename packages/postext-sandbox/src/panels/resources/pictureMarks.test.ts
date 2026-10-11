@@ -11,10 +11,10 @@ import { DEFAULT_LABELS } from '../../types/defaultLabels';
 import { SafeAreaField } from './SafeAreaEditor';
 import {
   addAnchor, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, applyMarks, firstAnchorIdProblem,
-  marksOf, nextAnchorId, normalizeMarks, nudge, removeMark, zoneAround, type PictureMarks,
+  addBystanderFace, marksOf, nextAnchorId, normalizeMarks, nudge, rectOf, removeMark, switchZone, withRect, zoneAround, type PictureMarks,
 } from './pictureMarks';
 
-const empty: PictureMarks = { anchors: [], avoid: [] };
+const empty: PictureMarks = { anchors: [], avoid: [], faces: [] };
 const close = (a: number, b: number) => expect(a).toBeCloseTo(b, 6);
 
 describe('speaker ids', () => {
@@ -110,6 +110,59 @@ describe('dragging and nudging', () => {
   });
 });
 
+// #726: the faces of the people who do not speak (`Resource.faces`),
+// edited in the Avoid zones mode beside the zones.
+describe('bystander faces', () => {
+  const picture: Resource = {
+    id: 'p1', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,
+    bitmap: { fileId: 'f1', width: 800, height: 600, format: 'jpeg' },
+  } as Resource;
+  const face = { x: 0.3, y: 0.2, width: 0.12, height: 0.2 };
+  const zone = { x: 0.6, y: 0.5, width: 0.2, height: 0.3 };
+
+  it('adds one around a point, moves it, resizes it and deletes it', () => {
+    const added = addBystanderFace(empty, { x: 0.5, y: 0.5 });
+    expect(added.faces).toEqual([zoneAround({ x: 0.5, y: 0.5 })]);
+    const target = { kind: 'bystander', index: 0 } as const;
+    expect(rectOf(added, target)).toEqual(added.faces[0]);
+    const moved = withRect(added, target, face);
+    expect(moved.faces).toEqual([face]);
+    expect(moved.avoid).toEqual([]);
+    // Dragged by its body, and nudged with the arrows like an avoid zone.
+    const dragged = applyDrag({ target, handle: 'move', start: moved, origin: { x: 0.35, y: 0.3 } }, { x: 0.45, y: 0.3 });
+    expect(dragged.faces[0]!.x).toBeCloseTo(0.4, 6);
+    expect(nudge(moved, target, 1, 0, false).faces[0]!.x).toBeCloseTo(0.31, 6);
+    expect(nudge(moved, target, 1, 0, true).faces[0]!.width).toBeCloseTo(0.13, 6);
+    expect(removeMark(moved, target).faces).toEqual([]);
+  });
+
+  it('switches a rectangle between an avoid zone and a face, and back', () => {
+    const start: PictureMarks = { ...empty, avoid: [zone, face], faces: [{ x: 0, y: 0, width: 0.1, height: 0.1 }] };
+    const toFace = switchZone(start, { kind: 'avoid', index: 1 });
+    expect(toFace.marks.avoid).toEqual([zone]);
+    expect(toFace.marks.faces).toEqual([{ x: 0, y: 0, width: 0.1, height: 0.1 }, face]);
+    expect(toFace.target).toEqual({ kind: 'bystander', index: 1 });
+    const back = switchZone(toFace.marks, toFace.target);
+    expect(back.marks.faces).toEqual([{ x: 0, y: 0, width: 0.1, height: 0.1 }]);
+    expect(back.marks.avoid).toEqual([zone, face]);
+    expect(back.target).toEqual({ kind: 'avoid', index: 1 });
+    // A target that is not there changes nothing.
+    expect(switchZone(start, { kind: 'bystander', index: 7 })).toEqual({ marks: start, target: { kind: 'bystander', index: 7 } });
+  });
+
+  it('is saved on the resource and read back, and leaves the key out when there is none', () => {
+    const saved = applyMarks(picture, { ...empty, faces: [face], avoid: [zone] });
+    expect(saved.faces).toEqual([face]);
+    expect(saved.avoid).toEqual([zone]);
+    expect(marksOf(saved)).toEqual({ safeArea: undefined, anchors: [], avoid: [zone], faces: [face] });
+    expect(applyMarks(saved, { ...marksOf(saved), faces: [] })).not.toHaveProperty('faces');
+    // The edited copy is apart from the stored one.
+    const m = marksOf(saved);
+    m.faces[0]!.x = 0.9;
+    expect(saved.faces![0]!.x).toBe(0.3);
+  });
+});
+
 describe('the safe area hint', () => {
   const area = { x: 0.2, y: 0.2, width: 0.6, height: 0.6 };
   it('flags a mouth or a head outside the safe area, never without one', () => {
@@ -130,9 +183,11 @@ describe('saving onto the resource', () => {
     const m = normalizeMarks({
       anchors: [{ id: ' ana ', x: 0.123456, y: 1.5, face: { x: 0.1, y: 0.1, width: 0.001, height: 0.2 } }],
       avoid: [{ x: 0.333333, y: 0, width: 0.2, height: 0.2 }, { x: 0.5, y: 0.5, width: 0, height: 0.1 }],
+      faces: [{ x: 0.123456, y: 0.2, width: 0.1, height: 0.15 }, { x: 0.5, y: 0.5, width: 0.1, height: 0.001 }],
     });
     expect(m.anchors).toEqual([{ id: 'ana', x: 0.1235, y: 1 }]);
     expect(m.avoid).toEqual([{ x: 0.3333, y: 0, width: 0.2, height: 0.2 }]);
+    expect(m.faces).toEqual([{ x: 0.1235, y: 0.2, width: 0.1, height: 0.15 }]);
   });
 
   it('writes anchors and avoid zones, and leaves the keys out when empty', () => {
@@ -141,7 +196,7 @@ describe('saving onto the resource', () => {
     expect(saved.anchors).toEqual([{ id: 'speaker1', x: 0.4, y: 0.6 }]);
     expect(saved.avoid).toEqual([{ x: 0, y: 0, width: 0.1, height: 0.1 }]);
     expect(saved).not.toHaveProperty('safeArea');
-    expect(marksOf(saved)).toEqual({ safeArea: undefined, anchors: saved.anchors, avoid: saved.avoid });
+    expect(marksOf(saved)).toEqual({ safeArea: undefined, anchors: saved.anchors, avoid: saved.avoid, faces: [] });
     const cleared = applyMarks(saved, empty);
     expect(cleared).not.toHaveProperty('anchors');
     expect(cleared).not.toHaveProperty('avoid');
@@ -163,7 +218,9 @@ describe('saving onto the resource', () => {
     const html = render({ ...picture, anchors: [{ id: 'ana', x: 0.5, y: 0.5 }], avoid: [{ x: 0, y: 0, width: 0.1, height: 0.1 }] });
     expect(html).toContain('Safe area &amp; lettering');
     expect(html).toContain('Speakers & avoid zones'.replace('&', '&amp;'));
-    expect(html).toContain('Speakers: 1 · Avoid zones: 1');
+    expect(html).toContain('Speakers: 1 · Avoid zones: 1 · Bystander faces: 0');
+    const crowd = render({ ...picture, faces: [{ x: 0.1, y: 0.1, width: 0.1, height: 0.2 }, { x: 0.6, y: 0.1, width: 0.1, height: 0.2 }] });
+    expect(crowd).toContain('Speakers: 0 · Avoid zones: 0 · Bystander faces: 2');
     const video = render({ id: 'v1', typeId: 'figure', kind: 'video', createdAt: 0, updatedAt: 0, video: { poster: { fileId: 'f2', width: 640, height: 360, format: 'jpeg' } } } as Resource);
     expect(video).toContain('Safe area');
     expect(video).not.toContain('lettering');

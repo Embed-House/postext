@@ -1,10 +1,11 @@
-import type { PreflightIssue, PreflightSeverity } from 'postext';
+import type { ContrastIssue, PreflightIssue, PreflightSeverity } from 'postext';
 /** Which design slot a warning points at. `level` tags heading slots;
  *  the part opener is a single slot. */
 export type WarningSlotKind = 'header' | 'footer' | 'heading' | 'part';
 
 export type WarningKind =
   | 'preflight'
+  | 'contrast'
   | 'missingFont'
   | 'missingFontFamily'
   | 'missingFontVariant'
@@ -12,6 +13,7 @@ export type WarningKind =
   | 'duplicateFontVariant'
   | 'looseLine'
   | 'cjkLooseLine'
+  | 'raggedLine'
   | 'unbreakableWordOverflow'
   | 'joiningScriptLetterSpacing'
   | 'cjkMarksExceedLeading'
@@ -93,6 +95,8 @@ export type WarningKind =
   | 'columnsTooNarrow'
   | 'afterText'
   | 'unplaced'
+  | 'shortListSplit'
+  | 'openerFloat'
   | 'codeOverflow'
   | 'floatShrunk'
   | 'unknownConfigKey'
@@ -139,6 +143,9 @@ export type WarningPayload =
     }
   | { kind: 'looseLine'; ratio: number; threshold: number }
   | { kind: 'cjkLooseLine'; text: string }
+  /** A justified line set ragged: its word spaces would have stretched to
+   *  `ratio` times their width (#732). */
+  | { kind: 'raggedLine'; text: string; ratio: number }
   | { kind: 'unbreakableWordOverflow'; text: string }
   | { kind: 'joiningScriptLetterSpacing'; text: string }
   | { kind: 'cjkMarksExceedLeading'; text: string; gapEm: number; neededEm: number }
@@ -383,6 +390,13 @@ export type WarningPayload =
   /** A box or a floated resource (`resourceId`) still waiting for a slot
    *  when the layout ended (#639): it is on no page. */
   | { kind: 'unplaced'; resourceId?: string }
+  /** A short list of `items` items cut between two columns or pages
+   *  (`bodyText.shortListSplit`, #749), its first item on book page
+   *  `page`. */
+  | { kind: 'shortListSplit'; page: number; items: number }
+  /** A figure, a table (`resourceId`) or a floated box set on an opener
+   *  page, book page `page` (`layout.openerFloats: 'warn'`, #749). */
+  | { kind: 'openerFloat'; page: number; resourceId?: string }
   /** A line number set in the side column overlaps a side box, caption or
    *  figure (#621); both are painted. `number` as printed. */
   | { kind: 'lineNumberOverlap'; number: string }
@@ -443,10 +457,17 @@ export type WarningPayload =
   | { kind: 'comicUnknownSpeaker'; speaker: string }
   /** A print preflight finding (#605): the engine's check, or what a
    *  placed PDF brings in. `page` is the book page number to jump to. */
-  | { kind: 'preflight'; check: PreflightCheck; page?: number };
+  | { kind: 'preflight'; check: PreflightCheck; page?: number }
+  /** A contrast finding (#748): text that does not read on its ground, or
+   *  reversed text too fine for the press. `page` is the book page number
+   *  of its first occurrence. */
+  | { kind: 'contrast'; check: ContrastCheck; page?: number };
 
 /** `Omit` over each member of a union. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+/** One contrast finding as the Checks panel lists it. */
+export type ContrastCheck = DistributiveOmit<ContrastIssue, 'rect' | 'sourceStart' | 'sourceEnd' | 'pageIndex'>;
 
 /** One preflight finding as the Checks panel lists it. */
 export type PreflightCheck =

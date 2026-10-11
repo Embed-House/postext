@@ -56,6 +56,52 @@ describe('stripConfigDefaults and the balancing default of the document (#651)',
       .toEqual({ balancing: { enabled: true, maxTracking: 40 } });
   });
 
+  it('keeps headings.columnHeadSpace \'remainder\' and drops \'none\', in every context (#706)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults({ ...context, headings: { columnHeadSpace: 'remainder' } }).headings, name).toEqual({ columnHeadSpace: 'remainder' });
+      expect(stripConfigDefaults({ ...context, headings: { columnHeadSpace: 'none' } }).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults({ headings: { columnHeadSpace: 'remainder' } })).headings.columnHeadSpace).toBe('remainder');
+    expect(resolveAllConfig({}).headings.columnHeadSpace).toBe('none');
+    expect(resolveAllConfig({ headings: { columnHeadSpace: 'above' as never } }).headings.columnHeadSpace).toBe('none');
+  });
+
+  it('keeps maxLinesBeforeLoose when it is not 2, in every context (#707)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { maxLinesBeforeLoose: 4 })).headings, name).toEqual({ balancing: { maxLinesBeforeLoose: 4 } });
+      expect(stripConfigDefaults(withBalancing(context, { maxLinesBeforeLoose: 2 })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { maxLinesBeforeLoose: 0 }))).headings.balancing.maxLinesBeforeLoose).toBe(0);
+  });
+
+  it('keeps trailingStep \'grid\' and drops \'lines\', in every context (#711)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { trailingStep: 'grid' })).headings, name).toEqual({ balancing: { trailingStep: 'grid' } });
+      expect(stripConfigDefaults(withBalancing(context, { trailingStep: 'lines' })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { trailingStep: 'grid' }))).headings.balancing.trailingStep).toBe('grid');
+    expect(resolveAllConfig({}).headings.balancing.trailingStep).toBe('lines');
+  });
+
+  it('keeps stretchAfterWideFloats \'always\' and drops \'flush\', in every context (#708)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterWideFloats: 'always' })).headings, name).toEqual({ balancing: { stretchAfterWideFloats: 'always' } });
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterWideFloats: 'flush' })).headings, name).toBeUndefined();
+    }
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { stretchAfterWideFloats: 'always' }))).headings.balancing.stretchAfterWideFloats).toBe('always');
+  });
+
+  it('keeps stretchAfterDisplays off and drops it on, in every context (#710)', () => {
+    for (const [name, context] of Object.entries(CONTEXTS)) {
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: false })).headings, name)
+        .toEqual({ balancing: { stretchAfterDisplays: false } });
+      expect(stripConfigDefaults(withBalancing(context, { stretchAfterDisplays: true })).headings, name).toBeUndefined();
+    }
+    const off = stripConfigDefaults(withBalancing({}, { stretchAfterDisplays: false }));
+    expect(resolveAllConfig(off).headings.balancing.stretchAfterDisplays).toBe(false);
+    expect(resolveAllConfig(stripConfigDefaults(withBalancing({}, { stretchAfterDisplays: true }))).headings.balancing.stretchAfterDisplays).toBe(true);
+  });
+
   it('keeps gridLines off, in every context', () => {
     for (const [name, context] of Object.entries(CONTEXTS)) {
       const config = withBalancing(context, { gridLines: 'off' });

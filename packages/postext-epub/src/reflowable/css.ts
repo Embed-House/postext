@@ -94,6 +94,12 @@ export interface CssRule {
   decls: string[];
 }
 
+/** Beside every `letter-spacing` (#703): letter-spacing never changes the
+ *  glyphs. A reading system turns the common ligatures off where the
+ *  letter-spacing is not zero; asked for as features they stay, as in the
+ *  print layout, the fixed-layout pages and the PDF. */
+const TRACKED_LIGATURES = "font-feature-settings: 'liga' 1, 'clig' 1";
+
 /** A rule from its declarations (the falsy ones left out); none when it
  *  declares nothing. */
 function rule(selector: string, decls: (string | false | undefined | null)[]): CssRule | '' {
@@ -155,8 +161,13 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     hyphens && '-epub-hyphens: auto',
     hyphens && '-webkit-hyphens: auto',
     body.fontWeight !== 400 && `font-weight: ${body.fontWeight}`,
-    body.avoidOrphans && `orphans: ${Math.max(1, body.orphanMinLines)}`,
-    body.avoidWidows && `widows: ${Math.max(1, body.widowMinLines)}`,
+    // CSS names the two rules the other way round (#717): `orphans` is
+    // the lines a paragraph keeps at the foot of a page (the engine's
+    // `avoidWidows`), `widows` the lines at the head of the next (its
+    // `avoidOrphans`). A rule that is off writes 1: the initial value of
+    // both properties is 2, so leaving one out would keep the rule.
+    `orphans: ${body.avoidWidows ? Math.max(1, body.widowMinLines) : 1}`,
+    `widows: ${body.avoidOrphans ? Math.max(1, body.orphanMinLines) : 1}`,
     'margin: 0',
     'padding: 0 1em',
     ...japaneseDecls(config.cjk),
@@ -211,6 +222,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       color(level.color),
       `text-align: ${ALIGN[headings.textAlign] ?? 'start'}`,
       level.letterSpacing.value !== 0 && `letter-spacing: ${em(level.letterSpacing, hPx)}`,
+      level.letterSpacing.value !== 0 && TRACKED_LIGATURES,
       level.textTransform === 'uppercase' && 'text-transform: uppercase',
       lineSpanMargin !== undefined
         ? `margin: ${round(lineSpanMargin / hPx)}em 0`
@@ -384,6 +396,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
         st.headerItalic ? 'font-style: italic' : reset && 'font-style: normal',
         st.headerTextTransform === 'uppercase' ? 'text-transform: uppercase' : reset && 'text-transform: none',
         st.headerLetterSpacing.value !== 0 ? `letter-spacing: ${round(px(st.headerLetterSpacing, cellPx) / cellPx)}em` : reset && 'letter-spacing: normal',
+        st.headerLetterSpacing.value !== 0 && TRACKED_LIGATURES,
         st.headerBackgroundEnabled ? color(st.headerBackground, 'background-color') : reset && 'background-color: transparent',
       ],
       extra,
@@ -467,6 +480,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       color(t.color),
       t.textTransform === 'uppercase' && 'text-transform: uppercase',
       t.letterSpacing.value !== 0 && `letter-spacing: ${round(px(t.letterSpacing, tPx) / tPx)}em`,
+      t.letterSpacing.value !== 0 && TRACKED_LIGATURES,
       `margin-block-end: ${round(px(t.gap, tPx) / tPx)}em`,
       'text-indent: 0',
     ]));

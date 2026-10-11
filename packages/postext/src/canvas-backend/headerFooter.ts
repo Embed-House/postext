@@ -10,6 +10,9 @@ import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock';
 import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText';
 import { segmentOrientation, type ForcedOrientation } from '../writingMode';
 import { paintRunInDirection, runPaintOrder } from './runDirection';
+import { fillTrackedWord } from './trackedText';
+import { hasCJK } from '../measure/cjk';
+import { markCuts } from '../measure/markCuts';
 
 /** Adds a rounded rectangle to the current path, as a closed subpath. */
 function traceRoundedRect(
@@ -125,7 +128,17 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
     ctx.lineWidth = stroke.widthPx;
   }
   const mode = stroke?.hollow ? 'stroke' : stroke ? 'fillStroke' : 'fill';
-  const paint = (text: string, x: number, y: number, orient?: ForcedOrientation) => fillFlowText(ctx, text, x, y, mode, undefined, 'text', orient);
+  const put = (text: string, x: number, y: number, orient?: ForcedOrientation) => fillFlowText(ctx, text, x, y, mode, undefined, 'text', orient);
+  // A tracked text keeps its ligatures, as it was measured (#703): one
+  // that would lose them to the letter-spacing is painted in pieces
+  // (`fillTrackedWord`), fill and outline alike, turned back as one run on
+  // a mirrored page. A vertical block's sideways runs do the same in the
+  // vertical painter; text whose CJK marks are painted apart stays as it
+  // was.
+  const paint = (text: string, x: number, y: number, orient?: ForcedOrientation): void => {
+    if (!tracked || verticalPaintActive() || (hasCJK(text) && markCuts(text, 'text').length > 0)) put(text, x, y, orient);
+    else fillTrackedWord(ctx, text, x, y, block.letterSpacingPx!, (piece, px, py) => put(piece, px, py, orient));
+  };
   // A vertical block (`VDTDesignTextBlock.vertical`) paints its lines in
   // its own frame, turned a quarter turn clockwise about the box's top
   // right corner, with the vertical painter on.
@@ -155,7 +168,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
       const runX = x + (run.inkOffset ?? 0);
       const runY = line.baselineY + (run.baselineShift ?? 0);
       if (run.inkScale === undefined) {
-        paintRunInDirection(ctx, run.rtl, () => paint(run.text, runX, runY, segmentOrientation(run)));
+        paintRunInDirection(ctx, run.rtl, () => paint(run.text, runX, runY, segmentOrientation(run)), run.text);
       } else {
         // A dash of a 破折号 (#652): stretched along the line from where
         // its glyph starts, and turned with the column down a vertical

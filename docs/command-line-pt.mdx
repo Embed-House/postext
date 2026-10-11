@@ -289,7 +289,9 @@ mostra: Markdown que não fecha, recursos, diretivas e estilos desconhecidos,
 boxes que a diagramação teve de forçar, fontes que faltam, configurações que o
 motor teve de substituir e, para um livro preparado para impressão (ou com
 `--preflight`), o preflight: imagens de baixa resolução, fios finos, texto
-pequeno em várias tintas, tinta acima do limite, texto perto do refile. Cada
+pequeno em várias tintas, tinta acima do limite, texto perto do refile. Também
+lista o texto que não se lê sobre o seu fundo (`contrast`), uma vez por par de
+cores, com a razão na tela e, para impressão, no papel do perfil de saída. Cada
 problema indica o arquivo do capítulo, a linha e a página. O código de saída é
 3 quando se encontra um erro, ou qualquer aviso com `--strict`.
 
@@ -348,6 +350,15 @@ Um peso ou uma inclinação que a família não traz é composto com a fonte mai
 próxima dela, como ela é, nas imagens de página e no PDF: uma família de
 letreiramento com um só peso mantém as próprias letras no negrito, e uma
 família sem itálico, as redondas.
+
+São baixados os pesos que a configuração nomeia: regular, negrito e seus
+itálicos para cada família, e qualquer outro peso que um ajuste indique,
+inclusive o do negrito (`bodyText.boldFontWeight: 600` pede a fonte de peso
+600). Quando um peso que a família traz não pôde ser carregado (offline e sem
+arquivo no cache, um download que falhou, uma pasta de fontes sem o arquivo),
+o texto é composto com a fonte mais próxima da família e `postext check` o
+lista como aviso `fontFallback`: as linhas podem quebrar de outro modo que no
+Sandbox.
 
 O cache fica em `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` no
 Windows); `POSTEXT_CACHE_DIR` ou `--cache-dir` o mudam de lugar. `--offline`
@@ -433,6 +444,7 @@ executável deste computador em `packages/postext-cli/bin/`.
   HTML do Sandbox recompõe o texto para a janela.
 - **`--chapters`** diagrama os capítulos isoladamente: a numeração das páginas
   recomeça, enquanto o Sandbox continua a numeração do livro.
-- **As fontes** vêm do livro, das suas pastas, do executável ou do Google
-  Fonts, nunca das fontes instaladas no computador, então um livro sai igual
-  em qualquer máquina.
+- **As fontes** vêm do livro, das suas pastas, do executável, do Google Fonts
+  ou da Fontsource (para uma família que o Google Fonts não tem), nunca das
+  fontes instaladas no computador, então um livro sai igual em qualquer
+  máquina.

@@ -886,6 +886,8 @@ export function createFolioFromDocument(container: HTMLElement, doc: VDTDocument
     getView: viewer.getView,
     setInteraction: viewer.setInteraction,
     setMagnification: viewer.setMagnification,
+    getMagnifier: viewer.getMagnifier,
+    holdMagnifier: viewer.holdMagnifier,
     pageAt: viewer.pageAt,
     pointOnScreen: viewer.pointOnScreen,
     setAppearance(next: FolioAppearance) {

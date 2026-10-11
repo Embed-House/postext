@@ -4,13 +4,12 @@ import { composeBookMemo } from '../book/compose';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { UploadCloud } from 'lucide-react';
-import type { Resource, ResourceKind, ResourceType, TableModel } from 'postext';
-import { defaultResourceTypes, defaultVideoResourceType } from 'postext';
+import type { Resource, ResourceKind, ResourceType } from 'postext';
+import { defaultResourceTypes } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { getBlob, putBlob } from '../storage/blobStore';
 import { ResourceList } from '../panels/resources/ResourceList';
 import { ResourceDetail } from '../panels/resources/ResourceDetail';
-import { uniqueSlug } from '../panels/resources/slugify';
+import { newResource, renameResource, typesWithVideo } from '../panels/resources/resourceEdits';
 import { uploadFiles } from '../panels/resources/uploadFiles';
 
 /** Escape a string for safe inclusion in a RegExp. */
@@ -24,28 +23,6 @@ function countReferences(markdown: string, id: string): number {
   const esc = escapeRegExp(id);
   const re = new RegExp(`(?:::resource|:ref)\\{[^}]*id="${esc}"`, 'g');
   return (markdown.match(re) ?? []).length;
-}
-
-/** Build a fresh, empty 2×2 table model for new table resources. */
-function emptyTableModel(): TableModel {
-  const cell = (isHeader: boolean) => ({ content: '', isHeader });
-  return {
-    headerRowCount: 1,
-    rows: [
-      [cell(true), cell(true)],
-      [cell(false), cell(false)],
-    ],
-  };
-}
-
-function newResource(kind: ResourceKind, typeId: string, existingIds: Set<string>): Resource {
-  const now = Date.now();
-  const base = kind === 'bitmap' ? 'image' : kind === 'svg' ? 'svg' : kind === 'video' ? 'video' : 'table';
-  const id = uniqueSlug(base, existingIds, base);
-  const resource: Resource = { id, typeId, kind, createdAt: now, updatedAt: now };
-  if (kind === 'table') resource.table = { model: emptyTableModel() };
-  if (kind === 'video') resource.video = { source: 'youtube' };
-  return resource;
 }
 
 interface ResourcesPanelProps {
@@ -95,8 +72,8 @@ export function ResourcesPanel({ isDark = true }: ResourcesPanelProps) {
   // Videos are numbered in a sequence of their own (#454): a book whose
   // types predate them gets the built-in Video type when it adds one.
   const videoTypeId = (): string => {
-    if (types.some((t) => t.id === 'video')) return 'video';
-    dispatch({ type: 'UPDATE_CONFIG', payload: { resourceTypes: [...types, defaultVideoResourceType(locale)] } });
+    const withVideo = typesWithVideo(types, locale);
+    if (withVideo) dispatch({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withVideo } });
     return 'video';
   };
 
@@ -162,63 +139,8 @@ export function ResourcesPanel({ isDark = true }: ResourcesPanelProps) {
   };
 
   const handleRename = (oldId: string, next: Resource) => {
-    // Renaming changes the keyed identity: drop the old record, add the new one.
-    // ResourceDetail only commits non-colliding ids, but guard here too.
-    if (next.id === oldId || resources.some((r) => r.id === next.id)) {
-      dispatch({ type: 'UPSERT_RESOURCE', payload: { ...next, id: oldId } });
-      return;
-    }
-
-    // The blob store keys records by id and the persistence layer cascade-
-    // deletes the old record's blob when the id disappears. To keep a renamed
-    // bitmap/SVG intact, copy its blob to a fresh fileId so the cascade deletes
-    // the now-orphaned original rather than the live payload.
-    if (next.video && (next.video.fileId || next.video.poster)) {
-      // A video's file and poster are copied the same way (#454).
-      const copy = (fileId: string | undefined) => (fileId
-        ? getBlob(fileId).then((record) => (record ? putBlob(record.bytes, record.contentType) : fileId))
-        : Promise.resolve(undefined));
-      const video = next.video;
-      Promise.all([copy(video.fileId), copy(video.poster?.fileId)])
-        .then(([fileId, posterId]) => ({
-          ...next,
-          video: { ...video, ...(fileId ? { fileId } : {}), ...(video.poster && posterId ? { poster: { ...video.poster, fileId: posterId } } : {}) },
-        }))
-        .catch(() => next)
-        .then((remapped) => {
-          dispatch({ type: 'DELETE_RESOURCE', payload: oldId });
-          dispatch({ type: 'UPSERT_RESOURCE', payload: remapped });
-          setSelectedId(remapped.id);
-        });
-      return;
-    }
-    const sourceFileId = next.bitmap?.fileId ?? next.svg?.fileId;
-    if (sourceFileId) {
-      getBlob(sourceFileId)
-        .then((record) => (record ? putBlob(record.bytes, record.contentType) : null))
-        .then((newFileId) => {
-          const remapped: Resource = newFileId
-            ? next.bitmap
-              ? { ...next, bitmap: { ...next.bitmap, fileId: newFileId } }
-              : next.svg
-                ? { ...next, svg: { ...next.svg, fileId: newFileId } }
-                : next
-            : next;
-          dispatch({ type: 'DELETE_RESOURCE', payload: oldId });
-          dispatch({ type: 'UPSERT_RESOURCE', payload: remapped });
-          setSelectedId(remapped.id);
-        })
-        .catch(() => {
-          dispatch({ type: 'DELETE_RESOURCE', payload: oldId });
-          dispatch({ type: 'UPSERT_RESOURCE', payload: next });
-          setSelectedId(next.id);
-        });
-      return;
-    }
-
-    dispatch({ type: 'DELETE_RESOURCE', payload: oldId });
-    dispatch({ type: 'UPSERT_RESOURCE', payload: next });
-    setSelectedId(next.id);
+    // ResourceDetail only commits non-colliding ids; the rename guards too.
+    void renameResource(oldId, next, resources, dispatch);
   };
 
   const handleDelete = () => {

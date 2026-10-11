@@ -23,7 +23,7 @@ my-book/
 ```jsonc
 {
   "version": 2,                        // 2 = book with chapters (1 = single "markdown" file, legacy)
-  "configVersion": 11,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
+  "configVersion": 12,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
                                        // bundle reads as 1.4: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
                                        // layout.inlineResourceGap 'above' when a chapter embeds a ::resource,
                                        // layout.inlineResourceGapInBoxes false when one sits inside a :::callout,
@@ -217,16 +217,17 @@ embeds them with `::resource{id="…"}` (placement `here`).
   `span` `column` | `page` | `side` (the float column of a `oneAndHalf` layout);
   `width` 0–1 + `align` (`align` also places a bitmap/SVG narrower than its slot,
   e.g. a small bitmap or one `fitFiguresToPage` shrank); `captionSide: true` (caption in the side column beside
-  a main-column figure); `rotate: "ccw"|"cw"` (landscape table/figure on its own
+  a main-column figure, floated or, ≥ 1.28, set `here`); `rotate: "ccw"|"cw"` (landscape table/figure on its own
   page, spine-flush; split between rows when too long). Missing fields fall
   back to the resource type's `defaultPlacement`, then `auto`/`column`.
 - A `here` resource that is only `:ref`'d and never `::resource`'d is numbered
   but never placed.
 - **Comic panel pictures** are bitmap or SVG resources placed by
   `::panel{art=id}` (never cited). Besides `safeArea` they carry `anchors`
-  (speaker mouths, heads, faces) and `avoid` zones, all in fractions of the
+  (speaker mouths, heads, faces), `avoid` zones and `faces` (the faces of
+  people who do not speak, postext ≥ 1.28), all in fractions of the
   picture and shared by every language; `preset_kit.bitmap(…, safe_area=,
-  anchors=, avoid=)` writes them. See comics.md §9.
+  anchors=, avoid=, faces=)` writes them. See comics.md §9.
 - **Videos**: numbered in their own sequence by the built-in `video` type
   (Video 1.1), added on its own to a `resourceTypes` list that lacks it. Without
   a poster they print a dark 16:9 box; an own file without `video.url` gets no
@@ -244,7 +245,7 @@ embeds them with `::resource{id="…"}` (placement `here`).
   `font-family` (postext ≥ 1.25). An `<img>` cannot see the page's fonts, so
   the engine embeds the faces the text names as `@font-face` data URIs when
   the picture is shown (canvas, HTML, EPUB): the bundle's own fonts first,
-  then registered or Google families. The PDF sets SVG `<text>` with the
+  then registered families and those of Google Fonts or Fontsource. The PDF sets SVG `<text>` with the
   document's embedded faces. No outlining, no hand-made `@font-face`; set
   `"inlineFonts": false` on an SVG resource that carries its own faces or
   must stay byte-identical. Checks: `svgFontUnavailable` (a family with no
@@ -267,8 +268,10 @@ embeds them with `::resource{id="…"}` (placement `here`).
 
 - `name` is what every `fontFamily` in the config references. Bundle **every**
   family the config uses (body, headings, callouts, captions, tables, lists,
-  design text, running heads): the browser can fetch Google Fonts for missing
-  names, but the PDF export and headless renders cannot.
+  design text, running heads). The Sandbox and the `postext` command line
+  fetch a missing family from Google Fonts, or from Fontsource when Google
+  Fonts does not have it; `render.mjs` downloads nothing, measures a missing
+  family with a stand-in face and embeds only bundled faces in its PDF.
 - Provide 400/700 normal + italic where the text uses them; semibold bold →
   add 600 and `bodyText.boldFontWeight: 600`.
 - `redistributable: false`: rendering and PDF embedding work, but a `.postext`
@@ -347,7 +350,7 @@ import { renderToPdf, decompressWoff2 } from 'postext-pdf';
 // Open: chapters, config (customFonts wired to the bundle's files), resources.
 const bundle = await openBundle(bytes, { locale: 'es' }); // Uint8Array | ArrayBuffer | Blob
 await loadBundleFonts(bundle);        // browser: FontFace for every bundled face (drops stale widths)
-// Google families the bundle names but does not carry: prepareFonts(chapters, bundle.config, { resolve })
+// Families the bundle names but does not carry (Google Fonts, or Fontsource): prepareFonts(chapters, bundle.config, { resolve })
 await registerBundleImages(bundle);   // canvas backend; bundleImageUrl(bundle) for renderToHtml
 const docs = buildBundle(bundle);     // one VDTDocument per chapter, chained like the Sandbox
 const pdf = await renderToPdf(docs, {

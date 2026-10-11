@@ -256,6 +256,14 @@ export const CitationsSection = memo(function CitationsSection() {
             />
           </>
         )}
+        <ToggleSwitch
+          label={labels.citationsHyphenateNames}
+          checked={c.hyphenateNames}
+          onChange={(v) => update({ hyphenateNames: v })}
+          tooltip={labels.citationsHyphenateNamesTooltip}
+          isDefault={c.hyphenateNames === D.hyphenateNames}
+          onReset={() => resetField('hyphenateNames')}
+        />
         {noteStyle && (
           <SelectInput
             label={labels.citationsNotes}

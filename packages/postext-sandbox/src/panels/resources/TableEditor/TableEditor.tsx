@@ -27,11 +27,12 @@ import type { InlineFocusRequest, InlineSelection } from '../../../controls/Inli
 import { TableEditorCell, type CellNav } from './TableEditorCell';
 import { TableEditorToolbar, type TableEditorImageOption } from './TableEditorToolbar';
 import { ColumnWidthsEditor } from './ColumnWidthsEditor';
+import { setHeaderRows, toggleHeaderColumn } from './headerCells';
 
 // ---------------------------------------------------------------------------
 // TableEditor — interactive grid editor for table resources. All model edits
-// go through the Phase-4 pure functions (plus a couple of local immutable
-// header helpers for the toggles those functions don't cover). Every committed
+// go through the Phase-4 pure functions (plus the immutable header helpers
+// of ./headerCells for the toggles those functions don't cover). Every committed
 // edit is pushed onto an undo snapshot stack; Cmd/Ctrl+Z and Shift+Cmd/Ctrl+Z
 // walk it. Keyboard navigation (Tab / Shift-Tab with row wrap, arrows) moves
 // the active cell.
@@ -59,45 +60,6 @@ interface TableEditorProps {
 
 const columnCount = (m: TableModel): number =>
   m.rows.reduce((max, row) => Math.max(max, row.length), 0);
-
-/** Clone a cell, returning a brand-new object (immutability). */
-const cloneCell = (c: TableCell): TableCell => ({ ...c });
-
-/**
- * Toggle whether the first `n` rows are header rows. Sets/clears `isHeader` on
- * the affected cells and updates `headerRowCount`. Pure: returns a new model.
- */
-function setHeaderRows(m: TableModel, headerRowCount: number): TableModel {
-  const count = Math.max(0, Math.min(headerRowCount, m.rows.length));
-  const rows = m.rows.map((row, r) =>
-    row.map((cell) => {
-      const next = cloneCell(cell);
-      if (r < count) next.isHeader = true;
-      else delete next.isHeader;
-      return next;
-    }),
-  );
-  return { ...m, rows, headerRowCount: count };
-}
-
-/**
- * Toggle whether column `col` is a header column by flipping `isHeader` on each
- * of its cells. Pure: returns a new model.
- */
-function toggleHeaderColumn(m: TableModel, col: number, on: boolean): TableModel {
-  const headerRows = m.headerRowCount ?? 0;
-  const rows = m.rows.map((row, r) =>
-    row.map((cell, c) => {
-      if (c !== col) return cell;
-      const next = cloneCell(cell);
-      // Header rows always stay header cells.
-      if (on || r < headerRows) next.isHeader = true;
-      else delete next.isHeader;
-      return next;
-    }),
-  );
-  return { ...m, rows };
-}
 
 /** Heuristic CSV/TSV → TableModel. Tabs win; otherwise commas are the split. */
 function parseDelimited(text: string): TableModel {

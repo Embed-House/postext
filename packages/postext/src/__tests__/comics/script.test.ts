@@ -130,6 +130,12 @@ describe(':::page block', () => {
     expect(items[1]).toMatchObject({ style: 'wisper', styleFlags: ['wisper'], join: false, break: true });
   });
 
+  it('reads the sides a tail may name, the picture\'s left and right among them (#727), and drops any other', () => {
+    const lines = ['none', 'auto', 'top', 'bottom', 'start', 'end', 'left', 'right', 'up', 'Left'].map((v) => `ana{tail=${v}}: Hi`);
+    const c = comicOf([':::page', '::panel', ...lines, ':::'].join('\n'));
+    expect(c.panels[0]!.items.map((i) => i.tail)).toEqual(['none', 'auto', 'top', 'bottom', 'start', 'end', 'left', 'right', undefined, undefined]);
+  });
+
   it('runs an unclosed page to the end of the text', () => {
     const md = ':::page\n::panel\nana: Hi';
     const c = comicOf(md);

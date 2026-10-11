@@ -1,5 +1,5 @@
 import type { BitmapResolution, Dimension, FloatShrinkConfig, FloatShrinkMode, LayoutConfig, LayoutType, ResolvedLayoutConfig, ResolvedTextWrapConfig, TextWrapConfig } from '../types';
-import { dimensionsEqual, colorsEqual } from './shared';
+import { dimensionsEqual, colorsEqual, compositionRuleOf } from './shared';
 
 export const DEFAULT_COLUMN_RULE = {
   enabled: false,
@@ -104,7 +104,9 @@ export const DEFAULT_LAYOUT_CONFIG: ResolvedLayoutConfig = {
   maxTopFraction: DEFAULT_MAX_TOP_FRACTION,
   hugClosingFloats: true,
   floatsUnderOpener: true,
+  openerFloats: 'allow',
   inlineResourceGap: 'around',
+  inlineCaptionSide: true,
   inlineResourceGapInBoxes: true,
   flowColumns: true,
   boxChildSplitMinLines: 2,
@@ -136,7 +138,9 @@ export function resolveLayoutConfig(partial?: LayoutConfig): ResolvedLayoutConfi
     maxTopFraction: maxTopFractionOf(partial.maxTopFraction) ?? DEFAULT_MAX_TOP_FRACTION,
     hugClosingFloats: partial.hugClosingFloats ?? DEFAULT_LAYOUT_CONFIG.hugClosingFloats,
     floatsUnderOpener: partial.floatsUnderOpener ?? DEFAULT_LAYOUT_CONFIG.floatsUnderOpener,
+    openerFloats: compositionRuleOf(partial.openerFloats) ?? DEFAULT_LAYOUT_CONFIG.openerFloats,
     inlineResourceGap: partial.inlineResourceGap === 'above' ? 'above' : DEFAULT_LAYOUT_CONFIG.inlineResourceGap,
+    inlineCaptionSide: typeof partial.inlineCaptionSide === 'boolean' ? partial.inlineCaptionSide : DEFAULT_LAYOUT_CONFIG.inlineCaptionSide,
     inlineResourceGapInBoxes: partial.inlineResourceGapInBoxes ?? DEFAULT_LAYOUT_CONFIG.inlineResourceGapInBoxes,
     flowColumns: partial.flowColumns ?? DEFAULT_LAYOUT_CONFIG.flowColumns,
     // A whole number of lines, at least one; anything else is the default.
@@ -228,8 +232,16 @@ export function stripLayoutDefaults(layout?: LayoutConfig): LayoutConfig | undef
     result.floatsUnderOpener = layout.floatsUnderOpener;
     hasOverride = true;
   }
+  if (layout.openerFloats !== undefined && layout.openerFloats !== DEFAULT_LAYOUT_CONFIG.openerFloats) {
+    result.openerFloats = layout.openerFloats;
+    hasOverride = true;
+  }
   if (layout.inlineResourceGap !== undefined && layout.inlineResourceGap !== DEFAULT_LAYOUT_CONFIG.inlineResourceGap) {
     result.inlineResourceGap = layout.inlineResourceGap;
+    hasOverride = true;
+  }
+  if (layout.inlineCaptionSide !== undefined && layout.inlineCaptionSide !== DEFAULT_LAYOUT_CONFIG.inlineCaptionSide) {
+    result.inlineCaptionSide = layout.inlineCaptionSide;
     hasOverride = true;
   }
   if (layout.inlineResourceGapInBoxes !== undefined && layout.inlineResourceGapInBoxes !== DEFAULT_LAYOUT_CONFIG.inlineResourceGapInBoxes) {

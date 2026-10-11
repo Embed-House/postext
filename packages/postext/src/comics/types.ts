@@ -27,8 +27,12 @@ export type ComicScriptRole = 'speech' | 'caption' | 'sfx' | 'note';
 /** The keys a script line may not use as a speaker id. */
 export const COMIC_RESERVED_KEYS: ReadonlySet<string> = new Set(['caption', 'sfx', 'note']);
 
-/** Where a balloon's tail goes when its speaker is off the panel. */
-export type ComicTailSide = 'top' | 'bottom' | 'start' | 'end';
+/** Where a balloon's tail goes when its speaker is off the panel. `start`
+ *  and `end` follow the reading direction of the page; `left` and `right`
+ *  are sides of the panel's picture as stored (#727), so they stay with
+ *  the speaker the picture implies in every edition of a comic and turn
+ *  over with a mirrored picture. */
+export type ComicTailSide = 'top' | 'bottom' | 'start' | 'end' | 'left' | 'right';
 
 /** One balloon of a panel's script (`ana{whisper at="40% 20%"}: Hello`),
  *  with its continuation lines. */
@@ -52,7 +56,7 @@ export interface ComicScriptItem {
   atKeyword?: Exclude<ComicBalloonPosition, 'auto'>;
   /** `to="x% y%"`: where the tail points, in fractions of the picture. */
   to?: { x: number; y: number };
-  /** `tail=none|auto|top|bottom|start|end`. */
+  /** `tail=none|auto|top|bottom|start|end|left|right`. */
   tail?: 'none' | 'auto' | ComicTailSide;
   /** `join` / `join=false`: force or forbid joining with the speaker's
    *  previous balloon. */

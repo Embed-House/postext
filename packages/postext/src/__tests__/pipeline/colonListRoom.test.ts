@@ -125,11 +125,11 @@ describe('colonListRoom: \'line\' keeps the postext 1.4 room check (EF-110)', ()
 describe('configurations stored before rules 6 keep the 1.4 colon-list room', () => {
   const LIST = 'Look for these signs:\n\n- one\n- two';
   it('pins a configuration older than 6 whose book introduces a list with a colon, once', () => {
-    expect(CONFIG_VERSION).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 4, 5]) {
       expect(migrateConfig(stored, version, { content: LIST }).bodyText, `${version}`)
-        .toEqual({ fontFamily: 'Georgia', colonListRoom: 'line' });
+        .toEqual({ fontFamily: 'Georgia', colonListRoom: 'line', scriptContext: false });
     }
     const once = migrateConfig(stored, 5, { content: LIST });
     expect(migrateConfig(once, CONFIG_VERSION, { content: LIST })).toBe(once);
@@ -138,12 +138,13 @@ describe('configurations stored before rules 6 keep the 1.4 colon-list room', ()
     expect(migrateConfig(stored, 5).bodyText?.colonListRoom).toBe('line');
     // The bundle reader pins the `bodyText` the layers leave in force.
     expect(migrateBundleConfig({ bodyText: { fontFamily: 'Base' } }, [{}], undefined, { content: [LIST] }).bodyText)
-      .toEqual({ fontFamily: 'Base', colonListRoom: 'line' });
+      .toEqual({ fontFamily: 'Base', colonListRoom: 'line', scriptContext: false });
   });
 
   it('reads a lead-in as the parser does: a colon closing its line, a list item next', () => {
     const stored: PostextConfig = {};
-    const pinned = (content: string) => migrateConfig(stored, 5, { content }) !== stored;
+    // (A list alone brings a pin of rules 12 on the headings, #711: this one is read on the body text.)
+    const pinned = (content: string) => migrateConfig(stored, 5, { content }).bodyText?.colonListRoom !== undefined;
     expect(pinned(LIST)).toBe(true);
     expect(pinned('**Note:**\n1. first')).toBe(true);
     expect(pinned('Steps:\n\n\n  + indented')).toBe(true);

@@ -1,4 +1,4 @@
-import type { CaptionStyleConfig, ColorValue, ColorPaletteEntry, Dimension, OrderedListsConfig, PartsBodyStyleConfig, PostextConfig, ResolvedTableStyleConfig, TableStyleConfig, UnorderedListsConfig } from '../types';
+import type { CaptionStyleConfig, ColorValue, ColorPaletteEntry, CompositionRule, Dimension, OrderedListsConfig, PartsBodyStyleConfig, PostextConfig, ResolvedTableStyleConfig, TableStyleConfig, UnorderedListsConfig } from '../types';
 import type { ResolvedConfig } from '../vdt';
 
 export const DEFAULT_MAIN_COLOR_ID = 'main-color';
@@ -38,6 +38,12 @@ export function isDefaultColorPalette(palette: ColorPaletteEntry[] | undefined):
       !entry.value.paletteId
     );
   });
+}
+
+/** A composition rule's level as written (`bodyText.shortListSplit`,
+ *  `layout.openerFloats`, #749): one of the three words, else `undefined`. */
+export function compositionRuleOf(value: unknown): CompositionRule | undefined {
+  return value === 'allow' || value === 'warn' || value === 'avoid' ? value : undefined;
 }
 
 export function dimensionsEqual(a: Dimension, b: Dimension): boolean {

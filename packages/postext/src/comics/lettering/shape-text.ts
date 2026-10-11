@@ -16,13 +16,16 @@ import { buildFontString } from '../../measure';
 import { joiningScriptIn } from '../../measure/joining';
 import { hasJoiningScript } from '../../bidi';
 import { hasCJK } from '../../measure/cjk';
-import { parseRichDesignText, RichMeasurer } from '../../design/richText';
+import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from '../../design/richText';
+import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText';
+import { cjkCompositionKey, getCjkComposition, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
 import { layoutTextElementAt } from '../../design/layout';
 import { designBaseDirection } from '../../design/bidiText';
 import { primitiveToBlock } from '../../pipeline/headerFooter';
 import { cjkRegionOf, directionOf, isJapaneseLanguage, languageOf } from '../../locale';
 import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
 import type { CjkRegion, ResolvedDesignTextElement } from '../../types';
+import type { InlineSpan } from '../../parse/types';
 import type { VDTDesignTextBlock } from '../../vdt';
 import { breakPoints, hasMarks, isIsolateControl, markupOf, type BreakPoint, type PreparedText } from './text';
 import { boundsOf } from './geom';
@@ -64,6 +67,9 @@ export interface ShapedText {
   /** What its breaks cost (their penalties and orphan lines, weighted as
    *  in the score): how well it parts the text, whatever its shape. */
   breakCost: number;
+  /** How many of its breaks part a Chinese word (`BreakPoint.inWord`,
+   *  #728). */
+  wordCuts: number;
 }
 
 /** Default target aspects of a text block. */
@@ -127,39 +133,94 @@ function trackingOf(p: PreparedText, style: LetteringStyle): number {
   return Number.isFinite(t) && !joiningScriptIn(p.text) ? t : 0;
 }
 
+/** The composition a balloon line is measured under (#723): the
+ *  document's with nothing given up and nothing added between the
+ *  characters. Every mark keeps its whole width (none set in half an em,
+ *  none compressed beside another mark or at an end of the line, none
+ *  hung) and no space opens between Han and Latin. What is left of the
+ *  composer's work on the line is the 破折号, set in two cells of one em. */
+function measuringComposition(c: CjkComposition): CjkComposition {
+  return { ...c, punctuationWidth: 'fullwidth', compressAdjacent: false, trimLineStart: false, hangingPunctuation: 'none', latinSpacing: { em: 0 } };
+}
+
+/**
+ * The width of `text` as a line of its own that the CJK composer sets
+ * (#723), undefined when the layout sets it at the font's advances.
+ * `setLines` hands each chosen line to the design-text layout as a row,
+ * and a row that composes as CJK (`composesDesignAsCjk`, the layout's own
+ * test) goes through `composeCjkDesignParagraph`, where a 破折号 takes
+ * two cells of one em whatever the face's dashes advance (#652). The line
+ * is composed here by the same composer, on one unbounded line, so the
+ * pair counts in the shaping what it takes on the page.
+ *
+ * The rest of the line is measured as before ({@link measuringComposition}):
+ * a line that ends in a comma the document's composition sets in half an
+ * em is still measured half an em long, and Latin inside Han text without
+ * the space `cjk.latinSpacing` opens. With every line measured as set,
+ * eight balloons of the published comics chose other lines and two of
+ * their pages read worse; with the space alone, one caption broke its
+ * title in two (the comparison of #723). A text whose lines hold no pair
+ * is shaped as it was.
+ */
+function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesignFonts, pitch: number, tracking: number): number | undefined {
+  if (text.includes('\n') || !composesDesignAsCjk(text)) return undefined;
+  const measureIn = (t: string, font: string): number => Math.max(0, flowTextWidth(t, font) + tracking * graphemeCount(t));
+  const own = getCjkComposition();
+  setCjkComposition(measuringComposition(own));
+  try {
+    const lines = composeCjkDesignParagraph(spans(), fonts, undefined, pitch, tracking, measureIn);
+    return lines.length === 1 ? lines[0]!.width : undefined;
+  } finally {
+    setCjkComposition(own);
+  }
+}
+
 /** A measurer of line widths over the prepared text, in the writing mode
  *  in force (call inside `withMeasureWritingMode`). Rich text is measured
  *  through the design-text measurer of its own markup, so that what is
  *  measured is what the layout sets; a markup that does not read back to
- *  the same text falls back to plain. */
-function measurerFor(p: PreparedText, style: LetteringStyle): Measurer {
+ *  the same text falls back to plain. With `composed`, a range the layout
+ *  sets with the CJK composer is measured by composing it (#723, see
+ *  `composedWidth`): the shaping asks for it, the ruby does not (it
+ *  places a reading along a line, and the start of a line is no line of
+ *  its own). */
+function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): Measurer {
   const tracking = trackingOf(p, style);
+  const pitch = style.fontSizePx * style.lineHeight;
   const memo = new Map<number, number>();
   const key = (a: number, b: number) => a * 100003 + b;
   if (hasMarks(p)) {
     const rt = parseRichDesignText(wholeMarkup(p), fontSpec(style));
     if (rt.text === p.text) {
       const m = new RichMeasurer(rt, tracking);
+      const fonts = composed ? richFontSet(fontSpec(style)) : undefined;
       return {
         rich: true,
         width(a, b) {
           const k = key(a, b);
           let w = memo.get(k);
-          if (w === undefined) memo.set(k, (w = a >= b ? 0 : m.measure(a, b)));
+          if (w === undefined) {
+            w = a >= b ? 0 : (fonts && composedWidth(p.text.slice(a, b), () => richDesignSpans(rt, a, b), fonts, pitch, tracking)) ?? m.measure(a, b);
+            memo.set(k, w);
+          }
           return w;
         },
       };
     }
   }
   const font = fontString(style);
+  const fonts: CjkDesignFonts | undefined = composed ? { normal: font, bold: font, italic: font, boldItalic: font } : undefined;
   return {
     rich: false,
     width(a, b) {
       const k = key(a, b);
       let w = memo.get(k);
       if (w === undefined) {
-        const s = p.text.slice(a, b).replace(/[\u2066-\u2069]/g, '');
-        memo.set(k, (w = a >= b ? 0 : Math.max(0, flowTextWidth(s, font) + tracking * graphemeCount(s))));
+        const row = p.text.slice(a, b);
+        const s = row.replace(/[\u2066-\u2069]/g, '');
+        w = a >= b ? 0 : (fonts && composedWidth(row, () => [{ text: row, bold: false, italic: false }], fonts, pitch, tracking))
+          ?? Math.max(0, flowTextWidth(s, font) + tracking * graphemeCount(s));
+        memo.set(k, w);
       }
       return w;
     },
@@ -172,6 +233,7 @@ interface Candidate {
   score: number;
   aspect: number;
   breakCost: number;
+  wordCuts: number;
 }
 
 /** Widths and lone-line penalties of the lines between two break points
@@ -354,10 +416,11 @@ interface LineSet {
   breaks: number[];
   lines: { start: number; end: number; width: number }[];
   breakCost: number;
+  wordCuts: number;
 }
 
 function breakingOf(p: PreparedText, pts: readonly BreakPoint[], m: Measurer): Breaking {
-  const all = [{ end: 0, next: 0, penalty: 0, forced: false }, ...pts];
+  const all: BreakPoint[] = [{ end: 0, next: 0, penalty: 0, forced: false }, ...pts];
   const lone = loneLinePenalty(p, all);
   return { length: p.text.length, all, m, table: lineTable(all, m, lone), lone, sets: new Map() };
 }
@@ -393,7 +456,7 @@ function lineSetsFor(b: Breaking, em: number, maxLen: number, penaltyWeight: num
       });
       const breakCost = penaltyWeight * br.slice(0, -1).reduce((sum, k) => sum + all[k]!.penalty, 0)
         + lines.reduce((sum, l) => sum + lone(l.start, l.end), 0);
-      out.push({ breaks: br, lines, breakCost });
+      out.push({ breaks: br, lines, breakCost, wordCuts: br.slice(0, -1).filter((k) => all[k]!.inWord).length });
     }
   }
   b.sets.set(key, out);
@@ -412,9 +475,9 @@ function candidatesFor(
   penaltyWeight: number,
 ): Candidate[] {
   const cjk = hasCJK(p.text);
-  const out: Candidate[] = lineSetsFor(b, em, maxLen, penaltyWeight).map(({ breaks, lines, breakCost }) => {
+  const out: Candidate[] = lineSetsFor(b, em, maxLen, penaltyWeight).map(({ breaks, lines, breakCost, wordCuts }) => {
     const { score, aspect } = scoreLines(lines, b.all, breaks, em, pitch, vertical, target, maxLen, penaltyWeight, b.lone, cjk);
-    return { breaks, lines, score, aspect, breakCost };
+    return { breaks, lines, score, aspect, breakCost, wordCuts };
   });
   out.sort((a, b) => a.score - b.score || a.lines.length - b.lines.length);
   return out;
@@ -469,9 +532,11 @@ export function shapeTextCandidates(p: PreparedText, style: LetteringStyle, opts
   const { cands, rich } = withMeasureWritingMode(mode, () => {
     let byKey = breakings.get(p);
     if (!byKey) breakings.set(p, (byKey = new Map()));
-    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0].join('|');
+    // The composition is part of the key: a line the CJK composer sets is
+    // measured by composing it (#723).
+    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0, style.lineHeight, cjkCompositionKey(getCjkComposition())].join('|');
     let b = byKey.get(key);
-    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style))));
+    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style, true))));
     // Japanese phrase breaks weigh more than a perfect profile: columns
     // move by whole characters.
     const penaltyWeight = lang === 'ja' ? 1 : 0.5;
@@ -535,6 +600,7 @@ function setLines(
     aspect: c.aspect,
     score: c.score,
     breakCost: c.breakCost,
+    wordCuts: c.wordCuts,
   };
 }
 

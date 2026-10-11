@@ -1,30 +1,34 @@
 import { Figure } from "../Figure";
-import { ArrowMarker, DropShadowDef, Label, colorTokens, type ColorKey } from "../primitives";
+import { ArrowMarker, DropShadowDef, Label, colorTokens } from "../primitives";
 
 export interface ConvergenceLoopLabels {
   title: string;
   desc?: string;
   caption?: string;
-  passBadges: { num: string; name: string }[]; // 7 entries
+  passBadges: { num: string; name: string }[]; // the stages of one placement pass
   loopBadge: string;
   loopCondition: string;
 }
 
-// Geometry (all derived from a 112px pitch grid)
-const BOX_W = 88;
+// Geometry (all derived from a 144px pitch grid)
+const BOX_W = 120;
 const BOX_H = 46;
-const PITCH = 112; // box + 24px arrow gap
-const START_X = 20;
+const PITCH = 144; // box + 24px arrow gap
+const START_X = 34;
 const BOX_Y = 44;
-const LOOP_START = 2; // index of the first pass inside the convergence loop (Pass 3)
 
+/**
+ * The placement pass and its re-runs: the stages a block goes through in one
+ * pass, inside the pass's container, and the arrow back to the first stage
+ * for the passes `buildDocument` runs again with hints.
+ */
 export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
   const n = labels.passBadges.length;
   const boxX = (i: number) => START_X + i * PITCH;
   const boxCx = (i: number) => boxX(i) + BOX_W / 2;
 
-  // Loop container wraps passes LOOP_START..n-1 with 14px side padding
-  const loopX = boxX(LOOP_START) - 14;
+  // The pass container wraps every stage with 14px side padding
+  const loopX = boxX(0) - 14;
   const loopRight = boxX(n - 1) + BOX_W + 14;
   const loopW = loopRight - loopX;
   const loopCx = (loopX + loopRight) / 2;
@@ -32,9 +36,10 @@ export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
   const vbW = loopRight + 20;
   const vbH = 160;
 
-  // Return path: down from last pass, back under the row, up into Pass 3
+  // Return path: down from the last stage, back under the row, up into the first
   const returnY = 116;
-  const returnPath = `M ${boxCx(n - 1)} ${BOX_Y + BOX_H} V ${returnY} H ${boxCx(LOOP_START)} V ${BOX_Y + BOX_H + 4}`;
+  const returnPath = `M ${boxCx(n - 1)} ${BOX_Y + BOX_H} V ${returnY} H ${boxCx(0)} V ${BOX_Y + BOX_H + 4}`;
+  const t = colorTokens.blue;
 
   return (
     <Figure
@@ -70,7 +75,7 @@ export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
         }
       `}</style>
 
-      {/* Convergence-loop container around passes 3..7 */}
+      {/* One placement pass: the container around its stages */}
       <rect
         x={loopX}
         y={12}
@@ -86,12 +91,9 @@ export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
         {labels.loopBadge}
       </Label>
 
-      {/* Pass boxes: purple = run once (parse, measure); blue = inside the loop */}
+      {/* Stage boxes */}
       {labels.passBadges.map((p, i) => {
         const x = boxX(i);
-        const inLoop = i >= LOOP_START;
-        const color: ColorKey = inLoop ? "blue" : "purple";
-        const t = colorTokens[color];
         return (
           <g key={i}>
             <rect
@@ -105,19 +107,17 @@ export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
               rx={6}
               filter="url(#clShadow)"
             />
-            {inLoop ? (
-              <rect
-                x={x}
-                y={BOX_Y}
-                width={BOX_W}
-                height={BOX_H}
-                fill={t.stroke}
-                opacity={0}
-                rx={6}
-                className="cl-pulse"
-                style={{ animationDelay: `${(i - LOOP_START) * 0.7}s` }}
-              />
-            ) : null}
+            <rect
+              x={x}
+              y={BOX_Y}
+              width={BOX_W}
+              height={BOX_H}
+              fill={t.stroke}
+              opacity={0}
+              rx={6}
+              className="cl-pulse"
+              style={{ animationDelay: `${i * 0.7}s` }}
+            />
             <text x={x + BOX_W / 2} y={63} textAnchor="middle" fontSize="10" fontWeight="bold" fill={t.text}>
               {p.num}
             </text>
@@ -139,7 +139,7 @@ export function ConvergenceLoop({ labels }: { labels: ConvergenceLoopLabels }) {
         );
       })}
 
-      {/* Loop-back: Pass 7 → Pass 3 while dirty blocks remain */}
+      {/* Back to the first stage: the pass run again with hints */}
       <path
         d={returnPath}
         fill="none"

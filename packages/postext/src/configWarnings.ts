@@ -44,6 +44,7 @@ import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/b
 import { parseFootnoteNumberFormat } from './defaults/footnotes';
 import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics';
 import { resolvePrintConfig } from './defaults/print';
+import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
 import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
 import { outputProfileInfo } from './color/catalogue';
@@ -118,6 +119,14 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   if (patterns !== undefined && patterns !== 'auto' && patterns !== 'naskh' && patterns !== 'simple' && patterns !== 'nastaliq') {
     out.push({ kind: 'unknownConfigValue', path: 'bodyText.kashidaPatterns', value: String(patterns), used: 'auto' });
   }
+  // The level of a composition rule (#749): read as `'allow'`, the rule off.
+  const rule = (path: string, value: unknown) => {
+    if (value !== undefined && value !== 'allow' && value !== 'warn' && value !== 'avoid') {
+      out.push({ kind: 'unknownConfigValue', path, value: String(value), used: 'allow' });
+    }
+  };
+  rule('bodyText.shortListSplit', config.bodyText?.shortListSplit);
+  rule('layout.openerFloats', config.layout?.openerFloats);
   // Where a heading's number stands (#401).
   const position = (path: string, value: unknown) => {
     if (value !== undefined && value !== 'before' && value !== 'replace') {
@@ -133,6 +142,7 @@ function collectChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   }
   out.push(...collectComicChoiceWarnings(config));
   out.push(...collectPrintChoiceWarnings(config));
+  out.push(...collectContrastChoiceWarnings(config));
   out.push(...collectLineNumbersWarnings(config));
   out.push(...collectWrapWarnings(config));
   out.push(...collectCodeStyleWarnings(config));
@@ -312,6 +322,23 @@ function collectPrintChoiceWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
+/** The contrast check's level and mode (#748): one written otherwise
+ *  reads as the default. */
+function collectContrastChoiceWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  const c = config.contrast;
+  if (!c) return out;
+  const level = c.level as unknown;
+  if (level !== undefined && !(CONTRAST_LEVELS as readonly unknown[]).includes(level)) {
+    out.push({ kind: 'unknownConfigValue', path: 'contrast.level', value: String(level), used: DEFAULT_CONTRAST_CONFIG.level });
+  }
+  const mode = c.mode as unknown;
+  if (mode !== undefined && !(CONTRAST_MODES as readonly unknown[]).includes(mode)) {
+    out.push({ kind: 'unknownConfigValue', path: 'contrast.mode', value: String(mode), used: DEFAULT_CONTRAST_CONFIG.mode });
+  }
+  return out;
+}
+
 /** The comics settings that take one of a few words (#590): the reading
  *  and art directions, a panel style's border style and fit, the
  *  lettering's writing mode, case, final stop and joins, a balloon style's
@@ -386,12 +413,12 @@ function collectNumeralsWarnings(config: PostextConfig): ConfigWarning[] {
 // here, so the check never flags a setting the engine reads.
 const HEADINGS_KEYS = {
   fontFamily: true, lineHeight: true, color: true, textAlign: true, fontWeight: true,
-  marginTop: true, marginBottom: true, keepWithNext: true, keepWithNextSpread: true, keepWithNextSplit: true, snapToGrid: true, inlineMarks: true, balancing: true, levels: true,
+  marginTop: true, marginBottom: true, keepWithNext: true, keepWithNextSpread: true, keepWithNextSplit: true, snapToGrid: true, columnHeadSpace: true, inlineMarks: true, balancing: true, levels: true,
 } satisfies Record<keyof HeadingsConfig, true>;
 const BALANCING_KEYS = {
-  enabled: true, maxLinesPerHeading: true, stretchAfterLists: true, maxLinesAfterList: true,
-  stretchAfterFloats: true, maxLinesAfterFloat: true, looseParagraphs: true, maxLooseParagraphs: true,
-  trackParagraphs: true, maxTracking: true, trailing: true, beforeSpan: true, closingBox: true, gridLines: true,
+  enabled: true, maxLinesPerHeading: true, maxLinesBeforeLoose: true, stretchAfterLists: true, maxLinesAfterList: true, stretchAfterDisplays: true,
+  stretchAfterFloats: true, maxLinesAfterFloat: true, stretchAfterWideFloats: true, looseParagraphs: true, maxLooseParagraphs: true,
+  trackParagraphs: true, maxTracking: true, trailing: true, trailingStep: true, beforeSpan: true, closingBox: true, gridLines: true,
 } satisfies Record<keyof ColumnBalancingConfig, true>;
 const HEADING_LEVEL_KEYS = {
   level: true, fontSize: true, lineHeight: true, fontFamily: true, color: true, fontWeight: true,
@@ -411,7 +438,7 @@ const PARAGRAPH_STYLE_KEYS = {
   id: true, name: true, fontFamily: true, fontSize: true, lineHeight: true, color: true, textAlign: true,
   boldColor: true, italicColor: true, fontWeight: true, boldFontWeight: true, italic: true, smallCaps: true,
   hyphenation: true, indent: true, endIndent: true, firstLineIndent: true, hangingIndent: true, spaceBetween: true,
-  marginTop: true, marginBottom: true, snapToGrid: true, textTransform: true, wordBreak: true, lineNumbers: true,
+  marginTop: true, marginBottom: true, snapToGrid: true, containerSpacing: true, textTransform: true, wordBreak: true, lineNumbers: true,
   tabStops: true, tabInterval: true, dropCap: true,
 } satisfies Record<keyof ParagraphStyleConfig, true>;
 // A body paragraph's drop cap (#623) and its lead-in.
@@ -463,7 +490,7 @@ const NAMED_PANEL_STYLE_KEYS = { ...PANEL_STYLE_KEYS, id: true, name: true } sat
 const LETTERING_KEYS = {
   fontFamily: true, fontSize: true, lineHeight: true, color: true, bold: true, italic: true, letterSpacing: true,
   writingMode: true, textTransform: true, dropFinalStop: true, doubleDash: true, inset: true, joinSameSpeaker: true,
-  maxColumnChars: true,
+  maxColumnChars: true, strictPlacement: true,
 } satisfies Record<keyof LetteringConfig, true>;
 const BALLOON_STYLE_KEYS = {
   id: true, name: true, shape: true, fill: true, stroke: true, strokeWidth: true, dash: true, double: true, wobble: true,

@@ -82,11 +82,13 @@ describe('inline :ref rendering in body text', () => {
   });
 
   it('uses verbatim override text', () => {
-    const seg = paragraphSegments({
+    // A label of words is one token per word and space (#702).
+    const segs = paragraphSegments({
       markdown: 'See :ref{id="fig-a" text="the diagram"}.',
       resources: [figure('fig-a')],
-    }).find((s) => s.refResourceId === 'fig-a');
-    expect(seg!.text).toBe('the diagram');
+    }).filter((s) => s.refResourceId === 'fig-a');
+    expect(segs.map((s) => s.text).join('')).toBe('the diagram');
+    expect(segs.map((s) => s.text)).toEqual(['the', ' ', 'diagram']);
   });
 
   it('case=lower lowercases the label but not the number', () => {
@@ -144,11 +146,11 @@ describe('inline :ref rendering in body text', () => {
   });
 
   it('text override ignores case', () => {
-    const seg = paragraphSegments({
+    const segs = paragraphSegments({
       markdown: 'See :ref{id="fig-a" text="the Diagram" case="upper"}.',
       resources: [figure('fig-a')],
-    }).find((s) => s.refResourceId === 'fig-a');
-    expect(seg!.text).toBe('the Diagram');
+    }).filter((s) => s.refResourceId === 'fig-a');
+    expect(segs.map((s) => s.text).join('')).toBe('the Diagram');
   });
 
   it('styles references bold + emphasis colour by default, and honours overrides', () => {

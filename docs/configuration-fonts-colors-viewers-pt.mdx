@@ -111,7 +111,7 @@ O binário de cada variante **não** fica embutido na própria configuração. A
 
 ### Como gerenciar fontes personalizadas no Sandbox
 
-Abra o painel **Fontes** na barra de atividades à esquerda (entre Recursos e Design). A lista **Famílias tipográficas deste livro** mostra cada família que o design usa, com sua função e se vem do Google Fonts ou de um arquivo seu. Em **Seus arquivos de fonte**, para cada família:
+Abra o painel **Fontes** na barra de atividades à esquerda (entre Recursos e Design). A lista **Famílias tipográficas deste livro** mostra cada família que o design usa, com sua função e de onde vem: do Google Fonts, da Fontsource (quando o Google Fonts não tem a família), de um arquivo seu, ou de lugar nenhum (*Não encontrada*). Em **Seus arquivos de fonte**, para cada família:
 
 1. **Adicionar família**: cria uma família vazia; renomeie-a ali mesmo.
 2. **Enviar variante(s)**: escolha um peso (100–900) e um estilo (normal / itálico) e selecione um *ou vários* arquivos `.woff2`, `.woff`, `.ttf` ou `.otf`. Cada arquivo vira uma variante própria, associada ao par (peso, estilo) selecionado no momento; o nome do arquivo enviado fica registrado e aparece na linha, para você distinguir as variantes. Você pode reajustar o peso ou o estilo de uma variante nos menus suspensos a qualquer momento.
@@ -708,6 +708,116 @@ O gerenciamento de cor que o postext usa é exportado para as suas próprias fer
 O resolvedor e o redutor seguem o padrão das outras seções: `resolvePrintConfig`, `stripPrintDefaults` e `profileInkLimit(config)` (o limite do perfil que uma configuração nomeia, antes de qualquer `inkLimit` que o substitua), com `DEFAULT_PRINT_CONFIG`, `DEFAULT_PRINT_BLACK_CONFIG`, `DEFAULT_PRINT_PREFLIGHT_CONFIG` e `DEFAULT_RICH_BLACK`.
 
 
+## Verificação de contraste (configuração)
+
+A propriedade `contrast` define a verificação que diz se o texto de um livro pode ser lido: cada cor de texto diante do fundo sobre o qual é composta. A diagramação a ignora, então mudá-la nunca move uma linha. `contrastDocument` a lê quando verifica um documento diagramado, o Sandbox lista os problemas em Verificações e mostra a razão ao lado de cada campo de cor, e `postext check` os imprime.
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>Propriedade</th>
+      <th style={{ width: '110px' }}>Tipo</th>
+      <th style={{ width: '100px' }}>Padrão</th>
+      <th>Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Executa a verificação.</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>O nível do WCAG 2 que as razões têm de alcançar. Veja [Limiares](#limiares).</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>O meio verificado: `'screen'`, `'print'`, `'both'` ou `'auto'`, que verifica sempre a tela e também a impressão num livro preparado para impressão (um padrão PDF/X em `print.standard`, um PDF em CMYK em `pdfGeneration` ou marcas de corte em `page.cutLines`).</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Informa o texto vazado na verificação de impressão.</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>O texto vazado abaixo deste corpo é informado.</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>O mesmo para itálicos e pesos finos, de traço mais delgado.</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Um peso igual ou menor que este conta como fino.</td></tr>
+  </tbody>
+</table>
+
+Um `level` ou um `mode` escrito de qualquer outra forma é lido como o padrão e informado como valor de configuração desconhecido (veja [Avisos de configuração](#avisos-de-configuração)).
+
+### Limiares
+
+A razão que um texto tem de alcançar depende do seu corpo e do seu peso, como no WCAG 2.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>Nível</th>
+      <th style={{ width: '120px' }}>Texto</th>
+      <th>Texto grande</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4,5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4,5:1</td></tr>
+  </tbody>
+</table>
+
+Texto grande é o de 18 pt ou mais, ou de 14 pt ou mais com peso 700 ou maior. Os corpos são os impressos, em pontos. Um sobrescrito ou um subscrito é avaliado no corpo do texto a que pertence.
+
+### Tela e impressão
+
+O Postext compõe as mesmas páginas para uma tela e para uma máquina de impressão, e uma cor não se lê do mesmo jeito nas duas.
+
+- **Tela** é a razão de contraste do WCAG 2 entre as cores sRGB, `(L1 + 0.05) / (L2 + 0.05)` sobre as suas luminâncias relativas: o que mostram o canvas, o visualizador HTML, um EPUB e um PDF em RGB.
+- **Impressão** é a mesma fórmula sobre a luminância que cada cor tem no papel. A cor é separada com o perfil de saída do trabalho (uma cor definida em CMYK mantém os seus valores), a separação é lida de volta pelo perfil, e a luminância dela é tomada em relação ao papel sem tinta, que é o branco de uma página impressa assim como o branco do monitor é o branco de uma tela. A tinta nunca é um preto perfeito: o preto chapado sobre branco dá cerca de 14:1 em papel couché (FOGRA39, FOGRA51), 8:1 em papel não revestido (FOGRA47, FOGRA52) e 5:1 em papel jornal (IFRA26, SNAP), onde uma tela dá 21:1. Um cinza que passa na tela pode não passar no papel: `#767676` sobre branco dá 4,54:1 na tela e cerca de 3,3:1 em papel couché.
+
+A razão de impressão precisa da transformação do perfil de saída (`options.transform`, criada com `outputTransform`). Sem ela, só o texto vazado é verificado para impressão.
+
+### Texto vazado
+
+O texto claro vazado sobre um fundo de tinta entope na impressão quando é pequeno ou de traço fino: a tinta do fundo se espalha para dentro das letras, e um fundo composto de várias tintas também depende de as chapas se manterem em registro. A razão não mostra isso, já que branco sobre azul-escuro passa de 10:1. A verificação de impressão informa esse texto à parte (`reversedText`) quando ele está abaixo de `minSize`, ou abaixo de `minFineSize` quando é itálico ou tem peso igual ou menor que `lightWeight`. Cada problema diz de quantas das quatro tintas o fundo é composto.
+
+### O que é lido
+
+A verificação lê as linhas de cada bloco com as suas cores na linha (negrito, itálico, referências, chips), os marcadores de lista, as capitulares, as legendas, as notas e as células de tabela, e o texto dos espaços de design: cabeços, aberturas, designs de título, títulos de boxes. O fundo é o preenchimento mais acima sob o texto: uma caixa de design, um boxe, uma barra de legenda, uma célula de tabela, um chip ou, na falta deles, a cor da página (`page.backgroundColor`, ou o papel que a paleta de uma parte dá às suas páginas). Uma cor translúcida é mesclada com o que está sob ela. O texto sobre uma imagem fica de fora, já que o fundo dele não é uma cor só, assim como o letreiramento dos quadrinhos, as leituras em rubi e as fórmulas.
+
+### Como executar a verificação
+
+`contrastDocument(doc, options)` devolve os problemas de um documento diagramado, da menor razão para a maior. Cada um traz o `pageIndex` absoluto no livro, o `rect` na folha (px da página) e o intervalo no código-fonte da sua primeira ocorrência, as duas cores como foram pintadas (`color`, `background`), o menor `sizePt` em que é composto, com o seu `weight` e o seu `italic`, um `role` (`'body'`, `'heading'`, `'caption'`, `'table'`, `'runningHead'`, `'design'`, `'chip'` ou `'marker'`), o `text` do primeiro trecho e o `count` de trechos compostos assim. Um par é informado uma vez por limiar, seja qual for o número de linhas que o usam.
+
+- `lowContrast` acrescenta `level`, `large`, `required`, a razão em cada meio verificado (`screen`, `print`) e `failing`, os meios abaixo de `required`.
+- `reversedText` acrescenta `reasons` (`'small'`, `'italic'`, `'light'`), `minimumPt` e `inks`.
+
+As opções são `contrast` (os ajustes resolvidos, quando não são os do documento), `media` (os meios, diga o que disser `mode`) e `transform`.
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)` devolve cada par de texto e fundo que o documento compõe, passe ou não, com a sua razão `screen`, a sua razão `print` quando o `transform` é fornecido, a razão `required` e as cores como a configuração as escreve (`textColor`, `groundColor`): o que uma ferramenta de design mostra ao lado de um campo de cor. Ele é executado diga o que disser `enabled`.
+
+As medidas são exportadas para as suas próprias ferramentas:
+
+- `contrastRatio(a, b)` e `relativeLuminance(color)` dão a razão e a luminância WCAG 2 de cores sRGB.
+- `isLargeText(sizePt, weight)` e `contrastThreshold(level, large)` dão o limiar de um corpo e de um peso.
+- `blendColors(top, under)` dá uma cor translúcida sobre outra, como `#rrggbb`.
+- `printContrastRatio(a, b, context)`, `printLuminance(color, context)` e `printSeparation(color, context)` dão o mesmo no papel. O contexto leva o `transform` e, como `authored`, o resultado de `authoredCmykColors(config)`.
+- `contrastMedia(doc.config, contrast)` dá os meios em que `mode` se resolve para um documento.
+
+O resolvedor e o redutor seguem o padrão das outras seções: `resolveContrastConfig` e `stripContrastDefaults`, com `DEFAULT_CONTRAST_CONFIG`, `DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`, `CONTRAST_LEVELS` e `CONTRAST_MODES`.
+
+
 ## Visualizador Folio (configuração)
 
 A propriedade `folio` define como o visualizador Folio (`postext-folio`) apresenta o livro impresso em 3D: o ângulo de visão, o papel, a encadernação, a superfície onde o livro está e a luz. O layout a ignora, assim como as saídas de canvas, HTML e PDF. `buildDocument` leva os ajustes resolvidos na VDT como `doc.config.folio` quando a configuração define algum, de modo que um documento sem eles mantém seu hash de layout.
@@ -1077,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`** devolve, em ordem de leitura, cada linha justificada cujo `justifiedSpaceRatio` passa de `threshold`: `{ block, line, ratio, x, y, width, height }`. O retângulo, em pixels da página, é a faixa que o destaque cobre: a largura inteira do bloco ao longo da linha. São as linhas que o Sandbox destaca e relata como `looseLine` no painel **Verificações**.
+- **`findLooseLines(doc, { threshold?, pageIndex? })`** devolve, em ordem de leitura, cada linha justificada cujo espaçamento entre palavras passa de `threshold`: `{ block, line, ratio, x, y, width, height }`. `ratio` é `lineWordSpacing(line)`: o espaçamento tal como `minWordSpacing` e `maxWordSpacing` o restringem (`justifiedSpaceLimitRatio` quando a linha contém espaços de outro estilo, senão `justifiedSpaceRatio`), de modo que uma linha composta no limite com um espaço em negrito não é relatada com um `threshold` igual a `maxWordSpacing`. O retângulo, em pixels da página, é a faixa que o destaque cobre: a largura inteira do bloco ao longo da linha. São as linhas que o Sandbox destaca e relata como `looseLine` no painel **Verificações**.
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`** preenche essas faixas em uma página e devolve as linhas que pintou. Ele desenha em pixels da página sob a transformação atual do contexto, então chame-o logo depois de `renderPage` ou `renderPageToCanvas` no mesmo canvas: os dois deixam o contexto na escala da página. `color` é qualquer estilo de preenchimento de canvas.
 - **Valores padrão.** Os dois auxiliares usam o limiar padrão (3) e a cor padrão (`#ff000040`), não o `debug.looseLineHighlight` do documento: essa configuração pertence ao Sandbox. Para seguir uma configuração, passe `resolveDebugConfig(config.debug).looseLineHighlight.threshold` e `.color.hex`.
 
@@ -1172,7 +1282,7 @@ Oito erros na própria configuração nunca passam em silêncio, e nenhuma opç�
 - **Número de colunas fora do intervalo**: um `columnCount` de um layout `'multiple'` (o do documento, ou o do `layout` próprio de um estilo de título) que não é um número inteiro de 3 a 8. A página é dividida no número válido mais próximo (3 para um valor que não é número), e `used` informa qual é (`columnCountClamped`; veja o [layout `'multiple'`](/pt/docs/configuration-page-layout#tipos-de-layout)).
 - **Grade de caracteres grande demais**: uma `cjk.grid` com mais caracteres por linha ou linhas por página do que as margens permitem. A grade é montada com o máximo que cabe, e `used` informa esse número (`cjkGridClamped`; veja [Grade de caracteres](/pt/docs/configuration-east-asian#grade-de-caracteres)).
 - **Configuração de título desconhecida**: uma chave que `headings`, `headings.balancing`, um nível de título, um estilo de título ou um estilo de parágrafo não tem: um `letterSpacng` com erro de digitação, um `tracking` emprestado de outra ferramenta, um `level` em um estilo de título, um `fontStyle: 'italic'` em um estilo de parágrafo (que usa `italic: true`). Uma parada de tabulação é verificada da mesma forma (um `leaders` em vez de `leader`). O motor a ignora (até o postext 1.4, fazia isso sem dizer nada). `value` é a chave, `used` fica vazio e `suggestion` indica a configuração mais próxima, quando há uma a uma ou duas letras de distância ou que difere só em maiúsculas e minúsculas (`unknownConfigKey`).
-- **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima.
+- **Valor de configuração desconhecido**: uma configuração que aceita uma entre poucas palavras contendo outra, como `direction: 'right'` (ela aceita `auto`, `ltr` ou `rtl`). O motor lê o valor padrão no lugar, e `used` informa no que ele resultou: para `direction`, a direção do idioma do documento (`unknownConfigValue`). Um `align` de uma parada de tabulação que não é nenhuma das suas quatro palavras é lido como `'start'`, e uma `position` que não é um comprimento, `'end'` nem uma porcentagem deixa a parada de fora (`used` é `'none'`). As palavras das configurações de quadrinhos também são verificadas ([Quadrinhos › Avisos de quadrinhos](/pt/docs/comics#avisos-de-quadrinhos)): `used` é o valor em que a configuração se resolveu (o padrão próprio de um estilo de balão, no caso de um estilo embutido), e `suggestion` indica a palavra mais próxima do valor, quando há uma próxima. O `level` e o `mode` da verificação de contraste são verificados da mesma forma: `used` é `'AA'` ou `'auto'`.
 - **Números de linha em texto vertical**: `lineNumbers.enabled: true` num documento composto na vertical (`layout.writingMode: 'vertical-rl'`). Páginas verticais não recebem números de linha, e `used` é `false` (`lineNumbersUnsupported`; veja [Numeração de linhas](/pt/docs/configuration-notes-references#numeração-de-linhas)).
 - **Contorno de texto na escrita vertical** — o `defaultPlacement.wrap` de um tipo de recurso num documento composto na vertical. Páginas verticais não compõem texto ao lado de uma figura, e `used` é `none` (`wrapUnsupported`; veja [Formato do documento › Contorno de texto](/pt/docs/document-format#contorno-de-texto)). Um `wrap` que não nomeia um lado é um valor de configuração desconhecido.
 

@@ -26,6 +26,7 @@ import { captureVariantFor, pageImages, pdfDownload, sandboxLink } from "@/lib/c
 import { getAllRecipes, getComposed, getRecipe, getVisibleRecipes, recipeHref, writeupFor } from "@/lib/cookbook/recipes";
 import { loadRegistry } from "@/lib/cookbook/registry";
 import { relatedRecipes } from "@/lib/cookbook/related";
+import { testedOn } from "@/lib/cookbook/tested";
 import type { ComposedPen, Credit, DocAnchor, LicenseId, Locale, Recipe, Registry } from "@/lib/cookbook/types";
 import { localizedText } from "@/lib/cookbook/types";
 import { shownGotchas } from "@/lib/cookbook/validate";
@@ -74,6 +75,8 @@ const LABELS = {
     linkYoutube: "video walkthroughs",
     agentSkills: "Agent skills",
     agentSkillsDesc: "index of the agent skills (postext-port turns a PDF, Word, EPUB, InDesign or HTML publication into a Postext project)",
+    webmcp: "WebMCP tools",
+    webmcpDesc: "in a browser with WebMCP (document.modelContext) every page registers tools for an agent — search, read a page as Markdown, open a Cookbook recipe in the Sandbox — and the Sandbox adds its own (sandbox_*): read and edit the book, change any design setting, get any laid-out page as a JPEG, turn pages, switch viewer, export",
     guideBundleDesc: "the Postext guide as one .postext file (manifest, Markdown chapters, fonts and pictures)",
     cookbook: "Cookbook",
     cookbookTitle: "Postext Cookbook",
@@ -157,6 +160,8 @@ const LABELS = {
     linkYoutube: "vídeos explicativos",
     agentSkills: "Skills para agentes",
     agentSkillsDesc: "índice de las skills para agentes (postext-port convierte una publicación en PDF, Word, EPUB, InDesign o HTML en un proyecto de Postext)",
+    webmcp: "Herramientas WebMCP",
+    webmcpDesc: "en un navegador con WebMCP (document.modelContext) cada página registra herramientas para un agente —buscar, leer una página como Markdown, abrir una receta del Recetario en el Sandbox— y el Sandbox añade las suyas (sandbox_*): leer y editar el libro, cambiar cualquier ajuste de diseño, obtener cualquier página maquetada como JPEG, pasar páginas, cambiar de visor, exportar",
     guideBundleDesc: "la guía de Postext en un solo fichero .postext (manifiesto, capítulos en Markdown, fuentes e imágenes)",
     cookbook: "Recetario",
     cookbookTitle: "Recetario de Postext",
@@ -240,6 +245,8 @@ const LABELS = {
     linkYoutube: "vídeos explicatius",
     agentSkills: "Skills per a agents",
     agentSkillsDesc: "índex de les skills per a agents (postext-port converteix una publicació en PDF, Word, EPUB, InDesign o HTML en un projecte de Postext)",
+    webmcp: "Eines WebMCP",
+    webmcpDesc: "en un navegador amb WebMCP (document.modelContext) cada pàgina registra eines per a un agent —cercar, llegir una pàgina com a Markdown, obrir una recepta del Receptari al Sandbox— i el Sandbox hi afegeix les seves (sandbox_*): llegir i editar el llibre, canviar qualsevol ajust de disseny, obtenir qualsevol pàgina maquetada com a JPEG, passar pàgines, canviar de visor, exportar",
     guideBundleDesc: "la guia de Postext en un sol fitxer .postext (manifest, capítols en Markdown, fonts i imatges)",
     cookbook: "Receptari",
     cookbookTitle: "Receptari de Postext",
@@ -323,6 +330,8 @@ const LABELS = {
     linkYoutube: "vídeos explicativos",
     agentSkills: "Skills para agentes",
     agentSkillsDesc: "índice das skills para agentes (a postext-port converte uma publicação em PDF, Word, EPUB, InDesign ou HTML em um projeto do Postext)",
+    webmcp: "Ferramentas WebMCP",
+    webmcpDesc: "em um navegador com WebMCP (document.modelContext) cada página registra ferramentas para um agente — buscar, ler uma página como Markdown, abrir uma receita das Receitas no Sandbox — e o Sandbox acrescenta as suas (sandbox_*): ler e editar o livro, mudar qualquer ajuste de design, obter qualquer página diagramada como JPEG, virar páginas, trocar de visualizador, exportar",
     guideBundleDesc: "o guia do Postext em um único arquivo .postext (manifesto, capítulos em Markdown, fontes e imagens)",
     cookbook: "Receitas",
     cookbookTitle: "Receitas do Postext",
@@ -406,6 +415,8 @@ const LABELS = {
     linkYoutube: "视频讲解",
     agentSkills: "智能体技能",
     agentSkillsDesc: "智能体技能索引（postext-port把PDF、Word、EPUB、InDesign或HTML出版物转换成Postext项目）",
+    webmcp: "WebMCP工具",
+    webmcpDesc: "在支持WebMCP（document.modelContext）的浏览器里，每个页面都为智能体注册工具：搜索、把页面读成Markdown、在沙盒里打开排版食谱中的食谱；沙盒另有自己的工具（sandbox_*）：读取和编辑书稿、修改任何设计设置、把排好的任意一页取为JPEG、翻页、切换查看器、导出",
     guideBundleDesc: "整本Postext指南，打包成一个.postext文件（清单、Markdown章节、字体和图片）",
     cookbook: "排版食谱",
     cookbookTitle: "Postext排版食谱",
@@ -489,6 +500,8 @@ const LABELS = {
     linkYoutube: "解説動画",
     agentSkills: "エージェントスキル",
     agentSkillsDesc: "エージェントスキルの一覧（postext-portは、PDF、Word、EPUB、InDesign、HTMLの出版物をPostextのプロジェクトに変換します）",
+    webmcp: "WebMCPツール",
+    webmcpDesc: "WebMCP（document.modelContext）のあるブラウザーでは、各ページがエージェント向けのツールを登録します（検索、ページをMarkdownとして読む、レシピ集のレシピをSandboxで開く）。Sandboxは専用のツール（sandbox_*）を加えます。本を読む・編集する、デザインの設定を変える、組み上がった任意のページをJPEGで受け取る、ページをめくる、ビューアーを切り替える、書き出す",
     guideBundleDesc: "Postextのガイド一冊を一つの.postextファイルにしたもの（マニフェスト、Markdownの章、フォント、画像）",
     cookbook: "レシピ集",
     cookbookTitle: "Postextレシピ集",
@@ -572,6 +585,8 @@ const LABELS = {
     linkYoutube: "شروح بالفيديو",
     agentSkills: "مهارات الوكلاء",
     agentSkillsDesc: "فهرس مهارات الوكلاء (postext-port تحوّل منشورًا بصيغة PDF أو Word أو EPUB أو InDesign أو HTML إلى مشروع Postext)",
+    webmcp: "أدوات WebMCP",
+    webmcpDesc: "في متصفح يدعم WebMCP (document.modelContext) تسجّل كل صفحة أدوات للوكيل — البحث، وقراءة صفحة بصيغة Markdown، وفتح وصفة من دليل الوصفات في Sandbox — ويضيف Sandbox أدواته (sandbox_*): قراءة الكتاب وتحريره، وتغيير أي إعداد في التصميم، والحصول على أي صفحة منضّدة بصيغة JPEG، وتقليب الصفحات، وتبديل العارض، والتصدير",
     guideBundleDesc: "دليل Postext في ملف ‎.postext واحد (البيان وفصول Markdown والخطوط والصور)",
     cookbook: "دليل الوصفات",
     cookbookTitle: "دليل وصفات Postext",
@@ -1278,6 +1293,7 @@ export function sandboxMarkdown(locale: string): string {
     "",
     ...(guide ? [`- [${guide.title}](${markdownUrl(locale, "/docs/sandbox")})${guide.description ? `: ${guide.description}` : ""}`] : []),
     `- [${GUIDE_BUNDLE_FILE}](${SITE_URL}${GUIDE_BUNDLE_PATH}): ${labels.guideBundleDesc}`,
+    `- ${labels.webmcp}: ${labels.webmcpDesc}`,
     "",
   ].join("\n");
 }
@@ -1561,8 +1577,10 @@ export function recipeMarkdown(slug: string, locale: string): string | null {
   if (meta.engine.postextPdf) requires.push(`postext-pdf ≥ ${meta.engine.postextPdf}`);
   let tested = "";
   if (capture) {
-    const versions = [capture.engine.postext, capture.engine.postextPdf && `postext-pdf ${capture.engine.postextPdf}`];
-    tested = ` · ${labels.testedWith} ${versions.filter(Boolean).join(", ")} ${labels.testedOn} ${capture.capturedAt.slice(0, 10)}`;
+    // The release it was last verified on, else the one that pictured it (#735).
+    const on = testedOn(capture);
+    const versions = [on.postext, on.postextPdf && `postext-pdf ${on.postextPdf}`];
+    tested = ` · ${labels.testedWith} ${versions.filter(Boolean).join(", ")} ${labels.testedOn} ${on.at.slice(0, 10)}`;
   }
   const pages = pageImages(recipe, lang);
   const pdf = pdfDownload(recipe, lang);
@@ -1786,6 +1804,7 @@ export function llmsTxt(locale: string): string {
     `- [YouTube](${YOUTUBE_URL}): ${labels.linkYoutube}`,
     `- [${labels.sandbox}](${markdownUrl(locale, "/sandbox")}): ${labels.sandboxDesc}`,
     `- [${labels.agentSkills}](${SITE_URL}/.well-known/agent-skills/index.json): ${labels.agentSkillsDesc}`,
+    `- [${labels.webmcp}](${markdownUrl(locale, "/docs/sandbox")}): ${labels.webmcpDesc}`,
     `- [${GUIDE_BUNDLE_FILE}](${SITE_URL}${GUIDE_BUNDLE_PATH}): ${labels.guideBundleDesc}`,
     "",
     `## ${labels.optional}`,

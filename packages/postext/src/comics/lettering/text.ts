@@ -295,6 +295,11 @@ export interface BreakPoint {
   next: number;
   penalty: number;
   forced: boolean;
+  /** Chinese text: the break falls inside a word of the runtime's
+   *  segmenter, or between two characters of a word its dictionary does
+   *  not know (#728). Never set in Japanese text, whose breaks go by
+   *  phrases. */
+  inWord?: true;
 }
 
 type Kind = 'H' | 'K' | 'C' | 'P' | 'O' | 'L';
@@ -428,6 +433,9 @@ export function breakPoints(p: PreparedText, level: CjkLineBreakLevel, japanese:
   // has one): a break there parts a word (如|此, くれ|る).
   const hints = cjkWordHints(t, japanese);
   const inWord = hints.interiors;
+  // The word cuts a shape is charged for (#728) are those of Chinese text:
+  // not a Japanese balloon's, nor those of a text that holds kana.
+  const chinese = !japanese && !/[\u3040-\u30ff]/.test(t);
   let k = 0;
   while (k < t.length) {
     const ch = t[k]!;
@@ -451,9 +459,11 @@ export function breakPoints(p: PreparedText, level: CjkLineBreakLevel, japanese:
       const next = String.fromCodePoint(t.codePointAt(at)!);
       const prev = ch;
       let penalty: number | undefined;
+      let cut = false;
       if (cjkJoinBreaks(t.slice(Math.max(0, at - 4), at), t.slice(at, at + 4), level)) {
         const before = k > 0 ? String.fromCodePoint(t.codePointAt(k - 1 - (k > 1 && /[\uDC00-\uDFFF]/.test(t[k - 1]!) ? 1 : 0))!) : undefined;
         penalty = cjkBreakPenalty(prev, next, japanese, before) + (inWord.has(at) ? (japanese ? 3 : 6) : hints.unknown.has(at) ? 4 : 0);
+        cut = chinese && (inWord.has(at) || hints.unknown.has(at));
       } else if (/\p{L}/u.test(next)) {
         // A hard hyphen or a dash between words; an ellipsis run into the
         // next word ("…AND").
@@ -463,7 +473,7 @@ export function breakPoints(p: PreparedText, level: CjkLineBreakLevel, japanese:
         else if (prev === '…') penalty = 1.5;
         else if (prev === '/') penalty = 3;
       }
-      if (penalty !== undefined) out.push({ end: at, next: at, penalty, forced: false });
+      if (penalty !== undefined) out.push({ end: at, next: at, penalty, forced: false, ...(cut ? { inWord: true as const } : {}) });
     }
     k = at;
   }

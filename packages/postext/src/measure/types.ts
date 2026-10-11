@@ -185,6 +185,15 @@ export interface MeasureBlockOptions {
    *  二、八月の行事 keeps the space after its number. Joins the cache key
    *  only when set. */
   labelLength?: number;
+  /** Seams of a text built from parts (#724): UTF-16 offsets into the
+   *  paragraph's text where a part the layout wrote meets one mirrored
+   *  from the document, as the number and the title of a design text
+   *  (`{number}{titleText}`, `{chapterNumber}{chapterTitle}`). The rule
+   *  `labelLength` stops is not read across them either: a 、 or ・ whose
+   *  unit ends at a seam, or starts at one, keeps its width and may end a
+   *  line. `labelLength: n` is the seam at `n`. Joins the cache key only
+   *  when set. */
+  numberSeams?: readonly number[];
   /** The paragraph's tab stops (#622, `measure/tabs.ts`): where its tabs
    *  (`InlineSpan.tab`) send the text after them. A paragraph that holds a
    *  tab is set line by line, whatever {@link optimal} says. Unset: a tab

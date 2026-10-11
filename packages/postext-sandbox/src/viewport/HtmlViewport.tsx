@@ -6,7 +6,8 @@ import { useSandboxSelector } from '../context/SandboxContext';
 import { HtmlPreview, type HtmlPreviewHandle } from './HtmlPreview';
 import { HtmlToolbar } from './HtmlToolbar';
 import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { usePageHashSync, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
+import { useViewerControls } from './viewerControls';
+import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import {
   loadHtmlFontScale,
   saveHtmlFontScale,
@@ -94,9 +95,45 @@ export function HtmlViewport() {
   const handlePageCountChange = useCallback((count: number, firstPage: number, pageNumbers: readonly number[], book?: BookPageMap) => {
     setLayout((l) => ({ pageCount: count, firstPage, pageNumbers, version: l.version + 1, ...(book ? { book } : {}) }));
   }, []);
-  const handleCurrentPageChange = usePageHashSync(layout, handleJumpToPage);
+  const syncPageHash = usePageHashSync(layout, handleJumpToPage);
+  const [currentPage, setCurrentPage] = useState(0);
+  const handleCurrentPageChange = useCallback((pageIndex: number) => {
+    setCurrentPage(pageIndex);
+    syncPageHash(pageIndex);
+  }, [syncPageHash]);
 
   const shell = useFloatingToolbarShell('html', generating);
+
+  useViewerControls('html', {
+    status: () => ({
+      fontScale,
+      columns: effectiveColumnMode,
+      toolbarPinned: shell.pinned,
+      generating,
+      pageCount: layout.pageCount,
+      pageIndex: currentPage,
+      pageNumber: pageNumberAt(layout, currentPage),
+      ...(effectiveColumnMode === 'multi' ? { canPrevious: scrollBounds.canPrev, canNext: scrollBounds.canNext } : {}),
+      ...(verticalBook && columnMode === 'single' ? { columnsForced: true } : {}),
+      videos: (previewRef.current?.videos() ?? []).map((v) => ({ resource: v.resource, pageNumber: pageNumberAt(layout, v.pageIndex), state: v.state })),
+    }),
+    set: (settings) => {
+      if (settings.fontScale !== undefined) setFontScale(clampFontScale(settings.fontScale));
+      if (settings.columns !== undefined) setColumnMode(settings.columns);
+      if (settings.toolbarPinned !== undefined) shell.setPinned(settings.toolbarPinned);
+    },
+    regenerate: handleRegenerate,
+    goToPage: handleJumpToPage,
+    step: handleScrollColumn,
+    goToEdge: (edge) => handleJumpToPage(edge === 'first' ? 0 : Math.max(0, layout.pageCount - 1)),
+    playVideo: async ({ pageNumber, ...pick }) => {
+      const pageIndex = pageNumber === undefined ? undefined : pageIndexOf(layout, pageNumber);
+      if (pageIndex !== undefined && pageIndex < 0) return { played: false, reason: 'none' };
+      const { pageIndex: at, ...result } = (await previewRef.current?.playVideo({ ...pick, ...(pageIndex !== undefined ? { pageIndex } : {}) })) ?? { played: false, reason: 'none' as const };
+      return { ...result, ...(at !== undefined ? { pageNumber: pageNumberAt(layout, at) } : {}) };
+    },
+    stopVideo: () => previewRef.current?.stopVideo(),
+  });
 
   return (
     <div className="relative h-full w-full" {...shell.containerProps}>

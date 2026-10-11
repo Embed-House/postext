@@ -3,10 +3,16 @@ import { renderPageToCanvas } from '../canvas-backend';
 import { renderBlock } from '../canvas-backend/blockRender';
 import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
 import { fillTrackedWord, trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText';
+import { renderHeaderFooterSlot, renderTextBlock } from '../canvas-backend/headerFooter';
+import { renderComicBalloon } from '../canvas-backend/comic';
+import { fillFlowText, setVerticalPaint } from '../canvas-backend/verticalText';
 import { renderToHtml } from '../html-backend';
 import { buildDocument } from '../pipeline';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { layoutSlotToVdt } from '../pipeline/headerFooter';
+import { resolveDesignSlot } from '../defaults/headerFooter';
+import type { DesignPlaceholderContext } from '../design/placeholders';
+import type { DesignElement, DesignTextElement, PostextConfig, Resource } from '../types';
+import type { VDTBlock, VDTComicBalloon, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTLine, VDTPage } from '../vdt';
 
 // #663: a tracked word is measured at its natural width, ligatures counted,
 // plus the tracking times its letters. A browser shapes it without its
@@ -280,8 +286,9 @@ const rightOf = (r: Run): number => Math.max(r.x, r.x + r.ux * r.width);
  *  and its state. `keeps`: see {@link BrowserCtx}; its fonts carry another
  *  name, so what is known of a word in one browser is not taken for the
  *  other. */
-function sheetCanvas(keeps = false): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; runs: Run[] } {
+function sheetCanvas(keeps = false): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; runs: Run[]; strokes: Run[] } {
   const runs: Run[] = [];
+  const strokes: Run[] = [];
   let m: M = [1, 0, 0, 1, 0, 0];
   const stack: { m: M; state: Record<string, unknown> }[] = [];
   const measure = new BrowserCtx(keeps);
@@ -304,17 +311,19 @@ function sheetCanvas(keeps = false): { canvas: HTMLCanvasElement; ctx: CanvasRen
     scale(x: number, y: number) { m = mul(m, [x, 0, 0, y, 0, 0]); },
     rotate(t: number) { m = mul(m, [Math.cos(t), Math.sin(t), -Math.sin(t), Math.cos(t), 0, 0]); },
     measureText,
-    fillText(text: string, x: number, y: number) {
-      const width = measureText(text).width;
-      // The run's box from its alignment, as a browser places it.
-      const rtl = state.direction === 'rtl';
-      const from = state.textAlign === 'right' || (state.textAlign === 'start' && rtl) || (state.textAlign === 'end' && !rtl) ? x - width : x;
-      runs.push({
-        text, x: m[0] * from + m[2] * y + m[4], y: m[1] * from + m[3] * y + m[5], ux: m[0], uy: m[1], det: m[0] * m[3] - m[1] * m[2],
-        width, baseline: y, spacing: parseFloat(state.letterSpacing as string) || 0, direction: state.direction as string, font: state.font as string,
-      });
-    },
+    fillText(text: string, x: number, y: number) { record(runs, text, x, y); },
+    strokeText(text: string, x: number, y: number) { record(strokes, text, x, y); },
   };
+  function record(list: Run[], text: string, x: number, y: number): void {
+    const width = measureText(text).width;
+    // The run's box from its alignment, as a browser places it.
+    const rtl = state.direction === 'rtl';
+    const from = state.textAlign === 'right' || (state.textAlign === 'start' && rtl) || (state.textAlign === 'end' && !rtl) ? x - width : x;
+    list.push({
+      text, x: m[0] * from + m[2] * y + m[4], y: m[1] * from + m[3] * y + m[5], ux: m[0], uy: m[1], det: m[0] * m[3] - m[1] * m[2],
+      width, baseline: y, spacing: parseFloat(state.letterSpacing as string) || 0, direction: state.direction as string, font: state.font as string,
+    });
+  }
   const ctx = new Proxy(state, {
     get(target, key) {
       if (typeof key === 'string' && key in api) return api[key];
@@ -332,7 +341,7 @@ function sheetCanvas(keeps = false): { canvas: HTMLCanvasElement; ctx: CanvasRen
     getOwnPropertyDescriptor() { return undefined; },
   }) as unknown as CanvasRenderingContext2D;
   const canvas = { width: 0, height: 0, getContext: () => ctx } as unknown as HTMLCanvasElement;
-  return { canvas, ctx, runs };
+  return { canvas, ctx, runs, strokes };
 }
 function runsOn(doc: VDTDocument, page = 0, keeps = false): Run[] {
   const { canvas, runs } = sheetCanvas(keeps);
@@ -482,9 +491,9 @@ const tracked2 = (config: PostextConfig): PostextConfig => ({
 const headingOf = (doc: VDTDocument): VDTBlock => doc.blocks.find((b) => b.type === 'heading')!;
 
 describe('right-to-left words on a tracked line (#685)', () => {
-  it('an Arabic or a Hebrew word is never cut, though its face has ligatures', () => {
+  it('an Arabic word, a word in two directions and a Hebrew word in a left-to-right context are never cut, though the face has ligatures', () => {
     const { ctx } = paintingCtx();
-    for (const word of [SALAM, ISRAEL, `first${SALAM}`, `${ISRAEL}first`]) {
+    for (const word of [SALAM, ISRAEL, `first${SALAM}`, `${ISRAEL}first`, `${ISRAEL}12`]) {
       // The browser shapes it otherwise under a letter-spacing…
       expect(shapedOtherwise(ctx, word)).toBe(true);
       // …and it is still painted whole, with one `fillText`.
@@ -581,18 +590,62 @@ describe('tracked header cells in either direction (#685)', () => {
   }
 });
 
-describe('lines that are never cut (#685)', () => {
-  it('a vertical line is painted the same whether the browser drops ligatures or not', () => {
+describe('a tracked vertical line (#685, #703)', () => {
+  it('paints its sideways Latin run with its ligatures, ending where the line was measured to end', () => {
     const doc = buildDocument({ markdown: '## first office fire' }, tracked2({ ...CONFIG, layout: { writingMode: 'vertical-rl', layoutType: 'single' } }));
-    expect(headingOf(doc).letterSpacing ?? headingOf(doc).lines[0]!.letterSpacing).toBeCloseTo(0.5, 6);
-    // What was painted and where; the two browsers measure the run apart.
-    const put = (r: Run) => ({ ...r, font: r.font.replace(', Keeps', ''), width: 0 });
-    const cut = runsOn(doc).map(put);
-    expect(cut.length).toBeGreaterThan(0);
-    expect(cut).toEqual(runsOn(doc, 0, true).map(put));
-    // The words with their neighbours, tracked: no ligature set apart.
-    expect(cut.map((r) => r.text).join(' ')).toContain('first');
-    expect(cut.some((r) => r.text === 'fi' || r.text === 'ffi' || r.spacing === 0)).toBe(false);
+    const heading = headingOf(doc);
+    const t = heading.letterSpacing ?? heading.lines[0]!.letterSpacing!;
+    expect(t).toBeCloseTo(0.5, 6);
+    const cut = runsOn(doc);
+    // Up to postext 1.27 the run was one text under the letter-spacing,
+    // shaped without its ligatures and wider than its place.
+    expect(cut.map((r) => r.text)).toEqual(['fi', 'rst o', 'ffi', 'ce ', 'fi', 're']);
+    expect(cut.filter((r) => r.text === 'fi' || r.text === 'ffi').every((r) => r.spacing === 0)).toBe(true);
+    expect(cut.filter((r) => r.text !== 'fi' && r.text !== 'ffi').every((r) => r.spacing === t)).toBe(true);
+    // The frame turns the line a quarter: the letters advance down the sheet.
+    expect(cut.every((r) => Math.abs(r.ux) < 1e-9 && r.uy === 1)).toBe(true);
+    for (let k = 1; k < cut.length; k++) expect(cut[k]!.y).toBeGreaterThan(cut[k - 1]!.y);
+    // Against a browser that keeps its ligatures, which paints the run
+    // whole at the width the layout measured: the same start, and an end
+    // short of it by the tracking the letters of its ligatures do not take
+    // (fi, ffi, fi: four letters).
+    const [whole, ...rest] = runsOn(doc, 0, true) as [Run, ...Run[]];
+    expect(rest).toEqual([]);
+    expect(whole.text).toBe('first office fire');
+    expect(whole.width).toBeCloseTo(heading.lines[0]!.bbox.width, 6);
+    expect(cut[0]!.y).toBeCloseTo(whole.y, 6);
+    expect(cut[0]!.x).toBeCloseTo(whole.x, 6);
+    const last = cut[cut.length - 1]!;
+    expect(whole.y + whole.width - (last.y + last.width)).toBeCloseTo(4 * t, 6);
+    // Painted whole without its ligatures it ran past its place.
+    const dropped = new BrowserCtx();
+    dropped.font = whole.font.replace(', Keeps', '');
+    dropped.letterSpacing = `${t}px`;
+    expect(dropped.measureText(whole.text).width - whole.width).toBeGreaterThan(3);
+  });
+
+  it('moves the pen past a sideways run by the width it was measured at', () => {
+    // "first" then a Han character in one text: the character stands
+    // after the run's natural width and the tracking of its five letters,
+    // where a browser that keeps the ligature puts it.
+    const cellAt = (keeps: boolean): Run => {
+      const { ctx, runs } = sheetCanvas(keeps);
+      ctx.letterSpacing = '0.5px';
+      const outer = setVerticalPaint({ region: 'mainland' });
+      fillFlowText(ctx, 'first\u697C', 30, 50);
+      setVerticalPaint(outer);
+      expect(ctx.letterSpacing).toBe('0.5px');
+      return runs.find((r) => r.text === '\u697C')!;
+    };
+    const cut = cellAt(false);
+    const whole = cellAt(true);
+    expect(cut.x).toBeCloseTo(whole.x, 6);
+    expect(cut.y).toBeCloseTo(whole.y, 6);
+    // Measured without its ligature the run is one letter's advance (a
+    // third of an em less the ligature's saving: 1 px here) longer.
+    const dropped = new BrowserCtx();
+    dropped.letterSpacing = '0.5px';
+    expect(dropped.measureText('first').width - (20 + 5 * 0.5)).toBeCloseTo(1, 6);
   });
 });
 
@@ -613,5 +666,318 @@ describe('a tracked line in HTML, either direction (#685)', () => {
     expect(html).toMatch(new RegExp(`<span[^>]*letter-spacing:0;[^>]*>${SALAM}</span>`));
     expect(html).toContain(SHALOM);
     expect(html).not.toMatch(new RegExp(`<span[^>]*letter-spacing:0;[^>]*>${SHALOM}</span>`));
+  });
+});
+
+// #703: letter-spacing never changes the glyphs. What #663 and #685 left
+// out is painted by the same rule: design text (running heads, openers,
+// callout titles, balloon lettering), the sideways Latin runs of a
+// vertical line (above), the Western runs of a line of the CJK composer,
+// and Hebrew words. And a Hebrew run of a tracked design text keeps the
+// tracking it was measured with.
+
+const container = { x: 20, y: 10, width: 300, height: 40 };
+const stubPage = { index: 0, pageLabel: '1' } as unknown as VDTPage;
+const placeholders: DesignPlaceholderContext = { kind: 'header', page: stubPage, allPages: [stubPage], metadata: {}, chapterTitleByPageIndex: [] };
+const T = 0.2;
+/** A running head tracked by {@link T} px after each letter (72 dpi). */
+const head = (content: string, extra: Partial<DesignTextElement> = {}): DesignElement => ({
+  kind: 'text', id: 'rh', content, fontSize: pt(10), letterSpacing: pt(T), overflow: 'wrap',
+  placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'auto' } },
+  ...extra,
+} as DesignElement);
+const slotOf = (el: DesignElement): VDTDesignSlot => layoutSlotToVdt(resolveDesignSlot({ elements: [el] }), container, 0, placeholders, 72)!;
+const textOf = (slot: VDTDesignSlot): VDTDesignTextBlock => slot.blocks.find((b): b is VDTDesignTextBlock => b.kind === 'text')!;
+function paintedSlot(slot: VDTDesignSlot, keeps = false): { runs: Run[]; strokes: Run[]; ctx: CanvasRenderingContext2D } {
+  const { ctx, runs, strokes } = sheetCanvas(keeps);
+  renderHeaderFooterSlot(ctx, slot);
+  return { runs, strokes, ctx };
+}
+const where = (runs: Run[]): [string, number, number][] => runs.map((r) => [r.text, +leftOf(r).toFixed(6), r.spacing]);
+
+describe('a tracked design text on canvas (#703)', () => {
+  it('a running head with ligatures is painted in pieces and takes its measured width', () => {
+    const slot = slotOf(head('first office'));
+    const block = textOf(slot);
+    const line = block.lines[0]!;
+    expect(block.letterSpacingPx).toBeCloseTo(T, 6);
+    // Measured with its ligatures: fi 5, ffi 7.5, the rest 5 a letter, the
+    // space 2.5, and the tracking after each of its twelve characters.
+    expect(line.width).toBeCloseTo(5 + 15 + 2.5 + 5 + 7.5 + 10 + 12 * T, 6);
+    const x0 = block.bbox.x + line.xOffset;
+    const { runs, ctx } = paintedSlot(slot);
+    expect(where(runs)).toEqual([
+      ['fi', x0, 0],
+      ['rst o', +(x0 + 5 + T).toFixed(6), T],
+      ['ffi', +(x0 + 27.5 + 6 * T).toFixed(6), 0],
+      ['ce', +(x0 + 35 + 7 * T).toFixed(6), T],
+    ]);
+    expect(ctx.letterSpacing).toBe('0px');
+    // Its ink ends where the line does, less the tracking the letters of
+    // its two ligatures do not take (one for fi, two for ffi).
+    const last = runs[runs.length - 1]!;
+    const ink = rightOf(last) - T;
+    const place = x0 + line.width - T;
+    expect(place - ink).toBeCloseTo(3 * T, 6);
+    // Painted as one text under the letter-spacing it was 2.5 px wider:
+    // the letters of two ligatures set apart.
+    const dropped = new BrowserCtx();
+    dropped.letterSpacing = `${T}px`;
+    expect(dropped.measureText('first office').width - line.width).toBeCloseTo(2.5, 6);
+  });
+
+  it('a text with no ligature, and any text in a browser that keeps them, is one fillText as before', () => {
+    const plain = slotOf(head('RUNNING HEAD'));
+    const x0 = textOf(plain).bbox.x + textOf(plain).lines[0]!.xOffset;
+    expect(where(paintedSlot(plain).runs)).toEqual([['RUNNING HEAD', x0, T]]);
+    const slot = slotOf(head('first office'));
+    expect(where(paintedSlot(slot, true).runs)).toEqual([['first office', x0, T]]);
+    // And an untracked one is never asked about.
+    const untracked = slotOf(head('first office', { letterSpacing: pt(0) }));
+    const { ctx, runs } = sheetCanvas();
+    const measure = (ctx as unknown as { measureText: (s: string) => unknown }).measureText;
+    let measured = 0;
+    (ctx as unknown as Record<string, unknown>).measureText = (s: string) => { measured++; return measure(s); };
+    renderHeaderFooterSlot(ctx, untracked);
+    expect(runs.map((r) => [r.text, r.spacing])).toEqual([['first office', 0]]);
+    expect(measured).toBe(0);
+  });
+
+  it('a bold run is cut in its own face, each run from where the layout put it', () => {
+    const slot = slotOf(head('the **first** office', { inlineMarks: true }));
+    const block = textOf(slot);
+    const line = block.lines[0]!;
+    expect(line.runs!.map((r) => r.text)).toEqual(['the ', 'first', ' office']);
+    const { runs } = paintedSlot(slot);
+    expect(runs.map((r) => r.text)).toEqual(['the ', 'fi', 'rst', ' o', 'ffi', 'ce']);
+    const starts = line.runs!.map((_, k) => block.bbox.x + line.xOffset + line.runs!.slice(0, k).reduce((w, r) => w + r.width, 0));
+    expect(leftOf(runs[0]!)).toBeCloseTo(starts[0]!, 6);
+    expect(leftOf(runs[1]!)).toBeCloseTo(starts[1]!, 6);
+    expect(leftOf(runs[3]!)).toBeCloseTo(starts[2]!, 6);
+    // The bold word in the bold face, ligature and letters alike.
+    expect(runs[1]!.font).toBe(line.runs![1]!.fontString);
+    expect(runs[2]!.font).toBe(line.runs![1]!.fontString);
+    expect(runs[1]!.font).not.toBe(runs[0]!.font);
+    expect(runs.filter((r) => r.text === 'fi' || r.text === 'ffi').every((r) => r.spacing === 0)).toBe(true);
+    // Each run ends inside its place.
+    expect(rightOf(runs[2]!) - T).toBeLessThanOrEqual(starts[2]! + 1e-6);
+    expect(rightOf(runs[5]!) - T).toBeLessThanOrEqual(starts[2]! + line.runs![2]!.width + 1e-6);
+  });
+
+  it('inside a mirrored frame the pieces of a line read from its box\'s left, turned once', () => {
+    const block = textOf(slotOf(head('first office')));
+    const paint = (keeps: boolean): Run[] => {
+      const { ctx, runs } = sheetCanvas(keeps);
+      const end = beginMirroredFlow(ctx, 400);
+      renderTextBlock(ctx, block);
+      end();
+      return runs;
+    };
+    const cut = paint(false);
+    const [whole] = paint(true) as [Run];
+    expect(cut.map((r) => r.text)).toEqual(['fi', 'rst o', 'ffi', 'ce']);
+    expect(cut.every((r) => r.det > 0 && r.ux === 1)).toBe(true);
+    expect(leftOf(cut[0]!)).toBeCloseTo(leftOf(whole), 6);
+    for (let k = 1; k < cut.length; k++) expect(leftOf(cut[k]!)).toBeGreaterThan(leftOf(cut[k - 1]!));
+    expect(rightOf(cut[3]!)).toBeLessThanOrEqual(rightOf(whole) + 1e-6);
+    expect(rightOf(whole) - rightOf(cut[3]!)).toBeCloseTo(3 * T, 6);
+  });
+
+  it('an outlined text strokes the same pieces it fills, a hollow one only strokes them', () => {
+    const block = textOf(slotOf(head('first office')));
+    const paint = (stroke: VDTDesignTextBlock['stroke']): { runs: Run[]; strokes: Run[] } => {
+      const { ctx, runs, strokes } = sheetCanvas();
+      renderTextBlock(ctx, { ...block, stroke });
+      return { runs, strokes };
+    };
+    const outlined = paint({ widthPx: 1, color: '#000000' });
+    expect(outlined.runs.map((r) => r.text)).toEqual(['fi', 'rst o', 'ffi', 'ce']);
+    expect(where(outlined.strokes)).toEqual(where(outlined.runs));
+    const hollow = paint({ widthPx: 1, color: '#000000', hollow: true });
+    expect(hollow.runs).toEqual([]);
+    expect(where(hollow.strokes)).toEqual(where(outlined.runs));
+  });
+
+  it('a balloon\'s lettering and its halo are painted in the same pieces', () => {
+    const block = textOf(slotOf(head('first office')));
+    const balloon = {
+      id: 'b', panelIndex: 0, order: 0, kind: 'sfx', style: 'sfx', sourceStart: 0, sourceEnd: 0, group: 0,
+      text: [block], bbox: block.bbox, halo: { width: 1, color: '#ffffff' },
+    } as VDTComicBalloon;
+    const { ctx, runs, strokes } = sheetCanvas();
+    renderComicBalloon(ctx, balloon);
+    // The halo (filled and stroked), then the letters over it.
+    const pieces = ['fi', 'rst o', 'ffi', 'ce'];
+    expect(strokes.map((r) => r.text)).toEqual(pieces);
+    expect(runs.map((r) => r.text)).toEqual([...pieces, ...pieces]);
+    expect(where(runs.slice(0, 4))).toEqual(where(runs.slice(4)));
+    expect(where(strokes)).toEqual(where(runs.slice(4)));
+  });
+
+  it('a line with CJK text keeps the ligature of its Latin word', () => {
+    const slot = slotOf(head('楼 first'));
+    const { runs } = paintedSlot(slot);
+    // The design composer sets the Han character, the space and the word
+    // as runs of their own.
+    expect(runs.map((r) => [r.text, r.spacing])).toEqual([['楼', T], [' ', T], ['fi', 0], ['rst', T]]);
+  });
+});
+
+const calloutConfig = (config: PostextConfig): PostextConfig => ({
+  ...config,
+  page: { ...config.page, width: pt(300), height: pt(300) },
+  calloutStyles: [{ id: 'd', titleStyle: { letterSpacing: pt(0.5) } }],
+});
+const CALLOUT_MD = 'Text.\n\n:::callout{type="d" title="first office"}\nOne line.\n:::\n';
+
+describe('a tracked callout title (#703)', () => {
+  for (const [name, config] of [['a left-to-right page', CONFIG], ['a right-to-left page', RTL]] as const) {
+    it(`${name}: the title in pieces where the whole title would stand`, () => {
+      const doc = buildDocument({ markdown: CALLOUT_MD }, calloutConfig(config));
+      const frame = doc.blocks.find((b) => b.type === 'callout')!;
+      const title = frame.designOverlay!.blocks.find((b): b is VDTDesignTextBlock => b.kind === 'text')!;
+      expect(title.letterSpacingPx).toBeCloseTo(0.5, 6);
+      const words = againstWholeWords(doc);
+      expect(words.map((w) => w.map((r) => r.text))).toEqual([['fi', 'rst o', 'ffi', 'ce']]);
+      const [pieces] = words as [Run[]];
+      for (let k = 1; k < pieces.length; k++) expect(leftOf(pieces[k]!)).toBeGreaterThan(leftOf(pieces[k - 1]!));
+    });
+  }
+});
+
+describe('a tracked Hebrew word of a face with a ligature (#703)', () => {
+  for (const [name, config, dir] of [['a right-to-left line of a left-to-right page', CONFIG, ' {dir=rtl}'], ['a line of a right-to-left page', RTL, '']] as const) {
+    it(`${name}: its pieces from the right end of its box, each painted right to left`, () => {
+      const doc = buildDocument({ markdown: `## ${ISRAEL} ${SALAM} ${SHALOM}${dir}` }, tracked2(config));
+      const t = 0.5;
+      const cut = runsOn(doc);
+      const whole = runsOn(doc, 0, true);
+      // The Arabic word and the Hebrew one with no ligature: whole, as before.
+      expect(cut.filter((r) => r.text === SALAM).map((r) => [r.spacing, r.direction])).toEqual([[0, 'rtl']]);
+      expect(cut.filter((r) => r.text === SHALOM).map((r) => [r.spacing, r.direction])).toEqual([[t, 'rtl']]);
+      const word = whole.find((r) => r.text === ISRAEL)!;
+      const pieces = cut.filter((r) => r.text !== SALAM && r.text !== SHALOM);
+      expect(pieces.map((r) => [r.text, r.spacing, r.direction])).toEqual([[ISRAEL.slice(0, 3), t, 'rtl'], [ISRAEL.slice(3), 0, 'rtl']]);
+      expect(pieces.every((r) => r.det > 0 && r.ux === 1)).toBe(true);
+      const [letters, ligature] = pieces as [Run, Run];
+      // The word starts at its right end: its first letters end there.
+      expect(rightOf(letters)).toBeCloseTo(rightOf(word), 6);
+      // The ligature after them, to their left, inside the word's box:
+      // short of its left end by the trailing tracking and the one its
+      // second letter does not take.
+      expect(rightOf(ligature)).toBeCloseTo(leftOf(letters), 6);
+      expect(leftOf(ligature) - leftOf(word)).toBeCloseTo(2 * t, 6);
+      // Painted whole under the letter-spacing it overran its segment.
+      const seg = headingOf(doc).lines[0]!.segments!.find((sg) => sg.text === ISRAEL)!;
+      expect(seg.width).toBeCloseTo(word.width, 6);
+      const dropped = new BrowserCtx();
+      dropped.font = word.font;
+      dropped.letterSpacing = `${t}px`;
+      expect(dropped.measureText(ISRAEL).width).toBeGreaterThan(seg.width + 1);
+    });
+  }
+
+  it('a Hebrew run of a tracked running head keeps its tracking and its ligature', () => {
+    const slot = slotOf(head(`${ISRAEL} first`, { direction: 'ltr' }));
+    const block = textOf(slot);
+    const line = block.lines[0]!;
+    expect(block.letterSpacingPx).toBeCloseTo(T, 6);
+    const hebrew = line.runs!.find((r) => r.rtl)!;
+    const x0 = block.bbox.x + line.xOffset;
+    const { runs } = paintedSlot(slot);
+    const rtl = runs.filter((r) => r.direction === 'rtl');
+    expect(rtl.map((r) => [r.text, r.spacing])).toEqual([[ISRAEL.slice(0, 3), T], [ISRAEL.slice(3), 0]]);
+    expect(rightOf(rtl[0]!)).toBeCloseTo(x0 + hebrew.width, 6);
+    expect(leftOf(rtl[1]!)).toBeGreaterThanOrEqual(x0 - 1e-6);
+    // The Latin word after it, in its own pieces.
+    expect(runs.filter((r) => r.direction !== 'rtl').map((r) => r.text).join('').trim()).toBe('first');
+    expect(runs.filter((r) => r.text === 'fi').map((r) => r.spacing)).toEqual([0]);
+  });
+
+  it('a Hebrew running head is tracked as it was measured; an Arabic one is not', () => {
+    const hebrew = slotOf(head(`${SHALOM} ${SHALOM}`, { direction: 'rtl' }));
+    const block = textOf(hebrew);
+    expect(block.letterSpacingPx).toBeCloseTo(T, 6);
+    // Up to postext 1.27 every right-to-left run was painted untracked,
+    // narrower than the width its line was measured at.
+    const painted = paintedSlot(hebrew).runs;
+    expect(painted.length).toBeGreaterThan(0);
+    expect(painted.every((r) => r.spacing === T && r.direction === 'rtl')).toBe(true);
+    expect(painted.reduce((w, r) => w + r.width, 0)).toBeCloseTo(block.lines[0]!.width, 6);
+    // A text with Arabic letters is measured and painted untracked.
+    const arabic = slotOf(head(`${SALAM} ${SALAM}`, { direction: 'rtl' }));
+    expect(textOf(arabic).letterSpacingPx ?? 0).toBe(0);
+    expect(paintedSlot(arabic).runs.every((r) => r.spacing === 0)).toBe(true);
+  });
+});
+
+describe('a Western run of a tracked line of the CJK composer (#703)', () => {
+  it('keeps its ligature on canvas and asks for it in HTML beside the CJK features', () => {
+    const doc = buildDocument(
+      { markdown: '## 红楼 first 梦' },
+      tracked2({ ...CONFIG, locale: 'zh', cjk: { region: 'mainland' } }),
+    );
+    const heading = headingOf(doc);
+    expect(heading.lines[0]!.cjkComposed).toBe(true);
+    const runs = runsOn(doc);
+    expect(runs.filter((r) => /[a-z]/.test(r.text)).map((r) => [r.text, r.spacing])).toEqual([['fi', 0], ['rst', 0.5]]);
+    const html = renderToHtml(doc);
+    expect(html).toContain("letter-spacing:0.5px;font-feature-settings:'liga' 1,'clig' 1;text-spacing-trim:space-all;text-autospace:no-autospace;font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'liga' 1,'clig' 1;");
+  });
+});
+
+const withHead = (content: string, extra: Partial<DesignTextElement> = {}, config: PostextConfig = CONFIG): PostextConfig => ({
+  ...config,
+  page: { ...config.page, width: pt(300), margins: { top: pt(40), bottom: pt(10), left: pt(10), right: pt(10) } },
+  header: { elements: [head(content, extra)] },
+});
+const LIGA = "font-feature-settings:'liga' 1,'clig' 1;";
+
+describe('a tracked design text in HTML (#703)', () => {
+  it('asks for its ligatures after the letter-spacing', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('first office')));
+    expect(html).toContain(`letter-spacing:${T}px;${LIGA}`);
+    expect(html).toContain('>first office</span>');
+  });
+
+  it('a run in another face asks again after its own font', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('the **first** office', { inlineMarks: true })));
+    expect(html).toMatch(/<span style="font:[^;]+;line-height:1;font-feature-settings:'liga' 1,'clig' 1;">first<\/span>/);
+  });
+
+  it('an untracked design text carries no feature', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('the **first** office', { inlineMarks: true, letterSpacing: pt(0) })));
+    expect(html).not.toContain("'liga'");
+  });
+
+  it('a line with CJK text holds both sets of features in one declaration', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('楼 first')));
+    expect(html).toContain("font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'liga' 1,'clig' 1;\">楼</span>");
+    // Untracked, the CJK declaration alone, as before.
+    const plain = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('楼 first', { letterSpacing: pt(0) })));
+    expect(plain).toContain("font-feature-settings:'chws' 0,'halt' 0,'vchw' 0;\">楼</span>");
+    expect(plain).not.toContain("'liga'");
+  });
+
+  it('a Hebrew running head keeps the block\'s letter-spacing', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead(`${SHALOM} ${SHALOM}`, { direction: 'rtl' })));
+    expect(html).toContain(`letter-spacing:${T}px;${LIGA}`);
+    expect(html).toContain(SHALOM);
+    expect(html).not.toContain('letter-spacing:0;');
+  });
+
+  it('a text set vertically asks after each font, which resets the features', () => {
+    const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('first office', { writingMode: 'vertical-rl' })));
+    expect(html).toContain(`letter-spacing:${T}px;`);
+    expect(html).toMatch(/font:[^;"]+;color:[^;"]+;font-feature-settings:'liga' 1,'clig' 1;/);
+  });
+
+  it('a tracked line of a vertical page asks for the ligatures of its sideways runs', () => {
+    const doc = buildDocument({ markdown: '## first office fire' }, tracked2({ ...CONFIG, layout: { writingMode: 'vertical-rl', layoutType: 'single' } }));
+    const html = renderToHtml(doc);
+    expect(html).toContain(`letter-spacing:0.5px;${LIGA}`);
+    // An untracked vertical line carries none.
+    const plain = renderToHtml(buildDocument({ markdown: '## first office fire' }, { ...CONFIG, layout: { writingMode: 'vertical-rl', layoutType: 'single' } }));
+    expect(plain).not.toContain("'liga'");
   });
 });

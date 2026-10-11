@@ -77,7 +77,7 @@ export function pieceOptions(
   last: boolean,
   looseness: number,
 ): MeasureBlockOptions {
-  const { firstLineIndentPx: _first, hangingIndent: _hanging, lineIndentsPx: _table, labelColumnPx, labelLength, restWidths, lineInsets, avoidHyphenAtLines, keepBreaks, looseness: _loose, runtPenalty, ...rest } = options ?? {};
+  const { firstLineIndentPx: _first, hangingIndent: _hanging, lineIndentsPx: _table, labelColumnPx, labelLength, numberSeams, restWidths, lineInsets, avoidHyphenAtLines, keepBreaks, looseness: _loose, runtPenalty, ...rest } = options ?? {};
   void _first;
   void _hanging;
   void _table;
@@ -95,6 +95,8 @@ export function pieceOptions(
   if (labelColumnPx !== undefined && piece === 0) out.labelColumnPx = labelColumnPx;
   // A heading's number (#679) opens its first piece.
   if (labelLength && piece === 0) out.labelLength = labelLength;
+  // Seams are offsets into the whole text (#724): the first piece's.
+  if (numberSeams?.length && piece === 0) out.numberSeams = numberSeams;
   if (restWidths && restWidths.length > 0) {
     const steps: LineWidthStep[] = [];
     const at = lineMeasure(maxWidthPx, restWidths, n);
@@ -196,8 +198,9 @@ export function measureForcedBreaks(
     const placed = shifted(r.lines, lines.length * lineHeightPx);
     if (k < lastPiece) {
       const end = placed[placed.length - 1]!;
-      const { justifiedSpaceRatio: _ratio, ...ragged } = end;
+      const { justifiedSpaceRatio: _ratio, justifiedSpaceLimitRatio: _limit, ...ragged } = end;
       void _ratio;
+      void _limit;
       placed[placed.length - 1] = { ...ragged, isLastLine: true, hardBreak: true };
     }
     lines.push(...placed);

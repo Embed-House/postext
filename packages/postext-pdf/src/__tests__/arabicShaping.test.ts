@@ -76,6 +76,8 @@ function legacy(doc: VDTDocument): VDTDocument {
     for (const seg of line.segments ?? []) {
       delete seg.rtl;
       delete seg.level;
+      // Nor did such a layout name the script of a word with no letter (#725).
+      delete seg.scriptContext;
     }
   }
   return doc;

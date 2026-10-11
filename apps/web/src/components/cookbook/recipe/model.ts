@@ -12,6 +12,7 @@ import { highlightLines, type HighlightedLine } from "@/lib/cookbook/highlight";
 import { captureVariantFor, pageImages, pdfDownload, spreadBinding, type PageImage } from "@/lib/cookbook/images";
 import { getComposed, writeupFor } from "@/lib/cookbook/recipes";
 import { loadRegistry } from "@/lib/cookbook/registry";
+import { testedOn, type TestedOn } from "@/lib/cookbook/tested";
 import type {
   CaptureManifest,
   CaptureVariant,
@@ -60,6 +61,9 @@ export interface RecipeView {
   jsLines: HighlightedLine[];
   capture: CaptureVariant | null;
   engine: CaptureManifest["engine"] | null;
+  /** The release the recipe was last tested with (lib/cookbook/tested.ts):
+   *  `engine`, unless a later release verified the capture unchanged. */
+  tested: TestedOn | null;
   pages: PageImage[];
   /** Indexes into `pages`: [verso, recto], in reading order. */
   spreads: [number | null, number | null][];
@@ -152,6 +156,7 @@ export async function recipeView(recipe: Recipe, locale: Locale): Promise<Recipe
     jsLines: await highlightLines(pen.js, "js"),
     capture: hit?.data ?? null,
     engine: recipe.capture?.engine ?? null,
+    tested: recipe.capture ? testedOn(recipe.capture) : null,
     pages,
     spreads,
     binding: spreadBinding(recipe, locale),

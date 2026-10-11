@@ -41,6 +41,7 @@ import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredB
 import { measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import {
   atomicSpanToken,
+  refLabelTokens,
   setLabelTabs,
   emergencySplit,
   expandSmallCaps,
@@ -75,6 +76,7 @@ import {
 } from './cjkClasses';
 import { hasCJK } from './cjk';
 import { graphemeCount, graphemesOf, lastGrapheme } from './graphemes';
+import { ratiosOf } from './spaceRatios';
 import { isBreakingSpace } from './spaces';
 import { trimChipLineEdges } from './chipEdges';
 import { cellAdvance, flowTextWidth, fontEm, fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measureCentralBaseline, verticalTrackCount, withMeasureWritingMode } from './vertical';
@@ -89,6 +91,7 @@ import {
   carryStopBlank,
   compositionFor,
   compressPair,
+  DEFAULT_NOTE_MIN_CHARS,
   DEFAULT_TITLE_MIN_CHARS,
   getCjkComposition,
   isLatinSpacingHan,
@@ -851,9 +854,30 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
       zwsp = false;
       continue;
     }
-    const atomic = atomicSpanToken(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx);
-    if (atomic) {
+    // A reference whose label is words (#702): one unit per word and per
+    // space, each carrying the reference; only the first is glued to the
+    // text before it, so a line may break after a space of the label.
+    const whole = refLabelTokens(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx)
+      ?? atomicSpanToken(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, letterSpacingPx);
+    const atomics = whole === undefined ? [] : Array.isArray(whole) ? whole : [whole];
+    for (const [k, atomic] of atomics.entries()) {
       const style = styleOf(span, fonts, vertical);
+      if (atomic.kind === 'space') {
+        units.push({
+          kind: 'space',
+          text: atomic.text,
+          width: atomic.width,
+          graphemes: graphemeCount(atomic.text),
+          first: 'western',
+          last: 'western',
+          firstCjk: false,
+          lastCjk: false,
+          style,
+          at: 0,
+          token: atomic,
+        });
+        continue;
+      }
       const graphemes = graphemesOf(atomic.text);
       const object = atomic.chip !== undefined || atomic.mathRender !== undefined || atomic.swatch !== undefined;
       const firstG = graphemes[0] ?? '';
@@ -870,13 +894,13 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
         style,
         at: 0,
         token: atomic,
-        ...(atomic.refResourceId !== undefined || atomic.footnoteId !== undefined ? { glueBefore: true } : {}),
+        ...((atomic.refResourceId !== undefined || atomic.footnoteId !== undefined) && k === 0 ? { glueBefore: true } : {}),
         ...(zwsp ? { zwspBefore: true } : {}),
         ...glue(),
       });
       zwsp = false;
-      continue;
     }
+    if (atomics.length > 0) continue;
     if (span.text.length === 0) continue;
     const style = styleOf(span, fonts, vertical);
     const graphemes = graphemesOf(span.text);
@@ -1449,7 +1473,7 @@ function labelEndUnit(units: readonly Unit[], labelLength: number): number {
  * ・ between kanji numerals is set solid (`Unit.solid`), and with
  * `spaceAfterQuestion` a ？ or ！ takes its one-em space (`Unit.aki`).
  */
-function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number, labelLength = 0): Unit[] {
+function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number, labelLength = 0, seams?: readonly number[]): Unit[] {
   const plain = isPlainComposition(c);
   // Down the line the mainland interpunct's cell is half an em already.
   if (plain && (c.region !== 'mainland' || c.vertical)) return units;
@@ -1468,12 +1492,15 @@ function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number,
     // 二、三日, 三・一四: the mark between two kanji numerals is its glyph
     // alone (JLReq §3.1.3), and the number is not broken there.
     // A heading's number is not half of a number with its title (#679):
-    // the unit that ends it is where the rule stops reading.
+    // the unit that ends it is where the rule stops reading. So is the
+    // seam between a number and a title in a design text (#724).
     const labelEnd = labelLength > 0 ? labelEndUnit(units, labelLength) : -1;
+    const seamEnds = seams?.length ? new Set(seams.filter((s) => s > 0).map((s) => labelEndUnit(units, s))) : undefined;
     for (let k = 1; k + 1 < units.length; k++) {
       const u = units[k]!;
       if (!u.punct || (u.text !== '、' && u.text !== '・')) continue;
       if (k === labelEnd || k - 1 === labelEnd) continue;
+      if (seamEnds && (seamEnds.has(k) || seamEnds.has(k - 1))) continue;
       if (!charUnitIn(units[k - 1], KANJI_DIGITS) || !charUnitIn(units[k + 1], KANJI_DIGITS) || units[k + 1]!.glueBefore) continue;
       shrinkPunctuation(u.punct, u.punct.blank);
       u.width = full.get(u)! - boxCut(u.punct);
@@ -1502,11 +1529,16 @@ function prepareUnits(units: Unit[], c: CjkComposition, letterSpacingPx: number,
  *  their logical order; undefined for a unit that is not a chip, or a chip
  *  in a superscript or a subscript. */
 function chipEdgeGrapheme(u: Unit, edge: 'first' | 'last'): string | undefined {
-  const runs = u.kind === 'atomic' && !u.style.script ? u.token?.chip?.runs : undefined;
-  if (!runs) return undefined;
-  const text = runs.map((r) => r.text).join('');
+  const text = chipText(u);
   if (text === '') return undefined;
   return edge === 'first' ? String.fromCodePoint(text.codePointAt(0)!) : lastGrapheme(text);
+}
+
+/** The words of a chip in their logical order; empty for a unit that is
+ *  not a chip, or a chip in a superscript or a subscript. */
+function chipText(u: Unit): string {
+  const runs = u.kind === 'atomic' && !u.style.script ? u.token?.chip?.runs : undefined;
+  return runs ? runs.map((r) => r.text).join('') : '';
 }
 
 /** `units` with the Han–Latin spaces of `cjk.latinSpacing` (see
@@ -1522,9 +1554,32 @@ function chipEdgeGrapheme(u: Unit, edge: 'first' | 'last'): string | undefined {
  *  goes at a line end and is dropped at a line start like any space, and
  *  a bracket, a mark or a sign next to the chip is neither Han nor Latin,
  *  so 「:chip[x]」 takes none. Down a vertical line the chip is set
- *  sideways, as a Latin run is, and the same rule holds. */
+ *  sideways, as a Latin run is, and the same rule holds.
+ *
+ *  Which edge of a Western word is Latin follows `cjk.latinSpacingEdge`
+ *  (#721). `'letters'`: one that is a letter or a digit. `'western'` (the
+ *  Japan region's): any edge of a word that holds a letter or a digit,
+ *  its brackets and signs being Western characters too (JLReq §3.2.6,
+ *  §3.9.2), but for a mark that binds to the other side: an opening
+ *  bracket or a prefix sign that ends the word, a closing bracket, a
+ *  pause, a stop or a postfix sign that opens it. A word of marks alone
+ *  (`(`, `!`) stands in Japanese context and takes none. */
 function latinSpaces(units: Unit[], c: CjkComposition): Unit[] {
   const out: Unit[] = [];
+  const western = c.latinSpacingEdge === 'western';
+  /** Whether `text` holds a letter or a digit that is not CJK. */
+  const holdsLetter = (text: string): boolean => {
+    for (const g of text) if (isLatinSpacingLatin(g) && !isCjkGrapheme(g) && !isLatinSpacingHan(g)) return true;
+    return false;
+  };
+  /** Whether the edge `g` of the Western word `text` takes the space. */
+  const latinEdge = (text: string, g: string, edge: 'first' | 'last'): boolean => {
+    if (isLatinSpacingLatin(g)) return true;
+    if (!western || g === '\u00A0' || g === '\u202F') return false;
+    const cls = cjkClassOf(g);
+    if (edge === 'last' ? cls === 'opening' || cls === 'prefix' : cls === 'closing' || cls === 'pause' || cls === 'stop' || cls === 'postfix') return false;
+    return holdsLetter(text);
+  };
   const han = (u: Unit | undefined, edge: 'first' | 'last'): boolean => {
     if (!u) return false;
     const chipEdge = chipEdgeGrapheme(u, edge);
@@ -1538,9 +1593,11 @@ function latinSpaces(units: Unit[], c: CjkComposition): Unit[] {
   const latin = (u: Unit | undefined, edge: 'first' | 'last'): boolean => {
     if (!u) return false;
     const chipEdge = chipEdgeGrapheme(u, edge);
-    if (chipEdge !== undefined) return !isCjkGrapheme(chipEdge) && !isLatinSpacingHan(chipEdge) && isLatinSpacingLatin(chipEdge);
+    if (chipEdge !== undefined) {
+      return !isCjkGrapheme(chipEdge) && !isLatinSpacingHan(chipEdge) && latinEdge(chipText(u), chipEdge, edge);
+    }
     return u.kind === 'text' && !!u.run && !u.note && !u.style.script && !(edge === 'first' ? u.cellStart : u.cellEnd)
-      && isLatinSpacingLatin(edge === 'first' ? String.fromCodePoint(u.text.codePointAt(0)!) : lastGrapheme(u.text));
+      && latinEdge(u.text, edge === 'first' ? String.fromCodePoint(u.text.codePointAt(0)!) : lastGrapheme(u.text), edge);
   };
   const spaceOf = (h: Unit): number => latinSpacingPx(c, emOfFont(h.style.font));
   for (let k = 0; k < units.length; k++) {
@@ -1807,6 +1864,43 @@ function titleBreaks(units: readonly Unit[], breaks: Uint8Array, min: number): U
       }
       if (units[k]!.kind !== 'space') before++;
     }
+  }
+  return out ?? breaks;
+}
+
+/**
+ * The breaks of `breaks` that leave fewer than `min` characters of a
+ * warichu note on either side of them taken out (`cjk.warichu.minChars`,
+ * #720): a line never ends on the first character of a note, and none
+ * opens on its last one with the stop that closes it. A character is a
+ * unit of the note that is a letter ({@link isLetterEdge}: a CJK
+ * character, a Western word, an inline box); marks and the note's word
+ * spaces do not count, so `異。` is one character. The note's brackets are
+ * not part of it. `breaks` itself when no note holds such a break.
+ */
+function noteBreaks(units: readonly Unit[], breaks: Uint8Array, min: number): Uint8Array {
+  if (min <= 1) return breaks;
+  const counts = (u: Unit): boolean => !u.noteSpace && (isLetterEdge(u, 'first') || isLetterEdge(u, 'last'));
+  let out: Uint8Array | undefined;
+  for (let from = 0; from < units.length;) {
+    const note = units[from]!.note;
+    if (!note) {
+      from++;
+      continue;
+    }
+    let to = from + 1;
+    while (to < units.length && units[to]!.note === note) to++;
+    let total = 0;
+    for (let k = from; k < to; k++) if (counts(units[k]!)) total++;
+    let before = 0;
+    for (let k = from; k < to; k++) {
+      if (k > from && breaks[k] && (before < min || total - before < min)) {
+        out ??= breaks.slice();
+        out[k] = 0;
+      }
+      if (counts(units[k]!)) before++;
+    }
+    from = to;
   }
   return out ?? breaks;
 }
@@ -2619,6 +2713,9 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
   let tracking = 0;
   let loose = false;
   let spaceRatio: number | undefined;
+  // The same spacing as the breaker bounds it, when the line's own spaces
+  // are not regular ones (#704, `justifiedSpaceRatios`).
+  let spaceLimitRatio: number | undefined;
   let ragged = false;
   const stretches: boolean[] = [];
   if (justify) {
@@ -2656,7 +2753,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
           // Word spaces first, up to half an em each, all set alike.
           spaceWidth = Math.max(widest, Math.min((natural + slack) / spaces, Math.max(ctx.em / 2, widest)));
           slack -= spaceWidth * spaces - natural;
-          if (ctx.normalSpace > 0) spaceRatio = spaceWidth / ctx.normalSpace;
+          ({ justifiedSpaceRatio: spaceRatio, justifiedSpaceLimitRatio: spaceLimitRatio } = ratiosOf(spaceWidth * spaces, natural, spaces, ctx.normalSpace));
         }
         if (autos.length > 0 && slack > FIT_EPS) {
           // Then the Han–Latin spaces, up to half an em each (clreq
@@ -2691,7 +2788,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
         // Latin words only (an English sentence in a CJK paragraph): the
         // spaces take it all, as in a Latin line (the renderers stretch
         // them, and a line past the ratio is set ragged).
-        if (ctx.normalSpace > 0) spaceRatio = (natural + slack) / spaces / ctx.normalSpace;
+        ({ justifiedSpaceRatio: spaceRatio, justifiedSpaceLimitRatio: spaceLimitRatio } = ratiosOf(natural + slack, natural, spaces, ctx.normalSpace));
       } else if (us.some((u) => u.kind === 'text' && (u.firstCjk || u.lastCjk))) {
         // A CJK character with nothing to spread against.
         loose = true;
@@ -2785,7 +2882,11 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
       continue;
     }
     if (u.kind === 'space') {
-      pieces.push({ seg: { kind: 'space', text: u.text, width: spaceWidth ?? u.width }, parts: [u.text], key: undefined });
+      // A space inside a reference label (#702) is of the reference.
+      const ref = u.token?.refResourceId !== undefined
+        ? { refResourceId: u.token.refResourceId, ...(u.token.refAnchor ? { refAnchor: true as const } : {}), ...(u.token.refPageIndex !== undefined ? { refPageIndex: u.token.refPageIndex } : {}), refContinues: true }
+        : {};
+      pieces.push({ seg: { kind: 'space', text: u.text, width: spaceWidth ?? u.width, ...ref }, parts: [u.text], key: undefined });
       continue;
     }
     if (u.kind === 'atomic') {
@@ -2877,7 +2978,7 @@ function composeLine(units: readonly Unit[], range: LineRange, li: number, isLas
     ...(range.hyphenated && range.hardHyphen ? { hardHyphen: true } : {}),
     segments: trimmed,
     isLastLine: isLast,
-    ...(spaceRatio !== undefined && !loose ? { justifiedSpaceRatio: spaceRatio } : {}),
+    ...(spaceRatio !== undefined && !loose ? { justifiedSpaceRatio: spaceRatio, ...(spaceLimitRatio !== undefined ? { justifiedSpaceLimitRatio: spaceLimitRatio } : {}) } : {}),
     ...(loose ? { ragged: true, cjkLoose: true } : ragged ? { ragged: true } : {}),
     cjkComposed: true,
   };
@@ -2962,7 +3063,7 @@ export function composeCjkParagraph(
   const plainText = spans.map((s) => s.text).join('');
   // Japanese text: only its two-em dashes, drawn as one stroke (#680).
   const route: MarkRouting = routesSharedMarks(composition, plainText) || (joinsDashPairs(composition, plainText) ? 'dashes' : false);
-  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength);
+  const units = prepareUnits(buildAllUnits(spans, fonts, letterSpacingPx, vertical, route), composition, letterSpacingPx, options?.labelLength, options?.numberSeams);
   // A bibliography label's column (#290).
   if (options?.labelColumnPx !== undefined) {
     setLabelTabs(units, (u) => u.token?.labelTab, options.labelColumnPx, (u, w) => {
@@ -2984,8 +3085,11 @@ export function composeCjkParagraph(
   // Book titles keep `cjk.titleMinChars` characters on either side of a
   // break (#637); a line with no other break falls back on the level's.
   const titled = titleBreaks(units, levelBreaks, composition.titleMinChars ?? DEFAULT_TITLE_MIN_CHARS);
-  const breaks = keepAll ? keepAllBreaks(units, titled) : titled;
-  const emergency = keepAll || titled !== levelBreaks ? levelBreaks : undefined;
+  // A warichu note keeps `cjk.warichu.minChars` of its characters on
+  // either side of a break too (#720), with the same fallback.
+  const noted = noteBreaks(units, titled, composition.noteMinChars ?? DEFAULT_NOTE_MIN_CHARS);
+  const breaks = keepAll ? keepAllBreaks(units, noted) : noted;
+  const emergency = keepAll || noted !== levelBreaks ? levelBreaks : undefined;
   // The first line's indent gives way to an opening bracket that starts it
   // (`paragraphStartIndent`); the others are as asked (`lineIndentAt`).
   const firstIndent = paragraphStartIndent(units, lineIndentAt(options, 0), composition);
@@ -3024,7 +3128,10 @@ export function composeCjkParagraph(
   // would need more than the tracking cap, the runt stays. Japanese text
   // (泣き別れ) first tries the other way JLReq prefers (§3.8.2): the line
   // above takes the character in by giving up blank (push-in), and the
-  // paragraph is a line shorter.
+  // paragraph is a line shorter. A paragraph that is not justified gives
+  // the character up too, its line above one short. On manuscript paper
+  // (`cjk.grid.fullLines`, #718) it does not: the line above would stay
+  // one cell short, so only a justified line, which is spread, gives it up.
   if ((options?.runtPenalty ?? 0) > 0 && endsOnOneCharacter(lines) && fit?.jlreq) {
     const pulled = breakUnits(units, breaks, measureOf, 0, letterSpacingPx, fit, level, undefined, ranges.length - 2, emergency);
     if (pulled.length === ranges.length - 1) {
@@ -3032,7 +3139,7 @@ export function composeCjkParagraph(
       if (!set.some((l) => l.cjkLoose) && !endsOnOneCharacter(set)) lines = set;
     }
   }
-  if ((options?.runtPenalty ?? 0) > 0 && endsOnOneCharacter(lines)) {
+  if ((options?.runtPenalty ?? 0) > 0 && (textAlign === 'justify' || !composition.gridFullLines) && endsOnOneCharacter(lines)) {
     const li = ranges.length - 2;
     const above = ranges[li]!;
     let at = above.end - 1;
@@ -3100,12 +3207,17 @@ export interface CjkWordBreaks {
  * paragraph quoting CJK): next to its CJK characters, under the document's
  * line-break rules. Each unit is measured once and the widths before a
  * break come from their running sums, so a long run of ideographs costs
- * linear time.
+ * linear time. With `keepAll` (`cjk.wordBreak: 'keep-all'`, or the block's
+ * own rule) no break is left between two letters, as in a paragraph the
+ * composer sets ({@link keepAllBreaks}): a quotation of a few characters
+ * stays whole, and a break next to its punctuation stays where the level
+ * allows it (#705).
  */
-export function cjkWordBreaks(word: string, font: string, smallCaps: boolean | undefined, letterSpacingPx: number, level: CjkLineBreakLevel = getCjkLineBreak()): CjkWordBreaks {
+export function cjkWordBreaks(word: string, font: string, smallCaps: boolean | undefined, letterSpacingPx: number, level: CjkLineBreakLevel = getCjkLineBreak(), keepAll = false): CjkWordBreaks {
   const span: InlineSpan = { text: word, bold: false, italic: false, ...(smallCaps ? { smallCaps: true } : {}) };
   const units = buildUnits([span], { normal: font, bold: font, italic: font, boldItalic: font }, letterSpacingPx, getMeasureWritingMode() === 'vertical-rl');
-  const opportunities = breakOpportunities(units, level);
+  const levelBreaks = breakOpportunities(units, level);
+  const opportunities = keepAll ? keepAllBreaks(units, levelBreaks) : levelBreaks;
   const starts: number[] = [];
   const sums: number[] = [0];
   const breaks: number[] = [];

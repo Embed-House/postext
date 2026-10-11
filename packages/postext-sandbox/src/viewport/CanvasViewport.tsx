@@ -4,6 +4,7 @@ import { useCallback, useState, useEffect, useRef } from 'react';
 import { CanvasPreview, type CanvasPreviewHandle } from './CanvasPreview';
 import { CanvasToolbar } from './CanvasToolbar';
 import { useFloatingToolbarShell } from './useFloatingToolbarShell';
+import { useViewerControls } from './viewerControls';
 import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
 import { announce } from '../ui/announcer';
 import { useSandboxSelector } from '../context/SandboxContext';
@@ -114,6 +115,38 @@ export function CanvasViewport() {
   }, [syncPageHash]);
 
   const shell = useFloatingToolbarShell('canvas', generating);
+
+  useViewerControls('canvas', {
+    status: () => ({
+      zoom,
+      fit: fitMode,
+      pages: viewMode,
+      toolbarPinned: shell.pinned,
+      generating,
+      pageCount,
+      pageIndex: currentPage,
+      pageNumber: pageNumberAt(layout, currentPage),
+      canPrevious: currentPage > 0,
+      canNext: currentPage < pageCount - 1,
+    }),
+    set: (settings) => {
+      if (settings.zoom !== undefined) {
+        setZoom(Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, settings.zoom)));
+        // A magnification only shows without a fit, as with the bar's buttons.
+        if (settings.fit === undefined) setFitMode('none');
+      }
+      if (settings.fit !== undefined) setFitMode(settings.fit);
+      if (settings.pages !== undefined) setViewMode(settings.pages);
+      if (settings.toolbarPinned !== undefined) shell.setPinned(settings.toolbarPinned);
+    },
+    regenerate: handleRegenerate,
+    goToPage: handleJumpToPage,
+    step: (delta) => {
+      const next = currentPage + delta * (viewMode === 'spread' ? 2 : 1);
+      handleJumpToPage(Math.max(0, Math.min(pageCount - 1, next)));
+    },
+    goToEdge: (edge) => handleJumpToPage(edge === 'first' ? 0 : Math.max(0, pageCount - 1)),
+  });
 
   // A finished layout is said through the live region (WCAG 4.1.3) when
   // its page count changes (a chapter opened, a page gained or lost), not

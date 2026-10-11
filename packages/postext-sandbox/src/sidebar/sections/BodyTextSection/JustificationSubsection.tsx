@@ -4,7 +4,7 @@ import { DEFAULT_BODY_TEXT_CONFIG } from 'postext';
 import type { BodyTextConfig, HyphenationConfig, KashidaPatterns, ResolvedBodyTextConfig } from 'postext';
 import { NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
 import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { HyphenateCompoundsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields';
+import { HyphenateCapitalizedField, HyphenateCompoundsField, HyphenationExceptionsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields';
 
 interface Props {
   bodyText: ResolvedBodyTextConfig;
@@ -42,18 +42,42 @@ export function OptimalRaggedSwitch({
 
 /** "Hyphenate across columns" (`bodyText.hyphenateAcrossColumns`): under
  *  hyphenation for a justified body, under optimal ragged breaking for a
- *  ragged one, since that is when the engine re-breaks ragged text. */
+ *  ragged one, since that is when the engine re-breaks ragged text. Three
+ *  states (#701): everywhere (`true`, stored as no value), between the
+ *  columns of one page (`'withinPage'`), never (`false`). */
+export type AcrossColumnsChoice = 'always' | 'withinPage' | 'never';
+
+/** The control's choice for a resolved `hyphenateAcrossColumns`. */
+export function acrossColumnsChoice(value: ResolvedBodyTextConfig['hyphenateAcrossColumns']): AcrossColumnsChoice {
+  return value === true ? 'always' : value === false ? 'never' : 'withinPage';
+}
+
+/** What a choice stores: nothing for the default (`true`). */
+export function acrossColumnsValue(choice: string): BodyTextConfig['hyphenateAcrossColumns'] {
+  return choice === 'never' ? false : choice === 'withinPage' ? 'withinPage' : undefined;
+}
+
 function HyphenateAcrossColumnsSwitch({
   bodyText,
   updateBodyText,
   resetField,
   labels,
 }: Pick<Props, 'bodyText' | 'updateBodyText' | 'resetField' | 'labels'>) {
+  const value = acrossColumnsChoice(bodyText.hyphenateAcrossColumns);
   return (
-    <ToggleSwitch
+    <SelectInput
       label={labels.bodyHyphenateAcrossColumns}
-      checked={bodyText.hyphenateAcrossColumns}
-      onChange={(checked) => updateBodyText({ hyphenateAcrossColumns: checked })}
+      value={value}
+      options={[
+        { value: 'always', label: labels.bodyHyphenateAcrossColumnsAlways },
+        { value: 'withinPage', label: labels.bodyHyphenateAcrossColumnsWithinPage },
+        { value: 'never', label: labels.bodyHyphenateAcrossColumnsNever },
+      ]}
+      onChange={(next) => {
+        const stored = acrossColumnsValue(next);
+        if (stored === undefined) resetField('hyphenateAcrossColumns');
+        else updateBodyText({ hyphenateAcrossColumns: stored });
+      }}
       tooltip={labels.bodyHyphenateAcrossColumnsTooltip}
       isDefault={bodyText.hyphenateAcrossColumns === DEFAULT_BODY_TEXT_CONFIG.hyphenateAcrossColumns}
       onReset={() => resetField('hyphenateAcrossColumns')}
@@ -130,6 +154,20 @@ export function JustificationSubsection({
             isHyphenationLocaleDefault={isHyphenationLocaleDefault}
           />
           <HyphenateCompoundsField
+            bodyText={bodyText}
+            raw={raw}
+            updateBodyText={updateBodyText}
+            updateHyphenation={updateHyphenation}
+            labels={labels}
+          />
+          <HyphenateCapitalizedField
+            bodyText={bodyText}
+            raw={raw}
+            updateBodyText={updateBodyText}
+            updateHyphenation={updateHyphenation}
+            labels={labels}
+          />
+          <HyphenationExceptionsField
             bodyText={bodyText}
             raw={raw}
             updateBodyText={updateBodyText}

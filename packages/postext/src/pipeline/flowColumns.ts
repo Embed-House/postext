@@ -34,7 +34,8 @@ const ZERO = { value: 0, unit: 'pt' as const };
 
 /** The two boxes: in the column, the sub-columns `columnGapPx` apart (a
  *  body line by default); across the page, `pageGapPx` (the gutter). The
- *  space below is the body's paragraph spacing; a cut between children
+ *  space below is the body's paragraph spacing, unless the group's fence
+ *  sets its own (`marginTop`, `marginBottom`, #714); a cut between children
  *  keeps `splitMinLines` lines of text on each side (the body's orphan and
  *  widow minimums). */
 export function flowColumnsStyles(columnGapPx: number, pageGapPx: number, marginBottom: Dimension, splitMinLines: number): CalloutStyleConfig[] {
@@ -85,12 +86,21 @@ export function wrapFlowColumns(blocks: readonly ContentBlock[]): { blocks: Cont
       const box = FLOW_COLUMNS_CONTAINER_BASE + wrapped++;
       open = { group: b.containerId, box };
       const span = b.containerAttrs?.span === 'page' ? 'page' : 'column';
+      // The space the fence asks for above and under the group is its
+      // box's (#714): `layoutCallout` reads the two attributes there.
+      const { marginTop, marginBottom } = b.containerAttrs ?? {};
       out.push({
         type: 'containerStart',
         text: '',
         spans: [],
         containerName: 'callout',
-        containerAttrs: { type: span === 'page' ? FLOW_COLUMNS_PAGE_STYLE_ID : FLOW_COLUMNS_STYLE_ID, span, placement: 'here' },
+        containerAttrs: {
+          type: span === 'page' ? FLOW_COLUMNS_PAGE_STYLE_ID : FLOW_COLUMNS_STYLE_ID,
+          span,
+          placement: 'here',
+          ...(marginTop !== undefined ? { marginTop } : {}),
+          ...(marginBottom !== undefined ? { marginBottom } : {}),
+        },
         containerId: box,
         sourceStart: b.sourceStart,
         sourceEnd: b.sourceStart,

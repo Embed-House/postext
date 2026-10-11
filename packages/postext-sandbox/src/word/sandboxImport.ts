@@ -3,10 +3,112 @@
 // templates kept in the browser.
 
 import { useCallback, useState } from 'react';
-import { bitmapInfo, type Resource, type ResourceType } from 'postext';
+import { bitmapInfo, type PostextConfig, type Resource, type ResourceType } from 'postext';
+import { newChapter } from '../book/chapterOps';
+import type { Chapter } from '../book/types';
+import type { SandboxAction } from '../context/SandboxContext';
 import { putBlob } from '../storage/blobStore';
+import { generateId } from '../storage/ids';
 import { isValidSvg, svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
-import { parseTemplate, pictureResolution, type ImportResult, type WordTemplate } from 'postext/word';
+import {
+  characterTargetOf,
+  lookup,
+  paragraphTargetOf,
+  parseTemplate,
+  pictureResolution,
+  wordToPostext,
+  type FindingId,
+  type ImportResult,
+  type ParagraphTarget,
+  type QualityReport,
+  type WordDocument,
+  type WordTemplate,
+} from 'postext/word';
+import type { SandboxLabels } from '../types';
+
+/** Where an import's text goes: into the open chapter in place of its
+ *  text, as new chapters after it, or as the whole book. */
+export type WordDestination = 'chapter' | 'append' | 'book';
+
+/** The label that words each finding of the quality report. */
+export const FINDING_LABEL: Record<FindingId, keyof SandboxLabels> = {
+  allNormal: 'wordFindingAllNormal',
+  directFormatting: 'wordFindingDirectFormatting',
+  manualHeadings: 'wordFindingManualHeadings',
+  lineBreaks: 'wordFindingLineBreaks',
+  pageBreaks: 'wordFindingPageBreaks',
+  emptyParagraphs: 'wordFindingEmptyParagraphs',
+  typedNumbering: 'wordFindingTypedNumbering',
+  spacing: 'wordFindingSpacing',
+  trackedChanges: 'wordFindingTrackedChanges',
+  comments: 'wordFindingComments',
+  textBoxes: 'wordFindingTextBoxes',
+  unsupportedPictures: 'wordFindingUnsupportedPictures',
+  equations: 'wordFindingEquations',
+  hiddenText: 'wordFindingHiddenText',
+};
+
+/** A count in words: the `…One` label for 1, the other one otherwise. */
+export function counted(labels: SandboxLabels, key: keyof SandboxLabels, count: number): string {
+  const one = `${String(key)}One` as keyof SandboxLabels;
+  const text = (count === 1 && typeof labels[one] === 'string' ? labels[one] : labels[key]) as string;
+  return text.replace('__count__', String(count));
+}
+
+/** Where a document goes unless asked: a whole book exported from the
+ *  Sandbox (chapter markers) comes back as a book; anything else goes
+ *  into the open chapter. */
+export function defaultWordDestination(doc: WordDocument, template: WordTemplate, config: PostextConfig): WordDestination {
+  return doc.blocks.some((b) => b.type === 'paragraph' && paragraphTargetOf(doc, b.styleId, template, config).kind === 'chapter') ? 'book' : 'chapter';
+}
+
+/** The document as Postext chapters for `destination`: one chapter to
+ *  replace the open one, else a chapter at each of its chapter breaks.
+ *  `untitledChapter` names the text before the first break when the
+ *  document has no title. */
+export function convertWordDocument(
+  doc: WordDocument,
+  settings: { template: WordTemplate; config: PostextConfig; destination: WordDestination; existingIds: ReadonlySet<string>; untitledChapter: string },
+): ImportResult {
+  return wordToPostext(doc, {
+    template: settings.template,
+    config: settings.config,
+    chapters: settings.destination === 'chapter' ? 'single' : 'split',
+    existingIds: settings.existingIds,
+    untitledChapter: doc.title || settings.untitledChapter,
+  });
+}
+
+/** What a paragraph style named `name` becomes under `template`. */
+export function paragraphTargetByName(doc: WordDocument, name: string, template: WordTemplate, config: PostextConfig): ParagraphTarget {
+  const styleId = [...doc.styles.values()].find((s) => s.type === 'paragraph' && s.name === name)?.id ?? '';
+  return lookup(template.paragraphs, name) ?? paragraphTargetOf(doc, styleId, template, config);
+}
+
+/** `template` with every style the document uses written out, so a saved
+ *  template says what each one became. */
+export function materializedTemplate(doc: WordDocument, template: WordTemplate, report: Pick<QualityReport, 'paragraphStyles' | 'characterStyles'>, config: PostextConfig): WordTemplate {
+  const paragraphs = { ...template.paragraphs };
+  const characters = { ...template.characters };
+  for (const s of report.paragraphStyles) paragraphs[s.name] = paragraphTargetByName(doc, s.name, template, config);
+  for (const s of report.characterStyles) characters[s.name] = characterTargetOf(doc, s.name, template, config);
+  return { ...template, paragraphs, characters };
+}
+
+/** The changes that put an import's chapters into the book: the open
+ *  chapter's text replaced, new chapters after it (the first one shown),
+ *  or the whole book replaced. */
+export function wordImportActions(
+  result: Pick<ImportResult, 'chapters'>,
+  destination: WordDestination,
+  book: { chapters: readonly Chapter[]; activeChapterId: string },
+): SandboxAction[] {
+  if (destination === 'chapter') return [{ type: 'SET_MARKDOWN', payload: result.chapters[0]?.markdown ?? '' }];
+  const made = result.chapters.map((c) => newChapter(generateId('chapter'), c.title, c.markdown));
+  if (destination === 'book') return [{ type: 'SET_BOOK', payload: { chapters: made, activeChapterId: made[0]!.id } }];
+  const at = Math.max(0, book.chapters.findIndex((c) => c.id === book.activeChapterId)) + 1;
+  return made.map((chapter, k) => ({ type: 'ADD_CHAPTER', payload: { chapter, index: at + k, activate: k === 0 } }));
+}
 
 const BITMAP_FORMATS: Record<string, 'png' | 'jpeg' | 'webp' | 'gif'> = {
   'image/png': 'png',
@@ -106,16 +208,29 @@ export function useWordTemplates(): {
 } {
   const [templates, setTemplates] = useState<WordTemplate[]>(() => loadTemplates());
   const save = useCallback((t: WordTemplate): boolean => {
-    const list = [t, ...loadTemplates().filter((x) => x.id !== t.id)];
+    const { templates: list, kept } = storeTemplate(t);
     setTemplates(list);
-    return saveTemplates(list);
+    return kept;
   }, []);
   const remove = useCallback((id: string): boolean => {
-    const list = loadTemplates().filter((x) => x.id !== id);
+    const { templates: list, kept } = removeTemplate(id);
     setTemplates(list);
-    return saveTemplates(list);
+    return kept;
   }, []);
   return { templates, save, remove };
+}
+
+/** Keep `t` among the saved templates, first, in place of the one with
+ *  its id. Answers with the list and whether the browser kept it. */
+export function storeTemplate(t: WordTemplate): { templates: WordTemplate[]; kept: boolean } {
+  const templates = [t, ...loadTemplates().filter((x) => x.id !== t.id)];
+  return { templates, kept: saveTemplates(templates) };
+}
+
+/** Take the template `id` out of the saved ones. */
+export function removeTemplate(id: string): { templates: WordTemplate[]; kept: boolean } {
+  const templates = loadTemplates().filter((x) => x.id !== id);
+  return { templates, kept: saveTemplates(templates) };
 }
 
 // ---------------------------------------------------------------------------

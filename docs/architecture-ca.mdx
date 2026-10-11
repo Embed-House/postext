@@ -5,10 +5,10 @@ export const metadata = {
   sidebarTitle: 'Arquitectura',
   description: 'Arquitectura tècnica del motor de composició tipogràfica Postext',
   lang: 'ca',
-  lastUpdated: '2026-10-10',
-  readingTime: '38 min',
+  lastUpdated: '2026-10-11',
+  readingTime: '45 min',
   order: 2,
-  plainSummary: "Aquesta pàgina explica com funciona Postext per dins, i està escrita per a programadors. Primer, Postext mesura cada paraula sense dibuixar res a la pantalla, i per això és molt ràpid. Després calcula on va cada línia, cada imatge i cada columna, i desa aquest pla a la memòria. Repeteix el càlcul fins que res no es mou. Al final dibuixa les pàgines acabades com a pàgina web, com a imatge en un canvas o com a fitxer PDF. Si canvies una paraula, només es torna a calcular el que ha canviat.",
+  plainSummary: "Aquesta pàgina explica com funciona Postext per dins, i està escrita per a programadors. Primer, Postext mesura cada paraula sense dibuixar res a la pantalla, i per això és molt ràpid. Després calcula on va cada línia, cada imatge i cada columna, i desa aquest pla a la memòria. Repeteix el càlcul fins que res no es mou. Al final dibuixa les pàgines acabades com a pàgina web, com a imatge en un canvas o com a fitxer PDF. Si canvies una paraula, torna a compondre les pàgines i aprofita les mesures dels paràgrafs que no han canviat.",
 };
 
 # Arquitectura de Postext
@@ -83,7 +83,7 @@ desdibuixat.
     </tr>
     <tr>
       <td><strong>Demerits</strong></td>
-      <td>El cost total d'un tall de línia candidat a Knuth-Plass: <em>badness</em> més penalitzacions (partició de mots, vídues/òrfenes/línies curtes, desajust de classe de <em>fitness</em>). L'algorisme tria el conjunt de talls amb el total més baix.</td>
+      <td>El cost total d'un tall de línia candidat a Knuth-Plass: <em>badness</em> més penalitzacions (partició de mots, una última línia curta, desajust de classe de <em>fitness</em>). L'algorisme tria el conjunt de talls amb el total més baix. La partició d'un paràgraf entre dues columnes es tria de la mateixa manera: guanya la suma més baixa dels costos de vídua, d'òrfena i de <em>slack</em>.</td>
     </tr>
     <tr>
       <td><strong>Fitness Class</strong></td>
@@ -91,19 +91,19 @@ desdibuixat.
     </tr>
     <tr>
       <td><strong>Slack</strong></td>
-      <td>Espai vertical sense fer servir al final d'una columna. Un cost quadràtic de <em>slack</em> (ponderat per <code>slackWeight</code>) empeny el divisor de línies cap a conjunts de talls que omplen les columnes de manera ajustada.</td>
+      <td>Línies que queden buides al final d'una columna quan un paràgraf s'hi parteix o passa sencer a la següent. Un cost quadràtic de <em>slack</em> (ponderat per <code>slackWeight</code>) es contraposa a les penalitzacions de vídua i d'òrfena quan el motor tria la partició.</td>
     </tr>
     <tr>
       <td><strong>Backend</strong></td>
-      <td>Destinació de renderitzat que consumeix el VDT convergit. Avui se'n distribueixen tres: <strong>canvas</strong> (previsualització bitmap), <strong>HTML</strong> (lectura en pantalla basada en DOM) i <strong>PDF</strong> (sortida a punt per imprimir a través de <code>postext-pdf</code>). Tots tres comparteixen la mateixa mesura (el mòdul de mesura sobre Pretext). Un quart, <strong>EPUB</strong> (<code>postext-epub</code>), escriu el llibre com a llibre electrònic a partir dels mateixos documents.</td>
+      <td>Destinació de renderitzat que consumeix el VDT acabat. Avui se'n distribueixen quatre: <strong>canvas</strong> (previsualització bitmap), <strong>HTML</strong> (lectura en pantalla basada en DOM), <strong>PDF</strong> (sortida a punt per imprimir a través de <code>postext-pdf</code>) i <strong>EPUB</strong> (<code>postext-epub</code>, el llibre com a llibre electrònic). Tots quatre renderitzen a partir de la mateixa mesura (el mòdul de mesura sobre Pretext).</td>
     </tr>
     <tr>
-      <td><strong>Pass</strong></td>
-      <td>Una etapa del pipeline de composició. Cada passada llegeix i modifica el VDT amb una única responsabilitat.</td>
+      <td><strong>Placement Pass</strong></td>
+      <td>La passada de col·locació: un recorregut del contingut, del primer bloc a l'últim, que construeix un VDT sencer. Analitza, mesura a través de la memòria cau, col·loca text, flotants i caixes, i aplica les regles de tall i de cohesió.</td>
     </tr>
     <tr>
-      <td><strong>Convergence Loop</strong></td>
-      <td>El bucle extern que torna a executar les passades de composició quan passades posteriors invaliden decisions anteriors. Limitat a un màxim de 5 iteracions.</td>
+      <td><strong>Round</strong></td>
+      <td>Una ronda: una nova execució de la passada de col·locació amb indicacions de l'anterior, com ara un topall de banda, palanques d'equilibrat, o etiquetes de pàgina i números de nota ja assentats. Cada mena de ronda té el seu propi límit (vegeu <a href="#el-controlador-de-la-passada">El controlador de la passada</a>).</td>
     </tr>
   </tbody>
 </table>
@@ -111,15 +111,15 @@ desdibuixat.
 
 ## Arquitectura del sistema
 
-<Illustration name="SystemArchitecture" data='{"title": "Arquitectura del sistema Postext", "desc": "El markdown enriquit i PostextConfig entren en un parser que construeix l’Arbre Virtual del Document. Pretext mesura el text. Set passades de composició muten el VDT dins d’un bucle de convergència. Un backend renderitza el VDT final a HTML o PDF.", "caption": "Parser → VDT ↔ Pretext → set passades de composició → backend → sortida.", "markdown": "Markdown enriquit", "configTitle": "PostextConfig", "configSubtitle": "(columnes, regles, espaiat)", "engine": "Motor de composició", "parser": "Parser", "pass1": "Passada 1", "vdtLine1": "Arbre Virtual del", "vdtLine2": "Document (VDT)", "vdtAttr1": "mutable, in situ", "vdtAttr2": "pàgines > columnes > blocs", "vdtAttr3": "cada node té bbox", "vdtAttr4": "seguiment dirty", "pretext": "Pretext", "pretextSubtitle": "mesura de text", "passesTitle": "Passades (llegeixen i muten el VDT)", "passes": [{"num": "Passada 2", "name": "Mesura de text (via Pretext)"}, {"num": "Passada 3", "name": "Col·locació de pàgina i columna"}, {"num": "Passada 4", "name": "Col·locació de recursos"}, {"num": "Passada 5", "name": "Refinament tipogràfic"}, {"num": "Passada 6", "name": "Equilibri de columnes"}, {"num": "Passada 7", "name": "Alineació del ritme vertical"}], "convergence": "convergència (màx. 5)", "backend": "Backend", "backendSubtitle": "(interfície unificada)", "backendItems": ["Canvas / Navegador", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "sortida renderitzada"}' />
+<Illustration name="SystemArchitecture" data='{"title": "Arquitectura del sistema Postext", "desc": "El markdown enriquit i PostextConfig entren al parser. La passada de col·locació mesura el text a través de Pretext i omple l’Arbre Virtual del Document; buildDocument torna a executar la passada amb indicacions fins que la composició s’assenta. Un backend renderitza el VDT acabat a HTML o PDF.", "caption": "Parser → passada de col·locació ↔ Pretext → VDT → backend → sortida.", "markdown": "Markdown enriquit", "configTitle": "PostextConfig", "configSubtitle": "(columnes, regles, espaiat)", "engine": "Motor de composició", "parser": "Parser", "pass1": "markdown → blocs", "vdtLine1": "Arbre Virtual del", "vdtLine2": "Document (VDT)", "vdtAttr1": "una passada l’omple in situ", "vdtAttr2": "pàgines > columnes > blocs", "vdtAttr3": "cada node té bbox", "vdtAttr4": "un arbre nou a cada passada", "pretext": "Pretext", "pretextSubtitle": "mesura de text", "passesTitle": "Passada de col·locació (recorre el contingut)", "passes": [{"num": "Mesurar", "name": "línies, a través de la memòria cau"}, {"num": "Col·locar", "name": "blocs en columnes i pàgines"}, {"num": "Flotar", "name": "recursos cap a bandes de pàgina"}, {"num": "Partir", "name": "paràgrafs al final de la columna"}, {"num": "Mantenir", "name": "títols i llistes amb el seu text"}, {"num": "Ajustar", "name": "el flux de nou a la retícula"}], "convergence": "repetir\u00a0amb indicacions", "backend": "Backend", "backendSubtitle": "(interfície unificada)", "backendItems": ["Canvas / Navegador", "PDF", "EPUB"], "output": "HTML / PDF", "outputSubtitle": "sortida renderitzada"}' />
 
 **Aquest és el recorregut del teu contingut a través del motor:**
 
-1. El **Parser** llegeix el markdown enriquit i la configuració, i construeix el VDT inicial — un arbre de blocs tipats encara sense posicions, només contingut i estructura
-2. Les **passades de composició** prenen el control i muten el VDT en seqüència: mesuren text via Pretext, fan fluir els blocs cap a pàgines i columnes, i refinen la tipografia fins a arribar a estàndards professionals
-3. El **bucle de convergència** vigila els problemes — quan una passada posterior (per exemple, corregir una vídua) invalida una decisió anterior (per exemple, les alçades de columna), el motor torna enrere i torna a executar des del punt afectat. Fins a 5 iteracions, fins que tot s'estabilitza
+1. El **parser** llegeix el markdown enriquit i el converteix en una llista plana de blocs de contingut tipats: contingut i estructura, encara sense posicions
+2. Una **passada de col·locació** recorre aquesta llista una vegada i construeix el VDT. Mesura cada bloc a través de Pretext a l'amplada de la columna on està a punt d'entrar, col·loca text, flotants i caixes en pàgines i columnes, i aplica les regles de tall i de cohesió sobre la marxa
+3. El **controlador** (`buildDocument`) torna a executar la passada quan una decisió necessita el resultat d'una composició sencera: una taula de continguts que imprimeix números de pàgina, una caixa a amplada de pàgina que ha de tallar a nivell les columnes que té a sobre, una columna que ha acabat curta. Cada repetició rep indicacions de la passada anterior, i cada mena de repetició té el seu propi límit
 4. El **VDT final** és la geometria completa de la composició: cada element coneix el seu número de pàgina, la columna assignada, la posició i la caixa delimitadora. El document està completament "compost" abans que es produeixi cap renderitzat
-5. Un **backend** recorre el VDT acabat i el renderitza al format de destinació — un bitmap rasteritzat sobre canvas, un arbre DOM d'elements HTML posicionats o un document PDF amb fonts incrustades. El mateix VDT alimenta tots tres; triar backend és purament una decisió de sortida
+5. Un **backend** recorre el VDT acabat i el renderitza al format de destinació: un bitmap rasteritzat sobre canvas, un arbre DOM d'elements HTML posicionats, un document PDF amb fonts incrustades o un EPUB. El mateix VDT alimenta tots quatre; triar backend és purament una decisió de sortida
 
 
 ## Capa d'entrada
@@ -204,24 +204,24 @@ Cada aspecte del pipeline de composició el controla `PostextConfig`. El repàs 
     <tr>
       <th style={{ width: '200px' }}>Config</th>
       <th>Controla</th>
-      <th style={{ width: '120px' }}>S'usa a</th>
+      <th style={{ width: '200px' }}>S'usa a</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code>bodyText</code> / <code>headings</code></td>
       <td>Penalitzacions per camp de vídues/òrfenes/línies curtes, regles de cohesió, límits de justificació, partició de mots — vegeu <a href="/ca/docs/configuration-text#text-de-cos">Configuració → Text del cos</a></td>
-      <td>Passada 2, Passada 5</td>
+      <td>Mesura, talls i regles de cohesió, equilibrat</td>
     </tr>
     <tr>
       <td><code>tableStyle</code></td>
       <td>Tipografia de cel·les, vores, radi de les cantonades i emplenaments de capçalera/cos per a recursos <code>kind: 'table'</code>, més les variants amb nom de <code>tableStyles</code> que una taula tria amb <code>table.styleId</code> — vegeu <a href="/ca/docs/configuration-resources#estil-de-taules">Configuració → Estil de taules</a></td>
-      <td>Passada 4</td>
+      <td>Col·locació de recursos</td>
     </tr>
     <tr>
       <td><code>captionStyle</code></td>
       <td>Tipografia dels peus de recurs: l'etiqueta numerada i el text descriptiu — vegeu <a href="/ca/docs/configuration-resources#estil-dels-peus-de-recurs">Configuració → Estil de peus de recurs</a></td>
-      <td>Passada 4</td>
+      <td>Col·locació de recursos</td>
     </tr>
     <tr>
       <td><code>diagramStyle</code></td>
@@ -231,38 +231,35 @@ Cada aspecte del pipeline de composició el controla `PostextConfig`. El repàs 
     <tr>
       <td><code>resourceTypes</code></td>
       <td>Numeració tipada de recursos: plantilles, formats de comptador, àmbits de reinici, flotament per defecte — vegeu <a href="/ca/docs/configuration-resources#tipus-de-recurs">Configuració → Tipus de recurs</a></td>
-      <td>Passada 1, Passada 4</td>
-    </tr>
-    <tr>
-      <td><code>TypographyConfig</code>, <code>ColumnConfig</code>, <code>ResourcePlacementConfig</code>, <code>ReferenceConfig</code>, <code>PostextSectionOverride</code></td>
-      <td><strong>Heretats.</strong> Declarats a <code>types.ts</code> però mai connectats al pipeline; les seves responsabilitats les van absorbir les seccions anteriors. Es conserven només com a referència.</td>
-      <td>—</td>
+      <td>Estructuració del contingut, col·locació de recursos</td>
     </tr>
   </tbody>
 </table>
 
 ### Estratègia d'anàlisi
 
-L'anàlisi és deliberadament el pas més simple de tot el pipeline. El markdown entra, s'analitza en un AST, i cada node es converteix en un `VDTBlock`. Les referències a recursos es resolen contra l'array `resources[]` per ID. Les definicions de notes a peu de pàgina (paràgrafs que comencen per `[^id]:`) surten del flux i es desen per id per a les crides que les citen; l'array `notes[]` no es llegeix. La sortida és una llista plana de blocs tipats i amb contingut, però sense assignació de pàgina, ni de columna, ni de posició.
+L'anàlisi és deliberadament el pas més simple de tot el pipeline. El markdown entra i en surt una llista plana de blocs de contingut tipats (`ContentBlock`, a `packages/postext/src/parse/`): un encapçalament, un paràgraf amb els seus trams en línia, un ítem de llista, una directiva. El resultat es memoritza (`parseMarkdownMemo`), de manera que les passades d'un mateix build analitzen el text una sola vegada, i un build posterior del mateix text tampoc no el torna a analitzar. Les referències a recursos es resolen contra l'array `resources[]` per ID a l'inici de cada passada de col·locació. Les definicions de notes a peu de pàgina (paràgrafs que comencen per `[^id]:`) també surten del flux en aquest punt i es desen per id per a les crides que les citen; l'array `notes[]` no es llegeix.
 
-Pensa-hi com en un manifest: "hi ha un encapçalament, després un paràgraf de 200 paraules, després una referència a una figura, després un altre paràgraf." Sense mesures. Sense posicionament. Sense cap decisió de composició. La feina feixuga comença a la Passada 2.
+Pensa-hi com en un manifest: "hi ha un encapçalament, després un paràgraf de 200 paraules, després una referència a una figura, després un altre paràgraf." Sense mesures. Sense posicionament. Sense cap decisió de composició. Un `VDTBlock` només existeix quan la passada de col·locació ha mesurat un bloc i li ha donat un lloc.
 
 
 ## Arbre Virtual del Document (VDT)
 
 Suposa que demanes a un tipògraf professional que compongui un llibre sencer, però en lloc d'entregar-te pàgines impreses, t'entrega un full de càlcul. Cada fila és un element. Cada cel·la és una mesura precisa: "l'encapçalament és a (40, 30), el primer paràgraf comença a (40, 78) i fa 144px d'alçada, la imatge va a la part superior de la columna 2 a la pàgina 3..." Aquest full de càlcul és el VDT.
 
-L'Arbre Virtual del Document és l'estructura de dades central de Postext — un arbre mutable, modificat in situ, que representa cada pàgina, columna, bloc i línia, cadascun amb una caixa delimitadora precisa. Un cop el pipeline de composició convergeix, el VDT *és* la resposta. Pots consultar "què hi ha a la pàgina 72, columna 2?" sense renderitzar un sol píxel.
+L'Arbre Virtual del Document és l'estructura de dades central de Postext — un arbre mutable, modificat in situ, que representa cada pàgina, columna, bloc i línia, cadascun amb una caixa delimitadora precisa. Un cop `buildDocument` retorna, el VDT *és* la resposta. Pots consultar "què hi ha a la pàgina 72, columna 2?" sense renderitzar un sol píxel.
 
 ### Per què mutable
 
 És el mateix enfocament que fan servir els pipelines de renderitzat dels motors de jocs, on sistemes successius actualitzen un estat mutable compartit del món en un bucle tancat. I per la mateixa raó.
 
-Els arbres immutables (com el DOM virtual de React) creen objectes nous amb cada canvi. Això està bé per a una interfície amb uns quants centenars de components. Però en un bucle de convergència que pot executar fins a 5 iteracions al llarg de 7 passades, tocant potencialment milers de blocs, la pressió d'assignació de memòria i les pauses del recol·lector d'escombraries es converteixen en un problema molt real. El VDT fa servir mutació in situ amb un patró de `dirty` flags: les passades marquen nodes com a bruts, i les passades posteriors saben exactament quins nodes han de tornar a examinar. El motor recorda què ha canviat per no refer feina vàlida.
+Una passada de col·locació omple l'arbre in situ. Obre una pàgina, hi afegeix columnes, resta l'alçada d'un bloc de l'`availableHeight` de la columna on cau, i tanca les columnes d'una banda allà on la talla una caixa a amplada de pàgina. Un llibre té milers de blocs, i un arbre immutable (com el DOM virtual de React) assignaria un objecte nou per a cadascun d'aquests passos. Per això els nodes són objectes plans i la passada hi escriu.
+
+Una passada acabada no s'apedaça. Quan `buildDocument` necessita un altre intent (un topall de banda, una palanca d'equilibrat), torna a executar la passada a partir del contingut i obté un arbre nou. L'arbre de la passada anterior queda com estava, de manera que el controlador pot comparar-los, quedar-se el millor o prendre unes pàgines de cadascun. La memòria cau de mesura fa assumible la repetició: un paràgraf el text, les fonts i l'amplada del qual no han canviat es llegeix de la memòria cau en lloc de tornar-se a mesurar.
 
 ### Estructura
 
-<Illustration name="VdtStructure" data='{"title": "Estructura de l’Arbre Virtual del Document", "desc": "VDT jeràrquic: el document conté pàgines, cada pàgina conté columnes, cada columna conté blocs (encapçalament, paràgraf, recurs) i cada bloc de text conté línies mesurades. Cada node porta bounding box, flag dirty i índexs de pàgina i columna.", "caption": "Cada node porta bbox, flag dirty i índexs de pàgina i columna.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["encapçalament", "paràgraf", "recurs"], "lineLabels": ["línia 0", "línia 1"], "legendHeader": "Cada node porta:", "legendAttrs": ["bbox: { x, y, w, h }", "dirty: boolean", "pageIndex: number", "columnIndex: number"], "linesHeader": "Les línies porten a més:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
+<Illustration name="VdtStructure" data='{"title": "Estructura de l’Arbre Virtual del Document", "desc": "VDT jeràrquic: el document conté pàgines, cada pàgina conté columnes, cada columna conté blocs (encapçalament, paràgraf, recurs) i cada bloc de text conté línies mesurades. Cada bloc porta bounding box, el seu tipus i índexs de pàgina i columna.", "caption": "Cada bloc porta el seu bbox, el seu tipus i índexs de pàgina i columna.", "document": "VDTDocument", "pageLabels": ["VDTPage [0]", "VDTPage [1]", "VDTPage [n]"], "columnLabels": ["VDTColumn [0]", "VDTColumn [1]"], "blockLabels": ["encapçalament", "paràgraf", "recurs"], "lineLabels": ["línia 0", "línia 1"], "legendHeader": "Cada bloc porta:", "legendAttrs": ["bbox: { x, y, w, h }", "type: VDTBlockType", "pageIndex: number", "columnIndex: number"], "linesHeader": "Les línies porten a més:", "linesAttrs": ["baseline: number", "hyphenated: boolean"]}' />
 
 ### Definicions de tipus
 
@@ -277,8 +274,8 @@ interface VDTDocument {
   blocks: VDTBlock[];         // vista plana dels mateixos objectes bloc
   config: ResolvedConfig;     // cada subconfiguració resolta a no opcional
   baselineGrid: number;       // increment de línia de base en px (p. ex. 24 per a 16px/1.5)
-  converged: boolean;
-  iterationCount: number;
+  converged: boolean;         // cada segment d'equilibrat ha acabat a ras o sense palanques
+  iterationCount: number;     // passades de col·locació darrere d'aquesta composició (vegeu El controlador de la passada)
   metadata: DocumentMetadata;
 }
 
@@ -303,24 +300,26 @@ interface VDTColumn {
   availableHeight: number;    // espai vertical restant
   baselineOffset: number;     // posició y actual de la línia de base
   band?: number;              // banda de columnes (0 tret que un bloc a amplada de pàgina parteixi la pàgina)
-  kind?: 'text' | 'span';     // 'span' = columna a tota l'amplada amb un bloc a amplada de pàgina
+  kind?: 'text' | 'span' | 'side'; // 'span' = columna a tota l'amplada amb un bloc a amplada de pàgina,
+                              // 'side' = la columna lateral, només per a flotants, d'una disposició de columna i mitja
 }
 
 // Un bloc de contingut (paràgraf, encapçalament, recurs, etc.)
 type VDTBlockType =
   | 'paragraph' | 'heading' | 'resource' | 'blockquote'
-  | 'listItem' | 'footnoteRef' | 'mathDisplay';
+  | 'listItem' | 'footnoteRef' | 'mathDisplay' | 'callout' | 'code';
 
 interface VDTBlock {
   id: string;
   type: VDTBlockType;
   bbox: BoundingBox;
-  lines: VDTLine[];           // per a blocs de text (l'emplena la Passada 2)
+  lines: VDTLine[];           // per a blocs de text: les línies mesurades
   resourceBlock?: ResolvedResourceBlock; // per a blocs de recurs
   pageIndex: number;
   columnIndex: number;
-  dirty: boolean;             // necessita recomposició
-  snappedToGrid: boolean;     // línia de base ajustada a la retícula
+  dirty: boolean;             // no es fa servir: es neteja en col·locar el bloc i no el llegeix res
+  snappedToGrid: boolean;     // el flux ha tornat a la retícula de base sota aquest bloc
+  balancing?: VDTBalancing;   // les palanques d'equilibrat de columnes aplicades a aquest bloc
 }
 
 // Una línia de text mesurada
@@ -333,7 +332,8 @@ interface VDTLine {
   repeatedHyphen?: boolean;     // comença amb aquest guionet repetit («léxico-» | «-semántico»), que no és a la font
   segments?: VDTLineSegment[];  // trams paraula/espai/matemàtica per justificar
   isLastLine?: boolean;         // última línia del seu paràgraf
-  justifiedSpaceRatio?: number; // amplada d'espai aplicada ÷ amplada d'espai normal
+  justifiedSpaceRatio?: number; // amplada a què es pinta cada espai ÷ espai de la rodona
+  justifiedSpaceLimitRatio?: number; // l'espaiat que fiten els límits, quan els espais de la línia no són de rodona (lineWordSpacing llegeix tots dos)
   sourceStart?: number;         // mapa al markdown original (offsets de caràcter; una línia que comença per `\$` comença a la barra)
   sourceEnd?: number;
   plainStart?: number;          // mapa al text pla del bloc
@@ -368,45 +368,39 @@ Alguns d'aquests camps mereixen una nota:
 - **`isLastLine`** governa el renderitzat justificat: les línies finals es renderitzen en bandera fins i tot quan el paràgraf està justificat — excepte les línies finals *desbordades*, els espais entre paraules de les quals es comprimeixen per cabre a la mesura (semàntica d'ajust de glue de TeX).
 - **`sourceStart`/`sourceEnd` i `plainStart`/`plainEnd`** són mapes des de cada línia cap al markdown original i cap al text pla del bloc — alimenten la sincronització de cursor i selecció en integracions d'editor.
 - **`VDTResourceTableLayout`** (amb les seves entrades `VDTResourceTableCell`) porta la geometria completa d'una taula composta: les vores x de les columnes, les vores y de les files i els rectangles per cel·la amb les seves línies de contingut mesurades, de manera que tots els backends dibuixen la mateixa taula.
+- **`dirty` i `snappedToGrid`** s'escriuen quan es col·loca un bloc i no els llegeix cap etapa ni cap backend. `dirty` comença a `true` en un bloc nou i passa a `false` quan el bloc es col·loca; el motor no fa cap seguiment de canvis sobre l'arbre, torna a executar la passada de col·locació (vegeu [El controlador de la passada](#el-controlador-de-la-passada)). `snappedToGrid` val `true` a la primera part d'un bloc de text després del qual el flux torna a la retícula (vegeu [Sistema de ritme vertical](#sistema-de-ritme-vertical)).
+- **`balancing`** diu quines palanques d'equilibrat de columnes han mogut o estirat el bloc; un bloc que l'equilibrat ha deixat com estava no en porta (vegeu [Equilibrat de columnes](#equilibrat-de-columnes)).
 - **`computePageTextExtent(page)`** és un petit helper públic que retorna l'extensió vertical realment coberta per text en una pàgina (incloent-hi els peus dels flotants). Les superposicions de depuració el fan servir perquè les línies de la retícula de base abastin només text real, no el final buit de la pàgina.
-
-### Seguiment de canvis (dirty flags)
-
-El seguiment de canvis és la manera com el motor evita refer feina que ja ha fet correctament. Quan una passada mou o redimensiona un bloc, estableix `dirty = true` en aquest bloc i en tots els blocs posteriors de la mateixa columna — perquè les posicions de tots depenen del bloc que ha canviat. Llavors el bucle de convergència es pot saltar del tot els subarbres sense canvis.
-
-Un exemple concret. La Passada 5 insereix un guionet en un paràgraf de la pàgina 12, i això fa que perdi una línia d'alçada. Aquest paràgraf es marca com a brut. També tots els blocs que té a sota a la mateixa columna — tots s'han de desplaçar una línia cap amunt. I els blocs de la pàgina 11 i anteriors? Intactes. Les passades se'ls salten completament a la iteració següent.
-
-El `dirty` flag també serveix com a senyal de convergència: si no hi ha blocs bruts després de les passades 5–7, la composició ha convergit i el motor deixa d'iterar. Fet.
 
 
 ## Pipeline de composició
 
-Set passades, cadascuna amb una sola feina. Aquest és tot el pipeline de composició.
+Una sola passada de col·locació, executada tantes vegades com la composició necessiti. Aquest és tot el pipeline de composició.
 
-El disseny està pres dels pipelines de renderitzat dels motors de jocs — passada d'ombres, passada d'il·luminació, passada de postprocessament — on cada sistema llegeix i muta un estat del món compartit i confia que els sistemes anteriors han fet la seva part. Això fa que cada passada individual sigui fàcil d'entendre, provar i optimitzar de manera aïllada. Pots mesurar el rendiment de la Passada 5 sense pensar en la Passada 3.
+La passada (`placeDocumentPass`, a `packages/postext/src/pipeline/build.ts`) recorre el contingut del primer bloc a l'últim. Per a cada bloc fa tot el que cal per compondre'l: el mesura a l'amplada de la columna on està a punt d'entrar, mira si hi cap, el parteix o el fa avançar segons les regles de tall i de cohesió, ofereix un forat als flotants que cita, i torna el flux a la retícula de línies de base (vegeu [Sistema de ritme vertical](#sistema-de-ritme-vertical)). Els flotants, les vídues i la retícula no tenen cap passada pròpia: es resolen a mesura que cada bloc aterra.
 
-La diferència clau respecte a un motor de jocs és que un joc renderitza cada fotograma una vegada i passa al següent. Postext no s'ho pot permetre. Les decisions tipogràfiques són profundament interdependents — corregir una vídua pot canviar les alçades de les columnes, cosa que afecta l'equilibri, cosa que pot crear una òrfena nova —, així que pot ser que el pipeline hagi d'iterar. Les passades 3–7 s'executen dins d'un bucle de convergència, que itera fins a 5 vegades fins que la composició s'estabilitza en un resultat final.
+Algunes decisions no es poden prendre dins d'un sol recorregut, perquè depenen d'on acaba el recorregut: els números de pàgina que imprimeix una taula de continguts, l'alçada a què una caixa a amplada de pàgina talla les columnes que té a sobre, les línies que encara falten a una columna curta. Per a aquestes, `buildDocument` torna a executar la passada amb *indicacions* tretes del resultat de la passada anterior. Les cinc etapes de sota segueixen un bloc al llarg de la passada; [El controlador de la passada](#el-controlador-de-la-passada) i [Equilibrat de columnes](#equilibrat-de-columnes) expliquen les repeticions.
 
-### Passada 1: Estructuració del contingut
+### Etapa 1: Estructuració del contingut
 
 - **Entrada:** `PostextContent` sense processar
-- **Acció:** Analitzar el markdown en un AST, resoldre les referències a recursos contra `resources[]` per ID, treure del flux les definicions de notes a peu de pàgina (`[^id]:`) i numerar-ne les crides per ordre de citació, crear els nodes `VDTBlock` inicials (`notes[]` no es llegeix)
-- **Sortida:** `VDTBlock[]` pla (tipat i amb contingut, però sense assignació de pàgina ni de columna)
-- **S'executa una sola vegada** (no forma part del bucle de convergència)
+- **Acció:** Analitzar el markdown en blocs de contingut, resoldre les referències a recursos contra `resources[]` per ID, treure del flux les definicions de notes a peu de pàgina (`[^id]:`) i numerar-ne les crides per ordre de citació, numerar els encapçalaments i planificar els flotants: quins recursos floten, i després de quin bloc (`notes[]` no es llegeix)
+- **Sortida:** Una llista plana de blocs de contingut (tipats i amb contingut, però sense assignació de pàgina ni de columna) i el pla de flotants
+- **S'executa:** a l'inici de cada passada de col·locació. L'anàlisi memoritzada es reutilitza després de la primera passada; la resta es torna a calcular
 
-### Passada 2: Mesura de text
+### Etapa 2: Mesura de text
 
-- **Entrada:** `VDTBlock[]` amb contingut de text
-- **Acció:** Per a cada bloc de text, mesurar les línies a l'amplada de columna objectiu a través del **mòdul de mesura** dedicat (`packages/postext/src/measure/`), que afegeix partició de mots, justificació, trams enriquits en línia i partició de línies Knuth-Plass per sobre de Pretext. Desar les `VDTLine[]` mesurades i l'alçada total a cada bloc
+- **Entrada:** Un bloc de contingut amb text, i l'amplada de la columna on està a punt d'entrar
+- **Acció:** Mesurar les línies del bloc a aquesta amplada a través del **mòdul de mesura** dedicat (`packages/postext/src/measure/`), que afegeix partició de mots, justificació, trams enriquits en línia i partició de línies Knuth-Plass per sobre de Pretext. El resultat són les `VDTLine[]` del bloc i la seva alçada total
 - **Detall clau:** La mesura es desa a la memòria cau. `cachedMeasureBlock` / `cachedMeasureRichBlock` (a `measure/cache.ts`) fan servir com a clau el text, les fonts, l'amplada i cada opció que afecta la composició, de manera que tornar a mesurar un paràgraf sense canvis és una consulta a un mapa
-- **Sortida:** Cada bloc de text té dimensions precises en píxels
-- **Es torna a executar quan:** Canvien les amplades de columna o el contingut del text (per exemple, en inserir partició de mots)
+- **Sortida:** Les línies del bloc, amb dimensions precises en píxels
+- **S'executa:** quan el recorregut arriba al bloc, no abans, perquè l'amplada depèn d'on cau el bloc: una columna al costat d'una columna lateral, les línies al costat d'una figura que el text envolta, les subcolumnes d'un grup `:::columns`. Un bloc que passa a una columna d'una altra amplada es torna a mesurar a aquesta amplada
 
 El mòdul es reparteix netament per responsabilitat: `plain.ts` mesura trams plans, `rich.ts` mesura trams mixtos de negreta/cursiva/matemàtiques, `font.ts` construeix les cadenes de font i governa el cicle de vida de les memòries cau, i `canvas.ts` embolcalla les primitives crues d'amplada de text del canvas. Un detall del cicle de vida importa a la pràctica: les amplades de glif mesurades amb una font de reserva no han de sobreviure a l'arribada de la font real. `canvas.ts` desa les seves amplades per cadena de font juntament amb una generació de mesura; `evictFontFamilies` (que criden un build que descobreix que han canviat les cares d'una família, `watchFonts`, `prepareFonts` i `loadBundleFonts`) descarta les amplades d'aquelles famílies i buida la memòria cau de Pretext, i una `MeasurementCache` omplerta en una generació anterior descarta els seus blocs d'aquelles famílies a la consulta següent. `clearMeasurementCache()` fa el mateix amb totes les famílies. Les cares mateixes es carreguen abans de compondre a `fonts/prepare.ts` (`prepareFonts`), i `fonts/faces.ts` recupera les cares que ha fet servir un document compost, per als avisos `fontFallback`.
 
 Els paràgrafs en xinès, japonès i coreà segueixen un altre camí dins del mateix mòdul. Un paràgraf amb més caràcters CJK que espais entre paraules passa al **compositor CJK** (`cjkCompose.ts`). Divideix el text en unitats (un caràcter, un tram de text llatí, un guió llarg o uns punts suspensius de dos quadratins, una caixa indivisible com una etiqueta o una crida de nota), mesura cada unitat una sola vegada i omple les línies per ordre, amb les regles de principi i final de línia de `cjkClasses.ts`: una línia admet un signe que no pot obrir la següent cedint blanc de la puntuació (`cjkPunctuation.ts`) abans de baixar un caràcter. Després, una línia justificada s'eixampla entre els seus caràcters. El resultat són `VDTLine` normals amb segments que porten el que els renderitzadors necessiten per pintar-los tal com es van mesurar: `tracking` (píxels després de cada caràcter, ja inclosos en l'amplada del segment), `inkOffset` per a un signe que ha cedit blanc, `hangs`, els espais entre xinès i llatí com a segments `autospace`, i les marques, les lectures ruby i les files warichu de les anotacions xineses. En un document japonès el mateix compositor segueix JLReq: les classes de kinsoku dels nivells japonesos es llegeixen, en el moment del tall, dels caràcters dels extrems de cada unitat, els blancs de la puntuació es comprimeixen i es retornen en l'ordre de JLReq, `rubyJis.ts` disposa els furigana (espaiat 1:2:1, desbordament sobre kana, paraules jukugo) i les marques de kanbun eixamplen la unitat del seu caràcter. El cost és lineal en la longitud del paràgraf: el capítol 1 de 紅樓夢 (6949 caràcters) es compon mesurant 1298 caràcters, una vegada cada caràcter diferent, mentre que mesurar prefixos del paràgraf en costava 636 948. Vegeu [Composició xinesa](/ca/docs/chinese-layout).
 
-Per sota, aquí és on Pretext demostra el seu valor. La crida a `prepare()` és la part costosa — analitza el text fent servir el motor de fonts del canvas i desa el resultat a la memòria cau. I la crida a `layout()`? Aritmètica pura, pràcticament gratuïta. Aquesta divisió ho canvia tot. Un cop el text està preparat, el motor pot tornar a compondre a amplades diferents — provant configuracions de columnes, comprovant què passa si un paràgraf guanya un guionet —, tot amb un cost insignificant. Preparar una vegada, compondre tantes vegades com calgui.
+Per sota, aquí és on Pretext demostra el seu valor. La crida a `prepare()` és la part costosa — analitza el text fent servir el motor de fonts del canvas i desa el resultat a la memòria cau. I la crida a `layout()`? Aritmètica pura, pràcticament gratuïta. Aquesta divisió ho canvia tot. Un cop el text està preparat, el motor el pot tornar a partir en línies amb un cost insignificant: a una altra amplada, per a un paràgraf que continua en una columna més estreta, o amb una línia més, per a un paràgraf que l'equilibrat de columnes fa córrer. Preparar una vegada, compondre tantes vegades com calgui.
 
 ```typescript
 // Simplificat: com fa servir pretext el mòdul de mesura internament
@@ -414,25 +408,27 @@ const prepared = prepare(paragraphText, '16px/1.5 Inter');
 const { height } = layout(prepared, columnWidth, 24); // line-height de 24px
 // => "Aquest paràgraf fa 168px d'alçada a 320px d'amplada de columna — són 7 línies."
 ```
-### Passada 3: Col·locació en pàgines i columnes
 
-- **Entrada:** Blocs mesurats
-- **Acció:** Fer fluir els blocs per pàgines i columnes seqüencialment. Crear nodes `VDTPage` i `VDTColumn`. Registrar `availableHeight` per columna. Quan un bloc no hi cap, avançar a la columna o la pàgina següent
+### Etapa 3: Col·locació en pàgines i columnes
+
+- **Entrada:** Un bloc mesurat
+- **Acció:** Compondre el bloc a la columna actual. Crear nodes `VDTPage` i `VDTColumn` a mesura que el flux els necessita. Registrar `availableHeight` per columna. Quan un bloc no hi cap, partir-lo (Etapa 5) o avançar a la columna o la pàgina següent
 - **Estratègia:** Col·locació greedy de primer ajust. Els salts de columna i de pàgina segueixen l'assignació vàlida més simple
-- **Sortida:** Cada bloc té `pageIndex`, `columnIndex` i `bbox` assignats
+- **Sortida:** El bloc té `pageIndex`, `columnIndex` i `bbox` assignats
 
-Aquest és el moment en què el VDT es converteix en un document de debò. Abans d'aquesta passada, els blocs són només una llista plana amb dimensions però sense adreça. La Passada 3 els recorre i assigna cadascun a una pàgina i una columna, com qui aboca aigua en una quadrícula de recipients: omplir la columna 1 fins que vessi, passar a la columna 2 i, quan la pàgina és plena, començar-ne una de nova.
+Aquest és el moment en què el VDT es converteix en un document de debò. Abans d'aquesta etapa un bloc és una entrada d'una llista plana, sense adreça. La col·locació assigna cadascun a una pàgina i una columna, com qui aboca aigua en una quadrícula de recipients: omplir la columna 1 fins que vessi, passar a la columna 2 i, quan la pàgina és plena, començar-ne una de nova.
 
-Abans que hi aterri cap bloc de contingut, la passada reserva espai per als elements estructurals — capçaleres i peus de pàgina (compostos com a slots de disseny a partir de `config.header` / `config.footer`) i les bandes de flotants ja pendents per a la pàgina acabada d'obrir. Aquestes reserves redueixen l'`availableHeight` de cada columna, de manera que quan els blocs de contingut comencen a fluir el motor ja sap exactament quant d'espai hi ha disponible.
+Abans que aterri cap bloc de contingut en una pàgina, la passada reserva espai per als elements estructurals — capçaleres i peus de pàgina (compostos com a slots de disseny a partir de `config.header` / `config.footer`) i les bandes de flotants ja pendents per a la pàgina acabada d'obrir. Aquestes reserves redueixen l'`availableHeight` de cada columna, de manera que quan els blocs de contingut comencen a fluir el motor ja sap exactament quant d'espai hi ha disponible.
 
-**Bandes de columnes i columnes a amplada de pàgina.** `page.columns` és un array pla en ordre de lectura, però una pàgina no sempre és una única fila de columnes. Un bloc en línia a amplada de pàgina — avui un `:::callout` amb `span: 'page'` en una disposició multicolumna — talla la pàgina en *bandes* apilades: les columnes de text de la banda actual es tanquen a la línia de tall (se'n retalla l'alçada i `availableHeight` queda a zero), el bloc rep la seva pròpia columna a tota l'amplada amb `kind: 'span'`, i a sota s'afegeix una banda nova de columnes de text (`band + 1`, amb la mateixa x i amplada i el mateix fons que la banda que substitueix). Les columnes només s'afegeixen al final, de manera que `columnIndex` continua apuntant a `page.columns[i]`, i els renderitzadors no necessiten cap traçat especial: cada columna retalla al seu propi bbox (eixamplat per `columnClipRect`: 2pt per a la tinta dels glifs més el que sobresurtin pels costats de la columna els seus dissenys superposats, com la pestanya d'un títol o el distintiu d'un requadre, i el que pugi per damunt de la seva part alta el disseny d'un encapçalament; el peu continua sent la vora; el mateix rectangle als backends canvas i PDF), i el filet entre columnes es dibuixa per banda entre columnes de text adjacents, començant sota la banda que ocupa un encapçalament a amplada de pàgina al capdamunt de la pàgina (`columnRuleSegments`), amb el filet propi de la pàgina quan una secció amb estil en fixa un (`VDTPage.columnRule`, llegit amb `pageColumnRule`). L'equilibrat de columnes ignora les columnes a amplada de pàgina i les bandes d'alçada zero. Un bloc a amplada de pàgina talla directament on la banda està anivellada (inici de pàgina, just després d'un encapçalament d'obertura, d'un altre bloc a amplada de pàgina o d'una banda de flotants superior); si arriba a una banda desigual, proposa en canvi un *topall de banda* (`packages/postext/src/pipeline/bandCaps.ts`) — les columnes de la banda que obre un bloc de contingut donat s'escurcen a `ceil(Σ usat / N / retícula)` línies — i `buildDocument` repeteix la passada de col·locació amb aquest topall (fent-lo créixer línia a línia quan la banda escurçada vessa, com a molt unes poques passades addicionals, i passant després a la pàgina següent), de manera que el text omple les columnes escurçades sota totes les regles de col·locació, acaba anivellat al tall, i les columnes tancades conserven el marge que quedi com a `availableHeight` perquè l'equilibrat l'absorbeixi. El mateix mecanisme anivella la banda de *tancament* de cada capítol i del document (`headings.balancing.trailing`): una obertura de capítol, un `:::part`, un avís `placement: 'fixed'` que tanca el capítol o el final del document, si s'hi arriba amb les columnes de la banda actual desiguals, proposa un topall `kind: 'trailing'`, indexat pel bloc límit; com que un topall s'indexa pel bloc que obre la seva banda — i aquest bloc es mou cada vegada que una pàgina anterior absorbeix línies d'equilibrat —, els topalls de tancament es resolen *després* que l'equilibrat de columnes s'hagi assentat, amb els seus ajustos congelats, i una breu ronda de poliment deixa que les palanques omplin el que el tall ha deixat curt. Els avisos `placement: 'fixed'` surten del flux: la caixa s'ancora a l'àrea de contingut / caixa de tall / caixa de sang de la pàgina, les columnes de text que cobreix cedeixen aquesta zona (retallada per baix o per dalt com una banda de flotants, i passant a la pàgina següent si hi ha conflicte), i la caixa amb els seus fills va a `page.floats`.
+**Bandes de columnes i columnes a amplada de pàgina.** `page.columns` és un array pla en ordre de lectura, però una pàgina no sempre és una única fila de columnes. En una disposició multicolumna, un bloc en línia a amplada de pàgina talla la pàgina en *bandes* apilades. Quatre coses compten com a tal: un `:::callout` l'estil o la tanca del qual fixa `span: 'page'`, un grup `:::columns{span="page"}` dins del text corrent, un `::resource` en línia la col·locació del qual es resol a `{ position: 'here', span: 'page' }`, i una tira de còmic composta a amplada de pàgina allà on s'escriu (`:::strip{span=page}`). Els tres últims s'emboliquen en una caixa a amplada de pàgina sense marc abans de la col·locació (`pipeline/flowColumns.ts`, `pipeline/spanEmbeds.ts`), de manera que un sol mecanisme els compon tots quatre. Al tall, les columnes de text de la banda actual es tanquen a la línia de tall (se'n retalla l'alçada i `availableHeight` queda a zero), el bloc rep la seva pròpia columna a tota l'amplada amb `kind: 'span'`, i a sota s'afegeix una banda nova de columnes de text (`band + 1`, amb la mateixa x i amplada i el mateix fons que la banda que substitueix). Les columnes només s'afegeixen al final, de manera que `columnIndex` continua apuntant a `page.columns[i]`, i els renderitzadors no necessiten cap traçat especial: cada columna retalla al seu propi bbox (eixamplat per `columnClipRect`: 2pt per a la tinta dels glifs més el que sobresurtin pels costats de la columna els seus dissenys superposats, com la pestanya d'un títol o el distintiu d'un requadre, i el que pugi per damunt de la seva part alta el disseny d'un encapçalament; el peu continua sent la vora; el mateix rectangle als backends canvas i PDF), i el filet entre columnes es dibuixa per banda entre columnes de text adjacents, començant sota la banda que ocupa un encapçalament a amplada de pàgina al capdamunt de la pàgina (`columnRuleSegments`), amb el filet propi de la pàgina quan una secció amb estil en fixa un (`VDTPage.columnRule`, llegit amb `pageColumnRule`). L'equilibrat de columnes ignora les columnes a amplada de pàgina, les columnes laterals i les bandes d'alçada zero. Un bloc a amplada de pàgina talla directament on la banda està anivellada (inici de pàgina, just després d'un encapçalament d'obertura, d'un altre bloc a amplada de pàgina o d'una banda de flotants superior); si arriba a una banda desigual, proposa en canvi un *topall de banda* (`packages/postext/src/pipeline/bandCaps.ts`) — les columnes de la banda que obre un bloc de contingut donat s'escurcen a `ceil(Σ usat / N / retícula)` línies — i `buildDocument` repeteix la passada de col·locació amb aquest topall (fent-lo créixer línia a línia quan la banda escurçada vessa, fins a `MAX_BAND_CAP_RETRIES` = 3 vegades, i descartant-lo després, de manera que el bloc passa al capdamunt de la pàgina següent), de manera que el text omple les columnes escurçades sota totes les regles de col·locació, acaba anivellat al tall, i les columnes tancades conserven el marge que quedi com a `availableHeight` perquè l'equilibrat l'absorbeixi. El mateix mecanisme anivella la banda de *tancament* de cada capítol i del document (`headings.balancing.trailing`): una obertura de capítol, un `:::part`, un avís `placement: 'fixed'` que tanca el capítol o el final del document, si s'hi arriba amb les columnes de la banda actual desiguals, proposa un topall `kind: 'trailing'`, indexat pel bloc límit; com que un topall s'indexa pel bloc que obre la seva banda — i aquest bloc es mou cada vegada que una pàgina anterior absorbeix línies d'equilibrat —, els topalls de tancament es resolen *després* que l'equilibrat de columnes s'hagi assentat, amb els seus ajustos congelats, i una breu ronda de poliment deixa que les palanques omplin el que el tall ha deixat curt. Els avisos `placement: 'fixed'` surten del flux: la caixa s'ancora a l'àrea de contingut / caixa de tall / caixa de sang de la pàgina, les columnes de text que cobreix cedeixen aquesta zona (retallada per baix o per dalt com una banda de flotants, i passant a la pàgina següent si hi ha conflicte), i la caixa amb els seus fills va a `page.floats`.
 
 **Pàgines verticals.** Amb `layout.writingMode: 'vertical-rl'` la passada compon una pàgina horitzontal girada un quart de volta en el sentit de les agulles del rellotge. En aquesta pàgina, la caixa de text, les columnes, els blocs, les línies, els flotants i les zones de notes a peu de pàgina estan en **coordenades de flux**, i `VDTPage.flow` porta el gir que les duu al plec: un punt (x, y) del flux cau a (amplada de pàgina − y, x). Res del que ve després no ho necessita saber: els talls, els flotants, les regles de cohesió i l'equilibrat funcionen en el marc del flux com en qualsevol pàgina, una columna del flux és un pis al plec, i cada backend aplica el gir en pintar (`flowToPage` i `pageToFlow` converteixen punts en els dos sentits). Les capçaleres, els folis, les marques de tall i el fons continuen en coordenades del plec. Les figures i les taules es componen com a blocs drets girats de tornada dins del marc, i els caràcters que van drets es giren de tornada un a un en pintar.
 
-### Passada 4: Col·locació de recursos
+### Etapa 4: Col·locació de recursos
 
-- **Entrada:** VDT amb blocs col·locats en columnes
-- **Acció:** Fer flotar cada recurs referenciat al primer forat lliure després de la seva primera referència — el final de la columna de la referència, el principi / el final de la columna buida següent, o una banda de la pàgina següent (`packages/postext/src/pipeline/floatPlacement.ts` planifica els flotants, `pipeline/floatSlots.ts` enumera i mesura els forats; el pipeline de construcció reserva les bandes)
+- **Entrada:** El pla de flotants de l'Etapa 1 i les pàgines tal com s'han col·locat fins ara
+- **Acció:** Fer flotar cada recurs referenciat al primer forat lliure després de la seva primera referència — el final de la columna de la referència, el principi / el final de la columna buida següent, o una banda de la pàgina següent (`packages/postext/src/pipeline/floatPlacement.ts` planifica els flotants, `pipeline/floatSlots.ts` enumera i mesura els forats; la passada de col·locació reserva les bandes mentre recorre el contingut)
+- **S'executa:** tan bon punt ha aterrat el bloc que conté la primera referència, dins del mateix recorregut; el text que es col·loca després flueix al voltant de la banda
 - **Resolució de la col·locació:** Per a cada recurs, el motor resol `resource.placement` → el `resourceType.defaultPlacement` del seu tipus → el valor per defecte integrat `{ position: 'auto', span: 'column' }`
 
 <table>
@@ -467,8 +463,14 @@ Abans que hi aterri cap bloc de contingut, la passada reserva espai per als elem
       <td><code>span: 'page'</code></td>
       <td>La banda abasta tota l'amplada de contingut a través de totes les columnes i interromp el flux — les bandes a amplada completa es reserven primer, de manera que els flotants de columna s'encaixen en l'espai restant</td>
     </tr>
+    <tr>
+      <td><code>span: 'side'</code></td>
+      <td>El recurs es compon a la columna lateral d'una disposició de columna i mitja que reserva aquesta columna als flotants (<code>layout.sideColumnRole: 'floats'</code>), apilat al costat del paràgraf que el cita per primera vegada. En una pàgina sense aquesta columna es comporta com <code>'column'</code></td>
+    </tr>
   </tbody>
 </table>
+
+`ResourcePlacement` té més camps que aquests dos: `rotate`, `width`, `align`, `columns`, `captionSide`, `shrink`, `minScale`, `captionMeasure`, `wrap`, `wrapGap` i `citingPage`. [Configuració → Tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs) i [Format del document › Col·locació](/ca/docs/document-format#collocació) expliquen què fa cadascun.
 
 - **Col·locació diferida:** Un flotant que no cap en cap forat de la pàgina actual espera la pàgina següent que obri el flux i, en un límit de capítol, s'aboca en pàgines obertes per davant del límit. Una imatge conserva la seva mida tret que `placement.shrink` (o `layout.floatShrink`, per a tot el document) permeti reduir-la a l'espai que té un forat. Una taula massa alta per a una pàgina nova es talla entre files i continua a les pàgines següents, amb les files de capçalera repetides (`tableStyle.overflow: 'split'`, el valor per defecte)
 - **Sortida:** Recursos posicionats en bandes de pàgina (`page.floats`), amb les alçades de les columnes afectades reduïdes perquè el text flueixi al voltant de les bandes
@@ -486,13 +488,13 @@ La col·locació de recursos és on les coses es posen interessants, perquè els
 
 **Numeració tipada per primera referència.** Els recursos *no* es numeren al markdown. `pipeline/resourceNumbering.ts` assigna a cada recurs el seu número la primera vegada que es referencia en ordre de lectura, fent servir el seu `ResourceType`: la `numberingTemplate` combina el comptador per tipus `{n}` amb els comptadors d'encapçalament `{h1}`..`{h6}` vigents a la referència (p. ex. `'{h1}.{n}'` → "1.7"), `resetOn` controla quan es reinicia el comptador (`'never'` o a qualsevol nivell d'encapçalament), i `counterFormat` tria numerals decimals, romans o alfabètics. Els tipus integrats *Figura* i *Taula* provenen de `defaultResourceTypes(locale)`, localitzats a la llengua del document. Com que la numeració segueix l'ordre de primera referència, inserir una figura nova a mig document renumera automàticament tot el que ve després — sense editar el contingut original.
 
-### Passada 5: Refinament tipogràfic
+### Etapa 5: Talls i regles de cohesió
 
-Aquesta és la passada que separa un motor de composició d'un bolcador de text. Aplica les regles de qualitat editorial que els tipògrafs professionals han aplicat a mà durant segles — i que el renderitzat de text ingenu ignora del tot.
+Aquesta és l'etapa que separa un motor de composició d'un bolcador de text. Aplica les regles de qualitat editorial que els tipògrafs professionals han aplicat a mà durant segles — i que el renderitzat de text ingenu ignora del tot.
 
-La Passada 5 opera en dos nivells: **divisió de línies basada en penalitzacions** dins de cada paràgraf, i **aplicació estructural de regles de cohesió (keep-together)** entre blocs. Treballen juntes, però són mecanismes diferents.
+Tres mecanismes es reparteixen la feina, i cadascun actua allà on existeix la informació que necessita: una **penalització de línia curta** dins del divisor de línies, una **partició puntuada** allà on un paràgraf topa amb el final d'una columna, i **regles estructurals de cohesió** entre blocs.
 
-#### Prevenció d'òrfenes, vídues i *runts* basada en penalitzacions
+#### Vídues, òrfenes i línies curtes
 
 Les **vídues i òrfenes** són els signes més visibles d'una composició amateur:
 
@@ -504,74 +506,133 @@ Les **vídues i òrfenes** són els signes més visibles d'una composició amate
   del seu context).
 - Una **línia curta** (*runt*, en anglès) és l'última línia d'un paràgraf quan es queda en una sola paraula curta (o dues): visualment massa curta per semblar una línia de text com cal. Estructuralment menys greu que una vídua, però igual de molesta per a un lector atent.
 
-Totes tres es tracten injectant **demerits** (penalitzacions) a l'algorisme de divisió de línies de Knuth-Plass. En lloc de maquetar el paràgraf i després intentar reparar un tall dolent *a posteriori*, el motor ensenya a l'algorisme que certs conjunts de talls són més cars que d'altres. Llavors l'algorisme tria el conjunt de talls globalment òptim, que de manera natural evita vídues, òrfenes i línies curtes sempre que és possible.
+**Les línies curtes es resolen al divisor de línies.** Una línia curta pertany només al paràgraf: la seva última línia és igual de curta allà on caigui el paràgraf. Per això és l'única de les tres regles que veu el divisor de línies de Knuth-Plass. Quan un conjunt de talls acabaria el paràgraf en una línia amb un contingut més estret que `runtMinCharacters × normalSpaceWidth` (valor per defecte de `runtMinCharacters`: 20, és a dir, vint espais entre paraules de contingut, entre 8 i 12 lletres), el divisor suma `runtPenalty` (valor per defecte 1000) al *badness* d'aquesta línia dins de la fórmula quadràtica de demerits, i així competeix a la mateixa escala que el *badness* de línia (que se satura a 10000) en lloc de quedar-ne aixafada. La penalització conviu amb els demerits habituals (*badness*, cost de partició de mots, desajust de classe de *fitness*) en una única optimització global, i el divisor gairebé sempre troba un conjunt de talls sense línia curta. Quan no el troba, `bodyText.tightenRunts` compon el paràgraf amb una línia menys si els seus espais entre paraules, i una mica de tracking negatiu, poden absorbir la diferència. El mòdul de mesura passa la penalització al divisor (`measure/plain.ts`, `measure/rich.ts`) i `knuthPlass/breakpoints.ts` l'aplica.
 
-Concretament, per a cada node de tall candidat en un paràgraf:
+**Les vídues i les òrfenes es resolen al final de la columna.** El divisor de línies parteix un paràgraf per a una amplada. No sap en quin lloc de la pàgina quedarà el paràgraf, i per tant no pot saber quines de les seves línies tancaran una columna. La passada de col·locació sí. Quan les línies d'un paràgraf no caben totes en el que queda de columna, `chooseParagraphSplit` (a `pipeline/orphanWidow.ts`) prova cada partició `k` de les línies ja tallades, de 0 al nombre de línies que hi caben: `k` línies es queden i la resta obren la columna següent. Cada candidata rep una puntuació:
 
-- Si triar aquest tall deixés menys de `orphanMinLines` línies a la part superior de la columna següent, se sumen `orphanPenalty` (valor per defecte 1000) als demerits del node.
-- Si triar aquest tall deixés menys de `widowMinLines` línies al final de la columna actual, se sumen `widowPenalty` (valor per defecte 1000).
-- Si la línia final resultant d'aquest tall tingués una amplada de contingut inferior a `runtMinCharacters × normalSpaceWidth` (valor per defecte de `runtMinCharacters`: 20 — aproximadament vint caràcters de contingut mesurats en amplades d'espai), s'injecta `runtPenalty` (valor per defecte 1000) com a *badness* equivalent dins de la fórmula quadràtica de demerits — així competeix a la mateixa escala que el *badness* de línia (que se satura a 10000) en lloc de quedar-ne aixafat.
+- `slackWeight · slack²` per les línies que deixa buides al peu de la columna, on `slack` són les línies que hi caben menys `k` (valor per defecte de `slackWeight`: 10);
+- més `widowPenalty` (valor per defecte 1000) quan deixa menys de `widowMinLines` línies al final de la columna;
+- més `orphanPenalty` (valor per defecte 1000) quan en porta menys de `orphanMinLines` al capdamunt de la següent.
 
-Aquestes penalitzacions conviuen amb els demerits habituals — *badness* (raó d'ajust al quadrat), cost de partició de mots i desajust de classe de *fitness* — en una única optimització global. Un detall de renderitzat completa el quadre: als paràgrafs justificats, les línies finals es renderitzen en bandera — excepte les línies finals *desbordades*, els espais entre paraules de les quals es comprimeixen per cabre a la mesura segons la semàntica d'ajust de glue de TeX, aplicada de manera idèntica als backends de canvas, HTML i PDF. L'algorisme en pot acceptar alguna si l'alternativa és pitjor (un paràgraf sense cap tall legal que compleixi totes les regles), però gairebé sempre trobarà un conjunt de talls que les eviti. Els ítems de llista s'apunten a la mateixa protecció mitjançant `avoidOrphansInLists`, `avoidWidowsInLists`, `avoidRuntsInLists` (tots a `true` per defecte).
-
-Una quarta pressió tova, `slackWeight`, pondera un cost quadràtic d'"espai de columna no utilitzat", de manera que l'algorisme prefereix conjunts de talls que omplin les columnes de manera ajustada. Junts, aquests demerits converteixen la Passada 5 en un refinament *de divisió de línies*: la majoria de casos de vídues, òrfenes i línies curtes es resolen dins del solver de Knuth-Plass, no mitjançant ajustos de tracking *a posteriori*.
+Guanya la partició amb la puntuació més baixa, i `k = 0` fa passar el paràgraf sencer. Les regles són toves, i els números diuen fins a quin punt: una penalització de 1000 és el cost de *slack* de deu línies buides (10 · 10² = 1000), de manera que amb els valors per defecte una partició que respecta totes dues regles guanya sempre que deixi buides menys de deu línies de la columna. Més enllà, una vídua o una òrfena pot ser l'opció més barata. La partició tria entre les línies que el divisor de línies ja havia fet; no torna a dividir el paràgraf en línies. Els ítems de llista passen per la mateixa partició mitjançant `avoidOrphansInLists` i `avoidWidowsInLists`, i reben la penalització de línia curta mitjançant `avoidRuntsInLists` (tots a `true` per defecte).
 
 Tot això es pot afinar a `BodyTextConfig` — vegeu [Configuració → Òrfenes, vídues, *runts* i cohesió](/ca/docs/configuration-text#òrfenes-vídues-runts-i-regles-de-cohesió). Posar qualsevol `*Penalty` a `0` desactiva efectivament aquella regla.
 
 #### Regles estructurals de cohesió (keep-together)
 
-Algunes agrupacions són més grans que un sol paràgraf — abasten blocs adjacents i no es poden resoldre només amb la divisió de línies. La Passada 5 les aplica a nivell de col·locació de blocs, movent grups sencers cap endavant quan altrament es partirien en un salt de columna o de pàgina:
+Algunes agrupacions són més grans que un sol paràgraf — abasten blocs adjacents i no es poden resoldre només amb la divisió de línies. La passada de col·locació les aplica a mesura que cada bloc aterra, movent grups sencers cap endavant quan altrament es partirien en un salt de columna o de pàgina:
 
 - **Títol amb el seu primer paràgraf.** Un títol no ha d'aparèixer mai al final d'una columna si el paràgraf que introdueix començaria a la columna següent. Ho gestiona `headings.keepWithNext` (per defecte `true`): si no hi ha lloc per al títol *més* el mínim de vídues del cos (`bodyText.widowMinLines`, per defecte `2`) del bloc següent — o només una línia quan `avoidWidows` està desactivat —, el títol s'empeny cap endavant per viatjar amb el seu text.
 - **Títols consecutius.** Quan apareixen diversos títols en seqüència (per exemple, un h2 seguit d'un h3 seguit d'un paràgraf), tot el grup ha de romandre junt. Cap dels títols no pot quedar solt al final d'una columna sense el contingut que introdueix.
-- **Llistes introduïdes amb dos punts.** Quan un paràgraf acaba amb dos punts que introdueixen directament una llista, la línia que porta els dos punts s'ha de quedar amb l'inici de la llista. Ho gestiona `bodyText.keepColonWithList` (per defecte `true`): si col·locar el paràgraf no deixés lloc perquè comenci el primer ítem de la llista (tot ell quan les regles d'òrfenes i vídues de les llistes el mantenen sencer; una línia amb `bodyText.colonListRoom: 'line'`, com fins a postext 1.4), l'última línia amb els dos punts (o el paràgraf sencer, si és d'una sola línia) es mou endavant juntament amb la llista. Sempre que aquesta regla hagi d'empènyer el paràgraf complet i just abans hi hagi una seqüència de títols a la columna, aquests títols també s'arrosseguen cap endavant per no violar silenciosament `keepWithNext`; l'única excepció és quan la columna conté només el títol (o títols) que una iteració anterior ja havia mogut endavant, i en aquest cas el motor deixa el paràgraf al costat del títol i accepta la separació més lleu entre els dos punts i la llista per evitar un bucle.
+- **Llistes introduïdes amb dos punts.** Quan un paràgraf acaba amb dos punts que introdueixen directament una llista, la línia que porta els dos punts s'ha de quedar amb l'inici de la llista. Ho gestiona `bodyText.keepColonWithList` (per defecte `true`): si col·locar el paràgraf no deixés lloc perquè comenci el primer ítem de la llista (tot ell quan les regles d'òrfenes i vídues de les llistes el mantenen sencer; una línia amb `bodyText.colonListRoom: 'line'`, com fins a postext 1.4), l'última línia amb els dos punts (o el paràgraf sencer, si és d'una sola línia) es mou endavant juntament amb la llista. Sempre que aquesta regla hagi d'empènyer el paràgraf complet i just abans hi hagi una seqüència de títols a la columna, aquests títols també s'arrosseguen cap endavant per no violar silenciosament `keepWithNext`; l'única excepció és quan la columna conté només el títol (o títols) que un moviment anterior ja havia dut endavant, i en aquest cas el motor deixa el paràgraf al costat del títol i accepta la separació més lleu entre els dos punts i la llista per evitar un bucle.
 - **Figura amb el seu peu.** Una figura i el seu peu de figura són una unitat inseparable. Sempre es mouen junts.
 
-Quan es detecta una violació de cohesió, el motor empeny tot el grup a la columna o la pàgina següent. L'espai vacant es gestiona mitjançant el mecanisme normal d'emplenament de columnes (el divisor de línies ja ha triat un conjunt de talls que encaixa; si la columna resultant queda una mica curta, la Passada 7 redistribueix l'espai vertical al voltant dels elements que trenquen la retícula per mantenir-la honesta).
-
-#### Sortida
-
-Els blocs les mesures o col·locacions dels quals hagin canviat es marquen com a `dirty` per a la iteració següent del bucle de convergència. A la pràctica, com que el gruix de la feina el fa Knuth-Plass en lloc d'ajustos *a posteriori*, la majoria de documents s'estabilitzen ràpidament — el divisor de línies tria un bon conjunt de talls a la primera i les iteracions següents només han d'absorbir efectes secundaris del moviment de blocs i de l'equilibrat de columnes.
+Quan es detecta una violació de cohesió, el motor empeny tot el grup a la columna o la pàgina següent. La columna que ha deixat acaba llavors curta, en les línies que el grup hi hauria ocupat. Omplir-la és feina de l'[Equilibrat de columnes](#equilibrat-de-columnes).
 
 Aquestes correccions són invisibles quan es fan bé (un lector no les hauria de notar mai). Però la seva *absència* salta a la vista de qualsevol que llegeixi amb atenció: aquella línia incòmoda a l'inici d'una columna, aquells buits desiguals on el motor va renunciar a intentar ajustar el text. Les editorials professionals tenen guies d'estil senceres dedicades a prevenir exactament aquests problemes. Postext els automatitza.
 
-### Passada 6: Equilibrat de columnes
+### El controlador de la passada
 
-- **Entrada:** VDT amb la tipografia refinada
-- **Acció:** Igualar les alçades de les columnes a cada pàgina movent blocs entre columnes per minimitzar la diferència d'alçada (activat per defecte; `headings.balancing.enabled: false` el desactiva, vegeu [Configuració → Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes))
-- **Restricció:** No ha de violar les regles de vídues/òrfenes establertes a la Passada 5
-- **Sortida:** Els blocs poden haver-se mogut entre columnes, marcats com a `dirty`
+<Illustration name="ConvergenceLoop" data='{"title": "La passada de col·locació i les seves repeticions", "desc": "Una passada de col·locació fa passar el contingut per cinc etapes: estructurar, mesurar, col·locar, flotants, i talls i regles de cohesió. buildDocument torna a executar la passada sencera amb indicacions de la passada anterior: un topall de banda, palanques d’equilibrat, un tall de la banda de tancament, etiquetes de pàgina o números de nota ja assentats.", "caption": "Una passada col·loca tot el document. buildDocument la torna a executar amb indicacions fins que cada ronda s’assenta o arriba al seu límit.", "passBadges": [{"num": "Etapa 1", "name": "estructurar"}, {"num": "Etapa 2", "name": "mesurar"}, {"num": "Etapa 3", "name": "col·locar"}, {"num": "Etapa 4", "name": "flotants"}, {"num": "Etapa 5", "name": "talls i cohesió"}], "loopBadge": "una passada de col·locació", "loopCondition": "es repeteix amb indicacions: topalls de banda, palanques d’equilibrat, talls de la banda de tancament"}' />
 
-Les columnes desequilibrades es noten immediatament, sobretot a l'última pàgina d'un capítol. Una columna esquerra plena i una de dreta gairebé buida semblen inacabades — com si la maquetació s'hagués rendit a mig camí. L'equilibrat redistribueix el contingut perquè totes dues columnes quedin aproximadament a la mateixa alçada, i dona a la doble pàgina un aspecte polit i intencionat.
+`buildDocument` és un controlador al voltant de la passada de col·locació (`buildDocumentGen` i `buildDocumentBalanced`, a `pipeline/build.ts`). Executa la passada una vegada. Després llegeix el que la passada ha deixat anotat, i allà on una decisió demana una segona mirada torna a executar la passada, sencera, amb indicacions (`PassHints`): els topalls, les línies addicionals i els números que la passada següent ha d'aplicar. Quan no es dona cap de les condicions de la taula de sota, aquesta primera passada és tot el build.
 
-L'algorisme calcula l'alçada total de contingut de tots els blocs d'una pàgina, la divideix pel nombre de columnes per trobar l'alçada objectiu, i cerca el millor punt de tall de columna que acosti cada columna tant com sigui possible a aquest objectiu. Però no és un simple tall per la meitat. És un problema de satisfacció de restriccions: l'algorisme ha de respectar les regles `keepTogether` (un encapçalament ha de romandre amb el seu primer paràgraf), complir els recomptes mínims de línies i — això és crucial — no desfer les correccions de vídues i òrfenes que tant va costar establir a la Passada 5.
+Les repeticions van per rondes, cadascuna per a una mena de decisió, en aquest ordre:
 
-### Passada 7: Alineació del ritme vertical
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '150px' }}>Ronda</th>
+      <th>S'executa quan</th>
+      <th>Què se li diu a la passada següent</th>
+      <th style={{ width: '230px' }}>Límit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Continguts</strong></td>
+      <td>El document imprimeix números de pàgina que l'amfitrió no ha proporcionat: un <code>:::toc</code> o un <code>:::index</code> sense <code>outline</code> al contingut, o una referència que imprimeix la pàgina d'una àncora</td>
+      <td>L'esquema amb les etiquetes de pàgina del build anterior</td>
+      <td><code>MAX_TOC_ROUNDS</code>: 3 builds a més del primer</td>
+    </tr>
+    <tr>
+      <td><strong>2. Números de nota</strong></td>
+      <td><code>footnotes.numbering</code> és <code>'page'</code>, <code>'column'</code> o <code>'spread'</code> i les notes van al peu de la columna o del plec, de manera que el número d'una nota depèn d'on la posa la composició</td>
+      <td>El número que cada nota ha rebut al build anterior (<code>footnoteNumbers</code>)</td>
+      <td><code>MAX_FOOTNOTE_ROUNDS</code>: 3 builds a més del primer</td>
+    </tr>
+    <tr>
+      <td><strong>3. Peus laterals</strong></td>
+      <td>Una caixa lateral o un flotant lateral s'ha superposat al peu que una figura havia compost a la columna lateral (<code>placement.captionSide</code>)</td>
+      <td>Aquests peus van sota les seves figures (<code>captionUnder</code>)</td>
+      <td>3 passades</td>
+    </tr>
+    <tr>
+      <td><strong>4. Flotants a la pàgina que els cita</strong></td>
+      <td>Un flotant amb <code>placement.citingPage</code> ha aterrat en una pàgina o una columna posterior a la línia que el cita</td>
+      <td>Aquesta pàgina, o columna, s'obre amb el flotant al capdamunt (<code>citingPageFloats</code>)</td>
+      <td><code>MAX_CITING_PAGE_ROUNDS</code>: 3 rondes de propostes, i després una passada per cada lot de flotants que una passada no hi ha pogut mantenir</td>
+    </tr>
+    <tr>
+      <td><strong>5. Topalls de banda</strong></td>
+      <td>Un bloc a amplada de pàgina ha arribat a una banda amb les columnes desiguals (vegeu l'<a href="#etapa-3-collocació-en-pàgines-i-columnes">Etapa 3</a>)</td>
+      <td>L'alçada a què s'ha de tallar aquesta banda (<code>bandCaps</code>)</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passades de propostes i reintents. Un topall creix una línia fins a 3 vegades (<code>MAX_BAND_CAP_RETRIES</code>), i després es descarta</td>
+    </tr>
+    <tr>
+      <td><strong>6. Equilibrat de columnes</strong></td>
+      <td><code>headings.balancing.enabled</code> està activat i una columna equilibrable acaba curta</td>
+      <td>Línies de retícula addicionals per bloc i els paràgrafs que s'han de compondre amb una línia més (<code>balanceExtraPx</code>, <code>balanceLooseness</code>)</td>
+      <td><code>MAX_BALANCING_PASSES</code>: 10 intents per segment. <code>MAX_BALANCING_PASSES_PER_DOCUMENT</code>: 30 passades per document</td>
+    </tr>
+    <tr>
+      <td><strong>7. Bandes de tancament</strong></td>
+      <td>L'equilibrat està activat amb <code>headings.balancing.trailing</code>, i un capítol o el document acaba en una banda amb les columnes desiguals</td>
+      <td>Un topall de tancament per a aquesta banda, amb les indicacions d'equilibrat congelades</td>
+      <td><code>MAX_BAND_PASSES</code>: 4 passades de propostes i reintents, cada topall amb els seus 3 reintents</td>
+    </tr>
+    <tr>
+      <td><strong>8. Poliment</strong></td>
+      <td>La ronda 7 ha conservat un topall de tancament</td>
+      <td>Equilibrat de columnes una vegada més, sobre la composició amb el topall, amb segments nous</td>
+      <td>10 intents per segment i 30 passades, comptats de nou</td>
+    </tr>
+  </tbody>
+</table>
 
-- **Entrada:** VDT amb columnes equilibrades
-- **Acció:** Ajustar les línies de base a la retícula distribuint ajustos d'espaiat al voltant d'encapçalaments, imatges i altres elements que trenquen la retícula
-- **Sortida:** Valors d'espaiat ajustats; línies de base alineades entre columnes
-- **Vegeu:** [Sistema de ritme vertical](#sistema-de-ritme-vertical) per a l'algorisme complet
+Les rondes 3 a 8 s'executen l'una darrere l'altra dins d'un mateix build (`buildDocumentBalanced`). Les rondes 1 i 2 en queden fora: una ronda de continguts o de números de nota és un build sencer, amb les seves pròpies rondes 3 a 8. No hi ha cap límit per al build en conjunt, només aquests.
 
-### Bucle de convergència
+**Cada repetició és una col·locació completa.** Una indicació no apedaça l'arbre de la passada anterior. La passada torna a col·locar el document amb la indicació en vigor, de manera que un encapçalament amb dues línies més al damunt, o una banda tallada sis línies més amunt, passa per les mateixes regles de tall i de cohesió que tota la resta. Després el controlador comprova el resultat: un topall de banda la caixa del qual no ha aterrat al tall creix o es descarta, i una passada d'equilibrat que no ha millorat un segment es descarta per a aquest segment. El que retorna el controlador està fet de pàgines que ha col·locat una passada: una passada sencera o, després de l'equilibrat de columnes, les pàgines de cada segment preses de la millor passada que ha tingut aquest segment.
 
-<Illustration name="ConvergenceLoop" data='{"title": "Bucle de convergència", "desc": "La Passada 1 analitza, la Passada 2 mesura, i les passades 3 a 7 s’executen dins del bucle de convergència. Si algun bloc continua dirty i el comptador d’iteracions és per sota de cinc, el bucle es torna a executar des de la Passada 3.", "caption": "El motor torna a la Passada 3 fins que cap bloc no queda dirty (màx. 5 iteracions).", "passBadges": [{"num": "Passada 1", "name": "analitzar"}, {"num": "Passada 2", "name": "mesurar"}, {"num": "Passada 3", "name": "col·locar"}, {"num": "Passada 4", "name": "recursos"}, {"num": "Passada 5", "name": "tipografia"}, {"num": "Passada 6", "name": "equilibrar"}, {"num": "Passada 7", "name": "ritme"}], "loopBadge": "bucle de convergència (màx. 5 iteracions)", "loopCondition": "si hi ha blocs dirty &amp;&amp; iteracions < 5"}' />
+**Què diu el document.** `doc.iterationCount` compta les passades de col·locació que hi ha darrere de la composició retornada: la primera i les de les rondes de topalls de banda, d'equilibrat i de bandes de tancament. Les passades de peus laterals i de flotants a la pàgina que els cita no hi entren, ni tampoc els builds anteriors d'una ronda de continguts o de números de nota; `BuildDocumentOptions.onPass` es crida per a cada passada, amb el temps que ha trigat. `doc.converged` parla només de l'equilibrat de columnes. Val `true` quan tots els segments han acabat sense cap línia buida a les seves columnes equilibrables o sense cap palanca per proposar, i `false` quan un segment s'ha aturat en una passada que no el millorava, o ha esgotat els intents, amb un buit encara obert. Amb l'equilibrat desactivat val `true`. Un document amb `converged: false` està complet: conté la millor composició que ha trobat el controlador, i alguna de les seves columnes acaba curta.
 
-Pensa en el bucle de convergència com el motor discutint amb si mateix. La Passada 5 tria un conjunt de talls que evita una vídua al paràgraf A — però, en fer-ho, el paràgraf A queda una línia més curt, cosa que deixa un buit al final de la columna 2. La Passada 6 torna a equilibrar les columnes per compensar-ho, cosa que empeny un títol a una columna nova, cosa que activa `keepWithNext` i força el títol a saltar sencer a la columna següent. La Passada 7 ajusta el ritme vertical, cosa que podria crear una nova línia curta on abans hi havia el títol. Així doncs, el motor torna a la Passada 3, torna a col·locar els blocs amb les mesures actualitzades i recorre tota la seqüència una altra vegada. Cada iteració resol més problemes dels que crea — fins que, finalment, no queda res brut.
+### Equilibrat de columnes
 
-Com que la majoria dels casos de vídues, òrfenes i línies curtes es resolen *dins* del solver de Knuth-Plass en una sola passada de divisió de línies, els documents típics ara convergeixen en 1–2 iteracions. El bucle continua sent necessari quan esdeveniments a nivell de bloc (un títol empès per `keepWithNext`, una figura diferida per la col·locació, o l'equilibrat de columnes igualant alçades) desplacen els límits de columna sobre els quals va mesurar la Passada 5. Quan passa això, la Passada 3 torna a col·locar, la Passada 5 torna a dividir amb les noves restriccions, i el bucle s'assenta.
+- **S'executa:** com a rondes 6 i 8 del controlador (activat per defecte; `headings.balancing.enabled: false` el desactiva, i està desactivat per defecte en text vertical i en una retícula de caràcters, vegeu [Configuració → Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes))
+- **Entrada:** La millor composició fins al moment i les línies de retícula buides al peu de cada columna equilibrable (`collectColumnGaps`, a `pipeline/columnBalancing.ts`)
+- **Acció:** Proposar palanques que omplin in situ cada columna curta, executar la passada de col·locació amb elles i conservar el resultat per a un segment quan la seva puntuació de buits ha baixat
+- **Sortida:** Columnes que acaben a l'última línia de retícula de la pàgina, amb cada palanca registrada al bloc on s'ha aplicat (`VDTBlock.balancing`)
 
-Un cop completades les passades 5–7, el motor comprova si hi ha blocs marcats com a `dirty`. Si hi ha blocs bruts i el comptador d'iteracions és per sota de 5, el pipeline es torna a executar des de la **Passada 3**.
+Les columnes desequilibrades es noten immediatament. Les regles de tall en deixen contínuament: un encapçalament que ha passat endavant per quedar-se amb el seu text, un paràgraf que ha passat sencer per evitar una vídua, una figura que no hi cabia. Una columna que s'atura dues línies per damunt de la del costat sembla inacabada — com si la maquetació s'hagués rendit a mig camí.
 
-**Criteris de convergència:**
-- No hi ha blocs bruts després de les passades 5–7, **o**
-- S'ha arribat al màxim de 5 iteracions (s'accepta el millor resultat obtingut fins aleshores)
+Cap bloc no canvia de columna per arreglar-ho. Un salt de columna va lligat a l'element que no hi cabia: el bloc que obre la columna següent era massa alt per a l'espai que quedava, i continua sent massa alt per a un espai més petit. Així doncs, una columna curta es pot omplir des de dins, com a màxim en la mida del seu buit, i res no travessa cap a la columna següent. L'ajust és local, que és el que fa un maquetista a mà: afegir una línia d'espai allà on l'ull l'accepta. Una columna és equilibrable quan el contingut ha continuat més enllà d'ella cap a una columna posterior de la mateixa pàgina o, per a l'última columna d'una pàgina, quan la pàgina flueix cap a la següent. L'última pàgina d'un capítol pot acabar curta; la seva banda de tancament la talla a nivell un topall de tancament (vegeu l'[Etapa 3](#etapa-3-collocació-en-pàgines-i-columnes)).
 
-El motor registra una **puntuació de violacions tipogràfiques** a cada iteració — una suma ponderada dels problemes restants: vídues, òrfenes, columnes desequilibrades, desalineació de la retícula de línies de base. Cada tipus de violació té un pes que reflecteix la seva gravetat visual (una vídua és molt més perceptible que 2px de desalineació a la retícula). Si s'arriba al límit de 5 iteracions sense convergència completa, el motor tria la iteració que ha produït la puntuació de violació més baixa. No necessàriament l'última — les iteracions posteriors a vegades sobrecorregeixen: arreglen un problema i en creen un altre.
+Per a cada buit les palanques es proposen en ordre de prioritat editorial, el mateix ordre en què les dona [Configuració → Equilibratge de columnes](/ca/docs/configuration-text#equilibratge-de-columnes):
 
-**L'equilibrat convergeix per segments.** Les pàgines entre salts explícits — l'obertura d'un capítol, un `:::pagebreak` — es maqueten independentment les unes de les altres: res no flueix a través d'un salt així, de manera que una palanca d'equilibrat dins d'una tanda de pàgines mai no pot moure una línia d'una altra. Per això el bucle d'equilibrat de columnes jutja cada *segment* per separat. Una passada continua col·locant el document sencer, però cada segment conserva o rebutja la seva part de les palanques segons la seva pròpia puntuació de buits, veta les seves pròpies cascades, s'estanca pel seu compte i gasta el seu propi pressupost d'intents; un segment el reintent del qual ha empitjorat recupera les seves pàgines de la millor passada que tenia mentre els altres continuen avançant. Així, un llibre de trenta capítols s'equilibra exactament igual que els seus capítols un per un — el PDF del llibre complet i el PDF del capítol solt són idèntics — en lloc que una cascada en qualsevol lloc costi una passada a totes les pàgines del llibre.
+1. **Una caixa que tanca la columna** pren l'espai que queda sota el seu peu com a espai al damunt, de manera que el seu peu cau a l'última línia de retícula de la pàgina, a nivell amb l'última línia de la columna contigua. Es registra com a `trailingCallout`.
+2. **Les imatges amb zona segura** (`Resource.safeArea`), col·locades en línia a la columna o flotades al seu cap o al seu peu i només sobre ella, creixen en línies senceres de retícula, retallades dins de la zona segura. Una imatge més alta no deixa cap forat a la pàgina, així que aquesta palanca actua abans d'afegir cap espai. Es registra com a `flexFigure`.
+3. **Els encapçalaments** prenen línies senceres de retícula al damunt, una línia cada vegada i per torns, començant per l'encapçalament més important (el de nivell més baix), que així en rep la part més gran. Un encapçalament al capdamunt mateix d'una columna no en pren cap, de manera que les columnes continuen començant a la part superior de la pàgina. Un encapçalament només pren així les seves primeres línies abans que es provin les palanques següents, i més, fins al seu màxim, quan aquestes ja no poden donar res més. Es registra com a `heading`.
+4. **Els finals de llista** prenen una línia de retícula on acaba una llista. Es registra com a `listEnd`.
+5. **Sota fórmules, caixes i figures** va una línia de retícula: sota una fórmula destacada o una caixa d'avís després de la qual segueix el text (`afterDisplay`), i entre una figura o taula que encapçala la columna i el text de sota (`afterFloat`).
+6. **Els paràgrafs correguts** són l'últim recurs. Els paràgrafs de la columna, els més llargs primer, es recomponen cadascun amb una línia més (el `\looseness=+1` de TeX, a través de l'opció `looseness` del divisor Knuth-Plass), i la composició més llarga només s'accepta mentre totes les línies queden dins de `bodyText.maxWordSpacing`. Quan amb l'espaiat entre paraules no n'hi ha prou per guanyar la línia, el paràgraf pot prendre a més el menor tracking positiu que ho aconsegueixi, amb un límit. Es registra com a `looseParagraph`.
 
-El límit de 5 iteracions és una vàlvula de seguretat pragmàtica: la perfecció és enemiga de la feina acabada. Alguns casos patològics — una pàgina on cada paràgraf té exactament la longitud incorrecta per crear vídues independentment de com equilibris les columnes — no convergiran mai del tot. El motor accepta el "millor esforç" i continua endavant.
+Els màxims, els interruptors i les excepcions (una retícula de caràcters, les pàgines de tancament, un flotant sobre diverses columnes) són claus de `headings.balancing`. La pàgina de Configuració les enumera i es manté al dia amb elles; aquesta pàgina no les repeteix.
+
+Una proposta es comprova col·locant-la. La passada que aplica les palanques és una col·locació completa, i de tant en tant una palanca sí que acaba movent contingut a través d'un salt de columna: un paràgraf partit el cap del qual ja no hi cap, un flotant que ha perdut el seu forat. Les pàgines posteriors a aquest punt flueixen d'una altra manera i s'obren buits en altres llocs. El controlador ho veu a la puntuació, descarta la passada per a aquest segment i veta les palanques acabades d'aplicar a la primera columna que ha canviat, de manera que la proposta següent conserva les palanques que han funcionat i deixa fora la que ha provocat la cascada.
+
+**L'equilibrat convergeix per segments.** Les pàgines entre salts explícits — l'obertura d'un capítol, un `:::pagebreak` — es maqueten independentment les unes de les altres: res no flueix a través d'un salt així, de manera que una palanca d'equilibrat dins d'una tanda de pàgines mai no pot moure una línia d'una altra. Per això el bucle d'equilibrat de columnes jutja cada *segment* per separat. La seva puntuació de buits és el nombre de línies de retícula buides al peu de les seves columnes equilibrables. Una passada continua col·locant el document sencer, però cada segment conserva o rebutja la seva part de les palanques segons la seva pròpia puntuació de buits, veta les seves pròpies cascades, s'estanca pel seu compte i gasta el seu propi pressupost d'intents; un segment el reintent del qual ha empitjorat recupera les seves pàgines de la millor passada que tenia mentre els altres continuen avançant. Així, un llibre de trenta capítols s'equilibra exactament igual que els seus capítols un per un — el PDF del llibre complet i el PDF del capítol solt són idèntics — en lloc que una cascada en qualsevol lloc costi una passada a totes les pàgines del llibre.
+
+Els límits són una vàlvula de seguretat. Algunes columnes no es poden tancar: una que només conté paràgrafs curts no té cap palanca per accionar, i una en què cada palanca empeny un bloc a través del salt de columna no en té cap que es pugui conservar. El motor es queda la millor composició que ha trobat i deixa curta aquesta columna. Com que les palanques queden registrades als blocs, una prova d'impremta o un test poden enumerar les columnes que no ha tancat res (vegeu [Configuració → Quina palanca ha actuat](/ca/docs/configuration-text#quina-palanca-ha-actuat)).
 
 
 ## Sistema de ritme vertical
@@ -596,43 +657,47 @@ Alguns elements trenquen la retícula perquè la seva alçada no és múltiple d
 - **Cites:** poden fer servir una mida de font o un padding diferent
 - **Àrees de notes a peu de pàgina:** les notes a peu de pàgina d'una columna i el seu filet; l'àrea de text de la columna acaba a sobre
 
-### Algorisme d'ajust d'espaiat
+### Com torna el flux a la retícula
 
-<Illustration name="VerticalRhythm" data='{"title": "Alineació del ritme vertical", "desc": "La columna 1 conté un encapçalament que trenca la retícula de línies de base en 12 píxels. El motor afegeix 12 píxels d’espaiat després de l’encapçalament perquè la línia de cos següent torni a caure sobre la retícula. La columna 2 continua alineada.", "caption": "L’espaiat s’ajusta després dels elements que trenquen la retícula per mantenir sincronitzades les línies de base entre columnes.", "column1": "Columna 1", "column2": "Columna 2", "bodyLine": "Línia de cos", "bodyBaseline": "Línia de cos (base: 24px)", "heading": "Encapçalament (36px)", "adjustment": "+12px d’ajust", "backOnGrid": "Cos (torna a la retícula)", "aligned": "alineat", "legendTitle": "Algorisme d’ajust d’espaiat", "legendSteps": ["1. Recórrer cada columna de dalt a baix", "2. Seguir gridDrift = yReal - reticulaMesPropera(yReal)", "3. A cada buit ajustable (després d’encapçalament, després de figura):", "   calcular la correcció necessària per anul·lar el drift", "4. Distribuir la correcció — preferir expandir a comprimir", "5. Limitar a valors mín./màx. de TypographyConfig.spacing"]}' />
+<Illustration name="VerticalRhythm" data='{"title": "Alineació del ritme vertical", "desc": "La columna 1 conté un encapçalament que trenca la retícula de línies de base en 12 píxels. En col·locar l’encapçalament, el motor arrodoneix l’alçada usada a la columna fins a la línia de retícula següent, cosa que afegeix 12 píxels sota l’encapçalament, de manera que la línia de cos següent torna a caure sobre la retícula. La columna 2 continua alineada.", "caption": "L’espai sota un element que trenca la retícula s’arrodoneix cap amunt fins a la retícula en col·locar l’element, i així les línies de base de les columnes es mantenen sincronitzades.", "column1": "Columna 1", "column2": "Columna 2", "bodyLine": "Línia de cos", "bodyBaseline": "Línia de cos (base: 24px)", "heading": "Encapçalament (36px)", "adjustment": "+12px d’ajust", "backOnGrid": "Cos (torna a la retícula)", "aligned": "alineat", "legendTitle": "Ajust a la retícula, en col·locar", "legendSteps": ["1. Compondre el bloc: les seves línies i després l’espai de sota (marginBottom)", "2. Arrodonir l’alçada usada a la columna fins a la línia de retícula següent", "3. El bloc següent comença allà, de manera que l’espai de sota és un mínim", "4. snapToGrid: false manté l’espai exacte fins al bloc següent que s’ajusti"]}' />
 
-Després d'ajustar l'espaiat de cada columna de manera independent, el motor verifica l'**alineació entre columnes**: les línies de base a la mateixa posició vertical en columnes adjacents han de coincidir. Si divergeixen — perquè les diferents columnes tenen diferents elements que trenquen la retícula — una segona passada d'alineació ajusta els buits de totes dues columnes per trobar un ritme comú.
+La retícula es manté en col·locar, bloc a bloc. Cap passada posterior no recorre les columnes buscant desviacions. Les línies de cos fan una línia de retícula d'alçada, de manera que una tirada de text de cos que comença sobre la retícula s'hi manté. Quan la passada de col·locació ha compost un bloc que pot sortir de la retícula, arrodoneix l'alçada usada a la columna fins a la línia de retícula següent abans que comenci el bloc següent. Els blocs que s'ajusten així són:
 
-Un exemple concret. La columna 1 té un encapçalament de 36px (1,5 vegades la retícula de 24px). La columna 2 no té encapçalament. Després de l'encapçalament, la columna 1 s'ha desviat 12px de la retícula. L'algorisme afegeix 12px d'espai extra després de l'encapçalament — i fa passar l'"espai després de l'encapçalament" de 16px a 28px. Ara la línia següent de text de cos de la columna 1 torna a caure sobre una línia de la retícula, i la seva línia de base coincideix amb la línia corresponent de la columna 2. Harmonia restaurada.
+- l'últim encapçalament d'una sèrie d'encapçalaments (els encapçalaments consecutius se succeeixen sense ajust, i l'últim torna a alinear el text que els segueix);
+- l'últim ítem d'una llista, sigui quin sigui l'espaiat entre ítems;
+- una fórmula destacada;
+- una caixa d'avís, un llistat de codi, i una figura o taula incrustada en línia;
+- l'últim paràgraf d'un contenidor `:::paragraphs` i un poema `:::verse`, que tenen interlínia pròpia.
 
-**Casos límit:**
-- Una columna amb més elements que trenquen la retícula que buits ajustables accepta una alineació
-  parcial (l'algorisme fa el que pot, però no pot garantir una alineació perfecta si hi ha
-  massa disrupcions i pocs punts per absorbir l'error)
-- Una imatge més alta que la columna abasta columnes o pàgines (es gestiona per separat a la Passada 4)
-- Quan l'ajust necessari crearia un espaiat visualment incòmode (per exemple, 40px d'espai
-  després d'un encapçalament quan la norma és 16px), l'algorisme distribueix l'error entre diversos
-  buits en lloc de concentrar-lo en un de sol
+L'espai sota el bloc (`marginBottom`) es compta abans de l'arrodoniment, de manera que el marge és un mínim i la retícula decideix la resta. A la figura, la columna 1 conté un encapçalament de 36px d'alçada sobre una retícula de 24px, sense marge inferior. El seu peu cau 12px més enllà d'una línia de retícula, l'ajust afegeix 12px, i la línia de cos següent comença sobre la retícula, a nivell amb la línia que té al costat a la columna 2. Amb un `marginBottom` de 16px el peu quedaria a 52px, i l'ajust l'arrodoniria fins a 72px.
+
+Les bandes de flotants mantenen la retícula a la seva manera, descrita a l'[Etapa 4](#etapa-4-collocació-de-recursos): una banda superior s'arrodoneix cap amunt a línies de retícula senceres, i un flotant inferior s'ancora de manera que l'última línia de base del seu peu quedi sobre la retícula. L'equilibrat de columnes afegeix el seu espai en línies de retícula senceres, de manera que també la manté.
+
+Res no compara una columna amb una altra. Cada columna comença sobre la retícula i cada ajust hi torna, de manera que les línies de columnes adjacents, i de pàgines enfrontades, coincideixen sense una segona passada.
+
+**Renunciar-hi.** `snapToGrid: false` manté en canvi l'espai exacte sota un bloc. Es pot fixar a `headings` (per a tots els nivells, per a un nivell o per a un estil d'encapçalament), en un estil de paràgraf, en un estil d'avís i a `codeStyle`. El text que segueix un bloc així pot quedar fora de la retícula fins al bloc següent que s'ajusti. El text de dins d'una caixa d'avís segueix la interlínia pròpia de la caixa i no té retícula.
 
 
 ## Interfície del backend
 
-Hi ha exactament una font de veritat per a la mesura de text — el mòdul de mesura sobre les mètriques de font del canvas de Pretext — i tots els backends renderitzen a partir del mateix VDT convergit que aquest ha produït.
+Hi ha exactament una font de veritat per a la mesura de text — el mòdul de mesura sobre les mètriques de font del canvas de Pretext — i tots els backends renderitzen a partir del mateix VDT acabat que aquest ha produït.
 
 És una decisió deliberada, i existeix per una raó crítica: **la manera com mesures el text ha de coincidir exactament amb la manera com el renderitzes.** Suposa que la mesura fes servir mètriques de font del canvas, però un backend de renderitzat fes servir una biblioteca PDF amb taules de kerning lleugerament diferents. La composició no coincidiria amb la sortida. Línies que el motor ha mesurat com a ajustades a 320px podrien desbordar-se o quedar-se curtes en renderitzar-les. Cada píxel de desviació és una mentida. Si es mesura una sola vegada i es renderitza sempre des de la geometria resultant, els backends no poden discrepar: els salts de línia, les alçades de columna i la col·locació de recursos queden congelats al VDT abans que s'executi cap backend.
 
-Per això el backend de PDF, per exemple, no torna a mesurar el text: consumeix un VDT ja convergit i tradueix les seves coordenades en píxels a punts PDF. Les mètriques del canvas són la font de veritat; PDF és un transport. Els usuaris de `renderToPdf` (del paquet `postext-pdf`) passen el mateix VDT que passarien a `renderToCanvas` o `renderToHtml`, i es garanteix que les tres sortides coincideixen.
+Per això el backend de PDF, per exemple, no torna a mesurar el text: consumeix un VDT acabat i tradueix les seves coordenades en píxels a punts PDF. Les mètriques del canvas són la font de veritat; PDF és un transport. Els usuaris de `renderToPdf` (del paquet `postext-pdf`) passen el mateix VDT que passarien a `renderToCanvas` o `renderToHtml`, i es garanteix que les tres sortides coincideixen.
+
 ### Superfície d'API
 
-Els backends són funcions planes sobre `VDTDocument`, no una jerarquia de classes. No hi ha cap interfície `PostextBackend` — només tres punts d'entrada de renderitzat i els helpers que necessita cada destinació de sortida:
+Els backends són funcions planes sobre `VDTDocument`, no una jerarquia de classes. No hi ha cap interfície `PostextBackend` — només els punts d'entrada de renderitzat de cada sortida i els helpers que necessita:
 
 ```typescript
 // Canvas (des de 'postext')
-renderToCanvas(doc): HTMLCanvasElement[];               // un canvas per pàgina
-renderPage(page, doc): HTMLCanvasElement;               // una sola pàgina
+renderToCanvas(doc, options?): HTMLCanvasElement[];     // un canvas per pàgina
+renderPage(page, doc, options?): HTMLCanvasElement;     // una sola pàgina
 renderPageToCanvas(page, doc, canvas, options?): void;  // dibuixa en un canvas existent
 
 // Registre d'imatges de recurs del canvas — imatges descodificades per fileId
-registerResourceImage(fileId, image): void;
+registerResourceImage(fileId, image, options?): void;   // options: { vector?, singleInk? }
 unregisterResourceImage(fileId): void;
 clearResourceImages(): void;
 
@@ -698,25 +763,31 @@ Com que els payloads binaris dels recursos viuen fora de banda, cada backend res
 
 Els quatre backends disponibles consumeixen el mateix `VDTDocument`. La divisió entre `postext` (que exporta els backends de canvas i HTML) i `postext-pdf` (que exporta el backend de PDF) és purament una qüestió de dependències: el camí PDF arrossega `pdf-lib` i `@pdf-lib/fontkit`, i la majoria d'integracions web no els necessiten. Instal·la `postext-pdf` només quan de debò vulguis emetre bytes PDF. `postext-epub` és un paquet a part per la mateixa raó, i només cal per a llibres electrònics. La línia d'ordres no és un cinquè backend: `postext-cli` executa aquests mateixos generadors on no hi ha navegador.
 
-**On s'executa la composició:** El motor mesura el text en un canvas, de manera que funciona allà on se li'n dona un. En un navegador, el pipeline es pot executar tant al fil principal (`buildDocument`) com dins d'un Web Worker dedicat (`createLayoutWorker` des de `postext/worker`) — la ruta del worker és la integració recomanada per a aplicacions orientades a UI perquè manté la mesura i el bucle de convergència fora del fil principal, admet cancel·lació *last-wins* mitjançant `AbortSignal`, i té la seva pròpia memòria cau de mesura i memòria cau de rasterització de matemàtiques perquè les reconstruccions successives continuïn sent barates. Consulta [Configuració → Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker) per al patró d'integració complet. Fora del navegador, la [línia d'ordres](/ca/docs/command-line) executa el mateix pipeline amb Skia fent de canvas del navegador, de manera que un llibre es parteix en les mateixes pàgines en un terminal, en un script o en un servidor de compilació.
+**On s'executa la composició:** El motor mesura el text en un canvas, de manera que funciona allà on se li'n dona un. En un navegador, el pipeline es pot executar tant al fil principal (`buildDocument`) com dins d'un Web Worker dedicat (`createLayoutWorker` des de `postext/worker`) — la ruta del worker és la integració recomanada per a aplicacions orientades a UI perquè manté la mesura i les passades de col·locació fora del fil principal, admet cancel·lació *last-wins* mitjançant `AbortSignal`, i té la seva pròpia memòria cau de mesura i memòria cau de rasterització de matemàtiques perquè les reconstruccions successives continuïn sent barates. Consulta [Configuració → Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker) per al patró d'integració complet. Fora del navegador, la [línia d'ordres](/ca/docs/command-line) executa el mateix pipeline amb Skia fent de canvas del navegador, de manera que un llibre es parteix en les mateixes pàgines en un terminal, en un script o en un servidor de compilació.
 
 
 ## Estratègia de rendiment
 
-La diferència entre una eina lenta i una que sembla màgica és un factor de 10x. Una composició de 500ms vol dir que l'usuari veu una estrebada visible cada vegada que redimensiona la finestra. Una composició de 50ms es percep instantània — com si el document sempre hagués estat allà. Aquest factor no es pot apedaçar després. Cal dissenyar-lo des del primer dia.
+La diferència entre una eina lenta i una que sembla màgica és un factor de 10x. Una composició de 500ms vol dir que l'usuari veu una estrebada visible cada vegada que canvia una paraula. Una composició de 50ms es percep instantània — com si el document sempre hagués estat allà. Aquest factor no es pot apedaçar després. Cal dissenyar-lo des del primer dia.
 
-Pensa en allò a què s'enfronta el motor: milers de blocs de text repartits en centenars de pàgines, amb la composició completa potencialment recalculada a cada redimensionament de finestra. És la mateixa classe de problema que tenen els motors de jocs — processar milers d'objectes (geometria, física, il·luminació, IA) 60 vegades per segon. Ho resolen amb una arquitectura de pipeline (múltiples passades sobre estat mutable compartit, cada passada fa una sola cosa i de pressa) i amb l'eliminació agressiva de feina innecessària (culling, dirty flags, particionament espacial). Postext manlleva cadascuna d'aquestes idees.
+Pensa en allò a què s'enfronta el motor: milers de blocs de text repartits en centenars de pàgines, compostos de nou a cada edició, i diverses vegades quan la composició necessita les seves rondes. Els motors de jocs tenen la mateixa classe de problema — processar milers d'objectes (geometria, física, il·luminació, IA) 60 vegades per segon — i el resolen no repetint feina que ja han fet. Postext ho aplica al que més li costa, que és mesurar text.
 
 ### Principis
 
 1. **Computació en memòria.** El VDT complet cap en memòria. No es llegeix el DOM durant la
    composició. El DOM només es toca al final, durant el renderitzat.
 
-2. **Seguiment de canvis.** Els blocs porten un dirty flag. Les passades se salten els subarbres nets.
-   El bucle de convergència només torna a executar des del punt brut més primerenc.
+2. **Passades senceres sobre mesures a la memòria cau.** Una repetició de la passada de col·locació
+   no busca què ha canviat: torna a col·locar el document des del primer bloc. Això és assumible perquè
+   mesurar, la part costosa, es desa a la memòria cau per paràgraf (principi 5). Una passada que no
+   canvia res del text, les fonts o l'amplada d'un paràgraf en llegeix les línies de la memòria cau.
 
-3. **Convergència acotada.** El màxim de 5 iteracions és una garantia ferma. El pitjor cas de
-   rendiment és predictible i mesurable.
+3. **Rondes acotades.** Cada mena de repetició té un límit fix (vegeu
+   [El controlador de la passada](#el-controlador-de-la-passada)), i l'equilibrat de columnes en té un
+   per document a més d'un per segment, de manera que un llibre de molts capítols no pot gastar passades
+   sense fi. El cost d'un build es pot mesurar passada a passada: `BuildDocumentOptions.onPass` informa
+   de cada passada i del temps que ha trigat.
+
 
 4. **Velocitat de Pretext.** La mesura de text a 300–600x la velocitat del DOM vol dir que el
    motor es pot permetre tornar a mesurar text de manera especulativa (provant diferents amplades de columna,
@@ -740,49 +811,54 @@ Pensa en allò a què s'enfronta el motor: milers de blocs de text repartits en 
 
 7. **Builds fora del fil principal.** El punt d'entrada `postext/worker` executa el pipeline
    complet dins d'un Web Worker dedicat. El fil principal publica `{ content, config }` i un
-   `AbortSignal`; el worker registra les fonts (transferides com a `ArrayBuffer`s), executa el bucle
-   de convergència i publica de tornada el `VDTDocument` acabat. Una nova crida a `build()`
-   cancel·la cooperativament l'anterior — el worker consulta un hook de cancel·lació per bloc dins
-   de `buildDocument` i llança `BuildCancelledError`, de manera que un usuari que escriu en un editor
+   `AbortSignal`; el worker registra les fonts (transferides com a `ArrayBuffer`s), executa les passades
+   de col·locació i publica de tornada el `VDTDocument` acabat. Una nova crida a `build()`
+   cancel·la cooperativament l'anterior — el worker executa `buildDocumentAsync`, que consulta un hook
+   de cancel·lació una vegada per bloc i entre passades i llança `BuildCancelledError`, de manera que un usuari que escriu en un editor
    mai no espera una composició ja obsoleta. El worker també manté la seva pròpia memòria cau persistent
    de mesura i una memòria cau de rasterització de matemàtiques amb clau per contingut, de manera que els
    objectes `MathRender` clonats estructuralment sobreviuen a les reconstruccions sense tornar-se a rasteritzar.
 
-8. **Camps numèrics plans.** Les caixes delimitadores s'emmagatzemen com a camps plans `x, y, width,
-   height` a cada node, no com a objectes niats. Això evita perseguir punters i és més amigable
-   amb la memòria cau.
+8. **VDT de doble accés.** L'arbre (`pages > columns > blocks`) proporciona accés jeràrquic per a
+   la feina que va pàgina per pàgina o columna per columna (l'equilibrat de columnes mesura el buit
+   al peu de cada columna). Un array pla paral·lel `blocks[]` dona accés directe a cada bloc sigui on
+   sigui (la ronda de números de nota hi llegeix la crida que ha imprès cada nota). Totes dues vistes
+   referencien els mateixos objectes bloc (no hi ha duplicació, només dues maneres de recórrer les
+   mateixes dades).
 
-9. **VDT de doble accés.** L'arbre (`pages > columns > blocks`) proporciona accés jeràrquic per a
-   passades que necessiten treballar pàgina per pàgina o columna per columna (com la Passada 6, equilibri
-   de columnes). Un array pla paral·lel `blocks[]` proporciona accés indexat O(1) per a passades que
-   necessiten iterar tots els blocs independentment de la seva ubicació (com la Passada 5, detecció
-   de vídues/òrfenes). Totes dues vistes referencien els mateixos objectes bloc (no hi ha duplicació, només
-   dues maneres de recórrer les mateixes dades).
+### Tornar a compondre
 
-### Gestió del redimensionament
+No hi ha cap punt d'entrada incremental: cap crida no pren un VDT acabat i l'actualitza. Quan canvia el contingut o la configuració (una pulsació de tecla, una altra mida de pàgina), l'amfitrió torna a cridar `buildDocument` i obté un document nou.
 
-Quan l'usuari redimensiona la finestra, el motor no ho reconstrueix tot des de zero. Actualitza les amplades de columna al VDT, marca tots els blocs de text com a bruts, i torna a executar el pipeline des de la Passada 2. Les estructures de pàgines i columnes es reutilitzen.
+El que es conserva d'un build al següent és la mesura. Crea una `MeasurementCache` una sola vegada amb `createMeasurementCache()` i passa-la com a tercer argument de cada crida a `buildDocument`. Un paràgraf el text, les fonts, l'amplada i les opcions de partició del qual no han canviat s'hi llegeix, de manera que un editor que compon el document a cada pulsació només mesura el paràgraf on s'està escrivint. Un canvi de mida de pàgina o de nombre de columnes canvia les amplades, i aquests paràgrafs es tornen a mesurar; els resultats de `prepare()` de Pretext continuen sent vàlids, perquè depenen de la font i del text i no de l'amplada, de manera que només s'executa l'aritmètica barata de `layout()`. L'anàlisi també es memoritza.
 
-Aquí és on el VDT mutable dona fruits. En lloc de descartar tota la composició i començar de zero, el motor reutilitza tota la feina possible. Els resultats de `prepare()` de Pretext continuen sent vàlids — depenen de la font i del contingut del text, no de l'amplada — així que només cal tornar a executar les crides barates a `layout()`. Un document de 50 pàgines es pot tornar a compondre completament tornant a mesurar tots els blocs de text (ràpid, perquè `prepare()` és a la memòria cau) i tornant a executar les passades 3–7, sense tornar a analitzar el markdown ni tornar a resoldre referències. L'usuari arrossega la vora de la finestra i la composició el segueix en temps real.
+Per a un editor en viu, `createLayoutWorker` (de `postext/worker`) fa tot això fora del fil principal: el worker té una memòria cau de mesura que viu tant com ell, i un `build()` més nou cancel·la el que està en curs. Vegeu [Configuració → Memòria cau de mesures](/ca/docs/configuration-programmatic-usage#memòria-cau-de-mesures) i [Executar la composició en un Web Worker](/ca/docs/configuration-programmatic-usage#executar-la-composició-en-un-web-worker).
 
-### Benchmarking des del primer dia
+### Benchmarks
 
-Cada passada es pot mesurar de manera independent i aïllada, amb l'API `bench` de vitest:
+Hi ha dos benchmarks a `packages/postext/src/__bench__/`. `pnpm test` se'ls salta; `pnpm bench`, executat a `packages/postext`, els executa. `chapter.bench.test.ts` compon un capítol de la mida d'un llibre de text (quaranta seccions d'encapçalaments, paràgrafs i llistes) cinc vegades contra una memòria cau de mesura buida (en fred) i cinc vegades contra una de ja omplerta (en calent), i informa de totes dues medianes i del nombre de passades. `cjkChapter.bench.test.ts` compon el capítol 1 de 红楼梦 i compta els caràcters enviats a `measureText`, per mantenir el compositor CJK en un cost lineal en la longitud del paràgraf.
 
 ```typescript
-// Exemple de benchmark
-bench('compondre un document de 50 pàgines', () => {
-  const vdt = createVDT(fiftyPageContent, config);
-  runPipeline(vdt);
-}, { time: 100 }); // mostreja durant 100ms i informa d'ops/s
+// De packages/postext/src/__bench__/chapter.bench.test.ts
+const cold: number[] = [];
+for (let i = 0; i < ROUNDS; i++) cold.push(time(() => buildDocument({ markdown }, config, createMeasurementCache())));
+
+const warmCache = createMeasurementCache();
+buildDocument({ markdown }, config, warmCache);
+const warm: number[] = [];
+for (let i = 0; i < ROUNDS; i++) warm.push(time(() => buildDocument({ markdown }, config, warmCache)));
+
+const passes: BuildPassInfo[] = [];
+const doc = buildDocument({ markdown }, config, createMeasurementCache(), { onPass: (p) => passes.push(p) });
+// [bench] chapter: … pages, … passes (… ms), iterationCount=…; cold median … ms, warm median … ms (5 rounds)
 ```
 
-Una salvetat, per honestedat: `{ time: 100 }` és quant de temps *mostreja* vitest el benchmark, no un llindar d'aprovat/suspès — els benchmarks informen de números, no trenquen el build. Les regressions es detecten comparant aquests números entre execucions quan canvia una ruta calenta (com es va fer amb la reescriptura de nodes actius de Knuth-Plass), no mitjançant una barrera automàtica a CI. El rendiment és una funcionalitat, no una esperança — però avui la garantia és mesura i revisió, no un pipeline que falla.
+Una salvetat, per honestedat: a Node no hi ha canvas, de manera que tots dos benchmarks simulen la mesura de text i els seus temps absoluts no són els del navegador. La proporció entre fred i calent i el nombre de passades sí que són els del navegador, i una regressió en qualsevol dels dos es veu aquí abans que al sandbox. El benchmark del capítol informa de números i no trenca el build; el xinès comprova que els caràcters mesurats es mantenen per sota del triple de la longitud del paràgraf més llarg. Cap dels dos s'executa a CI: les regressions es detecten comparant els números entre execucions quan canvia una ruta calenta (com es va fer amb la reescriptura de nodes actius de Knuth-Plass). El rendiment és una funcionalitat, no una esperança — però avui la garantia és mesura i revisió, no un pipeline que falla.
 
 
 ## Flux de dades
 
-<Illustration name="DataFlow" data='{"title": "Flux de dades a través del motor", "desc": "El contingut i la configuració entren a la Passada 1 (analitzar) i a la Passada 2 (mesurar). Les passades 3 a 7 s’executen dins del bucle de convergència. Un cop convergit, el VDT es lliura al backend, que renderitza HTML o PDF.", "caption": "Flux de dades d’extrem a extrem: analitzar, mesurar, convergir, renderitzar.", "input": ["Contingut +", "Config"], "parse": "1 Analitzar", "measure": "2 Mesurar", "loopBadge": "bucle de convergència (màx. 5)", "passesInLoop": [{"num": "3", "name": "col·locar"}, {"num": "4", "name": "recursos"}, {"num": "5", "name": "tipus"}, {"num": "6", "name": "equilibrar"}, {"num": "7", "name": "ritme"}], "loopCondition": "si dirty &amp;&amp; iter < 5", "convergedLabel": "VDT (convergit)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
+<Illustration name="DataFlow" data='{"title": "Flux de dades a través del motor", "desc": "El contingut i la configuració entren a la passada de col·locació, que estructura, mesura i col·loca cada bloc, fa flotar els recursos i aplica les regles de tall i de cohesió. buildDocument torna a executar la passada amb indicacions fins que totes les rondes s’assenten. El VDT acabat es lliura al backend, que renderitza HTML o PDF.", "caption": "Flux de dades d’extrem a extrem: una passada de col·locació, repetida amb indicacions, i després el renderitzat.", "input": ["Contingut +", "Config"], "loopBadge": "passada de col·locació", "passesInLoop": [{"num": "1", "name": "estructurar"}, {"num": "2", "name": "mesurar"}, {"num": "3", "name": "col·locar"}, {"num": "4", "name": "flotants"}, {"num": "5", "name": "cohesió"}], "loopCondition": "es repeteix amb indicacions, cada ronda fins al seu límit", "convergedLabel": "VDT (acabat)", "backend": "Backend: Render", "output": "HTML / PDF"}' />
 
 
 ## Fora d'abast
@@ -812,23 +888,23 @@ Així es relacionen els tipus principals definits a `packages/postext/src/types.
   <tbody>
     <tr>
       <td><code>PostextContent</code></td>
-      <td>Punt d'entrada: l'entrada al motor (Passada 1)</td>
+      <td>Punt d'entrada: l'entrada al motor (estructuració del contingut)</td>
     </tr>
     <tr>
       <td><code>PostextConfig</code></td>
-      <td>Controla el comportament del pipeline a totes les passades</td>
+      <td>Controla totes les etapes de la passada de col·locació i les rondes que l'envolten</td>
     </tr>
     <tr>
       <td><code>Resource</code></td>
-      <td>Recurs tipat de bitmap/SVG/taula/vídeo. Es converteix en un <code>ResolvedResourceBlock</code> durant la mesura i en un <code>VDTBlock</code> en línia de tipus <code>'resource'</code> (col·locació <code>'here'</code>) o en un flotant de banda de pàgina (Passada 4)</td>
+      <td>Recurs tipat de bitmap/SVG/taula/vídeo. Es converteix en un <code>ResolvedResourceBlock</code> durant la mesura i en un <code>VDTBlock</code> en línia de tipus <code>'resource'</code> (col·locació <code>'here'</code>) o en un flotant de banda de pàgina (col·locació de recursos)</td>
     </tr>
     <tr>
       <td><code>ResourceType</code></td>
-      <td>Governa la numeració tipada, els prefixos de peu, les etiquetes de referència i el flotament per defecte (Passada 1, Passada 4)</td>
+      <td>Governa la numeració tipada, els prefixos de peu, les etiquetes de referència i el flotament per defecte (estructuració del contingut, col·locació de recursos)</td>
     </tr>
     <tr>
       <td><code>ResourcePlacement</code></td>
-      <td>Sobreescriptura de flotament per recurs: <code>position</code> (<code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) i <code>span</code> (<code>'column'</code> / <code>'page'</code>), resolta a la Passada 4</td>
+      <td>Sobreescriptura de flotament per recurs: <code>position</code> (<code>'auto'</code> / <code>'top'</code> / <code>'bottom'</code> / <code>'here'</code>) i <code>span</code> (<code>'column'</code> / <code>'page'</code> / <code>'side'</code>), més <code>rotate</code>, <code>width</code>, <code>align</code>, <code>columns</code>, <code>captionSide</code>, <code>shrink</code>, <code>minScale</code>, <code>captionMeasure</code>, <code>wrap</code>, <code>wrapGap</code> i <code>citingPage</code>; cada camp que falta pren el valor del <code>defaultPlacement</code> del tipus, i tot es resol durant la col·locació de recursos</td>
     </tr>
     <tr>
       <td><code>PostextNote</code></td>
@@ -838,13 +914,9 @@ Així es relacionen els tipus principals definits a `packages/postext/src/types.
       <td><code>PostextResource</code></td>
       <td><strong>Obsolet.</strong> El recurs del model de contingut heretat, conservat només fins que l'última referència del renderitzador (<code>VDTBlock.resource</code>) migri al model <code>Resource</code></td>
     </tr>
-    <tr>
-      <td><code>PlacementStrategy</code>, <code>ColumnConfig</code>, <code>TypographyConfig</code>, <code>ResourcePlacementConfig</code>, <code>ReferenceConfig</code>, <code>PostextSectionOverride</code></td>
-      <td><strong>Heretats.</strong> Declarats però mai connectats al pipeline; substituïts per <code>bodyText</code>/<code>headings</code> (tipografia), <code>layout</code> (columnes) i el model de flotament de <code>Resource</code> (col·locació)</td>
-    </tr>
   </tbody>
 </table>
 
 ### On viuen els tipus del VDT
 
-Els tipus del VDT (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox` i companyia) viuen a `packages/postext/src/vdt.ts`, al costat dels helpers de fàbrica (`createVDTDocument`, `createVDTPage`, `createVDTBlock`, …) i `computePageTextExtent`. No hi ha cap mòdul separat d'interfície de backend — els punts d'entrada de renderitzat descrits a [Interfície del backend](#interfície-del-backend) s'exporten directament des de `postext` (canvas, HTML) i `postext-pdf` (PDF).
+Els tipus del VDT (`VDTDocument`, `VDTPage`, `VDTColumn`, `VDTBlock`, `VDTLine`, `VDTLineSegment`, `ResolvedResourceBlock`, `VDTResourceTableLayout`, `BoundingBox` i companyia) viuen a `packages/postext/src/vdt.ts`, al costat dels helpers de fàbrica (`createVDTDocument`, `createVDTPage`, `createVDTBlock`, …) i `computePageTextExtent`. No hi ha cap mòdul separat d'interfície de backend — els punts d'entrada de renderitzat descrits a [Interfície del backend](#interfície-del-backend) s'exporten directament des de `postext` (canvas, HTML), `postext-pdf` (PDF) i `postext-epub` (EPUB).

@@ -13,6 +13,9 @@
  *   /__repo/<path>         a repo file (live mode rewrites jsDelivr URLs here)
  *   /__public/<path>       a file of apps/web/public (live mode: postext.dev)
  *
+ * `startSandboxServer` is the other server here: the page and the worker
+ * of `pnpm cookbook sandbox` (#736).
+ *
  * The capture maps jsDelivr and postext.dev at the network level (net.ts);
  * a live page runs in any browser, so its loader rewrites those URLs in
  * `fetch` instead, and recipes can be developed before their assets reach
@@ -31,7 +34,7 @@ import { readKit, readRecipeMeta, readRecipeSources, resetKitCache } from "../..
 import type { ComposedPen, SampleLocale, RecipeMeta } from "../../src/lib/cookbook/types.ts";
 import { contentType, safeFile } from "./net.ts";
 import type { EngineSpec } from "./shim.ts";
-import { importMapTag, LOCAL_PREFIX, resolveEngine, shimModules } from "./shim.ts";
+import { importMapTag, LOCAL_PREFIX, pdfDateOf, resolveEngine, rewriteBareImports, shimModules } from "./shim.ts";
 
 const PROBE_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), "lib", "probe.js");
 
@@ -105,11 +108,11 @@ import('/__pen/script.js').then(
 export function capturePageHtml(
   pen: ComposedPen,
   meta: RecipeMeta,
-  { live = false, rewriteFetch = false, engine }: { live?: boolean; rewriteFetch?: boolean; engine?: EngineSpec } = {},
+  { live = false, rewriteFetch = false }: { live?: boolean; rewriteFetch?: boolean } = {},
 ): string {
   return pageHtml(pen, {
     title: `Nº ${String(meta.number).padStart(3, "0")} · ${pen.slug}`,
-    head: `${importMapTag(engine)}\n${loaderTag({ live, rewriteFetch })}`,
+    head: `${importMapTag()}\n${loaderTag({ live, rewriteFetch })}`,
     script: "none",
   });
 }
@@ -124,17 +127,12 @@ function errorPage(message: string): string {
 
 /** A module of the local engine: `postext/pipeline` → the file in
  *  `packages/postext/dist` (tsc keeps the imports extensionless, so the
- *  server tries `.js` and `/index.js`). */
-function localModule(rel: string): { file: string; path: string } | null {
-  // HarfBuzz as the workspace installed it, untransformed (see shim.ts).
-  const hb = /^harfbuzzjs\/([\w.-]+\.(?:mjs|js|wasm))$/.exec(rel);
-  if (hb) {
-    const file = safeFile(path.join(REPO_DIR, "packages", "postext-pdf", "node_modules", "harfbuzzjs", "dist"), hb[1]!);
-    return file ? { file, path: rel } : null;
-  }
+ *  server tries `.js` and `/index.js`). `packagesDir` is the workspace's
+ *  `packages` folder (a test's stand-in for it). */
+export function localModule(rel: string, packagesDir: string = path.join(REPO_DIR, "packages")): { file: string; path: string } | null {
   const match = /^(postext|postext-pdf|postext-citeproc|postext-folio|postext-epub)\/(.+)$/.exec(rel);
   if (!match) return null;
-  const dist = path.join(REPO_DIR, "packages", match[1]!, "dist");
+  const dist = path.join(packagesDir, match[1]!, "dist");
   const asked = match[2]!;
   const base = asked.replace(/\.js$/, "");
   // A file the package ships beside its modules (postext-pdf's
@@ -145,8 +143,19 @@ function localModule(rel: string): { file: string; path: string } | null {
     const file = safeFile(dist, candidate);
     if (file) return { file, path: `${match[1]}/${candidate}` };
   }
+  // `pnpm build` and `pnpm dev` of postext-pdf copy the binary into `dist`
+  // (scripts/copy-harfbuzz.mjs); a `dist` made by plain `tsc` has none, and
+  // the next places the binding tries are a jsDelivr path the capture
+  // blocks (#742). The file the script copies is answered instead.
+  if (rel === HARFBUZZ_WASM) {
+    const file = safeFile(path.join(packagesDir, "postext-pdf", "node_modules", "harfbuzzjs", "dist"), "harfbuzz.wasm");
+    if (file) return { file, path: rel };
+  }
   return null;
 }
+
+/** postext-pdf's HarfBuzz binary, beside its modules. */
+const HARFBUZZ_WASM = "postext-pdf/harfbuzz.wasm";
 
 /** The engine's MathJax module in the local engine's `dist`. */
 const MATHJAX_MODULE = "postext/math/mathjax.js";
@@ -184,11 +193,85 @@ export async function localMathJaxModule(source: string): Promise<string> {
   return mathJaxBundle.code;
 }
 
+/** The page `pnpm cookbook sandbox` lays bundles out in (#736): the
+ *  headless entry of the Sandbox package, built from the working tree. */
+const SANDBOX_PAGE = `<!doctype html><meta charset="utf-8"><title>Cookbook: Sandbox check</title>
+<script type="module">
+window.__sbErrors = [];
+addEventListener('error', (event) => window.__sbErrors.push(String(event.error?.stack ?? event.message)));
+addEventListener('unhandledrejection', (event) => window.__sbErrors.push('Unhandled rejection: ' + String(event.reason?.stack ?? event.reason)));
+import('/__sb/page.js').then(
+  () => { window.__sbReady = true; },
+  (error) => { window.__sbReady = false; window.__sbErrors.push(String(error?.stack ?? error)); });
+</script>`;
+
+export interface SandboxServer {
+  url: string;
+  close(): Promise<void>;
+}
+
+/**
+ * The static server of the Sandbox check (#736), one for a whole run:
+ *
+ *   /                          the harness page
+ *   /__sb/<path>               the built entries (`buildDir`): the page
+ *                              script, the layout worker and their chunks.
+ *                              Files of the local origin on purpose: the
+ *                              interceptor lets them through, and answering
+ *                              a worker's module requests from the cache
+ *                              stalls it (net.ts)
+ *   /__cb/probe.js             the layout hash and the warning keys
+ *   /__bundle/<slug>/<lang>    an edition's committed `.postext`
+ */
+export async function startSandboxServer({ buildDir, bundleFile, port }: { buildDir: string; bundleFile(slug: string, lang: string): string; port?: number }): Promise<SandboxServer> {
+  const send = (res: http.ServerResponse, status: number, type: string, body: string | Buffer) => {
+    res.writeHead(status, { "content-type": type, "cache-control": "no-store", "access-control-allow-origin": "*" });
+    res.end(body);
+  };
+  const server = http.createServer((req, res) => {
+    const route = new URL(req.url ?? "/", "http://localhost").pathname;
+    try {
+      if (route === "/" || route === "/index.html") return send(res, 200, "text/html; charset=utf-8", SANDBOX_PAGE);
+      if (route === "/__cb/probe.js") return send(res, 200, "text/javascript; charset=utf-8", fs.readFileSync(PROBE_FILE));
+      const built = /^\/__sb\/(.+)$/.exec(route);
+      if (built) {
+        const file = safeFile(buildDir, built[1]!);
+        return file ? send(res, 200, contentType(file), fs.readFileSync(file)) : send(res, 404, "text/plain", `not built: ${route}`);
+      }
+      const bundle = /^\/__bundle\/([a-z0-9-]+)\/([a-z]+)$/.exec(route);
+      if (bundle) {
+        const file = bundleFile(bundle[1]!, bundle[2]!);
+        return fs.existsSync(file) ? send(res, 200, "application/zip", fs.readFileSync(file)) : send(res, 404, "text/plain", `no bundle: ${route}`);
+      }
+      if (route === "/favicon.ico") return send(res, 204, "text/plain", "");
+      return send(res, 404, "text/plain", `not found: ${route}`);
+    } catch (error) {
+      return send(res, 500, "text/plain", String((error as Error).stack ?? error));
+    }
+  });
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(port ?? 0, "127.0.0.1", () => {
+      server.off("error", reject);
+      resolve();
+    });
+  });
+  const address = server.address();
+  return {
+    url: `http://127.0.0.1:${typeof address === "object" && address ? address.port : port}/`,
+    close: () => new Promise<void>((resolve) => {
+      server.close(() => resolve());
+      server.closeAllConnections();
+    }),
+  };
+}
+
 export async function startPenServer(opts: PenServerOptions): Promise<PenServer> {
   const engine = resolveEngine(opts.engine);
-  const shims = shimModules(engine);
   const live = opts.live === true;
   let state = composeVariant(opts.slug, opts.variant);
+  // A captured PDF is dated the day its recipe was written (#734).
+  const shims = shimModules(engine, { pdfDate: pdfDateOf(state.meta.created) });
   const clients = new Set<http.ServerResponse>();
 
   // Live mode composes on every page request, so a save shows at once.
@@ -212,7 +295,7 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
         let page: string;
         try {
           const { pen, meta } = fresh();
-          page = capturePageHtml(pen, meta, { live, rewriteFetch: opts.rewriteFetch, engine });
+          page = capturePageHtml(pen, meta, { live, rewriteFetch: opts.rewriteFetch });
         } catch (error) {
           if (!live) throw error;
           page = errorPage((error as Error).message);
@@ -252,7 +335,9 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
           );
           return;
         }
-        return send(res, 200, type, fs.readFileSync(found.file));
+        if (found.file.endsWith(".wasm")) return send(res, 200, type, fs.readFileSync(found.file));
+        // The bare imports as URLs (#742): a worker has no import map.
+        return send(res, 200, type, rewriteBareImports(fs.readFileSync(found.file, "utf-8")));
       }
       if (route === "/favicon.ico") return send(res, 204, "text/plain", "");
       return send(res, 404, "text/plain", `not found: ${route}`);

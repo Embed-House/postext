@@ -661,10 +661,10 @@ Keep crop regions in a JSON so they can be tuned.
 ### D6. Live-text figures (translated editions)
 Keep labels as SVG `<text>` and name the family in `font-family`: since
 postext 1.25 the engine embeds the faces they use when the picture is shown
-(the bundle's fonts, then Google families), and the PDF sets them as real
+(the bundle's fonts, then Google Fonts or Fontsource families), and the PDF sets them as real
 text, so neither outlines nor hand-made `@font-face` subsets are needed.
-Ship the faces the labels use in the bundle's `fonts` when they are not
-Google families. Key translations by source text, not by run index (indices
+Ship the faces the labels use in the bundle's `fonts` when neither
+Google Fonts nor Fontsource has them. Key translations by source text, not by run index (indices
 move when a crop is tuned).
 
 - Words baked into rasters or outlined: erase them (interpolating the
@@ -883,6 +883,7 @@ Decimal comma vs point in data and captions; `{,}` in LaTeX.
 - Check `cjkLooseLine` in the render (a line that could not be spread, usually a long Latin word or URL). A
   single-character last line (孤字) is avoided by the composer under `bodyText.avoidRunts` (default on): the line
   above gives up its last character; one left over means that line could not be spread: reword or accept.
+  Manuscript paper (genkō yōshi) set ragged wants every square filled instead: `cjk.grid.fullLines: true` (≥ 1.28).
 
 ### F6. Chinese, vertical and bound on the right (Taiwan novel, classic, poetry)
 - `locale: 'zh-Hant-TW'` (or `zh-Hant-HK`, or `zh-Hans` for a mainland classic set vertically: the region,

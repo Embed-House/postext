@@ -136,7 +136,9 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
     const headings = { fontFamily: 'Georgia' };
     const v3 = await openBundle(bundleBytes({ ...BODY, headings }, { configVersion: 3 }));
     expect(laidOut(buildBundle(v3)[0]!)).toEqual(LAID_OUT_BY_1_4_1.BODY);
-    expect(v3.config.headings).toEqual(headings);
+    // (Its headings gain the balancing pins of rules 12, #711, and no break.)
+    expect(v3.config.headings).toMatchObject(headings);
+    expect(v3.config.headings?.levels).toBeUndefined();
     // Unversioned (1.4): both pins.
     const v0 = await openBundle(bundleBytes({ ...BODY, headings }));
     expect(v0.config.headings?.levels?.[0]?.breakBefore).toEqual({ enabled: false });
@@ -177,8 +179,8 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
 
   it('writes bundles for today\'s rules, which read back unpinned', async () => {
     const { manifest, bytes } = await createBundle({ name: 'Now', chapters: [{ markdown: CHAPTER }], config: BODY });
-    expect(CONFIG_VERSION).toBe(11);
-    expect(manifest.configVersion).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
+    expect(manifest.configVersion).toBe(12);
     const again = await openBundle(bytes);
     expect(again.config.math).toBeUndefined();
     // …and a 1.4 bundle, opened and written again, is read back as it was
@@ -205,10 +207,10 @@ describe('migrateConfig and pinLegacyMathSize', () => {
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     const prose = migrateConfig(plain, 3, { content: ['# One', 'Prose only.'] });
     expect(prose.math).toBeUndefined();
-    expect(prose.bodyText).toBe(plain.bodyText);
+    expect(prose.bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
     expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     expect(migrateConfig(plain, 3).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
-    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toBe(plain.bodyText);
+    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
   });
 
   it('writes only what differs from the defaults', () => {

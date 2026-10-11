@@ -3,7 +3,7 @@ import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
 import { CONFIG_VERSION, migrateConfig, pinLegacyBoxChildCut } from '../../bundle';
-import { migrateBundleConfig } from '../../bundle/configVersion';
+import { migrateBundleConfig, pinLegacyScriptContext } from '../../bundle/configVersion';
 import type { VDTBlock, VDTDocument } from '../../vdt';
 import type { PostextConfig } from '../../types';
 
@@ -176,7 +176,7 @@ describe('layout.boxChildSplitMinLines', () => {
   it('is pinned to 1 for configurations stored before rules 6 whose book holds a box', () => {
     const cfg: PostextConfig = { layout: { layoutType: 'single', inlineResourceGap: 'around', inlineResourceGapInBoxes: true } };
     const box = twoLineItems(3);
-    expect(CONFIG_VERSION).toBe(11);
+    expect(CONFIG_VERSION).toBe(12);
     // Unversioned (1.4) and stamped 5 (a 1.5 prerelease): pinned.
     expect(migrateConfig(cfg, undefined, { content: box }).layout?.boxChildSplitMinLines).toBe(1);
     expect(migrateConfig(cfg, 5, { content: ['No box here.', box] }).layout?.boxChildSplitMinLines).toBe(1);
@@ -185,7 +185,7 @@ describe('layout.boxChildSplitMinLines', () => {
     // Today's rules, a book with no box, or a configuration that names the
     // setting: as it is.
     expect(migrateConfig(cfg, CONFIG_VERSION, { content: box })).toBe(cfg);
-    expect(migrateConfig(cfg, 5, { content: `${SENTENCE}\n\nA mention of \`:::callout\` in the text.` })).toBe(cfg);
+    expect(migrateConfig(cfg, 5, { content: `${SENTENCE}\n\nA mention of \`:::callout\` in the text.` })).toEqual(pinLegacyScriptContext(cfg));
     const named: PostextConfig = { layout: { boxChildSplitMinLines: 2 } };
     expect(pinLegacyBoxChildCut(named)).toBe(named);
     expect(pinLegacyBoxChildCut({} as PostextConfig).layout).toEqual({ boxChildSplitMinLines: 1 });

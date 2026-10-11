@@ -70,7 +70,9 @@ const gbConfig = (balancing?: NonNullable<PostextConfig['headings']>['balancing'
     grid: { enabled: true, charsPerLine: 28, linesPerPage: 22 },
     punctuationWidth: 'fullwidth', compressAdjacent: false, trimLineStart: false, hangingPunctuation: 'allow', latinSpacing: em(0),
   },
-  bodyText: { fontSize: pt(BODY), lineHeight: pt(LEAD), textAlign: 'justify', firstLineIndent: em(2), indentAfterHeading: true, avoidRunts: false, hyphenation: { enabled: false } },
+  // The foot rule is off by default on a grid (#717): on here, it is what
+  // leaves the columns short that these cases balance.
+  bodyText: { fontSize: pt(BODY), lineHeight: pt(LEAD), textAlign: 'justify', firstLineIndent: em(2), indentAfterHeading: true, avoidRunts: false, avoidWidows: true, hyphenation: { enabled: false } },
   headings: {
     levels: [2, 3].map((level) => ({ level, fontSize: pt(BODY), lineHeight: pt(LEAD), marginTop: pt(0), marginBottom: pt(0), numberingTemplate: '　　', numberSeparator: '' })),
     ...(balancing ? { balancing } : {}),

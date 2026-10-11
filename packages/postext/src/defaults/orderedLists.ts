@@ -98,7 +98,7 @@ export function resolveOrderedListsConfig(
     marginBottom: partial?.marginBottom ?? DEFAULT_LIST_MARGIN_BOTTOM,
     itemSpacing: partial?.itemSpacing ?? DEFAULT_LIST_ITEM_SPACING,
     snapTopToGrid: partial?.snapTopToGrid ?? DEFAULT_LIST_SNAP_TOP_TO_GRID,
-    numberWidth: partial?.numberWidth === 'level' ? 'level' : DEFAULT_ORDERED_NUMBER_WIDTH,
+    numberWidth: partial?.numberWidth === 'level' || partial?.numberWidth === 'item' ? partial.numberWidth : DEFAULT_ORDERED_NUMBER_WIDTH,
     numberAlign: partial?.numberAlign === 'start' ? 'start' : DEFAULT_ORDERED_NUMBER_ALIGN,
     hangingIndent: partial?.hangingIndent ?? DEFAULT_LIST_HANGING_INDENT,
     levels,

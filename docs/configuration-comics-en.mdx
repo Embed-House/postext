@@ -231,7 +231,7 @@ const config: PostextConfig = {
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Extra room between letters; <code>em</code> is relative to the text size. Never applied to Arabic.</td>
+      <td>Extra room between letters; <code>em</code> is relative to the text size. Never applied to Arabic. It does not change the glyphs: ligatures stay.</td>
     </tr>
     <tr>
       <td><code>writingMode</code></td>
@@ -274,6 +274,12 @@ const config: PostextConfig = {
       <td><code>number</code></td>
       <td><code>8</code></td>
       <td>Vertical lettering: the most characters in one column of a balloon. Sound effects break after five.</td>
+    </tr>
+    <tr>
+      <td><code>strictPlacement</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>A balloon reshaped to fit its panel does not part a Chinese word to do so: each word its new lines cut, which its preferred shape leaves whole, costs more than a balloon read out of order, so the placement moves the balloon or changes the order first. Japanese lettering, broken by phrases, is not touched. <code>false</code> letters as postext 1.27 did; a document stored before 1.28 that holds a comic is read with it.</td>
     </tr>
   </tbody>
 </table>

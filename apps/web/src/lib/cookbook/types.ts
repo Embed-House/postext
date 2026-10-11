@@ -271,6 +271,9 @@ export interface RecipeMeta {
       warnings?: WarningKind[];
       /** Deliberately sparse pages (dedication, half title), 1-based. */
       nearEmptyPages?: number[];
+      /** Justified lines the edition may set ragged (their word spaces
+       *  would stretch past 3×; check C34). Default 0. */
+      raggedLines?: number;
       /** Accepted console-error substrings (e.g. the `?bundle` noise). */
       console?: string[];
       /** Only for a recipe about the defaults themselves. */
@@ -543,6 +546,14 @@ export interface CaptureVariant {
     /** The pages the bundle lays out to, when it holds only some of the
      *  builds whose pages the capture counts. */
     pages?: number;
+    /** Each chapter of the bundle as it reads back on the capture's
+     *  engine: its pages and its layout hash (lib/probe.js `layoutHash`).
+     *  What `pnpm cookbook sandbox` compares the Sandbox's layout with. */
+    chapters?: { pages: number; hash: string }[];
+    /** The warnings of the pen's builds the bundle holds (kind and what
+     *  it names, positions aside): the Sandbox may raise these and no
+     *  others. Left out when there are none. */
+    warnings?: string[];
   };
   detected: {
     apis: string[];
@@ -565,6 +576,13 @@ export interface CaptureVariant {
      *  the tracking cap (`cjkLoose`), `worst` the widest space between
      *  characters, in em. Absent when the pages have no such line. */
     cjkLooseLines?: { count: number; share: number; worst: number };
+    /** Justified lines set ragged because their word spaces would have
+     *  stretched past 3× (C34). Absent on an engine without the warning. */
+    raggedLines?: { count: number };
+    /** Paragraphs set a line short to take up a runt (C35): how many, how
+     *  many of them with tracking, and the most tracking, in thousandths
+     *  of an em. Absent when there is none. */
+    runtFixes?: { count: number; tracked: number; worst: number };
     findings: CaptureFinding[];
   };
 }
@@ -581,6 +599,12 @@ export interface CaptureManifest {
   engine: { postext: SemVer; postextPdf?: SemVer; source: "npm" | "local" };
   chrome: string;
   capturedAt: string;
+  /** The newest release on which a capture run found the recipe unchanged
+   *  (pages within rendering noise, the PDF's bytes, the committed bundle
+   *  read back by that engine), the Chrome of that run and its time
+   *  (#735). `engine` and `capturedAt` stay the run that wrote the files;
+   *  a run that writes a file removes this. */
+  verified?: { postext: SemVer; postextPdf?: SemVer; chrome: string; at: string };
   variants: Partial<Record<SampleLocale, CaptureVariant>>;
 }
 

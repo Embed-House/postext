@@ -4,8 +4,9 @@ import { COMIC_RESERVED_KEYS, normalizeSafeArea } from 'postext';
 // ---------------------------------------------------------------------------
 // The marks drawn over a picture in the "Safe area & lettering" dialog: the
 // safe area (#442), the speakers a comic's lettering points at
-// (`Resource.anchors`, #557) and the zones its balloons keep clear of
-// (`Resource.avoid`). Everything is in fractions of the picture (0–1,
+// (`Resource.anchors`, #557), the zones its balloons keep clear of
+// (`Resource.avoid`) and the faces of the people who do not speak
+// (`Resource.faces`, #726). Everything is in fractions of the picture (0–1,
 // top-left origin), so the marks are the same in every edition of a comic.
 // Pure functions: the dialog keeps a `PictureMarks` value and replaces it.
 // ---------------------------------------------------------------------------
@@ -20,6 +21,9 @@ export interface PictureMarks {
   safeArea?: ResourceSafeArea;
   anchors: ResourceAnchor[];
   avoid: ResourceSafeArea[];
+  /** The faces of people who do not speak (`Resource.faces`): no balloon
+   *  covers them, where an avoid zone gives way at the last fallback. */
+  faces: ResourceSafeArea[];
 }
 
 /** A mark of the picture the pointer or the keyboard acts on. */
@@ -28,7 +32,8 @@ export type MarkTarget =
   | { kind: 'mouth'; index: number }
   | { kind: 'head'; index: number }
   | { kind: 'face'; index: number }
-  | { kind: 'avoid'; index: number };
+  | { kind: 'avoid'; index: number }
+  | { kind: 'bystander'; index: number };
 
 /** How a rectangle is dragged: by its body or by one of its handles. */
 export type Handle = 'move' | 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
@@ -55,6 +60,7 @@ export function marksOf(resource: Resource): PictureMarks {
     safeArea: normalizeSafeArea(resource.safeArea),
     anchors: (resource.anchors ?? []).map((a) => ({ ...a, head: a.head && { ...a.head }, face: a.face && { ...a.face } })),
     avoid: (resource.avoid ?? []).map((r) => ({ ...r })),
+    faces: (resource.faces ?? []).map((r) => ({ ...r })),
   };
 }
 
@@ -115,6 +121,7 @@ export function rectOf(marks: PictureMarks, target: MarkTarget): ResourceSafeAre
   if (target.kind === 'safe') return marks.safeArea;
   if (target.kind === 'face') return marks.anchors[target.index]?.face;
   if (target.kind === 'avoid') return marks.avoid[target.index];
+  if (target.kind === 'bystander') return marks.faces[target.index];
   return undefined;
 }
 
@@ -132,6 +139,7 @@ export function withRect(marks: PictureMarks, target: MarkTarget, rect: Resource
   if (target.kind === 'safe') return { ...marks, safeArea: rect };
   if (target.kind === 'face') return withAnchor(marks, target.index, (a) => ({ ...a, face: rect }));
   if (target.kind === 'avoid') return { ...marks, avoid: marks.avoid.map((r, i) => (i === target.index ? rect : r)) };
+  if (target.kind === 'bystander') return { ...marks, faces: marks.faces.map((r, i) => (i === target.index ? rect : r)) };
   return marks;
 }
 
@@ -184,14 +192,36 @@ export function nudge(marks: PictureMarks, target: MarkTarget, dx: number, dy: n
 }
 
 /** The marks without `target`: a mouth takes its whole speaker away, a head
- *  or a face only that part, an avoid zone itself. The safe area stays (it
- *  has its own Remove button). */
+ *  or a face only that part, an avoid zone or a bystander's face itself.
+ *  The safe area stays (it has its own Remove button). */
 export function removeMark(marks: PictureMarks, target: MarkTarget): PictureMarks {
   if (target.kind === 'mouth') return { ...marks, anchors: marks.anchors.filter((_, i) => i !== target.index) };
   if (target.kind === 'head') return withAnchor(marks, target.index, ({ head: _head, ...rest }) => rest);
   if (target.kind === 'face') return withAnchor(marks, target.index, ({ face: _face, ...rest }) => rest);
   if (target.kind === 'avoid') return { ...marks, avoid: marks.avoid.filter((_, i) => i !== target.index) };
+  if (target.kind === 'bystander') return { ...marks, faces: marks.faces.filter((_, i) => i !== target.index) };
   return marks;
+}
+
+/** An avoid zone or a bystander's face: the two lists the Avoid zones mode
+ *  of the dialog edits. */
+export type ZoneTarget = Extract<MarkTarget, { kind: 'avoid' | 'bystander' }>;
+
+/** The marks with a new bystander's face around `p`. */
+export function addBystanderFace(marks: PictureMarks, p: Point, side = DEFAULT_ZONE_SIDE): PictureMarks {
+  return { ...marks, faces: [...marks.faces, zoneAround(p, side)] };
+}
+
+/** The marks with the rectangle of `target` moved to the other list: an
+ *  avoid zone becomes the face of someone who does not speak, and such a
+ *  face an avoid zone. It goes to the end of its new list; `target` is
+ *  where it is now. */
+export function switchZone(marks: PictureMarks, target: ZoneTarget): { marks: PictureMarks; target: ZoneTarget } {
+  const rect = rectOf(marks, target);
+  if (!rect) return { marks, target };
+  const without = removeMark(marks, target);
+  if (target.kind === 'avoid') return { marks: { ...without, faces: [...without.faces, rect] }, target: { kind: 'bystander', index: without.faces.length } };
+  return { marks: { ...without, avoid: [...without.avoid, rect] }, target: { kind: 'avoid', index: without.avoid.length } };
 }
 
 /** The first `speakerN` id no speaker of `anchors` uses. */
@@ -262,7 +292,8 @@ export function normalizeMarks(marks: PictureMarks): PictureMarks {
     return out;
   });
   const avoid = marks.avoid.map(validRect).filter((r): r is ResourceSafeArea => !!r).map(roundRect);
-  return { safeArea: normalizeSafeArea(marks.safeArea), anchors, avoid };
+  const faces = marks.faces.map(validRect).filter((r): r is ResourceSafeArea => !!r).map(roundRect);
+  return { safeArea: normalizeSafeArea(marks.safeArea), anchors, avoid, faces };
 }
 
 function validRect(r: ResourceSafeArea): ResourceSafeArea | undefined {
@@ -286,6 +317,8 @@ export function applyMarks(resource: Resource, marks: PictureMarks): Resource {
   else delete next.anchors;
   if (m.avoid.length) next.avoid = m.avoid;
   else delete next.avoid;
+  if (m.faces.length) next.faces = m.faces;
+  else delete next.faces;
   return next;
 }
 

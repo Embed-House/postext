@@ -93,6 +93,21 @@ export function redoViewerEdit(): boolean {
   return true;
 }
 
+/** The edit {@link undoViewerEdit} would take back (with `redo`, the one
+ *  {@link redoViewerEdit} would put back), for a caller that checks it
+ *  against the chapter's text first; null when there is none. */
+export function peekViewerEdit(redo = false): { chapterId: string; changes: TextChange[]; baseLength: number } | null {
+  const stack = redo ? redoStack : undoStack;
+  const edit = stack[stack.length - 1];
+  return edit ? { chapterId: edit.chapterId, changes: edit.changes, baseLength: edit.baseLength } : null;
+}
+
+/** Forget the edit {@link peekViewerEdit} names, when the chapter is no
+ *  longer the text it left: it cannot be taken back any more. */
+export function dropViewerEdit(redo = false): void {
+  (redo ? redoStack : undoStack).pop();
+}
+
 /** Whether a key goes to a field (which undoes its own text). */
 function inField(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;

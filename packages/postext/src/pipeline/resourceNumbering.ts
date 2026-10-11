@@ -10,17 +10,21 @@
  * The renderer is shared with heading numbering through
  * {@link renderCounterTemplate}; only the template syntax differs. Resource
  * templates use `{n}` for the per-type counter and `{h1}`..`{h6}` for the
- * heading numbers in effect at the point of first reference.
+ * heading numbers in effect at the point of first reference. Each token
+ * takes the style suffix a heading template's does (`{h1:A}.{n}`, #730).
  */
 
 import { resourceRefId } from './crossRefs';
 import type { ContentBlock } from '../parse';
 import type { DigitSystem, HeadingCounters, Resource, ResourceNumberEntry, ResourceType, ResourceCounterFormat } from '../types';
 import {
+  counterStyleOf,
+  formatCounter,
   formatNumeral,
   nextHeadingCounter,
   parseNumberFormat,
   renderCounterTemplate,
+  type CounterStyle,
   type NumeralStyle,
   type RenderPiece,
 } from '../numbering';
@@ -79,16 +83,23 @@ export function computeHeadingContext(
   return out;
 }
 
-/** A `{n}` / `{h1}`..`{h6}` template token. */
+/** A `{n}` / `{h1}`..`{h6}` template token. `style` is the one the token
+ *  names after a colon (`{h1:A}`, `{n:i}`, #730); absent, the counter
+ *  follows the type's `counterFormat` and a heading number is decimal. */
 type ResourceToken =
   | { kind: 'literal'; text: string }
-  | { kind: 'counter' } // the `{n}` per-type counter
-  | { kind: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6 };
+  | { kind: 'counter'; style?: CounterStyle } // the `{n}` per-type counter
+  | { kind: 'heading'; level: 1 | 2 | 3 | 4 | 5 | 6; style?: CounterStyle };
 
 /** Parse a resource numbering template into tokens. Recognizes `{n}` (the
- *  per-type counter) and `{h1}`..`{h6}` (heading numbers). Backslash escapes a
- *  literal `{`, `}`, or `\`. Unknown `{…}` groups are kept as literal text. */
-function parseResourceTemplate(tpl: string): ResourceToken[] {
+ *  per-type counter) and `{h1}`..`{h6}` (heading numbers), each with the
+ *  style suffix a heading template's token takes (`{h1:A}`, `{h2:i}`,
+ *  `{h1:一}`, `{h1:Words}`, `{n:i}`: `counterStyleOf`, so the two template
+ *  families read a style alike; an unknown one counts in decimal).
+ *  Backslash escapes a literal `{`, `}`, or `\`. Unknown `{…}` groups are
+ *  kept as literal text. `locale` (the document language) reads the `一`
+ *  and `壹` tokens. */
+function parseResourceTemplate(tpl: string, locale?: string): ResourceToken[] {
   const tokens: ResourceToken[] = [];
   let buf = '';
   let i = 0;
@@ -111,17 +122,21 @@ function parseResourceTemplate(tpl: string): ResourceToken[] {
     if (ch === '{') {
       const end = tpl.indexOf('}', i + 1);
       if (end !== -1) {
-        const body = tpl.slice(i + 1, end).trim();
-        if (body === 'n') {
+        const body = tpl.slice(i + 1, end);
+        const colon = body.indexOf(':');
+        const name = (colon < 0 ? body : body.slice(0, colon)).trim();
+        const rawStyle = colon < 0 ? '' : body.slice(colon + 1).trim();
+        const style = rawStyle ? { style: counterStyleOf(rawStyle, locale) } : {};
+        if (name === 'n') {
           flush();
-          tokens.push({ kind: 'counter' });
+          tokens.push({ kind: 'counter', ...style });
           i = end + 1;
           continue;
         }
-        const hMatch = /^h([1-6])$/.exec(body);
+        const hMatch = /^h([1-6])$/.exec(name);
         if (hMatch) {
           flush();
-          tokens.push({ kind: 'heading', level: Number(hMatch[1]) as 1 | 2 | 3 | 4 | 5 | 6 });
+          tokens.push({ kind: 'heading', level: Number(hMatch[1]) as 1 | 2 | 3 | 4 | 5 | 6, ...style });
           i = end + 1;
           continue;
         }
@@ -138,21 +153,26 @@ function parseResourceTemplate(tpl: string): ResourceToken[] {
  *  context in effect. Empty heading counters collapse their adjacent separators
  *  via {@link renderCounterTemplate} (so `{h1}.{n}` with no h1 renders as the
  *  bare counter). The heading numbers, and a decimal counter, are written in
- *  the document's `digits`. */
+ *  the document's `digits`. A token that names a style is written in it
+ *  (`formatCounter`, with the document language for a spelled one); a
+ *  heading token with no value in scope prints nothing whatever its style
+ *  (the East Asian positional styles would print a zero). */
 function renderResourceNumber(
   tokens: ResourceToken[],
   counterValue: number,
   style: NumeralStyle,
   heading: HeadingContext,
   digits?: DigitSystem,
+  locale?: string,
 ): string {
   const pieces: RenderPiece[] = tokens.map((t) => {
     if (t.kind === 'literal') return { kind: 'literal', text: t.text };
     if (t.kind === 'counter') {
-      return { kind: 'counter', text: formatNumeral(counterValue, style, digits) };
+      return { kind: 'counter', text: t.style ? formatCounter(counterValue, t.style, locale, digits) : formatNumeral(counterValue, style, digits) };
     }
     const value = heading[`h${t.level}` as keyof HeadingContext];
-    return { kind: 'counter', text: value > 0 ? formatNumeral(value, 'decimal', digits) : '' };
+    if (!(value > 0)) return { kind: 'counter', text: '' };
+    return { kind: 'counter', text: t.style ? formatCounter(value, t.style, locale, digits) : formatNumeral(value, 'decimal', digits) };
   });
   return renderCounterTemplate(pieces);
 }
@@ -315,7 +335,7 @@ export function computeResourceNumberingState(
   const strips: Record<number, ResourceNumberEntry> = {};
   for (const [typeId, occurrences] of byType) {
     const type = typeById.get(typeId)!;
-    const tokens = parseResourceTemplate(type.numberingTemplate);
+    const tokens = parseResourceTemplate(type.numberingTemplate, locale);
     const style = counterFormatToStyle(type.counterFormat, locale);
     const resetLevel: ResetLevel | null =
       type.resetOn === 'never' ? null : (Number(type.resetOn.slice(1)) as ResetLevel);
@@ -330,7 +350,7 @@ export function computeResourceNumberingState(
       counter += 1;
       prevHeading = occ.heading;
       const entry: ResourceNumberEntry = {
-        number: renderResourceNumber(tokens, counter, style, occ.heading, digits),
+        number: renderResourceNumber(tokens, counter, style, occ.heading, digits, locale),
         typeId,
         heading: occ.heading,
       };
@@ -343,8 +363,10 @@ export function computeResourceNumberingState(
   return { map, counters, strips };
 }
 
-/** A number written with a resource-style template (`{n}`, `{h1}`..`{h6}`)
- *  — what labelled equations and numbered statements print (#530). */
+/** A number written with a resource-style template (`{n}`, `{h1}`..`{h6}`,
+ *  each with an optional style: `{h1:A}.{n}`, #730): what labelled
+ *  equations and numbered statements print (#530), and the Sandbox's
+ *  preview of a resource type's number. */
 export function renderTemplateNumber(
   template: string,
   counter: number,
@@ -353,7 +375,7 @@ export function renderTemplateNumber(
   digits?: DigitSystem,
   locale?: string,
 ): string {
-  return renderResourceNumber(parseResourceTemplate(template), counter, counterFormatToStyle(format, locale), heading, digits);
+  return renderResourceNumber(parseResourceTemplate(template, locale), counter, counterFormatToStyle(format, locale), heading, digits, locale);
 }
 
 /** Whether a counter reset at `resetOn` starts again between its last

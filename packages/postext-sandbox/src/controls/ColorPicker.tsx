@@ -10,6 +10,7 @@ import { Link2 } from 'lucide-react';
 import { ColorPopover } from './ColorPopover';
 import { formatColor, hexAlpha, hexWithoutAlpha, type ColorMode } from './color-utils';
 import type { PopoverCloseReason } from '../ui';
+import { ContrastBadge, ContrastDetails, useFieldContrast } from '../contrast/ContrastBadge';
 
 interface ColorPickerProps {
   label: string;
@@ -88,9 +89,13 @@ export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefau
   const swatchHex = isLinked ? linkedEntry!.value.hex : value.hex;
   const alpha = hexAlpha(swatchHex);
   const hex6 = hexWithoutAlpha(swatchHex);
+  // The colour's contrast with what the book sets it with (#748).
+  const contrast = useFieldContrast(swatchHex);
+  const contrastId = useId();
 
   const controls = (
-    <div ref={controlsRef} className="flex shrink-0 items-center">
+    <div ref={controlsRef} className="flex shrink-0 items-center gap-1.5">
+      {contrast && <ContrastBadge contrast={contrast} labels={state.labels} descriptionId={contrastId} />}
       <ColorTrigger
         open={popoverOpen}
         onToggle={() => setPopoverOpen((v) => !v)}
@@ -102,6 +107,7 @@ export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefau
         muted={muted}
         hex6={hex6}
         alpha={alpha}
+        contrastId={contrast ? contrastId : undefined}
       />
       <ColorPopover
         open={popoverOpen}
@@ -119,6 +125,7 @@ export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefau
         onLinkPalette={linkToEntry}
         onUnlinkPalette={unlink}
         unlinkLabel={unlinkLabel}
+        footer={contrast ? <ContrastDetails contrast={contrast} hex={swatchHex} labels={state.labels} /> : undefined}
       />
     </div>
   );
@@ -144,11 +151,13 @@ interface ColorTriggerProps {
   muted: boolean;
   hex6: string;
   alpha: number;
+  /** id of the contrast summary, read with the field's description. */
+  contrastId?: string;
 }
 
 /** One button: swatch + value (the palette colour's name when linked). Its
  *  accessible name is the row label followed by the value. */
-function ColorTrigger({ open, onToggle, label, standalone, displayText, modeLabel, isLinked, muted, hex6, alpha }: ColorTriggerProps) {
+function ColorTrigger({ open, onToggle, label, standalone, displayText, modeLabel, isLinked, muted, hex6, alpha, contrastId }: ColorTriggerProps) {
   const ids = useFieldIds();
   const valueId = useId();
   const named = ids && !standalone;
@@ -159,7 +168,7 @@ function ColorTrigger({ open, onToggle, label, standalone, displayText, modeLabe
       onClick={onToggle}
       aria-labelledby={named ? `${ids.labelId} ${valueId}` : undefined}
       aria-label={named ? undefined : `${label}: ${displayText}`}
-      aria-describedby={named ? ids.descriptionId : undefined}
+      aria-describedby={[named ? ids.descriptionId : undefined, contrastId].filter(Boolean).join(' ') || undefined}
       aria-expanded={open}
       aria-haspopup="dialog"
       className={cn(

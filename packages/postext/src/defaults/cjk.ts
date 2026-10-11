@@ -9,6 +9,7 @@ import type {
   CjkHangingPunctuation,
   CjkKuntenConfig,
   CjkKuntenPlacement,
+  CjkLatinSpacingEdge,
   CjkLineBreak,
   CjkParagraphStartBracket,
   CjkPunctuationWidth,
@@ -21,6 +22,7 @@ import type {
   CjkWordBreak,
   ColorValue,
   Dimension,
+  PostextConfig,
   ResolvedCjkConfig,
   ResolvedCjkEmphasisMarkConfig,
   ResolvedCjkGridConfig,
@@ -28,7 +30,7 @@ import type {
   ResolvedCjkRubyConfig,
   ResolvedCjkWarichuConfig,
 } from '../types';
-import { cjkRegionOf, isJapaneseLanguage, languageOf } from '../locale';
+import { cjkRegionOf, isJapaneseLanguage, languageOf, presentTag } from '../locale';
 import { dimensionsEqual } from './shared';
 
 /** `cjk` as written when nothing is set: everything follows the locale
@@ -52,14 +54,15 @@ export const DEFAULT_CJK_CONFIG: Required<Omit<CjkConfig, 'annotationColor'>> & 
   circledNumbers: 'cjk',
   composeDesignText: true,
   latinSpacing: { value: 0.25, unit: 'em' },
+  latinSpacingEdge: 'auto',
   uprightDigits: 2,
-  grid: { enabled: false, show: false },
+  grid: { enabled: false, show: false, fullLines: false },
   emphasis: 'auto',
   emphasisMark: { style: 'auto', fill: 'auto', position: 'auto' },
   bookTitleMark: 'auto',
   bookTitleBrackets: 'auto',
   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'auto', align: 'auto', smallKana: 'keep' },
-  warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '' },
+  warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '', minChars: 2 },
   kunten: { fontSize: { value: 0.5, unit: 'em' }, placement: 'inline' },
 };
 
@@ -187,7 +190,16 @@ function resolveWarichu(warichu: CjkWarichuConfig | undefined, region: CjkRegion
     ...(isColor(warichu?.color) ? { color: warichu.color } : {}),
     open: typeof warichu?.open === 'string' ? warichu.open : brackets.open,
     close: typeof warichu?.close === 'string' ? warichu.close : brackets.close,
+    minChars: countOfAtLeastOne(warichu?.minChars) ?? d.minChars!,
   };
+}
+
+/** A count written as a number or a numeric string: finite, one or more,
+ *  rounded down (`cjk.titleMinChars`, `cjk.warichu.minChars`); undefined
+ *  for anything else. */
+function countOfAtLeastOne(value: unknown): number | undefined {
+  const n = typeof value === 'string' ? Number(value) : value;
+  return typeof n === 'number' && Number.isFinite(n) && n >= 1 ? Math.floor(n) : undefined;
 }
 
 const REGIONS: readonly CjkRegion[] = ['mainland', 'taiwan', 'hongkong', 'japan'];
@@ -227,6 +239,24 @@ export function defaultCjkHangingPunctuation(region: CjkRegion): CjkHangingPunct
   return region === 'japan' ? 'allow' : 'none';
 }
 
+/** Which side of a Western word takes the Han–Latin space by default
+ *  (#721): any side of a word that holds a letter or a digit in Japan
+ *  (JLReq §3.2.6), a side that ends in a letter or a digit in the Chinese
+ *  regions (clreq §6.3.3). */
+export function defaultCjkLatinSpacingEdge(region: CjkRegion): CjkLatinSpacingEdge {
+  return region === 'japan' ? 'western' : 'letters';
+}
+
+/** The region a configuration's `cjk` settings resolve to: `cjk.region`
+ *  when it names one, else the region of the document language as
+ *  `resolveAllConfig` reads it (`locale`, else the hyphenation locale),
+ *  `'mainland'` for a language with none. */
+export function cjkRegionOfConfig(config: PostextConfig | undefined): CjkRegion {
+  const named = config?.cjk?.region;
+  if (named && REGIONS.includes(named as CjkRegion)) return named as CjkRegion;
+  return cjkRegionOf(presentTag(config?.locale) ?? presentTag(config?.bodyText?.hyphenation?.locale)) ?? 'mainland';
+}
+
 /** Whether ？！ take a full-width space after them by default: in Japan
  *  (JLReq §3.1.6), not in the Chinese regions. */
 export function defaultCjkSpaceAfterQuestion(region: CjkRegion): boolean {
@@ -263,6 +293,7 @@ function resolveGrid(grid: CjkGridConfig | undefined): ResolvedCjkGridConfig {
     charsPerLine: enabled ? count(grid?.charsPerLine) ?? 0 : 0,
     linesPerPage: enabled ? count(grid?.linesPerPage) ?? 0 : 0,
     show: enabled && grid?.show === true,
+    fullLines: enabled && grid?.fullLines === true,
   };
 }
 
@@ -320,6 +351,9 @@ export function resolveCjkConfig(partial: CjkConfig | undefined, locale: string 
     ...(partial?.circledNumbers === 'western' ? { circledNumbers: 'western' as const } : {}),
     ...(partial?.composeDesignText === false ? { composeDesignText: false as const } : {}),
     latinSpacing,
+    latinSpacingEdge: partial?.latinSpacingEdge === 'letters' || partial?.latinSpacingEdge === 'western'
+      ? partial.latinSpacingEdge
+      : defaultCjkLatinSpacingEdge(region),
     uprightDigits,
     grid: resolveGrid(partial?.grid),
     emphasis: partial?.emphasis && EMPHASES.includes(partial.emphasis as CjkEmphasis)
@@ -367,6 +401,7 @@ function stripWarichuDefaults(warichu: CjkWarichuConfig | undefined): CjkWarichu
   // brackets (Japan's （）, `defaultCjkWarichuBrackets`).
   if (warichu.open !== undefined) result.open = warichu.open;
   if (warichu.close !== undefined) result.close = warichu.close;
+  if (warichu.minChars !== undefined && warichu.minChars !== d.minChars) result.minChars = warichu.minChars;
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
@@ -402,6 +437,7 @@ function stripGridDefaults(grid: CjkGridConfig | undefined): CjkGridConfig | und
   if (grid.charsPerLine !== undefined) result.charsPerLine = grid.charsPerLine;
   if (grid.linesPerPage !== undefined) result.linesPerPage = grid.linesPerPage;
   if (grid.show !== undefined && grid.show !== false) result.show = grid.show;
+  if (grid.fullLines !== undefined && grid.fullLines !== false) result.fullLines = grid.fullLines;
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
@@ -424,6 +460,9 @@ export function stripCjkDefaults(cjk?: CjkConfig): CjkConfig | undefined {
   if (cjk.circledNumbers !== undefined && cjk.circledNumbers !== d.circledNumbers) result.circledNumbers = cjk.circledNumbers;
   if (cjk.composeDesignText !== undefined && cjk.composeDesignText !== d.composeDesignText) result.composeDesignText = cjk.composeDesignText;
   if (cjk.latinSpacing !== undefined && !dimensionsEqual(cjk.latinSpacing, d.latinSpacing)) result.latinSpacing = cjk.latinSpacing;
+  // `'letters'` and `'western'` are kept even where they restate the
+  // region's default, as the other `'auto'` keys are.
+  if (cjk.latinSpacingEdge !== undefined && cjk.latinSpacingEdge !== d.latinSpacingEdge) result.latinSpacingEdge = cjk.latinSpacingEdge;
   if (cjk.uprightDigits !== undefined && cjk.uprightDigits !== d.uprightDigits) result.uprightDigits = cjk.uprightDigits;
   const grid = stripGridDefaults(cjk.grid);
   if (grid) result.grid = grid;

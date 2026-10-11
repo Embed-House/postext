@@ -8,7 +8,7 @@ import {
 import type { VDTLine, VDTLineSegment } from '../vdt';
 import { createBoundingBox } from '../vdt';
 import type { TextAlign } from '../types';
-import { hyphenateText, hyphenateTextKeepingCompounds } from '../hyphenate';
+import { hyphenateText, hyphenateTextKeepingCompounds, withoutEdgeSoftHyphens } from '../hyphenate';
 import {
   pretextSegmentsToItems,
   computeBreakpoints,
@@ -19,17 +19,57 @@ import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate'
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, maxLineIndent, maxLineInset, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
 import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import { isRuntLastLine } from './runts';
+import { justifiedSpaceRatios } from './spaceRatios';
 import { measureRichBlock } from './rich';
 import { hasCJK, hasCJKRun } from './cjk';
 import { composesAsCjk, composesDashRow } from './cjkCompose';
 import { markCuts } from './markCuts';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measuringVertically, withMeasureWritingMode } from './vertical';
 import { holdsVerticalCell } from '../writingMode';
-import { WORDS_AND_SPACES_RE } from './spaces';
+import { WORDS_AND_SPACES_RE, isBreakingSpaceRun } from './spaces';
 import { breaksAfterHardHyphen, hasCompound, raggedStretchPx } from './breakRules';
 import { joiningScriptIn } from './joining';
 import { getMeasureDirection } from './bidiLines';
 import { needsBidi } from '../bidi';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, wordPieceScript } from './script';
+
+/** Whether a word of `text` (between breaking spaces) has no letter. */
+function holdsLetterlessWord(text: string): boolean {
+  const words = text.match(WORDS_AND_SPACES_RE);
+  return words !== null && words.some((word) => !isBreakingSpaceRun(word) && isLetterless(word));
+}
+
+/** A hyphen or a dash: where a word may part at the end of a line. */
+const HYPHEN_OR_DASH_RE = /[-\u2010-\u2015]/;
+
+/** Whether a word of `text` that has a letter parts, after a hyphen or a
+ *  dash it carries, into a piece with none (`COVID-19`, `(pre-2001)`,
+ *  `2-methyl`): the line may end there, and the piece is then a text of
+ *  its own, measured and painted in the script of its word (#725). */
+function holdsLetterlessPiece(text: string): boolean {
+  if (!HYPHEN_OR_DASH_RE.test(text)) return false;
+  for (const word of text.match(WORDS_AND_SPACES_RE) ?? []) {
+    if (isBreakingSpaceRun(word) || wordPieceScript(word) === undefined) continue;
+    let from = 0;
+    for (let at = 0; at < word.length; at++) {
+      if (!HYPHEN_OR_DASH_RE.test(word[at]!)) continue;
+      if (isLetterless(word.slice(from, at + 1))) return true;
+      from = at + 1;
+    }
+    if (from > 0 && isLetterless(word.slice(from))) return true;
+  }
+  return false;
+}
+
+/** Whether a word of `text` that has a letter and a character with none
+ *  (`10.1006/ijhc.2001.0458`) is wider than `widthPx`: cut where its line
+ *  ends, it may leave a piece with no letter (#725). */
+function hasOverwideMixedWord(text: string, font: string, widthPx: number): boolean {
+  for (const word of text.match(WORDS_AND_SPACES_RE) ?? []) {
+    if (!isBreakingSpaceRun(word) && wordPieceScript(word) !== undefined && measureTextWidth(word, font) > widthPx) return true;
+  }
+  return false;
+}
 
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 const FIGURE_SPACE = '\u2007';
@@ -187,6 +227,9 @@ export function hasOverfullLine(lines: VDTLine[], lineWidth: (lineIndex: number)
   });
 }
 
+/** The painted word-space ratio of a justified line that is not the last
+ *  (`VDTLine.justifiedSpaceRatio`); the breakers call `justifiedSpaceRatios`,
+ *  which gives the ratio the limits bound too (#704). */
 export function computeJustifiedSpaceRatio(
   segments: VDTLineSegment[],
   lineMaxWidth: number,
@@ -259,6 +302,18 @@ export function measureBlock(
   if ((options?.direction ?? getMeasureDirection()) === 'rtl' || needsBidi(text)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
+  // A word with no letter (`46.`, `1367)`) in a face that draws its
+  // punctuation by script (#725, `measure/script.ts`): the word-by-word
+  // breaker, which measures it in the script of the text around it and
+  // says so on its segment. Pretext would measure it alone, in whatever
+  // script the browser picks for a text with none.
+  // So does a word with a letter that may part into a piece with none:
+  // after its hyphen (`COVID-19`), or anywhere when it is wider than its
+  // line. The breaker measures that piece in the script of its word.
+  const readsScript = getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font);
+  if (readsScript && (holdsLetterlessWord(text) || holdsLetterlessPiece(text))) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
   const shouldHyphenate = options?.hyphenate ?? false;
   // Each line's start: its indent past its inset beside a picture (#627).
   const indentOf = (li: number): number => lineStartAt(options, li);
@@ -277,6 +332,9 @@ export function measureBlock(
   // A glued group wider than the narrowest line likewise (EF-66): pretext
   // would cut it between characters.
   if (text.includes(FIGURE_SPACE) || hasOverwideGluedGroup(text, font, Math.min(maxWidthPx, ...(options?.restWidths ?? []).map((s) => s.maxWidthPx)) - widestIndent)) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
+  if (readsScript && hasOverwideMixedWord(text, font, Math.min(maxWidthPx, ...(options?.restWidths ?? []).map((s) => s.maxWidthPx)) - widestIndent)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   // Words of a joining script stay whole: pretext would break one at a soft
@@ -298,9 +356,13 @@ export function measureBlock(
   if (keepCompounds && hasOverwideCompoundPart(text, font, maxWidthPx - widestIndent)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
-  const processedText = shouldHyphenate
+  const hyphenatedText = shouldHyphenate
     ? (keepCompounds ? hyphenateTextKeepingCompounds(text) : hyphenateText(text))
     : text;
+  // Pretext breaks at every soft hyphen it is given: one typed at a word's
+  // edge or next to punctuation is no break and is left out (#700). The
+  // block's plain text keeps it, as it keeps the ones inside a line.
+  const processedText = text.includes(SOFT_HYPHEN) ? withoutEdgeSoftHyphens(text, hyphenatedText) : hyphenatedText;
 
   const prepared = prepareWithSegments(processedText, font);
   const normalSpaceWidth = textAlign === 'justify' ? normalSpaceWidthFor(font) : 0;
@@ -402,13 +464,7 @@ export function measureBlock(
     // Whether this turns out to be the last line is only known once the
     // loop ends; the ratio is computed as if it weren't and corrected below.
     // This avoids a second layoutNextLine call per line just to peek ahead.
-    const justifiedSpaceRatio = computeJustifiedSpaceRatio(
-      segments,
-      lineMaxWidth,
-      normalSpaceWidth,
-      textAlign,
-      false,
-    );
+    const spaceRatios = textAlign === 'justify' ? justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth) : {};
 
     // Pretext's line text already ends with the hyphen of a soft-hyphen
     // break; add it only when it does not. It also carries the zero-width
@@ -427,7 +483,7 @@ export function measureBlock(
       hyphenated,
       segments,
       isLastLine: false,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
     });
 
     cursor = nextCursor;
@@ -439,6 +495,7 @@ export function measureBlock(
   if (lastLine) {
     lastLine.isLastLine = true;
     delete lastLine.justifiedSpaceRatio;
+    delete lastLine.justifiedSpaceLimitRatio;
   }
   markInsetLines(lines, maxWidthPx, options);
 

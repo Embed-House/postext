@@ -38,6 +38,8 @@ import {
 import { extractFrontmatter, normalizeMetadata } from '../frontmatter';
 import { collectConfigWarnings } from '../configWarnings';
 import { initHyphenator } from '../measure';
+import { setHyphenationRules } from '../hyphenate';
+import { citedNames } from '../citations/names';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
 import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
@@ -52,6 +54,7 @@ import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike 
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
+import { getMeasureScriptContext, hanMarksOfLocale, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -93,6 +96,8 @@ import {
   createPageWithColumns,
   currentColumn,
   advanceToNextColumn,
+  columnClosesPage,
+  flowColumnsAfter,
   advanceToNextPageBoundary,
   enforcePageParity,
   placeBlockInColumn,
@@ -165,6 +170,7 @@ import {
   floatedResourceIds,
   type PlannedFloat,
   floatColumnCount,
+  resolveResourcePlacement,
 } from './floatPlacement';
 import {
   enumerateCurrentPageSlots,
@@ -211,9 +217,11 @@ import {
   type BandPassReport,
   bandCapLinesAroundZone,
   type BandCapZone,
+  bandLinePitch,
+  capRetryLimit,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
 import { dropCapSinkAfter } from './dropCap';
 import { mostlyJoiningScript } from '../measure/joining';
 import { composesAsCjk } from '../measure/cjkCompose';
@@ -545,9 +553,11 @@ export function buildDocumentPass(
   const uprightDigits = getMeasureUprightDigits();
   const direction = getMeasureDirection();
   const arabicNumbers = getMeasureArabicNumbers();
+  const scriptContext = getMeasureScriptContext();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setMeasureScriptContext(scriptContext);
     setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
     setCjkComposition(composition);
@@ -555,6 +565,15 @@ export function buildDocumentPass(
     setMeasureUprightDigits(uprightDigits);
     setMeasureDirection(direction);
   }
+}
+
+/** A resource set in the text, measured with its caption in the side
+ *  column of the band of `col` (#729). */
+interface InlineAside {
+  block: MeasuredContentBlock;
+  opts: { captionAside: { dx: number; width: number } };
+  sideCol: VDTColumn;
+  col: VDTColumn;
 }
 
 function placeDocumentPass(
@@ -601,7 +620,10 @@ function placeDocumentPass(
   // design text — and so do the words wider than their measure, divided at a
   // syllable even in ragged text. Left unset, a build would hyphenate with
   // whichever dictionary the previous one (or the default, en-us) chose.
-  initHyphenator(resolved.bodyText.hyphenation.locale);
+  // With the words the document keeps whole (#699); the names of the
+  // authors it cites join them below, once its references are read.
+  const hyphenationRules = { exceptions: resolved.bodyText.hyphenation.exceptions, capitalized: resolved.bodyText.hyphenation.capitalized };
+  initHyphenator(resolved.bodyText.hyphenation.locale, hyphenationRules);
   // CJK text breaks at the document's level wherever it is measured (body,
   // captions, cells, notes, boxes), as it hyphenates in its language.
   setCjkLineBreak(resolved.cjk.lineBreak);
@@ -620,6 +642,15 @@ function placeDocumentPass(
   // And, in an Arabic-script book, read a number that opens a paragraph as
   // the numbers after its letters (#665).
   setMeasureArabicNumbers(arabicNumbersOf(resolved));
+  // A word with no letter is shaped in the script of the text around it,
+  // and with no letter near in the script of the document's language (#725).
+  // A Chinese or Japanese document sets its doubled ellipsis and dash as
+  // Han text wherever they are cited.
+  setMeasureScriptContext({
+    enabled: resolved.bodyText.scriptContext !== false,
+    script: scriptContextOfLocale(resolvedLocale(resolved)),
+    ...(hanMarksOfLocale(resolvedLocale(resolved)) ? { hanMarks: true } : {}),
+  });
 
   // Compute baseline grid
   const baselineGrid = computeBaselineGrid(resolved);
@@ -649,6 +680,19 @@ function placeDocumentPass(
   // styled section with its own margins / layout — the section's.
   let contentArea = pageMetrics.contentArea;
   let geomResolved = resolved;
+  /** How many columns of a fresh page take body text, in the geometry
+   *  pages are opened with now (`hyphenateAcrossColumns: 'withinPage'`,
+   *  #701: every that many column ends, a page ends). */
+  let freshFlowColumnsOf: ResolvedConfig | undefined;
+  let freshFlowColumns = 1;
+  const freshPageFlowColumns = (): number => {
+    if (freshFlowColumnsOf !== geomResolved) {
+      freshFlowColumnsOf = geomResolved;
+      const fresh = createPageWithColumns(doc.pages.length, geomResolved, contentArea, pageWidthPx, pageHeightPx, pageIndexOffset);
+      freshFlowColumns = Math.max(1, fresh.columns.filter((c) => c.kind !== 'side').length);
+    }
+    return freshFlowColumns;
+  };
   // Page/bleed frames for design elements anchored to `'page'` / `'bleed'`,
   // in the frame of the page's flow: the sheet's, or on a vertical page
   // (`page.flow`) the flow frame, where "the top of the page" is the
@@ -698,6 +742,11 @@ function placeDocumentPass(
   const parsedBody = numberTitlesFor(headingMarksFor(tashkilFor(literalBreaksFor(parseMarkdownMemo(markdownBody, codeParseOptions(resolved)), resolved), resolved.bodyText.tashkil), resolved), resolved);
   const citationContext = content.citations
     ?? (needsCitationContext(parsedBody, frontmatterMeta) ? bookCitationContexts([{ metadata: frontmatterMeta as Record<string, unknown>, blocks: parsedBody }], content.resources)[0] : undefined);
+  // `citations.hyphenateNames: false`: the cited authors' names are never
+  // divided, in a citation, in the text or in the bibliography (#699).
+  if (citationContext && !resolved.citations.hyphenateNames) {
+    setHyphenationRules({ ...hyphenationRules, names: citedNames(citationContext.items) });
+  }
   const citationsApplied = citationContext
     ? applyCitations(
       parsedBody,
@@ -894,6 +943,29 @@ function placeDocumentPass(
   /** The flow segment has ended and its floats and side boxes are taking
    *  pages after the text (see `drainPendingFloats`, #639). */
   let drainingAfterText = false;
+  /** Opener pages (`layout.openerFloats`, #749): the page a part opens,
+   *  the page a heading opens with its own break, and the first page of a
+   *  document that starts with a heading. Under `'avoid'` they offer a
+   *  float no slot (see `placeFloatInColumns`), so it takes the first one
+   *  after them; under `'warn'` each float set on one is reported. */
+  const openerPages = new Set<VDTPage>();
+  const openerFloatRule = resolved.layout.openerFloats;
+  /** The `openerFloat` warnings of this pass, and the floats they name. */
+  const openerFloatNotes: ContentWarning[] = [];
+  const openerFloatsNoted = new Set<string>();
+  const noteOpenerFloat = (page: VDTPage, f: PlannedFloat): void => {
+    if (openerFloatRule !== 'warn' || !openerPages.has(page) || openerFloatsNoted.has(f.resourceId)) return;
+    openerFloatsNoted.add(f.resourceId);
+    const box = f.callout ? calloutFloats.get(f.callout.startIdx) : undefined;
+    const first = contentBlocks[box ? f.callout!.startIdx : f.firstBlockIdx];
+    const last = contentBlocks[box ? box.plan.endIdx : f.firstBlockIdx];
+    openerFloatNotes.push({
+      kind: 'openerFloat',
+      ...(box ? {} : { resourceId: f.resourceId }),
+      ...(first && last ? { sourceStart: first.sourceStart + bodyOffset, sourceEnd: last.sourceEnd + bodyOffset } : {}),
+      pageIndex: page.index,
+    });
+  };
   /** `span: 'side'` boxes of a style with `sideAtColumnEnd: 'after'`
    *  (EF-161), and the side boxes fenced behind them, waiting for the text
    *  after their fence to land (see `settleAwaitingSideBoxes`). Each keeps
@@ -1936,6 +2008,9 @@ function placeDocumentPass(
     side = false,
     refY?: number,
   ): PlaceResult => {
+    // An opener page takes no float (`layout.openerFloats: 'avoid'`, #749):
+    // it waits for the page the flow opens next.
+    if (openerFloatRule === 'avoid' && openerPages.has(page)) return 'defer';
     const first = targetCols[0]!;
     const probe = probeFloatBand(page, f, targetCols, position, pageSpan, anchorToCap, side, refY);
     if (!probe) return 'skip';
@@ -2007,6 +2082,7 @@ function placeDocumentPass(
       if (!built) return 'skip';
       first.availableHeight = Math.max(0, first.availableHeight - need);
       commitFloatBlock(page, first, built, xLeft, y, width, f.firstBlockIdx);
+      noteOpenerFloat(page, f);
       if (drainingAfterText && !calloutFloatOf(f.resourceId)) {
         const citing = contentBlocks[f.firstBlockIdx];
         setAfterText.set(built.block, {
@@ -2271,6 +2347,7 @@ function placeDocumentPass(
     }
 
     commitFloatBlock(page, first, built, xLeft, y, width, f.firstBlockIdx);
+    noteOpenerFloat(page, f);
     floatsPlaced++;
     return rest ? { rest } : 'placed';
   };
@@ -2462,13 +2539,15 @@ function placeDocumentPass(
     page: VDTPage,
     f: PlannedFloat,
     slot: FloatSlot,
-    box: { heightAt: (width: number) => number },
+    box: { heightAt: (width: number) => number; stays?: boolean },
     anchorToCap: boolean,
   ): boolean => {
     const cursorCol = page.columns[cursor.columnIndex];
     if (!cursorCol) return false;
+    // (A short list set whole stays under what introduces it: only the
+    // cursor's column counts for it, #749.)
     const candidates = bandColumns(page, currentBand(page, cursor))
-      .filter((c) => c.kind !== 'span' && c.index >= cursorCol.index && (c === cursorCol || c.blocks.length === 0));
+      .filter((c) => c.kind !== 'span' && c.index >= cursorCol.index && (c === cursorCol || (!box.stays && c.blocks.length === 0)));
     const fitsIn = (c: VDTColumn, available: number): boolean => available >= box.heightAt(c.bbox.width) - 0.01;
     if (!candidates.some((c) => fitsIn(c, c.availableHeight))) return false;
     const probe = probeFloatBand(page, f, slot.cols, slot.position, slot.pageSpan, anchorToCap);
@@ -2483,11 +2562,12 @@ function placeDocumentPass(
    *  empty columns; the band bottom for page-span floats). Runs before each
    *  block is placed, so a float lands in the first gap after its reference.
    *  `nextBlockIdx` is that block: a keep-together box it opens holds the
-   *  slots that would starve it (see `slotStarvesBox`). */
+   *  slots that would starve it (see `slotStarvesBox`), and so does a
+   *  short list set whole (`shortListBoxAt`). */
   const tryPlacePendingFloatsOnCurrentPage = (preferTop = false, nextBlockIdx?: number, anyPosition = false): void => {
     if (pendingFloats.length === 0) return;
     const page = doc.pages[cursor.pageIndex]!;
-    const box = nextBlockIdx !== undefined ? keepTogetherBoxAt(nextBlockIdx) : null;
+    const box = nextBlockIdx !== undefined ? (keepTogetherBoxAt(nextBlockIdx) ?? shortListBoxAt(nextBlockIdx)) : null;
     for (let i = 0; i < pendingFloats.length;) {
       if (heldBack(i)) { i++; continue; }
       const f = pendingFloats[i]!;
@@ -3170,6 +3250,7 @@ function placeDocumentPass(
           // The tracking the note was measured with (a runt taken up by
           // setting it one line shorter, #662): painted with it too.
           if (m.letterSpacingPx !== undefined) blk.letterSpacing = m.letterSpacingPx;
+          if (m.runtTracking !== undefined) blk.runtFix = { tracking: m.runtTracking };
           blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign), noteStyle.lineHeightPx).map((line) => ({
             ...line,
             bbox: createBoundingBox(line.bbox.x + x, line.bbox.y + y, line.bbox.width, line.bbox.height),
@@ -3295,6 +3376,69 @@ function placeDocumentPass(
   let inlineGapOwed: { afterIdx: number; pending: number; exact: number; container?: boolean } | null = null;
   /** The pending spacing a heading, a display formula or a box at `idx`
    *  collapses its top margin with (see `inlineGapOwed`). */
+  /**
+   * What a heading that opens a column keeps of its space above (#706),
+   * 0 when it keeps none. `s0` is the space it takes above it after a
+   * paragraph of body text, `S` its height plus its bottom margin as the
+   * snap reads them, `u` the column's used height:
+   *
+   *     kept = s0 − (snap(u + s0 + S) − snap(u + S))
+   *
+   * the whole grid lines the column head saves are dropped and the rest
+   * stays. `kept` is less than a grid line and `u + kept + S` never passes
+   * `snap(u + S)`, so the box's foot stays on its grid line. A run of
+   * headings (the first does not snap because a heading follows it) reads
+   * as one block: `S` runs from the first heading's top to the last one's
+   * foot plus its bottom margin, the margins between them collapsed as the
+   * placement loop collapses them, and `kept` goes above the first. A run
+   * with a designed, page-span, hidden or `lineSpan` heading in it, or one
+   * whose last heading does not snap, keeps today's placement; so does a
+   * heading whose snapped box does not fit the column.
+   */
+  const columnHeadKept = (
+    blockIdx: number,
+    rawBlock: ContentBlock,
+    usedHeight: number,
+    height: number,
+    style: { marginTopPx: number; marginBottomPx: number },
+    snaps: boolean,
+    col: VDTColumn,
+    ctx: BlockMeasureContext,
+  ): number => {
+    let S: number;
+    if (snaps) {
+      S = height + style.marginBottomPx;
+    } else {
+      const own = headingLevels.forBlock(rawBlock);
+      const ownSnaps = own?.snapToGrid ?? resolved.headings.snapToGrid;
+      if (!own || !ownSnaps || own.advancedDesign.enabled || nextNonMarkerBlock(contentBlocks, blockIdx)?.type !== 'heading') return 0;
+      let run = height;
+      let pending = style.marginBottomPx;
+      let closed: number | undefined;
+      for (let j = blockIdx + 1; j < contentBlocks.length; j++) {
+        const b = contentBlocks[j]!;
+        if (isMarkerBlock(b)) continue;
+        const lvl = b.type === 'heading' ? headingLevels.forBlock(b) : undefined;
+        if (!lvl || lvl.span === 'page' || lvl.advancedDesign.enabled || headingIsHidden(b, lvl)) return 0;
+        const m = measureContentBlock(b, j, col.bbox.width, ctx);
+        if (!m || m.kind.vdtType !== 'heading' || m.kind.style.lineSpan !== undefined) return 0;
+        const st = m.kind.style;
+        run += Math.max(pending, st.marginTopPx) + m.measured.lines.length * st.lineHeightPx;
+        if (nextNonMarkerBlock(contentBlocks, j)?.type === 'heading') { pending = st.marginBottomPx; continue; }
+        if (lvl.snapToGrid ?? resolved.headings.snapToGrid) closed = run + st.marginBottomPx;
+        break;
+      }
+      if (closed === undefined) return 0;
+      S = closed;
+    }
+    const snap = (x: number): number => Math.ceil((x - 0.01) / baselineGrid) * baselineGrid;
+    const s0 = Math.max(ctx.bodyStyle.marginBottomPx, style.marginTopPx);
+    const foot = snap(usedHeight + S);
+    if (foot > col.bbox.height + FIT_EPS) return 0;
+    const kept = s0 - (snap(usedHeight + s0 + S) - foot);
+    return kept > 0.01 ? kept : 0;
+  };
+
   const pendingBeforeSelfSnapping = (idx: number): number =>
     inlineGapOwed && inlineGapOwed.afterIdx === idx - 1 && pendingSpacing === inlineGapOwed.pending
       ? inlineGapOwed.exact
@@ -3622,7 +3766,8 @@ function placeDocumentPass(
       // The cut is measured from under the float bands the proposing pass
       // had at the band's head, which may not have landed yet.
       const top = Math.max(bandTop(cols), bareBandTop(cols, floatHeadOf) + (cap.headPx ?? 0));
-      applyBandCap(cols, cap.lines * baselineGrid, uncappedBottoms, cap.zone, cap.kind === 'trailing', top);
+      // (A trailing cap counts the lines of its band's own leading, #711.)
+      applyBandCap(cols, cap.lines * (cap.pitchPx ?? baselineGrid), uncappedBottoms, cap.zone, cap.kind === 'trailing', top);
       cappedBandColumns.set(spanIndex, cols);
       activeCap = { spanIndex, pageIndex: page.index, band };
       bandCapsApplied.add(spanIndex);
@@ -3648,7 +3793,7 @@ function placeDocumentPass(
    * the displaced text (see {@link bandCapLinesAroundZone}) — the box then
    * fits on the page, under its columns, rather than opening a page alone.
    */
-  const proposeTrailingCap = (boundaryIndex: number, zone?: BandCapZone): void => {
+  const proposeTrailingCap = (boundaryIndex: number, zone?: BandCapZone, closeLevel = false): void => {
     const balancingCfg = resolved.headings.balancing;
     if (!balancingCfg.enabled || !balancingCfg.trailing) return;
     const page = doc.pages[cursor.pageIndex]!;
@@ -3677,8 +3822,24 @@ function placeDocumentPass(
     if (!cols.some((c) => c.blocks.length > 0)) return;
     if (!bandStart || !registeredBand || registeredBand.pageIndex !== page.index || registeredBand.band !== band) return;
     const bottoms = cols.map((c) => c.bbox.y + (c.bbox.height - c.availableHeight));
-    const aroundZone = zone ? bandCapLinesAroundZone(cols, baselineGrid, zone, (c) => columnBottom(c, uncappedBottoms)) : null;
-    if (aroundZone === null && Math.max(...bottoms) - Math.min(...bottoms) <= baselineGrid + 0.5) return;
+    // The cut counts lines of the band's own text (#711,
+    // `trailingStep: 'lines'`): an index or a list of references set on a
+    // leading of its own is cut, and retried, by whole lines of that
+    // leading, where a cut on the body grid lets a line more into one
+    // column and each retry lowers it by more than a line of the band. A
+    // band of body text has the grid for its pitch.
+    const pitch = balancingCfg.trailingStep === 'grid' ? baselineGrid : bandLinePitch(cols, baselineGrid);
+    const aroundZone = zone ? bandCapLinesAroundZone(cols, pitch, zone, (c) => columnBottom(c, uncappedBottoms)) : null;
+    if (aroundZone === null && Math.max(...bottoms) - Math.min(...bottoms) <= baselineGrid + 0.5) {
+      // A band that is level already needs no cap and no second pass, but
+      // it ends here all the same: where the boundary closes the flow of
+      // its page, its columns are cut on the grid line under its text, as
+      // a delivered cap would leave them, so the column rule stops with
+      // the text and not at the page foot (#713). Nothing is to be filled
+      // up to the cut, so the columns are not flagged `trailingCap`.
+      if (closeLevel) closeLevelBand(cols, bottoms);
+      return;
+    }
     // Float bands reserved at the columns' feet are the band's content too:
     // the level cut must leave them room under the text (a figure placed
     // before a span box then anchors to the cut, see `anchorToCap`). A band
@@ -3696,22 +3857,41 @@ function placeDocumentPass(
     const top = bandTop(cols);
     const floatHeads = cols
       .filter((c) => c.blocks.length === 0 && reservedOf(c).top > 0)
-      .map((c) => Math.ceil((c.bbox.y - top - 0.01) / baselineGrid));
+      .map((c) => Math.ceil((c.bbox.y - top - 0.01) / pitch));
     // So does one set under a page-span opener at the head of the opener's
     // own column (#639).
     for (const c of cols) {
-      if (c.headFloatFoot !== undefined) floatHeads.push(Math.ceil((c.headFloatFoot - top - 0.01) / baselineGrid));
+      if (c.headFloatFoot !== undefined) floatHeads.push(Math.ceil((c.headFloatFoot - top - 0.01) / pitch));
     }
     bandCapProposals.set(boundaryIndex, {
       kind: 'trailing',
       startContentIndex: bandStart.contentIndex,
       startPart: bandStart.part,
       ...(bandStart.visit > 0 ? { startVisit: bandStart.visit } : {}),
-      lines: aroundZone ?? Math.max(bandCapLines(cols, baselineGrid, footBands), ...floatHeads),
+      lines: aroundZone ?? Math.max(bandCapLines(cols, pitch, footBands), ...floatHeads),
+      ...(pitch !== baselineGrid ? { pitchPx: pitch, retryLimit: capRetryLimit(pitch, baselineGrid) } : {}),
       retries: 0,
       ...(aroundZone !== null ? { zone } : {}),
       ...capHeadPx(cols),
     });
+  };
+
+  /** Cut the columns of a closing band that ends level on the grid line
+   *  under its lowest text (#713). What a column paints below its used
+   *  height counts too (a tail whose negative margin snapped the flow back
+   *  above its last line): the renderers clip a column to its box. The true
+   *  bottoms go to `uncappedBottoms`, as under a delivered cap, so notes and
+   *  floats keep reading the page's foot. */
+  const closeLevelBand = (cols: readonly VDTColumn[], bottoms: readonly number[]): void => {
+    const top = bandTop(cols);
+    let lowest = Math.max(...bottoms);
+    for (const c of cols) {
+      for (const b of c.blocks) {
+        if (!b.hidden) lowest = Math.max(lowest, paintedBottom(b), b.bbox.y + b.bbox.height);
+      }
+    }
+    const lines = Math.ceil((lowest - top - 0.01) / baselineGrid);
+    applyBandCap(cols, lines * baselineGrid, uncappedBottoms, undefined, false, top);
   };
 
   /** Close the flow at a chapter-level boundary (block `boundaryIndex`):
@@ -3749,7 +3929,7 @@ function placeDocumentPass(
       pendingFloats.splice(i, 1);
     }
     tryPlacePendingFloatsOnCurrentPage();
-    proposeTrailingCap(boundaryIndex);
+    proposeTrailingCap(boundaryIndex, undefined, true);
     markForcedBreak();
     hugClosingText();
     drainPendingFloats();
@@ -3901,6 +4081,52 @@ function placeDocumentPass(
     let n = 0;
     for (let j = col.blocks.length - 1; j >= 0 && isFreeHeading(col.blocks[j]!) && !holdsHeadFloat(col, col.blocks[j]!); j--) n++;
     return n;
+  };
+
+  /**
+   * An index group divided between two columns keeps at least
+   * `index.groups.splitMinEntries` entries on each side (#712). `entry` is
+   * the entry block about to leave `col` (it does not fit, or would be
+   * divided between its lines); `k` entries of its group already close the
+   * column and `r` are still to place, this one included. Too few behind
+   * (`k < min`): the `k` go on with it. Too few ahead (`r < min`): enough of
+   * them go on for the next column to open with `min`, and all of them when
+   * that would leave too few behind. The blocks taken off the column are
+   * returned in column order (the caller rewinds to the first), with the
+   * run of headings they would strand; empty when the rule asks for
+   * nothing or cannot be met: the group's entries are all the column holds
+   * under its headings (they would open the next column as they open this
+   * one), or the entry that would lead the move is the rest of one begun
+   * in the column before.
+   */
+  const rollbackIndexGroup = (col: VDTColumn, entry: ContentBlock, min: number): VDTBlock[] => {
+    const info = entry.index;
+    if (!info || min <= 1 || info.groupIndex === undefined || info.groupPlace === undefined || info.groupSize === undefined) return [];
+    const sameGroup = (b: VDTBlock): boolean => {
+      const raw = b.contentIndex !== undefined ? contentBlocks[b.contentIndex] : undefined;
+      return raw?.index !== undefined && raw.index.groupIndex === info.groupIndex && raw.sourceStart === entry.sourceStart;
+    };
+    let k = 0;
+    for (let j = col.blocks.length - 1; j >= 0 && sameGroup(col.blocks[j]!); j--) k++;
+    if (k === 0) return [];
+    const r = info.groupSize - info.groupPlace;
+    let take = 0;
+    if (k < min) take = k;
+    else if (r < min) take = k - (min - r) < min ? k : min - r;
+    if (take === 0) return [];
+    // Nothing but the group under the column's headings: it stays.
+    const above = col.blocks.slice(0, col.blocks.length - k);
+    if (take === k && above.every((b) => isFreeHeading(b) || b.hidden)) return [];
+    // The rest of an entry begun in the column before cannot move back.
+    if (col.blocks[col.blocks.length - take]!.id.includes('-cont-')) return [];
+    let left = take;
+    const popped = rollbackTrailingBlocks(col, doc.blocks, () => left-- > 0);
+    // The headings the group stood under go with it.
+    const heads = take === k ? rollbackHeadings(col) : [];
+    // The space above the blocks taken off is the column's again.
+    const last = col.blocks[col.blocks.length - 1];
+    if (last) col.availableHeight = col.bbox.y + col.bbox.height - (last.bbox.y + last.bbox.height);
+    return [...heads, ...popped];
   };
 
   /** Stamp a callout frame's content index and source range: the whole
@@ -4454,6 +4680,8 @@ function placeDocumentPass(
      * to the head or foot of a page, the bands it was floated to.
      */
     const placeSpanFloatsAtCut = (page: VDTPage, capActiveHere: boolean): boolean => {
+      // Not on an opener page that takes no float (#749).
+      if (openerFloatRule === 'avoid' && openerPages.has(page)) return false;
       let placedAny = false;
       for (let i = 0; i < pendingFloats.length;) {
         const f = pendingFloats[i]!;
@@ -4485,6 +4713,7 @@ function placeDocumentPass(
         if (built.block.resourceBlock) offsetResourceBlockToAbsolute(built.block.resourceBlock, 0, built.block.bbox.y);
         built.block.contentIndex = f.firstBlockIdx;
         doc.blocks.push(built.block);
+        noteOpenerFloat(page, f);
         floatsPlaced++;
         placedAny = true;
         pendingFloats.splice(i, 1);
@@ -4768,8 +4997,9 @@ function placeDocumentPass(
         if (levelBefore && !capActive && !proposedSpan) {
           // The box leaves an uncapped band: level it behind the box (a
           // trailing cap, resolved after balancing) and keep balancing from
-          // stretching its last column to the page bottom meanwhile.
-          proposeTrailingCap(startIdx);
+          // stretching its last column to the page bottom meanwhile. A band
+          // that is level already is closed at its text (#713).
+          proposeTrailingCap(startIdx, undefined, true);
           markForcedBreak();
         } else if (capActive && cap?.kind === 'trailing') {
           // Reached inside the band cut level for it: delivered even though
@@ -5295,6 +5525,63 @@ function placeDocumentPass(
     }
   };
 
+  /** Whether a resource set in the text asks for its caption in the side
+   *  column (#729): `placement.captionSide` on a `span: 'column'` embed,
+   *  `layout.inlineCaptionSide` on, a horizontal page, and no text wrapped
+   *  round it. The side column and its room are looked at where the block
+   *  is placed ({@link measureInlineAside}). */
+  const inlineAsideWanted = (resource: Resource | undefined, type: ResourceType | undefined, page: VDTPage): boolean => {
+    if (!resource || !resolved.layout.inlineCaptionSide || pageIsVertical(page)) return false;
+    const placement = resolveResourcePlacement(resource, type);
+    if (!placement.captionSide || placement.span !== 'column') return false;
+    return resolveResourceWrap(resource, type, resolved.layout.wrap) === undefined;
+  };
+  /** Whether the side column `sc` is free over the band a caption
+   *  `asideHeight` tall takes beside an embed placed next in `c`: the side
+   *  stack ends above the embed's top, the band ends inside the side
+   *  column, and no obstacle (a heading design, another embed's caption)
+   *  stands in it or within the float gap of it. */
+  const inlineAsideFree = (c: VDTColumn, sc: VDTColumn, spacing: number, asideHeight: number): boolean => {
+    const top = c.bbox.y + (c.bbox.height - c.availableHeight) + (c.blocks.length === 0 ? 0 : spacing);
+    const bottom = top + asideHeight;
+    if (sideUsedBottom(sc) > top + 0.5) return false;
+    if (bottom > sc.bbox.y + sc.bbox.height + 0.5) return false;
+    return !(sideObstacles.get(sc) ?? []).some((o) => o.bottom + floatGapPx > top + 0.5 && o.top - floatGapPx < bottom - 0.5);
+  };
+  /** The embed measured for column `c` with its caption and note in the
+   *  band's float-only side column, level with the body's top (#729), or
+   *  `null` when the band has no such column or it is not free there: the
+   *  caption then stays under the body. */
+  const measureInlineAside = (
+    raw: ContentBlock,
+    blockIdx: number,
+    c: VDTColumn,
+    page: VDTPage,
+    ctx: BlockMeasureContext,
+    base: MeasureContentBlockOptions,
+    spacing: number,
+  ): InlineAside | null => {
+    if (c.kind === 'span' || c.kind === 'side') return null;
+    const sideCol = sideColumnOf(page, c.band ?? 0);
+    if (!sideCol || sideCol.bbox.width <= 0.5) return null;
+    const opts = { captionAside: { dx: sideCol.bbox.x - c.bbox.x, width: sideCol.bbox.width } };
+    const block = measureContentBlock(raw, blockIdx, c.bbox.width, ctx, { ...base, ...opts });
+    if (!block?.resourceBlock || block.asideHeight === undefined || block.resourceBlock.rotation) return null;
+    if (!inlineAsideFree(c, sideCol, spacing, block.asideHeight)) return null;
+    return { block, opts, sideCol, col: c };
+  };
+  /** The band an embed's side caption takes in the side column, recorded
+   *  as an obstacle of its stack: side floats and side boxes set later go
+   *  above it when they fit there, else under it. */
+  const markInlineAside = (blk: VDTBlock, sideCol: VDTColumn, asideHeight: number): void => {
+    if (!(asideHeight > 0)) return;
+    const mark = { owner: blk, top: blk.bbox.y, bottom: blk.bbox.y + asideHeight };
+    const list = sideObstacles.get(sideCol);
+    if (list) list.push(mark);
+    else sideObstacles.set(sideCol, [mark]);
+    sideObstacleColumn.set(blk, sideCol);
+  };
+
   /**
    * An inline table (`::resource` placed `here`) that does not fit the room
    * left in its column (#634), by its style's `overflow` when
@@ -5311,7 +5598,9 @@ function placeDocumentPass(
    * table is placed as one block by the caller (it fits, or the rule does
    * not apply), `'dropped'`, or `'placed'`: every slice is placed and the
    * cursor sits in the column of the last one, which the caller snaps
-   * under. `blk` is the first slice's block, filled in here.
+   * under. `blk` is the first slice's block, filled in here. With
+   * `asideWanted` the first slice sets its caption in the side column when
+   * that is free beside it (#729); the continuations are set as ever.
    */
   const MIN_HEAD_ROWS = 2;
   const placeInlineTableSlices = (
@@ -5323,6 +5612,7 @@ function placeDocumentPass(
     resource: Resource,
     wholeHeight: number,
     spacingBefore: number,
+    asideWanted = false,
   ): 'whole' | 'dropped' | 'placed' => {
     const style = pickTableStyle(resolved, resource.table?.styleId);
     if (!style.splitInline || pageIsVertical(doc.pages[cursor.pageIndex]!)) return 'whole';
@@ -5365,6 +5655,8 @@ function placeDocumentPass(
     let part = 0;
     let moves = 0;
     let block = blk;
+    /** Columns where the first slice's caption found no room at the side. */
+    const asideRefused = new Set<VDTColumn>();
     for (;;) {
       enterBand(blockIdx, part);
       let col = currentColumn(doc, cursor);
@@ -5376,8 +5668,15 @@ function placeDocumentPass(
       const metrics = metricsAt(width) ?? firstMetrics;
       const spacing = part === 0 && col.blocks.length > 0 ? spacingBefore : 0;
       const avail = col.availableHeight - spacing;
+      // The first slice with its caption in the side column (#729).
+      const asideHere = asideWanted && startRow === 0 && !asideRefused.has(col)
+        ? measureInlineAside(raw, blockIdx, col, doc.pages[cursor.pageIndex]!, ctx, { styleOverride }, spacing)
+        : null;
+      const sliceAt = (s?: TableSliceSpec) => (asideHere
+        ? measureContentBlock(raw, blockIdx, width, ctx, { styleOverride, ...(s ? { tableSlice: s } : {}), ...asideHere.opts })
+        : measureAt(width, s));
       const restSlice: TableSliceSpec | undefined = startRow > 0 ? { startRow, endRow: rowCount, continues: false } : undefined;
-      const rest = measureAt(width, restSlice);
+      const rest = sliceAt(restSlice);
       if (!rest?.resourceBlock) return part === 0 ? 'whole' : 'placed';
       let placed = rest;
       let slice: TableSliceSpec | null = null;
@@ -5390,7 +5689,7 @@ function placeDocumentPass(
           continue;
         }
         const firstBody = startRow > 0 ? Math.max(startRow, headerRows) : headerRows;
-        const probe = measureAt(width, { startRow, endRow: firstBody + 1, continues: true });
+        const probe = sliceAt({ startRow, endRow: firstBody + 1, continues: true });
         const overhead = probe?.resourceBlock ? probe.measured.totalHeight - probe.resourceBlock.bodyRect.height : 0;
         // An empty column of full height (or a run of short ones behind)
         // takes the smallest slice even when it overflows: a fresh page
@@ -5400,7 +5699,7 @@ function placeDocumentPass(
           floor: floorOf(startRow),
           force,
           split: overflow === 'split',
-          fits: (s) => (measureAt(width, s)?.measured.totalHeight ?? Infinity) <= avail + FIT_EPS,
+          fits: (s) => (sliceAt(s)?.measured.totalHeight ?? Infinity) <= avail + FIT_EPS,
         });
         if (!slice) {
           // Not even the head rows fit: the (rest of the) table starts in
@@ -5410,9 +5709,15 @@ function placeDocumentPass(
           advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(minHeightAt(width, startRow)));
           continue;
         }
-        const m = measureAt(width, slice);
+        const m = sliceAt(slice);
         if (!m?.resourceBlock) return part === 0 ? 'whole' : 'placed';
         placed = m;
+      }
+      // The slice's caption (a line longer with its continuation suffix,
+      // perhaps) must still find the side column free.
+      if (asideHere && (placed.asideHeight === undefined || !inlineAsideFree(col, asideHere.sideCol, spacing, placed.asideHeight))) {
+        asideRefused.add(col);
+        continue;
       }
       // The slice's block: the first one is the caller's.
       if (part > 0) {
@@ -5439,6 +5744,7 @@ function placeDocumentPass(
       if (spacing > 0) col.availableHeight -= spacing;
       placeBlockInColumn(block, height, col, cursor);
       offsetResourceBlockToAbsolute(rb, block.bbox.x, block.bbox.y);
+      if (asideHere && placed.asideHeight !== undefined) markInlineAside(block, asideHere.sideCol, placed.asideHeight);
       doc.blocks.push(block);
       enterBand(blockIdx, part);
       if (!slice?.continues) return 'placed';
@@ -5687,6 +5993,171 @@ function placeDocumentPass(
     }).splitAt > 0;
   };
 
+  // --- Short lists kept whole (`bodyText.shortListSplit`, #749) -------------
+  const shortListRule = resolved.bodyText.shortListSplit;
+  /** The short lists of the running text by the content index of their
+   *  first item (`null`: a block that opens none). */
+  const shortLists = new Map<number, { items: number[] } | null>();
+  /**
+   * The short list content block `idx` opens: a run of list items (seen
+   * through container markers, its nested lists included) of up to
+   * `bodyText.shortListMaxItems` items, `idx` being its first. Not the
+   * entries of the contents or of an index, which are set as list items.
+   */
+  const shortListFrom = (idx: number): { items: number[] } | undefined => {
+    const known = shortLists.get(idx);
+    if (known !== undefined) return known ?? undefined;
+    const isItem = (b: ContentBlock | undefined): boolean =>
+      b?.type === 'listItem' && b.toc === undefined && b.index === undefined;
+    let found: { items: number[] } | null = null;
+    if (isItem(contentBlocks[idx]) && prevNonMarkerBlock(contentBlocks, idx)?.type !== 'listItem') {
+      const items: number[] = [];
+      let i = idx;
+      for (; i < contentBlocks.length; i++) {
+        const b = contentBlocks[i]!;
+        if (isMarkerBlock(b)) continue;
+        if (!isItem(b)) break;
+        items.push(i);
+        if (items.length > resolved.bodyText.shortListMaxItems) break;
+      }
+      if (items.length <= resolved.bodyText.shortListMaxItems) found = { items };
+    }
+    shortLists.set(idx, found);
+    return found ?? undefined;
+  };
+  /** The room a short list takes in a column `width` wide, from the top of
+   *  its first line to the foot of its last (the space above it aside),
+   *  and its lines, for the notes they cite. Undefined when an item
+   *  cannot be measured. */
+  const shortListNeed = (list: { items: number[] }, width: number, ctx: BlockMeasureContext): { height: number; lines: VDTLine[] } | undefined => {
+    let height = 0;
+    const lines: VDTLine[] = [];
+    let prev: ContentBlock | undefined;
+    for (const idx of list.items) {
+      const raw = contentBlocks[idx]!;
+      const item = measureContentBlock(raw, idx, width, ctx);
+      if (!item) return undefined;
+      if (prev) {
+        height += listItemGapPx(
+          { spacingPx: listItemSpacingPx(prev, ctx.resolved), depth: prev.depth ?? 1 },
+          { spacingPx: listItemSpacingPx(raw, ctx.resolved), depth: raw.depth ?? 1 },
+        );
+      }
+      height += item.measured.lines.length * item.kind.style.lineHeightPx;
+      lines.push(...item.measured.lines);
+      prev = raw;
+    }
+    return { height, lines };
+  };
+  /**
+   * The room the floats text block `blockIdx` cites would take from the
+   * foot of `col` once their citing lines are placed: for each one still
+   * held back for it, the band of its first slot on the page, when that is
+   * a foot band over `col` that the room the block leaves under it
+   * (`roomAfter`) still holds. Read before the block is placed, so an
+   * estimate: the colon line of a short list set whole counts it, since
+   * the figure that line cites takes the foot of the column right after
+   * it, where the list would have gone.
+   */
+  const citedFootTake = (blockIdx: number, col: VDTColumn, roomAfter: number): number => {
+    const page = doc.pages[cursor.pageIndex]!;
+    if (openerFloatRule === 'avoid' && openerPages.has(page)) return 0;
+    let take = 0;
+    for (const [id, gate] of citationGates) {
+      if (gate.blockIdx !== blockIdx) continue;
+      const f = pendingFloats.find((p) => p.resourceId === id);
+      const slot = f ? enumerateCurrentPageSlots(page, cursor.columnIndex, f, capKindOf, openerHeadOf)[0] : undefined;
+      if (!f || !slot || slot.side || slot.position !== 'bottom' || !slot.cols.includes(col)) continue;
+      const probe = probeFloatBand(page, f, slot.cols, slot.position, slot.pageSpan, false);
+      if (!probe) continue;
+      const band = col.availableHeight - availableAfterBand(col, 'bottom', probe, false);
+      if (band <= roomAfter + FIT_EPS) take = Math.max(take, band);
+    }
+    return take;
+  };
+  /** The short list item `idx` belongs to, and its place in it. */
+  const shortListItemAt = (idx: number): { list: { items: number[] }; item: number } | undefined => {
+    if (contentBlocks[idx]?.type !== 'listItem') return undefined;
+    let start = idx;
+    for (let i = idx - 1, seen = 0; i >= 0 && seen <= resolved.bodyText.shortListMaxItems; i--) {
+      const b = contentBlocks[i]!;
+      if (isMarkerBlock(b)) continue;
+      if (b.type !== 'listItem') break;
+      start = i;
+      seen++;
+    }
+    const list = shortListFrom(start);
+    const item = list ? list.items.indexOf(idx) : -1;
+    return list && item >= 0 ? { list, item } : undefined;
+  };
+  /**
+   * Under `'avoid'`, the short list content block `idx` opens or goes on
+   * with, as the floats offered a slot right before it see a keep-together
+   * box (`slotStarvesBox`): its height at a column width, from that item
+   * on. A float yields to it when the cursor's column holds the list whole
+   * and would not with the float: the figure a list's own lead-in cites
+   * would otherwise take the foot of the column once its citing line is
+   * placed, and cut the list under it.
+   */
+  const shortListBoxAt = (idx: number): { heightAt: (width: number) => number; stays: boolean } | null => {
+    if (shortListRule !== 'avoid') return null;
+    const at = shortListItemAt(idx);
+    if (!at) return null;
+    const ctx = partPlan.byBlock[idx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[idx]);
+    const rest = { items: at.list.items.slice(at.item) };
+    const heights = new Map<number, number>();
+    return {
+      stays: true,
+      heightAt: (width) => {
+        const key = Math.round(width * 100);
+        let h = heights.get(key);
+        if (h === undefined) {
+          const need = shortListNeed(rest, width, ctx);
+          h = need ? need.height + pendingSpacing : 0;
+          heights.set(key, h);
+        }
+        return h;
+      },
+    };
+  };
+  /** A `shortListSplit` warning for each short list whose items the pass
+   *  set in more than one column: all of them under `'warn'`, under
+   *  `'avoid'` the ones no column could hold whole. */
+  const shortListWarnings = (): ContentWarning[] => {
+    if (shortListRule === 'allow') return [];
+    // Where each list item of the running text landed (a box's children
+    // carry `containerId`).
+    const placed = new Map<number, { pageIndex: number; columns: Set<string> }>();
+    for (const page of doc.pages) {
+      for (const c of page.columns) {
+        for (const b of c.blocks) {
+          if (b.type !== 'listItem' || b.containerId !== undefined || b.contentIndex === undefined) continue;
+          const at = placed.get(b.contentIndex) ?? { pageIndex: page.index, columns: new Set<string>() };
+          at.columns.add(`${page.index}:${c.index}`);
+          placed.set(b.contentIndex, at);
+        }
+      }
+    }
+    const out: ContentWarning[] = [];
+    for (let idx = 0; idx < contentBlocks.length; idx++) {
+      const list = placed.has(idx) ? shortListFrom(idx) : undefined;
+      if (!list) continue;
+      const columns = new Set<string>();
+      for (const item of list.items) for (const key of placed.get(item)?.columns ?? []) columns.add(key);
+      if (columns.size < 2) continue;
+      const first = contentBlocks[list.items[0]!]!;
+      const last = contentBlocks[list.items[list.items.length - 1]!]!;
+      out.push({
+        kind: 'shortListSplit',
+        items: list.items.length,
+        sourceStart: first.sourceStart + bodyOffset,
+        sourceEnd: last.sourceEnd + bodyOffset,
+        pageIndex: placed.get(idx)!.pageIndex,
+      });
+    }
+    return out;
+  };
+
   /** The page break into a page of the parity `even` asks (a spread opens
    *  on a verso, an even page): the page the cursor stands on, an empty
    *  one, is marked a parity blank and passed while its number is odd. Even
@@ -5805,6 +6276,10 @@ function placeDocumentPass(
     inlineGapOwed = pendingSpacing > 0 ? { afterIdx: blockIdx, pending: pendingSpacing, exact: owed } : null;
     return undefined;
   };
+
+  /** The first block of the document that sets something: a heading there
+   *  opens the document's first page (`openerPages`, #749). */
+  const firstFlowBlockIdx = contentBlocks.findIndex((b) => !isMarkerBlock(b) && b.type !== 'directive');
 
   for (let blockIdx = 0; blockIdx < contentBlocks.length; blockIdx++) {
     if (options?.shouldCancel?.()) throw new BuildCancelledError();
@@ -5975,6 +6450,7 @@ function placeDocumentPass(
           titleSourceStart,
           titleSourceEnd,
         }, pageIndexOffset);
+        openerPages.add(doc.pages[cursor.pageIndex]!);
         flushPendingNumberingAtBoundary();
         continue;
       }
@@ -6139,6 +6615,9 @@ function placeDocumentPass(
     if (rawBlock.type === 'heading' && rawBlock.level) {
       const level = headingLevels.forBlock(rawBlock);
       const bb = level?.breakBefore;
+      /** The heading opens its page (#749): with its own break, or as the
+       *  first block of the document. */
+      let opensPage = blockIdx === firstFlowBlockIdx;
       if (bb && bb.enabled) {
         pendingSpacing = 0;
         closeFlowSegment(blockIdx);
@@ -6147,6 +6626,7 @@ function placeDocumentPass(
           enforcePageParity(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, bb.parity);
         }
         flushPendingNumberingAtBoundary();
+        opensPage = true;
       }
       // `span: 'page'` headings open a chapter band across the full content
       // width. Always start on a fresh page boundary so the band sits at the
@@ -6160,7 +6640,9 @@ function placeDocumentPass(
         advanceToNextPageBoundary(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
         cursor.columnIndex = 0;
         flushPendingNumberingAtBoundary();
+        opensPage = true;
       }
+      if (opensPage) openerPages.add(doc.pages[cursor.pageIndex]!);
     }
 
     const id = `block-${blockIdCounter++}`;
@@ -6196,8 +6678,9 @@ function placeDocumentPass(
      *  block keeps its own space in its snap, and the container's
      *  `marginBottom` follows as pending spacing from the closing marker. */
     const containerTail = isContainerTail && rawBlock.type === 'paragraph' ? paragraphContainer : undefined;
+    // (A paragraph style may set the rule for its own containers, #715.)
     const collapseTail = containerTail !== undefined
-      && resolved.bodyText.paragraphContainerSpacing === 'collapse'
+      && (containerTail.spacing ?? resolved.bodyText.paragraphContainerSpacing) === 'collapse'
       && containerTail.tailStyle.marginBottomPx >= 0;
     const tailStyle = collapseTail && blockMeasureCtx.bodyStyle.marginBottomPx > containerTail.tailStyle.marginBottomPx
       ? { ...containerTail.tailStyle, marginBottomPx: blockMeasureCtx.bodyStyle.marginBottomPx }
@@ -6240,6 +6723,17 @@ function placeDocumentPass(
     let measuredBlock = tryLoose
       ? measureLooseParagraph(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, styleOverride, looseLines, trackingLadder, looseOutcome, looseOffGrid)
       : measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, { styleOverride, ...upright, ...figureDelta });
+    // A resource set in the text with `captionSide` (#729): its caption and
+    // note go to the band's side column when that is free beside it, and
+    // the block is as tall as the body alone. Decided again in every
+    // column the block is tried in (see the resource branch below).
+    const asideWanted = measuredBlock?.kind.vdtType === 'resource' && rawBlock.type === 'resourceBlock'
+      && inlineAsideWanted(measuredBlock.kind.resource, measuredBlock.kind.resourceType, blockPage);
+    let inlineAside: InlineAside | null = asideWanted
+      ? measureInlineAside(rawBlock, blockIdx, col, blockPage, blockMeasureCtx, { styleOverride, ...figureDelta }, Math.max(pendingSpacing, floatGapPx))
+      : null;
+    if (inlineAside) measuredBlock = inlineAside.block;
+    const asideOpts = inlineAside?.opts;
     // An inline picture with a safe area a little too tall for the room
     // left in its column is cropped within its safe area to stay there
     // rather than move on and leave the column short (#442).
@@ -6249,7 +6743,7 @@ function placeDocumentPass(
       const over = measuredBlock.measured.totalHeight - room;
       if (over > 0.01 && room > 0 && over <= flex.shrink + 0.01) {
         const cropped = measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, {
-          styleOverride, ...upright, figureHeightDelta: flex.delta - over,
+          styleOverride, ...upright, ...asideOpts, figureHeightDelta: flex.delta - over,
         });
         if (cropped && cropped.measured.totalHeight <= room + 0.01) measuredBlock = cropped;
       }
@@ -6270,7 +6764,7 @@ function placeDocumentPass(
           if (!(scale > 0)) break;
           width = current.bodyRect.width * Math.min(scale, 0.99);
           if (width < rb.bodyRect.width * MIN_INLINE_FIGURE_SCALE) break;
-          const smaller = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, figureMaxBodyWidth: width });
+          const smaller = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, ...asideOpts, figureMaxBodyWidth: width });
           if (!smaller) break;
           measuredBlock = smaller;
           if (smaller.measured.totalHeight <= room + FIT_EPS) break;
@@ -6278,10 +6772,12 @@ function placeDocumentPass(
         // Still too tall at the smallest acceptable size: back to full size
         // and on to the next column, as without the option.
         if (measuredBlock!.measured.totalHeight > room + FIT_EPS) {
-          measuredBlock = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride });
+          measuredBlock = measureContentBlock(rawBlock, blockIdx, col.bbox.width, blockMeasureCtx, { styleOverride, ...asideOpts });
         }
       }
     }
+    // The fits above keep the caption at the side: they work on the body.
+    if (inlineAside) inlineAside = measuredBlock?.asideHeight !== undefined ? { ...inlineAside, block: measuredBlock } : null;
     if (tryLoose && budget !== undefined && knownOutcome === undefined && typeof looseOutcome.get(blockIdx) === 'number') {
       looseGained.set(budget.group, (looseGained.get(budget.group) ?? 0) + 1);
     }
@@ -6293,7 +6789,7 @@ function placeDocumentPass(
     let capInfo = measuredBlock.dropCap;
     /** Tracking the block's lines are set with; a paragraph moved whole into
      *  a column of another width is measured again, and may change it. */
-    let { letterSpacingPx } = measuredBlock;
+    let { letterSpacingPx, runtTracking } = measuredBlock;
     const { vdtType, headingLevel, numberPrefix, numberSeparator, headingNumber, listBullet, listDepth, listKind, bulletXOffsetInColumn, strikethroughText } = kind;
     // A structural heading (`hidden`) is placed like any heading — its
     // break, keep-with-next and grid snap apply — but with no line height
@@ -6313,8 +6809,8 @@ function placeDocumentPass(
     // --- Resource blocks (image / svg / table + caption) -----------------
     // Placed atomically (kept-together) — no mid-content split for v1.
     if (vdtType === 'resource') {
-      const resourceBlock = measuredBlock.resourceBlock!;
-      const groupHeight = measured.totalHeight;
+      let resourceBlock = measuredBlock.resourceBlock!;
+      let groupHeight = measured.totalHeight;
       const blk = createVDTBlock(id, 'resource', style.fontString, style.color, style.textAlign);
       blk.contentIndex = blockIdx;
       stampBlockExtras(blk, rawBlock);
@@ -6372,7 +6868,7 @@ function placeDocumentPass(
       // An inline table that does not fit the room left in its column is
       // cut between rows (#634), by the rules of a floated one.
       const sliced = !wraps && !resourceBlock.rotation && resourceBlock.table && kind.resource
-        ? placeInlineTableSlices(rawBlock, blockIdx, blk, blockMeasureCtx, styleOverride, kind.resource, groupHeight, spacingBefore)
+        ? placeInlineTableSlices(rawBlock, blockIdx, blk, blockMeasureCtx, styleOverride, kind.resource, groupHeight, spacingBefore, asideWanted)
         : 'whole';
       if (sliced === 'dropped') {
         flushPendingNumberingAtBoundary();
@@ -6381,6 +6877,40 @@ function placeDocumentPass(
       const columnBefore = col;
       if (sliced === 'whole') {
         enterBand(blockIdx, 0);
+        // A side caption is decided where the block is placed (#729): an
+        // embed that does not fit its column moves on by the rule of
+        // `placeAtomicBlock`, and in each column it reaches its caption
+        // goes to the side when the side column is free there, else under
+        // the body.
+        if (asideWanted) {
+          let decidedFor: VDTColumn = col;
+          let plain: MeasuredContentBlock | null | undefined = inlineAside ? undefined : measuredBlock;
+          for (let guard = 0; ; guard++) {
+            const c = currentColumn(doc, cursor);
+            if (c !== decidedFor) {
+              decidedFor = c;
+              inlineAside = measureInlineAside(rawBlock, blockIdx, c, doc.pages[cursor.pageIndex]!, blockMeasureCtx, { styleOverride, ...figureDelta }, spacingBefore);
+              if (!inlineAside && plain === undefined) {
+                plain = measureContentBlock(rawBlock, blockIdx, measureWidth, blockMeasureCtx, { styleOverride, ...figureDelta });
+              }
+              const next = inlineAside?.block ?? plain;
+              if (next?.resourceBlock) {
+                resourceBlock = next.resourceBlock;
+                groupHeight = next.measured.totalHeight;
+              } else {
+                inlineAside = null;
+              }
+            }
+            const available = c.availableHeight - (c.blocks.length === 0 ? 0 : spacingBefore);
+            if (groupHeight <= available + FIT_EPS) break;
+            if (c.blocks.length === 0 && c.availableHeight >= 0.5 && groupHeight > contentArea.height + FIT_EPS) break;
+            if (guard >= 8) break;
+            advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(groupHeight));
+          }
+          blk.resourceBlock = resourceBlock;
+          blk.lines[0]!.bbox = { x: 0, y: 0, width: resourceBlock.bodyRect.width, height: groupHeight };
+        }
+        const decidedColumn = currentColumn(doc, cursor);
         placeAtomicBlock(
           blk, groupHeight, spacingBefore, cursor, doc, geomResolved,
           contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(groupHeight),
@@ -6398,6 +6928,9 @@ function placeDocumentPass(
         // resource's own caption/table lines live on `resourceBlock` and must be
         // offset to absolute page coordinates here using the placed bbox origin.
         offsetResourceBlockToAbsolute(resourceBlock, blk.bbox.x, blk.bbox.y);
+        if (inlineAside && inlineAside.block.asideHeight !== undefined && currentColumn(doc, cursor) === decidedColumn) {
+          markInlineAside(blk, inlineAside.sideCol, inlineAside.block.asideHeight);
+        }
         const grown = figureGrowPx > 0 ? resourceBlock.bodyFlex?.delta ?? 0 : 0;
         if (grown > 0.01) {
           blk.balancing = { levers: ['flexFigure'], spaceAbove: 0, bodyGrowth: grown };
@@ -6588,6 +7121,22 @@ function placeDocumentPass(
     /** Whether the paragraph was already re-broken to keep a hyphen off
      *  the last line of a column (`bodyText.hyphenateAcrossColumns`). */
     let columnEndHyphenRetried = false;
+    /** The lines (1-based, counted from the first line still to place) the
+     *  guard keeps a hyphen off: the line the split falls after and one
+     *  every full column after it, or, under `'withinPage'` (#701), those
+     *  of them that close a page — the j-th column end from here does when
+     *  the `rest` columns left on this page that still take a line of this
+     *  text are used up and a whole number of fresh pages, of `perPage`
+     *  flow columns each, has gone by. */
+    const guardedColumnEnds = (mode: false | 'withinPage', splitAt: number, lineCount: number, fullColumn: number, page: VDTPage, columnIndex: number): number[] => {
+      const ends: number[] = [];
+      const rest = mode === false ? 0 : flowColumnsAfter(page, columnIndex, style.lineHeightPx);
+      const perPage = mode === false ? 1 : freshPageFlowColumns();
+      for (let n = splitAt, j = 0; n < lineCount; n += fullColumn, j++) {
+        if (j >= rest && (j - rest) % perPage === 0) ends.push(n);
+      }
+      return ends;
+    };
     /** `hyphenateAcrossColumns: false`: the paragraph's lines as set now
      *  (a re-break replaces them) and where the breaker broke them, the
      *  lines (1-based) its last re-break kept a hyphen off, and the part
@@ -6659,6 +7208,7 @@ function placeDocumentPass(
             laterWidths = [];
             wrapInsets = [];
             letterSpacingPx = again.letterSpacingPx;
+            runtTracking = again.runtTracking;
             remainingLines = [...raggedLooseLines(again.measured.lines, style.textAlign)];
             paragraphLines = remainingLines;
             paragraphBreaks = again.measured.breaks;
@@ -6832,6 +7382,7 @@ function placeDocumentPass(
             if (placed === 0) {
               capInfo = again!.dropCap;
               letterSpacingPx = again!.letterSpacingPx;
+              runtTracking = again!.runtTracking;
               guardedEnds = [];
               columnEndHyphenRetried = false;
             }
@@ -6863,7 +7414,7 @@ function placeDocumentPass(
       // block fits when its lines and all their notes do, and a split
       // keeps the lines whose notes fit under them.
       const noteCosts = vdtType === 'mathDisplay' ? undefined : notesPrefixCost(curCol, remainingLines);
-      const effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
+      let effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
       // A hair of tolerance: room of exactly N lines (grid arithmetic in
       // floats — a column cut by a band cap, a balancing extra line) must
       // hold N lines, not N - 1.
@@ -6962,6 +7513,31 @@ function placeDocumentPass(
         }
       }
 
+      // With `headings.columnHeadSpace: 'remainder'` (#706) a heading that
+      // opens a column drops its space above in whole grid lines only: what is
+      // left of a line stays above it, so its text starts as far under it
+      // as under the same heading set after a paragraph. The foot of its
+      // box stays on the grid line the snap puts it on, and no line of body
+      // text moves. A heading the grid does not snap, a hidden one, a
+      // `lineSpan` band, a page-span opener and a heading painted from its
+      // own design (its band is the design's, drawn from the column's head)
+      // keep the head of the column; so does the first block of a column
+      // under an opener band, which is set level with the first block
+      // under the opener (`openerHead`).
+      if (
+        vdtType === 'heading' && partIndex === 0 && !hiddenHeading && lineSpan === undefined
+        && resolved.headings.columnHeadSpace === 'remainder'
+        && (isFirstInColumn || underOpenerHeadFloat(curCol)) && openerHead === undefined
+        && !headingSetsOwnBand(headingLevels.forBlock(rawBlock))
+      ) {
+        const usedHeight = curCol.bbox.height - curCol.availableHeight;
+        const kept = columnHeadKept(blockIdx, rawBlock, usedHeight, effectiveRemainHeight, style, shouldSnapToGrid, curCol, blockMeasureCtx);
+        if (kept > 0) {
+          spacingBefore += kept;
+          effectiveAvailable -= kept;
+        }
+      }
+
       // Keep-with-list: if this colon-paragraph would fit but would leave no
       // room for the first list item, split off the colon line (or push the
       // whole paragraph when it is a single line or the split would leave a
@@ -6992,6 +7568,16 @@ function placeDocumentPass(
           effectiveGap = Math.ceil((paragraphBottom + effectiveGap - 0.01) / baselineGrid) * baselineGrid - paragraphBottom;
         }
         const minSpaceForList = effectiveGap + bodyStyle.lineHeightPx;
+        // A short list set whole (`shortListSplit: 'avoid'`, #749) needs
+        // all its room under the colon line, when a column can hold the
+        // line and the list at all — less what a figure this paragraph
+        // cites will take from the column's foot (`citedFootTake`).
+        let listIdx = blockIdx + 1;
+        while (listIdx < contentBlocks.length && isMarkerBlock(contentBlocks[listIdx])) listIdx++;
+        const wholeList = shortListRule === 'avoid' ? shortListFrom(listIdx) : undefined;
+        const wholeNeed = wholeList ? shortListNeed(wholeList, curCol.bbox.width, blockMeasureCtx) : undefined;
+        const keepsListWhole = wholeNeed !== undefined
+          && style.lineHeightPx + effectiveGap + wholeNeed.height <= contentArea.height + FIT_EPS;
         // A line of room is not always enough (EF-110): with
         // `colonListRoom: 'item'` the first item has to be able to start
         // there, by the rules that split it — a two-line item the orphan
@@ -7001,6 +7587,7 @@ function placeDocumentPass(
           availableAfter < minSpaceForList - FIT_EPS
           || (resolved.bodyText.colonListRoom === 'item'
             && !firstListItemStarts(blockIdx, availableAfter - effectiveGap, curCol.bbox.width, blockMeasureCtx))
+          || (keepsListWhole && availableAfter - effectiveGap - citedFootTake(blockIdx, curCol, availableAfter) < wholeNeed.height - FIT_EPS)
         ) {
           const effectiveWidowMin = resolved.bodyText.avoidWidows
             ? Math.max(1, resolved.bodyText.widowMinLines)
@@ -7011,7 +7598,7 @@ function placeDocumentPass(
             const splitLines = remainingLines.slice(0, splitAt);
             const blk = createVDTBlock(id, vdtType, style.fontString, style.color, style.textAlign);
             applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
             blk.contentIndex = blockIdx;
             stampBlockExtras(blk, rawBlock);
             blk.headingLevel = headingLevel;
@@ -7108,7 +7695,7 @@ function placeDocumentPass(
             const splitLines = remainingLines.slice(0, splitAt);
             const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
             applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
             blk.contentIndex = blockIdx;
             stampBlockExtras(blk, rawBlock);
             blk.lines = resetLinePositions(splitLines, style.lineHeightPx);
@@ -7145,6 +7732,41 @@ function placeDocumentPass(
               advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
               continue;
             }
+          }
+        }
+      }
+
+      // A short list is set whole (`bodyText.shortListSplit: 'avoid'`,
+      // #749): when its items do not all fit under what the column holds
+      // and an empty column would hold them, the list opens the next
+      // column, with the headings right above it. Not a list a colon line
+      // introduces: that line already took the list's room into account,
+      // and the two stay together. Nor one that opens its column, or
+      // stands under nothing but headings: it cannot do better anywhere.
+      if (vdtType === 'listItem' && partIndex === 0 && shortListRule === 'avoid' && curCol.blocks.length > 0) {
+        const list = shortListFrom(blockIdx);
+        const headingRun = trailingHeadingRun(curCol);
+        const lead = list ? prevNonMarkerBlock(contentBlocks, blockIdx) : undefined;
+        const colonLed = lead?.type === 'paragraph' && resolved.bodyText.keepColonWithList && /[:：︰﹕]\s*$/.test(lead.text);
+        const need = list && !colonLed && headingRun < curCol.blocks.length
+          ? shortListNeed(list, curCol.bbox.width, blockMeasureCtx)
+          : undefined;
+        if (need && need.height <= contentArea.height + FIT_EPS) {
+          const listNotes = notesPrefixCost(curCol, need.lines);
+          const room = curCol.availableHeight - spacingBefore - (listNotes ? listNotes[listNotes.length - 1]! : 0);
+          if (need.height > room + FIT_EPS) {
+            if (resolved.headings.keepWithNext && headingRun > 0) {
+              const rolledBack = rollbackHeadings(curCol);
+              if (rolledBack.length > 0) {
+                blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
+                pendingSpacing = 0;
+                advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+                break;
+              }
+            }
+            pendingSpacing = 0;
+            advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+            continue;
           }
         }
       }
@@ -7229,7 +7851,7 @@ function placeDocumentPass(
         const partId = partIndex === 0 ? id : `${id}-cont-${partIndex}`;
         const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
         applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
         blk.contentIndex = blockIdx;
         stampBlockExtras(blk, rawBlock);
         if (partIndex === 0) { blk.headingLevel = headingLevel; if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; } if (headingNumber !== undefined) blk.headingNumber = headingNumber; }
@@ -7297,6 +7919,23 @@ function placeDocumentPass(
         if (vdtType === 'heading' && effectiveRemainHeight > totalRemainHeight && h > curCol.availableHeight + FIT_EPS) {
           h = Math.max(effectiveRemainHeight, curCol.availableHeight);
         }
+        // A block whose lines fit, and whose snap would reach the grid line
+        // under the column's foot (a foot the notes reserved there took off
+        // the grid, or a bottom margin on the column's last line), ends at
+        // the foot (#716): its box stays inside its column and the room left
+        // reads 0, not a negative height. The space it still owed is dropped,
+        // as pending spacing is at any column's end. A column cut by a band
+        // cap keeps the overrun: there it is how the block's bottom margin
+        // reaches the page-span box under the cut (`bandUsedBottomWithSide`).
+        if (
+          shouldSnapToGrid && partIndex === 0
+          && !uncappedBottoms.has(curCol)
+          && h > curCol.availableHeight + FIT_EPS
+          && effectiveRemainHeight <= curCol.availableHeight + FIT_EPS
+        ) {
+          h = Math.max(effectiveRemainHeight, curCol.availableHeight);
+          tailOwed = 0;
+        }
         placeBlockInColumn(blk, h, curCol, cursor);
         citedLinesPlaced(blockIdx, blk);
         finalizeListItem(blk, partIndex === 0);
@@ -7329,6 +7968,19 @@ function placeDocumentPass(
           }
         }
         break;
+      }
+
+      // An index entry that leaves the column takes the entries of its
+      // group the keep rule does not let stay with it (#712): the roll-back
+      // comes before any cut between its own lines.
+      if (rawBlock.index && partIndex === 0 && curCol.blocks.length > 0) {
+        const rolledBack = rollbackIndexGroup(curCol, rawBlock, blockMeasureCtx.resolved.index.groups.splitMinEntries);
+        if (rolledBack.length > 0) {
+          blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
+          pendingSpacing = 0;
+          advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+          break;
+        }
       }
 
       // Block doesn't fit — try to split (orphan/widow-aware)
@@ -7385,20 +8037,25 @@ function placeDocumentPass(
         // placement then starts over with its lines. Only a paragraph set
         // from its first line here — its earlier lines are not placed yet —
         // and never one the balancing is running long.
+        //
+        // `'withinPage'` (#701) guards only the ends that close a page: this
+        // column's when no later column of its page takes text, and then
+        // one every page of full columns. With none in the paragraph,
+        // nothing is measured again.
+        const hyphenGuard = resolved.bodyText.hyphenateAcrossColumns;
         if (
           choice.splitAt > 0
-          && !resolved.bodyText.hyphenateAcrossColumns
+          && hyphenGuard !== true
           && !columnEndHyphenRetried
           && partIndex === 0
           && looseLines === undefined
         ) {
           const fullColumn = Math.max(1, Math.floor((contentArea.height + 0.01) / style.lineHeightPx));
-          const ends: number[] = [];
-          for (let n = choice.splitAt; n < remainingLines.length; n += fullColumn) ends.push(n);
+          const ends = guardedColumnEnds(hyphenGuard, choice.splitAt, remainingLines.length, fullColumn, doc.pages[cursor.pageIndex]!, cursor.columnIndex);
           /** How a setting ends its guarded lines: whether this column's
            *  last line is hyphenated, and how many guarded lines are. */
           const columnEndHyphens = (lines: readonly VDTLine[]) => ({
-            first: lines[choice.splitAt - 1]?.hyphenated === true,
+            first: ends[0] === choice.splitAt && lines[choice.splitAt - 1]?.hyphenated === true,
             count: ends.filter((n) => lines[n - 1]?.hyphenated).length,
           });
           const natural = columnEndHyphens(remainingLines);
@@ -7439,19 +8096,21 @@ function placeDocumentPass(
         // this column's end (or fewer at the ends still to come). The
         // placed lines are checked again all the same: a break trace from
         // the other measuring path cannot keep them.
+        // Under `'withinPage'` only from a column that closes its page.
         if (
           choice.splitAt > 0
-          && !resolved.bodyText.hyphenateAcrossColumns
+          && hyphenGuard !== true
           && partIndex > 0
           && columnEndHyphenPart !== partIndex
           && looseLines === undefined
           && remainingLines[choice.splitAt - 1]?.hyphenated === true
+          && (hyphenGuard === false || columnClosesPage(doc.pages[cursor.pageIndex]!, cursor.columnIndex, style.lineHeightPx))
         ) {
           columnEndHyphenPart = partIndex;
           const placed = paragraphLines.length - remainingLines.length;
           const fullColumn = Math.max(1, Math.floor((contentArea.height + 0.01) / style.lineHeightPx));
-          const later: number[] = [];
-          for (let n = choice.splitAt; n < remainingLines.length; n += fullColumn) later.push(placed + n);
+          const later = guardedColumnEnds(hyphenGuard, choice.splitAt, remainingLines.length, fullColumn, doc.pages[cursor.pageIndex]!, cursor.columnIndex)
+            .map((n) => placed + n);
           // The ends already placed keep their guard; the later ones the
           // last re-break assumed give way to where the columns now end.
           const ends = [...guardedEnds.filter((n) => n <= placed), ...later];
@@ -7513,7 +8172,7 @@ function placeDocumentPass(
 
           const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
           applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
           blk.contentIndex = blockIdx;
           stampBlockExtras(blk, rawBlock);
           if (partIndex === 0) { blk.headingLevel = headingLevel; if (numberPrefix) { blk.numberPrefix = numberPrefix; if (numberSeparator !== undefined) blk.numberSeparator = numberSeparator; } if (headingNumber !== undefined) blk.headingNumber = headingNumber; }
@@ -7610,7 +8269,7 @@ function placeDocumentPass(
       const partId = partIndex === 0 ? id : `${id}-cont-${partIndex}`;
       const blk = createVDTBlock(partId, vdtType, style.fontString, style.color, style.textAlign);
       applyStyleAttrs(blk, style);
-            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx;
+            if (letterSpacingPx !== undefined) blk.letterSpacing = letterSpacingPx; if (runtTracking !== undefined) blk.runtFix = { tracking: runtTracking };
       blk.contentIndex = blockIdx;
       stampBlockExtras(blk, rawBlock);
       // Stamp the prefix as the other placement branches do: a full-page
@@ -7807,6 +8466,9 @@ function placeDocumentPass(
   });
   if (shrunk.length > 0) floatShrinkWarningsByDoc.set(doc, shrunk);
   if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // The composition rules (#749): short lists cut, floats on opener pages.
+  const ruleNotes = [...shortListWarnings(), ...openerFloatNotes];
+  if (ruleNotes.length > 0) compositionWarningsByDoc.set(doc, ruleNotes);
 
   const { proposals: citingPageProposals, refused: citingPageRefused } = settleCitingPageFloats();
 
@@ -7903,7 +8565,7 @@ export function* buildDocumentGen(
   // cap; words of a joining script that run past their line, and styles
   // whose letter-spacing such words do not take.
   // Line numbers set over a float of the side column (#621).
-  const loose = [...cjkLooseLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? [])];
+  const loose = [...cjkLooseLineWarnings(doc), ...raggedLineWarnings(doc), ...wordOverflowWarnings(doc), ...(joiningSpacingWarnings.get(doc) ?? []), ...(dropCapWarningsByDoc.get(doc) ?? []), ...lineNumberWarnings(doc), ...codeOverflowWarnings(doc), ...(floatShrinkWarningsByDoc.get(doc) ?? []), ...(textWrapWarningsByDoc.get(doc) ?? []), ...(compositionWarningsByDoc.get(doc) ?? [])];
   // Side boxes and side floats set on pages after the text, and what the
   // layout could place nowhere (#639).
   loose.push(...afterTextWarnings(doc), ...(unplacedByDoc.get(doc) ?? []));
@@ -7955,6 +8617,9 @@ const floatShrinkWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** The `textWrap` warnings of a build (#627) and its `columnsTooNarrow`
  *  ones (#634), found by its last pass. */
 const textWrapWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
+/** The `shortListSplit` and `openerFloat` warnings of a build (#749),
+ *  found by its last pass. */
+const compositionWarningsByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
 /** What a pass set in the side column of a page opened after the text of
  *  its chapter (#639): a side box's frame, a side float's block, with the
  *  source range an `afterText` warning points at. Read from the finished
@@ -8416,10 +9081,18 @@ function* buildDocumentBalanced(
     const div = firstDivergentColumn(best.doc, next.doc, s.range);
     if (!div) return false;
     if (newLines.length === 0 && newLoose.length === 0) return false;
+    // Where the headings hold lines back for the loose paragraphs (#707),
+    // a pass that tried both in the columns at fault blames the paragraphs
+    // first: run a line long, they are what moves text across a column
+    // break, and a heading blacklisted with them could never take the lines
+    // it took alone up to 1.27. The spacing levers are tried again without
+    // them, and blacklisted in their turn if the cascade is theirs.
+    const looseFirst = balancing.maxLinesBeforeLoose < balancing.maxLinesPerHeading;
     const blacklist = (cands: ReadonlySet<number> | null): boolean => {
       let hit = false;
-      for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       for (const k of newLoose) if (!cands || cands.has(k)) { s.failedLoose.add(k); hit = true; }
+      if (hit && looseFirst) return true;
+      for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       return hit;
     };
     const keysOf = (pick: (g: ColumnGap) => boolean): Set<number> =>
@@ -8444,10 +9117,13 @@ function* buildDocumentBalanced(
       }
       const proposal = proposeBalanceLines(best.doc, best.forcedBreakPages, applied, {
         maxLinesPerHeading: balancing.maxLinesPerHeading,
+        maxLinesBeforeLoose: balancing.maxLinesBeforeLoose,
         stretchAfterLists: balancing.stretchAfterLists,
         maxLinesAfterList: balancing.maxLinesAfterList,
+        stretchAfterDisplays: balancing.stretchAfterDisplays,
         stretchAfterFloats: balancing.stretchAfterFloats,
         maxLinesAfterFloat: balancing.maxLinesAfterFloat,
+        stretchAfterWideFloats: balancing.stretchAfterWideFloats,
         looseParagraphs: balancing.looseParagraphs,
         maxLooseParagraphs: balancing.maxLooseParagraphs,
         optimalLineBreaking: best.doc.config.bodyText.optimalLineBreaking,

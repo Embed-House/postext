@@ -82,6 +82,24 @@ Parentheses, square brackets, braces and guillemets are mirrored in right-to-lef
 
 The ornate parentheses of Qurʾān quotations, ﴿ (U+FD3F) and ﴾ (U+FD3E), are not mirrored: since Unicode 14 ﴿ is the opening one and ﴾ the closing one, and their glyphs are drawn for right-to-left text. Type ﴿ first: `﴿بسم الله الرحمن الرحيم﴾` prints with ﴿ on the right. They are not paired brackets either, so in a left-to-right paragraph (an Arabic verse quoted in an English book) the brackets next to a Latin word take the paragraph's direction: ﴿ lands on the left of the verse and the pair reads reversed, as it does in a browser. Set the quotation as a right-to-left isolate, `:rtl[﴿بسم الله الرحمن الرحيم﴾]`, and both brackets go with the verse, ﴿ on its right.
 
+### Words with no letter
+
+A word made only of digits, punctuation or symbols (`46.`, `1367)`, `».`) has no script of its own, and a face may draw its marks by script. Amiri sets a Latin full stop, brackets and guillemets in Latin text and Arabic ones otherwise: its stop is 0.20 em wide against 0.32, a bracket 0.26 against 0.46. Handed such a word alone, each shaper picks a script by a rule of its own: one version of Chrome takes the font's default forms, a later one the Latin ones, the PDF the default. The same note then broke its lines otherwise from one browser to the next, and its PDF set marks of another width in the measured places.
+
+Postext decides instead (`bodyText.scriptContext`, on by default). Such a word takes the script of the text around it:
+
+- painted left to right, the script of the nearest letter before it in its isolate, else of the nearest after it: `46.` at the end of an English note is Latin, the `1367` of `(1367)` in an Arabic sentence is Arabic;
+- painted right to left (a bracket or a full stop at a right-to-left level), the script of the nearest right-to-left letter: the brackets of `(1367)` in an Arabic sentence stay Arabic;
+- with no letter near it (a paragraph or an isolate of numbers alone), the script of the document's language.
+
+The layout measures the word in that script, and the canvas, the HTML, the fixed-layout EPUB and the PDF paint those forms at that width, the same in every browser. A Latin note, a citation or a bibliography entry in an Arabic book needs no no-break space to keep `46.` or `(d. 1367)` in their Latin forms: write them with ordinary spaces. A word shaped in the Arabic script takes no letter-spacing, like the Arabic words around it.
+
+A word that has a letter is one script run, and so are the pieces it is painted in. A DOI or a web address may end a line at each of its joints, and a word wider than its line is cut where the line ends; a piece left with no letter (`10.1006/` and `.2001` of `10.1006/ijhc.2001.0458`) takes the script it has inside its word: of the letter before it there, else of the word's first letter. It is measured and painted in that script, so the address sets solid in a face whose digits change with the script (Noto Serif SC draws them 0.55 em wide in Latin text and 0.47 em otherwise).
+
+In a Chinese or Japanese document (`locale` `zh` or `ja`) a doubled ellipsis or dash (`……`, `——`, `――`) is the document's own mark wherever it is cited. A word with no letter that holds one, as `…….` at the end of an English sentence of the colophon, sets the pair in the forms of Han text (six centred dots, a dash two ems long) and what stands with it, the full stop or a quote, in the script of the sentence. It needs no `:ltr[…]` and no span of another style.
+
+The rule acts in Latin, Greek, Cyrillic, Arabic and Hebrew contexts, and only in a face whose punctuation or digits change with the script; every other face is laid out as before. It covers the running text, headings, lists, captions, notes, table cells and the line of dots of a contents entry. A right-to-left word is measured as it is painted, so a bracket or a stop at its edge takes its width in every browser. A configuration stored by postext 1.27 or earlier is read with `scriptContext: false` and keeps the forms its browser gave it. See [`bodyText.scriptContext`](/en/docs/configuration-text#body-text).
+
 ## Page order and right binding
 
 An Arabic book is bound on its right edge. Its first page is a left-hand page, its spreads read from the right page to the left one, and its columns fill from right to left. Postext lays such a page out as a left-to-right page seen in a mirror: everything in the flow of the text (columns, lines, indents, list markers, floats, notes, boxes, tables) is placed by the same code as in an English book, and the page is then mirrored as a whole, with each word, image and formula painted the right way round.
@@ -453,6 +471,7 @@ The chapters start with `:::numbering{format="abjad" startAt=1}` before the intr
 - **Verse**: no run-in verse inside prose, no strophic forms with a centred refrain beyond single centred lines; a hemistich wider than the measure wraps from the start side, without a hanging indent.
 - **Kashida**: the text copied from the HTML output still holds the inserted tatweels, and kashidas on neighbouring lines are not kept from stacking up one above the other.
 - **Code listings** read left to right in a right-to-left book: each line is set from the box's far side, as an English quotation is, its line numbers in the gutter on its left, its copied text in logical order. See [Code listings](/en/docs/configuration-styles#code-listings).
+- **Words with no letter** take the script of their context in the running text, headings, lists, captions, notes and cells. A list marker, the label of a cross-reference, a note marker, design text (a folio, a running head of numbers), comic lettering and a paragraph set by the CJK composer are shaped alone, as each browser shapes them.
 
 ## Sources
 

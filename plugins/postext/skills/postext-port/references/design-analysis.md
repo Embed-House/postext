@@ -67,7 +67,9 @@ lines per page, plus the line gap and, with two columns, the gutter in character
   half width with a straight right edge = Kaiming or `lineEndHalf`; two marks side by side taking two full
   cells = no compression. These set `cjk.region` / `punctuationWidth` / `compressAdjacent`.
 - **Space between Han and Latin**: a visible gap around Latin words and digits = `latinSpacing` (¼ em by
-  default); none = `0`.
+  default); none = `0`. In a Japanese book the gap also stands next to a Western word's brackets and signs
+  (`normalize() 関数`, `(abc) 関数`, `100% 増`): that is `latinSpacingEdge: 'western'`, Japan's default from 1.28.
+  A Chinese page with the gap next to letters and digits only is `'letters'`, its default.
 - Then set `cjk.grid: {enabled: true, charsPerLine, linesPerPage}` and give `page.margins` as minimums: the
   engine centres the type area in the room they leave.
 
@@ -295,7 +297,7 @@ per-resource `placement`:
 | Across the page, at the top | `position: "top"`, `span: "page"` |
 | Exactly where it is mentioned, including ornaments and tables under their paragraph (a long one splits across columns from 1.25) | `position: "here"` + `::resource{id}` |
 | In the outer margin column | `span: "side"` (layout `oneAndHalf`, side role `floats`) |
-| Figure in the main column with its caption in the margin | `span: "column"`, `captionSide: true` |
+| Figure in the main column with its caption in the margin | `span: "column"`, `captionSide: true` (a float, or ≥ 1.28 a figure kept `position: "here"`) |
 | Across some of a newspaper's columns (2 of 5) | `span: "column"`, `columns: 2` (≥ 1.18; boxes: callout `columns`) |
 | Narrower than the column | `width: 0.7`, `align: "center"` |
 | Picture with the text running beside it (newsletter, magazine, a portrait in a profile) | `position: "here"`, `wrap: "right"`, `width: 0.4` + `::resource{id}` before the paragraph (≥ 1.24) |

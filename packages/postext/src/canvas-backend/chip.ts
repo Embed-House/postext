@@ -61,7 +61,7 @@ export function paintChip(
     const untracked = tracked && joiningScriptIn(run.text);
     if (untracked) ctx.letterSpacing = '0px';
     const runX = tx;
-    paintRunInDirection(ctx, run.rtl, () => ctx.fillText(run.text, runX, baseline + (run.baselineShift ?? 0)));
+    paintRunInDirection(ctx, run.rtl, () => ctx.fillText(run.text, runX, baseline + (run.baselineShift ?? 0)), run.text);
     if (untracked) ctx.letterSpacing = spacing!;
     tx += run.width;
   }

@@ -36,6 +36,7 @@ import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNam
 import { lineRuns, resolveParagraph } from 'postext';
 import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
+import { shapingScript } from '../shapingLanguage';
 import { toUnicodeCmap } from '../fontCache';
 import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives';
 
@@ -160,7 +161,14 @@ function cached<T>(byFont: WeakMap<PDFFont, Map<string, T>>, font: PDFFont, key:
  * bytes to shape from (a standard font) or HarfBuzz is not loaded.
  */
 function shapingOf(font: PDFFont, text: string, direction: 'ltr' | 'rtl', language: string | undefined): Shaping | null {
-  return cached(shapingsByFont, font, `${direction}|${language ?? ''}|${text}`, () => buildShaping(font, text, direction, language));
+  return cached(shapingsByFont, font, `${direction}|${language ?? ''}|${scriptKey()}${text}`, () => buildShaping(font, text, direction, language));
+}
+
+/** The script in force (#725, `withShapingScript`) in a cache key: empty
+ *  with none, so every other key is unchanged. */
+function scriptKey(): string {
+  const script = shapingScript();
+  return script === undefined ? '' : `${script}\u0001`;
 }
 
 /**
@@ -182,7 +190,7 @@ function shapedShow(
   from?: number,
   to?: number,
 ): ShapedShow | null {
-  const key = `${direction}|${language ?? ''}|${hideTatweel}|${from ?? ''}|${to ?? ''}|${text}`;
+  const key = `${direction}|${language ?? ''}|${hideTatweel}|${from ?? ''}|${to ?? ''}|${scriptKey()}${text}`;
   return cached(showsByFont, font, key, () => {
     const shaping = shapingOf(font, text, direction, language);
     return shaping ? encodeStretch(font, shaping, from ?? 0, to ?? shaping.run.glyphs.length, hideTatweel) : null;
@@ -250,7 +258,10 @@ function ownerOffset(clusterText: string, want: readonly number[], taken: Set<nu
 function buildShaping(font: PDFFont, text: string, direction: 'ltr' | 'rtl', language: string | undefined): Shaping | null {
   const embedder = embedderOf(font);
   if (!embedder) return null;
-  const run = shapeRun(embedder.fontData!, text, { direction, language, features: shapeFeatures(embedder.fontFeatures) });
+  // A word with no letter is shaped in the script the layout measured it
+  // in (#725); any other text in the script HarfBuzz reads from it.
+  const script = shapingScript();
+  const run = shapeRun(embedder.fontData!, text, { direction, language, ...(script ? { script } : {}), features: shapeFeatures(embedder.fontFeatures) });
   if (!run) return null;
   noteMissingGlyphs(font, text);
   const face = embedder.font;

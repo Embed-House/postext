@@ -1,4 +1,4 @@
-import { needsBidi } from '../bidi';
+import { bidiClassOf, needsBidi } from '../bidi';
 import { graphemesOf } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
 import { paintAsOneRun } from './mirrorFrame';
@@ -23,24 +23,33 @@ import { paintAsOneRun } from './mirrorFrame';
  * the same either way (nearly all of them) is painted as before, with one
  * `fillText`.
  *
- * Two rules of direction (#685):
+ * The same holds for any tracked text painted with one `fillText` (#703):
+ * a line or a run of a design text (running heads, openers, callout
+ * titles, balloon lettering) and the sideways Latin run of a vertical
+ * line come through here as a word does.
+ *
+ * Three rules of direction (#685, #703):
  * - the pieces are one run. On a right-to-left page, painted through a
  *   mirror that turns every `fillText` back about its own box
  *   (`mirrorFrame.ts`), the word is turned once, about the box it was
  *   measured in, and its pieces are set inside it from its left end, as on
  *   a left-to-right page. Turned one by one they stood in the mirror's
  *   order: "five" read "vefi";
- * - a word that holds a right-to-left letter (Hebrew, Arabic…) or a letter
- *   of a joining script is never cut, whoever asks: its letters run the
- *   other way, and an Arabic word painted in pieces loses its joins. The
- *   painters already keep such words away (`fillSegmentWord`); this is the
- *   rule where the cut is made.
+ * - a word that holds a letter of a joining script (Arabic…) is never cut,
+ *   whoever asks: painted in pieces it loses its joins. Nor is a text in
+ *   two directions (a Hebrew word with a number or a Latin letter in it):
+ *   its pieces would not stand in one order;
+ * - a right-to-left word of a script that does not join (Hebrew) is cut
+ *   like any other, where the painter set the context right to left for
+ *   it (`fillSegmentWord`, `paintRunInDirection`): its pieces are set from
+ *   the right end of its box, each painted right to left.
  */
 
 /** One piece of a word painted apart from the rest. */
 export interface TrackedPiece {
   text: string;
-  /** Where the piece starts in the word's natural shaping, px from its start. */
+  /** Where the piece starts in the word's natural shaping, px from its
+   *  start: its left end, or its right end for a right-to-left word. */
   offset: number;
   /** Glyphs of the word before the piece: each takes the tracking once (a
    *  ligature is one glyph, as in the PDF). */
@@ -65,6 +74,8 @@ interface TrackedWord {
   natural: number;
   /** Its letters (graphemes): each was measured with the tracking after it. */
   letters: number;
+  /** A right-to-left word: its pieces run from the right end of its box. */
+  rtl: boolean;
 }
 
 /** What is known of each text set in a font. */
@@ -78,16 +89,29 @@ const knownByFont = new Map<string, Known>();
 
 type Ctx = Pick<CanvasRenderingContext2D, 'font' | 'letterSpacing' | 'measureText'>;
 
+/** Bidi classes a right-to-left run holds at one level whatever stands
+ *  beside them: its letters, their marks, and the neutral characters that
+ *  take the run's direction. A digit, a Latin letter or a bidi control
+ *  makes a second level. */
+const ONE_LEVEL_RTL: ReadonlySet<string> = new Set(['R', 'AL', 'NSM', 'WS', 'ON', 'CS', 'ES', 'ET']);
+
 function known(font: string): Known {
   let k = knownByFont.get(font);
   if (!k) knownByFont.set(font, k = { otherwise: new Map(), words: new Map() });
   return k;
 }
 
-/** Whether `text` may be painted in pieces at all: no right-to-left letter
- *  in it and no letter of a joining script (see the module comment). */
-function divisible(text: string): boolean {
-  return !needsBidi(text) && !joiningScriptIn(text);
+/** The direction `text` runs in when it may be painted in pieces at all
+ *  (see the module comment), else null: left to right with no
+ *  right-to-left letter in it, right to left when it is one run of a
+ *  script that does not join. */
+function divisible(text: string): 'ltr' | 'rtl' | null {
+  if (joiningScriptIn(text)) return null;
+  if (!needsBidi(text)) return 'ltr';
+  for (const ch of text) {
+    if (!ONE_LEVEL_RTL.has(bidiClassOf(ch.codePointAt(0)!))) return null;
+  }
+  return 'rtl';
 }
 
 function widthAt(ctx: Ctx, text: string, spacing: number): number {
@@ -120,7 +144,8 @@ function otherwise(ctx: Ctx, font: string, text: string): boolean {
 }
 
 function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
-  if (!divisible(text)) return null;
+  const direction = divisible(text);
+  if (!direction) return null;
   const letters = graphemesOf(text);
   if (letters.length < 2 || !otherwise(ctx, font, text)) return null;
   // Two neighbours that shape otherwise under letter-spacing are a
@@ -150,10 +175,13 @@ function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
     glyphs += g.ligature ? 1 : g.end - g.start;
     return piece;
   });
-  return { pieces, natural: natural(0, letters.length), letters: letters.length };
+  return { pieces, natural: natural(0, letters.length), letters: letters.length, rtl: direction === 'rtl' };
 }
 
-/** {@link trackedPieces} with the word's measures. */
+/** {@link trackedPieces} with the word's measures. A word is cut only
+ *  where the context paints in its direction: a right-to-left word in a
+ *  context set right to left, any other in one that is not (a run of
+ *  brackets painted right to left is mirrored and reordered, never cut). */
 function trackedWord(ctx: CanvasRenderingContext2D, text: string): TrackedWord | null {
   if (text.length < 2 || !measures(ctx)) return null;
   const font = ctx.font;
@@ -166,6 +194,7 @@ function trackedWord(ctx: CanvasRenderingContext2D, text: string): TrackedWord |
     if (words.size >= MAX_WORDS) words.clear();
     words.set(text, word);
   }
+  if (word && word.rtl !== ('direction' in ctx && ctx.direction === 'rtl')) return null;
   return word;
 }
 
@@ -191,24 +220,30 @@ export function shapedOtherwise(ctx: CanvasRenderingContext2D, text: string): bo
 }
 
 /**
- * The pieces a tracked word is painted in, in the context's font, or null
- * when it is painted whole (the browser shapes it the same under
- * letter-spacing, the context measures none, or the word holds a
- * right-to-left or joining letter). The context's `letterSpacing` is put
- * back as it was found.
+ * The pieces a tracked word is painted in, in the context's font and
+ * direction, or null when it is painted whole (the browser shapes it the
+ * same under letter-spacing, the context measures none, the word holds a
+ * joining letter or text in two directions, or the context paints the
+ * other way). The context's `letterSpacing` is put back as it was found.
  */
 export function trackedPieces(ctx: CanvasRenderingContext2D, text: string): readonly TrackedPiece[] | null {
   return trackedWord(ctx, text)?.pieces ?? null;
 }
 
 /**
- * Paint a word of a tracked line with `paint` (the caller's `fillText`) at
- * `x`, `y`: its left end on a left-to-right page, the start of its box in
- * a mirrored frame. `tracking` is the context's `letterSpacing` on entry,
- * px, and on return. A word that would lose its ligatures to it is painted
- * in its {@link trackedPieces}, as one run (`paintAsOneRun`): its box is
- * the one the frame turns a word painted whole about, its natural width
- * and the tracking after each letter. Any other word with one `paint`.
+ * Paint a word of a tracked line, or any tracked text set as one run (a
+ * line or a run of a design text, a sideways run of a vertical line), with
+ * `paint` (the caller's `fillText`) at `x`, `y`: its left end on a
+ * left-to-right page, the start of its box in a mirrored frame. `tracking`
+ * is the context's `letterSpacing` on entry, px, and on return. A text
+ * that would lose its ligatures to it is painted in its
+ * {@link trackedPieces}, as one run (`paintAsOneRun`): its box is the one
+ * the frame turns a text painted whole about, its natural width and the
+ * tracking after each letter. A right-to-left word (the context set right
+ * to left and aligned on its left edge by the caller) has its pieces set
+ * from the right end of that box. Any other text with one `paint`.
+ * Returns the advance of a text painted in pieces, the width it was
+ * measured at, and undefined for one painted whole.
  */
 export function fillTrackedWord(
   ctx: CanvasRenderingContext2D,
@@ -217,17 +252,24 @@ export function fillTrackedWord(
   y: number,
   tracking: number,
   paint: (text: string, x: number, y: number) => void,
-): void {
+): number | undefined {
   const word = tracking !== 0 ? trackedWord(ctx, text) : null;
   if (!word) {
     paint(text, x, y);
-    return;
+    return undefined;
   }
-  paintAsOneRun(ctx, x, word.natural + tracking * word.letters, () => {
+  const width = word.natural + tracking * word.letters;
+  paintAsOneRun(ctx, x, width, () => {
+    const align = ctx.textAlign;
+    // Each piece of a right-to-left word from its own right end.
+    if (word.rtl) ctx.textAlign = 'right';
     for (const piece of word.pieces) {
+      const at = piece.offset + tracking * piece.glyphsBefore;
       if (piece.ligature) ctx.letterSpacing = '0px';
-      paint(piece.text, x + piece.offset + tracking * piece.glyphsBefore, y);
+      paint(piece.text, word.rtl ? x + width - at : x + at, y);
       if (piece.ligature) ctx.letterSpacing = `${tracking}px`;
     }
+    if (word.rtl) ctx.textAlign = align;
   });
+  return width;
 }

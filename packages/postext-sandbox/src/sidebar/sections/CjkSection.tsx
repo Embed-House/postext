@@ -18,6 +18,7 @@ import {
   defaultCjkRubyAlign,
   defaultCjkRubyOverhang,
   defaultCjkSpaceAfterQuestion,
+  defaultCjkLatinSpacingEdge,
   dimensionsEqual,
   isCjkLanguage,
   resolveBodyTextConfig,
@@ -125,6 +126,8 @@ export const CjkSection = memo(function CjkSection() {
   const circledNumbers = raw?.circledNumbers ?? DEFAULT_CJK_CONFIG.circledNumbers;
   const composeDesignText = raw?.composeDesignText ?? DEFAULT_CJK_CONFIG.composeDesignText;
   const latinSpacing = raw?.latinSpacing ?? DEFAULT_CJK_CONFIG.latinSpacing;
+  // As the engine reads it: an unknown value is Auto.
+  const latinSpacingEdge = raw?.latinSpacingEdge === 'letters' || raw?.latinSpacingEdge === 'western' ? raw.latinSpacingEdge : 'auto';
   const uprightDigits = raw?.uprightDigits ?? DEFAULT_CJK_CONFIG.uprightDigits;
   const autoRegion = cjkRegionOf(locale) ?? 'mainland';
   const resolvedRegion = region === 'auto' ? autoRegion : region;
@@ -134,6 +137,8 @@ export const CjkSection = memo(function CjkSection() {
   const hangingNames = { none: labels.cjkHangingNone, allow: labels.cjkHangingAllow, force: labels.cjkHangingForce };
   const autoHanging = defaultCjkHangingPunctuation(resolvedRegion);
   const autoSpaceAfterQuestion = defaultCjkSpaceAfterQuestion(resolvedRegion);
+  const edgeNames = { letters: labels.cjkLatinSpacingEdgeLetters, western: labels.cjkLatinSpacingEdgeWestern };
+  const autoLatinSpacingEdge = defaultCjkLatinSpacingEdge(resolvedRegion);
   const bracketNames = {
     half: labels.cjkParagraphStartBracketHalf,
     indent: labels.cjkParagraphStartBracketIndent,
@@ -172,6 +177,10 @@ export const CjkSection = memo(function CjkSection() {
   const markColor = raw?.annotationColor ?? body.color;
   const ruby = raw?.ruby;
   const warichu = raw?.warichu;
+  // As the engine reads it (`resolveWarichu`): one or more, rounded down.
+  const warichuMinChars = typeof warichu?.minChars === 'number' && Number.isFinite(warichu.minChars) && warichu.minChars >= 1
+    ? Math.floor(warichu.minChars)
+    : DEFAULT_CJK_CONFIG.warichu.minChars!;
   const kunten = raw?.kunten;
   const auto = (name: string) => labels.cjkAuto.replace('__value__', name);
   // Ruby overhang and alignment (#422): Japan's by name, else the clreq
@@ -372,6 +381,19 @@ export const CjkSection = memo(function CjkSection() {
               tooltip={labels.cjkLatinSpacingTooltip}
               isDefault={dimensionsEqual(latinSpacing, DEFAULT_CJK_CONFIG.latinSpacing)}
               onReset={() => resetField('latinSpacing')}
+            />
+            <SelectInput
+              label={labels.cjkLatinSpacingEdge}
+              value={latinSpacingEdge}
+              options={[
+                { value: 'auto', label: auto(edgeNames[autoLatinSpacingEdge]) },
+                { value: 'letters', label: labels.cjkLatinSpacingEdgeLetters },
+                { value: 'western', label: labels.cjkLatinSpacingEdgeWestern },
+              ]}
+              onChange={(v) => write({ ...raw, latinSpacingEdge: v as CjkConfig['latinSpacingEdge'] })}
+              tooltip={labels.cjkLatinSpacingEdgeTooltip}
+              isDefault={latinSpacingEdge === DEFAULT_CJK_CONFIG.latinSpacingEdge}
+              onReset={() => resetField('latinSpacingEdge')}
             />
             <SelectInput
               label={labels.cjkSpaceAfterQuestion}
@@ -594,6 +616,16 @@ export const CjkSection = memo(function CjkSection() {
               isDefault={warichu?.fontSize === undefined || dimensionsEqual(warichu.fontSize, DEFAULT_CJK_CONFIG.warichu.fontSize!)}
               onReset={() => writeWarichu({ fontSize: undefined })}
             />
+            <NumberInput
+              label={labels.cjkWarichuMinChars}
+              value={warichuMinChars}
+              onChange={(v) => writeWarichu({ minChars: Math.max(1, Math.round(v)) })}
+              min={1}
+              max={6}
+              tooltip={labels.cjkWarichuMinCharsTooltip}
+              isDefault={warichuMinChars === DEFAULT_CJK_CONFIG.warichu.minChars}
+              onReset={() => writeWarichu({ minChars: undefined })}
+            />
             <ColorPicker
               label={labels.cjkWarichuColor}
               value={warichu?.color ?? markColor}
@@ -691,6 +723,15 @@ export const CjkSection = memo(function CjkSection() {
                   tooltip={labels.cjkGridShowTooltip}
                   isDefault={raw?.grid?.show !== true}
                   onReset={() => writeGrid({ show: undefined })}
+                />
+                {/* Manuscript paper (#718): ragged lines keep every square. */}
+                <ToggleSwitch
+                  label={labels.cjkGridFullLines}
+                  checked={raw?.grid?.fullLines === true}
+                  onChange={(v) => writeGrid({ fullLines: v ? true : undefined })}
+                  tooltip={labels.cjkGridFullLinesTooltip}
+                  isDefault={raw?.grid?.fullLines !== true}
+                  onReset={() => writeGrid({ fullLines: undefined })}
                 />
                 {grid && (
                   <p className="mt-1 text-[0.66rem] leading-[1.35] text-(--slate) [text-wrap:pretty]">

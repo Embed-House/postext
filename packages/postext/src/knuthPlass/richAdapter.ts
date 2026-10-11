@@ -4,6 +4,7 @@
  * reconstruction of VDT lines from the optimal breakpoint sequence.
  */
 
+import { justifiedSpaceRatios } from '../measure/spaceRatios';
 import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
 import { createBoundingBox } from '../vdt';
 import type { TextAlign } from '../types';
@@ -15,6 +16,7 @@ import { lineTracking, trackSegments } from './tracking';
 import { graphemeCount } from '../measure/graphemes';
 import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate';
 import { joiningScriptIn } from '../measure/joining';
+import { pieceScriptContext } from '../measure/script';
 
 interface RichBreakPoint {
   charIndex: number;
@@ -65,6 +67,9 @@ interface RichToken {
   refResourceId?: string;
   refAnchor?: true;
   refPageIndex?: number;
+  /** A later piece of a reference label that breaks at its spaces (#702,
+   *  see `measure/rich.ts`). */
+  refContinues?: true;
   footnoteId?: string;
   /** A bibliography label's space (#290, see `measure/rich.ts`). */
   labelTab?: 'lead' | 'gap';
@@ -89,6 +94,12 @@ interface RichToken {
   runs?: { text: string; bold?: boolean; italic?: boolean }[];
   /** How far kashidas may widen this word, px (`measure/kashida.ts`). */
   kashida?: number;
+  /** The script a word with no letter is shaped in (#725, see
+   *  `measure/rich.ts`). */
+  scriptContext?: import('../measure/script').ScriptContext;
+  /** A word with a letter that may be set in pieces with none: the script
+   *  in force where it starts (see `measure/rich.ts`). */
+  wordScript?: import('../measure/script').ScriptContext;
 }
 
 export function richTokensToItems(
@@ -287,6 +298,12 @@ export function reconstructRichLines(
           ? token.text.slice(meta.subStart, meta.subEnd)
           : token.text;
         const cleanText = cleanSoftHyphens(subText);
+        // A piece with no letter of a word that has one (`10.1006/` of a
+        // DOI) is painted in the script it has inside the word (#725).
+        const pieceScript = token.scriptContext
+          ?? (token.wordScript !== undefined && meta.subStart !== undefined && meta.subEnd !== undefined
+            ? pieceScriptContext(token.text, meta.subStart, meta.subEnd, token.wordScript)
+            : undefined);
         lineSegments.push({
           kind: token.mathRender ? 'math' : token.swatch ? 'swatch' : token.chip ? 'chip' : 'text',
           text: cleanText,
@@ -296,7 +313,7 @@ export function reconstructRichLines(
           ...(token.mathRender ? { mathRender: token.mathRender } : {}),
           ...(token.swatch ? { swatch: token.swatch } : {}),
           ...(token.chip ? { chip: token.chip } : {}),
-          ...(token.refResourceId !== undefined ? { refResourceId: token.refResourceId, ...(token.refAnchor ? { refAnchor: true as const } : {}), ...(token.refPageIndex !== undefined ? { refPageIndex: token.refPageIndex } : {}) } : {}),
+          ...(token.refResourceId !== undefined ? { refResourceId: token.refResourceId, ...(token.refAnchor ? { refAnchor: true as const } : {}), ...(token.refPageIndex !== undefined ? { refPageIndex: token.refPageIndex } : {}), ...(token.refContinues ? { refContinues: true } : {}) } : {}),
           ...(token.footnoteId !== undefined ? { footnoteId: token.footnoteId } : {}),
           ...(token.labelTab ? { labelTab: true as const } : {}),
           ...(token.script ? { script: token.script, fontString: token.scriptFont, baselineShift: token.baselineShift } : {}),
@@ -311,6 +328,7 @@ export function reconstructRichLines(
           ...(token.cjkMarks ? { cjkMarks: token.cjkMarks } : {}),
           ...(token.inserted ? { inserted: true } : {}),
           ...(token.runs ? { runs: token.runs } : {}),
+          ...(pieceScript ? { scriptContext: pieceScript } : {}),
         });
         textParts.push(cleanText);
       } else if (it.type === 'glue' && meta) {
@@ -319,6 +337,8 @@ export function reconstructRichLines(
           kind: 'space',
           text: token.text,
           width: it.width,
+          // A space inside a reference label (#702) is of the reference.
+          ...(token.refResourceId !== undefined ? { refResourceId: token.refResourceId, ...(token.refAnchor ? { refAnchor: true as const } : {}), ...(token.refPageIndex !== undefined ? { refPageIndex: token.refPageIndex } : {}), refContinues: true } : {}),
         });
         textParts.push(token.text);
       }
@@ -365,20 +385,8 @@ export function reconstructRichLines(
     if (tracking !== 0) trackSegments(segments, tracking);
     const contentWidth = segments.reduce((s, seg) => s + seg.width, 0);
 
-    // Compute justifiedSpaceRatio
-    let justifiedSpaceRatio: number | undefined;
-    if (textAlign === 'justify' && !isLastLine && normalSpaceWidth > 0) {
-      let wordWidth = 0;
-      let spaceCount = 0;
-      for (const seg of segments) {
-        if (seg.kind === 'space') spaceCount++;
-        else wordWidth += seg.width;
-      }
-      if (spaceCount > 0) {
-        const justifiedSpaceWidth = (lineMaxWidth - wordWidth) / spaceCount;
-        justifiedSpaceRatio = justifiedSpaceWidth / normalSpaceWidth;
-      }
-    }
+    // The line's word spacing: as painted, and as the breaker bounds it.
+    const spaceRatios = textAlign === 'justify' && !isLastLine ? justifiedSpaceRatios(segments, lineMaxWidth, normalSpaceWidth) : {};
 
     lines.push({
       text: lineText,
@@ -390,7 +398,7 @@ export function reconstructRichLines(
       ...(opensRepeated ? { repeatedHyphen: true } : {}),
       segments,
       isLastLine,
-      ...(justifiedSpaceRatio !== undefined ? { justifiedSpaceRatio } : {}),
+      ...spaceRatios,
       ...(tracking !== 0 ? { letterSpacing: tracking } : {}),
     });
 

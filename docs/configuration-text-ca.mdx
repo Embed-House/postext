@@ -157,7 +157,7 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>minWordSpacing</code></td>
       <td><code>number</code></td>
       <td><code>0.6</code></td>
-      <td>Límit inferior de l'espaiat entre paraules en text justificat, com a multiplicador de l'amplada de l'espai normal.</td>
+      <td>Límit inferior de l'espaiat entre paraules en text justificat, com a multiplicador de l'amplada de l'espai normal. Tots dos límits fiten el canvi de cada espai respecte de la seva pròpia amplada, comptat en espais de rodona: una línia que conté un espai en cursiva o en negreta, més estret o més ample que el de la rodona, es pinta unes centèsimes d'espai per sota o per sobre del límit dins del qual es va tallar. <code>lineWordSpacing(line)</code> dona el nombre que fiten els límits; vegeu <a href="/ca/docs/justification#implementació-de-postext">Partició de mots i justificació</a>.</td>
     </tr>
     <tr>
       <td><code>maxJustifyTracking</code></td>
@@ -224,6 +224,12 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Llegeix una barra inversa al final d'una línia del text, i <code>{'\\\\'}</code> davant d'un espai, com un salt de línia forçat dins d'un paràgraf, una cita o un element de llista (el salt forçat de CommonMark): les paraules següents comencen una línia nova del mateix paràgraf, i la línia anterior es compon amb la seva amplada natural, com una última línia. Una barra inversa al final del paràgraf s'imprimeix, i dos espais al final d'una línia no són un salt (vegeu <a href="/ca/docs/document-format#salts-de-línia">Format del document › Salts de línia</a>). <code>false</code> conserva la lectura de la 1.22: les barres s'imprimeixen i les línies s'uneixen amb un espai; les configuracions desades abans el text de les quals té una barra així es llegeixen amb aquest valor (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Els títols, els peus, les notes i les cel·les de taula es parteixen a <code>{'\\\\'}</code> en tots dos casos.</td>
+    </tr>
+    <tr>
+      <td><code>scriptContext</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Compon una paraula sense lletres (<code>46.</code>, <code>1367)</code>, <code>».</code>: xifres, signes de puntuació o símbols sols) en l'escriptura del text que l'envolta. Una font pot dibuixar aquests signes segons l'escriptura (Amiri compon el punt i els parèntesis llatins en text llatí i els àrabs a la resta, amb altres amplades), i un motor que rep la paraula aïllada tria una escriptura amb la seva pròpia regla, diferent entre versions de navegador i el PDF. Amb això activat, la paraula agafa l'escriptura de la lletra més propera abans d'ella dins del seu aïllat (i si no, després), la de la lletra de dreta a esquerra més propera quan es pinta de dreta a esquerra, i la de la llengua del document si no hi ha lletres a prop; la maquetació la mesura en aquesta escriptura, i el canvas, l'HTML, l'EPUB de maquetació fixa i el PDF pinten aquestes formes amb aquesta amplada. Actua en contextos llatí, grec, ciríl·lic, àrab i hebreu, i només en una font la puntuació o les xifres de la qual canvien amb l'escriptura; una paraula composta en l'escriptura àrab no porta espaiat entre lletres. Un tros sense lletres d'una paraula que sí que en té (<code>10.1006/</code> i <code>.2001</code> d'un DOI que acaba la línia a les seves juntures) agafa l'escriptura que té dins de la paraula. En un document xinès o japonès, els punts suspensius dobles i el guió llarg doble (<code>……</code>, <code>——</code>) citats en una frase d'una altra escriptura conserven les formes del text han. No afecta els marcadors de llista, els rètols de les referències creuades, el text de disseny, la retolació de còmic ni els paràgrafs del compositor CJK. <code>false</code> compon la paraula aïllada, com fins a postext 1.27; una configuració desada abans de <code>configVersion</code> 12 es llegeix així (<code>pinLegacyScriptContext</code>). Vegeu <a href="/ca/docs/arabic-layout#paraules-sense-lletres">Paraules sense lletres</a>.</td>
     </tr>
     <tr>
       <td><code>tabStops</code></td>
@@ -592,6 +598,18 @@ Quan l'alineació del text està configurada com a `'justify'`, la partició de 
       <td><code>true</code></td>
       <td>Permet que el diccionari divideixi les paraules d'un compost, una paraula amb un guionet entre dues lletres (<code>teó-rico-práctico</code>). <code>false</code> deixa la paraula sencera excepte pel seu propi guionet, on la línia sí que pot acabar (<code>teórico-</code> · <code>práctico</code>), com fa TeX. Un guionet tou escrit a la paraula continua permetent el tall, i un compost més ample que tota la línia es continua dividint. S'aplica al text corregut, els títols, les llistes, les cites i els requadres; els peus, les notes, les cel·les de taula i l'índex de continguts continuen dividint els compostos. Vegeu <a href="/ca/docs/justification#paraules-compostes">Paraules compostes</a>.</td>
     </tr>
+    <tr>
+      <td><code>exceptions</code></td>
+      <td><code>string[]</code></td>
+      <td>cap</td>
+      <td>Paraules que el diccionari no ha de dividir, o que només pot dividir per on diu l'entrada: <code>'Alice'</code> no es divideix mai, <code>'You-Tube'</code> només pel seu guionet. Vegeu <a href="#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+    </tr>
+    <tr>
+      <td><code>capitalized</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Divideix les paraules amb majúscula inicial com qualsevol altra. <code>false</code> deixa sencera tota paraula que comença amb majúscula (<code>Alice</code>, <code>Ámsterdam</code>, <code>UNESCO</code>), inclosa la primera de cada frase. Vegeu <a href="#mots-que-no-es-divideixen">Mots que no es divideixen</a>.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -608,6 +626,27 @@ matchHyphenationLocale('sv');    // undefined: es divideix amb 'en-us', amb un a
 ```
 
 Les paraules de menys de 5 caràcters no es parteixen mai. El motor requereix com a mínim 2 caràcters abans i 3 caràcters després d'un punt de ruptura.
+
+#### Mots que no es divideixen
+
+Un diccionari divideix un nom com divideix qualsevol paraula: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Tres ajustos deixen senceres les paraules, i tots tres tenen per defecte el que fa el diccionari.
+
+`hyphenation.exceptions` és una llista de paraules, com el `\hyphenation{…}` de TeX. Una entrada escrita sense guionet no es divideix mai; una d'escrita amb guionets només es divideix per aquests, de manera que `'You-Tube'` dona `You-` · `Tube` i res més. Una entrada coincideix amb una sèrie de lletres, l'envolti el que l'envolti: `'Alice'` val per a `(Alice,` i `Alice’s`, i un compost es compara part per part (`Blender-based` coincideix amb `'Blender'`). Una forma flexionada és una altra paraula i necessita la seva pròpia entrada. Una entrada en minúscules val per a la paraula s'escrigui com s'escrigui (`'blender'` cobreix `Blender` i `BLENDER`); una entrada amb majúscula inicial només val per a les aparicions que comencen amb majúscula, de manera que `'Rose'` deixa sencer el nom i deixa `rose` al diccionari. Les entrades només porten lletres i guionets; la resta es descarta.
+
+`hyphenation.capitalized: false` deixa sencera tota paraula que comença amb majúscula: els noms, les sigles i també la primera paraula de cada frase. És l'opció «Hyphenate Capitalized Words» d'InDesign desactivada, i el `\uchyph=0` de TeX. Una entrada d'`exceptions` amb guionets continua dividint la seva paraula per aquests. L'alemany escriu amb majúscula tots els substantius, de manera que l'ajust deixaria un text alemany gairebé sense paraules per dividir: anomena-hi les paraules a `exceptions`, o fes servir `citations.hyphenateNames`.
+
+`citations.hyphenateNames: false` deixa sencers els cognoms dels autors que el document cita, siguin on siguin: en una citació, en el text corregut i a la llista de referències. Vegeu [Cites](/ca/docs/configuration-notes-references#cites).
+
+```ts
+const config: PostextConfig = {
+  locale: 'es',
+  bodyText: {
+    hyphenation: { exceptions: ['Ámsterdam', 'Blender', 'You-Tube'] },
+  },
+};
+```
+
+Tots tres arriben a tot text que el diccionari divideix: cos, títols, llistes, requadres, peus, cel·les de taula, notes, capçaleres i la resta del text de disseny. És més del que abasta `compounds`, que els peus, les notes, les cel·les i l'índex de continguts ignoren. Dues coses continuen com estaven. Un guionet tou escrit en una aparició d'una paraula continua decidint aquella aparició, i un guionet tou davant de la primera lletra deixa sencera una aparició sense necessitat de llista (vegeu [On no es talla mai una línia](/ca/docs/justification#on-no-es-talla-mai-una-línia)). I una paraula més ampla que la mesura sencera es continua dividint: pels punts de la seva entrada si en té i, si no, per les síl·labes del diccionari. Amb menys paraules dividides, una columna justificada estreta té menys maneres d'omplir les seves línies, així que revisa l'espaiat entre paraules després de desactivar `capitalized` en una pàgina a tres columnes. L'EPUB de maquetació fluida deixa la partició de mots al sistema de lectura, que no sap res d'aquestes regles.
 
 #### Text en bandera
 
@@ -768,7 +807,7 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td><code>avoidOrphans</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que un paràgraf acabi amb menys de <code>orphanMinLines</code> línies al principi de la columna següent.</td>
+      <td>Desaconsellar que un paràgraf acabi amb menys de <code>orphanMinLines</code> línies al principi de la columna següent. En una retícula de caràcters (<code>cjk.grid</code>) de la regió <code>japan</code> el valor per defecte és <code>false</code>.</td>
     </tr>
     <tr>
       <td><code>orphanMinLines</code></td>
@@ -792,7 +831,7 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td><code>avoidWidows</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que un paràgraf comenci amb menys de <code>widowMinLines</code> línies al final de la columna actual.</td>
+      <td>Desaconsellar que un paràgraf comenci amb menys de <code>widowMinLines</code> línies al final de la columna actual. En una retícula de caràcters (<code>cjk.grid</code>) el valor per defecte és <code>false</code>: la pàgina conté les línies que la retícula compta.</td>
     </tr>
     <tr>
       <td><code>widowMinLines</code></td>
@@ -813,10 +852,22 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
       <td>Quan és <code>true</code>, els elements de llista també reben protecció contra vídues. Només té efecte si <code>avoidWidows</code> és <code>true</code>.</td>
     </tr>
     <tr>
+      <td><code>shortListSplit</code></td>
+      <td><code>'allow' | 'warn' | 'avoid'</code></td>
+      <td><code>'allow'</code></td>
+      <td>Una llista curta partida entre dues columnes o pàgines: una llista de fins a <code>shortListMaxItems</code> elements al text corregut, com una de tres elements composta 1 + 2. <code>avoidOrphansInLists</code> i <code>avoidWidowsInLists</code> mantenen juntes les línies d'un element; aquesta regla manté junts els elements d'una llista. <code>'allow'</code> parteix la llista on s'acaba la columna, com qualsevol altra. <code>'warn'</code> la compon igual i informa de cada llista partida (un avís <code>shortListSplit</code>, vegeu <a href="/ca/docs/configuration-programmatic-usage#avisos-del-document">Avisos del document</a>). <code>'avoid'</code> compon la llista sencera: si no hi cap sota el que ja té la columna, obre la següent, i els encapçalaments que tingui just a sobre i la línia de dos punts que la introdueix (<code>keepColonWithList</code>) l'acompanyen. Una llista més alta que una columna buida es parteix com qualsevol altra, i se n'avisa. Les llistes de dins d'un <code>:::callout</code> segueixen les regles de tall de la caixa, i les entrades de <code>:::toc</code> i de <code>:::index</code> no són llistes. Des de postext 1.28.</td>
+    </tr>
+    <tr>
+      <td><code>shortListMaxItems</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Quants elements pot tenir com a màxim una llista per comptar com a curta a <code>shortListSplit</code>, inclosos els de les seves llistes niades. Un nombre enter, 1 com a mínim. Des de postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>avoidRunts</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Desaconsellar que els paràgrafs acabin amb una línia curta: una última línia molt breu, p. ex. una única paraula curta aïllada. També en el text en bandera, amb <code>optimalRagged</code>. Un paràgraf xinès, japonès o coreà no acaba en una línia d'un sol caràcter, sol o amb els signes que el tanquen (孤字): la línia anterior li cedeix el seu últim caràcter si encara es pot justificar dins del límit d'espaiat.</td>
+      <td>Desaconsellar que els paràgrafs acabin amb una línia curta: una última línia molt breu, p. ex. una única paraula curta aïllada. També en el text en bandera, amb <code>optimalRagged</code>. Un paràgraf xinès, japonès o coreà no acaba en una línia d'un sol caràcter, sol o amb els signes que el tanquen (孤字): la línia anterior li cedeix el seu últim caràcter si encara es pot justificar dins del límit d'espaiat. Una línia alineada a l'esquerra, a la dreta o centrada també el cedeix i queda un caràcter curta; amb <code>cjk.grid.fullLines</code> (paper de manuscrit) conserva totes les caselles, i el paràgraf pot acabar en un sol caràcter.</td>
     </tr>
     <tr>
       <td><code>runtMinCharacters</code></td>
@@ -874,15 +925,15 @@ Més enllà de la partició de mots i els límits d'espaiat, la configuració de
     </tr>
     <tr>
       <td><code>hyphenateAcrossColumns</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | 'withinPage'</code></td>
       <td><code>true</code></td>
-      <td>Permet que una columna o una pàgina acabi en una paraula partida (l'<em>Hyphenate Across Column</em> d'InDesign). Amb <code>false</code>, el paràgraf que travessa el salt de columna es torna a tallar perquè la seva última línia a la columna acabi en una paraula sencera; els espais entre paraules de les línies de dalt absorbeixen la diferència, dins de <code>maxWordSpacing</code> i <code>minWordSpacing</code>. És una preferència: on cap tall dins d'aquests límits no ho evita, el guionet es queda. Ho intenta en tots els salts de columna d'un paràgraf: en el primer i en els següents que cauen on acaba una columna plena, amb un nou tall; i en un salt posterior que cau en un altre lloc (una vídua evitada, una banda tallada a nivell), amb un altre nou tall des d'aquella columna, que deixa les línies ja col·locades a les columnes anteriors amb els seus talls i només torna a tallar la resta. No afecta el cos dels requadres. Amb <code>optimalRagged</code>, un paràgraf en bandera es torna a tallar igual: els seus espais entre paraules no canvien d'amplada, així que només es mouen els finals de les seves línies. Cada nou tall mesura el paràgraf una vegada més, així que un llibre amb molts guionets al peu de columna triga una mica més a compondre's. Necessita <code>optimalLineBreaking</code>, i <code>optimalRagged</code> en el text en bandera.</td>
+      <td>Permet que una columna o una pàgina acabi en una paraula partida (l'<em>Hyphenate Across Column</em> d'InDesign). Amb <code>false</code>, el paràgraf que travessa el salt de columna es torna a tallar perquè la seva última línia a la columna acabi en una paraula sencera; els espais entre paraules de les línies de dalt absorbeixen la diferència, dins de <code>maxWordSpacing</code> i <code>minWordSpacing</code>. És una preferència: on cap tall dins d'aquests límits no ho evita, el guionet es queda. Ho intenta en tots els salts de columna d'un paràgraf: en el primer i en els següents que cauen on acaba una columna plena, amb un nou tall; i en un salt posterior que cau en un altre lloc (una vídua evitada, una banda tallada a nivell), amb un altre nou tall des d'aquella columna, que deixa les línies ja col·locades a les columnes anteriors amb els seus talls i només torna a tallar la resta. <code>'withinPage'</code> protegeix les línies que tanquen una pàgina i cap altra: una paraula es pot partir entre dues columnes d'una mateixa pàgina, i l'última línia d'una pàgina acaba en una paraula sencera sempre que els límits ho permeten. Canvia menys línies que <code>false</code>, i això pesa amb tres columnes o més, on dos de cada tres finals de columna queden dins de la pàgina; amb una sola columna els dos valors donen les mateixes línies. Una columna tanca la seva pàgina quan cap columna posterior de la pàgina rep text: no en rep una columna lateral reservada als flotants, ni una columna que una taula o una figura ha omplert. No afecta el cos dels requadres. Amb <code>optimalRagged</code>, un paràgraf en bandera es torna a tallar igual: els seus espais entre paraules no canvien d'amplada, així que només es mouen els finals de les seves línies. Cada nou tall mesura el paràgraf una vegada més, així que un llibre amb molts guionets al peu de columna triga una mica més a compondre's. Necessita <code>optimalLineBreaking</code>, i <code>optimalRagged</code> en el text en bandera.</td>
     </tr>
     <tr>
       <td><code>paragraphContainerSpacing</code></td>
       <td><code>'collapse' | 'add'</code></td>
       <td><code>'collapse'</code></td>
-      <td>L'espai sota un contenidor <code>:::paragraphs</code> que es tanca amb un paràgraf, entre aquest paràgraf i el bloc següent (vegeu <a href="/ca/docs/configuration-styles#el-contenidor-paragraphs">El contenidor <code>:::paragraphs</code></a>). <code>'collapse'</code>: el més gran entre el <code>spaceBetween</code> i el <code>marginBottom</code> de l'estil i la separació entre paràgrafs del text que envolta el contenidor (una línia amb <code>paragraphSpacing</code>; en un requadre, la del requadre), fos amb l'espai que el bloc següent deixa sobre seu, com entre dos paràgrafs del text corregut: un encapçalament sota una bibliografia en queda separat pel seu propi <code>marginTop</code>, no per aquest marge més la separació de les entrades. <code>'add'</code>: com fins a postext 1.4, sota l'última línia només s'hi posa l'espai de l'estil abans de l'ajust a la retícula, l'espai que el bloc següent deixa sobre seu se suma a sota i la separació entre paràgrafs no compta, així que el paràgraf que segueix el contenidor podia quedar-hi més enganxat que a qualsevol altre. Una configuració desada abans de <code>configVersion</code> 8 que declara algun estil de paràgraf, en un llibre que té un d'aquests contenidors, es llegeix amb <code>'add'</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Un <code>marginBottom</code> negatiu puja el bloc següent en tots dos casos.</td>
+      <td>L'espai sota un contenidor <code>:::paragraphs</code> que es tanca amb un paràgraf, entre aquest paràgraf i el bloc següent (vegeu <a href="/ca/docs/configuration-styles#el-contenidor-paragraphs">El contenidor <code>:::paragraphs</code></a>). <code>'collapse'</code>: el més gran entre el <code>spaceBetween</code> i el <code>marginBottom</code> de l'estil i la separació entre paràgrafs del text que envolta el contenidor (una línia amb <code>paragraphSpacing</code>; en un requadre, la del requadre), fos amb l'espai que el bloc següent deixa sobre seu, com entre dos paràgrafs del text corregut: un encapçalament sota una bibliografia en queda separat pel seu propi <code>marginTop</code>, no per aquest marge més la separació de les entrades. <code>'add'</code>: com fins a postext 1.4, sota l'última línia només s'hi posa l'espai de l'estil abans de l'ajust a la retícula, l'espai que el bloc següent deixa sobre seu se suma a sota i la separació entre paràgrafs no compta, així que el paràgraf que segueix el contenidor podia quedar-hi més enganxat que a qualsevol altre. Una configuració desada abans de <code>configVersion</code> 8 que declara algun estil de paràgraf, en un llibre que té un d'aquests contenidors, es llegeix amb <code>'add'</code> (vegeu <a href="/ca/docs/configuration-programmatic-usage#paquets-escrits-per-postext-14-o-anterior">Paquets escrits per postext 1.4 o anterior</a>). Un <code>marginBottom</code> negatiu puja el bloc següent en tots dos casos. Un estil de paràgraf pot fixar la seva pròpia regla per als seus contenidors (<code>containerSpacing</code>, des de postext 1.28).</td>
     </tr>
   </tbody>
 </table>
@@ -942,7 +993,7 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
       <td><code>marginTop</code></td>
       <td><code>Dimension</code></td>
       <td><code>1.5 em</code></td>
-      <td>Espai sobre els encapçalaments.</td>
+      <td>Espai sobre els encapçalaments. Es treu en un encapçalament que obre una columna (vegeu <code>columnHeadSpace</code>).</td>
     </tr>
     <tr>
       <td><code>marginBottom</code></td>
@@ -975,6 +1026,12 @@ La propietat `headings` controla la tipografia de tots els nivells d'encapçalam
       <td>Si el flux torna a la retícula de base sota un títol. Amb <code>true</code> el <code>marginBottom</code> del títol s'arrodoneix a línies senceres de la retícula; amb <code>false</code> es conserva el marge exacte i el text sota el títol pot quedar fora de la retícula fins al punt d'ajust següent (el final d'una llista, la cua d'un <code>:::paragraphs</code>, una equació), com molts llibres, que deixen línia i mitja sota el títol. Un nivell (<code>levels[].snapToGrid</code>) o un estil d'encapçalament poden fixar el seu propi valor; aquest és el que hereten.</td>
     </tr>
     <tr>
+      <td><code>columnHeadSpace</code></td>
+      <td><code>'none' | 'remainder'</code></td>
+      <td><code>'none'</code></td>
+      <td>Què conserva del seu espai superior un encapçalament que s'ajusta a la retícula quan obre una columna, al cap de la pàgina o sota una figura o taula que encapçala la columna. <code>'none'</code>: es treu tot l'espai i l'encapçalament queda a la primera línia de la columna, a l'altura de la columna veïna; l'ajust a la retícula posa llavors sota l'encapçalament la fracció de línia que li cal, de manera que el seu text pot quedar més lluny que després d'un paràgraf. <code>'remainder'</code>: l'espai es treu només en línies senceres de retícula i la fracció de línia que sobra queda sobre l'encapçalament, de manera que el text comença sota seu a la distància a què comença després d'un paràgraf; l'encapçalament comença una mica més avall que el cap de la columna i cap línia de text no es mou. Convé a un llibre a una columna, on cap cap de columna veí no delata la diferència. Qualsevol altre valor es llegeix com a <code>'none'</code>. No s'aplica sota una obertura a tota pàgina ni a un encapçalament <code>span: 'page'</code>, amb <code>lineSpan</code>, ocult o amb disseny (<code>advancedDesign</code>). Des de postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>inlineMarks</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
@@ -1005,13 +1062,14 @@ Les editorials esperen que cada columna comenci a la part superior de la pàgina
 
 1. **Una caixa que tanca la columna** — un callout que acaba una columna curta baixa exactament l'espai que queda sota el seu peu, de manera que la seva vora inferior cau a l'última casella de retícula de la pàgina, a nivell amb l'última línia de la columna contigua. Ocupa aquest espai encara que sigui menor que una línia, sempre que res no passi a una altra columna. Per defecte actua abans que qualsevol altra palanca i es queda tot el buit, de manera que un requadre que comenta el paràgraf de damunt pot acabar diverses línies per sota d'aquest; amb `closingBox: 'last'` els encapçalaments, els finals de llista i les altres palanques d'espai prenen abans les línies senceres, i el requadre només el que deixen, i amb `closingBox: 'off'` no es mou mai.
 2. **Imatges amb zona segura** — una imatge amb zona segura (`Resource.safeArea`, vegeu [Format del document › Zona segura](/ca/docs/document-format#zona-segura)) col·locada en línia a la columna curta, o flotada al seu cap o al seu peu i només sobre ella, creix en línies senceres de retícula, retallada dins de la zona segura, fins a omplir la columna o fins que el retall arriba a la zona segura. Una imatge més alta no deixa cap forat a la pàgina, així que actua abans d'afegir cap espai; un flotant al cap d'una columna d'una pàgina o banda on els caps de columna queden anivellats (vegeu més avall) no creix. S'anota com a `flexFigure`. No té cap ajust propi: només creix una imatge el recurs de la qual marca una zona segura.
-3. **Encapçalaments** — s'afegeixen línies completes de retícula al marge superior dels encapçalaments de la columna curta. Quan calen diverses línies i la columna conté diversos encapçalaments, les línies es reparteixen entre ells, deixant sempre la major part a l'encapçalament més important (un `h2` en rep més que un `h3`). Els encapçalaments situats al principi d'una columna no reben mai espai addicional, de manera que les columnes continuen començant a la part superior — llevat d'un encapçalament just sota una figura o taula que encapçala la seva columna en una pàgina que flueix cap a la següent: l'espai va damunt d'aquest encapçalament, sota la figura.
+3. **Encapçalaments** — s'afegeixen línies completes de retícula al marge superior dels encapçalaments de la columna curta. Quan calen diverses línies i la columna conté diversos encapçalaments, les línies es reparteixen entre ells, deixant sempre la major part a l'encapçalament més important (un `h2` en rep més que un `h3`). Els encapçalaments situats al principi d'una columna no reben mai espai addicional, de manera que les columnes continuen començant a la part superior — llevat d'un encapçalament just sota una figura o taula que encapçala la seva columna en una pàgina que flueix cap a la següent: l'espai va damunt d'aquest encapçalament, sota la figura. Un encapçalament pren així com a màxim `maxLinesBeforeLoose` línies (dues per defecte) abans de provar les palanques següents, i les altres, fins a `maxLinesPerHeading`, només quan aquestes ja no poden donar més.
 4. **Finals de llista** — quan els encapçalaments no poden absorbir tot el buit, s'afegeix una línia de retícula on acaba una llista o enumeració (l'aire després d'una llista es llegeix amb naturalitat), amb un màxim per llista.
-5. **Paràgrafs correguts** — com a últim recurs, es recompon un paràgraf de la columna amb una línia més (el `\looseness=+1` de TeX), triant el paràgraf més llarg perquè l'espaiat addicional es dilueixi de manera invisible. La solució correguda només s'accepta quan totes les seves línies queden **per sota de `bodyText.maxWordSpacing`** — el color tipogràfic mai no supera el límit que ja tinguis configurat. Requereix `bodyText.optimalLineBreaking`.
+5. **Sota fórmules, caixes i figures** — després va una línia de retícula sota una fórmula destacada o una caixa després de la qual segueix el text (`stretchAfterDisplays`; es llegeix com a marge del mateix element), i sota una figura o taula que encapçala la columna (`stretchAfterFloats`, amb el màxim de `maxLinesAfterFloat`).
+6. **Paràgrafs correguts** — com a últim recurs, es recompon un paràgraf de la columna amb una línia més (el `\looseness=+1` de TeX), triant el paràgraf més llarg perquè l'espaiat addicional es dilueixi de manera invisible. La solució correguda només s'accepta quan totes les seves línies queden **per sota de `bodyText.maxWordSpacing`** — el color tipogràfic mai no supera el límit que ja tinguis configurat. Requereix `bodyText.optimalLineBreaking`.
 
 En una retícula de caràcters (`cjk.grid`, vegeu [Composició xinesa › La retícula de caràcters](/ca/docs/chinese-layout#la-retícula-de-caràcters)) cada caràcter ocupa una casella d'un quadratí d'amplada i cada línia cau al pas de línies de la retícula, que és també la retícula de base. Allà l'equilibratge està desactivat per defecte, com en el text vertical: una pàgina composta línia a línia sobre una retícula, a la manera de la GB/T 9704, que compta 22 línies de 28 caràcters, deixa curta la columna que acaba curta. Una configuració que fixa `enabled: true` rep palanques que respecten la retícula: els encapçalaments, els finals de llista, les fórmules en bloc i les figures prenen línies senceres de la retícula, de manera que el text de sota es desplaça files senceres, i `gridLines: 'off'` deixa fora aquestes palanques per a una norma que no té cap fila buida per cedir. Un paràgraf xinès o japonès guanya una línia només quan cap espai entre dos dels seus caràcters no s'obre més de `maxTracking`, i no rep tracking a les seves lletres: una línia a la qual falta un caràcter reparteix un quadratí entre els seus espais, molt per sobre dels 0,01 em per defecte, així que en una retícula de caselles senceres la palanca de paràgrafs correguts gairebé mai no troba res. La caixa que tanca una columna i les imatges amb zona segura queden fora de la retícula per disseny i funcionen com a qualsevol altra pàgina.
 
-L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de manera natural cap a la següent — la pàgina final d'un capítol acaba curta de manera legítima. Aquesta pàgina, i una banda de tancament tallada a nivell per `trailing`, mantenen a més els caps de les seves columnes a la mateixa altura: no s'afegeix cap línia sota una figura o taula que encapçali una de les seves columnes (la palanca després de flotants), i un encapçalament o una caixa que obre una columna sota aquesta figura es queda al seu cap, digui el que digui `stretchAfterFloats`, de manera que cap columna no comença més avall que la veïna només per igualar els peus.
+L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de manera natural cap a la següent — la pàgina final d'un capítol acaba curta de manera legítima. Aquesta pàgina, i una banda de tancament tallada a nivell per `trailing`, mantenen a més els caps de les seves columnes a la mateixa altura: no s'afegeix cap línia sota una figura o taula que encapçali una de les seves columnes (la palanca després de flotants), i un encapçalament o una caixa que obre una columna sota aquesta figura es queda al seu cap, digui el que digui `stretchAfterFloats`, igual que l'encapçalament que va just a sota d'una obertura `span: 'page'`, a la columna d'aquesta obertura, de manera que cap columna no comença més avall que la veïna només per igualar els peus.
 
 <table>
   <thead>
@@ -1036,6 +1094,12 @@ L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de man
       <td>Nombre màxim de línies de retícula addicionals que es poden afegir damunt d'un mateix encapçalament.</td>
     </tr>
     <tr>
+      <td><code>maxLinesBeforeLoose</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>Línies de retícula que un encapçalament pot prendre abans de provar les palanques següents: els finals de llista, les fórmules i caixes, les figures i els paràgrafs correguts. L'encapçalament només rep les altres, fins a <code>maxLinesPerHeading</code>, quan aquestes ja no poden donar més, de manera que una pàgina amb un sol encapçalament no obre quatre línies al damunt mentre els seus paràgrafs podrien córrer una línia. Un valor igual o superior a <code>maxLinesPerHeading</code> dona primer totes les línies als encapçalaments, com fins a postext 1.27; <code>0</code> prova les altres palanques abans d'afegir cap línia sobre un encapçalament. Des de postext 1.28; els documents desats abans conserven l'ordre anterior (<code>pinLegacyLooseOrder</code>).</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterLists</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
@@ -1048,16 +1112,28 @@ L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de man
       <td>Nombre màxim de línies de retícula addicionals després del final d'una mateixa llista.</td>
     </tr>
     <tr>
+      <td><code>stretchAfterDisplays</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Permet una línia de retícula addicional sota una fórmula destacada, i sota una caixa, a la columna curta, després de la palanca dels finals de llista: el bloc que la segueix baixa una línia. Amb <code>false</code>, l'espai sota fórmules i caixes queda com el fixen els seus propis marges; el buit passa a les palanques següents i la columna acaba curta si no el tanquen. Des de postext 1.28.</td>
+    </tr>
+    <tr>
       <td><code>stretchAfterFloats</code></td>
       <td><code>boolean</code></td>
       <td><code>true</code></td>
-      <td>Permet línies de retícula addicionals sota una figura o taula que encapçala la columna curta (un flotant superior), després de la palanca dels finals de llista, de manera que el text de sota baixa en lloc d'acabar la columna curta. Mai en una pàgina que no flueix cap a la següent (la pàgina final d'un capítol) ni en una banda de tancament tallada a nivell per <code>trailing</code>: allà els caps de les columnes queden a la mateixa altura i l'última columna pot acabar una línia més curta. El primer bloc sota la figura pot ser la continuació d'un paràgraf començat a la pàgina anterior: baixa igualment, la línia que les regles de tall van deixar lliure al peu de la columna (una línia que la regla de vídues va deixar buida, o un espai entre paràgrafs sense lloc per a text al darrere). Amb <code>false</code>, el text queda just a sota de la figura.</td>
+      <td>Permet línies de retícula addicionals sota una figura o taula que encapçala la columna curta (un flotant superior), després de la palanca dels finals de llista, de manera que el text de sota baixa en lloc d'acabar la columna curta. Mai en una pàgina que no flueix cap a la següent (la pàgina final d'un capítol) ni en una banda de tancament tallada a nivell per <code>trailing</code>: allà els caps de les columnes queden a la mateixa altura i l'última columna pot acabar una línia més curta. El primer bloc sota la figura pot ser la continuació d'un paràgraf començat a la pàgina anterior: baixa igualment, la línia que les regles de tall van deixar lliure al peu de la columna (una línia que la regla de vídues va deixar buida, o un espai entre paràgrafs sense lloc per a text al darrere). Amb <code>false</code>, el text queda just a sota de la figura. Sota un flotant a diverses columnes, les columnes baixen juntes o no baixen: vegeu <code>stretchAfterWideFloats</code>.</td>
     </tr>
     <tr>
       <td><code>maxLinesAfterFloat</code></td>
       <td><code>number</code></td>
       <td><code>1</code></td>
       <td>Nombre màxim de línies de retícula addicionals sota un mateix flotant superior.</td>
+    </tr>
+    <tr>
+      <td><code>stretchAfterWideFloats</code></td>
+      <td><code>'flush' | 'always'</code></td>
+      <td><code>'flush'</code></td>
+      <td>Sota una figura o taula que ocupa dues o més columnes de text. Amb <code>'flush'</code>, una columna només baixa sota seu quan totes les columnes de text que queden sota el flotant prenen les mateixes línies, de manera que els seus caps continuen a la mateixa altura, o quan les línies deixen aquesta columna a ras; no s'afegeix una línia que baixaria el cap d'una columna i la deixaria curta igualment, i el buit passa als paràgrafs correguts. <code>'always'</code> estira aquesta columna com sota qualsevol flotant, com fins a postext 1.27. Qualsevol altre valor es llegeix com a <code>'flush'</code>. Des de postext 1.28; els documents desats abans conserven <code>'always'</code> (<code>pinLegacyWideFloatStretch</code>).</td>
     </tr>
     <tr>
       <td><code>looseParagraphs</code></td>
@@ -1088,6 +1164,12 @@ L'última columna d'una pàgina només s'equilibra quan la pàgina flueix de man
       <td><code>boolean</code></td>
       <td><code>true</code></td>
       <td>Anivella la banda de tancament de cada capítol i del document: quan el flux acaba abans d'omplir la pàgina (en una obertura de capítol, un <code>:::part</code>, una caixa <code>placement: 'fixed'</code> que tanca el capítol o el final del document) amb les columnes desiguals, es tallen a la mateixa altura — un topall de banda de <code>ceil(Σ usado / N / rejilla)</code> línies, resolt després que les palanques anteriors hagin assentat les pàgines prèvies —, de manera que una bibliografia curta acaba a la mateixa altura a totes les columnes en lloc d'omplir la primera i deixar l'última a mitges. El tall respecta les regles d'una banda sense tallar: quan un bloc que no s'hi pot partir (el final d'un paràgraf que els mínims d'òrfenes i vídues mantenen sencer, una caixa que no es parteix) el sobrepassaria — i perdria les seves últimes línies, perquè els renderitzadors retallen cada columna a la seva caixa — o un encapçalament tancaria una columna mentre el seu text obre la següent (amb <code>headings.keepWithNext</code>, el valor per defecte), el tall baixa una línia, fins a tres vegades, i si no n'hi ha prou es descarta. Un bloc que no pot començar a les línies que el tall deixa sota una figura que encapçala una columna (un paràgraf hi necessita el seu mínim d'òrfenes) passa a la columna següent de la banda, com ho faria des d'una columna sense tallar, i la figura queda sola a la seva columna. Les columnes els peus de les quals difereixen en una línia de la retícula o menys es deixen com estan: una banda de tancament l'última columna de la qual acaba una línia més curta és el final habitual, i tallar-la només mouria una línia. El tall va a la banda en què es va mesurar, igual que el que demana una caixa d'amplada de pàgina a mitja pàgina: fins a postext 1.4, quan el primer text de la pàgina de tancament s'havia ofert abans a una banda sense lloc per a ell (una pàgina que ocupa sencera un flotant, la banda estreta que deixa al peu de la pàgina anterior una caixa d'amplada de pàgina), el tall es gastava en aquesta banda i la pàgina de tancament deixava totes les seves línies a la primera columna. Les columnes d'amplades diferents (una disposició de columna i mitja amb text a les dues) es tallen per superfície, ponderant l'altura de cada columna per la seva amplada, perquè una línia de la columna estreta porta menys text. Només actua quan <code>enabled</code> és true.</td>
+    </tr>
+    <tr>
+      <td><code>trailingStep</code></td>
+      <td><code>'lines' | 'grid'</code></td>
+      <td><code>'lines'</code></td>
+      <td>La unitat del tall a nivell que fa <code>trailing</code> (i del tall que fa <code>beforeSpan</code> darrere d'una caixa que passa a la pàgina següent). <code>'lines'</code>: una banda el text de la qual va amb un interlineat propi (un índex, una llista de referències, un contenidor en cos petit) es talla, i es reintenta, per línies senceres d'aquest interlineat: l'alçada que comparteix la majoria de les línies de la banda, sense comptar encapçalaments ni caixes. Les seves columnes acaben llavors amb una línia de diferència com a màxim, com les d'una banda de text base. Una banda de text base, i una que barreja dos interlineats a parts iguals, es talla a la retícula base com abans. També una banda en què les línies comparteixen alçada però queden separades per una fracció de línia (referències amb un espai entre entrades, grups d'índex amb un marge posat a mà): quatre de cada cinc línies de cada columna han d'estar a un nombre enter de línies les unes de les altres. <code>'grid'</code>: tot tall és un nombre enter de línies de retícula base, com fins a postext 1.27, on un tall a la retícula deixava entrar una línia de més en una columna d'una banda fora de retícula i un tall fallit baixava més d'una de les seves línies (columnes amb fins a tres línies de diferència). Qualsevol altre valor es llegeix com a <code>'lines'</code>. Des de postext 1.28; els documents desats abans conserven <code>'grid'</code> (<code>pinLegacyTrailingStep</code>).</td>
     </tr>
     <tr>
       <td><code>beforeSpan</code></td>
@@ -1263,7 +1345,7 @@ Les configuracions per nivell admeten les mateixes propietats que els valors gen
       <td><code>letterSpacing</code></td>
       <td><code>Dimension</code></td>
       <td><code>0</code></td>
-      <td>Espaiat entre lletres després de cada glif de l'encapçalament —espais i prefix de numeració inclosos—, com <code>letter-spacing</code> en CSS. Un valor positiu obre les lletres (les versals compostes amb <code>textTransform: 'uppercase'</code> solen demanar-ne una mica: <code>&#123; value: 0.12, unit: 'em' &#125;</code>); un de negatiu estreny un cos de titular. Un valor en <code>em</code> és relatiu al <code>fontSize</code> del nivell. Les línies de l'encapçalament es mesuren amb aquest valor, de manera que tallen on acaba el text espaiat, i canvas, HTML i PDF el pinten igual. Una línia centrada o alineada a la dreta es col·loca per les seves lletres: l'espaiat que segueix el seu últim glif no compta, com en el text dels dissenys, així que un encapçalament centrat queda alineat amb l'obertura per defecte d'un encapçalament <code>span: 'page'</code>. Un nivell dibuixat amb el seu <code>advancedDesign</code> l'ignora, com els altres camps tipogràfics d'aquesta taula: cada element de text del disseny té el seu propi <code>letterSpacing</code>. Un <a href="/ca/docs/configuration-styles#estils-dencapçalament">estil d'encapçalament</a> també el pot fixar, per als encapçalaments que l'usen. Fins a postext 1.4 els encapçalaments no tenien espaiat entre lletres, i la clau es descartava sense avís.</td>
+      <td>Espaiat entre lletres després de cada glif de l'encapçalament —espais i prefix de numeració inclosos—, com <code>letter-spacing</code> en CSS. Un valor positiu obre les lletres (les versals compostes amb <code>textTransform: 'uppercase'</code> solen demanar-ne una mica: <code>&#123; value: 0.12, unit: 'em' &#125;</code>); un de negatiu estreny un cos de titular. Un valor en <code>em</code> és relatiu al <code>fontSize</code> del nivell. Les línies de l'encapçalament es mesuren amb aquest valor, de manera que tallen on acaba el text espaiat, i canvas, HTML i PDF el pinten igual. L'espaiat no canvia mai els glifs: les lligadures del tipus (fi, fl) es conserven a totes les sortides. Una línia centrada o alineada a la dreta es col·loca per les seves lletres: l'espaiat que segueix el seu últim glif no compta, com en el text dels dissenys, així que un encapçalament centrat queda alineat amb l'obertura per defecte d'un encapçalament <code>span: 'page'</code>. Un nivell dibuixat amb el seu <code>advancedDesign</code> l'ignora, com els altres camps tipogràfics d'aquesta taula: cada element de text del disseny té el seu propi <code>letterSpacing</code>. Un <a href="/ca/docs/configuration-styles#estils-dencapçalament">estil d'encapçalament</a> també el pot fixar, per als encapçalaments que l'usen. Fins a postext 1.4 els encapçalaments no tenien espaiat entre lletres, i la clau es descartava sense avís.</td>
     </tr>
     <tr>
       <td><code>lineSpan</code></td>
@@ -1926,15 +2008,15 @@ La propietat `orderedLists` controla les llistes numerades (`1.`, `2)`, etc.). S
     </tr>
     <tr>
       <td><code>numberWidth</code></td>
-      <td><code>'run' | 'level'</code></td>
+      <td><code>'run' | 'level' | 'item'</code></td>
       <td><code>'run'</code></td>
-      <td>L'amplada de la columna de números d'un element, que fixa on comença el seu text; els números s'alineen a la dreta dins d'aquesta columna. <code>'run'</code>: el número més ample del tram mateix de l'element, és a dir, els elements d'una mateixa profunditat sense res més que elements més profunds entre ells. Una figura, un paràgraf o un requadre entre dos elements obre un tram nou, de manera que <code>ii)</code> després d'una taula pot començar el text una mica més a la dreta que <code>i)</code> abans de la taula, i una llista de nou elements compon el text més a l'esquerra que una de dotze. <code>'level'</code>: el número més ample d'aquella profunditat en tot el document (el capítol, en un llibre), de manera que totes les llistes, i cada part d'una llista interrompuda, comencen el text al mateix lloc, com ja fan els sagnats dels nivells més profunds.</td>
+      <td>L'amplada de la columna de números d'un element, que fixa on comença el seu text; els números s'alineen a la dreta dins d'aquesta columna. <code>'run'</code>: el número més ample del tram mateix de l'element, és a dir, els elements d'una mateixa profunditat sense res més que elements més profunds entre ells. Una figura, un paràgraf o un requadre entre dos elements obre un tram nou, de manera que <code>ii)</code> després d'una taula pot començar el text una mica més a la dreta que <code>i)</code> abans de la taula, i una llista de nou elements compon el text més a l'esquerra que una de dotze. <code>'level'</code>: el número més ample d'aquella profunditat en tot el document (el capítol, en un llibre), de manera que totes les llistes, i cada part d'una llista interrompuda, comencen el text al mateix lloc, com ja fan els sagnats dels nivells més profunds. <code>'item'</code>: el número del mateix element, de manera que el text de cada element comença un <code>gap</code> després de la seva pròpia etiqueta: <span lang="ja" className="font-body">第九條</span> i <span lang="ja" className="font-body">第十一條</span> porten darrere el mateix espai i els seus textos comencen en llocs diferents, com imprimeix el Butlletí Oficial japonès els articles d'una llei. Les línies següents obeeixen <code>hangingIndent</code>: amb <code>false</code> tornen al sagnat de la llista, amb <code>true</code> pengen sota el text del mateix element. El sagnat d'un nivell més profund continua sent un sol valor per nivell. Des de postext 1.28.</td>
     </tr>
     <tr>
       <td><code>numberAlign</code></td>
       <td><code>'end' | 'start'</code></td>
       <td><code>'end'</code></td>
-      <td>Com se situa un número a la seva columna. <code>'end'</code>: al costat del text, de manera que els números d'un tram acaben a la mateixa alçada i <code>9.</code> i <code>10.</code> alineen els punts. <code>'start'</code>: al principi de la columna (l'esquerra en una pàgina d'esquerra a dreta, la dreta en una de dreta a esquerra, el cap de la línia en text vertical), de manera que les etiquetes de llargada diferent comencen a la mateixa alçada, com els articles d'una llei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). La columna conserva l'amplada que li dona <code>numberWidth</code>, de manera que el text dels elements comença al mateix lloc en tots dos casos; amb un separador d'estil propi, el separador segueix el seu número. Des de postext 1.26.</td>
+      <td>Com se situa un número a la seva columna. <code>'end'</code>: al costat del text, de manera que els números d'un tram acaben a la mateixa alçada i <code>9.</code> i <code>10.</code> alineen els punts. <code>'start'</code>: al principi de la columna (l'esquerra en una pàgina d'esquerra a dreta, la dreta en una de dreta a esquerra, el cap de la línia en text vertical), de manera que les etiquetes de llargada diferent comencen a la mateixa alçada, com els articles d'una llei (<span lang="ja" className="font-body">第九條</span>, <span lang="ja" className="font-body">第十一條</span>). La columna conserva l'amplada que li dona <code>numberWidth</code>, de manera que el text dels elements comença al mateix lloc en tots dos casos; amb un separador d'estil propi, el separador segueix el seu número. Des de postext 1.26. Amb <code>numberWidth: 'item'</code> la columna és el mateix número, de manera que tots dos valors componen la mateixa llista.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -2072,7 +2154,7 @@ interface MathConfig {
       <td><code>equationNumbering</code></td>
       <td><code>&#123; enabled, numberingTemplate, resetOn, counterFormat, format &#125;</code></td>
       <td><code>true</code>, <code>'&#123;n&#125;'</code>, <code>'never'</code>, <code>'decimal'</code>, <code>'(&#123;n&#125;)'</code></td>
-      <td>Com es numeren les fórmules en bloc que porten un <code>\label</code> (vegeu <em>Equacions numerades</em> més avall). <code>numberingTemplate</code>, <code>resetOn</code> i <code>counterFormat</code> funcionen com els d'un tipus de recurs: <code>'&#123;h1&#125;.&#123;n&#125;'</code> amb <code>resetOn: 'h1'</code> numera (2.1), (2.2)… per capítol, i <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> amb <code>'h2'</code>, per secció. <code>format</code> és el número tal com l'imprimeixen la fórmula i <code>\eqref</code>, amb <code>&#123;n&#125;</code> al lloc del número: <code>'[&#123;n&#125;]'</code> compon [3]. <code>enabled: false</code> no numera res: un <code>\label</code> es descarta i una referència que hi apunta n'imprimeix la pàgina.</td>
+      <td>Com es numeren les fórmules en bloc que porten un <code>\label</code> (vegeu <em>Equacions numerades</em> més avall). <code>numberingTemplate</code>, <code>resetOn</code> i <code>counterFormat</code> funcionen com els d'un tipus de recurs: <code>'&#123;h1&#125;.&#123;n&#125;'</code> amb <code>resetOn: 'h1'</code> numera (2.1), (2.2)… per capítol, i <code>'&#123;h1&#125;.&#123;h2&#125;.&#123;n&#125;'</code> amb <code>'h2'</code>, per secció. <code>format</code> és el número tal com l'imprimeixen la fórmula i <code>\eqref</code>, amb <code>&#123;n&#125;</code> al lloc del número: <code>'[&#123;n&#125;]'</code> compon [3]. <code>enabled: false</code> no numera res: un <code>\label</code> es descarta i una referència que hi apunta n'imprimeix la pàgina. Un token admet també un estil després de dos punts (<code>'&#123;h1:A&#125;.&#123;n&#125;'</code>: (A.1) en un apèndix amb lletra).</td>
     </tr>
   </tbody>
 </table>

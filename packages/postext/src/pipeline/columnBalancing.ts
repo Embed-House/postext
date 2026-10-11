@@ -19,7 +19,9 @@
  * lines are distributed round-robin in importance order (lowest heading
  * level first), so the most important heading always receives the largest
  * share — e.g. 3 lines over an h2 and an h3 become +2 above the h2 and +1
- * above the h3.
+ * above the h3. A heading takes at most `maxLinesBeforeLoose` lines (two)
+ * that way before the levers below are tried, and its further lines, up to
+ * `maxLinesPerHeading`, only when they have nothing left to give (#707).
  *
  * When the column's headings cannot absorb the whole gap, further levers
  * apply in editorial priority order:
@@ -35,9 +37,14 @@
  *    levers and takes only what they leave; with `'off'` never);
  *  - extra grid lines where a list/enumeration ends (space after a list
  *    reads naturally), capped per list end;
+ *  - one grid line under a display formula or a callout box (it reads as
+ *    the element's own margin), unless `stretchAfterDisplays` is off;
  *  - extra grid lines between a top float band (a figure or table at the
  *    head of the column) and the text under it, capped per band — a
- *    little more air under a figure is invisible;
+ *    little more air under a figure is invisible. Under a figure across
+ *    several columns that holds only while their heads stay level: the
+ *    columns under it move together, or one moves alone to end flush
+ *    (`stretchAfterWideFloats`, #708);
  *  - as a last resort, up to `maxLooseParagraphs` paragraphs of the column
  *    are each re-broken one line looser (TeX \looseness=+1) via the
  *    Knuth-Plass `looseness` option — always within the configured
@@ -61,10 +68,15 @@
  */
 
 import type { BalanceLever, VDTBlock, VDTColumn, VDTDocument, VDTPage } from '../vdt';
-import type { ClosingBoxLever } from '../types';
+import type { ClosingBoxLever, StretchAfterWideFloats } from '../types';
 
 /** Tolerance against FP drift when converting free space to grid lines. */
 const EPS = 0.01;
+
+/** Grid lines the after-display lever may add under one display formula or
+ *  callout box. It has a switch (`stretchAfterDisplays`, #710) and no cap
+ *  setting: nobody wants two lines of white under a formula. */
+const MAX_LINES_AFTER_DISPLAY = 1;
 
 /** Balancing attempts a segment of pages (see {@link pageSegments}) may
  *  spend: passes in which it tried new levers. */
@@ -159,6 +171,10 @@ interface BalanceCandidate {
   key?: number;
   /** `flexFigure`: whole grid lines the picture can still grow. */
   maxLines?: number;
+  /** `afterFloat`, when the float the column starts under also stands over
+   *  another text column of its band (#708): a key the columns under that
+   *  float share, and how many text columns it stands over. */
+  wideFloat?: { key: string; under: number };
 }
 
 /** The key a candidate's adjustment is stored under. */
@@ -243,6 +259,28 @@ function isTextColumn(col: VDTColumn): boolean {
   return col.kind !== 'span' && col.kind !== 'side' && col.bbox.height > 0.5;
 }
 
+/** The float band `col` starts under when that float also stands over
+ *  another text column of the same band (#708): a key shared by the
+ *  columns under it and how many they are. The lowest such float counts
+ *  when several are stacked. Null under a float of the column's own. */
+function wideFloatOver(page: VDTPage, col: VDTColumn): { key: string; under: number } | null {
+  const floats = page.floats ?? [];
+  const above = (f: VDTBlock, k: VDTColumn): boolean =>
+    f.bbox.x < k.bbox.x + k.bbox.width - 0.5
+    && f.bbox.x + f.bbox.width > k.bbox.x + 0.5
+    && f.bbox.y + f.bbox.height <= k.bbox.y + 0.5
+    && f.bbox.y >= page.contentArea.y - 0.5;
+  let best: { index: number; bottom: number; under: number } | null = null;
+  floats.forEach((f, index) => {
+    if (!above(f, col)) return;
+    const under = page.columns.filter((k) => isTextColumn(k) && (k.band ?? 0) === (col.band ?? 0) && above(f, k)).length;
+    const bottom = f.bbox.y + f.bbox.height;
+    if (under >= 2 && (!best || bottom > best.bottom)) best = { index, bottom, under };
+  });
+  const found = best as { index: number; bottom: number; under: number } | null;
+  return found ? { key: `${page.index}:${found.index}`, under: found.under } : null;
+}
+
 /**
  * Collect the bottom gaps of every balanceable column.
  *
@@ -257,7 +295,11 @@ function isTextColumn(col: VDTColumn): boolean {
  * starting at the page top) nor the last (space above a trailing heading
  * would strand it at the column bottom); a heading that opens a column
  * under a float band is eligible too (it is a heading lever, not an
- * after-float point). List-end points are the first
+ * after-float point). In a closing band (a page that does not flow on, a
+ * band cut level by a trailing cap) the heading at its column's head keeps
+ * its place, under a float band and under a page-span opener alike: the
+ * hidden block the opener leaves in its own column does not make the
+ * heading after it a mid-column one (#709). List-end points are the first
  * non-list block after a run of list items — they may be last in column
  * (pushing a trailing paragraph down by at most the gap is local: the
  * element that opened the next column still does not fit). After-float
@@ -529,10 +571,16 @@ export function collectColumnGaps(
         // under the float does there (EF-79): room above it would only drop
         // its column's head below the one beside it.
         const underFloat = i === 0 && columnUnderTopFloat(page, col);
+        // So does the heading right under a page-span opener in the opener's
+        // own column (#709): the opener stays there as a hidden block, so
+        // the heading is the first thing its column shows, and the columns
+        // beside it start level with it (`openerHeadSpacing`). A line above
+        // it would lower this column's head alone.
+        const opensColumn = i >= 1 && col.blocks.slice(0, i).every((k) => k.hidden);
         if (
           b.type === 'heading'
           && b.headingLevel !== undefined
-          && (i >= 1 || (underFloat && !closingBand))
+          && ((i >= 1 && !(opensColumn && closingBand)) || (underFloat && !closingBand))
           && i < col.blocks.length - 1
         ) {
           candidates.push({
@@ -543,6 +591,7 @@ export function collectColumnGaps(
             lineCount: b.lines.length,
           });
         } else if (underFloat && !closingBand) {
+          const wideFloat = wideFloatOver(page, col);
           candidates.push({
             contentIndex: b.contentIndex,
             part: fragmentOf(b),
@@ -550,6 +599,7 @@ export function collectColumnGaps(
             level: 0,
             order: i,
             lineCount: b.lines.length,
+            ...(wideFloat ? { wideFloat } : {}),
           });
         } else if (
           i >= 1
@@ -631,10 +681,20 @@ export interface BalanceState {
 
 export interface BalanceProposalOptions {
   maxLinesPerHeading: number;
+  /** `headings.balancing.maxLinesBeforeLoose` (#707): lines a heading may
+   *  take before the levers after it are tried. Omitted, the headings take
+   *  all their lines first. */
+  maxLinesBeforeLoose?: number;
   stretchAfterLists: boolean;
   maxLinesAfterList: number;
+  /** `headings.balancing.stretchAfterDisplays` (#710); on when omitted. */
+  stretchAfterDisplays?: boolean;
   stretchAfterFloats: boolean;
   maxLinesAfterFloat: number;
+  /** `headings.balancing.stretchAfterWideFloats` (#708): `'flush'` moves a
+   *  column down under a float over several columns only with the others
+   *  under it or to end it flush. Omitted, as `'always'`. */
+  stretchAfterWideFloats?: StretchAfterWideFloats;
   looseParagraphs: boolean;
   /** Loose paragraphs allowed per short column (one extra line each). */
   maxLooseParagraphs: number;
@@ -729,16 +789,25 @@ export interface BalanceProposal {
  *     'last'` moves this step after step 3, where it takes the room the
  *     whole lines before it left; `'off'` drops it);
  *  1. headings — round-robin in importance order (level asc, then reading
- *     order), capped at `maxLinesPerHeading`;
+ *     order), capped at `maxLinesBeforeLoose` lines each at this point and
+ *     at `maxLinesPerHeading` in step 5;
  *  2. list ends — round-robin in reading order, capped at
  *     `maxLinesAfterList`;
+ *  2b. after-display points — the block after a display formula or a
+ *     callout box, one line each (`stretchAfterDisplays: false` skips the
+ *     step);
  *  3. after-float points — the first block under a float band, capped at
- *     `maxLinesAfterFloat`;
+ *     `maxLinesAfterFloat`. Under a float over several text columns, with
+ *     `stretchAfterWideFloats: 'flush'` (#708), the columns under it take
+ *     the same number of lines together, and one takes lines alone only
+ *     when they close its gap;
  *  4. loose paragraphs — every eligible candidate of the column is offered,
  *     longest first (most glue = least visible loosening), with a shared
  *     budget: the pass stops loosening once the column has gained what it
  *     needs, capped at `maxLooseParagraphs` (cumulative across passes).
- *     Candidates that already failed to gain a line are skipped.
+ *     Candidates that already failed to gain a line are skipped;
+ *  5. headings again, up to `maxLinesPerHeading` (#707), only when a gap is
+ *     left and step 4 has nothing more to offer this column.
  */
 export function proposeBalanceLines(
   doc: VDTDocument,
@@ -773,27 +842,41 @@ export function proposeBalanceLines(
   };
 
   const boxOrder = options.closingBox ?? doc.config?.headings?.balancing?.closingBox ?? 'first';
+  // A box closing the column takes the exact room under its foot (a
+  // fraction of a line is fine — the box interior is off-grid anyway),
+  // which closes the column's gap outright. Taken after other levers
+  // (`closingBox: 'last'`), that room is what their `used` whole lines,
+  // which move the box down too, leave of it. Returns whether it took any.
+  const takeBoxRoom = (gap: ColumnGap, used: number): boolean => {
+    let took = false;
+    for (const cand of gap.candidates) {
+      if (cand.kind !== 'trailingCallout' || cand.gapPx === undefined) continue;
+      const key = candidateKey(cand);
+      if (options.failedLines?.has(key)) continue;
+      const px = cand.gapPx - used * doc.baselineGrid;
+      if (!(px > doc.baselineGrid * 0.1)) continue;
+      const cur = lines.get(key) ?? 0;
+      lines.set(key, cur + px / doc.baselineGrid);
+      changed = true;
+      took = true;
+    }
+    return took;
+  };
+
+  // On a character grid that counts its lines, no row is added (#632).
+  const rows = options.gridLines !== false;
+
+  /** A column gap on its way through the levers: what is left of it after
+   *  the ones run so far. */
+  interface GapRun { gap: ColumnGap; remaining: number; headings: BalanceCandidate[]; linesFirst: number }
+  const runs: GapRun[] = [];
+
+  // The levers before the after-float one, for every column: a float over
+  // several columns is decided for the columns under it together (#708),
+  // on what those levers left of each.
   for (const gap of collectColumnGaps(doc, forcedBreakPages)) {
     let remaining = gap.gapLines;
-    // A box closing the column takes the exact room under its foot (a
-    // fraction of a line is fine — the box interior is off-grid anyway),
-    // which closes the column's gap outright. Taken after other levers
-    // (`closingBox: 'last'`), that room is what their `used` whole lines,
-    // which move the box down too, leave of it.
-    const takeBoxRoom = (used: number): void => {
-      for (const cand of gap.candidates) {
-        if (cand.kind !== 'trailingCallout' || cand.gapPx === undefined) continue;
-        const key = candidateKey(cand);
-        if (options.failedLines?.has(key)) continue;
-        const px = cand.gapPx - used * doc.baselineGrid;
-        if (!(px > doc.baselineGrid * 0.1)) continue;
-        const cur = lines.get(key) ?? 0;
-        lines.set(key, cur + px / doc.baselineGrid);
-        changed = true;
-        remaining = 0;
-      }
-    };
-    if (boxOrder === 'first') takeBoxRoom(0);
+    if (boxOrder === 'first' && takeBoxRoom(gap, 0)) remaining = 0;
 
     // Pictures with a safe area grow first among the line levers, each by
     // as many lines as its crop still allows (on top of what earlier passes
@@ -809,12 +892,15 @@ export function proposeBalanceLines(
       changed = true;
     }
 
-    // On a character grid that counts its lines, no row is added (#632).
-    const rows = options.gridLines !== false;
     const headings = gap.candidates
       .filter((c) => rows && c.kind === 'heading')
       .sort((a, b) => a.level - b.level || a.order - b.order);
-    remaining = distribute(headings, remaining, options.maxLinesPerHeading);
+    // A heading takes its first lines here and the rest only once the
+    // levers after it have nothing left to give (#707): four lines above
+    // the one heading of a page are a hole, while its paragraphs could run
+    // a line long.
+    const linesFirst = Math.min(options.maxLinesBeforeLoose ?? options.maxLinesPerHeading, options.maxLinesPerHeading);
+    remaining = distribute(headings, remaining, linesFirst);
 
     if (remaining > 0 && rows && options.stretchAfterLists) {
       const listEnds = gap.candidates
@@ -823,22 +909,70 @@ export function proposeBalanceLines(
       remaining = distribute(listEnds, remaining, options.maxLinesAfterList);
     }
 
-    if (remaining > 0 && rows) {
+    if (remaining > 0 && rows && options.stretchAfterDisplays !== false) {
       const afterDisplay = gap.candidates
         .filter((c) => c.kind === 'afterDisplay')
         .sort((a, b) => a.order - b.order);
-      remaining = distribute(afterDisplay, remaining, 1);
+      remaining = distribute(afterDisplay, remaining, MAX_LINES_AFTER_DISPLAY);
     }
+    runs.push({ gap, remaining, headings, linesFirst });
+  }
 
-    if (remaining > 0 && rows && options.stretchAfterFloats) {
-      const afterFloats = gap.candidates
+  // After-float points. Under a float over one column, and under any float
+  // with `stretchAfterWideFloats: 'always'`, a column takes what is left of
+  // its gap, up to the cap. Under a float that stands over several text
+  // columns (#708) a line that lowers one column's head alone is worth it
+  // only when it ends the column flush: otherwise the heads come apart and
+  // the feet stay apart too.
+  if (rows && options.stretchAfterFloats) {
+    const flush = options.stretchAfterWideFloats === 'flush';
+    const cap = options.maxLinesAfterFloat;
+    /** The columns under one wide float that offer an after-float point. */
+    const groups = new Map<string, { under: number; members: { run: GapRun; key: number }[] }>();
+    for (const run of runs) {
+      const afterFloats = run.gap.candidates
         .filter((c) => c.kind === 'afterFloat')
         .sort((a, b) => a.order - b.order);
-      remaining = distribute(afterFloats, remaining, options.maxLinesAfterFloat);
+      const narrow = flush ? afterFloats.filter((c) => !c.wideFloat) : afterFloats;
+      if (run.remaining > 0) run.remaining = distribute(narrow, run.remaining, cap);
+      if (!flush) continue;
+      for (const cand of afterFloats) {
+        if (!cand.wideFloat) continue;
+        const group = groups.get(cand.wideFloat.key) ?? { under: cand.wideFloat.under, members: [] };
+        group.members.push({ run, key: candidateKey(cand) });
+        groups.set(cand.wideFloat.key, group);
+      }
     }
+    for (const { under, members } of groups.values()) {
+      /** Lines the member's point may still take. */
+      const room = (m: { run: GapRun; key: number }): number =>
+        (options.failedLines?.has(m.key) ? 0 : Math.max(0, Math.min(m.run.remaining, cap - (lines.get(m.key) ?? 0))));
+      const take = (m: { run: GapRun; key: number }, n: number): void => {
+        lines.set(m.key, (lines.get(m.key) ?? 0) + n);
+        m.run.remaining -= n;
+        changed = true;
+      };
+      // Together: every text column under the float moves down by the same
+      // number of lines, the smallest any of them can take, so their heads
+      // stay level. A column under it with no gap, or opened by a heading
+      // or a box (no after-float point), takes none, and so does the group.
+      const together = members.length === under ? Math.min(...members.map(room)) : 0;
+      if (together > 0) for (const m of members) take(m, together);
+      // Alone: beyond that, only the lines that close the column's gap.
+      for (const m of members) {
+        if (m.run.remaining > 0 && m.run.remaining <= room(m)) take(m, m.run.remaining);
+      }
+    }
+  }
 
-    if (boxOrder === 'last') takeBoxRoom(gap.gapLines - remaining);
+  for (const run of runs) {
+    const { gap, headings, linesFirst } = run;
+    let remaining = run.remaining;
+    if (boxOrder === 'last' && takeBoxRoom(gap, gap.gapLines - remaining)) remaining = 0;
 
+    /** Whether this proposal offers the column a loose paragraph it has
+     *  not tried yet. */
+    let looseOffered = false;
     if (
       remaining > 0
       && options.looseParagraphs
@@ -860,8 +994,18 @@ export function proposeBalanceLines(
           loose.set(pick.contentIndex, 1);
           looseBudget.set(pick.contentIndex, budget);
           changed = true;
+          looseOffered = true;
         }
       }
+    }
+
+    // The headings' further lines, when the loose lever has nothing left
+    // for this column: it is off, the column holds its `maxLooseParagraphs`
+    // already, or every candidate is loose or has failed. Not in the
+    // proposal that offers a paragraph: the pass must show what the
+    // paragraphs gain first, and the next proposal sees the smaller gap.
+    if (remaining > 0 && !looseOffered && linesFirst < options.maxLinesPerHeading) {
+      remaining = distribute(headings, remaining, options.maxLinesPerHeading);
     }
   }
   return { lines, loose, looseBudget, changed };

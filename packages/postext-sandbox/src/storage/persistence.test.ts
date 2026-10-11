@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { CONFIG_VERSION } from 'postext/bundle';
 import { clearStorage, loadEpubLayout, loadPanel, loadProjectId, saveEpubLayout, saveProjectId } from './persistence';
 
 function installStorage(initial: Record<string, string> = {}) {
@@ -113,13 +114,14 @@ describe('working configuration', () => {
     expect(config.headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
     // A save stamps the copy, so the next load reads it as it is.
     saveConfig(config);
-    expect(map.get('postext-sandbox-config-version')).toBe('11');
+    expect(map.get('postext-sandbox-config-version')).toBe('12');
     expect(loadConfig()).toEqual(config);
   });
   it('reads a stamped copy as it is', async () => {
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
-      'postext-sandbox-config-version': '11',
+      // Today's stamp: a copy stamped 11 gets the pins of rules 12 (#707).
+      'postext-sandbox-config-version': '12',
     });
     const { loadConfig } = await import('./persistence');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
@@ -131,14 +133,21 @@ describe('working configuration', () => {
     const book = (markdown: string) => JSON.stringify({ version: 2, activeChapterId: 'a', chapters: [{ id: 'a', title: 'A', markdown, createdAt: 1, updatedAt: 1 }] });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Text.\n\n::resource{id="fig"}\n\nMore.') });
     const { loadConfig } = await import('./persistence');
-    // (Its inline tables move whole, #634.)
-    expect(loadConfig()).toEqual({ ...saved, layout: { inlineResourceGap: 'above' }, tableStyle: { splitInline: false } });
+    // (Its inline tables move whole, #634, and a column under a figure
+    // across several columns stretches as under any figure, #708.)
+    expect(loadConfig()).toEqual({
+      headings: { fontFamily: 'Georgia', balancing: { stretchAfterWideFloats: 'always' } }, // (no fence, no list: the level cut keeps today's unit)
+      layout: { inlineResourceGap: 'above' },
+      tableStyle: { splitInline: false },
+      // (every copy stamped before 12 shapes its words with no letter alone, #725)
+      bodyText: { scriptContext: false },
+    });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Prose only.') });
-    expect(loadConfig()).toEqual(saved);
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false } });
     // A book that only mentions the directive (the guide's chapter 9) embeds
     // nothing, and shows no changed spacing setting.
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('`::resource{id="…"}` on a line of its own embeds a resource.') });
-    expect(loadConfig()).toEqual(saved);
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false } });
   });
   // EF-75: a copy saved before the stamp reached 4 keeps the maths size it
   // was laid out at, when the saved book sets maths.
@@ -151,12 +160,14 @@ describe('working configuration', () => {
     expect(loadConfig()).toEqual({
       headings: { fontFamily: 'Georgia' },
       math: { fontSizeScale: 1.2 * LEGACY_MATH_SIZE, marginTop: { value: 0.8 / LEGACY_MATH_SIZE, unit: 'em' }, marginBottom: { value: 0.8 / LEGACY_MATH_SIZE, unit: 'em' } },
+      bodyText: { scriptContext: false },
     });
-    // A book without a formula keeps its configuration as it was saved.
+    // A book without a formula keeps its configuration as it was saved
+    // (but for the pin every copy stamped before 12 takes, #725).
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-book': book('Prose only.') });
-    expect(loadConfig()).toEqual(saved);
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false } });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-markdown': 'Prose only.' });
-    expect(loadConfig()).toEqual(saved);
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false } });
     // No saved book: the maths may be anywhere, so the size is pinned.
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3' });
     expect(loadConfig()!.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
@@ -173,7 +184,8 @@ describe('working configuration', () => {
     // An export carries no chapters: it may hold a heading anywhere, so
     // every copy stamped before 8 keeps 1.4's split under a heading too.
     const v3 = configFromExport({ ...legacy, configVersion: 3 });
-    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' });
+    // (and every copy stamped before 12 the order of its balancing levers, #707)
+    expect(v3.headings).toEqual({ fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } });
     expect(v3.math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     // One stamped 4 (a later 1.5 prerelease) gets the inline gap and the
     // version-6, version-7 and version-8 pins: an export carries no
@@ -183,59 +195,81 @@ describe('working configuration', () => {
     // not pinned.
     // It may set a poem with no separator anywhere too, and end a line with
     // a backslash, which printed up to 1.22 (#620).
+    // It may hold a heading in balanced columns: the order of the balancing
+    // levers is pinned too (#707).
+    // It may hold a cross-reference: its labels stay one word (#702).
     expect(configFromExport({ ...legacy, configVersion: 4 })).toEqual({
-      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' },
+      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } },
       layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
-      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
+      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
-      cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false },
+      // (it may print an index: a column may end between any two entries of a group, #712)
+      index: { groups: { splitMinEntries: 1 } },
+      cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
+      crossRefs: { breakLabels: false },
+      // (it may hold a comic: its balloons are placed as before 1.28, #728)
+      comics: { lettering: { strictPlacement: false } },
     });
+    // (Every copy stamped before 12 also gets the pins of rules 12 that read
+    // no content: the order of the balancing levers, #707, the line under a
+    // float across columns, #708, and the breaks inside index groups, #712.)
     // One stamped 5 gets the version-6, version-7 and version-8 pins only
     // (EF-110, EF-115, EF-117, EF-122; EF-141; EF-186).
-    expect(configFromExport({ ...legacy, configVersion: 5 })).toEqual({
-      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill' },
+    expect(configFromExport({ ...legacy, configVersion: 5 })).toEqual({ comics: { lettering: { strictPlacement: false } },
+      headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } },
       layout: { inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
-      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false },
+      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
-      cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false },
+      index: { groups: { splitMinEntries: 1 } },
+      cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
+      crossRefs: { breakLabels: false },
     });
     // One stamped 6 gets the version-7 and version-8 pins only: the dash
     // breaks, the ragged breaking when it sets text ragged (EF-141,
     // EF-147), the split under a heading (EF-185) and the compound breaks
     // (EF-186).
-    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill' }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     const ragged = { ...legacy, config: { bodyText: { textAlign: 'left' as const } } };
-    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, headings: { keepWithNextSplit: 'fill' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 7 gets the version-8 pins only: the split under a
     // heading, the compound breaks, and the space under containers when it
     // declares a paragraph style (EF-159, EF-181).
-    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill' }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     const styled = { ...legacy, config: { paragraphStyles: [{ id: 'verse' }] } };
-    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill' }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 8 (postext 1.5 to 1.22) gets the version-9 and version-10
     // pins only: the verse layout, a first-line indent dropped from a style
     // that hangs, the printed backslashes (#620), fences read as Markdown
     // (#624) and the 1.23 verse turnovers.
     const hanging = { ...legacy, config: { paragraphStyles: [{ id: 'bib', firstLineIndent: { value: 1, unit: 'em' as const }, hangingIndent: { value: 2, unit: 'em' as const } }] } };
-    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
-    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 9 (postext 1.23) gets the version-10 pin only: its lines
     // of verse turn over at their natural spacing (#620).
-    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { verse: { tighten: false } }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { tighten: false }, scriptContext: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
     // One stamped 10 (postext 1.24) gets the version-11 pins: its inline
     // tables move whole and its :::columns fences are read as 1.24 read
     // them (#634).
-    expect(configFromExport({ ...legacy, configVersion: 10 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false } });
+    expect(configFromExport({ ...legacy, configVersion: 10 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, tableStyle: { splitInline: false }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } } });
     // And, with a page-span heading, the slots 1.24 offered a float under
     // an opener (#639).
     const opener = { ...legacy, config: { headings: { levels: [{ level: 1, span: 'page' as const }] } } };
     expect(configFromExport({ ...opener, configVersion: 10 })).toMatchObject({ layout: { floatsUnderOpener: false } });
-    expect(configFromExport({ ...opener, configVersion: 11 })).toEqual(opener.config);
+    expect(configFromExport({ ...opener, configVersion: 12 })).toEqual(opener.config);
     // Exports carry the version since 1.5, and read back as they are.
-    expect(configFromExport({ ...legacy, configVersion: 11 })).toEqual({ headings: { fontFamily: 'Georgia' } });
-    expect(configFromExport({ ...styled, configVersion: 11 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
+    // One stamped 11 (postext 1.25 to 1.27) gets the version-12 pins: a
+    // two-row note it may hold breaks where 1.27 broke it (#720).
+    expect(configFromExport({ ...legacy, configVersion: 11 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, cjk: { warichu: { minChars: 1 } } });
+    expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' } });
+    // And a column-and-a-half layout keeps the caption of a resource set in
+    // the text under it, where 1.27 set it (#729); other layouts take no pin.
+    const sided = { ...legacy, config: { layout: { layoutType: 'oneAndHalf' as const, sideColumnRole: 'floats' as const } } };
+    expect(configFromExport({ ...sided, configVersion: 11 })).toMatchObject({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats', inlineCaptionSide: false } });
+    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual(sided.config);
+    expect(configFromExport({ ...legacy, configVersion: 11 }).layout?.inlineCaptionSide).toBeUndefined();
+    expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
   });
   // The applied preset's snapshot hashed the copy as it was stored; once the
   // copy is migrated on load, an untouched book must still read untouched
@@ -282,7 +316,7 @@ describe('working configuration', () => {
     expect(isDocumentUntouched(prose.state, prose.rekeyed)).toBe(true);
     // A copy stamped for today's rules: nothing is migrated, and the
     // snapshot is left as it is.
-    const today = open(stripConfigDefaults(guide), 'Prose only.', 7);
+    const today = open(stripConfigDefaults(guide), 'Prose only.', CONFIG_VERSION);
     expect(today.config).toBe(today.stored);
     expect(today.rekeyed).toBe(today.snapshot);
     expect(isDocumentUntouched(today.state, today.rekeyed)).toBe(true);

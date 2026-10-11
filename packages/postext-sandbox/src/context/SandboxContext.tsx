@@ -75,6 +75,7 @@ import { composeBookMemo } from '../book/compose';
 import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
 import { hidePresetId, unhidePresetId } from '../presets/hidden';
 import { computeWarnings } from '../warnings/compute';
+import { publishContrast } from '../contrast/contrastStore';
 import type { Warning } from '../warnings/types';
 import { hasIndexedDB } from '../storage/blobStore';
 import { folioSupported } from '../viewport/folioSupport';
@@ -727,7 +728,7 @@ export function sandboxReducer(state: SandboxState, action: SandboxAction): Sand
   }
 }
 
-interface SandboxStore {
+export interface SandboxStore {
   getSnapshot: () => SandboxState;
   subscribe: (cb: () => void) => () => void;
   dispatch: Dispatch<SandboxAction>;
@@ -798,6 +799,12 @@ export function useSandbox(): SandboxContextValue {
   const store = useStore();
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
   return { state, dispatch: store.dispatch, docRef: store.docRef };
+}
+
+/** The whole store, for code that reads and acts outside React's render
+ *  (the WebMCP tools, ../webmcp). Stable for the provider's lifetime. */
+export function useSandboxStore(): SandboxStore {
+  return useStore();
 }
 
 /** Stable dispatch reference — never triggers a re-render on state changes. */
@@ -2175,6 +2182,11 @@ export function SandboxProvider({
     const book = whole ?? chapterBook;
     const doc = stitched ? chapterDocsRef.current.get(s.activeChapterId)?.doc ?? null : docRef.current;
     const fontChecks = pdfFontChecksFor(s);
+    const preflight = preflightInputs(s.config.print, s.resources);
+    // The colour fields show their contrast against every page laid out
+    // so far, not the active chapter's alone (#748).
+    const laidOut = new Set<VDTDocument>([...(doc ? [doc] : []), ...[...chapterDocsRef.current.values()].map((c) => c.doc)]);
+    publishContrast([...laidOut], s.config, preflight.transform);
     const all = computeWarnings({
       markdown: book.markdown,
       config: s.config,
@@ -2188,7 +2200,7 @@ export function SandboxProvider({
       // Another book's are dropped; after an edit they are marked stale.
       pdfFontChecks: fontChecks.checks,
       pdfFontChecksStale: fontChecks.stale,
-      preflight: preflightInputs(s.config.print, s.resources),
+      preflight,
     });
     const value = whole ? all.filter((w) => w.chapterId === undefined || w.chapterId === s.activeChapterId) : all;
     warningsCacheRef.current = { key, value };

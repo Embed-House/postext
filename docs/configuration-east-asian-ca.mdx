@@ -35,8 +35,9 @@ interface CjkConfig {
   circledNumbers?: 'cjk' | 'western';       // ① ② com a caràcters xinesos (per defecte) o com a lletres llatines.
   composeDesignText?: boolean;              // Regles CJK al text de disseny; per defecte true.
   latinSpacing?: Dimension;                 // Entre xinès i llatí; per defecte 0,25 em.
+  latinSpacingEdge?: 'auto' | 'letters' | 'western'; // Quin costat d'una paraula occidental el porta.
   uprightDigits?: 0 | 2 | 3 | 4;            // Text vertical: nombres en una casella; per defecte 2.
-  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean };
+  grid?: { enabled?: boolean; charsPerLine?: number; linesPerPage?: number; show?: boolean; fullLines?: boolean };
   emphasis?: 'auto' | 'italic' | 'dots';    // Què fa *…* amb els caràcters CJK.
   emphasisMark?: {                          // La marca que dibuixen *…* i :dots[…] quan no la indiquen.
     style?: 'auto' | 'dot' | 'circle' | 'sesame';
@@ -53,7 +54,7 @@ interface CjkConfig {
     align?: 'auto' | 'center' | 'jis' | 'start'; // Com s'espaia una lectura més curta que la seva base.
     smallKana?: 'keep' | 'full';                 // Kana petits de les lectures tal com s'escriuen, o a mida normal.
   };
-  warichu?: { fontSize?: Dimension; color?: ColorValue; open?: string; close?: string };
+  warichu?: { fontSize?: Dimension; color?: ColorValue; open?: string; close?: string; minChars?: number };
   kunten?: { fontSize?: Dimension; color?: ColorValue; placement?: 'inline' | 'interlinear' }; // Marques de kanbun.
 }
 ```
@@ -120,7 +121,7 @@ interface CjkConfig {
       <td><code>wordBreak</code></td>
       <td><code>'normal' | 'keep-all'</code></td>
       <td><code>'normal'</code></td>
-      <td>On es talla una línia entre dos caràcters. <code>'keep-all'</code> talla només en un espai (U+0020, U+3000) i al costat de la puntuació on <code>lineBreak</code> ho permet (després de 、。」, abans de 「), mai entre dues lletres (kana, kanji, hangul, llatines): per a kana escrit amb un espai entre frases (分かち書き), com als llibres il·lustrats i les cartilles, i per al coreà. Una frase més llarga que la línia es talla per dins com la tallaria <code>'normal'</code>. Un estil de paràgraf pot fixar el seu (<code>wordBreak</code>). Des de postext 1.16.</td>
+      <td>On es talla una línia entre dos caràcters. <code>'keep-all'</code> talla només en un espai (U+0020, U+3000) i al costat de la puntuació on <code>lineBreak</code> ho permet (després de 、。」, abans de 「), mai entre dues lletres (kana, kanji, hangul, llatines): per a kana escrit amb un espai entre frases (分かち書き), com als llibres il·lustrats i les cartilles, i per al coreà. Una frase més llarga que la línia es talla per dins com la tallaria <code>'normal'</code>. La regla val allà on es componguin aquests caràcters: en un paràgraf en xinès o en japonès, i per als pocs caràcters que cita un paràgraf en anglès o en castellà, que llavors queden junts (des de postext 1.28; abans, un paràgraf en escriptura llatina tallava una citació entre dos caràcters qualssevol, digués el que digués aquest valor). Un estil de paràgraf pot fixar el seu (<code>wordBreak</code>), i també les notes (<code>footnotes.wordBreak</code>). Des de postext 1.16.</td>
     </tr>
     <tr>
       <td><code>titleMinChars</code></td>
@@ -145,6 +146,12 @@ interface CjkConfig {
       <td><code>Dimension</code></td>
       <td><code>&#123; value: 0.25, unit: 'em' &#125;</code></td>
       <td>L'espai entre un caràcter xinès i la lletra llatina o la xifra que té al costat, en quadratins del cos del text CJK o en qualsevol mesura; <code>0</code> el treu (vegeu <a href="#espai-entre-xinès-i-llatí">Espai entre xinès i llatí</a>).</td>
+    </tr>
+    <tr>
+      <td><code>latinSpacingEdge</code></td>
+      <td><code>'auto' | 'letters' | 'western'</code></td>
+      <td><code>'auto'</code></td>
+      <td>Quin costat d'una paraula occidental porta <code>latinSpacing</code>. <code>'letters'</code>: el costat que acaba en lletra o xifra (<code>abc関数</code>, no <code>normalize()関数</code>). <code>'western'</code>: qualsevol costat d'una paraula que tingui una lletra o una xifra, amb els seus parèntesis i signes. <code>'auto'</code>: <code>'western'</code> a la regió del Japó, <code>'letters'</code> a les altres. Una configuració japonesa desada abans de postext 1.28 es llegeix amb <code>'letters'</code>. Des de postext 1.28 (vegeu <a href="#espai-entre-xinès-i-llatí">Espai entre xinès i llatí</a>).</td>
     </tr>
     <tr>
       <td><code>uprightDigits</code></td>
@@ -198,7 +205,7 @@ interface CjkConfig {
       <td><code>warichu</code></td>
       <td><code>&#123; fontSize?, color?, open?, close? &#125;</code></td>
       <td>mig cos; signes （） al Japó, cap a les altres regions</td>
-      <td>Les notes en dues files de <code>:warichu[…]</code>: la mida de la nota (per defecte mig em, de manera que les dues files omplen l'em de la línia), el seu color i els signes que es componen a la mida del text abans de la primera fila i després de l'última (manen els <code>open</code> / <code>close</code> de cada nota). Al Japó un <code>open</code> o un <code>close</code> buit (<code>''</code>) compon la nota sense aquest signe.</td>
+      <td>Les notes en dues files de <code>:warichu[…]</code>: la mida de la nota (per defecte mig em, de manera que les dues files omplen l'em de la línia), el seu color i els signes que es componen a la mida del text abans de la primera fila i després de l'última (manen els <code>open</code> / <code>close</code> de cada nota). Al Japó un <code>open</code> o un <code>close</code> buit (<code>''</code>) compon la nota sense aquest signe. <code>minChars</code> (per defecte <code>2</code>) és quants caràcters d'una nota deixa com a mínim un tall de línia a cada costat: una nota de fins a tres caràcters no es parteix mai, una línia sense cap altre tall recorre als que permet <code>lineBreak</code>, i <code>1</code> talla on aquests ho permetin, com fins a postext 1.27. Una configuració desada abans de postext 1.28 el text de la qual té una nota es llegeix amb <code>1</code>. Des de postext 1.28.</td>
     </tr>
     <tr>
       <td><code>kunten</code></td>
@@ -296,6 +303,8 @@ Al VDT un signe que ha cedit blanc és un segment propi, el `width` del qual és
 
 `latinSpacing` (per defecte, un quart de quadratí) posa un espai entre un caràcter xinès (o kana) i la lletra llatina o la xifra europea que té al costat: `用iPhone拍照` i `1999年` es componen `用 iPhone 拍照` i `1999 年`. No es posa al començament ni al final d'una línia, ni entre un caràcter llatí i un signe xinès (`用iPhone，` no porta res abans de la coma), ni dins de parèntesis xinesos (`（iPhone）`), ni al costat d'un signe que no és lletra ni xifra (`为¥5,999`). Un espai que l'autor ha escrit en aquest punt (`用 iPhone 拍照`, com el porten molts textos del web) se substitueix per l'espai entre xinès i llatí, no s'hi suma, així que les dues grafies es componen igual; un espai de no separació o un espai ideogràfic es queden com estan. En una línia justificada creix fins a mig quadratí abans de repartir espai entre els caràcters; en una línia que admet un caràcter que no pot obrir la línia següent es redueix fins a un vuitè de quadratí. Una mesura en una unitat que no sigui em es converteix amb els ppp de la pàgina. `0` el treu, i un espai escrit allà continua sent un espai entre paraules.
 
+Quin costat d'una paraula occidental porta l'espai ho decideix `latinSpacingEdge`. Amb `'letters'`, la regla de clreq §6.3.3 i de `text-autospace` de CSS i el valor per defecte de les regions xineses, és el costat que acaba en lletra o xifra. Amb `'western'`, el valor per defecte de la regió del Japó (JLReq §3.2.6), una paraula occidental que tingui una lletra o una xifra el porta també al costat que acaba en un parèntesi o un signe: `normalize()関数`, `(abc)関数`, `A+関数` i `100%関数` es componen amb el quart de quadratí a tots dos costats de la paraula, igual que `abc関数`, i un espai escrit allà també se substitueix. Dos costats queden sense espai, allà on el signe s'uneix al que té a l'altra banda: després d'un parèntesi d'obertura o un signe anteposat que tanca la paraula (`abc(関数`), i davant d'un parèntesi de tancament, una coma, un punt o un signe posposat que l'obre (`関数)abc`). Un parèntesi o un signe sense cap lletra ni xifra a la seva paraula, com a `関数(かんすう)は`, és en context japonès i no en porta cap. Una configuració japonesa desada abans de postext 1.28 conserva `'letters'`.
+
 L'espai és un segment de `kind: 'space'` amb `autospace`, `text` buit (o l'espai que ha escrit l'autor); el seu `width` és definitiu, i la justificació d'espais dels renderitzadors el deixa com està. Mai no és al text pla, així que la cerca, el copiar i enganxar i els rangs d'origen llegeixen el text tal com es va escriure. El PDF posa cada línia composta en peces (caràcters espaiats, espais entre xinès i llatí, signes que han cedit blanc o que pengen) en un `/Span` el `/ActualText` del qual és el text de la línia, de manera que l'extracció de text llegeix `用iPhone拍照` i no `用 iPhone 拍 照`, i llegeix com una sola línia una que porta signes de mig quadratí.
 
 ### Nombres en text vertical
@@ -329,12 +338,16 @@ cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 28, show: true } }
 
 Amb `enabled`, la configuració es reescriu abans que res no la llegeixi: cada columna fa `charsPerLine` quadratins de `bodyText.fontSize`, i la caixa de text `linesPerPage` línies de `bodyText.lineHeight`; amb `layoutType: 'double'` l'espai entre columnes és `layout.gutterWidth` arrodonit a un nombre enter de quadratins, com a mínim un. Els marges de `page.margins` funcionen com a mínims: la caixa de text es col·loca al centre de l'àrea que deixen, i cada marge creix la meitat del lloc sobrant en el seu eix (un llibre amb marges emmirallats conserva la diferència entre l'interior i l'exterior, i tots dos creixen el mateix). Sense valor, `charsPerLine` i `linesPerPage` prenen els que hi càpiguen. Un nombre més gran del que hi cap es redueix al que hi cap i s'avisa com a `cjkGridClamped` als avisos de configuració. El cos i l'interlineat es queden com estan escrits. En una disposició `oneAndHalf`, `charsPerLine` és el de la columna principal; la lateral pren el nombre enter de quadratins més proper a l'amplada que li dona `sideColumnPercent` dins dels marges configurats (com a mínim un), l'espai entre columnes s'arrodoneix com en dues columnes, i `sideColumnPercent` es reescriu perquè les dues columnes facin quadratins enters. En text vertical (`layout.writingMode: 'vertical-rl'`) els caràcters d'una línia baixen per la pàgina i les línies la travessen, així que `charsPerLine` mesura l'alçada de la pàgina, una disposició `double` dona dos pisos, l'un damunt de l'altre, i les caselles de la retícula dibuixada es centren en l'eix sobre el qual es centren els caràcters.
 
+Una pàgina sobre la retícula conté les línies que la retícula compta, de manera que les dues regles que deixen una columna amb una línia de menys segueixen la retícula. `bodyText.avoidWidows`, que passa un paràgraf sencer a la columna següent quan només hi cap una línia seva al peu, hi està desactivada per defecte. `bodyText.avoidOrphans`, que treu una línia a la columna anterior perquè un paràgraf no acabi amb una sola línia al capdamunt de la següent, continua activa en un document xinès (孤行, clreq §7.1.2) i es desactiva a la regió `japan`: JLReq §3.5.4 compta els caràcters de l'última línia d'un paràgraf, no les seves línies en un salt de pàgina. Una configuració que fixa qualsevol de les dues claus conserva el seu valor, i una de desada abans de postext 1.28 manté les dues regles actives (`configVersion` 12).
+
 Dues caixes de la pràctica xinesa, en 五号 (10,5 pt) amb 6 pt d'interlineat (`lineHeight: 16.5pt`):
 
 - 大32开, 140 × 203 mm, 28 × 28: una mesura de 294 pt (103,7 mm) i una caixa de 462 pt (163 mm); uns `page.margins` de 16/20 mm interior i exterior i 18/20 mm superior i inferior li deixen lloc.
 - 16开, 184 × 260 mm, dues columnes de 23 caràcters en 小五 (9 pt, línies de 13,5 pt) amb un espai entre columnes de dos caràcters: 2 × 207 pt + 18 pt.
 
 `show` dibuixa la retícula (稿纸) sobre la caixa de text, un quadrat gris clar per posició de caràcter a cada línia (la caixa de quadratí del caràcter al voltant de la seva línia de base), a cada columna de la pàgina (la lateral d'una disposició `oneAndHalf`, al costat que li toca segons la paritat de la pàgina), al canvas i a l'HTML. El PDF només la dibuixa quan `renderToPdf` rep `characterGrid: true`: és una ajuda de pantalla. `cjkGridGeometry(config)` retorna la retícula que fixa una configuració (els nombres en ús, els marges, la caixa de text) i `applyCjkGrid(config)` la configuració reescrita.
+
+`fullLines` és per al paper de manuscrit (原稿用紙), on s'escriu a totes les caselles d'una línia completa. Un paràgraf no acaba en un sol caràcter (vegeu `bodyText.avoidRunts`): la línia anterior li cedeix el seu últim caràcter, i quan aquesta línia no està justificada queda amb una casella buida. Amb `fullLines: true` una línia sense justificar conserva totes les caselles i el paràgraf pot acabar en un sol caràcter; una línia justificada continua cedint el seu caràcter i es reparteix fins a la mesura. Desactivat per defecte. Des de postext 1.28.
 ### Marques, ruby i warichu
 
 El marcatge de [marques xineses, ruby i warichu](/ca/docs/document-format#marques-xineses-ruby-i-warichu) conserva el seu text al paràgraf: la cerca, l'índex general, les àncores de l'índex analític i el text copiat llegeixen els caràcters tal com es van escriure, i d'aquesta configuració només depèn el que es dibuixa al voltant.
@@ -343,7 +356,7 @@ El marcatge de [marques xineses, ruby i warichu](/ca/docs/document-format#marque
 - **Línies laterals** (傍線, `:sideline[…]{style pos}`): corren al costat del text, puntuació i espais inclosos: `solid`, `double`, `wavy` o `dotted`, per defecte sota el text en horitzontal i a la seva dreta en vertical; dues línies que es toquen cedeixen cadascuna un vuitè d'em. Funcionen en qualsevol escriptura.
 - **Línies de nom propi i de títol** (专名号 `:name[…]`, 书名号 `:book[…]` amb `bookTitleMark: 'wavy'`): corren sota la caixa dels caràcters (a la seva esquerra en vertical) i travessen els espais de la seqüència. On es toquen dues seqüències, cada extrem cedeix un vuitè d'em, de manera que `:name[賈寶玉]:name[林黛玉]` es llegeix com a dos noms. Si uns punts i una línia marquen el mateix text pel mateix costat, la línia va més a prop del text. Amb `'brackets'`, els 《》 són text amb el qual es tallen les línies, es pinten i es copien com qualsevol caràcter; no ocupen cap caràcter del text pla ni del mapa de font (els segments porten `inserted`).
 - **Ruby**: les lectures ocupen l'espai entre línies al costat de la caixa de la base, centrades en ella; una lectura amb lletres llatines (pinyin) sobre la seva base puja el que baixen els traços descendents de la seva font (g, j, p, q, y) i 0,04 em del text més, perquè no toquin la base, i totes les lectures de la línia comparteixen línia de base; una lectura més ampla que la seva base eixampla la caixa de la base, menys el quart d'em de ruby que pot envair un veí sense lectura, i dues lectures deixen un quart d'em de ruby entre elles (dues lectures en zhuyin, un quart de l'em dels seus símbols, de manera que tres símbols al costat de cadascun de dos caràcters no surten de la seva casella). Un ruby mono (una lectura per caràcter) es pot tallar entre els seus caràcters; un ruby de grup, mai. Al Japó una lectura segueix en canvi `ruby.align` i `ruby.overhang`: es reparteix 1:2:1 quan és més curta que la seva base, i envaeix els kana però no els kanji quan és més llarga, i la resta del lloc surt d'espaiar la base; un ruby per caràcter de dos o més caràcters és ruby jukugo, en què cada caràcter conserva la seva lectura, que pot envair el caràcter següent de la paraula però mai no se superposa a una altra lectura, i la línia es continua podent tallar entre ells (JLReq §3.3). Al principi o al final d'una línia, base i lectura s'alineen amb la vora (clreq §5.5.4). El zhuyin en text horitzontal forma una columna a la dreta de cada caràcter, i la caixa del caràcter creix el que mesura la columna; en text vertical la mateixa columna baixa a la dreta dels caràcters. La marca de to va a la dreta de la columna, amb la meitat del seu traç per sobre de l'últim símbol (clreq §5.5.3.3), col·locada pel seu traç perquè les fonts dibuixen aquestes marques altes dins de la seva caixa, i en vertical es manté dreta, igual que el punt del to neutre sobre el primer símbol.
-- **Notes warichu** (双行夹注): es pleguen en dues files a la mida de la nota, centrades a la línia i sense espai entre elles. La fila de dalt pren caràcters fins a tenir almenys la meitat del fragment, de manera que la segona no és mai la més llarga, i un més mentre la de baix començaria amb un signe que no pot obrir línia. Una nota més llarga que l'espai que queda a la línia l'omple i continua a la línia, la columna o la pàgina següents; els seus signes van només abans de la primera fila i després de l'última. En text vertical la fila de dalt és la de la dreta, que es llegeix primer.
+- **Notes warichu** (双行夹注): es pleguen en dues files a la mida de la nota, centrades a la línia i sense espai entre elles. La fila de dalt pren caràcters fins a tenir almenys la meitat del fragment, de manera que la segona no és la més llarga, i un més mentre la de baix començaria amb un signe que no pot obrir línia. Si tots aquests plecs obririen la fila de baix amb un signe (`本名。`), es pren el plec anterior i la fila de baix és la més llarga: `本` sobre `名。`; un fragment d'un sol caràcter amb els seus signes es queda en una fila. Una nota més llarga que l'espai que queda a la línia l'omple i continua a la línia, la columna o la pàgina següents, i la línia només es talla dins de la nota on queden `warichu.minChars` dels seus caràcters a cada costat (2 per defecte; els signes i els espais entre paraules no compten), de manera que cap línia, columna o pàgina no comença amb un sol caràcter petit i el seu punt; els seus signes van només abans de la primera fila i després de l'última. En text vertical la fila de dalt és la de la dreta, que es llegeix primer.
 - **Marques de kanbun** (`:kunten[字]{kaeri okuri tate}`): les marques de retorn de l'últim caràcter van darrere seu, al costat del peu de la línia (a baix a l'esquerra en text vertical), els okurigana van al costat del cap a partir de la seva meitat (els més llargs desplacen el caràcter següent), i el tatesen és un filet curt fins al caràcter següent (JIS X 4051 §5). El text copiat i l'`/ActualText` del PDF llegeixen els okurigana darrere dels seus caràcters i deixen fora les marques de retorn; una interlínia massa estreta per a elles s'avisa amb `kuntenExceedsLeading`.
 
 El pas de línia no canvia mai: marques i lectures viuen a l'interlineat. Un paràgraf l'espai entre línies del qual (l'alçada de línia menys el cos) mesura menys de mig em amb marques per un costat, o cinc vuitens amb marques pels dos (clreq §5.6.1), s'avisa amb `cjkMarksExceedLeading`; un les lectures del qual mesuren més que l'espai (una lectura en pinyin, amb el que puja), amb `rubyExceedsLeading`. Dona a aquests paràgrafs un estil de paràgraf amb més interlineat. Els llibres japonesos amb furigana solen fer servir un interlineat del text d'uns 1,75 em (JLReq §2.4.2).
@@ -358,11 +371,11 @@ import { DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, cjkRegionOf, se
 resolveCjkConfig(undefined, 'zh-HK');
 // { region: 'hongkong', lineBreak: 'basic', punctuationWidth: 'fullwidth', compressAdjacent: true,
 //   trimLineStart: true, hangingPunctuation: 'none', latinSpacing: { value: 0.25, unit: 'em' }, uprightDigits: 2,
-//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false },
+//   grid: { enabled: false, charsPerLine: 0, linesPerPage: 0, show: false, fullLines: false },
 //   emphasis: 'dots', emphasisMark: { style: 'dot', fill: 'auto', position: 'auto' },
 //   bookTitleMark: 'wavy', bookTitleBrackets: [{ open: '《', close: '》' }, { open: '〈', close: '〉' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto' },
-//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '' }, kunten: { … } }
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '', minChars: 2 }, kunten: { … } }
 
 resolveCjkConfig(undefined, 'ja');
 // { region: 'japan', lineBreak: 'ja-very-strict', punctuationWidth: 'fullwidth', compressAdjacent: true,
@@ -370,7 +383,7 @@ resolveCjkConfig(undefined, 'ja');
 //   emphasisMark: { style: 'sesame', fill: 'auto', position: 'over' }, bookTitleMark: 'brackets',
 //   bookTitleBrackets: [{ open: '『', close: '』' }, { open: '「', close: '」' }],
 //   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'kana', align: 'jis' },
-//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '（', close: '）' }, kunten: { … } }
+//   warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '（', close: '）', minChars: 2 }, kunten: { … } }
 ```
 
 Al Sandbox aquesta configuració és a **Disseny › Escriptura › Tipografia d'Àsia oriental**.

@@ -88,7 +88,7 @@ function progressText(progress: EpubGenerationProgress | null, labels: ReturnTyp
 /** Share of the generation done: the layout fills the first half (one
  *  step per chapter), the writing the second; the steps that report no
  *  count pulse. */
-function progressFraction(progress: EpubGenerationProgress | null): { fraction: number; pulse: boolean } {
+export function progressFraction(progress: EpubGenerationProgress | null): { fraction: number; pulse: boolean } {
   if (!progress) return { fraction: 0, pulse: false };
   const share = progress.total > 0 ? Math.min(1, progress.done / progress.total) : 0;
   switch (progress.phase) {

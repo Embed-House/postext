@@ -1,4 +1,4 @@
-import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, KeepWithNextSplit, ColorValue, Dimension } from '../types';
+import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, TrailingStep, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types';
 import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
 import { resolveDesignSlot } from './headerFooter';
 import { isDropCap } from './dropCap';
@@ -44,15 +44,19 @@ const KEEP_WITH_NEXT_SPLITS: readonly KeepWithNextSplit[] = ['rules', 'fill'];
 export const DEFAULT_COLUMN_BALANCING = {
   enabled: true,
   maxLinesPerHeading: 4,
+  maxLinesBeforeLoose: 2,
   stretchAfterLists: true,
   maxLinesAfterList: 1,
+  stretchAfterDisplays: true,
   stretchAfterFloats: true,
   maxLinesAfterFloat: 1,
+  stretchAfterWideFloats: 'flush' as StretchAfterWideFloats,
   looseParagraphs: true,
   maxLooseParagraphs: 2,
   trackParagraphs: true,
   maxTracking: 10,
   trailing: true,
+  trailingStep: 'lines' as TrailingStep,
   beforeSpan: true,
   closingBox: 'first' as ClosingBoxLever,
 };
@@ -100,6 +104,7 @@ export const DEFAULT_HEADINGS_CONFIG: ResolvedHeadingsConfig = {
   keepWithNext: true,
   keepWithNextSplit: 'rules',
   snapToGrid: true,
+  columnHeadSpace: 'none',
   inlineMarks: true,
   balancing: { ...DEFAULT_COLUMN_BALANCING },
   levels: DEFAULT_HEADING_LEVELS,
@@ -128,20 +133,30 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
     ? partial.keepWithNextSplit!
     : DEFAULT_HEADINGS_CONFIG.keepWithNextSplit;
   const generalSnapToGrid = partial.snapToGrid ?? DEFAULT_HEADINGS_CONFIG.snapToGrid;
+  // Any other value reads as the default.
+  const columnHeadSpace: ColumnHeadSpace = partial.columnHeadSpace === 'remainder' ? 'remainder' : DEFAULT_HEADINGS_CONFIG.columnHeadSpace;
   const inlineMarks = partial.inlineMarks ?? DEFAULT_HEADINGS_CONFIG.inlineMarks;
   const balancing = partial.balancing
     ? {
         enabled: partial.balancing.enabled ?? DEFAULT_COLUMN_BALANCING.enabled,
         maxLinesPerHeading:
           partial.balancing.maxLinesPerHeading ?? DEFAULT_COLUMN_BALANCING.maxLinesPerHeading,
+        maxLinesBeforeLoose:
+          partial.balancing.maxLinesBeforeLoose ?? DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose,
         stretchAfterLists:
           partial.balancing.stretchAfterLists ?? DEFAULT_COLUMN_BALANCING.stretchAfterLists,
         maxLinesAfterList:
           partial.balancing.maxLinesAfterList ?? DEFAULT_COLUMN_BALANCING.maxLinesAfterList,
+        stretchAfterDisplays:
+          partial.balancing.stretchAfterDisplays ?? DEFAULT_COLUMN_BALANCING.stretchAfterDisplays,
         stretchAfterFloats:
           partial.balancing.stretchAfterFloats ?? DEFAULT_COLUMN_BALANCING.stretchAfterFloats,
         maxLinesAfterFloat:
           partial.balancing.maxLinesAfterFloat ?? DEFAULT_COLUMN_BALANCING.maxLinesAfterFloat,
+        // Any other value reads as the default.
+        stretchAfterWideFloats: partial.balancing.stretchAfterWideFloats === 'always'
+          ? 'always' as StretchAfterWideFloats
+          : DEFAULT_COLUMN_BALANCING.stretchAfterWideFloats,
         looseParagraphs:
           partial.balancing.looseParagraphs ?? DEFAULT_COLUMN_BALANCING.looseParagraphs,
         maxLooseParagraphs:
@@ -152,6 +167,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
           partial.balancing.maxTracking ?? DEFAULT_COLUMN_BALANCING.maxTracking,
         trailing:
           partial.balancing.trailing ?? DEFAULT_COLUMN_BALANCING.trailing,
+        // Any other value reads as the default.
+        trailingStep: partial.balancing.trailingStep === 'grid' ? 'grid' as TrailingStep : DEFAULT_COLUMN_BALANCING.trailingStep,
         beforeSpan:
           partial.balancing.beforeSpan ?? DEFAULT_COLUMN_BALANCING.beforeSpan,
         // Any other value reads as the default.
@@ -195,7 +212,7 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
     };
   });
 
-  return { fontFamily: generalFont, lineHeight: generalLineHeight, color: generalColor, textAlign: generalTextAlign, fontWeight: generalFontWeight, marginTop: generalMarginTop, marginBottom: generalMarginBottom, keepWithNext: generalKeepWithNext, ...(keepWithNextSpread ? { keepWithNextSpread } : {}), keepWithNextSplit, snapToGrid: generalSnapToGrid, inlineMarks, balancing, levels };
+  return { fontFamily: generalFont, lineHeight: generalLineHeight, color: generalColor, textAlign: generalTextAlign, fontWeight: generalFontWeight, marginTop: generalMarginTop, marginBottom: generalMarginBottom, keepWithNext: generalKeepWithNext, ...(keepWithNextSpread ? { keepWithNextSpread } : {}), keepWithNextSplit, snapToGrid: generalSnapToGrid, columnHeadSpace, inlineMarks, balancing, levels };
 }
 
 /** A level's `lineSpan`, `indent` and `jidori` (#424) and its
@@ -317,6 +334,11 @@ export function stripHeadingsDefaults(
     result.snapToGrid = headings.snapToGrid;
     hasOverride = true;
   }
+  // `'none'` is the default; any other value resolves like it.
+  if (headings.columnHeadSpace === 'remainder') {
+    result.columnHeadSpace = 'remainder';
+    hasOverride = true;
+  }
   if (headings.inlineMarks !== undefined && headings.inlineMarks !== DEFAULT_HEADINGS_CONFIG.inlineMarks) {
     result.inlineMarks = headings.inlineMarks;
     hasOverride = true;
@@ -336,6 +358,13 @@ export function stripHeadingsDefaults(
       hasBOverride = true;
     }
     if (
+      headings.balancing.maxLinesBeforeLoose !== undefined
+      && headings.balancing.maxLinesBeforeLoose !== DEFAULT_COLUMN_BALANCING.maxLinesBeforeLoose
+    ) {
+      b.maxLinesBeforeLoose = headings.balancing.maxLinesBeforeLoose;
+      hasBOverride = true;
+    }
+    if (
       headings.balancing.stretchAfterLists !== undefined
       && headings.balancing.stretchAfterLists !== DEFAULT_COLUMN_BALANCING.stretchAfterLists
     ) {
@@ -350,6 +379,13 @@ export function stripHeadingsDefaults(
       hasBOverride = true;
     }
     if (
+      headings.balancing.stretchAfterDisplays !== undefined
+      && headings.balancing.stretchAfterDisplays !== DEFAULT_COLUMN_BALANCING.stretchAfterDisplays
+    ) {
+      b.stretchAfterDisplays = headings.balancing.stretchAfterDisplays;
+      hasBOverride = true;
+    }
+    if (
       headings.balancing.stretchAfterFloats !== undefined
       && headings.balancing.stretchAfterFloats !== DEFAULT_COLUMN_BALANCING.stretchAfterFloats
     ) {
@@ -361,6 +397,11 @@ export function stripHeadingsDefaults(
       && headings.balancing.maxLinesAfterFloat !== DEFAULT_COLUMN_BALANCING.maxLinesAfterFloat
     ) {
       b.maxLinesAfterFloat = headings.balancing.maxLinesAfterFloat;
+      hasBOverride = true;
+    }
+    // `'flush'` is the default; any other value resolves like it.
+    if (headings.balancing.stretchAfterWideFloats === 'always') {
+      b.stretchAfterWideFloats = 'always';
       hasBOverride = true;
     }
     if (
@@ -396,6 +437,11 @@ export function stripHeadingsDefaults(
       && headings.balancing.trailing !== DEFAULT_COLUMN_BALANCING.trailing
     ) {
       b.trailing = headings.balancing.trailing;
+      hasBOverride = true;
+    }
+    // `'lines'` is the default; any other value resolves like it.
+    if (headings.balancing.trailingStep === 'grid') {
+      b.trailingStep = 'grid';
       hasBOverride = true;
     }
     if (

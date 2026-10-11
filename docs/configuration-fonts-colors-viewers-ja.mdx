@@ -111,7 +111,7 @@ interface PostextConfig {
 
 ### Sandboxでのカスタムフォントの管理
 
-左のアクティビティバー（リソースとデザインのあいだ）から**フォント**パネルを開きます。**この本の書体**の一覧には、デザインが使うすべてのファミリーが、その役割と、Google Fontsのものか自分のファイルかとともに表示されます。**自分のフォントファイル**では、ファミリーごとに次の操作ができます：
+左のアクティビティバー（リソースとデザインのあいだ）から**フォント**パネルを開きます。**この本の書体**の一覧には、デザインが使うすべてのファミリーが、その役割と入手元（Google Fonts、Google FontsにないファミリーはFontsource、自分のファイル。どこにもない場合は**見つかりません**）とともに表示されます。**自分のフォントファイル**では、ファミリーごとに次の操作ができます：
 
 1. **フォントファミリーを追加**：空のファミリーを作ります。名前はその場で変更できます。
 2. **ファイルをアップロード**：ウェイト（100–900）とスタイル（normal / italic）を選び、`.woff2`、`.woff`、`.ttf`、`.otf`のファイルを1つ、*または複数*選びます。各ファイルは、そのとき選んでいる（ウェイト、スタイル）に結び付いた独立したバリアントになります。アップロードしたファイル名は記録されて行に表示されるので、バリアントを見分けられます。バリアントのウェイトとスタイルは、ドロップダウンからいつでも変更できます。
@@ -708,6 +708,116 @@ postextが使うカラーマネジメントは、独自のツールのために�
 リゾルバーとストリッパーはほかのセクションと同じです。`resolvePrintConfig`、`stripPrintDefaults`、`profileInkLimit(config)`（`inkLimit`で上書きする前の、設定が指定したプロファイルの上限）と、`DEFAULT_PRINT_CONFIG`、`DEFAULT_PRINT_BLACK_CONFIG`、`DEFAULT_PRINT_PREFLIGHT_CONFIG`、`DEFAULT_RICH_BLACK`があります。
 
 
+## コントラストの検査（設定）
+
+`contrast`プロパティは、本の文字が読めるかどうかを確かめる検査を設定します。すべての文字色を、それが載る地の色と比べます。レイアウトはこれを無視するので、変更しても行が動くことはありません。組み上がった文書を検査するときに`contrastDocument`がこれを読みます。Sandboxは結果を**検査**パネルに並べ、色の項目の横にそれぞれの比を表示します。`postext check`は結果を出力します。
+
+```ts
+interface ContrastConfig {
+  enabled?: boolean;
+  level?: 'AA' | 'AAA';
+  mode?: 'auto' | 'screen' | 'print' | 'both';
+  reversedText?: {
+    enabled?: boolean;
+    minSize?: Dimension;
+    minFineSize?: Dimension;
+    lightWeight?: number;
+  };
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '210px' }}>プロパティ</th>
+      <th style={{ width: '110px' }}>型</th>
+      <th style={{ width: '100px' }}>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>検査を実行します。</td></tr>
+    <tr><td><code>level</code></td><td><code>'AA' | 'AAA'</code></td><td><code>'AA'</code></td><td>コントラスト比に求めるWCAG 2のレベルです。[しきい値](#しきい値)を参照してください。</td></tr>
+    <tr><td><code>mode</code></td><td><code>string</code></td><td><code>'auto'</code></td><td>検査の対象です。`'screen'`、`'print'`、`'both'`、`'auto'`のいずれかを指定します。`'auto'`は画面を常に検査し、印刷向けに設定した本（`print.standard`のPDF/X規格、`pdfGeneration`のCMYKのPDF、または`page.cutLines`のトンボがある本）では印刷も検査します。</td></tr>
+    <tr><td><code>reversedText.enabled</code></td><td><code>boolean</code></td><td><code>true</code></td><td>印刷の検査で白抜き文字を報告します。</td></tr>
+    <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>このサイズより小さい白抜き文字を報告します。</td></tr>
+    <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>線の細いイタリックと細いウェイトには、こちらのサイズを使います。</td></tr>
+    <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>この値以下のウェイトを細いとみなします。</td></tr>
+  </tbody>
+</table>
+
+`level`や`mode`にこれ以外の値を書くと、既定値として読まれ、不明な設定値として報告されます（[設定の警告](#設定の警告)を参照）。
+
+### しきい値
+
+文字に求める比は、WCAG 2と同じく、そのサイズとウェイトで決まります。
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '120px' }}>レベル</th>
+      <th style={{ width: '120px' }}>通常の文字</th>
+      <th>大きな文字</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AA</code></td><td>4.5:1</td><td>3:1</td></tr>
+    <tr><td><code>AAA</code></td><td>7:1</td><td>4.5:1</td></tr>
+  </tbody>
+</table>
+
+大きな文字とは、18 pt以上の文字、またはウェイトが700以上で14 pt以上の文字です。サイズは印刷時のもので、単位はポイントです。上付き文字と下付き文字は、それが属する文字のサイズで判定します。
+
+### 画面と印刷
+
+Postextは同じページを画面用にも印刷機用にも組みますが、色の見え方は両者で同じではありません。
+
+- **画面**は、sRGBの色のWCAG 2のコントラスト比です。2色の相対輝度から`(L1 + 0.05) / (L2 + 0.05)`で求めます。canvas、HTMLビューアー、EPUB、RGBのPDFが表示する色にあたります。
+- **印刷**は、それぞれの色が紙の上で持つ輝度に同じ式を当てたものです。色をジョブの出力プロファイルで分版し（CMYKで指定した色はその値を保ちます）、その分版をプロファイルで読み戻して、紙そのものの白を基準に輝度を求めます。画面ではディスプレイの白が白であるように、印刷したページでは紙の白が白だからです。インキは完全な黒にはなりません。白の上のベタの黒は、画面では21:1になりますが、コート紙（FOGRA39、FOGRA51）ではおよそ14:1、上質紙などの非塗工紙（FOGRA47、FOGRA52）では8:1、新聞用紙（IFRA26、SNAP）では5:1です。画面で合格するグレーが、紙では不合格になることがあります。白の上の`#767676`は、画面では4.54:1、コート紙ではおよそ3.3:1です。
+
+印刷での比を求めるには、出力プロファイルの変換（`outputTransform`で作る`options.transform`）が必要です。渡さないときは、印刷については白抜き文字だけを検査します。
+
+### 白抜き文字
+
+インキの地から抜いた明るい文字は、小さいときや線が細いときに印刷でつぶれます。地のインキが文字の中へ広がるためです。複数のインキで作る地では、版の見当が合っていることも条件になります。コントラスト比にはこれが表れません。濃い青の上の白は10:1を超えます。印刷の検査は、`minSize`より小さい文字と、イタリックまたは`lightWeight`以下のウェイトで`minFineSize`より小さい文字を、別の項目（`reversedText`）として報告します。各項目は、地が4色のインキのうち何色でできているかを示します。
+
+### 検査する文字と地
+
+検査は、すべてのブロックの行をインラインの色（太字、イタリック、参照、チップ）とともに読み、リストのマーカー、ドロップキャップ、キャプション、注、表のセルも読みます。デザインスロットのテキスト、つまり柱、扉、見出しのデザイン、囲みのタイトルも対象です。地は、文字の下にあるいちばん上の塗りです。デザインのボックス、囲み、キャプションの帯、表のセル、チップのいずれかで、どれもなければページの色（`page.backgroundColor`、または部のパレットがそのページに与える紙の色）になります。半透明の色は、その下にあるものと合成します。画像の上の文字は、地が1色ではないので検査しません。漫画の写植、ルビ、数式も検査しません。
+
+### 検査の実行
+
+`contrastDocument(doc, options)`は、組み上がった文書の検査結果を、比の低いものから順に返します。各項目は、最初に現れる箇所について、本全体での`pageIndex`、紙面上の`rect`（ページのpx）、ソースの範囲を持ちます。そのほかに、描画されたとおりの2つの色（`color`、`background`）、組まれている最小の`sizePt`とその`weight`と`italic`、`role`（`'body'`、`'heading'`、`'caption'`、`'table'`、`'runningHead'`、`'design'`、`'chip'`、`'marker'`のいずれか）、最初のランの`text`、同じ設定のランの数`count`を持ちます。色の組み合わせは、何行で使われていても、しきい値ごとに1回だけ報告されます。
+
+- `lowContrast`には、`level`、`large`、`required`、検査した対象ごとの比（`screen`、`print`）と、`required`に届かない対象を示す`failing`が加わります。
+- `reversedText`には、`reasons`（`'small'`、`'italic'`、`'light'`）、`minimumPt`、`inks`が加わります。
+
+オプションは、`contrast`（文書のものと異なる設定を使うときの、解決済みの設定）、`media`（`mode`の値にかかわらず検査する対象）、`transform`です。
+
+```ts
+import { contrastDocument, outputTransform, parseIccProfile } from 'postext';
+
+const transform = outputTransform(parseIccProfile(fogra51Bytes));
+for (const issue of contrastDocument(doc, { transform })) {
+  if (issue.kind === 'lowContrast') {
+    console.log(`${issue.color} on ${issue.background}: ${issue.screen}:1, ${issue.level} asks for ${issue.required}:1`);
+  }
+}
+```
+
+`contrastPairs(doc, options)`は、文書に現れる文字と地の組み合わせを、合格かどうかにかかわらずすべて返します。それぞれが`screen`の比、変換を渡したときは`print`の比、求められる比`required`、設定に書かれたとおりの色（`textColor`、`groundColor`）を持ちます。デザインツールが色の項目の横に表示する内容です。`enabled`の値にかかわらず実行されます。
+
+計算に使う関数は、独自のツールのためにエクスポートされています。
+
+- `contrastRatio(a, b)`と`relativeLuminance(color)`は、sRGBの色のWCAG 2のコントラスト比と相対輝度を返します。
+- `isLargeText(sizePt, weight)`と`contrastThreshold(level, large)`は、サイズとウェイトに対するしきい値を返します。
+- `blendColors(top, under)`は、半透明の色を別の色に重ねた結果を`#rrggbb`で返します。
+- `printContrastRatio(a, b, context)`、`printLuminance(color, context)`、`printSeparation(color, context)`は、同じものを紙の上について返します。`context`は`transform`と、`authored`として`authoredCmykColors(config)`の結果を持ちます。
+- `contrastMedia(doc.config, contrast)`は、その文書で`mode`が解決される検査の対象を返します。
+
+リゾルバーとストリッパーはほかのセクションと同じです。`resolveContrastConfig`と`stripContrastDefaults`、そして`DEFAULT_CONTRAST_CONFIG`、`DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG`、`CONTRAST_LEVELS`、`CONTRAST_MODES`があります。
+
+
 ## Folioビューアー（設定）
 
 `folio`プロパティは、Folioビューアー（`postext-folio`）が印刷された本を3Dでどう見せるかを設定します。対象は視点の角度、紙、製本、本を置く台、照明です。レイアウトはこれを無視し、canvas、HTML、PDFの出力も同様です。`buildDocument`は、設定がいずれかの値を指定しているときに限り、解決した設定をVDTの`doc.config.folio`として持ち運びます。そのため、これらを指定しない文書のレイアウトハッシュは変わりません。
@@ -1077,7 +1187,7 @@ for (const { ratio, line, block } of findLooseLines(doc, { threshold: 2.5 })) {
 }
 ```
 
-- **`findLooseLines(doc, { threshold?, pageIndex? })`**：`justifiedSpaceRatio`が`threshold`を超えるすべての両端そろえの行を、読む順に返します（`{ block, line, ratio, x, y, width, height }`）。矩形はページのピクセル単位で、強調が覆う帯、つまりその行の位置でブロックの全幅にわたる帯です。これらは、Sandboxが強調し、検査パネルで`looseLine`として報告する行と同じです。
+- **`findLooseLines(doc, { threshold?, pageIndex? })`**：語間が`threshold`を超えるすべての両端そろえの行を、読む順に返します（`{ block, line, ratio, x, y, width, height }`）。`ratio`は`lineWordSpacing(line)`の値、つまり`minWordSpacing`と`maxWordSpacing`が縛る語間です（行が別の書体のスペースを含むときは`justifiedSpaceLimitRatio`、そうでなければ`justifiedSpaceRatio`）。そのため、上限ちょうどで組まれて太字のスペースを含む行は、しきい値が`maxWordSpacing`と同じでも報告されません。矩形はページのピクセル単位で、強調が覆う帯、つまりその行の位置でブロックの全幅にわたる帯です。これらは、Sandboxが強調し、検査パネルで`looseLine`として報告する行と同じです。
 - **`drawLooseLines(ctx, page, doc, { threshold?, color? })`**：1ページについてその帯を塗り、塗った行を返します。コンテキストの現在の変換のもとでページのピクセル単位で描くため、同じcanvasで`renderPage`または`renderPageToCanvas`を呼んだ直後に呼び出してください。どちらもコンテキストをページに合わせてスケールした状態のままにします。`color`には任意のcanvasの塗りスタイルを指定できます。
 - **既定値**：どちらのヘルパーも、文書の`debug.looseLineHighlight`ではなく、既定のしきい値（3）と色（`#ff000040`）を使います。この設定はSandboxのためのものです。設定に従わせるには、`resolveDebugConfig(config.debug).looseLineHighlight.threshold`と`.color.hex`を渡します。
 
@@ -1172,7 +1282,7 @@ debug: {
 - **範囲外の段数**：`'multiple'`レイアウトの`columnCount`（文書のもの、または見出しスタイル自身の`layout`のもの）が3〜8の整数ではない場合です。ページはいちばん近い有効な段数で分けられ（数値でなければ3）、`used`がその数を示します（`columnCountClamped`。[`'multiple'`レイアウト](/ja/docs/configuration-page-layout#レイアウトの種類)を参照）。
 - **大きすぎる文字グリッド**：`cjk.grid`の1行の字数または1ページの行数が、余白の内側に収まる数より多い場合です。グリッドは収まる最大の数で組まれ、`used`がその数を示します（`cjkGridClamped`。[文字グリッド](/ja/docs/configuration-east-asian#文字グリッド)を参照）。
 - **不明な設定**：`headings`、`headings.balancing`、見出しレベル、見出しスタイル、段落スタイルにないキーです。たとえば綴りを誤った`letterSpacng`、別のツールから持ち込んだ`tracking`、見出しスタイルに付けた`level`、段落スタイルに付けた`fontStyle: 'italic'`（段落スタイルは`italic: true`を取ります）などです。タブ位置も同じように検査されます（`leader`を`leaders`と書いた場合など）。エンジンはこれを無視します（postext 1.4までは何も知らせずに無視していました）。`value`はそのキー、`used`は空で、`suggestion`は、1、2文字の違いか大文字小文字の違いだけで済む設定があれば、その最も近い設定の名前を示します（`unknownConfigKey`）。
-- **不明な設定値**：いくつかの語のうち1つを取る設定に、別の値が入っている場合です。たとえば`direction: 'right'`です（`auto`、`ltr`、`rtl`のいずれかを取ります）。エンジンは代わりに既定値を読み、`used`がその結果を示します。`direction`なら文書の言語の方向になります（`unknownConfigValue`）。タブ位置の`align`が4つの語のどれでもなければ`'start'`として読み、`position`が長さでも`'end'`でも割合でもなければそのタブ位置を除外します（`used`は`'none'`）。漫画の設定の語も検査されます（[漫画 › 漫画の警告](/ja/docs/comics#漫画の警告)）。そのとき`used`は設定が解決された値（組み込みの吹き出しのスタイルでは、そのスタイル自身の既定値）で、近い語があれば`suggestion`がその語を示します。
+- **不明な設定値**：いくつかの語のうち1つを取る設定に、別の値が入っている場合です。たとえば`direction: 'right'`です（`auto`、`ltr`、`rtl`のいずれかを取ります）。エンジンは代わりに既定値を読み、`used`がその結果を示します。`direction`なら文書の言語の方向になります（`unknownConfigValue`）。タブ位置の`align`が4つの語のどれでもなければ`'start'`として読み、`position`が長さでも`'end'`でも割合でもなければそのタブ位置を除外します（`used`は`'none'`）。漫画の設定の語も検査されます（[漫画 › 漫画の警告](/ja/docs/comics#漫画の警告)）。そのとき`used`は設定が解決された値（組み込みの吹き出しのスタイルでは、そのスタイル自身の既定値）で、近い語があれば`suggestion`がその語を示します。コントラストの検査の`level`と`mode`も同じように検査されます。`used`は`'AA'`または`'auto'`です。
 - **縦組みの行番号**：縦組みの文書（`layout.writingMode: 'vertical-rl'`）で`lineNumbers.enabled: true`を指定した場合です。縦組みのページには行番号が付かず、`used`は`false`です（`lineNumbersUnsupported`。[行番号](/ja/docs/configuration-notes-references#行番号)を参照）。
 - **縦組みでの回り込み** — 縦組みの文書でのリソースタイプの`defaultPlacement.wrap`。縦組みのページでは図版の横に本文を組まず、`used`は`none`です（`wrapUnsupported`。[文書の書式 › 回り込み](/ja/docs/document-format#回り込み)を参照）。側を指さない`wrap`は不明な設定値です。
 

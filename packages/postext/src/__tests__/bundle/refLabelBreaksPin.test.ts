@@ -1,0 +1,78 @@
+import { describe, it, expect } from 'vitest';
+import { migrateBundleConfig, migrateConfig, pinLegacyRefLabelBreaks } from '../../bundle/configVersion';
+import { stripConfigDefaults } from '../../defaults';
+import { resolveAllConfig } from '../../pipeline/config';
+import type { PostextConfig } from '../../types';
+
+// #702: a configuration stored before a reference's label of words broke
+// at its spaces (configVersion 11 or older, postext 1.27 or earlier) keeps
+// every label whole.
+
+const kept = (config: PostextConfig): boolean | undefined => config.crossRefs?.breakLabels;
+
+describe('pinLegacyRefLabelBreaks (#702)', () => {
+  it('writes breakLabels: false beside what the configuration sets', () => {
+    expect(pinLegacyRefLabelBreaks<PostextConfig>({}).crossRefs).toEqual({ breakLabels: false });
+    const own: PostextConfig = { crossRefs: { page: 'page {n}', defaultStyle: 'title' } };
+    expect(pinLegacyRefLabelBreaks(own).crossRefs).toEqual({ page: 'page {n}', defaultStyle: 'title', breakLabels: false });
+    // The stored configuration is not touched.
+    expect(kept(own)).toBeUndefined();
+  });
+
+  it('leaves a configuration that names the setting as it is', () => {
+    for (const config of [{ crossRefs: { breakLabels: true } }, { crossRefs: { breakLabels: false } }] as PostextConfig[]) {
+      expect(pinLegacyRefLabelBreaks(config)).toBe(config);
+    }
+  });
+
+  it('pins every version before 12 whose content may hold a reference, none from 12', () => {
+    const withRef = [
+      'See :ref{id="fig-1"} for the map.',
+      'By \\ref{thm:main} and \\eqref{eq:energy}.',
+      'As @fig:map shows, and [@sec:intro].',
+    ];
+    for (const v of [undefined, 1, 5, 8, 10, 11]) {
+      // Unknown content counts as holding one.
+      expect(kept(migrateConfig({}, v)), String(v)).toBe(false);
+      for (const content of withRef) expect(kept(migrateConfig({}, v, { content })), `${v} ${content}`).toBe(false);
+      expect(kept(migrateConfig({}, v, { content: ['No reference here.', withRef[0]!] })), String(v)).toBe(false);
+      // No reference: an e-mail address is no pandoc-crossref.
+      expect(kept(migrateConfig({}, v, { content: 'Write to ana@example.org. A [phrase]{#anchor} and a heading {#sec}.' })), String(v)).toBeUndefined();
+    }
+    const current: PostextConfig = {};
+    expect(migrateConfig(current, 12)).toBe(current);
+    expect(resolveAllConfig(current).crossRefs.breakLabels).toBe(true);
+    expect(resolveAllConfig(migrateConfig({}, 11)).crossRefs.breakLabels).toBe(false);
+  });
+
+  it('survives a save', () => {
+    for (const config of [{}, { crossRefs: { page: 'page {n}' } }] as PostextConfig[]) {
+      const migrated = migrateConfig(config, 11);
+      const saved = stripConfigDefaults(migrated);
+      expect(kept(saved)).toBe(false);
+      const reloaded = migrateConfig(saved, 12);
+      expect(reloaded).toBe(saved);
+      expect(resolveAllConfig(reloaded).crossRefs).toEqual(resolveAllConfig(migrated).crossRefs);
+      expect(kept(stripConfigDefaults(saved))).toBe(false);
+    }
+    // The default is not stored.
+    expect(stripConfigDefaults({ crossRefs: { breakLabels: true } }).crossRefs).toBeUndefined();
+    expect(stripConfigDefaults({ crossRefs: { breakLabels: false } }).crossRefs).toEqual({ breakLabels: false });
+  });
+
+  it('pins a bundle on the crossRefs in force', () => {
+    const content = 'See :ref{id="fig-1"}.';
+    // The locale's layer replaces the manifest's `crossRefs` wholesale: the
+    // pin goes on what is left in force.
+    const merged = migrateBundleConfig({}, [{ crossRefs: { page: 'page {n}' } }, { crossRefs: { page: 'página {n}' } }], 11, { content });
+    expect(merged.crossRefs).toEqual({ page: 'página {n}', breakLabels: false });
+    // A layer that names the setting keeps its word.
+    expect(kept(migrateBundleConfig({}, [{ crossRefs: { breakLabels: true } }], 11, { content }))).toBe(true);
+    // The reader's own base is pinned with the rest when nothing names it.
+    expect(kept(migrateBundleConfig({ crossRefs: { defaultStyle: 'title' } }, [{}], 11, { content }))).toBe(false);
+    // A current bundle is read as written.
+    expect(kept(migrateBundleConfig({}, [{}], 12, { content }))).toBeUndefined();
+    // No reference in the book: nothing to pin.
+    expect(kept(migrateBundleConfig({}, [{}], 11, { content: 'Plain text.' }))).toBeUndefined();
+  });
+});

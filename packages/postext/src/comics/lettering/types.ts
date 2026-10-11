@@ -29,8 +29,10 @@ export type BalloonTailKind = 'curved' | 'wedge' | 'bubbles' | 'zigzag' | 'none'
 export type LetteringPosition = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'top' | 'bottom';
 
 /** A panel side, for an off-panel speaker (`tail=<side>`). `start` / `end`
- *  follow the panel's reading direction. */
-export type PanelSide = 'top' | 'bottom' | 'start' | 'end';
+ *  follow the panel's reading direction; `left` / `right` are sides of the
+ *  page (#727: the layout has already turned a side of a mirrored picture
+ *  over). */
+export type PanelSide = 'top' | 'bottom' | 'start' | 'end' | 'left' | 'right';
 
 /**
  * A balloon style with every length resolved to page px: the resolved
@@ -221,6 +223,10 @@ export interface LetteringPanel {
   /** Locale of the text (BCP 47). */
   locale: string;
   anchors: readonly LetteringAnchor[];
+  /** The faces of people who do not speak (`Resource.faces`, #726), page
+   *  px: each counts as a face wherever an anchor's does (no balloon over
+   *  it at any fallback, no tail across it or across the figure under it). */
+  faces?: readonly Rect[];
   /** Regions balloons must not cover (hands, key objects), page px. A
    *  `guard` is one the layout derives (the hair or hat over a face), which
    *  the last fallback covers before it covers what the art marks. */
@@ -298,6 +304,10 @@ export interface LetteringEnv {
   /** Mirror flag of the frame the text is painted in (balloons are painted
    *  on the sheet: false). */
   mirrored?: boolean;
+  /** `comics.lettering.strictPlacement` (#728): a balloon reshaped to fit
+   *  its panel pays for every Chinese word its new lines part, more than a
+   *  balloon read out of order does. Unset: the placement of 1.27. */
+  strictPlacement?: boolean;
 }
 
 /** Why a balloon could not be placed cleanly (warning

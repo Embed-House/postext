@@ -33,6 +33,7 @@ interface FootnotesConfig {
   lineHeight?: Dimension;     // Note leading; em is the note size.
   color?: ColorValue;         // Note colour; the body colour when unset.
   textAlign?: TextAlign;      // The body alignment when unset.
+  wordBreak?: 'normal' | 'keep-all'; // The document's cjk.wordBreak when unset.
   hangingIndent?: Dimension;  // Indent of a note's turnover lines.
   spaceBetween?: Dimension;   // Space between two notes.
   spaceAbove?: Dimension;     // Space between the text and the rule; em is the body size.
@@ -139,6 +140,12 @@ interface FootnotesConfig {
       <td><code>TextAlign</code></td>
       <td>body alignment</td>
       <td>Alignment of the note text.</td>
+    </tr>
+    <tr>
+      <td><code>wordBreak</code></td>
+      <td><code>'normal' | 'keep-all'</code></td>
+      <td><code>cjk.wordBreak</code></td>
+      <td>Where the notes break between Chinese, Japanese and Korean characters, apart from the body (see <a href="/en/docs/configuration-east-asian#east-asian-typography"><code>cjk.wordBreak</code></a>). <code>'keep-all'</code> keeps a run of such characters whole: the readings an English note quotes (<code>看月光</code>) no longer need a word joiner between every two characters, while the poems of the page go on breaking between any two. <code>'normal'</code> does the reverse under a document that sets <code>'keep-all'</code>. Notes at the foot of the column, at the end of the chapter and beside a spread take it. Since postext 1.28.</td>
     </tr>
     <tr>
       <td><code>hangingIndent</code></td>
@@ -400,6 +407,7 @@ interface CrossRefsConfig {
   section?: string;  // Around any other heading's number: "section {n}".
   page?: string;     // Around a page number: "p. {n}".
   defaultStyle?: 'default' | 'number' | 'title' | 'page'; // A :ref without style=.
+  breakLabels?: boolean; // A label of words breaks at its spaces.
 }
 ```
 
@@ -437,6 +445,12 @@ interface CrossRefsConfig {
       <td><code>'default'</code></td>
       <td>What a <code>:ref</code> to a heading or an anchor prints without <code>style=</code>. <code>'default'</code>: a numbered heading by its word and number, an unnumbered one by its title, an anchor by its text. A reference that sets <code>style</code> keeps it, and references to figures and tables are not affected.</td>
     </tr>
+    <tr>
+      <td><code>breakLabels</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let a line break at the spaces of a reference whose label is words: the text of a <code>[words]{'{#id}'}</code> anchor, the title of a heading or a box, a <code>text="…"</code> override (on a reference to a figure or a table too). The label's spaces then stretch and shrink with the line, and the reference stays one link; its words are not hyphenated. A number, a Roman numeral or a single letter inside such a label keeps to the word before it (<code>Fig. 1a</code>, <code>plate IV</code>). A label with a number or a page (<em>section 3.2</em>, <em>p. 112</em>, <em>Fig. 1.7</em>, <em>Theorem 2</em>) never breaks, even when its template holds an ordinary space. <code>false</code> sets every label as one word no line breaks inside, as up to postext 1.27. A configuration stored before <code>configVersion</code> 12 whose text holds a reference reads with <code>false</code>, so its lines stay where they were (see <a href="/en/docs/configuration-programmatic-usage#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -456,6 +470,7 @@ interface CitationsConfig {
   collapseRanges?: boolean;
   notes?: 'footnote' | 'warichu';
   numbering?: 'book' | 'chapter';
+  hyphenateNames?: boolean; // false: the cited authors' names are never divided
   bibliography?: {
     title?: string;        // unset: the document language's word; '' or ' ': none
     scope?: 'book' | 'chapter';
@@ -530,6 +545,12 @@ interface CitationsConfig {
       <td><code>'book' | 'chapter'</code></td>
       <td><code>'book'</code></td>
       <td>Citations through the book, or each chapter on its own (each document, and each level-1 heading after a citation): a numbered style numbers each chapter from 1 and a work cited in two chapters takes each chapter's number; a note style writes a work in full at its first citation in each chapter. Meant with <code>bibliography.scope: 'chapter'</code>, whose lists then take the chapter's numbers.</td>
+    </tr>
+    <tr>
+      <td><code>hyphenateNames</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let the dictionary divide the names of the cited authors. <code>false</code> keeps whole the family name of every person in the references (authors, editors, translators) and every name given as one string, wherever it stands with its capital: in a citation, in the running text and in the list, so no line ends on <code>(Lup-</code>. A double name is read part by part, and an author called Baker does not keep the word <code>baker</code> whole. See <a href="/en/docs/configuration-text#words-kept-whole">Words kept whole</a>.</td>
     </tr>
     <tr>
       <td><code>bibliography.title</code></td>
@@ -814,6 +835,12 @@ const config: PostextConfig = {
       <td><code>Dimension</code></td>
       <td>one line of the index</td>
       <td>Space above each group, with or without a head; none above the first group, whose distance from the heading is the heading's, and none at the top of a column.</td>
+    </tr>
+    <tr>
+      <td><code>groups.splitMinEntries</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>When a column or a page ends inside a group, the fewest entries of the group left at the foot of the column and the fewest carried to the head of the next. With <code>2</code> no entry stands alone under its head at a column's foot and none opens a column alone before the next group: a group of two or three entries moves whole, and one of four or more is divided only where two stay and two go. An entry is one entry block (a main entry or a sub-entry, with the head and the page-less entries set above it); a group taller than a column is divided where it must be. The level cut of a closing band follows the rule too, so a last group that cannot be shared can leave the columns uneven by its lines. <code>1</code> lets a column end between any two entries, as up to postext 1.27. Since postext 1.28; documents stored earlier that print an index keep <code>1</code> (<code>pinLegacyIndexGroupSplit</code>).</td>
     </tr>
     <tr>
       <td><code>groups.symbolsLabel</code>, <code>numbersLabel</code></td>

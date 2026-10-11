@@ -35,6 +35,7 @@ import { isJapaneseLanguage, renderLangOf } from './locale';
 import { hasCJK } from './measure/cjk';
 import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
+import { scriptContextUntracked, scriptMark, type ScriptContext } from './measure/script';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
@@ -79,9 +80,24 @@ const inkScaleDecl = (scale: number): string =>
  *  and the word comes out wider than its place (fi in Newsreader: 4.5 px at
  *  40 px). Asked for as features they stay (`font-variant-ligatures` does
  *  not bring them back). After the `font` shorthand, which resets them: on
- *  the line's box and on each run in another face. A box that takes
- *  {@link CJK_TEXT_DECL} after it keeps that one. */
+ *  the line's box and on each run in another face. Design text (running
+ *  heads, openers, callout titles, balloon lettering) and the lines of a
+ *  vertical page carry it too (#703). A box that also takes
+ *  {@link CJK_TEXT_DECL} takes {@link CJK_TRACKED_TEXT_DECL} in its place. */
 const TRACKED_LIGATURES_DECL = "font-feature-settings:'liga' 1,'clig' 1;";
+/** The box of a script mark (see {@link scriptTextHtml}): no size, so it
+ *  advances nothing, and no part of a selection or a copy. */
+const SCRIPT_MARK_DECL = 'font-size:0;-webkit-user-select:none;user-select:none;';
+/** {@link CJK_TEXT_DECL} for a box of a tracked text (#703): one
+ *  `font-feature-settings` with the ligatures of
+ *  {@link TRACKED_LIGATURES_DECL} beside its own features. The property
+ *  does not merge: of two declarations the last one stands alone, and a
+ *  tracked CJK line lost the ligatures of its Latin words. */
+const CJK_TRACKED_TEXT_DECL = "text-spacing-trim:space-all;text-autospace:no-autospace;font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'liga' 1,'clig' 1;";
+/** {@link CJK_FEATURES_DECL} for a box of a tracked text. */
+const CJK_TRACKED_FEATURES_DECL = "font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'liga' 1,'clig' 1;";
+/** {@link CJK_TEXT_DECL} of a box, with its ligatures when it is `tracked`. */
+const cjkTextDecl = (tracked: boolean): string => (tracked ? CJK_TRACKED_TEXT_DECL : CJK_TEXT_DECL);
 
 /** Whether a line box carries {@link CJK_TEXT_DECL}: a line of the CJK
  *  composer, which it measured character by character, or a line with no
@@ -266,11 +282,32 @@ type RunPaint = (probe: VDTLineSegment) => { font: string; color: string };
  */
 function segmentBox(seg: VDTLineSegment, inherited: TextDirection, rootLang: string | undefined, tracking: number, font: string, color: string, paint: RunPaint): SegmentBox {
   const attrs = dirAttr(seg.rtl ? 'rtl' : 'ltr', inherited) + (seg.lang !== undefined && seg.lang !== rootLang ? ` lang="${esc(seg.lang)}"` : '');
-  const decl = tracking !== 0 && joiningScriptIn(seg.text) ? 'letter-spacing:0;' : '';
+  // A word of a joining script takes no tracking, nor does a word with no
+  // letter shaped in the Arabic script (#725).
+  const decl = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext)) ? 'letter-spacing:0;' : '';
   const html = seg.runs && seg.runs.length > 0 ? wordRunsHtml(seg, font, color, paint)
-    : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida) : undefined;
+    : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida)
+    : seg.scriptContext !== undefined ? scriptTextHtml(seg.text, seg.scriptContext, seg.rtl === true) : undefined;
   if (!attrs && !decl && html === undefined) return PLAIN_BOX;
   return html === undefined ? { attrs, decl } : { attrs, decl, html };
+}
+
+/**
+ * A word with no letter set in the script the layout measured it in
+ * (`VDTLineSegment.scriptContext`, #725): its text, and beside it the mark
+ * of the script (`scriptMark`, a character of the script glued with a
+ * no-break space) in a box of no size. The browser reads the script of
+ * digits and punctuation from the text they stand in, across the box, so
+ * the word takes the forms and the width of that script, where alone it
+ * would take the ones the browser picks for a text with no letter. The
+ * mark comes after a left-to-right word and before a right-to-left one,
+ * as on the canvas; it has no size, is hidden from assistive technology
+ * and is left out of a selection, so the page reads and copies as written.
+ */
+function scriptTextHtml(text: string, script: ScriptContext, rtl: boolean): string {
+  const { lead, trail } = scriptMark(script, rtl);
+  const hidden = (mark: string): string => (mark === '' ? '' : `<span aria-hidden="true" style="${SCRIPT_MARK_DECL}">${esc(mark)}</span>`);
+  return hidden(lead) + esc(text) + hidden(trail);
 }
 
 /**
@@ -619,11 +656,15 @@ function renderTextSegment(
   // A compressed CJK mark is painted before its box (`inkOffset`).
   const left = seg.inkOffset !== undefined ? x + seg.inkOffset : x;
   const scaleDecl = seg.inkScale !== undefined ? inkScaleDecl(seg.inkScale) : '';
-  const pos = `position:absolute;left:${left.toFixed(3)}px;top:${top};white-space:pre;${spacingDecl}${cjk === 'own' ? CJK_TEXT_DECL : ''}${scaleDecl}${box.decl}`;
+  const pos = `position:absolute;left:${left.toFixed(3)}px;top:${top};white-space:pre;${spacingDecl}${cjk === 'own' ? cjkTextDecl(tracking !== 0) : ''}${scaleDecl}${box.decl}`;
   // Text set with emphasis dots is emphasis (#193); the dots are the
   // line's marks.
   const text = seg.cjkMarks?.dots ? `<em style="font-style:inherit;">${esc(seg.text)}</em>` : box.html ?? esc(seg.text);
-  const featuresDecl = !fontDecl ? '' : scaleDecl ? DASH_FEATURES_DECL : cjk ? CJK_FEATURES_DECL : '';
+  // A run in another face of a tracked line asks for its ligatures again
+  // after its `font` (#703), with the CJK features when it takes those.
+  const featuresDecl = !fontDecl ? '' : scaleDecl ? DASH_FEATURES_DECL
+    : cjk ? (tracking !== 0 ? CJK_TRACKED_FEATURES_DECL : CJK_FEATURES_DECL)
+    : tracking !== 0 && !fontDecl.includes(TRACKED_LIGATURES_DECL) ? TRACKED_LIGATURES_DECL : '';
   if (seg.refResourceId !== undefined) {
     // Anchors carry an explicit color so the UA link blue never leaks in.
     const inner = `<a href="${refAnchorHref(refKey(seg))}" style="text-decoration:none;${fontDecl}${featuresDecl}${fontDecl ? 'line-height:0;' : ''}color:${color};">${text}</a>`;
@@ -698,10 +739,14 @@ function renderMarkedWordSegment(
 }
 
 /** A `:ref` painted as several runs (a label in small capitals: one run per
- *  case) from `segs[start]` on. Every run is placed as measured, and all of
- *  them sit in one anchor, so the reference stays one link. `paint` renders
- *  one run, as plain text, at its x. Returns the markup, the index past the
- *  last run and the x after it. */
+ *  case; a label of words, #702: one per word and per space) from
+ *  `segs[start]` on. Every run is placed as measured, and all of them sit
+ *  in one anchor, so the reference stays one link on its line. `paint`
+ *  renders one run, as plain text, at its x; a space inside the label is
+ *  copy text that advances by `layout.gap` (the line's justified space),
+ *  and `layout.at` gives each segment's x on a line whose segments are
+ *  reordered. Returns the markup, the index past the last run and the x
+ *  after it. */
 function renderRefRuns(
   segs: readonly VDTLineSegment[],
   start: number,
@@ -709,13 +754,21 @@ function renderRefRuns(
   color: string,
   paint: (seg: VDTLineSegment, x: number) => string,
   linked = true,
+  layout?: { gap?: (space: VDTLineSegment) => number; at?: readonly number[] },
 ): { html: string; end: number; x: number } {
   const runs: string[] = [];
   let i = start;
   do {
     const seg = segs[i]!;
-    runs.push(paint(seg, x));
-    x += seg.width;
+    if (layout?.at) x = layout.at[i]!;
+    if (seg.kind === 'space') {
+      const gap = layout?.gap ? layout.gap(seg) : seg.width;
+      runs.push(copyTextHtml(seg.text, x, gap - seg.width));
+      x += gap;
+    } else {
+      runs.push(paint(seg, x));
+      x += seg.width;
+    }
     i++;
   } while (segs[i]?.refContinues);
   if (!linked) return { html: runs.join(''), end: i, x };
@@ -989,7 +1042,10 @@ function renderSegments(
       continue;
     }
     if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, runX) => paintText(run, runX, true), refLinks(refKey(seg), targets), {
+        gap: (space) => (useJustify ? justifiedSpaceWidth : space.width),
+        ...(at ? { at } : {}),
+      });
       parts.push(group.html);
       x = group.x;
       i = group.end - 1;
@@ -1140,7 +1196,9 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+      const group = renderRefRuns(segs, i, x, pickSegmentColor(seg, block), (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets), {
+        gap: (space) => (useJustify && !space.autospace ? justifiedSpaceWidth : space.width),
+      });
       parts.push(group.html);
       x = group.x;
       i = group.end - 1;
@@ -1349,7 +1407,7 @@ function renderLine(
     `color:${block.color};` +
     strikethroughDecl +
     trackingDecl +
-    (lineCjkDecl(line) ? CJK_TEXT_DECL : '') +
+    (lineCjkDecl(line) ? cjkTextDecl(tracking !== 0) : '') +
     `">${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
   );
 }
@@ -1581,7 +1639,9 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
     // stretched down the column from where the layout put its glyph, the
     // face's own Chinese form off, as the canvas and the PDF paint it.
     const stretched = seg.inkScale !== undefined;
-    const decl = (font !== blockFont ? `font:${font};` : '')
+    // A run in another face of a tracked line asks for its ligatures
+    // again after its `font`, which resets them (#703).
+    const decl = (font !== blockFont ? `font:${font};${lineTracking !== 0 ? TRACKED_LIGATURES_DECL : ''}` : '')
       + (color !== block.color ? `color:${color};` : '')
       + (seg.tracking !== undefined ? `letter-spacing:${lineTracking + seg.tracking}px;` : '')
       + (stretched ? `transform:scaleY(${seg.inkScale!.toFixed(4)});transform-origin:0 0;${DASH_FEATURES_DECL}` : '');
@@ -1616,8 +1676,10 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
   const width = Math.max(line.bbox.width, effectiveWidth);
   const decl = `font:${blockFont};color:${block.color};`
     + (block.strikethroughText ? 'text-decoration:line-through;' : '')
-    + (lineTracking !== 0 ? `letter-spacing:${lineTracking}px;` : '')
-    + (lineCjkDecl(line) || hasCJK(line.text) ? CJK_TEXT_DECL : '');
+    // A tracked line keeps the ligatures of its sideways Latin runs, as
+    // they were measured (#703).
+    + (lineTracking !== 0 ? `letter-spacing:${lineTracking}px;${TRACKED_LIGATURES_DECL}` : '')
+    + (lineCjkDecl(line) || hasCJK(line.text) ? cjkTextDecl(lineTracking !== 0) : '');
   return (
     `<div class="pt-line" data-block="${esc(block.id)}" style="position:absolute;left:${line.bbox.x}px;top:${line.bbox.y}px;width:${width}px;height:${line.bbox.height}px;">` +
     uprightInner(width, line.bbox.height, decl, inner.join('')) +
@@ -1664,6 +1726,9 @@ function renderVerticalBullet(block: VDTBlock, v: VerticalHtml): string {
 function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX: number, originY: number): string {
   const size = extractFontSizePx(block.fontString);
   const font = quoteFontString(block.fontString);
+  // A tracked text keeps its ligatures (#703): asked for after each
+  // `font`, which resets them.
+  const tracked = !!block.letterSpacingPx;
   const parts: string[] = [];
   const h = size * 2;
   for (const line of block.lines) {
@@ -1677,7 +1742,7 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
       // A dash of a 破折号 (`inkScale`, #652): turned with the flow and
       // stretched down the column, as a body segment's is.
       const stretched = run.inkScale !== undefined;
-      const decl = (runFont !== font ? `font:${runFont};` : '')
+      const decl = (runFont !== font ? `font:${runFont};${tracked ? TRACKED_LIGATURES_DECL : ''}` : '')
         + (stretched ? `transform:scaleY(${run.inkScale!.toFixed(4)});transform-origin:0 0;${DASH_FEATURES_DECL}` : '');
       // A run whose width is its box (a CJK mark that gave up blank, #637)
       // sets its glyphs `inkOffset` into it.
@@ -1685,7 +1750,7 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
       x += run.width;
     }
     const width = Math.max(line.width, x);
-    const decl = `font:${font};color:${block.color};${hasCJK(line.text) ? CJK_TEXT_DECL : ''}`
+    const decl = `font:${font};color:${block.color};${hasCJK(line.text) ? cjkTextDecl(tracked) : tracked ? TRACKED_LIGATURES_DECL : ''}`
       + (line.wordSpacingPx ? `word-spacing:${line.wordSpacingPx.toFixed(3)}px;` : '');
     parts.push(uprightBox(originX + line.xOffset, originY + top, width, h, decl, inner.join('')));
   }
@@ -1797,7 +1862,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.refResourceId !== undefined && segs[i + 1]?.refContinues) {
-        const group = renderRefRuns(segs, i, x, linkColor, (run, at) => paintText(run, at, true), refLinks(refKey(seg), targets));
+        const group = renderRefRuns(segs, i, x, linkColor, (run, runX) => paintText(run, runX, true), refLinks(refKey(seg), targets), at ? { at } : undefined);
         parts.push(group.html);
         x = group.x;
         i = group.end - 1;
@@ -1833,7 +1898,7 @@ function renderResourceLine(
     // A tracked line (a table header set with `headerLetterSpacing`) was
     // measured with the tracking in its widths.
     (line.letterSpacing ? `letter-spacing:${line.letterSpacing}px;${TRACKED_LIGATURES_DECL}` : '') +
-    (lineDecl ? CJK_TEXT_DECL : '') +
+    (lineDecl ? cjkTextDecl(!!line.letterSpacing) : '') +
     `">${parts.join('')}</div>`
   );
 }
@@ -2207,6 +2272,11 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
   if (block.vertical) return parts.join('') + renderTurnedDesignText(block);
   const font = quoteFontString(block.fontString);
   const fontSize = extractFontSizePx(block.fontString);
+  // A tracked text keeps its ligatures, as it was measured (#703): the
+  // block's box asks for them after its `letter-spacing`, each run in
+  // another face after its `font`, and a box that takes the CJK
+  // declarations holds both sets of features.
+  const tracked = !!block.letterSpacingPx;
   const lineParts: string[] = [];
   for (const line of block.lines) {
     const top = line.baselineY - block.bbox.y - fontSize * 0.8;
@@ -2219,11 +2289,11 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     const inner = line.runs
       ? line.runs.map((run, i) => {
           const runFont = quoteFontString(run.fontString);
-          const cjkDecl = hasCJK(run.text) ? CJK_TEXT_DECL : '';
+          const cjkDecl = hasCJK(run.text) ? cjkTextDecl(tracked) : '';
           // The `font` shorthand resets `line-height` to `normal`: a run in
           // another face would grow the line box and push the line's
           // baseline down. It keeps the line's own.
-          const fontDecl = runFont !== font ? `font:${runFont};line-height:1;` : '';
+          const fontDecl = runFont !== font ? `font:${runFont};line-height:1;${tracked && !cjkDecl ? TRACKED_LIGATURES_DECL : ''}` : '';
           const stackDecl = run.stacked
             ? 'display:inline-block;width:0;'
             : line.runs![i - 1]?.stacked ? `display:inline-block;min-width:${run.width.toFixed(3)}px;` : '';
@@ -2243,7 +2313,7 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
           return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl ? `<span style="${fontDecl}${cjkDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
         }).join('')
       : esc(line.text);
-    const lineDecl = !line.runs && hasCJK(line.text) ? CJK_TEXT_DECL : '';
+    const lineDecl = !line.runs && hasCJK(line.text) ? cjkTextDecl(tracked) : '';
     // A justified line: its word spaces widened as the canvas and the PDF
     // advance its runs (EF-109).
     const wordSpacingDecl = line.wordSpacingPx ? `word-spacing:${line.wordSpacingPx.toFixed(3)}px;` : '';
@@ -2263,7 +2333,7 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     );
   }
   const clipDecl = block.clip ? 'overflow:hidden;' : '';
-  const trackingDecl = block.letterSpacingPx ? `letter-spacing:${block.letterSpacingPx}px;` : '';
+  const trackingDecl = block.letterSpacingPx ? `letter-spacing:${block.letterSpacingPx}px;${TRACKED_LIGATURES_DECL}` : '';
   // An outline over the glyphs (centred on their edges, as on canvas and in
   // the PDF); hollow letters leave the fill transparent.
   const strokeDecl = block.stroke && block.stroke.widthPx > 0
