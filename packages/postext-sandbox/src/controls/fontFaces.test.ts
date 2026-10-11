@@ -388,3 +388,140 @@ describe('where a family comes from, as the loader resolved it (#739)', () => {
     expect(loader.fontFamilySource('House Serif')).toBe('missing');
   });
 });
+
+// #753: opening the guide cost 64 failed requests. Its figures are set in
+// `Geist, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif`,
+// the engine asks the host for every named family of the list, and the
+// loader took each of them to Fontsource, to Google Fonts and to jsDelivr,
+// weight by weight and style by style.
+describe('the system fonts of a font stack (#753)', () => {
+  const STACK = ['-apple-system', 'Segoe UI', 'Helvetica Neue', 'Arial'];
+  const GENERIC = ['sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont'];
+  const FACES: [number, 'normal' | 'italic'][] = [[400, 'normal'], [400, 'italic'], [600, 'normal'], [700, 'normal'], [700, 'italic']];
+  const fontsourceCss = (id: string, weight: number) => `https://cdn.jsdelivr.net/npm/@fontsource/${id}@latest/${weight}`;
+  const LORA_CSS = `@font-face{font-family:'Lora';font-style:normal;font-weight:400;src:url(./files/lora-latin-400-normal.woff2) format('woff2');unicode-range:${LATIN};}`;
+  const GEORGIA_CSS = googleCss('Georgia', [{ weight: '400', range: LATIN, file: 'l/georgia' }]);
+
+  /** The style sheets the page was given. */
+  let links: string[];
+  /** A page that takes a style sheet link, and fails to load it. */
+  function pageWithLinks(): void {
+    links = [];
+    globals.document = {
+      fonts,
+      createElement: () => ({}),
+      head: {
+        appendChild: (link: { href: string; onerror?: () => void }) => {
+          links.push(link.href);
+          queueMicrotask(() => link.onerror?.());
+        },
+      },
+    };
+  }
+
+  const provider = async () => (await import('../viewport/pdfFontProvider')).createPdfFontProvider({ raw: true });
+
+  it('tells them by name, whatever the quotes and the case', async () => {
+    const { isSystemFontFamily, isGenericFontFamily } = await import('./systemFonts');
+    for (const name of [...STACK, ...GENERIC, "'Segoe UI'", '"helvetica neue"', 'ARIAL', 'Times New Roman', 'PingFang SC', 'Hiragino Mincho ProN', 'Yu Gothic', 'Geeza Pro', 'Tahoma', 'Source Han Sans SC']) {
+      expect(isSystemFontFamily(name), name).toBe(true);
+    }
+    // System fonts somewhere, and in the catalogue too; a misspelt name is
+    // for the catalogue to answer.
+    for (const name of ['Geist', 'Roboto', 'Noto Sans SC', 'Ubuntu', 'DejaVu Sans', 'EB Garamond', 'Helvetica Noue', 'Arial Nova Web']) {
+      expect(isSystemFontFamily(name), name).toBe(false);
+    }
+    expect(GENERIC.every(isGenericFontFamily)).toBe(true);
+    expect(['Arial', 'Segoe UI', 'Helvetica Neue', 'Geist'].some(isGenericFontFamily)).toBe(false);
+  });
+
+  it('gives their faces up in the provider of the SVG pictures and the PDF, with no request', async () => {
+    pageWithLinks();
+    const ask = await provider();
+    for (const family of [...STACK, 'sans-serif']) {
+      for (const [weight, style] of FACES) {
+        await expect(ask(family, weight, style, { codePoints: new Set([0x20, 0x41]) })).rejects.toThrow(`Fontsource has no files for the family "${family}"`);
+      }
+    }
+    expect(requests).toEqual([]);
+    expect(links).toEqual([]);
+  });
+
+  it('asks no service for a generic keyword: no record, no style sheet, no files', async () => {
+    pageWithLinks();
+    await Promise.all(GENERIC.map((family) => loader.loadFont(family)));
+    expect(await loader.collectFontPayloadsForFamilies(GENERIC)).toEqual([]);
+    expect(await loader.fetchFamilyFaces('sans-serif')).toEqual([]);
+    expect(requests).toEqual([]);
+    expect(links).toEqual([]);
+    expect(fonts.loads).toEqual([]);
+  });
+
+  it('does not look a face of an operating system up, and leaves a setting that names one what Google Fonts answers for it', async () => {
+    pageWithLinks();
+    routes[google('Georgia')] = GEORGIA_CSS;
+    expect(await loader.fontFamilyWeights('Georgia')).toBeNull();
+    await loader.loadFont('Georgia');
+    expect(links).toEqual(['https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400;1,700&display=swap']);
+    const payloads = await loader.collectFontPayloadsForFamilies(['Georgia']);
+    expect(payloads.map((p) => `${p.family} ${p.weight} ${p.style}`)).toEqual(['Georgia 400 normal']);
+    expect(requests.filter((u) => u.includes('fontsource'))).toEqual([]);
+  });
+
+  it('keeps them missing for the Checks panel, known from the start', async () => {
+    for (const family of STACK) {
+      expect(loader.fontFamilySource(family)).toBe('missing');
+      expect(loader.isKnownUnavailableGoogleFont(family)).toBe(true);
+      expect(loader.isUncataloguedFontFamily(family)).toBe(true);
+    }
+    const { computeWarnings } = await import('../warnings/compute');
+    const config: PostextConfig = { bodyText: { fontFamily: 'Arial' }, headings: { fontFamily: 'Lora, Helvetica Neue, sans-serif' } };
+    const payloads = computeWarnings({ markdown: 'Text.', config, doc: null }).map((w) => w.payload);
+    expect(payloads.filter((p) => p.kind === 'missingFontFamily')).toEqual([{ kind: 'missingFontFamily', family: 'Arial' }]);
+    expect(payloads.filter((p) => p.kind === 'fontFamilyStack')).toEqual([
+      { kind: 'fontFamilyStack', path: 'headings.fontFamily', value: 'Lora, Helvetica Neue, sans-serif', used: 'Lora' },
+    ]);
+    expect(requests).toEqual([]);
+  });
+
+  it('leaves an uploaded family of such a name to its files', () => {
+    loader.setCustomFonts([{ name: 'Arial', variants: [{ weight: 400, style: 'normal' as const, fileId: 'f1', format: 'woff2' as const }] }]);
+    expect(loader.fontFamilySource('Arial')).toBe('custom');
+    expect(loader.isUncataloguedFontFamily('Arial')).toBe(false);
+  });
+
+  it('looks a family the catalogue does not have up once, whatever weights and styles are asked', async () => {
+    pageWithLinks();
+    routes[fontsource('helvetica-noue')] = 404;
+    const ask = await provider();
+    for (const [weight, style] of FACES) {
+      await expect(ask('Helvetica Noue', weight, style)).rejects.toThrow('Fontsource has no files for the family "Helvetica Noue"');
+    }
+    expect(requests).toEqual([fontsource('helvetica-noue')]);
+    expect(loader.isUncataloguedFontFamily('Helvetica Noue')).toBe(true);
+    expect(loader.fontFamilySource('Helvetica Noue')).toBe('missing');
+  });
+
+  it('looks a family the catalogue has up once too, and answers with its files', async () => {
+    pageWithLinks();
+    routes[fontsource('lora')] = { type: 'google', variable: true, weights: [400, 500, 600, 700], styles: ['normal', 'italic'] };
+    routes[fontsourceCss('lora', 400)] = LORA_CSS;
+    const ask = await provider();
+    const files = await ask('Lora', 400, 'normal', { codePoints: new Set([0x41]) });
+    expect([files].flat().map((f) => new TextDecoder().decode(f))).toEqual([
+      'https://cdn.jsdelivr.net/npm/@fontsource/lora@latest/files/lora-latin-400-normal.woff2',
+    ]);
+    expect(requests.filter((u) => u.startsWith(fontsource('lora')))).toHaveLength(1);
+    expect(loader.isUncataloguedFontFamily('Lora')).toBe(false);
+  });
+
+  it('still asks for the files of a family whose lookup failed: the catalogue down is not the family missing', async () => {
+    pageWithLinks();
+    routes[fontsource('lora')] = 503;
+    routes[fontsourceCss('lora', 400)] = LORA_CSS;
+    const ask = await provider();
+    const files = await ask('Lora', 400, 'normal', { codePoints: new Set([0x41]) });
+    expect([files].flat()).toHaveLength(1);
+    expect(loader.isUncataloguedFontFamily('Lora')).toBe(false);
+  });
+});

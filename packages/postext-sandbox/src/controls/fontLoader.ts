@@ -15,6 +15,7 @@ import {
 import type { PostextContent } from 'postext';
 import { getFontFile } from '../storage/fontStorage';
 import { parseUnicodeRange } from '../viewport/fontsourceSlices';
+import { isGenericFontFamily, isSystemFontFamily } from './systemFonts';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 
@@ -87,12 +88,18 @@ function fontsourceFaces(family: string, data: FontsourceRecord): FamilyFace[] {
 
 const metadataCache = new Map<string, FontMetadata | null>();
 const metadataInFlight = new Map<string, Promise<FontMetadata | null>>();
+/** The families Fontsource answered it does not have (a 404), apart from
+ *  the ones whose lookup failed (the service down, the network gone), whose
+ *  files may still be there. */
+const uncatalogued = new Set<string>();
 
 function toFontsourceId(family: string): string {
   return family.toLowerCase().replace(/\s+/g, '-');
 }
 
 async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
+  // A face of the reader's machine is not in the catalogue (#753).
+  if (isSystemFontFamily(family)) return null;
   if (metadataCache.has(family)) return metadataCache.get(family)!;
   const existing = metadataInFlight.get(family);
   if (existing) return existing;
@@ -100,6 +107,7 @@ async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
   const promise = (async (): Promise<FontMetadata | null> => {
     try {
       const res = await fetch(`https://api.fontsource.org/v1/fonts/${toFontsourceId(family)}`);
+      if (res.status === 404) uncatalogued.add(family);
       if (!res.ok) return null;
       const data = await res.json() as FontsourceRecord;
       const weights = (data.weights ?? []).filter((w) => typeof w === 'number');
@@ -125,6 +133,24 @@ async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
   return meta;
 }
 
+/** The weights Fontsource lists for a family, or null when it has no record
+ *  of it. The lookup `loadFont` makes, answered from its cache. */
+export async function fontFamilyWeights(family: string): Promise<number[] | null> {
+  return (await fetchFontMetadata(family))?.weights ?? null;
+}
+
+/**
+ * Whether Fontsource has no files for `family` (#753): a generic keyword
+ * or a face of an operating system (`isSystemFontFamily`), which it is
+ * never asked for, or a family it answered it does not have. Its faces are
+ * not worth a request per weight and style. False for a custom family, and
+ * while the lookup has not answered or has failed.
+ */
+export function isUncataloguedFontFamily(family: string): boolean {
+  if (isCustomFontFamily(family)) return false;
+  return isSystemFontFamily(family) || uncatalogued.has(family);
+}
+
 /** Where the loader takes a family from. */
 export type FontFamilySource = 'custom' | 'google' | 'fontsource' | 'missing';
 
@@ -144,11 +170,14 @@ export function onFontSourceResolved(cb: (family: string) => void): () => void {
  * `google` for any other family the services know; `missing` for one
  * neither has (a misspelt name, a system font) and for a custom family
  * whose files were removed. Undefined while no answer has come: the
- * request is in flight or was never made.
+ * request is in flight or was never made. A system font is `missing` from
+ * the start, no request made for it (#753).
  */
 export function fontFamilySource(family: string): FontFamilySource | undefined {
   if (isCustomFontFamily(family)) return 'custom';
   if (isRemovedCustomFontFamily(family)) return 'missing';
+  // Known without asking (#753).
+  if (isSystemFontFamily(family)) return 'missing';
   if (!metadataCache.has(family)) return undefined;
   const meta = metadataCache.get(family);
   if (!meta) return 'missing';
@@ -204,6 +233,10 @@ export function loadFont(font: string): Promise<void> {
     loadingPromises.set(font, promise);
     return promise;
   }
+
+  // A generic keyword names no face: no style sheet to add, nothing to
+  // wait for (#753).
+  if (isGenericFontFamily(font)) return Promise.resolve();
 
   const promise = (async () => {
     const meta = await fetchFontMetadata(font);
@@ -477,6 +510,7 @@ export function fetchFamilyFaces(family: string): Promise<FamilyFace[]> {
   if (cached && (failedAt === undefined || Date.now() - failedAt < FAMILY_FACES_RETRY_MS)) return cached;
   familyFacesFailedAt.delete(family);
   const promise = (async (): Promise<FamilyFace[]> => {
+    if (isGenericFontFamily(family)) return [];
     try {
       const meta = await fetchFontMetadata(family);
       if (meta?.fontsource) return meta.fontsource;
@@ -1022,8 +1056,10 @@ async function fetchCustomFamilyPayloads(family: CustomFontFamily): Promise<Font
  *  has a matching variant (exact weight + style). */
 /** Returns true only when we've conclusively tried and failed to fetch
  *  metadata for `family` from Fontsource (so we know it's not a Google
- *  Font). Returns false while the lookup is pending or not yet started. */
+ *  Font). Returns false while the lookup is pending or not yet started.
+ *  A system font is known not to be one without a lookup (#753). */
 export function isKnownUnavailableGoogleFont(family: string): boolean {
+  if (isSystemFontFamily(family)) return true;
   return metadataCache.has(family) && metadataCache.get(family) === null;
 }
 
