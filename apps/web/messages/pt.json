@@ -1327,6 +1327,8 @@
     "cjkGridLinesTooltip": "Linhas da entrelinha do texto numa coluna. 0: tantas quantas as margens permitirem.",
     "cjkGridShow": "Mostrar a grade",
     "cjkGridShowTooltip": "Desenhar um quadrado para cada posição de caractere sobre a mancha (稿纸), só na tela; o PDF não a inclui.",
+    "cjkGridFullLines": "Papel de manuscrito: linhas cheias",
+    "cjkGridFullLinesTooltip": "Um parágrafo não justificado mantém todas as casas das suas linhas completas: nenhum caractere desce da linha anterior para acompanhar um último caractere sozinho, então o parágrafo pode terminar em um só caractere. Os parágrafos justificados são compostos como sempre. Desativado: um parágrafo assim não termina em um só caractere, e a linha anterior fica com uma casa vazia",
     "cjkGridReadout": "__chars__ 字 × __lines__ 行 · 版心 __width__ × __height__ mm",
     "cjkGridMargins": "Margens a partir da grade: superior __top__, inferior __bottom__, esquerda __left__, direita __right__ mm.",
     "cjkGroupLineEdges": "Pontas da linha",

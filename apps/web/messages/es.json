@@ -2027,6 +2027,8 @@
     "cjkGridLinesTooltip": "Líneas del interlineado del texto en una columna. 0: las que quepan entre los márgenes.",
     "cjkGridShow": "Mostrar la retícula",
     "cjkGridShowTooltip": "Dibuja un cuadrado por cada posición de carácter sobre la caja de texto (稿纸), solo en pantalla; el PDF no la lleva.",
+    "cjkGridFullLines": "Papel de manuscrito: líneas llenas",
+    "cjkGridFullLinesTooltip": "Un párrafo sin justificar conserva todas las casillas de sus líneas completas: ningún carácter baja de la línea anterior para acompañar a un último carácter suelto, así que el párrafo puede acabar en un solo carácter. Los párrafos justificados se componen como siempre. Desactivado: un párrafo así no acaba en un solo carácter, y la línea anterior queda con una casilla vacía",
     "cjkGridReadout": "__chars__ 字 × __lines__ 行 · 版心 __width__ × __height__ mm",
     "cjkGridMargins": "Márgenes de la retícula: superior __top__, inferior __bottom__, izquierdo __left__, derecho __right__ mm.",
     "cjkGroupLineEdges": "Principio y final de línea",

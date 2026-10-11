@@ -1327,6 +1327,8 @@
     "cjkGridLinesTooltip": "1段に入る、本文の行送りでの行数です。0：余白が許すだけ入れます。",
     "cjkGridShow": "グリッドの表示",
     "cjkGridShowTooltip": "版面の文字位置ごとにマス目を描きます（原稿用紙）。画面上だけの表示で、PDFには含めません。",
+    "cjkGridFullLines": "原稿用紙：行のマスを空けない",
+    "cjkGridFullLinesTooltip": "両端をそろえない段落で、いっぱいの行のマスをすべて埋めます。段落末の1字のために前の行から文字を送らないので、段落が1字で終わることがあります。両端ぞろえの段落はこれまでどおりです。オフでは、そうした段落は1字だけの行で終わらず、前の行のマスが一つ空きます。",
     "cjkGridReadout": "__chars__字 × __lines__行 · 版面__width__ × __height__ mm",
     "cjkGridMargins": "グリッドから求めた余白：天__top__、地__bottom__、左__left__、右__right__ mm。",
     "cjkGroupLineEdges": "行頭・行末",

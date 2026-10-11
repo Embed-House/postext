@@ -705,6 +705,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     cjkGridLinesTooltip: t("cjkGridLinesTooltip"),
     cjkGridShow: t("cjkGridShow"),
     cjkGridShowTooltip: t("cjkGridShowTooltip"),
+    cjkGridFullLines: t("cjkGridFullLines"),
+    cjkGridFullLinesTooltip: t("cjkGridFullLinesTooltip"),
     cjkGridReadout: t("cjkGridReadout"),
     cjkGridMargins: t("cjkGridMargins"),
     cjkGroupLineEdges: t("cjkGroupLineEdges"),

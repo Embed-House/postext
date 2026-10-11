@@ -1327,6 +1327,8 @@
     "cjkGridLinesTooltip": "一栏中按正文行高计的行数。0：页边距允许的最大行数。",
     "cjkGridShow": "显示字格",
     "cjkGridShowTooltip": "在版心上为每个字位画一个方格（稿纸），只在屏幕上显示；PDF中不包含。",
+    "cjkGridFullLines": "稿纸：整行不留空格",
+    "cjkGridFullLinesTooltip": "不两端对齐的段落，整行的每个格子都填满：不从上一行借一个字去陪段末的孤字，段落因此可能以一个字结尾。两端对齐的段落照常排。关闭时，这样的段落不以孤字结尾，上一行会空出一格",
     "cjkGridReadout": "__chars__ 字 × __lines__ 行 · 版心 __width__ × __height__ mm",
     "cjkGridMargins": "字格确定的页边距：上__top__，下__bottom__，左__left__，右__right__ mm。",
     "cjkGroupLineEdges": "行首行尾",

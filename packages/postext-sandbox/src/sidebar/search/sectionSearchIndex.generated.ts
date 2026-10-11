@@ -3359,6 +3359,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'cjkGridDescription',
       'cjkGridEnabled',
       'cjkGridEnabledTooltip',
+      'cjkGridFullLines',
+      'cjkGridFullLinesTooltip',
       'cjkGridLines',
       'cjkGridLinesTooltip',
       'cjkGridMargins',

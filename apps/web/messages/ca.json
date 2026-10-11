@@ -1327,6 +1327,8 @@
     "cjkGridLinesTooltip": "Línies de l'interlineat del text en una columna. 0: les que hi càpiguen entre els marges.",
     "cjkGridShow": "Mostrar la retícula",
     "cjkGridShowTooltip": "Dibuixa un quadrat per cada posició de caràcter sobre la caixa de text (稿纸), només a la pantalla; el PDF no la porta.",
+    "cjkGridFullLines": "Paper de manuscrit: línies plenes",
+    "cjkGridFullLinesTooltip": "Un paràgraf sense justificar conserva totes les caselles de les seves línies completes: cap caràcter baixa de la línia anterior per acompanyar un últim caràcter solt, de manera que el paràgraf pot acabar en un sol caràcter. Els paràgrafs justificats es componen com sempre. Desactivat: un paràgraf així no acaba en un sol caràcter, i la línia anterior queda amb una casella buida",
     "cjkGridReadout": "__chars__ 字 × __lines__ 行 · 版心 __width__ × __height__ mm",
     "cjkGridMargins": "Marges de la retícula: superior __top__, inferior __bottom__, esquerre __left__, dret __right__ mm.",
     "cjkGroupLineEdges": "Principi i final de línia",

@@ -784,6 +784,8 @@ export interface SandboxLabels {
   cjkGridLinesTooltip: string;
   cjkGridShow: string;
   cjkGridShowTooltip: string;
+  cjkGridFullLines: string;
+  cjkGridFullLinesTooltip: string;
   cjkGridReadout: string;
   cjkGridMargins: string;
   cjkGroupLineEdges: string;

@@ -726,6 +726,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   cjkGridLinesTooltip: 'Lines of the body line height in one column. 0: as many as the margins leave room for.',
   cjkGridShow: 'Show the grid',
   cjkGridShowTooltip: 'Draw a square for every character position over the type area (稿纸), on screen only; the PDF leaves it out.',
+  cjkGridFullLines: 'Manuscript paper: keep full lines full',
+  cjkGridFullLinesTooltip: 'A paragraph that is not justified keeps every square of its full lines: no character is carried down from the line above to keep a lone last character company, so the paragraph may end on one character. Justified paragraphs are set as ever. Off: such a paragraph does not end on a single character, and the line above it stands one square short',
   cjkGridReadout: '__chars__ 字 × __lines__ 行 · 版心 __width__ × __height__ mm',
   cjkGridMargins: 'Margins from the grid: top __top__, bottom __bottom__, left __left__, right __right__ mm.',
   cjkGroupLineEdges: 'Line edges',

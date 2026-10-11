@@ -724,6 +724,15 @@ export const CjkSection = memo(function CjkSection() {
                   isDefault={raw?.grid?.show !== true}
                   onReset={() => writeGrid({ show: undefined })}
                 />
+                {/* Manuscript paper (#718): ragged lines keep every square. */}
+                <ToggleSwitch
+                  label={labels.cjkGridFullLines}
+                  checked={raw?.grid?.fullLines === true}
+                  onChange={(v) => writeGrid({ fullLines: v ? true : undefined })}
+                  tooltip={labels.cjkGridFullLinesTooltip}
+                  isDefault={raw?.grid?.fullLines !== true}
+                  onReset={() => writeGrid({ fullLines: undefined })}
+                />
                 {grid && (
                   <p className="mt-1 text-[0.66rem] leading-[1.35] text-(--slate) [text-wrap:pretty]">
                     <span className="font-semibold">{readout}</span>
