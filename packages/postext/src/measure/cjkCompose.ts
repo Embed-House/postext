@@ -89,6 +89,7 @@ import {
   carryStopBlank,
   compositionFor,
   compressPair,
+  DEFAULT_NOTE_MIN_CHARS,
   DEFAULT_TITLE_MIN_CHARS,
   getCjkComposition,
   isLatinSpacingHan,
@@ -1811,6 +1812,43 @@ function titleBreaks(units: readonly Unit[], breaks: Uint8Array, min: number): U
   return out ?? breaks;
 }
 
+/**
+ * The breaks of `breaks` that leave fewer than `min` characters of a
+ * warichu note on either side of them taken out (`cjk.warichu.minChars`,
+ * #720): a line never ends on the first character of a note, and none
+ * opens on its last one with the stop that closes it. A character is a
+ * unit of the note that is a letter ({@link isLetterEdge}: a CJK
+ * character, a Western word, an inline box); marks and the note's word
+ * spaces do not count, so `異。` is one character. The note's brackets are
+ * not part of it. `breaks` itself when no note holds such a break.
+ */
+function noteBreaks(units: readonly Unit[], breaks: Uint8Array, min: number): Uint8Array {
+  if (min <= 1) return breaks;
+  const counts = (u: Unit): boolean => !u.noteSpace && (isLetterEdge(u, 'first') || isLetterEdge(u, 'last'));
+  let out: Uint8Array | undefined;
+  for (let from = 0; from < units.length;) {
+    const note = units[from]!.note;
+    if (!note) {
+      from++;
+      continue;
+    }
+    let to = from + 1;
+    while (to < units.length && units[to]!.note === note) to++;
+    let total = 0;
+    for (let k = from; k < to; k++) if (counts(units[k]!)) total++;
+    let before = 0;
+    for (let k = from; k < to; k++) {
+      if (k > from && breaks[k] && (before < min || total - before < min)) {
+        out ??= breaks.slice();
+        out[k] = 0;
+      }
+      if (counts(units[k]!)) before++;
+    }
+    from = to;
+  }
+  return out ?? breaks;
+}
+
 /** Whether a unit opens (`first`) or ends (`last`) with a letter, which
  *  `keep-all` never parts from a letter next to it: a CJK character (kanji,
  *  kana, hangul, an iteration mark, ー), a Western run or a sign glued to
@@ -2984,8 +3022,11 @@ export function composeCjkParagraph(
   // Book titles keep `cjk.titleMinChars` characters on either side of a
   // break (#637); a line with no other break falls back on the level's.
   const titled = titleBreaks(units, levelBreaks, composition.titleMinChars ?? DEFAULT_TITLE_MIN_CHARS);
-  const breaks = keepAll ? keepAllBreaks(units, titled) : titled;
-  const emergency = keepAll || titled !== levelBreaks ? levelBreaks : undefined;
+  // A warichu note keeps `cjk.warichu.minChars` of its characters on
+  // either side of a break too (#720), with the same fallback.
+  const noted = noteBreaks(units, titled, composition.noteMinChars ?? DEFAULT_NOTE_MIN_CHARS);
+  const breaks = keepAll ? keepAllBreaks(units, noted) : noted;
+  const emergency = keepAll || noted !== levelBreaks ? levelBreaks : undefined;
   // The first line's indent gives way to an opening bracket that starts it
   // (`paragraphStartIndent`); the others are as asked (`lineIndentAt`).
   const firstIndent = paragraphStartIndent(units, lineIndentAt(options, 0), composition);

@@ -124,6 +124,9 @@ import { hasCJK } from '../measure/cjk';
  *     `bodyText.avoidWidows` is off by default there, and
  *     `bodyText.avoidOrphans` too in the Japan region (#717), where up to
  *     1.27 both were on ({@link pinLegacyGridBreakRules});
+ *   - a line breaks inside a two-row note only where two of its characters
+ *     stand on either side (`cjk.warichu.minChars: 2`, #720), where up to
+ *     1.27 it could leave one ({@link pinLegacyNoteBreaks});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -208,6 +211,9 @@ const OPENER_HEAD_FLOAT_RULES = 11;
 /** The rules that turn the widow rule off on a character grid, and the
  *  orphan rule too in the Japan region (#717). */
 const GRID_BREAK_RULES = 12;
+/** The rules that keep two characters of a two-row note on either side of
+ *  a line break (#720). */
+const NOTE_BREAK_RULES = 12;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1205,6 +1211,34 @@ export function pinLegacyDesignText<T extends Partial<PostextConfig>>(config: T)
   return { ...config, cjk: { ...cjk, composeDesignText: false } };
 }
 
+/**
+ * A configuration written before #720 (postext 1.27 or earlier), pinned to
+ * the way 1.27 broke a line inside a two-row note: `cjk.warichu.minChars:
+ * 1`, so a break may leave one character of the note at the end of a line
+ * or at the head of the next, where today two stand on either side. A
+ * configuration that sets `warichu.minChars` is returned as it is (the
+ * same object).
+ */
+export function pinLegacyNoteBreaks<T extends Partial<PostextConfig>>(config: T): T {
+  const cjk = cjkOf(config);
+  const warichu = isRecord(cjk.warichu) ? cjk.warichu : {};
+  if (warichu.minChars !== undefined) return config;
+  return { ...config, cjk: { ...cjk, warichu: { ...warichu, minChars: 1 } } };
+}
+
+/** A two-row note typed in the text. */
+const NOTE_RE = /:warichu\[/;
+
+/** Whether a document may set a two-row note: a `:warichu[…]` in its
+ *  markdown, or citations set as notes (`citations.notes: 'warichu'`).
+ *  Unknown content (undefined) may. */
+function mayHaveNotes(content: string | readonly string[] | undefined, config: Partial<PostextConfig>): boolean {
+  if (content === undefined) return true;
+  if (isRecord(config.citations) && config.citations.notes === 'warichu') return true;
+  if (typeof content === 'string') return NOTE_RE.test(content);
+  return content.some((text) => NOTE_RE.test(text));
+}
+
 /** A book title in brackets (《》 〈〉), or a `:book[…]` title. */
 const BOOK_TITLE_RE = /[《〈︽︿]|:book\[/;
 /** A circled, parenthesized or full-stop number or letter (①, ⑴, ⒈, ⓐ, ❶,
@@ -1338,7 +1372,9 @@ export interface MigrateConfigOptions {
  * it sets a heading level or style with `span: 'page'`, unless
  * `options.content` shows no heading; one older than 12 has the widow and
  * orphan rules of a page on a character grid pinned by {@link
- * pinLegacyGridBreakRules}. A current one is returned as it is (the same object).
+ * pinLegacyGridBreakRules}, and the breaks inside its two-row notes by
+ * {@link pinLegacyNoteBreaks}, unless neither `options.content` nor the
+ * configuration shows a note. A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
  * read twice under its old number would grow twice.
@@ -1377,6 +1413,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) out = pinLegacyFlowColumns(out);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(out) && mayHaveHeadings(content)) out = pinLegacyOpenerHeadFloats(out);
   if (rules < GRID_BREAK_RULES) out = pinLegacyGridBreakRules(out);
+  if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, out)) out = pinLegacyNoteBreaks(out);
   return out;
 }
 
@@ -1403,7 +1440,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * when the merged configuration sets a page-span heading), and the book
  * titles, the circled numbers and the design text on the `cjk` in force,
  * and the widow and orphan rules of a character grid on the merged `cjk`
- * and `bodyText`.
+ * and `bodyText`, and the breaks inside two-row notes on the `cjk` in
+ * force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1444,5 +1482,6 @@ export function migrateBundleConfig(
   if (rules < FLOW_COLUMNS_RULES && mayHaveColumnGroups(content)) merged = pinLegacyFlowColumns(merged);
   if (rules < OPENER_HEAD_FLOAT_RULES && setsPageSpanHeading(merged) && mayHaveHeadings(content)) merged = pinLegacyOpenerHeadFloats(merged);
   if (rules < GRID_BREAK_RULES) merged = pinLegacyGridBreakRules(merged);
+  if (rules < NOTE_BREAK_RULES && mayHaveNotes(content, merged)) merged = pinLegacyNoteBreaks(merged);
   return merged;
 }

@@ -84,6 +84,11 @@ export interface CjkComposition {
    *  (`cjk.composeDesignText: false`, #637); unset: a design text that
    *  composes as CJK is set by the CJK composer. */
   plainDesignText?: true;
+  /** How many characters of a warichu note a line break leaves on either
+   *  side of it at least (`cjk.warichu.minChars`, #720); unset:
+   *  {@link DEFAULT_NOTE_MIN_CHARS}. 1 lets a line break anywhere in a
+   *  note the level allows. */
+  noteMinChars?: number;
   /** The document is on a character grid (`cjk.grid.enabled`, #718): a
    *  paragraph that is not justified keeps every full line full, so the
    *  runt rule carries no character down from a line it cannot spread. */
@@ -93,6 +98,10 @@ export interface CjkComposition {
 /** Characters of a book title a line break leaves on either side of it by
  *  default (`cjk.titleMinChars`). */
 export const DEFAULT_TITLE_MIN_CHARS = 2;
+
+/** Characters of a warichu note a line break leaves on either side of it
+ *  by default (`cjk.warichu.minChars`). */
+export const DEFAULT_NOTE_MIN_CHARS = 2;
 
 /** The composition outside a build: every mark at its full advance, no
  *  compression, no hanging, no Han–Latin space — CJK text set as the
@@ -142,6 +151,7 @@ export function cjkCompositionOf(cjk: ResolvedCjkConfig, dpi: number, locale?: s
     ...(cjk.titleMinChars !== DEFAULT_TITLE_MIN_CHARS ? { titleMinChars: cjk.titleMinChars } : {}),
     ...(cjk.circledNumbers === 'western' ? { circledNumbers: 'western' as const } : {}),
     ...(cjk.composeDesignText === false ? { plainDesignText: true as const } : {}),
+    ...(cjk.warichu.minChars !== DEFAULT_NOTE_MIN_CHARS ? { noteMinChars: cjk.warichu.minChars } : {}),
     ...(cjk.grid.enabled ? { grid: true as const } : {}),
   };
 }
@@ -221,7 +231,9 @@ export function cjkCompositionKey(c: CjkComposition): string {
   // The grid (#718) only where set: it changes how a ragged paragraph
   // that ends on one character is broken.
   const grid = c.grid ? ':g' : '';
-  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}${grid}`;
+  // The note rule (#720) only where it differs from the default.
+  const notes = c.noteMinChars !== undefined && c.noteMinChars !== DEFAULT_NOTE_MIN_CHARS ? `:n${c.noteMinChars}` : '';
+  return `${c.region}:${c.punctuationWidth}:${c.compressAdjacent ? 1 : 0}:${c.trimLineStart ? 1 : 0}:${c.hangingPunctuation}:${ls}${c.vertical ? ':v' : ''}${lang}${ja}${titles}${circled}${grid}${notes}`;
 }
 
 /** Whether a composition changes nothing: the text is set as without it. */

@@ -5162,6 +5162,16 @@ export interface CjkWarichuConfig {
    *  own `open` / `close` attributes win. */
   open?: string;
   close?: string;
+  /** How many characters of a note a line break leaves on either side of
+   *  it at least (#720): a note that runs over a line end never leaves one
+   *  of its characters alone at the end of a line or at the head of the
+   *  next, so no column or page opens on a single small character and its
+   *  stop. A character is a CJK character, a Western word or an inline
+   *  box; marks and the note's word spaces do not count. A note of fewer
+   *  than twice the number is never divided; a line with no other break
+   *  falls back on the breaks the level allows. Default 2; `1` lets a line
+   *  break anywhere in a note the level allows, as up to postext 1.27. */
+  minChars?: number;
 }
 
 /** Where the 返り点 of a kanbun text go (see {@link CjkKuntenConfig}):
@@ -5215,6 +5225,7 @@ export interface ResolvedCjkWarichuConfig {
   color?: ColorValue;
   open: string;
   close: string;
+  minChars: number;
 }
 
 /** Punctuation width styles (clreq §6.3.2.1): each full-width mark is

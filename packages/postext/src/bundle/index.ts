@@ -15,6 +15,7 @@ export { openBundleZip, zipBundle, POSTEXT_EXTENSION, POSTEXT_MIME, MANIFEST_FIL
 export type { OpenedBundleZip, ZipBundleOptions } from './zip';
 export { CONFIG_VERSION, LEGACY_MATH_SIZE, migrateConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats, pinLegacyTitleBreaks, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking } from './configVersion';
 export { pinLegacyGridBreakRules } from './configVersion';
+export { pinLegacyNoteBreaks } from './configVersion';
 export type { MigrateConfigOptions } from './configVersion';
 export {
   isBundleManifest,

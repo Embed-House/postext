@@ -59,7 +59,7 @@ export const DEFAULT_CJK_CONFIG: Required<Omit<CjkConfig, 'annotationColor'>> & 
   bookTitleMark: 'auto',
   bookTitleBrackets: 'auto',
   ruby: { fontSize: { value: 0.5, unit: 'em' }, position: 'auto', overhang: 'auto', align: 'auto', smallKana: 'keep' },
-  warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '' },
+  warichu: { fontSize: { value: 0.5, unit: 'em' }, open: '', close: '', minChars: 2 },
   kunten: { fontSize: { value: 0.5, unit: 'em' }, placement: 'inline' },
 };
 
@@ -187,7 +187,16 @@ function resolveWarichu(warichu: CjkWarichuConfig | undefined, region: CjkRegion
     ...(isColor(warichu?.color) ? { color: warichu.color } : {}),
     open: typeof warichu?.open === 'string' ? warichu.open : brackets.open,
     close: typeof warichu?.close === 'string' ? warichu.close : brackets.close,
+    minChars: countOfAtLeastOne(warichu?.minChars) ?? d.minChars!,
   };
+}
+
+/** A count written as a number or a numeric string: finite, one or more,
+ *  rounded down (`cjk.titleMinChars`, `cjk.warichu.minChars`); undefined
+ *  for anything else. */
+function countOfAtLeastOne(value: unknown): number | undefined {
+  const n = typeof value === 'string' ? Number(value) : value;
+  return typeof n === 'number' && Number.isFinite(n) && n >= 1 ? Math.floor(n) : undefined;
 }
 
 const REGIONS: readonly CjkRegion[] = ['mainland', 'taiwan', 'hongkong', 'japan'];
@@ -367,6 +376,7 @@ function stripWarichuDefaults(warichu: CjkWarichuConfig | undefined): CjkWarichu
   // brackets (Japan's （）, `defaultCjkWarichuBrackets`).
   if (warichu.open !== undefined) result.open = warichu.open;
   if (warichu.close !== undefined) result.close = warichu.close;
+  if (warichu.minChars !== undefined && warichu.minChars !== d.minChars) result.minChars = warichu.minChars;
   return Object.keys(result).length > 0 ? result : undefined;
 }
 

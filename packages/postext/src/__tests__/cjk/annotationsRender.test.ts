@@ -110,9 +110,9 @@ describe('zhuyin tone marks on a vertical page', () => {
 
 describe('annotations in HTML', () => {
   it('writes the marks, the readings and the note as positioned boxes', () => {
-    // Lines broken as before the title rule (#637): the note splits where
-    // it did.
-    const doc = buildDocument({ markdown: MD }, config({ cjk: { titleMinChars: 1 } }));
+    // Lines broken as before the title rule (#637) and the note rule
+    // (#720): the note splits where it did.
+    const doc = buildDocument({ markdown: MD }, config({ cjk: { titleMinChars: 1, warichu: { minChars: 1 } } }));
     const html = renderToHtml(doc);
     // Dotted text is emphasis; the dots are aria-hidden boxes.
     expect(html).toContain('<em style="font-style:inherit;">不可</em>');
