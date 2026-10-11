@@ -2925,6 +2925,8 @@ export interface SandboxLabels {
   crossRefsSectionTooltip: string;
   crossRefsPage: string;
   crossRefsPageTooltip: string;
+  crossRefsBreakLabels: string;
+  crossRefsBreakLabelsTooltip: string;
   citationsSection: string;
   citationsPreview: string;
   citationsPreviewLoading: string;

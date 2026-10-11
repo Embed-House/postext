@@ -3346,6 +3346,8 @@
     "crossRefsSectionTooltip": "Paraules al voltant del número d'un títol de nivell 2 o inferior, amb '{'n'}' per al número («§ '{'n'}'», «secció '{'n'}'»).",
     "crossRefsPage": "Pàgina",
     "crossRefsPageTooltip": "Paraules al voltant del número en una referència de pàgina (:ref'{'… style=page'}'), amb '{'n'}' per a la pàgina («pàg. '{'n'}'», «pàgina '{'n'}'»).",
+    "crossRefsBreakLabels": "Tallar els rètols llargs",
+    "crossRefsBreakLabelsTooltip": "Permet que una línia es talli pels espais d'una referència que imprimeix paraules: el text d'una àncora, un títol, un text= propi. Els seus espais s'estiren llavors amb la línia i la referència continua sent un sol enllaç. Un rètol amb número o amb pàgina (secció 3.2, p. 112, Fig. 1.7) no es talla mai. Desactivat: cada rètol és una sola paraula, com fins a postext 1.27; els llibres desats abans s'obren amb l'opció desactivada.",
     "citationsSection": "Cites",
     "citationsPreview": "Previsualització",
     "citationsPreviewLoading": "S'estan carregant els estils de cita…",

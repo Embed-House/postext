@@ -4,7 +4,7 @@ import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import { resolveCrossRefsConfig } from 'postext';
 import type { CrossRefsConfig } from 'postext';
-import { CollapsibleSection, SelectInput, TextInput } from '../../controls';
+import { CollapsibleSection, SelectInput, TextInput, ToggleSwitch } from '../../controls';
 
 type Template = 'chapter' | 'section' | 'page';
 
@@ -12,6 +12,8 @@ type Template = 'chapter' | 'section' | 'page';
  * Cross-references to headings and anchors (#266): the words around the
  * number of a chapter, a section and a page, and the style a `:ref` without
  * `style=` takes. An empty template shows the document language's words.
+ * And whether a label of words breaks at its spaces (#702): on is the
+ * default and stores nothing.
  */
 export const CrossRefsSection = memo(function CrossRefsSection() {
   const dispatch = useSandboxDispatch();
@@ -76,6 +78,14 @@ export const CrossRefsSection = memo(function CrossRefsSection() {
       {template('chapter', labels.crossRefsChapter, labels.crossRefsChapterTooltip)}
       {template('section', labels.crossRefsSectionLabel, labels.crossRefsSectionTooltip)}
       {template('page', labels.crossRefsPage, labels.crossRefsPageTooltip)}
+      <ToggleSwitch
+        label={labels.crossRefsBreakLabels}
+        checked={resolved.breakLabels}
+        onChange={(v) => (v ? resetField('breakLabels') : write({ ...raw, breakLabels: false }))}
+        tooltip={labels.crossRefsBreakLabelsTooltip}
+        isDefault={resolved.breakLabels}
+        onReset={() => resetField('breakLabels')}
+      />
     </CollapsibleSection>
   );
 });

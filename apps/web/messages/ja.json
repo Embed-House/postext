@@ -3346,6 +3346,8 @@
     "crossRefsSectionTooltip": "レベル2以下の見出しの番号の前後に付ける語です。番号の位置は'{'n'}'で示します（「§ '{'n'}'」「第'{'n'}'節」）。",
     "crossRefsPage": "ページ",
     "crossRefsPageTooltip": "ページ参照（:ref'{'… style=page'}'）でページ番号の前後に付ける語です。ページ番号の位置は'{'n'}'で示します（「p. '{'n'}'」「'{'n'}'ページ」）。",
+    "crossRefsBreakLabels": "長い参照ラベルを折り返す",
+    "crossRefsBreakLabelsTooltip": "語句として印字される参照（アンカーのテキスト、見出し、独自のtext=）のスペースで行を折り返せるようにします。そのスペースは行と一緒に伸縮し、参照は1つのリンクのままです。番号やページを含むラベル（section 3.2、p. 112、Fig. 1.7）は折り返しません。オフ：postext 1.27までと同じく、どのラベルも1語として扱います。それ以前に保存した本はオフの状態で開きます。",
     "citationsSection": "引用",
     "citationsPreview": "プレビュー",
     "citationsPreviewLoading": "引用スタイルを読み込んでいます…",

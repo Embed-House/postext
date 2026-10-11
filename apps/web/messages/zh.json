@@ -3346,6 +3346,8 @@
     "crossRefsSectionTooltip": "二级及以下标题编号前后的文字，'{'n'}' 表示编号（“§ '{'n'}'”“第'{'n'}'节”）。",
     "crossRefsPage": "页",
     "crossRefsPageTooltip": "页码引用（:ref'{'… style=page'}'）中页码前后的文字，'{'n'}' 表示页码（“第'{'n'}'页”“p. '{'n'}'”）。",
+    "crossRefsBreakLabels": "较长的引用文字可换行",
+    "crossRefsBreakLabelsTooltip": "允许在以文字印出的引用内部的空格处换行：锚点的文字、标题、自定义的text=。这样它的空格会随行一起伸缩，整个引用仍是一个链接。带编号或页码的引用文字（section 3.2、p. 112、Fig. 1.7）从不换行。关闭：每个引用文字都当作一个词，和postext 1.27及以前一样；此前保存的书打开时为关闭。",
     "citationsSection": "引用与参考文献",
     "citationsPreview": "预览",
     "citationsPreviewLoading": "正在加载引用样式……",

@@ -2748,6 +2748,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   crossRefsSectionTooltip: 'Words around the number of a heading of level 2 or below, with {n} for the number ("§ {n}", "section {n}").',
   crossRefsPage: 'Page',
   crossRefsPageTooltip: 'Words around a page number in a page reference (:ref{… style=page}), with {n} for the page ("p. {n}", "page {n}").',
+  crossRefsBreakLabels: 'Break long reference labels',
+  crossRefsBreakLabelsTooltip: 'Let a line break at the spaces of a reference that prints words: the text of an anchor, a title, a text= override. Its spaces then stretch with the line and the reference stays one link. A label with a number or a page (section 3.2, p. 112, Fig. 1.7) never breaks. Off: every label is one word, as up to postext 1.27; books saved before then open with it off.',
   citationsSection: 'Citations',
   citationsPreview: 'Preview',
   citationsPreviewLoading: 'Loading the citation styles…',

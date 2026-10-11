@@ -3193,6 +3193,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
     sources: [],
     literals: [],
     keys: [
+      'crossRefsBreakLabels',
+      'crossRefsBreakLabelsTooltip',
       'crossRefsChapter',
       'crossRefsChapterTooltip',
       'crossRefsDefaultStyle',

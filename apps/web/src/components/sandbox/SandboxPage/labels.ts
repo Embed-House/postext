@@ -2725,6 +2725,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     crossRefsSectionTooltip: t("crossRefsSectionTooltip"),
     crossRefsPage: t("crossRefsPage"),
     crossRefsPageTooltip: t("crossRefsPageTooltip"),
+    crossRefsBreakLabels: t("crossRefsBreakLabels"),
+    crossRefsBreakLabelsTooltip: t("crossRefsBreakLabelsTooltip"),
     citationsSection: t("citationsSection"),
     citationsPreview: t("citationsPreview"),
     citationsPreviewLoading: t("citationsPreviewLoading"),

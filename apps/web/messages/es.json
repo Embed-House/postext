@@ -3346,6 +3346,8 @@
     "crossRefsSectionTooltip": "Palabras alrededor del número de un título de nivel 2 o inferior, con '{'n'}' para el número («§ '{'n'}'», «sección '{'n'}'»).",
     "crossRefsPage": "Página",
     "crossRefsPageTooltip": "Palabras alrededor del número en una referencia de página (:ref'{'… style=page'}'), con '{'n'}' para la página («pág. '{'n'}'», «página '{'n'}'»).",
+    "crossRefsBreakLabels": "Cortar los rótulos largos",
+    "crossRefsBreakLabelsTooltip": "Permite que una línea se corte por los espacios de una referencia que imprime palabras: el texto de un ancla, un título, un text= propio. Sus espacios se estiran entonces con la línea y la referencia sigue siendo un solo enlace. Un rótulo con número o con página (sección 3.2, pág. 112, Fig. 1.7) nunca se corta. Desactivado: cada rótulo es una sola palabra, como hasta postext 1.27; los libros guardados antes se abren con la opción desactivada.",
     "citationsSection": "Citas",
     "citationsPreview": "Vista previa",
     "citationsPreviewLoading": "Cargando los estilos de cita…",
