@@ -555,6 +555,11 @@ export interface Resource {
   /** Regions of a comic panel's picture no balloon covers (a hand, a key
    *  object), in fractions of the picture. Only comic panels read them. */
   avoid?: ResourceSafeArea[];
+  /** The faces of people in a comic panel's picture who do not speak
+   *  (#726): no balloon covers them, at any fallback, as it covers no
+   *  speaker's `face`; a balloon that still does is reported. In fractions
+   *  of the picture. Only comic panels read them. */
+  faces?: ResourceSafeArea[];
   /** Optional per-resource placement override. When unset, the resource's
    *  type default (then `top` / `column`) applies. A `position` of `'top'` or
    *  `'bottom'` floats the resource to a band on the page near its first

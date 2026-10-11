@@ -171,7 +171,8 @@ function sceneOf(panel: LetteringPanel): Scene {
     panel,
     visible,
     visBox: boundsOf(visible),
-    faces: panel.anchors.filter((a) => a.face).map((a) => a.face!),
+    // A speaker's face and a bystander's (#726) are faces alike.
+    faces: [...panel.anchors.filter((a) => a.face).map((a) => a.face!), ...(panel.faces ?? [])],
     avoid: [...(panel.avoid ?? [])],
     soft: figureContacts(panel.softAvoid ?? [], panel.anchors),
     mouths: panel.anchors.filter((a) => a.visible && a.id !== 'sfx').map((a) => a.mouth),
@@ -597,10 +598,16 @@ function evaluate(
     // A tail drawn across another figure (the body under a marked face):
     // the eye follows it through the wrong character.
     const drawn = mine;
+    const figureOf = (f: Rect): Rect => ({ x: f.x - 0.2 * f.width, y: f.y + f.height, width: 1.4 * f.width, height: 1.6 * f.height });
     for (const a of scene.panel.anchors) {
       if (!a.face || a.mouth === target || a.head === target) continue;
-      const f = a.face;
-      const figure = { x: f.x - 0.2 * f.width, y: f.y + f.height, width: 1.4 * f.width, height: 1.6 * f.height };
+      if (segmentHitsRect(drawn[0], drawn[1], figureOf(a.face))) S('tailOverFigure', W.tailOverFigure);
+    }
+    // And across a bystander's (#726), unless the tail is aimed at them
+    // (`to=` on a point of their face or figure).
+    for (const f of scene.panel.faces ?? []) {
+      const figure = figureOf(f);
+      if (pointInRect(target, f) || pointInRect(target, figure)) continue;
       if (segmentHitsRect(drawn[0], drawn[1], figure)) S('tailOverFigure', W.tailOverFigure);
     }
   } else if (unit.target.kind === 'offPanel' && target && leave) {

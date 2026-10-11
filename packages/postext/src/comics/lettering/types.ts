@@ -223,6 +223,10 @@ export interface LetteringPanel {
   /** Locale of the text (BCP 47). */
   locale: string;
   anchors: readonly LetteringAnchor[];
+  /** The faces of people who do not speak (`Resource.faces`, #726), page
+   *  px: each counts as a face wherever an anchor's does (no balloon over
+   *  it at any fallback, no tail across it or across the figure under it). */
+  faces?: readonly Rect[];
   /** Regions balloons must not cover (hands, key objects), page px. A
    *  `guard` is one the layout derives (the hair or hat over a face), which
    *  the last fallback covers before it covers what the art marks. */
