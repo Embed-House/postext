@@ -44,6 +44,7 @@ export { lineInkExtent } from './lineInk';
 export { applyCjkGrid, cjkGridGeometry, cjkGridCells, CHARACTER_GRID_COLOR } from './pipeline/cjkGrid';
 export type { CjkGridGeometry, CjkGridCells } from './pipeline/cjkGrid';
 export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault } from './pipeline/config';
+export { renderTemplateNumber } from './pipeline/resourceNumbering';
 export type { ColumnRuleSegment } from './columnRule';
 export { findLooseLines, drawLooseLines, lineLooseness } from './looseLines';
 export type { LooseLine, FindLooseLinesOptions, DrawLooseLinesOptions } from './looseLines';

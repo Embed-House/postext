@@ -128,6 +128,7 @@ describe("package exports", () => {
       "balancingOnByDefault",
       "avoidWidowsByDefault",
       "avoidOrphansByDefault",
+      "renderTemplateNumber",
       "findLooseLines",
       "drawLooseLines",
       "lineLooseness",

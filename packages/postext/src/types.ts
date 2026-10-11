@@ -212,7 +212,11 @@ export interface ResourceType {
   /** Compact label used in inline references (e.g. "Fig."). */
   shortLabel: string;
   /** Template for the computed number. Placeholders: `{n}` (the counter),
-   *  `{h1}`..`{h6}` (current heading numbers). E.g. `'{h1}.{n}'`. `''`
+   *  `{h1}`..`{h6}` (current heading numbers). E.g. `'{h1}.{n}'`. A token
+   *  takes the style a heading template's does after a colon (#730):
+   *  `'{h1:A}.{n}'` prints "A.1" under a lettered appendix, `'{h1:I}.{n}'`
+   *  "II.3", and `{n:i}` wins over `counterFormat` for that token. Without
+   *  one a heading number is decimal and `{n}` follows `counterFormat`. `''`
    *  prints no number: the caption reads "Do. Caption" and a reference the
    *  label alone, though the counter still counts. */
   numberingTemplate: string;
@@ -3305,8 +3309,9 @@ export interface CalloutNumberingConfig {
    *  prints the label with no number ("Proof."). Default: the style's id. */
   counter?: string | false;
   /** Template of the number: `{n}` (the counter) and `{h1}`..`{h6}`
-   *  (heading numbers), as a resource type's. Default `'{n}'`;
-   *  `'{h1}.{n}'` numbers by chapter (with `resetOn: 'h1'`). */
+   *  (heading numbers), as a resource type's, with the same style suffix
+   *  (`'{h1:A}.{n}'`, #730). Default `'{n}'`; `'{h1}.{n}'` numbers by
+   *  chapter (with `resetOn: 'h1'`). */
   numberingTemplate?: string;
   /** When the counter starts again at 1. Default `'never'`. */
   resetOn?: ResourceCounterReset;
@@ -4552,8 +4557,9 @@ export interface EquationNumberingConfig {
    *  and a reference prints the equation's page. */
   enabled?: boolean;
   /** Template of the number: `{n}` (the counter) and `{h1}`..`{h6}`
-   *  (heading numbers), as a resource type's. Default `'{n}'`;
-   *  `'{h1}.{n}'` numbers by chapter (with `resetOn: 'h1'`). */
+   *  (heading numbers), as a resource type's, with the same style suffix
+   *  (`'{h1:A}.{n}'`, #730). Default `'{n}'`; `'{h1}.{n}'` numbers by
+   *  chapter (with `resetOn: 'h1'`). */
   numberingTemplate?: string;
   /** When the counter starts again at 1. Default `'never'`. */
   resetOn?: ResourceCounterReset;
