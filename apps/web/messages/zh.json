@@ -3997,6 +3997,8 @@
     "comicsJoinConnectorDescription": "用一段细颈把两个对白框连起来。",
     "comicsJoinNone": "分开",
     "comicsJoinNoneDescription": "两个独立的对白框，各有自己的尾巴。",
+    "comicsStrictPlacement": "不拆开中文词语",
+    "comicsStrictPlacementHelp": "为了放进格子而改变形状的对白框，不会把一个中文词拆到两行：排版会先移动对白框或调整顺序。关闭后按 postext 1.27 的方式嵌字。",
     "comicsBalloonStylesSection": "对白框样式",
     "comicsBalloonStylesResetConfirm": "恢复全部内置对白框样式，并删除你添加的样式？",
     "comicsBalloonStylesIntro": "脚本的每一行在角色后面加一个标记来选样式：ben'{'whisper'}': … 旁白框、注释和拟声词按各自的键（caption:、note:、sfx:）取样式。内置样式可以修改，也可以恢复；新样式从普通对白框开始。",

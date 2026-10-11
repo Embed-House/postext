@@ -173,6 +173,14 @@ export const ComicsLetteringSection = memo(function ComicsLetteringSection() {
           isDefault={unset('joinSameSpeaker')}
           onReset={reset('joinSameSpeaker')}
         />
+        <ToggleSwitch
+          label={labels.comicsStrictPlacement}
+          tooltip={labels.comicsStrictPlacementHelp}
+          checked={l.strictPlacement}
+          onChange={(v) => set('strictPlacement', v)}
+          isDefault={unset('strictPlacement')}
+          onReset={reset('strictPlacement')}
+        />
       </FieldGroup>
     </CollapsibleSection>
   );

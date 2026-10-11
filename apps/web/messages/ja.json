@@ -3997,6 +3997,8 @@
     "comicsJoinConnectorDescription": "細い首で二つのフキダシをつなぎます。",
     "comicsJoinNone": "離す",
     "comicsJoinNoneDescription": "別々のフキダシにし、それぞれにしっぽを付けます。",
+    "comicsStrictPlacement": "中国語の単語を分けない",
+    "comicsStrictPlacementHelp": "コマに収めるために形を変えたフキダシが、中国語の単語を二行に分けることはありません。その前にフキダシを動かすか、順序を変えます。オフにすると postext 1.27 と同じ写植になります。",
     "comicsBalloonStylesSection": "フキダシのスタイル",
     "comicsBalloonStylesResetConfirm": "組み込みのフキダシのスタイルをすべて元に戻し、追加したスタイルを削除しますか？",
     "comicsBalloonStylesIntro": "台本の各行は、話し手の後に付けた印でスタイルを選びます：ben'{'whisper'}': … ナレーション、注、描き文字はキー（caption:、note:、sfx:）でスタイルが決まります。組み込みのスタイルは変更でき、元に戻せます。新しいスタイルは通常のフキダシから始まります。",

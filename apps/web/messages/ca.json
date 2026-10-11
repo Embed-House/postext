@@ -3997,6 +3997,8 @@
     "comicsJoinConnectorDescription": "Un coll estret uneix les dues bafarades.",
     "comicsJoinNone": "Separades",
     "comicsJoinNoneDescription": "Dues bafarades separades, cadascuna amb la seva cua.",
+    "comicsStrictPlacement": "No partir paraules xineses",
+    "comicsStrictPlacementHelp": "Una bafarada que canvia de forma per cabre a la vinyeta no parteix una paraula xinesa entre dues línies per aconseguir-ho: abans es mou la bafarada o canvia l'ordre. Desactivat, es retola com a postext 1.27.",
     "comicsBalloonStylesSection": "Estils de bafarada",
     "comicsBalloonStylesResetConfirm": "Vols restaurar tots els estils de bafarada integrats i suprimir els que has afegit?",
     "comicsBalloonStylesIntro": "Una línia del guió tria un estil amb una marca després del personatge: ben'{'whisper'}': … Els cartutxos, les notes i les onomatopeies prenen el seu de la clau (caption:, note:, sfx:). Els estils integrats es poden canviar i restaurar; un estil nou parteix de la bafarada de diàleg.",

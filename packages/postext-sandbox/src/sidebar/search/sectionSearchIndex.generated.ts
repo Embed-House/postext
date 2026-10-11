@@ -4606,6 +4606,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'comicsPanelFitContain',
       'comicsPanelFitCover',
       'comicsPanelFitHelp',
+      'comicsStrictPlacement',
+      'comicsStrictPlacementHelp',
       'comicsTextTransform',
       'comicsTextTransformHelp',
       'comicsTextTransformNone',

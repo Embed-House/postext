@@ -3472,6 +3472,8 @@ export interface SandboxLabels {
   comicsJoinConnectorDescription: string;
   comicsJoinNone: string;
   comicsJoinNoneDescription: string;
+  comicsStrictPlacement: string;
+  comicsStrictPlacementHelp: string;
   comicsBalloonStylesSection: string;
   comicsBalloonStylesResetConfirm: string;
   comicsBalloonStylesIntro: string;

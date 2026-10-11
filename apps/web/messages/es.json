@@ -3997,6 +3997,8 @@
     "comicsJoinConnectorDescription": "Un cuello estrecho une los dos globos.",
     "comicsJoinNone": "Separados",
     "comicsJoinNoneDescription": "Dos globos separados, cada uno con su rabillo.",
+    "comicsStrictPlacement": "No partir palabras chinas",
+    "comicsStrictPlacementHelp": "Un globo que cambia de forma para caber en su viñeta no parte una palabra china entre dos líneas para lograrlo: antes se mueve el globo o cambia el orden. Desactivado, se rotula como en postext 1.27.",
     "comicsBalloonStylesSection": "Estilos de globo",
     "comicsBalloonStylesResetConfirm": "¿Restaurar todos los estilos de globo integrados y eliminar los que has añadido?",
     "comicsBalloonStylesIntro": "Una línea del guion elige un estilo con una marca tras el personaje: ben'{'whisper'}': … Las cartelas, notas y onomatopeyas toman el suyo de su clave (caption:, note:, sfx:). Los estilos integrados se pueden cambiar y restaurar; un estilo nuevo parte del globo de diálogo.",

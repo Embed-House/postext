@@ -3376,6 +3376,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     comicsJoinConnectorDescription: t("comicsJoinConnectorDescription"),
     comicsJoinNone: t("comicsJoinNone"),
     comicsJoinNoneDescription: t("comicsJoinNoneDescription"),
+    comicsStrictPlacement: t("comicsStrictPlacement"),
+    comicsStrictPlacementHelp: t("comicsStrictPlacementHelp"),
     comicsBalloonStylesSection: t("comicsBalloonStylesSection"),
     comicsBalloonStylesResetConfirm: t("comicsBalloonStylesResetConfirm"),
     comicsBalloonStylesIntro: t("comicsBalloonStylesIntro"),

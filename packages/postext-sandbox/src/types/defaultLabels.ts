@@ -3386,6 +3386,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   comicsJoinConnectorDescription: "A narrow neck links the two balloons.",
   comicsJoinNone: "Apart",
   comicsJoinNoneDescription: "Two separate balloons, each with its own tail.",
+  comicsStrictPlacement: "Keep Chinese words whole",
+  comicsStrictPlacementHelp: "A balloon reshaped to fit its panel does not cut a Chinese word across two lines to do so: the placement moves the balloon or changes the order first. Off letters as postext 1.27 did.",
   comicsBalloonStylesSection: "Balloon styles",
   comicsBalloonStylesResetConfirm: "Restore every built-in balloon style and remove the ones you added?",
   comicsBalloonStylesIntro: "A script line picks a style with a flag after the speaker: ben{whisper}: … Captions, notes and sound effects take theirs from their key (caption:, note:, sfx:). The built-in styles can be changed and restored; a new style starts from the speech balloon.",

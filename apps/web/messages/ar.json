@@ -3997,6 +3997,8 @@
     "comicsJoinConnectorDescription": "عنق ضيق يصل بين الفقاعتين.",
     "comicsJoinNone": "منفصلتان",
     "comicsJoinNoneDescription": "فقاعتان منفصلتان، لكل منهما ذيلها.",
+    "comicsStrictPlacement": "عدم قطع الكلمات الصينية",
+    "comicsStrictPlacementHelp": "الفقاعة التي يتغيّر شكلها لتدخل في إطارها لا تقطع كلمة صينية بين سطرين لأجل ذلك: تُحرَّك الفقاعة أو يتغيّر الترتيب أولًا. وعند الإيقاف تُكتب الحوارات كما في postext 1.27.",
     "comicsBalloonStylesSection": "أنماط الفقاعات",
     "comicsBalloonStylesResetConfirm": "استعادة كل أنماط الفقاعات المدمجة وحذف ما أضفته؟",
     "comicsBalloonStylesIntro": "يختار سطر النص نمطًا بعلامة بعد المتحدث: ⁦ben'{'whisper'}': …⁩ أما مربعات السرد والملاحظات والمؤثرات الصوتية فتأخذ نمطها من مفتاحها (⁦caption:⁩ و⁦note:⁩ و⁦sfx:⁩). ويمكن تغيير الأنماط المدمجة واستعادتها، ويبدأ النمط الجديد من فقاعة الكلام.",
