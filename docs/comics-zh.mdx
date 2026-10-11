@@ -213,7 +213,7 @@ note: 电子管收音机要预热一分钟才出声。
     <tr><td><code>at="62% 40%"</code></td><td>把对白框的中心固定在分格画面的这个点上（分格没有画面时是格子上的点）。这个点以画面的比例表示，所以无论怎样裁切、怎样拖动分格线，它都留在画上的同一个位置。</td></tr>
     <tr><td><code>at=top-start</code></td><td>把对白框放在分格的一个角或一条边上：<code>top-start</code>、<code>top-end</code>、<code>bottom-start</code>、<code>bottom-end</code>、<code>top</code>、<code>bottom</code>。旁白框和注释紧贴边框。</td></tr>
     <tr><td><code>to="40% 70%"</code></td><td>让尾巴指向画面上的这个点，而不是说话人的锚点。尾巴转向这个点，并在到达之前停住，就像在嘴前停住一样。</td></tr>
-    <tr><td><code>tail=none</code>、<code>tail=start</code></td><td>不要尾巴，或者让尾巴指向这一侧格外的说话人（<code>top</code>、<code>bottom</code>、<code>start</code>、<code>end</code>）。默认值是<code>tail=auto</code>。</td></tr>
+    <tr><td><code>tail=none</code>、<code>tail=start</code></td><td>不要尾巴，或者让尾巴指向这一侧格外的说话人（<code>top</code>、<code>bottom</code>、<code>start</code>、<code>end</code>、<code>left</code>、<code>right</code>）。<code>start</code>和<code>end</code>跟随页面的阅读方向；<code>left</code>和<code>right</code>是这一格画面的左右两侧。默认值是<code>tail=auto</code>。</td></tr>
     <tr><td><code>join</code>、<code>join=false</code></td><td>把这个对白框与同一说话人的前一个连起来，或者分开，不管<code>comics.lettering.joinSameSpeaker</code>怎样设置。</td></tr>
     <tr><td><code>break</code></td><td>允许对白框越过分格边框，伸进格间距或相邻的分格。这种越界是有意为之，不作为溢出报告；对白框在另一侧盖住的东西（一张脸、另一格的对白框）仍会报告，而且它的中心留在自己的分格内。</td></tr>
     <tr><td><code>rotate=-8</code></td><td>把对白框或拟声词按顺时针旋转若干度。</td></tr>
@@ -238,7 +238,7 @@ note: 电子管收音机要预热一分钟才出声。
 
 ### 尾巴
 
-对白的尾巴指向说话人的嘴，心声的气泡指向头部（见[说话人与锚点](#说话人与锚点)）。尾巴从轮廓上朝向说话人的地方伸出，略带弯曲，在嘴前停住。说话人的锚点被裁到分格之外，或者画面没有为这个说话人标锚点时，尾巴指向格外，朝向锚点或最近的边框，并止于边框。这样的对白框放在声音传来的那条边框旁边，配一条短尾巴：横穿整格的尾巴看起来像一支箭头，所以移动的是对白框，而不是把尾巴拉长。`to="x% y%"`让尾巴指向画面上的另一个点，`tail=start`（或`top`、`bottom`、`end`）让它指向那一侧格外的说话人。旁白框、注释和拟声词没有尾巴。
+对白的尾巴指向说话人的嘴，心声的气泡指向头部（见[说话人与锚点](#说话人与锚点)）。尾巴从轮廓上朝向说话人的地方伸出，略带弯曲，在嘴前停住。说话人的锚点被裁到分格之外，或者画面没有为这个说话人标锚点时，尾巴指向格外，朝向锚点或最近的边框，并止于边框。这样的对白框放在声音传来的那条边框旁边，配一条短尾巴：横穿整格的尾巴看起来像一支箭头，所以移动的是对白框，而不是把尾巴拉长。`to="x% y%"`让尾巴指向画面上的另一个点，`tail=start`（或`top`、`bottom`、`end`、`left`、`right`）让它指向那一侧格外的说话人。旁白框、注释和拟声词没有尾巴。
 
 ### 相连的对白框
 
@@ -447,7 +447,7 @@ caption: 从钟楼上望去的星期六集市。
 
 同一份源文件给出两种页面版式。从右到左的页面把每一行的分格从右边排起，所以第1格在右上角；斜线随之镜像，`bleed`和`pad`的逻辑方向以及角位置关键词也一样（`top-start`的旁白框在右上角）。各行仍然自上而下，脚本的阅读顺序不变。嵌字规则也随之镜像：一格中的第一个对白框靠右，下一个只有在更靠左时才可以更高。
 
-画面除非要求，否则不翻转：`comics.mirrorArt: true`把阅读方向与`artDirection`相反的页面上的每幅画左右翻转，日本漫画的西方版本长期以来就是这样做的；`::panel{mirror=false}`让一幅画保持原样（画里有文字，或者剑客是用右手持剑的）。锚点和安全区随翻转而变。通常最好不要翻转：分格顺序已经跟随读者，翻转的画面改变了画家画的东西。
+画面除非要求，否则不翻转：`comics.mirrorArt: true`把阅读方向与`artDirection`相反的页面上的每幅画左右翻转，日本漫画的西方版本长期以来就是这样做的；`::panel{mirror=false}`让一幅画保持原样（画里有文字，或者剑客是用右手持剑的）。锚点和安全区随翻转而变。用`tail=left`或`tail=right`指向格外的尾巴也一样：这两个值说的是画面的一侧，而`tail=start`和`tail=end`跟随页面的阅读方向。画面保持原样时，`tail=right`在每个语言版本里都落在右边框上；画面翻转后，落在左边框上。通常最好不要翻转：分格顺序已经跟随读者，翻转的画面改变了画家画的东西。
 
 对白框的书写方向跟随语言，而不是分格顺序。`comics.lettering.writingMode: 'auto'`时，日文和繁体中文竖排成从右往左读的列，每列最多`maxColumnChars`个字（8），遵循日文的禁则，数字用`:tcy`在列中横排，标点用竖排形式；以竖排排版的文档在任何语言中都竖排嵌字。简体中文、韩文和其他所有语言都横排嵌字，`'horizontal'`或`'vertical'`可以强制其中一种。阿拉伯文从右往左嵌字，其中的拉丁词和数字按自己的方向排，从不倾斜，也从不加字距。
 

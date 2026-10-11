@@ -234,7 +234,7 @@ ana{thought}: First line,\
 | `at` | `"x% y%"` | pins the balloon's centre, in fractions of the panel's **picture** (so it survives crops, splitter drags and other page sizes); of the cell when the panel has no picture |
 | `at` | `top-start` `top-end` `bottom-start` `bottom-end` `top` `bottom` | a corner or edge of the panel, butted to the border for captions |
 | `to` | `"x% y%"` | where the tail points (picture fractions) |
-| `tail` | `none` \| `auto` \| `top` \| `bottom` \| `start` \| `end` | no tail, or a speaker off the panel on that side |
+| `tail` | `none` \| `auto` \| `top` \| `bottom` \| `start` \| `end` \| `left` \| `right` | no tail, or a speaker off the panel on that side. `start`/`end` follow the page's reading direction; `left`/`right` are sides of the picture as stored (they turn over with a mirrored picture), so one line is right in every edition of a comic whose art is kept as drawn |
 | `join` / `join=false` | flag | force or forbid joining with the speaker's previous balloon |
 | `break` | flag | the balloon may cross the panel border into the gutter or the next panel (no `comicBalloonOverflow` for the crossing itself; what it covers there, a face or another panel's balloon, is still reported; its centre stays in its panel; never off the trim) |
 | `rotate` | degrees, clockwise | sound effects |

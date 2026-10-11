@@ -642,6 +642,14 @@ describe.skipIf(!python)("postext-port lint on comics", () => {
     expect(status).toBe(1);
   });
 
+  it("knows the sides a tail may name, left and right among them (#727)", () => {
+    const page = (tail: string) => [":::page", "::panel{art=p1}", `ben{tail=${tail}}: Over here!`, ":::", ""].join("\n");
+    for (const side of ["none", "auto", "top", "bottom", "start", "end", "left", "right"]) {
+      expect(lint(comicProject(letters, { en: page(side) })).out).not.toContain("tail=");
+    }
+    expect(lint(comicProject(letters, { en: page("up") })).out).toContain("tail='up' is ignored");
+  });
+
   it("knows strips and their attributes, and flags an unclosed block", () => {
     const strip = [':::strip{span=page placement=top aspect=4/1 height=40mm}', "::panel{art=p1}", "ana: Morning!", "::panel{art=p2}", ":::", ""].join("\n");
     expect(lint(comicProject(letters, { en: strip })).out).not.toMatch(/strip attribute|not a Postext/);
