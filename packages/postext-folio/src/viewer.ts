@@ -197,6 +197,13 @@ export interface FolioViewer {
   /** How many times the magnifying glass magnifies at its centre; null
    *  goes back to the default (see {@link FolioMagnifier.zoom}). */
   setMagnification(zoom: number | null): void;
+  /** The magnifying glass as it is: how many times it magnifies at its
+   *  centre, and whether it is held over the book now. */
+  getMagnifier(): { zoom: number; held: boolean };
+  /** Holds the glass over the middle of the open spread, as the + and −
+   *  keys do (in the magnify interaction, on the 3D book), or puts it
+   *  away, as Escape does. */
+  holdMagnifier(held: boolean): void;
   /** A page's canvas was drawn again in place: shows it again. */
   refreshPage(src: PageSource): void;
   /** Plays a video on a page (#477): drawn over the page's painting, on
@@ -684,12 +691,7 @@ export function createFolio(container: HTMLElement, options: FolioOptions): Foli
         if (!lensAt) return;
         hideLens();
       } else {
-        // From the keyboard the glass comes up over the spread's centre.
-        if (!lensAt) {
-          const r = spreadEl.getBoundingClientRect();
-          lensAt = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-          root.classList.add("is-magnifying");
-        }
+        raiseLens();
         zoomBy(event.key === "-" ? 1 / 1.25 : 1.25);
       }
       event.preventDefault();
@@ -840,6 +842,14 @@ export function createFolio(container: HTMLElement, options: FolioOptions): Foli
     lensAt = { x: lens.x, y: lens.y };
     root.classList.add("is-magnifying");
     flipper.setLens(lens);
+  }
+  /** Without a pointer to hold it (the keyboard, a host), the glass comes
+   *  up over the spread's centre. */
+  function raiseLens() {
+    if (lensAt) return;
+    const r = spreadEl.getBoundingClientRect();
+    lensAt = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    root.classList.add("is-magnifying");
   }
   function hideLens() {
     if (!lensAt) return;
@@ -1194,6 +1204,19 @@ export function createFolio(container: HTMLElement, options: FolioOptions): Foli
     setMagnification(zoom) {
       lensZoom = zoom ? clamp(zoom, ZOOM_MIN, ZOOM_MAX) : null;
       if (lensAt) flipper?.setLens(lensOf(lensAt));
+      scheduleDetail(250);
+    },
+    getMagnifier() {
+      return { zoom: zoomNow(), held: lensAt !== null };
+    },
+    holdMagnifier(held) {
+      if (!held) {
+        hideLens();
+        return;
+      }
+      if (interaction !== "magnify" || !flipper) return;
+      raiseLens();
+      if (lensAt) flipper.setLens(lensOf(lensAt));
       scheduleDetail(250);
     },
     pageAt: aimedPageAt,
