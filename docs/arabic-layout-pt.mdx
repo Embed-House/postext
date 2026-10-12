@@ -40,7 +40,7 @@ const config: PostextConfig = {
 - **ênfase em negrito** em vez de itálico, e citações em redondo;
 - **os textos embutidos**: شكل e جدول para figuras e tabelas, numeradas por capítulo (شكل ٢-٣), الفصل e ص nas referências cruzadas, المراجع sobre a bibliografia, انظر e انظر أيضًا no índice remissivo, (تابع) depois da legenda de uma tabela que continua;
 - **a ordem do índice remissivo**, alfabética (hijāʾī), ignorando o artigo ال;
-- **a etiqueta de idioma** no HTML (`lang="ar" dir="rtl"`), no canvas e no PDF (`/Lang`), para que as formas da fonte próprias do idioma sejam aplicadas.
+- **a etiqueta de idioma** no HTML (`lang="ar" dir="rtl"`), no canvas, no PDF (`/Lang`) e nos contextos com que o layout mede, para que as formas da fonte próprias do idioma sejam aplicadas onde o texto é medido e onde é pintado: um livro em urdu ou em persa recebe os seus algarismos e as formas das suas letras numa página em qualquer idioma e num worker de layout ([`bodyText.shapingLanguage`](/pt/docs/configuration-text#texto-do-corpo)).
 
 O Sandbox faz isso em um só passo: escolha العربية em **Design › Sistema de escrita** e clique em **Padrões para árabe › Revisar…** (veja [No Sandbox](#no-sandbox)).
 

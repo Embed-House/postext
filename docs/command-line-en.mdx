@@ -439,3 +439,13 @@ executable to `packages/postext-cli/bin/`.
 - **Fonts** come from the book, your folders, the executable, Google Fonts or
   Fontsource (for a family Google Fonts does not have), never from the fonts
   installed on the computer, so a book comes out the same on every machine.
+- **The language of the text** is the document's own in a browser
+  (`bodyText.shapingLanguage`). Skia's canvas takes a language and shapes
+  without it, so the command line measures the forms of each font's default
+  language and lays its books out with `shapingLanguage: 'host'`, whatever the
+  configuration says; its PDF and its pictures paint those same forms. A
+  Chinese book in a Simplified face, a Japanese book in a Japanese face and any
+  book in a face with no forms by language come out as in the Sandbox. A book
+  whose face has forms for its language (a Catalan `l·l`, a Turkish `fi`, the
+  digits of a Chinese face in an English book) is set in the default forms
+  here.

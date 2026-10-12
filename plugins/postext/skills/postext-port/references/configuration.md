@@ -313,6 +313,12 @@ H&J / Knuth–Plass
 │                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
+├─ shapingLanguage      'document' | 'host'  'document'   (≥ the release after 1.28) the language the text is measured, painted and embedded in: the document's
+│                        `locale` (a run's own with `{lang=…}`), set on every measuring context, so the lines are the same on a page in any
+│                        language and in a layout worker; canvas `ctx.lang`, HTML/EPUB `lang`, PDF OpenType language system (ZHS, ZHT, JAN, CAT, TRK…).
+│                        'host' = ≤ 1.28: measured in the host page's language (none in a worker); every preset below configVersion 13 reads 'host'.
+│                        Set `locale` on every ported book (zh-Hans / zh-Hant / ja / ca …): it now decides glyph forms and line breaks, not only strings.
+│                        `postext` CLI and render.mjs measure on Skia, which shapes without a language: they lay out with 'host' (font-default forms).
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
@@ -1749,7 +1755,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 
 **preset.json** — `version: 2` manifest (full reference: project-format.md):
 ```
-{ version: 2, configVersion: 12, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
+{ version: 2, configVersion: 13, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
   default?, view?: { canvasScope?: 'book'|'chapter' },
   start?: { pageIndexOffset?, pageNumbering?: { startAt?, format? }, headings?: { h1..h6 }, part?: { number, title, palette? },
             resourceCounters?, resourceNumbers?, statementCounters?, footnoteNumber?, lineNumber?, afterPartPage? },
@@ -1764,7 +1770,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 12` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
+`configVersion: 13` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
 the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`
 when one is embedded inside a `:::callout`, `headings.inlineMarks: false` when a heading carries `*`, `_`, `^`,
@@ -1791,7 +1797,8 @@ too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter s
 `citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
 kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
 reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
-no letter shaped alone). The pins keep what those rules changed, not
+no letter shaped alone); one stamped 12 (postext 1.28), that of rules 13: `bodyText.shapingLanguage: 'host'` on every such
+config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —
