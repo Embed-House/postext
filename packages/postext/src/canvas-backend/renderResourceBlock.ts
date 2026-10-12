@@ -25,6 +25,7 @@ import { paintChip } from './chip';
 import { renderMathSegment } from './blockRender';
 import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk';
 import { fillSegmentWord, type WordRun } from './wordRuns';
+import { paintedSegments } from './wordPieces';
 import { uncroppedPictureBox } from '../pipeline/safeArea';
 import { mirroredPaintActive } from './mirrorFrame';
 import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
@@ -418,8 +419,12 @@ function paintLineRuns(
     // A line holding right-to-left text is painted in its `order`, each
     // right-to-left segment as a right-to-left run (`fillSegmentWord`).
     const order = !composed && line.order?.length === line.segments.length ? line.order : undefined;
-    for (let k = 0; k < line.segments.length; k++) {
-      const seg = line.segments[order ? order[k]! : k]!;
+    // The pieces of a word the layout measured whole are painted as that
+    // word (#770).
+    const segments = paintedSegments(ctx, line, composed, tracking, (seg) =>
+      seg.fontString ?? pickFont(!!seg.bold, !!seg.italic, font, boldFont, italicFont, boldItalicFont))!;
+    for (let k = 0; k < segments.length; k++) {
+      const seg = segments[order ? order[k]! : k]!;
       if (seg.kind === 'space') {
         x += seg.width;
         continue;

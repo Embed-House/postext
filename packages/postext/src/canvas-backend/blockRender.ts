@@ -21,6 +21,7 @@ import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 import { taskBoxTick } from '../taskBox';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { paintedSegments, paintsAsOneText } from './wordPieces';
 
 function pickSegmentFont(
   bold: boolean,
@@ -409,6 +410,10 @@ function renderLine(
   // turns the flow around) reads the same painted as one text.
   const order = segments && line.order?.length === segments.length ? line.order : undefined;
   const directed = segments?.some((s) => s.rtl) ?? false;
+  // The pieces of a word the layout measured whole are painted as that
+  // word (#770), on a line painted segment by segment: asked for there.
+  const pieces = (): VDTLineSegment[] => paintedSegments(ctx, line, false, tracking, (seg) =>
+    seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont))!;
 
   // Justified rendering with per-segment spacing. Last lines render ragged at
   // natural width — except when overfull: Knuth-Plass may accept a final line
@@ -426,7 +431,7 @@ function renderLine(
     }
     if (spaceCount > 0 && !line.tabbed && ((!line.isLastLine && !line.ragged) || naturalWidth > effectiveWidth)) {
       const justifiedSpaceWidth = (effectiveWidth - wordWidth) / spaceCount;
-      renderSegments(ctx, segments, lineX, line.baseline, style, justifiedSpaceWidth, cjk, tracking, order);
+      renderSegments(ctx, pieces(), lineX, line.baseline, style, justifiedSpaceWidth, cjk, tracking, order);
       return;
     }
   }
@@ -440,7 +445,7 @@ function renderLine(
     for (const seg of segments) contentWidth += seg.width;
     const slack = Math.max(0, effectiveWidth - (contentWidth - trailing));
     const startX = lineX + (align === 'center' ? slack / 2 : slack);
-    renderSegments(ctx, segments, startX, line.baseline, style, undefined, cjk, tracking, order);
+    renderSegments(ctx, pieces(), startX, line.baseline, style, undefined, cjk, tracking, order);
     return;
   }
 
@@ -451,7 +456,7 @@ function renderLine(
   // a line of verse tightened its word spaces to fit (#620); otherwise one
   // fillText paints the line.
   if (segments && (directed || line.verseLine?.spaceRatio !== undefined || segments.some(segmentIsStyled) || (tracking !== 0 && joiningScriptIn(line.text)))) {
-    renderSegments(ctx, segments, lineX, line.baseline, style, undefined, cjk, tracking, order);
+    renderSegments(ctx, pieces(), lineX, line.baseline, style, undefined, cjk, tracking, order);
     return;
   }
 
@@ -462,11 +467,21 @@ function renderLine(
   // A tracked line that would lose a ligature to the letter-spacing is
   // painted word by word, each as it was measured (#663).
   if (tracking !== 0 && segments && segments.length > 0 && shapedOtherwise(ctx, line.text)) {
-    renderSegments(ctx, segments, plainX, line.baseline, style, undefined, cjk, tracking, order);
+    renderSegments(ctx, pieces(), plainX, line.baseline, style, undefined, cjk, tracking, order);
     return;
   }
-  if (cjk) fillWordsText(ctx, line.text, plainX, line.baseline);
-  else ctx.fillText(line.text, plainX, line.baseline);
+  if (cjk) {
+    fillWordsText(ctx, line.text, plainX, line.baseline);
+    return;
+  }
+  // One text, where it is as wide as the line's words were measured: the
+  // pieces of a plain paragraph's words were measured one by one, and a
+  // face that kerns across a cut sets the line shorter (#770).
+  if (segments && !paintsAsOneText(ctx, line, tracking, style.font)) {
+    renderSegments(ctx, pieces(), plainX, line.baseline, style, undefined, cjk, tracking, order);
+    return;
+  }
+  ctx.fillText(line.text, plainX, line.baseline);
 }
 
 /** {@link renderLine} for a line of the CJK composer or any line down a

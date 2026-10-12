@@ -1,0 +1,120 @@
+import type { VDTLine, VDTLineSegment } from '../vdt';
+import { lineWordSegments, sameSetWidth } from '../wordPieces';
+import { graphemeCount } from '../measure/graphemes';
+import { measurementGeneration } from '../measure/canvas';
+import { languageOf, setLetterSpacing } from './contextState';
+import { inSegmentLanguage } from './wordRuns';
+
+/**
+ * The segments the canvas paints a line from (#770): the line's own, the
+ * pieces of a word joined where the word was measured whole and the
+ * hyphen of a line end set apart where it was measured apart
+ * (`lineWordSegments`, the rule the HTML and the PDF apply).
+ *
+ * The context that paints is the one asked: a text is joined when this
+ * canvas, in the font and the language it paints in, sets it as wide as
+ * the layout measured its pieces together. A tracked line was measured at
+ * its natural widths plus the tracking after each letter (#663), so the
+ * context measures with no letter-spacing and the tracking is counted.
+ *
+ * A ragged line in one style is painted as one text, which is faster.
+ * Not when that text is not as wide as its segments were measured
+ * together ({@link paintsAsOneText}): the pieces of a plain paragraph's
+ * words were measured one by one, and a face that kerns across a cut
+ * (the `r` and the `q` of `per|qu`) sets the line shorter as one text
+ * than the places of its words.
+ *
+ * A line is asked once: its answers are kept by its segments, for the
+ * language, the tracking and the font it was given under, until a face
+ * arrives (the measurement generation) or its segments change.
+ */
+
+/** What is known of a line. */
+interface Painted {
+  key: string;
+  /** The segments it is painted from. */
+  segments?: VDTLineSegment[];
+  /** Whether its text set as one is as wide as its segments. */
+  whole?: boolean;
+}
+
+/** A line's segments → what is known of the line. */
+const painted = new WeakMap<VDTLineSegment[], Painted>();
+
+/** What is known of the line of `segments` under the faces loaded, the
+ *  language and the `tracking` painted in and the line's `font`, with its
+ *  segments as they are; nothing yet when any of those changed. */
+function knownOf(ctx: CanvasRenderingContext2D, line: VDTLine, segments: VDTLineSegment[], tracking: number, font: string): Painted {
+  let widths = 0;
+  for (const seg of segments) widths += seg.width;
+  const key = `${measurementGeneration()}\u0000${languageOf(ctx) ?? ''}\u0000${tracking}\u0000${segments.length}\u0000${widths}\u0000${line.hyphenated === true}\u0000${font}`;
+  let known = painted.get(segments);
+  if (known?.key !== key) painted.set(segments, known = { key });
+  return known;
+}
+
+/**
+ * The segments to paint `line` from. `composed`: a line of the CJK
+ * composer or down a vertical page, painted as it is. `tracking` is the
+ * context's `letterSpacing` on entry, px, and on return; `fontOf` gives
+ * the font string a segment is painted in. The context's font is left at
+ * any value: the painter sets its own before each text.
+ */
+export function paintedSegments(
+  ctx: CanvasRenderingContext2D,
+  line: VDTLine,
+  composed: boolean,
+  tracking: number,
+  fontOf: (seg: VDTLineSegment) => string,
+): VDTLineSegment[] | undefined {
+  const segments = line.segments;
+  if (!segments || segments.length === 0 || composed || line.order !== undefined || typeof ctx.measureText !== 'function') return segments;
+  const known = knownOf(ctx, line, segments, tracking, fontOf(segments[0]!));
+  if (known.segments) return known.segments;
+  let font = '';
+  let spaced = tracking !== 0;
+  known.segments = lineWordSegments(line, composed, (seg, text) => {
+    if (spaced) {
+      setLetterSpacing(ctx, 0);
+      spaced = false;
+    }
+    let width = 0;
+    inSegmentLanguage(ctx, seg, () => {
+      const own = fontOf(seg);
+      if (own !== font) ctx.font = font = own;
+      width = ctx.measureText(text).width;
+    });
+    return width + (tracking === 0 ? 0 : tracking * graphemeCount(text));
+  })!;
+  if (tracking !== 0 && !spaced) setLetterSpacing(ctx, tracking);
+  return known.segments;
+}
+
+/**
+ * Whether a line's text, painted with one `fillText` in the context's
+ * font (the line's `font`, set by the caller), is as wide as the layout
+ * measured its segments together. `tracking` is the context's
+ * `letterSpacing` on entry, px, and on return. A line with no two pieces
+ * that touch is, with nothing asked: its words and its spaces were
+ * measured whole. So is any line where the context does not measure.
+ */
+export function paintsAsOneText(ctx: CanvasRenderingContext2D, line: VDTLine, tracking: number, font: string): boolean {
+  const segments = line.segments;
+  if (!segments || !segments.some((seg, i) => i > 0 && seg.kind !== 'space' && segments[i - 1]!.kind !== 'space') || typeof ctx.measureText !== 'function') return true;
+  const known = knownOf(ctx, line, segments, tracking, font);
+  if (known.whole === undefined) {
+    let measured = 0;
+    let widest = 0;
+    for (const seg of segments) {
+      measured += seg.width;
+      if (seg.width > widest) widest = seg.width;
+    }
+    if (tracking !== 0) setLetterSpacing(ctx, 0);
+    const set = ctx.measureText(line.text).width + (tracking === 0 ? 0 : tracking * graphemeCount(line.text));
+    if (tracking !== 0) setLetterSpacing(ctx, tracking);
+    // What a kerned pair moves is small beside a line: the difference is
+    // weighed against the line's widest word, as a word's pieces are.
+    known.whole = sameSetWidth(widest + set - measured, widest);
+  }
+  return known.whole;
+}

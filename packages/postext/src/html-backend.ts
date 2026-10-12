@@ -31,7 +31,7 @@ import { registeredFontSyncProvider } from './svg/fontRegistry';
 import { svgPictureFontWarning } from './svg/image';
 import { lineInkExtent, lineTrailingTracking } from './lineInk';
 import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
-import { isJapaneseLanguage, renderLangOf, shapingLanguageOf } from './locale';
+import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale';
 import { hasCJK } from './measure/cjk';
 import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
@@ -39,7 +39,9 @@ import { scriptContextUntracked, scriptMark, type ScriptContext } from './measur
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
-import { graphemesOf } from './measure/graphemes';
+import { graphemeCount, graphemesOf } from './measure/graphemes';
+import { measureTextWidth, withMeasureLanguage } from './measure/canvas';
+import { lineWordSegments } from './wordPieces';
 import { fontFamilyOf } from './measure/vertical';
 import { lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
@@ -596,6 +598,46 @@ function pickSegmentFont(
   return block.fontString;
 }
 
+/**
+ * The language the browser shapes the text of the document being written
+ * in, as far as the writer knows it (#770): `lang` is the one its root
+ * declares (the document's own, or none: the empty tag), or undefined for
+ * the language of the page that writes it, which shows it too. Null where
+ * nobody can tell: a document in the host's language written in a worker,
+ * or where nothing measures. Set by {@link renderToHtmlIndexed} while it
+ * writes its pages, null again after them.
+ */
+let shapedText: { lang: string | undefined } | null = null;
+
+/** {@link shapedText} of a document whose root declares `declared`
+ *  (undefined: it declares none). */
+function shapedTextOf(declared: string | undefined): { lang: string | undefined } | null {
+  const page = typeof document !== 'undefined';
+  if (!page && typeof OffscreenCanvas === 'undefined') return null;
+  if (declared !== undefined) return { lang: declared };
+  return page ? { lang: undefined } : null;
+}
+
+/**
+ * The segments a line set word by word is written from (#770): the line's
+ * own, the pieces of a word joined into one box where the word was
+ * measured whole and the hyphen of a line end in a box of its own where
+ * it was measured apart (`lineWordSegments`, the rule the canvas and the
+ * PDF apply). The browser sets each box's text as one run, so a joined
+ * word has the glyphs the layout measured: the `ffi` of `of|fice`, the
+ * dot of a Catalan `l·l`. Asked of the engine's measurer, in the language
+ * the text is shaped in ({@link shapedText}, a segment's own where it
+ * names one), at the line's `tracking`; `fontOf` gives a segment's font
+ * string. The line's own segments where that language is not known.
+ */
+function wordSegmentsOf(line: VDTLine, tracking: number, fontOf: (seg: VDTLineSegment) => string): VDTLineSegment[] {
+  const shaped = shapedText;
+  if (!shaped) return line.segments!;
+  return lineWordSegments(line, false, (seg, text) =>
+    withMeasureLanguage(seg.lang !== undefined ? shapingTagOf(seg.lang) : shaped.lang, () => measureTextWidth(text, fontOf(seg)))
+    + (tracking === 0 ? 0 : tracking * graphemeCount(text)))!;
+}
+
 function pickSegmentColor(
   seg: VDTLineSegment,
   block: VDTBlock,
@@ -987,7 +1029,8 @@ function renderSegments(
   const parts: string[] = [];
   const links = linkRuns();
   let x = leadingGap;
-  const segs = line.segments;
+  // The pieces of a word the layout measured whole are one box (#770).
+  const segs = wordSegmentsOf(line, tracking, (seg) => pickSegmentFont(seg, block));
   // Segments advance along the line in `line.order` when it has one (a
   // line with right-to-left runs, or any line of a mirrored page): their
   // x are taken in that order; the markup stays in logical order, so the
@@ -1831,13 +1874,14 @@ function renderResourceLine(
   const parts: string[] = [];
   const lineDecl = lineCjkDecl(line);
   if (line.segments && line.segments.length > 0) {
-    const segs = line.segments;
     const composed = line.cjkComposed === true;
+    const tracking = line.letterSpacing ?? 0;
+    // The pieces of a word the layout measured whole are one box (#770).
+    const segs = composed ? line.segments : wordSegmentsOf(line, tracking, (seg) => pickResourceFont(seg, fonts));
     const cjk = !composed && hasCJK(line.text);
     // A caption or cell line with right-to-left runs, or on a mirrored
     // page, advances through its segments in `order` (#379).
     const at = line.order && line.order.length === segs.length ? orderedOffsets(segs, line.order, 0, undefined) : undefined;
-    const tracking = line.letterSpacing ?? 0;
     const segColorOf = (seg: VDTLineSegment): string => (seg.refResourceId !== undefined
       ? linkColor
       : seg.captionLabel
@@ -2860,6 +2904,9 @@ export function renderToHtmlIndexed(
     ? Math.max(0, doc.trimOffset - dimensionToPx(doc.config.page.cutLines.bleed, doc.config.page.dpi))
     : 0;
   const svgUrl = svgFontInliner(doc, options);
+  // The language the pages' text is shaped in, for the words set whole
+  // (#770): the declared one, else the writing page's.
+  shapedText = shapedTextOf(docLang);
   for (const p of doc.pages) {
     const pageOptions: HtmlPaint = onWarning
       ? {
@@ -2887,6 +2934,7 @@ export function renderToHtmlIndexed(
       ...(detail.comicHtml ? { comicHtml: detail.comicHtml } : {}),
     });
   }
+  shapedText = null;
 
   // The host's inherited text properties are reset first (EF-96). A
   // Chinese, Japanese or Korean document declares its language, so the

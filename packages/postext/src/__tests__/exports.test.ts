@@ -121,6 +121,8 @@ describe("package exports", () => {
       "headingDesignOverhangAbove",
       "hangingPunctuationOverhang",
       "lineInkExtent",
+      "joinedWordPieces",
+      "lineWordSegments",
       "applyCjkGrid",
       "cjkGridGeometry",
       "cjkGridCells",
