@@ -21,7 +21,7 @@ import {
 } from 'postext';
 import type { PostextContent } from 'postext';
 import { getFontFile } from '../storage/fontStorage';
-import { fontsourceCssUrl, fontsourceId, parseFontsourceCss, parseUnicodeRange } from '../viewport/fontsourceSlices';
+import { fontsourceCssUrl, fontsourceId, parseFontsourceCss, parseUnicodeRange, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices';
 import { isGenericFontFamily, isSystemFontFamily } from './systemFonts';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
@@ -504,6 +504,16 @@ function facesByCut(faces: readonly FamilyFace[]): Map<string, FamilyFace[]> {
  * there). Null when the package's style sheet cannot be had or is not laid
  * out as expected.
  */
+/** The version each family's package was answered from, by Fontsource id. */
+const packageVersions = new Map<string, string>();
+
+/** The exact version of `family`'s package its files are taken from, once
+ *  its style sheet has been read; null before, and when jsDelivr did not
+ *  say (#766). */
+export function fontsourcePackageVersion(family: string): string | null {
+  return packageVersions.get(fontsourceId(family)) ?? null;
+}
+
 async function packageFaces(family: string, meta: FontMetadata): Promise<FamilyFace[] | null> {
   const weights = [...new Set(meta.weights)].sort((a, b) => a - b);
   const styles: ('normal' | 'italic')[] = [...(meta.hasUpright ? ['normal' as const] : []), ...(meta.hasItalic ? ['italic' as const] : [])];
@@ -512,12 +522,20 @@ async function packageFaces(family: string, meta: FontMetadata): Promise<FamilyF
   const probeStyle = styles[0]!;
   const cssUrl = fontsourceCssUrl(family, probeWeight, probeStyle);
   let css: string | null;
+  // The version of the package this style sheet came from (#766): every
+  // file of the family is asked of it, not of the range.
+  let version: string | null = null;
   try {
-    css = await fetchWithin(cssUrl, async (res) => (res.ok ? await res.text() : null), { credentials: 'omit' });
+    css = await fetchWithin(cssUrl, async (res) => {
+      if (!res.ok) return null;
+      version = fontsourceVersionOf(res);
+      return await res.text();
+    }, { credentials: 'omit' });
   } catch {
     return null;
   }
   if (css === null) return null;
+  if (version) packageVersions.set(fontsourceId(family), version);
   const prefix = `${fontsourceId(family)}-`;
   const suffix = `-${probeWeight}-${probeStyle}.woff2`;
   const subsets: { name: string; base: string; unicodeRange?: string }[] = [];
@@ -527,7 +545,7 @@ async function packageFaces(family: string, meta: FontMetadata): Promise<FamilyF
     if (!file.startsWith(prefix) || !file.endsWith(suffix)) return null;
     subsets.push({
       name: file.slice(prefix.length, file.length - suffix.length),
-      base: slice.url.slice(0, slice.url.length - suffix.length),
+      base: fontsourceUrlAt(slice.url.slice(0, slice.url.length - suffix.length), version),
       ...(slice.unicodeRange ? { unicodeRange: slice.unicodeRange } : {}),
     });
   }

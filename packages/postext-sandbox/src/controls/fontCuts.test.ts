@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { FontFaceLike, PostextConfig } from 'postext';
-import { FONTSOURCE_PACKAGE_VERSION, fontsourceCssUrl, fontsourceFileUrl } from '../viewport/fontsourceSlices';
+import { FONTSOURCE_PACKAGE_VERSION, fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices';
 // The blocks of the Cookbook kit that fetch font files, as text (Vite's `?raw`).
 // @ts-expect-error a file outside the package, with no types
 import KIT_FONTS from '../../../../cookbook/_kit/fonts.js?raw';
@@ -101,6 +101,8 @@ let noFile: Set<string>;
 let stalled: Set<string>;
 /** The URLs the network answers after a while (ms). */
 let slow: Map<string, number>;
+/** The version jsDelivr says it answered a package's style sheets from, by Fontsource id (x-jsd-version). */
+let answeredFrom: Map<string, string>;
 
 const fontsource = (id: string) => `https://api.fontsource.org/v1/fonts/${id}`;
 const google = (family: string) => `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}`;
@@ -134,7 +136,9 @@ function stubFetch(): void {
     const answer = key === undefined ? 404 : routes[key]!;
     if (answer instanceof Error) throw answer;
     if (typeof answer === 'number') return { ok: false, status: answer, json: async () => ({}), text: async () => '' };
-    return { ok: true, status: 200, json: async () => answer, text: async () => String(answer) };
+    const from = /@fontsource\/([a-z0-9-]+)@/.exec(url)?.[1];
+    const headers = { get: (name: string) => (name === 'x-jsd-version' && from ? answeredFrom.get(from) ?? null : null) };
+    return { ok: true, status: 200, headers, json: async () => answer, text: async () => String(answer) };
   });
 }
 
@@ -243,6 +247,7 @@ beforeEach(async () => {
   noFile = new Set();
   stalled = new Set();
   slow = new Map();
+  answeredFrom = new Map();
   stubFetch();
   previous = { document: globals.document, FontFace: globals.FontFace };
   fonts = new CutFontSet();
@@ -563,20 +568,23 @@ describe('the Sandbox\'s PDF and its previews (#757)', () => {
 describe('the Cookbook kit and the Sandbox (#757)', () => {
   const BLOCKS: Record<string, string> = { fonts: KIT_FONTS, cjk: KIT_CJK, arabic: KIT_ARABIC, comics: KIT_COMICS, pdf: KIT_PDF, images: KIT_IMAGES };
 
-  it('take a family\'s files from the same package version and the same URLs', () => {
-    const versions = new Set<string>();
+  it('take a family\'s files from the same package, the same range and the same URLs', () => {
+    // The kit names a package's folder in one place (fontsourceAt), at the
+    // range the Sandbox starts from, and every block goes through it (#766).
+    const folder = /function fontsourceAt\(id, u = `(https:\/\/cdn\.jsdelivr\.net\/npm\/@fontsource\/\$\{id\}@)`\)/.exec(KIT_FONTS)![1]!;
+    expect(KIT_FONTS).toContain(`fetch(u + '${FONTSOURCE_PACKAGE_VERSION}/package.json')`);
     for (const [name, source] of Object.entries(BLOCKS)) {
-      const found = [...source.matchAll(/@fontsource\/\$\{id\}@([\w.]+)\//g)].map((m) => m[1]!);
-      expect(found.length, name).toBeGreaterThan(0);
-      for (const version of found) versions.add(version);
+      expect(source.match(/@fontsource\//g)?.length ?? 0, name).toBe(name === 'fonts' ? 1 : 0);
+      expect(source, name).toContain('fontsourceAt(id)');
     }
-    expect([...versions]).toEqual([FONTSOURCE_PACKAGE_VERSION]);
-    // The kit's own template of a file's URL, filled in.
-    const template = /(https:\/\/cdn\.jsdelivr\.net\/npm\/@fontsource\/\$\{id\}@[^`]+\.woff2)`/.exec(KIT_FONTS)![1]!;
-    const filled = template.replace(/\$\{id\}/g, 'source-serif-4').replace('${subset}', 'latin-ext').replace('${weight}', '600').replace('${style}', 'italic');
-    expect(fontsourceFileUrl(SERIF, 'latin-ext', 600, 'italic')).toBe(filled);
+    // The kit's own template of a file's URL, filled in at the range.
+    const template = /\$\{at\}(files\/\$\{id\}-\$\{subset\}-\$\{weight\}-\$\{style\}\.woff2)`/.exec(KIT_FONTS)![1]!;
+    const fill = (text: string) => text.replace(/\$\{id\}/g, 'source-serif-4').replace('${subset}', 'latin-ext').replace('${weight}', '600').replace('${style}', 'italic');
+    expect(fontsourceFileUrl(SERIF, 'latin-ext', 600, 'italic')).toBe(fill(`${folder}${FONTSOURCE_PACKAGE_VERSION}/${template}`));
+    // At the version the package resolves to, the same address on both sides.
+    expect(fontsourceUrlAt(fontsourceFileUrl(SERIF, 'latin-ext', 600, 'italic'), '5.3.1')).toBe(fill(`${folder}5.3.1/${template}`));
     // And the style sheet the kit reads a Chinese or Japanese family's slices from.
-    expect(KIT_CJK).toContain("https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css");
+    expect(KIT_CJK).toContain("${weight}${style === 'italic' ? '-italic' : ''}.css");
     expect(fontsourceCssUrl('Noto Serif JP', 700, 'italic')).toBe('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-jp@5/700-italic.css');
   });
 
@@ -669,5 +677,73 @@ describe('a request the network does not answer (#757)', () => {
     // The family may have files a later request brings; another family has not.
     expect(loader.fontRequestsUnanswered(SERIF, [])).toBe(true);
     expect(loader.fontRequestsUnanswered('Amiri', [])).toBe(false);
+  });
+});
+
+describe('a family from one version of its package (#766)', () => {
+  const versionsAsked = (id: string) => [...new Set(requests.filter((url) => url.includes(`/@fontsource/${id}@`) && url.endsWith('.woff2')).map((url) => /@([^/]+)\/files\//.exec(url)![1]!))];
+
+  it('takes every file from the version the family\'s style sheet was answered from, on the page, for the worker and in the PDF', async () => {
+    // jsDelivr resolves the range for each URL on that URL's clock: asked by
+    // the range, the files of a family cut again would come from two cuts.
+    answeredFrom.set('source-serif-4', '5.3.1');
+    await loader.loadFont(SERIF, [upright(400), italic(700)]);
+    expect(loader.fontsourcePackageVersion(SERIF)).toBe('5.3.1');
+    const faces = await loader.familyCutFaces(SERIF, [upright(400), italic(700)], { standard: true });
+    expect(faces.length).toBeGreaterThan(0);
+    expect(faces.every((f) => f.url.startsWith('https://cdn.jsdelivr.net/npm/@fontsource/source-serif-4@5.3.1/files/'))).toBe(true);
+    // The page declares those very files.
+    expect(fonts.faces.every((f) => f.source.includes('@5.3.1/files/'))).toBe(true);
+    await loader.fetchFacePayloads(faces);
+    const provide = (await import('../viewport/pdfFontProvider')).createPdfFontProvider({ raw: true });
+    await provide(SERIF, 400, 'normal', { codePoints: cps('abc') });
+    await provide(SERIF, 500, 'normal', { codePoints: cps('abc') });
+    expect(versionsAsked('source-serif-4')).toEqual(['5.3.1']);
+    // One style sheet read by the range, to learn the version: nothing else.
+    expect(requests.filter((url) => url.includes('@fontsource/source-serif-4@5/'))).toEqual([fontsourceCssUrl(SERIF, 400, 'normal')]);
+  });
+
+  it('keeps the range when jsDelivr does not say the version, as before', async () => {
+    const faces = await loader.familyCutFaces(SERIF, [upright(400)]);
+    expect(loader.fontsourcePackageVersion(SERIF)).toBeNull();
+    expect(faces.every((f) => f.url.includes(`@${FONTSOURCE_PACKAGE_VERSION}/files/`))).toBe(true);
+    expect(fontsourceVersionOf({ headers: { get: () => 'latest' } })).toBeNull();
+    expect(fontsourceVersionOf({ headers: { get: () => '5.3.1' } })).toBe('5.3.1');
+    expect(fontsourceVersionOf({})).toBeNull();
+    expect(fontsourceUrlAt('https://fonts.gstatic.com/s/x/latin.woff2', '5.3.1')).toBe('https://fonts.gstatic.com/s/x/latin.woff2');
+  });
+
+  it('the kit takes every file from the version the package says it is, the PDF with them, and keeps the range when it cannot ask', async () => {
+    const asked: string[] = [];
+    let reachable = true;
+    vi.stubGlobal('fetch', async (input: string) => {
+      const url = String(input);
+      asked.push(url);
+      if (url.endsWith('/package.json')) {
+        if (!reachable) throw new TypeError('Failed to fetch');
+        // The range, resolved for this URL: another URL of the family could be answered from 5.2.9.
+        return { ok: true, json: async () => ({ version: '5.3.1' }) };
+      }
+      if (url.includes('api.fontsource.org')) return { ok: true, json: async () => ({ weights: [400, 700], styles: ['normal', 'italic'], subsets: ['latin', 'latin-ext'] }) };
+      return { ok: true, arrayBuffer: async () => new ArrayBuffer(4) };
+    });
+    const load = () => new Function('kitStatus', 'decompressWoff2', `${KIT_FONTS}\n${KIT_PDF}\nreturn { fontsourceResolver, fontsourceProvider };`)(() => {}, async (bytes: Uint8Array) => bytes) as {
+      fontsourceResolver(family: string, weight: number, style: string, options?: { text?: string }): Promise<{ source: string }[] | null>;
+      fontsourceProvider(family: string, weight: number, style: string, request?: { codePoints?: number[] }): Promise<unknown>;
+    };
+    const kit = load();
+    const faces = (await kit.fontsourceResolver('Noto Sans TC', 400, 'normal', { text: 'a\u0101' }))!;
+    expect(faces.length).toBeGreaterThan(0);
+    expect(faces.every((f) => f.source.startsWith('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5.3.1/files/noto-sans-tc-'))).toBe(true);
+    await kit.fontsourceProvider('Noto Sans TC', 700, 'normal', { codePoints: [0x61, 0x101] });
+    const files = asked.filter((url) => url.endsWith('.woff2'));
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.every((url) => url.includes('/@fontsource/noto-sans-tc@5.3.1/files/'))).toBe(true);
+    // Asked once per family, of the range the Sandbox starts from.
+    expect(asked.filter((url) => url.endsWith('/package.json'))).toEqual([`https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@${FONTSOURCE_PACKAGE_VERSION}/package.json`]);
+    // The package cannot be asked: the range, as before.
+    reachable = false;
+    const again = (await load().fontsourceResolver('Noto Sans TC', 400, 'normal'))!;
+    expect(again.every((f) => f.source.startsWith(`https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@${FONTSOURCE_PACKAGE_VERSION}/files/`))).toBe(true);
   });
 });

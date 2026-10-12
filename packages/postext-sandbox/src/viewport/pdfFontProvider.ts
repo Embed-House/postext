@@ -1,9 +1,9 @@
 import type { PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
-import { facesForCodePoints, fontFamilyWeights, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
+import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
 import { getFontFile } from '../storage/fontStorage';
-import { fontsourceCssUrl, fontsourceFileUrl, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
+import { fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
 
 const bytesCache = new Map<string, Promise<Uint8Array>>();
 const slicesCache = new Map<string, Promise<FontSlice[] | null>>();
@@ -27,7 +27,7 @@ function fontsourceWoff2Url(
   weight: number,
   style: 'normal' | 'italic',
 ): string {
-  return fontsourceFileUrl(family, 'latin', weight, style);
+  return fontsourceUrlAt(fontsourceFileUrl(family, 'latin', weight, style), fontsourcePackageVersion(family));
 }
 
 /** A WOFF2 file as TrueType bytes, fetched once per URL (a failed fetch is
@@ -65,7 +65,10 @@ function fetchSlices(family: string, weight: number, style: 'normal' | 'italic')
       return null;
     }
     if (!res.ok) return null;
-    const slices = parseFontsourceCss(await res.text(), url);
+    // Every file from the version of the package the style sheet came
+    // from (#766): the one the previews took, when they read the family.
+    const version = fontsourcePackageVersion(family) ?? fontsourceVersionOf(res);
+    const slices = parseFontsourceCss(await res.text(), url).map((slice) => ({ ...slice, url: fontsourceUrlAt(slice.url, version) }));
     return slices.length > 0 ? slices : null;
   })();
   slicesCache.set(url, promise);
