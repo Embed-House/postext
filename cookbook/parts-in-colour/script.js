@@ -96,7 +96,7 @@ const bodyText = {
   // 45 are about 20 letters of Alegreya (the default 20, about 9); a shorter last line is a runt.
   minWordSpacing: 0.75, maxWordSpacing: 1.7, runtMinCharacters: 45,
 };
-const unorderedLists = { bulletChar: '▪', color: col('band'), // the field marks' bullets
+const unorderedLists = { bulletChar: '•', color: col('band'), // the field marks' bullets
   marginTop: pt(0), marginBottom: pt(0) };
 // The plates are numbered with the species, and their label is in the part's colour.
 const resourceTypes = [{ id: 'plate', numberingTemplate: '{n}', resetOn: 'never',

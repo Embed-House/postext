@@ -3,21 +3,21 @@
   "slug": "gojuon-index",
   "sourceHash": "7ab6edb64dbcd97300de76d1e1d579ca74e37f2614636b1525d8b133a5c306a2",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.244Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:54:37.034Z",
   "variants": {
     "en": {
-      "hash8": "ef2e0a1a",
-      "vdtHash": "a84ccc3847b8caa93f3369c2562cc78b96bdc2b2",
+      "hash8": "cef5e19e",
+      "vdtHash": "f8b56a0c3328d7a843fa101f7fd5b623b24105e8",
       "timings": {
-        "importMs": 1175,
-        "fontsMs": 1227,
-        "buildMs": 111,
-        "totalMs": 3714,
+        "importMs": 327,
+        "fontsMs": 970,
+        "buildMs": 82,
+        "totalMs": 1991,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78826,
+          "bytes": 78838,
           "alt": "Opening page 9: 紙面を呼ぶ言葉."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118614,
+          "bytes": 118690,
           "alt": "Page 10: 1.3 約物と組版の規則."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35652,
+          "bytes": 35614,
           "alt": "Opening page 11: 索引."
         }
       ],
@@ -99,18 +99,18 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137175,
+        "bytes": 137200,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15513,
+        "bytes": 15429,
         "folio": "3266640a",
         "chapters": [
           {
             "pages": 3,
-            "hash": "17d0c6e3637a356f",
-            "lines": "2a320ea87652fd86"
+            "hash": "f6c96c39a0c82139",
+            "lines": "57f00fd2dd90169a"
           }
         ]
       },
@@ -328,9 +328,14 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",
@@ -341,13 +346,13 @@
       }
     },
     "es": {
-      "hash8": "5216f18c",
-      "vdtHash": "a4df38ce9f4b8fd2359d25ea27fe586fcfb220af",
+      "hash8": "efc340f9",
+      "vdtHash": "ea4f51661750ca2803d83212feef5b3e6cfddca3",
       "timings": {
-        "importMs": 862,
-        "fontsMs": 1312,
-        "buildMs": 108,
-        "totalMs": 3664,
+        "importMs": 333,
+        "fontsMs": 963,
+        "buildMs": 82,
+        "totalMs": 1992,
         "builds": 1
       },
       "specimen": {
@@ -379,7 +384,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78826,
+          "bytes": 78838,
           "alt": "Página de apertura 9: 紙面を呼ぶ言葉."
         },
         {
@@ -390,7 +395,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118614,
+          "bytes": 118690,
           "alt": "Página 10: 1.3 約物と組版の規則."
         },
         {
@@ -401,7 +406,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35890,
+          "bytes": 35842,
           "alt": "Página de apertura 11: 索引."
         }
       ],
@@ -429,18 +434,18 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137119,
+        "bytes": 137144,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15568,
+        "bytes": 15484,
         "folio": "3266640a",
         "chapters": [
           {
             "pages": 3,
-            "hash": "c8cbdab3dbb676bb",
-            "lines": "98430d466934de42"
+            "hash": "6415d45dd06fd655",
+            "lines": "ec1f02b4a92f9056"
           }
         ]
       },
@@ -658,9 +663,14 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",

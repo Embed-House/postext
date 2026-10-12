@@ -166,7 +166,7 @@ The TypeScript source of truth is `RecipeMeta` in `apps/web/src/lib/cookbook/typ
 | `engine` | `postext` minimum version (≤ the released one, or the next release in a preview draft, §3); `postextPdf` for PDF recipes; `math`, `worker` flags. |
 | `kit` | Blocks to inline: always `core`, `fonts`, `viewer`; plus `pdf`, `images`, `cjk`, `arabic`, `book` and `comics` when used (`book` or `cjk`, never both: each declares `showBook`). |
 | `sample.locales` | Languages with a `content.<lang>.md`; `[0]` is the fallback edition. Usually `en` and `es`; any site locale may have an edition of its own (a comic re-lettered per language writes all six), and a page shows its own edition, else the Spanish one for Catalan, else `[0]`. A value that changes with the edition is written `t({ en: 'en', ja: 'ja', … })`; the lint reads `config.locale` written so for each edition. |
-| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect` (what the recipe means to show: `pages`, `warnings`, `nearEmptyPages`, `console`, `defaultSkin`, and `raggedLines`, the number of justified lines the edition may set ragged, check C34, 0 by default), `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079), and `sandbox`, which of the builds of such a list the Sandbox bundle is made from: `first` (the default), `last` or an index from 0 into the list (§11; the lint fails an index the list does not have, and the field without a list). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks and the detected features read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
+| `capture` | `hero` (a page, or a spread `[verso, recto]`; page 1 is a recto on its own), `card` (`spread`, `page`, `loupe`, `crop`, `screenshot`), `focus` for loupe and crop, `pages`, `expect` (what the recipe means to show: `pages`, `warnings`, `nearEmptyPages`, `console`, `defaultSkin`, `raggedLines`, the number of justified lines the edition may set ragged, check C34, 0 by default, and `systemFont`, the marks the pages take from a font of the system, check C36), `doc`, the recorded build whose pages are published: `last` by default, `first` or an index from 0, or a list of them for a pen that builds several documents, such as two editions (Nº 079), and `sandbox`, which of the builds of such a list the Sandbox bundle is made from: `first` (the default), `last` or an index from 0 into the list (§11; the lint fails an index the list does not have, and the field without a list). The pages of a list are numbered on from one build to the next, each build's page 1 stands alone, and the checks and the detected features read the first build. Page numbers count from 1 at the document's first page, whatever its printed folio (`continuation.pageNumbering.startAt`) or its place in the book (`continuation.pageIndexOffset`). Versos and rectos follow the physical book page (`pageIndexOffset` + index + 1), not the folio: the capture checks that a spread's verso is an even book page. A spread is named in reading order, `[verso, recto]`, also in a book bound on the right, which the light table and the card lay out mirrored (`[3 \| 2]`). |
 | `downloads.pdf` | Keep and serve the PDF the pen builds. |
 | `folio` | How the Sandbox's Folio view shows the publication in 3D: `paper` (stock `type`, `grammage`, `texture`, `shade`, `showThrough`…), `binding` (`type`, `cover`, `coverMaterial`, `coverColor`), `surface` and `lighting`, as `PostextConfig.folio` with colours written `#rrggbb`. Only the `.postext` bundle carries it (over the pen's own `config.folio`); it never changes the pages, so editing it needs `pnpm cookbook capture <slug> --sandbox-only`, not a recapture. Pick the object the recipe sets: a novel on book wove in a cloth case, a magazine saddle-stitched on gloss, a menu on card. Use `cover: "pages"` only when the document has an even page count, so the last page closes the book as its back; otherwise a `case` in a palette colour. When the page paints its own paper colour, give a light `shade` (about the page colour 60 % of the way to white) so the stock does not tint it twice. |
 | `credits` | Authors; text, image and font credits (§8). |
@@ -378,7 +378,7 @@ whole Cookbook is verified again.
 | Captured pages | 2–12 |
 | Each asset / all assets | ≤ 400 KB / ≤ 2 MB; images ≤ 2400 px on the long side, JPEG q80 |
 | Captured media per edition (PDF excluded) | warning at 0.9 MB (0.1 MB per published page past 9), failure at 1.4 MB |
-| PDF text | letters in a face's Fontsource `latin`, `latin-ext` or `greek` files, or set in a CJK face loaded by the `cjk` block or an Arabic face completed by the `arabic` block (with the `cjk` block, Greek reaches the PDF only from a face the pen serves itself); symbols such as → ≈ ✓ ★ are in none of these files (the lint and C25 warn) |
+| PDF text | letters in a face's Fontsource `latin`, `latin-ext` or `greek` files, or set in a CJK face loaded by the `cjk` block or an Arabic face completed by the `arabic` block (with the `cjk` block, Greek reaches the PDF only from a face the pen serves itself); symbols such as → ≈ ✓ ★ are in none of these files: the lint warns, and the capture fails a character no loaded file of its family holds (C36) |
 
 A pen may fetch from `esm.sh`, `cdn.jsdelivr.net/npm/@fontsource/*`,
 `cdn.jsdelivr.net/gh/drnachio/postext@main/cookbook/*`, `api.fontsource.org` and
@@ -799,12 +799,41 @@ Run `pnpm exec vitest run src/lib/cookbook` from `apps/web` after any registry c
 ## 11. Capture and checks
 
 `pnpm cookbook capture` composes each edition, serves it with an import map that pins the
-released engine, opens it in Chrome (`COOKBOOK_CHROME`, else the Puppeteer cache), waits for
+released engine, opens it in Chrome (below), waits for
 the module to settle and the fonts to load, verifies, then paints every page with the
 engine's own renderer and writes the files atomically. A failure writes nothing to the site
 (`--preview-dir` still gets its PNGs, so you can see what failed). Each edition runs in a
 browser window of its own, and every step of the run is named: one that never answers fails
 within the recipe's timeout as `harness step <name> of <slug> <lang>`.
+
+**The Chrome of a capture.** The pages are what a reader's browser lays out, so the capture and
+the Sandbox check run on a current Chrome: `COOKBOOK_CHROME` when set, else the newest Chrome for
+Testing in Puppeteer's cache when it is 152 or newer, else the Chrome installed on the machine
+(`apps/web/scripts/cookbook/chrome.ts`). An older one is refused. Chrome does not shape text
+alike from one release to another, and the engine measures with the browser's shaping: since a
+canvas has a language (`ctx.lang`, Chrome 136) a run of digits is shaped in a script and a
+language where it had none, and Google's cuts of the Noto CJK families answer with other glyphs
+(`locl`: in Noto Serif SC and JP the digits go from 471–562 units to 550 each and the ellipsis
+from 1000 to 900, as Latin text of a language the font has no forms for); Fira Sans lost the
+kerning of a digit before a full stop, a comma or a hyphen between Chrome 131 and 152. The
+recipes captured on the Chrome for Testing 131 that had sat in the cache laid out on 152 and 154
+with ten editions broken at other words and eleven set to other widths, on every machine (#746).
+`capture.json` records the release (`chrome`), and a run on another one says so. Two limits of the
+engine remain, and a recipe cannot route around them: a pen measures in its page's language
+(`<html lang>`, the edition's) and the Sandbox's layout worker in none, so a Chinese or Japanese
+page (`zh`, `ja`) of a recipe set in Noto Serif SC or JP measures its digits, quotes and dashes
+otherwise than the Sandbox does; and the PDF shapes Chinese in the font's default forms.
+
+**One version of a font package.** The kit and the Sandbox ask jsDelivr for
+`@fontsource/<family>@5/…`, a name that moves: jsDelivr resolves it for each URL on its own and
+keeps each answer for days, so after a release of a package the style sheet and the files of one
+family come from two or three versions. @fontsource/noto-sans-tc 5.3.1 (2026-10-11) cut the
+family anew (102 of its 105 files with another `unicode-range`), and a 5.3.0 style sheet beside
+5.3.1 files left characters of the headings and running heads of ten recipes in no file: a font of the system set
+them, with every other check green, since a line is as long in any CJK face. The capture and the
+Sandbox check fetch each such URL from one exact version of the package, the one its range names
+when first asked (`pinnedFontsourceUrl` in `apps/web/scripts/cookbook/net.ts`; `--refresh-net`
+asks again). A reader's browser still gets what jsDelivr answers.
 
 **What a recapture keeps.** With the same sources (the source hash), each kind of file is
 judged on its own, whatever release the run used:
@@ -973,6 +1002,7 @@ but `comicUnknownSpeaker`: `comicPanelLetterbox`, `comicBalloonOverflow`, `comic
 (C7), unknown directives (C8), unknown style ids (C9), unknown references that print "?"
 (C10), unregistered images (C11), faces used but not loaded, or a CJK face setting characters
 whose files were not loaded when the layout ran (C12; an Arabic face counts the same way, so a weight the arabic block did not load fails it),
+characters that no loaded file of their family holds (C36, below),
 PDF errors (C14), a tainted canvas (C15), "undefined" or "NaN" printed (C16), the default
 skin (C17), empty pages (C18), missing credits (C19), over budget (C20), a build over
 4 s (C21; the one build of `buildDocumentWithFonts` starts with nothing measured), and, for an `epub` output, no EPUB written before the module settled, or a file
@@ -995,6 +1025,27 @@ needed (`p. 3 4.1× “Marrow Mutual will pay”`). Reword the copy or give the 
 take; a recipe that means the line accepts a count with `capture.expect.raggedLines` (part of
 the source hash, so the recipe is captured again). `capture.json` records the count as
 `diagnostics.raggedLines`.
+
+**No character from a font of the system (C36).** A character that no loaded file of its family
+holds is set by the browser in a font of the reader's machine: another on macOS, Windows and
+Linux, with other widths, so the lines a reader gets are not the published ones, and the PDF
+draws the font's `.notdef` glyph in its place (postext-pdf's `missingGlyph` warning, C25). The engine's `fontFallback` warning is raised for a face that did not load, not
+for a character its files lack, and a file's `unicode-range` says what the file may be asked for,
+not what it holds, so the capture asks the browser: every character of the pages is measured in
+its face followed by a blank font built for the purpose (`blankFont` in
+`apps/web/scripts/cookbook/lib/probe.js`: every code point, one empty glyph of a known advance),
+twice, with two advances. A character whose width follows the blank font is in no file of the
+family; a combining mark is measured on the letter it stands on; a character of emoji
+presentation is counted when the system's colour font takes it whatever the family holds. The
+check names the face, the characters with their code points and where the first one stands
+(`Source Serif 4 400 sets → U+2192 (p2 paragraph)`). Load the
+file of the family that holds the character (`kitSubsetsFor` adds latin-ext and greek, `loadCjkFonts`
+and `loadArabicFonts` the files of a script), set it in a family that has it, or write another
+character: a list bullet `▪` or `■` becomes `•`, `km²` becomes `km^2^`. One case is accepted,
+with `capture.expect.systemFont` (a string of marks, part of the source hash): a mark the engine
+sets by itself and no text face holds, which today is the task box `☐` of a `- [ ]` item. The
+recipe's write-up then says, among its pitfalls, that the box is drawn by the reader's system. A space other than the word space (no-break, thin, ideographic) that a face lacks is
+no failure: the browser sets it from the face's own space.
 
 **Notes** are printed and kept for whoever fits the copy. C35 lists the paragraphs the engine
 set one line shorter to take up a runt with negative tracking (`VDTBlock.runtFix`), most

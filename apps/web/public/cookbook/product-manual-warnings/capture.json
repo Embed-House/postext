@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "product-manual-warnings",
-  "sourceHash": "0ee3fd307dc7cd3ced16bf05d7445b43bdcd0e820db29052b4b9f9891762bf02",
+  "sourceHash": "53e34cc570f7ef5c8b73118066d57c95a7792d0dbccb917cb32f334157e0a84e",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.726Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:56.626Z",
   "variants": {
     "en": {
-      "hash8": "0d842b6b",
+      "hash8": "b97ee221",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
-        "importMs": 4446,
-        "fontsMs": 246,
-        "buildMs": 221,
-        "totalMs": 7085,
+        "importMs": 256,
+        "fontsMs": 708,
+        "buildMs": 95,
+        "totalMs": 1739,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 26246,
+          "bytes": 26222,
           "alt": "Opening page 1: Verra W1."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121978,
+          "bytes": 122002,
           "alt": "Page 2: 1 Sicherheitshinweise."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 61140,
+          "bytes": 60926,
           "alt": "Page 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91430,
+          "bytes": 91412,
           "alt": "Page 4: 3 Bedienung."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121314,
+          "bytes": 121298,
           "alt": "Page 5: 4 Reinigung und Entkalken."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 79166,
+          "bytes": 79146,
           "alt": "Page 7: 6 Technische Daten. Tabelle 3. Kenndaten des VW-170 · Tabelle 2. Störungen und ihre Behebung (Fortsetzung)."
         }
       ],
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35994,
+        "bytes": 35986,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -492,21 +492,31 @@
         },
         "findings": [
           {
+            "check": "C36",
+            "severity": "info",
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "067812b8",
+      "hash8": "effaf84b",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
-        "importMs": 1572,
-        "fontsMs": 192,
-        "buildMs": 162,
-        "totalMs": 4036,
+        "importMs": 256,
+        "fontsMs": 706,
+        "buildMs": 95,
+        "totalMs": 1741,
         "builds": 1
       },
       "specimen": {
@@ -539,7 +549,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 26246,
+          "bytes": 26222,
           "alt": "Página de apertura 1: Verra W1."
         },
         {
@@ -550,7 +560,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121978,
+          "bytes": 122002,
           "alt": "Página 2: 1 Sicherheitshinweise."
         },
         {
@@ -561,7 +571,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 61140,
+          "bytes": 60926,
           "alt": "Página 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -572,7 +582,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91430,
+          "bytes": 91412,
           "alt": "Página 4: 3 Bedienung."
         },
         {
@@ -583,7 +593,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121314,
+          "bytes": 121298,
           "alt": "Página 5: 4 Reinigung und Entkalken."
         },
         {
@@ -605,7 +615,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 79166,
+          "bytes": 79146,
           "alt": "Página 7: 6 Technische Daten. Tabelle 3. Kenndaten des VW-170 · Tabelle 2. Störungen und ihre Behebung (Fortsetzung)."
         }
       ],
@@ -641,7 +651,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 36017,
+        "bytes": 36009,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -982,9 +992,19 @@
         },
         "findings": [
           {
+            "check": "C36",
+            "severity": "info",
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

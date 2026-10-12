@@ -57,7 +57,7 @@ const boxes = [
     stripe: { enabled: true, side: 'top', width: pt(2.5), color: col('proof') },
     padding: { ...NONE, top: mm(2.6) }, titleStyle: { ...caps(8), color: col('proof') },
     body: { fontSize: pt(9), lineHeight: pt(LEAD), textAlign: 'left', firstLineIndent: pt(0) },
-    lists: { bulletChar: '■', color: col('proof'), bulletFontSize: pt(5) } },
+    lists: { bulletChar: '•', color: col('proof') } },
   // 'fixed': pinned to the page its fence falls on, out of the flow; 'auto': as wide as its title.
   { id: 'stamp', placement: 'fixed', width: 'auto', backgroundEnabled: false,
     title: t({ en: 'Proof · 2nd pass', es: 'Segundas pruebas' }),

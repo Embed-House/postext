@@ -3,21 +3,21 @@
   "slug": "medical-article-vancouver",
   "sourceHash": "687b8759d67575fbbe54e5624900e3ba06d90f310f107b4efb88a5d0271deebd",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.474Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:26.194Z",
   "variants": {
     "en": {
-      "hash8": "aee30964",
-      "vdtHash": "664c1cc1968e625f35b19432dc038ec6947580c8",
+      "hash8": "887da59d",
+      "vdtHash": "ce872ab1a591b03e785f48b21754e94a2ce26ca3",
       "timings": {
-        "importMs": 1561,
-        "fontsMs": 71,
-        "buildMs": 225,
-        "totalMs": 3242,
+        "importMs": 360,
+        "fontsMs": 253,
+        "buildMs": 128,
+        "totalMs": 1916,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 184274,
+          "bytes": 184230,
           "alt": "Opening page 181: Pharmacist-led home blood pressure telemonitoring after an emergency visit for severe hypertension: a pilot randomised trial."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 190216,
+          "bytes": 190188,
           "alt": "Page 182: Outcomes and analysis. Table 1. Characteristics of the patients at baseline. · Figure 1. Mean home systolic pressure by week in the telemonitoring group, with its 95% confidence interval. The dashed line is the home target of 135 mm Hg."
         },
         {
@@ -101,18 +101,18 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 123074,
+        "bytes": 123029,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53285,
+        "bytes": 53289,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "f6165968f0cb5cfc",
-            "lines": "c9203cf90d0afe8f"
+            "hash": "0eff04d6c1a2c0b2",
+            "lines": "50cb3855ae3ffbdf"
           }
         ]
       },
@@ -420,18 +420,28 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “What is already known Self-monitoring lowers blo…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9b2086c6",
-      "vdtHash": "de7caee6ad82d8f4d42b3b7a0a1717e8c8df7fb4",
+      "hash8": "fba72d43",
+      "vdtHash": "dd1bcea63030803accfaefd72e3afb18bbba355d",
       "timings": {
-        "importMs": 1736,
-        "fontsMs": 385,
-        "buildMs": 162,
-        "totalMs": 3462,
+        "importMs": 356,
+        "fontsMs": 255,
+        "buildMs": 123,
+        "totalMs": 1917,
         "builds": 1
       },
       "specimen": {
@@ -465,7 +475,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 183402,
+          "bytes": 183414,
           "alt": "Página de apertura 181: Telemonitorización domiciliaria de la presión arterial dirigida por farmacéuticos tras una visita a urgencias por hipertensión grave: ensayo piloto aleatorizado."
         },
         {
@@ -476,7 +486,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 189652,
+          "bytes": 189640,
           "alt": "Página 182: Intervenciones. Tabla 1. Características de los pacientes al inicio. · Figura 1. Presión sistólica domiciliaria media por semana en el grupo de telemonitorización, con su intervalo de confianza del 95 %. La línea discontinua es el objetivo de 135 mm Hg."
         },
         {
@@ -515,17 +525,17 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 132600,
+        "bytes": 132601,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54517,
+        "bytes": 54527,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "89e680616b3ef6db",
+            "hash": "fd66ca978f7141f5",
             "lines": "e16a9b9775999b6d"
           }
         ]
@@ -824,7 +834,18 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

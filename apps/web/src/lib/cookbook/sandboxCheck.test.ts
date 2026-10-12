@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sandboxEntry } from "../../../scripts/cookbook/capture.ts";
-import { keptOnDisk, routeFor } from "../../../scripts/cookbook/net.ts";
+import { fontsourceRange, keptOnDisk, routeFor, withFontsourceVersion } from "../../../scripts/cookbook/net.ts";
 import { compareEdition, extraWarnings, variableFamilies } from "../../../scripts/cookbook/sandbox.ts";
 import type { SandboxExpected, SandboxRun } from "../../../scripts/cookbook/sandbox.ts";
 import type { RecipeMeta } from "./types.ts";
@@ -227,5 +227,34 @@ describe("capture.json's sandbox entry (#736)", () => {
   it("keeps what it recorded before: the kept build and the pages of a bundle that holds some builds", () => {
     const some = sandboxEntry("a-recipe", { ...bundle, pages: 2, allPages: 6 }, { capture: { sandbox: "last" }, folio: undefined } as unknown as Pick<RecipeMeta, "folio" | "capture">);
     expect(some).toMatchObject({ keep: "last", pages: 2 });
+  });
+});
+
+// #746: `@fontsource/<id>@5` is answered per file by whatever version each
+// cache holds. Noto Sans TC 5.3.1 cut the family anew, and a 5.3.0 style
+// sheet beside 5.3.1 files left characters in no file: a font of the system
+// set them. The capture asks for one exact version of a package.
+describe("one version of a Fontsource package (#746)", () => {
+  const css = "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5/700.css";
+  const file = "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5/files/noto-sans-tc-100-700-normal.woff2";
+
+  it("reads the package and the range of a URL asked for by a range", () => {
+    expect(fontsourceRange(css)).toEqual({ id: "noto-sans-tc", range: "5" });
+    expect(fontsourceRange(file)).toEqual({ id: "noto-sans-tc", range: "5" });
+    expect(fontsourceRange("https://cdn.jsdelivr.net/npm/@fontsource/source-serif-4@latest/400.css")).toEqual({ id: "source-serif-4", range: "latest" });
+    expect(fontsourceRange("https://cdn.jsdelivr.net/npm/@fontsource/lora@5.3/400.css")).toEqual({ id: "lora", range: "5.3" });
+  });
+
+  it("leaves an exact version and every other URL alone", () => {
+    expect(fontsourceRange("https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5.3.1/700.css")).toBeNull();
+    expect(fontsourceRange("https://api.fontsource.org/v1/fonts/noto-sans-tc")).toBeNull();
+    expect(fontsourceRange("https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-tc@latest/latin-400-normal.woff2")).toBeNull();
+    expect(fontsourceRange("https://esm.sh/postext@1.28.5")).toBeNull();
+  });
+
+  it("asks for the same path in the version", () => {
+    expect(withFontsourceVersion(css, "5.3.1")).toBe("https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5.3.1/700.css");
+    expect(withFontsourceVersion(file, "5.3.1")).toBe("https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5.3.1/files/noto-sans-tc-100-700-normal.woff2");
+    expect(withFontsourceVersion("https://esm.sh/postext@1.28.5", "5.3.1")).toBe("https://esm.sh/postext@1.28.5");
   });
 });

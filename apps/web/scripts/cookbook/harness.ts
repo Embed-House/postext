@@ -20,6 +20,7 @@ import puppeteer from "puppeteer-core";
 import type { Browser, Page } from "puppeteer-core";
 import type { CaptureBuild, SampleLocale, RecipeMeta } from "../../src/lib/cookbook/types.ts";
 import { cardProblems, heroPages, publishedPages } from "./cards.ts";
+import { CHROME_HELP, chromeTooOld, installedChromes, pickChrome, tooOldMessage } from "./chrome.ts";
 import type { BundleReadBack, EpubRecord, ProbeFacts } from "./checks.ts";
 import type { NetIssue } from "./net.ts";
 import { interceptor, routeFor } from "./net.ts";
@@ -46,28 +47,27 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
-/** COOKBOOK_CHROME, else the newest Chrome for Testing puppeteer cached. */
+/** The Chrome to launch (chrome.ts `pickChrome`): COOKBOOK_CHROME, else the
+ *  newest Chrome for Testing Puppeteer cached when it is current enough,
+ *  else the Chrome installed on the machine. */
 export function findChrome(): string {
   const env = process.env.COOKBOOK_CHROME;
-  if (env) {
-    if (!fs.existsSync(env)) throw new Error(`COOKBOOK_CHROME does not exist: ${env}`);
-    return env;
-  }
+  if (env && !fs.existsSync(env)) throw new Error(`COOKBOOK_CHROME does not exist: ${env}`);
   const root = path.join(os.homedir(), ".cache", "puppeteer", "chrome");
-  const found = (fs.existsSync(root) ? fs.readdirSync(root) : [])
+  const cached = (fs.existsSync(root) ? fs.readdirSync(root) : [])
     .map((dir) => ({ dir, version: /-(\d+\.\d+\.\d+\.\d+)$/.exec(dir)?.[1] }))
     .filter((entry): entry is { dir: string; version: string } => !!entry.version)
     .flatMap(({ dir, version }) =>
       CFT_BINARIES.map((bin) => ({ file: path.join(root, dir, bin), version })).filter(({ file }) => fs.existsSync(file)),
     )
     .sort((a, b) => compareVersions(b.version, a.version));
-  if (!found.length) {
-    throw new Error(
-      "No Chrome for Testing found in ~/.cache/puppeteer/chrome. Install one with " +
-        "`npx @puppeteer/browsers install chrome@stable` or set COOKBOOK_CHROME.",
-    );
+  const choice = pickChrome({ env, cached, installed: installedChromes() });
+  if (!choice) {
+    throw new Error(cached.length
+      ? `${tooOldMessage(cached[0].version, cached[0].file)} No other Chrome is installed.`
+      : `No Chrome found (none in ~/.cache/puppeteer/chrome, none installed): ${CHROME_HELP}.`);
   }
-  return found[0].file;
+  return choice.file;
 }
 
 export interface HarnessBrowser {
@@ -78,21 +78,25 @@ export interface HarnessBrowser {
 }
 
 /** `protocolTimeout`: how long one CDP call may stay unanswered
- *  (steps.ts `protocolTimeoutFor`; Puppeteer's own default is 180 s). */
+ *  (steps.ts `protocolTimeoutFor`; Puppeteer's own default is 180 s).
+ *  A Chrome older than chrome.ts `OLDEST_CHROME` is refused: its pages are
+ *  not the ones a reader's browser lays out (#746). */
 export async function launchBrowser({ headed = false, protocolTimeout }: { headed?: boolean; protocolTimeout?: number } = {}): Promise<HarnessBrowser> {
+  const executablePath = findChrome();
   const browser = await puppeteer.launch({
-    executablePath: findChrome(),
+    executablePath,
     headless: !headed,
     args: ["--no-sandbox", "--hide-scrollbars", "--mute-audio", "--no-first-run", "--no-default-browser-check"],
     defaultViewport: null,
     ...(protocolTimeout ? { protocolTimeout } : {}),
   });
   const version = await browser.version();
-  return {
-    browser,
-    chrome: /(\d+\.\d+\.\d+\.\d+)/.exec(version)?.[1] ?? version,
-    userAgent: await browser.userAgent(),
-  };
+  const chrome = /(\d+\.\d+\.\d+\.\d+)/.exec(version)?.[1] ?? version;
+  if (chromeTooOld(chrome)) {
+    await browser.close().catch(() => {});
+    throw new Error(tooOldMessage(chrome, executablePath));
+  }
+  return { browser, chrome, userAgent: await browser.userAgent() };
 }
 
 // ─── One edition ────────────────────────────────────────────────────────────
@@ -407,6 +411,11 @@ export async function runVariant(opts: RunOptions): Promise<VariantRun> {
     const hero = heroPages(meta);
     const select = meta.capture.doc ?? "last";
     run.facts = await within("facts", () => probe<ProbeFacts>(page, "facts", { select, hero }));
+    // C36: the characters no loaded file of their family holds (the
+    // browser is asked, which takes a moment: a step of its own).
+    if (run.facts.selected >= 0) {
+      run.facts.systemFont = await within("systemFont", () => probe<NonNullable<ProbeFacts["systemFont"]>>(page, "systemFontChars", { select }));
+    }
     const all = (run.facts.pages ?? []).map((p) => p.n);
     if (run.facts.selected < 0 || all.length === 0) return run;
     const keep = meta.capture.sandbox ?? null;

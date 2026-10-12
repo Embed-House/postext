@@ -91,6 +91,10 @@ export interface ProbeFacts {
     late?: (ProbeFace & { chars: string })[];
   };
   garbage?: { text: string; where: string }[];
+  /** The characters of the pages that no loaded file of their own family
+   *  holds, by face (lib/probe.js `systemFontChars`): the browser sets
+   *  them in a font of the system (C36). */
+  systemFont?: (ProbeFace & { chars: { ch: string; code: string; where: string }[] })[];
   /** Characters outside Fontsource's latin subset. `ownFile`: a loaded
    *  file of the face that sets it holds it (latin-ext, from loadFonts). */
   nonLatin?: { ch: string; code: string; where: string; ownFile?: boolean }[];
@@ -710,6 +714,31 @@ function collect(input: CheckInput): Finding[] {
       (/\p{Script=Arabic}/u.test(face.chars)
         ? "list the weight in FONTS and load it with loadArabicFonts(FONTS, markdown) before the build"
         : "give loadCjkFonts the text this face sets, and list the weight in FONTS"));
+  }
+
+  // C36: characters set in a font of the system (#746). No loaded file of
+  // the family holds them, so the browser takes another font for each: one
+  // of the reader's machine, with other widths on every system, and the
+  // lines a reader gets are then not the published ones. A recipe gives
+  // such a character a face or writes another; the one it may accept
+  // (`capture.expect.systemFont`) is a mark the engine sets by itself and
+  // no text face holds, the task box ☐, which its write-up then names.
+  const acceptedMarks = new Set(expect.systemFont ?? "");
+  const systemMarks = new Set<string>();
+  for (const face of facts.systemFont ?? []) {
+    for (const c of face.chars) systemMarks.add(c.ch);
+    const chars = face.chars.filter((c) => !acceptedMarks.has(c.ch));
+    if (!chars.length) continue;
+    const shown = chars.slice(0, 12).map((c) => `${c.ch} ${c.code}`).join(", ");
+    const more = chars.length > 12 ? ` and ${chars.length - 12} more` : "";
+    add("C36", "fail", `${faceName(face)} sets ${shown}${more} (${chars[0]!.where}) in no file the page loaded: ` +
+      "the browser takes a font of the system for them, another on every machine. Load the file of the family that holds them, " +
+      "set them in a family that does, or write another character");
+  }
+  const taken = [...acceptedMarks].filter((ch) => systemMarks.has(ch));
+  if (taken.length) add("C36", "info", `${taken.join(" ")} set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's`);
+  for (const ch of acceptedMarks) {
+    if (facts.systemFont && !systemMarks.has(ch)) add("C36", "info", `capture.expect.systemFont lists ${ch}, which a face of the pages holds now`);
   }
 
   // C14: the PDF.

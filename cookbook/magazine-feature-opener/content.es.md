@@ -32,7 +32,7 @@ Lind perfora los dos cada semana del invierno. Los testigos salen con bandas, co
 :::callout{type="glance" title="De un vistazo"}
 **Altitud** 1540 m sobre el nivel del mar
 
-**Superficie** 3,2 km²; 63 m en el punto más hondo
+**Superficie** 3,2 km^2^; 63 m en el punto más hondo
 
 **Registro desde** el invierno de 1911-1912
 

@@ -3,21 +3,21 @@
   "slug": "sist02-research-paper",
   "sourceHash": "ed05dddfb00f0b3890c1554c60e0c9d2f69b7d38bc7fe21e9cd32268327d4a4d",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.867Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:34.845Z",
   "variants": {
     "en": {
-      "hash8": "7f597344",
-      "vdtHash": "5952d7e7ba5a11716c051c1d1a377a700c5a5059",
+      "hash8": "eaf2dc4a",
+      "vdtHash": "d256f9085b8c49ebe024fcc10d882b884a679883",
       "timings": {
-        "importMs": 2141,
-        "fontsMs": 703,
-        "buildMs": 324,
-        "totalMs": 4805,
+        "importMs": 376,
+        "fontsMs": 723,
+        "buildMs": 155,
+        "totalMs": 1890,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106430,
+          "bytes": 106220,
           "alt": "Opening page 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89770,
+          "bytes": 89772,
           "alt": "Page 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -90,17 +90,17 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227408,
+        "bytes": 227335,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32396,
+        "bytes": 32366,
         "folio": "5f42a5f6",
         "chapters": [
           {
             "pages": 2,
-            "hash": "7fc3b37746649ac1",
+            "hash": "fa340d65bbd890af",
             "lines": "f186d43aec4849e0"
           }
         ]
@@ -396,21 +396,26 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “A specimen article written for the Postext Cookb…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e3764657",
-      "vdtHash": "f3218b0fa5e1bb8f0cb8f16daf7a4c60af76d94d",
+      "hash8": "76e0e1cb",
+      "vdtHash": "c7d625899867fbca93a218c3f4f2edee96e08f04",
       "timings": {
-        "importMs": 1272,
-        "fontsMs": 806,
-        "buildMs": 165,
-        "totalMs": 2808,
+        "importMs": 377,
+        "fontsMs": 724,
+        "buildMs": 136,
+        "totalMs": 1877,
         "builds": 1
       },
       "specimen": {
@@ -444,7 +449,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106430,
+          "bytes": 106220,
           "alt": "Página de apertura 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -455,7 +460,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89644,
+          "bytes": 89522,
           "alt": "Página 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -483,17 +488,17 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227043,
+        "bytes": 226974,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32466,
+        "bytes": 32436,
         "folio": "5f42a5f6",
         "chapters": [
           {
             "pages": 2,
-            "hash": "e3448c63ed580383",
+            "hash": "4922fdadb8ae748d",
             "lines": "675759caeaed5916"
           }
         ]
@@ -779,9 +784,14 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

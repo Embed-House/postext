@@ -323,6 +323,7 @@ export const RECIPE_SCHEMA: JsonSchema = {
             warnings: idList("Engine warnings demonstrated on purpose."),
             nearEmptyPages: { type: "array", items: ref("page"), uniqueItems: true },
             raggedLines: { type: "integer", minimum: 0, description: "Justified lines the edition may set ragged (check C34)." },
+            systemFont: { type: "string", minLength: 1, maxLength: 8, description: "Characters the pages take from a font of the system, named in the write-up (check C36)." },
             console: { type: "array", items: { type: "string", minLength: 1 } },
             defaultSkin: {
               type: "array",
@@ -813,6 +814,11 @@ export function validateRecipeMeta(
   }
   if (expect.raggedLines !== undefined && !(Number.isInteger(expect.raggedLines) && (expect.raggedLines as number) >= 0)) {
     errors.push(`capture.expect.raggedLines: a whole number of lines, 0 or more`);
+  }
+  if (typeof expect.systemFont === "string") {
+    const listed = [...expect.systemFont];
+    if (listed.some((ch) => /[\s\p{L}\p{Nd}]/u.test(ch))) errors.push(`capture.expect.systemFont: marks only (☐), never a letter, a digit or a space: a face of the recipe sets those`);
+    if (new Set(listed).size !== listed.length) errors.push(`capture.expect.systemFont: each character once`);
   }
   if (expect.defaultSkin !== undefined && asArray(expect.defaultSkin).length === 0) {
     errors.push(`capture.expect.defaultSkin: omit it rather than leave it empty`);

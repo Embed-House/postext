@@ -32,7 +32,7 @@ Lind drills through both every week of the winter. The cores come up banded like
 :::callout{type="glance" title="At a glance"}
 **Altitude** 1,540 m above sea level
 
-**Area** 3.2 km², deepest point 63 m
+**Area** 3.2 km^2^, deepest point 63 m
 
 **Record kept since** the winter of 1911–12
 

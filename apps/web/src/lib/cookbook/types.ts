@@ -274,6 +274,10 @@ export interface RecipeMeta {
       /** Justified lines the edition may set ragged (their word spaces
        *  would stretch past 3×; check C34). Default 0. */
       raggedLines?: number;
+      /** Characters the pages take from a font of the system and the
+       *  recipe's write-up says so (check C36): the engine's own task box
+       *  ☐, which no text face holds. Each is written once. */
+      systemFont?: string;
       /** Accepted console-error substrings (e.g. the `?bundle` noise). */
       console?: string[];
       /** Only for a recipe about the defaults themselves. */

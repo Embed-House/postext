@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "section-heads-field-manual",
-  "sourceHash": "6fa73e8eadb1e691c331f8d3f2eadb20dd2cd8fd3aee5dd1d52fe60d18bfbd0b",
+  "sourceHash": "86f6fcdf51374d736abd6f6afec974ce56b27e9ff96e0cefb49b5ad4bfa45fbc",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.810Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:59.280Z",
   "variants": {
     "en": {
-      "hash8": "da6e1fd7",
+      "hash8": "07799fa1",
       "vdtHash": "e49da79aeee8d17e20131d359b6a1a8e69ece565",
       "timings": {
-        "importMs": 728,
-        "fontsMs": 6,
-        "buildMs": 141,
-        "totalMs": 2969,
+        "importMs": 249,
+        "fontsMs": 4,
+        "buildMs": 75,
+        "totalMs": 1502,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126426,
+          "bytes": 126402,
           "alt": "Opening page 1: 1 Drainage."
         },
         {
@@ -337,21 +337,26 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "C36",
             "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "cc390015",
+      "hash8": "23c70251",
       "vdtHash": "e435c4dc3a3581b9691ecb4da3ca88efd1e9587b",
       "timings": {
-        "importMs": 1036,
-        "fontsMs": 6,
-        "buildMs": 126,
-        "totalMs": 1881,
+        "importMs": 254,
+        "fontsMs": 3,
+        "buildMs": 67,
+        "totalMs": 1488,
         "builds": 1
       },
       "specimen": {
@@ -385,7 +390,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 129110,
+          "bytes": 129146,
           "alt": "Página de apertura 1: 1 Drenaje."
         },
         {
@@ -670,7 +675,18 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "C36",
+            "severity": "info",
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

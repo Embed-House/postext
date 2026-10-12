@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-feature-opener",
-  "sourceHash": "3074f4ca5158b820987d781595b3d6e322b901b6178671960e0c4f435c6d5ea3",
+  "sourceHash": "f3f91b95c995585cb9f21aef18668d61542dd6ed2fe53d67cec1ebcfdbfbbd5a",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.379Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:43.944Z",
   "variants": {
     "en": {
-      "hash8": "41888195",
-      "vdtHash": "135791b269e24d278d0a78692b9df516fa183b28",
+      "hash8": "712bdd7e",
+      "vdtHash": "1871a690ae43e90d4c3e530d5da43e94d98675cb",
       "timings": {
-        "importMs": 755,
-        "fontsMs": 49,
-        "buildMs": 311,
-        "totalMs": 2385,
+        "importMs": 255,
+        "fontsMs": 36,
+        "buildMs": 221,
+        "totalMs": 1404,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237428,
+          "bytes": 237362,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 178872,
+          "bytes": 178846,
           "alt": "Page 59: 31. Early March in the pine wood above the shore: the snow goes first where the sun reaches the ground, weeks before the ice lets go of the lake."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 103828,
+          "bytes": 103848,
           "alt": "Opening page 60: Five Kinds of Ice."
         }
       ],
@@ -115,13 +115,13 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768189,
+        "bytes": 768160,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "23895e8eb79e049a",
-            "lines": "b00fb613ae59ce83"
+            "hash": "34a16409afdd06e9",
+            "lines": "4afb8793d3c96303"
           }
         ]
       },
@@ -316,6 +316,7 @@
         ],
         "inline": [
           "{attrs}",
+          "^…^",
           ":chip"
         ],
         "resources": {
@@ -384,7 +385,8 @@
           "paragraph-styles",
           "part-palettes",
           "resource-types",
-          "resources"
+          "resources",
+          "super-subscripts"
         ],
         "suggestedLevel": 3
       },
@@ -411,6 +413,16 @@
             "detail": "3 paragraphs set a line short with tracking (worst −5‰): p. 1 −5‰ “The notebook lives in a biscuit tin on the kitch…”, p. 2 −5‰ “The reason lies in an odd habit of water. Most l…”, p. 2 −5‰ “For the first fifty years of the record, the lak…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering"
@@ -419,13 +431,13 @@
       }
     },
     "es": {
-      "hash8": "c53dd690",
-      "vdtHash": "2fba783e69d9830d15eabf9202d020f6be693509",
+      "hash8": "08f7728e",
+      "vdtHash": "8cd4f449ddc4be1a9bc7860b0343edd132b9d730",
       "timings": {
-        "importMs": 800,
-        "fontsMs": 51,
-        "buildMs": 163,
-        "totalMs": 2277,
+        "importMs": 259,
+        "fontsMs": 38,
+        "buildMs": 128,
+        "totalMs": 1256,
         "builds": 1
       },
       "specimen": {
@@ -470,7 +482,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238110,
+          "bytes": 238146,
           "alt": "Página 58: Un termómetro con tapa."
         },
         {
@@ -481,7 +493,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 182084,
+          "bytes": 182012,
           "alt": "Página 59: 31. Principios de marzo en el pinar sobre la orilla: la nieve se retira primero donde el sol llega al suelo, semanas antes de que el hielo suelte el lago."
         },
         {
@@ -492,7 +504,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105706,
+          "bytes": 105682,
           "alt": "Página de apertura 60: Cinco clases de hielo."
         }
       ],
@@ -524,13 +536,13 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768176,
+        "bytes": 768204,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "5bded8f5cdd72ad7",
-            "lines": "df5d3aaf12ae6c17"
+            "hash": "6ab9aa75246f9857",
+            "lines": "6d64c02f4df49997"
           }
         ]
       },
@@ -725,6 +737,7 @@
         ],
         "inline": [
           "{attrs}",
+          "^…^",
           ":chip",
           "\\\\"
         ],
@@ -795,6 +808,7 @@
           "part-palettes",
           "resource-types",
           "resources",
+          "super-subscripts",
           "title-line-breaks"
         ],
         "suggestedLevel": 3
@@ -811,6 +825,16 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          },
           {
             "check": "sandbox",
             "severity": "info",

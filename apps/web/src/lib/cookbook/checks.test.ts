@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cardProblems, sidesOf, spreadsOf } from "../../../scripts/cookbook/cards.ts";
 import { detect, detectFeatures, readBackFindings, runChecks } from "../../../scripts/cookbook/checks.ts";
 import type { BundleReadBack, CheckInput, EpubRecord, ProbeFacts } from "../../../scripts/cookbook/checks.ts";
-import { mathErrorsOf } from "../../../scripts/cookbook/lib/probe.js";
+import { blankFont, mathErrorsOf, textOfFaces } from "../../../scripts/cookbook/lib/probe.js";
 import { loadRegistry } from "./registry.ts";
 import type { ComposedPen, RecipeMeta } from "./types.ts";
 
@@ -626,5 +626,156 @@ describe("C35: paragraphs set a line short with tracking (#733)", () => {
     );
     const below = { count: 1, tracked: 1, worst: 5, blocks: [{ page: 2, tracking: 5, text: "a paragraph" }] };
     expect(of("C35", runChecks(input({ facts: facts({ runtFixes: below }) })))[0]!.detail).toBe("1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “a paragraph”");
+  });
+});
+
+// #746: a character no loaded file of its family holds is set in a font of
+// the reader's system, with other widths on every machine. Nothing said so:
+// `fontFallback` is raised for a face that did not load, not for a
+// character its files lack, and C25 goes by the files' unicode-range, which
+// says what a file may be asked for and not what it holds.
+describe("C36: characters set in a font of the system (#746)", () => {
+  const face = (chars: string, extra: Partial<{ family: string; weight: number; style: "normal" | "italic"; where: string }> = {}) => ({
+    family: "Source Serif 4", weight: 400, style: "normal" as const,
+    chars: [...chars].map((ch) => ({ ch, code: `U+${ch.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}`, where: extra.where ?? "p2 paragraph" })),
+    ...extra,
+  });
+
+  it("passes pages whose characters are all in the files loaded", () => {
+    expect(of("C36", runChecks(input({ facts: facts() })))).toEqual([]);
+    expect(of("C36", runChecks(input({ facts: facts({ systemFont: [] }) })))).toEqual([]);
+  });
+
+  it("fails a face with the characters, their code points and where the first stands", () => {
+    expect(of("C36", runChecks(input({ facts: facts({ systemFont: [face("→①")] }) })))).toEqual([{
+      check: "C36", severity: "fail",
+      detail: "Source Serif 4 400 sets → U+2192, ① U+2460 (p2 paragraph) in no file the page loaded: the browser takes a font of the system for them, " +
+        "another on every machine. Load the file of the family that holds them, set them in a family that does, or write another character",
+    }]);
+  });
+
+  it("fails each face on its own, an italic named as one", () => {
+    const found = of("C36", runChecks(input({ facts: facts({ systemFont: [face("≥"), face("µ", { family: "Fira Sans", weight: 600, style: "italic", where: "p1 table" })] }) })));
+    expect(found.map((f) => f.detail.split(" in no file")[0])).toEqual(["Source Serif 4 400 sets ≥ U+2265 (p2 paragraph)", "Fira Sans 600 italic sets µ U+00B5 (p1 table)"]);
+    expect(found.every((f) => f.severity === "fail")).toBe(true);
+  });
+
+  it("lists twelve characters and counts the rest", () => {
+    const detail = of("C36", runChecks(input({ facts: facts({ systemFont: [face("①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮")] }) })))[0]!.detail;
+    expect(detail).toContain("⑫ U+246B and 3 more (p2 paragraph)");
+    expect(detail).not.toContain("⑬");
+  });
+
+  it("is not excused by expect.warnings", () => {
+    const m = meta({ capture: { hero: 1, card: "page", expect: { warnings: ["fontFallback"] } } });
+    expect(of("C36", runChecks(input({ meta: m, facts: facts({ systemFont: [face("→")] }) })))).toHaveLength(1);
+  });
+
+  it("accepts the marks capture.expect.systemFont lists, and says so", () => {
+    const m = meta({ capture: { hero: 1, card: "page", expect: { systemFont: "☐" } } });
+    const bullets = face("☐", { family: "Figtree", weight: 700, where: "p1 listItem bullet" });
+    expect(of("C36", runChecks(input({ meta: m, facts: facts({ systemFont: [bullets] }) })))).toEqual([{
+      check: "C36", severity: "info",
+      detail: "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's",
+    }]);
+  });
+
+  it("still fails the other characters of a face that sets an accepted one", () => {
+    const m = meta({ capture: { hero: 1, card: "page", expect: { systemFont: "☐" } } });
+    const found = of("C36", runChecks(input({ meta: m, facts: facts({ systemFont: [face("☐→")] }) })));
+    expect(found.map((f) => f.severity)).toEqual(["fail", "info"]);
+    expect(found[0]!.detail.startsWith("Source Serif 4 400 sets → U+2192 (p2 paragraph) in no file")).toBe(true);
+  });
+
+  it("notes a listed mark that a face holds now", () => {
+    const m = meta({ capture: { hero: 1, card: "page", expect: { systemFont: "☐" } } });
+    expect(of("C36", runChecks(input({ meta: m, facts: facts({ systemFont: [] }) })))).toEqual([{
+      check: "C36", severity: "info", detail: "capture.expect.systemFont lists ☐, which a face of the pages holds now",
+    }]);
+    // With no measure of the pages (nothing built), nothing is said.
+    expect(of("C36", runChecks(input({ meta: m, facts: facts() })))).toEqual([]);
+  });
+});
+
+describe("the blank font of C36 (lib/probe.js)", () => {
+  const u16 = (b: Uint8Array, at: number) => (b[at]! << 8) | b[at + 1]!;
+  const u32 = (b: Uint8Array, at: number) => ((b[at]! << 24) | (b[at + 1]! << 16) | (b[at + 2]! << 8) | b[at + 3]!) >>> 0;
+  const tables = (b: Uint8Array) => Object.fromEntries(Array.from({ length: u16(b, 4) }, (_, i) => {
+    const at = 12 + 16 * i;
+    return [String.fromCharCode(...b.slice(at, at + 4)), { sum: u32(b, at + 4), offset: u32(b, at + 8), length: u32(b, at + 12) }];
+  }));
+  const sum = (b: Uint8Array) => {
+    let total = 0;
+    for (let i = 0; i < b.length; i += 4) total = (total + u32(Uint8Array.from([b[i] ?? 0, b[i + 1] ?? 0, b[i + 2] ?? 0, b[i + 3] ?? 0]), 0)) >>> 0;
+    return total;
+  };
+
+  it("is a TrueType font with the tables a browser asks for, each at its place", () => {
+    const font = blankFont(3000) as Uint8Array;
+    expect(u32(font, 0)).toBe(0x00010000);
+    const dir = tables(font);
+    expect(Object.keys(dir)).toEqual(["OS/2", "cmap", "glyf", "head", "hhea", "hmtx", "loca", "maxp", "name", "post"]);
+    expect(dir.head!.length).toBe(54);
+    expect(dir.hhea!.length).toBe(36);
+    expect(dir.maxp!.length).toBe(32);
+    expect(dir["OS/2"]!.length).toBe(96);
+    expect(dir.post!.length).toBe(32);
+    for (const t of Object.values(dir)) {
+      expect(t.offset % 4).toBe(0);
+      expect(t.offset + t.length).toBeLessThanOrEqual(font.length);
+    }
+    // The whole file sums to the magic number once head's adjustment is in.
+    expect(sum(font)).toBe(0xb1b0afba);
+  });
+
+  it("maps every code point to one glyph of the advance asked for", () => {
+    for (const advance of [3000, 5000]) {
+      const font = blankFont(advance) as Uint8Array;
+      const dir = tables(font);
+      const cmap = dir.cmap!.offset;
+      // One subtable, Windows full repertoire, format 13: a single group.
+      expect([u16(font, cmap + 4), u16(font, cmap + 6), u16(font, cmap + 12)]).toEqual([3, 10, 13]);
+      expect([u32(font, cmap + 24), u32(font, cmap + 28), u32(font, cmap + 32), u32(font, cmap + 36)]).toEqual([1, 0, 0x10ffff, 1]);
+      const hmtx = dir.hmtx!.offset;
+      expect([u16(font, hmtx), u16(font, hmtx + 4)]).toEqual([advance, advance]);
+      expect(u16(font, dir.head!.offset + 18)).toBe(1000);
+    }
+  });
+});
+
+describe("the characters each face sets (lib/probe.js textOfFaces)", () => {
+  const line = (text: string, segments?: object[]) => ({ text, ...(segments ? { segments } : {}) });
+  const page = (blocks: object[]) => ({ page: { index: 0, columns: [{ blocks }] }, n: 1 });
+  const para = (lines: object[], extra: object = {}) => ({ type: "paragraph", fontString: '400 12px "Lora"', boldFontString: '700 12px "Lora"', lines, ...extra });
+
+  it("lists the characters of a face once, with where the first stands", () => {
+    const faces = textOfFaces([page([para([line("a → b"), line("b ①")])])]) as { family: string; weight: number; chars: [string, string][] }[];
+    expect(faces).toHaveLength(1);
+    expect(faces[0]!.family).toBe("Lora");
+    expect(faces[0]!.chars).toEqual([["a", "p1 paragraph"], ["→", "p1 paragraph"], ["b", "p1 paragraph"], ["①", "p1 paragraph"]]);
+  });
+
+  it("gives a bold segment to the bold face and a segment's own font to its family", () => {
+    const segments = [{ kind: "text", text: "x " }, { kind: "text", text: "≥", bold: true }, { kind: "text", text: " f()", fontString: '400 11px "Fira Mono"' }];
+    const faces = textOfFaces([page([para([line("x ≥ f()", segments)])])]) as { family: string; weight: number; chars: [string, string][] }[];
+    expect(faces.map((f) => `${f.family} ${f.weight}: ${f.chars.map(([ch]) => ch).join("")}`)).toEqual(["Fira Mono 400: f()", "Lora 400: x", "Lora 700: ≥"]);
+  });
+
+  it("keeps a combining mark with its letter, and the spaces that are characters", () => {
+    const faces = textOfFaces([page([para([line("e\u0301 1\u202f000\u3000x")])])]) as { chars: [string, string][] }[];
+    expect(faces[0]!.chars.map(([set]) => set)).toEqual(["e", "e\u0301", "1", "\u202f", "0", "\u3000", "x"]);
+  });
+
+  it("leaves out the engine's placeholders and what prints nothing", () => {
+    const faces = textOfFaces([page([para([line("a\uFFFC\u200Bb\u00AD")])])], new Set(["\uFFFC"])) as { chars: [string, string][] }[];
+    expect(faces[0]!.chars.map(([set]) => set)).toEqual(["a", "b"]);
+  });
+
+  it("reaches text that carries a font of its own: a drop cap, a balloon's lettering", () => {
+    const block = para([line("nce")], { dropCap: { text: "O", fontString: '700 40px "Playfair Display"' } });
+    const comic = { balloons: [{ text: [{ kind: "text", fontString: '400 10px "Comic Neue"', lines: [{ text: "POW!" }] }] }] };
+    const faces = textOfFaces([{ page: { index: 0, columns: [{ blocks: [block] }], comic }, n: 3 }]) as { family: string; chars: [string, string][] }[];
+    expect(faces.map((f) => `${f.family}: ${f.chars.map(([ch]) => ch).join("")}`)).toEqual(["Comic Neue: POW!", "Lora: nce", "Playfair Display: O"]);
+    expect(faces[0]!.chars[0]![1]).toBe("p3");
   });
 });

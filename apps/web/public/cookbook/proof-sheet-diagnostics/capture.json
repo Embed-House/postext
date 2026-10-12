@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "proof-sheet-diagnostics",
-  "sourceHash": "41ffccd53792ff708e287d1dbcfebca91b461917767a2d26c89a77183e2df493",
+  "sourceHash": "4589e5e81c39480040be4943faeda3311f0acba3754fb4140cfd5e3e99618427",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.734Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:50.780Z",
   "variants": {
     "en": {
-      "hash8": "854beff9",
+      "hash8": "8f251d05",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 1765,
-        "fontsMs": 68,
-        "buildMs": 13,
-        "totalMs": 4798,
+        "importMs": 263,
+        "fontsMs": 707,
+        "buildMs": 9,
+        "totalMs": 1802,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1332,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100710,
+          "bytes": 100784,
           "alt": "Opening page 1: The Night Ferry Returns. Map 1. Night route, north up. Solid: straight across on the flood, 12 minutes. Dashed red: on the ebb, when the current runs out to sea (arrow), bowed upstream of the Coffin Rock shoal (dotted), 15 minutes."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1332,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151320,
+          "bytes": 151306,
           "alt": "Page 2."
         }
       ],
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 103198,
+        "bytes": 103008,
         "folio": "3db66766",
         "chapters": [
           {
@@ -145,7 +145,6 @@
           "calloutStyles[].keepTogether",
           "calloutStyles[].lists",
           "calloutStyles[].lists.bulletChar",
-          "calloutStyles[].lists.bulletFontSize",
           "calloutStyles[].lists.color",
           "calloutStyles[].marginBottom",
           "calloutStyles[].padding",
@@ -262,7 +261,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 295,
+        "configLeaves": 294,
         "designElements": 8,
         "directives": [
           ":::callout",
@@ -349,17 +348,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "50f5f9d6",
+      "hash8": "c98b9555",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 1448,
-        "fontsMs": 89,
-        "buildMs": 23,
-        "totalMs": 3438,
+        "importMs": 266,
+        "fontsMs": 702,
+        "buildMs": 12,
+        "totalMs": 1805,
         "builds": 2
       },
       "specimen": {
@@ -393,7 +398,7 @@
           "h": 1332,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 105444,
+          "bytes": 105506,
           "alt": "Página de apertura 1: Vuelve la barcaza nocturna. Mapa 1. Ruta nocturna, norte arriba. Continua: en línea recta con la llenante, 12 minutos. Roja discontinua: con la vaciante (flecha), aguas arriba del bajo Piedra Negra (punteado), 15 minutos."
         },
         {
@@ -404,7 +409,7 @@
           "h": 1332,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149858,
+          "bytes": 149840,
           "alt": "Página 2."
         }
       ],
@@ -432,7 +437,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 104054,
+        "bytes": 104021,
         "folio": "3db66766",
         "chapters": [
           {
@@ -488,7 +493,6 @@
           "calloutStyles[].keepTogether",
           "calloutStyles[].lists",
           "calloutStyles[].lists.bulletChar",
-          "calloutStyles[].lists.bulletFontSize",
           "calloutStyles[].lists.color",
           "calloutStyles[].marginBottom",
           "calloutStyles[].padding",
@@ -605,7 +609,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 295,
+        "configLeaves": 294,
         "designElements": 8,
         "directives": [
           ":::callout",
@@ -692,7 +696,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }
