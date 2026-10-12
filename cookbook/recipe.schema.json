@@ -483,6 +483,12 @@
               "minimum": 0,
               "description": "Justified lines the edition may set ragged (check C34)."
             },
+            "systemFont": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8,
+              "description": "Characters the pages take from a font of the system, named in the write-up (check C36)."
+            },
             "console": {
               "type": "array",
               "items": {
