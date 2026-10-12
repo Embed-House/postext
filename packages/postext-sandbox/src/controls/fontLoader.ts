@@ -65,6 +65,22 @@ export function fontRequestsUnanswered(family: string, urls: readonly string[]):
   return false;
 }
 
+/** What the loader is waiting for, for a check that asks a page why its
+ *  layout does not come (#757). */
+export function fontLoaderState(): {
+  requestsOut: number; sinceProgressMs: number | null; stallClockArmed: boolean;
+  unanswered: string[]; recordsInFlight: string[]; pageLoadsInFlight: string[];
+} {
+  return {
+    requestsOut: requestsOut.size,
+    sinceProgressMs: lastFontProgress ? Date.now() - lastFontProgress : null,
+    stallClockArmed: stallTimer !== null,
+    unanswered: [...unanswered],
+    recordsInFlight: [...metadataInFlight.keys()],
+    pageLoadsInFlight: [...loadingPromises.keys()],
+  };
+}
+
 /** The requests out, and when one of them last received something. */
 const requestsOut = new Set<AbortController>();
 let lastFontProgress = 0;
@@ -108,8 +124,9 @@ async function received(res: Response): Promise<Response> {
 async function fetchWithin<T>(url: string, read: (res: Response) => Promise<T>, init?: RequestInit): Promise<T> {
   if (typeof AbortController === 'undefined') return read(await fetch(url, init));
   const controller = new AbortController();
-  // The first request out starts the clock.
-  if (requestsOut.size === 0) fontProgress();
+  // A request sent has the bound to itself at least: the clock starts
+  // again, whatever the requests already out have waited.
+  fontProgress();
   requestsOut.add(controller);
   watchForStall();
   try {
@@ -1186,6 +1203,10 @@ function faceCacheKey(p: { family: string; weight: string; style: string; unicod
 /** The bytes of each font file fetched, by URL, and when a fetch failed. */
 const fileBytes = new Map<string, Promise<ArrayBuffer | null>>();
 const fileFailedAt = new Map<string, number>();
+/** The files the server answered it has not (a 404): Fontsource's record
+ *  lists cuts its package does not hold (Libertinus Sans has no bold
+ *  italic, #168). Not asked for again (#757). */
+const filesGone = new Set<string>();
 
 /** A font file's bytes, fetched once per URL; null when it cannot be had,
  *  and asked again after a while. */
@@ -1196,14 +1217,17 @@ function fetchFileBytes(url: string): Promise<ArrayBuffer | null> {
   fileFailedAt.delete(url);
   const promise = (async (): Promise<ArrayBuffer | null> => {
     try {
-      return await fetchWithin(url, async (r) => (r.ok ? await r.arrayBuffer() : null), { credentials: 'omit' });
+      return await fetchWithin(url, async (r) => {
+        if (r.status === 404) filesGone.add(url);
+        return r.ok ? await r.arrayBuffer() : null;
+      }, { credentials: 'omit' });
     } catch {
       return null; // ignore individual face failures
     }
   })();
   fileBytes.set(url, promise);
   void promise.then((bytes) => {
-    if (bytes === null && fileBytes.get(url) === promise) fileFailedAt.set(url, Date.now());
+    if (bytes === null && !filesGone.has(url) && fileBytes.get(url) === promise) fileFailedAt.set(url, Date.now());
   });
   return promise;
 }

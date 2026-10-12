@@ -52,6 +52,24 @@ export interface LayoutService {
   dispose(): void;
   /** Disposed services reject every build: the host makes a new one. */
   readonly disposed: boolean;
+  /** What the service is doing and waiting for, for a check that asks a
+   *  page why its layout does not come (#757). */
+  state?(): LayoutServiceState;
+}
+
+export interface LayoutServiceState {
+  /** The build under way: whose, and the step it is at. */
+  active: { clientId: string; step: string; sinceMs: number } | null;
+  queued: string[];
+  /** The step of the font queue under way, if any. */
+  fonts: { step: string; sinceMs: number } | null;
+  /** What the worker was asked and has not answered. */
+  worker: { ask: string; sinceMs: number }[];
+  /** The files sent to the worker, by family. */
+  sent: Record<string, number>;
+  short: string[];
+  retryDue: boolean;
+  fontsPending: boolean;
 }
 
 interface Entry {
@@ -185,6 +203,17 @@ export function createLayoutService(options?: {
   const queue: Entry[] = [];
   let active: Entry | null = null;
   let disposed = false;
+  // Where things stand, for `state()`.
+  let activeStep = { step: '', at: 0 };
+  let fontStep: { step: string; at: number } | null = null;
+  const asked = new Set<{ ask: string; at: number }>();
+  const at = (step: string): void => { activeStep = { step, at: Date.now() }; };
+  const fontsAt = (step: string | null): void => { fontStep = step === null ? null : { step, at: Date.now() }; };
+  const askWorker = <T>(ask: string, send: () => Promise<T>): Promise<T> => {
+    const entry = { ask, at: Date.now() };
+    asked.add(entry);
+    return send().finally(() => { asked.delete(entry); });
+  };
 
   // One thing at a time on the worker (#757): a build that did not wait
   // for a slow file must not have its faces registered half way through
@@ -198,7 +227,7 @@ export function createLayoutService(options?: {
     return run;
   };
   const register = (payloads: Parameters<LayoutWorkerHandle['registerFonts']>[0]): Promise<void> =>
-    exclusive(() => worker().registerFonts(payloads));
+    exclusive(() => askWorker(`registerFonts (${payloads.length} files)`, () => worker().registerFonts(payloads)));
 
   // --- fonts: registered lazily, for the worker's lifetime
   // The custom families sent, each with every file it has.
@@ -285,6 +314,7 @@ export function createLayoutService(options?: {
     if (custom.length > 0) {
       for (const f of custom) registeredFamilies.add(f);
       try {
+        fontsAt(`the files of the custom families ${custom.join(', ')}`);
         const payloads = await collectFontPayloadsForFamilies(custom);
         if (payloads.length > 0) {
           await register(payloads);
@@ -300,8 +330,10 @@ export function createLayoutService(options?: {
     // One message for every family: their files are fetched side by side.
     try {
       const catalogue = families.filter((f) => !getCustomFontFamily(f));
+      fontsAt(`the faces of ${catalogue.join(', ')}`);
       const perFamily = await Promise.all(catalogue.map(lackingFaces));
       const lacking = perFamily.flat();
+      fontsAt(`${lacking.length} files of ${catalogue.join(', ')}`);
       // A file that cannot be had is left out, and asked for again: by a
       // later build, and by the service itself a while later.
       const payloads = lacking.length > 0 ? await fetchFacePayloads(lacking) : [];
@@ -372,6 +404,7 @@ export function createLayoutService(options?: {
    *  this build's characters. True when the worker got any. */
   const sendStandIns = async (config: PostextConfig, content: PostextContent): Promise<boolean> => {
     try {
+      fontsAt('the stand-in faces');
       const standIns = await collectStandInPayloads(config, content, registeredStandIns);
       if (standIns.length > 0) {
         const keys = standIns.map(fontPayloadKey);
@@ -394,8 +427,12 @@ export function createLayoutService(options?: {
     const families = [...uses.keys()];
     let sent = false;
     const next = fontQueue.then(async () => {
-      sent = await sendFamilies(families);
-      sent = (await sendStandIns(config, content)) || sent;
+      try {
+        sent = await sendFamilies(families);
+        sent = (await sendStandIns(config, content)) || sent;
+      } finally {
+        fontsAt(null);
+      }
     });
     fontQueue = next;
     await next;
@@ -444,8 +481,12 @@ export function createLayoutService(options?: {
     noteUses(fresh);
     let sent = false;
     const next = fontQueue.then(async () => {
-      sent = await sendFamilies(fresh.map(([family]) => family));
-      if (sent) await sendStandIns(config, content);
+      try {
+        sent = await sendFamilies(fresh.map(([family]) => family));
+        if (sent) await sendStandIns(config, content);
+      } finally {
+        fontsAt(null);
+      }
     });
     fontQueue = next;
     await next;
@@ -476,6 +517,7 @@ export function createLayoutService(options?: {
     try {
       // Waited for while its requests are answered (#757): a request the
       // loader gives up, or the ceiling, lets the chapter go without.
+      at('the files of its faces');
       let waited = await hold(ensureFonts(request.config, request.content), () => []);
       if (controller.signal.aborted) throw abortError();
       const buildOptions = {
@@ -485,14 +527,16 @@ export function createLayoutService(options?: {
         resourcesKey: request.content.resources ? resourcesKeyOf(request.content.resources) : undefined,
         cacheKey: request.cacheKey,
       };
-      const build = (): Promise<VDTDocument> => exclusive(() => worker().build(request.content, request.config, buildOptions));
+      const build = (): Promise<VDTDocument> => exclusive(() => askWorker('build', () => worker().build(request.content, request.config, buildOptions)));
+      at('the worker\'s layout');
       let doc = request.warmOnly && request.cacheKey
-        ? await exclusive(() => worker().warm(request.content, request.config, { ...buildOptions, cacheKey: request.cacheKey! })).then(() => null)
+        ? await exclusive(() => askWorker('warm', () => worker().warm(request.content, request.config, { ...buildOptions, cacheKey: request.cacheKey! }))).then(() => null)
         : await build();
       // Laid out again when its pages set a face the worker did not have
       // (#757): once for the faces the first layout names, once more for
       // any the second brings.
       for (let round = 0; doc && round < FONT_ROUNDS; round++) {
+        at('the files of the faces its pages name');
         const named = ensureDocumentFonts(doc, request.config, request.content);
         const families = (): string[] => [...new Set(documentFontFaces(doc!).map((face) => face.family))];
         // A file of theirs that is slow: the document stands as it is, and
@@ -503,6 +547,7 @@ export function createLayoutService(options?: {
         }
         if (!(await named)) break;
         if (controller.signal.aborted) throw abortError();
+        at('the worker\'s layout, again');
         doc = await build();
       }
       const built = stats as BuildStats | null;
@@ -553,6 +598,19 @@ export function createLayoutService(options?: {
 
   return {
     get disposed() { return disposed; },
+    state() {
+      const now = Date.now();
+      return {
+        active: active ? { clientId: active.request.clientId, step: activeStep.step, sinceMs: now - activeStep.at } : null,
+        queued: queue.map((q) => q.request.clientId),
+        fonts: fontStep ? { step: fontStep.step, sinceMs: now - fontStep.at } : null,
+        worker: [...asked].map((a) => ({ ask: a.ask, sinceMs: now - a.at })),
+        sent: Object.fromEntries([...sentFaces].map(([family, keys]) => [family, keys.size])),
+        short: [...shortFamilies],
+        retryDue: retryTimer !== null,
+        fontsPending: fontsPending(),
+      };
+    },
     build(request) {
       if (disposed) return Promise.reject(new Error('Layout service disposed'));
       return new Promise<VDTDocument>((resolve, reject) => {

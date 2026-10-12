@@ -3,13 +3,13 @@
 // tree and calls `window.__postextSandbox.layOutBundle` once per edition.
 
 import './nodeGlobals';
-import { layOutBundle } from './layOutBundle';
+import { layOutBundle, layOutState } from './layOutBundle';
 import type { LaidOutBundle, LayOutBundleOptions } from './layOutBundle';
 
 declare global {
   interface Window {
-    __postextSandbox?: { layOutBundle: (bytes: Uint8Array, options: LayOutBundleOptions) => Promise<LaidOutBundle> };
+    __postextSandbox?: { layOutBundle: (bytes: Uint8Array, options: LayOutBundleOptions) => Promise<LaidOutBundle>; state: () => unknown };
   }
 }
 
-window.__postextSandbox = { layOutBundle };
+window.__postextSandbox = { layOutBundle, state: layOutState };

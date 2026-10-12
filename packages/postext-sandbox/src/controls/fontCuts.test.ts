@@ -641,11 +641,16 @@ describe('a request the network does not answer (#757)', () => {
     expect(loader.fontRequestsUnanswered(SERIF, faces.slice(0, -1).map((f) => f.url))).toBe(false);
   });
 
-  it('does not count a file the server has not (a 404 is an answer)', async () => {
+  it('does not count a file the server has not (a 404 is an answer), and does not ask for it again', async () => {
     const faces = await loader.familyCutFaces(SERIF, [upright(400)]);
     noFile.add(faces[0]!.url);
+    vi.useFakeTimers();
     expect(await loader.fetchFacePayloads(faces)).toHaveLength(faces.length - 1);
     expect(loader.unansweredFontRequests()).toEqual([]);
+    // A later build, long after: the file is still not there to ask for.
+    await vi.advanceTimersByTimeAsync(loader.FONT_RETRY_MS * 3);
+    expect(await loader.fetchFacePayloads(faces)).toHaveLength(faces.length - 1);
+    expect(requests.filter((url) => url === faces[0]!.url)).toHaveLength(1);
   });
 
   it('gives a family\'s record up after its bound, and the family is set from Google\'s style sheet', async () => {

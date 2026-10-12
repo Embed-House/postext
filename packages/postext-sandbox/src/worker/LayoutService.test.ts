@@ -642,4 +642,25 @@ describe('a build and a file that is slow or does not come (#757)', () => {
     await vi.advanceTimersByTimeAsync(600_000);
     expect(fontLoader.fileRequests).toHaveLength(1);
   });
+
+  it('says what it waits for: the step of the build under way, the files sent and what the worker has not answered', async () => {
+    reset();
+    let arrive!: () => void;
+    fontLoader.files = new Promise<void>((resolve) => { arrive = resolve; });
+    const { handle, builds } = ordered();
+    const service = createLayoutService({ handle });
+    const built = service.build(request());
+    await tick();
+    // Waiting for its files: the font queue says which.
+    expect(service.state!()).toMatchObject({ active: { clientId: 'canvas', step: 'the files of its faces' }, fonts: { step: '1 files of Lora' }, worker: [], sent: {}, fontsPending: true });
+    arrive();
+    await tick();
+    expect(service.state!()).toMatchObject({ active: { step: 'the worker\'s layout' }, fonts: null, sent: { Lora: 1 } });
+    expect(service.state!().worker.map((w) => w.ask)).toEqual(['build']);
+    builds[0]!.finish();
+    await built;
+    await tick();
+    expect(service.state!()).toMatchObject({ active: null, queued: [], worker: [], short: [], retryDue: false, fontsPending: false });
+    service.dispose();
+  });
 });
