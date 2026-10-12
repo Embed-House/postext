@@ -166,7 +166,7 @@ import { hasCJK } from '../measure/cjk';
  *     (`bodyText.scriptContext`, #725), where up to 1.27 it was shaped
  *     alone, in the script each browser and the PDF picked ({@link
  *     pinLegacyScriptContext});
- * - 13 (#764), the rules of the postext that follows 1.28:
+ * - 13 (#764), the rules of postext 1.29:
  *   - the text is measured, painted and embedded in the document's own
  *     language on every host (`bodyText.shapingLanguage`, #764), where up
  *     to 1.28 the layout measured in the language of the page that hosted

@@ -1,6 +1,5 @@
 import { FORCED_BREAK } from './hardBreaks';
 import {
-  prepareWithSegments,
   layoutNextLine,
   type PreparedTextWithSegments,
   type LayoutCursor,

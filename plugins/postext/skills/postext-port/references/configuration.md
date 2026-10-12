@@ -313,7 +313,7 @@ H&J / Knuth–Plass
 │                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
-├─ shapingLanguage      'document' | 'host'  'document'   (≥ the release after 1.28) the language the text is measured, painted and embedded in: the document's
+├─ shapingLanguage      'document' | 'host'  'document'   (≥ 1.29) the language the text is measured, painted and embedded in: the document's
 │                        `locale` (a run's own with `{lang=…}`), set on every measuring context, so the lines are the same on a page in any
 │                        language and in a layout worker; canvas `ctx.lang`, HTML/EPUB `lang`, PDF OpenType language system (ZHS, ZHT, JAN, CAT, TRK…).
 │                        'host' = ≤ 1.28: measured in the host page's language (none in a worker); every preset below configVersion 13 reads 'host'.
@@ -931,7 +931,7 @@ marginTop = 1.5em, marginBottom = 1.5em, itemSpacing = 0em, hangingIndent = true
 snapTopToGrid = false  (true: the space above rounds up so the first item sits on the grid)
 levels[]: { level 1–5, bulletChar, fontFamily, fontSize, color, fontWeight, italic, indent, verticalOffset }
 taskCheckboxChar '☐', taskCheckedChar '☑', taskCompletedStrikethrough true, taskCompletedColor?
-taskBox 'drawn' | 'character' = 'drawn'  (≥ the release after 1.28) the default ☐ / ☑ of a task item (`- [ ]`, `- [x]`) is
+taskBox 'drawn' | 'character' = 'drawn'  (≥ 1.29) the default ☐ / ☑ of a task item (`- [ ]`, `- [x]`) is
         drawn by the engine, not set as text: a square outline (a tick when done), side 0.6 em of the marker size
         (bulletFontSize / level fontSize), which is the room it takes before `gap`; centred where a bullet is (at
         the text's size it stands on the baseline); stroke follows the marker fontWeight, colour the marker color.
