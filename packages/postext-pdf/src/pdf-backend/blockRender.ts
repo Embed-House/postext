@@ -6,6 +6,7 @@ import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
 import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
 import { paintChip } from './chip';
+import { drawTaskBoxPx } from './taskBox';
 import { drawRightToLeftRun } from './rtlRun';
 import { pickSegmentColor, pickSegmentFont } from './fontHelpers';
 import { renderHeaderFooterSlot } from './headerFooter';
@@ -609,6 +610,13 @@ function isDirected(line: VDTLine): boolean {
 }
 
 function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem: StructElem | undefined): void {
+  // A task item's drawn box (#765): paths in its `Lbl`, which reads as the
+  // character the box stands for.
+  if (block.bulletBox) {
+    tagContent(ctx, elem);
+    drawTaskBoxPx(ctx, block);
+    return;
+  }
   if (
     !block.bulletText ||
     !block.bulletFontString ||

@@ -7034,8 +7034,12 @@ function placeDocumentPass(
       // Bullet (and its positional metadata) only belongs on the first part of
       // a split list item; continuation parts render without a bullet.
       if (!isFirstPart) return;
-      blk.bulletText = listBullet.bulletText;
-      blk.bulletFontString = listBullet.bulletFontString;
+      // A task item's drawn box (#765) stands for its character and face.
+      if (listBullet.box) blk.bulletBox = listBullet.box;
+      else {
+        blk.bulletText = listBullet.bulletText;
+        blk.bulletFontString = listBullet.bulletFontString;
+      }
       blk.bulletColor = listBullet.bulletColor;
       // `bulletXOffsetInColumn` is `indentPx` for unordered/task, and
       // `indentPx + (maxNumberWidth - thisNumberWidth)` for ordered — giving

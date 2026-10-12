@@ -36,9 +36,10 @@ describe('pinLegacyScriptContext (#725)', () => {
       expect(kept(migrateConfig({ bodyText: { scriptContext: true } }, v)), String(v)).toBe(true);
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // One stamped 12 takes the pins of rules 13 alone: the language (#764)
+    // and, its text not being known, the task box (#765). One stamped 13 is
     // read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(migrateConfig(current, 13)).toBe(current);
     // A new document has the rule; one read from before keeps the old way.
     expect(resolveAllConfig(current).bodyText.scriptContext).toBeUndefined();

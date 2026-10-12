@@ -1,7 +1,7 @@
 // The semantic model to EPUB 3 XHTML content documents: one per chapter
 // (or part opener), with its footnotes after the text.
 
-import { bidiClassOf, comicPanelSvg, isHlsMimeType, mediaFragment, type VDTResourceVideo } from 'postext';
+import { bidiClassOf, comicPanelSvg, isHlsMimeType, mediaFragment, TASK_BOX_SIDE_EM, taskBoxSvgBody, taskBoxText, type VDTResourceVideo } from 'postext';
 import type {
   ComicNode,
   FileModel,
@@ -514,7 +514,11 @@ class Writer {
   private list(node: ListNode): string {
     const tag = node.ordered ? 'ol' : 'ul';
     const items = node.items.map((item) => {
-      const marker = item.marker ? `<span class="pt-lbl">${xmlText(item.marker)}</span> ` : '';
+      // A task item's box (#765) is drawn, in ems of the reader's text: an
+      // image named by the character it stands for.
+      const marker = item.box
+        ? `<span class="pt-lbl" role="img" aria-label="${xmlAttr(taskBoxText(item.box.checked))}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${TASK_BOX_SIDE_EM}em" height="${TASK_BOX_SIDE_EM}em" aria-hidden="true" focusable="false">${taskBoxSvgBody(item.box.stroke, item.box.checked)}</svg></span> `
+        : item.marker ? `<span class="pt-lbl">${xmlText(item.marker)}</span> ` : '';
       const body = this.within(item.dir, () => this.inline(item.done ? item.inl.map((i) => (i.t === 'text' ? { ...i, fmt: { ...i.fmt, done: true } } : i)) : item.inl));
       const nested = item.children.length > 0 ? `\n${this.nodes(item.children)}\n` : '';
       return `<li${this.dirAttr(item.dir)}>${marker}${body}${nested}</li>`;

@@ -40,14 +40,15 @@ describe('pinLegacyShapingLanguage (#764)', () => {
       expect(kept(migrateConfig({ bodyText: { shapingLanguage: 'document' } }, v)), String(v)).toBe('document');
       expect(kept(migrateConfig({ bodyText: { shapingLanguage: 'host' } }, v)), String(v)).toBe('host');
     }
-    // A configuration stored under 12 gets this pin and no other.
+    // A configuration stored under 12 whose text holds no task item (#765)
+    // gets this pin and no other.
     const twelve: PostextConfig = { locale: 'tr', bodyText: { fontFamily: 'Literata' } };
-    expect(migrateConfig(twelve, 12)).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
+    expect(migrateConfig(twelve, 12, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
     expect(twelve.bodyText).toEqual({ fontFamily: 'Literata' });
     // One that names the setting has nothing left to pin.
     for (const value of ['document', 'host'] as const) {
       const named: PostextConfig = { bodyText: { shapingLanguage: value } };
-      expect(migrateConfig(named, 12)).toBe(named);
+      expect(migrateConfig(named, 12, { content: 'Words.' })).toBe(named);
     }
     const current: PostextConfig = {};
     expect(migrateConfig(current, 13)).toBe(current);

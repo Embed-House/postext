@@ -124,13 +124,14 @@ describe('working configuration', () => {
     });
     const { loadConfig } = await import('./persistence');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
-    // Today's stamp is 13: a copy stamped 12 gets the pin of rules 13, its
-    // text shaped in the language of the host (#764).
+    // Today's stamp is 13: a copy stamped 12 gets the pins of rules 13, its
+    // text shaped in the language of the host (#764) and, with no saved
+    // book to read, the box of its task items kept as a character (#765).
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '12',
     });
-    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' } });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
   });
   // EF-93: a copy saved before the stamp reached 5 keeps the space 1.4 left
   // under an inline figure, when the saved book embeds one.
@@ -219,6 +220,8 @@ describe('working configuration', () => {
       crossRefs: { breakLabels: false },
       // (it may hold a comic: its balloons are placed as before 1.28, #728)
       comics: { lettering: { strictPlacement: false } },
+      // (it may hold a task list: the box of an item stays a character, #765)
+      unorderedLists: { taskBox: 'character' },
     });
     // (Every copy stamped before 12 also gets the pins of rules 12 that read
     // no content: the order of the balancing levers, #707, the line under a
@@ -234,30 +237,31 @@ describe('working configuration', () => {
       index: { groups: { splitMinEntries: 1 } },
       cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } },
       crossRefs: { breakLabels: false },
+      unorderedLists: { taskBox: 'character' },
     });
     // One stamped 6 gets the version-7 and version-8 pins only: the dash
     // breaks, the ragged breaking when it sets text ragged (EF-141,
     // EF-147), the split under a heading (EF-185) and the compound breaks
     // (EF-186).
-    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     const ragged = { ...legacy, config: { bodyText: { textAlign: 'left' as const } } };
-    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     // One stamped 7 gets the version-8 pins only: the split under a
     // heading, the compound breaks, and the space under containers when it
     // declares a paragraph style (EF-159, EF-181).
-    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     const styled = { ...legacy, config: { paragraphStyles: [{ id: 'verse' }] } };
-    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     // One stamped 8 (postext 1.5 to 1.22) gets the version-9 and version-10
     // pins only: the verse layout, a first-line indent dropped from a style
     // that hangs, the printed backslashes (#620), fences read as Markdown
     // (#624) and the 1.23 verse turnovers.
     const hanging = { ...legacy, config: { paragraphStyles: [{ id: 'bib', firstLineIndent: { value: 1, unit: 'em' as const }, hangingIndent: { value: 2, unit: 'em' as const } }] } };
-    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
-    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
+    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     // One stamped 9 (postext 1.23) gets the version-10 pin only: its lines
     // of verse turn over at their natural spacing (#620).
-    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host' }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false } });
+    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host' }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' } });
     // One stamped 10 (postext 1.24) gets the version-11 pins: its inline
     // tables move whole and its :::columns fences are read as 1.24 read
     // them (#634).
@@ -266,24 +270,25 @@ describe('working configuration', () => {
     // an opener (#639).
     const opener = { ...legacy, config: { headings: { levels: [{ level: 1, span: 'page' as const }] } } };
     expect(configFromExport({ ...opener, configVersion: 10 })).toMatchObject({ layout: { floatsUnderOpener: false } });
-    // (One stamped 12, postext 1.28, gets the version-13 pin alone: its
-    // text is shaped in the language of the host, #764.)
-    expect(configFromExport({ ...opener, configVersion: 12 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' } });
+    // (One stamped 12, postext 1.28, gets the version-13 pins alone: its
+    // text is shaped in the language of the host, #764, and the box of a
+    // task item it may hold stays a character, #765.)
+    expect(configFromExport({ ...opener, configVersion: 12 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(configFromExport({ ...opener, configVersion: 13 })).toEqual(opener.config);
     // Exports carry the version since 1.5, and read back as they are.
     // One stamped 11 (postext 1.25 to 1.27) gets the version-12 pins: a
     // two-row note it may hold breaks where 1.27 broke it (#720).
     expect(configFromExport({ ...legacy, configVersion: 11 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, cjk: { warichu: { minChars: 1 } } });
-    expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(configFromExport({ ...legacy, configVersion: 13 })).toEqual({ headings: { fontFamily: 'Georgia' } });
     // And a column-and-a-half layout keeps the caption of a resource set in
     // the text under it, where 1.27 set it (#729); other layouts take no pin.
     const sided = { ...legacy, config: { layout: { layoutType: 'oneAndHalf' as const, sideColumnRole: 'floats' as const } } };
     expect(configFromExport({ ...sided, configVersion: 11 })).toMatchObject({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats', inlineCaptionSide: false } });
-    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats' }, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(configFromExport({ ...sided, configVersion: 13 })).toEqual(sided.config);
     expect(configFromExport({ ...legacy, configVersion: 11 }).layout?.inlineCaptionSide).toBeUndefined();
-    expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(configFromExport({ ...styled, configVersion: 13 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
   });
   // The applied preset's snapshot hashed the copy as it was stored; once the

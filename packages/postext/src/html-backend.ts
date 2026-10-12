@@ -48,6 +48,7 @@ import type { VDTResourceVideo } from './vdt';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
+import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
  * Declarations of every box of CJK text measured with no punctuation
@@ -1315,7 +1316,35 @@ function arabicMarkNeeded(text: string): boolean {
   return plain.length !== arabic.length || plain.some((r, i) => r.text !== arabic[i]!.text);
 }
 
+/**
+ * The box of a task item (`VDTBlock.bulletBox`, #765): an inline SVG the
+ * size of the box, from `bulletOffsetX` and centred on `bulletY`, in the
+ * marker's colour. Its holder is an image named ☐ or ☑, which is what
+ * assistive technology reads, and holds that character as text of no
+ * size, so a selection copies it as it copied the character the box
+ * stands for. On a vertical page the tick is drawn turned back
+ * (`vertical`); on a right-to-left one the flow's own rule turns every
+ * `svg` back.
+ */
+function renderTaskBox(block: VDTBlock, vertical = false): string {
+  const box = block.bulletBox;
+  const firstLine = block.lines[0];
+  if (!box || block.bulletOffsetX === undefined || !firstLine) return '';
+  const { side, stroke, checked } = box;
+  const top = (block.bulletY ?? firstLine.baseline) - side / 2;
+  const mark = esc(taskBoxText(checked));
+  return (
+    `<div class="pt-bullet pt-task-box" role="img" aria-label="${mark}" style="position:absolute;` +
+    `left:${block.bulletOffsetX}px;top:${top}px;width:${side}px;height:${side}px;` +
+    `color:${block.bulletColor ?? block.color};font-size:0;">` +
+    `<svg aria-hidden="true" focusable="false" viewBox="0 0 100 100" width="${side}" height="${side}" style="position:absolute;left:0;top:0;">` +
+    taskBoxSvgBody(stroke / side, checked, vertical ? 'vertical' : undefined) +
+    `</svg>${mark}</div>`
+  );
+}
+
 function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
+  if (block.type === 'listItem' && block.bulletBox) return renderTaskBox(block);
   if (
     block.type !== 'listItem' ||
     !block.bulletText ||
@@ -1706,6 +1735,7 @@ function renderVerticalMarker(cls: string, x: number, block: VDTBlock, v: Vertic
 }
 
 function renderVerticalBullet(block: VDTBlock, v: VerticalHtml): string {
+  if (block.type === 'listItem' && block.bulletBox) return renderTaskBox(block, true);
   if (block.type !== 'listItem' || !block.bulletText || block.bulletOffsetX === undefined || !block.lines[0]) return '';
   const bulletFont = block.bulletFontString ?? block.fontString;
   const bulletColor = block.bulletColor ?? block.color;

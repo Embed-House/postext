@@ -52,7 +52,7 @@ describe('pinLegacyWideFloatStretch (#708)', () => {
     const migrated = migrateConfig({}, 11, { content: FIGURE });
     const saved = stripConfigDefaults(migrated);
     expect(wide(saved)).toBe('always');
-    expect(migrateConfig(saved, 12)).toBe(saved);
+    expect(migrateConfig(saved, 12, { content: FIGURE })).toBe(saved);
     expect(resolveAllConfig(saved).headings.balancing.stretchAfterWideFloats).toBe('always');
     expect(wide(stripConfigDefaults(saved))).toBe('always');
     expect(stripConfigDefaults({ headings: { balancing: { stretchAfterWideFloats: 'flush' } } }).headings).toBeUndefined();

@@ -4231,9 +4231,31 @@ export interface UnorderedListsConfig {
   snapTopToGrid?: boolean;
   hangingIndent?: boolean;
   levels?: UnorderedListLevelConfig[];
-  /** GFM task list rendering. The bullet glyph is replaced with a checkbox. */
+  /** GFM task list rendering. The bullet glyph is replaced with a checkbox.
+   *  The default characters, ☐ for an open item and ☑ for a done one, are
+   *  not set as text: the engine draws the box, and its tick, itself
+   *  (#765; see `taskBox`). A character of the author's own (`✗`, `[ ]`)
+   *  is set as text in the level's face, which then has to hold it. */
   taskCheckboxChar?: string;
   taskCheckedChar?: string;
+  /**
+   * How the default box of a task item is set (#765). `'drawn'` (default):
+   * the engine draws a square outline, with a tick when the item is done.
+   * Its side is 0.6 em of the marker's size (the level's `fontSize`), and
+   * that is the room it takes before the list's `gap`; it is centred where
+   * a bullet is, so at the text's size it stands on the first line's
+   * baseline; its stroke follows the level's `fontWeight` and its colour
+   * the level's `color`. No font is asked for it, so it is the same on
+   * every machine, on the canvas, in the PDF, in the HTML and in the EPUB;
+   * assistive technology reads ☐ or ☑. `'character'`: ☐ and ☑ are set as
+   * text in the level's face, as up to postext 1.28: a face that lacks
+   * them leaves the browser to pick a font of the system, and the item's
+   * text starts after the width that font gives. A configuration stored
+   * before version 13 reads with `'character'`
+   * (`pinLegacyTaskBox`). A character of the author's own is text either
+   * way.
+   */
+  taskBox?: 'drawn' | 'character';
   taskCompletedStrikethrough?: boolean;
   /** Optional color for the text of completed tasks. When undefined, body color is used. */
   taskCompletedColor?: ColorValue;
@@ -4257,6 +4279,9 @@ export interface ResolvedUnorderedListsConfig {
   levels: ResolvedUnorderedListLevelConfig[];
   taskCheckboxChar: string;
   taskCheckedChar: string;
+  /** Present only when the default box is set as a character
+   *  (`'character'`); absent when the engine draws it. */
+  taskBox?: 'character';
   taskCompletedStrikethrough: boolean;
   /** Undefined => inherit body text color at render time. */
   taskCompletedColor?: ColorValue;

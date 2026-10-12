@@ -225,6 +225,6 @@ describe('pin of #721', () => {
     const stripped = stripConfigDefaults(migrateConfig(ja(), 11, { content: TEXT }));
     expect(stripped.cjk).toEqual({ latinSpacingEdge: 'letters' });
     expect(edge(stripped)).toBe('letters');
-    expect(migrateConfig(stripped, 12)).toBe(stripped);
+    expect(migrateConfig(stripped, 12, { content: TEXT })).toBe(stripped);
   });
 });

@@ -10,6 +10,7 @@ import { defaultNumeralsFor, languageOf } from '../locale';
 import { resolvedLocale } from './config';
 import type { BlockStyle } from './styles';
 import { resolveBodyStyle } from './styles';
+import { isDrawnTaskBox, taskBoxSize } from '../taskBox';
 
 export interface ListBulletStyle {
   indentPx: number;
@@ -38,6 +39,10 @@ export interface ListBulletStyle {
    *  bullet's left edge (negative: the prefix sits before the number). */
   prefixText?: string;
   prefixOffsetPx?: number;
+  /** The box of a task item the renderers draw (`VDTBlock.bulletBox`,
+   *  #765): the block then takes it and neither `bulletText` nor
+   *  `bulletFontString`, and `bulletWidthPx` is its side. */
+  box?: { side: number; stroke: number; checked: boolean };
 }
 
 /**
@@ -443,9 +448,17 @@ export function resolveUnorderedListItemStyle(
       : lists.taskCheckboxChar
     : levelConfig.bulletChar;
 
+  // The default box of a task item is drawn (#765): its side comes from
+  // the marker's size, so no font is asked for the character. A character
+  // of the author's own, and the default one under `taskBox: 'character'`
+  // (postext 1.28), is text, as wide as its face sets it.
+  const box = isTask && lists.taskBox !== 'character' && isDrawnTaskBox(bulletChar, checked)
+    ? { ...taskBoxSize(bulletFontSizePx, levelConfig.fontWeight), checked }
+    : undefined;
+
   const indentPx = levelIndentsPx[levelIdx] ?? 0;
   const gapPx = dimensionToPx(lists.gap, dpi, bodyStyle.fontSizePx);
-  const bulletWidthPx = flowTextWidth(bulletChar, bulletFontString);
+  const bulletWidthPx = box ? box.side : flowTextWidth(bulletChar, bulletFontString);
   const itemSpacingPx = dimensionToPx(lists.itemSpacing, dpi, bodyStyle.fontSizePx);
   const verticalOffsetPx = dimensionToPx(levelConfig.verticalOffset, dpi, bodyStyle.fontSizePx);
   const marginTopPx = dimensionToPx(lists.marginTop, dpi, bodyStyle.fontSizePx);
@@ -478,6 +491,7 @@ export function resolveUnorderedListItemStyle(
     textFontSizePx: bodyStyle.fontSizePx,
     verticalOffsetPx,
   };
+  if (box) bullet.box = box;
 
   return {
     text,
@@ -589,6 +603,11 @@ export function directListMarker(blk: VDTBlock, direction: 'ltr' | 'rtl', arabic
 }
 
 export function mirrorListMarker(blk: VDTBlock): void {
+  // A drawn box (#765) moves by its side: it has no text to measure.
+  if (blk.bulletOffsetX !== undefined && blk.bulletBox) {
+    blk.bulletOffsetX = 2 * blk.bbox.x + blk.bbox.width - blk.bulletOffsetX - blk.bulletBox.side;
+    return;
+  }
   if (blk.bulletOffsetX === undefined || !blk.bulletText) return;
   const left = blk.bbox.x;
   const right = blk.bbox.x + blk.bbox.width;

@@ -1059,8 +1059,12 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     if (listBullet && !openedMidRun) {
       blk.listDepth = listDepth;
       blk.listKind = listKind;
-      blk.bulletText = listBullet.bulletText;
-      blk.bulletFontString = listBullet.bulletFontString;
+      // A task item's drawn box (#765) stands for its character and face.
+      if (listBullet.box) blk.bulletBox = listBullet.box;
+      else {
+        blk.bulletText = listBullet.bulletText;
+        blk.bulletFontString = listBullet.bulletFontString;
+      }
       blk.bulletColor = listBullet.bulletColor;
       blk.bulletOffsetX = x + bulletXOffsetInColumn;
       if (listBullet.separatorText !== undefined) {
@@ -1224,7 +1228,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const tailOf = (blk: VDTBlock, l: number): VDTBlock => {
     const lh = blk.lines[0]?.bbox.height ?? 0;
     const tail: VDTBlock = { ...blk, id: input.nextChildId(), lines: resetLinePositions(blk.lines.slice(l), lh) };
-    delete tail.bulletText; delete tail.bulletFontString; delete tail.bulletColor;
+    delete tail.bulletText; delete tail.bulletFontString; delete tail.bulletColor; delete tail.bulletBox;
     delete tail.bulletOffsetX; delete tail.bulletY; delete tail.bulletBaselineY;
     delete tail.separatorText; delete tail.separatorFontString; delete tail.separatorColor; delete tail.separatorX;
     delete tail.prefixText; delete tail.prefixX; delete tail.bulletDirection;

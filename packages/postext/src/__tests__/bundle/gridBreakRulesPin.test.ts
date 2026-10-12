@@ -67,9 +67,10 @@ describe('pinLegacyGridBreakRules (#717)', () => {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
     const current = grid('ja');
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // One stamped 12 takes the pins of rules 13 alone: the language (#764)
+    // and, its text not being known, the task box (#765). One stamped 13 is
     // read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
     expect(migrateConfig(current, 13)).toBe(current);
   });
 

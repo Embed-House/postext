@@ -47,7 +47,7 @@ describe('pinLegacyIndexGroupSplit (#712)', () => {
     const migrated = migrateConfig({}, 11, { content: INDEX });
     const saved = stripConfigDefaults(migrated);
     expect(min(saved)).toBe(1);
-    expect(migrateConfig(saved, 12)).toBe(saved);
+    expect(migrateConfig(saved, 12, { content: INDEX })).toBe(saved);
     expect(resolveAllConfig(saved).index.groups.splitMinEntries).toBe(1);
     expect(min(stripConfigDefaults(saved))).toBe(1);
     expect(stripConfigDefaults({ index: { groups: { splitMinEntries: 2 } } }).index).toBeUndefined();
