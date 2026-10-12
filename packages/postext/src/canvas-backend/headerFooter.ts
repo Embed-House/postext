@@ -13,6 +13,7 @@ import { paintRunInDirection, runPaintOrder } from './runDirection';
 import { fillTrackedWord } from './trackedText';
 import { hasCJK } from '../measure/cjk';
 import { markCuts } from '../measure/markCuts';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 /** Adds a rounded rectangle to the current path, as a closed subpath. */
 function traceRoundedRect(
@@ -73,7 +74,7 @@ function drawBoxBackground(
   const bw = style.borderColor ? Math.max(0, style.borderWidthPx) : 0;
   const solid = bw > 0 && (bw >= w || bw >= h);
   const outerRadius = Math.max(0, Math.min(style.borderRadiusPx, w / 2, h / 2));
-  ctx.save();
+  saveContext(ctx);
   if (outerRadius > 0) {
     if (style.backgroundColor || solid) {
       drawRoundedRectPath(ctx, x, y, w, h, outerRadius);
@@ -98,7 +99,7 @@ function drawBoxBackground(
       ctx.strokeRect(x + bw / 2, y + bw / 2, w - bw, h - bw);
     }
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Paint one design text block (horizontal, right to left or vertical) as
@@ -107,7 +108,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
   if (block.box) {
     drawBoxBackground(ctx, block.bbox.x, block.bbox.y, block.bbox.width, block.bbox.height, block.box);
   }
-  ctx.save();
+  saveContext(ctx);
   if (block.clip) {
     ctx.beginPath();
     ctx.rect(block.bbox.x, block.bbox.y, block.bbox.width, block.bbox.height);
@@ -118,7 +119,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
   ctx.textBaseline = 'alphabetic';
   // Negative tracking tightens the letters (EF-82).
   const tracked = block.letterSpacingPx !== undefined && block.letterSpacingPx !== 0;
-  if (tracked) ctx.letterSpacing = `${block.letterSpacingPx}px`;
+  if (tracked) setLetterSpacing(ctx, block.letterSpacingPx!);
   // An outline is stroked over the filled glyphs (or alone, for hollow
   // letters), centred on their edges — as PDF render mode 2 / 1 and CSS
   // `-webkit-text-stroke` do.
@@ -173,23 +174,23 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
         // A dash of a 破折号 (#652): stretched along the line from where
         // its glyph starts, and turned with the column down a vertical
         // line, as a body segment's is (`fillSegmentText`).
-        ctx.save();
+        saveContext(ctx);
         ctx.translate(runX, runY);
         ctx.scale(run.inkScale, 1);
         paint(run.text, 0, 0, verticalPaintActive() ? 'sideways' : undefined);
-        ctx.restore();
+        restoreContext(ctx);
       }
       x += run.width;
     }
     ctx.font = block.fontString;
   }
   if (vertical) setVerticalPaint(outerPaint);
-  if (tracked) ctx.letterSpacing = '0px';
-  ctx.restore();
+  if (tracked) setLetterSpacing(ctx, 0);
+  restoreContext(ctx);
 }
 
 function renderRuleBlock(ctx: CanvasRenderingContext2D, block: VDTDesignRuleBlock): void {
-  ctx.save();
+  saveContext(ctx);
   ctx.fillStyle = block.color;
   // A vertical rule is `thickness` wide and `bbox.height` tall; a horizontal
   // one is `bbox.width` wide and `thickness` tall.
@@ -198,7 +199,7 @@ function renderRuleBlock(ctx: CanvasRenderingContext2D, block: VDTDesignRuleBloc
   } else {
     ctx.fillRect(block.bbox.x, block.bbox.y, block.bbox.width, block.thicknessPx);
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 function renderBoxBlock(ctx: CanvasRenderingContext2D, block: VDTDesignBoxBlock): void {
@@ -208,11 +209,11 @@ function renderBoxBlock(ctx: CanvasRenderingContext2D, block: VDTDesignBoxBlock)
     return;
   }
   // A callout stripe on a rounded frame: clipped to the frame's outline.
-  ctx.save();
+  saveContext(ctx);
   roundedOutlinePath(ctx, clip);
   ctx.clip();
   drawBoxBackground(ctx, block.bbox.x, block.bbox.y, block.bbox.width, block.bbox.height, block.box);
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Image block (e.g. a callout icon): drawn from the resource image
@@ -220,7 +221,7 @@ function renderBoxBlock(ctx: CanvasRenderingContext2D, block: VDTDesignBoxBlock)
 function renderImageBlock(ctx: CanvasRenderingContext2D, block: VDTDesignImageBlock, inkHex: string | null): void {
   const { x, y, width, height } = block.bbox;
   if (width <= 0 || height <= 0) return;
-  ctx.save();
+  saveContext(ctx);
   // Single ink tints an SVG picture, never a bitmap; a VDT without the
   // kind leaves it to the registry.
   const svg = block.imageKind === undefined ? undefined : block.imageKind === 'svg';
@@ -234,7 +235,7 @@ function renderImageBlock(ctx: CanvasRenderingContext2D, block: VDTDesignImageBl
       ctx.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
     }
   }, block.upright === true);
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 export function renderHeaderFooterSlot(

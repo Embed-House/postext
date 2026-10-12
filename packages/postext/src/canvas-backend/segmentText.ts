@@ -4,6 +4,8 @@ import { hasCJK } from '../measure/cjk';
 import { segmentOrientation } from '../writingMode';
 import { fillFlowText, verticalPaintActive } from './verticalText';
 import { fillTrackedWord } from './trackedText';
+import { inSegmentLanguage } from './wordRuns';
+import { letterSpacingOf, restoreContext, saveContext } from './contextState';
 
 /**
  * Paint `text` of a line set word by word (not `VDTLine.cjkComposed`) on
@@ -35,20 +37,32 @@ export function fillSegmentText(
   baseline: number,
   cuts: MarkCutRule,
 ): void {
+  // In the segment's own language when it names one, as a word of a line
+  // set word by word is (`fillSegmentWord`): the composer measured it so.
+  inSegmentLanguage(ctx, seg, () => fillSegmentGlyphs(ctx, seg, x, baseline, cuts));
+}
+
+function fillSegmentGlyphs(
+  ctx: CanvasRenderingContext2D,
+  seg: VDTLineSegment,
+  x: number,
+  baseline: number,
+  cuts: MarkCutRule,
+): void {
   const px = x + (seg.inkOffset ?? 0);
   const py = baseline + (seg.baselineShift ?? 0);
   if (seg.inkScale === undefined) {
     // A Western run of a tracked line of the CJK composer keeps its
     // ligatures, as it was measured (#703). Down a vertical line the
     // vertical painter does it for each sideways run.
-    const tracking = !verticalPaintActive() && !seg.rtl && !hasCJK(seg.text) ? parseFloat(ctx.letterSpacing) || 0 : 0;
+    const tracking = !verticalPaintActive() && !seg.rtl && !hasCJK(seg.text) ? letterSpacingOf(ctx) : 0;
     if (tracking !== 0) fillTrackedWord(ctx, seg.text, px, py, tracking, (piece, x, y) => fillFlowText(ctx, piece, x, y, 'fill', undefined, cuts));
     else fillFlowText(ctx, seg.text, px, py, 'fill', undefined, cuts, segmentOrientation(seg));
     return;
   }
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(px, py);
   ctx.scale(seg.inkScale, 1);
   fillFlowText(ctx, seg.text, 0, 0, 'fill', undefined, cuts, verticalPaintActive() ? 'sideways' : undefined);
-  ctx.restore();
+  restoreContext(ctx);
 }

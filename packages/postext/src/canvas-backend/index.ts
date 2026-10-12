@@ -8,7 +8,7 @@ import { cjkGridCells } from '../pipeline/cjkGrid';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { documentInkHex } from '../svg/singleInk';
-import { renderLangOf, shapingLanguageOf } from '../locale';
+import { shapingLanguageOf } from '../locale';
 import { setSegmentLanguages } from './wordRuns';
 import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
 import { setVerticalPaint } from './verticalText';
@@ -16,6 +16,7 @@ import { beginMirroredFlow } from './mirrorFrame';
 import { renderComicPage } from './comic';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
+import { resetContextState, restoreContext, saveContext } from './contextState';
 export {
   registerResourceImage,
   unregisterResourceImage,
@@ -117,19 +118,23 @@ function paintPage(
   // paints with `ltr`, and the context gets its own direction back.
   const direction = 'direction' in ctx ? ctx.direction : undefined;
   if (direction !== undefined) ctx.direction = 'ltr';
+  // The page sets the language it paints in (`paintContext`); what the
+  // host draws over it afterwards is the host's, in the context's own.
+  const language = 'lang' in ctx ? (ctx as CanvasRenderingContext2D & { lang: string }).lang : undefined;
   try {
     paintContext(ctx, canvas, page, doc, options);
   } finally {
     if (direction !== undefined) ctx.direction = direction;
+    if (language !== undefined && (ctx as CanvasRenderingContext2D & { lang: string }).lang !== language) (ctx as CanvasRenderingContext2D & { lang: string }).lang = language;
   }
 }
 
-/** {@link renderLangOf} of each resolved config: every page of a document
- *  asks for it. */
+/** {@link shapingLanguageOf} of each resolved config: every page of a
+ *  document asks for it. */
 const langByConfig = new WeakMap<object, string | undefined>();
 function langOf(config: VDTDocument['config']): string | undefined {
   if (langByConfig.has(config)) return langByConfig.get(config);
-  const lang = shapingLanguageOf(config) ?? renderLangOf(config);
+  const lang = shapingLanguageOf(config);
   langByConfig.set(config, lang);
   return lang;
 }
@@ -141,11 +146,23 @@ function paintContext(
   doc: VDTDocument,
   options?: RenderPageOptions,
 ): void {
+  // The canvas was just given its size: its state is new.
+  resetContextState(ctx);
   // The page is painted in the language it was measured in (`ctx.lang`,
-  // Chrome 136+; #764): the document's, so the browser picks the glyph
-  // forms of that language, and a run's own where it names one. A
-  // document shaped in the host's language keeps what it had: its own
-  // when it is Chinese, Japanese, Korean or written right to left.
+  // Chrome 136+; #764): the document's when it asks for its own
+  // (`bodyText.shapingLanguage: 'document'`), so the browser picks the
+  // glyph forms the layout measured, and a run's own where it names one.
+  // The language holds through every `save()` of the page
+  // (`saveContext`): a context loses it there.
+  //
+  // A document shaped in the host's language was measured in the host's,
+  // and is painted in it: the context is left as it comes. Up to postext
+  // 1.29.1 a Chinese, Japanese, Korean or right-to-left document had its
+  // own language set here all the same, and lost it at the first `save()`,
+  // so its columns, its design text and its captions were painted in the
+  // host's, as they still are; only what was painted in no saved state at
+  // all (a floated text box on a page with no cut lines, not vertical and
+  // not mirrored) took the document's language, against its measure.
   const lang = langOf(doc.config);
   if (lang !== undefined && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
   setSegmentLanguages(doc.config.bodyText?.shapingLanguage === 'document');
@@ -194,7 +211,7 @@ function paintContext(
   const bleedClip = trimOff > 0;
   if (bleedClip) {
     const bleedInset = Math.max(0, trimOff - bleedPx);
-    ctx.save();
+    saveContext(ctx);
     ctx.beginPath();
     ctx.rect(bleedInset, bleedInset, page.width - bleedInset * 2, page.height - bleedInset * 2);
     ctx.clip();
@@ -208,7 +225,7 @@ function paintContext(
   const flow = verticalFlowOf(page);
   let outerVertical: ReturnType<typeof setVerticalPaint> = null;
   if (flow) {
-    ctx.save();
+    saveContext(ctx);
     ctx.transform(0, 1, -1, 0, page.width, 0);
     outerVertical = setVerticalPaint({
       region: doc.config.cjk?.region ?? 'mainland',
@@ -258,7 +275,7 @@ function paintContext(
   const hanging = doc.config.cjk?.hangingPunctuation !== 'none';
   for (const col of page.columns) {
     const clip = columnClipRect(col, doc.config.page.dpi, hanging);
-    ctx.save();
+    saveContext(ctx);
     ctx.beginPath();
     ctx.rect(clip.x, clip.y, clip.width, clip.height);
     ctx.clip();
@@ -266,7 +283,7 @@ function paintContext(
       if (block.tocPart && block.designOverlay) continue;
       renderBlock(ctx, block, col.bbox.width, col.bbox.x, inkHex);
     }
-    ctx.restore();
+    restoreContext(ctx);
     // A part row of the contents carries a design of its own, which may
     // run past the column (a band reaching beyond the page numbers): it
     // is drawn outside the column clip, like a float.
@@ -286,7 +303,7 @@ function paintContext(
 
   if (flow) {
     setVerticalPaint(outerVertical);
-    ctx.restore();
+    restoreContext(ctx);
   }
   endMirror?.();
 
@@ -299,7 +316,7 @@ function paintContext(
   if (page.header) renderHeaderFooterSlot(ctx, page.header, inkHex);
   if (page.footer) renderHeaderFooterSlot(ctx, page.footer, inkHex);
 
-  if (bleedClip) ctx.restore();
+  if (bleedClip) restoreContext(ctx);
 
   if (options?.pageNegative) {
     ctx.filter = 'none';
@@ -335,7 +352,7 @@ function paintPrintPreview(
   const guides = preview.guides;
   const marks = preview.marksFor?.(page.index) ?? [];
   if (!guides && marks.length === 0) return;
-  ctx.save();
+  saveContext(ctx);
   const line = 1 / pxPerPagePx;
   ctx.lineWidth = line;
   if (guides) {
@@ -365,7 +382,7 @@ function paintPrintPreview(
       ctx.strokeRect(m.x, m.y, m.width, m.height);
     }
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Screen-only colours of the print preview's guides. */

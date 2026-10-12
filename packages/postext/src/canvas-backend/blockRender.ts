@@ -20,6 +20,7 @@ import { fillSegmentWord, paintsSegmentLanguage, type WordRun } from './wordRuns
 import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 import { taskBoxTick } from '../taskBox';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 function pickSegmentFont(
   bold: boolean,
@@ -70,10 +71,10 @@ function renderMathRender(
   const { viewBox, widthPx, heightPx, paths } = render;
   if (!paths.length || viewBox.width <= 0 || viewBox.height <= 0) {
     // Fallback — draw a muted placeholder so the box is still visible.
-    ctx.save();
+    saveContext(ctx);
     ctx.fillStyle = render.error ? 'rgba(198, 40, 40, 0.15)' : 'rgba(160, 160, 160, 0.15)';
     ctx.fillRect(topLeftX, topLeftY, widthPx, heightPx);
-    ctx.restore();
+    restoreContext(ctx);
     return;
   }
   // The bitmap at the size the formula shows at on the device (#674).
@@ -88,7 +89,7 @@ function renderMathRender(
   // Paths are not a run or a picture the mirrored frame turns back on its
   // own (see `mirrorFrame.ts`): the formula asks for it.
   counterFlipBox(ctx, topLeftX, widthPx, () => {
-    ctx.save();
+    saveContext(ctx);
     ctx.translate(topLeftX, topLeftY);
     ctx.scale(sx, sy);
     ctx.translate(-viewBox.minX, -viewBox.minY);
@@ -96,7 +97,7 @@ function renderMathRender(
       ctx.fillStyle = paths[i]!.fill === 'currentColor' ? fallbackColor : paths[i]!.fill;
       ctx.fill(path2ds[i]!);
     }
-    ctx.restore();
+    restoreContext(ctx);
   });
 }
 
@@ -294,7 +295,7 @@ function renderComposedSegments(
       // justified run before it added between its characters: painted with
       // that spacing still set, its words ran into the text after it.
       if (spacing !== tracking) {
-        ctx.letterSpacing = `${tracking}px`;
+        setLetterSpacing(ctx, tracking);
         spacing = tracking;
       }
       paintChip(ctx, seg.chip, x, baseline, (run) =>
@@ -335,7 +336,7 @@ function renderComposedSegments(
     }
     const segSpacing = tracking + (seg.tracking ?? 0);
     if (segSpacing !== spacing) {
-      ctx.letterSpacing = `${segSpacing}px`;
+      setLetterSpacing(ctx, segSpacing);
       spacing = segSpacing;
     }
     // A compressed CJK mark is painted before its box (`inkOffset`), along
@@ -347,7 +348,7 @@ function renderComposedSegments(
     if (seg.kunten) paintKunten(ctx, seg.kunten, x, baseline, fill);
     x += seg.width;
   }
-  if (spacing !== tracking) ctx.letterSpacing = `${tracking}px`;
+  if (spacing !== tracking) setLetterSpacing(ctx, tracking);
 }
 
 /** Whether a segment of a line of the CJK composer, or of a line down a
@@ -356,7 +357,9 @@ function composedSegmentIsStyled(s: VDTLineSegment): boolean {
   return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined || s.tracking !== undefined
     || s.inkOffset !== undefined || s.hangs !== undefined || s.autospace !== undefined || s.tcy !== undefined || s.orientation !== undefined
-    || s.ruby !== undefined || s.kunten !== undefined || s.warichu !== undefined || s.labelTab !== undefined || s.sideMarker !== undefined;
+    || s.ruby !== undefined || s.kunten !== undefined || s.warichu !== undefined || s.labelTab !== undefined || s.sideMarker !== undefined
+    // A run in its own language, painted in it (#764).
+    || paintsSegmentLanguage(s);
 }
 
 /**
@@ -544,7 +547,7 @@ function renderTaskBox(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
   const { side, stroke } = box;
   const cx = block.bulletOffsetX + side / 2;
   const cy = block.bulletY ?? firstLine.baseline;
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = block.bulletColor ?? block.color;
   ctx.lineWidth = stroke;
   ctx.lineJoin = 'miter';
@@ -559,7 +562,7 @@ function renderTaskBox(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
     tick.forEach(([dx, dy], i) => (i === 0 ? ctx.moveTo(cx + dx, cy + dy) : ctx.lineTo(cx + dx, cy + dy)));
     ctx.stroke();
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
@@ -570,7 +573,7 @@ function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
   if (!block.bulletText || !block.bulletFontString || block.bulletOffsetX === undefined) return;
   const firstLine = block.lines[0];
   if (!firstLine) return;
-  ctx.save();
+  saveContext(ctx);
   ctx.fillStyle = block.bulletColor ?? block.color;
   // A marker set as text (a contents number) sits on `bulletBaselineY` as
   // its baseline; a list bullet is centred on `bulletY`.
@@ -592,7 +595,7 @@ function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
     // The prefix run before the number, in the separator's style.
     if (block.prefixText && block.prefixX !== undefined) put(block.prefixText, block.prefixX);
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /**
@@ -617,7 +620,7 @@ function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, 
 /** A paragraph's drop cap (#623) on its baseline, and an opening mark
  *  hung before it at text size. */
 function renderDropCap(ctx: CanvasRenderingContext2D, cap: VDTDropCap): void {
-  ctx.save();
+  saveContext(ctx);
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = cap.color;
   ctx.font = cap.fontString;
@@ -626,12 +629,12 @@ function renderDropCap(ctx: CanvasRenderingContext2D, cap: VDTDropCap): void {
     ctx.font = cap.hang.fontString;
     fillFlowText(ctx, cap.hang.text, cap.hang.x, cap.hang.baselineY);
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 function renderStrikethrough(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
   if (!block.strikethroughText) return;
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = block.color;
   ctx.lineWidth = Math.max(1, block.lines[0]?.bbox.height ? block.lines[0].bbox.height * 0.05 : 1);
   for (const line of block.lines) {
@@ -642,7 +645,7 @@ function renderStrikethrough(ctx: CanvasRenderingContext2D, block: VDTBlock): vo
     ctx.lineTo(line.bbox.x + line.bbox.width, y);
     ctx.stroke();
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** A strip's caption (`VDTBlock.stripCaption`, #590): the bar behind it,
@@ -652,10 +655,10 @@ function renderStripCaption(ctx: CanvasRenderingContext2D, block: VDTBlock): voi
   if (!caption) return;
   if (caption.bar) {
     const { rect, background } = caption.bar;
-    ctx.save();
+    saveContext(ctx);
     ctx.fillStyle = background;
     ctx.fillRect(block.bbox.x + rect.x, block.bbox.y + rect.y, rect.width, rect.height);
-    ctx.restore();
+    restoreContext(ctx);
   }
   const style: BlockTextStyle = {
     font: block.fontString,
@@ -722,9 +725,9 @@ export function renderBlock(
   const tocEntry = block.tocEntry !== undefined;
   for (const line of block.lines) {
     const tracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
-    if (tracking !== 0) ctx.letterSpacing = `${tracking}px`;
+    if (tracking !== 0) setLetterSpacing(ctx, tracking);
     renderLine(ctx, line, style, block.textAlign, block.bbox.width, block.bbox.x, lineTrailingTracking(line, tracking), tracking, tocEntry);
-    if (tracking !== 0) ctx.letterSpacing = '0px';
+    if (tracking !== 0) setLetterSpacing(ctx, 0);
     // Emphasis dots, proper-name and book-title lines (#193).
     if (line.marks) paintLineMarks(ctx, line, block.color);
   }

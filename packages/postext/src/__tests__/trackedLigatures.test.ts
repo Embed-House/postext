@@ -3,6 +3,7 @@ import { renderPageToCanvas } from '../canvas-backend';
 import { renderBlock } from '../canvas-backend/blockRender';
 import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
 import { fillTrackedWord, trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText';
+import { setLetterSpacing } from '../canvas-backend/contextState';
 import { renderHeaderFooterSlot, renderTextBlock } from '../canvas-backend/headerFooter';
 import { renderComicBalloon } from '../canvas-backend/comic';
 import { fillFlowText, setVerticalPaint } from '../canvas-backend/verticalText';
@@ -111,7 +112,7 @@ describe('the pieces of a tracked word (#663)', () => {
 
   it('leaves the letter-spacing as it found it and measures a word once', () => {
     const { ctx } = paintingCtx();
-    ctx.letterSpacing = '-0.2px';
+    setLetterSpacing(ctx, -0.2);
     trackedPieces(ctx, 'reflect');
     expect(ctx.letterSpacing).toBe('-0.2px');
     const before = (ctx as unknown as BrowserCtx).measured;
@@ -404,7 +405,7 @@ describe('a word in pieces inside a mirrored frame (#685)', () => {
   it('is turned once, about its box: the pieces in reading order from the box\'s left', () => {
     const { ctx, runs } = sheetCanvas();
     const t = -0.1;
-    ctx.letterSpacing = `${t}px`;
+    setLetterSpacing(ctx, t);
     const end = beginMirroredFlow(ctx, 200);
     const paint = (text: string, x: number, y: number): void => ctx.fillText(text, x, y);
     fillTrackedWord(ctx, 'first', 40, 50, t, paint);
@@ -432,7 +433,7 @@ describe('a word in pieces inside a mirrored frame (#685)', () => {
 
   it('outside a mirrored frame the pieces start at the word\'s left', () => {
     const { ctx, runs } = sheetCanvas();
-    ctx.letterSpacing = '-0.1px';
+    setLetterSpacing(ctx, -0.1);
     fillTrackedWord(ctx, 'first', 40, 50, -0.1, (text, x, y) => ctx.fillText(text, x, y));
     expect(runs.map((r) => [r.text, +leftOf(r).toFixed(6), r.spacing])).toEqual([['fi', 40, 0], ['rst', 44.9, -0.1]]);
   });
@@ -499,7 +500,7 @@ describe('right-to-left words on a tracked line (#685)', () => {
       // …and it is still painted whole, with one `fillText`.
       expect(trackedPieces(ctx, word)).toBeNull();
       const seen: [string, number, number][] = [];
-      ctx.letterSpacing = '0.5px';
+      setLetterSpacing(ctx, 0.5);
       fillTrackedWord(ctx, word, 10, 20, 0.5, (text, x, y) => seen.push([text, x, y]));
       expect(seen).toEqual([[word, 10, 20]]);
       expect(ctx.letterSpacing).toBe('0.5px');
@@ -630,7 +631,7 @@ describe('a tracked vertical line (#685, #703)', () => {
     // where a browser that keeps the ligature puts it.
     const cellAt = (keeps: boolean): Run => {
       const { ctx, runs } = sheetCanvas(keeps);
-      ctx.letterSpacing = '0.5px';
+      setLetterSpacing(ctx, 0.5);
       const outer = setVerticalPaint({ region: 'mainland' });
       fillFlowText(ctx, 'first\u697C', 30, 50);
       setVerticalPaint(outer);

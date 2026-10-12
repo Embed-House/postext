@@ -3,6 +3,7 @@ import { dimensionToPx } from '../units';
 import { columnRuleSegments, footnoteRuleSegments } from '../columnRule';
 import { cropMarkSegments } from '../cropMarks';
 import { CHARACTER_GRID_COLOR, type CjkGridCells } from '../pipeline/cjkGrid';
+import { restoreContext, saveContext } from './contextState';
 
 export function renderBaselineGrid(
   ctx: CanvasRenderingContext2D,
@@ -12,7 +13,7 @@ export function renderBaselineGrid(
   lineWidth: number,
   textExtent: { top: number; bottom: number },
 ): void {
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
 
@@ -38,14 +39,14 @@ export function renderBaselineGrid(
     y += baselineIncrement;
   }
 
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** The character grid (稿纸) over the type area (`cjk.grid.show`): one
  *  square per character position, drawn in a light grey (see
  *  `cjkGridCells`). */
 export function renderCharacterGrid(ctx: CanvasRenderingContext2D, cells: CjkGridCells): void {
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = CHARACTER_GRID_COLOR;
   ctx.lineWidth = 0.5;
   ctx.beginPath();
@@ -65,7 +66,7 @@ export function renderCharacterGrid(ctx: CanvasRenderingContext2D, cells: CjkGri
     }
   });
   ctx.stroke();
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 export function renderColumnRule(
@@ -82,7 +83,7 @@ export function renderColumnRule(
   const segments = columnRuleSegments(columns, footnoteAreas);
   if (segments.length === 0) return;
 
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
 
@@ -93,7 +94,7 @@ export function renderColumnRule(
     ctx.stroke();
   }
 
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 export function renderCutLines(
@@ -104,7 +105,7 @@ export function renderCutLines(
   const { cutLines, dpi } = doc.config.page;
   if (!cutLines.enabled) return;
 
-  ctx.save();
+  saveContext(ctx);
   ctx.strokeStyle = cutLines.color.hex;
   ctx.lineWidth = dimensionToPx(cutLines.markWidth, dpi);
 
@@ -116,7 +117,7 @@ export function renderCutLines(
     ctx.stroke();
   }
 
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** The page's content area. Pages built by the pipeline carry it directly
@@ -151,7 +152,7 @@ export function computeContentArea(page: VDTPage, doc: VDTDocument): BoundingBox
 export function renderFootnoteRules(ctx: CanvasRenderingContext2D, page: VDTPage): void {
   const rules = footnoteRuleSegments(page);
   if (rules.length === 0) return;
-  ctx.save();
+  saveContext(ctx);
   for (const r of rules) {
     ctx.strokeStyle = r.color;
     ctx.lineWidth = r.lineWidthPx;
@@ -160,5 +161,5 @@ export function renderFootnoteRules(ctx: CanvasRenderingContext2D, page: VDTPage
     ctx.lineTo(r.x + r.width, r.y);
     ctx.stroke();
   }
-  ctx.restore();
+  restoreContext(ctx);
 }

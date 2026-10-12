@@ -13,6 +13,7 @@ import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesi
 import { drawResourceImage } from './renderResourceBlock';
 import { renderTextBlock } from './headerFooter';
 import { comicBalloonMatrix, comicRoughBorder } from '../comics/paint';
+import { restoreContext, saveContext } from './contextState';
 
 export { roughOutline, comicRoughBorder } from '../comics/paint';
 
@@ -45,11 +46,11 @@ export function comicPanelPath(ctx: CanvasRenderingContext2D, panel: Pick<VDTCom
 function drawArt(ctx: CanvasRenderingContext2D, art: VDTComicArt, inkHex: string | null): boolean {
   const { box } = art;
   if (!art.mirrored) return drawResourceImage(ctx, art.fileId, box.x, box.y, box.width, box.height, { inkHex, svg: art.kind === 'svg' }, art.resourceId);
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(box.x + box.width, box.y);
   ctx.scale(-1, 1);
   const drawn = drawResourceImage(ctx, art.fileId, 0, 0, box.width, box.height, { inkHex, svg: art.kind === 'svg' }, art.resourceId);
-  ctx.restore();
+  restoreContext(ctx);
   return drawn;
 }
 
@@ -57,7 +58,7 @@ function drawArt(ctx: CanvasRenderingContext2D, art: VDTComicArt, inkHex: string
  *  cut-out over them unless `pop` is false (a page paints the cut-outs of
  *  all its panels after the last one, {@link renderComicPanels}). */
 export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicPanel, inkHex: string | null = null, pop = true): void {
-  ctx.save();
+  saveContext(ctx);
   comicPanelPath(ctx, panel);
   ctx.clip();
   if (panel.background) {
@@ -69,10 +70,10 @@ export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicP
     ctx.fillStyle = 'rgba(160, 160, 160, 0.15)';
     ctx.fillRect(panel.bbox.x, panel.bbox.y, panel.bbox.width, panel.bbox.height);
   }
-  ctx.restore();
+  restoreContext(ctx);
   const { border } = panel;
   if (border.style !== 'none' && border.width > 0) {
-    ctx.save();
+    saveContext(ctx);
     ctx.strokeStyle = border.color;
     ctx.lineWidth = border.width;
     ctx.lineJoin = 'round';
@@ -86,7 +87,7 @@ export function renderComicPanel(ctx: CanvasRenderingContext2D, panel: VDTComicP
       comicPanelPath(ctx, panel);
     }
     ctx.stroke();
-    ctx.restore();
+    restoreContext(ctx);
   }
   // The pop-out cut-out runs over the border, unclipped.
   if (pop && panel.pop) drawArt(ctx, panel.pop, inkHex);
@@ -182,7 +183,7 @@ function haloOf(block: VDTDesignTextBlock, halo: NonNullable<VDTComicBalloon['ha
  *  halo and its text, leaned by `skew` and turned by `rotate` degrees
  *  about its box's centre. */
 export function renderComicBalloon(ctx: CanvasRenderingContext2D, balloon: VDTComicBalloon): void {
-  ctx.save();
+  saveContext(ctx);
   const m = comicBalloonMatrix(balloon);
   if (m) ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
   if (balloon.shape) paintBalloonShape(ctx, balloon.shape);
@@ -192,7 +193,7 @@ export function renderComicBalloon(ctx: CanvasRenderingContext2D, balloon: VDTCo
     for (const block of balloon.text) renderTextBlock(ctx, haloOf(block, balloon.halo));
   }
   for (const block of balloon.text) renderTextBlock(ctx, block);
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Paint the lettering of a comic page: balloons, captions and notes in

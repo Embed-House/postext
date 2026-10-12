@@ -188,9 +188,12 @@ function sourceTag(config: LanguageSource | undefined): string | undefined {
   return presentTag(config?.locale) ?? presentTag(h?.tag) ?? presentTag(h?.locale);
 }
 
-/** The `lang` a renderer declares for a resolved document (the HTML root,
- *  the canvas context): its language in canonical form (`zh-Hant-TW`,
- *  `ar-EG`, `ca`), from `locale`, else the hyphenation tag.
+/** The `lang` a renderer declares for a resolved document (the HTML
+ *  root): its language in canonical form (`zh-Hant-TW`, `ar-EG`, `ca`),
+ *  from `locale`, else the hyphenation tag. The canvas declares nothing:
+ *  it paints in the language the layout measured in
+ *  ({@link shapingLanguageOf}), the host's unless the document asks for
+ *  its own.
  *
  *  A document whose text is shaped in the host's language (the default of
  *  `bodyText.shapingLanguage`) declares one only when it is Chinese,

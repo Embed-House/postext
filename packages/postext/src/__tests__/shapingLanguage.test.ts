@@ -351,11 +351,15 @@ describe('the outputs paint what was measured (#764)', () => {
     expect(mixed[mixed.length - 1]!.lang).toBe('zh-Hans');
   });
 
-  it('the canvas of a document shaped in the host\'s language: untouched unless it is Chinese, Japanese, Korean or right to left', () => {
+  it('the canvas of a document shaped in the host\'s language is left in the host\'s, whatever the document\'s', () => {
+    // It was measured in the host's language, so it is painted in it. Up
+    // to postext 1.29.1 a Chinese, Japanese, Korean or right-to-left one
+    // had its own set on the context, which a real context dropped at the
+    // first `save()` of the page: its columns were painted in the host's.
     const pinned = { bodyText: { shapingLanguage: 'host' as const } };
     expect(new Set(paintedLanguages(build(CATALAN, config('Fira', 'ca', pinned))).map((p) => p.lang))).toEqual(new Set(['inherit']));
     const chinese = paintedLanguages(build('In **2016** it ran, :ltr[dated 2016]{lang=en} and so on.\n', config('Song', 'zh-Hans', pinned)));
-    expect(new Set(chinese.map((p) => p.lang))).toEqual(new Set(['zh-Hans']));
+    expect(new Set(chinese.map((p) => p.lang))).toEqual(new Set(['inherit']));
   });
 
   it('the HTML: the root and every page say the language', () => {

@@ -1,5 +1,6 @@
 import type { VDTBlock, VDTDocument, VDTLine, VDTPage } from './vdt';
 import { DEFAULT_DEBUG_CONFIG } from './defaults/debug';
+import { restoreContext, saveContext } from './canvas-backend/contextState';
 
 const FONT_SIZE_RE = /(\d*\.?\d+)px/;
 
@@ -113,9 +114,9 @@ export function drawLooseLines(
 ): LooseLine[] {
   const lines = findLooseLines(doc, { threshold: options.threshold, pageIndex: page.index });
   if (lines.length === 0) return lines;
-  ctx.save();
+  saveContext(ctx);
   ctx.fillStyle = options.color ?? DEFAULT_DEBUG_CONFIG.looseLineHighlight.color.hex;
   for (const l of lines) ctx.fillRect(l.x, l.y, l.width, l.height);
-  ctx.restore();
+  restoreContext(ctx);
   return lines;
 }

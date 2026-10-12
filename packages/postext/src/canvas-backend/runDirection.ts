@@ -1,4 +1,5 @@
 import { joiningScriptIn } from '../measure/joining';
+import { letterSpacingOf, setLetterSpacing } from './contextState';
 
 /**
  * Painting one right-to-left run of a design text or a chip on the canvas
@@ -28,16 +29,19 @@ export function paintRunInDirection(ctx: CanvasRenderingContext2D, rtl: boolean 
   }
   const direction = ctx.direction;
   const align = ctx.textAlign;
-  const spacing = 'letterSpacing' in ctx && joiningScriptIn(text) ? ctx.letterSpacing : undefined;
+  // The tracking to lift and put back: the backend's own record of it
+  // (`contextState.ts`), since the context does not tell inside a saved
+  // state.
+  const spacing = joiningScriptIn(text) ? letterSpacingOf(ctx) : 0;
   ctx.direction = 'rtl';
   ctx.textAlign = 'left';
-  if (spacing !== undefined && spacing !== '0px') ctx.letterSpacing = '0px';
+  if (spacing !== 0) setLetterSpacing(ctx, 0);
   try {
     paint();
   } finally {
     ctx.direction = direction;
     ctx.textAlign = align;
-    if (spacing !== undefined && spacing !== '0px') ctx.letterSpacing = spacing;
+    if (spacing !== 0) setLetterSpacing(ctx, spacing);
   }
 }
 
