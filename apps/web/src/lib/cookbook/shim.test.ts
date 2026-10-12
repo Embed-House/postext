@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { SHIM_PATHS, importMapTag, localImports, resolveBare, resolveEngine, rewriteBareImports, shimModules } from "../../../scripts/cookbook/shim.ts";
+import { runCapture, runSandboxOnly } from "../../../scripts/cookbook/capture.ts";
+import { SHIM_PATHS, forcedConfig, importMapTag, localImports, resolveBare, resolveEngine, rewriteBareImports, shimModules } from "../../../scripts/cookbook/shim.ts";
 import { POSTEXT_EPUB_URL, POSTEXT_EPUB_WORKER_URL, POSTEXT_FOLIO_URL, isEngineUrl } from "./detect.ts";
 import { ALLOWED_IMPORTS } from "./lint.ts";
 import { REPO_DIR } from "./paths.ts";
@@ -38,6 +39,66 @@ describe("capture shims", () => {
     expect(shim).toContain("readEpub(bytes)");
     expect(shimModules(resolveEngine("local"))["/__shim/postext-epub-worker.js"]).toContain("'/__local/postext-epub/worker/client.js'");
     expect(importMapTag()).toContain(`"${POSTEXT_EPUB_WORKER_URL}":"/__shim/postext-epub-worker.js"`);
+  });
+});
+
+// A run can force a configuration on every build (COOKBOOK_FORCE_CONFIG):
+// the paint check of #764 lays the recipes out under
+// `bodyText.shapingLanguage: 'document'`, which no pen names.
+describe("a forced configuration", () => {
+  const FORCE = { bodyText: { shapingLanguage: "document" } };
+
+  it("is the JSON object of COOKBOOK_FORCE_CONFIG, or none", () => {
+    expect(forcedConfig(undefined)).toBeNull();
+    expect(forcedConfig("  ")).toBeNull();
+    expect(forcedConfig(JSON.stringify(FORCE))).toEqual(FORCE);
+    expect(() => forcedConfig("{bodyText")).toThrow(/COOKBOOK_FORCE_CONFIG is not JSON/);
+    expect(() => forcedConfig("[1]")).toThrow(/expects a JSON object/);
+    expect(() => forcedConfig("3")).toThrow(/expects a JSON object/);
+  });
+
+  /** The recorder's `forced` of a run, taken out of the module's text. */
+  const forcedOf = (force: Record<string, unknown> | null): ((config: unknown) => unknown) => {
+    const recorder = shimModules(resolveEngine("npm"), { force })["/__shim/recorder.js"]!;
+    const tail = recorder.slice(recorder.indexOf("const FORCED")).replace("export function forced", "function forced");
+    return new Function(`${tail}; return forced;`)() as (config: unknown) => unknown;
+  };
+
+  it("is merged key by key over each configuration a pen builds with", () => {
+    const forced = forcedOf(FORCE);
+    const config = { locale: "ar", bodyText: { fontFamily: "Amiri", hyphenation: { enabled: false } } };
+    expect(forced(config)).toEqual({ locale: "ar", bodyText: { fontFamily: "Amiri", hyphenation: { enabled: false }, shapingLanguage: "document" } });
+    // The pen's own object is left as it is.
+    expect(config.bodyText).not.toHaveProperty("shapingLanguage");
+    expect(forced(undefined)).toEqual(FORCE);
+    expect(forced({ bodyText: { shapingLanguage: "host" } })).toEqual(FORCE);
+  });
+
+  it("leaves a configuration as given when none is forced", () => {
+    const config = { locale: "ar" };
+    expect(forcedOf(null)(config)).toBe(config);
+    expect(forcedOf(null)(undefined)).toBeUndefined();
+  });
+
+  it("reaches buildDocument, buildDocumentWithFonts, buildBundle and the worker client's build", () => {
+    const shims = shimModules(resolveEngine("local"), { force: FORCE });
+    const engine = shims["/__shim/postext.js"]!;
+    expect(engine.match(/config = forced\(config\);/g)).toHaveLength(2);
+    expect(engine).toContain("config: forced(options?.config ?? bundle?.config)");
+    expect(shims["/__shim/postext-worker.js"]).toContain("config = forced(config);");
+    expect(shims["/__shim/recorder.js"]).toContain(`const FORCED = ${JSON.stringify(FORCE)};`);
+  });
+
+  it("is never captured: a run that would write stops", async () => {
+    const before = process.env.COOKBOOK_FORCE_CONFIG;
+    process.env.COOKBOOK_FORCE_CONFIG = JSON.stringify(FORCE);
+    try {
+      await expect(runCapture({ slugs: ["no-such-recipe"] })).rejects.toThrow(/COOKBOOK_FORCE_CONFIG is set: a forced configuration is never captured/);
+      await expect(runSandboxOnly({ slugs: ["no-such-recipe"] })).rejects.toThrow(/COOKBOOK_FORCE_CONFIG is set/);
+    } finally {
+      if (before === undefined) delete process.env.COOKBOOK_FORCE_CONFIG;
+      else process.env.COOKBOOK_FORCE_CONFIG = before;
+    }
   });
 });
 

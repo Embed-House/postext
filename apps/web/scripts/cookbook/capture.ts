@@ -50,7 +50,7 @@ import type { HarnessBrowser, PageChange, SandboxBundle, SandboxMeta, VariantRun
 import { launchBrowser, runVariant } from "./harness.ts";
 import { writeSheet } from "./sheet.ts";
 import type { SheetEntry } from "./sheet.ts";
-import { resolveEngine } from "./shim.ts";
+import { forcedConfig, resolveEngine } from "./shim.ts";
 import type { EngineSpec } from "./shim.ts";
 import { harnessDetail, protocolTimeoutFor } from "./steps.ts";
 
@@ -779,7 +779,20 @@ async function pool<T>(jobs: (() => Promise<T>)[], limit: number): Promise<T[]> 
   return results;
 }
 
+/**
+ * A run with a forced configuration (`COOKBOOK_FORCE_CONFIG`, shim.ts)
+ * lays the recipes out as no reader's pen does: it checks, and says so on
+ * its first line; asked to write a capture or a bundle, it stops.
+ */
+function announceForcedConfig(writes: boolean): void {
+  const force = forcedConfig();
+  if (!force) return;
+  if (writes) throw new Error("COOKBOOK_FORCE_CONFIG is set: a forced configuration is never captured, run with --check (or unset it)");
+  process.stderr.write(styleText("yellow", `  configuration forced on every build (COOKBOOK_FORCE_CONFIG): ${JSON.stringify(force)}\n`, { stream: process.stderr }));
+}
+
 export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]> {
+  announceForcedConfig(!opts.check);
   const engine = resolveEngine(opts.engine ?? "npm");
   const langs = opts.langs?.length ? opts.langs : SAMPLE_LOCALES;
   const { prepared, broken } = selectRecipes(opts, langs, engine);
@@ -891,6 +904,7 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
  * layout than the published pages shows up as a warning.
  */
 export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResult[]> {
+  announceForcedConfig(true);
   const langs = opts.langs?.length ? opts.langs : SAMPLE_LOCALES;
   const slugs = opts.slugs.length ? opts.slugs : listRecipeSlugs();
   const results: CaptureResult[] = [];
