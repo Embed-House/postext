@@ -272,9 +272,11 @@ describe('lang in the output', () => {
     expect(renderLangOf({ bodyText: { hyphenation: { tag: 'ja-JP' } } })).toBe('ja-JP');
   });
 
-  it('other documents declare theirs too (#764), and print as before when shaped in the language of the host', () => {
-    expect(renderToHtml(docOf({ locale: 'es' }))).toContain('<div class="pt-doc" lang="es" data-mode=');
-    expect(renderLangOf({ locale: 'en-us' })).toBe('en-US');
+  it('other documents declare theirs when shaped in their own language (#764), and print as before in the language of the host', () => {
+    expect(renderToHtml(docOf({ locale: 'es', bodyText: { shapingLanguage: 'document' } }))).toContain('<div class="pt-doc" lang="es" data-mode=');
+    expect(renderLangOf({ locale: 'en-us', bodyText: { shapingLanguage: 'document' } })).toBe('en-US');
+    expect(renderToHtml(docOf({ locale: 'es' }))).toContain('<div class="pt-doc" data-mode=');
+    expect(renderLangOf({ locale: 'en-us' })).toBeUndefined();
     expect(renderToHtml(docOf({ locale: 'es', bodyText: { shapingLanguage: 'host' } }))).toContain('<div class="pt-doc" data-mode=');
     expect(renderLangOf({ locale: 'en-us', bodyText: { shapingLanguage: 'host' } })).toBeUndefined();
     // A Chinese document declared its language before, and still does.

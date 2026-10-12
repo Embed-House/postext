@@ -313,12 +313,12 @@ H&J / Knuth–Plass
 │                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
-├─ shapingLanguage      'document' | 'host'  'document'   (≥ 1.29) the language the text is measured, painted and embedded in: the document's
-│                        `locale` (a run's own with `{lang=…}`), set on every measuring context, so the lines are the same on a page in any
-│                        language and in a layout worker; canvas `ctx.lang`, HTML/EPUB `lang`, PDF OpenType language system (ZHS, ZHT, JAN, CAT, TRK…).
-│                        'host' = ≤ 1.28: measured in the host page's language (none in a worker); every preset below configVersion 13 reads 'host'.
-│                        Set `locale` on every ported book (zh-Hans / zh-Hant / ja / ca …): it now decides glyph forms and line breaks, not only strings.
-│                        `postext` CLI and render.mjs measure on Skia, which shapes without a language: they lay out with 'host' (font-default forms).
+├─ shapingLanguage      'document' | 'host'  'host'       (≥ 1.29) the language the text is measured, painted and embedded in. 'host' (default, = ≤ 1.28):
+│                        the measure takes the host page's language (none in a worker); only CJK and right-to-left documents are painted in their own.
+│                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context, so the lines are the same on a
+│                        page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, ZHT, JAN, CAT, TRK…).
+│                        NOT FINISHED: the canvas still paints in the host's language and the PDF sets Arabic marks and some Catalan l·l off the
+│                        measured widths; it was the default of 1.29.0 alone. Leave it unset when porting. Presets below configVersion 13 read 'host'.
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
@@ -1807,7 +1807,7 @@ too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter s
 kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
 reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
 no letter shaped alone); one stamped 12 (postext 1.28), those of rules 13: `bodyText.shapingLanguage: 'host'` on every such
-config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker), and
+config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker) (the default too since 1.29.1; a preset stamped 13 with no value was laid out in the document's language by 1.29.0 and reads 'host' from 1.29.1 on), and
 `unorderedLists.taskBox: 'character'` when a chapter holds a task item (`- [ ]`, `- [x]`) (#765: its box stays the character
 ☐ / ☑ in the list face, the item's text after that character's width). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,

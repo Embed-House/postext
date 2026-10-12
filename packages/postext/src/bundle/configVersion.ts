@@ -167,10 +167,10 @@ import { hasCJK } from '../measure/cjk';
  *     alone, in the script each browser and the PDF picked ({@link
  *     pinLegacyScriptContext});
  * - 13 (#764), the rules of postext 1.29:
- *   - the text is measured, painted and embedded in the document's own
- *     language on every host (`bodyText.shapingLanguage`, #764), where up
- *     to 1.28 the layout measured in the language of the page that hosted
- *     it, and in none in a worker ({@link pinLegacyShapingLanguage});
+ *   - the language the text is shaped in is a setting
+ *     (`bodyText.shapingLanguage`, #764): the host's, as up to 1.28, or
+ *     the document's own on every host; an older configuration has the
+ *     host's written out ({@link pinLegacyShapingLanguage});
  *   - the box of a task item is drawn by the engine and takes a room of
  *     its own (`unorderedLists.taskBox`, #765), where up to 1.28 it was the
  *     character ☐ or ☑ in the list's face, as wide as the font the system
@@ -1507,12 +1507,17 @@ export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config:
  * the language its text was shaped in: `bodyText.shapingLanguage: 'host'`,
  * the measuring contexts left with the language of the page that hosts
  * the layout (none in a worker) and only a Chinese, Japanese, Korean or
- * right-to-left document painted and embedded in its own, where today
- * every document is measured, painted and embedded in its own language.
- * Every such configuration gets it: a face answers with other glyphs
- * under a language, and which faces a document loads is not known here.
- * A configuration that names the setting already is returned as it is
- * (the same object).
+ * right-to-left document painted and embedded in its own. That is the
+ * default again since postext 1.29.1 (in 1.29.0 alone it was the
+ * document's own language), and the pin writes it out, so such a
+ * configuration keeps it when the default changes. Every such
+ * configuration gets it: a face answers with other glyphs under a
+ * language, and which faces a document loads is not known here. A
+ * configuration that names the setting already is returned as it is (the
+ * same object). One stored under 13 with no value was written by postext
+ * 1.29.0, which laid it out in the document's language, or by a later one,
+ * which lays it out in the host's: it reads with the default of the
+ * engine that reads it.
  */
 export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(config: T): T {
   const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};

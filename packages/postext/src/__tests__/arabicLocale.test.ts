@@ -70,16 +70,18 @@ describe('Arabic as a document language', () => {
     expect(warn).toHaveBeenCalledTimes(1);
   });
 
-  it('declares its language to the renderers, as every document does (#764)', () => {
+  it('declares its language to the renderers, and so does any document shaped in its own (#764)', () => {
     expect(renderLangOf({ locale: 'ar' })).toBe('ar');
     expect(renderLangOf({ locale: 'ar_eg' })).toBe('ar-EG');
     expect(renderLangOf({ locale: 'fa-IR' })).toBe('fa-IR');
     expect(renderLangOf({ locale: 'he' })).toBe('he');
     expect(renderLangOf({ bodyText: { hyphenation: { tag: 'ur-PK' } } })).toBe('ur-PK');
     for (const [locale, tag] of [['en-us', 'en-US'], ['es', 'es'], ['tr', 'tr'], ['sw', 'sw']] as const) {
-      expect(renderLangOf({ locale }), locale).toBe(tag);
-      // Shaped in the host's language, as up to 1.28: a left-to-right
-      // document that is not Chinese, Japanese or Korean declares none.
+      expect(renderLangOf({ locale, bodyText: { shapingLanguage: 'document' } }), locale).toBe(tag);
+      // Shaped in the host's language, the default, as up to 1.28: a
+      // left-to-right document that is not Chinese, Japanese or Korean
+      // declares none.
+      expect(renderLangOf({ locale }), locale).toBeUndefined();
       expect(renderLangOf({ locale, bodyText: { shapingLanguage: 'host' } }), locale).toBeUndefined();
     }
     expect(renderLangOf({ locale: 'ar_eg', bodyText: { shapingLanguage: 'host' } })).toBe('ar-EG');

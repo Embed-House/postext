@@ -87,7 +87,7 @@ function config(locale: string, fontFamily: string, shapingLanguage?: 'host'): P
     layout: { layoutType: 'single' },
     header: { elements: [] },
     footer: { elements: [] },
-    bodyText: { fontFamily, fontSize: pt(SIZE), lineHeight: pt(36), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false }, ...(shapingLanguage ? { shapingLanguage } : {}) },
+    bodyText: { fontFamily, fontSize: pt(SIZE), lineHeight: pt(36), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false }, shapingLanguage: shapingLanguage ?? 'document' },
   };
 }
 
