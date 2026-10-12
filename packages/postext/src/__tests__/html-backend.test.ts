@@ -70,14 +70,18 @@ describe('renderToHtmlIndexed paint order', () => {
 
     // The header is emitted after the blocks (on top), and the block list
     // still drives per-block patching.
-    const headerAt = page.innerHtml.indexOf('Running head');
+    // A space inside one box of text is a box of its own (#770): the
+    // browser would kern the letters beside it, where the canvas that
+    // measured the head shapes word by word.
+    const head = 'Running<span style="display:inline-block;"> </span>head';
+    const headerAt = page.innerHtml.indexOf(head);
     expect(headerAt).toBeGreaterThan(firstBlockAt);
     expect(page.blocks.map((b) => b.id)).toEqual(part.columns[0]!.blocks.map((b) => b.id));
     expect(page.innerHtml.startsWith(page.blocks[0]!.html)).toBe(false);
     // The non-block markup is exposed on its own so a block-level patcher
     // can notice a design-only change.
     expect(page.decorationHtml).toContain('background:#e3e0d6');
-    expect(page.decorationHtml).toContain('Running head');
+    expect(page.decorationHtml).toContain(head);
     expect(page.decorationHtml).not.toContain('pt-block');
   });
 });

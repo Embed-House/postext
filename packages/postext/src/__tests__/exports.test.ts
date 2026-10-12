@@ -123,6 +123,8 @@ describe("package exports", () => {
       "lineInkExtent",
       "joinedWordPieces",
       "lineWordSegments",
+      "lineWordSegmentsInOrder",
+      "cellsOf",
       "applyCjkGrid",
       "cjkGridGeometry",
       "cjkGridCells",

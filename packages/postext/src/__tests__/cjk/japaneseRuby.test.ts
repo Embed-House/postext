@@ -487,7 +487,7 @@ describe('renderers paint the geometry', () => {
 
   it('HTML: the same boxes', () => {
     const html = renderToHtml(build(MD));
-    expect(html).toContain('<span style="position:absolute;left:25.000px;top:0;white-space:pre;letter-spacing:10px;">紅茶</span>');
+    expect(html).toContain('<span style="position:absolute;left:25.000px;top:0;white-space:pre;letter-spacing:10px;font-kerning:none;">紅茶</span>');
     expect(html).toMatch(/left:20\.000px;top:-[\d.]+px;white-space:pre;"><span style="font:[^"]*10px[^"]*">こうちゃかな</);
     expect(html).toMatch(/left:130\.000px;top:-[\d.]+px;white-space:pre;"><span style="font:[^"]*">む</);
     expect(html).toMatch(/left:160\.000px;top:-[\d.]+px;white-space:pre;"><span style="font:[^"]*">ぎ</);

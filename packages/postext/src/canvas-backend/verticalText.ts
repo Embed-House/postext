@@ -38,6 +38,7 @@ import { measureRunWidth, withMeasureLanguage } from '../measure/canvas';
 import { hasCJK } from '../measure/cjk';
 import { fillTrackedWord } from './trackedText';
 import { languageOf, letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { contextTextWidth, fillContextText, measureContextText, strokeContextText } from './contextText';
 
 /** What the painter needs while a vertical flow paints. */
 export interface VerticalPaintState {
@@ -155,7 +156,7 @@ export const VERTICAL_ALTERNATE_SAMPLE = '「」『』（）《》〈〉【】�
 
 function inkKey(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, font: string, text: string): string {
   ctx.font = font;
-  const m = ctx.measureText(text);
+  const m = measureContextText(ctx, text);
   return [m.actualBoundingBoxLeft, m.actualBoundingBoxRight, m.actualBoundingBoxAscent, m.actualBoundingBoxDescent]
     .map((v) => Math.round((v ?? 0) * 10))
     .join(',');
@@ -331,8 +332,8 @@ function parseFont(font: string): { em: number; family: string; prefix: string }
 export type TextPaintMode = 'fill' | 'stroke' | 'fillStroke';
 
 function put(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, mode: TextPaintMode): void {
-  if (mode !== 'stroke') ctx.fillText(text, x, y);
-  if (mode !== 'fill') ctx.strokeText(text, x, y);
+  if (mode !== 'stroke') fillContextText(ctx, text, x, y);
+  if (mode !== 'fill') strokeContextText(ctx, text, x, y);
 }
 
 /**
@@ -446,7 +447,7 @@ function paintVertical(
       const advance = spaced !== 0
         ? fillTrackedWord(ctx, run.text, cx, baseline, spaced, (piece, px, py) => put(ctx, piece, px, py, mode))
         : (put(ctx, run.text, cx, baseline, mode), undefined);
-      cx += advance ?? ctx.measureText(run.text).width;
+      cx += advance ?? contextTextWidth(ctx, run.text);
       continue;
     }
     if (run.glyph.orient === 'tcy') {
@@ -520,7 +521,7 @@ function paintCell(
   }
   const baseFont = face ? ctx.font : undefined;
   if (face) ctx.font = face;
-  const w = ctx.measureText(char).width;
+  const w = contextTextWidth(ctx, char);
   saveContext(ctx);
   ctx.translate(cx, axis);
   if (kind === 'rotate') {
@@ -532,7 +533,7 @@ function paintCell(
     if (glyph.stretch && w > 0 && w < cell) ctx.scale(cell / w, 1);
     let lift = central;
     if (glyph.orient === 'rotate') {
-      const m = ctx.measureText(char);
+      const m = measureContextText(ctx, char);
       const ascent = m.actualBoundingBoxAscent;
       const descent = m.actualBoundingBoxDescent;
       if (Number.isFinite(ascent) && Number.isFinite(descent) && ascent + descent > 0) lift = (ascent - descent) / 2;
@@ -568,7 +569,7 @@ function paintCombined(
   const spacing = letterSpacingOf(ctx);
   const tracked = spacing !== 0;
   if (tracked) setLetterSpacing(ctx, 0);
-  const w = ctx.measureText(text).width;
+  const w = contextTextWidth(ctx, text);
   const k = w > em ? em / w : 1;
   saveContext(ctx);
   ctx.translate(x + em / 2, axis);

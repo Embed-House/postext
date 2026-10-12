@@ -28,6 +28,13 @@
  *
  * Every `save()`, `restore()` and letter-spacing of the paint code goes
  * through here (`contextState.test.ts` scans the sources for a bare one).
+ *
+ * The word spacing is the key of the word cache a text is painted from
+ * (#770, `contextText.ts`). It reads `""` inside a saved state as the
+ * letter-spacing does, but nothing reads it: it is set before every text,
+ * a value set inside a saved state is taken, and `restore()` brings the
+ * outer one back (the same sequences measured on Chrome 154, three states
+ * deep). So neither `saveContext` nor `restoreContext` carries it.
  */
 
 /** The language a context has until someone sets one: the host's. */

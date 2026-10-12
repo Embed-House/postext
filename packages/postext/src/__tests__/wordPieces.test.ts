@@ -3,7 +3,7 @@ import { renderPageToCanvas } from '../canvas-backend';
 import { renderToHtml } from '../html-backend';
 import { buildDocument } from '../pipeline';
 import { clearMeasurementCache } from '../measure';
-import { joinedWordPieces, lineWordSegments } from '../wordPieces';
+import { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder } from '../wordPieces';
 import * as engine from '../index';
 import type { PostextConfig, Resource } from '../types';
 import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
@@ -630,5 +630,143 @@ describe('the HTML sets the pieces of a word measured whole in one box', () => {
     words.forEach((word, i) => expect(word.text.startsWith(texts[i]!), word.text).toBe(true));
     const painted = paint(doc).map((p) => p.text);
     for (const word of words) expect(painted, word.text).toContain(word.text);
+  });
+});
+
+describe('a line that carries an order (lineWordSegmentsInOrder)', () => {
+  const advance = (seg: VDTLineSegment, text: string): number => faceWidth(text, '10px Punt', seg.lang ?? 'en');
+  const text = (t: string, width: number, extra: Partial<VDTLineSegment> = {}): VDTLineSegment => ({ kind: 'text', text: t, width, ...extra });
+  const space = (): VDTLineSegment => ({ kind: 'space', text: ' ', width: 2.5 });
+  const lineOf = (segments: VDTLineSegment[], extra: Partial<VDTLine> = {}): VDTLine => ({
+    text: segments.map((s) => s.text).join(''), bbox: { x: 0, y: 0, width: segments.reduce((w, s) => w + s.width, 0), height: 14 }, baseline: 11, segments, ...extra,
+  }) as VDTLine;
+  const AR = '\u0643\u062A\u0627\u0628';
+  const texts = (segments: VDTLineSegment[] | undefined): [string, number][] => segments!.map((s) => [s.text, round(s.width)]);
+
+  it('a left-to-right line of a mirrored page: the word where its pieces stood, the order written again', () => {
+    // `Toy|ota was`, advanced from the sheet's right: the last word first.
+    const line = lineOf([text('Toy', 15), text('ota', 14), space(), text('was', 15)], { order: [3, 2, 1, 0] });
+    const set = lineWordSegmentsInOrder(line, false, advance);
+    expect(texts(set.segments)).toEqual([['Toyota', 29], [' ', 2.5], ['was', 15]]);
+    expect(set.order).toEqual([2, 1, 0]);
+    // Each segment once, at the place its pieces had along the line.
+    expect(line.segments).toHaveLength(4);
+  });
+
+  it('a Latin word among right-to-left words: joined, its neighbours in their places', () => {
+    const line = lineOf([text(AR, 20, { rtl: true }), space(), text('Toy', 15, { level: 2 }), text('ota', 14, { level: 2 }), space(), text(AR, 20, { rtl: true })], { order: [5, 4, 2, 3, 1, 0] });
+    const set = lineWordSegmentsInOrder(line, false, advance);
+    expect(texts(set.segments)).toEqual([[AR, 20], [' ', 2.5], ['Toyota', 29], [' ', 2.5], [AR, 20]]);
+    expect(set.order).toEqual([4, 3, 2, 1, 0]);
+    expect(set.segments![2]!.level).toBe(2);
+    expect(set.segments![0]).toBe(line.segments![0]);
+  });
+
+  it('pieces that do not stand side by side along the line, or at two levels, stay apart', () => {
+    const apart = lineOf([text('Toy', 15), text('ota', 14), space(), text('was', 15)], { order: [0, 3, 2, 1] });
+    const same = lineWordSegmentsInOrder(apart, false, advance);
+    expect(same.segments).toBe(apart.segments);
+    expect(same.order).toBe(apart.order);
+    const levels = lineOf([text('Toy', 15, { level: 2 }), text('ota', 14)], { order: [0, 1] });
+    expect(lineWordSegmentsInOrder(levels, false, advance).segments).toBe(levels.segments);
+    const rtl = lineOf([text('Toy', 15, { rtl: true }), text('ota', 14, { rtl: true })], { order: [1, 0] });
+    expect(lineWordSegmentsInOrder(rtl, false, advance).segments).toBe(rtl.segments);
+  });
+
+  it('the hyphen of a line end, set apart: after its word the way the line reads', () => {
+    // `se-` is measured as `se` and a hyphen apart, 15 px; set as one text
+    // the face kerns the pair.
+    const mirrored = lineOf([text('the', 15), space(), text('se-', 15)], { order: [2, 1, 0], hyphenated: true });
+    const set = lineWordSegmentsInOrder(mirrored, false, advance);
+    expect(texts(set.segments)).toEqual([['the', 15], [' ', 2.5], ['se', 10], ['-', 5]]);
+    // From the sheet's right: the hyphen, the word it ends, the space, `the`.
+    expect(set.order).toEqual([3, 2, 1, 0]);
+    const forward = lineOf([text('the', 15), space(), text('se-', 15)], { order: [0, 1, 2], hyphenated: true });
+    expect(lineWordSegmentsInOrder(forward, false, advance).order).toEqual([0, 1, 2, 3]);
+    // A line that does not tell which way its Latin text runs is left as it is.
+    const alone = lineOf([text('se-', 15)], { order: [0], hyphenated: true });
+    expect(lineWordSegmentsInOrder(alone, false, advance).segments).toBe(alone.segments);
+  });
+
+  it('a line with no order is set as lineWordSegments sets it, a line of the composer as it is', () => {
+    const line = lineOf([text('Toy', 15), text('ota', 14)]);
+    const set = lineWordSegmentsInOrder(line, false, advance);
+    expect(texts(set.segments)).toEqual([['Toyota', 29]]);
+    expect(set.order).toBeUndefined();
+    expect(set.segments).toEqual(lineWordSegments(line, false, advance));
+    const composed = lineOf([text('Toy', 15), text('ota', 14)], { order: [0, 1] });
+    expect(lineWordSegmentsInOrder(composed, true, advance)).toEqual({ segments: composed.segments, order: composed.order });
+    // The rule the PDF applies is unchanged: a directed line as it is.
+    expect(lineWordSegments(composed, false, advance)).toBe(composed.segments);
+  });
+
+  it('the canvas and the HTML set a joined word of a right-to-left page once, in its place', () => {
+    // An English sentence on a right-to-left page: its line carries an
+    // order, and `Toy|ota` was measured whole (a word in italics beside it).
+    const doc = build(`A Toy${SHY}ota *was* here.`, config('ar', 600, { direction: 'rtl', bodyText: { ...OWN, textAlign: 'left' } }));
+    const line = paragraphs(doc)[0]!.lines[0]!;
+    expect(line.order).toBeDefined();
+    expect(textSegments(line).map((s) => s.text)).toEqual(expect.arrayContaining(['Toy', 'ota']));
+    const painted = paint(doc).filter((p) => /Toy|ota/.test(p.text));
+    expect(painted.map((p) => p.text)).toEqual(['Toyota']);
+    expect(painted[0]!.width).toBeCloseTo(29, 6);
+    globals.document = {};
+    const html = renderToHtml(doc);
+    expect(html).toContain('>Toyota<');
+    expect(html).not.toContain('>ota<');
+  });
+});
+
+describe('the HTML sets a text of several words as the canvas measured it', () => {
+  const header = { elements: [{ kind: 'text' as const, id: 'rh', content: 'The Art of War', fontFamily: 'Punt', fontSize: pt(8), overflow: 'wrap' as const, align: 'start' as const, placement: { anchor: { to: 'container' as const, edge: 'top-left' as const }, size: { width: 'fill' as const } } }] };
+
+  it('a line of design text: a box per word, each where the canvas puts it, in a line box as wide as the line', () => {
+    const html = renderToHtml(build('Body.', config('en', 300, { header, bodyText: OWN })));
+    const box = (x: number, text: string): string => `<span style="position:absolute;left:${x.toFixed(3)}px;top:0;">${text}</span>`;
+    // Letters of 4 px and spaces of 2 px at 8 px.
+    expect(html).toContain(`line-height:1;white-space:pre;width:50.000px;">${box(0, 'The')}${box(12, ' ')}${box(14, 'Art')}${box(26, ' ')}${box(28, 'of')}${box(36, ' ')}${box(38, 'War')}</span>`);
+    // Read without its markup the head is its text.
+    expect(html.replace(/<[^>]+>/g, '')).toContain('The Art of War');
+  });
+
+  it('where the language of the page is not known: one box, each space in a box of its own', () => {
+    const html = renderToHtml(build('Body.', config('en', 300, { header })));
+    const apart = '<span style="display:inline-block;"> </span>';
+    expect(html).toContain(`line-height:1;white-space:pre;">The${apart}Art${apart}of${apart}War</span>`);
+    expect(html.replace(/<[^>]+>/g, '')).toContain('The Art of War');
+  });
+
+  it('a word of a line is written as it was: one box, its text alone', () => {
+    const html = renderToHtml(build('Two words.', config('en', 300, { bodyText: { ...OWN, textAlign: 'left' } })));
+    expect(html).toContain('<span style="position:absolute;left:0.000px;top:0;white-space:pre;">Two</span>');
+    expect(html).not.toContain('display:inline-block');
+    expect(html).not.toContain('top:0;">');
+  });
+});
+
+describe('a doubled dash given the forms of Han text is set alone where it was measured alone', () => {
+  const DASHES = '\u2014\u2014';
+  /** A line whose first word is the pair, as the layout gives it the
+   *  forms of Han text: its box `width` px wide (10: two dashes alone). */
+  const withDashes = (width = 10, shaping: PostextConfig['bodyText'] = OWN): VDTDocument => {
+    const doc = build('xx and here', config('en', 300, { bodyText: { ...shaping, textAlign: 'left' } }));
+    const seg = paragraphs(doc)[0]!.lines[0]!.segments![0]!;
+    Object.assign(seg, { text: DASHES, width, scriptContext: 'Hani' });
+    return doc;
+  };
+
+  it('no mark beside it on the page whose canvas sets it alone at that width', () => {
+    globals.document = {};
+    const html = renderToHtml(withDashes());
+    expect(html).toContain(`>${DASHES}</span>`);
+    expect(html).not.toContain('font-size:0');
+  });
+
+  it('the mark where the word alone is not as wide as measured, and where the language is not known', () => {
+    globals.document = {};
+    expect(renderToHtml(withDashes(13))).toContain('font-size:0');
+    delete globals.document;
+    const host = withDashes(10, {});
+    expect(renderToHtml(host)).toContain('font-size:0');
   });
 });

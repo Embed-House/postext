@@ -82,7 +82,7 @@ describe('semantic ruby in horizontal HTML (#428)', () => {
       // The base box (painted from its ink offset), then the reading's box
       // at its place (the segment's start plus the run's dx), without
       // aria-hidden.
-      const m = new RegExp(`(?:${RUBY_OPEN})?(?:<a [^>]*>)?<span style="position:absolute;left:([\\d.]+)px;top:0;white-space:pre;">${s.text}</span>${RT_OPEN}<span style="position:absolute;left:([\\d.]+)px;top:(-?[\\d.]+)px;white-space:pre;"><span style="font:[^"]*">${s.ruby!.text}</span></span></rt>`).exec(html);
+      const m = new RegExp(`(?:${RUBY_OPEN})?(?:<a [^>]*>)?<span style="position:absolute;left:([\\d.]+)px;top:0;white-space:pre;(?:font-kerning:none;)?">${s.text}</span>${RT_OPEN}<span style="position:absolute;left:([\\d.]+)px;top:(-?[\\d.]+)px;white-space:pre;"><span style="font:[^"]*">${s.ruby!.text}</span></span></rt>`).exec(html);
       expect(m, s.text).not.toBeNull();
       expect(+m![2]! - +m![1]!).toBeCloseTo(run.dx - (s.inkOffset ?? 0), 3);
       expect(+m![3]!).toBeCloseTo(run.dy, 3);

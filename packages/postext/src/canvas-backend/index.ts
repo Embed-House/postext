@@ -17,6 +17,7 @@ import { renderComicPage } from './comic';
 import { pageComics } from '../comics/transform';
 import { proofPixels, type PrintPreview } from '../color/softProof';
 import { resetContextState, restoreContext, saveContext } from './contextState';
+import { resetWordSpacing } from './contextText';
 export {
   registerResourceImage,
   unregisterResourceImage,
@@ -125,6 +126,10 @@ function paintPage(
     paintContext(ctx, canvas, page, doc, options);
   } finally {
     if (direction !== undefined) ctx.direction = direction;
+    // Every text of the page set the word spacing that keys its word
+    // cache (`contextText.ts`): the canvas is left at the one it had when
+    // it was given its size.
+    resetWordSpacing(ctx);
     if (language !== undefined && (ctx as CanvasRenderingContext2D & { lang: string }).lang !== language) (ctx as CanvasRenderingContext2D & { lang: string }).lang = language;
   }
 }

@@ -22,6 +22,7 @@ import { joiningScriptIn } from '../measure/joining';
 import { taskBoxTick } from '../taskBox';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 import { paintedSegments, paintsAsOneText } from './wordPieces';
+import { contextTextWidth, fillContextText } from './contextText';
 
 function pickSegmentFont(
   bold: boolean,
@@ -158,7 +159,7 @@ function renderSegments(
   let currentFill = '';
   const paint = cjk
     ? (text: string, px: number, py: number): void => fillWordsText(ctx, text, px, py)
-    : (text: string, px: number, py: number): void => ctx.fillText(text, px, py);
+    : (text: string, px: number, py: number): void => fillContextText(ctx, text, px, py);
   const runStyle = (run: WordRun): { font: string; fill: string } => ({
     font: pickSegmentFont(!!run.bold, !!run.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont),
     fill: pickSegmentColor(!!run.bold, !!run.italic, style.color, style.boldColor, style.italicColor),
@@ -408,12 +409,15 @@ function renderLine(
   // Right-to-left runs on the line: painted in `order`, never as one text.
   // A line with none (a Latin line of a mirrored page, whose `order` only
   // turns the flow around) reads the same painted as one text.
-  const order = segments && line.order?.length === segments.length ? line.order : undefined;
   const directed = segments?.some((s) => s.rtl) ?? false;
   // The pieces of a word the layout measured whole are painted as that
   // word (#770), on a line painted segment by segment: asked for there.
-  const pieces = (): VDTLineSegment[] => paintedSegments(ctx, line, false, tracking, (seg) =>
-    seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont))!;
+  // On a line with an order they are joined too, and the order with them.
+  const paintPieces = (x: number, justifiedSpaceWidth?: number): void => {
+    const set = paintedSegments(ctx, line, false, tracking, (seg) =>
+      seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont));
+    renderSegments(ctx, set.segments!, x, line.baseline, style, justifiedSpaceWidth, cjk, tracking, set.order);
+  };
 
   // Justified rendering with per-segment spacing. Last lines render ragged at
   // natural width — except when overfull: Knuth-Plass may accept a final line
@@ -431,7 +435,7 @@ function renderLine(
     }
     if (spaceCount > 0 && !line.tabbed && ((!line.isLastLine && !line.ragged) || naturalWidth > effectiveWidth)) {
       const justifiedSpaceWidth = (effectiveWidth - wordWidth) / spaceCount;
-      renderSegments(ctx, pieces(), lineX, line.baseline, style, justifiedSpaceWidth, cjk, tracking, order);
+      paintPieces(lineX, justifiedSpaceWidth);
       return;
     }
   }
@@ -445,7 +449,7 @@ function renderLine(
     for (const seg of segments) contentWidth += seg.width;
     const slack = Math.max(0, effectiveWidth - (contentWidth - trailing));
     const startX = lineX + (align === 'center' ? slack / 2 : slack);
-    renderSegments(ctx, pieces(), startX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(startX);
     return;
   }
 
@@ -456,7 +460,7 @@ function renderLine(
   // a line of verse tightened its word spaces to fit (#620); otherwise one
   // fillText paints the line.
   if (segments && (directed || line.verseLine?.spaceRatio !== undefined || segments.some(segmentIsStyled) || (tracking !== 0 && joiningScriptIn(line.text)))) {
-    renderSegments(ctx, pieces(), lineX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(lineX);
     return;
   }
 
@@ -467,21 +471,24 @@ function renderLine(
   // A tracked line that would lose a ligature to the letter-spacing is
   // painted word by word, each as it was measured (#663).
   if (tracking !== 0 && segments && segments.length > 0 && shapedOtherwise(ctx, line.text)) {
-    renderSegments(ctx, pieces(), plainX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(plainX);
+    return;
+  }
+  // One text, where it is as wide as the line's words were measured: the
+  // pieces of a plain paragraph's words were measured one by one, and a
+  // face that kerns across a cut sets the line shorter; in a line with a
+  // Han character the browser draws a word with no letter (a number, a
+  // bracketed figure) by other rules than in the string it was measured
+  // in (#770).
+  if (segments && !paintsAsOneText(ctx, line, tracking, style.font)) {
+    paintPieces(plainX);
     return;
   }
   if (cjk) {
     fillWordsText(ctx, line.text, plainX, line.baseline);
     return;
   }
-  // One text, where it is as wide as the line's words were measured: the
-  // pieces of a plain paragraph's words were measured one by one, and a
-  // face that kerns across a cut sets the line shorter (#770).
-  if (segments && !paintsAsOneText(ctx, line, tracking, style.font)) {
-    renderSegments(ctx, pieces(), plainX, line.baseline, style, undefined, cjk, tracking, order);
-    return;
-  }
-  ctx.fillText(line.text, plainX, line.baseline);
+  fillContextText(ctx, line.text, plainX, line.baseline);
 }
 
 /** {@link renderLine} for a line of the CJK composer or any line down a
@@ -536,7 +543,14 @@ function renderComposedLine(
     return;
   }
 
-  if (segments && segments.some(composedSegmentIsStyled)) {
+  // Segment by segment: a line of the composer on a horizontal page always
+  // (#770), each segment where the layout put it. Painted as one text, a
+  // kana drew up to the mark after it and every character after the pair
+  // stood off its place (`fillSegmentText`), and a number among Han
+  // characters took other forms than in the string it was measured in
+  // (`contextText.ts`). Down a vertical page a line in one style is one
+  // call: the vertical painter sets it cell by cell.
+  if (segments && segments.length > 0 && (!verticalPaintActive() || segments.some(composedSegmentIsStyled))) {
     renderComposedSegments(ctx, segments, line.bbox.x, line.baseline, style, undefined, tracking, cuts);
     return;
   }
@@ -628,7 +642,7 @@ function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, 
   let at = x;
   for (const run of runs) {
     paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y), run.text);
-    if (runs.length > 1) at += ctx.measureText(run.text).width;
+    if (runs.length > 1) at += contextTextWidth(ctx, run.text);
   }
 }
 

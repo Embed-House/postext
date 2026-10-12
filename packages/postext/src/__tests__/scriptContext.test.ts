@@ -941,7 +941,22 @@ describe('a doubled ellipsis or dash in a Chinese or Japanese document (#725)', 
       expect(segs[at + 1]!.text).toBe('.');
       // Canvas and HTML paint it beside a Han character.
       expect(painted(doc).map((p) => p.text)).toContain(`${ELLIPSIS}${ELLIPSIS}${NBSP}${HAN_MARK}`);
-      expect(renderToHtml(doc)).toContain(`>${ELLIPSIS}${ELLIPSIS}<span aria-hidden="true" style="font-size:0;-webkit-user-select:none;user-select:none;">${NBSP}${HAN_MARK}</span></`);
+      // The HTML sets it beside the mark too, unless the canvas that
+      // measured it sets it alone at that width: then the mark changes
+      // nothing there, and in the browser's layout it would bring the
+      // forms of the document's language with it (#770).
+      const html = renderToHtml(doc);
+      const font = doc.pages[0]!.columns[0]!.blocks[0]!.fontString;
+      const mark = `<span aria-hidden="true" style="font-size:0;-webkit-user-select:none;user-select:none;">${NBSP}${HAN_MARK}</span>`;
+      const set: string[] = [];
+      for (const pair of [`${EM_DASH}${EM_DASH}`, `${ELLIPSIS}${ELLIPSIS}`]) {
+        const alone = Math.abs(shapedWidth(pair, font, 'ltr') - segs.find((seg) => seg.text === pair)!.width) < 1e-6;
+        expect(html, `${version} ${pair}`).toContain(alone ? `>${pair}</` : `>${pair}${mark}</`);
+        set.push(alone ? 'alone' : 'marked');
+      }
+      // In this face the pair alone has the width of its Han forms on
+      // both browsers (`wordPieces.test.ts` has a pair that does not).
+      expect(set).toEqual(['alone', 'alone']);
     }
   });
 
@@ -1060,3 +1075,35 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
     }
   });
 });
+
+describe('a design text with no letter is set in the HTML in the forms the canvas painted it in (#770)', () => {
+  // A design text carries no script: the canvas paints each of its runs
+  // alone, and a current Chrome gives a run with no letter Latin forms,
+  // where the browser's layout gives it the face's default ones.
+  const head = (content: string, fontFamily = 'Amiri') => ({ elements: [{ kind: 'text' as const, id: 'rh', content, fontFamily, fontSize: pt(10), overflow: 'wrap' as const, align: 'start' as const, placement: { anchor: { to: 'container' as const, edge: 'top-left' as const }, size: { width: 'fill' as const } } }] });
+  const OWN = { bodyText: { shapingLanguage: 'document' as const } };
+  const MARK = `<span aria-hidden="true" style="font-size:0;-webkit-user-select:none;user-select:none;">${NBSP}n</span>`;
+
+  it('beside a Latin mark of no size, where the face draws by script and the run has that width', () => {
+    const html = renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)'), ...OWN })));
+    expect(html).toContain(`>(1)${MARK}</span>`);
+  });
+
+  it('as it was in a face that draws the same under any script, in a text with letters, and in one of several words', () => {
+    const plain = renderToHtml(build('Text.', config('Plain', { locale: 'en', header: head('(1)', 'Plain'), ...OWN })));
+    expect(plain).toContain('>(1)</span>');
+    expect(plain).not.toContain('font-size:0');
+    const letters = renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('Page (1)'), ...OWN })));
+    expect(letters).not.toContain('font-size:0');
+    const words = renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1) (2)'), ...OWN })));
+    expect(words).not.toContain('font-size:0');
+  });
+
+  it('as it was where the canvas set it in the default forms, and where the language of the page is not known', () => {
+    on(131);
+    expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)'), ...OWN })))).not.toContain('font-size:0');
+    on(154);
+    expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)') })))).not.toContain('font-size:0');
+  });
+});
+

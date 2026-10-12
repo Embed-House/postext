@@ -31,6 +31,7 @@ import { mirroredPaintActive } from './mirrorFrame';
 import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { fillContextText } from './contextText';
 
 /** A decoded image the canvas backend can `drawImage`. */
 export type ResourceImageSource = CanvasImageSource;
@@ -411,18 +412,19 @@ function paintLineRuns(
     const cuts = lineMarkCuts(line);
     const paint = cjk
       ? (text: string, px: number, py: number): void => fillWordsText(ctx, text, px, py)
-      : (text: string, px: number, py: number): void => ctx.fillText(text, px, py);
+      : (text: string, px: number, py: number): void => fillContextText(ctx, text, px, py);
     const runStyle = (run: WordRun): { font: string; fill: string } => ({
       font: pickFont(!!run.bold, !!run.italic, font, boldFont, italicFont, boldItalicFont),
       fill: color,
     });
     // A line holding right-to-left text is painted in its `order`, each
     // right-to-left segment as a right-to-left run (`fillSegmentWord`).
-    const order = !composed && line.order?.length === line.segments.length ? line.order : undefined;
     // The pieces of a word the layout measured whole are painted as that
-    // word (#770).
-    const segments = paintedSegments(ctx, line, composed, tracking, (seg) =>
-      seg.fontString ?? pickFont(!!seg.bold, !!seg.italic, font, boldFont, italicFont, boldItalicFont))!;
+    // word (#770), and the line's order is the one of what is painted.
+    const set = paintedSegments(ctx, line, composed, tracking, (seg) =>
+      seg.fontString ?? pickFont(!!seg.bold, !!seg.italic, font, boldFont, italicFont, boldItalicFont));
+    const segments = set.segments!;
+    const order = set.order;
     for (let k = 0; k < segments.length; k++) {
       const seg = segments[order ? order[k]! : k]!;
       if (seg.kind === 'space') {
@@ -485,7 +487,7 @@ function paintLineRuns(
   ctx.fillStyle = color;
   if (line.cjkComposed || verticalPaintActive()) fillFlowText(ctx, line.text, line.bbox.x, line.baseline, 'fill', undefined, lineMarkCuts(line));
   else if (hasCJK(line.text)) fillWordsText(ctx, line.text, line.bbox.x, line.baseline);
-  else ctx.fillText(line.text, line.bbox.x, line.baseline);
+  else fillContextText(ctx, line.text, line.bbox.x, line.baseline);
 }
 
 /** The play mark and the QR code of a video's poster (#454), over the body
@@ -575,7 +577,7 @@ function drawPlaceholder(
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = `${Math.max(10, Math.min(16, h * 0.1))}px sans-serif`;
-  ctx.fillText(label, x + w / 2, y + h / 2);
+  fillContextText(ctx, label, x + w / 2, y + h / 2);
   restoreContext(ctx);
 }
 

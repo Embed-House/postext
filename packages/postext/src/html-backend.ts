@@ -33,15 +33,15 @@ import { lineInkExtent, lineTrailingTracking } from './lineInk';
 import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
 import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale';
 import { hasCJK } from './measure/cjk';
-import { markerRuns } from './bidi';
+import { markerRuns, needsBidi } from './bidi';
 import { joiningScriptIn } from './measure/joining';
-import { scriptContextUntracked, scriptMark, type ScriptContext } from './measure/script';
+import { faceReadsScript, isLetterless, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
 import { graphemeCount, graphemesOf } from './measure/graphemes';
 import { measureTextWidth, withMeasureLanguage } from './measure/canvas';
-import { lineWordSegments } from './wordPieces';
+import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
 import { fontFamilyOf } from './measure/vertical';
 import { lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
@@ -101,6 +101,21 @@ const CJK_TRACKED_TEXT_DECL = "text-spacing-trim:space-all;text-autospace:no-aut
 const CJK_TRACKED_FEATURES_DECL = "font-feature-settings:'chws' 0,'halt' 0,'vchw' 0,'liga' 1,'clig' 1;";
 /** {@link CJK_TEXT_DECL} of a box, with its ligatures when it is `tracked`. */
 const cjkTextDecl = (tracked: boolean): string => (tracked ? CJK_TRACKED_TEXT_DECL : CJK_TEXT_DECL);
+/**
+ * The box of the cells of a line of the CJK composer (#770). The composer
+ * measures each Chinese or Japanese character alone and a line carries
+ * the cells of one style as one segment (`cellsOf`); set in one box, the
+ * browser kerns inside it: a kana against the mark after it, a kana
+ * against a kana. Chrome 154, thousandths of the em under `lang="ja"`:
+ * Noto Sans JP `す。` −100, `れ、` +11; Noto Serif JP `す。` −130; and
+ * it kerns more pairs than the canvas (21 of 41 texts against 13 in Noto
+ * Sans JP). With the kerning off the box is as wide as its cells (41 texts,
+ * the two faces, two languages, at 7.5 and 10 px: none differs), and its
+ * text stays one run for a selection, a ruby or a link. After the `font`
+ * shorthand, which resets it. A Western run was measured with its kerning
+ * and keeps it.
+ */
+const CELLS_DECL = 'font-kerning:none;';
 
 /** Whether a line box carries {@link CJK_TEXT_DECL}: a line of the CJK
  *  composer, which it measured character by character, or a line with no
@@ -290,7 +305,7 @@ function segmentBox(seg: VDTLineSegment, inherited: TextDirection, rootLang: str
   const decl = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext)) ? 'letter-spacing:0;' : '';
   const html = seg.runs && seg.runs.length > 0 ? wordRunsHtml(seg, font, color, paint)
     : seg.kashida && seg.kashida.length > 0 ? kashidaTextHtml(seg.text, seg.kashida)
-    : seg.scriptContext !== undefined ? scriptTextHtml(seg.text, seg.scriptContext, seg.rtl === true) : undefined;
+    : seg.scriptContext !== undefined && !setsAlone(seg, font, tracking) ? scriptTextHtml(seg.text, seg.scriptContext, seg.rtl === true) : undefined;
   if (!attrs && !decl && html === undefined) return PLAIN_BOX;
   return html === undefined ? { attrs, decl } : { attrs, decl, html };
 }
@@ -311,6 +326,123 @@ function scriptTextHtml(text: string, script: ScriptContext, rtl: boolean): stri
   const { lead, trail } = scriptMark(script, rtl);
   const hidden = (mark: string): string => (mark === '' ? '' : `<span aria-hidden="true" style="${SCRIPT_MARK_DECL}">${esc(mark)}</span>`);
   return hidden(lead) + esc(text) + hidden(trail);
+}
+
+/**
+ * Whether a doubled dash or ellipsis given the forms of Han text
+ * (`scriptContext: 'Hani'`) is set with no mark beside it (#770): where
+ * the canvas that measured it set it alone as wide as its place.
+ *
+ * The mark of the Han script is an ideograph, and Chrome's canvas cuts a
+ * string before a Han character that follows another one: the word
+ * beside the mark is shaped alone there, in no script, and the mark
+ * changes nothing. The browser's layout shapes the two as one run of Han
+ * text, where the face may answer with the form of the document's
+ * language. Chrome 154, Noto Serif TC at 14.58 px under `zh-Hant`: `——`
+ * is 24.67 px on the canvas with the mark or without, 24.67 px alone in a
+ * box, and 29.17 px in a box with the mark (the full-width dash of the
+ * face's `locl`). So the box takes the word alone whenever the measurer
+ * says that is what the layout holds; asked in the language the text is
+ * shaped in ({@link shapedText}), and the mark stays where that is not
+ * known.
+ */
+function setsAlone(seg: VDTLineSegment, font: string, tracking: number): boolean {
+  const shaped = shapedText;
+  if (!shaped || seg.scriptContext !== 'Hani') return false;
+  const alone = withMeasureLanguage(seg.lang !== undefined ? shapingTagOf(seg.lang) : shaped.lang, () => measureTextWidth(seg.text, font));
+  return sameSetWidth(alone + (tracking === 0 ? 0 : tracking * graphemeCount(seg.text)), seg.width);
+}
+
+/**
+ * A run of design text with no letter, set in the forms the canvas
+ * painted it in (#770), or undefined when it is written as it is.
+ *
+ * A word of body text with no letter carries the script it was measured
+ * in (`scriptContext`, #725). A design text carries none: its runs are
+ * measured as the canvas paints them, each alone, and a current Chrome
+ * gives such a run the face's Latin forms there, while the browser's
+ * layout gives a run with no letter the default ones. Chrome 154, Amiri
+ * at 25 px: the `(` that opens a date set right to left is 6.38 px on the
+ * canvas and 11.45 px in a box, alone or beside the Arabic text; with a
+ * Latin mark of no size after it the box is 6.38 px wide. So where the
+ * face draws such characters by script and the run is as wide as the
+ * canvas sets it in Latin forms (`width` px, `tracking` after each
+ * character), it is written beside that mark, in a box of its own
+ * direction so the mark's letter orders nothing around it. One word
+ * only: in a text of several the mark would reach the others. Asked in
+ * the language the text is shaped in ({@link shapedText}); nothing
+ * changes where that is not known.
+ */
+function letterlessRunHtml(text: string, font: string, rtl: boolean, width: number, tracking: number): string | undefined {
+  const shaped = shapedText;
+  if (!shaped || text.indexOf(' ') >= 0 || !isLetterless(text)) return undefined;
+  return withMeasureLanguage(shaped.lang, () => {
+    if (!faceReadsScript(font)) return undefined;
+    const set = scriptTextWidth(text, font, 'Latn', rtl) + (tracking === 0 ? 0 : tracking * graphemeCount(text));
+    return sameSetWidth(set, width) ? scriptTextHtml(text, 'Latn', rtl) : undefined;
+  });
+}
+
+/**
+ * {@link CELLS_DECL} for a line or a run of design text set at the
+ * glyphs' own advances (#770): when its characters are cells and spaces
+ * and the layout holds it `width` px wide, the sum of their advances
+ * (`tracking` after each). The canvas, which measured it, kerns fewer
+ * pairs of kana than the browser's layout does: the running head
+ * `日本語テキスト処理` in Noto Sans JP at 15.6 px is 140.58 px on the
+ * canvas, its nine cells, and 140.13 px in a box. Asked in the language
+ * the text is shaped in ({@link shapedText}); nothing where that is not
+ * known, or where the canvas kerned the text itself.
+ */
+function designCellsDecl(text: string, font: string, width: number, tracking: number): string {
+  const shaped = shapedText;
+  if (!shaped || !hasCJK(text)) return '';
+  const cells = cellsOf(text.replace(/[ \u3000]+/g, ''));
+  if (!cells) return '';
+  const graphemes = graphemesOf(text);
+  const sum = withMeasureLanguage(shaped.lang, () => graphemes.reduce((w, g) => w + measureTextWidth(g, font), 0));
+  return sameSetWidth(sum + tracking * graphemes.length, width) ? CELLS_DECL : '';
+}
+
+/**
+ * A line of design text that carries directions (`VDTDesignTextLine.order`),
+ * as the markup inside its line box (#770): each run in a box of its own,
+ * at the place the layout gave it along the line and in its own direction.
+ *
+ * The canvas paints such a line run by run, each run a text of its own
+ * shaped right to left or left to right, and since #770 the layout
+ * measures each run so. Set inline in one line box, the browser shapes
+ * across the runs: a bracket takes the script of the run beside it and of
+ * the bracket it closes (the date `(٧٣٢–٨٠٨هـ)` in Amiri at 25 px is 122.5
+ * px run by run and 127.6 px as one line), and the browser orders the
+ * runs itself. A box per run is shaped alone, as the canvas shapes it;
+ * the markup stays in logical order, so the text copies as written. The
+ * boxes carry `white-space:pre` and their line box does not: a mirrored
+ * flow turns each of them back about itself (`MIRRORED_FLOW_STYLE`).
+ */
+function directedDesignRunsHtml(line: VDTDesignTextBlock['lines'][number], block: VDTDesignTextBlock, font: string, tracked: boolean): string {
+  const runs = line.runs!;
+  const at = new Array<number>(runs.length).fill(0);
+  let x = 0;
+  // The order the canvas advances in: the line's when it lists every run,
+  // else the runs' own (a mirrored flow may leave it out).
+  const order = line.order && line.order.length === runs.length ? line.order : runs.map((_, i) => i);
+  for (const i of order) {
+    at[i] = x;
+    x += runs[i]!.width;
+  }
+  return runs.map((run, i) => {
+    const runFont = quoteFontString(run.fontString);
+    const cjkDecl = hasCJK(run.text) ? cjkTextDecl(tracked) : '';
+    const text = letterlessRunHtml(run.text, run.fontString, run.rtl === true, run.width, block.letterSpacingPx ?? 0) ?? wordsHtml(run.text);
+    const top = run.baselineShift ? `${run.baselineShift.toFixed(3)}px` : '0';
+    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${cjkDecl}`;
+    // A run in another face sits on the baseline of the line's own.
+    const inner = runFont !== font
+      ? `<span style="font:${runFont};line-height:0;${cjkDecl ? (tracked ? CJK_TRACKED_FEATURES_DECL : CJK_FEATURES_DECL) : tracked ? TRACKED_LIGATURES_DECL : ''}">${text}</span>`
+      : text;
+    return `<span dir="${run.rtl ? 'rtl' : 'ltr'}" style="${pos}">${inner}</span>`;
+  }).join('');
 }
 
 /**
@@ -520,6 +652,83 @@ function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => HTML_ESCAPE[c] ?? c);
 }
 
+/**
+ * `text` escaped, each run of spaces inside it in a box of its own, and
+ * each word with no letter of a text that holds a character past U+00FF
+ * (#770).
+ *
+ * The canvas, which measured the text, shapes a string word by word: a
+ * space is a word of its own and nothing kerns across it. The browser
+ * shapes the text of a box as one run and kerns a letter against the
+ * space beside it. Chrome 154, STIX Two Text at 20.83 px: `Section V` is
+ * 83.72 px on the canvas and 83.31 px in one box, `To AV Ty` 80.22 px and
+ * 79.39 px; in Hedvig Letters Serif at 40 px a space beside a capital is
+ * 1.3 to 3.1 px narrower in a box. In Arabic text the browser also takes
+ * another space: Aref Ruqaa's is 0.146 em between two words of a run and
+ * 0.333 em alone, 34 px over a title of three words at 92 px. An inline
+ * block is shaped apart from the text around it, so with its spaces in
+ * such boxes the text is as wide as the canvas made it (83.75 and
+ * 80.27 px: the boxes' edges fall on a 64th of a pixel), and it reads and
+ * copies as written.
+ *
+ * A word with no letter (`(1332–1406),`) has no script of its own. In a
+ * string with a character past U+00FF the canvas draws it by the face's
+ * default rules (`canvas-backend/contextText.ts`); in a box the browser
+ * gives it the script of the words beside it, across those inline blocks
+ * too: Amiri's brackets are 0.255 em in Latin text and 0.458 em by
+ * default, 7.5 px over that word at 18.75 px. In a box of its own it is
+ * drawn by the default rules.
+ *
+ * For the text of one box that holds several words: a reference's label,
+ * a line with no segments, a line or a run of a design text.
+ */
+function wordsHtml(text: string): string {
+  const escaped = esc(text);
+  if (text.indexOf(' ') < 0 || text.trim() === '') return escaped;
+  if (!WIDE_TEXT_RE.test(text)) return escaped.replace(/ +/g, (spaces) => `${APART_OPEN}${spaces}</span>`);
+  return text.split(/( +)/).map((part) => (part === '' ? ''
+    : part[0] === ' ' || isLetterless(part) ? `${APART_OPEN}${esc(part)}</span>` : esc(part))).join('');
+}
+/** A box shaped apart from the text around it. */
+const APART_OPEN = '<span style="display:inline-block;">';
+
+/**
+ * A line of several words as a box per word and per run of spaces, each
+ * at the place the canvas gives it (#770), or undefined where
+ * {@link wordsHtml} sets it.
+ *
+ * Boxes inside a line each round their width to a 64th of a pixel, and
+ * over a long line the rounding adds up: a colophon of 26 spaces set with
+ * {@link wordsHtml} ends 0.14 to 0.64 px past the canvas's width (four
+ * faces, three sizes), where in one box it stood 1.9 to 16 px short of
+ * it. With every word at its own place, as the words of a body line
+ * are, nothing adds up. The places are the canvas's: the advance of each
+ * word alone, in the language the text is shaped in ({@link shapedText}),
+ * `tracking` after each character and `wordSpacing` on each space. For a
+ * text that reads left to right, written straight into a box that keeps
+ * the line's font; the caller gives that box the line's width, since its
+ * words no longer make it. Not where the language is not known, nor in a
+ * face that draws by script when the text holds a word with no letter
+ * (measured alone it would take other forms than in the line).
+ */
+function wordBoxesHtml(text: string, font: string, tracking: number, wordSpacing: number): string | undefined {
+  const shaped = shapedText;
+  if (!shaped || text.indexOf(' ') < 0 || text.trim() === '' || needsBidi(text)) return undefined;
+  const parts = text.split(/( +)/).filter((part) => part !== '');
+  return withMeasureLanguage(shaped.lang, () => {
+    if (WIDE_TEXT_RE.test(text) && parts.some((part) => part[0] !== ' ' && isLetterless(part)) && faceReadsScript(font)) return undefined;
+    let x = 0;
+    let out = '';
+    for (const part of parts) {
+      out += `<span style="position:absolute;left:${x.toFixed(3)}px;top:0;">${esc(part)}</span>`;
+      x += measureTextWidth(part, font) + (tracking === 0 ? 0 : tracking * graphemeCount(part)) + (part[0] === ' ' ? wordSpacing * part.length : 0);
+    }
+    return out;
+  });
+}
+/** A character past Latin-1 (see `canvas-backend/contextText.ts`). */
+const WIDE_TEXT_RE = /[^\u0000-\u00FF]/;
+
 /** Element id for a resource embed's in-document anchor. `:ref` segments link
  *  to it with `#<id>` so references navigate in standalone HTML output. */
 function resourceAnchorId(resourceId: string): string {
@@ -628,14 +837,19 @@ function shapedTextOf(declared: string | undefined): { lang: string | undefined 
  * dot of a Catalan `l·l`. Asked of the engine's measurer, in the language
  * the text is shaped in ({@link shapedText}, a segment's own where it
  * names one), at the line's `tracking`; `fontOf` gives a segment's font
- * string. The line's own segments where that language is not known.
+ * string. With them the order they advance in on a line that carries one
+ * (`VDTLine.order`): the pieces of a left-to-right word are joined there
+ * too, and the order is the one of the segments that result. The line's
+ * own segments and order where that language is not known.
  */
-function wordSegmentsOf(line: VDTLine, tracking: number, fontOf: (seg: VDTLineSegment) => string): VDTLineSegment[] {
+function wordSegmentsOf(line: VDTLine, tracking: number, fontOf: (seg: VDTLineSegment) => string): SetLine {
   const shaped = shapedText;
-  if (!shaped) return line.segments!;
-  return lineWordSegments(line, false, (seg, text) =>
+  if (!shaped) return { segments: line.segments, order: line.order };
+  const set = lineWordSegmentsInOrder(line, false, (seg, text) =>
     withMeasureLanguage(seg.lang !== undefined ? shapingTagOf(seg.lang) : shaped.lang, () => measureTextWidth(text, fontOf(seg)))
-    + (tracking === 0 ? 0 : tracking * graphemeCount(text)))!;
+    + (tracking === 0 ? 0 : tracking * graphemeCount(text)));
+  // Nothing joined: the line's order as it is, whatever it counts.
+  return set.segments === line.segments ? { segments: line.segments, order: line.order } : set;
 }
 
 function pickSegmentColor(
@@ -699,15 +913,17 @@ function renderTextSegment(
   // A compressed CJK mark is painted before its box (`inkOffset`).
   const left = seg.inkOffset !== undefined ? x + seg.inkOffset : x;
   const scaleDecl = seg.inkScale !== undefined ? inkScaleDecl(seg.inkScale) : '';
-  const pos = `position:absolute;left:${left.toFixed(3)}px;top:${top};white-space:pre;${spacingDecl}${cjk === 'own' ? cjkTextDecl(tracking !== 0) : ''}${scaleDecl}${box.decl}`;
+  // The cells of a line of the composer, each where it was measured.
+  const cellsDecl = cjk === 'line' && cellsOf(seg.text) ? CELLS_DECL : '';
+  const pos = `position:absolute;left:${left.toFixed(3)}px;top:${top};white-space:pre;${spacingDecl}${cjk === 'own' ? cjkTextDecl(tracking !== 0) : ''}${scaleDecl}${fontDecl ? '' : cellsDecl}${box.decl}`;
   // Text set with emphasis dots is emphasis (#193); the dots are the
   // line's marks.
-  const text = seg.cjkMarks?.dots ? `<em style="font-style:inherit;">${esc(seg.text)}</em>` : box.html ?? esc(seg.text);
+  const text = seg.cjkMarks?.dots ? `<em style="font-style:inherit;">${esc(seg.text)}</em>` : box.html ?? wordsHtml(seg.text);
   // A run in another face of a tracked line asks for its ligatures again
   // after its `font` (#703), with the CJK features when it takes those.
-  const featuresDecl = !fontDecl ? '' : scaleDecl ? DASH_FEATURES_DECL
+  const featuresDecl = !fontDecl ? '' : (scaleDecl ? DASH_FEATURES_DECL
     : cjk ? (tracking !== 0 ? CJK_TRACKED_FEATURES_DECL : CJK_FEATURES_DECL)
-    : tracking !== 0 && !fontDecl.includes(TRACKED_LIGATURES_DECL) ? TRACKED_LIGATURES_DECL : '';
+    : tracking !== 0 && !fontDecl.includes(TRACKED_LIGATURES_DECL) ? TRACKED_LIGATURES_DECL : '') + cellsDecl;
   if (seg.refResourceId !== undefined) {
     // Anchors carry an explicit color so the UA link blue never leaks in.
     const inner = `<a href="${refAnchorHref(refKey(seg))}" style="text-decoration:none;${fontDecl}${featuresDecl}${fontDecl ? 'line-height:0;' : ''}color:${color};">${text}</a>`;
@@ -741,7 +957,7 @@ function renderWordTextSegment(
 ): string {
   if (cjk || seg.cjkMarks) return renderMarkedWordSegment(seg, x, top, fontDecl, colorDecl, color, cjk, box);
   const pos = `position:absolute;left:${x.toFixed(3)}px;top:${top};white-space:pre;${box.decl}`;
-  const text = box.html ?? esc(seg.text);
+  const text = box.html ?? wordsHtml(seg.text);
   if (seg.refResourceId !== undefined) {
     // Anchors carry an explicit color so the UA link blue never leaks in.
     const inner = `<a href="${refAnchorHref(refKey(seg))}" style="text-decoration:none;${fontDecl}${fontDecl ? 'line-height:0;' : ''}color:${color};">${text}</a>`;
@@ -768,7 +984,7 @@ function renderMarkedWordSegment(
   const pos = `position:absolute;left:${x.toFixed(3)}px;top:${top};white-space:pre;${cjk ? CJK_TEXT_DECL : ''}${box.decl}`;
   // Text set with emphasis dots is emphasis (#193); the dots are the
   // line's marks.
-  const text = seg.cjkMarks?.dots ? `<em style="font-style:inherit;">${esc(seg.text)}</em>` : box.html ?? esc(seg.text);
+  const text = seg.cjkMarks?.dots ? `<em style="font-style:inherit;">${esc(seg.text)}</em>` : box.html ?? wordsHtml(seg.text);
   const featuresDecl = fontDecl && cjk ? CJK_FEATURES_DECL : '';
   if (seg.refResourceId !== undefined) {
     // Anchors carry an explicit color so the UA link blue never leaks in.
@@ -995,7 +1211,7 @@ function renderSegments(
         ? Math.max(0, (room - plainWidth) / 2)
         : 0);
     const plainDir = dirAttr(block.direction ?? rootDir, rootDir);
-    return `<span${plainDir} style="position:absolute;left:${plainLeft.toFixed(3)}px;top:0;white-space:pre;">${esc(line.text)}</span>` + lineEndHtml(end, plainLeft + plainWidth);
+    return `<span${plainDir} style="position:absolute;left:${plainLeft.toFixed(3)}px;top:0;white-space:pre;">${wordsHtml(line.text)}</span>` + lineEndHtml(end, plainLeft + plainWidth);
   }
 
   // Match canvas justification: stretch inter-word spaces to fill effective width.
@@ -1030,12 +1246,13 @@ function renderSegments(
   const links = linkRuns();
   let x = leadingGap;
   // The pieces of a word the layout measured whole are one box (#770).
-  const segs = wordSegmentsOf(line, tracking, (seg) => pickSegmentFont(seg, block));
-  // Segments advance along the line in `line.order` when it has one (a
+  const set = wordSegmentsOf(line, tracking, (seg) => pickSegmentFont(seg, block));
+  const segs = set.segments!;
+  // Segments advance along the line in its order when it has one (a
   // line with right-to-left runs, or any line of a mirrored page): their
   // x are taken in that order; the markup stays in logical order, so the
   // text copies as written.
-  const at = line.order ? orderedOffsets(segs, line.order, leadingGap, useJustify ? justifiedSpaceWidth : undefined) : undefined;
+  const at = set.order ? orderedOffsets(segs, set.order, leadingGap, useJustify ? justifiedSpaceWidth : undefined) : undefined;
   const cjk = block.tocEntry !== undefined || hasCJK(line.text) || (line.tabbed === true && segs.some((sg) => sg.leader === 'text'));
   const paintText = (seg: VDTLineSegment, at: number, inLink = false): string => {
     const font = quoteFontString(pickSegmentFont(seg, block));
@@ -1139,7 +1356,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       : block.textAlign === 'center'
         ? Math.max(0, (plainRoom - plainWidth) / 2)
         : 0;
-    return `<span style="position:absolute;left:${plainLeft.toFixed(3)}px;top:0;white-space:pre;">${esc(line.text)}</span>` + lineEndHtml(end, plainLeft + plainWidth);
+    return `<span style="position:absolute;left:${plainLeft.toFixed(3)}px;top:0;white-space:pre;">${wordsHtml(line.text)}</span>` + lineEndHtml(end, plainLeft + plainWidth);
   }
 
   // Match canvas justification: stretch inter-word spaces to fill effective width.
@@ -1877,11 +2094,12 @@ function renderResourceLine(
     const composed = line.cjkComposed === true;
     const tracking = line.letterSpacing ?? 0;
     // The pieces of a word the layout measured whole are one box (#770).
-    const segs = composed ? line.segments : wordSegmentsOf(line, tracking, (seg) => pickResourceFont(seg, fonts));
+    const set = composed ? { segments: line.segments, order: line.order } : wordSegmentsOf(line, tracking, (seg) => pickResourceFont(seg, fonts));
+    const segs = set.segments!;
     const cjk = !composed && hasCJK(line.text);
     // A caption or cell line with right-to-left runs, or on a mirrored
     // page, advances through its segments in `order` (#379).
-    const at = line.order && line.order.length === segs.length ? orderedOffsets(segs, line.order, 0, undefined) : undefined;
+    const at = set.order && set.order.length === segs.length ? orderedOffsets(segs, set.order, 0, undefined) : undefined;
     const segColorOf = (seg: VDTLineSegment): string => (seg.refResourceId !== undefined
       ? linkColor
       : seg.captionLabel
@@ -1958,7 +2176,7 @@ function renderResourceLine(
     // (#193, #421, #429).
     if (line.marks) parts.push(lineMarksHtml(line, color));
   } else {
-    parts.push(`<span style="position:absolute;left:0;top:0;white-space:pre;">${esc(line.text)}</span>`);
+    parts.push(`<span style="position:absolute;left:0;top:0;white-space:pre;">${wordsHtml(line.text)}</span>`);
     parts.push(lineEndHtml(end, line.bbox.width));
   }
   return (
@@ -2360,6 +2578,9 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     // takes no room and the second in one as wide as the pair (EF-80).
     // Each run was measured whole, and so was a line without runs: the
     // browser's punctuation trimming is off on those that hold CJK text.
+    // A line of several words in the block's font: a box per word (see
+    // `wordBoxesHtml`), in a line box as wide as the line.
+    const words = line.runs ? undefined : wordBoxesHtml(line.text, block.fontString, block.letterSpacingPx ?? 0, line.wordSpacingPx ?? 0);
     const inner = line.runs
       ? line.runs.map((run, i) => {
           const runFont = quoteFontString(run.fontString);
@@ -2368,6 +2589,11 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
           // another face would grow the line box and push the line's
           // baseline down. It keeps the line's own.
           const fontDecl = runFont !== font ? `font:${runFont};line-height:1;${tracked && !cjkDecl ? TRACKED_LIGATURES_DECL : ''}` : '';
+          // A run whose width is its box comes from the CJK composer,
+          // which measured its characters one by one: its cells are set
+          // with no kerning between them (see {@link CELLS_DECL}).
+          const cellsDecl = run.inkOffset !== undefined ? (cellsOf(run.text) ? CELLS_DECL : '')
+            : designCellsDecl(run.text, run.fontString, run.width, block.letterSpacingPx ?? 0);
           const stackDecl = run.stacked
             ? 'display:inline-block;width:0;'
             : line.runs![i - 1]?.stacked ? `display:inline-block;min-width:${run.width.toFixed(3)}px;` : '';
@@ -2383,11 +2609,20 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
           // glyph, as a body segment's is.
           const text = run.inkScale !== undefined
             ? `<span style="display:inline-block;text-indent:0;${inkScaleDecl(run.inkScale)}">${esc(run.text)}</span>`
-            : esc(run.text);
-          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl ? `<span style="${fontDecl}${cjkDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
+            // A run whose width is its box holds no word space: its box
+            // indents its text, and so would a box inside it.
+            : run.inkOffset !== undefined ? esc(run.text)
+            : wordsHtml(run.text);
+          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl ? `<span style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
         }).join('')
-      : esc(line.text);
-    const lineDecl = !line.runs && hasCJK(line.text) ? cjkTextDecl(tracked) : '';
+      : letterlessRunHtml(line.text, block.fontString, false, line.width, block.letterSpacingPx ?? 0) ?? words ?? wordsHtml(line.text);
+    // A line that carries directions (an order, a right-to-left run): a box
+    // per run (see `directedDesignRunsHtml`), unless a run is set otherwise
+    // than as its text at its advance (a stacked script, a box of the CJK
+    // composer).
+    const directed = line.runs !== undefined && (line.order !== undefined || line.runs.some((run) => run.rtl))
+      && line.runs.every((run) => !run.stacked && run.inkOffset === undefined && run.inkScale === undefined && !run.tcy && !run.orientation);
+    const lineDecl = !line.runs && hasCJK(line.text) ? cjkTextDecl(tracked) + designCellsDecl(line.text, block.fontString, line.width, block.letterSpacingPx ?? 0) : '';
     // A justified line: its word spaces widened as the canvas and the PDF
     // advance its runs (EF-109).
     const wordSpacingDecl = line.wordSpacingPx ? `word-spacing:${line.wordSpacingPx.toFixed(3)}px;` : '';
@@ -2400,10 +2635,11 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
       `position:absolute;` +
       `left:${line.xOffset.toFixed(3)}px;` +
       `top:${top.toFixed(3)}px;` +
-      `line-height:1;white-space:pre;` +
+      (directed ? 'line-height:1;' : 'line-height:1;white-space:pre;') +
+      (words !== undefined ? `width:${line.width.toFixed(3)}px;` : '') +
       wordSpacingDecl +
       lineDecl +
-      `">${inner}</span>`,
+      `">${directed ? directedDesignRunsHtml(line, block, font, tracked) : inner}</span>`,
     );
   }
   const clipDecl = block.clip ? 'overflow:hidden;' : '';

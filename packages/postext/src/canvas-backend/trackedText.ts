@@ -3,6 +3,7 @@ import { graphemesOf } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
 import { paintAsOneRun } from './mirrorFrame';
 import { letterSpacingOf, setLetterSpacing } from './contextState';
+import { contextTextWidth } from './contextText';
 
 /**
  * Tracked words keep their ligatures (#663).
@@ -121,7 +122,7 @@ function divisible(text: string): 'ltr' | 'rtl' | null {
 
 function widthAt(ctx: Ctx, text: string, spacing: number): number {
   setLetterSpacing(ctx, spacing);
-  return ctx.measureText(text).width;
+  return contextTextWidth(ctx, text);
 }
 
 /** {@link shapedOtherwise}, measured: the context's `letterSpacing` is
@@ -170,7 +171,7 @@ function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
   // Shaped otherwise as a whole but by no pair of neighbours: left as it was.
   if (ligatures === 0) return null;
   setLetterSpacing(ctx, 0);
-  const natural = (from: number, to: number): number => ctx.measureText(letters.slice(from, to).join('')).width;
+  const natural = (from: number, to: number): number => contextTextWidth(ctx, letters.slice(from, to).join(''));
   let glyphs = 0;
   const pieces = groups.map((g) => {
     // Up to the piece's first letter in the natural shaping, the kerning

@@ -6,6 +6,7 @@ import { fillTrackedWord } from './trackedText';
 import { fillScriptWord } from './scriptText';
 import { scriptContextUntracked } from '../measure/script';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { contextTextWidth } from './contextText';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -159,7 +160,7 @@ export function paintWordRuns(
 ): void {
   const text = seg.text;
   const runs = seg.runs!;
-  const whole = ctx.measureText(text).width;
+  const whole = contextTextWidth(ctx, text);
   if (!(whole > 0)) return;
   const rtl = seg.rtl === true;
   let at = 0;
@@ -171,8 +172,8 @@ export function paintWordRuns(
     // A cluster is a letter and its marks: widen the run to whole ones.
     while (from > 0 && MARK_RE.test(text[from]!)) from--;
     while (to < text.length && MARK_RE.test(text[to]!)) to++;
-    const before = whole - ctx.measureText(text.slice(from)).width;
-    const after = whole - ctx.measureText(text.slice(0, to)).width;
+    const before = whole - contextTextWidth(ctx, text.slice(from));
+    const after = whole - contextTextWidth(ctx, text.slice(0, to));
     let left = x + Math.max(0, rtl ? after : before);
     let right = x + whole - Math.max(0, rtl ? before : after);
     if (mirroredPaintActive()) [left, right] = [2 * x + whole - right, 2 * x + whole - left];
@@ -184,7 +185,7 @@ export function paintWordRuns(
     ctx.clip();
     ctx.font = font;
     ctx.fillStyle = fill;
-    const w = ctx.measureText(text).width;
+    const w = contextTextWidth(ctx, text);
     if (w > 0 && Math.abs(w - whole) > 0.01) {
       ctx.translate(x, 0);
       ctx.scale(whole / w, 1);

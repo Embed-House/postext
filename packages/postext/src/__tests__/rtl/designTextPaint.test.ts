@@ -138,7 +138,9 @@ describe('HTML: design text and chips right to left', () => {
     // The document root runs right to left (#379); a right-to-left running
     // head inherits that direction, a Latin run of the chip declares its own.
     expect(html).toMatch(/^<div class="pt-doc" lang="ar" dir="rtl"/);
-    expect(html).toMatch(/<span style="position:absolute;left:[\d.]+px;top:[-\d.]+px;line-height:1;white-space:pre;">/);
+    // Its line box holds a box per run, each in its direction and at the
+    // place the layout gave it, as the canvas paints it run by run (#770).
+    expect(html).toMatch(/<span style="position:absolute;left:[\d.]+px;top:[-\d.]+px;line-height:1;"><span dir="rtl" style="position:absolute;left:[\d.]+px;top:0;white-space:pre;">/);
     expect(html).toContain(`<span dir="ltr" style="position:absolute;`);
   });
 

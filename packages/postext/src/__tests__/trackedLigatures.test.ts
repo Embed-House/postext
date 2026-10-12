@@ -938,7 +938,8 @@ describe('a tracked design text in HTML (#703)', () => {
   it('asks for its ligatures after the letter-spacing', () => {
     const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('first office')));
     expect(html).toContain(`letter-spacing:${T}px;${LIGA}`);
-    expect(html).toContain('>first office</span>');
+    // Its word space in a box of its own, so nothing kerns across it (#770).
+    expect(html).toContain('>first<span style="display:inline-block;"> </span>office</span>');
   });
 
   it('a run in another face asks again after its own font', () => {

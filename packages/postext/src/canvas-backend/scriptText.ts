@@ -1,6 +1,7 @@
 import { scriptMark, type ScriptContext } from '../measure/script';
 import { paintAsOneRun } from './mirrorFrame';
 import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { contextTextWidth } from './contextText';
 
 /**
  * A word with no letter painted in the script it was measured in (#725,
@@ -40,7 +41,7 @@ function slackOf(ctx: CanvasRenderingContext2D, glue: string): number {
   if (slack === undefined) {
     const spacing = letterSpacingOf(ctx);
     if (spacing !== 0) setLetterSpacing(ctx, 0);
-    slack = ctx.measureText(glue).width / 2;
+    slack = contextTextWidth(ctx, glue) / 2;
     if (spacing !== 0) setLetterSpacing(ctx, spacing);
     if (slackByFont.size > 512) slackByFont.clear();
     slackByFont.set(font, Number.isFinite(slack) ? slack : 0);
@@ -68,7 +69,7 @@ export function fillScriptWord(
   const { lead, trail } = scriptMark(script, rtl);
   // The word's advance as the context sets it, its tracking included: the
   // two together less the mark alone (nothing kerns across the glue).
-  const width = ctx.measureText(lead + text + trail).width - ctx.measureText(lead + trail).width;
+  const width = contextTextWidth(ctx, lead + text + trail) - contextTextWidth(ctx, lead + trail);
   if (!(width > 0)) {
     paint(text, x, y);
     return;

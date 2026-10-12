@@ -43,8 +43,8 @@ export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hang
 export { lineInkExtent } from './lineInk';
 // The pieces of a word set as the word the layout measured (#770): the one
 // rule of the canvas, the HTML and the PDF.
-export { joinedWordPieces, lineWordSegments } from './wordPieces';
-export type { WordPiece } from './wordPieces';
+export { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder, cellsOf } from './wordPieces';
+export type { WordPiece, SetLine } from './wordPieces';
 export { applyCjkGrid, cjkGridGeometry, cjkGridCells, CHARACTER_GRID_COLOR } from './pipeline/cjkGrid';
 export type { CjkGridGeometry, CjkGridCells } from './pipeline/cjkGrid';
 export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault } from './pipeline/config';

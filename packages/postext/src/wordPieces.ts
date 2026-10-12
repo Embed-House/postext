@@ -41,8 +41,16 @@
  *
  * The canvas, the HTML and the PDF call {@link lineWordSegments}, so the
  * three set the same pieces together.
+ *
+ * The CJK composer goes the other way: it measures a Chinese or Japanese
+ * character alone, as one cell, and a line carries the cells of one style
+ * as one segment. Set as one text the browser kerns inside it, a kana
+ * against the mark after it; {@link cellsOf} tells which texts are cells,
+ * for an output to set them where they were measured.
  */
 import type { VDTLine, VDTLineSegment } from './vdt';
+import { isCjkGrapheme } from './measure/cjkClasses';
+import { graphemesOf } from './measure/graphemes';
 
 /** A piece of a word as a line carries it: its text and the width the
  *  layout gave it. */
@@ -52,11 +60,13 @@ export interface WordPiece {
 }
 
 /** What two pieces may carry and still be joined, when both carry the
- *  same: their style, their link, their language. A segment with anything
+ *  same: their style, their link, their language, and the level a
+ *  left-to-right run has inside right-to-left text (`level`, an even one:
+ *  a run painted right to left carries `rtl`). A segment with anything
  *  else (a reference, a script of its own, a ruby, styled runs, a
  *  direction) is set as it is. */
-const SHARED: ReadonlySet<string> = new Set(['kind', 'text', 'width', 'bold', 'italic', 'href', 'captionLabel', 'fontString', 'color', 'script', 'baselineShift', 'lang']);
-const JOINED: readonly (keyof VDTLineSegment)[] = ['bold', 'italic', 'href', 'captionLabel', 'fontString', 'color', 'script', 'baselineShift', 'lang'];
+const SHARED: ReadonlySet<string> = new Set(['kind', 'text', 'width', 'bold', 'italic', 'href', 'captionLabel', 'fontString', 'color', 'script', 'baselineShift', 'lang', 'level']);
+const JOINED: readonly (keyof VDTLineSegment)[] = ['bold', 'italic', 'href', 'captionLabel', 'fontString', 'color', 'script', 'baselineShift', 'lang', 'level'];
 
 /** Text of the scripts a line sets word by word: nothing from the CJK
  *  blocks on, whose characters the layout measures one by one. */
@@ -197,15 +207,98 @@ function setPieces(pieces: readonly VDTLineSegment[], opensLine: boolean, endsLi
  *
  * The line's own array when nothing changes: a line of the CJK composer
  * or down a vertical page (`composed`), a line that carries directions
- * (its `order` counts its segments), a line whose pieces are each as wide
- * alone as measured. A joined segment carries what its first piece does;
- * the line's segments are not touched, so what reads a piece's box from
- * them (a link's area, a selection) reads the same boxes.
+ * (its `order` counts its segments: {@link lineWordSegmentsInOrder} sets
+ * those), a line whose pieces are each as wide alone as measured. A
+ * joined segment carries what its first piece does; the line's segments
+ * are not touched, so what reads a piece's box from them (a link's area,
+ * a selection) reads the same boxes.
  */
 export function lineWordSegments(line: VDTLine, composed: boolean, advanceOf: (seg: VDTLineSegment, text: string) => number): VDTLineSegment[] | undefined {
   const segments = line.segments;
   if (!segments || composed || line.order !== undefined || segments.some((s) => s.rtl)) return segments;
+  return setLine(line, segments, undefined, advanceOf).segments;
+}
+
+/** A line as an output sets it: its segments, and the order they advance
+ *  in along the line when the line carries one (`VDTLine.order`). */
+export interface SetLine {
+  segments: VDTLineSegment[] | undefined;
+  order: readonly number[] | undefined;
+}
+
+/**
+ * {@link lineWordSegments} for any line, one that carries directions
+ * included: the segments it is set from and the `order` they advance in.
+ *
+ * A line with right-to-left text, and every line of a right-to-left page,
+ * lists its segments in the order they stand along the line
+ * (`VDTLine.order`). The pieces of a left-to-right word stand side by side
+ * there, in reading order or, on a mirrored page, against it; they are
+ * joined as on any line, and the order is written again for the segments
+ * that result: the joined word where its pieces stood. A right-to-left
+ * segment is one shaped run already and is never a piece. The line's own
+ * segments and order when nothing changes.
+ */
+export function lineWordSegmentsInOrder(line: VDTLine, composed: boolean, advanceOf: (seg: VDTLineSegment, text: string) => number): SetLine {
+  const segments = line.segments;
+  const order = segments && line.order?.length === segments.length ? line.order : undefined;
+  if (!segments || composed) return { segments, order };
+  // Directions with no order to advance in: set as it is.
+  if (!order && (line.order !== undefined || segments.some((s) => s.rtl))) return { segments, order };
+  return setLine(line, segments, order, advanceOf);
+}
+
+/** A run of pieces set otherwise than piece by piece. */
+interface SetRun {
+  /** Its first piece among the line's segments. */
+  from: number;
+  /** How many pieces it had, and how many segments it is set from. */
+  pieces: number;
+  set: number;
+  /** Whether its segments follow each other along the line (a
+   *  left-to-right page) or stand against it (a mirrored one). */
+  forward: boolean;
+}
+
+/**
+ * The way left-to-right text runs along a line whose segments stand at
+ * `place`: 1 along it, -1 against it (the line of a mirrored page), 0
+ * when the line does not tell. Read off two left-to-right words with one
+ * space between them, or two pieces that touch: a space beside a
+ * right-to-left word may stand on either side of it.
+ */
+function leftToRightStep(segments: readonly VDTLineSegment[], place: readonly number[]): number {
+  const word = (seg: VDTLineSegment | undefined): boolean => seg !== undefined && seg.kind === 'text' && !seg.rtl;
+  for (let i = 0; i + 1 < segments.length; i++) {
+    if (!word(segments[i])) continue;
+    const next = word(segments[i + 1]) ? i + 1 : segments[i + 1]!.kind === 'space' && word(segments[i + 2]) ? i + 2 : -1;
+    if (next < 0) continue;
+    const step = place[next]! - place[i]!;
+    if (Math.abs(step) === next - i) return Math.sign(step);
+  }
+  return 0;
+}
+
+/**
+ * {@link lineWordSegmentsInOrder} of a line set word by word. `order`:
+ * the order its segments advance in, when it carries one; a run of pieces
+ * is then joined only where its pieces follow each other along the line,
+ * one step apart, all the same way.
+ */
+function setLine(line: VDTLine, segments: VDTLineSegment[], order: readonly number[] | undefined, advanceOf: (seg: VDTLineSegment, text: string) => number): SetLine {
+  // Where each segment stands along the line.
+  let place: number[] | undefined;
+  if (order) {
+    place = new Array<number>(segments.length);
+    order.forEach((index, at) => (place![index] = at));
+  }
   let set: VDTLineSegment[] | undefined;
+  // Each run set otherwise: its first piece, how many pieces it had, how
+  // many segments it is set from, and whether they follow each other
+  // along the line or stand against it.
+  const runs: SetRun[] = [];
+  // The way left-to-right text runs along an ordered line, asked once.
+  let along: number | undefined;
   // Whether a text was met on the line: the run before any opens it.
   let opened = false;
   for (let from = 0; from < segments.length;) {
@@ -218,13 +311,69 @@ export function lineWordSegments(line: VDTLine, composed: boolean, advanceOf: (s
       from = to;
       continue;
     }
-    while (to < segments.length && joinable(segments[to]!) && sameStyle(first, segments[to]!)) to++;
+    const step = place && to < segments.length ? place[to]! - place[from]! : 1;
+    while (to < segments.length && joinable(segments[to]!) && sameStyle(first, segments[to]!)
+      && (!place || (Math.abs(step) === 1 && place[to]! - place[to - 1]! === step))) to++;
     const pieces = segments.slice(from, to);
     const endsLine = line.hyphenated === true && to === segments.length;
-    const run = pieces.length > 1 || endsLine ? setPieces(pieces, opensLine, endsLine, (text) => advanceOf(first, text)) : undefined;
-    if (run) (set ??= segments.slice(0, from)).push(...run);
-    else set?.push(...pieces);
+    // One piece on an ordered line may still be cut from its hyphen: the
+    // two are then placed the way the line's left-to-right text runs.
+    const way = !place ? 1 : pieces.length > 1 ? step : (along ??= leftToRightStep(segments, place));
+    const run = way !== 0 && (pieces.length > 1 || endsLine) ? setPieces(pieces, opensLine, endsLine, (text) => advanceOf(first, text)) : undefined;
+    if (run) {
+      (set ??= segments.slice(0, from)).push(...run);
+      runs.push({ from, pieces: pieces.length, set: run.length, forward: way > 0 });
+    } else set?.push(...pieces);
     from = to;
   }
-  return set ?? segments;
+  if (!set) return { segments, order };
+  if (!order || !place) return { segments: set, order: undefined };
+  // The order again: every segment under its new index, a run's segments
+  // where its pieces stood, the way they followed each other.
+  const index = new Array<number>(segments.length);
+  const runAt = new Map<number, SetRun>();
+  let shift = 0;
+  let next = 0;
+  for (let i = 0; i < segments.length; i++) {
+    const run = runs[next];
+    if (run && run.from === i) {
+      for (let k = 0; k < run.pieces; k++) {
+        index[i + k] = i + shift;
+        runAt.set(i + k, run);
+      }
+      shift += run.set - run.pieces;
+      i += run.pieces - 1;
+      next++;
+    } else index[i] = i + shift;
+  }
+  const written: number[] = [];
+  const done = new Set<number>();
+  for (const i of order) {
+    const run = runAt.get(i);
+    if (!run) {
+      written.push(index[i]!);
+      continue;
+    }
+    if (done.has(run.from)) continue;
+    done.add(run.from);
+    for (let k = 0; k < run.set; k++) written.push(index[run.from]! + (run.forward ? k : run.set - 1 - k));
+  }
+  return { segments: set, order: written };
+}
+
+/**
+ * The cells of `text`, a segment of a line of the CJK composer
+ * (`VDTLine.cjkComposed`), a ruby base or a run of composed design text:
+ * its characters when there are two or more and each is one the composer
+ * measures alone (`isCjkGrapheme`: a Han character, a kana, a CJK mark, a
+ * dash or a quote it treats as one). Undefined for any other text: a
+ * Western run, which was measured whole with its kerning, and a single
+ * character.
+ */
+export function cellsOf(text: string): string[] | undefined {
+  if (text.length < 2 || text.charCodeAt(0) < 0x80) return undefined;
+  const cells = graphemesOf(text);
+  if (cells.length < 2) return undefined;
+  for (const cell of cells) if (!isCjkGrapheme(cell)) return undefined;
+  return cells;
 }
