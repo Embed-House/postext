@@ -24,7 +24,7 @@ import type { BlockStyle } from './styles';
 import type { HeadingLevelResolver } from './headingStyles';
 import { dropCapAttr, readDropCap, type DropCapSettings } from '../defaults/dropCap';
 import { buildFontString } from '../measure';
-import { measureInkBox, measureTextWidth, onTextWidthCacheClear } from '../measure/canvas';
+import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import { fontFamilyOf } from '../measure/vertical';
 import { graphemesOf } from '../measure/graphemes';
 import { hasCJK } from '../measure/cjk';
@@ -188,7 +188,7 @@ onTextWidthCacheClear(() => capHeights.clear());
  *  `sample` (an `H`, or the initial itself in CJK text), else 0.72 of the
  *  size. */
 export function capHeightOf(font: string, sizePx: number, sample = 'H'): number {
-  const key = `${font}\u0000${sample}`;
+  const key = `${measureLanguageKey()}${font}\u0000${sample}`;
   const hit = capHeights.get(key);
   if (hit !== undefined) return hit;
   const ink = measureInkBox(sample, font);

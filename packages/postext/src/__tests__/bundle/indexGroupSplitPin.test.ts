@@ -37,7 +37,10 @@ describe('pinLegacyIndexGroupSplit (#712)', () => {
       expect(migrateConfig({} as PostextConfig, v, { content: 'The fence `:::index` is only mentioned.' }).index, String(v)).toBeUndefined();
     }
     const current: PostextConfig = {};
-    expect(migrateConfig(current, 12, { content: INDEX })).toBe(current);
+    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // read as it is.
+    expect(migrateConfig(current, 12, { content: INDEX })).toEqual({ bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 13, { content: INDEX })).toBe(current);
   });
 
   it('survives a save; resolves a whole number of 1 or more', () => {

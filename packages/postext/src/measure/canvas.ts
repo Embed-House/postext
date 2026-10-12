@@ -7,6 +7,37 @@ let _measureCtx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | 
  *  `ctx.font` assignments (each assignment re-parses the shorthand). */
 let _currentFont = '';
 
+// The language text is measured in (#764).
+//
+// A 2D context has a language (`ctx.lang`, Chrome 136 and later), which the
+// shaper hands the font: Noto Serif SC sets `1` 47.1 px wide at 100 px in
+// Chinese and 55 px in any language it has no forms for, Fira Sans sets
+// `l·l` 62.5 px wide in Catalan and 81.6 px otherwise. Left alone
+// (`inherit`) a context made on a page takes the language of the page that
+// hosts the layout, and one made in a worker none, so one document had a
+// layout per host. The engine sets the language itself, on every context
+// it measures with: the document's, a block's or a run's own.
+//
+// Measured on Chrome 154: any string is taken; a tag the browser or the
+// font knows nothing of (`''`, `und`, `xx`, `en` in a face with no English
+// forms) gives the forms of no language, the ones a worker's `inherit`
+// gives; setting the attribute to the value it has costs nothing that can
+// be measured (40 000 measures in 6 ms either way), and so does reading it.
+// A browser without the attribute measures as it did.
+
+/** The value a context is given for "the host's language", what it has
+ *  until someone sets another. */
+const HOST_LANGUAGE = 'inherit';
+/** The language set by {@link setMeasureLanguage}; undefined: the host's. */
+let _language: string | undefined;
+/** What `lang` of the measuring context was last set to. */
+let _ctxLanguage = HOST_LANGUAGE;
+
+/** Give `ctx` the language measured in, where the context has one. */
+function applyLanguage(ctx: object, language: string | undefined): void {
+  if ('lang' in ctx) (ctx as { lang: string }).lang = language ?? HOST_LANGUAGE;
+}
+
 function getMeasureCtx(): OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D {
   if (!_measureCtx) {
     if (typeof OffscreenCanvas !== 'undefined') {
@@ -15,8 +46,82 @@ function getMeasureCtx(): OffscreenCanvasRenderingContext2D | CanvasRenderingCon
       _measureCtx = document.createElement('canvas').getContext('2d')!;
     }
     _currentFont = '';
+    _ctxLanguage = HOST_LANGUAGE;
+  }
+  const wanted = _language ?? HOST_LANGUAGE;
+  if (wanted !== _ctxLanguage) {
+    applyLanguage(_measureCtx, _language);
+    _ctxLanguage = wanted;
   }
   return _measureCtx;
+}
+
+/** The widths measured in one language: every cache below is one of
+ *  these, so a document in two languages keeps both. */
+interface WidthCaches {
+  width: Map<string, Map<string, number>>;
+  widthEntries: number;
+  run: Map<string, Map<string, number>>;
+  runEntries: number;
+  marked: Map<string, Map<string, number>>;
+  markedEntries: number;
+  /** Font string → whether its punctuation changes with the script. */
+  sensitive: Map<string, boolean>;
+}
+const newCaches = (): WidthCaches => ({ width: new Map(), widthEntries: 0, run: new Map(), runEntries: 0, marked: new Map(), markedEntries: 0, sensitive: new Map() });
+/** The caches of each language measured in (`''` under the key of the
+ *  host's language is never mixed with the explicit empty tag: the host's
+ *  is kept under {@link HOST_LANGUAGE}). */
+let _cachesByLanguage = new Map<string, WidthCaches>();
+/** The caches of the language measured in now. */
+let C: WidthCaches = newCaches();
+_cachesByLanguage.set(HOST_LANGUAGE, C);
+
+/**
+ * Measure in `language` from now on: a BCP 47 tag (`zh-Hans`, `ca`), the
+ * empty string for no language at all, or undefined for the host's (what
+ * a context has when nobody sets one: the page's on a page, none in a
+ * worker; a configuration with `bodyText.shapingLanguage: 'host'`). The
+ * build sets the document's and puts back what it found; a block and a run
+ * that name their own set it for their text ({@link withMeasureLanguage}).
+ * Each language keeps its own widths, so going from one to another drops
+ * nothing measured; a cache kept elsewhere of what was measured in a font
+ * holds the language in its key ({@link measureLanguageKey}).
+ */
+export function setMeasureLanguage(language: string | undefined): void {
+  if (language === _language) return;
+  _language = language;
+  const key = language ?? HOST_LANGUAGE;
+  let caches = _cachesByLanguage.get(key);
+  if (!caches) {
+    caches = newCaches();
+    _cachesByLanguage.set(key, caches);
+  }
+  C = caches;
+}
+
+/** The language set by {@link setMeasureLanguage}. */
+export function getMeasureLanguage(): string | undefined {
+  return _language;
+}
+
+/** Run `fn` measuring in `language`, then measure again in the language
+ *  in force before, also when `fn` throws. */
+export function withMeasureLanguage<T>(language: string | undefined, fn: () => T): T {
+  const previous = _language;
+  if (language === previous) return fn();
+  setMeasureLanguage(language);
+  try {
+    return fn();
+  } finally {
+    setMeasureLanguage(previous);
+  }
+}
+
+/** The part of a measurement cache key the language decides: empty for
+ *  the host's, so those keys are unchanged. */
+export function measureLanguageKey(): string {
+  return _language === undefined ? '' : `lg${_language}\x00`;
 }
 
 // Word-level width cache. Text measurement is the engine's hottest call:
@@ -25,14 +130,12 @@ function getMeasureCtx(): OffscreenCanvasRenderingContext2D | CanvasRenderingCon
 // needs no string concatenation. Cleared wholesale when it grows past the
 // cap (rare) or when fonts change (see clearTextWidthCache).
 const MAX_WIDTH_CACHE_ENTRIES = 100_000;
-let _widthCaches = new Map<string, Map<string, number>>();
-let _widthCacheEntries = 0;
 
 export function measureTextWidth(text: string, font: string): number {
-  let byText = _widthCaches.get(font);
+  let byText = C.width.get(font);
   if (byText === undefined) {
     byText = new Map();
-    _widthCaches.set(font, byText);
+    C.width.set(font, byText);
   }
   const cached = byText.get(text);
   if (cached !== undefined) return cached;
@@ -50,20 +153,18 @@ export function measureTextWidth(text: string, font: string): number {
   if (!hasCJK(text)) width += ctx.measureText(text).width;
   else for (const piece of cjkMarkPieces(text, true)) width += ctx.measureText(piece).width;
 
-  if (_widthCacheEntries >= MAX_WIDTH_CACHE_ENTRIES) {
-    _widthCaches = new Map();
-    _widthCacheEntries = 0;
+  if (C.widthEntries >= MAX_WIDTH_CACHE_ENTRIES) {
+    C.width = new Map();
+    C.widthEntries = 0;
     byText = new Map();
-    _widthCaches.set(font, byText);
+    C.width.set(font, byText);
   }
   byText.set(text, width);
-  _widthCacheEntries++;
+  C.widthEntries++;
   return width;
 }
 
-// Widths of runs as the browser sets them (see `measureRunWidth`).
-let _runCaches = new Map<string, Map<string, number>>();
-let _runCacheEntries = 0;
+// Widths of runs as the browser sets them (see `measureRunWidth`): `C.run`.
 
 /**
  * The width of `text` set in one run, as the browser paints it: two CJK
@@ -72,10 +173,10 @@ let _runCacheEntries = 0;
  * holds only pairs the layout measured whole.
  */
 export function measureRunWidth(text: string, font: string): number {
-  let byText = _runCaches.get(font);
+  let byText = C.run.get(font);
   if (byText === undefined) {
     byText = new Map();
-    _runCaches.set(font, byText);
+    C.run.set(font, byText);
   }
   const cached = byText.get(text);
   if (cached !== undefined) return cached;
@@ -85,22 +186,18 @@ export function measureRunWidth(text: string, font: string): number {
     _currentFont = font;
   }
   const width = ctx.measureText(text).width;
-  if (_runCacheEntries >= MAX_WIDTH_CACHE_ENTRIES) {
-    _runCaches = new Map();
-    _runCacheEntries = 0;
+  if (C.runEntries >= MAX_WIDTH_CACHE_ENTRIES) {
+    C.run = new Map();
+    C.runEntries = 0;
     byText = new Map();
-    _runCaches.set(font, byText);
+    C.run.set(font, byText);
   }
   byText.set(text, width);
-  _runCacheEntries++;
+  C.runEntries++;
   return width;
 }
 
-// Widths of words with no letter, measured in a script (#725).
-let _markedCaches = new Map<string, Map<string, number>>();
-let _markedCacheEntries = 0;
-/** Font string → whether its punctuation changes with the script. */
-let _sensitive = new Map<string, boolean>();
+// Widths of words with no letter, measured in a script (#725): `C.marked`.
 
 function rawWidth(ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D, text: string, rtl: boolean): number {
   // A right-to-left word is measured as it is painted: its brackets mirrored.
@@ -121,10 +218,10 @@ function rawWidth(ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContex
  * across. For text with no CJK character (it is measured in one run).
  */
 export function measureMarkedWidth(text: string, font: string, lead: string, trail: string, rtl: boolean): number {
-  let byText = _markedCaches.get(font);
+  let byText = C.marked.get(font);
   if (byText === undefined) {
     byText = new Map();
-    _markedCaches.set(font, byText);
+    C.marked.set(font, byText);
   }
   const key = `${rtl ? '<' : '>'}${lead}\x00${trail}\x00${text}`;
   const cached = byText.get(key);
@@ -139,17 +236,17 @@ export function measureMarkedWidth(text: string, font: string, lead: string, tra
   if (mark === undefined) {
     mark = rawWidth(ctx, lead + trail, rtl);
     byText.set(markKey, mark);
-    _markedCacheEntries++;
+    C.markedEntries++;
   }
   const width = Math.max(0, rawWidth(ctx, lead + text + trail, rtl) - mark);
-  if (_markedCacheEntries >= MAX_WIDTH_CACHE_ENTRIES) {
-    _markedCaches = new Map();
-    _markedCacheEntries = 0;
+  if (C.markedEntries >= MAX_WIDTH_CACHE_ENTRIES) {
+    C.marked = new Map();
+    C.markedEntries = 0;
     byText = new Map();
-    _markedCaches.set(font, byText);
+    C.marked.set(font, byText);
   }
   byText.set(key, width);
-  _markedCacheEntries++;
+  C.markedEntries++;
   return width;
 }
 
@@ -170,7 +267,7 @@ const PROBE_TOLERANCE = 0.0005;
  * that tells nothing apart (no canvas, a stub) answers false.
  */
 export function scriptSensitive(font: string, marks: readonly string[]): boolean {
-  const known = _sensitive.get(font);
+  const known = C.sensitive.get(font);
   if (known !== undefined) return known;
   const ctx = getMeasureCtx();
   if (font !== _currentFont) {
@@ -185,7 +282,7 @@ export function scriptSensitive(font: string, marks: readonly string[]): boolean
     if (width > hi) hi = width;
   }
   const sensitive = Number.isFinite(lo) && lo > 0 && hi - lo > lo * PROBE_TOLERANCE;
-  _sensitive.set(font, sensitive);
+  C.sensitive.set(font, sensitive);
   return sensitive;
 }
 
@@ -244,22 +341,20 @@ function dropFamilies(caches: Map<string, Map<string, number>>, families: Readon
 export function evictTextWidths(families: Iterable<string> | null): void {
   const set = families === null ? null : new Set(Array.from(families, (f) => f.toLowerCase()));
   if (set === null) {
-    _widthCaches = new Map();
-    _widthCacheEntries = 0;
-    _runCaches = new Map();
-    _runCacheEntries = 0;
-    _markedCaches = new Map();
-    _markedCacheEntries = 0;
-    _sensitive = new Map();
+    // Every language's widths: the one measured in keeps its place.
+    C = newCaches();
+    _cachesByLanguage = new Map([[_language ?? HOST_LANGUAGE, C]]);
   } else {
-    _widthCacheEntries -= dropFamilies(_widthCaches, set);
-    _runCacheEntries -= dropFamilies(_runCaches, set);
-    _markedCacheEntries -= dropFamilies(_markedCaches, set);
-    for (const font of [..._sensitive.keys()]) {
-      const family = fontStringFamily(font);
-      // A face of the stack may stand in for another: any font string
-      // that names a changed family is asked again.
-      if (family === null || [...set].some((f) => font.toLowerCase().includes(f))) _sensitive.delete(font);
+    for (const caches of _cachesByLanguage.values()) {
+      caches.widthEntries -= dropFamilies(caches.width, set);
+      caches.runEntries -= dropFamilies(caches.run, set);
+      caches.markedEntries -= dropFamilies(caches.marked, set);
+      for (const font of [...caches.sensitive.keys()]) {
+        const family = fontStringFamily(font);
+        // A face of the stack may stand in for another: any font string
+        // that names a changed family is asked again.
+        if (family === null || [...set].some((f) => font.toLowerCase().includes(f))) caches.sensitive.delete(font);
+      }
     }
   }
   // The context resolves its font again on the next measure.
@@ -334,6 +429,8 @@ export function measureInkProfile(text: string, font: string): InkProfile | null
   const ctx = _profileCtx;
   if (!ctx) return null;
   try {
+    // The ink is the ink of the glyphs measured: the same language.
+    applyLanguage(ctx, _language);
     ctx.font = font;
     const m = ctx.measureText(text);
     const { actualBoundingBoxLeft: left, actualBoundingBoxRight: right, actualBoundingBoxAscent: ascent, actualBoundingBoxDescent: descent } = m;

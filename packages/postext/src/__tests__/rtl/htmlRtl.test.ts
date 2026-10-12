@@ -72,12 +72,24 @@ describe('document root and pages', () => {
     expect(renderToHtml(doc, { mode: 'multi' })).toContain('flex-direction:row-reverse;');
   });
 
-  it('a left-to-right document is marked as before', () => {
+  it('a left-to-right document declares its language and no direction (#764)', () => {
     const doc = buildDocument({ markdown: 'Plain English words.' }, config('ltr'));
+    const html = renderToHtml(doc);
+    // No locale: the language of the hyphenation default.
+    expect(html).toMatch(/^<div class="pt-doc" lang="en-US" data-mode="multi" style="/);
+    expect(html).toMatch(/<div class="pt-page" id="[^"]+" data-page="0" lang="en-US" style="/);
+    expect(html).toContain(HTML_TEXT_RESET);
+    expect(html).not.toContain(' dir=');
+  });
+
+  it('a left-to-right document shaped in the language of the host is marked as before', () => {
+    const base = config('ltr');
+    const doc = buildDocument({ markdown: 'Plain English words.' }, { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } });
     const html = renderToHtml(doc);
     expect(html).toMatch(/^<div class="pt-doc" data-mode="multi" style="/);
     expect(html).toContain(HTML_TEXT_RESET);
     expect(html).not.toContain(' dir=');
+    expect(html).not.toContain(' lang=');
   });
 });
 

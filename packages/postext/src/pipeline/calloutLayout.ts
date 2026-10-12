@@ -40,7 +40,7 @@
  */
 
 import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical';
-import { onTextWidthCacheClear } from '../measure/canvas';
+import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import type { ContentBlock, DirectiveAttrs } from '../parse';
 import { suffixJoiner } from '../parse/inlineFormatting';
 import { spaceDirectiveLines } from '../parse/attrs';
@@ -840,7 +840,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const base = steps[0]!.columnWidth;
     let prev: ReturnType<typeof measureContentBlock> | undefined;
     for (let i = 0; i < steps.length; i++) {
-      const key = `${styleAt}|${blockIdx}|${steps.slice(0, i + 1).map((st) => `${st.fromLine}:${st.columnWidth}`).join(',')}`;
+      const key = `${measureLanguageKey()}${styleAt}|${blockIdx}|${steps.slice(0, i + 1).map((st) => `${st.fromLine}:${st.columnWidth}`).join(',')}`;
       if (memo.has(key)) {
         prev = memo.get(key);
         if (!prev) return undefined;

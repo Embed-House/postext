@@ -170,6 +170,9 @@ describe("package exports", () => {
       "matchContentLocale",
       "canonicalLocaleTag",
       "renderLangOf",
+      // The language a document's text is shaped in (#764).
+      "shapingLanguageOf",
+      "shapingTagOf",
       "stringsFor",
       "directionOf",
       "comicsLocaleDirection",
@@ -539,6 +542,10 @@ describe("package exports", () => {
       "scriptContextUntracked",
       "scriptMark",
       "withScriptMark",
+      // The language the measuring contexts shape in (#764).
+      "setMeasureLanguage",
+      "getMeasureLanguage",
+      "withMeasureLanguage",
       "bidiClassOf",
       "isRtlScriptChar",
       "needsBidi",

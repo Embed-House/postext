@@ -53,10 +53,13 @@ describe('pinLegacyGridBalancing (#632)', () => {
       expect(migrateConfig(grid(), v).headings?.balancing?.enabled, String(v)).toBe(true);
     }
     // A grid stamped 11 keeps its balancing as written; the break rules of
-    // 12 are pinned on it (#717), and one stamped 12 is read as it is.
+    // 12 are pinned on it (#717).
     const current = grid();
     expect(migrateConfig(current, 11, { content: '正文。' }).headings).toBe(current.headings);
-    expect(migrateConfig(current, 12)).toBe(current);
+    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 13)).toBe(current);
   });
 
   // #651: the first save stores the migrated configuration stripped of

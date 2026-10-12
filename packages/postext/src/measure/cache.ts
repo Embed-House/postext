@@ -8,7 +8,7 @@ import { getCjkLineBreak } from './cjkClasses';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical';
 import { cjkCompositionKey, getCjkComposition } from './cjkPunctuation';
 import { getMeasureArabicNumbers, getMeasureDirection } from './bidiLines';
-import { evictionsSince, measurementGeneration } from './canvas';
+import { evictionsSince, measurementGeneration, measureLanguageKey } from './canvas';
 import { scriptContextKey } from './script';
 
 /** Options that change a block's lines, joined into its cache key. The
@@ -21,7 +21,7 @@ import { scriptContextKey } from './script';
  *  (#725), in the documents whose language is not written in Latin
  *  letters or that switch the rule off. */
 function optionsKey(options: MeasureBlockOptions | undefined): string {
-  return `${(options?.direction ?? getMeasureDirection()) === 'rtl' ? 'rtl\x00' : ''}${getMeasureArabicNumbers() ? 'an\x00' : ''}${scriptContextKey()}${options?.textAlign ?? ''}\x00${options?.hyphenate ?? ''}\x00${options?.firstLineIndentPx ?? ''}\x00${options?.hangingIndent ?? ''}\x00${options?.optimal ?? ''}\x00${options?.maxStretchRatio ?? ''}\x00${options?.minShrinkRatio ?? ''}\x00${options?.runtPenalty ?? ''}\x00${options?.runtMinCharacters ?? ''}\x00${options?.looseness ?? ''}\x00${options?.letterSpacingPx ?? ''}\x00${options?.hyphenationZonePx ?? ''}\x00${getHyphenationLocale()}${options?.justifyTrackingPx ? `\x00${options.justifyTrackingPx}` : ''}${options?.runtGraded ? '\x00rg' : ''}${options?.labelColumnPx !== undefined ? `\x00lc${options.labelColumnPx}` : ''}${options?.labelLength ? `\x00ll${options.labelLength}` : ''}${options?.numberSeams?.length ? `\x00ns${options.numberSeams.join(',')}` : ''}${options?.avoidHyphenAtLines?.length ? `\x00ah${options.avoidHyphenAtLines.join(',')}` : ''}${options?.kashida ? `\x00k${options.kashida.patterns}:${options.kashida.perWord}:${options.kashida.maxLengthPx}` : ''}${options?.lineIndentsPx?.length ? `\x00li${options.lineIndentsPx.join(',')}` : ''}${options?.tabs ? `\x00tb${JSON.stringify(options.tabs)}` : ''}${hyphenationRulesKey()}`;
+  return `${(options?.direction ?? getMeasureDirection()) === 'rtl' ? 'rtl\x00' : ''}${getMeasureArabicNumbers() ? 'an\x00' : ''}${scriptContextKey()}${measureLanguageKey()}${options?.textAlign ?? ''}\x00${options?.hyphenate ?? ''}\x00${options?.firstLineIndentPx ?? ''}\x00${options?.hangingIndent ?? ''}\x00${options?.optimal ?? ''}\x00${options?.maxStretchRatio ?? ''}\x00${options?.minShrinkRatio ?? ''}\x00${options?.runtPenalty ?? ''}\x00${options?.runtMinCharacters ?? ''}\x00${options?.looseness ?? ''}\x00${options?.letterSpacingPx ?? ''}\x00${options?.hyphenationZonePx ?? ''}\x00${getHyphenationLocale()}${options?.justifyTrackingPx ? `\x00${options.justifyTrackingPx}` : ''}${options?.runtGraded ? '\x00rg' : ''}${options?.labelColumnPx !== undefined ? `\x00lc${options.labelColumnPx}` : ''}${options?.labelLength ? `\x00ll${options.labelLength}` : ''}${options?.numberSeams?.length ? `\x00ns${options.numberSeams.join(',')}` : ''}${options?.avoidHyphenAtLines?.length ? `\x00ah${options.avoidHyphenAtLines.join(',')}` : ''}${options?.kashida ? `\x00k${options.kashida.patterns}:${options.kashida.perWord}:${options.kashida.maxLengthPx}` : ''}${options?.lineIndentsPx?.length ? `\x00li${options.lineIndentsPx.join(',')}` : ''}${options?.tabs ? `\x00tb${JSON.stringify(options.tabs)}` : ''}${hyphenationRulesKey()}`;
 }
 
 /** The document's hyphenation rules (#699: words kept whole, capitalised

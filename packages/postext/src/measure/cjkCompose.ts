@@ -38,7 +38,8 @@ import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineSegment, VDTSegmentMa
 import { createBoundingBox } from '../vdt';
 import { isJapaneseLanguage } from '../locale';
 import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredBlock, type MeasureBlockOptions } from './types';
-import { measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor } from './canvas';
+import { getMeasureLanguage, measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage } from './canvas';
+import { spanShapingLanguage } from './spanLanguage';
 import {
   atomicSpanToken,
   refLabelTokens,
@@ -369,6 +370,9 @@ function spanLanguageHere(span: InlineSpan): string | undefined {
   let lang: string | undefined;
   for (let d = span.direction; d && lang === undefined; d = d.outer) lang = d.lang;
   if (lang === undefined) return undefined;
+  // In a document shaped in its own language every run that names one
+  // carries it (#764): it was measured in it, and is painted in it.
+  if (getMeasureLanguage() !== undefined) return lang;
   return getMeasureRegion() === 'japan' || isJapaneseLanguage(lang) ? lang : undefined;
 }
 
@@ -838,6 +842,11 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
   const spanStarts: number[] = [];
 
   for (let si = 0; si < spans.length; si++) {
+    // A run that names its language is measured in it (#764).
+    const ownLanguage = spanShapingLanguage(spans[si]!);
+    const languageBefore = getMeasureLanguage();
+    if (ownLanguage !== undefined) setMeasureLanguage(ownLanguage);
+    try {
     const span = spans[si]!;
     spanStarts.push(units.length);
     // A ruby base: one unit, sized with its reading once its neighbours
@@ -1050,6 +1059,9 @@ function buildUnits(spans: readonly InlineSpan[], fonts: Fonts, letterSpacingPx:
     flushRun();
     flushSpace();
     if (units.length === spanFirst + 1 && units[spanFirst]!.kind === 'text') wholeSpan.add(spanFirst);
+    } finally {
+      if (ownLanguage !== undefined) setMeasureLanguage(languageBefore);
+    }
   }
 
   if (spans.some((s) => s.kunten)) attachKunten(spans, spanStarts, units);

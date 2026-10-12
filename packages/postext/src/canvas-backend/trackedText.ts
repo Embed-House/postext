@@ -95,9 +95,13 @@ type Ctx = Pick<CanvasRenderingContext2D, 'font' | 'letterSpacing' | 'measureTex
  *  makes a second level. */
 const ONE_LEVEL_RTL: ReadonlySet<string> = new Set(['R', 'AL', 'NSM', 'WS', 'ON', 'CS', 'ES', 'ET']);
 
-function known(font: string): Known {
-  let k = knownByFont.get(font);
-  if (!k) knownByFont.set(font, k = { otherwise: new Map(), words: new Map() });
+function known(ctx: object, font: string): Known {
+  // A face ligates otherwise under a language (no `fi` in Turkish): the
+  // context's own is part of the key (#764).
+  const lang = (ctx as { lang?: unknown }).lang;
+  const key = typeof lang === 'string' && lang !== 'inherit' ? `${lang}\u0000${font}` : font;
+  let k = knownByFont.get(key);
+  if (!k) knownByFont.set(key, k = { otherwise: new Map(), words: new Map() });
   return k;
 }
 
@@ -133,7 +137,7 @@ function probe(ctx: Ctx, text: string): boolean {
 }
 
 function otherwise(ctx: Ctx, font: string, text: string): boolean {
-  const { otherwise: words } = known(font);
+  const { otherwise: words } = known(ctx, font);
   let changed = words.get(text);
   if (changed === undefined) {
     changed = probe(ctx, text);
@@ -185,7 +189,7 @@ function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
 function trackedWord(ctx: CanvasRenderingContext2D, text: string): TrackedWord | null {
   if (text.length < 2 || !measures(ctx)) return null;
   const font = ctx.font;
-  const { words } = known(font);
+  const { words } = known(ctx, font);
   let word = words.get(text);
   if (word === undefined) {
     const spacing = ctx.letterSpacing;

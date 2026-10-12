@@ -1537,6 +1537,25 @@ export interface BodyTextConfig {
    *  to postext 1.27 (configurations stored before `configVersion` 12
    *  read with it, see `pinLegacyScriptContext` in `postext/bundle`). */
   scriptContext?: boolean;
+  /** The language the document's text is shaped in (#764): measured,
+   *  painted and embedded. A font answers with other glyphs under a
+   *  language (OpenType `locl`): Noto Serif SC sets its digits otherwise
+   *  in Chinese, a face with a Catalan form draws `l·l` closer, one with the Turkish rule keeps `fi` apart. `'document'` (the
+   *  default): the document's own ({@link PostextConfig.locale}), and a
+   *  block's or a run's own where it names one (`{lang=en}`), on every
+   *  context the layout measures with (the engine's, a layout worker's,
+   *  the plain-paragraph breaker's), on the canvas, in the HTML viewer,
+   *  the EPUB and the PDF (the OpenType language system of the language),
+   *  so the same document has the same lines on a page in any language
+   *  and in a worker. `'host'`: as up to postext 1.28, the measuring
+   *  contexts take the language of the page that hosts the layout (none
+   *  in a worker), and only a Chinese, Japanese, Korean or right-to-left
+   *  document is painted in its own (configurations stored before
+   *  `configVersion` 13 read with it, see `pinLegacyShapingLanguage` in
+   *  `postext/bundle`). A browser whose canvas has no `lang` (Chrome
+   *  before 136, Firefox and Safari where it is missing) measures as it
+   *  always did. */
+  shapingLanguage?: 'document' | 'host';
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
    *  it. A paragraph style or a callout body that sets its own replaces
@@ -2203,6 +2222,9 @@ export interface ResolvedBodyTextConfig {
   /** Present only when switched off (see
    *  {@link BodyTextConfig.scriptContext}). */
   scriptContext?: false;
+  /** Present only when the host's (see
+   *  {@link BodyTextConfig.shapingLanguage}). */
+  shapingLanguage?: 'host';
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */

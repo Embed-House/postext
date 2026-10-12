@@ -8,7 +8,8 @@ import { cjkGridCells } from '../pipeline/cjkGrid';
 import { renderBlock } from './blockRender';
 import { renderHeaderFooterSlot } from './headerFooter';
 import { documentInkHex } from '../svg/singleInk';
-import { renderLangOf } from '../locale';
+import { renderLangOf, shapingLanguageOf } from '../locale';
+import { setSegmentLanguages } from './wordRuns';
 import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
 import { setVerticalPaint } from './verticalText';
 import { beginMirroredFlow } from './mirrorFrame';
@@ -128,7 +129,7 @@ function paintPage(
 const langByConfig = new WeakMap<object, string | undefined>();
 function langOf(config: VDTDocument['config']): string | undefined {
   if (langByConfig.has(config)) return langByConfig.get(config);
-  const lang = renderLangOf(config);
+  const lang = shapingLanguageOf(config) ?? renderLangOf(config);
   langByConfig.set(config, lang);
   return lang;
 }
@@ -140,10 +141,14 @@ function paintContext(
   doc: VDTDocument,
   options?: RenderPageOptions,
 ): void {
-  // A Chinese, Japanese or Korean document paints in its language, so the
-  // browser picks the region's glyph forms (`ctx.lang`, Chrome 136+).
+  // The page is painted in the language it was measured in (`ctx.lang`,
+  // Chrome 136+; #764): the document's, so the browser picks the glyph
+  // forms of that language, and a run's own where it names one. A
+  // document shaped in the host's language keeps what it had: its own
+  // when it is Chinese, Japanese, Korean or written right to left.
   const lang = langOf(doc.config);
-  if (lang && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
+  if (lang !== undefined && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
+  setSegmentLanguages(doc.config.bodyText?.shapingLanguage !== 'host');
   // The bitmap is a whole number of pixels; the page rarely is. Drawing at
   // `scale` would leave the last column (and row) of pixels only partly
   // covered — a light hairline at the edge of a dark or coloured page — so

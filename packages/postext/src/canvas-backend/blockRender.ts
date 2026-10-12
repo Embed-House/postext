@@ -16,7 +16,7 @@ import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
-import { fillSegmentWord, type WordRun } from './wordRuns';
+import { fillSegmentWord, paintsSegmentLanguage, type WordRun } from './wordRuns';
 import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 
@@ -230,7 +230,9 @@ function segmentIsStyled(s: VDTLineSegment): boolean {
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
     || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.runs !== undefined || s.sideMarker !== undefined
     // A word with no letter painted in the script of its context (#725).
-    || s.leader !== undefined || s.scriptContext !== undefined;
+    || s.leader !== undefined || s.scriptContext !== undefined
+    // A word of a run in its own language, painted in it (#764).
+    || paintsSegmentLanguage(s);
 }
 
 /** A rule leader (#622): a line across `width` px under the baseline, its

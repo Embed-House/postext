@@ -1,3 +1,4 @@
+import { shapingTagOf } from '../locale';
 import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
@@ -46,6 +47,47 @@ const MARK_RE = /\p{M}/u;
  * it was measured (`scriptContextUntracked`).
  */
 export function fillSegmentWord(
+  ctx: CanvasRenderingContext2D,
+  seg: VDTLineSegment,
+  x: number,
+  y: number,
+  tracking: number,
+  paint: (text: string, x: number, y: number) => void,
+  runStyle: (run: WordRun) => { font: string; fill: string },
+): void {
+  // A word of a run that names its language is painted in it, as it was
+  // measured (#764), and the context gets the document's back.
+  if (segmentLanguages && seg.lang !== undefined && 'lang' in ctx) {
+    const context = ctx as CanvasRenderingContext2D & { lang: string };
+    const language = context.lang;
+    context.lang = shapingTagOf(seg.lang);
+    try {
+      fillWord(ctx, seg, x, y, tracking, paint, runStyle);
+    } finally {
+      context.lang = language;
+    }
+    return;
+  }
+  fillWord(ctx, seg, x, y, tracking, paint, runStyle);
+}
+
+/** Whether a segment's own language is painted (see
+ *  {@link setSegmentLanguages}). */
+let segmentLanguages = false;
+
+/** Paint the segments that name a language in it from now on (`on`), or
+ *  in the page's as up to postext 1.28: the page painter says which for
+ *  the document it paints (`bodyText.shapingLanguage`). */
+export function setSegmentLanguages(on: boolean): void {
+  segmentLanguages = on;
+}
+
+/** Whether a segment that names its language is painted on its own. */
+export function paintsSegmentLanguage(seg: VDTLineSegment): boolean {
+  return segmentLanguages && seg.lang !== undefined;
+}
+
+function fillWord(
   ctx: CanvasRenderingContext2D,
   seg: VDTLineSegment,
   x: number,

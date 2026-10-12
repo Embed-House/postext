@@ -17,8 +17,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 12 since #747 (11 from
- * postext 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 13 since #764 (12 from
+ * postext 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -166,6 +166,11 @@ import { hasCJK } from '../measure/cjk';
  *     (`bodyText.scriptContext`, #725), where up to 1.27 it was shaped
  *     alone, in the script each browser and the PDF picked ({@link
  *     pinLegacyScriptContext});
+ * - 13 (#764), the rules of the postext that follows 1.28:
+ *   - the text is measured, painted and embedded in the document's own
+ *     language on every host (`bodyText.shapingLanguage`, #764), where up
+ *     to 1.28 the layout measured in the language of the page that hosted
+ *     it, and in none in a worker ({@link pinLegacyShapingLanguage});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -180,9 +185,10 @@ import { hasCJK } from '../measure/cjk';
  * under 10 was written by postext 1.24 and gets the version-11 pins (which
  * every older one gets too); one stored under 11 was written by postext
  * 1.25 to 1.27 and gets the version-12 pins (which every older one gets
- * too).
+ * too); one stored under 12 was written by postext 1.28 and gets the
+ * version-13 pins (which every older one gets too).
  */
-export const CONFIG_VERSION = 12;
+export const CONFIG_VERSION = 13;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -279,6 +285,9 @@ const BALLOON_PLACEMENT_RULES = 12;
 /** The rules that shape a word with no letter in the script of its
  *  context (#725). */
 const SCRIPT_CONTEXT_RULES = 12;
+/** The rules that shape the text in the document's own language on every
+ *  host (#764). */
+const SHAPING_LANGUAGE_RULES = 13;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1487,6 +1496,24 @@ export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config:
   return { ...config, bodyText: { ...bodyText, scriptContext: false } };
 }
 
+/**
+ * A configuration written before #764 (postext 1.28 or earlier), pinned to
+ * the language its text was shaped in: `bodyText.shapingLanguage: 'host'`,
+ * the measuring contexts left with the language of the page that hosts
+ * the layout (none in a worker) and only a Chinese, Japanese, Korean or
+ * right-to-left document painted and embedded in its own, where today
+ * every document is measured, painted and embedded in its own language.
+ * Every such configuration gets it: a face answers with other glyphs
+ * under a language, and which faces a document loads is not known here.
+ * A configuration that names the setting already is returned as it is
+ * (the same object).
+ */
+export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.shapingLanguage !== undefined) return config;
+  return { ...config, bodyText: { ...bodyText, shapingLanguage: 'host' } };
+}
+
 /** A line that opens a comic: a `:::page` or a `:::strip` fence. */
 const COMIC_FENCE_LINE_RE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;
 
@@ -1673,7 +1700,8 @@ export interface MigrateConfigOptions {
  * and its comic balloons placed as 1.27 placed them by {@link
  * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
  * or strip, and its words with no letter shaped alone by {@link
- * pinLegacyScriptContext}.
+ * pinLegacyScriptContext}, and its text shaped in the host's language by
+ * {@link pinLegacyShapingLanguage}.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1723,6 +1751,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) out = pinLegacyBalloonPlacement(out);
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
+  if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
   return out;
 }
 
@@ -1810,5 +1839,6 @@ export function migrateBundleConfig(
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) merged = pinLegacyBalloonPlacement(merged);
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
+  if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
   return merged;
 }

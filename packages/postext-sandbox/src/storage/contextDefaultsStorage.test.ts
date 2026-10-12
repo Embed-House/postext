@@ -315,17 +315,21 @@ describe('the break rules of a character grid survive a save (#717)', () => {
     await putProject(migrated);
     const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
     expect(raw.version).toBe(PROJECT_RECORD_VERSION);
-    // (With the pin every record stored before 12 takes, #725.)
-    expect(raw.config.bodyText).toEqual({ ...ON, scriptContext: false });
+    // (With the pins every record stored before 12 takes, #725, and before
+    // 13, #764.)
+    expect(raw.config.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
     expect(laidOut((await getProject('old'))!.config)).toEqual(ON);
   });
 
   it('an exported configuration stamped 11 is read back with both rules', () => {
     const migrated = configFromExport({ type: 'postext-config', version: 1, configVersion: 11, config: japanese() });
     expect(laidOut(migrated)).toEqual(ON);
-    // One exported today is read as it is.
+    // One stamped 12 is read with the rules of its grid as they are today,
+    // and one exported today as it is.
     const current = configFromExport({ type: 'postext-config', version: 1, configVersion: 12, config: japanese() });
     expect(laidOut(current)).toEqual(OFF);
+    const today = japanese();
+    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 13, config: today })).toBe(today);
   });
 
   it('the layout key sees a rule turned on where it is off by default', () => {

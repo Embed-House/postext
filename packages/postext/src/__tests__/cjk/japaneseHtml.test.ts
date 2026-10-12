@@ -168,9 +168,20 @@ describe('page language (#428)', () => {
     expect(pageTag(indexed.html)).not.toContain('dir=');
   });
 
-  it('other documents\' pages are as before', () => {
-    expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, config({ locale: 'zh-Hans' }))))).not.toContain('lang=');
-    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).not.toContain('lang=');
+  it('other documents\' pages declare theirs too (#764)', () => {
+    expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, config({ locale: 'zh-Hans' }))))).toMatch(/ data-page="0" lang="zh-Hans" style="/);
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).toMatch(/ data-page="0" lang="en" style="/);
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, config({ locale: 'ar' }))))).toContain(' dir="rtl" lang="ar"');
+  });
+
+  it('pages of a document shaped in the language of the host are as before', () => {
+    const host = (locale: string): PostextConfig => {
+      const base = config({ locale });
+      return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } };
+    };
+    expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, host('zh-Hans'))))).not.toContain('lang=');
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, host('en'))))).not.toContain('lang=');
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, host('ar'))))).toContain(' dir="rtl" lang="ar"');
+    expect(pageTag(renderToHtml(buildDocument({ markdown: '吾輩は猫である。' }, host('ja'))))).toContain(' lang="ja"');
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyLatinSpacingEdge, pinLegacyNoteBreaks, pinLegacyTitleBreaks, pinLegacyScriptContext } from '../../bundle/configVersion';
+import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyLatinSpacingEdge, pinLegacyNoteBreaks, pinLegacyTitleBreaks, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
 import { resolveAllConfig } from '../../pipeline/config';
 import { stripConfigDefaults } from '../../defaults';
 import type { PostextConfig } from '../../types';
@@ -51,7 +51,7 @@ describe('pins of #637', () => {
     expect(circled).toEqual({ circledNumbers: 'western', composeDesignText: false });
     // Latin text with no CJK, in a configuration with none: nothing.
     const latin: PostextConfig = { locale: 'en', headings: { fontFamily: 'Literata' } };
-    expect(migrateConfig(latin, 10, { content: 'A plain chapter.' })).toEqual(pinLegacyScriptContext(latin));
+    expect(migrateConfig(latin, 10, { content: 'A plain chapter.' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(latin)));
     // CJK only in the configuration's own text (a running head written
     // out): the design text is pinned.
     const literal: PostextConfig = { locale: 'en', header: { elements: [{ kind: 'text', id: 'h', content: '紅樓夢' } as never] } };
@@ -68,7 +68,7 @@ describe('pins of #637', () => {
       expect(cjk?.composeDesignText, String(v)).toBe(false);
     }
     const current = zh();
-    expect(migrateConfig(current, 11, { content: '《說文》①' })).toEqual(pinLegacyScriptContext(current));
+    expect(migrateConfig(current, 11, { content: '《說文》①' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(current)));
   });
 
   it('pin a bundle on its merged cjk', () => {
@@ -114,7 +114,7 @@ describe('pin of #720', () => {
     expect(migrateConfig(config, 11, { content: NOTE }).cjk).toEqual({ warichu: { minChars: 1 } });
     expect(migrateConfig(config, 11, { content: ['一章。', NOTE] }).cjk).toEqual({ warichu: { minChars: 1 } });
     // No note in the text: nothing.
-    expect(migrateConfig(config, 11, { content: '撰此《石頭記》一書也。' })).toEqual(pinLegacyScriptContext(config));
+    expect(migrateConfig(config, 11, { content: '撰此《石頭記》一書也。' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(config)));
     // Citations set as notes: the configuration itself says so.
     const cited = zh({ citations: { notes: 'warichu' } });
     expect(migrateConfig(cited, 11, { content: '一章。' }).cjk).toEqual({ warichu: { minChars: 1 } });
@@ -128,7 +128,10 @@ describe('pin of #720', () => {
       expect(migrateConfig(zh(), v, { content: NOTE }).cjk?.warichu, String(v)).toEqual({ minChars: 1 });
     }
     const current = zh();
-    expect(migrateConfig(current, 12, { content: NOTE })).toBe(current);
+    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // read as it is.
+    expect(migrateConfig(current, 12, { content: NOTE })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 13, { content: NOTE })).toBe(current);
   });
 
   it('pins a bundle on its merged cjk and citations', () => {
@@ -189,12 +192,12 @@ describe('pin of #721', () => {
     expect(migrateConfig(ja(), 11, { content: TEXT }).cjk).toEqual({ latinSpacingEdge: 'letters' });
     expect(migrateConfig(ja(), 11, { content: ['A Latin chapter.', TEXT] }).cjk).toEqual({ latinSpacingEdge: 'letters' });
     const latin = ja();
-    expect(migrateConfig(latin, 11, { content: 'A chapter with no kana at all.' })).toEqual(pinLegacyScriptContext(latin));
+    expect(migrateConfig(latin, 11, { content: 'A chapter with no kana at all.' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(latin)));
     // Unknown content may hold some (and a note: the pin of #720 too).
     expect(migrateConfig(ja(), 11).cjk).toEqual({ warichu: { minChars: 1 }, latinSpacingEdge: 'letters' });
     // A Chinese document is never pinned.
     const chinese = zh();
-    expect(migrateConfig(chinese, 11, { content: '撰此一書也。' })).toEqual(pinLegacyScriptContext(chinese));
+    expect(migrateConfig(chinese, 11, { content: '撰此一書也。' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(chinese)));
   });
 
   it('pins every version before 12, none from 12', () => {
@@ -202,7 +205,10 @@ describe('pin of #721', () => {
       expect(migrateConfig(ja(), v, { content: TEXT }).cjk?.latinSpacingEdge, String(v)).toBe('letters');
     }
     const current = ja();
-    expect(migrateConfig(current, 12, { content: TEXT })).toBe(current);
+    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
+    // read as it is.
+    expect(migrateConfig(current, 12, { content: TEXT })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 13, { content: TEXT })).toBe(current);
   });
 
   it('pins a bundle on the merged configuration of each locale', () => {
