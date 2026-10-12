@@ -307,7 +307,23 @@ export function scriptTextWidth(text: string, font: string, script: ScriptContex
  * falls at the paragraph's level, outside the word's run: Chrome 131 still
  * gave it the word's script, Chrome 154 shapes that run alone and gives
  * it Latin forms, so the word was measured narrower than every output
- * paints it. For a face that draws punctuation by script.
+ * paints it.
+ *
+ * And in any face the two measures differ by more than the forms (#770).
+ * Left to right, the stop and the guillemet of `خالة.»` are a run apart,
+ * shaped alone, and the word is the sum of two runs. Painted, it is one
+ * right-to-left run: its marks mirrored, in the order they are read,
+ * kerned to each other. Markazi Text sets that word 1993.2 thousandths of
+ * the em wide as two runs and 1988.3 as one, in any language.
+ *
+ * Who is measured so: a word of a face that draws punctuation by script
+ * (`faceReadsScript`), and every right-to-left word of a document shaped
+ * in its own language. Markazi Text is such a face in Arabic alone: its
+ * Arabic stop, exclamation mark, guillemets and ellipsis are a `locl` of
+ * the Arabic language system (`arab`/`ARA `), which Persian, Urdu and a
+ * text with no language do not take, so there its words were measured as
+ * two runs. A document shaped in its host's language keeps the widths it
+ * had.
  */
 export function rtlTextWidth(text: string, font: string): number {
   return measureMarkedWidth(text, font, '', '', true);

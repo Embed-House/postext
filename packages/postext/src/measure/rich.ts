@@ -333,9 +333,11 @@ function pieceScriptFields(token: Pick<RichToken, 'text' | 'scriptContext' | 'sc
 /** The width of a word of a joining script (Arabic…), always painted
  *  right to left: measured so too in a face that draws its punctuation by
  *  script (#725, `rtlTextWidth`), so the bracket or the stop at its edge
- *  takes the forms it is painted in; as any text otherwise. */
+ *  takes the forms it is painted in, and in every face in a document
+ *  shaped in its own language (#770, see `rtlTextWidth`); as any text
+ *  otherwise. */
 function rtlWordWidth(text: string, font: string): number {
-  return getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) ? rtlTextWidth(text, font) : textWidth(text, font, false);
+  return getMeasureScriptContext().enabled && !measuringVertically() && (faceReadsScript(font) || getMeasureLanguage() !== undefined) ? rtlTextWidth(text, font) : textWidth(text, font, false);
 }
 
 /** How a token's text is measured: in its script when it is a word with
@@ -1309,8 +1311,12 @@ function tokenizeSpans(
   const contextOf = !scriptState.enabled || measuringVertically()
     ? undefined
     : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean; pieces?: ScriptContext } | undefined => {
-        if (!faceReadsScript(font) || hasCJK(word)) return undefined;
         const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
+        // A face whose marks are the same in every script: no word of it
+        // is given one, and a right-to-left word is still measured as it
+        // is painted in a document shaped in its own language (#770).
+        if (!faceReadsScript(font)) return rtl && getMeasureLanguage() !== undefined && !hasCJK(word) ? { script: undefined, rtl } : undefined;
+        if (hasCJK(word)) return undefined;
         if (!isLetterless(word)) {
           if (rtl) return { script: undefined, rtl };
           const pieces = wordPieceScript(word);

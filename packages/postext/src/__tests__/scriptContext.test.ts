@@ -99,6 +99,9 @@ function shapedWidth(text: string, font: string, direction: string): number {
       }
     }
     for (const unit of units) {
+      // A face like Markazi Text kerns a stop to the guillemet after it
+      // in a run set right to left (measured: 4.9 thousandths of the em).
+      if (font.includes('Markazi') && unitIsRtl(unit, direction)) width -= stopGuillemetPairs(unit) * 0.049 * size;
       const first = unit.map(ownScript).find((s) => s !== undefined);
       let script: Script | 'DFLT' = first ?? (chrome === 131 ? 'DFLT' : 'Latn');
       for (const ch of unit) {
@@ -111,6 +114,20 @@ function shapedWidth(text: string, font: string, direction: string): number {
     }
   }
   return width;
+}
+
+/** Whether a run the browser itemised is set right to left: on a current
+ *  Chrome by the side its characters fell on, on Chrome 131 (a word is one
+ *  run there) when it holds a right-to-left letter or its context is one. */
+function unitIsRtl(unit: string[], direction: string): boolean {
+  if (chrome === 131) return direction === 'rtl' || unit.some(isRtlLetter);
+  const ch = unit[0]!;
+  return direction === 'rtl' ? !(isLtrLetter(ch) || isDigit(ch)) : isRtlLetter(ch);
+}
+function stopGuillemetPairs(unit: string[]): number {
+  let pairs = 0;
+  for (let i = 0; i + 1 < unit.length; i++) if (unit[i] === '.' && unit[i + 1] === '\u00BB') pairs++;
+  return pairs;
 }
 
 class BrowserCtx {
@@ -958,5 +975,88 @@ describe('a doubled ellipsis or dash in a Chinese or Japanese document (#725)', 
     const plain = build(COLOPHON, config('Plain', { locale: 'zh-Hans', ...wide }));
     expect(segmentsOf(plain).some((seg) => 'scriptContext' in seg)).toBe(false);
     expect(segmentsOf(plain).some((seg) => seg.text === `${ELLIPSIS}${ELLIPSIS}.`)).toBe(true);
+  });
+});
+
+describe('a right-to-left word in a face that draws its marks one way (#770)', () => {
+  // Markazi Text draws its Arabic stop and guillemets as a form of the
+  // Arabic language alone, so in Persian, in Urdu and with no language it
+  // is no face that draws punctuation by script, and its words were
+  // measured left to right: the stop and the guillemet of the word below a
+  // run apart, 4.9 thousandths of the em wider than the one run painted.
+  const MARKAZI = 'Plain Markazi';
+  const FONT = `10px ${MARKAZI}`;
+  const KHALA = '\u062E\u0627\u0644\u0629';
+  const WORD = `${KHALA}.\u00BB`;
+  const OWN = { shapingLanguage: 'document' as const };
+  const cfg = (family: string, bodyText: PostextConfig['bodyText'] = {}): PostextConfig => config(family, { direction: 'rtl', locale: 'fa', bodyText });
+  /** What the canvas gives a segment as it paints it: alone, in a context
+   *  set right to left. */
+  const painted = (text: string, font: string): number => {
+    const ctx = new BrowserCtx();
+    ctx.font = font;
+    ctx.direction = 'rtl';
+    return +ctx.measureText(text).width.toFixed(4);
+  };
+  const widthOf = (markdown: string, text: string, config: PostextConfig): number[] => segmentsOf(build(markdown, config)).filter((s) => s.text === text).map((s) => +s.width.toFixed(4));
+
+  it('the face is none that draws punctuation by script', () => {
+    expect(faceReadsScript(FONT)).toBe(false);
+    expect(painted(WORD, FONT)).toBeCloseTo(26.21, 6);
+  });
+
+  it('in a document shaped in its own language it is measured as it is painted: one run, right to left', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, OWN))).toEqual([painted(WORD, FONT)]);
+    }
+    expect(painted(WORD, FONT)).toBe(26.21);
+  });
+
+  it('in a document shaped in its host\'s language it keeps the width it had: two runs on a current browser', () => {
+    on(154);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI))).toEqual([26.7]);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, { shapingLanguage: 'host' }))).toEqual([26.7]);
+    // Chrome 131 read a word as one run.
+    on(131);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI))).toEqual([26.21]);
+  });
+
+  it('marks that stand alone between right-to-left words likewise', () => {
+    const md = `${AR} .\u00BB ${AR}`;
+    expect(widthOf(md, '.\u00BB', cfg(MARKAZI, OWN))).toEqual([painted('.\u00BB', FONT)]);
+    expect(painted('.\u00BB', FONT)).toBe(6.21);
+    expect(widthOf(md, '.\u00BB', cfg(MARKAZI))).toEqual([6.7]);
+  });
+
+  it('a Hebrew word too', () => {
+    const hebrew = '\u05D0\u05D1.\u00BB';
+    const md = `\u05D0\u05D1 ${hebrew} \u05D0\u05D1`;
+    const own = config(MARKAZI, { direction: 'rtl', locale: 'he', bodyText: OWN });
+    expect(widthOf(md, hebrew, own)).toEqual([painted(hebrew, FONT)]);
+    expect(widthOf(md, hebrew, config(MARKAZI, { direction: 'rtl', locale: 'he' }))).toEqual([16.7]);
+  });
+
+  it('carries no field, and is cut where it was', () => {
+    const seg = segmentsOf(build(`${AR} ${WORD} ${AR}`, cfg(MARKAZI, OWN))).find((s) => s.text === WORD)!;
+    expect(seg.rtl).toBe(true);
+    expect('scriptContext' in seg).toBe(false);
+    expect('scriptRtl' in seg).toBe(false);
+    const texts = (config: PostextConfig): string[] => segmentsOf(build(`${AR} (${KHALA}) ${WORD} 46. ${AR}`, config)).map((s) => s.text);
+    expect(texts(cfg(MARKAZI, OWN))).toEqual(texts(cfg(MARKAZI)));
+  });
+
+  it('with the rule off a word is measured as up to postext 1.27', () => {
+    on(154);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, { ...OWN, scriptContext: false }))).toEqual([26.7]);
+  });
+
+  it('a face that draws punctuation by script is measured as it was, in either language', () => {
+    for (const version of [131, 154] as const) {
+      on(version);
+      const md = `${AR} (1367\u0645) ${AR}. 46. ${WORD}`;
+      const widths = (config: PostextConfig): unknown => segmentsOf(build(md, config)).map((s) => [s.text, +s.width.toFixed(4), s.scriptContext]);
+      expect(widths(cfg('Amiri', OWN))).toEqual(widths(cfg('Amiri')));
+    }
   });
 });
