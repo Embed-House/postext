@@ -107,7 +107,8 @@
       "pages": [
         7,
         7
-      ]
+      ],
+      "systemFont": "☐"
     }
   },
   "folio": {
@@ -145,5 +146,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-26",
-  "updated": "2026-10-10"
+  "updated": "2026-10-12"
 }

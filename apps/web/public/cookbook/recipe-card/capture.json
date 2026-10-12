@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "recipe-card",
-  "sourceHash": "6f6a17eaae5093a7f62cafe83612585e152f2b8e895944d84e604ff8128ba63b",
+  "sourceHash": "cb196d24dcb010f9bdb97d1686ef1f94914424bf07dd5e7be0fcb0c6ff36dea3",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.763Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:53.467Z",
   "variants": {
     "en": {
-      "hash8": "655e296c",
+      "hash8": "14fd34d6",
       "vdtHash": "d9244626546dce03f38e887964c7962bf560c7f9",
       "timings": {
-        "importMs": 956,
-        "fontsMs": 36,
-        "buildMs": 48,
-        "totalMs": 2436,
+        "importMs": 271,
+        "fontsMs": 26,
+        "buildMs": 51,
+        "totalMs": 1601,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1316,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 140296,
+          "bytes": 140306,
           "alt": "Opening page 58: Tortilla de patatas."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1316,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 132046,
+          "bytes": 132072,
           "alt": "Opening page 59: Gazpacho andaluz."
         }
       ],
@@ -84,7 +84,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416863,
+        "bytes": 416865,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -320,6 +320,16 @@
         },
         "findings": [
           {
+            "check": "C36",
+            "severity": "info",
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -328,13 +338,13 @@
       }
     },
     "es": {
-      "hash8": "9187856f",
+      "hash8": "14b15f5e",
       "vdtHash": "9f33fe5a8572ed57cd8bdc43156f67c1776702d7",
       "timings": {
-        "importMs": 1027,
-        "fontsMs": 55,
-        "buildMs": 60,
-        "totalMs": 2105,
+        "importMs": 266,
+        "fontsMs": 25,
+        "buildMs": 53,
+        "totalMs": 1598,
         "builds": 1
       },
       "specimen": {
@@ -367,7 +377,7 @@
           "h": 1316,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 145618,
+          "bytes": 145648,
           "alt": "Página de apertura 58: Tortilla de patatas."
         },
         {
@@ -378,7 +388,7 @@
           "h": 1316,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 133892,
+          "bytes": 133926,
           "alt": "Página de apertura 59: Gazpacho andaluz."
         }
       ],
@@ -402,7 +412,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417164,
+        "bytes": 417188,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -637,6 +647,16 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "C36",
+            "severity": "info",
+            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

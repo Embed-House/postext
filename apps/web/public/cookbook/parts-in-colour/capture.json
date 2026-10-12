@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "parts-in-colour",
-  "sourceHash": "4d8c7d2799da0e0fae57aec4048f9031d3f5410cbe97dbae792d464307e3ab89",
+  "sourceHash": "63a62500616ff38cac49b4effbe92f1a9f8859e63c7e5f532b8f0e24f18ef450",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.595Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:47.510Z",
   "variants": {
     "en": {
-      "hash8": "733d260a",
-      "vdtHash": "0e5889b3360077090ccfa5da2047c750f0b77848",
+      "hash8": "0f6d4c47",
+      "vdtHash": "619f902096812d84db96eb8eb3345bac84aed7ad",
       "timings": {
-        "importMs": 671,
-        "fontsMs": 52,
-        "buildMs": 110,
-        "totalMs": 2707,
+        "importMs": 265,
+        "fontsMs": 34,
+        "buildMs": 87,
+        "totalMs": 2014,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 166002,
+          "bytes": 165964,
           "alt": "Opening page 1: Birds of the Estuary."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118876,
+          "bytes": 118884,
           "alt": "Opening page 2: Contents."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 31380,
+          "bytes": 31382,
           "alt": "Part title page 3: PART I The Mudflats."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 102090,
+          "bytes": 102078,
           "alt": "Page 5: 1 Eurasian Curlew. Plate 1. Adult at low water. The female’s bill is the longer."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 94184,
+          "bytes": 94056,
           "alt": "Page 6: 2 Common Redshank. Plate 2. Adult by a saltmarsh creek, on the red legs that give it its name."
         },
         {
@@ -137,7 +137,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 78290,
+          "bytes": 78222,
           "alt": "Page 9: 3 Bearded Reedling. Plate 3. Male on a reed stem. The female has a plain brown head."
         },
         {
@@ -148,7 +148,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 79252,
+          "bytes": 79452,
           "alt": "Page 10: 4 Eurasian Reed Warbler. Plate 4. Singing from the reeds, one foot on each stem."
         }
       ],
@@ -192,12 +192,12 @@
       },
       "sandbox": {
         "file": "parts-in-colour.postext",
-        "bytes": 843871,
+        "bytes": 843881,
         "folio": "a033cff5",
         "chapters": [
           {
             "pages": 10,
-            "hash": "99ba13f79b386881",
+            "hash": "fa99c9814a10c78d",
             "lines": "0775f587bdf14401"
           }
         ]
@@ -489,17 +489,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "0380445b",
-      "vdtHash": "31d347092a81c1b9efa5c01bdc022c9921779bf7",
+      "hash8": "2bb9236d",
+      "vdtHash": "e8472f4ee1ee490f6911bb6b044692e4cd2fb61d",
       "timings": {
-        "importMs": 1111,
-        "fontsMs": 243,
-        "buildMs": 104,
-        "totalMs": 2571,
+        "importMs": 260,
+        "fontsMs": 29,
+        "buildMs": 82,
+        "totalMs": 2018,
         "builds": 1
       },
       "specimen": {
@@ -532,7 +543,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 164784,
+          "bytes": 164812,
           "alt": "Página de apertura 1: Aves del estuario."
         },
         {
@@ -543,7 +554,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118414,
+          "bytes": 118600,
           "alt": "Página de apertura 2: Índice."
         },
         {
@@ -554,7 +565,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 31788,
+          "bytes": 31800,
           "alt": "Portadilla de parte 3: PARTE I Los fangales."
         },
         {
@@ -576,7 +587,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 104660,
+          "bytes": 104622,
           "alt": "Página 5: 1 Zarapito real. Lámina 1. Adulto en bajamar. La hembra tiene el pico más largo."
         },
         {
@@ -587,7 +598,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 88140,
+          "bytes": 88116,
           "alt": "Página 6: 2 Archibebe común. Lámina 2. Adulto junto a un caño de la marisma, sobre las patas rojas que lo delatan."
         },
         {
@@ -620,7 +631,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 76438,
+          "bytes": 76546,
           "alt": "Página 9: 3 Bigotudo. Lámina 3. Macho en un tallo de carrizo. La hembra tiene la cabeza parda."
         },
         {
@@ -631,7 +642,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 75956,
+          "bytes": 75920,
           "alt": "Página 10: 4 Carricero común. Lámina 4. Cantando en el carrizal, con una pata en cada tallo."
         }
       ],
@@ -675,12 +686,12 @@
       },
       "sandbox": {
         "file": "parts-in-colour.postext",
-        "bytes": 843801,
+        "bytes": 843773,
         "folio": "a033cff5",
         "chapters": [
           {
             "pages": 10,
-            "hash": "80855903209bb003",
+            "hash": "bce3587147b84c8f",
             "lines": "4dd2b236a7cd7a62"
           }
         ]
@@ -972,7 +983,18 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
       }
     }
   }
