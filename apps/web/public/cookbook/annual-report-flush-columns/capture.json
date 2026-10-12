@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annual-report-flush-columns",
-  "sourceHash": "f3741fa3f2a99759424143c16a9e685f32904d14edd2e09d1161ba07d87c99fe",
+  "sourceHash": "3bb77d69e88d46a67a1494034e356033b0b5c98764572ee5aeb815e148d2b729",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.662Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.566Z",
   "variants": {
     "en": {
-      "hash8": "8a929ffb",
+      "hash8": "fb436e4c",
       "vdtHash": "b585cd45d2e8e8119620237d6fc4b106362d869b",
       "timings": {
-        "importMs": 325,
-        "fontsMs": 60,
-        "buildMs": 171,
-        "totalMs": 1213,
+        "importMs": 145,
+        "fontsMs": 25,
+        "buildMs": 124,
+        "totalMs": 917,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 46928,
+          "bytes": 46896,
           "alt": "Opening page 1: Tidewell Community Energy."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 147956,
+          "bytes": 147954,
           "alt": "Opening page 2: The wind and the sun took turns."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 109858,
+          "bytes": 109888,
           "alt": "Opening page 3: Harrow Down, the Saltings and 21 roofs. Chart 1. Output by month in 2025, in megawatt-hours: ⁤ wind at Harrow Down and ⁤ sun on the Saltings and the 21 roofs."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 155440,
+          "bytes": 155442,
           "alt": "Page 4: Availability. Table 1. Output by site, in megawatt-hours. · Chart 2. How the two turbines spent the 17,520 hours of their year."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 94624,
+          "bytes": 94534,
           "alt": "Opening page 5: Paying 3.5% and still adding to reserves. Table 2. Income statement for the year to 31 December."
         }
       ],
@@ -421,7 +421,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

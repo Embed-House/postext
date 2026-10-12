@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-novel-horizontal",
-  "sourceHash": "09e63a6806eb227c631ae88a2edc998e79f1a810bddd8c7aa050a559c4815ae8",
+  "sourceHash": "71637e69c9d9e91d11d772f8b9b76455e2c7b642ed613976a9a0330b3cba835e",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.949Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.756Z",
   "variants": {
     "en": {
-      "hash8": "17437be8",
+      "hash8": "39807a4f",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 1460,
-        "fontsMs": 1090,
-        "buildMs": 86,
-        "totalMs": 3192,
+        "importMs": 214,
+        "fontsMs": 321,
+        "buildMs": 61,
+        "totalMs": 1214,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 223988,
+          "bytes": 223728,
           "alt": "Opening page 70: 月下的瓜地."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117702,
+          "bytes": 117706,
           "alt": "Opening page 71: 故乡."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149580,
+          "bytes": 149528,
           "alt": "Page 72."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128420,
+          "bytes": 128422,
           "alt": "Page 73."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1450,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 118320,
+          "bytes": 118314,
           "alt": "Page 74."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 153696,
+          "bytes": 153644,
           "alt": "Page 75."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 84612,
+          "bytes": 84346,
           "alt": "Page 76."
         }
       ],
@@ -152,12 +152,12 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651740,
+        "bytes": 651732,
         "pages": 7
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391386,
+        "bytes": 391424,
         "folio": "77b45883",
         "chapters": [
           {
@@ -364,6 +364,11 @@
             "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 7 pages)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hans, the document's language: en names its resource types otherwise"
@@ -377,13 +382,13 @@
       }
     },
     "es": {
-      "hash8": "16d11645",
+      "hash8": "4a750372",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 2316,
-        "fontsMs": 815,
-        "buildMs": 79,
-        "totalMs": 5038,
+        "importMs": 191,
+        "fontsMs": 177,
+        "buildMs": 63,
+        "totalMs": 1162,
         "builds": 1
       },
       "specimen": {
@@ -416,7 +421,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 223988,
+          "bytes": 223728,
           "alt": "Página de apertura 70: 月下的瓜地."
         },
         {
@@ -427,7 +432,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117702,
+          "bytes": 117706,
           "alt": "Página de apertura 71: 故乡."
         },
         {
@@ -438,7 +443,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149580,
+          "bytes": 149528,
           "alt": "Página 72."
         },
         {
@@ -449,7 +454,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128420,
+          "bytes": 128422,
           "alt": "Página 73."
         },
         {
@@ -460,7 +465,7 @@
           "h": 1450,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 118320,
+          "bytes": 118314,
           "alt": "Página 74."
         },
         {
@@ -471,7 +476,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 153696,
+          "bytes": 153644,
           "alt": "Página 75."
         },
         {
@@ -482,7 +487,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 84784,
+          "bytes": 84804,
           "alt": "Página 76."
         }
       ],
@@ -518,12 +523,12 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 651638,
+        "bytes": 651616,
         "pages": 7
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391454,
+        "bytes": 391492,
         "folio": "77b45883",
         "chapters": [
           {
@@ -728,6 +733,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

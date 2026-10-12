@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "seed-catalogue",
-  "sourceHash": "89ce15e19c7d71eea42e7a97f8d8e38465971ffb5813b56dfa29d290d215145c",
+  "sourceHash": "0c34cc0715c6cd9cb0f265b2ef45c35d2a6dae7844c110a0c5f276238214c214",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.814Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.369Z",
   "variants": {
     "en": {
-      "hash8": "af34d87f",
+      "hash8": "acc4c723",
       "vdtHash": "3ccd93ebb4a4b6a4aa9815376b23d2df3d4bbc03",
       "timings": {
-        "importMs": 1131,
-        "fontsMs": 175,
-        "buildMs": 91,
-        "totalMs": 2628,
+        "importMs": 171,
+        "fontsMs": 50,
+        "buildMs": 65,
+        "totalMs": 910,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1316,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156752,
+          "bytes": 156748,
           "alt": "Opening page 1: Spring Seeds."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1316,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80612,
+          "bytes": 80584,
           "alt": "Page 2. Vegetable Seeds."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1316,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 101192,
+          "bytes": 101202,
           "alt": "Page 3: From Our Trial Garden. Vegetable Seeds (continued)."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1316,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38460,
+          "bytes": 38354,
           "alt": "Opening page 4: Order Sheet."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "seed-catalogue.postext",
-        "bytes": 713567,
+        "bytes": 713565,
         "folio": "d45f6f65",
         "chapters": [
           {
@@ -386,7 +386,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

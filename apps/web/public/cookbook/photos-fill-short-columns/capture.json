@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "photos-fill-short-columns",
-  "sourceHash": "775ef0a6500b8b80ed2acf11d7a0eb855e195fc1c60b0e03ac4cd90dfd198fd7",
+  "sourceHash": "af26583697fa305ac7afae643a3ac7f5c747397d9d30fc24470460124c386f02",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.680Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.246Z",
   "variants": {
     "en": {
-      "hash8": "58001253",
+      "hash8": "746cd41c",
       "vdtHash": "c5f6a5f7af08d3668f758f078fb27e030423f634",
       "timings": {
-        "importMs": 1647,
-        "fontsMs": 257,
-        "buildMs": 90,
-        "totalMs": 3521,
+        "importMs": 224,
+        "fontsMs": 66,
+        "buildMs": 65,
+        "totalMs": 1019,
         "builds": 2
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 217682,
+          "bytes": 217750,
           "alt": "Opening page 1: People of the low tide."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 220006,
+          "bytes": 220016,
           "alt": "Page 2: The eleven o’clock auction. Figure 1. Carmen Lago sorts cockles on her plot of the estuary at low water. · Figure 2. Rosa Doval mends a purse-seine panel on the quay."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 185326,
+          "bytes": 185224,
           "alt": "Page 3: The lighthouse and the path. Figure 5. Lucía Fraga lifts an octopus out of the copper cauldron. · Figure 3. Manuel Barreiro planes the planking of the gamela. · Figure 4. Arnela point: the lighthouse and the coastal path."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1320,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 222744,
+          "bytes": 222724,
           "alt": "Page 2: The eleven o’clock auction. Figure 1. Carmen Lago sorts cockles on her plot of the estuary at low water. · Figure 2. Rosa Doval mends a purse-seine panel on the quay."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1320,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 185326,
+          "bytes": 185224,
           "alt": "Page 3: The lighthouse and the path. Figure 5. Lucía Fraga lifts an octopus out of the copper cauldron. · Figure 3. Manuel Barreiro planes the planking of the gamela. · Figure 4. Arnela point: the lighthouse and the coastal path."
         }
       ],
@@ -132,7 +132,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919843,
+        "bytes": 1919813,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -352,18 +352,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.17 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "8005c7cc",
+      "hash8": "d617f2c1",
       "vdtHash": "e8aa75614373eb12e9b977db79d9f32a95a757d7",
       "timings": {
-        "importMs": 1169,
-        "fontsMs": 108,
-        "buildMs": 98,
-        "totalMs": 3698,
+        "importMs": 176,
+        "fontsMs": 103,
+        "buildMs": 79,
+        "totalMs": 1035,
         "builds": 2
       },
       "specimen": {
@@ -397,7 +402,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 210660,
+          "bytes": 210772,
           "alt": "Página de apertura 1: Gente de la bajamar."
         },
         {
@@ -408,7 +413,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 219974,
+          "bytes": 219996,
           "alt": "Página 2: La subasta de las once. Figura 1. Carmen Lago separa berberechos en su parcela de la ría, en bajamar. · Figura 2. Rosa Doval remienda un paño de cerco en el muelle."
         },
         {
@@ -419,7 +424,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 195216,
+          "bytes": 195192,
           "alt": "Página 3: El faro y el camino. Figura 5. Lucía Fraga saca un pulpo del caldero de cobre. · Figura 3. Manuel Barreiro cepilla el forro de la gamela. · Figura 4. La punta de Arnela: el faro y el camino de la costa."
         },
         {
@@ -430,7 +435,7 @@
           "h": 1320,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 222450,
+          "bytes": 222838,
           "alt": "Página 2: La subasta de las once. Figura 1. Carmen Lago separa berberechos en su parcela de la ría, en bajamar. · Figura 2. Rosa Doval remienda un paño de cerco en el muelle."
         },
         {
@@ -441,7 +446,7 @@
           "h": 1320,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 192488,
+          "bytes": 195762,
           "alt": "Página 3: El faro y el camino. Figura 5. Lucía Fraga saca un pulpo del caldero de cobre. · Figura 3. Manuel Barreiro cepilla el forro de la gamela. · Figura 4. La punta de Arnela: el faro y el camino de la costa."
         }
       ],
@@ -478,7 +483,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919575,
+        "bytes": 1919583,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -698,6 +703,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 5 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

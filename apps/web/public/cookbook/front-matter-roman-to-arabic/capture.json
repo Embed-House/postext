@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "front-matter-roman-to-arabic",
-  "sourceHash": "9c067e73827793d6ffdc4b3231bd60d19c54b9b9fc579f8ef747ad7ae1ee290b",
+  "sourceHash": "4992ec9f849f943aca85f192ab464cf90a385e520ac159164f6832423188eaab",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.205Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.906Z",
   "variants": {
     "en": {
-      "hash8": "f1668108",
+      "hash8": "54f91701",
       "vdtHash": "b08f2e14b353da55f033eeb01d81d2a0de1bca33",
       "timings": {
-        "importMs": 1344,
-        "fontsMs": 246,
-        "buildMs": 189,
-        "totalMs": 2789,
+        "importMs": 240,
+        "fontsMs": 55,
+        "buildMs": 123,
+        "totalMs": 1156,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1535,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 142294,
+          "bytes": 142128,
           "alt": "Opening page i: Cover."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1535,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 110834,
+          "bytes": 110820,
           "alt": "Opening page iv: Frontispiece."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1535,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 19162,
+          "bytes": 19154,
           "alt": "Opening page v: Title page."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1535,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 127056,
+          "bytes": 127022,
           "alt": "Opening page 1: Letter I."
         },
         {
@@ -228,7 +228,7 @@
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713684,
+        "bytes": 713674,
         "folio": "ba949066",
         "chapters": [
           {
@@ -483,9 +483,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 14 −5‰ “This is the most favourable period for travellin…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

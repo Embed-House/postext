@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "one-text-four-citation-styles",
-  "sourceHash": "7c38b51c4592008d39830d4967f242265a13df757cc2aac32b4806df7452bd93",
+  "sourceHash": "156cf50d5c86a14e2bcd3a71836502b6856f7061a587f9ebc093c79e6d22520e",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.578Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.164Z",
   "variants": {
     "en": {
-      "hash8": "ece1faaf",
+      "hash8": "4fe7752d",
       "vdtHash": "e2ab5f1e45d7e85e8394662fa4a051927baf5b89",
       "timings": {
-        "importMs": 1241,
-        "fontsMs": 8,
-        "buildMs": 298,
-        "totalMs": 3103,
+        "importMs": 149,
+        "fontsMs": 5,
+        "buildMs": 244,
+        "totalMs": 1435,
         "builds": 4
       },
       "specimen": {
@@ -109,7 +109,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17110,
+        "bytes": 17116,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -279,9 +279,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -297,13 +297,13 @@
       }
     },
     "es": {
-      "hash8": "d8d1e37a",
+      "hash8": "571f982d",
       "vdtHash": "ebef93da2548d5e1f314a5886ee23b7c4ba14867",
       "timings": {
-        "importMs": 1477,
-        "fontsMs": 6,
-        "buildMs": 289,
-        "totalMs": 4148,
+        "importMs": 186,
+        "fontsMs": 5,
+        "buildMs": 255,
+        "totalMs": 1530,
         "builds": 4
       },
       "specimen": {
@@ -396,7 +396,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17906,
+        "bytes": 17918,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -556,9 +556,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

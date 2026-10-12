@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ml-paper-theorems-proofs",
-  "sourceHash": "1b6be3f4c1bfdc8e8d77e8ac171726938fe45b601848efcf9c6e411cb8a20b05",
+  "sourceHash": "03514934a4a8fa479a015e3854e844a4f824106256aeb8e0f5bf94c5d875b236",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.482Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.092Z",
   "variants": {
     "en": {
-      "hash8": "d6588573",
+      "hash8": "3e06af7f",
       "vdtHash": "128ac7e24b3cff59f2e981b610a048bdfd3766c6",
       "timings": {
-        "importMs": 2446,
-        "fontsMs": 312,
-        "buildMs": 357,
-        "totalMs": 4742,
+        "importMs": 172,
+        "fontsMs": 121,
+        "buildMs": 268,
+        "totalMs": 1184,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1427,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120584,
+          "bytes": 120648,
           "alt": "Page 3. Figure 1. DPO optimizes for human preferences while avoiding reinforcement learning. Existing methods for fine-tuning language models with human feedback first fit a reward model to a dataset of prompts and human preferences over pairs of responses, and then use RL to…"
         },
         {
@@ -83,7 +83,7 @@
           "h": 1427,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 144390,
+          "bytes": 144372,
           "alt": "Page 4: 4 Direct Preference Optimization."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1427,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 143534,
+          "bytes": 143518,
           "alt": "Page 5."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1427,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140200,
+          "bytes": 140180,
           "alt": "Page 6: 5 Theoretical Analysis of DPO."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1427,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 92410,
+          "bytes": 92408,
           "alt": "Page 9: A.5 Proof of Lemma 1 and 2."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1427,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 32628,
+          "bytes": 32612,
           "alt": "Page 10."
         }
       ],
@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "ml-paper-theorems-proofs.postext",
-        "bytes": 86707,
+        "bytes": 86695,
         "folio": "70aa8698",
         "chapters": [
           {
@@ -567,9 +567,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Lemma 1. Under the Plackett-Luce, and in particu…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

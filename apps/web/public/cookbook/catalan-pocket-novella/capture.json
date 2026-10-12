@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "d544220ce65795046dad3833775ea80ebfe4a99b112449d5da92770d9b7619f1",
+  "sourceHash": "ab7d0655e38c795c72fd72b6e64b98343f57cca3e66a7c9ea4ed54df9a36f652",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.862Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.696Z",
   "variants": {
     "en": {
-      "hash8": "76e2a72b",
+      "hash8": "b65a4da4",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 1480,
-        "fontsMs": 178,
-        "buildMs": 1118,
-        "totalMs": 5039,
+        "importMs": 231,
+        "fontsMs": 69,
+        "buildMs": 877,
+        "totalMs": 1802,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 204482,
+          "bytes": 204550,
           "alt": "Opening page 2: El Forner de les Monges."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151786,
+          "bytes": 151886,
           "alt": "Opening page 5: I."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 169090,
+          "bytes": 168934,
           "alt": "Opening page 26: IV."
         },
         {
@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492631,
+        "bytes": 1492627,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -391,18 +391,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "cb0ab760",
+      "hash8": "b2969687",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 1580,
-        "fontsMs": 109,
-        "buildMs": 1087,
-        "totalMs": 3845,
+        "importMs": 211,
+        "fontsMs": 65,
+        "buildMs": 910,
+        "totalMs": 1865,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +440,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 204482,
+          "bytes": 204550,
           "alt": "Página de apertura 2: El Forner de les Monges."
         },
         {
@@ -468,7 +473,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151786,
+          "bytes": 151886,
           "alt": "Página de apertura 5: I."
         },
         {
@@ -490,7 +495,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 169090,
+          "bytes": 168934,
           "alt": "Página de apertura 26: IV."
         },
         {
@@ -557,7 +562,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492645,
+        "bytes": 1492641,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -776,6 +781,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

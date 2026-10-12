@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-arabic-english-report",
-  "sourceHash": "3647a7db92fb2f0d548068db39ab6fcba3721277507d1fe85081ab3f8f5f0c67",
+  "sourceHash": "ba3e3a35118a6cb003d4b511ae9bbca3b41fadbfc8d46ce9c0a2b4a4708ffe8f",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.773Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.637Z",
   "variants": {
     "en": {
-      "hash8": "02db692f",
+      "hash8": "c6cc93d7",
       "vdtHash": "a88cf196bdbbc73cf272c1914c1d26bb1359c054",
       "timings": {
-        "importMs": 1363,
-        "fontsMs": 362,
-        "buildMs": 101,
-        "totalMs": 3311,
+        "importMs": 233,
+        "fontsMs": 144,
+        "buildMs": 82,
+        "totalMs": 1047,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82824,
+        "bytes": 82820,
         "pages": 3
       },
       "sandbox": {
@@ -348,18 +348,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 3 −10‰ “Training. Each workshop runs for five days, and …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "709f05e0",
+      "hash8": "b9b06e05",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 1321,
-        "fontsMs": 219,
-        "buildMs": 108,
-        "totalMs": 2228,
+        "importMs": 194,
+        "fontsMs": 62,
+        "buildMs": 89,
+        "totalMs": 958,
         "builds": 1
       },
       "specimen": {
@@ -442,12 +447,12 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 83714,
+        "bytes": 83720,
         "pages": 3
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16575,
+        "bytes": 16581,
         "folio": "3c25eba8",
         "chapters": [
           {
@@ -690,6 +695,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Lo que más nos alegra de estas cifras es que la …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

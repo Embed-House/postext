@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "pinyin-primer",
-  "sourceHash": "f1490c1fd787970633ff3b8aea5d56d653b0bfbd6fd540875edd7663d978c544",
+  "sourceHash": "e6b59cdd58ed63a6f59bf8e7aaeb05086264291e8a0bd0203532e905773ecb2f",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.707Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.265Z",
   "variants": {
     "en": {
-      "hash8": "62f95bc6",
+      "hash8": "204728b1",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 1386,
-        "fontsMs": 272,
-        "buildMs": 74,
-        "totalMs": 2672,
+        "importMs": 147,
+        "fontsMs": 83,
+        "buildMs": 64,
+        "totalMs": 945,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 59374,
+          "bytes": 59432,
           "alt": "Opening page 36: 第一課."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 64632,
+          "bytes": 64764,
           "alt": "Opening page 37: 第二課."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 57600,
+          "bytes": 57604,
           "alt": "Opening page 38: 第三課."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61428,
+          "bytes": 61516,
           "alt": "Opening page 39: 第四課."
         }
       ],
@@ -110,7 +110,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 205877,
+        "bytes": 205879,
         "folio": "4f4bf2f0",
         "chapters": [
           {
@@ -312,6 +312,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-HK, the document's language: en names its resource types otherwise"
@@ -325,13 +330,13 @@
       }
     },
     "es": {
-      "hash8": "d33621e3",
+      "hash8": "15b02983",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 1800,
-        "fontsMs": 645,
-        "buildMs": 91,
-        "totalMs": 3749,
+        "importMs": 166,
+        "fontsMs": 74,
+        "buildMs": 65,
+        "totalMs": 931,
         "builds": 1
       },
       "specimen": {
@@ -364,7 +369,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 61804,
+          "bytes": 61874,
           "alt": "Página de apertura 36: 第一課."
         },
         {
@@ -375,7 +380,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65940,
+          "bytes": 66080,
           "alt": "Página de apertura 37: 第二課."
         },
         {
@@ -386,7 +391,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 57146,
+          "bytes": 57212,
           "alt": "Página de apertura 38: 第三課."
         },
         {
@@ -397,7 +402,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 60304,
+          "bytes": 60404,
           "alt": "Página de apertura 39: 第四課."
         }
       ],
@@ -425,7 +430,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 206341,
+        "bytes": 206337,
         "folio": "4f4bf2f0",
         "chapters": [
           {
@@ -626,6 +631,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "poetry-collection",
-  "sourceHash": "5c744070920191ccbf768009e1ab1b64cd4380d3f77f1bf64fdff59603886b7e",
+  "sourceHash": "f9aca0541f57390e692f27fccdbb9da2e0e71030957f3a9dccc0b72a17da58d6",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.712Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.270Z",
   "variants": {
     "en": {
-      "hash8": "11c65b79",
+      "hash8": "46df7a9e",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 1813,
-        "fontsMs": 207,
-        "buildMs": 76,
-        "totalMs": 3394,
+        "importMs": 125,
+        "fontsMs": 29,
+        "buildMs": 54,
+        "totalMs": 823,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1543,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 199246,
+          "bytes": 199240,
           "alt": "Opening page 2: Fern and Rowan."
         },
         {
@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "poetry-collection.postext",
-        "bytes": 370783,
+        "bytes": 370769,
         "folio": "6d3a2b7c",
         "chapters": [
           {
@@ -385,7 +385,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

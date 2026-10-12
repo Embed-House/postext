@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "zhuyin-vertical-reader",
-  "sourceHash": "7b5cd66ac5cfc40a85a823f00cbe526becbfbc830e2000403eb3b611db91a7cc",
+  "sourceHash": "b02091649ca41c1f89d47dcd8830a018c6d76a003485f63038ab5335314c28d9",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.175Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.603Z",
   "variants": {
     "en": {
-      "hash8": "98d03bfe",
+      "hash8": "e8329835",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 203,
-        "fontsMs": 430,
-        "buildMs": 70,
-        "totalMs": 1287,
+        "importMs": 239,
+        "fontsMs": 346,
+        "buildMs": 63,
+        "totalMs": 1307,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100130,
+          "bytes": 100146,
           "alt": "Opening page 86: 第十二課 寓言兩則."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86808,
+          "bytes": 86810,
           "alt": "Page 87: 語譯."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116428,
+          "bytes": 116486,
           "alt": "Page 88: 語譯."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82288,
+          "bytes": 82944,
           "alt": "Page 89: 語文天地."
         }
       ],
@@ -118,7 +118,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507862,
+        "bytes": 507680,
         "folio": "351449da",
         "chapters": [
           {
@@ -382,6 +382,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -390,13 +395,13 @@
       }
     },
     "es": {
-      "hash8": "ed5f6e73",
+      "hash8": "8ed74b9e",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 278,
-        "fontsMs": 587,
-        "buildMs": 76,
-        "totalMs": 1522,
+        "importMs": 183,
+        "fontsMs": 451,
+        "buildMs": 58,
+        "totalMs": 1300,
         "builds": 1
       },
       "specimen": {
@@ -430,7 +435,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100130,
+          "bytes": 100146,
           "alt": "Página de apertura 86: 第十二課 寓言兩則."
         },
         {
@@ -441,7 +446,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86808,
+          "bytes": 86810,
           "alt": "Página 87: 語譯."
         },
         {
@@ -452,7 +457,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116428,
+          "bytes": 116486,
           "alt": "Página 88: 語譯."
         },
         {
@@ -463,7 +468,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 83228,
+          "bytes": 83198,
           "alt": "Página 89: 語文天地."
         }
       ],
@@ -492,12 +497,12 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 741511,
+        "bytes": 741504,
         "pages": 4
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507897,
+        "bytes": 507715,
         "folio": "351449da",
         "chapters": [
           {
@@ -760,6 +765,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "textbook-box-family",
-  "sourceHash": "b31f77b10c7b26e436c277adfe511aef3a77d9f79a9a3894084dfc3967bde6c6",
+  "sourceHash": "2929067b61fa2bec9953d6cfd743852b4bcf5407ed00623c3f18f3b52c6c62d0",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.984Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.500Z",
   "variants": {
     "en": {
-      "hash8": "79470210",
+      "hash8": "83abce99",
       "vdtHash": "dc28595e779ffca5d21fcfb164e4e34256c3f5e4",
       "timings": {
-        "importMs": 145,
-        "fontsMs": 42,
-        "buildMs": 83,
-        "totalMs": 868,
+        "importMs": 155,
+        "fontsMs": 31,
+        "buildMs": 78,
+        "totalMs": 918,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 161724,
+          "bytes": 161776,
           "alt": "Opening page 27: Cells and Membranes."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 138420,
+          "bytes": 138430,
           "alt": "Page 28: 2.3 Crossing the membrane. Figure 2.2. Mouse proteins in green, human proteins in magenta (the red dye): the two cells, the hybrid just after fusion and the same hybrid 40 minutes later. · Figure 2.1. The fluid mosaic: magenta phospholipids, green proteins, an amber c…"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 134204,
+          "bytes": 134166,
           "alt": "Page 29: 2.4 Moving in bulk. Figure 2.3. Red blood cells in a hypertonic, an isotonic and a hypotonic solution. Arrows show the net flow of water."
         }
       ],
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 45512,
+        "bytes": 45562,
         "folio": "4d63ba9f",
         "chapters": [
           {
@@ -389,6 +389,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
@@ -397,13 +402,13 @@
       }
     },
     "es": {
-      "hash8": "0617f980",
+      "hash8": "22b0f95f",
       "vdtHash": "b95d9fed920cda47bd315548b4bf324147383d0b",
       "timings": {
-        "importMs": 236,
-        "fontsMs": 96,
-        "buildMs": 80,
-        "totalMs": 1057,
+        "importMs": 199,
+        "fontsMs": 44,
+        "buildMs": 72,
+        "totalMs": 924,
         "builds": 1
       },
       "specimen": {
@@ -437,7 +442,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 166886,
+          "bytes": 166890,
           "alt": "Página de apertura 27: Células y membranas."
         },
         {
@@ -448,7 +453,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140146,
+          "bytes": 140038,
           "alt": "Página 28: 2.3 Atravesar la membrana. Figura 2.2. En verde, las proteínas de ratón; en magenta, las humanas (el colorante rojo): las dos células, el híbrido recién fusionado y el mismo híbrido 40 minutos después. · Figura 2.1. El mosaico fluido: fosfolípidos magenta, proteínas…"
         },
         {
@@ -459,7 +464,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 142354,
+          "bytes": 142344,
           "alt": "Página 29: 2.4 Cargas a granel. Figura 2.3. Glóbulos rojos en una disolución hipertónica, una isotónica y una hipotónica. Las flechas indican el flujo neto de agua."
         }
       ],
@@ -487,7 +492,7 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 44273,
+        "bytes": 44277,
         "folio": "4d63ba9f",
         "chapters": [
           {
@@ -775,6 +780,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

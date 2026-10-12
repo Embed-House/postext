@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "chapter-opener-bleed-band",
-  "sourceHash": "345c0b1f3a264c0da44e62a02e35cea53602059efd3aaa44fb3bebbd3ceb6312",
+  "sourceHash": "74e9749f9788df17407a401aedf4f12aab3c714967d8842deb7792a079db5919",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.896Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.719Z",
   "variants": {
     "en": {
-      "hash8": "ef3fa9d8",
+      "hash8": "c01d49dd",
       "vdtHash": "c60ad9d9a5a91a06fd908e446ccf480f2cdd8ee8",
       "timings": {
-        "importMs": 667,
-        "fontsMs": 3,
-        "buildMs": 182,
-        "totalMs": 1511,
+        "importMs": 188,
+        "fontsMs": 2,
+        "buildMs": 162,
+        "totalMs": 1049,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 117182,
+          "bytes": 117184,
           "alt": "Opening page 41: The Restless Crust. Figure 3.1. A plate’s life in cross-section: born at a ridge (left), it cools as it drifts away and sinks under a continent; dots mark earthquakes."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 150910,
+          "bytes": 150922,
           "alt": "Page 44: 4.3 Living with volcanoes. Figure 4.1. Two volcanoes in cross-section: a broad shield built of runny basalt flows (left) and a steep stratovolcano of lava and ash layers (right)."
         }
       ],
@@ -332,9 +332,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -345,13 +345,13 @@
       }
     },
     "es": {
-      "hash8": "9768b2c9",
+      "hash8": "b367de9c",
       "vdtHash": "256f874234a5d86a1ea1a8b1319f24f1128a52f6",
       "timings": {
-        "importMs": 1438,
+        "importMs": 154,
         "fontsMs": 2,
-        "buildMs": 103,
-        "totalMs": 3500,
+        "buildMs": 90,
+        "totalMs": 908,
         "builds": 1
       },
       "specimen": {
@@ -385,7 +385,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 117012,
+          "bytes": 117018,
           "alt": "Página de apertura 41: La corteza inquieta. Figura 3.1. La vida de una placa, en corte: nace en la dorsal (izquierda), se enfría al alejarse y se hunde bajo el continente; los puntos son terremotos."
         },
         {
@@ -418,7 +418,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 168618,
+          "bytes": 168620,
           "alt": "Página 44: 4.3 Vivir con los volcanes. Figura 4.1. Dos volcanes en corte: un escudo ancho, de coladas de basalto fluido (izquierda), y un estratovolcán de capas de lava y ceniza (derecha)."
         }
       ],
@@ -666,6 +666,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

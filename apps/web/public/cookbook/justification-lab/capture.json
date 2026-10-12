@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "justification-lab",
-  "sourceHash": "d90087551afb6ba8baf7dc89c59572b43132992179492b889483e9bb57cf48a4",
+  "sourceHash": "d7640adedce544989fe2a6e5f45e4fa43f9aecd63fc13ec869c27bc518c99348",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.306Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.968Z",
   "variants": {
     "en": {
-      "hash8": "106af00e",
+      "hash8": "6743df81",
       "vdtHash": "86cfc166e9e8f9660f2c2d7da71ff06dd39238ba",
       "timings": {
-        "importMs": 883,
+        "importMs": 153,
         "fontsMs": 2,
-        "buildMs": 75,
-        "totalMs": 2146,
+        "buildMs": 69,
+        "totalMs": 969,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 115948,
+          "bytes": 115896,
           "alt": "Opening page 1: The river problem."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 34594,
+        "bytes": 34444,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -344,21 +344,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Two numbers fence the glue in: a space may shrin…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "4e1f5e12",
+      "hash8": "3a2264fd",
       "vdtHash": "b6fa89103ba58230a9e7d49ac56c99d00cd8a5a0",
       "timings": {
-        "importMs": 515,
-        "fontsMs": 3,
-        "buildMs": 193,
-        "totalMs": 2445,
+        "importMs": 149,
+        "fontsMs": 2,
+        "buildMs": 117,
+        "totalMs": 989,
         "builds": 2
       },
       "specimen": {
@@ -392,7 +392,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 117328,
+          "bytes": 117318,
           "alt": "Página de apertura 1: El problema de los ríos."
         },
         {
@@ -442,7 +442,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 35293,
+        "bytes": 35217,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -685,9 +685,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La separación silábica le da al algoritmo más pu…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

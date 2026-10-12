@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "conference-programme",
-  "sourceHash": "7e85233d787384ec0515702093fba3b78f4b9c0b57c02cc06b847ceeb45fad8a",
+  "sourceHash": "2673557f0ddef0e2287e2e25ae03ab0c06900bae23429c4441a5596ed37a48ea",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.095Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.840Z",
   "variants": {
     "en": {
-      "hash8": "35c18478",
+      "hash8": "ab114fa8",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 542,
-        "fontsMs": 141,
-        "buildMs": 86,
-        "totalMs": 1932,
+        "importMs": 163,
+        "fontsMs": 31,
+        "buildMs": 78,
+        "totalMs": 889,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 23158,
+          "bytes": 23180,
           "alt": "Opening page 1: Jornades de Tipografia i Edició Digital."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 132014,
+          "bytes": 131956,
           "alt": "Opening page 2: Dijous."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 81316,
+          "bytes": 81332,
           "alt": "Opening page 5: Divendres. Taula 2. Divendres 13 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 97458,
+          "bytes": 97528,
           "alt": "Page 6: Com arribar. Figura 1. La Impremta, planta baixa."
         }
       ],
@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32744,
+        "bytes": 32724,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -413,17 +413,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "60daf8e6",
+      "hash8": "ead5466a",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 1120,
-        "fontsMs": 69,
-        "buildMs": 108,
-        "totalMs": 3084,
+        "importMs": 124,
+        "fontsMs": 27,
+        "buildMs": 72,
+        "totalMs": 871,
         "builds": 1
       },
       "specimen": {
@@ -457,7 +463,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 23158,
+          "bytes": 23180,
           "alt": "Página de apertura 1: Jornades de Tipografia i Edició Digital."
         },
         {
@@ -468,7 +474,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 132014,
+          "bytes": 131956,
           "alt": "Página de apertura 2: Dijous."
         },
         {
@@ -501,7 +507,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 81316,
+          "bytes": 81332,
           "alt": "Página de apertura 5: Divendres. Taula 2. Divendres 13 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició."
         },
         {
@@ -512,7 +518,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 97458,
+          "bytes": 97528,
           "alt": "Página 6: Com arribar. Figura 1. La Impremta, planta baixa."
         }
       ],
@@ -548,7 +554,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32748,
+        "bytes": 32728,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -820,7 +826,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "eb236a77f98c86dc811456eb391531e379b94d432b9d643077997581e0160f09",
+  "sourceHash": "4b07cd66e749adfbf71bb4e022cb534ce4938eb5de7a92a17f662a305482d293",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.788Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.647Z",
   "variants": {
     "en": {
-      "hash8": "7bcc1c92",
+      "hash8": "cc37fa88",
       "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 1754,
-        "fontsMs": 3344,
-        "buildMs": 605,
-        "totalMs": 6436,
+        "importMs": 216,
+        "fontsMs": 2358,
+        "buildMs": 431,
+        "totalMs": 3616,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 135814,
+          "bytes": 135790,
           "alt": "Opening page 1: Why Most Published Research Findings Are False."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182538,
+          "bytes": 182518,
           "alt": "Page 2: Bias. Table 1. Research Findings and True Relationships."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 114136,
+          "bytes": 114078,
           "alt": "Page 3: Corollaries. Table 2. Research Findings and True Relationships in the Presence of Bias · Figure 1. PPV (Probability That a Research Finding Is True) as a Function of the Pre-Study Odds for Various Levels of Bias, ￼ · Table 3. Research Findings and True Relationships in…"
         },
         {
@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 123955,
+        "bytes": 123965,
         "folio": "a418809e",
         "chapters": [
           {
@@ -510,18 +510,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2a10724e",
+      "hash8": "481bea28",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 1852,
-        "fontsMs": 1192,
-        "buildMs": 556,
-        "totalMs": 4270,
+        "importMs": 185,
+        "fontsMs": 2123,
+        "buildMs": 412,
+        "totalMs": 3348,
         "builds": 1
       },
       "specimen": {
@@ -554,7 +559,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156684,
+          "bytes": 156686,
           "alt": "Página de apertura 1: Por qué la mayoría de los resultados de investigación publicados son falsos."
         },
         {
@@ -565,7 +570,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 185720,
+          "bytes": 185704,
           "alt": "Página 2: El sesgo. Tabla 1. Resultados de la investigación y relaciones verdaderas."
         },
         {
@@ -576,7 +581,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118764,
+          "bytes": 118824,
           "alt": "Página 3: Corolarios. Tabla 2. Resultados de la investigación y relaciones verdaderas en presencia de sesgo · Figura 1. VPP (probabilidad de que un resultado de la investigación sea verdadero) en función de la razón de probabilidades previa al estudio para varios niveles de se…"
         },
         {
@@ -587,7 +592,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 241896,
+          "bytes": 241912,
           "alt": "Página 5: En la mayoría de los diseños y de los campos, la mayoría de los resultados son falsos."
         },
         {
@@ -598,7 +603,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206410,
+          "bytes": 206404,
           "alt": "Página 6: ¿Cómo podemos mejorar la situación?. Tabla 4. VPP de los resultados de la investigación para varias combinaciones de potencia (￼), razón entre relaciones verdaderas y no verdaderas (￼) y sesgo (￼)."
         },
         {
@@ -650,7 +655,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126640,
+        "bytes": 126676,
         "folio": "a418809e",
         "chapters": [
           {
@@ -1006,9 +1011,9 @@
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

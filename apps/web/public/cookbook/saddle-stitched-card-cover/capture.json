@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "saddle-stitched-card-cover",
-  "sourceHash": "03b3b073100ebd3a0cdd86f78c5213f8d2bd37aeb5266c8198c2862e92812bfd",
+  "sourceHash": "e4732e5ee8c732f796374bf4656ba893f91764d939f5f38178fc6914110b756f",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.800Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.356Z",
   "variants": {
     "en": {
-      "hash8": "185a5118",
+      "hash8": "fa0a0e93",
       "vdtHash": "8a5df44b6af7d2917161122c80f77d5fbfd388c5",
       "timings": {
-        "importMs": 1338,
+        "importMs": 141,
         "fontsMs": 3,
-        "buildMs": 79,
-        "totalMs": 2344,
+        "buildMs": 50,
+        "totalMs": 817,
         "builds": 1
       },
       "specimen": {
@@ -165,7 +165,7 @@
       },
       "sandbox": {
         "file": "saddle-stitched-card-cover.postext",
-        "bytes": 11558,
+        "bytes": 11634,
         "folio": "0753e69b",
         "chapters": [
           {
@@ -374,6 +374,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 8.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

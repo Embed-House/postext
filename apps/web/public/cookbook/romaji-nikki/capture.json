@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "romaji-nikki",
-  "sourceHash": "36f51f77199e28dcd0b4e428e6c32792afb96f964573af44ec14fc362085c9c9",
+  "sourceHash": "8d035e4c3cd52854c489c2a583a9e5879c5930d59f3c8895421567052ad58470",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.787Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.345Z",
   "variants": {
     "en": {
-      "hash8": "2ed1d9bf",
+      "hash8": "b1442da4",
       "vdtHash": "82d693e9a6d7d3ffcdce158b9dfa43e9084eed21",
       "timings": {
-        "importMs": 1581,
-        "fontsMs": 672,
-        "buildMs": 99,
-        "totalMs": 3064,
+        "importMs": 188,
+        "fontsMs": 87,
+        "buildMs": 68,
+        "totalMs": 949,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 124489,
+        "bytes": 124567,
         "pages": 4
       },
       "sandbox": {
@@ -314,17 +314,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "6787533d",
+      "hash8": "809b0d5c",
       "vdtHash": "05ba8ba6c5d7b5df7fd90f8904b3f6f58bc75dad",
       "timings": {
-        "importMs": 1301,
-        "fontsMs": 380,
-        "buildMs": 91,
-        "totalMs": 2964,
+        "importMs": 190,
+        "fontsMs": 87,
+        "buildMs": 73,
+        "totalMs": 1008,
         "builds": 1
       },
       "specimen": {
@@ -422,7 +428,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 125118,
+        "bytes": 125194,
         "pages": 4
       },
       "sandbox": {
@@ -621,7 +627,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

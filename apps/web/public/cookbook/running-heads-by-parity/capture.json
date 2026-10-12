@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "running-heads-by-parity",
-  "sourceHash": "b9b685463529a05272947ba88f738ec83d313dacddd0f7ab2b240c41e4e08f96",
+  "sourceHash": "64f9a5f805160d112146ab4f1a2bcac4a2e0eccb4fa75fdb34a3eb8e286f4ea1",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.795Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.350Z",
   "variants": {
     "en": {
-      "hash8": "e299626c",
+      "hash8": "5162af66",
       "vdtHash": "0fd2ce0f5bc9963d0e66b0da481d735d672036c2",
       "timings": {
-        "importMs": 995,
-        "fontsMs": 0,
-        "buildMs": 169,
-        "totalMs": 2059,
+        "importMs": 129,
+        "fontsMs": 1,
+        "buildMs": 128,
+        "totalMs": 858,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 96794,
+          "bytes": 96770,
           "alt": "Opening page 29: That the soul expends its passions upon false objects, where the true are wanting."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 138100,
+          "bytes": 138118,
           "alt": "Page 30."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 95692,
+          "bytes": 95626,
           "alt": "Opening page 33: Whether the governor of a place besieged ought himself to go out to parley."
         }
       ],
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 24113,
+        "bytes": 24135,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -330,6 +330,11 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “Quintus Marcius, the Roman legate in the war aga…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -338,13 +343,13 @@
       }
     },
     "es": {
-      "hash8": "cc7c69c1",
+      "hash8": "a5b09955",
       "vdtHash": "03511421b5d1dfa2a26bebd282903dc09494abdc",
       "timings": {
-        "importMs": 962,
+        "importMs": 149,
         "fontsMs": 0,
-        "buildMs": 81,
-        "totalMs": 2661,
+        "buildMs": 61,
+        "totalMs": 867,
         "builds": 1
       },
       "specimen": {
@@ -377,7 +382,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 99326,
+          "bytes": 99336,
           "alt": "Página de apertura 29: Cómo el alma descarga sus pasiones sobre objetos falsos cuando le faltan los verdaderos."
         },
         {
@@ -421,7 +426,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 88684,
+          "bytes": 88678,
           "alt": "Página de apertura 33: Si el jefe de una plaza sitiada debe salir a parlamentar."
         }
       ],
@@ -453,7 +458,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 22557,
+        "bytes": 22519,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -647,6 +652,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "78a49ee8b19e11b5d46fe5232bafedb88d9e06ac6ec1685a27f5cdeb29e62262",
+  "sourceHash": "a853d453c95fae068c9ad60a7cdb9fda1f5d1d6d886a9336a23b2822483dc462",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.505Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.111Z",
   "variants": {
     "en": {
-      "hash8": "b7bc6768",
+      "hash8": "51556445",
       "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
       "timings": {
-        "importMs": 1389,
-        "fontsMs": 419,
-        "buildMs": 410,
-        "totalMs": 3003,
+        "importMs": 175,
+        "fontsMs": 114,
+        "buildMs": 312,
+        "totalMs": 1217,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 110714,
+          "bytes": 110882,
           "alt": "Page 1."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 163900,
+          "bytes": 163910,
           "alt": "Opening page 2: Ten winters on the floe."
         }
       ],
@@ -93,7 +93,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 811773,
+        "bytes": 811805,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -335,21 +335,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "cb80701f",
+      "hash8": "04d4638c",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 1482,
-        "fontsMs": 1049,
-        "buildMs": 532,
-        "totalMs": 4430,
+        "importMs": 206,
+        "fontsMs": 122,
+        "buildMs": 405,
+        "totalMs": 1344,
         "builds": 1
       },
       "specimen": {
@@ -381,7 +381,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114410,
+          "bytes": 114382,
           "alt": "Página 1."
         },
         {
@@ -392,7 +392,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 177906,
+          "bytes": 177788,
           "alt": "Página de apertura 2: Diez inviernos en el témpano."
         }
       ],
@@ -425,7 +425,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812397,
+        "bytes": 812405,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -665,17 +665,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "5897a158",
+      "hash8": "53dca3e1",
       "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
       "timings": {
-        "importMs": 1746,
-        "fontsMs": 530,
-        "buildMs": 410,
-        "totalMs": 3808,
+        "importMs": 213,
+        "fontsMs": 113,
+        "buildMs": 292,
+        "totalMs": 1243,
         "builds": 1
       },
       "specimen": {
@@ -707,7 +713,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 113974,
+          "bytes": 113822,
           "alt": "Pàgina 1."
         },
         {
@@ -718,7 +724,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 169496,
+          "bytes": 169340,
           "alt": "Pàgina d'obertura 2: Deu hiverns al glaç."
         }
       ],
@@ -751,7 +757,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812385,
+        "bytes": 812365,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -993,21 +999,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "605ec622",
+      "hash8": "74b770ad",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 1357,
-        "fontsMs": 4957,
-        "buildMs": 369,
-        "totalMs": 7488,
+        "importMs": 176,
+        "fontsMs": 420,
+        "buildMs": 295,
+        "totalMs": 1497,
         "builds": 1
       },
       "specimen": {
@@ -1039,7 +1045,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 110638,
+          "bytes": 110588,
           "alt": "第 1 页。"
         },
         {
@@ -1050,7 +1056,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149952,
+          "bytes": 149906,
           "alt": "章首页，第 2 页：浮冰上的十个冬天。"
         }
       ],
@@ -1078,12 +1084,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1016341,
+        "bytes": 1016342,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812325,
+        "bytes": 812293,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1324,17 +1330,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "e5d9faba",
+      "hash8": "64aae98c",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 2390,
-        "fontsMs": 1646,
-        "buildMs": 398,
-        "totalMs": 5281,
+        "importMs": 205,
+        "fontsMs": 167,
+        "buildMs": 300,
+        "totalMs": 1328,
         "builds": 1
       },
       "specimen": {
@@ -1366,7 +1378,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 113816,
+          "bytes": 113840,
           "alt": "الصفحة ١."
         },
         {
@@ -1377,7 +1389,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 143566,
+          "bytes": 143562,
           "alt": "صفحة الافتتاح ٢: عشرة شتاءات على الجليد."
         }
       ],
@@ -1411,7 +1423,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813660,
+        "bytes": 813678,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1652,21 +1664,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "cf546a69",
+      "hash8": "b5192ced",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 1890,
-        "fontsMs": 5174,
-        "buildMs": 378,
-        "totalMs": 8247,
+        "importMs": 286,
+        "fontsMs": 546,
+        "buildMs": 319,
+        "totalMs": 1809,
         "builds": 1
       },
       "specimen": {
@@ -1698,7 +1710,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116144,
+          "bytes": 116294,
           "alt": "1ページ。"
         },
         {
@@ -1709,7 +1721,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 170642,
+          "bytes": 170672,
           "alt": "章扉、2ページ：流氷の上の十の冬。"
         }
       ],
@@ -1738,12 +1750,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1006746,
+        "bytes": 1006750,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813835,
+        "bytes": 813787,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1985,17 +1997,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "3a53b62e",
+      "hash8": "92817876",
       "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
       "timings": {
-        "importMs": 2205,
-        "fontsMs": 774,
-        "buildMs": 414,
-        "totalMs": 6028,
+        "importMs": 359,
+        "fontsMs": 188,
+        "buildMs": 342,
+        "totalMs": 1510,
         "builds": 1
       },
       "specimen": {
@@ -2027,7 +2045,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114696,
+          "bytes": 114810,
           "alt": "Página 1."
         },
         {
@@ -2038,7 +2056,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 176150,
+          "bytes": 176128,
           "alt": "Página de abertura 2: Dez invernos no gelo."
         }
       ],
@@ -2071,7 +2089,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812394,
+        "bytes": 812402,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -2323,9 +2341,9 @@
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

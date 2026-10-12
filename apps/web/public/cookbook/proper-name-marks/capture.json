@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "proper-name-marks",
-  "sourceHash": "d3cce4227cc796e680f39160c2d46214df5d82c74c39bd2367f418cfb4d22fd6",
+  "sourceHash": "f2b99eb117704f5630ca3bdaa96faef21d557256656a121d09be68c67b40fd29",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.739Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.299Z",
   "variants": {
     "en": {
-      "hash8": "20ba0730",
+      "hash8": "0caed021",
       "vdtHash": "666b14ae1706626f3a5dda2a0371d7dcbd4dd76e",
       "timings": {
-        "importMs": 1067,
-        "fontsMs": 1392,
-        "buildMs": 84,
-        "totalMs": 4502,
+        "importMs": 193,
+        "fontsMs": 240,
+        "buildMs": 59,
+        "totalMs": 1084,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 82220,
+          "bytes": 82198,
           "alt": "Opening page 一: 史記選讀."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 85526,
+          "bytes": 85552,
           "alt": "Opening page 二: 項羽本紀."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 97158,
+          "bytes": 97164,
           "alt": "Opening page 三: 項羽本紀."
         }
       ],
@@ -101,12 +101,12 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170208,
+        "bytes": 170214,
         "pages": 3
       },
       "sandbox": {
         "file": "proper-name-marks.postext",
-        "bytes": 22677,
+        "bytes": 22691,
         "folio": "dd71612a",
         "chapters": [
           {
@@ -314,17 +314,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "281ee223",
+      "hash8": "d89674b8",
       "vdtHash": "4ef88f23fb888f40f39312aab00daabe9b7c9bf4",
       "timings": {
-        "importMs": 1308,
-        "fontsMs": 2256,
-        "buildMs": 74,
-        "totalMs": 6431,
+        "importMs": 190,
+        "fontsMs": 327,
+        "buildMs": 54,
+        "totalMs": 1142,
         "builds": 1
       },
       "specimen": {
@@ -357,7 +363,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 82492,
+          "bytes": 82484,
           "alt": "Página de apertura 一: 史記選讀."
         },
         {
@@ -368,7 +374,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 85474,
+          "bytes": 85498,
           "alt": "Página de apertura 二: 項羽本紀."
         },
         {
@@ -379,7 +385,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 97962,
+          "bytes": 97972,
           "alt": "Página de apertura 三: 項羽本紀."
         }
       ],
@@ -408,12 +414,12 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170790,
+        "bytes": 170799,
         "pages": 3
       },
       "sandbox": {
         "file": "proper-name-marks.postext",
-        "bytes": 22774,
+        "bytes": 22784,
         "folio": "dd71612a",
         "chapters": [
           {
@@ -621,7 +627,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

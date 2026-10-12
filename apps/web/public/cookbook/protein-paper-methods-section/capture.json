@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "protein-paper-methods-section",
-  "sourceHash": "ef93c9ac0d16dd49555922b743703eb504a9979478bde3bf3d4efb330c30998c",
+  "sourceHash": "ae670bc1f7368b2202444408513bc1ff38f1c756ba203f45f177cb319f231c1f",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.743Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.305Z",
   "variants": {
     "en": {
-      "hash8": "2525de6c",
+      "hash8": "5b202f5d",
       "vdtHash": "7d65b4d482af7e0ae5727f913c9c9a21dd94b38d",
       "timings": {
-        "importMs": 2609,
-        "fontsMs": 637,
-        "buildMs": 1156,
-        "totalMs": 6480,
+        "importMs": 239,
+        "fontsMs": 59,
+        "buildMs": 842,
+        "totalMs": 1791,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 189332,
+          "bytes": 189470,
           "alt": "Opening page 1: Highly accurate protein structure prediction with AlphaFold. Fig. 1 | AlphaFold produces highly accurate structures. a, Median accuracy on the CASP14 domains of AlphaFold and of the next best method, as r.m.s.d.95 over Cα atoms (backbone) and over all atoms, wi…"
         },
         {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77622,
+        "bytes": 77616,
         "folio": "9eaee533",
         "chapters": [
           {
@@ -441,6 +441,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Since CASP14, we have found that the accuracy of…”, p. 5 −10‰ “53. Lim, C. J. et al. The structure of human CST…”, p. 5 −10‰ “Acknowledgements We thank A. Rrustemi, A. Gu, A.…”, p. 5 −5‰ “All input data are freely available from public …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

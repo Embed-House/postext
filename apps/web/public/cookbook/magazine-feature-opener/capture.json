@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-feature-opener",
-  "sourceHash": "f3f91b95c995585cb9f21aef18668d61542dd6ed2fe53d67cec1ebcfdbfbbd5a",
+  "sourceHash": "882d5972a4fc1920cffed0b2192601ca098c046a56bf78d59199733a418f09bf",
   "engine": {
-    "postext": "1.28.5",
+    "postext": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:43.944Z",
+  "capturedAt": "2026-10-12T10:07:47.019Z",
   "variants": {
     "en": {
       "hash8": "712bdd7e",
       "vdtHash": "1871a690ae43e90d4c3e530d5da43e94d98675cb",
       "timings": {
-        "importMs": 255,
-        "fontsMs": 36,
-        "buildMs": 221,
-        "totalMs": 1404,
+        "importMs": 129,
+        "fontsMs": 32,
+        "buildMs": 210,
+        "totalMs": 997,
         "builds": 1
       },
       "specimen": {
@@ -413,16 +413,6 @@
             "detail": "3 paragraphs set a line short with tracking (worst −5‰): p. 1 −5‰ “The notebook lives in a biscuit tin on the kitch…”, p. 2 −5‰ “The reason lies in an odd habit of water. Most l…”, p. 2 −5‰ “For the first fifty years of the record, the lak…”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering"
@@ -434,10 +424,10 @@
       "hash8": "08f7728e",
       "vdtHash": "8cd4f449ddc4be1a9bc7860b0343edd132b9d730",
       "timings": {
-        "importMs": 259,
-        "fontsMs": 38,
-        "buildMs": 128,
-        "totalMs": 1256,
+        "importMs": 132,
+        "fontsMs": 32,
+        "buildMs": 124,
+        "totalMs": 883,
         "builds": 1
       },
       "specimen": {
@@ -825,16 +815,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
           {
             "check": "sandbox",
             "severity": "info",

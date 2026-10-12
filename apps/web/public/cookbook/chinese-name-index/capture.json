@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-name-index",
-  "sourceHash": "3d07739468942b5e98f3395f8e38e0119b2045a6884808520321f30fdf19f3c9",
+  "sourceHash": "9f7d9835ac746849f637bd6c7d7fafe276b70d65ba2d4468e719bf186d43ec3b",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:30.775Z",
+  "capturedAt": "2026-10-12T10:07:46.742Z",
   "variants": {
     "en": {
       "hash8": "fb656fec",
       "vdtHash": "96886d18327697be821f983cbf205ac32b80b962",
       "timings": {
-        "importMs": 305,
-        "fontsMs": 361,
-        "buildMs": 107,
-        "totalMs": 1463,
+        "importMs": 268,
+        "fontsMs": 400,
+        "buildMs": 110,
+        "totalMs": 1449,
         "builds": 2
       },
       "specimen": {
@@ -473,28 +473,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "f627aeeb",
       "vdtHash": "faa0bc8df6328dc99a362713506403f6c23a469d",
       "timings": {
-        "importMs": 334,
-        "fontsMs": 344,
-        "buildMs": 106,
-        "totalMs": 1466,
+        "importMs": 243,
+        "fontsMs": 348,
+        "buildMs": 108,
+        "totalMs": 1453,
         "builds": 2
       },
       "specimen": {
@@ -950,18 +939,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

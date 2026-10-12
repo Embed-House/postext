@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-datasheet",
-  "sourceHash": "f65e5df0582f6f9e9278b2d43d8037444ee6ea72685310a65b7dce6e99b347ff",
+  "sourceHash": "4cee82baf7041149ec3a6a0bb8f1fe662b4e27900a03e35a79b1dbd9d20ca911",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:37.611Z",
+  "capturedAt": "2026-10-12T10:07:47.497Z",
   "variants": {
     "en": {
       "hash8": "d9166aaa",
       "vdtHash": "e74bd519f779e7b73780cdecb642841295527226",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 236,
-        "buildMs": 85,
-        "totalMs": 1144,
+        "importMs": 227,
+        "fontsMs": 138,
+        "buildMs": 89,
+        "totalMs": 1119,
         "builds": 1
       },
       "specimen": {
@@ -442,16 +442,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "critical-edition-line-numbers",
-  "sourceHash": "c53486a3d4befa9bfc698849e4dceb304c6cb23391466955eb128378a0f0e415",
+  "sourceHash": "375912d103834b932c907f27bb45a7f6f82b16d95966bf556ce276d432dc9990",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.103Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.847Z",
   "variants": {
     "en": {
-      "hash8": "ad5462f9",
+      "hash8": "82b881e6",
       "vdtHash": "07468e409ef5400855eb4297fb4b8812c1ff05cf",
       "timings": {
-        "importMs": 1255,
-        "fontsMs": 16,
-        "buildMs": 96,
-        "totalMs": 3242,
+        "importMs": 149,
+        "fontsMs": 15,
+        "buildMs": 68,
+        "totalMs": 918,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1565,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 91694,
+          "bytes": 91658,
           "alt": "Opening page 1: Lycidas."
         },
         {
@@ -152,7 +152,7 @@
       },
       "sandbox": {
         "file": "critical-edition-line-numbers.postext",
-        "bytes": 107987,
+        "bytes": 107963,
         "folio": "bc0e5eea",
         "chapters": [
           {
@@ -358,9 +358,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

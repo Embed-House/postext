@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "side-heads-hanging-numbers",
-  "sourceHash": "44791fdcd9e685f2b78fe0895cf9e92d75ee09a3708b7e6d08fbda77e252a877",
+  "sourceHash": "cd5dd8588a41f17309f47bb194bf871c9fb460f53416e6938b80d17bc78af187",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.861Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.386Z",
   "variants": {
     "en": {
-      "hash8": "0972c76a",
+      "hash8": "d3e14fe3",
       "vdtHash": "b4ac9f246a4b482f524154867e5b331a204e9587",
       "timings": {
-        "importMs": 554,
-        "fontsMs": 8,
-        "buildMs": 118,
-        "totalMs": 1433,
+        "importMs": 167,
+        "fontsMs": 4,
+        "buildMs": 61,
+        "totalMs": 894,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 88580,
+          "bytes": 88614,
           "alt": "Opening page 1: Competition brief."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 129550,
+          "bytes": 129596,
           "alt": "Page 2: 2 The site. Figure 1. The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks along the north edge. Red arrows: possible entrances; grey arrow: service."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 73868,
+          "bytes": 73870,
           "alt": "Page 3: 3.2 Staff areas. Figure 2. Quay front, 1:300. In red, the four frames at the east end, where the reinforcement has corroded. · Table 1. Schedule of net floor areas."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1414,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 44024,
+          "bytes": 43998,
           "alt": "Page 5: 6.2 Prizes. Table 2. Competition timetable."
         }
       ],
@@ -126,7 +126,7 @@
       },
       "sandbox": {
         "file": "side-heads-hanging-numbers.postext",
-        "bytes": 26530,
+        "bytes": 26540,
         "folio": "2324bd6f",
         "chapters": [
           {
@@ -360,17 +360,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "b0c18d3e",
+      "hash8": "b3f4fa22",
       "vdtHash": "05cd015399770ed6b13ddb7974d9e7a3f9663b69",
       "timings": {
-        "importMs": 1100,
-        "fontsMs": 6,
-        "buildMs": 112,
-        "totalMs": 3815,
+        "importMs": 177,
+        "fontsMs": 4,
+        "buildMs": 60,
+        "totalMs": 912,
         "builds": 1
       },
       "specimen": {
@@ -404,7 +410,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93400,
+          "bytes": 93344,
           "alt": "Página de apertura 1: Bases del concurso."
         },
         {
@@ -415,7 +421,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134248,
+          "bytes": 134268,
           "alt": "Página 2: 2 El emplazamiento. Figura 1. La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el borde norte. Flechas rojas: accesos posibles; flecha gris: servicio."
         },
         {
@@ -426,7 +432,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77024,
+          "bytes": 77124,
           "alt": "Página 3: 3.2 Áreas internas. Figura 2. Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con las armaduras corroídas. · Tabla 1. Programa de superficies útiles por zonas."
         },
         {
@@ -480,7 +486,7 @@
       },
       "sandbox": {
         "file": "side-heads-hanging-numbers.postext",
-        "bytes": 27505,
+        "bytes": 27507,
         "folio": "2324bd6f",
         "chapters": [
           {
@@ -716,9 +722,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

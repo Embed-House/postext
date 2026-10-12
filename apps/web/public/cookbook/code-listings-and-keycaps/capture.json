@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "code-listings-and-keycaps",
-  "sourceHash": "465ab92efe8cbf4b60dd416ffe1888268cfb41e4e4fbb2f559d755bb469d8444",
+  "sourceHash": "133379e68c11f41bfd82b16599504970a7d7f34b06d08a0bb98f5546c1de3dd3",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.972Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.770Z",
   "variants": {
     "en": {
-      "hash8": "4e653282",
+      "hash8": "d31454b7",
       "vdtHash": "8b3311fe4bda801d997d19193889d8a025dee896",
       "timings": {
-        "importMs": 1435,
-        "fontsMs": 403,
-        "buildMs": 90,
-        "totalMs": 2930,
+        "importMs": 236,
+        "fontsMs": 43,
+        "buildMs": 79,
+        "totalMs": 1026,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1287,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 103132,
+          "bytes": 103128,
           "alt": "Page 50: When a command will not stop."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24526,
+        "bytes": 24518,
         "folio": "e7298095",
         "chapters": [
           {
@@ -397,6 +397,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -405,13 +410,13 @@
       }
     },
     "es": {
-      "hash8": "815897ec",
+      "hash8": "6cbc4ea4",
       "vdtHash": "f61d6e1ac7d69bfb6a85cc1f21905dd10cfc0c68",
       "timings": {
-        "importMs": 803,
-        "fontsMs": 321,
-        "buildMs": 104,
-        "totalMs": 1830,
+        "importMs": 152,
+        "fontsMs": 55,
+        "buildMs": 100,
+        "totalMs": 910,
         "builds": 1
       },
       "specimen": {
@@ -456,7 +461,7 @@
           "h": 1287,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 108292,
+          "bytes": 108346,
           "alt": "Página 50: Cuando una orden no termina."
         },
         {
@@ -791,6 +796,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

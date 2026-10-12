@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "mla-humanities-essay",
-  "sourceHash": "bca3f6c3d0f28335486202d7d0596d2c755e85ad5233852b93fe11275ba2a9c5",
+  "sourceHash": "a6b89ad569b85c70e863514285a286a0c67c14658ca53a5348a772a37ec55a3b",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.489Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.099Z",
   "variants": {
     "en": {
-      "hash8": "2758ffd5",
+      "hash8": "d8f3b405",
       "vdtHash": "aeeb7aaff771f2fadcc155673cfa79108d5db99d",
       "timings": {
-        "importMs": 1863,
-        "fontsMs": 36,
-        "buildMs": 128,
-        "totalMs": 3207,
+        "importMs": 172,
+        "fontsMs": 29,
+        "buildMs": 96,
+        "totalMs": 948,
         "builds": 1
       },
       "specimen": {
@@ -340,17 +340,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "56c4f5d6",
+      "hash8": "168d2d3f",
       "vdtHash": "7e9d0444b1b469b4a6b5ab616769497245a62456",
       "timings": {
-        "importMs": 2140,
-        "fontsMs": 35,
-        "buildMs": 125,
-        "totalMs": 4343,
+        "importMs": 206,
+        "fontsMs": 30,
+        "buildMs": 102,
+        "totalMs": 1039,
         "builds": 1
       },
       "specimen": {
@@ -673,7 +679,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "section-heads-field-manual",
-  "sourceHash": "86f6fcdf51374d736abd6f6afec974ce56b27e9ff96e0cefb49b5ad4bfa45fbc",
+  "sourceHash": "c446aa6df81598510d5709f4ebc8cbd8eae7a846a03015bfcb818f3345c5fcd9",
   "engine": {
-    "postext": "1.28.5",
+    "postext": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:59.280Z",
+  "capturedAt": "2026-10-12T10:07:47.366Z",
   "variants": {
     "en": {
       "hash8": "07799fa1",
       "vdtHash": "e49da79aeee8d17e20131d359b6a1a8e69ece565",
       "timings": {
-        "importMs": 249,
+        "importMs": 195,
         "fontsMs": 4,
-        "buildMs": 75,
-        "totalMs": 1502,
+        "buildMs": 80,
+        "totalMs": 914,
         "builds": 1
       },
       "specimen": {
@@ -340,11 +340,6 @@
             "check": "C36",
             "severity": "info",
             "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
@@ -353,10 +348,10 @@
       "hash8": "23c70251",
       "vdtHash": "e435c4dc3a3581b9691ecb4da3ca88efd1e9587b",
       "timings": {
-        "importMs": 254,
-        "fontsMs": 3,
-        "buildMs": 67,
-        "totalMs": 1488,
+        "importMs": 150,
+        "fontsMs": 4,
+        "buildMs": 68,
+        "totalMs": 867,
         "builds": 1
       },
       "specimen": {
@@ -680,11 +675,6 @@
             "check": "C36",
             "severity": "info",
             "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

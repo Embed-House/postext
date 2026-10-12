@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-dictionary-page",
-  "sourceHash": "455a098eed41e5d355e0e53281f29aeb2083420b41d68658d080a61b351fd636",
+  "sourceHash": "257b2fd4404cd8ba4fae266c98a168600328e7aa12e3f4691b83c2a8d5b1245c",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.922Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.737Z",
   "variants": {
     "en": {
-      "hash8": "afab7340",
+      "hash8": "d1ab22b1",
       "vdtHash": "77fc13a8a6aff79bfe7ab1c0fc8f64a849cace85",
       "timings": {
-        "importMs": 1219,
-        "fontsMs": 672,
-        "buildMs": 92,
-        "totalMs": 3405,
+        "importMs": 226,
+        "fontsMs": 378,
+        "buildMs": 62,
+        "totalMs": 1245,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 136356,
+          "bytes": 136382,
           "alt": "Page 634: 天."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140604,
+          "bytes": 140544,
           "alt": "Page 635: 腆."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 134194,
+          "bytes": 134196,
           "alt": "Page 636: 挑."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 127960,
+          "bytes": 128036,
           "alt": "Page 637: 餮."
         }
       ],
@@ -112,12 +112,12 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313324,
+        "bytes": 313330,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 25982,
+        "bytes": 26046,
         "folio": "662b056b",
         "chapters": [
           {
@@ -304,9 +304,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -317,13 +317,13 @@
       }
     },
     "es": {
-      "hash8": "6d28f25e",
+      "hash8": "1eaddf51",
       "vdtHash": "20acac35a92c6e960979044b58b8febea6c50037",
       "timings": {
-        "importMs": 1581,
-        "fontsMs": 1841,
-        "buildMs": 72,
-        "totalMs": 4226,
+        "importMs": 191,
+        "fontsMs": 253,
+        "buildMs": 59,
+        "totalMs": 1138,
         "builds": 1
       },
       "specimen": {
@@ -357,7 +357,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 136356,
+          "bytes": 136382,
           "alt": "Página 634: 天."
         },
         {
@@ -368,7 +368,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140604,
+          "bytes": 140544,
           "alt": "Página 635: 腆."
         },
         {
@@ -379,7 +379,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 134194,
+          "bytes": 134196,
           "alt": "Página 636: 挑."
         },
         {
@@ -390,7 +390,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128586,
+          "bytes": 128658,
           "alt": "Página 637: 餮."
         }
       ],
@@ -418,12 +418,12 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313321,
+        "bytes": 313329,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26055,
+        "bytes": 26119,
         "folio": "662b056b",
         "chapters": [
           {
@@ -610,9 +610,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-right-to-left",
-  "sourceHash": "599e9fd582471418cdd25540feffff725ee5bf0040e3a1784f5a6207bd65762a",
+  "sourceHash": "504bea096773283a19e41a117ddf17ab99195036176cc703807fcddc7e1c11f7",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.431Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.054Z",
   "variants": {
     "en": {
-      "hash8": "339c21c3",
+      "hash8": "5f1c97fa",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1781,
-        "fontsMs": 1599,
-        "buildMs": 991,
-        "totalMs": 6355,
+        "importMs": 214,
+        "fontsMs": 246,
+        "buildMs": 858,
+        "totalMs": 2314,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "Page 1."
         },
         {
@@ -58,7 +58,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "Page 2."
         },
         {
@@ -69,7 +69,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 180824,
+          "bytes": 180880,
           "alt": "Page 1."
         },
         {
@@ -80,7 +80,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 172924,
+          "bytes": 172928,
           "alt": "Page 2."
         }
       ],
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410331,
+        "bytes": 1410341,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -253,6 +253,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -267,13 +272,13 @@
       }
     },
     "es": {
-      "hash8": "48405440",
+      "hash8": "f406a005",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1318,
-        "fontsMs": 2081,
-        "buildMs": 996,
-        "totalMs": 7240,
+        "importMs": 156,
+        "fontsMs": 258,
+        "buildMs": 863,
+        "totalMs": 2281,
         "builds": 2
       },
       "specimen": {
@@ -303,7 +308,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "Página 1."
         },
         {
@@ -314,7 +319,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "Página 2."
         },
         {
@@ -325,7 +330,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 179168,
+          "bytes": 178974,
           "alt": "Página 1."
         },
         {
@@ -336,7 +341,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 175844,
+          "bytes": 175980,
           "alt": "Página 2."
         }
       ],
@@ -365,12 +370,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522841,
+        "bytes": 1522840,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410462,
+        "bytes": 1410472,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -509,6 +514,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -523,13 +533,13 @@
       }
     },
     "ca": {
-      "hash8": "6721b0f4",
+      "hash8": "5c14ea9d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1493,
-        "fontsMs": 1496,
-        "buildMs": 1001,
-        "totalMs": 6533,
+        "importMs": 178,
+        "fontsMs": 242,
+        "buildMs": 860,
+        "totalMs": 2355,
         "builds": 2
       },
       "specimen": {
@@ -559,7 +569,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "Pàgina 1."
         },
         {
@@ -570,7 +580,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "Pàgina 2."
         },
         {
@@ -581,7 +591,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181174,
+          "bytes": 181246,
           "alt": "Pàgina 1."
         },
         {
@@ -592,7 +602,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 182514,
+          "bytes": 182264,
           "alt": "Pàgina 2."
         }
       ],
@@ -621,12 +631,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522196,
+        "bytes": 1522194,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410453,
+        "bytes": 1410463,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -765,6 +775,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -779,13 +794,13 @@
       }
     },
     "zh": {
-      "hash8": "b065809d",
+      "hash8": "c65779b4",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1433,
-        "fontsMs": 1742,
-        "buildMs": 1023,
-        "totalMs": 8873,
+        "importMs": 160,
+        "fontsMs": 200,
+        "buildMs": 861,
+        "totalMs": 2563,
         "builds": 2
       },
       "specimen": {
@@ -815,7 +830,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "第 1 页。"
         },
         {
@@ -826,7 +841,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "第 2 页。"
         },
         {
@@ -837,7 +852,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181604,
+          "bytes": 182154,
           "alt": "第 1 页。"
         },
         {
@@ -848,7 +863,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176848,
+          "bytes": 178248,
           "alt": "第 2 页。"
         }
       ],
@@ -877,12 +892,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1544570,
+        "bytes": 1544569,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410564,
+        "bytes": 1410574,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1022,6 +1037,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1035,13 +1055,13 @@
       }
     },
     "ar": {
-      "hash8": "58db6dd9",
+      "hash8": "820d37b1",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 2288,
-        "fontsMs": 2604,
-        "buildMs": 991,
-        "totalMs": 8191,
+        "importMs": 220,
+        "fontsMs": 237,
+        "buildMs": 851,
+        "totalMs": 2329,
         "builds": 2
       },
       "specimen": {
@@ -1071,7 +1091,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "الصفحة 1."
         },
         {
@@ -1082,7 +1102,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "الصفحة 2."
         },
         {
@@ -1093,7 +1113,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 179676,
+          "bytes": 178966,
           "alt": "الصفحة ١."
         },
         {
@@ -1104,7 +1124,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176400,
+          "bytes": 176508,
           "alt": "الصفحة ٢."
         }
       ],
@@ -1133,12 +1153,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1530169,
+        "bytes": 1530205,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410779,
+        "bytes": 1410789,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1278,6 +1298,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1291,13 +1316,13 @@
       }
     },
     "ja": {
-      "hash8": "0c900a8a",
+      "hash8": "d96c04a9",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1114,
-        "fontsMs": 2314,
-        "buildMs": 985,
-        "totalMs": 7209,
+        "importMs": 175,
+        "fontsMs": 210,
+        "buildMs": 927,
+        "totalMs": 2347,
         "builds": 2
       },
       "specimen": {
@@ -1327,7 +1352,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 175026,
           "alt": "1ページ。"
         },
         {
@@ -1338,7 +1363,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164510,
           "alt": "2ページ。"
         },
         {
@@ -1349,7 +1374,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 180824,
+          "bytes": 180880,
           "alt": "1ページ。"
         },
         {
@@ -1360,7 +1385,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 172924,
+          "bytes": 172928,
           "alt": "2ページ。"
         }
       ],
@@ -1389,12 +1414,12 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521160,
+        "bytes": 1521152,
         "pages": 4
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410526,
+        "bytes": 1410554,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1534,6 +1559,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1552,13 +1582,13 @@
       }
     },
     "pt": {
-      "hash8": "15972c60",
+      "hash8": "8f4e8858",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 970,
-        "fontsMs": 2126,
-        "buildMs": 1012,
-        "totalMs": 6269,
+        "importMs": 180,
+        "fontsMs": 238,
+        "buildMs": 870,
+        "totalMs": 2297,
         "builds": 2
       },
       "specimen": {
@@ -1588,7 +1618,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175128,
+          "bytes": 174892,
           "alt": "Página 1."
         },
         {
@@ -1599,7 +1629,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164548,
+          "bytes": 164570,
           "alt": "Página 2."
         },
         {
@@ -1610,7 +1640,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 180452,
+          "bytes": 180470,
           "alt": "Página 1."
         },
         {
@@ -1621,7 +1651,7 @@
           "h": 1422,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 177066,
+          "bytes": 177260,
           "alt": "Página 2."
         }
       ],
@@ -1655,7 +1685,7 @@
       },
       "sandbox": {
         "file": "manga-right-to-left.postext",
-        "bytes": 1410444,
+        "bytes": 1410454,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 2,
@@ -1794,6 +1824,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

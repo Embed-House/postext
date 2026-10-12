@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-novel-right-bound",
-  "sourceHash": "5eba454be083f6ded3867bb9a98af6f0f88f77706fde07cf970f2407592229e9",
+  "sourceHash": "a6bd2d4efb28877068941edf1ca18ab9da0b4878334e990c64eddad4219fa930",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.686Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.581Z",
   "variants": {
     "en": {
-      "hash8": "3e14c79a",
+      "hash8": "94e5191d",
       "vdtHash": "c6a02a8a6f28959dd8ec0ac174534c5721eac10a",
       "timings": {
-        "importMs": 2025,
-        "fontsMs": 258,
-        "buildMs": 107,
-        "totalMs": 3936,
+        "importMs": 223,
+        "fontsMs": 62,
+        "buildMs": 102,
+        "totalMs": 986,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 41762,
+          "bytes": 41750,
           "alt": "Opening page ١٠: الدرب."
         },
         {
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34622,
+        "bytes": 34612,
         "folio": "217e1225",
         "chapters": [
           {
@@ -355,6 +355,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar, the document's language: en names its resource types otherwise"
@@ -368,13 +373,13 @@
       }
     },
     "es": {
-      "hash8": "551f63ac",
+      "hash8": "786c1b47",
       "vdtHash": "e562550e168ab8ad0da1e6d7ee8cc3b80226c331",
       "timings": {
-        "importMs": 1665,
-        "fontsMs": 311,
-        "buildMs": 128,
-        "totalMs": 2737,
+        "importMs": 237,
+        "fontsMs": 70,
+        "buildMs": 101,
+        "totalMs": 1001,
         "builds": 1
       },
       "specimen": {
@@ -407,7 +412,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 41762,
+          "bytes": 41750,
           "alt": "Página de apertura ١٠: الدرب."
         },
         {
@@ -515,7 +520,7 @@
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34681,
+        "bytes": 34671,
         "folio": "217e1225",
         "chapters": [
           {
@@ -711,6 +716,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

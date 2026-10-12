@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anchoring-cheat-sheet",
-  "sourceHash": "7f616dc1e44cdd335228c216f32701827a1906aca3f8d23a471db53f30afc88d",
+  "sourceHash": "0732514211f4de21cab5fac7432d0e7605e9ad3fca10246ac580da76f955c4f7",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.652Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.559Z",
   "variants": {
     "en": {
-      "hash8": "6055687b",
+      "hash8": "99d9feaa",
       "vdtHash": "83b4c5c2478a8640f808f3fe6c6466a94448c263",
       "timings": {
-        "importMs": 1183,
-        "fontsMs": 7,
-        "buildMs": 55,
-        "totalMs": 1990,
+        "importMs": 166,
+        "fontsMs": 4,
+        "buildMs": 70,
+        "totalMs": 891,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 86024,
+          "bytes": 86026,
           "alt": "Opening page 1: The Shadow Returns."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 119758,
+          "bytes": 119700,
           "alt": "Opening page 2: The Shadow Returns."
         }
       ],
@@ -85,7 +85,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42880,
+        "bytes": 42900,
         "folio": "061973f6",
         "chapters": [
           {
@@ -263,9 +263,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -276,13 +276,13 @@
       }
     },
     "es": {
-      "hash8": "fe3b0cff",
+      "hash8": "90cf74c9",
       "vdtHash": "740960f561a724cb8de0b55f121be0586184cf3c",
       "timings": {
-        "importMs": 1608,
-        "fontsMs": 5,
-        "buildMs": 66,
-        "totalMs": 2714,
+        "importMs": 199,
+        "fontsMs": 4,
+        "buildMs": 46,
+        "totalMs": 932,
         "builds": 1
       },
       "specimen": {
@@ -316,7 +316,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85396,
+          "bytes": 85406,
           "alt": "Página de apertura 1: Vuelve la sombra."
         },
         {
@@ -327,7 +327,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118698,
+          "bytes": 118922,
           "alt": "Página de apertura 2: Vuelve la sombra."
         }
       ],
@@ -351,7 +351,7 @@
       },
       "sandbox": {
         "file": "anchoring-cheat-sheet.postext",
-        "bytes": 42412,
+        "bytes": 42410,
         "folio": "061973f6",
         "chapters": [
           {
@@ -529,9 +529,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

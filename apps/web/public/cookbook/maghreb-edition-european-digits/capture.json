@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "maghreb-edition-european-digits",
-  "sourceHash": "68911d482326951b25d523dbb34fc54766114c77d7e887d8648a275776863e43",
+  "sourceHash": "926916ef35672316e3f309813c3a12dd2ca908219706c41355659cac247def78",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.397Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.033Z",
   "variants": {
     "en": {
-      "hash8": "8140d75b",
+      "hash8": "6f4ee906",
       "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 971,
-        "fontsMs": 140,
-        "buildMs": 102,
-        "totalMs": 1811,
+        "importMs": 192,
+        "fontsMs": 58,
+        "buildMs": 68,
+        "totalMs": 935,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1556,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 97854,
+          "bytes": 97872,
           "alt": "Opening page 41: الفصل 3: أبواب فاس. شكل 3-1: زليج من نجوم ثمانية الرؤوس، على طريقة الفسيفساء الفاسية."
         },
         {
@@ -115,12 +115,12 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 65864,
+        "bytes": 65865,
         "pages": 4
       },
       "sandbox": {
         "file": "maghreb-edition-european-digits.postext",
-        "bytes": 25822,
+        "bytes": 25814,
         "folio": "5362c1cb",
         "chapters": [
           {
@@ -312,9 +312,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -325,13 +325,13 @@
       }
     },
     "es": {
-      "hash8": "295b91b3",
+      "hash8": "45e6b6c3",
       "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 1123,
-        "fontsMs": 246,
-        "buildMs": 109,
-        "totalMs": 2971,
+        "importMs": 242,
+        "fontsMs": 99,
+        "buildMs": 87,
+        "totalMs": 1090,
         "builds": 1
       },
       "specimen": {
@@ -363,7 +363,7 @@
           "h": 1556,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 97854,
+          "bytes": 97872,
           "alt": "Página de apertura 41: الفصل 3: أبواب فاس. شكل 3-1: زليج من نجوم ثمانية الرؤوس، على طريقة الفسيفساء الفاسية."
         },
         {
@@ -429,12 +429,12 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 66272,
+        "bytes": 66274,
         "pages": 4
       },
       "sandbox": {
         "file": "maghreb-edition-european-digits.postext",
-        "bytes": 25886,
+        "bytes": 25878,
         "folio": "5362c1cb",
         "chapters": [
           {
@@ -626,9 +626,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

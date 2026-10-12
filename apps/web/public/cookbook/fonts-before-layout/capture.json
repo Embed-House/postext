@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "fonts-before-layout",
-  "sourceHash": "e651d3690ed7ca201a6f26b4df432a3cf0c64f40cb4a34f887b6cb9c4b3bb980",
+  "sourceHash": "f39a7f6ba4fc3881e3656de7b6e51df21a8910e68152d5f327d3c64e9853a986",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.201Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.904Z",
   "variants": {
     "en": {
-      "hash8": "e7e865d6",
+      "hash8": "e8c63940",
       "vdtHash": "0c1ef201c84c95cf7ac8d8dff7a325431f209674",
       "timings": {
-        "importMs": 1526,
+        "importMs": 217,
         "fontsMs": 1,
-        "buildMs": 8,
-        "totalMs": 2916,
+        "buildMs": 5,
+        "totalMs": 1041,
         "builds": 3
       },
       "specimen": {
@@ -82,7 +82,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 85708,
+          "bytes": 85722,
           "alt": "Page 4: What the early build got wrong. Figure 1. The first paragraph of page 1 as the early build set it, measured before the fonts had arrived (above), and as the last build set it (below). The early build broke 23 of its 45 lines of text elsewhere, and its own warnings name…"
         }
       ],
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "fonts-before-layout.postext",
-        "bytes": 422070,
+        "bytes": 476142,
         "folio": "4b67afad",
         "chapters": [
           {
@@ -345,6 +345,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “When the faces arrived, Postext dropped every wi…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

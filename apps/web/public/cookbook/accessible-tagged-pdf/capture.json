@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "accessible-tagged-pdf",
-  "sourceHash": "79c1bc64b1bd78039aa4f73b1b96302aadebe7c442a6088cc9e7ba7c76e5cc0d",
+  "sourceHash": "71a90a57fba580f67950e5589f77bb66a65b4aefda7b3ef492008543505f3fde",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.636Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.548Z",
   "variants": {
     "es": {
-      "hash8": "a6765dec",
+      "hash8": "f69c24c8",
       "vdtHash": "b4d90a107216c3f089ce544b14ad07edef22c525",
       "timings": {
-        "importMs": 28110,
-        "fontsMs": 49,
-        "buildMs": 122,
-        "totalMs": 29358,
+        "importMs": 21256,
+        "fontsMs": 38,
+        "buildMs": 93,
+        "totalMs": 22109,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 37032,
+          "bytes": 37038,
           "alt": "Página de apertura 1: Reciclar en el barrio."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 148742,
+          "bytes": 148790,
           "alt": "Página de apertura 3: 1 Qué va en cada contenedor. Figura 1.1. Una isla del barrio: de izquierda a derecha, amarillo, azul, verde, marrón y gris. · Tabla 1.1. Los residuos que más dudas dan."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 124048,
+          "bytes": 124058,
           "alt": "Página de apertura 4: 2 Lo que no va al contenedor. Tabla 2.1. Días y horas de recogida."
         }
       ],
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "accessible-tagged-pdf.postext",
-        "bytes": 36308,
+        "bytes": 36304,
         "folio": "ccb10a06",
         "chapters": [
           {
@@ -387,7 +387,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "boxes-split-float-pin",
-  "sourceHash": "6f98efad4370cdba6d12890f97506fc3bb8a7ca9eacba61b6d5e16a3ae0a3cd8",
+  "sourceHash": "162885125f440a05e5dc76fa19ceafdcc7be31e1660f64a58a22d3e481e00b5c",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.817Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.667Z",
   "variants": {
     "es": {
-      "hash8": "dd85a1ce",
+      "hash8": "40844055",
       "vdtHash": "731766a34e54522c0cbf634b2c7f9ff4a2b60ec3",
       "timings": {
-        "importMs": 1026,
-        "fontsMs": 57,
-        "buildMs": 151,
-        "totalMs": 2639,
+        "importMs": 182,
+        "fontsMs": 31,
+        "buildMs": 111,
+        "totalMs": 943,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1308,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 134146,
+          "bytes": 134160,
           "alt": "Página de apertura 41: Construye un reloj de sol."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1308,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 162154,
+          "bytes": 162068,
           "alt": "Página 42: 4.2 Una esfera con dos caras."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1308,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 72646,
+          "bytes": 72628,
           "alt": "Página 44. Figura 4.1. El reloj visto desde el este. A mediodía, el Sol ilumina la cara superior en verano (izquierda) y la inferior en invierno. · Tabla 4.2. Tus lecturas. La primera fila es la del ejemplo."
         }
       ],
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "boxes-split-float-pin.postext",
-        "bytes": 34670,
+        "bytes": 34664,
         "folio": "bcf271e0",
         "chapters": [
           {
@@ -385,6 +385,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

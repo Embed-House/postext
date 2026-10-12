@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "nights-ordinal-headings",
-  "sourceHash": "5bdb8079592d3737f4958f9655eb081c5f520af70a1f1f312cd516cec1919af9",
+  "sourceHash": "6b0bd6659462c705362ec412ebb92e20e7a1647ade2057ece0ed11da96039e33",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.539Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.135Z",
   "variants": {
     "en": {
-      "hash8": "01b5c096",
+      "hash8": "27e027db",
       "vdtHash": "fe5e674ff0e9a96395add1ca76fc84dc9cad8c6a",
       "timings": {
-        "importMs": 1207,
-        "fontsMs": 161,
-        "buildMs": 130,
-        "totalMs": 3145,
+        "importMs": 187,
+        "fontsMs": 80,
+        "buildMs": 102,
+        "totalMs": 1003,
         "builds": 1
       },
       "specimen": {
@@ -194,7 +194,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 157729,
+        "bytes": 157728,
         "pages": 10
       },
       "sandbox": {
@@ -397,21 +397,21 @@
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "de622090",
+      "hash8": "c7b4e3e4",
       "vdtHash": "82db57898ac3341cba6efde729976c7ed9423b12",
       "timings": {
-        "importMs": 1157,
-        "fontsMs": 253,
-        "buildMs": 121,
-        "totalMs": 2515,
+        "importMs": 166,
+        "fontsMs": 72,
+        "buildMs": 98,
+        "totalMs": 939,
         "builds": 1
       },
       "specimen": {
@@ -588,7 +588,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 158459,
+        "bytes": 158454,
         "pages": 10
       },
       "sandbox": {
@@ -791,9 +791,9 @@
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

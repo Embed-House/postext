@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "paper-swatch-book",
-  "sourceHash": "ce3ccc7ebd9a7dc2c36b89e3fd05bc660a4002993c944fd8038c7eeef75f7035",
+  "sourceHash": "c230c9e24b8854c3e728a3e2e1e0fc0fe047b5986048f8b059afe226e51a3ebf",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.590Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.175Z",
   "variants": {
     "en": {
-      "hash8": "d5f5221f",
+      "hash8": "747b4eeb",
       "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 1613,
-        "fontsMs": 3,
-        "buildMs": 101,
-        "totalMs": 3246,
+        "importMs": 144,
+        "fontsMs": 2,
+        "buildMs": 61,
+        "totalMs": 824,
         "builds": 1
       },
       "specimen": {
@@ -218,7 +218,7 @@
       },
       "sandbox": {
         "file": "paper-swatch-book.postext",
-        "bytes": 30856,
+        "bytes": 30828,
         "folio": "c0edc776",
         "chapters": [
           {
@@ -440,7 +440,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

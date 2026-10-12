@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "genko-yoshi-manuscript",
-  "sourceHash": "5a1c973404225250a3a1b776e968b0af2b3b4cd28e25051509304df437ef6c29",
+  "sourceHash": "74d8c438969e21c94c090e9d65cdbc8ebe71b1ba3704be2696bb6eb31d37ffb6",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.236Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.921Z",
   "variants": {
     "en": {
-      "hash8": "fd6d9f89",
+      "hash8": "0c5585ed",
       "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 1702,
-        "fontsMs": 868,
-        "buildMs": 45,
-        "totalMs": 3306,
+        "importMs": 161,
+        "fontsMs": 116,
+        "buildMs": 34,
+        "totalMs": 875,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 870,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101212,
+          "bytes": 101116,
           "alt": "Opening page 1: 坊っちゃん."
         },
         {
@@ -60,7 +60,7 @@
           "h": 870,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 103614,
+          "bytes": 103588,
           "alt": "Page 2."
         },
         {
@@ -71,7 +71,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62164,
+          "bytes": 62072,
           "alt": "Page 3."
         }
       ],
@@ -100,12 +100,12 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155783,
+        "bytes": 155775,
         "pages": 3
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28485,
+        "bytes": 28479,
         "chapters": [
           {
             "pages": 3,
@@ -271,17 +271,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "f8673bbb",
+      "hash8": "7c6b4699",
       "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 1309,
-        "fontsMs": 1172,
-        "buildMs": 45,
-        "totalMs": 3662,
+        "importMs": 158,
+        "fontsMs": 111,
+        "buildMs": 34,
+        "totalMs": 913,
         "builds": 1
       },
       "specimen": {
@@ -313,7 +319,7 @@
           "h": 870,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101392,
+          "bytes": 101280,
           "alt": "Página de apertura 1: 坊っちゃん."
         },
         {
@@ -324,7 +330,7 @@
           "h": 870,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 103614,
+          "bytes": 103588,
           "alt": "Página 2."
         },
         {
@@ -335,7 +341,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62164,
+          "bytes": 62072,
           "alt": "Página 3."
         }
       ],
@@ -364,12 +370,12 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155780,
+        "bytes": 155769,
         "pages": 3
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28519,
+        "bytes": 28507,
         "chapters": [
           {
             "pages": 3,
@@ -535,7 +541,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

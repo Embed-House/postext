@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "7eb1c2bc771c0ab62e078ccd574d8ae654fe61f959d4bcee2865c3c9c156907d",
+  "sourceHash": "9f2a99212d5ca4676e645bc93dcc918a60cbb7b2414f1e7defe93cedfe1015d8",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.695Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.587Z",
   "variants": {
     "en": {
-      "hash8": "0a3da0a2",
+      "hash8": "a08e84ee",
       "vdtHash": "fc2fc1949f0cd4a3f42f67d22fe8c64c7a6874b9",
       "timings": {
-        "importMs": 1863,
-        "fontsMs": 534,
-        "buildMs": 615,
-        "totalMs": 4725,
+        "importMs": 262,
+        "fontsMs": 72,
+        "buildMs": 548,
+        "totalMs": 1478,
         "builds": 1
       },
       "specimen": {
@@ -126,12 +126,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99063,
+        "bytes": 99059,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14403,
+        "bytes": 14405,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -398,21 +398,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "576851c2",
+      "hash8": "23dfe9a5",
       "vdtHash": "4969cce40dbd3f45a1b9ed0bd619bcf50961dd09",
       "timings": {
-        "importMs": 2626,
-        "fontsMs": 581,
-        "buildMs": 603,
-        "totalMs": 5027,
+        "importMs": 348,
+        "fontsMs": 68,
+        "buildMs": 510,
+        "totalMs": 1539,
         "builds": 1
       },
       "specimen": {
@@ -521,12 +521,12 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98879,
+        "bytes": 98878,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14477,
+        "bytes": 14479,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -793,9 +793,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

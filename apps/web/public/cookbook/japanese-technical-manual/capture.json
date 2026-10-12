@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "japanese-technical-manual",
-  "sourceHash": "aaeb1edf09d822bc0df21d2a502322290b30496b90caf4e3ef7d1d922f350dcf",
+  "sourceHash": "3b47e2f268c360ffe7ae3368cc3314dd8456800d76a3c49e956f28194aa2c66a",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:11.918Z",
+  "capturedAt": "2026-10-12T10:07:46.954Z",
   "variants": {
     "en": {
       "hash8": "0284a571",
       "vdtHash": "408df2355fa6ab31f93c86cf0b8c3c7688eaaa3f",
       "timings": {
-        "importMs": 327,
-        "fontsMs": 31546,
-        "buildMs": 110,
-        "totalMs": 32663,
+        "importMs": 161,
+        "fontsMs": 127,
+        "buildMs": 91,
+        "totalMs": 1008,
         "builds": 1
       },
       "specimen": {
@@ -427,21 +427,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 32.7 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
@@ -453,10 +438,10 @@
       "hash8": "dfa91db2",
       "vdtHash": "c37443f092c4e6782997f0f2dafddb3ec87fc23b",
       "timings": {
-        "importMs": 322,
-        "fontsMs": 31552,
-        "buildMs": 110,
-        "totalMs": 32665,
+        "importMs": 161,
+        "fontsMs": 177,
+        "buildMs": 92,
+        "totalMs": 993,
         "builds": 1
       },
       "specimen": {
@@ -865,21 +850,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 32.7 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
           {
             "check": "sandbox",
             "severity": "info",

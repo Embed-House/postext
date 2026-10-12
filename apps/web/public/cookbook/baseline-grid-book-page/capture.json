@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "2f8d294c528545c542b5ccbf89b93f0753581fec4494421e298f379dcb7abf26",
+  "sourceHash": "e6242b75f1e0b198be8ac5b30e2015d0f7cc70a2ea87339caa0db023f9695489",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.767Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.631Z",
   "variants": {
     "en": {
-      "hash8": "2d852695",
+      "hash8": "531ae2b9",
       "vdtHash": "e34bb0c4f98af58e2a09050a71580f54f4aa2825",
       "timings": {
-        "importMs": 912,
-        "fontsMs": 5,
-        "buildMs": 179,
-        "totalMs": 2019,
+        "importMs": 151,
+        "fontsMs": 3,
+        "buildMs": 104,
+        "totalMs": 901,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 151450,
+          "bytes": 151324,
           "alt": "Opening page 9: The Secret Canon. Figure 1.1. The canon on an open spread of 2:3 pages. The diagonals fix the corners of both text blocks; the circle, as wide as a page, is exactly as tall as its block."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 36326,
+          "bytes": 36342,
           "alt": "Page 11. Figure 1.2. This book’s 210 × 280 mm page twice. Left, divided by the canon into ninths, with a text block of 140 × 187 mm. Right, as the book sets it: margins of 16, 24, 32 and 48 mm and two columns of 44 lines."
         }
       ],
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43219,
+        "bytes": 43201,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -319,6 +319,11 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The ruling fixed the lines as well as the frame.…”"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -327,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "636c57cf",
+      "hash8": "5b03e4a6",
       "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
       "timings": {
-        "importMs": 1343,
-        "fontsMs": 5,
-        "buildMs": 101,
-        "totalMs": 2458,
+        "importMs": 184,
+        "fontsMs": 3,
+        "buildMs": 80,
+        "totalMs": 893,
         "builds": 1
       },
       "specimen": {
@@ -367,7 +372,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 153988,
+          "bytes": 153868,
           "alt": "Página de apertura 9: El canon secreto. Figura 1.1. El canon sobre un pliego abierto de páginas 2:3. Las diagonales fijan las esquinas de las dos cajas; el círculo, tan ancho como la página, es tan alto como su caja."
         },
         {
@@ -389,7 +394,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 41160,
+          "bytes": 40946,
           "alt": "Página 11. Figura 1.2. La página de 210 × 280 mm de este libro, dos veces. A la izquierda, dividida en novenos por el canon, con una caja de 140 × 187 mm. A la derecha, tal como la compone el libro: márgenes de 16, 24, 32 y 48 mm y dos columnas de 44 líneas."
         }
       ],
@@ -417,7 +422,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 44067,
+        "bytes": 44011,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -626,6 +631,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -634,13 +644,13 @@
       }
     },
     "pt": {
-      "hash8": "2e4570a4",
+      "hash8": "e7ff10ab",
       "vdtHash": "f1a0564255a404acb4b0129639aefa3c0cc930c6",
       "timings": {
-        "importMs": 854,
+        "importMs": 202,
         "fontsMs": 3,
-        "buildMs": 99,
-        "totalMs": 2785,
+        "buildMs": 68,
+        "totalMs": 930,
         "builds": 1
       },
       "specimen": {
@@ -674,7 +684,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 149478,
+          "bytes": 149464,
           "alt": "Página de abertura 9: O cânone secreto. Figura 1.1. O cânone sobre uma página dupla aberta de páginas 2:3. As diagonais fixam os cantos das duas manchas; o círculo, da largura da página, tem exatamente a altura da mancha."
         },
         {
@@ -696,7 +706,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50578,
+          "bytes": 50358,
           "alt": "Página 11. Figura 1.2. A página de 210 × 280 mm deste livro, duas vezes. À esquerda, dividida em nonos pelo cânone, com uma mancha de 140 × 187 mm. À direita, como o livro a compõe: margens de 16, 24, 32 e 48 mm e duas colunas de 44 linhas."
         }
       ],
@@ -724,7 +734,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42994,
+        "bytes": 42976,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -932,6 +942,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "letters-edition",
-  "sourceHash": "2e26306fc9de725ebd674df525573e47bbe44461cddbdbd0b76c47e933434f7b",
+  "sourceHash": "2656475dd1dbe55f4a68e65df34ac6fab87244daf3d0bfad1356bd40ff2c4cce",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.339Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.996Z",
   "variants": {
     "en": {
-      "hash8": "01fc5c53",
+      "hash8": "4e6334bf",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 575,
-        "fontsMs": 157,
-        "buildMs": 61,
-        "totalMs": 1880,
+        "importMs": 135,
+        "fontsMs": 21,
+        "buildMs": 52,
+        "totalMs": 843,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90430,
+          "bytes": 90678,
           "alt": "Opening page 1: Mon sort est changé."
         },
         {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212081,
+        "bytes": 212087,
         "folio": "a3ceaa8c",
         "chapters": [
           {
@@ -292,6 +292,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale fr, the document's language: en names its resource types otherwise"
@@ -300,13 +305,13 @@
       }
     },
     "es": {
-      "hash8": "0a61abf0",
+      "hash8": "ae711dce",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 1031,
-        "fontsMs": 113,
-        "buildMs": 75,
-        "totalMs": 2418,
+        "importMs": 181,
+        "fontsMs": 61,
+        "buildMs": 60,
+        "totalMs": 955,
         "builds": 1
       },
       "specimen": {
@@ -339,7 +344,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90430,
+          "bytes": 90678,
           "alt": "Página de apertura 1: Mon sort est changé."
         },
         {
@@ -415,7 +420,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212116,
+        "bytes": 212122,
         "folio": "a3ceaa8c",
         "chapters": [
           {
@@ -581,6 +586,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

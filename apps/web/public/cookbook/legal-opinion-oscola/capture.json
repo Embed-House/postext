@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "0964b28cfaaf7a2844a7540f5c916b5481c80550a45c6ac03e351d53e2781adf",
+  "sourceHash": "2e551d9391b802a2d2b6a9781afbc362ce2219e64aa9a5ccc14ae21de7354100",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.334Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.990Z",
   "variants": {
     "en": {
-      "hash8": "2c1d8e19",
+      "hash8": "3878255f",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 1822,
-        "fontsMs": 36,
-        "buildMs": 199,
-        "totalMs": 4296,
+        "importMs": 215,
+        "fontsMs": 32,
+        "buildMs": 136,
+        "totalMs": 1075,
         "builds": 1
       },
       "specimen": {
@@ -337,17 +337,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c295411b",
+      "hash8": "40288d25",
       "vdtHash": "dd0b895147d7e0a20e297a1723961914425e2f01",
       "timings": {
-        "importMs": 1883,
-        "fontsMs": 38,
-        "buildMs": 671,
-        "totalMs": 3677,
+        "importMs": 189,
+        "fontsMs": 30,
+        "buildMs": 533,
+        "totalMs": 1423,
         "builds": 1
       },
       "specimen": {
@@ -679,9 +685,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “7 Lord Bridge hizo suyas las palabras del juez B…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

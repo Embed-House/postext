@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "book-from-chapters",
-  "sourceHash": "39a70687cada3a58797de0e184ca57f4eb93cb5cc119fc0f5ce7939b55a04ccc",
+  "sourceHash": "5fbfbe08efc2198468f121419a1288ce53e3cc7b3cabd8b47b4b12f3e235b6d7",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.807Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.659Z",
   "variants": {
     "en": {
-      "hash8": "3119f463",
+      "hash8": "0d799a7d",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 1405,
-        "fontsMs": 1249,
-        "buildMs": 106,
-        "totalMs": 3612,
+        "importMs": 304,
+        "fontsMs": 71,
+        "buildMs": 87,
+        "totalMs": 1140,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 101294,
+          "bytes": 101352,
           "alt": "Page 4: Stores for winter. Figure 1.1. A frame in October: honey (gold) round the last brood (brown) and pollen (russet)."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 79604,
+          "bytes": 79674,
           "alt": "Opening page 5: 2 Winter. Figure 2.1. The same frame in January: the cluster (dark) eats its way up from empty comb (pale)."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109054,
+          "bytes": 109020,
           "alt": "Opening page 7: 3 Spring."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 93920,
+          "bytes": 93914,
           "alt": "Page 8: Room to grow. Figure 3.1. The same frame in late April: brood across the middle, the winter honey nearly gone."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 83998,
+          "bytes": 83920,
           "alt": "Opening page 9: 4 Summer. Figure 4.1. The same frame in July: an arch of new honey presses down on the brood."
         },
         {
@@ -490,17 +490,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "532062e1",
+      "hash8": "46512640",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 1804,
-        "fontsMs": 350,
-        "buildMs": 124,
-        "totalMs": 4266,
+        "importMs": 305,
+        "fontsMs": 73,
+        "buildMs": 90,
+        "totalMs": 1132,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +561,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 107318,
+          "bytes": 107314,
           "alt": "Página de apertura 3: 1 Otoño."
         },
         {
@@ -566,7 +572,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 114946,
+          "bytes": 114940,
           "alt": "Página 4: Reservas para el invierno. Figura 1.1. Un cuadro en octubre: la miel (dorada) rodea la última cría (marrón) y el polen (rojizo)."
         },
         {
@@ -577,7 +583,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 86382,
+          "bytes": 86420,
           "alt": "Página de apertura 5: 2 Invierno. Figura 2.1. El mismo cuadro en enero: el racimo (oscuro) deja la cera vacía (clara) y sube."
         },
         {
@@ -599,7 +605,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109400,
+          "bytes": 109414,
           "alt": "Página de apertura 7: 3 Primavera."
         },
         {
@@ -610,7 +616,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 102768,
+          "bytes": 102740,
           "alt": "Página 8: Sitio para crecer. Figura 3.1. El mismo cuadro a finales de abril: cría en el centro; queda poca miel del invierno."
         },
         {
@@ -621,7 +627,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 91214,
+          "bytes": 91208,
           "alt": "Página de apertura 9: 4 Verano. Figura 4.1. El mismo cuadro en julio: un arco de miel nueva aprieta la cría hacia abajo."
         },
         {
@@ -973,7 +979,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "recipe-card",
-  "sourceHash": "cb196d24dcb010f9bdb97d1686ef1f94914424bf07dd5e7be0fcb0c6ff36dea3",
+  "sourceHash": "edd4740101055534ade9399da0de15133738e9b5af8756359b10610561fae402",
   "engine": {
-    "postext": "1.28.5",
+    "postext": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:53.467Z",
+  "capturedAt": "2026-10-12T10:07:47.323Z",
   "variants": {
     "en": {
       "hash8": "14fd34d6",
       "vdtHash": "d9244626546dce03f38e887964c7962bf560c7f9",
       "timings": {
-        "importMs": 271,
-        "fontsMs": 26,
-        "buildMs": 51,
-        "totalMs": 1601,
+        "importMs": 162,
+        "fontsMs": 23,
+        "buildMs": 45,
+        "totalMs": 933,
         "builds": 1
       },
       "specimen": {
@@ -325,11 +325,6 @@
             "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -341,10 +336,10 @@
       "hash8": "14b15f5e",
       "vdtHash": "9f33fe5a8572ed57cd8bdc43156f67c1776702d7",
       "timings": {
-        "importMs": 266,
-        "fontsMs": 25,
-        "buildMs": 53,
-        "totalMs": 1598,
+        "importMs": 166,
+        "fontsMs": 23,
+        "buildMs": 47,
+        "totalMs": 867,
         "builds": 1
       },
       "specimen": {
@@ -651,11 +646,6 @@
             "check": "C36",
             "severity": "info",
             "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

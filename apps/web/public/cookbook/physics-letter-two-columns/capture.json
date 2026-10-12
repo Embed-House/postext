@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "f84fa58d8cf1fed1350a052ef1beca440640a8f7f5cbecf45cd4f4f1e3e77b9e",
+  "sourceHash": "6e3bd522b0144c6f0e86501c213a74304fb62ed6e5696ab27940732f4639e6f1",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.698Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.261Z",
   "variants": {
     "en": {
-      "hash8": "428b8a44",
+      "hash8": "27865cf0",
       "vdtHash": "06767cd7f40ab538a3884f63dec15a13dc2084f8",
       "timings": {
-        "importMs": 1201,
-        "fontsMs": 546,
-        "buildMs": 290,
-        "totalMs": 4027,
+        "importMs": 217,
+        "fontsMs": 166,
+        "buildMs": 188,
+        "totalMs": 1256,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 152526,
+          "bytes": 152524,
           "alt": "Opening page 1: Observation of Gravitational Waves from a Binary Black Hole Merger. FIG. 1. The gravitational-wave event GW150914 observed by the LIGO Hanford (H1, left column panels) and Livingston (L1, right column panels) detectors. Times are shown relative to September 14,…"
         },
         {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 250500,
+          "bytes": 250496,
           "alt": "Page 2: II. Observation."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181446,
+          "bytes": 181522,
           "alt": "Page 3: IV. Searches. FIG. 2. Top: Estimated gravitational-wave strain amplitude from GW150914 projected onto H1. This shows the full bandwidth of the waveforms, without the filtering used for Fig. 1. Bottom: The Keplerian effective black hole separation in units of Schwarzsch…"
         },
         {
@@ -83,7 +83,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 188944,
+          "bytes": 188938,
           "alt": "Page 4: V. Source discussion. FIG. 4. Search results from the generic transient search (left) and the binary coalescence search (right). These histograms show the number of candidate events (orange markers) and the mean number of background events (black lines) in the search c…"
         },
         {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "physics-letter-two-columns.postext",
-        "bytes": 151007,
+        "bytes": 151001,
         "folio": "72637274",
         "chapters": [
           {
@@ -464,9 +464,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “[15] R. W. P. Drever, The Detection of Gravitati…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

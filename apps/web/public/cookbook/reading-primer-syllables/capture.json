@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "reading-primer-syllables",
-  "sourceHash": "36927e0523da33d4301b561dbf9628dab9937acc2d16696a6288223126a0a14d",
+  "sourceHash": "7332222661d49dcd7c027f66813b676c58eb0db812193dc87f8f15b65a237208",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.760Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.319Z",
   "variants": {
     "en": {
-      "hash8": "5ae4daf0",
+      "hash8": "bd0d56d7",
       "vdtHash": "d64ad253cc972508a2cda095bea75275aa5e933e",
       "timings": {
-        "importMs": 730,
-        "fontsMs": 346,
-        "buildMs": 56,
-        "totalMs": 2291,
+        "importMs": 212,
+        "fontsMs": 45,
+        "buildMs": 51,
+        "totalMs": 941,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1238,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58412,
+          "bytes": 58388,
           "alt": "Opening page 37: Mm."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1238,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 56222,
+          "bytes": 56200,
           "alt": "Page 38: Look and read."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1238,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62874,
+          "bytes": 62870,
           "alt": "Page 39: Read the sentences."
         }
       ],
@@ -99,7 +99,7 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 311490,
+        "bytes": 311488,
         "folio": "6010a127",
         "chapters": [
           {
@@ -338,6 +338,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -346,13 +351,13 @@
       }
     },
     "es": {
-      "hash8": "9f1b49d8",
+      "hash8": "95ee0408",
       "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
       "timings": {
-        "importMs": 800,
-        "fontsMs": 272,
-        "buildMs": 81,
-        "totalMs": 2659,
+        "importMs": 154,
+        "fontsMs": 43,
+        "buildMs": 47,
+        "totalMs": 902,
         "builds": 1
       },
       "specimen": {
@@ -385,7 +390,7 @@
           "h": 1238,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 55662,
+          "bytes": 55652,
           "alt": "Página de apertura 37: Mm."
         },
         {
@@ -396,7 +401,7 @@
           "h": 1238,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 58076,
+          "bytes": 58088,
           "alt": "Página 38: Mira y lee."
         },
         {
@@ -407,7 +412,7 @@
           "h": 1238,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 57118,
+          "bytes": 57092,
           "alt": "Página 39: Lee las frases."
         }
       ],
@@ -673,6 +678,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

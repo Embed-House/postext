@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bunko-novel-furigana",
-  "sourceHash": "187da97fe70130335959273112cf446ff8bbffdd5f548e3bd8c8273149fd8f94",
+  "sourceHash": "630d46ca239bf0e403ac5143461f0d2997882aa843277df7a7e7cf54f6d6c0d7",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.846Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.686Z",
   "variants": {
     "en": {
-      "hash8": "67b20ffa",
+      "hash8": "b7200da3",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 1930,
-        "fontsMs": 2603,
-        "buildMs": 67,
-        "totalMs": 5286,
+        "importMs": 212,
+        "fontsMs": 198,
+        "buildMs": 48,
+        "totalMs": 1102,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1410,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 16124,
+          "bytes": 16110,
           "alt": "Opening page 一: 夢十夜."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1410,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 94532,
+          "bytes": 94616,
           "alt": "Page 二: 第一夜."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1410,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84592,
+          "bytes": 84610,
           "alt": "Page 三."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 118546,
+          "bytes": 119256,
           "alt": "Page 四."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1410,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92080,
+          "bytes": 92008,
           "alt": "Page 五."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1410,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 91948,
+          "bytes": 91866,
           "alt": "Page 六: 第二夜."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 111410,
+          "bytes": 111446,
           "alt": "Page 七."
         }
       ],
@@ -152,12 +152,12 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330741,
+        "bytes": 330739,
         "pages": 9
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28172,
+        "bytes": 28178,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -348,17 +348,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "bad069c2",
+      "hash8": "725bd107",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 1694,
-        "fontsMs": 1509,
-        "buildMs": 67,
-        "totalMs": 4368,
+        "importMs": 237,
+        "fontsMs": 229,
+        "buildMs": 54,
+        "totalMs": 1162,
         "builds": 1
       },
       "specimen": {
@@ -390,7 +396,7 @@
           "h": 1410,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 17072,
+          "bytes": 17060,
           "alt": "Página de apertura 一: 夢十夜."
         },
         {
@@ -401,7 +407,7 @@
           "h": 1410,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 94532,
+          "bytes": 94616,
           "alt": "Página 二: 第一夜."
         },
         {
@@ -412,7 +418,7 @@
           "h": 1410,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84592,
+          "bytes": 84610,
           "alt": "Página 三."
         },
         {
@@ -423,7 +429,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 118546,
+          "bytes": 119256,
           "alt": "Página 四."
         },
         {
@@ -434,7 +440,7 @@
           "h": 1410,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92080,
+          "bytes": 92008,
           "alt": "Página 五."
         },
         {
@@ -445,7 +451,7 @@
           "h": 1410,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 91948,
+          "bytes": 91866,
           "alt": "Página 六: 第二夜."
         },
         {
@@ -456,7 +462,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 111410,
+          "bytes": 111446,
           "alt": "Página 七."
         }
       ],
@@ -493,12 +499,12 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330863,
+        "bytes": 330858,
         "pages": 9
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28212,
+        "bytes": 28218,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -689,7 +695,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

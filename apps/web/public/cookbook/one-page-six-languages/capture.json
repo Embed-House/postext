@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "one-page-six-languages",
-  "sourceHash": "c89ce6776eae348af9e464e15d7a180fd688c6e70a0cc4ed261419fda74865b3",
+  "sourceHash": "c852ddf7610ee7898e6fa4cd109dd34828fc4226c1ca44b4e71391f847a7dc5c",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.555Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.147Z",
   "variants": {
     "en": {
-      "hash8": "47b02ea4",
+      "hash8": "49e7a209",
       "vdtHash": "f449370ee3262648d8ec670b3847b33451c2fdda",
       "timings": {
-        "importMs": 1173,
-        "fontsMs": 685,
-        "buildMs": 179,
-        "totalMs": 3822,
+        "importMs": 215,
+        "fontsMs": 127,
+        "buildMs": 146,
+        "totalMs": 1196,
         "builds": 2
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1529,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211486,
           "alt": "Page 1."
         }
       ],
@@ -87,12 +87,12 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 801588,
+        "bytes": 801586,
         "pages": 1
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794297,
+        "bytes": 794299,
         "pages": 1,
         "chapters": [
           {
@@ -241,17 +241,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9d03bd2d",
+      "hash8": "48c4369f",
       "vdtHash": "a17aabb0ecf88ff14b0fcb36da2997ab31273c85",
       "timings": {
-        "importMs": 1292,
-        "fontsMs": 649,
-        "buildMs": 183,
-        "totalMs": 3095,
+        "importMs": 156,
+        "fontsMs": 105,
+        "buildMs": 162,
+        "totalMs": 1126,
         "builds": 2
       },
       "specimen": {
@@ -282,7 +288,7 @@
           "h": 1529,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 210108,
+          "bytes": 210572,
           "alt": "Página 1."
         },
         {
@@ -293,7 +299,7 @@
           "h": 1529,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211486,
           "alt": "Página 1."
         }
       ],
@@ -326,7 +332,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794466,
+        "bytes": 794490,
         "pages": 1,
         "chapters": [
           {
@@ -475,17 +481,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "41f302cb",
+      "hash8": "cee0e1b4",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 1606,
-        "fontsMs": 1158,
-        "buildMs": 183,
-        "totalMs": 3976,
+        "importMs": 231,
+        "fontsMs": 218,
+        "buildMs": 141,
+        "totalMs": 1326,
         "builds": 2
       },
       "specimen": {
@@ -517,7 +529,7 @@
           "h": 1529,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 210972,
+          "bytes": 210920,
           "alt": "第 1 页。"
         },
         {
@@ -528,7 +540,7 @@
           "h": 1529,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211486,
           "alt": "第 1 页。"
         }
       ],
@@ -561,7 +573,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794589,
+        "bytes": 794641,
         "pages": 1,
         "chapters": [
           {
@@ -716,17 +728,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "a5fd2492",
+      "hash8": "352ce93c",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 1300,
-        "fontsMs": 1410,
-        "buildMs": 161,
-        "totalMs": 4722,
+        "importMs": 167,
+        "fontsMs": 108,
+        "buildMs": 123,
+        "totalMs": 1094,
         "builds": 2
       },
       "specimen": {
@@ -758,7 +776,7 @@
           "h": 1529,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 211694,
+          "bytes": 212082,
           "alt": "الصفحة ١."
         },
         {
@@ -769,7 +787,7 @@
           "h": 1529,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211486,
           "alt": "الصفحة 1."
         }
       ],
@@ -803,7 +821,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794921,
+        "bytes": 794905,
         "pages": 1,
         "chapters": [
           {
@@ -960,17 +978,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "0721df82",
+      "hash8": "7d1d6544",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 580,
-        "fontsMs": 623,
-        "buildMs": 158,
-        "totalMs": 3478,
+        "importMs": 188,
+        "fontsMs": 192,
+        "buildMs": 125,
+        "totalMs": 1220,
         "builds": 2
       },
       "specimen": {
@@ -1002,7 +1026,7 @@
           "h": 1529,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 210104,
+          "bytes": 210726,
           "alt": "1ページ。"
         },
         {
@@ -1013,7 +1037,7 @@
           "h": 1529,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211486,
           "alt": "1ページ。"
         }
       ],
@@ -1047,7 +1071,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794913,
+        "bytes": 794907,
         "pages": 1,
         "chapters": [
           {
@@ -1203,7 +1227,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

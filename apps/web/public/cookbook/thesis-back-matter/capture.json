@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "thesis-back-matter",
-  "sourceHash": "4198d86dc4021a4b908a9720b0b739461b100456b1a3710ae336a2a153c5d7be",
+  "sourceHash": "faa4c2982dba44d9a380f057c73e5e7681194f38b0ed6e6519f04c6ef3151e57",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.994Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.509Z",
   "variants": {
     "en": {
-      "hash8": "1892e767",
+      "hash8": "2946658d",
       "vdtHash": "58bdbc7a44d770d70948ab18b7146ec729340d9f",
       "timings": {
-        "importMs": 288,
-        "fontsMs": 28,
-        "buildMs": 128,
-        "totalMs": 1150,
+        "importMs": 164,
+        "fontsMs": 25,
+        "buildMs": 104,
+        "totalMs": 928,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95088,
+          "bytes": 95096,
           "alt": "Opening page 171: 6 Conclusion. Table 6.1. Main results by medium."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 81948,
+          "bytes": 81938,
           "alt": "Opening page 173: A Interview guide. Table A.1. Timing of an interview session."
         },
         {
@@ -435,9 +435,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

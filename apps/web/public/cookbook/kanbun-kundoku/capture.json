@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "kanbun-kundoku",
-  "sourceHash": "1cdc5f8e0be51bb4796e4a5f34cfbb5b9b98ea378bcdb22d0f25e45874431c3a",
+  "sourceHash": "bd204b05d61ac914277cf5493ab6201e06bcae615f43cf861420cd8c6b7f5c51",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.310Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.972Z",
   "variants": {
     "en": {
-      "hash8": "0edceba0",
+      "hash8": "e1406a5d",
       "vdtHash": "cea294344d4ba3029b117bd33687c965b41d48c7",
       "timings": {
-        "importMs": 1315,
-        "fontsMs": 1355,
-        "buildMs": 55,
-        "totalMs": 3607,
+        "importMs": 209,
+        "fontsMs": 232,
+        "buildMs": 45,
+        "totalMs": 1103,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 39878,
+          "bytes": 39910,
           "alt": "Opening page 一: 論語."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 22962,
+          "bytes": 22920,
           "alt": "Page 二: 学而第三."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 22806,
+          "bytes": 22790,
           "alt": "Opening page 三: 唐詩."
         }
       ],
@@ -101,12 +101,12 @@
       },
       "pdf": {
         "file": "kanbun-kundoku.pdf",
-        "bytes": 138188,
+        "bytes": 138180,
         "pages": 3
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15708,
+        "bytes": 15780,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -301,17 +301,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "6376658a",
+      "hash8": "04167570",
       "vdtHash": "eeffa96ae9ff865139c37006dc7fc4599bc7e1e1",
       "timings": {
-        "importMs": 966,
-        "fontsMs": 1672,
-        "buildMs": 55,
-        "totalMs": 3892,
+        "importMs": 270,
+        "fontsMs": 296,
+        "buildMs": 40,
+        "totalMs": 1216,
         "builds": 1
       },
       "specimen": {
@@ -344,7 +350,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 40302,
+          "bytes": 40340,
           "alt": "Página de apertura 一: 論語."
         },
         {
@@ -355,7 +361,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 22962,
+          "bytes": 22920,
           "alt": "Página 二: 学而第三."
         },
         {
@@ -366,7 +372,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 22806,
+          "bytes": 22790,
           "alt": "Página de apertura 三: 唐詩."
         }
       ],
@@ -395,12 +401,12 @@
       },
       "pdf": {
         "file": "kanbun-kundoku.pdf",
-        "bytes": 138114,
+        "bytes": 138108,
         "pages": 3
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15755,
+        "bytes": 15833,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -595,7 +601,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

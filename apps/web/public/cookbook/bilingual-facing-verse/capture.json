@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-facing-verse",
-  "sourceHash": "082ca7894c8defe1d19f0d72141ed22a96502429a6918a22115d7e83e1f3ccce",
+  "sourceHash": "57759ee59866598d3edbcafa1598b7dda3c470143978754ac8983901ae869200",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.783Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.640Z",
   "variants": {
     "en": {
-      "hash8": "eb6dfdf9",
+      "hash8": "33a3e775",
       "vdtHash": "129547437132769e83b543787acbd0ea6bd5d8fe",
       "timings": {
-        "importMs": 1238,
-        "fontsMs": 106,
-        "buildMs": 77,
-        "totalMs": 2178,
+        "importMs": 175,
+        "fontsMs": 23,
+        "buildMs": 51,
+        "totalMs": 879,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 18244,
+          "bytes": 18246,
           "alt": "Opening page 1: August Salt."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 108948,
+          "bytes": 108974,
           "alt": "Opening page 3: August Salt."
         },
         {
@@ -326,17 +326,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "3eea3f43",
+      "hash8": "7e13bd23",
       "vdtHash": "ca557f462a56e6869b897a41818d29d6b2669d3d",
       "timings": {
-        "importMs": 1393,
-        "fontsMs": 104,
-        "buildMs": 71,
-        "totalMs": 2800,
+        "importMs": 154,
+        "fontsMs": 75,
+        "buildMs": 56,
+        "totalMs": 917,
         "builds": 1
       },
       "specimen": {
@@ -369,7 +375,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 18904,
+          "bytes": 18896,
           "alt": "Página de apertura 1: Sal de agosto."
         },
         {
@@ -391,7 +397,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 110194,
+          "bytes": 110114,
           "alt": "Página de apertura 3: Sal de agosto."
         },
         {
@@ -445,7 +451,7 @@
       },
       "sandbox": {
         "file": "bilingual-facing-verse.postext",
-        "bytes": 212908,
+        "bytes": 212904,
         "folio": "ee93f084",
         "chapters": [
           {
@@ -646,7 +652,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }
