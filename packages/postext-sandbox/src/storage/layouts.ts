@@ -19,7 +19,10 @@ export async function getChapterLayouts(chapterIds: readonly string[]): Promise<
 }
 
 /** Write (or replace) records, in one transaction. */
-export function putChapterLayouts(layouts: readonly ChapterLayout[]): Promise<void> {
+export function putChapterLayouts(records: readonly ChapterLayout[]): Promise<void> {
+  // A layout made without a face it asked for is not the chapter's (#757):
+  // stored, the next visit would take it for current.
+  const layouts = records.filter((layout) => !layout.withoutFaces);
   if (!hasIndexedDB() || layouts.length === 0) return Promise.resolve();
   return runInStore(LAYOUTS_STORE, 'readwrite', (store) => {
     let last: IDBRequest<IDBValidKey> | undefined;

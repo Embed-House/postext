@@ -540,6 +540,16 @@ describe('layouts.json round trip', () => {
     expect(first.resourcesKey).toBe(resourcesKeyOf(loaded.resources));
   });
 
+  it('leaves out the record of a chapter laid out without a face it asked for (#757)', async () => {
+    const layouts = { c1: { ...layoutOf(chapters[0]!, config, resources), withoutFaces: true as const }, c2: layoutOf(chapters[1]!, config, resources) };
+    const built = await buildBundleFiles(meta, { chapters, config, resources, layouts }, sources);
+    const file = JSON.parse(dec.decode(built.files['layouts.json']!)) as { chapters: Record<string, unknown> };
+    expect(Object.keys(file.chapters)).toHaveLength(1);
+    expect(JSON.stringify(file)).not.toContain('withoutFaces');
+    const none = await buildBundleFiles(meta, { chapters, config, resources, layouts: { c1: layouts.c1 } }, sources);
+    expect(Object.keys(none.files)).not.toContain('layouts.json');
+  });
+
   it('carries the current records only, and no file without any', async () => {
     const chapterFiles = (built: Awaited<ReturnType<typeof buildBundleFiles>>): string[] =>
       Object.keys((JSON.parse(dec.decode(built.files['layouts.json']!)) as { chapters: Record<string, unknown> }).chapters);

@@ -329,6 +329,7 @@ export type SandboxAction =
   | { type: 'SET_CHAPTER_LAYOUT'; payload: ChapterLayout }
   /** Stored records (storage, a bundle) for chapters that have none in memory yet. */
   | { type: 'SET_CHAPTER_LAYOUTS'; payload: Record<string, ChapterLayout> }
+  | { type: 'DROP_CHAPTER_LAYOUTS_WITHOUT_FACES' }
   | { type: 'HIDE_PRESET'; payload: string }
   | { type: 'UNHIDE_PRESET'; payload: string }
   | { type: 'SET_ACTIVE_RESOURCE'; payload: string | null }
@@ -492,6 +493,13 @@ export function sandboxReducer(state: SandboxState, action: SandboxAction): Sand
       // consumer (and the preview that just built) a needless re-derivation.
       if (sameChapterLayout(state.chapterLayouts[layout.chapterId], layout)) return state;
       return { ...state, chapterLayouts: { ...state.chapterLayouts, [layout.chapterId]: layout } };
+    }
+    case 'DROP_CHAPTER_LAYOUTS_WITHOUT_FACES': {
+      // The faces arrived (#757): the chapters laid out without them have
+      // no record again, and the plan has them laid out anew.
+      const kept = Object.values(state.chapterLayouts).filter((l) => !l.withoutFaces);
+      if (kept.length === Object.keys(state.chapterLayouts).length) return state;
+      return { ...state, chapterLayouts: Object.fromEntries(kept.map((l) => [l.chapterId, l])) };
     }
     case 'SET_CHAPTER_LAYOUTS': {
       // A record built in this session is at least as fresh as a stored

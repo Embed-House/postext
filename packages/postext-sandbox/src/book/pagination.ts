@@ -5,6 +5,7 @@
 // preceding chapter, recorded as a `ChapterLayout`). Page numbers thus run
 // on across chapters without ever laying out the whole book in a preview.
 
+import { builtWithoutFaces } from './withoutFaces';
 import { anchorOutline, bookCitationContexts, citationContextKey, citationSourceOf, mayNeedCitations, needsCitationContext, configUsesPlaceholder, contentOutline, continuationAfter, extractFrontmatter, formatNumeral, indexOutline, outlineFromDoc, outlineKey, parseMarkdown, resolveHeadingsConfig, resolvePageConfig, DEFAULT_PARTS_CONFIG, tocOutline } from 'postext';
 import type { CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
 import type { BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
@@ -207,6 +208,7 @@ export function sameChapterLayout(a: ChapterLayout | undefined, b: ChapterLayout
     && a.lastPageFormat === b.lastPageFormat
     && sameLineNumber(a.lastLineNumber, b.lastLineNumber)
     && a.outlineKey === b.outlineKey
+    && !!a.withoutFaces === !!b.withoutFaces
     && sameOutlinePages(a.outlinePages, b.outlinePages);
 }
 
@@ -636,5 +638,7 @@ export function chapterLayoutFromDoc(
       : {}),
     outlinePages,
     outlineKey: plan.outlineKey,
+    // Laid out without a face it asked for (#757): not the chapter's pages.
+    ...(builtWithoutFaces(doc) ? { withoutFaces: true as const } : {}),
   };
 }

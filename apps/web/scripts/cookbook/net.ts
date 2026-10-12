@@ -134,6 +134,12 @@ function writeAtomic(file: string, data: string | Buffer): void {
   fs.renameSync(tmp, file);
 }
 
+/** Whether an answer goes to the disk cache: every one but an error,
+ *  and the 404 of a Fontsource font file. */
+export function keptOnDisk(url: string, status: number): boolean {
+  return status < 400 || (status === 404 && /\/@fontsource\/.+\.woff2$/.test(url));
+}
+
 async function fetchAndStore(url: string, userAgent: string): Promise<Cached> {
   const res = await fetch(url, {
     redirect: "manual",
@@ -146,8 +152,11 @@ async function fetchAndStore(url: string, userAgent: string): Promise<Cached> {
     if (value) headers[name] = value;
   }
   const body = Buffer.from(await res.arrayBuffer());
-  // Errors are not cached: a transient 5xx must not stick.
-  if (res.status < 400) {
+  // Errors are not cached: a transient 5xx must not stick. A font file
+  // Fontsource lists and jsDelivr has not is (#757; Libertinus Sans has no
+  // bold italic, #168): every run would ask the network for it again, and
+  // wait when the answer is slow to come.
+  if (keptOnDisk(url, res.status)) {
     const files = cacheFiles(url);
     writeAtomic(files.body, body);
     writeAtomic(files.meta, JSON.stringify({ url, status: res.status, headers }, null, 1));
@@ -194,6 +203,21 @@ export interface InterceptorOptions {
 }
 
 const CORS = { "access-control-allow-origin": "*" };
+
+// A slow line, for a check of what a page does while its files arrive
+// (#757): COOKBOOK_NET_KBPS (and COOKBOOK_NET_LATENCY_MS) make the answers
+// from the network share one link of that rate, one after another, whether
+// they come from the disk cache or not. Unset, answers go out at once.
+const LINK_KBPS = Number(process.env.COOKBOOK_NET_KBPS) || 0;
+const LINK_LATENCY_MS = Number(process.env.COOKBOOK_NET_LATENCY_MS) || 0;
+let linkFreeAt = 0;
+
+function overTheLink(bytes: number): Promise<void> {
+  if (LINK_KBPS <= 0) return Promise.resolve();
+  const start = Math.max(Date.now() + LINK_LATENCY_MS, linkFreeAt);
+  linkFreeAt = start + (bytes * 8) / LINK_KBPS;
+  return new Promise((resolve) => setTimeout(resolve, linkFreeAt - Date.now()));
+}
 
 /** The `request` handler for `page.setRequestInterception(true)`. */
 export function interceptor(opts: InterceptorOptions): (request: HTTPRequest) => Promise<void> {
@@ -246,6 +270,7 @@ export function interceptor(opts: InterceptorOptions): (request: HTTPRequest) =>
         const tolerated = /\/@fontsource\/.+\.woff2$/.test(url);
         opts.onIssue({ severity: tolerated ? "warn" : "fail", url, detail: `HTTP ${res.status}: ${url}` });
       }
+      await overTheLink(res.body.length);
       await request.respond({
         status: res.status,
         headers: { ...res.headers, ...CORS },

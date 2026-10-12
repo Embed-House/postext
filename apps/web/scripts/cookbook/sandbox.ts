@@ -49,7 +49,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { styleText } from "node:util";
-import type { Browser, Page } from "puppeteer-core";
+import type { Browser, CDPSession, Page } from "puppeteer-core";
 import { htmlLang } from "../../src/i18n/locales.ts";
 import { captureDir, REPO_DIR, WEB_DIR } from "../../src/lib/cookbook/paths.ts";
 import { listRecipeSlugs, readRecipeMeta } from "../../src/lib/cookbook/sources.ts";
@@ -287,7 +287,9 @@ async function pool<T>(jobs: (() => Promise<T>)[], limit: number): Promise<T[]> 
 
 // ─── The working tree ───────────────────────────────────────────────────────
 
-const BUILD_DIR = path.join(WEB_DIR, ".cache", "cookbook-sandbox");
+// A directory per run: two checks at once (two sessions in one tree) would
+// otherwise serve their pages from a build the other is writing anew.
+const BUILD_DIR = path.join(WEB_DIR, ".cache", "cookbook-sandbox", String(process.pid));
 const SANDBOX_SRC = path.join(REPO_DIR, "packages", "postext-sandbox", "src");
 
 /** bun, as the workspace installed it (a dev dependency of postext-cli), else on the PATH. */
@@ -300,8 +302,11 @@ function findBun(): string {
 }
 
 /** The page entry and the layout worker of the Sandbox package, built from
- *  the working tree with code splitting (MathJax and the citation engine
- *  are chunks the worker loads when a text needs them). */
+ *  the working tree as two files that import nothing: a worker's request
+ *  for a chunk of its module graph now and then got no answer under the
+ *  harness's request interception, and the edition stalled on
+ *  `/__sb/page-<hash>.js` (#736). MathJax and the citation engine are in
+ *  the files, and still run only when a text needs them. */
 export function buildSandboxEntries(outDir: string = BUILD_DIR): void {
   for (const name of ["postext", "postext-citeproc"]) {
     if (!fs.existsSync(path.join(REPO_DIR, "packages", name, "dist", "index.js"))) {
@@ -311,20 +316,42 @@ export function buildSandboxEntries(outDir: string = BUILD_DIR): void {
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
   try {
-    execFileSync(findBun(), [
-      "build", path.join(SANDBOX_SRC, "headless", "page.ts"), path.join(SANDBOX_SRC, "headless", "worker.ts"),
-      "--outdir", outDir, "--target", "browser", "--format", "esm", "--splitting",
-    ], { cwd: path.join(REPO_DIR, "packages", "postext-sandbox"), stdio: ["ignore", "pipe", "pipe"] });
+    for (const entry of ["page.ts", "worker.ts"]) {
+      execFileSync(findBun(), [
+        "build", path.join(SANDBOX_SRC, "headless", entry),
+        "--outdir", outDir, "--target", "browser", "--format", "esm",
+      ], { cwd: path.join(REPO_DIR, "packages", "postext-sandbox"), stdio: ["ignore", "pipe", "pipe"] });
+    }
   } catch (error) {
     const { stderr, stdout, message } = error as { stderr?: Buffer; stdout?: Buffer; message: string };
     throw new Error(`the Sandbox's headless entry did not build with bun: ${String(stderr ?? "") || String(stdout ?? "") || message}`);
   }
 }
 
+/** Where a thread is, if it is running script: the debugger stops it and
+ *  says its frames. "idle" for a thread that waits (#757). */
+async function runningIn(client: CDPSession, label: string): Promise<string> {
+  try {
+    await Promise.race([client.send("Debugger.enable"), new Promise((resolve) => setTimeout(resolve, 2_000))]);
+    const paused = new Promise<{ callFrames: { functionName: string; url: string; location: { lineNumber: number; columnNumber?: number } }[] } | null>((resolve) => {
+      client.once("Debugger.paused", resolve);
+      setTimeout(() => resolve(null), 3_000);
+    });
+    await Promise.race([client.send("Debugger.pause"), new Promise((resolve) => setTimeout(resolve, 3_000))]);
+    const stop = await paused;
+    if (!stop) return `${label}: idle`;
+    const frames = stop.callFrames.slice(0, 12).map((f) => `${f.functionName || "(anonymous)"} ${f.url.split("/").pop()}:${f.location.lineNumber + 1}:${f.location.columnNumber ?? 0}`);
+    void client.send("Debugger.resume").catch(() => {});
+    return `${label} runs ${frames.join(" < ")}`;
+  } catch (error) {
+    return `${label}: ${error instanceof Error ? error.message : String(error)}`;
+  }
+}
+
 /** One edition in a page of the harness: a browser context of its own (the
  *  font store and the loader's caches are per page), the network through
  *  the capture's cache with Google Fonts allowed. */
-async function runLocal(browser: Browser, userAgent: string, url: string, edition: Edition, refresh: boolean): Promise<SandboxRun> {
+async function runLocal(browser: Browser, userAgent: string, url: string, edition: Edition, refresh: boolean, crashes: ReadonlyMap<string, string>): Promise<SandboxRun> {
   const { interceptor } = await import("./net.ts");
   const name = `${edition.slug} ${edition.variant}`;
   const within = <T>(what: string, run: () => Promise<T>, timeoutMs = edition.timeoutMs) => step(what, { edition: name, timeoutMs }, run);
@@ -347,13 +374,34 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
       return urls.length ? `the page waits for ${urls.slice(0, 6).join(", ")}${urls.length > 6 ? ` and ${urls.length - 6} more` : ""}` : "no request of the page is out";
     };
     page.on("pageerror", (error) => errors.push(`page error: ${error instanceof Error ? error.message : String(error)}`));
+    // The debugger, on from the start (#757): a thread that never comes back
+    // (a loop) answers no question, and only a debugger already on can
+    // stop it to say where it is.
+    const debug = await page.createCDPSession();
+    await debug.send("Debugger.enable").catch(() => {});
+    page.on("workercreated", (worker) => { void worker.client.send("Debugger.enable").catch(() => {}); });
+    // The page's process gone (#757): nothing it was asked gets an answer.
+    let crashed = "";
+    const died = new Promise<never>((_, reject) => {
+      page.on("error", (error) => {
+        // How it ended, as the browser says it (crashed, killed, out of memory, and the exit code).
+        crashed = `the page's process died (${error instanceof Error ? error.message : String(error)})`;
+        // The browser's word comes a moment after the page's.
+        setTimeout(() => {
+          const how = crashes.get((page.target() as unknown as { _targetId?: string })._targetId ?? "");
+          if (how) crashed = `the page's process died (${how})`;
+          reject(new StepError("layout", name, crashed, { stalled: true }));
+        }, 300);
+      });
+    });
+    died.catch(() => {});
     page.on("console", (message) => {
       // A font file the loader could not fetch is the warnings' business.
       if (message.type() === "error" && !/Failed to load resource/.test(message.text())) errors.push(`console error: ${message.text().slice(0, 300)}`);
     });
     await within("goto", () => page.goto(url, { waitUntil: "domcontentloaded", timeout: edition.timeoutMs }));
     await within("entry", () => page.waitForFunction("window.__sbReady !== undefined", { timeout: edition.timeoutMs, polling: 50 }));
-    const laid = await within("layout", () => page.evaluate(
+    const laid = await within("layout", () => Promise.race([died, page.evaluate(
       async (bundle: string, locale: string) => {
         const w = window as unknown as {
           __sbReady?: boolean; __sbErrors: string[];
@@ -361,12 +409,22 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
         };
         if (!w.__sbReady || !w.__postextSandbox) return { error: `the Sandbox entry did not load: ${w.__sbErrors.join(" · ")}` };
         try {
+          const stage = (name: string) => { (window as unknown as { __sbStage?: string }).__sbStage = name; };
+          stage("importing the probe");
           const probe = (await import("/__cb/probe.js" as string)) as { layoutHash(doc: unknown): string; linesHash(doc: unknown): string; warningsOf(doc: unknown): string[] };
+          stage("fetching the bundle");
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
-          const worker = new Worker("/__sb/worker.js", { type: "module" });
+          // The worker's script is fetched by the page and handed over as a
+          // blob: a worker's own request for it now and then got no answer
+          // under the harness's request interception (#736).
+          stage("fetching the worker's script");
+          const script = await fetch("/__sb/worker.js");
+          if (!script.ok) return { error: `the layout worker did not load: HTTP ${script.status}` };
+          const worker = new Worker(URL.createObjectURL(new Blob([await script.text()], { type: "text/javascript" })), { type: "module" });
           worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
+          stage("layOutBundle");
           const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
           return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, unanswered: out.unanswered, errors: w.__sbErrors };
         } catch (error) {
@@ -375,9 +433,29 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
       },
       `/__bundle/${edition.slug}/${edition.variant}`,
       htmlLang(edition.variant),
-    )).catch((error: unknown) => {
-      if (error instanceof StepError && error.stalled) throw new StepError(error.step, error.edition, `${error.message.replace(/^step \S+ of [^:]+: /, "")}; ${waitingFor()}`, { stalled: true });
-      throw error;
+    )])).catch(async (error: unknown) => {
+      if (!(error instanceof StepError && error.stalled)) throw error;
+      // A process that died says nothing more: tried again at once.
+      if (crashed) throw error;
+      // What the page says it waits for (#757): the step of the headless
+      // entry, the loader's requests, the layout service, the worker.
+      const state = await Promise.race([
+        page.evaluate(() => {
+          const w = window as unknown as { __sbStage?: string; __sbErrors?: string[]; __postextSandbox?: { state?: () => unknown } };
+          return JSON.stringify({ stage: w.__sbStage ?? "before the layout", errors: w.__sbErrors ?? [], entry: w.__postextSandbox?.state?.() ?? null });
+        }).catch((e: unknown) => `the page did not say (${e instanceof Error ? e.message : String(e)})`),
+        new Promise<string>((resolve) => setTimeout(() => resolve("the page did not say in 8 s"), 8_000)),
+      ]);
+      // And what its threads are running, when one is busy: a page that
+      // does not say is a main thread that does not come back, and a
+      // worker in a loop answers nothing either. The debugger stops a
+      // running thread where it is; an idle one has nothing to stop.
+      const stacks = await Promise.all([
+        runningIn(debug, "the page"),
+        ...page.workers().map((worker, i) => runningIn(worker.client, `worker ${i + 1}`)),
+      ]);
+      if (page.workers().length === 0) stacks.push("no worker");
+      throw new StepError(error.step, error.edition, `${error.message.replace(/^step \S+ of [^:]+: /, "")}; ${waitingFor()}; state ${state}; ${stacks.join("; ")}`, { stalled: true });
     });
     for (const issue of issues) if (issue.severity === "fail") errors.push(`network: ${issue.detail}`);
     if ("error" in laid && laid.error) return { chapters: [], fonts: {}, settled: false, errors: [laid.error, ...(laid.errors ?? []), ...errors] };
@@ -444,10 +522,14 @@ async function runSite(browser: Browser, site: string, edition: Edition): Promis
       if (url.split("?")[0]!.endsWith(".postext") && request.response()?.ok()) bundleUrl = new URL(url).pathname;
     });
     await within("goto", () => page.goto(`${site}/${edition.variant}/sandbox#recipe=${edition.slug}&lang=${edition.variant}`, { waitUntil: "domcontentloaded", timeout: edition.timeoutMs }));
-    // Every chapter paginated, and no `built` message for a while.
+    // Every chapter paginated, the book's fonts settled (`data-postext-fonts`,
+    // #757: no build waits for font files and no layout for late faces is
+    // due; a deploy older than the attribute is waited for as before), and
+    // no `built` message for a while.
     await within("layout", () => page.waitForFunction(
       `(() => { const s = window.__sbSite; return !!s && s.chapters.size > 0 && performance.now() - s.lastBuiltAt > ${QUIET_MS}
-        && document.documentElement.dataset.postextPagination !== 'pending' && document.documentElement.dataset.postextPagination !== 'loading'; })()`,
+        && document.documentElement.dataset.postextPagination !== 'pending' && document.documentElement.dataset.postextPagination !== 'loading'
+        && document.documentElement.dataset.postextFonts !== 'pending'; })()`,
       { timeout: edition.timeoutMs, polling: 250 },
     ), edition.timeoutMs + 5_000);
     const count = await page.evaluate("window.__sbSite.chapters.size") as number;
@@ -502,6 +584,18 @@ export async function runSandboxCheck(opts: SandboxOptions): Promise<CaptureResu
   // An edition that hangs fails alone: a CDP call may wait a little longer
   // than the edition's own bound, no more.
   const hb = await launchBrowser({ protocolTimeout: opts.timeoutMs + 30_000 });
+  // How a page's process ended, by target (#757): the browser says whether
+  // it crashed, was killed or ran out of memory, and with what code.
+  const crashes = new Map<string, string>();
+  try {
+    const session = await hb.browser.target().createCDPSession();
+    await session.send("Target.setDiscoverTargets", { discover: true });
+    session.on("Target.targetCrashed", (event: { targetId: string; status: string; errorCode: number }) => {
+      crashes.set(event.targetId, `${event.status}, code ${event.errorCode}`);
+    });
+  } catch {
+    // The reason is a nicety: without it a death is still told.
+  }
   try {
     const jobs = editions.map((edition) => async () => {
       const t0 = Date.now();
@@ -515,7 +609,7 @@ export async function runSandboxCheck(opts: SandboxOptions): Promise<CaptureResu
       // an edition that hangs for a reason of its own hangs again and fails.
       const open = () => opts.site
         ? runSite(hb.browser, opts.site.replace(/\/$/, ""), edition)
-        : runLocal(hb.browser, hb.userAgent, server!.url, edition, !!opts.refreshNet);
+        : runLocal(hb.browser, hb.userAgent, server!.url, edition, !!opts.refreshNet, crashes);
       try {
         let stalled: StepError | null = null;
         try {
@@ -542,6 +636,7 @@ export async function runSandboxCheck(opts: SandboxOptions): Promise<CaptureResu
   } finally {
     await hb.browser.close().catch(() => {});
     await server?.close();
+    if (!opts.site) fs.rmSync(BUILD_DIR, { recursive: true, force: true });
   }
   if (opts.report) {
     fs.mkdirSync(path.dirname(opts.report), { recursive: true });

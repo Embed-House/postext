@@ -26,17 +26,20 @@ import { isGenericFontFamily, isSystemFontFamily } from './systemFonts';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 
-/** A request for a family's record, its style sheet or one of its files is
- *  given up after this long (#757): `fetch` has no bound of its own, and a
- *  connection that stalls would hold the layout that waits for the file.
- *  A request given up counts as one that failed, asked again after a
- *  while. */
-export const FONT_FETCH_TIMEOUT_MS = 15_000;
+/** The requests for a family's record, its style sheets and its files are
+ *  given up when none of them has received anything for this long (#757):
+ *  `fetch` has no bound of its own, and a connection that stalls would
+ *  hold the layout that waits for the file. The clock is the loader's, not
+ *  a request's: a book of some hundred files on a slow line has most of
+ *  them waiting their turn while the others arrive, and each is alive as
+ *  long as bytes come in for any, a face the page loads for itself
+ *  included. A request given up counts as one that failed, asked again
+ *  after a while. */
+export const FONT_STALL_MS = 15_000;
 
 /** The requests the network did not answer (an error, the bound above),
  *  by URL: not the ones a server answered with a status, which a later
- *  request would get again. A check reads them to tell a layout without a
- *  face from one the network did not let it have. */
+ *  request would get again. */
 const unanswered = new Set<string>();
 
 /** The font requests the network has not answered since the page loaded
@@ -45,20 +48,103 @@ export function unansweredFontRequests(): string[] {
   return [...unanswered];
 }
 
-/** `fetch` and the reading of its body, given up after
- *  `FONT_FETCH_TIMEOUT_MS`. Rejects as `fetch` does. */
+/**
+ * True when the network did not answer for a file of `urls`, or for what
+ * says which files `family` has (its record, its package's style sheet,
+ * Google's): the family may have files a later request brings.
+ */
+export function fontRequestsUnanswered(family: string, urls: readonly string[]): boolean {
+  if (unanswered.size === 0) return false;
+  if (urls.some((url) => unanswered.has(url))) return true;
+  const id = fontsourceId(family);
+  const google = `family=${encodeURIComponent(family)}`;
+  for (const url of unanswered) {
+    if (url.endsWith('.woff2')) continue;
+    if (url.endsWith(`/v1/fonts/${id}`) || url.includes(`/@fontsource/${id}@`) || url.includes(`${google}:`) || url.endsWith(google)) return true;
+  }
+  return false;
+}
+
+/** What the loader is waiting for, for a check that asks a page why its
+ *  layout does not come (#757). */
+export function fontLoaderState(): {
+  requestsOut: number; sinceProgressMs: number | null; stallClockArmed: boolean;
+  unanswered: string[]; recordsInFlight: string[]; pageLoadsInFlight: string[];
+} {
+  return {
+    requestsOut: requestsOut.size,
+    sinceProgressMs: lastFontProgress ? Date.now() - lastFontProgress : null,
+    stallClockArmed: stallTimer !== null,
+    unanswered: [...unanswered],
+    recordsInFlight: [...metadataInFlight.keys()],
+    pageLoadsInFlight: [...loadingPromises.keys()],
+  };
+}
+
+/** The requests out, and when one of them last received something. */
+const requestsOut = new Set<AbortController>();
+let lastFontProgress = 0;
+let stallTimer: ReturnType<typeof setTimeout> | null = null;
+
+function fontProgress(): void {
+  lastFontProgress = Date.now();
+}
+
+/** Give the requests out up once `FONT_STALL_MS` pass without a byte. */
+function watchForStall(): void {
+  if (stallTimer !== null || requestsOut.size === 0) return;
+  stallTimer = setTimeout(() => {
+    stallTimer = null;
+    if (requestsOut.size === 0) return;
+    if (Date.now() - lastFontProgress >= FONT_STALL_MS) {
+      for (const controller of [...requestsOut]) controller.abort();
+      return;
+    }
+    watchForStall();
+  }, Math.max(0, lastFontProgress + FONT_STALL_MS - Date.now()));
+}
+
+/** The response with its body read, each chunk counted as progress. A
+ *  response without a stream (a test's) is returned as it is. */
+async function received(res: Response): Promise<Response> {
+  const reader = typeof Response === 'undefined' ? undefined : res.body?.getReader?.();
+  if (!reader) return res;
+  const chunks: BlobPart[] = [];
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    fontProgress();
+  }
+  return new Response(new Blob(chunks), { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
+/** `fetch` and the reading of its body, given up when the loader's
+ *  requests stall (`FONT_STALL_MS`). Rejects as `fetch` does. */
 async function fetchWithin<T>(url: string, read: (res: Response) => Promise<T>, init?: RequestInit): Promise<T> {
-  const controller = typeof AbortController === 'undefined' ? null : new AbortController();
-  const timer = controller ? setTimeout(() => controller.abort(), FONT_FETCH_TIMEOUT_MS) : undefined;
+  if (typeof AbortController === 'undefined') return read(await fetch(url, init));
+  const controller = new AbortController();
+  // A request sent has the bound to itself at least: the clock starts
+  // again, whatever the requests already out have waited.
+  fontProgress();
+  requestsOut.add(controller);
+  watchForStall();
   try {
-    const value = await read(await fetch(url, controller ? { ...init, signal: controller.signal } : init));
+    const res = await fetch(url, { ...init, signal: controller.signal });
+    fontProgress();
+    const value = await read(await received(res));
+    fontProgress();
     unanswered.delete(url);
     return value;
   } catch (err) {
     unanswered.add(url);
     throw err;
   } finally {
-    if (timer !== undefined) clearTimeout(timer);
+    requestsOut.delete(controller);
+    if (requestsOut.size === 0 && stallTimer !== null) {
+      clearTimeout(stallTimer);
+      stallTimer = null;
+    }
   }
 }
 
@@ -1117,6 +1203,10 @@ function faceCacheKey(p: { family: string; weight: string; style: string; unicod
 /** The bytes of each font file fetched, by URL, and when a fetch failed. */
 const fileBytes = new Map<string, Promise<ArrayBuffer | null>>();
 const fileFailedAt = new Map<string, number>();
+/** The files the server answered it has not (a 404): Fontsource's record
+ *  lists cuts its package does not hold (Libertinus Sans has no bold
+ *  italic, #168). Not asked for again (#757). */
+const filesGone = new Set<string>();
 
 /** A font file's bytes, fetched once per URL; null when it cannot be had,
  *  and asked again after a while. */
@@ -1127,14 +1217,17 @@ function fetchFileBytes(url: string): Promise<ArrayBuffer | null> {
   fileFailedAt.delete(url);
   const promise = (async (): Promise<ArrayBuffer | null> => {
     try {
-      return await fetchWithin(url, async (r) => (r.ok ? await r.arrayBuffer() : null), { credentials: 'omit' });
+      return await fetchWithin(url, async (r) => {
+        if (r.status === 404) filesGone.add(url);
+        return r.ok ? await r.arrayBuffer() : null;
+      }, { credentials: 'omit' });
     } catch {
       return null; // ignore individual face failures
     }
   })();
   fileBytes.set(url, promise);
   void promise.then((bytes) => {
-    if (bytes === null && fileBytes.get(url) === promise) fileFailedAt.set(url, Date.now());
+    if (bytes === null && !filesGone.has(url) && fileBytes.get(url) === promise) fileFailedAt.set(url, Date.now());
   });
   return promise;
 }
@@ -1402,11 +1495,16 @@ function declareFaces(faces: readonly FamilyFace[]): FamilyFace[] {
     if (declaredFaces.has(key)) continue;
     declaredFaces.add(key);
     try {
-      document.fonts.add(new FontFaceCtor(face.family, `url(${JSON.stringify(face.url)}) format('woff2')`, {
+      const declared = new FontFaceCtor(face.family, `url(${JSON.stringify(face.url)}) format('woff2')`, {
         weight: face.weight,
         style: face.style,
         ...(face.unicodeRange ? { unicodeRange: face.unicodeRange } : {}),
-      }));
+      });
+      document.fonts.add(declared);
+      // A face of the page that loads is a font file that arrived (#757):
+      // the page takes its files over the same line as the loader's
+      // requests, which are alive while it does.
+      void (declared as { loaded?: Promise<unknown> }).loaded?.then(fontProgress, () => {});
       added.push(face);
     } catch (err) {
       console.warn('[postext-sandbox] failed to declare font face', face.family, face.weight, face.style, err);

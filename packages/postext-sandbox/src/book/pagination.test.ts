@@ -3,6 +3,7 @@ import type { NumeralStyle, PostextConfig, Resource, VDTDocument } from 'postext
 import { chapterLayoutFromDoc, chapterPageLabels, createBookPlanner, opensOnEvenPage, sameChapterLayout, sameLayoutInputs } from './pagination';
 import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
 import { newChapter } from './chapterOps';
+import { markBuiltWithoutFaces } from './withoutFaces';
 import type { Chapter, ChapterLayout, ChapterPlan } from './types';
 
 const figure = (id: string): Resource => ({
@@ -401,6 +402,26 @@ describe('createBookPlanner: line numbers through the book (#621)', () => {
     // The first chapter's count changes: the rest follow without new layouts.
     const longer = record(p0.byId.a!, { lastLineNumber: { delta: 45 } });
     expect(planner.plan(book, numbered, [], { a: longer, b }).byId.c!.continuation?.lineNumber).toBe(57);
+  });
+
+  it('marks the record of a document laid out without a face it asked for, and a plan without that record has the chapter laid out again (#757)', () => {
+    const planner = createBookPlanner();
+    const p0 = planner.plan(chapters, config, resources, {});
+    const first = chapters[0]!;
+    const doc = () => ({ pages: [{ index: 0, pageNumberValue: 1, pageNumberFormat: 'decimal' }, { index: 1, pageNumberValue: 2, pageNumberFormat: 'decimal' }], blocks: [{ pageIndex: 0 }] }) as unknown as VDTDocument;
+    const inputs = { markdown: first.markdown, config, resources };
+    const whole = chapterLayoutFromDoc(doc(), p0.byId[first.id]!, inputs)!;
+    expect(whole.withoutFaces).toBeUndefined();
+    const fallback = doc();
+    markBuiltWithoutFaces(fallback);
+    const short = chapterLayoutFromDoc(fallback, p0.byId[first.id]!, inputs)!;
+    expect(short.withoutFaces).toBe(true);
+    // The same pages, and yet another record: the one with its faces takes its place.
+    expect(sameChapterLayout(short, whole)).toBe(false);
+    expect(sameChapterLayout(whole, { ...whole })).toBe(true);
+    // Held meanwhile, the plan moves on to the next chapter; dropped, it is back at this one.
+    expect(planner.plan(chapters, config, resources, { [first.id]: short }).pendingChapterId).not.toBe(first.id);
+    expect(planner.plan(chapters, config, resources, {}).pendingChapterId).toBe(first.id);
   });
 
   it('records the last line relative to what the chapter inherited', () => {

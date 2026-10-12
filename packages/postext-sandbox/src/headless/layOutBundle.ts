@@ -20,7 +20,7 @@ import { chapterLayoutFromDoc, createBookPlanner, sameChapterLayout } from '../b
 import type { ChapterLayout } from '../book/types';
 import { withDefaultResourceTypes } from '../context/defaultConfig';
 import {
-  declareStandIns, ensureConfigFontsLoaded, getConfigFontFamilies, loadVerticalTwins, preloadConfigFonts, setCustomFonts,
+  declareStandIns, ensureConfigFontsLoaded, fontLoaderState, getConfigFontFamilies, loadVerticalTwins, preloadConfigFonts, setCustomFonts,
   unansweredFontRequests,
 } from '../controls/fontLoader';
 import { withHyphenationLocale } from '../controls/hyphenation';
@@ -117,8 +117,37 @@ function pageFaces(families: readonly string[]): Map<string, string[]> {
  * The layout records a bundle ships (`layouts.json`) are not taken: every
  * chapter goes through the worker, which is what there is to check.
  */
+/** Where the layout under way stands (#757): the step of this entry, the
+ *  loader's requests, the layout service and the worker's messages. A
+ *  check that waited in vain asks for it (`pnpm cookbook sandbox`). */
+export function layOutState(): unknown {
+  return { step: stepNow.step, sinceMs: Date.now() - stepNow.at, loader: fontLoaderState(), service: serviceNow?.state?.() ?? null, worker: { ...workerNow, lastAgoMs: workerNow.lastAt ? Date.now() - workerNow.lastAt : null } };
+}
+
+let stepNow = { step: 'not started', at: Date.now() };
+let serviceNow: { state?(): unknown } | null = null;
+const workerNow = { posted: 0, received: 0, last: '', lastAgoMs: null as number | null, errors: [] as string[], lastAt: 0 };
+const step = (name: string): void => { stepNow = { step: name, at: Date.now() }; };
+
 export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptions): Promise<LaidOutBundle> {
   const { locale } = options;
+  step('opening the bundle');
+  // What the worker is told and what it says, counted.
+  if (options.worker) {
+    const raw = options.worker;
+    const post = raw.postMessage.bind(raw) as (message: unknown, transfer?: Transferable[]) => void;
+    raw.postMessage = ((message: unknown, transfer?: Transferable[]) => {
+      workerNow.posted++;
+      return transfer ? post(message, transfer) : post(message);
+    }) as Worker['postMessage'];
+    raw.addEventListener('message', (event: MessageEvent<{ kind?: string; id?: number }>) => {
+      workerNow.received++;
+      workerNow.last = `${event.data?.kind ?? '?'} #${event.data?.id ?? '?'}`;
+      workerNow.lastAt = Date.now();
+    });
+    raw.addEventListener('error', (event) => { workerNow.errors.push(String(event.message ?? 'error')); });
+    raw.addEventListener('messageerror', () => { workerNow.errors.push('messageerror'); });
+  }
   const projectId = generateProjectId();
   const opened = openBundleZip(bytes);
   const manifestId = (opened.manifest as { id?: unknown } | null)?.id;
@@ -130,6 +159,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
     chapterIds: generateChapterId,
   });
   // The custom faces are read from the font store, by the page and for the worker.
+  step('storing the bundle\'s font files');
   await Promise.all(loaded.fonts.map((file) => putFontFile(file)));
   const config: PostextConfig = withDefaultResourceTypes(loaded.config, locale);
   setCustomFonts(config.customFonts, { newBook: true });
@@ -137,10 +167,15 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
   const { chapters, resources } = loaded;
   const texts = chapters.map((c) => c.markdown);
   const effective = withHyphenationLocale(config, locale);
+  step('preloadConfigFonts');
   await preloadConfigFonts(config);
+  step('ensureConfigFontsLoaded');
   await ensureConfigFontsLoaded(effective, texts);
+  step('loadVerticalTwins');
   await loadVerticalTwins(effective, texts);
+  step('declareStandIns');
   await declareStandIns(effective, texts);
+  step('the layout service');
 
   // The worker's faces, read before they are handed over (the buffers are
   // transferred).
@@ -163,7 +198,8 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
   };
   // Nobody watches a first layout here: the one with every face is waited
   // for, as long as the requests themselves are (#757).
-  const service = createLayoutService({ handle, fontHoldMs: Infinity });
+  const service = createLayoutService({ handle, fontCeilingMs: Infinity });
+  serviceNow = service;
   const planner = createBookPlanner();
   const layouts: Record<string, ChapterLayout> = {};
   const docs = new Map<string, VDTDocument>();
@@ -189,6 +225,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
         continuation: chapterPlan.continuation, outline: chapterPlan.outline,
         ...(chapterPlan.citations ? { citations: chapterPlan.citations } : {}),
       };
+      step(`build ${builds + 1}, chapter ${chapters.findIndex((c) => c.id === id) + 1} of ${chapters.length}`);
       const doc = await service.build({
         clientId: 'headless', priority: 'background', content, config: effective,
         cacheKey: layoutCacheKey({

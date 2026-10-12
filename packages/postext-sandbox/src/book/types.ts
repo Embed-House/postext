@@ -145,6 +145,11 @@ export interface ChapterLayout {
    *  when it inherited none), `value` when the count started again inside
    *  the chapter. Absent when line numbers are off. */
   lastLineNumber?: ChapterPageNumber;
+  /** The layout was made while the worker lacked a file its faces asked
+   *  for (#757): its pages are a fallback's, not the chapter's. Held for
+   *  the session so the chapters after it can be numbered meanwhile, never
+   *  stored nor put in a bundle, and dropped when the faces arrive. */
+  withoutFaces?: true;
   /** Where each entry of the chapter's outline (its headings and parts, in
    *  the order `contentOutline` gives them from the text) landed; null for
    *  an entry that reached no page. The book's table of contents is

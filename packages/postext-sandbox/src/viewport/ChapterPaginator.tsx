@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { useBookPlan, useSandboxDispatch, useSandboxSelector } from '../context/SandboxContext';
 import { composeBookMemo } from '../book/compose';
 import { chapterLayoutFromDoc } from '../book/pagination';
@@ -8,6 +8,7 @@ import { layoutCacheKey } from '../book/layoutKeys';
 import { withHyphenationLocale } from '../controls/hyphenation';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
+import { fontsPending, onFontsPending, onLateFonts } from '../worker/LayoutService';
 
 /** Pause before a preceding chapter is laid out in the background (ms). */
 const PAGINATION_DEBOUNCE_MS = 300;
@@ -74,6 +75,23 @@ export function ChapterPaginator() {
   useEffect(() => {
     document.documentElement.dataset.postextPagination = paginationState;
   }, [paginationState]);
+
+  // Faces that reached the layout worker after builds that went without
+  // them (#757): the records of the chapters laid out meanwhile are
+  // dropped, so every one is laid out again (here or by the preview that
+  // shows it) and the contents, the index and the page references take
+  // their pages from the chapters as they are.
+  useEffect(() => onLateFonts(() => dispatch({ type: 'DROP_CHAPTER_LAYOUTS_WITHOUT_FACES' })), [dispatch]);
+
+  // Whether the book's fonts are settled, on the root element beside the
+  // pagination: `pending` while a build waits for font files, a family
+  // the network left short of files is due another try, or the views were
+  // just told to lay out again for late faces. A script that reads the
+  // documents or the records waits for `ready`.
+  const fontsState = useSyncExternalStore(onFontsPending, () => (fontsPending() ? 'pending' : 'ready'), () => 'ready');
+  useEffect(() => {
+    document.documentElement.dataset.postextFonts = fontsState;
+  }, [fontsState]);
 
   const printPreview = activeViewport === 'canvas' || activeViewport === 'folio';
   const wholeBookOnCanvas = printPreview && canvasScope === 'book';

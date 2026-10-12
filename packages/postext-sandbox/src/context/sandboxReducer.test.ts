@@ -289,6 +289,29 @@ describe('book actions', () => {
   });
 });
 
+describe('the records of chapters laid out without a face they asked for (#757)', () => {
+  const layout = { chapterId: 'b', markdown: '# B', configKey: 'c', resourcesKey: 'r', engine: 'e', continuationKey: 'k', pageCount: 3, leadingBlankPages: 1, firstContentPageNumber: { delta: 1 }, firstContentPageFormat: 'decimal' as const, lastPageNumber: { delta: 2 }, lastPageFormat: 'decimal' as const, outlinePages: [], outlineKey: '' };
+
+  it('DROP_CHAPTER_LAYOUTS_WITHOUT_FACES forgets them and keeps the others', () => {
+    const a = { ...layout, chapterId: 'a', markdown: '# A' };
+    let s = sandboxReducer(baseState(), { type: 'SET_CHAPTER_LAYOUT', payload: a });
+    s = sandboxReducer(s, { type: 'SET_CHAPTER_LAYOUT', payload: { ...layout, withoutFaces: true } });
+    expect(Object.keys(s.chapterLayouts)).toEqual(['a', 'b']);
+    const dropped = sandboxReducer(s, { type: 'DROP_CHAPTER_LAYOUTS_WITHOUT_FACES' });
+    expect(Object.keys(dropped.chapterLayouts)).toEqual(['a']);
+    expect(dropped.chapterLayouts.a).toBe(a);
+    // Nothing to drop: the state as it was.
+    expect(sandboxReducer(dropped, { type: 'DROP_CHAPTER_LAYOUTS_WITHOUT_FACES' })).toBe(dropped);
+  });
+
+  it('SET_CHAPTER_LAYOUT takes the record with its faces over the one without, pages alike', () => {
+    const s = sandboxReducer(baseState(), { type: 'SET_CHAPTER_LAYOUT', payload: { ...layout, withoutFaces: true } });
+    const again = sandboxReducer(s, { type: 'SET_CHAPTER_LAYOUT', payload: layout });
+    expect(again).not.toBe(s);
+    expect(again.chapterLayouts.b!.withoutFaces).toBeUndefined();
+  });
+});
+
 describe('hidden presets', () => {
   it('hides and unhides, never the built-in preset', () => {
     const s = sandboxReducer(baseState(), { type: 'HIDE_PRESET', payload: 'remote-a' });
