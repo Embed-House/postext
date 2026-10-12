@@ -2121,13 +2121,36 @@ function overflowAt(u: Unit, room: number, letterSpacingPx: number): number {
   return over;
 }
 
-/** The rest of a run after its first `from` UTF-16 units (`cutWidth` px). */
-function runTail(u: Unit, from: number, cutWidth: number): Unit {
+/** How many characters of the rest of a run are measured with what
+ *  follows the cut (see {@link runTail}), as `REST_WINDOW` of
+ *  `measure/rich.ts`. */
+const TAIL_WINDOW = 32;
+
+/** The rest of a run after its first `from` UTF-16 units (`cutWidth` px).
+ *
+ *  In a document shaped in its own language the rest is as wide as the
+ *  text that opens the next line (#770), not the run less what stayed
+ *  above: the browser measured the run whole, and what the face draws
+ *  across the cut is not painted on either line. The address of the
+ *  GB/T 7714 paper, cut before `.w3.org/TR/clreq/`, left that rest
+ *  1.67 px (0.82 pt) narrower than it is painted alone. Its first
+ *  {@link TAIL_WINDOW} characters are measured from the cut and the
+ *  others as the run grew by them, so a run many lines long still costs
+ *  what a line of it does. Vertical text keeps the widths it had. */
+function runTail(u: Unit, from: number, cutWidth: number, letterSpacingPx: number): Unit {
   const tail = u.text.slice(from);
+  let width = u.width - cutWidth;
+  if (getMeasureLanguage() !== undefined && getMeasureWritingMode() !== 'vertical-rl') {
+    let end = Math.min(u.text.length, from + TAIL_WINDOW);
+    if (end < u.text.length && (u.text.charCodeAt(end) & 0xFC00) === 0xDC00) end++;
+    const head = u.text.slice(from, end);
+    const own = textWidth(head, u.style.font, u.style.smallCaps) + (letterSpacingPx === 0 ? 0 : letterSpacingPx * graphemeCount(head));
+    width = end === u.text.length ? own : own + u.width - prefixWidth(u, end, letterSpacingPx);
+  }
   return {
     ...u,
     text: tail,
-    width: u.width - cutWidth,
+    width,
     graphemes: u.graphemes - graphemeCount(u.text.slice(0, from)),
     first: cjkClassOf(tail),
     at: u.at + from,
@@ -2150,7 +2173,7 @@ function cutAtJoint(u: Unit, room: number, letterSpacingPx: number): { head: Uni
     if (w > room + FIT_EPS) continue;
     return {
       head: { ...u, text: head, width: w, graphemes: graphemeCount(head), last: cjkClassOf(lastGrapheme(head)), url: false },
-      tail: runTail(u, idx, w),
+      tail: runTail(u, idx, w, letterSpacingPx),
     };
   }
   return null;
@@ -2182,7 +2205,10 @@ function divideRun(u: Unit, room: number, letterSpacingPx: number): { head: Unit
   const from = text.length - split.tail.text.length;
   return {
     head: { ...u, text: headText, width: split.head.width, graphemes: graphemeCount(headText), last: cjkClassOf(lastGrapheme(headText)), url: false },
-    tail: runTail(u, from, width - split.tail.width),
+    // What stayed on the line: the truncated text less its rest, or, where
+    // that rest was measured as a text of its own (#770), the advance of
+    // the characters before it.
+    tail: runTail(u, from, split.tail.ownPieces !== undefined ? prefixWidth(u, from, letterSpacingPx) : width - split.tail.width, letterSpacingPx),
     hyphen,
     hard: split.hard === true,
   };

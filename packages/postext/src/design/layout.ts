@@ -38,7 +38,7 @@ import {
   type DesignPlaceholderContext,
 } from './placeholders';
 import { hasJoiningScript, joinsWithNext } from '../bidi';
-import { designBaseDirection, directRuns } from './bidiText';
+import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
 import { getCjkComposition } from '../measure/cjkPunctuation';
 import {
@@ -1365,8 +1365,15 @@ function layoutTextElement(
   // letters apart breaks the joins (`measure/joining.ts`).
   const trackingPx = dimPx(el.letterSpacing, dpi, fontSizePx);
   const letterSpacingPx = Number.isFinite(trackingPx) && !joiningScriptIn(text) ? trackingPx : 0;
-  const measure: TextMeasure = (t) => Math.max(0, flowTextWidth(t, fontString) + letterSpacingPx * graphemeCount(t));
-  const measureIn = (t: string, font: string): number => Math.max(0, flowTextWidth(t, font) + letterSpacingPx * graphemeCount(t));
+  // In a document shaped in its own language a text is as wide as its
+  // runs are painted, each in its own direction (#770,
+  // `measuresRunsAsPainted`): wrapping, justification and truncation then
+  // read the widths the renderers set. `base`, the direction the runs are
+  // resolved at, is read when a text is measured, further down.
+  const asPainted = measuresRunsAsPainted();
+  const flowIn = (t: string, font: string): number => (asPainted ? directedTextWidth(t, font, base, frame.arabicNumbers === true) : flowTextWidth(t, font));
+  const measure: TextMeasure = (t) => Math.max(0, flowIn(t, fontString) + letterSpacingPx * graphemeCount(t));
+  const measureIn = (t: string, font: string): number => Math.max(0, flowIn(t, font) + letterSpacingPx * graphemeCount(t));
   const box = resolveBox(el.box, dpi, fontSizePx);
   const padding: ResolvedPadding = box?.padding ?? { top: 0, right: 0, bottom: 0, left: 0 };
   // Inline marks: a text that carries any is laid out in runs; one that
@@ -1374,12 +1381,12 @@ function layoutTextElement(
   const rich = el.inlineMarks
     ? parseRichDesignText(text, { family: el.fontFamily, sizePx: fontSizePx, weight: el.fontWeight, italic: el.italic })
     : undefined;
-  const richM = rich?.hasMarks ? new RichMeasurer(rich, letterSpacingPx) : undefined;
+  const richM = rich?.hasMarks ? new RichMeasurer(rich, letterSpacingPx, asPainted ? flowIn : undefined) : undefined;
   if (rich && !rich.hasMarks) text = rich.text;
   // The base direction: the element's, `'auto'` from its first strong
   // letter, else the document's. Vertical text is not reordered.
   const vertical = getMeasureWritingMode() === 'vertical-rl';
-  const base = vertical ? 'ltr' : designBaseDirection(el.direction, richM ? richM.rt.text : text, frame.direction ?? 'ltr');
+  const base: 'ltr' | 'rtl' = vertical ? 'ltr' : designBaseDirection(el.direction, richM ? richM.rt.text : text, frame.direction ?? 'ltr');
   const mirrored = !vertical && frame.mirrored === true;
   const strokeWidthPx = el.stroke ? Math.max(0, dimPx(el.stroke.width, dpi, fontSizePx)) : 0;
   const stroke = el.stroke && strokeWidthPx > 0
@@ -1549,16 +1556,40 @@ function layoutTextElement(
     // Right-to-left text: each line's runs cut where the direction
     // changes, flagged and ordered for the frame the slot is painted in.
     // A justified run keeps its spaces' share of the stretch.
+    let resized = false;
     for (const line of m.lines) {
       // An Arabic word wider than a wrapping line's room is left whole and
       // runs past it: flagged for a warning.
       if (wraps && contentMax !== undefined && line.width > contentMax - (line.xOffset ?? 0) + 0.5 && joiningScriptIn(line.text)) line.wordOverflow = true;
       const runs: DesignTextRun[] = line.runs ?? [{ text: line.text, fontString, width: line.width }];
       const spacing = line.wordSpacingPx ?? 0;
-      const directed = directRuns(runs, base, mirrored, (r, t) => measureIn(t, r.fontString) + spacing * stretchableSpaces(t), frame.arabicNumbers === true);
+      const directed = directRuns(
+        runs, base, mirrored,
+        (r, t, rtl) => (asPainted ? Math.max(0, paintedRunWidth(t, r.fontString, rtl) + letterSpacingPx * graphemeCount(t)) : measureIn(t, r.fontString)) + spacing * stretchableSpaces(t),
+        frame.arabicNumbers === true, asPainted,
+      );
       if (!directed) continue;
       line.runs = directed.runs;
       if (directed.order) line.order = directed.order;
+      if (!asPainted) continue;
+      // Each run is now as wide as it is painted (#770): the line is as
+      // wide as its runs. A justified line keeps its width, the edge it
+      // ends on, and its word spaces take up what the runs moved by.
+      const set = directed.runs.reduce((sum, r) => sum + r.width, 0);
+      const spaces = spacing === 0 ? 0 : directed.runs.reduce((n, r) => n + (r.stacked || r.tcy || r.orientation ? 0 : stretchableSpaces(r.text)), 0);
+      if (spaces > 0) {
+        const more = (line.width - set) / spaces;
+        for (const r of directed.runs) if (!r.stacked && !r.tcy && !r.orientation) r.width += more * stretchableSpaces(r.text);
+        line.wordSpacingPx = spacing + more;
+      } else if (Math.abs(set - line.width) > 1e-9) {
+        line.width = set;
+        resized = true;
+      }
+    }
+    // A text that sizes its own box is as wide as its widest line.
+    if (resized) {
+      const widest = m.lines.reduce((mx, l) => Math.max(mx, l.width + (l.xOffset ?? 0)), 0);
+      m.contentWidth = m.needsClip && contentMax !== undefined ? Math.min(widest, contentMax) : widest;
     }
   }
   // The tracking after a line's last glyph is advance, not ink: a box that

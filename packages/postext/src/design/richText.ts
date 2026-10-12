@@ -214,7 +214,14 @@ function merge(pieces: Piece[]): Piece[] {
 
 /** Measuring and run building over one rich text. */
 export class RichMeasurer {
-  constructor(readonly rt: RichDesignText, readonly letterSpacingPx: number) {}
+  constructor(
+    readonly rt: RichDesignText,
+    readonly letterSpacingPx: number,
+    /** How a run's text is measured, untracked, when not as any text of
+     *  the flow: in the direction its pieces are painted in, in a document
+     *  shaped in its own language (#770, `design/bidiText.ts`). */
+    private readonly flow?: (text: string, font: string) => number,
+  ) {}
 
   private widthOf(text: string, style: number): number {
     const s = this.rt.styles[style]!;
@@ -225,7 +232,7 @@ export class RichMeasurer {
     const n = graphemeCount(text);
     if (s.orient === 'upright') return (fontEm(s.font) + this.letterSpacingPx) * n;
     if (s.orient === 'sideways') return Math.max(0, measureTextWidth(text, s.font) + this.letterSpacingPx * n);
-    return Math.max(0, flowTextWidth(text, s.font) + this.letterSpacingPx * n);
+    return Math.max(0, (this.flow ? this.flow(text, s.font) : flowTextWidth(text, s.font)) + this.letterSpacingPx * n);
   }
 
   /** Whether `[k, k + 1)` lies inside a run the author oriented (a line

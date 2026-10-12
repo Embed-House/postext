@@ -23,9 +23,63 @@
  */
 
 import { bidiClassOf, lineLevels, needsBidi, resolveParagraph, visualOrder } from '../bidi';
+import { getMeasureLanguage } from '../measure/canvas';
 import { graphemeCount } from '../measure/graphemes';
-import { flowTextWidth } from '../measure/vertical';
+import { rtlTextWidth } from '../measure/script';
+import { flowTextWidth, measuringVertically } from '../measure/vertical';
 import type { VDTDesignTextBlock, VDTDesignTextRun } from '../vdt';
+
+/**
+ * Whether the runs of a design text or a chip are measured as they are
+ * painted, each in its own direction (#770): in a document shaped in its
+ * own language, in horizontal text.
+ *
+ * A renderer paints a right-to-left run with its context set right to
+ * left (`paintRunInDirection` on the canvas). Up to postext 1.29 the
+ * layout measured the line left to right, whole, and handed each run but
+ * the last the width of its text measured left to right too. The two
+ * differ. Markazi Text sets the opener `«الحرف العربي لا يعيش وحده.»` of
+ * the Arabic novel 9.917 em wide left to right (the stop and the
+ * guillemets are runs apart, shaped alone) and 9.712 em as the one
+ * right-to-left run it is painted as: 5.55 px at 27 px. In Amiri the date
+ * `(٧٣٢–٨٠٨هـ)` of the taḥqīq opener is five runs; the layout gave the
+ * last, `هـ)`, what the whole line left over, 1.298 em, for a run painted
+ * 1.095 em wide: 5.08 px at 25 px. Measured in Chrome 154.
+ *
+ * A document that keeps the host's language keeps the widths it had.
+ */
+export function measuresRunsAsPainted(): boolean {
+  return getMeasureLanguage() !== undefined && !measuringVertically();
+}
+
+/** The advance of one run of a line, untracked, as it is painted: a
+ *  right-to-left run in a context set right to left (`rtlTextWidth`), any
+ *  other as a text of its own. */
+export function paintedRunWidth(text: string, font: string, rtl: boolean): number {
+  if (text === '') return 0;
+  return rtl ? rtlTextWidth(text, font) : flowTextWidth(text, font);
+}
+
+/**
+ * The advance of `text` in `font`, untracked, as a line of it is painted
+ * (see {@link measuresRunsAsPainted}): its bidi levels resolved at `base`
+ * as {@link directRuns} resolves a line's, the text cut where the level
+ * changes, each piece measured in its direction. A left-to-right text
+ * with no right-to-left character is measured whole, as it is painted.
+ */
+export function directedTextWidth(text: string, font: string, base: 'ltr' | 'rtl', arabicNumbers = false): number {
+  if (text.length === 0) return 0;
+  if (base === 'ltr' && !needsBidi(text)) return flowTextWidth(text, font);
+  const levels = lineLevels(resolveParagraph(text, base, undefined, arabicNumbers ? { arabicNumbers: true } : undefined));
+  let width = 0;
+  let from = 0;
+  for (let i = 1; i <= text.length; i++) {
+    if (i < text.length && levels[i] === levels[i - 1]) continue;
+    width += paintedRunWidth(text.slice(from, i), font, (levels[from]! & 1) === 1);
+    from = i;
+  }
+  return width;
+}
 
 /** A run of a design text line or of a chip, as far as ordering it goes. */
 interface Run {
@@ -81,19 +135,24 @@ export interface DirectedRuns<R> {
  * line with no right-to-left character, or one whose text resolves to one
  * even level throughout.
  *
- * A piece takes `widthOf(run, text)` as its advance; the last piece of a
- * run takes what is left of the run's width, so the line advances exactly
- * as far as it was measured (kerning across a cut stays inside the run).
+ * A piece takes `widthOf(run, text, rtl)` as its advance; the last piece
+ * of a run takes what is left of the run's width, so the line advances
+ * exactly as far as it was measured (kerning across a cut stays inside the
+ * run). With `asPainted` every piece takes its own advance, the last one
+ * too, and the pieces of a run that is not cut are measured again in the
+ * direction they are painted in: the caller then sets the line as wide as
+ * its runs ({@link measuresRunsAsPainted}).
  * A stacked script or an oriented vertical run is never cut.
  */
 export function directRuns<R extends Run>(
   runs: readonly R[],
   base: 'ltr' | 'rtl',
   mirrored: boolean,
-  widthOf: (run: R, text: string) => number,
+  widthOf: (run: R, text: string, rtl: boolean) => number,
   /** The text belongs to an Arabic-script document: a number that opens
    *  it reads as an Arabic one (`BidiOptions.arabicNumbers`, #665). */
   arabicNumbers = false,
+  asPainted = false,
 ): DirectedRuns<R> | undefined {
   let text = '';
   for (const r of runs) text += r.text;
@@ -127,9 +186,10 @@ export function directRuns<R extends Run>(
       const b = cuts[k + 1]!;
       const piece = text.slice(a, b);
       const last = k + 2 === cuts.length;
-      const width = last ? run.width - used : widthOf(run, piece);
-      used += width;
       const level = levels[a]!;
+      // A run set whole (a stacked script, an oriented one) keeps its box.
+      const width = asPainted && !whole ? widthOf(run, piece, (level & 1) === 1) : last ? run.width - used : widthOf(run, piece, (level & 1) === 1);
+      used += width;
       const next = { ...run, text: piece, width } as R & { rtl?: true };
       if (level & 1) next.rtl = true;
       else delete next.rtl;
@@ -158,10 +218,18 @@ export function directDesignTextBlock(
   arabicNumbers = false,
 ): void {
   if (base === 'rtl') block.direction = 'rtl';
+  // In a document shaped in its own language each run is as wide as it is
+  // painted, and the line as wide as its runs (#770).
+  const asPainted = measuresRunsAsPainted();
   for (const line of block.lines) {
     const runs: VDTDesignTextRun[] = line.runs ?? [{ text: line.text, fontString: block.fontString, width: line.width }];
-    const directed = directRuns(runs, base, mirrored, (r, t) => Math.max(0, flowTextWidth(t, r.fontString) + trackingPx * graphemeCount(t)), arabicNumbers);
+    const directed = directRuns(
+      runs, base, mirrored,
+      (r, t, rtl) => Math.max(0, (asPainted ? paintedRunWidth(t, r.fontString, rtl) : flowTextWidth(t, r.fontString)) + trackingPx * graphemeCount(t)),
+      arabicNumbers, asPainted,
+    );
     if (!directed) continue;
+    if (asPainted) line.width = directed.runs.reduce((sum, r) => sum + r.width, 0);
     line.runs = directed.runs;
     if (directed.order) line.order = directed.order;
     else delete line.order;
@@ -178,11 +246,14 @@ export function directDesignTextBlock(
  */
 export function directChipRuns<R extends Run>(
   runs: R[],
-  measure: (text: string, font: string) => number,
+  measure: (text: string, font: string, rtl: boolean) => number,
+  /** Every run takes its own advance, in the direction it is painted in
+   *  ({@link measuresRunsAsPainted}): the chip is then as wide as its runs. */
+  asPainted = false,
 ): { runs: (R & { rtl?: true })[]; order?: number[] } {
   let text = '';
   for (const r of runs) text += r.text;
   if (!needsBidi(text)) return { runs };
-  const directed = directRuns(runs as (R & { fontString: string })[], firstStrongDirection(text) ?? 'ltr', false, (r, t) => measure(t, r.fontString));
+  const directed = directRuns(runs as (R & { fontString: string })[], firstStrongDirection(text) ?? 'ltr', false, (r, t, rtl) => measure(t, r.fontString, rtl), false, asPainted);
   return directed ?? { runs };
 }

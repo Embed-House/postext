@@ -46,6 +46,12 @@ export interface KPPenalty {
    *  (`MeasureBlockOptions.repeatHyphen`). TeX's post-break text. */
   postWidth?: number;
   postChars?: number;
+  /** What the rest of the word is wider (px; negative: narrower) when it
+   *  opens the next line as a text of its own than the boxes after this
+   *  break add up to (#770, `RichBreakPoint.restShift`): the line that
+   *  starts here counts it with its content. It adds no character. Set in
+   *  a document shaped in its own language only. */
+  postShift?: number;
 }
 
 export type KPItem = KPBox | KPGlue | KPPenalty;
