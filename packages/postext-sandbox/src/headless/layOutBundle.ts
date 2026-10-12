@@ -21,6 +21,7 @@ import type { ChapterLayout } from '../book/types';
 import { withDefaultResourceTypes } from '../context/defaultConfig';
 import {
   declareStandIns, ensureConfigFontsLoaded, getConfigFontFamilies, loadVerticalTwins, preloadConfigFonts, setCustomFonts,
+  unansweredFontRequests,
 } from '../controls/fontLoader';
 import { withHyphenationLocale } from '../controls/hyphenation';
 import { parseBundle } from '../presets/bundle';
@@ -74,6 +75,10 @@ export interface LaidOutBundle {
   /** How many builds the layout service ran. */
   builds: number;
   fonts: Record<string, FamilyFaces>;
+  /** The font requests the network did not answer (an error, a request
+   *  given up): the layout is then one without those files, not the
+   *  book's. */
+  unanswered: string[];
 }
 
 /** "400 normal ×3", in the order first seen. */
@@ -156,7 +161,9 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
     warm: (content, cfg, opts) => inner.warm(content, cfg, opts),
     dispose: () => inner.dispose(),
   };
-  const service = createLayoutService({ handle });
+  // Nobody watches a first layout here: the one with every face is waited
+  // for, as long as the requests themselves are (#757).
+  const service = createLayoutService({ handle, fontHoldMs: Infinity });
   const planner = createBookPlanner();
   const layouts: Record<string, ChapterLayout> = {};
   const docs = new Map<string, VDTDocument>();
@@ -212,6 +219,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
   return {
     locale: loaded.locale,
     settled: settled && chapters.every((c) => docs.has(c.id)),
+    unanswered: unansweredFontRequests(),
     builds,
     fonts,
     chapters: chapters.filter((c) => docs.has(c.id)).map((c) => {

@@ -20,6 +20,7 @@ import type { BookPageMap } from '../usePageHashSync';
 import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../../controls/fontLoader';
 import { ensureResourceImages } from '../../controls/resourceImages';
 import { useLayoutWorker } from '../../worker/useLayoutWorker';
+import { onLateFonts } from '../../worker/LayoutService';
 import { layoutCacheKey } from '../../book/layoutKeys';
 import { perfSpan, type PerfSpan } from '../../perf/marks';
 import {
@@ -420,7 +421,11 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     if (typeof document === 'undefined' || !document.fonts) return;
     const stop = watchFonts(document.fonts);
     const off = onFontsChanged(() => setRebuildKey((k) => k + 1));
+    // And the faces the layout worker got after a build that could not
+    // wait for their files (#757).
+    const offLate = onLateFonts(() => setRebuildKey((k) => k + 1));
     return () => {
+      offLate();
       off();
       stop();
     };

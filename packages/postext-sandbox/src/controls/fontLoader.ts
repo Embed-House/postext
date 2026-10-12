@@ -26,6 +26,42 @@ import { isGenericFontFamily, isSystemFontFamily } from './systemFonts';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 
+/** A request for a family's record, its style sheet or one of its files is
+ *  given up after this long (#757): `fetch` has no bound of its own, and a
+ *  connection that stalls would hold the layout that waits for the file.
+ *  A request given up counts as one that failed, asked again after a
+ *  while. */
+export const FONT_FETCH_TIMEOUT_MS = 15_000;
+
+/** The requests the network did not answer (an error, the bound above),
+ *  by URL: not the ones a server answered with a status, which a later
+ *  request would get again. A check reads them to tell a layout without a
+ *  face from one the network did not let it have. */
+const unanswered = new Set<string>();
+
+/** The font requests the network has not answered since the page loaded
+ *  and that no later request made good. */
+export function unansweredFontRequests(): string[] {
+  return [...unanswered];
+}
+
+/** `fetch` and the reading of its body, given up after
+ *  `FONT_FETCH_TIMEOUT_MS`. Rejects as `fetch` does. */
+async function fetchWithin<T>(url: string, read: (res: Response) => Promise<T>, init?: RequestInit): Promise<T> {
+  const controller = typeof AbortController === 'undefined' ? null : new AbortController();
+  const timer = controller ? setTimeout(() => controller.abort(), FONT_FETCH_TIMEOUT_MS) : undefined;
+  try {
+    const value = await read(await fetch(url, controller ? { ...init, signal: controller.signal } : init));
+    unanswered.delete(url);
+    return value;
+  } catch (err) {
+    unanswered.add(url);
+    throw err;
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
+}
+
 // What a configuration asks of its faces lives in the engine, shared with
 // the CLI; re-exported here for the Sandbox's own callers.
 import {
@@ -176,10 +212,11 @@ async function fetchFontMetadata(family: string): Promise<FontMetadata | null> {
 
   const promise = (async (): Promise<FontMetadata | null> => {
     try {
-      const res = await fetch(`https://api.fontsource.org/v1/fonts/${toFontsourceId(family)}`);
-      if (res.status === 404) uncatalogued.add(family);
-      if (!res.ok) return null;
-      const data = await res.json() as FontsourceRecord;
+      const data = await fetchWithin(`https://api.fontsource.org/v1/fonts/${toFontsourceId(family)}`, async (res) => {
+        if (res.status === 404) uncatalogued.add(family);
+        return res.ok ? await res.json() as FontsourceRecord : null;
+      });
+      if (!data) return null;
       const weights = (data.weights ?? []).filter((w) => typeof w === 'number');
       if (weights.length === 0) return null;
       // Fontsource also lists families that are not on Google Fonts.
@@ -388,14 +425,13 @@ async function packageFaces(family: string, meta: FontMetadata): Promise<FamilyF
   const probeWeight = weights.includes(400) ? 400 : weights[0]!;
   const probeStyle = styles[0]!;
   const cssUrl = fontsourceCssUrl(family, probeWeight, probeStyle);
-  let css: string;
+  let css: string | null;
   try {
-    const res = await fetch(cssUrl, { credentials: 'omit' });
-    if (!res.ok) return null;
-    css = await res.text();
+    css = await fetchWithin(cssUrl, async (res) => (res.ok ? await res.text() : null), { credentials: 'omit' });
   } catch {
     return null;
   }
+  if (css === null) return null;
   const prefix = `${fontsourceId(family)}-`;
   const suffix = `-${probeWeight}-${probeStyle}.woff2`;
   const subsets: { name: string; base: string; unicodeRange?: string }[] = [];
@@ -437,6 +473,9 @@ const familyFacesFailedAt = new Map<string, number>();
  *  for its families, and a family that is nowhere would otherwise cost a
  *  failed request per keystroke. */
 const FAMILY_FACES_RETRY_MS = 30_000;
+/** How long after a family's files could not be had they are asked for
+ *  again. */
+export const FONT_RETRY_MS = FAMILY_FACES_RETRY_MS;
 
 /**
  * The files of a family that is not a custom one: Fontsource's static
@@ -468,9 +507,8 @@ function familyFiles(family: string): Promise<FamilyFiles> {
       // fine. From a worker it would return ttf; that's why we do this on
       // the main thread. A family Google does not have answers 400 with no
       // CORS headers, which rejects.
-      const res = await fetch(buildFontUrl(family, meta), { credentials: 'omit' });
-      if (!res.ok) return { faces: [], meta };
-      return { faces: parseFontFaceCss(await res.text()), meta };
+      const sheet = await fetchWithin(buildFontUrl(family, meta), async (res) => (res.ok ? await res.text() : null), { credentials: 'omit' });
+      return { faces: sheet === null ? [] : parseFontFaceCss(sheet), meta };
     } catch {
       return { faces: [], meta };
     }
@@ -505,9 +543,9 @@ function instanceFaces(family: string, weight: number, style: 'normal' | 'italic
   const axis = style === 'italic' ? `ital,wght@1,${weight}` : `wght@${weight}`;
   const promise = (async (): Promise<FamilyFace[]> => {
     try {
-      const res = await fetch(`https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:${axis}&display=swap`, { credentials: 'omit' });
-      if (!res.ok) return [];
-      return parseFontFaceCss(await res.text())
+      const sheet = await fetchWithin(`https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:${axis}&display=swap`, async (res) => (res.ok ? await res.text() : null), { credentials: 'omit' });
+      if (sheet === null) return [];
+      return parseFontFaceCss(sheet)
         .filter((face) => isSlanted(face.style) === (style === 'italic'))
         .map((face) => ({ ...face, family, weight: String(weight), style }));
     } catch {
@@ -1089,8 +1127,7 @@ function fetchFileBytes(url: string): Promise<ArrayBuffer | null> {
   fileFailedAt.delete(url);
   const promise = (async (): Promise<ArrayBuffer | null> => {
     try {
-      const r = await fetch(url, { credentials: 'omit' });
-      return r.ok ? await r.arrayBuffer() : null;
+      return await fetchWithin(url, async (r) => (r.ok ? await r.arrayBuffer() : null), { credentials: 'omit' });
     } catch {
       return null; // ignore individual face failures
     }

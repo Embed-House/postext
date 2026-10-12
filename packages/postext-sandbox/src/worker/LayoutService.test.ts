@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { LayoutWorkerHandle } from 'postext/worker';
 import type { VDTDocument } from 'postext';
 
@@ -15,6 +15,13 @@ const fontLoader = vi.hoisted(() => ({
   changed: null as ((families: string[]) => void) | null,
   /** The faces the page was told to declare. */
   pageLoads: [] as string[],
+  /** What the files of a registration wait for before they are had. */
+  files: null as Promise<void> | null,
+  /** The files the network does not give (by URL), and the requests made
+   *  for files. */
+  failing: new Set<string>(),
+  fileRequests: [] as string[][],
+  unanswered: [] as string[],
 }));
 
 vi.mock('../controls/fontLoader', () => {
@@ -31,8 +38,15 @@ vi.mock('../controls/fontLoader', () => {
         .sort((a, b) => a.weight - b.weight || (a.style === b.style ? 0 : a.style === 'normal' ? -1 : 1));
       return cuts.flatMap((u) => fontLoader.subsets.map((subset) => ({ family, weight: String(u.weight), style: u.style, unicodeRange: subset, url: `${family}-${subset}-${u.weight}-${u.style}` })));
     },
-    fetchFacePayloads: async (faces: { family: string; weight: string; style: string; unicodeRange?: string }[]) =>
-      faces.map((f) => ({ family: f.family, weight: f.weight, style: f.style, unicodeRange: f.unicodeRange, buffer: new ArrayBuffer(1) })),
+    fetchFacePayloads: async (faces: { family: string; weight: string; style: string; unicodeRange?: string; url: string }[]) => {
+      fontLoader.fileRequests.push(faces.map((f) => f.url));
+      if (fontLoader.files) await fontLoader.files;
+      return faces
+        .filter((f) => !fontLoader.failing.has(f.url))
+        .map((f) => ({ family: f.family, weight: f.weight, style: f.style, unicodeRange: f.unicodeRange, buffer: new ArrayBuffer(1) }));
+    },
+    FONT_RETRY_MS: 30_000,
+    unansweredFontRequests: () => fontLoader.unanswered,
     collectStandInPayloads: async (_config: unknown, _content: unknown, sent: ReadonlySet<string>) =>
       fontLoader.standIns.filter((p) => !sent.has(key(p))),
     fontPayloadKey: key,
@@ -46,7 +60,7 @@ vi.mock('../controls/fontLoader', () => {
   };
 });
 
-import { createLayoutService } from './LayoutService';
+import { createLayoutService, FONT_HOLD_MS, onLateFonts } from './LayoutService';
 
 interface FakeBuild {
   markdown: string;
@@ -352,5 +366,184 @@ describe('the static cuts a build is sent (#757)', () => {
     } finally {
       reset();
     }
+  });
+});
+
+describe('a build and a file that is slow or does not come (#757)', () => {
+  const reset = () => {
+    fontLoader.uses = { Lora: [{ weight: 400, style: 'normal' }] };
+    fontLoader.subsets = ['latin'];
+    fontLoader.sliced = ['Lora'];
+    fontLoader.pageLoads = [];
+    fontLoader.files = null;
+    fontLoader.failing = new Set();
+    fontLoader.fileRequests = [];
+    fontLoader.unanswered = [];
+  };
+  /** A handle that records, in order, what the worker is asked. */
+  function ordered() {
+    const { handle, builds } = fakeHandle();
+    const log: string[] = [];
+    const build = handle.build;
+    handle.build = (content, config, opts) => {
+      log.push(`build ${content.markdown}`);
+      return build(content, config, opts).then((doc) => {
+        log.push(`built ${content.markdown}`);
+        return doc;
+      });
+    };
+    handle.registerFonts = async (faces) => {
+      log.push(`register ${faces.map((f) => `${f.family} ${f.weight}`).join(', ')}`);
+    };
+    return { handle, builds, log };
+  }
+  const late = () => {
+    const told: string[][] = [];
+    const off = onLateFonts((families) => told.push(families));
+    return { told, off };
+  };
+
+  afterEach(() => {
+    vi.useRealTimers();
+    fontLoader.files = null;
+    fontLoader.failing = new Set();
+    fontLoader.unanswered = [];
+    fontLoader.sliced = [];
+  });
+
+  it('waits for the files that come in time: they are registered before the build, and nobody is told', async () => {
+    reset();
+    const { handle, builds, log } = ordered();
+    const { told, off } = late();
+    const service = createLayoutService({ handle });
+    const built = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await tick();
+    builds[0]!.finish();
+    await built;
+    expect(log).toEqual(['register Lora 400', 'build a', 'built a']);
+    expect(told).toEqual([]);
+    expect(FONT_HOLD_MS).toBeLessThanOrEqual(10_000);
+    off();
+    service.dispose();
+  });
+
+  it('lays the chapter out with the faces the worker has when a file outlasts the hold, registers it once the build is over and tells the views', async () => {
+    reset();
+    vi.useFakeTimers();
+    let arrive!: () => void;
+    fontLoader.files = new Promise<void>((resolve) => { arrive = resolve; });
+    const { handle, builds, log } = ordered();
+    const { told, off } = late();
+    const service = createLayoutService({ handle, fontHoldMs: 500 });
+    const built = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(499);
+    // Held for its file.
+    expect(log).toEqual([]);
+    await vi.advanceTimersByTimeAsync(2);
+    // No longer: the chapter is laid out without it.
+    expect(log).toEqual(['build a']);
+    // The file lands while the worker lays out: its faces wait for the
+    // build, which would otherwise be measured half with them.
+    arrive();
+    await vi.advanceTimersByTimeAsync(50);
+    expect(log).toEqual(['build a']);
+    expect(told).toEqual([]);
+    builds[0]!.finish();
+    await built;
+    await vi.advanceTimersByTimeAsync(0);
+    expect(log).toEqual(['build a', 'built a', 'register Lora 400']);
+    expect(told).toEqual([['Lora']]);
+    // The view lays out again: nothing to wait for, the faces are there.
+    const again = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(0);
+    builds[1]!.finish();
+    await again;
+    expect(log.slice(3)).toEqual(['build a', 'built a']);
+    expect(told).toHaveLength(1);
+    off();
+    service.dispose();
+  });
+
+  it('waits for the files without a bound when the host asks so (the headless entry)', async () => {
+    reset();
+    vi.useFakeTimers();
+    let arrive!: () => void;
+    fontLoader.files = new Promise<void>((resolve) => { arrive = resolve; });
+    const { handle, builds, log } = ordered();
+    const { told, off } = late();
+    const service = createLayoutService({ handle, fontHoldMs: Infinity });
+    const built = service.build({ clientId: 'headless', priority: 'background', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(120_000);
+    expect(log).toEqual([]);
+    arrive();
+    await vi.advanceTimersByTimeAsync(0);
+    builds[0]!.finish();
+    await built;
+    expect(log).toEqual(['register Lora 400', 'build a', 'built a']);
+    expect(told).toEqual([]);
+    off();
+    service.dispose();
+  });
+
+  it('asks again, a while later, for a file the network did not give, and tells the views when it arrives', async () => {
+    reset();
+    vi.useFakeTimers();
+    fontLoader.uses = { Lora: [{ weight: 400, style: 'normal' }, { weight: 700, style: 'normal' }] };
+    fontLoader.failing = new Set(['Lora-latin-700-normal']);
+    const { handle, builds, log } = ordered();
+    const { told, off } = late();
+    const service = createLayoutService({ handle });
+    const built = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(0);
+    builds[0]!.finish();
+    await built;
+    // Laid out with the regular alone.
+    expect(log).toEqual(['register Lora 400', 'build a', 'built a']);
+    // Nobody builds; the network gives the file at the next try.
+    fontLoader.failing = new Set();
+    await vi.advanceTimersByTimeAsync(29_000);
+    expect(fontLoader.fileRequests).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(2_500);
+    expect(fontLoader.fileRequests).toEqual([['Lora-latin-400-normal', 'Lora-latin-700-normal'], ['Lora-latin-700-normal']]);
+    expect(log).toEqual(['register Lora 400', 'build a', 'built a', 'register Lora 700']);
+    expect(told).toEqual([['Lora']]);
+    // Nothing is short any more: no further try.
+    await vi.advanceTimersByTimeAsync(200_000);
+    expect(fontLoader.fileRequests).toHaveLength(2);
+    off();
+    service.dispose();
+  });
+
+  it('gives a file up after three more tries, and asks for it no more without a build', async () => {
+    reset();
+    vi.useFakeTimers();
+    fontLoader.failing = new Set(['Lora-latin-400-normal']);
+    const { handle, builds } = ordered();
+    const { told, off } = late();
+    const service = createLayoutService({ handle });
+    const built = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(0);
+    builds[0]!.finish();
+    await built;
+    await vi.advanceTimersByTimeAsync(600_000);
+    expect(fontLoader.fileRequests).toHaveLength(4);
+    expect(told).toEqual([]);
+    off();
+    service.dispose();
+  });
+
+  it('asks no more once disposed', async () => {
+    reset();
+    vi.useFakeTimers();
+    fontLoader.failing = new Set(['Lora-latin-400-normal']);
+    const { handle, builds } = ordered();
+    const service = createLayoutService({ handle });
+    const built = service.build({ clientId: 'canvas', priority: 'preview', content: content('a'), config: {} });
+    await vi.advanceTimersByTimeAsync(0);
+    builds[0]!.finish();
+    await built;
+    service.dispose();
+    await vi.advanceTimersByTimeAsync(600_000);
+    expect(fontLoader.fileRequests).toHaveLength(1);
   });
 });
