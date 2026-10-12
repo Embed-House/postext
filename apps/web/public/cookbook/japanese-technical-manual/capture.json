@@ -3,21 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "3b47e2f268c360ffe7ae3368cc3314dd8456800d76a3c49e956f28194aa2c66a",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.954Z",
+  "capturedAt": "2026-10-12T13:19:51.416Z",
   "variants": {
     "en": {
-      "hash8": "0284a571",
+      "hash8": "6b40fbbd",
       "vdtHash": "408df2355fa6ab31f93c86cf0b8c3c7688eaaa3f",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 127,
-        "buildMs": 91,
-        "totalMs": 1008,
+        "importMs": 212,
+        "fontsMs": 254,
+        "buildMs": 105,
+        "totalMs": 1189,
         "builds": 1
       },
       "specimen": {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41316,
+        "bytes": 41317,
         "folio": "90d2b4f0",
         "chapters": [
           {
@@ -427,6 +427,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
@@ -435,13 +440,13 @@
       }
     },
     "es": {
-      "hash8": "dfa91db2",
+      "hash8": "939f4894",
       "vdtHash": "c37443f092c4e6782997f0f2dafddb3ec87fc23b",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 177,
-        "buildMs": 92,
-        "totalMs": 993,
+        "importMs": 219,
+        "fontsMs": 274,
+        "buildMs": 107,
+        "totalMs": 1198,
         "builds": 1
       },
       "specimen": {
@@ -850,6 +855,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

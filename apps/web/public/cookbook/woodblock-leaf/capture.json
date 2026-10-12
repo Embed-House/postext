@@ -3,21 +3,21 @@
   "slug": "woodblock-leaf",
   "sourceHash": "7f581c9f677f7dc25d8793ffa7577a86cfbd95bb49a606157ef0cbf629dd6f06",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.563Z",
+  "capturedAt": "2026-10-12T13:19:52.347Z",
   "variants": {
     "en": {
-      "hash8": "19dd04b1",
+      "hash8": "b92abf69",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 156,
-        "fontsMs": 108,
-        "buildMs": 44,
-        "totalMs": 924,
+        "importMs": 222,
+        "fontsMs": 116,
+        "buildMs": 47,
+        "totalMs": 994,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 32956,
+          "bytes": 32954,
           "alt": "Opening page 1: 論語集註."
         },
         {
@@ -308,11 +308,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -321,13 +316,13 @@
       }
     },
     "es": {
-      "hash8": "a7ace648",
+      "hash8": "249f5076",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 229,
-        "fontsMs": 128,
-        "buildMs": 50,
-        "totalMs": 1030,
+        "importMs": 315,
+        "fontsMs": 116,
+        "buildMs": 48,
+        "totalMs": 1127,
         "builds": 1
       },
       "specimen": {
@@ -359,7 +354,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33786,
+          "bytes": 33764,
           "alt": "Página de apertura 1: 論語集註."
         },
         {
@@ -617,11 +612,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

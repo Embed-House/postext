@@ -3,21 +3,21 @@
   "slug": "pendulum-lab-video-players",
   "sourceHash": "b519a2e2d8e2e4d71d603734cf5d93556c42d6583a6e2270df9922f0179024ca",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.208Z",
+  "capturedAt": "2026-10-12T13:19:51.890Z",
   "variants": {
     "en": {
-      "hash8": "b157e194",
+      "hash8": "8923f290",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 271,
-        "fontsMs": 55,
-        "buildMs": 149,
-        "totalMs": 1209,
+        "importMs": 278,
+        "fontsMs": 59,
+        "buildMs": 157,
+        "totalMs": 1220,
         "builds": 2
       },
       "specimen": {
@@ -95,7 +95,7 @@
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 29796,
+        "bytes": 29799,
         "chapters": [
           {
             "pages": 2,
@@ -437,11 +437,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "small: video file pendulum-small.mp4 left out (it plays from video.url)"
@@ -455,13 +450,13 @@
       }
     },
     "es": {
-      "hash8": "c24bb705",
+      "hash8": "5c703a49",
       "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 71,
-        "buildMs": 145,
-        "totalMs": 1162,
+        "importMs": 288,
+        "fontsMs": 68,
+        "buildMs": 146,
+        "totalMs": 1339,
         "builds": 2
       },
       "specimen": {
@@ -539,7 +534,7 @@
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 30264,
+        "bytes": 30267,
         "chapters": [
           {
             "pages": 2,
@@ -889,11 +884,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La primera corrección a la fórmula de las oscila…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

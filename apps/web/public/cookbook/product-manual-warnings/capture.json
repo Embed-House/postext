@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "product-manual-warnings",
-  "sourceHash": "5e0816d5fa9058067f64d44eec9c15ece1bb0bf135fadfd4f3161ba8a403f49d",
+  "sourceHash": "b5151e1f3afdc6c737edbcb513a87c4aefe8cb8e87f1a93e17049895e3e63b8f",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.287Z",
+  "capturedAt": "2026-10-12T13:19:51.997Z",
   "variants": {
     "en": {
-      "hash8": "b97ee221",
-      "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
+      "hash8": "527e95b0",
+      "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
       "timings": {
-        "importMs": 119,
-        "fontsMs": 31,
-        "buildMs": 91,
-        "totalMs": 916,
+        "importMs": 161,
+        "fontsMs": 51,
+        "buildMs": 105,
+        "totalMs": 950,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60926,
+          "bytes": 60964,
           "alt": "Page 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -151,12 +151,12 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35986,
+        "bytes": 35987,
         "folio": "6d89ead9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "9302406e3b3993da",
+            "hash": "95dd604f8b67c821",
             "lines": "fc502be864ee3b26"
           }
         ]
@@ -492,11 +492,6 @@
         },
         "findings": [
           {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
-          {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
@@ -505,13 +500,13 @@
       }
     },
     "es": {
-      "hash8": "effaf84b",
-      "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
+      "hash8": "af732b7b",
+      "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 39,
-        "buildMs": 94,
-        "totalMs": 922,
+        "importMs": 191,
+        "fontsMs": 42,
+        "buildMs": 101,
+        "totalMs": 1030,
         "builds": 1
       },
       "specimen": {
@@ -566,7 +561,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60926,
+          "bytes": 60964,
           "alt": "Página 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -646,12 +641,12 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 36009,
+        "bytes": 36010,
         "folio": "6d89ead9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "9302406e3b3993da",
+            "hash": "95dd604f8b67c821",
             "lines": "fc502be864ee3b26"
           }
         ]
@@ -986,11 +981,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
           {
             "check": "C26",
             "severity": "warn",

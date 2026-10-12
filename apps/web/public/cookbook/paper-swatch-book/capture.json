@@ -3,20 +3,20 @@
   "slug": "paper-swatch-book",
   "sourceHash": "c230c9e24b8854c3e728a3e2e1e0fc0fe047b5986048f8b059afe226e51a3ebf",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.175Z",
+  "capturedAt": "2026-10-12T13:19:51.863Z",
   "variants": {
     "en": {
-      "hash8": "747b4eeb",
+      "hash8": "b6b767c2",
       "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 144,
-        "fontsMs": 2,
-        "buildMs": 61,
-        "totalMs": 824,
+        "importMs": 184,
+        "fontsMs": 3,
+        "buildMs": 67,
+        "totalMs": 902,
         "builds": 1
       },
       "specimen": {
@@ -218,7 +218,7 @@
       },
       "sandbox": {
         "file": "paper-swatch-book.postext",
-        "bytes": 30828,
+        "bytes": 30830,
         "folio": "c0edc776",
         "chapters": [
           {
@@ -440,13 +440,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

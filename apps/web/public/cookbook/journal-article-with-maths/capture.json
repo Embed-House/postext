@@ -3,21 +3,21 @@
   "slug": "journal-article-with-maths",
   "sourceHash": "a4aa50311bbe973da28b47932a41747b3a9f77f7610dd54d323015eea159d1e4",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.962Z",
+  "capturedAt": "2026-10-12T13:19:51.422Z",
   "variants": {
     "en": {
-      "hash8": "6dadcc6b",
+      "hash8": "8cc2e613",
       "vdtHash": "5983265a2aefc88ff1af9b6a409f96fc03e06dce",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 98,
-        "buildMs": 134,
-        "totalMs": 1091,
+        "importMs": 220,
+        "fontsMs": 126,
+        "buildMs": 151,
+        "totalMs": 1140,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "journal-article-with-maths.postext",
-        "bytes": 44964,
+        "bytes": 44966,
         "folio": "ba291173",
         "chapters": [
           {
@@ -442,13 +442,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

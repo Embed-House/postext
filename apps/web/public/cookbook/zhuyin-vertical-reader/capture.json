@@ -3,21 +3,21 @@
   "slug": "zhuyin-vertical-reader",
   "sourceHash": "b02091649ca41c1f89d47dcd8830a018c6d76a003485f63038ab5335314c28d9",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.603Z",
+  "capturedAt": "2026-10-12T13:19:52.393Z",
   "variants": {
     "en": {
-      "hash8": "e8329835",
+      "hash8": "5604f5dd",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 239,
-        "fontsMs": 346,
+        "importMs": 269,
+        "fontsMs": 422,
         "buildMs": 63,
-        "totalMs": 1307,
+        "totalMs": 1329,
         "builds": 1
       },
       "specimen": {
@@ -118,7 +118,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507680,
+        "bytes": 507682,
         "folio": "351449da",
         "chapters": [
           {
@@ -382,11 +382,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -395,13 +390,13 @@
       }
     },
     "es": {
-      "hash8": "8ed74b9e",
+      "hash8": "d606cd82",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 451,
-        "buildMs": 58,
-        "totalMs": 1300,
+        "importMs": 295,
+        "fontsMs": 591,
+        "buildMs": 65,
+        "totalMs": 1590,
         "builds": 1
       },
       "specimen": {
@@ -502,7 +497,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507715,
+        "bytes": 507716,
         "folio": "351449da",
         "chapters": [
           {
@@ -765,11 +760,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

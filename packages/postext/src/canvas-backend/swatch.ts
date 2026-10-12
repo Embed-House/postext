@@ -4,6 +4,9 @@
  * outlined in the text colour so a pale fill still reads against the paper.
  * Shared by the body-text and resource-block painters.
  */
+
+import { restoreContext, saveContext } from './contextState';
+
 export function paintSwatch(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -13,7 +16,7 @@ export function paintSwatch(
   ink: string,
 ): void {
   const y = baseline - side;
-  ctx.save();
+  saveContext(ctx);
   if (fill) {
     ctx.fillStyle = fill;
     ctx.fillRect(x, y, side, side);
@@ -22,5 +25,5 @@ export function paintSwatch(
   ctx.strokeStyle = ink;
   ctx.lineWidth = stroke;
   ctx.strokeRect(x + stroke / 2, y + stroke / 2, side - stroke, side - stroke);
-  ctx.restore();
+  restoreContext(ctx);
 }

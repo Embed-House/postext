@@ -3,20 +3,20 @@
   "slug": "boxes-split-float-pin",
   "sourceHash": "162885125f440a05e5dc76fa19ceafdcc7be31e1660f64a58a22d3e481e00b5c",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.667Z",
+  "capturedAt": "2026-10-12T13:19:51.029Z",
   "variants": {
     "es": {
-      "hash8": "40844055",
+      "hash8": "edd82f79",
       "vdtHash": "731766a34e54522c0cbf634b2c7f9ff4a2b60ec3",
       "timings": {
-        "importMs": 182,
-        "fontsMs": 31,
-        "buildMs": 111,
-        "totalMs": 943,
+        "importMs": 229,
+        "fontsMs": 88,
+        "buildMs": 130,
+        "totalMs": 1120,
         "builds": 1
       },
       "specimen": {
@@ -385,11 +385,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

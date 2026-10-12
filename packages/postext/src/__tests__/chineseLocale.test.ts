@@ -283,10 +283,14 @@ describe('lang in the output', () => {
     expect(renderToHtml(docOf({ locale: 'zh-Hans', bodyText: { shapingLanguage: 'host' } }))).toContain('<div class="pt-doc" lang="zh-Hans"');
   });
 
-  it('the canvas paints in the document language', () => {
-    const doc = docOf({ locale: 'zh-Hant' });
+  // The canvas paints in the language the layout measured in (#764): the
+  // document's when it asks for its own, and the host's otherwise, which
+  // is the context as it comes (`inherit`). Up to postext 1.29.1 a Chinese
+  // document shaped in the host's language had `zh-Hant` set on its
+  // context all the same, and lost it at the first `save()` of the page.
+  const languagesSet = (doc: VDTDocument): Promise<string[]> => {
     const set: string[] = [];
-    const ctx = new Proxy({ lang: '' } as Record<string, unknown>, {
+    const ctx = new Proxy({ lang: 'inherit' } as Record<string, unknown>, {
       get: (t, k) => (k in t ? t[k as string] : () => ({ width: 0 })),
       set: (t, k, v) => { if (k === 'lang') set.push(v as string); t[k as string] = v; return true; },
       has: (t, k) => k in t || k === 'lang',
@@ -294,7 +298,20 @@ describe('lang in the output', () => {
     const canvas = { width: 0, height: 0, getContext: () => ctx } as unknown as HTMLCanvasElement;
     return import('../canvas-backend').then(({ renderPageToCanvas }) => {
       renderPageToCanvas(doc.pages[0]!, doc, canvas);
-      expect(set).toEqual(['zh-Hant']);
+      return set;
     });
+  };
+
+  it('the canvas paints a document shaped in its own language in it', async () => {
+    const set = await languagesSet(docOf({ locale: 'zh-Hant', bodyText: { shapingLanguage: 'document' } }));
+    // Set for the page and again in each state saved, then the context
+    // gets back the language it came in.
+    expect(set.length).toBeGreaterThan(1);
+    expect(set[set.length - 1]).toBe('inherit');
+    expect(new Set(set.slice(0, -1))).toEqual(new Set(['zh-Hant']));
+  });
+
+  it('the canvas leaves a document shaped in the host\'s language in the host\'s', async () => {
+    expect(await languagesSet(docOf({ locale: 'zh-Hant' }))).toEqual([]);
   });
 });

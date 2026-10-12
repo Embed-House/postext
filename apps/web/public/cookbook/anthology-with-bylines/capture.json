@@ -3,20 +3,20 @@
   "slug": "anthology-with-bylines",
   "sourceHash": "cd8fbe80a9ab5bbfa56853ec52d261ed97d86e2e74186e37201140832a59673e",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.570Z",
+  "capturedAt": "2026-10-12T13:19:50.919Z",
   "variants": {
     "en": {
-      "hash8": "3edfec39",
+      "hash8": "92195a44",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 24,
-        "buildMs": 79,
-        "totalMs": 948,
+        "importMs": 181,
+        "fontsMs": 39,
+        "buildMs": 76,
+        "totalMs": 992,
         "builds": 1
       },
       "specimen": {
@@ -177,7 +177,7 @@
       },
       "sandbox": {
         "file": "anthology-with-bylines.postext",
-        "bytes": 243467,
+        "bytes": 243468,
         "folio": "6cdad6f3",
         "chapters": [
           {
@@ -423,11 +423,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -3,20 +3,20 @@
   "slug": "first-page-from-markdown",
   "sourceHash": "83c4f58b098c4c0ba56270a438fd7c50599b1dae73f333dbda6008e0f98c8825",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.889Z",
+  "capturedAt": "2026-10-12T13:19:51.319Z",
   "variants": {
     "en": {
-      "hash8": "cc3b9e39",
+      "hash8": "4a031497",
       "vdtHash": "07c56b8d23023596323db7886c283256ac133054",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 23,
-        "buildMs": 141,
-        "totalMs": 1069,
+        "importMs": 219,
+        "fontsMs": 30,
+        "buildMs": 143,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193206,
+        "bytes": 193208,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -295,23 +295,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −4‰, the cap): p. 2 −4‰ “We slept that night in a hollow of the dunes tha…”, p. 2 −4‰ “The ledger is written in three hands. The first …”, p. 2 −4‰ “The last entry in the ledger, halfway down a pag…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "156f98ff",
+      "hash8": "23ea83d9",
       "vdtHash": "1e26a3350d2d18641aafd17b9408bbe5a95fba4b",
       "timings": {
-        "importMs": 153,
-        "fontsMs": 26,
-        "buildMs": 69,
-        "totalMs": 891,
+        "importMs": 159,
+        "fontsMs": 22,
+        "buildMs": 75,
+        "totalMs": 902,
         "builds": 1
       },
       "specimen": {
@@ -384,7 +379,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193513,
+        "bytes": 193515,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -580,23 +575,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "97db554e",
+      "hash8": "777683ac",
       "vdtHash": "e0adb9fecd13a0fc4c60faa93b63baaf7b57aed8",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 21,
-        "buildMs": 112,
-        "totalMs": 947,
+        "importMs": 166,
+        "fontsMs": 22,
+        "buildMs": 115,
+        "totalMs": 985,
         "builds": 1
       },
       "specimen": {
@@ -669,7 +658,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193620,
+        "bytes": 193619,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -875,11 +864,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −4‰, the cap): p. 1 −4‰ “Durante seis séculos, o sal de Arvela saiu do li…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

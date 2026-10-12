@@ -3,21 +3,21 @@
   "slug": "arabic-novel-right-bound",
   "sourceHash": "a6bd2d4efb28877068941edf1ca18ab9da0b4878334e990c64eddad4219fa930",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.581Z",
+  "capturedAt": "2026-10-12T13:19:50.936Z",
   "variants": {
     "en": {
-      "hash8": "94e5191d",
+      "hash8": "f568d8eb",
       "vdtHash": "c6a02a8a6f28959dd8ec0ac174534c5721eac10a",
       "timings": {
-        "importMs": 223,
-        "fontsMs": 62,
-        "buildMs": 102,
-        "totalMs": 986,
+        "importMs": 285,
+        "fontsMs": 70,
+        "buildMs": 97,
+        "totalMs": 1097,
         "builds": 1
       },
       "specimen": {
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34612,
+        "bytes": 34613,
         "folio": "217e1225",
         "chapters": [
           {
@@ -355,9 +355,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",
@@ -373,13 +373,13 @@
       }
     },
     "es": {
-      "hash8": "786c1b47",
+      "hash8": "2506169d",
       "vdtHash": "e562550e168ab8ad0da1e6d7ee8cc3b80226c331",
       "timings": {
-        "importMs": 237,
-        "fontsMs": 70,
-        "buildMs": 101,
-        "totalMs": 1001,
+        "importMs": 258,
+        "fontsMs": 62,
+        "buildMs": 91,
+        "totalMs": 1038,
         "builds": 1
       },
       "specimen": {
@@ -717,9 +717,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",

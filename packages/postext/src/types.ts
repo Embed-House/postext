@@ -1543,21 +1543,25 @@ export interface BodyTextConfig {
    *  in Chinese, a face with a Catalan form draws `l·l` otherwise, one
    *  with the Turkish rule keeps `fi` apart. `'host'` (the default): as
    *  up to postext 1.28, the measuring contexts take the language of the
-   *  page that hosts the layout (none in a worker), and only a Chinese,
-   *  Japanese, Korean or right-to-left document is painted in its own.
-   *  `'document'`: the document's own ({@link PostextConfig.locale}), and
-   *  a run's own where it names one (`{lang=en}`), on every context the
-   *  layout measures with (the engine's, a layout worker's, the
-   *  plain-paragraph breaker's), so the same document has the same lines
-   *  on a page in any language and in a worker; the HTML viewer and the
+   *  page that hosts the layout (none in a worker) and the canvas paints
+   *  in that same language; the HTML viewer declares the language of a
+   *  Chinese, Japanese, Korean or right-to-left document. `'document'`:
+   *  the document's own ({@link PostextConfig.locale}), and a run's own
+   *  where it names one (`{lang=en}`), on every context the layout
+   *  measures with (the engine's, a layout worker's, the plain-paragraph
+   *  breaker's), so the same document has the same lines on a page in any
+   *  language and in a worker; the canvas paints in it through every
+   *  `save()` (`canvas-backend/contextState.ts`), the HTML viewer and the
    *  EPUB declare it and the PDF shapes with the OpenType language system
-   *  of the language. It was the default of postext 1.29.0 alone, whose
-   *  canvas painted in the host's language all the same and whose PDF set
-   *  Arabic and Catalan marks at other widths than the measured ones
-   *  (#764): until those are fixed, a document that asks for it is
-   *  measured in its language and may be painted off its measure where
-   *  its face has forms for that language. A configuration stored before
-   *  `configVersion` 13 reads with `'host'` written out
+   *  of the language. One case is open: a word the breaker may cut is
+   *  measured whole and painted piece by piece on the canvas and in the
+   *  HTML viewer, so a face whose form for the language needs the letters
+   *  on both sides of a cut (the Catalan `l·l` of Crimson Pro, a wide dot
+   *  set only between two `l`) leaves a gap inside such a word, as it does
+   *  under `'host'` on a page in that language; the PDF sets the word
+   *  whole. `'document'` was the default of postext 1.29.0 alone, whose
+   *  canvas and PDF did not follow the measure (#764). A configuration
+   *  stored before `configVersion` 13 reads with `'host'` written out
    *  (`pinLegacyShapingLanguage` in `postext/bundle`). A browser whose
    *  canvas has no `lang` (Chrome before 136, Firefox and Safari where it
    *  is missing) measures as it always did. */

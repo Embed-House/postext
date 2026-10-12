@@ -29,6 +29,7 @@ import { uncroppedPictureBox } from '../pipeline/safeArea';
 import { mirroredPaintActive } from './mirrorFrame';
 import { paintKunten, paintLineMarks, paintRuby, paintWarichu } from './annotations';
 import { rasterScaleOf } from './deviceScale';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 /** A decoded image the canvas backend can `drawImage`. */
 export type ResourceImageSource = CanvasImageSource;
@@ -377,9 +378,9 @@ function paintLine(
   labelColor: string = color,
 ): void {
   const tracking = line.letterSpacing ?? 0;
-  if (tracking !== 0) ctx.letterSpacing = `${tracking}px`;
+  if (tracking !== 0) setLetterSpacing(ctx, tracking);
   paintLineRuns(ctx, line, font, boldFont, italicFont, boldItalicFont, color, linkColor, labelColor, tracking);
-  if (tracking !== 0) ctx.letterSpacing = '0px';
+  if (tracking !== 0) setLetterSpacing(ctx, 0);
 }
 
 function paintLineRuns(
@@ -461,9 +462,9 @@ function paintLineRuns(
         continue;
       }
       // A justified CJK line spreads its characters per segment.
-      if (seg.tracking !== undefined) ctx.letterSpacing = `${tracking + seg.tracking}px`;
+      if (seg.tracking !== undefined) setLetterSpacing(ctx, tracking + seg.tracking);
       fillSegmentText(ctx, seg, x, line.baseline, cuts);
-      if (seg.tracking !== undefined) ctx.letterSpacing = `${tracking}px`;
+      if (seg.tracking !== undefined) setLetterSpacing(ctx, tracking);
       // A ruby base's reading (#194, #429).
       if (seg.ruby) paintRuby(ctx, seg.ruby, x, line.baseline, fill);
       // Kanbun marks (#430).
@@ -494,7 +495,7 @@ export function paintVideoOverlays(
   bw: number,
 ): void {
   if (!video.playMark && !video.qr) return;
-  ctx.save();
+  saveContext(ctx);
   if (mirroredPaintActive()) {
     ctx.translate(2 * bx + bw, 0);
     ctx.scale(-1, 1);
@@ -548,7 +549,7 @@ export function paintVideoOverlays(
     for (const run of qrModuleRuns(qr)) ctx.rect(ox + run.x, oy + run.y, run.w, run.h);
     ctx.fill();
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 function drawPlaceholder(
@@ -559,7 +560,7 @@ function drawPlaceholder(
   h: number,
   label: string,
 ): void {
-  ctx.save();
+  saveContext(ctx);
   ctx.fillStyle = 'rgba(160, 160, 160, 0.12)';
   ctx.fillRect(x, y, w, h);
   ctx.strokeStyle = 'rgba(160, 160, 160, 0.5)';
@@ -570,7 +571,7 @@ function drawPlaceholder(
   ctx.textBaseline = 'middle';
   ctx.font = `${Math.max(10, Math.min(16, h * 0.1))}px sans-serif`;
   ctx.fillText(label, x + w / 2, y + h / 2);
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Trace a rounded outline (per-corner radii) as the current path. */
@@ -641,7 +642,7 @@ function renderTable(
   // to its outer contour, then is stroked round on top.
   const rounded = t.frameRadii !== undefined;
   const clipTo = (outset: number) => {
-    ctx.save();
+    saveContext(ctx);
     roundedOutlinePath(ctx, tableFrameOutline(t, bx, by, rb.bodyRect.width, outset));
     ctx.clip();
   };
@@ -657,10 +658,10 @@ function renderTable(
       fillCell(cell.rect.x, cell.rect.y, cell.rect.width, cell.rect.height);
     }
   }
-  if (rounded) ctx.restore();
+  if (rounded) restoreContext(ctx);
   if (t.strokes) {
     // Booktabs (#625): the layout's strokes, straight, each its own width.
-    ctx.save();
+    saveContext(ctx);
     ctx.strokeStyle = t.borderColor;
     ctx.lineCap = 'butt';
     for (const s of t.strokes) {
@@ -670,9 +671,9 @@ function renderTable(
       ctx.lineTo(bx + s.x2, by + s.y2);
       ctx.stroke();
     }
-    ctx.restore();
+    restoreContext(ctx);
   } else if (t.borderWidthPx > 0) {
-    ctx.save();
+    saveContext(ctx);
     ctx.strokeStyle = t.borderColor;
     ctx.lineWidth = t.borderWidthPx;
     const rules = t.rules ?? 'grid';
@@ -694,12 +695,12 @@ function renderTable(
       const tableHeight = t.rowEdges[t.rowEdges.length - 1] ?? rb.bodyRect.height;
       ctx.strokeRect(bx, by, rb.bodyRect.width, tableHeight);
     }
-    if (rounded && rules !== 'outer') ctx.restore();
+    if (rounded && rules !== 'outer') restoreContext(ctx);
     if (rounded && (rules === 'grid' || rules === 'outer')) {
       roundedOutlinePath(ctx, tableFrameOutline(t, bx, by, rb.bodyRect.width));
       ctx.stroke();
     }
-    ctx.restore();
+    restoreContext(ctx);
   }
   // Cell images (bitmap / SVG resources embedded in cells), then text.
   for (const cell of t.cells) {
@@ -737,7 +738,7 @@ export function renderResourceBlock(
   // a vertical page that is the upright figure, set horizontally.
   const outerVertical = rot ? setVerticalPaint(null) : null;
   if (rot) {
-    ctx.save();
+    saveContext(ctx);
     ctx.translate(rot.originX, rot.originY);
     ctx.rotate(rot.direction === 'ccw' ? -Math.PI / 2 : Math.PI / 2);
   }
@@ -756,7 +757,7 @@ export function renderResourceBlock(
     // box: reflect that box about the body so the same part shows.
     if (full && mirroredPaintActive()) full = { ...full, x: 2 * bx + bw - full.x - full.width };
     if (full) {
-      ctx.save();
+      saveContext(ctx);
       ctx.beginPath();
       ctx.rect(bx, by, bw, bh);
       ctx.clip();
@@ -764,13 +765,13 @@ export function renderResourceBlock(
     const drawn = rb.fileId
       ? drawResourceImage(ctx, rb.fileId, full?.x ?? bx, full?.y ?? by, full?.width ?? bw, full?.height ?? bh, { inkHex, svg: rb.kind === 'svg' }, rb.resource.id)
       : false;
-    if (full) ctx.restore();
+    if (full) restoreContext(ctx);
     if (!drawn && rb.kind === 'video') {
       // No poster (or not loaded yet): a dark frame the overlays read on.
-      ctx.save();
+      saveContext(ctx);
       ctx.fillStyle = '#1f1f1f';
       ctx.fillRect(bx, by, bw, bh);
-      ctx.restore();
+      restoreContext(ctx);
     } else if (!drawn) {
       drawPlaceholder(ctx, bx, by, bw, bh, rb.kind === 'svg' ? 'SVG' : 'Image');
     }
@@ -781,7 +782,7 @@ export function renderResourceBlock(
 
   // Caption bar (behind the caption lines), then caption + note lines — all
   // already positioned in absolute page coords during placement.
-  ctx.save();
+  saveContext(ctx);
   if (rb.captionBar) {
     const { rect, background } = rb.captionBar;
     ctx.fillStyle = background;
@@ -804,9 +805,9 @@ export function renderResourceBlock(
       rb.noteColor, rb.linkColor,
     );
   }
-  ctx.restore();
+  restoreContext(ctx);
   if (rot) {
-    ctx.restore();
+    restoreContext(ctx);
     setVerticalPaint(outerVertical);
   }
 }

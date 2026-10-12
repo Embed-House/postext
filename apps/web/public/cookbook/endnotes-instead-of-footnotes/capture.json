@@ -3,20 +3,20 @@
   "slug": "endnotes-instead-of-footnotes",
   "sourceHash": "249059699def7895d7e691fcedf421037cbf99d55db79749ba5a67950e9f4ab3",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.865Z",
+  "capturedAt": "2026-10-12T13:19:51.284Z",
   "variants": {
     "en": {
-      "hash8": "6da66ba9",
+      "hash8": "5b369179",
       "vdtHash": "e4999498153329210326f1834fe8debf4c9f584d",
       "timings": {
-        "importMs": 216,
-        "fontsMs": 46,
-        "buildMs": 95,
-        "totalMs": 1083,
+        "importMs": 163,
+        "fontsMs": 42,
+        "buildMs": 116,
+        "totalMs": 992,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "endnotes-instead-of-footnotes.postext",
-        "bytes": 78143,
+        "bytes": 78145,
         "folio": "3d3a1e90",
         "chapters": [
           {
@@ -349,11 +349,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,20 +3,20 @@
   "slug": "puzzle-book",
   "sourceHash": "b2714c66c2de29daa0fcabac48dd6fad50ec0a255c4e22762030d559b542d213",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.309Z",
+  "capturedAt": "2026-10-12T13:19:52.022Z",
   "variants": {
     "en": {
-      "hash8": "7fc05ec6",
+      "hash8": "ef83673c",
       "vdtHash": "7fc9d6b0d819dec89885d5ae89ec48f5a6537d79",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 44,
-        "buildMs": 55,
-        "totalMs": 911,
+        "importMs": 193,
+        "fontsMs": 38,
+        "buildMs": 53,
+        "totalMs": 934,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23118,
+        "bytes": 23121,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -371,23 +371,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d1a4957f",
+      "hash8": "cce4ce11",
       "vdtHash": "a641d94188496fe2b5955581bc4ed838524e62c1",
       "timings": {
-        "importMs": 224,
-        "fontsMs": 42,
-        "buildMs": 56,
-        "totalMs": 953,
+        "importMs": 278,
+        "fontsMs": 40,
+        "buildMs": 59,
+        "totalMs": 1047,
         "builds": 1
       },
       "specimen": {
@@ -496,7 +490,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23987,
+        "bytes": 23990,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -742,13 +736,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

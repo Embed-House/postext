@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "a853d453c95fae068c9ad60a7cdb9fda1f5d1d6d886a9336a23b2822483dc462",
+  "sourceHash": "f6ad4776073b627b2aca6499f4da6420a19991cddc3b4afd22e2c46efb5ff27c",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.111Z",
+  "capturedAt": "2026-10-12T13:19:51.736Z",
   "variants": {
     "en": {
-      "hash8": "51556445",
+      "hash8": "347bbbce",
       "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 114,
-        "buildMs": 312,
-        "totalMs": 1217,
+        "importMs": 245,
+        "fontsMs": 234,
+        "buildMs": 338,
+        "totalMs": 1559,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -93,7 +93,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 811805,
+        "bytes": 811825,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -129,6 +129,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -258,7 +259,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -333,23 +334,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "04d4638c",
+      "hash8": "f3ff9b51",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 206,
-        "fontsMs": 122,
-        "buildMs": 405,
-        "totalMs": 1344,
+        "importMs": 234,
+        "fontsMs": 217,
+        "buildMs": 469,
+        "totalMs": 1522,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +365,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -425,7 +420,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812405,
+        "bytes": 812426,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -461,6 +456,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -590,7 +586,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -665,23 +661,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "53dca3e1",
+      "hash8": "af77143a",
       "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 113,
-        "buildMs": 292,
-        "totalMs": 1243,
+        "importMs": 243,
+        "fontsMs": 140,
+        "buildMs": 338,
+        "totalMs": 1392,
         "builds": 1
       },
       "specimen": {
@@ -702,7 +692,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -757,7 +747,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812365,
+        "bytes": 812386,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -793,6 +783,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -922,7 +913,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -997,23 +988,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "74b770ad",
+      "hash8": "21350df5",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 420,
-        "buildMs": 295,
-        "totalMs": 1497,
+        "importMs": 215,
+        "fontsMs": 595,
+        "buildMs": 325,
+        "totalMs": 1727,
         "builds": 1
       },
       "specimen": {
@@ -1034,7 +1019,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -1089,7 +1074,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812293,
+        "bytes": 812316,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1125,6 +1110,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1254,7 +1240,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1330,23 +1316,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "64aae98c",
+      "hash8": "e2bfb7a6",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 167,
-        "buildMs": 300,
-        "totalMs": 1328,
+        "importMs": 324,
+        "fontsMs": 172,
+        "buildMs": 336,
+        "totalMs": 1465,
         "builds": 1
       },
       "specimen": {
@@ -1367,7 +1347,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -1418,12 +1398,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 896817,
+        "bytes": 896977,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813678,
+        "bytes": 813699,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1459,6 +1439,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1588,7 +1569,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1662,23 +1643,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "b5192ced",
+      "hash8": "82aade37",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 286,
-        "fontsMs": 546,
-        "buildMs": 319,
-        "totalMs": 1809,
+        "importMs": 306,
+        "fontsMs": 797,
+        "buildMs": 329,
+        "totalMs": 2045,
         "builds": 1
       },
       "specimen": {
@@ -1699,7 +1674,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -1755,7 +1730,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813787,
+        "bytes": 813806,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1791,6 +1766,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1920,7 +1896,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1997,23 +1973,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "92817876",
+      "hash8": "a0172621",
       "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
       "timings": {
-        "importMs": 359,
-        "fontsMs": 188,
-        "buildMs": 342,
-        "totalMs": 1510,
+        "importMs": 295,
+        "fontsMs": 225,
+        "buildMs": 367,
+        "totalMs": 1482,
         "builds": 1
       },
       "specimen": {
@@ -2034,7 +2004,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 177
+        "ownLines": 179
       },
       "pages": [
         {
@@ -2089,7 +2059,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812402,
+        "bytes": 812421,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -2125,6 +2095,7 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -2254,7 +2225,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 203,
+        "configLeaves": 204,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -2339,11 +2310,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "ai-preprint-prompt-exemplars",
   "sourceHash": "15bde53416c04fec1928b57193bf651076e3b1ea1887b68c7ebe83666596d6f8",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.553Z",
+  "capturedAt": "2026-10-12T13:19:50.898Z",
   "variants": {
     "en": {
-      "hash8": "0b6163ad",
+      "hash8": "012af07b",
       "vdtHash": "4d00faa8c19033ddf8a92f4baef745aee3e0b696",
       "timings": {
-        "importMs": 21258,
-        "fontsMs": 96,
-        "buildMs": 916,
-        "totalMs": 23010,
+        "importMs": 20829,
+        "fontsMs": 91,
+        "buildMs": 893,
+        "totalMs": 22591,
         "builds": 1
       },
       "specimen": {
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153374,
+        "bytes": 153375,
         "folio": "055119a2",
         "chapters": [
           {
@@ -540,11 +540,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

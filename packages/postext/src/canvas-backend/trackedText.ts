@@ -2,6 +2,7 @@ import { bidiClassOf, needsBidi } from '../bidi';
 import { graphemesOf } from '../measure/graphemes';
 import { joiningScriptIn } from '../measure/joining';
 import { paintAsOneRun } from './mirrorFrame';
+import { letterSpacingOf, setLetterSpacing } from './contextState';
 
 /**
  * Tracked words keep their ligatures (#663).
@@ -119,7 +120,7 @@ function divisible(text: string): 'ltr' | 'rtl' | null {
 }
 
 function widthAt(ctx: Ctx, text: string, spacing: number): number {
-  ctx.letterSpacing = `${spacing}px`;
+  setLetterSpacing(ctx, spacing);
   return ctx.measureText(text).width;
 }
 
@@ -168,7 +169,7 @@ function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
   }
   // Shaped otherwise as a whole but by no pair of neighbours: left as it was.
   if (ligatures === 0) return null;
-  ctx.letterSpacing = '0px';
+  setLetterSpacing(ctx, 0);
   const natural = (from: number, to: number): number => ctx.measureText(letters.slice(from, to).join('')).width;
   let glyphs = 0;
   const pieces = groups.map((g) => {
@@ -192,9 +193,9 @@ function trackedWord(ctx: CanvasRenderingContext2D, text: string): TrackedWord |
   const { words } = known(ctx, font);
   let word = words.get(text);
   if (word === undefined) {
-    const spacing = ctx.letterSpacing;
+    const spacing = letterSpacingOf(ctx);
     word = wordOf(ctx, font, text);
-    ctx.letterSpacing = spacing;
+    setLetterSpacing(ctx, spacing);
     if (words.size >= MAX_WORDS) words.clear();
     words.set(text, word);
   }
@@ -217,9 +218,9 @@ function measures(ctx: CanvasRenderingContext2D): boolean {
  */
 export function shapedOtherwise(ctx: CanvasRenderingContext2D, text: string): boolean {
   if (text.length < 2 || !measures(ctx)) return false;
-  const spacing = ctx.letterSpacing;
+  const spacing = letterSpacingOf(ctx);
   const changed = otherwise(ctx, ctx.font, text);
-  ctx.letterSpacing = spacing;
+  setLetterSpacing(ctx, spacing);
   return changed;
 }
 
@@ -269,9 +270,9 @@ export function fillTrackedWord(
     if (word.rtl) ctx.textAlign = 'right';
     for (const piece of word.pieces) {
       const at = piece.offset + tracking * piece.glyphsBefore;
-      if (piece.ligature) ctx.letterSpacing = '0px';
+      if (piece.ligature) setLetterSpacing(ctx, 0);
       paint(piece.text, word.rtl ? x + width - at : x + at, y);
-      if (piece.ligature) ctx.letterSpacing = `${tracking}px`;
+      if (piece.ligature) setLetterSpacing(ctx, tracking);
     }
     if (word.rtl) ctx.textAlign = align;
   });

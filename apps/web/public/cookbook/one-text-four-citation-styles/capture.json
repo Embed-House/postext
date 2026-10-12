@@ -3,20 +3,20 @@
   "slug": "one-text-four-citation-styles",
   "sourceHash": "156cf50d5c86a14e2bcd3a71836502b6856f7061a587f9ebc093c79e6d22520e",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.164Z",
+  "capturedAt": "2026-10-12T13:19:51.832Z",
   "variants": {
     "en": {
-      "hash8": "4fe7752d",
+      "hash8": "a4d121d2",
       "vdtHash": "e2ab5f1e45d7e85e8394662fa4a051927baf5b89",
       "timings": {
-        "importMs": 149,
+        "importMs": 192,
         "fontsMs": 5,
-        "buildMs": 244,
-        "totalMs": 1435,
+        "buildMs": 260,
+        "totalMs": 1546,
         "builds": 4
       },
       "specimen": {
@@ -109,7 +109,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17116,
+        "bytes": 17118,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -279,11 +279,6 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 1 of 4; build 2 (The page that is not seen), build 3 (The page that is not seen) and build 4 (The page that is not seen) left out (another configuration)"
@@ -297,13 +292,13 @@
       }
     },
     "es": {
-      "hash8": "571f982d",
+      "hash8": "878a219a",
       "vdtHash": "ebef93da2548d5e1f314a5886ee23b7c4ba14867",
       "timings": {
-        "importMs": 186,
+        "importMs": 260,
         "fontsMs": 5,
-        "buildMs": 255,
-        "totalMs": 1530,
+        "buildMs": 254,
+        "totalMs": 1604,
         "builds": 4
       },
       "specimen": {
@@ -396,7 +391,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17918,
+        "bytes": 17919,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -555,11 +550,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

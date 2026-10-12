@@ -314,11 +314,11 @@ H&J / Knuth–Plass
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
 ├─ shapingLanguage      'document' | 'host'  'host'       (≥ 1.29) the language the text is measured, painted and embedded in. 'host' (default, = ≤ 1.28):
-│                        the measure takes the host page's language (none in a worker); only CJK and right-to-left documents are painted in their own.
-│                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context, so the lines are the same on a
-│                        page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, ZHT, JAN, CAT, TRK…).
-│                        NOT FINISHED: the canvas still paints in the host's language and the PDF sets Arabic marks and some Catalan l·l off the
-│                        measured widths; it was the default of 1.29.0 alone. Leave it unset when porting. Presets below configVersion 13 read 'host'.
+│                        the measure and the canvas take the host page's language (none in a worker); HTML declares lang for CJK and RTL documents.
+│                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context and on the canvas, so the lines
+│                        are the same on a page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, JAN, CAT…).
+│                        Open case: a hyphenatable word is measured whole and painted in pieces on canvas/HTML; a face whose language form needs both
+│                        neighbours (Crimson Pro's Catalan l·l) shows a gap there. Leave unset when porting unless the book needs it. Below configVersion 13: 'host'.
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true

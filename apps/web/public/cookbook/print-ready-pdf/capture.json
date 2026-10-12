@@ -3,21 +3,21 @@
   "slug": "print-ready-pdf",
   "sourceHash": "2030d5a3a325d2e674fd3080863937dbacab9106a3ea0cffcd919d6e4af29b26",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.285Z",
+  "capturedAt": "2026-10-12T13:19:51.991Z",
   "variants": {
     "es": {
-      "hash8": "d3def562",
+      "hash8": "2f227610",
       "vdtHash": "731346965b7c574a9b7c70d0d12cb2b5299688cd",
       "timings": {
-        "importMs": 173,
-        "fontsMs": 40,
-        "buildMs": 55,
-        "totalMs": 969,
+        "importMs": 228,
+        "fontsMs": 38,
+        "buildMs": 56,
+        "totalMs": 994,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "print-ready-pdf.postext",
-        "bytes": 102287,
+        "bytes": 102291,
         "folio": "2465c19b",
         "chapters": [
           {
@@ -353,11 +353,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

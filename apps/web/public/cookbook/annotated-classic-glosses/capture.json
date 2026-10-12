@@ -3,20 +3,20 @@
   "slug": "annotated-classic-glosses",
   "sourceHash": "8846f14e522191630d908f59affe029a706b4a63e32f0673789aa256b0b39259",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.564Z",
+  "capturedAt": "2026-10-12T13:19:50.912Z",
   "variants": {
     "en": {
-      "hash8": "566a9178",
+      "hash8": "22b1a103",
       "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 142,
+        "importMs": 191,
         "fontsMs": 25,
-        "buildMs": 82,
-        "totalMs": 852,
+        "buildMs": 90,
+        "totalMs": 994,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319053,
+        "bytes": 319055,
         "folio": "923d57f4",
         "chapters": [
           {
@@ -314,11 +314,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -3,21 +3,21 @@
   "slug": "bilingual-metascience-essay",
   "sourceHash": "4b07cd66e749adfbf71bb4e022cb534ce4938eb5de7a92a17f662a305482d293",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.647Z",
+  "capturedAt": "2026-10-12T13:19:51.005Z",
   "variants": {
     "en": {
-      "hash8": "cc37fa88",
+      "hash8": "c518e0bc",
       "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 216,
-        "fontsMs": 2358,
-        "buildMs": 431,
-        "totalMs": 3616,
+        "importMs": 235,
+        "fontsMs": 2680,
+        "buildMs": 485,
+        "totalMs": 4047,
         "builds": 1
       },
       "specimen": {
@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 123965,
+        "bytes": 123968,
         "folio": "a418809e",
         "chapters": [
           {
@@ -510,23 +510,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "481bea28",
+      "hash8": "31fb02ca",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 2123,
-        "buildMs": 412,
-        "totalMs": 3348,
+        "importMs": 223,
+        "fontsMs": 1954,
+        "buildMs": 445,
+        "totalMs": 3259,
         "builds": 1
       },
       "specimen": {
@@ -655,7 +650,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126676,
+        "bytes": 126679,
         "folio": "a418809e",
         "chapters": [
           {
@@ -1009,11 +1004,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

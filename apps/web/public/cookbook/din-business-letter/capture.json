@@ -3,21 +3,21 @@
   "slug": "din-business-letter",
   "sourceHash": "b9d95f9fde6da95efea4168812b897ba25d61eb964b633f56c4659cbd76a5da4",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.856Z",
+  "capturedAt": "2026-10-12T13:19:51.269Z",
   "variants": {
     "en": {
-      "hash8": "80541b62",
+      "hash8": "41d4ec2d",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 31,
-        "buildMs": 158,
-        "totalMs": 1144,
+        "importMs": 205,
+        "fontsMs": 29,
+        "buildMs": 157,
+        "totalMs": 1028,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +94,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23164,
+        "bytes": 23166,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -278,23 +278,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "46426e0e",
+      "hash8": "e2abb714",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 285,
-        "fontsMs": 34,
-        "buildMs": 165,
-        "totalMs": 1196,
+        "importMs": 236,
+        "fontsMs": 30,
+        "buildMs": 155,
+        "totalMs": 1096,
         "builds": 1
       },
       "specimen": {
@@ -371,7 +366,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23188,
+        "bytes": 23190,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -555,11 +550,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

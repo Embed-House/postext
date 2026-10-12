@@ -3,20 +3,20 @@
   "slug": "magazine-feature-opener",
   "sourceHash": "882d5972a4fc1920cffed0b2192601ca098c046a56bf78d59199733a418f09bf",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.019Z",
+  "capturedAt": "2026-10-12T13:19:51.526Z",
   "variants": {
     "en": {
-      "hash8": "712bdd7e",
+      "hash8": "3d92cf84",
       "vdtHash": "1871a690ae43e90d4c3e530d5da43e94d98675cb",
       "timings": {
-        "importMs": 129,
-        "fontsMs": 32,
-        "buildMs": 210,
-        "totalMs": 997,
+        "importMs": 164,
+        "fontsMs": 36,
+        "buildMs": 228,
+        "totalMs": 1105,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768160,
+        "bytes": 768162,
         "folio": "da2eb3c6",
         "chapters": [
           {
@@ -421,13 +421,13 @@
       }
     },
     "es": {
-      "hash8": "08f7728e",
+      "hash8": "9fa7398b",
       "vdtHash": "8cd4f449ddc4be1a9bc7860b0343edd132b9d730",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 32,
-        "buildMs": 124,
-        "totalMs": 883,
+        "importMs": 179,
+        "fontsMs": 44,
+        "buildMs": 147,
+        "totalMs": 1037,
         "builds": 1
       },
       "specimen": {
@@ -526,7 +526,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768204,
+        "bytes": 768206,
         "folio": "da2eb3c6",
         "chapters": [
           {

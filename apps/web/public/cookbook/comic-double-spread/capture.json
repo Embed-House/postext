@@ -3,21 +3,21 @@
   "slug": "comic-double-spread",
   "sourceHash": "267a711bbf03ad16328c77412cd9eac294c7fe1d1e031c39d2396474acd681dc",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.773Z",
+  "capturedAt": "2026-10-12T13:19:51.153Z",
   "variants": {
     "en": {
-      "hash8": "6cf388ca",
+      "hash8": "45a60eb3",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 225,
-        "fontsMs": 110,
-        "buildMs": 242,
-        "totalMs": 1276,
+        "importMs": 448,
+        "fontsMs": 130,
+        "buildMs": 264,
+        "totalMs": 1504,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893400,
+        "bytes": 893401,
         "chapters": [
           {
             "pages": 2,
@@ -257,11 +257,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -270,13 +265,13 @@
       }
     },
     "es": {
-      "hash8": "0a30f24f",
+      "hash8": "354b113a",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 236,
-        "fontsMs": 261,
-        "buildMs": 250,
-        "totalMs": 1381,
+        "importMs": 354,
+        "fontsMs": 262,
+        "buildMs": 274,
+        "totalMs": 1547,
         "builds": 1
       },
       "specimen": {
@@ -347,7 +342,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893457,
+        "bytes": 893458,
         "chapters": [
           {
             "pages": 2,
@@ -516,11 +511,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -529,13 +519,13 @@
       }
     },
     "ca": {
-      "hash8": "bef8c9e5",
+      "hash8": "92eaf54a",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
-        "importMs": 281,
-        "fontsMs": 114,
-        "buildMs": 225,
-        "totalMs": 1302,
+        "importMs": 289,
+        "fontsMs": 333,
+        "buildMs": 248,
+        "totalMs": 1531,
         "builds": 1
       },
       "specimen": {
@@ -606,7 +596,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893455,
+        "bytes": 893456,
         "chapters": [
           {
             "pages": 2,
@@ -775,11 +765,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -788,13 +773,13 @@
       }
     },
     "zh": {
-      "hash8": "62e836dd",
+      "hash8": "1323383a",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 282,
-        "fontsMs": 221,
-        "buildMs": 242,
-        "totalMs": 1335,
+        "importMs": 302,
+        "fontsMs": 315,
+        "buildMs": 256,
+        "totalMs": 1444,
         "builds": 1
       },
       "specimen": {
@@ -865,7 +850,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893743,
+        "bytes": 893745,
         "chapters": [
           {
             "pages": 2,
@@ -1035,11 +1020,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1048,13 +1028,13 @@
       }
     },
     "ar": {
-      "hash8": "7a5c2657",
+      "hash8": "5b6c1de6",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 287,
-        "fontsMs": 313,
-        "buildMs": 253,
-        "totalMs": 1452,
+        "importMs": 240,
+        "fontsMs": 148,
+        "buildMs": 257,
+        "totalMs": 1269,
         "builds": 1
       },
       "specimen": {
@@ -1126,7 +1106,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893880,
+        "bytes": 893882,
         "chapters": [
           {
             "pages": 2,
@@ -1298,11 +1278,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1311,13 +1286,13 @@
       }
     },
     "ja": {
-      "hash8": "1667006b",
+      "hash8": "5ac67d25",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 245,
-        "fontsMs": 228,
-        "buildMs": 228,
-        "totalMs": 1343,
+        "importMs": 223,
+        "fontsMs": 213,
+        "buildMs": 223,
+        "totalMs": 1303,
         "builds": 1
       },
       "specimen": {
@@ -1389,7 +1364,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893776,
+        "bytes": 893778,
         "chapters": [
           {
             "pages": 2,
@@ -1560,11 +1535,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1573,13 +1543,13 @@
       }
     },
     "pt": {
-      "hash8": "b40dc156",
+      "hash8": "cc49e67a",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 242,
-        "fontsMs": 207,
-        "buildMs": 296,
-        "totalMs": 1347,
+        "importMs": 258,
+        "fontsMs": 159,
+        "buildMs": 293,
+        "totalMs": 1384,
         "builds": 1
       },
       "specimen": {
@@ -1650,7 +1620,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893539,
+        "bytes": 893541,
         "chapters": [
           {
             "pages": 2,
@@ -1817,11 +1787,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

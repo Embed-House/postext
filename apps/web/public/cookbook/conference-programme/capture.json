@@ -3,20 +3,20 @@
   "slug": "conference-programme",
   "sourceHash": "2673557f0ddef0e2287e2e25ae03ab0c06900bae23429c4441a5596ed37a48ea",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.840Z",
+  "capturedAt": "2026-10-12T13:19:51.249Z",
   "variants": {
     "en": {
-      "hash8": "ab114fa8",
+      "hash8": "535837e2",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 31,
-        "buildMs": 78,
-        "totalMs": 889,
+        "importMs": 243,
+        "fontsMs": 45,
+        "buildMs": 81,
+        "totalMs": 971,
         "builds": 1
       },
       "specimen": {
@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32724,
+        "bytes": 32725,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -415,21 +415,21 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ead5466a",
+      "hash8": "9f5da6c1",
       "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
       "timings": {
-        "importMs": 124,
-        "fontsMs": 27,
-        "buildMs": 72,
-        "totalMs": 871,
+        "importMs": 162,
+        "fontsMs": 33,
+        "buildMs": 79,
+        "totalMs": 928,
         "builds": 1
       },
       "specimen": {
@@ -554,7 +554,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32728,
+        "bytes": 32730,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -828,9 +828,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

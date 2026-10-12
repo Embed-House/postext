@@ -3,21 +3,21 @@
   "slug": "qasida-diwan-page",
   "sourceHash": "4a69928b1658c23a93da3edd55c2fe7eb1d37001f8d4804646c0dd5940eaff84",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.314Z",
+  "capturedAt": "2026-10-12T13:19:52.026Z",
   "variants": {
     "en": {
-      "hash8": "2d03df48",
+      "hash8": "d130fd97",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 218,
-        "fontsMs": 158,
+        "importMs": 245,
+        "fontsMs": 201,
         "buildMs": 90,
-        "totalMs": 1073,
+        "totalMs": 1191,
         "builds": 1
       },
       "specimen": {
@@ -320,23 +320,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "dc9b0452",
+      "hash8": "e9cacb53",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 235,
-        "fontsMs": 67,
+        "importMs": 293,
+        "fontsMs": 71,
         "buildMs": 82,
-        "totalMs": 1005,
+        "totalMs": 1104,
         "builds": 1
       },
       "specimen": {
@@ -639,13 +633,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

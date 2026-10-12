@@ -3,21 +3,21 @@
   "slug": "gojuon-index",
   "sourceHash": "7f461c80bdc910c0f415452f1c53891db051d3dc2fe80e84686fd18ff6154def",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.927Z",
+  "capturedAt": "2026-10-12T13:19:51.380Z",
   "variants": {
     "en": {
-      "hash8": "cef5e19e",
+      "hash8": "ef2a3c89",
       "vdtHash": "f8b56a0c3328d7a843fa101f7fd5b623b24105e8",
       "timings": {
-        "importMs": 155,
-        "fontsMs": 138,
-        "buildMs": 82,
-        "totalMs": 1007,
+        "importMs": 205,
+        "fontsMs": 284,
+        "buildMs": 87,
+        "totalMs": 1152,
         "builds": 1
       },
       "specimen": {
@@ -328,6 +328,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -336,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "efc340f9",
+      "hash8": "b576471b",
       "vdtHash": "ea4f51661750ca2803d83212feef5b3e6cfddca3",
       "timings": {
-        "importMs": 151,
-        "fontsMs": 133,
-        "buildMs": 81,
-        "totalMs": 988,
+        "importMs": 209,
+        "fontsMs": 183,
+        "buildMs": 90,
+        "totalMs": 1184,
         "builds": 1
       },
       "specimen": {
@@ -652,6 +657,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

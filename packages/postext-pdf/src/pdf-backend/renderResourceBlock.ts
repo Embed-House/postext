@@ -69,6 +69,7 @@ import {
   strokeOutlinePx,
   counterFlipPx,
   paintInScript,
+  textAdvancePx,
 } from './primitives';
 import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
 import { paintChip } from './chip';
@@ -87,6 +88,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { withSegmentLanguage } from '../shapingLanguage';
+import { wordSegments } from './wordPieces';
 import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
 import type { PrintColorMode } from '../print/colorMode';
 import { embedPrintRaster } from '../print/images';
@@ -620,7 +622,6 @@ function paintLineRuns(
   if (!baseFont) return;
   const baseSize = parseFontString(fonts.normal)?.sizePx ?? 0;
   if (line.segments && line.segments.length > 0) {
-    const segs = line.segments;
     const refRun = new RefRun();
     let x = line.bbox.x;
     const uris = new UriRuns(ctx, line, linkRegistry, elem);
@@ -628,6 +629,12 @@ function paintLineRuns(
     // tracking, ink offset and scale); any other is painted as every line
     // was before them (see `renderSegments` in blockRender.ts).
     const composed = line.cjkComposed === true || ctx.vertical !== undefined;
+    // The pieces of a word the layout measured whole are painted as that
+    // word, in a document shaped in its own language (#764).
+    const segs = wordSegments(line, composed, (seg, text) => {
+      const fontStr = seg.fontString ?? pickFont(!!seg.bold, !!seg.italic, fonts);
+      return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? baseFont, text, parseFontString(fontStr)?.sizePx ?? baseSize, tracking).advance);
+    }) ?? line.segments;
     // A composed CJK line reads as written, not with its gaps.
     const actualLine = composed ? cjkLineText(segs) : undefined;
     let lineState: LineTextState | undefined;

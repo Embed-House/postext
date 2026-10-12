@@ -3,20 +3,20 @@
   "slug": "cv-with-sidebar",
   "sourceHash": "6a8276fe1d5abfbd37de7cf81c4daa9a921ad930fc2db19beab98ec88bb26b1d",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.850Z",
+  "capturedAt": "2026-10-12T13:19:51.260Z",
   "variants": {
     "en": {
-      "hash8": "0ebaadec",
+      "hash8": "85dc1567",
       "vdtHash": "92600c27d780bd4fb06c0c104b39322d0186616d",
       "timings": {
-        "importMs": 236,
+        "importMs": 197,
         "fontsMs": 2,
-        "buildMs": 52,
-        "totalMs": 946,
+        "buildMs": 45,
+        "totalMs": 908,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 29200,
+        "bytes": 29202,
         "folio": "4fd007fe",
         "chapters": [
           {
@@ -269,23 +269,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "45884bbd",
+      "hash8": "03e0e35f",
       "vdtHash": "44f7eab9b9c0d2daf9dc1441a3c6b92fbccaef08",
       "timings": {
-        "importMs": 191,
+        "importMs": 282,
         "fontsMs": 2,
-        "buildMs": 54,
-        "totalMs": 970,
+        "buildMs": 53,
+        "totalMs": 1112,
         "builds": 1
       },
       "specimen": {
@@ -342,7 +336,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 31520,
+        "bytes": 31522,
         "folio": "4fd007fe",
         "chapters": [
           {
@@ -538,13 +532,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

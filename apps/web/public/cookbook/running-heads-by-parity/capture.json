@@ -3,20 +3,20 @@
   "slug": "running-heads-by-parity",
   "sourceHash": "64f9a5f805160d112146ab4f1a2bcac4a2e0eccb4fa75fdb34a3eb8e286f4ea1",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.350Z",
+  "capturedAt": "2026-10-12T13:19:52.071Z",
   "variants": {
     "en": {
-      "hash8": "5162af66",
+      "hash8": "4d0424a9",
       "vdtHash": "0fd2ce0f5bc9963d0e66b0da481d735d672036c2",
       "timings": {
-        "importMs": 129,
+        "importMs": 172,
         "fontsMs": 1,
-        "buildMs": 128,
-        "totalMs": 858,
+        "buildMs": 130,
+        "totalMs": 984,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 24135,
+        "bytes": 24138,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -330,11 +330,6 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “Quintus Marcius, the Roman legate in the war aga…”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -343,13 +338,13 @@
       }
     },
     "es": {
-      "hash8": "a5b09955",
+      "hash8": "38aabbe1",
       "vdtHash": "03511421b5d1dfa2a26bebd282903dc09494abdc",
       "timings": {
-        "importMs": 149,
-        "fontsMs": 0,
-        "buildMs": 61,
-        "totalMs": 867,
+        "importMs": 206,
+        "fontsMs": 1,
+        "buildMs": 69,
+        "totalMs": 967,
         "builds": 1
       },
       "specimen": {
@@ -458,7 +453,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 22519,
+        "bytes": 22522,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -652,11 +647,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

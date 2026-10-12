@@ -3,20 +3,20 @@
   "slug": "bistro-menu",
   "sourceHash": "f6209c519056d3309e7d81e0eb2f1f240560aa4b8e35306a91356e533173ad7d",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.656Z",
+  "capturedAt": "2026-10-12T13:19:51.012Z",
   "variants": {
     "en": {
-      "hash8": "e872f13c",
+      "hash8": "4ab05b99",
       "vdtHash": "006ad9e905a6d78d3dea4d05c500815703794116",
       "timings": {
-        "importMs": 234,
-        "fontsMs": 45,
-        "buildMs": 44,
-        "totalMs": 1002,
+        "importMs": 307,
+        "fontsMs": 46,
+        "buildMs": 48,
+        "totalMs": 1066,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 25546,
+        "bytes": 25547,
         "folio": "bda6e41d",
         "chapters": [
           {
@@ -283,23 +283,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "dd23a3ac",
+      "hash8": "9159631b",
       "vdtHash": "d5f60de0e53f5cd6ee29178611c26a9a557f506b",
       "timings": {
-        "importMs": 236,
-        "fontsMs": 42,
-        "buildMs": 42,
-        "totalMs": 944,
+        "importMs": 306,
+        "fontsMs": 55,
+        "buildMs": 48,
+        "totalMs": 1042,
         "builds": 1
       },
       "specimen": {
@@ -566,13 +560,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

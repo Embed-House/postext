@@ -34,9 +34,10 @@ import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
 import { forcedVerticalRuns, verticalRuns, CORNER_OFFSET_EM, type ForcedOrientation, type VerticalGlyph } from '../writingMode';
 import { graphemeCount, graphemesOf } from '../measure/graphemes';
 import { markPieces, type MarkCutRule } from '../measure/markCuts';
-import { measureRunWidth } from '../measure/canvas';
+import { measureRunWidth, withMeasureLanguage } from '../measure/canvas';
 import { hasCJK } from '../measure/cjk';
 import { fillTrackedWord } from './trackedText';
+import { languageOf, letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 /** What the painter needs while a vertical flow paints. */
 export interface VerticalPaintState {
@@ -340,9 +341,10 @@ function put(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, 
  * in one run, where the layout may have measured each at its own advance.
  * Such text is cut where the layout's measurer cut it (`rule`, see
  * `markCuts`) and painted piece by piece, each piece where the one before
- * ends as the browser sets it (`measureRunWidth`, the context's tracking
- * and word spacing on top) — for a line of the CJK composer, where its
- * characters are. Any other text is one call, as before.
+ * ends as the browser sets it (`measureRunWidth`, the tracking the backend
+ * set on the context on top; it sets no word spacing) — for a line of the
+ * CJK composer, where its characters are. Any other text is one call, as
+ * before.
  */
 function putHorizontal(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, mode: TextPaintMode, rule: MarkCutRule): void {
   const pieces = markPieces(text, rule);
@@ -351,11 +353,11 @@ function putHorizontal(ctx: CanvasRenderingContext2D, text: string, x: number, y
     return;
   }
   const font = ctx.font;
-  const spacing = parseFloat(ctx.letterSpacing) || 0;
-  const wordSpacing = parseFloat((ctx as { wordSpacing?: string }).wordSpacing ?? '') || 0;
-  const widths = pieces.map((piece) => measureRunWidth(piece, font)
-    + (spacing === 0 ? 0 : spacing * graphemeCount(piece))
-    + (wordSpacing === 0 ? 0 : wordSpacing * (piece.split(' ').length - 1)));
+  const spacing = letterSpacingOf(ctx);
+  // Measured in the language the context paints in (#764), where the
+  // layout measured them.
+  const widths = withMeasureLanguage(languageOf(ctx), () => pieces.map((piece) => measureRunWidth(piece, font)
+    + (spacing === 0 ? 0 : spacing * graphemeCount(piece))));
   const align = ctx.textAlign;
   let px = x;
   if (align === 'center' || align === 'right' || align === 'end') {
@@ -379,8 +381,9 @@ function putHorizontal(ctx: CanvasRenderingContext2D, text: string, x: number, y
  * (`MarkCutRule`: whole by default; word by word for a line of a Latin
  * paragraph; character by character for a line of the CJK composer). In a
  * vertical flow (see the module comment) it sets the text vertically:
- * `tracking` (px after every character, default the context's
- * `letterSpacing`) is added after each cell and inside each sideways run.
+ * `tracking` (px after every character, default the letter-spacing the
+ * backend set on the context, `letterSpacingOf`) is added after each cell
+ * and inside each sideways run.
  * Returns nothing; the caller advances by the width the layout measured.
  */
 export function fillFlowText(
@@ -419,8 +422,7 @@ function paintVertical(
   const font = ctx.font;
   const { em, family, prefix } = parseFont(font);
   const central = (state.axes?.[family] ?? DEFAULT_CENTRAL_BASELINE) * em;
-  const spacing = ctx.letterSpacing;
-  const tracking = trackingArg ?? (parseFloat(spacing) || 0);
+  const tracking = trackingArg ?? letterSpacingOf(ctx);
   // A caller centring on `middle` (a list bullet) gives the axis itself.
   const middle = ctx.textBaseline === 'middle';
   const axis = middle ? y : y - central;
@@ -440,7 +442,7 @@ function paintVertical(
       // pieces, and the pen moves by the width it was measured at: its
       // natural width and the tracking after each letter (#703). Painted
       // whole it was wider than its place, and so was the pen's move.
-      const spaced = parseFloat(ctx.letterSpacing) || 0;
+      const spaced = letterSpacingOf(ctx);
       const advance = spaced !== 0
         ? fillTrackedWord(ctx, run.text, cx, baseline, spaced, (piece, px, py) => put(ctx, piece, px, py, mode))
         : (put(ctx, run.text, cx, baseline, mode), undefined);
@@ -451,7 +453,7 @@ function paintVertical(
       cx += paintCombined(ctx, run.glyph.paintAs ?? run.text, cx, axis, em, central, mode) + tracking;
       continue;
     }
-    cx += paintCell(ctx, run.text, run.glyph, cx, axis, em * run.cell, em, central, mode, twinFont, tracking !== 0) + tracking;
+    cx += paintCell(ctx, run.text, run.glyph, cx, axis, em * run.cell, em, central, mode, twinFont) + tracking;
   }
   if (middle) ctx.textBaseline = 'middle';
   if (align !== 'left' && align !== 'start') ctx.textAlign = align;
@@ -490,11 +492,12 @@ function paintCell(
   central: number,
   mode: TextPaintMode,
   twinFont: string | undefined,
-  tracked: boolean,
 ): number {
   const cx = x + cell / 2;
-  const spacing = tracked ? ctx.letterSpacing : undefined;
-  if (spacing !== undefined) ctx.letterSpacing = '0px';
+  // A cell is one character: painted with no letter-spacing, which is
+  // put back for the sideways runs of the line.
+  const spacing = letterSpacingOf(ctx);
+  if (spacing !== 0) setLetterSpacing(ctx, 0);
   let kind: 'upright' | 'rotate' | 'corner' = 'upright';
   // What is painted: a Japanese “ as 〝, whose vertical form is looked for.
   let char = glyph.paintAs ?? g;
@@ -518,7 +521,7 @@ function paintCell(
   const baseFont = face ? ctx.font : undefined;
   if (face) ctx.font = face;
   const w = ctx.measureText(char).width;
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(cx, axis);
   if (kind === 'rotate') {
     // Turned with the frame; a dash stretched to fill its cell. A bracket
@@ -543,9 +546,9 @@ function paintCell(
     const dy = offset ? offset.y * em : 0;
     put(ctx, char, -w / 2 + dx, central + dy, mode);
   }
-  ctx.restore();
+  restoreContext(ctx);
   if (baseFont !== undefined) ctx.font = baseFont;
-  if (spacing !== undefined) ctx.letterSpacing = spacing;
+  if (spacing !== 0) setLetterSpacing(ctx, spacing);
   return cell;
 }
 
@@ -562,18 +565,18 @@ function paintCombined(
   central: number,
   mode: TextPaintMode,
 ): number {
-  const spacing = ctx.letterSpacing;
-  const tracked = spacing !== '' && spacing !== '0px';
-  if (tracked) ctx.letterSpacing = '0px';
+  const spacing = letterSpacingOf(ctx);
+  const tracked = spacing !== 0;
+  if (tracked) setLetterSpacing(ctx, 0);
   const w = ctx.measureText(text).width;
   const k = w > em ? em / w : 1;
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(x + em / 2, axis);
   ctx.rotate(-Math.PI / 2);
   if (k !== 1) ctx.scale(k, 1);
   put(ctx, text, -w / 2, central, mode);
-  ctx.restore();
-  if (tracked) ctx.letterSpacing = spacing;
+  restoreContext(ctx);
+  if (tracked) setLetterSpacing(ctx, spacing);
   return em;
 }
 
@@ -599,7 +602,7 @@ export function drawUprightInBox(
     draw(x, y, w, h);
     return;
   }
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(x, y + h);
   ctx.rotate(-Math.PI / 2);
   // The box on the sheet is `h` wide and `w` tall.
@@ -610,5 +613,5 @@ export function drawUprightInBox(
     const dh = h * k;
     draw((h - dw) / 2, (w - dh) / 2, dw, dh);
   }
-  ctx.restore();
+  restoreContext(ctx);
 }

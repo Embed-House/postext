@@ -36,6 +36,25 @@
  * ({@link shapingScriptOf}). Any other text with no letter (`……`, `—`)
  * was measured in the default script, by the canvas and by both shapers.
  *
+ * That rule is for the string the canvas was handed, the word the layout
+ * measured, not for what a face made of several files leaves of it.
+ * Chrome cuts a string into runs of one direction and each run into words
+ * at its spaces, and gives a mark the script of the word it stands in
+ * before it looks for the file that draws it: the `»` and the stop of
+ * `خالة.»`, which Fontsource keeps in the `latin` file of an Arabic
+ * family, are Arabic text to it. Markazi Text draws its guillemets 0.1 em
+ * narrower for Arabic text in Arabic (`arab`, `ARA `) and Amiri sets a
+ * Latin stop and brackets under `latn` only, so a mark shaped alone as
+ * Latin text came out at another width than the one measured (#764). So:
+ *
+ * - a part with no letter, cut out of a word that has one, is shaped in
+ *   the script of the letter beside it ({@link besideLetterOf},
+ *   {@link withBesideLetter});
+ * - a piece with no letter and none beside it, in a string with
+ *   right-to-left letters (never one kept in eight bits), is shaped in no
+ *   script, also where the piece itself has no character above U+00FF
+ *   ({@link withinRightToLeftText}).
+ *
  * The script in force (#725) is for one word at a time: a word with no
  * letter (`46.`, `1367)`) that the layout measured in the script of the
  * text around it (`VDTLineSegment.scriptContext`) is shaped in that script
@@ -200,6 +219,123 @@ export function withShapingScript<T>(script: string | undefined, fn: () => T): T
 
 /** Text a browser keeps in eight bits: no character above U+00FF. */
 const LATIN_1_RE = /^[\u0000-\u00FF]*$/;
+/** The space words are cut at. */
+const SPACE = 0x20;
+
+/** The scripts a mark takes from the letter beside it (ISO 15924, the
+ *  names `\p{sc=…}` knows them by): the ones a family comes cut into
+ *  files by, and the right-to-left ones HarfBuzz paints. Not Han, kana or
+ *  Hangul: the canvas shapes each of those characters apart from what
+ *  stands beside it (see the module comment). */
+const BESIDE_SCRIPTS = ['Latn', 'Grek', 'Cyrl', 'Armn', 'Geor', 'Hebr', 'Arab', 'Syrc', 'Thaa', 'Nkoo', 'Samr', 'Mand', 'Adlm', 'Rohg'] as const;
+let besideScriptRes: readonly [string, RegExp][] | undefined;
+const besideScripts = new Map<number, string | undefined>();
+
+/** The script of the letter `cp`, one of {@link BESIDE_SCRIPTS}; undefined
+ *  for a letter of any other script and for a character with none. */
+function besideScriptOf(cp: number): string | undefined {
+  if (besideScripts.has(cp)) return besideScripts.get(cp);
+  besideScriptRes ??= BESIDE_SCRIPTS.map((code) => [code, new RegExp(`\\p{sc=${code}}`, 'u')]);
+  const ch = String.fromCodePoint(cp);
+  const script = besideScriptRes.find(([, re]) => re.test(ch))?.[0];
+  if (besideScripts.size >= SCRIPT_SLOTS) besideScripts.clear();
+  besideScripts.set(cp, script);
+  return script;
+}
+
+/** The letter (a code point) whose script a part with no letter is shaped
+ *  in now; undefined: the part is shaped as a text of its own. */
+let besideLetter: number | undefined;
+
+/** Run `fn` (the shaping of one part of a word, cut out by the file that
+ *  draws it) with the part shaped in the script of `letter`
+ *  ({@link besideLetterOf}; undefined: as a text of its own), then put back
+ *  what was in force before, also when `fn` throws. */
+export function withBesideLetter<T>(letter: number | undefined, fn: () => T): T {
+  if (letter === besideLetter) return fn();
+  const previous = besideLetter;
+  besideLetter = letter;
+  try {
+    return fn();
+  } finally {
+    besideLetter = previous;
+  }
+}
+
+/**
+ * The letter whose script the part `[from, to)` of `text` takes, when the
+ * part holds no letter and `text` (the string the layout measured: a word,
+ * a run of one direction) does: the nearest letter before it in its word,
+ * else the first after it. A word ends at a space: the browser shapes each
+ * word of a run apart, so a mark between two spaces takes nothing from
+ * the words either side. That is the script the browser gave the part,
+ * whatever file draws it (Chrome 154, measured: `«أنا` in Markazi Text
+ * under `ar` is 939 thousandths of the em set right to left, 636 for the
+ * letters and 303 for the guillemet of Arabic text, which alone is 407).
+ * Undefined, the part shaped as a text of its own, for a part with a
+ * letter, for one that holds two words, for text with no character above
+ * U+00FF (all of it is Latin text to the canvas), when the letter is of a
+ * script the rule leaves alone ({@link BESIDE_SCRIPTS}), with a script in
+ * force (#725) and in a document that keeps the host's language.
+ */
+export function besideLetterOf(text: string, from: number, to: number): number | undefined {
+  if (!shapedAsCanvas() || currentScript !== undefined) return undefined;
+  if (STRONG_SCRIPT_RE.test(text.slice(from, to)) || LATIN_1_RE.test(text)) return undefined;
+  // The part without the spaces at its ends: what is left is in one word.
+  let start = from;
+  let end = to;
+  while (start < end && text.charCodeAt(start) === SPACE) start++;
+  while (end > start && text.charCodeAt(end - 1) === SPACE) end--;
+  if (start === end || text.slice(start, end).includes(' ')) return undefined;
+  let found: number | undefined;
+  // Backwards by UTF-16 unit: a low surrogate is skipped to its pair.
+  for (let at = start - 1; at >= 0 && found === undefined; at--) {
+    const unit = text.charCodeAt(at);
+    if (unit === SPACE) break;
+    if (unit >= 0xDC00 && unit <= 0xDFFF) continue;
+    const cp = text.codePointAt(at)!;
+    if (STRONG_SCRIPT_RE.test(String.fromCodePoint(cp))) found = cp;
+  }
+  for (let at = end; at < text.length && found === undefined;) {
+    const cp = text.codePointAt(at)!;
+    if (cp === SPACE) break;
+    if (STRONG_SCRIPT_RE.test(String.fromCodePoint(cp))) found = cp;
+    at += cp > 0xFFFF ? 2 : 1;
+  }
+  return found !== undefined && besideScriptOf(found) !== undefined ? found : undefined;
+}
+
+/** Whether the text being shaped is part of a string with right-to-left
+ *  letters ({@link withinRightToLeftText}). */
+let rightToLeftText = false;
+
+/**
+ * Run `fn` (the shaping of the runs and the parts of `text`, a string
+ * HarfBuzz sets) knowing whether `text` holds a right-to-left letter
+ * (`rightToLeft`). Such a string is not one the canvas kept in eight
+ * bits, so a piece of it with no letter and none beside it in its word
+ * (the `(` and the `)` of `كتاب (1)`, each a run of its own; the `.` of
+ * `كتاب . كتاب`) was shaped in no script, even where the piece alone has
+ * no character above U+00FF: Amiri sets those brackets 0.458 em wide, and
+ * 0.255 em as Latin text. Put back afterwards, also when `fn` throws.
+ */
+export function withinRightToLeftText<T>(rightToLeft: boolean, fn: () => T): T {
+  if (rightToLeft === rightToLeftText) return fn();
+  const previous = rightToLeftText;
+  rightToLeftText = rightToLeft;
+  try {
+    return fn();
+  } finally {
+    rightToLeftText = previous;
+  }
+}
+
+/** Whether `text` is shaped in no script though it has no character above
+ *  U+00FF: a piece with no letter of a string with right-to-left letters
+ *  ({@link withinRightToLeftText}). */
+function unscripted(text: string): boolean {
+  return rightToLeftText && !STRONG_SCRIPT_RE.test(text);
+}
 
 /** Whether text is shaped as the canvas shaped it (see the module
  *  comment): the text of a document shaped in its own language. */
@@ -212,14 +348,19 @@ function shapedAsCanvas(): boolean {
  * shaper reads from the text (the default script, for text with no
  * letter). The script in force; else, and for a word the layout measured
  * beside an ideograph, as the canvas shaped the text of a document in its
- * own language: Latin with no character above U+00FF, no script beside an
- * ideograph. For HarfBuzz; fontkit is told the same
+ * own language: the script of the letter a part with no letter was cut
+ * from beside ({@link withBesideLetter}), else Latin with no character
+ * above U+00FF (but no script for a piece with no letter of a string with
+ * right-to-left letters, {@link withinRightToLeftText}), no script beside
+ * an ideograph. For HarfBuzz; fontkit is told the same
  * ({@link shapeInCurrentLanguage}).
  */
 export function shapingScriptOf(text: string): string | undefined {
   if (!shapedAsCanvas()) return currentScript;
   if (currentScript === 'Hani') return undefined;
-  return currentScript ?? (LATIN_1_RE.test(text) ? 'Latn' : undefined);
+  if (currentScript !== undefined) return currentScript;
+  const beside = besideLetter !== undefined ? besideScriptOf(besideLetter) : undefined;
+  return beside ?? (LATIN_1_RE.test(text) && !unscripted(text) ? 'Latn' : undefined);
 }
 
 /** The key a cache of shaped `text` holds it under: the text itself with
@@ -227,6 +368,8 @@ export function shapingScriptOf(text: string): string | undefined {
  *  with the language and the script it was shaped in. */
 export function shapingKey(text: string): string {
   if (currentScript !== undefined) return `${currentScript}\u0001${current?.key ?? ''}\u0000${text}`;
+  if (besideLetter !== undefined && shapedAsCanvas()) return `${besideScriptOf(besideLetter) ?? ''}\u0003${current?.key ?? ''}\u0000${text}`;
+  if (shapedAsCanvas() && unscripted(text) && LATIN_1_RE.test(text)) return `\u0004${current?.key ?? ''}\u0000${text}`;
   return current === undefined ? text : `${current.key}\u0000${text}`;
 }
 
@@ -299,6 +442,11 @@ function scriptEntry(table: LayoutTable | undefined, scripts: readonly string[])
   return undefined;
 }
 
+/** Whether a face names the script `tag` in its `GSUB` or its `GPOS`. */
+function hasScript(face: FontkitFace, tag: string): boolean {
+  return [face.GSUB, face.GPOS].some((table) => table?.scriptList?.some((entry) => entry.tag === tag) ?? false);
+}
+
 function hasLanguage(entry: ScriptEntry | undefined, tag: string): boolean {
   const padded = tag.padEnd(4, ' ');
   return entry?.script?.langSysRecords?.some((record) => record.tag === padded) ?? false;
@@ -363,7 +511,8 @@ const shaped = new WeakSet<object>();
  * Text of a document shaped in its own language is told the language
  * system of that language for the script it is shaped in
  * ({@link languageSystem}): the script in force (the default one for a
- * word measured beside an ideograph), else Latin for text with no
+ * word measured beside an ideograph), else the script of the letter a
+ * part with no letter was cut from beside, else Latin for text with no
  * character above U+00FF, else the one fontkit reads from the text
  * ({@link shapingScriptOf}).
  *
@@ -391,9 +540,13 @@ export function shapeInCurrentLanguage(font: PDFFont): void {
       const scriptTag = script ?? (typeof text === 'string' && !STRONG_SCRIPT_RE.test(text) ? 'hani' : undefined);
       return layout(text, features, scriptTag, lang, direction);
     }
+    // A part with no letter, in the script of the letter it was cut from
+    // beside: the first of that script's tags the font has.
+    const beside = inForce === undefined && script === undefined && besideLetter !== undefined ? scriptsOfText(layout, String.fromCodePoint(besideLetter)) : NO_SCRIPT;
+    const besideTag = beside.find((tag) => hasScript(face, tag)) ?? beside[0];
     // `DFLT`: the default script, which fontkit also takes for a script
     // the font lacks.
-    const scriptTag = inForce === 'hani' ? 'DFLT' : inForce ?? script ?? (LATIN_1_RE.test(text) ? 'latn' : undefined);
+    const scriptTag = inForce === 'hani' ? 'DFLT' : inForce ?? script ?? besideTag ?? (LATIN_1_RE.test(text) && !unscripted(text) ? 'latn' : undefined);
     const system = languageSystem(face, scriptTag !== undefined ? [scriptTag] : scriptsOfText(layout, text), state);
     return layout(text, features, scriptTag, system, inForce !== undefined ? direction ?? 'ltr' : direction);
   };

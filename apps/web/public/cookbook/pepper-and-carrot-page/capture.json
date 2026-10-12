@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pepper-and-carrot-page",
-  "sourceHash": "49f402e36977a0a8d4bd6bb5abc9a08623070fda5b386001d9d27add59525f81",
+  "sourceHash": "9a4faefafe11c962e1dc0e36c170ad2a7af140e24e5037c6fe9b3625550d1345",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.214Z",
+  "capturedAt": "2026-10-12T13:19:51.896Z",
   "variants": {
     "en": {
-      "hash8": "da54d38b",
+      "hash8": "33f3fe77",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 128,
-        "buildMs": 140,
-        "totalMs": 1058,
+        "importMs": 254,
+        "fontsMs": 161,
+        "buildMs": 158,
+        "totalMs": 1204,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676147,
+        "bytes": 676165,
         "chapters": [
           {
             "pages": 3,
@@ -136,6 +136,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -233,7 +234,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -290,13 +291,13 @@
       }
     },
     "es": {
-      "hash8": "f2e0a597",
+      "hash8": "0da2dc10",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 133,
-        "buildMs": 157,
-        "totalMs": 1106,
+        "importMs": 209,
+        "fontsMs": 193,
+        "buildMs": 175,
+        "totalMs": 1223,
         "builds": 1
       },
       "specimen": {
@@ -317,7 +318,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -383,7 +384,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676172,
+        "bytes": 676191,
         "chapters": [
           {
             "pages": 3,
@@ -415,6 +416,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -512,7 +514,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -569,13 +571,13 @@
       }
     },
     "ca": {
-      "hash8": "72eab823",
+      "hash8": "e6cbb854",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 125,
-        "buildMs": 149,
-        "totalMs": 1071,
+        "importMs": 233,
+        "fontsMs": 226,
+        "buildMs": 165,
+        "totalMs": 1314,
         "builds": 1
       },
       "specimen": {
@@ -596,7 +598,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -662,7 +664,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675924,
+        "bytes": 675944,
         "chapters": [
           {
             "pages": 3,
@@ -694,6 +696,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -791,7 +794,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -848,13 +851,13 @@
       }
     },
     "zh": {
-      "hash8": "c294cb72",
+      "hash8": "86fc189a",
       "vdtHash": "6d4640c02a77be2578270ee81f7c11cb359284d5",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 350,
-        "buildMs": 142,
-        "totalMs": 1324,
+        "importMs": 201,
+        "fontsMs": 452,
+        "buildMs": 143,
+        "totalMs": 1387,
         "builds": 1
       },
       "specimen": {
@@ -875,7 +878,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -936,12 +939,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 743373,
+        "bytes": 743387,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676151,
+        "bytes": 676170,
         "chapters": [
           {
             "pages": 3,
@@ -973,6 +976,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -1070,7 +1074,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -1128,13 +1132,13 @@
       }
     },
     "ar": {
-      "hash8": "30f76be5",
+      "hash8": "15ed65ed",
       "vdtHash": "1b785ccdf3009d9a11a68bd1448b1a5d210bc58c",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 133,
-        "buildMs": 149,
-        "totalMs": 1105,
+        "importMs": 241,
+        "fontsMs": 148,
+        "buildMs": 162,
+        "totalMs": 1198,
         "builds": 1
       },
       "specimen": {
@@ -1155,7 +1159,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -1217,12 +1221,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 692886,
+        "bytes": 692859,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676841,
+        "bytes": 676861,
         "chapters": [
           {
             "pages": 3,
@@ -1254,6 +1258,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -1351,7 +1356,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -1411,13 +1416,13 @@
       }
     },
     "ja": {
-      "hash8": "d8797e7b",
+      "hash8": "fc6bf821",
       "vdtHash": "c6747e7d24ce903aafc04151730f7047754f962a",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 528,
-        "buildMs": 150,
-        "totalMs": 1432,
+        "importMs": 268,
+        "fontsMs": 698,
+        "buildMs": 168,
+        "totalMs": 1732,
         "builds": 1
       },
       "specimen": {
@@ -1438,7 +1443,7 @@
           "Zen Antique"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -1505,7 +1510,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 677107,
+        "bytes": 677127,
         "chapters": [
           {
             "pages": 3,
@@ -1537,6 +1542,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -1634,7 +1640,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",
@@ -1693,13 +1699,13 @@
       }
     },
     "pt": {
-      "hash8": "97665620",
+      "hash8": "811e61bb",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 196,
-        "fontsMs": 209,
-        "buildMs": 149,
-        "totalMs": 1192,
+        "importMs": 294,
+        "fontsMs": 275,
+        "buildMs": 177,
+        "totalMs": 1403,
         "builds": 1
       },
       "specimen": {
@@ -1720,7 +1726,7 @@
           "Source Serif 4"
         ],
         "pages": 3,
-        "ownLines": 167
+        "ownLines": 169
       },
       "pages": [
         {
@@ -1786,7 +1792,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676116,
+        "bytes": 676135,
         "chapters": [
           {
             "pages": 3,
@@ -1818,6 +1824,7 @@
           "bodyText.lineHeight",
           "bodyText.paragraphSpacing",
           "bodyText.referenceColor",
+          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "colorPalette",
           "colorPalette[].id",
@@ -1915,7 +1922,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 125,
+        "configLeaves": 126,
         "designElements": 1,
         "directives": [
           ":::paragraphs",

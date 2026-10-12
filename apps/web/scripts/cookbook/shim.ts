@@ -65,6 +65,41 @@ export function resolveEngine(spec: string = "npm"): EngineSpec {
   throw new Error(`--engine expects npm, npm@x.y.z or local, not "${spec}"`);
 }
 
+/**
+ * The configuration forced on every build of a run: the JSON object of
+ * `COOKBOOK_FORCE_CONFIG`, merged key by key over each configuration a pen
+ * builds with (`{"bodyText":{"shapingLanguage":"document"}}` lays every
+ * recipe out in its document's language, #764), or null. Such a run shows
+ * what the recipes would do under a setting none of them names; it is
+ * never written as a capture (capture.ts).
+ */
+export function forcedConfig(raw: string | undefined = process.env.COOKBOOK_FORCE_CONFIG): Record<string, unknown> | null {
+  if (!raw?.trim()) return null;
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`COOKBOOK_FORCE_CONFIG is not JSON: ${(error as Error).message}`);
+  }
+  if (value === null || typeof value !== "object" || Array.isArray(value)) throw new Error("COOKBOOK_FORCE_CONFIG expects a JSON object");
+  return value as Record<string, unknown>;
+}
+
+/** The recorder's `forced(config)`: the run's forced values over a pen's
+ *  configuration, the configuration as given when none is forced. */
+function forcedModule(force: Record<string, unknown> | null): string {
+  return `
+const FORCED = ${JSON.stringify(force)};
+const isRecord = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+function merged(base, over) {
+  const out = { ...base };
+  for (const [key, value] of Object.entries(over)) out[key] = isRecord(value) && isRecord(out[key]) ? merged(out[key], value) : value;
+  return out;
+}
+export function forced(config) { return FORCED ? merged(config ?? {}, FORCED) : config; }
+`;
+}
+
 /** Specifiers a pen may import → the shim that serves them. A maths recipe
  *  imports the engine from either of the first two (`?bundle` was required
  *  up to postext 1.4); both shims start MathJax through `initMathEngine`. */
@@ -254,11 +289,12 @@ export function seen(doc, shim) {
 function engineShim(name: string, url: string): string {
   return `export * from '${url}';
 import * as real from '${url}';
-import { cb, record, begin, end, seen } from '/__shim/recorder.js';
+import { cb, record, begin, end, seen, forced } from '/__shim/recorder.js';
 const SHIM = ${JSON.stringify(name)};
 cb.engines[SHIM] = real;
 
 export function buildDocument(content, config, cache, options) {
+  config = forced(config);
   const t0 = begin();
   try {
     const doc = real.buildDocument(content, config, cache, options);
@@ -271,6 +307,7 @@ export function buildDocument(content, config, cache, options) {
 // document it returns, with the faces loaded when its last build ran.
 // Its time is the passes of its last build (font loading left out).
 export async function buildDocumentWithFonts(content, config, options) {
+  config = forced(config);
   const started = performance.now();
   let ms = 0;
   const onPass = (info) => {
@@ -288,6 +325,7 @@ export async function buildDocumentWithFonts(content, config, options) {
 }
 
 export function buildBundle(bundle, options) {
+  if (forced(null)) options = { ...options, config: forced(options?.config ?? bundle?.config) };
   const t0 = begin();
   const done = (docs) => {
     record({ kind: 'bundle', shim: SHIM, content: bundle, config: options?.config ?? bundle?.config,
@@ -327,13 +365,14 @@ export function renderToHtml(doc, ...rest) { seen(doc, SHIM); return real.render
 function workerShim(url: string): string {
   return `export * from '${url}';
 import * as real from '${url}';
-import { record, begin, end } from '/__shim/recorder.js';
+import { record, begin, end, forced } from '/__shim/recorder.js';
 
 /** The worker client's build() is recorded like buildDocument (H6). */
 export function createLayoutWorker(...args) {
   const client = real.createLayoutWorker(...args);
   const build = client.build;
   client.build = function (content, config, options) {
+    config = forced(config);
     const t0 = begin();
     return build.call(this, content, config, options).then((doc) => {
       end();
@@ -473,13 +512,14 @@ export function pdfDateOf(created: string | undefined): string | null {
 
 /** The shim modules of one run, keyed by the path the server answers.
  *  `pdfDate`: see {@link pdfDateOf}. */
-export function shimModules(engine: EngineSpec, { pdfDate = null }: { pdfDate?: string | null } = {}): Record<string, string> {
+export function shimModules(engine: EngineSpec, { pdfDate = null, force = forcedConfig() }: { pdfDate?: string | null; force?: Record<string, unknown> | null } = {}): Record<string, string> {
   const V = engine.postext;
   const P = engine.postextPdf;
+  const recorder = RECORDER + forcedModule(force);
   if (engine.source === "local") {
     const local = (file: string) => `${LOCAL_PREFIX}${file}`;
     return {
-      "/__shim/recorder.js": RECORDER,
+      "/__shim/recorder.js": recorder,
       "/__shim/postext.js": engineShim("postext", local("postext/index.js")),
       "/__shim/postext-bundle.js": engineShim("postext-bundle", local("postext/index.js")),
       "/__shim/postext-worker.js": workerShim(local("postext/worker/client.js")),
@@ -491,7 +531,7 @@ export function shimModules(engine: EngineSpec, { pdfDate = null }: { pdfDate?: 
     };
   }
   return {
-    "/__shim/recorder.js": RECORDER,
+    "/__shim/recorder.js": recorder,
     "/__shim/postext.js": engineShim("postext", `https://esm.sh/postext@${V}`),
     "/__shim/postext-bundle.js": engineShim("postext-bundle", `https://esm.sh/postext@${V}?bundle`),
     "/__shim/postext-worker.js": workerShim(`https://esm.sh/postext@${V}/worker`),

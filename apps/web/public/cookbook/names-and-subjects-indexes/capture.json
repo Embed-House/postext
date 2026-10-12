@@ -3,21 +3,21 @@
   "slug": "names-and-subjects-indexes",
   "sourceHash": "b65bbea66ee192d2795b5f136aeb3d50d47f8bb68f4d436fb73efb2aa399b32d",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.104Z",
+  "capturedAt": "2026-10-12T13:19:51.726Z",
   "variants": {
     "en": {
-      "hash8": "b9098f51",
+      "hash8": "d8981863",
       "vdtHash": "1ee2d1bee34f81d339504d2e948ad35641b12ecc",
       "timings": {
-        "importMs": 203,
-        "fontsMs": 24,
-        "buildMs": 127,
-        "totalMs": 1030,
+        "importMs": 206,
+        "fontsMs": 27,
+        "buildMs": 144,
+        "totalMs": 1087,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 16855,
+        "bytes": 16857,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -396,23 +396,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "a4489cd8",
+      "hash8": "cd96c021",
       "vdtHash": "41c1b576705fe8442f83218e328c6536a3d6ab95",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 24,
-        "buildMs": 143,
-        "totalMs": 997,
+        "importMs": 234,
+        "fontsMs": 27,
+        "buildMs": 164,
+        "totalMs": 1151,
         "builds": 1
       },
       "specimen": {
@@ -552,7 +546,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17494,
+        "bytes": 17496,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -796,11 +790,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

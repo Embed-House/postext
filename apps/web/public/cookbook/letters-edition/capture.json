@@ -3,20 +3,20 @@
   "slug": "letters-edition",
   "sourceHash": "2656475dd1dbe55f4a68e65df34ac6fab87244daf3d0bfad1356bd40ff2c4cce",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.996Z",
+  "capturedAt": "2026-10-12T13:19:51.469Z",
   "variants": {
     "en": {
-      "hash8": "4e6334bf",
+      "hash8": "244a4190",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 21,
-        "buildMs": 52,
-        "totalMs": 843,
+        "importMs": 213,
+        "fontsMs": 27,
+        "buildMs": 59,
+        "totalMs": 965,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212087,
+        "bytes": 212090,
         "folio": "a3ceaa8c",
         "chapters": [
           {
@@ -292,11 +292,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale fr, the document's language: en names its resource types otherwise"
@@ -305,13 +300,13 @@
       }
     },
     "es": {
-      "hash8": "ae711dce",
+      "hash8": "9a5a4f0a",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 61,
-        "buildMs": 60,
-        "totalMs": 955,
+        "importMs": 211,
+        "fontsMs": 33,
+        "buildMs": 61,
+        "totalMs": 983,
         "builds": 1
       },
       "specimen": {
@@ -420,7 +415,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212122,
+        "bytes": 212125,
         "folio": "a3ceaa8c",
         "chapters": [
           {
@@ -586,11 +581,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

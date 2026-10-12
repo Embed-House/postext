@@ -3,21 +3,21 @@
   "slug": "maghreb-edition-european-digits",
   "sourceHash": "926916ef35672316e3f309813c3a12dd2ca908219706c41355659cac247def78",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.033Z",
+  "capturedAt": "2026-10-12T13:19:51.571Z",
   "variants": {
     "en": {
-      "hash8": "6f4ee906",
+      "hash8": "44708cd3",
       "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 58,
-        "buildMs": 68,
-        "totalMs": 935,
+        "importMs": 288,
+        "fontsMs": 78,
+        "buildMs": 78,
+        "totalMs": 1072,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "maghreb-edition-european-digits.postext",
-        "bytes": 25814,
+        "bytes": 25815,
         "folio": "5362c1cb",
         "chapters": [
           {
@@ -312,11 +312,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar-MA, the document's language: en names its resource types otherwise"
@@ -325,13 +320,13 @@
       }
     },
     "es": {
-      "hash8": "45e6b6c3",
+      "hash8": "ad1e696c",
       "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 242,
-        "fontsMs": 99,
-        "buildMs": 87,
-        "totalMs": 1090,
+        "importMs": 221,
+        "fontsMs": 64,
+        "buildMs": 72,
+        "totalMs": 968,
         "builds": 1
       },
       "specimen": {
@@ -625,11 +620,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

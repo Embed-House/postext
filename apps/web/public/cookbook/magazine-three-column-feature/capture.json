@@ -3,20 +3,20 @@
   "slug": "magazine-three-column-feature",
   "sourceHash": "8352f28c6e2b483d9592b0240f2b1b62df2bedc5ef471efd5cc1cde6ce88810b",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.025Z",
+  "capturedAt": "2026-10-12T13:19:51.538Z",
   "variants": {
     "en": {
-      "hash8": "454a8b5b",
+      "hash8": "77b61aeb",
       "vdtHash": "89fbc32ceeafe6419ee3e4b3399303688a6f3d86",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 53,
-        "buildMs": 103,
-        "totalMs": 956,
+        "importMs": 213,
+        "fontsMs": 46,
+        "buildMs": 98,
+        "totalMs": 1032,
         "builds": 1
       },
       "specimen": {
@@ -418,11 +418,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.23 MB (warning at 0.9 MB for 6 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

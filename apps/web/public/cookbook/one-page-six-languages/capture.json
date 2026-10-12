@@ -3,21 +3,21 @@
   "slug": "one-page-six-languages",
   "sourceHash": "c852ddf7610ee7898e6fa4cd109dd34828fc4226c1ca44b4e71391f847a7dc5c",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.147Z",
+  "capturedAt": "2026-10-12T13:19:51.797Z",
   "variants": {
     "en": {
-      "hash8": "49e7a209",
+      "hash8": "308a3aec",
       "vdtHash": "f449370ee3262648d8ec670b3847b33451c2fdda",
       "timings": {
-        "importMs": 215,
-        "fontsMs": 127,
-        "buildMs": 146,
-        "totalMs": 1196,
+        "importMs": 246,
+        "fontsMs": 166,
+        "buildMs": 171,
+        "totalMs": 1325,
         "builds": 2
       },
       "specimen": {
@@ -92,7 +92,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794299,
+        "bytes": 794302,
         "pages": 1,
         "chapters": [
           {
@@ -241,23 +241,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "48c4369f",
+      "hash8": "3407f47d",
       "vdtHash": "a17aabb0ecf88ff14b0fcb36da2997ab31273c85",
       "timings": {
-        "importMs": 156,
-        "fontsMs": 105,
-        "buildMs": 162,
-        "totalMs": 1126,
+        "importMs": 226,
+        "fontsMs": 163,
+        "buildMs": 151,
+        "totalMs": 1296,
         "builds": 2
       },
       "specimen": {
@@ -332,7 +326,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794490,
+        "bytes": 794491,
         "pages": 1,
         "chapters": [
           {
@@ -481,23 +475,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "cee0e1b4",
+      "hash8": "bb45dc3f",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 231,
-        "fontsMs": 218,
-        "buildMs": 141,
-        "totalMs": 1326,
+        "importMs": 214,
+        "fontsMs": 279,
+        "buildMs": 170,
+        "totalMs": 1402,
         "builds": 2
       },
       "specimen": {
@@ -573,7 +561,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794641,
+        "bytes": 794643,
         "pages": 1,
         "chapters": [
           {
@@ -728,23 +716,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "352ce93c",
+      "hash8": "3ee04df6",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 108,
-        "buildMs": 123,
-        "totalMs": 1094,
+        "importMs": 238,
+        "fontsMs": 138,
+        "buildMs": 141,
+        "totalMs": 1273,
         "builds": 2
       },
       "specimen": {
@@ -821,7 +803,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794905,
+        "bytes": 794907,
         "pages": 1,
         "chapters": [
           {
@@ -978,23 +960,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "7d1d6544",
+      "hash8": "278ec66a",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 188,
-        "fontsMs": 192,
-        "buildMs": 125,
-        "totalMs": 1220,
+        "importMs": 211,
+        "fontsMs": 236,
+        "buildMs": 138,
+        "totalMs": 1311,
         "builds": 2
       },
       "specimen": {
@@ -1071,7 +1047,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794907,
+        "bytes": 794909,
         "pages": 1,
         "chapters": [
           {
@@ -1227,13 +1203,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

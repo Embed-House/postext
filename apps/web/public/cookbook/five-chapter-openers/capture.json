@@ -3,20 +3,20 @@
   "slug": "five-chapter-openers",
   "sourceHash": "62073ca205272ae659bcabe45dc15a85554287d863d65b442d80faa77b40eef2",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.893Z",
+  "capturedAt": "2026-10-12T13:19:51.325Z",
   "variants": {
     "en": {
-      "hash8": "3124d561",
+      "hash8": "1105a5f7",
       "vdtHash": "45587f7495f542a963e19fb3590dbea4a204e252",
       "timings": {
-        "importMs": 138,
+        "importMs": 163,
         "fontsMs": 2,
-        "buildMs": 117,
-        "totalMs": 896,
+        "buildMs": 138,
+        "totalMs": 959,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100990,
+          "bytes": 100996,
           "alt": "Opening page 1: The Voice."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66802,
+          "bytes": 66788,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -409,23 +409,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "c500aa6d",
+      "hash8": "2b112667",
       "vdtHash": "12a9a52a7154dc26eeb05039fb7610dfba8e4749",
       "timings": {
-        "importMs": 201,
+        "importMs": 157,
         "fontsMs": 2,
-        "buildMs": 223,
-        "totalMs": 1229,
+        "buildMs": 211,
+        "totalMs": 1127,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +497,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 71552,
+          "bytes": 71564,
           "alt": "Página de apertura 5: Salta a la vista."
         },
         {
@@ -818,13 +812,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

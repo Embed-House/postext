@@ -26,6 +26,8 @@
  * paint on the sheet untouched.
  */
 
+import { restoreContext, saveContext } from './contextState';
+
 /** Whether the flow of a mirrored page is being painted (see the module
  *  comment). */
 let active = 0;
@@ -63,13 +65,13 @@ export function counterFlipBox(ctx: CanvasRenderingContext2D, left: number, widt
     paint();
     return;
   }
-  ctx.save();
+  saveContext(ctx);
   ctx.translate(2 * left + width, 0);
   ctx.scale(-1, 1);
   try {
     paint();
   } finally {
-    ctx.restore();
+    restoreContext(ctx);
   }
 }
 
@@ -111,7 +113,7 @@ function sourceWidth(image: CanvasImageSource): number {
  * function that ends it, restoring the context.
  */
 export function beginMirroredFlow(ctx: CanvasRenderingContext2D, originX: number): () => void {
-  ctx.save();
+  saveContext(ctx);
   ctx.transform(-1, 0, 0, 1, originX, 0);
   const own = new Map<Patched, PropertyDescriptor | undefined>();
   for (const name of PATCHED) own.set(name, Object.getOwnPropertyDescriptor(ctx, name));
@@ -164,6 +166,6 @@ export function beginMirroredFlow(ctx: CanvasRenderingContext2D, originX: number
       if (d) Object.defineProperty(ctx, name, d);
       else delete target[name];
     }
-    ctx.restore();
+    restoreContext(ctx);
   };
 }

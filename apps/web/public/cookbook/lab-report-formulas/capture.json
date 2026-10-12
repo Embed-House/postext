@@ -3,21 +3,21 @@
   "slug": "lab-report-formulas",
   "sourceHash": "0ef0c4dbdcc07ede5533484f3c508d33b8069a0074ff1ae766469e83a1720a7b",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.986Z",
+  "capturedAt": "2026-10-12T13:19:51.455Z",
   "variants": {
     "en": {
-      "hash8": "c5785839",
+      "hash8": "f9060209",
       "vdtHash": "78a366fe1aa21b9c025482a889d0ae88a74aba07",
       "timings": {
-        "importMs": 243,
-        "fontsMs": 106,
-        "buildMs": 87,
-        "totalMs": 1107,
+        "importMs": 260,
+        "fontsMs": 117,
+        "buildMs": 103,
+        "totalMs": 1162,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36541,
+        "bytes": 36544,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -437,23 +437,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "0d448730",
+      "hash8": "794428c2",
       "vdtHash": "6be2b97b8c7d9bc8f5a005e8ce47c6f7c091c39b",
       "timings": {
-        "importMs": 173,
-        "fontsMs": 102,
-        "buildMs": 84,
-        "totalMs": 1133,
+        "importMs": 237,
+        "fontsMs": 107,
+        "buildMs": 92,
+        "totalMs": 1129,
         "builds": 1
       },
       "specimen": {
@@ -556,7 +550,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37833,
+        "bytes": 37836,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -873,13 +867,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

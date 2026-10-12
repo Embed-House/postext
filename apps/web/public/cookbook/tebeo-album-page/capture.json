@@ -3,21 +3,21 @@
   "slug": "tebeo-album-page",
   "sourceHash": "dc4589f3f38c96e1aff87e1bc078eb6847506f8191a12c493c8249a8589882ec",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.460Z",
+  "capturedAt": "2026-10-12T13:19:52.196Z",
   "variants": {
     "en": {
-      "hash8": "2b65e32c",
+      "hash8": "6338becf",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 226,
-        "fontsMs": 128,
-        "buildMs": 422,
-        "totalMs": 1399,
+        "importMs": 248,
+        "fontsMs": 178,
+        "buildMs": 440,
+        "totalMs": 1502,
         "builds": 1
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115580,
+        "bytes": 1115583,
         "chapters": [
           {
             "pages": 2,
@@ -293,11 +293,6 @@
             "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -306,13 +301,13 @@
       }
     },
     "es": {
-      "hash8": "5524f20f",
+      "hash8": "b40c0dc3",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 249,
-        "fontsMs": 358,
-        "buildMs": 330,
-        "totalMs": 1574,
+        "importMs": 346,
+        "fontsMs": 289,
+        "buildMs": 343,
+        "totalMs": 1623,
         "builds": 1
       },
       "specimen": {
@@ -384,7 +379,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116064,
+        "bytes": 1116067,
         "chapters": [
           {
             "pages": 2,
@@ -588,11 +583,6 @@
             "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -601,13 +591,13 @@
       }
     },
     "ca": {
-      "hash8": "33b63fdf",
+      "hash8": "36de3bb2",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 239,
-        "fontsMs": 129,
-        "buildMs": 354,
-        "totalMs": 1335,
+        "importMs": 245,
+        "fontsMs": 351,
+        "buildMs": 336,
+        "totalMs": 1576,
         "builds": 1
       },
       "specimen": {
@@ -679,7 +669,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116264,
+        "bytes": 1116267,
         "chapters": [
           {
             "pages": 2,
@@ -888,11 +878,6 @@
             "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -901,13 +886,13 @@
       }
     },
     "zh": {
-      "hash8": "e696471a",
+      "hash8": "5f1acc95",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 311,
-        "fontsMs": 227,
-        "buildMs": 367,
-        "totalMs": 1613,
+        "importMs": 253,
+        "fontsMs": 307,
+        "buildMs": 400,
+        "totalMs": 1600,
         "builds": 1
       },
       "specimen": {
@@ -979,7 +964,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115431,
+        "bytes": 1115435,
         "chapters": [
           {
             "pages": 2,
@@ -1184,11 +1169,6 @@
             "detail": "card.webp weighs 98 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1197,13 +1177,13 @@
       }
     },
     "ar": {
-      "hash8": "32d1ca2e",
+      "hash8": "a760ce73",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 177,
-        "buildMs": 342,
-        "totalMs": 1328,
+        "importMs": 267,
+        "fontsMs": 133,
+        "buildMs": 356,
+        "totalMs": 1365,
         "builds": 1
       },
       "specimen": {
@@ -1276,7 +1256,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115504,
+        "bytes": 1115509,
         "chapters": [
           {
             "pages": 2,
@@ -1483,11 +1463,6 @@
             "detail": "card.webp weighs 97 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1496,13 +1471,13 @@
       }
     },
     "ja": {
-      "hash8": "27574ee7",
+      "hash8": "e1e339ba",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 189,
-        "fontsMs": 306,
-        "buildMs": 333,
-        "totalMs": 1416,
+        "importMs": 222,
+        "fontsMs": 344,
+        "buildMs": 336,
+        "totalMs": 1500,
         "builds": 1
       },
       "specimen": {
@@ -1575,7 +1550,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116351,
+        "bytes": 1116354,
         "chapters": [
           {
             "pages": 2,
@@ -1781,11 +1756,6 @@
             "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1794,13 +1764,13 @@
       }
     },
     "pt": {
-      "hash8": "94d5c290",
+      "hash8": "e2324c65",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 208,
+        "importMs": 254,
         "fontsMs": 107,
-        "buildMs": 335,
-        "totalMs": 1249,
+        "buildMs": 345,
+        "totalMs": 1361,
         "builds": 1
       },
       "specimen": {
@@ -1872,7 +1842,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115989,
+        "bytes": 1115993,
         "chapters": [
           {
             "pages": 2,
@@ -2074,11 +2044,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -3,21 +3,21 @@
   "slug": "kanji-numerals-and-dates",
   "sourceHash": "257c67a750736270ac038a482b230251ae647fd5b68c8387892ec1685e0c17a4",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.975Z",
+  "capturedAt": "2026-10-12T13:19:51.441Z",
   "variants": {
     "en": {
-      "hash8": "27bc1d57",
+      "hash8": "7a8a6319",
       "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 290,
-        "buildMs": 82,
-        "totalMs": 1161,
+        "importMs": 232,
+        "fontsMs": 351,
+        "buildMs": 76,
+        "totalMs": 1275,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14694,
+        "bytes": 14695,
         "folio": "5113964e",
         "chapters": [
           {
@@ -401,23 +401,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 3 −5‰ “Set in Noto Serif JP, Noto Sans JP and Zen Maru …”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "042f01c2",
+      "hash8": "2cff1128",
       "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 315,
-        "buildMs": 74,
-        "totalMs": 1150,
+        "importMs": 206,
+        "fontsMs": 285,
+        "buildMs": 77,
+        "totalMs": 1305,
         "builds": 1
       },
       "specimen": {
@@ -521,7 +516,7 @@
       },
       "sandbox": {
         "file": "kanji-numerals-and-dates.postext",
-        "bytes": 14673,
+        "bytes": 14674,
         "folio": "5113964e",
         "chapters": [
           {
@@ -791,13 +786,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

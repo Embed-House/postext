@@ -62,4 +62,3 @@ With the section number in the template and a reset at every section, the drawin
 ## Pitfalls
 
 - Column balancing pushes a box that closes a page down to the page's last grid line, so any room left on the page opens above the box ([column balancing](/en/docs/configuration-text#column-balancing)). The text of page 2 was fitted to fill its column exactly. Delete one VORSICHT bullet and the box still ends at the foot, while the gap between the two boxes grows from 4.5 to 13.6 mm; with `headings: { balancing: { enabled: false } }` the box stays one line under WARNUNG and the page ends two lines short.
-- The task box ☐ is in none of the recipe's faces, so the browser draws it from a system font and its shape changes from one system to another.

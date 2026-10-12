@@ -3,21 +3,21 @@
   "slug": "outbreak-report-bulletin",
   "sourceHash": "859e348f40347064632ab418a4a02f1c659dff6333d990f4440cd7673ecf3c96",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.168Z",
+  "capturedAt": "2026-10-12T13:19:51.859Z",
   "variants": {
     "en": {
-      "hash8": "7fe7c9b6",
+      "hash8": "b48f6add",
       "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 52,
-        "buildMs": 353,
-        "totalMs": 1283,
+        "importMs": 244,
+        "fontsMs": 59,
+        "buildMs": 366,
+        "totalMs": 1303,
         "builds": 1
       },
       "specimen": {
@@ -147,7 +147,7 @@
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95695,
+        "bytes": 95697,
         "folio": "0cf5d184",
         "chapters": [
           {
@@ -454,11 +454,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

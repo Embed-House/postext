@@ -5,6 +5,7 @@ import { mirroredPaintActive } from './mirrorFrame';
 import { fillTrackedWord } from './trackedText';
 import { fillScriptWord } from './scriptText';
 import { scriptContextUntracked } from '../measure/script';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -55,20 +56,31 @@ export function fillSegmentWord(
   paint: (text: string, x: number, y: number) => void,
   runStyle: (run: WordRun) => { font: string; fill: string },
 ): void {
-  // A word of a run that names its language is painted in it, as it was
-  // measured (#764), and the context gets the document's back.
-  if (segmentLanguages && seg.lang !== undefined && 'lang' in ctx) {
-    const context = ctx as CanvasRenderingContext2D & { lang: string };
-    const language = context.lang;
-    context.lang = shapingTagOf(seg.lang);
-    try {
-      fillWord(ctx, seg, x, y, tracking, paint, runStyle);
-    } finally {
-      context.lang = language;
-    }
+  inSegmentLanguage(ctx, seg, () => fillWord(ctx, seg, x, y, tracking, paint, runStyle));
+}
+
+/**
+ * Run `paint`, which paints the text of `seg`, with the context in the
+ * segment's language when it names one (`:ltr[…]{lang=en}`): a word of
+ * such a run is painted in it, as it was measured (#764), and the context
+ * gets the document's back. The language holds through the saves inside
+ * (a word's clip, a mirrored page's turn: `saveContext`). Any other
+ * segment, and every segment of a document shaped in the host's language,
+ * is painted as the context is.
+ */
+export function inSegmentLanguage(ctx: CanvasRenderingContext2D, seg: VDTLineSegment, paint: () => void): void {
+  if (!segmentLanguages || seg.lang === undefined || !('lang' in ctx)) {
+    paint();
     return;
   }
-  fillWord(ctx, seg, x, y, tracking, paint, runStyle);
+  const context = ctx as CanvasRenderingContext2D & { lang: string };
+  const language = context.lang;
+  context.lang = shapingTagOf(seg.lang);
+  try {
+    paint();
+  } finally {
+    context.lang = language;
+  }
 }
 
 /** Whether a segment's own language is painted (see
@@ -97,7 +109,7 @@ function fillWord(
   runStyle: (run: WordRun) => { font: string; fill: string },
 ): void {
   const untracked = tracking !== 0 && (joiningScriptIn(seg.text) || scriptContextUntracked(seg.scriptContext));
-  if (untracked) ctx.letterSpacing = '0px';
+  if (untracked) setLetterSpacing(ctx, 0);
   const rtl = seg.rtl === true && 'direction' in ctx;
   const direction = rtl ? ctx.direction : undefined;
   const textAlign = rtl ? ctx.textAlign : undefined;
@@ -113,7 +125,7 @@ function fillWord(
     ctx.direction = direction!;
     ctx.textAlign = textAlign!;
   }
-  if (untracked) ctx.letterSpacing = `${tracking}px`;
+  if (untracked) setLetterSpacing(ctx, tracking);
 }
 
 /**
@@ -166,7 +178,7 @@ export function paintWordRuns(
     if (mirroredPaintActive()) [left, right] = [2 * x + whole - right, 2 * x + whole - left];
     if (right <= left) continue;
     const { font, fill } = runStyle(run);
-    ctx.save();
+    saveContext(ctx);
     ctx.beginPath();
     ctx.rect(left, y - CLIP_REACH, right - left, 2 * CLIP_REACH);
     ctx.clip();
@@ -180,6 +192,6 @@ export function paintWordRuns(
     } else {
       paint(text, x, y);
     }
-    ctx.restore();
+    restoreContext(ctx);
   }
 }

@@ -3,21 +3,21 @@
   "slug": "chinese-dictionary-page",
   "sourceHash": "257b2fd4404cd8ba4fae266c98a168600328e7aa12e3f4691b83c2a8d5b1245c",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.737Z",
+  "capturedAt": "2026-10-12T13:19:51.106Z",
   "variants": {
     "en": {
-      "hash8": "d1ab22b1",
+      "hash8": "34049d76",
       "vdtHash": "77fc13a8a6aff79bfe7ab1c0fc8f64a849cace85",
       "timings": {
-        "importMs": 226,
-        "fontsMs": 378,
-        "buildMs": 62,
-        "totalMs": 1245,
+        "importMs": 367,
+        "fontsMs": 490,
+        "buildMs": 66,
+        "totalMs": 1559,
         "builds": 1
       },
       "specimen": {
@@ -304,9 +304,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",
@@ -317,13 +317,13 @@
       }
     },
     "es": {
-      "hash8": "1eaddf51",
+      "hash8": "daac2c0f",
       "vdtHash": "20acac35a92c6e960979044b58b8febea6c50037",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 253,
-        "buildMs": 59,
-        "totalMs": 1138,
+        "importMs": 345,
+        "fontsMs": 317,
+        "buildMs": 64,
+        "totalMs": 1341,
         "builds": 1
       },
       "specimen": {
@@ -610,9 +610,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",

@@ -12,6 +12,7 @@
 import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from '../vdt';
 import { fillFlowText, verticalPaintActive, type TextPaintMode } from './verticalText';
 import type { MarkCutRule } from '../measure/markCuts';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 
 type Ctx = CanvasRenderingContext2D;
 
@@ -68,7 +69,7 @@ export function paintLineMarks(ctx: Ctx, line: VDTLine, color: string): void {
   const x0 = line.bbox.x;
   const y0 = line.baseline;
   const vertical = verticalPaintActive();
-  ctx.save();
+  saveContext(ctx);
   for (const m of marks) {
     const ink = m.color ?? color;
     ctx.fillStyle = ink;
@@ -130,12 +131,12 @@ export function paintLineMarks(ctx: Ctx, line: VDTLine, color: string): void {
       }
     }
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 function paintRuns(ctx: Ctx, runs: readonly VDTAnnotationRun[], x: number, baseline: number, color: string, cuts: MarkCutRule, mode: TextPaintMode = 'fill'): void {
-  ctx.save();
-  ctx.letterSpacing = '0px';
+  saveContext(ctx);
+  setLetterSpacing(ctx, 0);
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left';
   const vertical = verticalPaintActive();
@@ -146,7 +147,7 @@ function paintRuns(ctx: Ctx, runs: readonly VDTAnnotationRun[], x: number, basel
     // (`VDTAnnotationRun.upright`), as the PDF and HTML set it.
     fillFlowText(ctx, run.text, x + run.dx, baseline + run.dy, mode, 0, cuts, run.upright && vertical ? 'upright' : undefined);
   }
-  ctx.restore();
+  restoreContext(ctx);
 }
 
 /** Paint a ruby base's reading; `x` is where the base's segment starts. */
@@ -161,10 +162,10 @@ export function paintKunten(ctx: Ctx, kunten: VDTKunten, x: number, baseline: nu
   paintRuns(ctx, kunten.runs, x, baseline, color, 'text');
   const t = kunten.tate;
   if (t) {
-    ctx.save();
+    saveContext(ctx);
     ctx.fillStyle = color;
     ctx.fillRect(x + t.dx, baseline + t.dy - t.thickness / 2, t.length, t.thickness);
-    ctx.restore();
+    restoreContext(ctx);
   }
 }
 

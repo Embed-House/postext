@@ -3,20 +3,20 @@
   "slug": "web-worker-live-editor",
   "sourceHash": "002c496f8994aeced54329ac9b240b3205c98cb7b6e2ea7248e15bf95d3e7523",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.561Z",
+  "capturedAt": "2026-10-12T13:19:52.343Z",
   "variants": {
     "en": {
-      "hash8": "fabbbb9a",
+      "hash8": "eb039ec6",
       "vdtHash": "f28c72ad1821926ff80cada74187bed204248786",
       "timings": {
-        "importMs": 1438,
-        "fontsMs": 1520,
-        "buildMs": 135,
-        "totalMs": 3697,
+        "importMs": 1677,
+        "fontsMs": 1393,
+        "buildMs": 137,
+        "totalMs": 3824,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "web-worker-live-editor.postext",
-        "bytes": 218768,
+        "bytes": 218775,
         "folio": "ddaa1eeb",
         "chapters": [
           {
@@ -318,11 +318,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ ““The experiment!” cried Filby, who was getting b…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

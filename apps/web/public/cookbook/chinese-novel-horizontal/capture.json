@@ -3,21 +3,21 @@
   "slug": "chinese-novel-horizontal",
   "sourceHash": "71637e69c9d9e91d11d772f8b9b76455e2c7b642ed613976a9a0330b3cba835e",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.756Z",
+  "capturedAt": "2026-10-12T13:19:51.129Z",
   "variants": {
     "en": {
-      "hash8": "39807a4f",
+      "hash8": "3c44c05c",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 214,
-        "fontsMs": 321,
-        "buildMs": 61,
-        "totalMs": 1214,
+        "importMs": 261,
+        "fontsMs": 451,
+        "buildMs": 68,
+        "totalMs": 1406,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391424,
+        "bytes": 391426,
         "folio": "77b45883",
         "chapters": [
           {
@@ -364,11 +364,6 @@
             "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 7 pages)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hans, the document's language: en names its resource types otherwise"
@@ -382,13 +377,13 @@
       }
     },
     "es": {
-      "hash8": "4a750372",
+      "hash8": "f8a725ce",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 177,
-        "buildMs": 63,
-        "totalMs": 1162,
+        "importMs": 288,
+        "fontsMs": 211,
+        "buildMs": 64,
+        "totalMs": 1205,
         "builds": 1
       },
       "specimen": {
@@ -528,7 +523,7 @@
       },
       "sandbox": {
         "file": "chinese-novel-horizontal.postext",
-        "bytes": 391492,
+        "bytes": 391494,
         "folio": "77b45883",
         "chapters": [
           {
@@ -733,11 +728,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

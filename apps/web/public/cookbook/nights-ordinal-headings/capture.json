@@ -3,21 +3,21 @@
   "slug": "nights-ordinal-headings",
   "sourceHash": "6b0bd6659462c705362ec412ebb92e20e7a1647ade2057ece0ed11da96039e33",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.135Z",
+  "capturedAt": "2026-10-12T13:19:51.780Z",
   "variants": {
     "en": {
-      "hash8": "27e027db",
+      "hash8": "b4eade1a",
       "vdtHash": "fe5e674ff0e9a96395add1ca76fc84dc9cad8c6a",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 80,
-        "buildMs": 102,
-        "totalMs": 1003,
+        "importMs": 209,
+        "fontsMs": 83,
+        "buildMs": 112,
+        "totalMs": 983,
         "builds": 1
       },
       "specimen": {
@@ -199,7 +199,7 @@
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32633,
+        "bytes": 32635,
         "chapters": [
           {
             "pages": 10,
@@ -397,21 +397,21 @@
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
           },
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c7b4e3e4",
+      "hash8": "08bb7a9f",
       "vdtHash": "82db57898ac3341cba6efde729976c7ed9423b12",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 72,
-        "buildMs": 98,
-        "totalMs": 939,
+        "importMs": 202,
+        "fontsMs": 77,
+        "buildMs": 109,
+        "totalMs": 982,
         "builds": 1
       },
       "specimen": {
@@ -593,7 +593,7 @@
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32688,
+        "bytes": 32684,
         "chapters": [
           {
             "pages": 10,
@@ -791,9 +791,9 @@
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
           },
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

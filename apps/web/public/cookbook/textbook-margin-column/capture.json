@@ -3,20 +3,20 @@
   "slug": "textbook-margin-column",
   "sourceHash": "db2019aaca18f7ac1335c6b789b6c3d1d99a3bcf74b3d90ae315fa7debaf9585",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.503Z",
+  "capturedAt": "2026-10-12T13:19:52.278Z",
   "variants": {
     "en": {
-      "hash8": "586514e5",
+      "hash8": "3f8d0090",
       "vdtHash": "a601945d5147436ead9c994844b45ac4ec76a676",
       "timings": {
-        "importMs": 132,
-        "fontsMs": 4,
-        "buildMs": 66,
-        "totalMs": 845,
+        "importMs": 247,
+        "fontsMs": 5,
+        "buildMs": 72,
+        "totalMs": 1068,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29455,
+        "bytes": 29457,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -386,11 +386,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
@@ -399,13 +394,13 @@
       }
     },
     "es": {
-      "hash8": "963a4b84",
+      "hash8": "1e1cddda",
       "vdtHash": "d981da01d244693a337bfbf8fe84d097564a7a42",
       "timings": {
-        "importMs": 135,
-        "fontsMs": 4,
-        "buildMs": 71,
-        "totalMs": 858,
+        "importMs": 214,
+        "fontsMs": 5,
+        "buildMs": 93,
+        "totalMs": 1066,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +498,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29877,
+        "bytes": 29878,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -774,11 +769,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

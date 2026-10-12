@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "recipe-card",
-  "sourceHash": "edd4740101055534ade9399da0de15133738e9b5af8756359b10610561fae402",
+  "sourceHash": "819ba35a3b659929168170abfa52c49dc2e80506c1930491796d9139ebc38220",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.323Z",
+  "capturedAt": "2026-10-12T13:19:52.039Z",
   "variants": {
     "en": {
-      "hash8": "14fd34d6",
-      "vdtHash": "d9244626546dce03f38e887964c7962bf560c7f9",
+      "hash8": "33ca0a9d",
+      "vdtHash": "ef1f268d7ade4cde3407841a6c4fb658f7cd8662",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 23,
-        "buildMs": 45,
-        "totalMs": 933,
+        "importMs": 198,
+        "fontsMs": 22,
+        "buildMs": 43,
+        "totalMs": 924,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1316,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 140306,
+          "bytes": 140332,
           "alt": "Opening page 58: Tortilla de patatas."
         },
         {
@@ -84,12 +84,12 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416865,
+        "bytes": 416868,
         "folio": "3a99731f",
         "chapters": [
           {
             "pages": 2,
-            "hash": "c977dbdf44165e0d",
+            "hash": "0d544c21672916fb",
             "lines": "1f5eef90507e160c"
           }
         ]
@@ -320,11 +320,6 @@
         },
         "findings": [
           {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -333,13 +328,13 @@
       }
     },
     "es": {
-      "hash8": "14b15f5e",
-      "vdtHash": "9f33fe5a8572ed57cd8bdc43156f67c1776702d7",
+      "hash8": "324464ee",
+      "vdtHash": "fa49903c822ded99b5276d5336af3f1d820472bb",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 23,
+        "importMs": 202,
+        "fontsMs": 26,
         "buildMs": 47,
-        "totalMs": 867,
+        "totalMs": 920,
         "builds": 1
       },
       "specimen": {
@@ -372,7 +367,7 @@
           "h": 1316,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 145648,
+          "bytes": 145650,
           "alt": "Página de apertura 58: Tortilla de patatas."
         },
         {
@@ -407,12 +402,12 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417188,
+        "bytes": 417191,
         "folio": "3a99731f",
         "chapters": [
           {
             "pages": 2,
-            "hash": "107f48aef1c7e3f2",
+            "hash": "e1308ac86af4e2a4",
             "lines": "2970bb4158ee9e7d"
           }
         ]
@@ -642,11 +637,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          },
           {
             "check": "sandbox",
             "severity": "info",

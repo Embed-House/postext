@@ -3,21 +3,21 @@
   "slug": "comic-epub-guided-view",
   "sourceHash": "e7604b381d84dbee640c63807e67ebb09a3a697bbf1056ee6469da6cd984a2f8",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.795Z",
+  "capturedAt": "2026-10-12T13:19:51.179Z",
   "variants": {
     "en": {
-      "hash8": "9994048c",
+      "hash8": "178c110d",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 3279,
-        "fontsMs": 155,
-        "buildMs": 246,
-        "totalMs": 4319,
+        "importMs": 4537,
+        "fontsMs": 147,
+        "buildMs": 216,
+        "totalMs": 5509,
         "builds": 1
       },
       "specimen": {
@@ -286,23 +286,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d4f42d4f",
+      "hash8": "92b4151f",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 1756,
-        "fontsMs": 174,
-        "buildMs": 214,
-        "totalMs": 2734,
+        "importMs": 3768,
+        "fontsMs": 129,
+        "buildMs": 188,
+        "totalMs": 4708,
         "builds": 1
       },
       "specimen": {
@@ -389,7 +383,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807145,
+        "bytes": 807144,
         "chapters": [
           {
             "pages": 3,
@@ -571,23 +565,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "153ba8e3",
+      "hash8": "6d008a3e",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 462,
-        "fontsMs": 139,
-        "buildMs": 205,
-        "totalMs": 1539,
+        "importMs": 344,
+        "fontsMs": 246,
+        "buildMs": 204,
+        "totalMs": 1400,
         "builds": 1
       },
       "specimen": {
@@ -856,23 +844,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "f9198157",
+      "hash8": "f1b9fc0d",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 463,
-        "fontsMs": 343,
-        "buildMs": 186,
-        "totalMs": 1923,
+        "importMs": 421,
+        "fontsMs": 338,
+        "buildMs": 178,
+        "totalMs": 1830,
         "builds": 1
       },
       "specimen": {
@@ -1142,23 +1124,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "2b56a8c4",
+      "hash8": "d59dfae0",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 203,
-        "fontsMs": 120,
-        "buildMs": 168,
-        "totalMs": 1090,
+        "importMs": 272,
+        "fontsMs": 132,
+        "buildMs": 177,
+        "totalMs": 1232,
         "builds": 1
       },
       "specimen": {
@@ -1431,23 +1407,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "d4bb00dd",
+      "hash8": "0b76d94c",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 218,
+        "importMs": 212,
+        "fontsMs": 320,
         "buildMs": 183,
-        "totalMs": 1466,
+        "totalMs": 1657,
         "builds": 1
       },
       "specimen": {
@@ -1719,23 +1689,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "c878e3a4",
+      "hash8": "ad109e32",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 97,
-        "buildMs": 175,
-        "totalMs": 1067,
+        "importMs": 275,
+        "fontsMs": 124,
+        "buildMs": 203,
+        "totalMs": 1226,
         "builds": 1
       },
       "specimen": {
@@ -2004,13 +1968,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

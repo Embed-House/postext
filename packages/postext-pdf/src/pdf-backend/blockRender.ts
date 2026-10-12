@@ -23,6 +23,7 @@ import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
 import { shapesSegmentLanguages, withSegmentLanguage } from '../shapingLanguage';
+import { wordSegments } from './wordPieces';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
 export interface ResourceRenderContext {
@@ -180,6 +181,10 @@ function paintComposedText(
  * A word set in several styles (`VDTLineSegment.runs`, a bold letter in an
  * Arabic word) is shaped whole and each glyph painted in its run's style
  * (`drawStyledWordPx`).
+ *
+ * `segments` are the line's own, or, in a document shaped in its own
+ * language, those with the pieces of a word measured whole joined
+ * (`wordPieces.ts`).
  */
 function renderSegments(
   ctx: PageCtx,
@@ -491,10 +496,15 @@ function renderLineText(
   const align = lineTextAlign(line, block.textAlign);
   const lineIndent = lineX - columnX;
   const effectiveWidth = span ? span.width : columnWidth - lineIndent;
-  const segments = line.segments;
   // Only a line of the CJK composer (or down a vertical page) has hung
   // marks and Han–Latin spaces (see `renderSegments`).
   const composed = line.cjkComposed === true || ctx.vertical !== undefined;
+  // The pieces of a word the layout measured whole are painted as that
+  // word, in a document shaped in its own language (#764).
+  const segments = wordSegments(line, composed, (seg, text) => {
+    const fontStr = seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, block);
+    return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? blockFont, text, parseFontString(fontStr)?.sizePx ?? blockSize, tracking).advance);
+  });
 
   // Last lines render ragged at natural width — except when overfull:
   // Knuth-Plass may accept a final line wider than the measure on the

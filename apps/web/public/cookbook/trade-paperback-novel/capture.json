@@ -3,20 +3,20 @@
   "slug": "trade-paperback-novel",
   "sourceHash": "9500b07f7923b16b03cd4b4c05e97d3aea6a08a5cf6ab3d0be5f06c8c168717e",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.512Z",
+  "capturedAt": "2026-10-12T13:19:52.287Z",
   "variants": {
     "en": {
-      "hash8": "419df7ea",
+      "hash8": "3ae25494",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 204,
-        "fontsMs": 27,
-        "buildMs": 55,
-        "totalMs": 923,
+        "importMs": 257,
+        "fontsMs": 33,
+        "buildMs": 63,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 374203,
+        "bytes": 374204,
         "folio": "846eba29",
         "chapters": [
           {
@@ -361,23 +361,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "c0205aa7",
+      "hash8": "213e2407",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 150,
-        "fontsMs": 28,
-        "buildMs": 161,
-        "totalMs": 1007,
+        "importMs": 208,
+        "fontsMs": 32,
+        "buildMs": 211,
+        "totalMs": 1105,
         "builds": 1
       },
       "specimen": {
@@ -527,7 +522,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 372855,
+        "bytes": 372857,
         "folio": "846eba29",
         "chapters": [
           {
@@ -712,13 +707,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

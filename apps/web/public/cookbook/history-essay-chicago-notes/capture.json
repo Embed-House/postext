@@ -3,21 +3,21 @@
   "slug": "history-essay-chicago-notes",
   "sourceHash": "4e6fff42ca51d3899775ff540910cc45ba2777df66cc16183bf43867f7444c7d",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.944Z",
+  "capturedAt": "2026-10-12T13:19:51.403Z",
   "variants": {
     "en": {
-      "hash8": "48653be6",
+      "hash8": "8af7c24a",
       "vdtHash": "994aae3a811c99b2205ceb072cb0db1659f464e2",
       "timings": {
-        "importMs": 167,
-        "fontsMs": 29,
-        "buildMs": 417,
-        "totalMs": 1271,
+        "importMs": 257,
+        "fontsMs": 32,
+        "buildMs": 448,
+        "totalMs": 1484,
         "builds": 1
       },
       "specimen": {
@@ -328,23 +328,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "6ba60852",
+      "hash8": "b1e087d7",
       "vdtHash": "5d4c797d0c8398d84f1c79e2864e796fe0b7cea3",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 29,
-        "buildMs": 435,
-        "totalMs": 1286,
+        "importMs": 218,
+        "fontsMs": 32,
+        "buildMs": 470,
+        "totalMs": 1400,
         "builds": 1
       },
       "specimen": {
@@ -655,13 +649,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

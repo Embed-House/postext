@@ -3,21 +3,21 @@
   "slug": "thesis-back-matter",
   "sourceHash": "faa4c2982dba44d9a380f057c73e5e7681194f38b0ed6e6519f04c6ef3151e57",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.509Z",
+  "capturedAt": "2026-10-12T13:19:52.284Z",
   "variants": {
     "en": {
-      "hash8": "2946658d",
+      "hash8": "c7fc0d45",
       "vdtHash": "58bdbc7a44d770d70948ab18b7146ec729340d9f",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 25,
-        "buildMs": 104,
-        "totalMs": 928,
+        "importMs": 290,
+        "fontsMs": 26,
+        "buildMs": 114,
+        "totalMs": 1139,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 81938,
+          "bytes": 81948,
           "alt": "Opening page 173: A Interview guide. Table A.1. Timing of an interview session."
         },
         {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "thesis-back-matter.postext",
-        "bytes": 20541,
+        "bytes": 20544,
         "folio": "8d599631",
         "chapters": [
           {
@@ -434,11 +434,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

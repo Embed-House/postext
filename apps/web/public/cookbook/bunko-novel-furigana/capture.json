@@ -3,21 +3,21 @@
   "slug": "bunko-novel-furigana",
   "sourceHash": "630d46ca239bf0e403ac5143461f0d2997882aa843277df7a7e7cf54f6d6c0d7",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.686Z",
+  "capturedAt": "2026-10-12T13:19:51.054Z",
   "variants": {
     "en": {
-      "hash8": "b7200da3",
+      "hash8": "af363492",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 212,
-        "fontsMs": 198,
-        "buildMs": 48,
-        "totalMs": 1102,
+        "importMs": 288,
+        "fontsMs": 248,
+        "buildMs": 57,
+        "totalMs": 1366,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28178,
+        "bytes": 28179,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -348,23 +348,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "725bd107",
+      "hash8": "543644da",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 237,
-        "fontsMs": 229,
-        "buildMs": 54,
-        "totalMs": 1162,
+        "importMs": 238,
+        "fontsMs": 238,
+        "buildMs": 53,
+        "totalMs": 1163,
         "builds": 1
       },
       "specimen": {
@@ -504,7 +498,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28218,
+        "bytes": 28219,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -695,13 +689,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }
