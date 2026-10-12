@@ -300,8 +300,11 @@ function findBun(): string {
 }
 
 /** The page entry and the layout worker of the Sandbox package, built from
- *  the working tree with code splitting (MathJax and the citation engine
- *  are chunks the worker loads when a text needs them). */
+ *  the working tree as two files that import nothing: a worker's request
+ *  for a chunk of its module graph now and then got no answer under the
+ *  harness's request interception, and the edition stalled on
+ *  `/__sb/page-<hash>.js` (#736). MathJax and the citation engine are in
+ *  the files, and still run only when a text needs them. */
 export function buildSandboxEntries(outDir: string = BUILD_DIR): void {
   for (const name of ["postext", "postext-citeproc"]) {
     if (!fs.existsSync(path.join(REPO_DIR, "packages", name, "dist", "index.js"))) {
@@ -311,10 +314,12 @@ export function buildSandboxEntries(outDir: string = BUILD_DIR): void {
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
   try {
-    execFileSync(findBun(), [
-      "build", path.join(SANDBOX_SRC, "headless", "page.ts"), path.join(SANDBOX_SRC, "headless", "worker.ts"),
-      "--outdir", outDir, "--target", "browser", "--format", "esm", "--splitting",
-    ], { cwd: path.join(REPO_DIR, "packages", "postext-sandbox"), stdio: ["ignore", "pipe", "pipe"] });
+    for (const entry of ["page.ts", "worker.ts"]) {
+      execFileSync(findBun(), [
+        "build", path.join(SANDBOX_SRC, "headless", entry),
+        "--outdir", outDir, "--target", "browser", "--format", "esm",
+      ], { cwd: path.join(REPO_DIR, "packages", "postext-sandbox"), stdio: ["ignore", "pipe", "pipe"] });
+    }
   } catch (error) {
     const { stderr, stdout, message } = error as { stderr?: Buffer; stdout?: Buffer; message: string };
     throw new Error(`the Sandbox's headless entry did not build with bun: ${String(stderr ?? "") || String(stdout ?? "") || message}`);
@@ -365,7 +370,12 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
-          const worker = new Worker("/__sb/worker.js", { type: "module" });
+          // The worker's script is fetched by the page and handed over as a
+          // blob: a worker's own request for it now and then got no answer
+          // under the harness's request interception (#736).
+          const script = await fetch("/__sb/worker.js");
+          if (!script.ok) return { error: `the layout worker did not load: HTTP ${script.status}` };
+          const worker = new Worker(URL.createObjectURL(new Blob([await script.text()], { type: "text/javascript" })), { type: "module" });
           worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
           const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
           return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, unanswered: out.unanswered, errors: w.__sbErrors };
