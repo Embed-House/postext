@@ -1005,6 +1005,36 @@ export function loadFont(font: string, uses: readonly FontVariantUse[] = REGULAR
   return Promise.all((uses.length > 0 ? uses : REGULAR_USE).map((use) => loadUse(font, use))).then(() => {});
 }
 
+/**
+ * Declare on the page the faces the pages of a laid-out document name
+ * (`uses`, by family) and load them for the characters the document sets
+ * (`text`), as the wait before a build does for the faces its
+ * configuration asks for (#770). `loadFont` loads the file of a cut that
+ * holds a space, the Latin one; a cut the pages alone name had its other
+ * files (Arabic, Greek, Cyrillic, Latin Extended) fetched by the first
+ * paint, which set that text in a fallback face meanwhile: the summaries
+ * of the Arabic guide's contents, in Amiri italic at 39.58 px, were painted
+ * in the system's Arabic face, «والصفحة» 121.44 px wide in the 111.02 px
+ * the layout gave it. A family cut by slices (some hundred files per cut)
+ * is left to the page, which fetches the slices its text needs as it
+ * paints. Resolves when the faces have loaded, failed or outlasted the
+ * timeout.
+ */
+export async function loadFacesForText(uses: Iterable<readonly [string, readonly FontVariantUse[]]>, text: string): Promise<void> {
+  if (typeof document === 'undefined' || !document.fonts) return;
+  await Promise.all([...uses].map(async ([family, list]) => {
+    if (list.length === 0 || getCustomFontFamily(family) || isGenericFontFamily(family)) return;
+    await loadFont(family, list);
+    const { cuts } = await familyFiles(family);
+    if (cuts) {
+      let largest = 0;
+      for (const cut of cuts.values()) largest = Math.max(largest, cut.length);
+      if (largest > SLICED_CUT_FILES) return;
+    }
+    await loadFontSpecs(sortedUses(list).map((use) => `${use.style === 'italic' ? 'italic ' : ''}${use.weight} 16px "${family}"`), text);
+  }));
+}
+
 /** Declare and load the faces a configuration asks of each of its
  *  families (`configFontUses`). */
 export function preloadConfigFonts(config: PostextConfig, markdown?: FontContentText): Promise<void> {
