@@ -444,10 +444,14 @@ async function runSite(browser: Browser, site: string, edition: Edition): Promis
       if (url.split("?")[0]!.endsWith(".postext") && request.response()?.ok()) bundleUrl = new URL(url).pathname;
     });
     await within("goto", () => page.goto(`${site}/${edition.variant}/sandbox#recipe=${edition.slug}&lang=${edition.variant}`, { waitUntil: "domcontentloaded", timeout: edition.timeoutMs }));
-    // Every chapter paginated, and no `built` message for a while.
+    // Every chapter paginated, the book's fonts settled (`data-postext-fonts`,
+    // #757: no build waits for font files and no layout for late faces is
+    // due; a deploy older than the attribute is waited for as before), and
+    // no `built` message for a while.
     await within("layout", () => page.waitForFunction(
       `(() => { const s = window.__sbSite; return !!s && s.chapters.size > 0 && performance.now() - s.lastBuiltAt > ${QUIET_MS}
-        && document.documentElement.dataset.postextPagination !== 'pending' && document.documentElement.dataset.postextPagination !== 'loading'; })()`,
+        && document.documentElement.dataset.postextPagination !== 'pending' && document.documentElement.dataset.postextPagination !== 'loading'
+        && document.documentElement.dataset.postextFonts !== 'pending'; })()`,
       { timeout: edition.timeoutMs, polling: 250 },
     ), edition.timeoutMs + 5_000);
     const count = await page.evaluate("window.__sbSite.chapters.size") as number;

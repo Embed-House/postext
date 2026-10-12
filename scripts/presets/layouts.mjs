@@ -6,7 +6,9 @@
 // Opens every edition of every bundle in apps/web/public/presets in a
 // headless Sandbox (a fresh browser profile each), waits until the
 // paginator has laid out every chapter (`data-postext-pagination="done"` on
-// the root element), reads the chapter records it stored in IndexedDB and
+// the root element) and the book's fonts are settled (`data-postext-fonts`
+// not `pending`: a chapter laid out while a font file was on its way is
+// laid out again when it lands), reads the chapter records it stored in IndexedDB and
 // writes them to the bundle as `layouts.<locale>.json` — the file the
 // Sandbox reads when it opens the bundle (`presets/bundle.ts`), so a book
 // opens paginated at once. Then refreshes the bundle's `fingerprint.json`.
@@ -133,7 +135,11 @@ async function paginate(edition) {
     for (;;) {
       if (Date.now() - started > TIMEOUT_MS) throw new Error(`timed out (${last})`);
       await sleep(1000);
-      const state = await page.evaluate(() => document.documentElement.dataset.postextPagination ?? 'absent').catch(() => 'absent');
+      const state = await page.evaluate(() => {
+        const { postextPagination, postextFonts } = document.documentElement.dataset;
+        // A deploy older than the fonts attribute has none: waited for as before.
+        return postextFonts === 'pending' ? 'fonts pending' : postextPagination ?? 'absent';
+      }).catch(() => 'absent');
       const records = await readRecords(page).catch(() => ({}));
       const current = ids.filter((id) => records[id]?.engine === ENGINE_KEY);
       if (!firstCount) firstCount = current.length;
