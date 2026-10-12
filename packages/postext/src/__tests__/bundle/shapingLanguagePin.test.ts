@@ -56,14 +56,16 @@ describe('pinLegacyShapingLanguage (#764)', () => {
     expect(migrateConfig(current, 99)).toBe(current);
   });
 
-  it('resolves to the setting only when the text is shaped in the language of the host', () => {
+  it('resolves to the setting only when the text is shaped in the document\'s language', () => {
     expect('shapingLanguage' in resolveAllConfig({}).bodyText).toBe(false);
-    expect('shapingLanguage' in resolveAllConfig({ bodyText: { shapingLanguage: 'document' } }).bodyText).toBe(false);
-    expect(resolveAllConfig({ bodyText: { shapingLanguage: 'host' } }).bodyText.shapingLanguage).toBe('host');
-    // A new document is shaped in its own language; one read from before
-    // keeps the old way.
+    expect('shapingLanguage' in resolveAllConfig({ bodyText: { shapingLanguage: 'host' } }).bodyText).toBe(false);
+    expect(resolveAllConfig({ bodyText: { shapingLanguage: 'document' } }).bodyText.shapingLanguage).toBe('document');
+    // The host's language is the default (in postext 1.29.0 alone the
+    // document's was): one read from before has it written out, and
+    // resolves as a new one does.
+    expect(migrateConfig({} as PostextConfig, 12).bodyText).toEqual({ shapingLanguage: 'host' });
+    expect(resolveAllConfig(migrateConfig({}, 12)).bodyText).toEqual(resolveAllConfig({}).bodyText);
     expect(resolveAllConfig(migrateConfig({}, 13)).bodyText.shapingLanguage).toBeUndefined();
-    expect(resolveAllConfig(migrateConfig({}, 12)).bodyText.shapingLanguage).toBe('host');
   });
 
   it('survives a save', () => {
@@ -76,8 +78,9 @@ describe('pinLegacyShapingLanguage (#764)', () => {
       expect(resolveAllConfig(reloaded).bodyText).toEqual(resolveAllConfig(migrated).bodyText);
       expect(kept(stripConfigDefaults(saved))).toBe('host');
     }
-    // The default is not stored.
-    expect(stripConfigDefaults({ bodyText: { shapingLanguage: 'document' } }).bodyText).toBeUndefined();
+    // A value is stored as written, the default too: the default changed
+    // between two releases, so the stored value says which was meant.
+    expect(stripConfigDefaults({ bodyText: { shapingLanguage: 'document' } }).bodyText).toEqual({ shapingLanguage: 'document' });
     expect(stripConfigDefaults({ bodyText: { shapingLanguage: 'host' } }).bodyText).toEqual({ shapingLanguage: 'host' });
   });
 

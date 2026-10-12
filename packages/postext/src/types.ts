@@ -1540,21 +1540,27 @@ export interface BodyTextConfig {
   /** The language the document's text is shaped in (#764): measured,
    *  painted and embedded. A font answers with other glyphs under a
    *  language (OpenType `locl`): Noto Serif SC sets its digits otherwise
-   *  in Chinese, a face with a Catalan form draws `l·l` closer, one with the Turkish rule keeps `fi` apart. `'document'` (the
-   *  default): the document's own ({@link PostextConfig.locale}), and a
-   *  block's or a run's own where it names one (`{lang=en}`), on every
-   *  context the layout measures with (the engine's, a layout worker's,
-   *  the plain-paragraph breaker's), on the canvas, in the HTML viewer,
-   *  the EPUB and the PDF (the OpenType language system of the language),
-   *  so the same document has the same lines on a page in any language
-   *  and in a worker. `'host'`: as up to postext 1.28, the measuring
-   *  contexts take the language of the page that hosts the layout (none
-   *  in a worker), and only a Chinese, Japanese, Korean or right-to-left
-   *  document is painted in its own (configurations stored before
-   *  `configVersion` 13 read with it, see `pinLegacyShapingLanguage` in
-   *  `postext/bundle`). A browser whose canvas has no `lang` (Chrome
-   *  before 136, Firefox and Safari where it is missing) measures as it
-   *  always did. */
+   *  in Chinese, a face with a Catalan form draws `l·l` otherwise, one
+   *  with the Turkish rule keeps `fi` apart. `'host'` (the default): as
+   *  up to postext 1.28, the measuring contexts take the language of the
+   *  page that hosts the layout (none in a worker), and only a Chinese,
+   *  Japanese, Korean or right-to-left document is painted in its own.
+   *  `'document'`: the document's own ({@link PostextConfig.locale}), and
+   *  a run's own where it names one (`{lang=en}`), on every context the
+   *  layout measures with (the engine's, a layout worker's, the
+   *  plain-paragraph breaker's), so the same document has the same lines
+   *  on a page in any language and in a worker; the HTML viewer and the
+   *  EPUB declare it and the PDF shapes with the OpenType language system
+   *  of the language. It was the default of postext 1.29.0 alone, whose
+   *  canvas painted in the host's language all the same and whose PDF set
+   *  Arabic and Catalan marks at other widths than the measured ones
+   *  (#764): until those are fixed, a document that asks for it is
+   *  measured in its language and may be painted off its measure where
+   *  its face has forms for that language. A configuration stored before
+   *  `configVersion` 13 reads with `'host'` written out
+   *  (`pinLegacyShapingLanguage` in `postext/bundle`). A browser whose
+   *  canvas has no `lang` (Chrome before 136, Firefox and Safari where it
+   *  is missing) measures as it always did. */
   shapingLanguage?: 'document' | 'host';
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
@@ -2222,9 +2228,9 @@ export interface ResolvedBodyTextConfig {
   /** Present only when switched off (see
    *  {@link BodyTextConfig.scriptContext}). */
   scriptContext?: false;
-  /** Present only when the host's (see
+  /** Present only when the document's (see
    *  {@link BodyTextConfig.shapingLanguage}). */
-  shapingLanguage?: 'host';
+  shapingLanguage?: 'document';
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */

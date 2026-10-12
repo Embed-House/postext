@@ -148,7 +148,7 @@ function paintContext(
   // when it is Chinese, Japanese, Korean or written right to left.
   const lang = langOf(doc.config);
   if (lang !== undefined && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
-  setSegmentLanguages(doc.config.bodyText?.shapingLanguage !== 'host');
+  setSegmentLanguages(doc.config.bodyText?.shapingLanguage === 'document');
   // The bitmap is a whole number of pixels; the page rarely is. Drawing at
   // `scale` would leave the last column (and row) of pixels only partly
   // covered — a light hairline at the edge of a dark or coloured page — so

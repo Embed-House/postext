@@ -168,10 +168,14 @@ describe('page language (#428)', () => {
     expect(pageTag(indexed.html)).not.toContain('dir=');
   });
 
-  it('other documents\' pages declare theirs too (#764)', () => {
-    expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, config({ locale: 'zh-Hans' }))))).toMatch(/ data-page="0" lang="zh-Hans" style="/);
-    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).toMatch(/ data-page="0" lang="en" style="/);
-    expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, config({ locale: 'ar' }))))).toContain(' dir="rtl" lang="ar"');
+  it('the pages of a document shaped in its own language declare it too (#764)', () => {
+    const own = (locale: string): PostextConfig => {
+      const base = config({ locale });
+      return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'document' } };
+    };
+    expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, own('zh-Hans'))))).toMatch(/ data-page="0" lang="zh-Hans" style="/);
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, own('en'))))).toMatch(/ data-page="0" lang="en" style="/);
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, own('ar'))))).toContain(' dir="rtl" lang="ar"');
   });
 
   it('pages of a document shaped in the language of the host are as before', () => {
@@ -179,6 +183,8 @@ describe('page language (#428)', () => {
       const base = config({ locale });
       return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } };
     };
+    // The default is the host's.
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, host('zh-Hans'))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, host('en'))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, host('ar'))))).toContain(' dir="rtl" lang="ar"');

@@ -52,9 +52,13 @@ describe('isolate languages on composed Japanese lines (#427)', () => {
   });
 
   it('carries the language of any isolate in a Chinese document shaped in its own language (#764)', () => {
-    const ja = buildDocument({ markdown: '他說:ltr[本当]{lang=ja}。' }, config('zh-Hans'));
+    const own = (): PostextConfig => {
+      const base = config('zh-Hans');
+      return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'document' } };
+    };
+    const ja = buildDocument({ markdown: '他說:ltr[本当]{lang=ja}。' }, own());
     expect(languages(ja)).toEqual([['他說', null], ['本当', 'ja'], ['。', null]]);
-    const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, config('zh-Hans'));
+    const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, own());
     expect(languages(en)).toEqual([['他說', null], ['the', 'en'], ['end', 'en'], ['。', null]]);
   });
 
@@ -67,5 +71,8 @@ describe('isolate languages on composed Japanese lines (#427)', () => {
     expect(languages(ja)).toContainEqual(['本当', 'ja']);
     const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, host());
     expect(segments(en).some((s) => s.lang !== undefined)).toBe(false);
+    // The host's is the default.
+    const plain = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, config('zh-Hans'));
+    expect(segments(plain).some((s) => s.lang !== undefined)).toBe(false);
   });
 });
