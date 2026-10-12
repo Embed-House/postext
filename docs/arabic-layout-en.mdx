@@ -40,7 +40,7 @@ const config: PostextConfig = {
 - **bold emphasis** instead of italics, upright blockquotes;
 - **the built-in words**: شكل and جدول for figures and tables, numbered by chapter (شكل ٢-٣), الفصل and ص in cross-references, المراجع over the bibliography, انظر and انظر أيضًا in the index, (تابع) after a continued table caption;
 - **the index order**, alphabetical (hijāʾī), with the article ال ignored;
-- **the language tag** in the HTML (`lang="ar" dir="rtl"`), on the canvas and in the PDF (`/Lang`), so the font's language forms apply. With [`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text) the contexts the layout measures with take it too, on a page in any language and in a layout worker; by default they take the language of the page that hosts the layout.
+- **the language tag** in the HTML (`lang="ar" dir="rtl"`) and in the PDF (`/Lang`), so the font's language forms apply. With [`bodyText.shapingLanguage: 'document'`](/en/docs/configuration-text#body-text) the canvas and the contexts the layout measures with take it too, on a page in any language and in a layout worker; by default they take the language of the page that hosts the layout.
 
 The Sandbox does this in one step: pick العربية under **Design › Writing system** and press **Arabic defaults › Review…** (see [In the Sandbox](#in-the-sandbox)).
 
