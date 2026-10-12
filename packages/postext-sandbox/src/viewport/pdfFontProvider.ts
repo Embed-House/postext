@@ -1,4 +1,4 @@
-import type { PdfFontProvider } from 'postext-pdf';
+import type { PdfFontFile, PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, staticFaceFiles } from '../controls/fontLoader';
@@ -75,14 +75,39 @@ function fetchSlices(family: string, weight: number, style: 'normal' | 'italic')
   return promise;
 }
 
+/** A file of a face to fetch: where it is, the characters its rule
+ *  answers for, and its place among the rules of the face as the previews
+ *  declare them (the greater number is declared later). */
+interface DeclaredFile {
+  url: string;
+  unicodeRange?: string;
+  order: number;
+}
+
+/** `files`, the files of a face in the order they are declared, each with
+ *  its place in `declared`, the whole list of the face. */
+function declaredFiles<T extends { url: string; unicodeRange?: string }>(files: readonly T[], declared: readonly T[]): DeclaredFile[] {
+  return files.map((file) => ({ url: file.url, ...(file.unicodeRange ? { unicodeRange: file.unicodeRange } : {}), order: declared.indexOf(file) }));
+}
+
 /** Each file of a face, fetched with one retry; a file that still fails is
  *  left out, so a CDN hiccup costs the characters of that file (reported as
- *  missing glyphs), not the face. Rejects only when every file failed. */
-async function fetchFaceFiles(slices: readonly Pick<FontSlice, 'url'>[], raw = false): Promise<Uint8Array[]> {
-  const files = await mapLimit(slices, FETCH_CONCURRENCY, async (slice) => {
+ *  missing glyphs), not the face. Rejects only when every file failed.
+ *  A PDF gets each file saying its range and its place in the declaration
+ *  (`PdfFontFile`, #770: two properties on a view of the bytes, the
+ *  fetched ones being kept for the next answer), so it sets a character
+ *  two files hold in the file the previews took it from; an SVG picture
+ *  (`raw`) gets the bytes as they are. */
+async function fetchFaceFiles(slices: readonly DeclaredFile[], raw = false): Promise<PdfFontFile[]> {
+  const files = await mapLimit(slices, FETCH_CONCURRENCY, async (slice): Promise<PdfFontFile | null> => {
     for (let attempt = 0; ; attempt++) {
       try {
-        return await fetchAndDecompress(slice.url, raw);
+        const bytes = await fetchAndDecompress(slice.url, raw);
+        if (raw) return bytes;
+        return Object.assign(new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength), {
+          ...(slice.unicodeRange ? { unicodeRange: slice.unicodeRange } : {}),
+          order: slice.order,
+        });
       } catch (err) {
         if (attempt >= FETCH_RETRIES) {
           console.warn(`[pdfFontProvider] left out ${slice.url}: ${err instanceof Error ? err.message : String(err)}`);
@@ -91,7 +116,7 @@ async function fetchFaceFiles(slices: readonly Pick<FontSlice, 'url'>[], raw = f
       }
     }
   });
-  const got = files.filter((file): file is Uint8Array => file !== null);
+  const got = files.filter((file): file is PdfFontFile => file !== null);
   if (got.length === 0) throw new Error(`font fetch failed: none of the ${slices.length} file(s) of the face could be had`);
   return got;
 }
@@ -179,8 +204,19 @@ async function loadCustomFontBytes(
  * weight the family has no file for is set in the cut the page draws it
  * from, an italic of a family without italics in its upright.
  *
+ * A face of several files is answered with each file saying its
+ * `unicode-range` and its place among the files the previews declare
+ * (#770): the page sets a character two files hold in the one declared
+ * last, and the PDF of a document shaped in its own language follows it. The numbered slices of a Japanese family repeat the ASCII
+ * letters of its `latin` file and are declared after it, the `arabic`
+ * file of an Arabic one has a space and brackets its range does not
+ * claim; without the ranges the PDF took such a character from the first
+ * file with a glyph, which kerns it against other neighbours than the
+ * layout measured.
+ *
  * With `raw`, files come as stored or fetched (WOFF2 and WOFF included),
- * for the `@font-face` rules of SVG pictures (#630).
+ * for the `@font-face` rules of SVG pictures (#630), and say nothing of
+ * themselves.
  */
 export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontProvider {
   const raw = options.raw === true;
@@ -202,10 +238,10 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
     if (isUncataloguedFontFamily(family)) throw noFiles(family);
     // The cut the previews measure this face with, in the order its files
     // are declared; the browser looks a character up from the last one
-    // declared, and so does the PDF.
+    // declared, and so does the PDF, which is told each file's place.
     const cut = await staticFaceFiles(family, weight, style);
     if (isUncataloguedFontFamily(family)) throw noFiles(family);
-    if (cut) return fetchFaceFiles(facesForCodePoints(cut, request?.codePoints).reverse(), raw);
+    if (cut) return fetchFaceFiles(declaredFiles(facesForCodePoints(cut, request?.codePoints), cut).reverse(), raw);
 
     // A family the loader has no static files for (it took Google's style
     // sheet): Fontsource's files of the nearest weight, where it has any.
@@ -217,7 +253,8 @@ export function createPdfFontProvider(options: { raw?: boolean } = {}): PdfFontP
     const slices = (await fetchSlices(family, targetWeight, style))
       ?? (style === 'italic' ? await fetchSlices(family, targetWeight, 'normal') : null);
     if (slices) {
-      return fetchFaceFiles(pickSlices(slices, request?.codePoints), raw);
+      // `pickSlices` answers the last rule of the sheet first.
+      return fetchFaceFiles(declaredFiles(pickSlices(slices, request?.codePoints), slices), raw);
     }
 
     try {

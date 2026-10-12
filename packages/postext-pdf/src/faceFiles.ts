@@ -12,6 +12,20 @@
  * text object, so a line of Han with a Latin word paints from three or four
  * slices and each slice keeps only the glyphs set in it.
  *
+ * Which file sets a character two files hold (postext #770): a browser
+ * takes it from the `@font-face` rule declared last among those whose
+ * `unicode-range` holds it, and Fontsource's files overlap. A Japanese
+ * family repeats the ASCII letters in its `latin` file and in its numbered
+ * slices, and a pen declares the slices after `latin`: Chrome 154 sets the
+ * letters of `Shift_JIS` from slice 118 and the `_` from slice 113 of Noto
+ * Serif JP, 4252 thousandths of the em wide, where the `latin` file alone
+ * kerns `t_` and `_J` and sets it 4318 wide. A provider that hands each
+ * file with its range and its place in the declaration (`PdfFontFile`)
+ * gets each character from the file the browser took it from
+ * ({@link FaceFiles.declaredFile}), in a document shaped in its own
+ * language; one that hands bare files gets it from the first file with a
+ * glyph, as before, and so does a document that keeps the host's language.
+ *
  * Characters a face lacks in every file are recorded as they are shaped
  * ({@link noteMissingGlyphs}), for the `missingGlyph` warning.
  */
@@ -20,6 +34,7 @@ import { mirroredCodePoint } from 'postext';
 import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces';
 import { besideLetterOf, shapesAsCanvas, shapingScript, shapingScriptLetter, withBesideLetter, withinWideText } from './shapingLanguage';
 import { canvasWords } from './canvasWords';
+import { parseUnicodeRange, rangesHold, type CodePointRanges } from './unicodeRange';
 
 /** The fontkit face of an embedded font, as far as coverage needs it. */
 interface CoverageFace {
@@ -38,31 +53,77 @@ function neverMissing(cp: number): boolean {
   return cp < 0x20 || (cp >= 0x7f && cp < 0xa0) || isFallbackHandled(cp);
 }
 
+/** What a provider says of a file of a face (`PdfFontFile`): the
+ *  characters its `@font-face` rule answers for, and where the rule is
+ *  declared among the rules of the face. */
+export interface FileDeclaration {
+  unicodeRange?: string;
+  order?: number;
+}
+
 /** The files of one face, in the order their glyphs are looked up. */
 export class FaceFiles {
   readonly files: PDFFont[];
   private readonly faces = new Map<PDFFont, CoverageFace | undefined>();
   /** First file holding each code point, or null for none. */
   private readonly first = new Map<number, PDFFont | null>();
+  /** The range each file was given with; a file with none answers for
+   *  every character. */
+  private readonly ranges = new Map<PDFFont, CodePointRanges>();
+  /** Where each file is declared: the number it was given with, else its
+   *  place in the list counted down, the first file being the one
+   *  declared last. */
+  private readonly orders = new Map<PDFFont, number>();
+  /** The files from the one declared last to the one declared first. */
+  private lastDeclaredFirst: PDFFont[] | undefined;
+  /** The file a browser sets each code point in, or null for none. */
+  private readonly declared = new Map<number, PDFFont | null>();
+  private hasRanges = false;
 
-  constructor(files: readonly PDFFont[]) {
+  constructor(files: readonly PDFFont[], declarations?: ReadonlyMap<PDFFont, FileDeclaration>) {
     this.files = [];
-    for (const file of files) this.add(file);
+    for (const file of files) this.add(file, declarations?.get(file));
   }
 
-  /** Append a file (a slice fetched later); a file already listed is kept
-   *  where it is. */
-  add(file: PDFFont): void {
+  /** Append a file (a slice fetched later), with what the provider says
+   *  of it; a file already listed is kept where it is, as it was given. */
+  add(file: PDFFont, declaration?: FileDeclaration): void {
     if (this.faces.has(file)) return;
+    this.orders.set(file, declaration?.order ?? -this.files.length);
     this.files.push(file);
     this.faces.set(file, coverageFace(file));
-    // A code point no file had may be in this one.
+    const ranges = declaration?.unicodeRange === undefined ? undefined : parseUnicodeRange(declaration.unicodeRange);
+    if (ranges) {
+      this.ranges.set(file, ranges);
+      this.hasRanges = true;
+    }
+    // A code point no file had may be in this one, and a file declared
+    // later than the one that set a character takes it.
     for (const [cp, hit] of this.first) if (hit === null) this.first.delete(cp);
+    this.declared.clear();
+    this.lastDeclaredFirst = undefined;
+  }
+
+  /** Whether the provider gave a file of the face with its range: the
+   *  face is then read as a browser reads its `@font-face` rules
+   *  ({@link declaredFile}). */
+  get ranged(): boolean {
+    return this.hasRanges;
   }
 
   /** Whether `file` has a glyph for `cp`. */
   covers(file: PDFFont, cp: number): boolean {
     return this.faces.get(file)?.hasGlyphForCodePoint(cp) ?? false;
+  }
+
+  /** Whether `file` answers for `cp` as a browser reads it: its range
+   *  holds the character and the file has a glyph for it. Chrome 154 skips
+   *  a file whose range claims a character it has no glyph for and takes
+   *  the next one down, and never draws a glyph a file has outside its
+   *  range. */
+  private answers(file: PDFFont, cp: number): boolean {
+    const ranges = this.ranges.get(file);
+    return (ranges === undefined || rangesHold(ranges, cp)) && this.covers(file, cp);
   }
 
   /** The first file with a glyph for `cp`, or null when none has one. */
@@ -79,6 +140,42 @@ export class FaceFiles {
     this.first.set(cp, found);
     return found;
   }
+
+  /** The files a browser tries in turn: the one declared last first.
+   *  Files of one number keep the order they were given in. */
+  private byDeclaration(): readonly PDFFont[] {
+    if (!this.lastDeclaredFirst) {
+      const at = new Map(this.files.map((file, i) => [file, i]));
+      this.lastDeclaredFirst = [...this.files].sort((a, b) => this.orders.get(b)! - this.orders.get(a)! || at.get(a)! - at.get(b)!);
+    }
+    return this.lastDeclaredFirst;
+  }
+
+  /**
+   * The file a browser sets `cp` in: the one declared last among those
+   * whose range holds it and that have a glyph for it. Null when none
+   * does: the browser then leaves the family, for the next one of the
+   * `font-family` list or a font of the system.
+   */
+  declaredFile(cp: number): PDFFont | null {
+    const hit = this.declared.get(cp);
+    if (hit !== undefined) return hit;
+    const found = this.byDeclaration().find((file) => this.answers(file, cp)) ?? null;
+    this.declared.set(cp, found);
+    return found;
+  }
+
+  /**
+   * The file a browser sets a letter and the marks on it in (`cps`, the
+   * letter first): the one declared last that answers for every one of
+   * them. With Source Serif 4 declared first and Noto Serif JP after it
+   * for `a` alone, Chrome sets `a` in the second (557 thousandths) and
+   * `a` + U+0308 whole in the first (541). Null when no file sets them
+   * all.
+   */
+  declaredFileOfAll(cps: readonly number[]): PDFFont | null {
+    return this.byDeclaration().find((file) => cps.every((cp) => this.answers(file, cp))) ?? null;
+  }
 }
 
 const faceFiles = new WeakMap<PDFFont, FaceFiles>();
@@ -87,13 +184,13 @@ const faceFiles = new WeakMap<PDFFont, FaceFiles>();
  *  renderers are handed. A first file already registered (two faces the
  *  provider answered with the same files) keeps its list, which takes the
  *  new files too; the list in force is returned. */
-export function registerFaceFiles(primary: PDFFont, files: readonly PDFFont[]): FaceFiles {
+export function registerFaceFiles(primary: PDFFont, files: readonly PDFFont[], declarations?: ReadonlyMap<PDFFont, FileDeclaration>): FaceFiles {
   const known = faceFiles.get(primary);
   if (known) {
-    for (const file of files) known.add(file);
+    for (const file of files) known.add(file, declarations?.get(file));
     return known;
   }
-  const list = new FaceFiles([primary, ...files]);
+  const list = new FaceFiles([primary, ...files], declarations);
   faceFiles.set(primary, list);
   return list;
 }
@@ -155,10 +252,15 @@ export interface FileRun {
  * `خالة.»`, which the `latin` file draws), says the letter whose script
  * the browser shaped it in (`beside`, #764), in a document shaped in its
  * own language.
+ *
+ * A face given with the ranges of its files is cut as a browser cuts it
+ * ({@link declaredRuns}, #770) in a document shaped in its own language,
+ * and none of the rules above that guess at the browser's file apply.
  */
 export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   const list = faceFilesOf(font);
   if (!list) return [{ font, text }];
+  if (setsAsDeclared(list)) return besideLetters(declaredRuns(list, font, text, rtl), text, font);
   const letter = shapingScriptLetter();
   if (letter !== undefined) {
     const file = list.fileFor(letter);
@@ -213,6 +315,12 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
     if (current) current.text += pending;
     else runs.push({ font, text: pending });
   }
+  return besideLetters(runs, text, font);
+}
+
+/** `runs`, the runs `text` was cut into, each saying the letter it was
+ *  cut from beside when it has none; one run in `font` for no run. */
+function besideLetters(runs: FileRun[], text: string, font: PDFFont): FileRun[] {
   if (runs.length > 1) {
     // The runs follow each other through the text.
     let at = 0;
@@ -223,6 +331,126 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
     }
   }
   return runs.length > 0 ? runs : [{ font, text }];
+}
+
+/**
+ * Whether the text being painted takes each character from the file a
+ * browser takes it from: a face whose provider gave its files with their
+ * ranges, in a document shaped in its own language.
+ *
+ * The page chose the file of a character the same way whatever language
+ * it shaped the text in, but a document that keeps the host's language is
+ * shaped string by string, each run in the script it shows, as it always
+ * was, and prints the same bytes. Cut by the browser's files, its strings
+ * fall into more runs with no letter, which that shaping gives no script:
+ * in Noto Serif SC the space is another slice's than the letters and the
+ * digits, so `GB/T 15834` became `GB/T`, a space and `15834`, and the
+ * digits alone took the proportional forms of the default script, 0.80 pt
+ * short of the tabular ones the page measured in a Latin string (15.75
+ * pt, the Cookbook's Chinese official document). `renderToPdf` drops what
+ * the files say when no document of the render is shaped in its own
+ * language (`withBareFiles`); this is for a page of one that is not, in a
+ * render that has one.
+ */
+function setsAsDeclared(list: FaceFiles): boolean {
+  return list.ranged && shapesAsCanvas();
+}
+
+/** A combining mark: it is set in the file of the letter it stands on. */
+const MARK_RE = /^\p{M}$/u;
+
+/**
+ * `text` cut into runs by the file a browser sets each character in, for
+ * a face given with the ranges of its files (postext #770). As measured
+ * in Chrome 154 (two files that draw the same letters at other widths,
+ * declared as one family, on a canvas in a page and in a worker):
+ *
+ * - a character is set in the file declared last among those whose range
+ *   holds it: of two `FontFace` objects, the one added to the font set
+ *   last, whichever was made or loaded first; of two `@font-face` rules,
+ *   the later one in the document; and a `FontFace` added by script
+ *   rather than any rule of a style sheet, whichever came first;
+ * - a file with no range answers for every character;
+ * - a file whose range claims a character it has no glyph for is passed
+ *   over for the next one down, and a glyph a file has outside its range
+ *   is never drawn;
+ * - nothing stays in a file because the character before it was set
+ *   there: `Aa` with the capitals in one file is `A` from it and `a` from
+ *   the other, 1269 thousandths, where either file alone gives 1253 or
+ *   1274. A space goes to the file whose range holds it, though every
+ *   file has one;
+ * - a letter and the marks on it are set in one file, the one declared
+ *   last that answers for them all. (Chrome also composes the pair where
+ *   a file answers for the composed character: `o` + U+0304 is the `ō` of
+ *   `latin-ext`. The PDF's shapers compose nothing, so here the pair goes
+ *   to a file that has both.)
+ *
+ * So no character follows the one before it here, an opening bracket does
+ * not go with what it opens and a word shaped in a script is not looked up
+ * by a letter of that script: the browser did none of that. What stays is
+ * what the shapers need: a zero width joiner or non-joiner with the letter
+ * it joins, an invisible character in the run it stands in.
+ *
+ * A character no file answers for was drawn by the browser in another
+ * family; here it is set as in a face given without ranges: in the run
+ * before it when that file has a glyph, else in the first file that has
+ * one (its mirror's, in a right-to-left run), and reported as missing
+ * when none has.
+ */
+function declaredRuns(list: FaceFiles, font: PDFFont, text: string, rtl: boolean): FileRun[] {
+  const runs: FileRun[] = [];
+  let current: FileRun | undefined;
+  // Joining controls waiting for the letter after them.
+  let pending = '';
+  let previous = 0;
+  // The file of the letter whose marks follow, up to `wholeEnd`.
+  let whole: PDFFont | null = null;
+  let wholeEnd = 0;
+  const chars = [...text];
+  for (let at = 0; at < chars.length; at++) {
+    const ch = chars[at]!;
+    const cp = ch.codePointAt(0)!;
+    if (isJoiningControl(cp) && (!current || !joinsOnto(previous))) {
+      pending += ch;
+      continue;
+    }
+    let file: PDFFont | null | undefined;
+    if (at < wholeEnd) {
+      file = whole;
+    } else if (current && isDefaultIgnorable(cp)) {
+      file = current.font;
+    } else if (MARK_RE.test(ch)) {
+      // A mark whose letter no file sets with it: beside its letter when
+      // that file has a glyph for it.
+      file = current && list.covers(current.font, cp) ? current.font : list.declaredFile(cp);
+    } else {
+      let end = at + 1;
+      while (end < chars.length && MARK_RE.test(chars[end]!)) end++;
+      if (end > at + 1) {
+        whole = list.declaredFileOfAll(chars.slice(at, end).map((c) => c.codePointAt(0)!));
+        wholeEnd = whole ? end : 0;
+      }
+      file = (at < wholeEnd ? whole : null) ?? list.declaredFile(cp);
+    }
+    if (!file) {
+      const mirror = rtl ? mirroredCodePoint(cp) : cp;
+      const shown = mirror !== cp && list.fileFor(mirror) ? mirror : cp;
+      file = current && (list.covers(current.font, shown) || isDefaultIgnorable(cp)) ? current.font : list.fileFor(shown) ?? current?.font ?? font;
+    }
+    if (current && current.font === file) {
+      current.text += pending + ch;
+    } else {
+      current = { font: file, text: pending + ch };
+      runs.push(current);
+    }
+    pending = '';
+    previous = cp;
+  }
+  if (pending) {
+    if (current) current.text += pending;
+    else runs.push({ font, text: pending });
+  }
+  return runs;
 }
 
 /** A string a browser keeps in eight bits: no character above U+00FF. */

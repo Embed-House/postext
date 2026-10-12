@@ -42,7 +42,8 @@ import { applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svg
 import { roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
 import { parseFontString } from '../fontString';
-import { FontCache, type PdfFontProvider } from '../fontCache';
+import { FontCache, declarationOf, fontFilesOf, inDeclarationOrder, type PdfFontFile, type PdfFontProvider } from '../fontCache';
+import { parseUnicodeRange } from '../unicodeRange';
 import { widthOfTextAtSize } from '../faceFiles';
 import {
   type PageCtx,
@@ -291,10 +292,23 @@ export async function inlineSvgFontsForRaster(
     if (!parsed || declared.has(parsed.family.toLowerCase())) continue;
     const answer = await provider(parsed.family, parsed.weight, parsed.style, { codePoints }).catch(() => null);
     // A face of several files is one @font-face per file: the browser
-    // looks each character up in them in turn.
-    for (const bytes of Array.isArray(answer) ? answer : answer ? [answer] : []) {
+    // looks each character up in them in turn. Files given with their
+    // ranges are declared as the page declared them, each rule with its
+    // range and the one declared last at the end, so the picture takes a
+    // character from the file the page did.
+    const files = answer ? fontFilesOf(answer) : [];
+    const rangesOf = (file: PdfFontFile) => {
+      const unicodeRange = declarationOf(file)?.unicodeRange;
+      return unicodeRange === undefined ? undefined : parseUnicodeRange(unicodeRange);
+    };
+    const ranged = files.some((file) => rangesOf(file) !== undefined);
+    for (const bytes of ranged ? inDeclarationOrder(files) : files) {
       if (bytes.length === 0) continue;
-      css += fontFaceRule(parsed.family, parsed.weight, parsed.style, bytes, sniffFontFormat(bytes) ?? 'ttf');
+      const rule = fontFaceRule(parsed.family, parsed.weight, parsed.style, bytes, sniffFontFormat(bytes) ?? 'ttf');
+      const ranges = rangesOf(bytes);
+      css += ranges && rule.endsWith('}')
+        ? `${rule.slice(0, -1)};unicode-range:${ranges.map(([lo, hi]) => `U+${lo.toString(16)}${hi > lo ? `-${hi.toString(16)}` : ''}`).join(',')}}`
+        : rule;
     }
   }
   return injectSvgStyle(svgText, css);

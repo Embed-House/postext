@@ -1,4 +1,5 @@
 import type { VDTDocument } from 'postext';
+import type { PdfFontFileDeclaration } from '../fontCache';
 import type { PdfWarning, RenderProgress, RenderToPdfOptions } from '../pdf-backend';
 
 /** The render options that travel to the worker as data. */
@@ -23,6 +24,11 @@ export type PdfRequestMessage =
       kind: 'answer';
       askId: number;
       bytes: Uint8Array | Uint8Array[] | null;
+      /** What each file of a font says of itself (its range, its place in
+       *  the declaration: `PdfFontFile`), in the order of `bytes`, null
+       *  for a file that says nothing; left out when none does. The
+       *  properties a file carries do not cross to the worker with it. */
+      declared?: Array<PdfFontFileDeclaration | null>;
       error?: string;
     }
   | { kind: 'dispose' };

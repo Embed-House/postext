@@ -2,7 +2,7 @@ import { cssWeightOrder } from 'postext';
 import { padTrueTypeGlyphs } from './trueTypePadding';
 import { PDFDict, PDFName, PDFRef, PDFStream, type PDFDocument, type PDFFont } from 'pdf-lib';
 import { fontKey, parseFontString } from './fontString';
-import { missingGlyphsOf, registerFaceFiles, wantsGlyph, type FaceFiles } from './faceFiles';
+import { missingGlyphsOf, registerFaceFiles, wantsGlyph, type FaceFiles, type FileDeclaration } from './faceFiles';
 import { registerFontFamily } from './fontFamilies';
 import { verticalTwinRefOf } from './verticalFonts';
 import { shapeInCurrentLanguage } from './shapingLanguage';
@@ -149,21 +149,127 @@ export interface PdfFontRequest {
 }
 
 /**
+ * One file of a face, which may say what its `@font-face` rule says of it:
+ * the bytes themselves, carrying two properties, for a provider that
+ * knows how the page that measured the layout declared the face (postext
+ * #770). A plain `Uint8Array` is a file that says nothing.
+ *
+ * A browser sets a character in the file declared last among those whose
+ * `unicode-range` holds it, and the files of a family overlap: Fontsource
+ * repeats the ASCII letters of a Japanese family in its `latin` file and
+ * in its numbered slices, the space in every file, the brackets in the
+ * `arabic` file of an Arabic one. Two characters set in two files do not
+ * kern, so the file decides the width the layout measured. A provider
+ * that hands every file of a face this way has each character drawn from
+ * the file the browser took it from.
+ *
+ * The properties ride on the bytes, so a described file is still the
+ * `Uint8Array` every reader of a provider expects (the engine's SVG
+ * inliner and `bundleFontProvider`, a postext-pdf released before this),
+ * and what does not look at them reads the file as before. A copy of the
+ * bytes does not carry them: {@link declaredFontFile} puts them on.
+ */
+export type PdfFontFile = Uint8Array & {
+  /** The `unicode-range` of the file's rule, as CSS writes it
+   *  (`U+0000-00FF,U+0131,U+4E??`). A file with none answers for every
+   *  character, as a rule without the descriptor does. */
+  unicodeRange?: string;
+  /** Where the file is declared among the files of the face (one weight
+   *  and style of the family): any number that grows with the order of
+   *  the `@font-face` rules in the page, or of the calls to
+   *  `document.fonts.add`; the file with the greatest is the one declared
+   *  last. The same file keeps its number in every answer for the face.
+   *  Files with none are read in the order given, the first being the
+   *  one declared last. */
+  order?: number;
+};
+
+/** What a {@link PdfFontFile} says of itself. */
+export type PdfFontFileDeclaration = FileDeclaration;
+
+/**
+ * `bytes` as a file that says how the page declared it: a view of the
+ * same bytes (nothing is copied, and `bytes` itself is left as it is)
+ * carrying `unicodeRange` and `order` ({@link PdfFontFile}). A plain
+ * `Object.assign(bytes, { unicodeRange, order })` does as well where the
+ * bytes are the provider's own to mark.
+ */
+export function declaredFontFile(bytes: Uint8Array, declaration: PdfFontFileDeclaration): PdfFontFile {
+  const file: PdfFontFile = new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if (declaration.unicodeRange !== undefined) file.unicodeRange = declaration.unicodeRange;
+  if (declaration.order !== undefined) file.order = declaration.order;
+  return file;
+}
+
+/** What `file` says of itself, when it says anything a browser would
+ *  read: a range that is text, a place that is a number. */
+export function declarationOf(file: PdfFontFile): PdfFontFileDeclaration | undefined {
+  const unicodeRange = typeof file.unicodeRange === 'string' ? file.unicodeRange : undefined;
+  const order = typeof file.order === 'number' && Number.isFinite(file.order) ? file.order : undefined;
+  if (unicodeRange === undefined && order === undefined) return undefined;
+  return { ...(unicodeRange !== undefined ? { unicodeRange } : {}), ...(order !== undefined ? { order } : {}) };
+}
+
+/**
  * The bytes of a face (TrueType, or CFF-flavoured OpenType): one file, or
  * several that together make the face — each holding part of its
  * characters, like the numbered unicode-range slices Fontsource ships for
  * Chinese, Japanese and Korean families. Each file is embedded as its own
- * subset font and a character is drawn from the first file, in the order
- * given, that has a glyph for it. Reject (throw) for a face the provider
- * cannot supply: another cut of the family is set in its place
- * (`fontFallback`).
+ * subset font.
+ *
+ * A character is drawn from the first file, in the order given, that has
+ * a glyph for it. When a file of the face comes with its range
+ * ({@link PdfFontFile}), a character is drawn from the file a browser
+ * takes it from: the one declared last among those whose range holds it
+ * and that have a glyph for it; a character no range holds is drawn from
+ * the first file with a glyph. So it is in a document shaped in its own
+ * language (`bodyText.shapingLanguage: 'document'`); one that keeps the
+ * host's language reads the files in the order given whatever they say,
+ * and prints as it did. A provider that describes its files therefore
+ * still lists them with the one declared last first.
+ *
+ * Reject (throw) for a face the provider cannot supply: another cut of
+ * the family is set in its place (`fontFallback`).
  */
 export type PdfFontProvider = (
   family: string,
   weight: number,
   style: 'normal' | 'italic',
   request?: PdfFontRequest,
-) => Promise<Uint8Array | Uint8Array[]>;
+) => Promise<PdfFontAnswer>;
+
+/** What a {@link PdfFontProvider} answers a face with. */
+export type PdfFontAnswer = PdfFontFile | PdfFontFile[];
+
+/** The files of an answer. */
+export function fontFilesOf(answer: PdfFontAnswer): PdfFontFile[] {
+  return Array.isArray(answer) ? answer : [answer];
+}
+
+/**
+ * `provider` answering with files that say nothing: what each says of
+ * itself is left off. For a render with no document shaped in its own
+ * language, which reads every face as it did before a file could say
+ * more (the first file with a glyph), and asks for the same characters.
+ */
+export function withBareFiles(provider: PdfFontProvider): PdfFontProvider {
+  const bare = (file: PdfFontFile): Uint8Array => (declarationOf(file) ? new Uint8Array(file.buffer, file.byteOffset, file.byteLength) : file);
+  return async (family, weight, style, request) => {
+    const answer = await provider(family, weight, style, request);
+    return Array.isArray(answer) ? answer.map(bare) : bare(answer);
+  };
+}
+
+/** The files of an answer from the one declared first to the one declared
+ *  last, as a style sheet lists its rules (`PdfFontFile.order`; a file
+ *  with no number takes its place in the answer, the first being the one
+ *  declared last). */
+export function inDeclarationOrder(files: readonly PdfFontFile[]): PdfFontFile[] {
+  return files
+    .map((file, at) => ({ file, at, order: declarationOf(file)?.order ?? -at }))
+    .sort((a, b) => a.order - b.order || b.at - a.at)
+    .map((entry) => entry.file);
+}
 
 /** A face some characters of which no file of it has a glyph for; the PDF
  *  draws them as the font's `.notdef` glyph. */
@@ -276,8 +382,10 @@ export interface FontCacheOptions {
  * A face the provider answers with several files (see
  * {@link PdfFontProvider}) embeds each file as a subset of its own; `get()`
  * hands out the first, and the text primitives draw each character from
- * the file that has it (`faceFiles.ts`). Asked again for characters its
- * files lack, such a face asks the provider for those only.
+ * the file that has it, or from the file a browser takes it from when the
+ * provider says how the files are declared (`faceFiles.ts`). Asked again
+ * for characters its files lack, such a face asks the provider for those
+ * only.
  */
 export class FontCache {
   private map = new Map<string, PDFFont | null>();
@@ -346,15 +454,20 @@ export class FontCache {
     return font;
   }
 
-  /** Embed every file of a provider answer, in order, dropping repeats. */
-  private async embedAnswer(answer: Uint8Array | Uint8Array[], spec: FaceSpec): Promise<PDFFont[]> {
-    const files = Array.isArray(answer) ? answer : [answer];
+  /** Embed every file of a provider answer, in order, dropping repeats:
+   *  the fonts, and what the provider says of each (the first time it
+   *  gives a file). */
+  private async embedAnswer(answer: PdfFontAnswer, spec: FaceSpec): Promise<{ fonts: PDFFont[]; declarations: Map<PDFFont, FileDeclaration> }> {
     const fonts: PDFFont[] = [];
-    for (const bytes of files) {
-      const font = await this.embedBytes(bytes, spec);
-      if (!fonts.includes(font)) fonts.push(font);
+    const declarations = new Map<PDFFont, FileDeclaration>();
+    for (const file of fontFilesOf(answer)) {
+      const font = await this.embedBytes(file, spec);
+      if (fonts.includes(font)) continue;
+      fonts.push(font);
+      const declaration = declarationOf(file);
+      if (declaration) declarations.set(font, declaration);
     }
-    return fonts;
+    return { fonts, declarations };
   }
 
   /** Fetch and embed one face, once; later calls with characters it was
@@ -372,14 +485,14 @@ export class FontCache {
     const load = (async (): Promise<LoadedFace | null> => {
       try {
         const answer = await this.provider(spec.family, spec.weight, spec.style, { codePoints });
-        const fonts = await this.embedAnswer(answer, spec);
+        const { fonts, declarations } = await this.embedAnswer(answer, spec);
         if (fonts.length === 0) throw new Error('the font provider returned no file');
         for (const font of fonts) registerFontFamily(font, spec.family);
         const primary = fonts[0]!;
         const face: LoadedFace = {
           spec,
           primary,
-          files: registerFaceFiles(primary, fonts.slice(1)),
+          files: registerFaceFiles(primary, fonts.slice(1), declarations),
           sliced: Array.isArray(answer),
           asked: new Set(codePoints),
           growing: Promise.resolve(),
@@ -401,25 +514,31 @@ export class FontCache {
   }
 
   /** Ask a sliced face's provider for the characters none of its files
-   *  has that it was not asked for yet, and add the files it answers. A
-   *  rejection leaves the face as it is (the characters are reported as
-   *  missing when drawn). */
+   *  has that it was not asked for yet (every character it was not asked
+   *  for, when its files came with their ranges), and add the files it
+   *  answers. A rejection leaves the face as it is (the characters are
+   *  reported as missing when drawn). */
   private growFace(face: LoadedFace, codePoints: ReadonlySet<number>): Promise<void> {
     if (!face.sliced) return Promise.resolve();
     const wanted = new Set<number>();
     for (const cp of codePoints) {
       if (face.asked.has(cp)) continue;
       face.asked.add(cp);
-      if (wantsGlyph(cp) && !face.files.fileFor(cp)) wanted.add(cp);
+      // A face given with its ranges asks for every character it was not
+      // asked for: the file a browser sets it in may be one declared
+      // later than the files given so far, though one of those has a
+      // glyph for it and a range that holds it.
+      if (wantsGlyph(cp) && (face.files.ranged || !face.files.fileFor(cp))) wanted.add(cp);
     }
     if (wanted.size === 0) return face.growing;
     const { family, weight, style } = face.spec;
     face.growing = face.growing.then(async () => {
       try {
         const answer = await this.provider(family, weight, style, { codePoints: wanted });
-        for (const font of await this.embedAnswer(answer, face.spec)) {
+        const { fonts, declarations } = await this.embedAnswer(answer, face.spec);
+        for (const font of fonts) {
           registerFontFamily(font, face.spec.family);
-          face.files.add(font);
+          face.files.add(font, declarations.get(font));
         }
       } catch {
         // The characters stay missing; the render goes on.

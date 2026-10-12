@@ -12,7 +12,7 @@ import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../pr
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
 import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, computePageTextExtent, dimensionToPx, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
-import { FontCache, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
+import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -318,7 +318,8 @@ export interface RenderProgress {
   totalPages: number;
 }
 
-export type { PdfFontProvider, PdfFontRequest };
+export type { PdfFontAnswer, PdfFontFile, PdfFontFileDeclaration, PdfFontProvider, PdfFontRequest };
+export { declaredFontFile } from '../fontCache';
 export type { ResourceBytesProvider } from './renderResourceBlock';
 
 /** BCP 47 tag of a document (`/Lang`): its `locale` (`'zh-Hant-TW'`,
@@ -733,7 +734,12 @@ export async function renderToPdf(
   pdfDoc.setProducer('postext-pdf');
 
   const warn = options.onWarning ?? ((w: PdfWarning) => { if ('message' in w) console.warn(w.message); });
-  const fontCache = new FontCache(pdfDoc, options.fontProvider, {
+  // What a provider says of its files (their ranges, the order they are
+  // declared in: `PdfFontFile`, #770) is for the documents shaped in their
+  // own language. With none in the render it is dropped here, so every
+  // face is asked, embedded and read as before.
+  const fontProvider = docs.some((doc) => shapingLanguageOf(doc.config) !== undefined) ? options.fontProvider : withBareFiles(options.fontProvider);
+  const fontCache = new FontCache(pdfDoc, fontProvider, {
     onFallback: (f) => warn(fontFallbackWarning(f)),
     onFileIssue: (issue) => warn(fileIssueWarning(issue)),
   });
@@ -793,7 +799,7 @@ export async function renderToPdf(
   // is embedded once.
   const resourceImages: ResourceImageMap = new Map();
   for (const doc of docs) {
-    await preloadResourceImages(pdfDoc, doc, options.resourceBytes, fontCache, options.fontProvider, resourceImages, options.rasterizeSvg, printMode);
+    await preloadResourceImages(pdfDoc, doc, options.resourceBytes, fontCache, fontProvider, resourceImages, options.rasterizeSvg, printMode);
   }
   options.onProgress?.({ phase: 'prepare', pages: 0, totalPages });
 
