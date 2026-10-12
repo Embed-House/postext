@@ -459,3 +459,14 @@ d'aquest ordinador a `packages/postext-cli/bin/`.
   Google Fonts o de Fontsource (per a una família que Google Fonts no té), mai
   de les fonts instal·lades a l'ordinador, així que un llibre surt igual a
   qualsevol màquina.
+- **La llengua del text** és, en un navegador, la del mateix document
+  (`bodyText.shapingLanguage`). El canvas de Skia accepta una llengua i
+  conforma el text sense tenir-la en compte, així que la línia d'ordres mesura
+  les formes de la llengua per defecte de cada font i compon els seus llibres
+  amb `shapingLanguage: 'host'`, digui el que digui la configuració; el seu PDF
+  i les seves imatges de pàgina pinten aquestes mateixes formes. Un llibre
+  xinès en una font de xinès simplificat, un llibre japonès en una font
+  japonesa i qualsevol llibre en una font sense formes per llengua surten com
+  al Sandbox. Un llibre la font del qual té formes per a la seva llengua (una
+  `l·l` catalana, un `fi` turc, les xifres d'una font xinesa en un llibre
+  anglès) es compon aquí amb les formes per defecte.

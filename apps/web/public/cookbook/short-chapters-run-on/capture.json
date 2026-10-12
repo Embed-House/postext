@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "short-chapters-run-on",
-  "sourceHash": "fe03a051a79ec1c53ddbb3cd54f4a9bea14c3e09d8b0c455d9fc2d7d4bf04770",
+  "sourceHash": "4215a62f835bd117d137d675164274d39dc7f79a237ea40adaf2e19492ad9db8",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.828Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.378Z",
   "variants": {
     "en": {
-      "hash8": "b5c707a2",
+      "hash8": "99b34972",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 287,
-        "fontsMs": 133,
-        "buildMs": 109,
-        "totalMs": 1343,
+        "importMs": 158,
+        "fontsMs": 27,
+        "buildMs": 65,
+        "totalMs": 926,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1618,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 21598,
+          "bytes": 21590,
           "alt": "Opening page 1: Dom Casmurro."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1618,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161580,
+          "bytes": 161548,
           "alt": "Opening page 212: Capítulo CXXIII."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1618,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 52570,
+          "bytes": 52572,
           "alt": "Page 217."
         }
       ],
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322310,
+        "bytes": 322286,
         "folio": "badc8643",
         "chapters": [
           {
@@ -349,6 +349,11 @@
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale pt, the document's language: en names its resource types otherwise"
@@ -362,13 +367,13 @@
       }
     },
     "es": {
-      "hash8": "6e2ce32d",
+      "hash8": "f0618f79",
       "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
       "timings": {
-        "importMs": 963,
-        "fontsMs": 99,
-        "buildMs": 116,
-        "totalMs": 2480,
+        "importMs": 122,
+        "fontsMs": 27,
+        "buildMs": 64,
+        "totalMs": 880,
         "builds": 1
       },
       "specimen": {
@@ -401,7 +406,7 @@
           "h": 1618,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 21598,
+          "bytes": 21590,
           "alt": "Página de apertura 1: Dom Casmurro."
         },
         {
@@ -412,7 +417,7 @@
           "h": 1618,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161580,
+          "bytes": 161548,
           "alt": "Página de apertura 212: Capítulo CXXIII."
         },
         {
@@ -467,7 +472,7 @@
           "h": 1618,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 52570,
+          "bytes": 52572,
           "alt": "Página 217."
         }
       ],
@@ -503,7 +508,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322322,
+        "bytes": 322298,
         "folio": "badc8643",
         "chapters": [
           {
@@ -699,6 +704,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

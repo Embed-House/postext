@@ -1708,6 +1708,16 @@ export interface VDTBlock {
    *  numbers (`3-1` with the 3 on the right, as `٣-١`; #665). Absent for a
    *  left-to-right marker, painted as one run. */
   bulletDirection?: 'rtl' | 'rtl-arabic';
+  /** The box of a task item (`- [ ]`, `- [x]`), which the renderers draw
+   *  (#765): a square outline of `side` px from `bulletOffsetX`, centred on
+   *  `bulletY`, its `stroke` px inside the square, with a tick when
+   *  `checked` (`taskBox.ts` has the shape). It stands for ☐ or ☑, which
+   *  is what a reader hears and a copy takes; the block then has no
+   *  `bulletText` and no `bulletFontString`, and nothing asks a font for
+   *  the character. Absent when the list settings name a character of
+   *  their own, or keep the character of postext 1.28
+   *  (`unorderedLists.taskBox: 'character'`). */
+  bulletBox?: { side: number; stroke: number; checked: boolean };
   /** A drop cap opening the paragraph (#623), on the fragment that holds
    *  its first line only: renderers paint it beside the lines, which were
    *  set short of it. */

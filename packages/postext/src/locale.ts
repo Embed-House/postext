@@ -175,25 +175,58 @@ export function canonicalLocaleTag(tag: unknown): string | undefined {
   }
 }
 
+/** What a document's language is read from: its `locale`, else the
+ *  hyphenation tag, and whether its text is shaped in the host's language
+ *  (`bodyText.shapingLanguage`). */
+interface LanguageSource {
+  locale?: string;
+  bodyText?: { hyphenation?: { tag?: string; locale?: string }; shapingLanguage?: 'document' | 'host' };
+}
+
+function sourceTag(config: LanguageSource | undefined): string | undefined {
+  const h = config?.bodyText?.hyphenation;
+  return presentTag(config?.locale) ?? presentTag(h?.tag) ?? presentTag(h?.locale);
+}
+
 /** The `lang` a renderer declares for a resolved document (the HTML root,
  *  the canvas context): its language in canonical form (`zh-Hant-TW`,
- *  `ar-EG`), from `locale`, else the hyphenation tag. Only two kinds of
- *  document declare one, so the output of every other document is
- *  unchanged:
- *  - Chinese, Japanese and Korean: the browser picks regional glyph forms
- *    from it (Han characters unified in Unicode, punctuation set in the
- *    corner or the centre of the em box);
- *  - languages written right to left (Arabic, Persian, Urdu, Hebrew…): the
- *    font's language-specific forms (`locl`: the Urdu and Persian digits
- *    and letter shapes of a shared Arabic font) and the fallback font
- *    follow it, and assistive technology reads the text in its language. */
-export function renderLangOf(config: {
-  locale?: string;
-  bodyText?: { hyphenation?: { tag?: string; locale?: string } };
-} | undefined): string | undefined {
-  const h = config?.bodyText?.hyphenation;
-  const tag = presentTag(config?.locale) ?? presentTag(h?.tag) ?? presentTag(h?.locale);
+ *  `ar-EG`, `ca`), from `locale`, else the hyphenation tag. Every document
+ *  declares its own (#764): a font answers with other glyphs under a
+ *  language (`locl`: the Catalan `l·l`, the Turkish `fi`, the regional
+ *  forms of Han characters and of the marks Chinese and Japanese share
+ *  with Latin text), the layout measured those ({@link shapingLanguageOf}),
+ *  and assistive technology reads the text in its language.
+ *
+ *  A document whose text is shaped in the host's language
+ *  (`bodyText.shapingLanguage: 'host'`, every configuration stored by
+ *  postext 1.28 or earlier) declares one as it did then, only when it is
+ *  Chinese, Japanese or Korean, or written right to left, so its output is
+ *  unchanged. */
+export function renderLangOf(config: LanguageSource | undefined): string | undefined {
+  const tag = sourceTag(config);
+  if (config?.bodyText?.shapingLanguage !== 'host') return canonicalLocaleTag(tag);
   return isCjkLanguage(tag) || isRightToLeftLanguage(tag) ? canonicalLocaleTag(tag) : undefined;
+}
+
+/**
+ * The language a document's text is measured in (`setMeasureLanguage`),
+ * painted in and embedded in (#764): its own ({@link renderLangOf}), the
+ * empty tag (no language at all, the same on every host) when its locale
+ * is no tag, and undefined, the host's, for a document that asks for it
+ * (`bodyText.shapingLanguage: 'host'`): the page's on a page, none in a
+ * worker, as up to postext 1.28.
+ */
+export function shapingLanguageOf(config: LanguageSource | undefined): string | undefined {
+  if (config?.bodyText?.shapingLanguage === 'host') return undefined;
+  return canonicalLocaleTag(sourceTag(config)) ?? '';
+}
+
+/** The language of a block or a run that names its own (`{lang=en}`), as
+ *  it is measured and painted in a document shaped in its own language:
+ *  the tag in canonical form, or as written when it is no tag (a browser
+ *  takes any string, and knows no forms for it). */
+export function shapingTagOf(lang: string): string {
+  return canonicalLocaleTag(lang) ?? lang.trim();
 }
 
 /**

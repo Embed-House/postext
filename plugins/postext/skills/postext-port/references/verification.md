@@ -210,7 +210,7 @@ those lines, or run the script.
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
   compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 12` and check the pages again when the config is meant for today's rules.
+  Set `"configVersion": 13` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page

@@ -20,6 +20,33 @@
  */
 export const FONTSOURCE_PACKAGE_VERSION = '5';
 
+const PACKAGE_URL = /^(https:\/\/cdn\.jsdelivr\.net\/npm\/@fontsource\/[a-z0-9-]+@)[^/]+(\/.*)$/;
+
+/**
+ * The exact version of a package an answer of jsDelivr came from (#766):
+ * its `x-jsd-version` header, which the CDN lets a page of another origin
+ * read (`access-control-expose-headers: *`). The range `@5` is a moving
+ * name jsDelivr resolves for each URL on that URL's own clock: after a
+ * release that cuts a family again (noto-sans-tc 5.3.1), its style sheets
+ * came from one version and some of its files from two others, and the
+ * characters no file then held fell to a font of the system. The version
+ * the family's style sheet was answered from is the one every file of the
+ * family is then asked of. Null when the answer does not say (a cache in
+ * between, a test): the range stays, as before.
+ */
+export function fontsourceVersionOf(res: { headers?: { get?(name: string): string | null } } | null | undefined): string | null {
+  const value = res?.headers?.get?.('x-jsd-version') ?? null;
+  return value && /^\d+\.\d+\.\d+/.test(value) ? value : null;
+}
+
+/** `url` of a file of a Fontsource package, asked of `version` instead of
+ *  the range it names; as it is for any other URL, or with no version. */
+export function fontsourceUrlAt(url: string, version: string | null | undefined): string {
+  if (!version) return url;
+  const m = PACKAGE_URL.exec(url);
+  return m ? `${m[1]}${version}${m[2]}` : url;
+}
+
 /** Fontsource's id of a family: `Source Serif 4` is `source-serif-4`. */
 export function fontsourceId(family: string): string {
   return family.toLowerCase().replace(/\s+/g, '-');

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-double-spread",
-  "sourceHash": "b7ac5c9a29a47731720ea4f1cb12b50038dc167d2bdbf7590c726603694752a0",
+  "sourceHash": "267a711bbf03ad16328c77412cd9eac294c7fe1d1e031c39d2396474acd681dc",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.977Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.773Z",
   "variants": {
     "en": {
-      "hash8": "92241806",
+      "hash8": "6cf388ca",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 1164,
-        "fontsMs": 542,
-        "buildMs": 281,
-        "totalMs": 3689,
+        "importMs": 225,
+        "fontsMs": 110,
+        "buildMs": 242,
+        "totalMs": 1276,
         "builds": 1
       },
       "specimen": {
@@ -48,7 +48,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 229240,
+          "bytes": 229172,
           "alt": "Page 2."
         },
         {
@@ -59,7 +59,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 213316,
+          "bytes": 213352,
           "alt": "Page 3."
         }
       ],
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893390,
+        "bytes": 893400,
         "chapters": [
           {
             "pages": 2,
@@ -257,6 +257,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -265,13 +270,13 @@
       }
     },
     "es": {
-      "hash8": "11cd9c4a",
+      "hash8": "0a30f24f",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 1227,
-        "fontsMs": 556,
-        "buildMs": 292,
-        "totalMs": 3087,
+        "importMs": 236,
+        "fontsMs": 261,
+        "buildMs": 250,
+        "totalMs": 1381,
         "builds": 1
       },
       "specimen": {
@@ -302,7 +307,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 228650,
+          "bytes": 228550,
           "alt": "Página 2."
         },
         {
@@ -313,7 +318,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 213078,
+          "bytes": 213012,
           "alt": "Página 3."
         }
       ],
@@ -342,7 +347,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893551,
+        "bytes": 893457,
         "chapters": [
           {
             "pages": 2,
@@ -511,6 +516,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -519,13 +529,13 @@
       }
     },
     "ca": {
-      "hash8": "e7f59dfe",
+      "hash8": "bef8c9e5",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
-        "importMs": 1677,
-        "fontsMs": 450,
-        "buildMs": 279,
-        "totalMs": 3148,
+        "importMs": 281,
+        "fontsMs": 114,
+        "buildMs": 225,
+        "totalMs": 1302,
         "builds": 1
       },
       "specimen": {
@@ -556,7 +566,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 228372,
+          "bytes": 228274,
           "alt": "Pàgina 2."
         },
         {
@@ -567,7 +577,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 213496,
+          "bytes": 213098,
           "alt": "Pàgina 3."
         }
       ],
@@ -596,7 +606,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893447,
+        "bytes": 893455,
         "chapters": [
           {
             "pages": 2,
@@ -765,6 +775,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -773,13 +788,13 @@
       }
     },
     "zh": {
-      "hash8": "274cb782",
+      "hash8": "62e836dd",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 1730,
-        "fontsMs": 1418,
-        "buildMs": 312,
-        "totalMs": 4895,
+        "importMs": 282,
+        "fontsMs": 221,
+        "buildMs": 242,
+        "totalMs": 1335,
         "builds": 1
       },
       "specimen": {
@@ -810,7 +825,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 229014,
+          "bytes": 228830,
           "alt": "第 2 页。"
         },
         {
@@ -821,7 +836,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 215690,
+          "bytes": 215676,
           "alt": "第 3 页。"
         }
       ],
@@ -850,7 +865,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893787,
+        "bytes": 893743,
         "chapters": [
           {
             "pages": 2,
@@ -1012,12 +1027,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 134 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 133 KB (aim for ≤ 90 KB)"
           },
           {
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1028,13 +1048,13 @@
       }
     },
     "ar": {
-      "hash8": "9fef934e",
+      "hash8": "7a5c2657",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 1425,
-        "fontsMs": 696,
-        "buildMs": 295,
-        "totalMs": 3029,
+        "importMs": 287,
+        "fontsMs": 313,
+        "buildMs": 253,
+        "totalMs": 1452,
         "builds": 1
       },
       "specimen": {
@@ -1065,7 +1085,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 210252,
+          "bytes": 210274,
           "alt": "الصفحة ٢."
         },
         {
@@ -1076,7 +1096,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 231038,
+          "bytes": 231054,
           "alt": "الصفحة ٣."
         }
       ],
@@ -1106,7 +1126,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893838,
+        "bytes": 893880,
         "chapters": [
           {
             "pages": 2,
@@ -1278,6 +1298,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1286,13 +1311,13 @@
       }
     },
     "ja": {
-      "hash8": "f6331ae9",
+      "hash8": "1667006b",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 1558,
-        "fontsMs": 1202,
-        "buildMs": 256,
-        "totalMs": 4990,
+        "importMs": 245,
+        "fontsMs": 228,
+        "buildMs": 228,
+        "totalMs": 1343,
         "builds": 1
       },
       "specimen": {
@@ -1323,7 +1348,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 209690,
+          "bytes": 209708,
           "alt": "2ページ。"
         },
         {
@@ -1334,7 +1359,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 230712,
+          "bytes": 230764,
           "alt": "3ページ。"
         }
       ],
@@ -1359,12 +1384,12 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895739,
+        "bytes": 895741,
         "pages": 2
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893844,
+        "bytes": 893776,
         "chapters": [
           {
             "pages": 2,
@@ -1535,6 +1560,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1543,13 +1573,13 @@
       }
     },
     "pt": {
-      "hash8": "02425927",
+      "hash8": "b40dc156",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 1666,
-        "fontsMs": 684,
-        "buildMs": 332,
-        "totalMs": 3249,
+        "importMs": 242,
+        "fontsMs": 207,
+        "buildMs": 296,
+        "totalMs": 1347,
         "builds": 1
       },
       "specimen": {
@@ -1580,7 +1610,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 228334,
+          "bytes": 228356,
           "alt": "Página 2."
         },
         {
@@ -1591,7 +1621,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 213894,
+          "bytes": 213484,
           "alt": "Página 3."
         }
       ],
@@ -1620,7 +1650,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893511,
+        "bytes": 893539,
         "chapters": [
           {
             "pages": 2,
@@ -1787,6 +1817,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

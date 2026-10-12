@@ -7,7 +7,7 @@ import { collectConfigWarnings } from '../../configWarnings';
 import type { BodyTextConfig, ParagraphStyleConfig, PostextConfig } from '../../types';
 import type { VDTBlock, VDTDocument } from '../../vdt';
 import { CONFIG_VERSION, migrateConfig, pinLegacyParagraphContainerSpacing } from '../../bundle';
-import { migrateBundleConfig, pinLegacyScriptContext } from '../../bundle/configVersion';
+import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -272,7 +272,7 @@ describe('configurations stored before rules 8 keep the 1.4 space under containe
   const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' }, paragraphStyles: [{ id: 's' }] };
 
   it('pins \'add\' when the book holds a :::paragraphs container', () => {
-    expect(CONFIG_VERSION).toBe(12);
+    expect(CONFIG_VERSION).toBe(13);
     for (const version of [undefined, 3, 5, 6, 7]) {
       expect(migrateConfig(stored, version, { content: GROUP_THEN_HEADING }).bodyText?.paragraphContainerSpacing, `${version}`).toBe('add');
     }
@@ -286,17 +286,17 @@ describe('configurations stored before rules 8 keep the 1.4 space under containe
   });
 
   it('leaves a book with no container, no paragraph style, a named value or today\'s rules as it is', () => {
-    expect(migrateConfig(stored, 7, { content: 'Just text, and a mention of :::paragraphs in a line.' })).toEqual(pinLegacyScriptContext(stored));
+    expect(migrateConfig(stored, 7, { content: 'Just text, and a mention of :::paragraphs in a line.' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(stored)));
     const noStyles: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     // (GROUP_THEN_TEXT: a heading or a compound would bring the other
     // version-8 pins.)
     // (The fence brings the version-12 pin of the level cut's unit, #711,
     // on the headings.)
-    expect(migrateConfig(noStyles, 7, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ ...noStyles.bodyText, scriptContext: false });
+    expect(migrateConfig(noStyles, 7, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ ...noStyles.bodyText, scriptContext: false, shapingLanguage: 'host' });
     expect(migrateConfig(stored, CONFIG_VERSION, { content: GROUP_THEN_HEADING })).toBe(stored);
     const named: PostextConfig = { ...stored, bodyText: { paragraphContainerSpacing: 'collapse' } };
     expect(pinLegacyParagraphContainerSpacing(named)).toBe(named);
-    expect(migrateConfig(named, undefined, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ ...named.bodyText, scriptContext: false });
+    expect(migrateConfig(named, undefined, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ ...named.bodyText, scriptContext: false, shapingLanguage: 'host' });
   });
 
   it('counts the paragraph styles of the HTML viewer\'s overrides', () => {
@@ -306,7 +306,7 @@ describe('configurations stored before rules 8 keep the 1.4 space under containe
 
   it('pins the bodyText in force in a bundle', () => {
     const merged = migrateBundleConfig({}, [{ paragraphStyles: [{ id: 's' }] }, { bodyText: { fontFamily: 'Georgia' } }], 7, { content: GROUP_THEN_TEXT });
-    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', paragraphContainerSpacing: 'add', scriptContext: false });
-    expect(migrateBundleConfig({}, [{ paragraphStyles: [{ id: 's' }] }], 8, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ scriptContext: false });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', paragraphContainerSpacing: 'add', scriptContext: false, shapingLanguage: 'host' });
+    expect(migrateBundleConfig({}, [{ paragraphStyles: [{ id: 's' }] }], 8, { content: GROUP_THEN_TEXT }).bodyText).toEqual({ scriptContext: false, shapingLanguage: 'host' });
   });
 });

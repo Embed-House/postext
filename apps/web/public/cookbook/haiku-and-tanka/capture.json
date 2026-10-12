@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "haiku-and-tanka",
-  "sourceHash": "82fac3399997aa95293ae14593b6dc2b782b163cd48d1ff8d5de3d90d3b62e63",
+  "sourceHash": "2bb93843a9df6bc9cedb2e3c1196e4d0e27e22bf5704d2a5c4c62e02a32b3c47",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.249Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.930Z",
   "variants": {
     "en": {
-      "hash8": "c196201c",
+      "hash8": "15b637dd",
       "vdtHash": "351aa50ad42f719591ada45f71b4b1a8ff2d4369",
       "timings": {
-        "importMs": 1071,
-        "fontsMs": 1267,
-        "buildMs": 78,
-        "totalMs": 2970,
+        "importMs": 155,
+        "fontsMs": 218,
+        "buildMs": 52,
+        "totalMs": 996,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 65800,
+          "bytes": 65890,
           "alt": "Opening page 一: おくのほそ道."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65648,
+          "bytes": 65636,
           "alt": "Page 二: 旅立."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 55592,
+          "bytes": 55544,
           "alt": "Page 三: 立石寺."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1480,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 18788,
+          "bytes": 18794,
           "alt": "Opening page 五: 一握の砂."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1480,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 21834,
+          "bytes": 21850,
           "alt": "Page 六."
         },
         {
@@ -167,12 +167,12 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221312,
+        "bytes": 221315,
         "pages": 8
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17536,
+        "bytes": 17542,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -357,21 +357,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "edf4a314",
+      "hash8": "31a2796c",
       "vdtHash": "a5d3308460805ad0d7f0cc310898046450ac8fc0",
       "timings": {
-        "importMs": 1166,
-        "fontsMs": 1683,
-        "buildMs": 75,
-        "totalMs": 3672,
+        "importMs": 160,
+        "fontsMs": 146,
+        "buildMs": 49,
+        "totalMs": 922,
         "builds": 1
       },
       "specimen": {
@@ -403,7 +403,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 65718,
+          "bytes": 65836,
           "alt": "Página de apertura 一: おくのほそ道."
         },
         {
@@ -414,7 +414,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65648,
+          "bytes": 65636,
           "alt": "Página 二: 旅立."
         },
         {
@@ -425,7 +425,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 55592,
+          "bytes": 55544,
           "alt": "Página 三: 立石寺."
         },
         {
@@ -447,7 +447,7 @@
           "h": 1480,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 18788,
+          "bytes": 18794,
           "alt": "Página de apertura 五: 一握の砂."
         },
         {
@@ -458,7 +458,7 @@
           "h": 1480,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 21834,
+          "bytes": 21850,
           "alt": "Página 六."
         },
         {
@@ -521,12 +521,12 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221331,
+        "bytes": 221334,
         "pages": 8
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17531,
+        "bytes": 17537,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -711,9 +711,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

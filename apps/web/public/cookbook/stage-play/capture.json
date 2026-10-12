@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "stage-play",
-  "sourceHash": "1d0683ceab8794b2c43b6613fb4bc16238f2716f7a84a198e46d6b424f8ee8b2",
+  "sourceHash": "03ec04599a9752a3488424b48cd414b7473958a9ac36e5c28af1c5c0960e3f2b",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.908Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.426Z",
   "variants": {
     "en": {
-      "hash8": "ea069af2",
+      "hash8": "a7ec9cfa",
       "vdtHash": "4ad978657d69393da5b14f4fd35f89ee64564f9f",
       "timings": {
-        "importMs": 272,
-        "fontsMs": 5,
-        "buildMs": 74,
-        "totalMs": 969,
+        "importMs": 174,
+        "fontsMs": 3,
+        "buildMs": 62,
+        "totalMs": 886,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1543,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33708,
+          "bytes": 33724,
           "alt": "Opening page 1: THE IMPORTANCE OF BEING EARNEST."
         },
         {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22428,
+        "bytes": 22440,
         "folio": "059474f1",
         "chapters": [
           {
@@ -337,21 +337,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "75575ac6",
+      "hash8": "f379dfb2",
       "vdtHash": "e5b1fe795f2a01b7037caf01111416ac60d66d8d",
       "timings": {
-        "importMs": 425,
+        "importMs": 145,
         "fontsMs": 4,
-        "buildMs": 71,
-        "totalMs": 1139,
+        "buildMs": 62,
+        "totalMs": 856,
         "builds": 1
       },
       "specimen": {
@@ -384,7 +384,7 @@
           "h": 1543,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33804,
+          "bytes": 33706,
           "alt": "Página de apertura 1: LA IMPORTANCIA DE LLAMARSE ERNESTO."
         },
         {
@@ -460,7 +460,7 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22553,
+        "bytes": 22535,
         "folio": "059474f1",
         "chapters": [
           {
@@ -670,7 +670,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

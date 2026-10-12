@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "red-ink-commentary",
-  "sourceHash": "5f2c353d0ccd6bc9e9403edb73764006532d48d6113a0348a36288de455b759e",
+  "sourceHash": "1884f00fd572b7fcea0783fce806657c5199dc4f10e512ff8bdd1ff5eb8458ef",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.769Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.327Z",
   "variants": {
     "en": {
-      "hash8": "826d1e89",
+      "hash8": "aceec4cf",
       "vdtHash": "7def34376af266dd12ad436268b0a41daca7ad39",
       "timings": {
-        "importMs": 844,
-        "fontsMs": 1971,
-        "buildMs": 64,
-        "totalMs": 4180,
+        "importMs": 176,
+        "fontsMs": 271,
+        "buildMs": 53,
+        "totalMs": 1072,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 77932,
+          "bytes": 77934,
           "alt": "Opening page 一: 第一回."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124978,
+          "bytes": 124946,
           "alt": "Page 二."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 89562,
+          "bytes": 89570,
           "alt": "Page 三."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 137888,
+          "bytes": 137862,
           "alt": "Page 四."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128570,
+          "bytes": 128640,
           "alt": "Page 五."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45722,
+          "bytes": 45750,
           "alt": "Page 六."
         }
       ],
@@ -143,12 +143,12 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513215,
+        "bytes": 513203,
         "pages": 6
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 38167,
+        "bytes": 37691,
         "folio": "941f3254",
         "chapters": [
           {
@@ -365,21 +365,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2c43f7d8",
+      "hash8": "263f836e",
       "vdtHash": "cfe780efe70a07358783d8838a77a783afac2a11",
       "timings": {
-        "importMs": 1064,
-        "fontsMs": 2258,
-        "buildMs": 91,
-        "totalMs": 4380,
+        "importMs": 226,
+        "fontsMs": 226,
+        "buildMs": 54,
+        "totalMs": 1155,
         "builds": 1
       },
       "specimen": {
@@ -413,7 +413,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 77932,
+          "bytes": 77934,
           "alt": "Página de apertura 一: 第一回."
         },
         {
@@ -424,7 +424,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124978,
+          "bytes": 124946,
           "alt": "Página 二."
         },
         {
@@ -435,7 +435,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 89562,
+          "bytes": 89570,
           "alt": "Página 三."
         },
         {
@@ -446,7 +446,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 137888,
+          "bytes": 137862,
           "alt": "Página 四."
         },
         {
@@ -457,7 +457,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 128570,
+          "bytes": 128640,
           "alt": "Página 五."
         },
         {
@@ -468,7 +468,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45988,
+          "bytes": 45966,
           "alt": "Página 六."
         }
       ],
@@ -505,12 +505,12 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 513307,
+        "bytes": 513281,
         "pages": 6
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 38196,
+        "bytes": 37720,
         "folio": "941f3254",
         "chapters": [
           {
@@ -727,9 +727,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

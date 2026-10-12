@@ -6,7 +6,10 @@ import type { VDTDocument, VDTLineSegment } from '../../vdt';
 // #427: in Japanese text the CJK composer carries the language an inline
 // isolate names (`:ltr[…]{lang=zh}`) to the segments of its text, never
 // joining them with text of another language, so the PDF shapes and tags
-// each in its own language. Chinese composed text carries none, as before.
+// each in its own language. Chinese composed text carries the language of
+// every isolate too since the text is shaped in the document's own language
+// (#764); shaped in the language of the host, it carries a Japanese
+// isolate's alone, as before.
 
 class StubCtx {
   font = '';
@@ -48,10 +51,21 @@ describe('isolate languages on composed Japanese lines (#427)', () => {
     }
   });
 
-  it('carries a Japanese isolate’s language in a Chinese document, and no other', () => {
+  it('carries the language of any isolate in a Chinese document shaped in its own language (#764)', () => {
     const ja = buildDocument({ markdown: '他說:ltr[本当]{lang=ja}。' }, config('zh-Hans'));
-    expect(languages(ja)).toContainEqual(['本当', 'ja']);
+    expect(languages(ja)).toEqual([['他說', null], ['本当', 'ja'], ['。', null]]);
     const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, config('zh-Hans'));
+    expect(languages(en)).toEqual([['他說', null], ['the', 'en'], ['end', 'en'], ['。', null]]);
+  });
+
+  it('carries a Japanese isolate’s language in a Chinese document shaped in the language of the host, and no other', () => {
+    const host = (): PostextConfig => {
+      const base = config('zh-Hans');
+      return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } };
+    };
+    const ja = buildDocument({ markdown: '他說:ltr[本当]{lang=ja}。' }, host());
+    expect(languages(ja)).toContainEqual(['本当', 'ja']);
+    const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, host());
     expect(segments(en).some((s) => s.lang !== undefined)).toBe(false);
   });
 });

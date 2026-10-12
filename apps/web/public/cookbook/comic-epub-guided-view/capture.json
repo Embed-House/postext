@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "a78c17dcd2bf84bfa8f8a8364f8c67b48226ba202fbe2e3bc13ea8c3a725a560",
+  "sourceHash": "e7604b381d84dbee640c63807e67ebb09a3a697bbf1056ee6469da6cd984a2f8",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.017Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.795Z",
   "variants": {
     "en": {
-      "hash8": "a8e45e41",
+      "hash8": "9994048c",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 3481,
-        "fontsMs": 811,
-        "buildMs": 247,
-        "totalMs": 5272,
+        "importMs": 3279,
+        "fontsMs": 155,
+        "buildMs": 246,
+        "totalMs": 4319,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 244648,
+          "bytes": 244556,
           "alt": "Page 2."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 206390,
+          "bytes": 206426,
           "alt": "Page 3."
         }
       ],
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806958,
+        "bytes": 806960,
         "chapters": [
           {
             "pages": 3,
@@ -286,17 +286,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "69549453",
+      "hash8": "d4f42d4f",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 1241,
-        "fontsMs": 455,
-        "buildMs": 202,
-        "totalMs": 2648,
+        "importMs": 1756,
+        "fontsMs": 174,
+        "buildMs": 214,
+        "totalMs": 2734,
         "builds": 1
       },
       "specimen": {
@@ -339,7 +345,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238102,
+          "bytes": 238026,
           "alt": "Página 2."
         },
         {
@@ -350,7 +356,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 207222,
+          "bytes": 207316,
           "alt": "Página 3."
         }
       ],
@@ -378,12 +384,12 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 814275,
+        "bytes": 814271,
         "pages": 3
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806917,
+        "bytes": 807145,
         "chapters": [
           {
             "pages": 3,
@@ -565,17 +571,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "f4b3edd5",
+      "hash8": "153ba8e3",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 1325,
-        "fontsMs": 2048,
-        "buildMs": 238,
-        "totalMs": 4376,
+        "importMs": 462,
+        "fontsMs": 139,
+        "buildMs": 205,
+        "totalMs": 1539,
         "builds": 1
       },
       "specimen": {
@@ -618,7 +630,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 243254,
+          "bytes": 243086,
           "alt": "Pàgina 2."
         },
         {
@@ -629,7 +641,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 206380,
+          "bytes": 206692,
           "alt": "Pàgina 3."
         }
       ],
@@ -662,7 +674,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807007,
+        "bytes": 806997,
         "chapters": [
           {
             "pages": 3,
@@ -844,17 +856,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "7f1e2279",
+      "hash8": "f9198157",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 1923,
-        "fontsMs": 988,
-        "buildMs": 235,
-        "totalMs": 7047,
+        "importMs": 463,
+        "fontsMs": 343,
+        "buildMs": 186,
+        "totalMs": 1923,
         "builds": 1
       },
       "specimen": {
@@ -897,7 +915,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 239862,
+          "bytes": 239892,
           "alt": "第 2 页。"
         },
         {
@@ -908,7 +926,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 204958,
+          "bytes": 205422,
           "alt": "第 3 页。"
         }
       ],
@@ -941,7 +959,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807331,
+        "bytes": 807367,
         "chapters": [
           {
             "pages": 3,
@@ -1124,17 +1142,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "9400872c",
+      "hash8": "2b56a8c4",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 2117,
-        "fontsMs": 640,
-        "buildMs": 200,
-        "totalMs": 3558,
+        "importMs": 203,
+        "fontsMs": 120,
+        "buildMs": 168,
+        "totalMs": 1090,
         "builds": 1
       },
       "specimen": {
@@ -1177,7 +1201,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 242570,
+          "bytes": 242586,
           "alt": "الصفحة ٢."
         },
         {
@@ -1188,7 +1212,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 207676,
+          "bytes": 207722,
           "alt": "الصفحة ٣."
         }
       ],
@@ -1222,7 +1246,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807710,
+        "bytes": 807688,
         "chapters": [
           {
             "pages": 3,
@@ -1407,17 +1431,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "5f81dcd3",
+      "hash8": "d4bb00dd",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 1514,
-        "fontsMs": 3065,
-        "buildMs": 205,
-        "totalMs": 6031,
+        "importMs": 192,
+        "fontsMs": 218,
+        "buildMs": 183,
+        "totalMs": 1466,
         "builds": 1
       },
       "specimen": {
@@ -1460,7 +1490,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 239064,
+          "bytes": 239118,
           "alt": "2ページ。"
         },
         {
@@ -1471,7 +1501,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 206964,
+          "bytes": 206862,
           "alt": "3ページ。"
         }
       ],
@@ -1505,7 +1535,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807646,
+        "bytes": 807698,
         "chapters": [
           {
             "pages": 3,
@@ -1689,17 +1719,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "3de5752f",
+      "hash8": "c878e3a4",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 1690,
-        "fontsMs": 626,
-        "buildMs": 222,
-        "totalMs": 3279,
+        "importMs": 199,
+        "fontsMs": 97,
+        "buildMs": 175,
+        "totalMs": 1067,
         "builds": 1
       },
       "specimen": {
@@ -1742,7 +1778,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 243612,
+          "bytes": 243598,
           "alt": "Página 2."
         },
         {
@@ -1753,7 +1789,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 206486,
+          "bytes": 206790,
           "alt": "Página 3."
         }
       ],
@@ -1786,7 +1822,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806986,
+        "bytes": 807014,
         "chapters": [
           {
             "pages": 3,
@@ -1968,7 +2004,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

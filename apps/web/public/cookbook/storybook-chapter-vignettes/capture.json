@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "storybook-chapter-vignettes",
-  "sourceHash": "03408dd9b8e194377bf6dff0974a35b925bca02329719d9594c91c19fe1211b0",
+  "sourceHash": "acb476664477ce5433b764ce415ec0963fc79795dcd39651bda40d0475356da8",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.912Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.432Z",
   "variants": {
     "en": {
-      "hash8": "81cbfc2c",
+      "hash8": "cdd436c0",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 336,
-        "fontsMs": 37,
-        "buildMs": 65,
-        "totalMs": 1268,
+        "importMs": 185,
+        "fontsMs": 41,
+        "buildMs": 61,
+        "totalMs": 1010,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1263,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 229186,
+          "bytes": 228916,
           "alt": "Opening page 6: Pinocchio."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91406,
+          "bytes": 91418,
           "alt": "Opening page 7: Capitolo I."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93106,
+          "bytes": 93102,
           "alt": "Page 9."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 91172,
+          "bytes": 91158,
           "alt": "Opening page 10: Capitolo II."
         }
       ],
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820959,
+        "bytes": 820977,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -328,6 +328,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -336,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "7ce52189",
+      "hash8": "6982c695",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 301,
-        "fontsMs": 40,
-        "buildMs": 67,
-        "totalMs": 1256,
+        "importMs": 172,
+        "fontsMs": 29,
+        "buildMs": 54,
+        "totalMs": 949,
         "builds": 1
       },
       "specimen": {
@@ -375,7 +380,7 @@
           "h": 1263,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 229186,
+          "bytes": 228916,
           "alt": "Página de apertura 6: Pinocchio."
         },
         {
@@ -386,7 +391,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91406,
+          "bytes": 91418,
           "alt": "Página de apertura 7: Capitolo I."
         },
         {
@@ -408,7 +413,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93106,
+          "bytes": 93102,
           "alt": "Página 9."
         },
         {
@@ -419,7 +424,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 91172,
+          "bytes": 91158,
           "alt": "Página de apertura 10: Capitolo II."
         }
       ],
@@ -451,7 +456,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 821009,
+        "bytes": 821027,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -653,6 +658,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

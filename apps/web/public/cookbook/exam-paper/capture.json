@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "exam-paper",
-  "sourceHash": "0307837fae13fc58d7d3b0907e990c03cc5bd91a45a164696a539a782b56baa6",
+  "sourceHash": "cb2767e34267f660e545ca86db0dfb07105e7f836b865fe681e910b46a6dad4d",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.148Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.872Z",
   "variants": {
     "en": {
-      "hash8": "c477410e",
+      "hash8": "73aac1c2",
       "vdtHash": "f49cc0ea280bbd27748cd242d2cffc82ec625700",
       "timings": {
-        "importMs": 1250,
-        "fontsMs": 176,
-        "buildMs": 101,
-        "totalMs": 2176,
+        "importMs": 184,
+        "fontsMs": 37,
+        "buildMs": 77,
+        "totalMs": 922,
         "builds": 1
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 85554,
+          "bytes": 85388,
           "alt": "Page 2: Multiple choice."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120804,
+          "bytes": 120764,
           "alt": "Page 3: Source-based questions."
         },
         {
@@ -113,7 +113,7 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 45451,
+        "bytes": 45453,
         "folio": "059452bc",
         "chapters": [
           {
@@ -432,17 +432,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "92d8d080",
+      "hash8": "babfe201",
       "vdtHash": "7066da48c16d318de3498b882396f8d3b4e76f34",
       "timings": {
-        "importMs": 1039,
-        "fontsMs": 263,
-        "buildMs": 93,
-        "totalMs": 2572,
+        "importMs": 179,
+        "fontsMs": 83,
+        "buildMs": 79,
+        "totalMs": 975,
         "builds": 1
       },
       "specimen": {
@@ -474,7 +480,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 69590,
+          "bytes": 69586,
           "alt": "Página de apertura 1: Historia. Parte A: plantilla de respuestas."
         },
         {
@@ -485,7 +491,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95882,
+          "bytes": 95846,
           "alt": "Página 2: Preguntas tipo test."
         },
         {
@@ -496,7 +502,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 123702,
+          "bytes": 123648,
           "alt": "Página 3: Comentario de una fuente."
         },
         {
@@ -539,7 +545,7 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 46072,
+        "bytes": 46074,
         "folio": "059452bc",
         "chapters": [
           {
@@ -858,7 +864,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

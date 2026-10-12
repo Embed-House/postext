@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-novel-right-bound",
-  "sourceHash": "539f6b2391b5d2255db0dc1a15a005347f801a60d6f07ee13acf4ef5b8524bb1",
+  "sourceHash": "d35761ee36437984e5307e77519a1b2d011616a3df021e6c76204d3292d8d62a",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.106Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.539Z",
   "variants": {
     "en": {
-      "hash8": "42a906b0",
+      "hash8": "ca80a146",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 228,
-        "fontsMs": 433,
-        "buildMs": 54,
-        "totalMs": 1273,
+        "importMs": 186,
+        "fontsMs": 244,
+        "buildMs": 46,
+        "totalMs": 1097,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 105196,
+          "bytes": 105246,
           "alt": "Opening page 二: 桃園結義."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121628,
+          "bytes": 121648,
           "alt": "Page 二."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 130402,
+          "bytes": 130422,
           "alt": "Page 三."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 127826,
+          "bytes": 127818,
           "alt": "Page 八."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1419,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 56234,
+          "bytes": 56186,
           "alt": "Page 九."
         }
       ],
@@ -154,12 +154,12 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 755428,
+        "bytes": 755450,
         "pages": 11
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279929,
+        "bytes": 279895,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -364,9 +364,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -377,13 +377,13 @@
       }
     },
     "es": {
-      "hash8": "da9b58af",
+      "hash8": "bf46d392",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 383,
-        "buildMs": 52,
-        "totalMs": 1213,
+        "importMs": 157,
+        "fontsMs": 308,
+        "buildMs": 45,
+        "totalMs": 1114,
         "builds": 1
       },
       "specimen": {
@@ -428,7 +428,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 105196,
+          "bytes": 105246,
           "alt": "Página de apertura 二: 桃園結義."
         },
         {
@@ -450,7 +450,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121628,
+          "bytes": 121648,
           "alt": "Página 二."
         },
         {
@@ -461,7 +461,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 130402,
+          "bytes": 130422,
           "alt": "Página 三."
         },
         {
@@ -472,7 +472,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 127826,
+          "bytes": 127818,
           "alt": "Página 八."
         },
         {
@@ -483,7 +483,7 @@
           "h": 1419,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 56234,
+          "bytes": 56186,
           "alt": "Página 九."
         }
       ],
@@ -520,12 +520,12 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754823,
+        "bytes": 754840,
         "pages": 11
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279951,
+        "bytes": 279917,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -730,9 +730,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

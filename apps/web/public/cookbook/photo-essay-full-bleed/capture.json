@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "photo-essay-full-bleed",
-  "sourceHash": "added8690c4e989ef056deb38faa29591e6a12568fe94ede3392fd3b116d09b7",
+  "sourceHash": "ba42bc95a957ecb1f47428c7fa15755b3ddf9c421eae9839c5de5ab80ef6c4ba",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.670Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.232Z",
   "variants": {
     "en": {
-      "hash8": "d417e4e3",
+      "hash8": "7a895258",
       "vdtHash": "1d00ac2f07809ef1dbc262a94650a7453d3692ce",
       "timings": {
-        "importMs": 1145,
-        "fontsMs": 315,
-        "buildMs": 66,
-        "totalMs": 3260,
+        "importMs": 224,
+        "fontsMs": 40,
+        "buildMs": 47,
+        "totalMs": 947,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
           "h": 750,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 38490,
+          "bytes": 38488,
           "alt": "Page 6: Eleven seconds. IV · Dusk · 19:41."
         },
         {
@@ -177,7 +177,7 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718467,
+        "bytes": 1718481,
         "folio": "fb4fa41a",
         "chapters": [
           {
@@ -337,17 +337,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "dd1c9cb5",
+      "hash8": "f06d73e3",
       "vdtHash": "70b8dc3093c70fc1c90d4908e864abcdaa8aacec",
       "timings": {
-        "importMs": 1225,
-        "fontsMs": 173,
-        "buildMs": 56,
-        "totalMs": 2982,
+        "importMs": 259,
+        "fontsMs": 50,
+        "buildMs": 55,
+        "totalMs": 1043,
         "builds": 1
       },
       "specimen": {
@@ -508,7 +514,7 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718618,
+        "bytes": 1718650,
         "folio": "fb4fa41a",
         "chapters": [
           {
@@ -668,7 +674,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

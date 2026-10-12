@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "puzzle-book",
-  "sourceHash": "ac824315b21a4866557eea414cbcb26d7e83060f39d821466c85c93a8accf33c",
+  "sourceHash": "b2714c66c2de29daa0fcabac48dd6fad50ec0a255c4e22762030d559b542d213",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.749Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.309Z",
   "variants": {
     "en": {
-      "hash8": "6226534f",
+      "hash8": "7fc05ec6",
       "vdtHash": "7fc9d6b0d819dec89885d5ae89ec48f5a6537d79",
       "timings": {
-        "importMs": 1221,
-        "fontsMs": 47,
-        "buildMs": 64,
-        "totalMs": 3753,
+        "importMs": 181,
+        "fontsMs": 44,
+        "buildMs": 55,
+        "totalMs": 911,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1000,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 45358,
+          "bytes": 45304,
           "alt": "Opening page 1: Summer Workbook."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1000,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 39882,
+          "bytes": 39936,
           "alt": "Opening page 2: Crossword."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1000,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 52312,
+          "bytes": 52246,
           "alt": "Opening page 3: Word Search."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1000,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 31674,
+          "bytes": 31460,
           "alt": "Opening page 4: Maze."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1000,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 72504,
+          "bytes": 72582,
           "alt": "Opening page 5: Answers. Solution 1. Crossword · Solution 2. Word search · Solution 3. Maze."
         }
       ],
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23184,
+        "bytes": 23118,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -371,17 +371,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c152a298",
+      "hash8": "d1a4957f",
       "vdtHash": "a641d94188496fe2b5955581bc4ed838524e62c1",
       "timings": {
-        "importMs": 1485,
-        "fontsMs": 81,
-        "buildMs": 99,
-        "totalMs": 2629,
+        "importMs": 224,
+        "fontsMs": 42,
+        "buildMs": 56,
+        "totalMs": 953,
         "builds": 1
       },
       "specimen": {
@@ -414,7 +420,7 @@
           "h": 1000,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 46850,
+          "bytes": 46820,
           "alt": "Página de apertura 1: Cuaderno de verano."
         },
         {
@@ -425,7 +431,7 @@
           "h": 1000,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 42812,
+          "bytes": 42888,
           "alt": "Página de apertura 2: Crucigrama."
         },
         {
@@ -436,7 +442,7 @@
           "h": 1000,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 54204,
+          "bytes": 54304,
           "alt": "Página de apertura 3: Sopa de letras."
         },
         {
@@ -447,7 +453,7 @@
           "h": 1000,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 33544,
+          "bytes": 33566,
           "alt": "Página de apertura 4: Laberinto."
         },
         {
@@ -458,7 +464,7 @@
           "h": 1000,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 74342,
+          "bytes": 74420,
           "alt": "Página de apertura 5: Soluciones. Solución 1. Crucigrama · Solución 2. Sopa de letras · Solución 3. Laberinto."
         }
       ],
@@ -490,7 +496,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23995,
+        "bytes": 23987,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -736,7 +742,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

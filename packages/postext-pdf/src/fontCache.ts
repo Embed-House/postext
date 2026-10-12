@@ -334,7 +334,8 @@ export class FontCache {
           this.onFileIssue?.({ kind: 'cffEmbeddedWhole', ...spec, bytes: bytes.length });
         }
       }
-      // Japanese text is shaped in its language system (`JAN `).
+      // Text is shaped in the language in force: the document's, a
+      // segment's own (#764).
       shapeInCurrentLanguage(embedded);
       spaceGlyphForSpace(embedded);
       this.embedded.add(embedded);

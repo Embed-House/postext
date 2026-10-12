@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bulaq-framed-page",
-  "sourceHash": "f5a54958ba09be35286bee402650305594d556a0fc542b99e2e9fe7f950f1ef7",
+  "sourceHash": "56fa3e5c95b0d6218b4b6af70bf46f3d8667a709da24087da5ee623f35e83adc",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.835Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.677Z",
   "variants": {
     "en": {
-      "hash8": "76e60103",
+      "hash8": "f0d5574f",
       "vdtHash": "f209e5eff08c8f19b36eb49188ea00b8a7239131",
       "timings": {
-        "importMs": 1450,
-        "fontsMs": 293,
-        "buildMs": 147,
-        "totalMs": 3883,
+        "importMs": 239,
+        "fontsMs": 76,
+        "buildMs": 96,
+        "totalMs": 1057,
         "builds": 1
       },
       "specimen": {
@@ -142,7 +142,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 109694,
+        "bytes": 109706,
         "pages": 6
       },
       "sandbox": {
@@ -374,21 +374,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "153f5bdc",
+      "hash8": "b242e29a",
       "vdtHash": "6b8d7055fc41adb04a90a265a431501113ae8f32",
       "timings": {
-        "importMs": 1776,
-        "fontsMs": 261,
-        "buildMs": 134,
-        "totalMs": 2762,
+        "importMs": 174,
+        "fontsMs": 147,
+        "buildMs": 105,
+        "totalMs": 1004,
         "builds": 1
       },
       "specimen": {
@@ -513,7 +513,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110613,
+        "bytes": 110629,
         "pages": 6
       },
       "sandbox": {
@@ -745,9 +745,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

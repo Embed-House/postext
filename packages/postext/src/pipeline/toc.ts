@@ -11,7 +11,7 @@
  */
 
 import { flowTextWidth } from '../measure/vertical';
-import { onTextWidthCacheClear } from '../measure/canvas';
+import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import { fitLeader } from '../measure/leader';
 import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
 import type { ContentBlock, InlineSpan, TocBlockInfo } from '../parse';
@@ -120,11 +120,13 @@ function widestNumber(numbers: readonly string[], font: string): number {
     byFont = new Map();
     widestCache.set(numbers, byFont);
   }
-  let widest = byFont.get(font);
+  // The widths of a language (#764).
+  const key = measureLanguageKey() + font;
+  let widest = byFont.get(key);
   if (widest === undefined) {
     widest = 0;
     for (const n of numbers) widest = Math.max(widest, flowTextWidth(n, font));
-    byFont.set(font, widest);
+    byFont.set(key, widest);
   }
   return widest;
 }

@@ -54,7 +54,7 @@ export type { CjkComposition, PunctuationSide } from './measure';
 export type { BreakTrace, LineInsetStep, LineWidthStep, MeasuredBlock, MeasureBlockOptions, MeasurementCache } from './measure';
 export { hyphenateText, hyphenateByDictionary, setHyphenationLocale, setHyphenationRules, normalizeHyphenationExceptions, HYPHENATION_LOCALES, matchHyphenationLocale } from './hyphenate';
 export type { HyphenationRules } from './hyphenate';
-export { DOCUMENT_LANGUAGES, isCjkLanguage, isJapaneseLanguage, isUnhyphenatedLanguage, localeScript, chineseScriptOf, cjkRegionOf, stringsKeyOf, sameContentLocale, matchContentLocale, canonicalLocaleTag, renderLangOf, stringsFor, directionOf, comicsLocaleDirection, defaultNumeralsFor } from './locale';
+export { DOCUMENT_LANGUAGES, isCjkLanguage, isJapaneseLanguage, isUnhyphenatedLanguage, localeScript, chineseScriptOf, cjkRegionOf, stringsKeyOf, sameContentLocale, matchContentLocale, canonicalLocaleTag, renderLangOf, shapingLanguageOf, shapingTagOf, stringsFor, directionOf, comicsLocaleDirection, defaultNumeralsFor } from './locale';
 export type { DocumentLanguage } from './locale';
 export { parseMarkdown } from './parse';
 export { addRow, addColumn, removeRow, removeColumn, mergeCells, unmergeCell, setCellContent, setCellImage, setCellBackground, setAlignment, parseTSV, tableGridIssues } from './table/model';
@@ -536,9 +536,13 @@ export { resourceBlockToPage, resourceBlockToLocal, resourceBlockRectToPage, tab
 export { flowToPage, pageToFlow, flowRectToPage, pageRectToFlow, pageIsVertical, pageIsMirrored, verticalFlowOf, lineTextAlign, leaderRuleGeometry, DEFAULT_CENTRAL_BASELINE } from './vdt';
 export { verticalOrientation, verticalRuns, uaxVerticalOrientation, isVerticalCell, verticalCellEms, CORNER_OFFSET_EM, uprightDigitRuns, forcedVerticalRuns, segmentOrientation } from './writingMode';
 export { graphemesOf } from './measure/graphemes';
+// The box of a task-list item, drawn by the renderers (#765,
+// `VDTBlock.bulletBox`).
+export { TASK_BOX_SIDE_EM, TASK_BOX_TICK, taskBoxSize, taskBoxTick, taskBoxText, taskBoxSvgBody } from './taskBox';
 // A word with no letter shaped in the script of its context (#725): the
 // mark a renderer sets it beside (`VDTLineSegment.scriptContext`).
 export { scriptContextUntracked, scriptMark, withScriptMark } from './measure/script';
+export { setMeasureLanguage, getMeasureLanguage, withMeasureLanguage } from './measure/canvas';
 export type { ScriptContext } from './measure/script';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {

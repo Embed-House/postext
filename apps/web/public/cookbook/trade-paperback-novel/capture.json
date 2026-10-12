@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "trade-paperback-novel",
-  "sourceHash": "a5c593d7a79700e808c2fdbe9387a4b5bace2c870e46d0ed4286ce7ec21168bc",
+  "sourceHash": "9500b07f7923b16b03cd4b4c05e97d3aea6a08a5cf6ab3d0be5f06c8c168717e",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.999Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.512Z",
   "variants": {
     "en": {
-      "hash8": "8583ad06",
+      "hash8": "419df7ea",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 219,
-        "fontsMs": 32,
-        "buildMs": 62,
-        "totalMs": 962,
+        "importMs": 204,
+        "fontsMs": 27,
+        "buildMs": 55,
+        "totalMs": 923,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1543,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 213044,
+          "bytes": 213014,
           "alt": "Opening page 1: The Awakening."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 136932,
+          "bytes": 136936,
           "alt": "Page 5."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 151610,
+          "bytes": 151612,
           "alt": "Page 8."
         }
       ],
@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 374181,
+        "bytes": 374203,
         "folio": "846eba29",
         "chapters": [
           {
@@ -361,18 +361,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "b5205571",
+      "hash8": "c0205aa7",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 31,
-        "buildMs": 206,
-        "totalMs": 1061,
+        "importMs": 150,
+        "fontsMs": 28,
+        "buildMs": 161,
+        "totalMs": 1007,
         "builds": 1
       },
       "specimen": {
@@ -405,7 +410,7 @@
           "h": 1543,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 213922,
+          "bytes": 213892,
           "alt": "Página de abertura 1: Quincas Borba."
         },
         {
@@ -427,7 +432,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67100,
+          "bytes": 67102,
           "alt": "Página de abertura 3: I."
         },
         {
@@ -449,7 +454,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 44700,
+          "bytes": 44698,
           "alt": "Página de abertura 5: II."
         },
         {
@@ -522,7 +527,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 372831,
+        "bytes": 372855,
         "folio": "846eba29",
         "chapters": [
           {
@@ -707,7 +712,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -31,7 +31,7 @@ import { registeredFontSyncProvider } from './svg/fontRegistry';
 import { svgPictureFontWarning } from './svg/image';
 import { lineInkExtent, lineTrailingTracking } from './lineInk';
 import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
-import { isJapaneseLanguage, renderLangOf } from './locale';
+import { isJapaneseLanguage, renderLangOf, shapingLanguageOf } from './locale';
 import { hasCJK } from './measure/cjk';
 import { markerRuns } from './bidi';
 import { joiningScriptIn } from './measure/joining';
@@ -48,6 +48,7 @@ import type { VDTResourceVideo } from './vdt';
 import type { ComicCastMember } from './types';
 import { renderComicHtml } from './htmlComic';
 import { comicBlockOnSheet, pageComics } from './comics/transform';
+import { taskBoxSvgBody, taskBoxText } from './taskBox';
 
 /**
  * Declarations of every box of CJK text measured with no punctuation
@@ -1315,7 +1316,35 @@ function arabicMarkNeeded(text: string): boolean {
   return plain.length !== arabic.length || plain.some((r, i) => r.text !== arabic[i]!.text);
 }
 
+/**
+ * The box of a task item (`VDTBlock.bulletBox`, #765): an inline SVG the
+ * size of the box, from `bulletOffsetX` and centred on `bulletY`, in the
+ * marker's colour. Its holder is an image named ☐ or ☑, which is what
+ * assistive technology reads, and holds that character as text of no
+ * size, so a selection copies it as it copied the character the box
+ * stands for. On a vertical page the tick is drawn turned back
+ * (`vertical`); on a right-to-left one the flow's own rule turns every
+ * `svg` back.
+ */
+function renderTaskBox(block: VDTBlock, vertical = false): string {
+  const box = block.bulletBox;
+  const firstLine = block.lines[0];
+  if (!box || block.bulletOffsetX === undefined || !firstLine) return '';
+  const { side, stroke, checked } = box;
+  const top = (block.bulletY ?? firstLine.baseline) - side / 2;
+  const mark = esc(taskBoxText(checked));
+  return (
+    `<div class="pt-bullet pt-task-box" role="img" aria-label="${mark}" style="position:absolute;` +
+    `left:${block.bulletOffsetX}px;top:${top}px;width:${side}px;height:${side}px;` +
+    `color:${block.bulletColor ?? block.color};font-size:0;">` +
+    `<svg aria-hidden="true" focusable="false" viewBox="0 0 100 100" width="${side}" height="${side}" style="position:absolute;left:0;top:0;">` +
+    taskBoxSvgBody(stroke / side, checked, vertical ? 'vertical' : undefined) +
+    `</svg>${mark}</div>`
+  );
+}
+
 function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
+  if (block.type === 'listItem' && block.bulletBox) return renderTaskBox(block);
   if (
     block.type !== 'listItem' ||
     !block.bulletText ||
@@ -1706,6 +1735,7 @@ function renderVerticalMarker(cls: string, x: number, block: VDTBlock, v: Vertic
 }
 
 function renderVerticalBullet(block: VDTBlock, v: VerticalHtml): string {
+  if (block.type === 'listItem' && block.bulletBox) return renderTaskBox(block, true);
   if (block.type !== 'listItem' || !block.bulletText || block.bulletOffsetX === undefined || !block.lines[0]) return '';
   const bulletFont = block.bulletFontString ?? block.fontString;
   const bulletColor = block.bulletColor ?? block.color;
@@ -2667,7 +2697,7 @@ function renderPageDetailed(
   // that mounts them apart from the document's root (#379); so do a
   // Japanese document's, whose glyph forms (a pan-CJK face's `locl`) and
   // vertical forms the browser picks by language (#428).
-  const pageAttrs = (options.dir === 'rtl' ? ' dir="rtl"' : '') + (options.lang ? ` lang="${options.lang}"` : '');
+  const pageAttrs = (options.dir === 'rtl' ? ' dir="rtl"' : '') + (options.lang !== undefined ? ` lang="${options.lang}"` : '');
   const outerHtml =
     `<div class="pt-page" id="${pageElementId((options.pageIndexOffset ?? 0) + page.index)}" data-page="${page.index}"${pageAttrs} style="` +
     `position:relative;` +
@@ -2787,7 +2817,13 @@ export function renderToHtmlIndexed(
   // browser resolves the text of every box in that direction unless the
   // box declares its own (see `dirAttr`).
   const rtl = doc.config.direction === 'rtl';
-  const docLang = renderLangOf(doc.config);
+  // The language the document was measured in is the one its HTML
+  // declares (#764): the browser shapes the text in it, on a page in any
+  // other. A document with no language to name (`shapingLanguageOf` gives
+  // the empty tag) says `lang=""`, no language, as it was measured; one
+  // shaped in the host's declares what it did up to postext 1.28.
+  const shapedIn = shapingLanguageOf(doc.config);
+  const docLang = shapedIn ?? renderLangOf(doc.config);
   // A right-bound book lays its pages out right to left in a row: a row
   // already runs that way in a right-to-left root.
   const reversed = (doc.binding === 'right') !== rtl;
@@ -2814,7 +2850,11 @@ export function renderToHtmlIndexed(
     ...(doc.anchors ? { anchors: doc.anchors } : {}),
     pageIndexOffset: doc.pageIndexOffset ?? 0,
     ...(docLang ? { rootLang: docLang } : {}),
-    ...(rtl ? { dir: 'rtl' as const, ...(docLang ? { lang: docLang } : {}) } : isJapaneseLanguage(docLang) ? { lang: docLang } : {}),
+    // Every page says its language, for a host that mounts it apart from
+    // the document's root; up to postext 1.28 only a right-to-left and a
+    // Japanese one did.
+    ...(rtl ? { dir: 'rtl' as const } : {}),
+    ...(docLang !== undefined && (shapedIn !== undefined || rtl || isJapaneseLanguage(docLang)) ? { lang: docLang } : {}),
   };
   const bleedInset = doc.trimOffset > 0
     ? Math.max(0, doc.trimOffset - dimensionToPx(doc.config.page.cutLines.bleed, doc.config.page.dpi))
@@ -2854,7 +2894,7 @@ export function renderToHtmlIndexed(
   // with its direction (see `renderLangOf`).
   const reset = rtl ? HTML_TEXT_RESET.replace('direction:ltr;', 'direction:rtl;') : HTML_TEXT_RESET;
   const html =
-    `<div class="pt-doc"${docLang ? ` lang="${docLang}"` : ''}${rtl ? ' dir="rtl"' : ''} data-mode="${mode}" style="${reset}${docStyle}">` +
+    `<div class="pt-doc"${docLang !== undefined ? ` lang="${docLang}"` : ''}${rtl ? ' dir="rtl"' : ''} data-mode="${mode}" style="${reset}${docStyle}">` +
     pageHtmlParts.join('') +
     `</div>`;
 

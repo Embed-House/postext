@@ -36,7 +36,11 @@ describe('pinLegacyScriptContext (#725)', () => {
       expect(kept(migrateConfig({ bodyText: { scriptContext: true } }, v)), String(v)).toBe(true);
     }
     const current: PostextConfig = {};
-    expect(migrateConfig(current, 12)).toBe(current);
+    // One stamped 12 takes the pins of rules 13 alone: the language (#764)
+    // and, its text not being known, the task box (#765). One stamped 13 is
+    // read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
+    expect(migrateConfig(current, 13)).toBe(current);
     // A new document has the rule; one read from before keeps the old way.
     expect(resolveAllConfig(current).bodyText.scriptContext).toBeUndefined();
     expect(resolveAllConfig(migrateConfig({}, 11)).bodyText.scriptContext).toBe(false);
@@ -62,7 +66,8 @@ describe('pinLegacyScriptContext (#725)', () => {
     // The locale's layer replaces the manifest's `bodyText` wholesale: the
     // pin goes on what is left in force.
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Amiri' } }, { bodyText: { fontFamily: 'Lora' } }], 11);
-    expect(merged.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false });
+    // (With the pin every bundle before 13 takes, #764.)
+    expect(merged.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false, shapingLanguage: 'host' });
     // A layer that names the setting keeps its word.
     expect(kept(migrateBundleConfig({}, [{ bodyText: { scriptContext: true } }], 11))).toBe(true);
     // The reader's own base is pinned with the rest when nothing names it.

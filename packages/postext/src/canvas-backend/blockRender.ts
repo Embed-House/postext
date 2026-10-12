@@ -16,9 +16,10 @@ import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
 import { paintKunten, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
-import { fillSegmentWord, type WordRun } from './wordRuns';
+import { fillSegmentWord, paintsSegmentLanguage, type WordRun } from './wordRuns';
 import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
+import { taskBoxTick } from '../taskBox';
 
 function pickSegmentFont(
   bold: boolean,
@@ -230,7 +231,9 @@ function segmentIsStyled(s: VDTLineSegment): boolean {
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
     || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.runs !== undefined || s.sideMarker !== undefined
     // A word with no letter painted in the script of its context (#725).
-    || s.leader !== undefined || s.scriptContext !== undefined;
+    || s.leader !== undefined || s.scriptContext !== undefined
+    // A word of a run in its own language, painted in it (#764).
+    || paintsSegmentLanguage(s);
 }
 
 /** A rule leader (#622): a line across `width` px under the baseline, its
@@ -527,7 +530,43 @@ function renderComposedLine(
   fillFlowText(ctx, line.text, plainX, line.baseline, 'fill', undefined, cuts);
 }
 
+/**
+ * The box of a task item (`VDTBlock.bulletBox`, #765): a square outline
+ * from `bulletOffsetX`, centred on `bulletY`, its stroke inside the
+ * square, and a tick with round ends when the item is done. Paths only:
+ * no font draws it. In the flow of a vertical or a right-to-left page the
+ * tick's points are turned or mirrored back, so it reads as on any page.
+ */
+function renderTaskBox(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
+  const box = block.bulletBox;
+  const firstLine = block.lines[0];
+  if (!box || block.bulletOffsetX === undefined || !firstLine) return;
+  const { side, stroke } = box;
+  const cx = block.bulletOffsetX + side / 2;
+  const cy = block.bulletY ?? firstLine.baseline;
+  ctx.save();
+  ctx.strokeStyle = block.bulletColor ?? block.color;
+  ctx.lineWidth = stroke;
+  ctx.lineJoin = 'miter';
+  ctx.beginPath();
+  ctx.rect(cx - (side - stroke) / 2, cy - (side - stroke) / 2, side - stroke, side - stroke);
+  ctx.stroke();
+  if (box.checked) {
+    const tick = taskBoxTick(side, verticalPaintActive() ? 'vertical' : mirroredPaintActive() ? 'mirrored' : undefined);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    tick.forEach(([dx, dy], i) => (i === 0 ? ctx.moveTo(cx + dx, cy + dy) : ctx.lineTo(cx + dx, cy + dy)));
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
+  if (block.bulletBox) {
+    renderTaskBox(ctx, block);
+    return;
+  }
   if (!block.bulletText || !block.bulletFontString || block.bulletOffsetX === undefined) return;
   const firstLine = block.lines[0];
   if (!firstLine) return;

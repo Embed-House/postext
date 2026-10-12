@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "vocalised-classical-prose",
-  "sourceHash": "99947dabdc92f91857f5ded7581b0dce5d15ffec1fb125d2d6376393a22d05e2",
+  "sourceHash": "05e46d35e6d53075cf3089adf8068eb021b94a85a977e56d0ef08be94e0e0fa2",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.116Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.549Z",
   "variants": {
     "en": {
-      "hash8": "22617219",
+      "hash8": "e7f940b5",
       "vdtHash": "3ee5260508696be07c239cd7e0ef72102c7c91fe",
       "timings": {
-        "importMs": 148,
-        "fontsMs": 34,
-        "buildMs": 90,
-        "totalMs": 838,
+        "importMs": 198,
+        "fontsMs": 38,
+        "buildMs": 89,
+        "totalMs": 975,
         "builds": 1
       },
       "specimen": {
@@ -278,21 +278,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Set in Amiri and Aref Ruqaa (SIL OFL) · Text: al…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "18b26016",
+      "hash8": "497261a7",
       "vdtHash": "60238519a34f1d62bfad9b498caba15c2afaf7a1",
       "timings": {
-        "importMs": 139,
-        "fontsMs": 33,
-        "buildMs": 91,
-        "totalMs": 797,
+        "importMs": 164,
+        "fontsMs": 30,
+        "buildMs": 81,
+        "totalMs": 891,
         "builds": 1
       },
       "specimen": {
@@ -544,9 +544,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

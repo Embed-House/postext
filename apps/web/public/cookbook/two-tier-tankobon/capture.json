@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "two-tier-tankobon",
-  "sourceHash": "1ab04f41cb715d1518a0ed4714db967ca03639df8b1bfd39fc90ef9bf6679882",
+  "sourceHash": "2835856ed4726fb72b56b3a007e3f94350ce401b945c8d9ab4c20ac3b5541ecb",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.007Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.519Z",
   "variants": {
     "en": {
-      "hash8": "48b1da92",
+      "hash8": "688fcf60",
       "vdtHash": "67258c9bf6f5c0c1ade6528c963766933df61385",
       "timings": {
-        "importMs": 197,
-        "fontsMs": 378,
-        "buildMs": 66,
-        "totalMs": 1214,
+        "importMs": 156,
+        "fontsMs": 187,
+        "buildMs": 54,
+        "totalMs": 1047,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98570,
+          "bytes": 98434,
           "alt": "Opening page 211: 蜘蛛の糸."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 147688,
+          "bytes": 147474,
           "alt": "Page 212: 二."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149698,
+          "bytes": 149482,
           "alt": "Page 213."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61950,
+          "bytes": 61866,
           "alt": "Page 214: 三."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92682,
+          "bytes": 92580,
           "alt": "Opening page 215: 尾生の信."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140486,
+          "bytes": 140290,
           "alt": "Page 216."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 26866,
+          "bytes": 26834,
           "alt": "Page 217."
         }
       ],
@@ -153,12 +153,12 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281180,
+        "bytes": 281154,
         "pages": 7
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 23464,
+        "bytes": 23444,
         "folio": "95c7420e",
         "chapters": [
           {
@@ -343,21 +343,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "791455b9",
+      "hash8": "abf9214f",
       "vdtHash": "126571f4ba3eb720413355fd7c18821414d7f297",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 389,
-        "buildMs": 70,
-        "totalMs": 1222,
+        "importMs": 154,
+        "fontsMs": 249,
+        "buildMs": 53,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -390,7 +390,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98526,
+          "bytes": 98380,
           "alt": "Página de apertura 211: 蜘蛛の糸."
         },
         {
@@ -401,7 +401,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 147688,
+          "bytes": 147474,
           "alt": "Página 212: 二."
         },
         {
@@ -412,7 +412,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149698,
+          "bytes": 149482,
           "alt": "Página 213."
         },
         {
@@ -423,7 +423,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 61950,
+          "bytes": 61866,
           "alt": "Página 214: 三."
         },
         {
@@ -434,7 +434,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92682,
+          "bytes": 92580,
           "alt": "Página de apertura 215: 尾生の信."
         },
         {
@@ -445,7 +445,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140486,
+          "bytes": 140290,
           "alt": "Página 216."
         },
         {
@@ -456,7 +456,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 26866,
+          "bytes": 26834,
           "alt": "Página 217."
         }
       ],
@@ -493,12 +493,12 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 281321,
+        "bytes": 281311,
         "pages": 7
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 23486,
+        "bytes": 23466,
         "folio": "95c7420e",
         "chapters": [
           {
@@ -683,9 +683,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -45,6 +45,21 @@ export function selectChapters(book: Book, opts: Options): BookChapter[] {
   return parseChapterList(spec, book.chapters.length).map((i) => book.chapters[i]!);
 }
 
+/**
+ * `config` as the command line lays it out: with the text shaped in the
+ * host's language (`bodyText.shapingLanguage: 'host'`, #764). A browser
+ * shapes a document in its own language; Skia's canvas takes a language
+ * and shapes without it (@napi-rs/canvas 1.0: the widths of Noto Serif SC,
+ * of Noto Serif JP and of a face with Catalan and Turkish forms are the
+ * same under every `lang`), so what is measured here is the forms of each
+ * font's default language. The outputs are told so: a PDF shaped in the
+ * document's language would set a Catalan `l·l` or a Turkish `fi` in
+ * other glyphs than the ones their places were measured for.
+ */
+export function shapedBySkia<T extends { bodyText?: object }>(config: T): T {
+  return { ...config, bodyText: { ...config.bodyText, shapingLanguage: 'host' } };
+}
+
 export async function layOut(book: Book, opts: Options, reporter: Reporter, cache?: MeasurementCache, fonts?: FontSet): Promise<Layout> {
   const chapters = selectChapters(book, opts);
   const text = chapters.map((c) => c.markdown);
@@ -63,7 +78,7 @@ export async function layOut(book: Book, opts: Options, reporter: Reporter, cach
   // laid out from page 1, as it always was.
   const start = chapters[0] === book.chapters[0] ? book.start : undefined;
   const docs = reporter.time('layout', () => buildBundle(
-    { chapters, config: book.config, resources: book.resources, ...(start ? { start } : {}) },
+    { chapters, config: shapedBySkia(book.config), resources: book.resources, ...(start ? { start } : {}) },
     {
       cache: cache ?? createMeasurementCache(),
       onChapter: (index, doc) => reporter.detail(`  laid out ${chapters[index]!.file ?? chapters[index]!.title}: ${doc.pages.length} pages`),

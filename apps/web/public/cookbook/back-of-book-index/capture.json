@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "back-of-book-index",
-  "sourceHash": "6f0d9e12686b2421f9b5de34a5ce122926126190abbfe7e1b3d9c2c8e22c3ada",
+  "sourceHash": "2e7520dbbc7b66c51c316ec9850945b9473cc903ad5b7a4b37250bd61df9e076",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.709Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.598Z",
   "variants": {
     "en": {
-      "hash8": "5f841a4b",
+      "hash8": "87695237",
       "vdtHash": "567fbe441250ca13ccc219d5f880d9059fa7beae",
       "timings": {
-        "importMs": 1989,
-        "fontsMs": 78,
-        "buildMs": 73,
-        "totalMs": 2919,
+        "importMs": 196,
+        "fontsMs": 53,
+        "buildMs": 47,
+        "totalMs": 1054,
         "builds": 2
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117870,
+          "bytes": 117876,
           "alt": "Page 298: 14.2 The pressure–volume loop. Figure 14.1. Pressure–volume loop of the left ventricle at rest: volume from 0 to 150 mL across, pressure from 0 to 140 mmHg up. The dots, anticlockwise from bottom right: mitral valve closes (120 mL), aortic valve opens (80 mmHg), aort…"
         },
         {
@@ -537,21 +537,21 @@
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c53348f3",
+      "hash8": "2a0bd88c",
       "vdtHash": "3425c1e6734c0df06ad03d5aaa75c71f6e5f237e",
       "timings": {
-        "importMs": 1852,
-        "fontsMs": 142,
-        "buildMs": 69,
-        "totalMs": 2949,
+        "importMs": 171,
+        "fontsMs": 52,
+        "buildMs": 53,
+        "totalMs": 1015,
         "builds": 2
       },
       "specimen": {
@@ -595,7 +595,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 115050,
+          "bytes": 114952,
           "alt": "Página 298: 14.2 El bucle presión-volumen. Figura 14.1. Bucle presión-volumen del ventrículo izquierdo en reposo: volumen de 0 a 150 mL en horizontal, presión de 0 a 140 mmHg en vertical. Los puntos, en sentido antihorario desde abajo a la derecha: cierre de la válvula mitral…"
         },
         {
@@ -1071,9 +1071,9 @@
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

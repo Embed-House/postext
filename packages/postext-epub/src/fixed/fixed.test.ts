@@ -212,6 +212,25 @@ describe('fixed layout from a real two-chapter book', () => {
     ctrl.abort();
     await expect(renderToEpub(docs, { layout: 'fixed', metadata: { title: 'T', language: 'en' }, signal: ctrl.signal })).rejects.toThrow();
   });
+
+  it('draws the box of a task item on the page, as an image named by its character (#765)', async () => {
+    const tasks = layOutBook(['- [ ] Buy the paper\n- [x] Set the type']);
+    const made = readEpub(await renderToEpub(tasks, {
+      layout: 'fixed',
+      metadata: { title: 'Tasks', language: 'en', modified: MODIFIED },
+      fonts: [{ family: 'Lora', weight: 400, style: 'normal', bytes: LORA, format: 'ttf' }],
+    }));
+    const first = made.spine[0]!;
+    const xhtml = new TextDecoder().decode(made.files.get(first.path)!);
+    const boxes = [...xhtml.matchAll(/<div class="pt-bullet pt-task-box" role="img" aria-label="(.)"[^>]*>(.*?)<\/div>/g)];
+    expect(boxes.map((m) => m[1])).toEqual(['\u2610', '\u2611']);
+    // The SVG is XML here, in its namespace, and the page says it holds one.
+    expect(boxes[0]![2]).toMatch(/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" [^>]*viewBox="0 0 100 100"[^>]*><rect [^>]*\/><\/svg>\u2610$/);
+    expect(boxes[1]![2]).toContain('<path d="M22 52L42 72L78 28"');
+    expect([...made.manifest.values()].find((item) => item.path === first.path)!.properties).toContain('svg');
+    // No face is asked for the bullets' weight: the box is not text.
+    expect(xhtml).not.toMatch(/<div class="pt-bullet" aria-hidden="true"/);
+  });
 });
 
 describe('fixed layout of a right-to-left book', () => {

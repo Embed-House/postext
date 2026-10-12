@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anthology-with-bylines",
-  "sourceHash": "953f2e0235b36203dde328a0a81aa090c2b838b0bb2236fc2c3f27ac407b4617",
+  "sourceHash": "cd8fbe80a9ab5bbfa56853ec52d261ed97d86e2e74186e37201140832a59673e",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.668Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.570Z",
   "variants": {
     "en": {
-      "hash8": "1b3fae18",
+      "hash8": "3edfec39",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 986,
-        "fontsMs": 40,
-        "buildMs": 90,
-        "totalMs": 2880,
+        "importMs": 188,
+        "fontsMs": 24,
+        "buildMs": 79,
+        "totalMs": 948,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114162,
+          "bytes": 114202,
           "alt": "Opening page 1: Afoot."
         },
         {
@@ -423,6 +423,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

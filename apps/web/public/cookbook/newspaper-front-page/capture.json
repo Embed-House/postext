@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-front-page",
-  "sourceHash": "3a209e205cc38f51558e7769b6676e7f00915c6dd732f8167fd3f800bc7683c4",
+  "sourceHash": "3be32d110eb6114ae2fb38aa0fcb022f59926438bcf2b53a2f571669f09982d2",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.536Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.133Z",
   "variants": {
     "en": {
-      "hash8": "b6410d38",
+      "hash8": "2d5a4ca3",
       "vdtHash": "4f9d3577c2f86f3c219c3113504231ed24fa64d4",
       "timings": {
-        "importMs": 1101,
-        "fontsMs": 197,
-        "buildMs": 165,
-        "totalMs": 2263,
+        "importMs": 133,
+        "fontsMs": 34,
+        "buildMs": 126,
+        "totalMs": 970,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 154400,
+          "bytes": 154380,
           "alt": "Opening page 1: The Elverdale Courier. File picture: turbines on an upland ridge. Each of the three planned for Harrow Ridge would generate 2.3 megawatts."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 185810,
+          "bytes": 185590,
           "alt": "Opening page 2: Town & Valley. The rebuilt pier. Its new concrete footing (red) goes six metres below the riverbed. Both arches were relaid with their own stones. · The next five days · How the wards voted."
         }
       ],
@@ -387,9 +387,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

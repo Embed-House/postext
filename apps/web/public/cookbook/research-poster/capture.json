@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "research-poster",
-  "sourceHash": "a611d3b868da21506ef9cab64df0e92ac1c192775b6b1f92e38f69a42f623e73",
+  "sourceHash": "3183b946dd09cfcefffb0e425094f240955cc916cc9c5b9d9a15e15b5cafd99a",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.781Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.339Z",
   "variants": {
     "en": {
-      "hash8": "398d111a",
+      "hash8": "8751dec1",
       "vdtHash": "152bbae97cbf2ff3c7d0228699c51b639930e246",
       "timings": {
-        "importMs": 916,
-        "fontsMs": 75,
-        "buildMs": 93,
-        "totalMs": 2571,
+        "importMs": 204,
+        "fontsMs": 29,
+        "buildMs": 68,
+        "totalMs": 918,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174932,
+          "bytes": 174868,
           "alt": "Opening page 1: Street trees and sidewalk heat. Figure 1. Ashby Road, schematic plan: crowns from the canopy survey and the 16 loggers (orange). Widths across the street are not to scale. · Figure 2. Canopy cover per block (bars, %) and the air at head height against the stree…"
         }
       ],
@@ -74,7 +74,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94059,
+        "bytes": 94053,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -303,17 +303,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "b647ecb6",
+      "hash8": "75045582",
       "vdtHash": "565a8c265171499f754da27b53b2f58943f172da",
       "timings": {
-        "importMs": 1084,
-        "fontsMs": 119,
-        "buildMs": 93,
-        "totalMs": 3140,
+        "importMs": 146,
+        "fontsMs": 28,
+        "buildMs": 66,
+        "totalMs": 868,
         "builds": 1
       },
       "specimen": {
@@ -347,7 +353,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 181780,
+          "bytes": 181824,
           "alt": "Página de apertura 1: Arbolado viario y calor en la acera. Figura 1. La avenida en plano esquemático: las copas del inventario de arbolado y los 16 registradores (naranja). Los anchos transversales no están a escala. · Figura 2. Copa por manzana (barras, %) y aire a la altura…"
         }
       ],
@@ -371,7 +377,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94800,
+        "bytes": 94814,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -600,7 +606,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

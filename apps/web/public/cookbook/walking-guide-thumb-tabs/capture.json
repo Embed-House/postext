@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "walking-guide-thumb-tabs",
-  "sourceHash": "d74dc4b993bedb9b5f6aab9474e42e0bf56dafdb3e0be6bdd9f8f15615e45f4b",
+  "sourceHash": "f6b55104c92fedb6245e0a1c6cf362ce7cbb8b7cb5b7e1ae8f5a3641cd85b0b6",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.121Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.552Z",
   "variants": {
     "en": {
-      "hash8": "91d848a9",
+      "hash8": "9d54ce3b",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 133,
-        "fontsMs": 26,
-        "buildMs": 56,
-        "totalMs": 864,
+        "importMs": 183,
+        "fontsMs": 22,
+        "buildMs": 59,
+        "totalMs": 951,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1667,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 159142,
+          "bytes": 159180,
           "alt": "Opening page 1: Lisbon on Foot."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1667,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95790,
+          "bytes": 95784,
           "alt": "Page 2: Before you set out. Map 1. The three walks. The numbered pins are the stops in the text."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1667,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116964,
+          "bytes": 116956,
           "alt": "Opening page 3: Alfama."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1667,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121050,
+          "bytes": 121038,
           "alt": "Page 4: 3 Largo das Portas do Sol."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1667,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 62748,
+          "bytes": 62660,
           "alt": "Blank page 6."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1667,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 104690,
+          "bytes": 104708,
           "alt": "Opening page 7: Baixa."
         }
       ],
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52342,
+        "bytes": 52368,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -432,17 +432,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d29f6fc5",
+      "hash8": "eacc0453",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 147,
-        "fontsMs": 29,
-        "buildMs": 55,
-        "totalMs": 878,
+        "importMs": 131,
+        "fontsMs": 22,
+        "buildMs": 51,
+        "totalMs": 835,
         "builds": 1
       },
       "specimen": {
@@ -475,7 +481,7 @@
           "h": 1667,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 158218,
+          "bytes": 158268,
           "alt": "Página de apertura 1: Lisboa a pie."
         },
         {
@@ -486,7 +492,7 @@
           "h": 1667,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 98092,
+          "bytes": 98112,
           "alt": "Página 2: Antes de salir. Plano 1. Los tres paseos. Los pines numerados son las paradas del texto."
         },
         {
@@ -497,7 +503,7 @@
           "h": 1667,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118742,
+          "bytes": 118728,
           "alt": "Página de apertura 3: Alfama."
         },
         {
@@ -508,7 +514,7 @@
           "h": 1667,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 119738,
+          "bytes": 119770,
           "alt": "Página 4: 3 Largo das Portas do Sol."
         },
         {
@@ -530,7 +536,7 @@
           "h": 1667,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 62748,
+          "bytes": 62660,
           "alt": "Página en blanco 6."
         },
         {
@@ -541,7 +547,7 @@
           "h": 1667,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 106730,
+          "bytes": 106764,
           "alt": "Página de apertura 7: Baixa."
         }
       ],
@@ -577,7 +583,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52584,
+        "bytes": 52558,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -863,6 +869,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

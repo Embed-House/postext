@@ -3,7 +3,7 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig } from '../types';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
 import { avoidOrphansByDefault } from '../defaults/bodyText';
 import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
@@ -17,8 +17,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 12 since #747 (11 from
- * postext 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 13 since #764 (12 from
+ * postext 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -166,6 +166,15 @@ import { hasCJK } from '../measure/cjk';
  *     (`bodyText.scriptContext`, #725), where up to 1.27 it was shaped
  *     alone, in the script each browser and the PDF picked ({@link
  *     pinLegacyScriptContext});
+ * - 13 (#764), the rules of postext 1.29:
+ *   - the text is measured, painted and embedded in the document's own
+ *     language on every host (`bodyText.shapingLanguage`, #764), where up
+ *     to 1.28 the layout measured in the language of the page that hosted
+ *     it, and in none in a worker ({@link pinLegacyShapingLanguage});
+ *   - the box of a task item is drawn by the engine and takes a room of
+ *     its own (`unorderedLists.taskBox`, #765), where up to 1.28 it was the
+ *     character ☐ or ☑ in the list's face, as wide as the font the system
+ *     gave for it ({@link pinLegacyTaskBox});
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -180,9 +189,10 @@ import { hasCJK } from '../measure/cjk';
  * under 10 was written by postext 1.24 and gets the version-11 pins (which
  * every older one gets too); one stored under 11 was written by postext
  * 1.25 to 1.27 and gets the version-12 pins (which every older one gets
- * too).
+ * too); one stored under 12 was written by postext 1.28 and gets the
+ * version-13 pins (which every older one gets too).
  */
-export const CONFIG_VERSION = 12;
+export const CONFIG_VERSION = 13;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -279,6 +289,11 @@ const BALLOON_PLACEMENT_RULES = 12;
 /** The rules that shape a word with no letter in the script of its
  *  context (#725). */
 const SCRIPT_CONTEXT_RULES = 12;
+/** The rules that shape the text in the document's own language on every
+ *  host (#764). */
+const SHAPING_LANGUAGE_RULES = 13;
+/** The rules that draw the box of a task item (#765). */
+const TASK_BOX_RULES = 13;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1487,6 +1502,53 @@ export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config:
   return { ...config, bodyText: { ...bodyText, scriptContext: false } };
 }
 
+/**
+ * A configuration written before #764 (postext 1.28 or earlier), pinned to
+ * the language its text was shaped in: `bodyText.shapingLanguage: 'host'`,
+ * the measuring contexts left with the language of the page that hosts
+ * the layout (none in a worker) and only a Chinese, Japanese, Korean or
+ * right-to-left document painted and embedded in its own, where today
+ * every document is measured, painted and embedded in its own language.
+ * Every such configuration gets it: a face answers with other glyphs
+ * under a language, and which faces a document loads is not known here.
+ * A configuration that names the setting already is returned as it is
+ * (the same object).
+ */
+export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.shapingLanguage !== undefined) return config;
+  return { ...config, bodyText: { ...bodyText, shapingLanguage: 'host' } };
+}
+
+/**
+ * A configuration written before #765 (postext 1.28 or earlier), pinned to
+ * the box it set before a task item: `unorderedLists.taskBox: 'character'`,
+ * the character ☐ (☑ when the item is done) set as text in the list's
+ * face and the item's text started after its width, where today the
+ * engine draws the box and gives it a room of its own. That width was the
+ * advance of the character in whatever font held it, a font of the system
+ * in most documents, which is not known here: every such configuration
+ * gets the pin, so no line of its task lists moves. A configuration that
+ * names the setting already is returned as it is (the same object).
+ */
+export function pinLegacyTaskBox<T extends Partial<PostextConfig>>(config: T): T {
+  const lists: UnorderedListsConfig = isRecord(config.unorderedLists) ? config.unorderedLists : {};
+  if (lists.taskBox !== undefined) return config;
+  return { ...config, unorderedLists: { ...lists, taskBox: 'character' } };
+}
+
+/** A task item as the block parser reads one (`TASK_ITEM_RE`): a bullet,
+ *  `[ ]`, `[x]` or `[X]`, and a space, at any indent; inside a quotation
+ *  too. Only a bullet opens one: a numbered item is never a task. */
+const TASK_ITEM_LINE_RE = /^[^\S\n]*(?:>[^\S\n]*)*[-*+][^\S\n]+\[[ xX]\][^\S\n]/m;
+
+/** Whether markdown may hold a task item. Unknown content (undefined)
+ *  may. */
+function mayHaveTaskItems(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? TASK_ITEM_LINE_RE.test(content) : content.some((text) => TASK_ITEM_LINE_RE.test(text));
+}
+
 /** A line that opens a comic: a `:::page` or a `:::strip` fence. */
 const COMIC_FENCE_LINE_RE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;
 
@@ -1587,7 +1649,9 @@ export interface MigrateConfigOptions {
    * whose own text holds none) not the 1.24 design text (see {@link
    * pinLegacyDesignText}); and text with no heading (in a configuration
    * that sets a page-span heading) is not given the 1.24 slots under an
-   * opener (see {@link pinLegacyOpenerHeadFloats}).
+   * opener (see {@link pinLegacyOpenerHeadFloats}); and text with no task
+   * item (`- [ ]`, `- [x]`) is not given the 1.28 box set as a character
+   * (see {@link pinLegacyTaskBox}).
    * That keeps a stored configuration as
    * short as it was. Without it the size is pinned whenever maths is on,
    * and the gaps, the room, the heading marks, the box cut, the dash
@@ -1673,7 +1737,10 @@ export interface MigrateConfigOptions {
  * and its comic balloons placed as 1.27 placed them by {@link
  * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
  * or strip, and its words with no letter shaped alone by {@link
- * pinLegacyScriptContext}.
+ * pinLegacyScriptContext}, and its text shaped in the host's language by
+ * {@link pinLegacyShapingLanguage}, and the box of its task items set as a
+ * character by {@link pinLegacyTaskBox}, unless `options.content` shows no
+ * task item.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1723,6 +1790,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) out = pinLegacyRefLabelBreaks(out);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) out = pinLegacyBalloonPlacement(out);
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
+  if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
+  if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
   return out;
 }
 
@@ -1759,7 +1828,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
  * force, the side caption of a resource set in the text on the `layout` in
  * force, and the labels of cross-references on the `crossRefs` in force,
- * and the shaping of words with no letter on the `bodyText` in force.
+ * and the shaping of words with no letter on the `bodyText` in force, and
+ * the box of a task item on the `unorderedLists` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1810,5 +1880,7 @@ export function migrateBundleConfig(
   if (rules < REF_LABEL_BREAK_RULES && mayHaveRefs(content)) merged = pinLegacyRefLabelBreaks(merged);
   if (rules < BALLOON_PLACEMENT_RULES && mayHaveComics(content)) merged = pinLegacyBalloonPlacement(merged);
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
+  if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
+  if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
   return merged;
 }

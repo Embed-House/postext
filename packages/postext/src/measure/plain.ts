@@ -1,6 +1,5 @@
 import { FORCED_BREAK } from './hardBreaks';
 import {
-  prepareWithSegments,
   layoutNextLine,
   type PreparedTextWithSegments,
   type LayoutCursor,
@@ -32,6 +31,7 @@ import { joiningScriptIn } from './joining';
 import { getMeasureDirection } from './bidiLines';
 import { needsBidi } from '../bidi';
 import { faceReadsScript, getMeasureScriptContext, isLetterless, wordPieceScript } from './script';
+import { prepareInLanguage } from './pretextLanguage';
 
 /** Whether a word of `text` (between breaking spaces) has no letter. */
 function holdsLetterlessWord(text: string): boolean {
@@ -364,7 +364,8 @@ export function measureBlock(
   // block's plain text keeps it, as it keeps the ones inside a line.
   const processedText = text.includes(SOFT_HYPHEN) ? withoutEdgeSoftHyphens(text, hyphenatedText) : hyphenatedText;
 
-  const prepared = prepareWithSegments(processedText, font);
+  // Measured in the document's language, like every other text (#764).
+  const prepared = prepareInLanguage(processedText, font);
   const normalSpaceWidth = textAlign === 'justify' ? normalSpaceWidthFor(font) : 0;
 
   // Knuth-Plass optimal line breaking path (text with words set without

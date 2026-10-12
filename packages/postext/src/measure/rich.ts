@@ -14,7 +14,8 @@ import {
 } from '../knuthPlass';
 import { SOFT_HYPHEN } from './types';
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
-import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
+import { cleanSoftHyphens, getMeasureLanguage, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage, withMeasureLanguage } from './canvas';
+import { spanShapingLanguage } from './spanLanguage';
 import { isRuntLastLine } from './runts';
 import { hasOverfullLine } from './plain';
 import { justifiedSpaceRatios } from './spaceRatios';
@@ -183,6 +184,10 @@ export interface RichToken {
    *  Absent on every other token. */
   scriptContext?: ScriptContext;
   scriptRtl?: true;
+  /** The language of the run this word is of, when the run names its own
+   *  and the document is shaped in its own (`:ltr[…]{lang=en}`, #764): what
+   *  is measured of the word later (a cut, a piece) is measured in it. */
+  lang?: string;
   /** A word with a letter that may be painted in pieces with none
    *  (`10.1006/ijhc.2001`): the script in force where its text starts,
    *  which such a piece takes when no letter stands before it in the text
@@ -296,7 +301,7 @@ function tokenFont(
 
 /** The script, small-caps and Chinese-mark fields a token derived from
  *  another (a split, a hyphenated head) carries on. */
-function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShift?: number; faceFont?: string; smallCaps?: boolean; cjkMarks?: VDTSegmentMarks; inserted?: boolean; scriptContext?: ScriptContext; scriptRtl?: true }): Pick<RichToken, 'script' | 'scriptFont' | 'baselineShift' | 'faceFont' | 'smallCaps' | 'cjkMarks' | 'inserted' | 'scriptContext' | 'scriptRtl'> {
+function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShift?: number; faceFont?: string; smallCaps?: boolean; cjkMarks?: VDTSegmentMarks; inserted?: boolean; scriptContext?: ScriptContext; scriptRtl?: true; lang?: string }): Pick<RichToken, 'script' | 'scriptFont' | 'baselineShift' | 'faceFont' | 'smallCaps' | 'cjkMarks' | 'inserted' | 'scriptContext' | 'scriptRtl' | 'lang'> {
   return {
     ...(t.script ? { script: t.script, scriptFont: t.scriptFont, baselineShift: t.baselineShift } : {}),
     ...(t.faceFont ? { faceFont: t.faceFont } : {}),
@@ -306,6 +311,8 @@ function scriptOf(t: { script?: 'sup' | 'sub'; scriptFont?: string; baselineShif
     // The pieces of a word with no letter are shaped in its script (#725).
     ...(t.scriptContext ? { scriptContext: t.scriptContext } : {}),
     ...(t.scriptRtl ? { scriptRtl: true as const } : {}),
+    // And the pieces of a word of a run in another language in it (#764).
+    ...(t.lang !== undefined ? { lang: t.lang } : {}),
   };
 }
 
@@ -333,7 +340,13 @@ function rtlWordWidth(text: string, font: string): number {
 
 /** How a token's text is measured: in its script when it is a word with
  *  no letter given one (#725), else as any text (`textWidth`). */
-function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps' | 'wordScript'>, font: string): (text: string) => number {
+function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | 'smallCaps' | 'wordScript' | 'lang'>, font: string): (text: string) => number {
+  // A word of a run in another language is measured in it (#764).
+  if (token.lang !== undefined) {
+    const { lang, ...rest } = token;
+    const inner = tokenTextWidth(rest, font);
+    return (text) => withMeasureLanguage(lang, () => inner(text));
+  }
   const script = token.scriptContext;
   if (script) return (text) => (text === '' ? 0 : scriptTextWidth(text, font, script, token.scriptRtl === true));
   // A right-to-left word of a face that draws punctuation by script.
@@ -1339,6 +1352,14 @@ function tokenizeSpans(
   };
 
   for (const span of spans) {
+    // A run that names its language (`:ltr[…]{lang=en}`) is measured in it,
+    // in a document shaped in its own (#764); its tokens say so, for what
+    // is measured of them later (a cut, a piece).
+    const ownLanguage = spanShapingLanguage(span);
+    const spanTokensFrom = tokens.length;
+    const languageBefore = getMeasureLanguage();
+    if (ownLanguage !== undefined) setMeasureLanguage(ownLanguage);
+    try {
     const spanBase = spanStart;
     spanStart += span.text.length;
     // A tab (#622): its width is set where its line gets to it.
@@ -1480,6 +1501,12 @@ function tokenizeSpans(
           kind: isSpace ? 'space' : 'text',
           width: (inScript ? inScript(word) : textWidth(word, font, sc && !isSpace)) + (untracked ? 0 : track(word)),
         });
+      }
+    }
+    } finally {
+      if (ownLanguage !== undefined) {
+        setMeasureLanguage(languageBefore);
+        if (ownLanguage !== languageBefore) for (let k = spanTokensFrom; k < tokens.length; k++) tokens[k]!.lang = ownLanguage;
       }
     }
   }

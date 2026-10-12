@@ -71,6 +71,8 @@ export function resolveUnorderedListsConfig(
   if (partial?.taskCompletedColor !== undefined) {
     resolved.taskCompletedColor = partial.taskCompletedColor;
   }
+  // Resolved only when the box is kept as a character (#765).
+  if (partial?.taskBox === 'character') resolved.taskBox = 'character';
   return resolved;
 }
 
@@ -207,6 +209,10 @@ export function stripUnorderedListsDefaults(
   }
   if (lists.taskCheckedChar !== undefined && lists.taskCheckedChar !== DEFAULT_TASK_CHECKED_CHAR) {
     result.taskCheckedChar = lists.taskCheckedChar;
+    hasOverride = true;
+  }
+  if (lists.taskBox === 'character') {
+    result.taskBox = 'character';
     hasOverride = true;
   }
   if (

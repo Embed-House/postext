@@ -232,6 +232,12 @@ A propriedade `bodyText` controla a tipografia de todo o texto dos parágrafos.
       <td>Compõe uma palavra sem letras (<code>46.</code>, <code>1367)</code>, <code>».</code>: algarismos, sinais de pontuação ou símbolos sozinhos) na escrita do texto ao redor. Uma fonte pode desenhar esses sinais conforme a escrita (a Amiri compõe o ponto e os parênteses latinos em texto latino e os árabes no resto, com outras larguras), e um motor que recebe a palavra sozinha escolhe uma escrita por uma regra própria, que difere entre versões de navegador e o PDF. Com isto ligado, a palavra toma a escrita da letra mais próxima antes dela dentro do seu isolado (senão depois), a da letra da direita para a esquerda mais próxima quando é pintada da direita para a esquerda, e a do idioma do documento sem letra por perto; o layout a mede nessa escrita, e o canvas, o HTML, o EPUB de layout fixo e o PDF pintam essas formas com essa largura. Atua em contextos latino, grego, cirílico, árabe e hebraico, e só numa fonte cuja pontuação ou cujos algarismos mudam com a escrita; uma palavra composta na escrita árabe não leva espaçamento entre letras. Um pedaço sem letras de uma palavra que as tem (<code>10.1006/</code> e <code>.2001</code> de um DOI que termina a linha nas suas junções) toma a escrita que tem dentro da palavra. Num documento chinês ou japonês, as reticências dobradas e o travessão dobrado (<code>……</code>, <code>——</code>) citados numa frase de outra escrita mantêm as formas do texto han. Não toca nos marcadores de lista, nos rótulos das referências cruzadas, no texto de design, no letreiramento de quadrinhos nem nos parágrafos do compositor CJK. <code>false</code> compõe a palavra sozinha, como até o postext 1.27; uma configuração salva antes do <code>configVersion</code> 12 é lida assim (<code>pinLegacyScriptContext</code>). Veja <a href="/pt/docs/arabic-layout#palavras-sem-letras">Palavras sem letras</a>.</td>
     </tr>
     <tr>
+      <td><code>shapingLanguage</code></td>
+      <td><code>'document' | 'host'</code></td>
+      <td><code>'document'</code></td>
+      <td>O idioma em que o texto é composto: em que é medido, pintado e incorporado. Uma fonte responde com outros glifos conforme o idioma (<code>locl</code> do OpenType): a Noto Serif SC compõe os algarismos de outro modo em chinês, uma fonte com uma forma catalã desenha <code>l·l</code> mais junto, uma com a regra turca deixa <code>fi</code> sem ligadura. <code>'document'</code>: o do próprio documento (<code>locale</code>, senão o idioma da hifenização; um documento que não nomeia nenhum é inglês, <code>en-US</code>), e o de um trecho quando ele nomeia o seu (<code>:ltr[…]&#123;lang=en&#125;</code>). O layout o define em cada contexto com que mede, então um documento quebra as linhas do mesmo jeito numa página em qualquer idioma e num worker de layout; o canvas pinta nele, o visualizador HTML e o EPUB o declaram no documento e em cada página, e o PDF compõe com o sistema de idioma OpenType desse idioma. <code>'host'</code>: como até o postext 1.28, o layout mede no idioma da página que o hospeda (em nenhum dentro de um worker) e só um documento chinês, japonês, coreano ou da direita para a esquerda é pintado no seu; uma configuração salva antes do <code>configVersion</code> 13 é lida assim (<code>pinLegacyShapingLanguage</code>). Um navegador cujo canvas não tem <code>lang</code> (o Chrome anterior ao 136, e o Firefox e o Safari onde ele falta) mede como sempre mediu, e a linha de comando mede as formas do idioma padrão de cada fonte (veja <a href="/pt/docs/command-line#diferenças-em-relação-ao-sandbox">Diferenças em relação ao Sandbox</a>).</td>
+    </tr>
+    <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>não definido</td>
@@ -1805,7 +1811,7 @@ A propriedade `unorderedLists` controla como são renderizadas as listas com mar
 
 ### Extensões para listas de tarefas
 
-Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como itens com marcador, com um glifo de caixa de seleção no lugar do marcador. Os campos a seguir se aplicam só aos itens de tarefa:
+Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como itens com marcador, com uma caixa de seleção no lugar do marcador. O próprio motor desenha a caixa, um quadrado em contorno com uma marca quando a tarefa está concluída: nenhuma fonte é consultada, então ela é igual em todas as máquinas, no canvas, no PDF, no HTML e no EPUB, e as tecnologias assistivas leem `☐` ou `☑`. O lado mede 0,6 em do tamanho do marcador (`bulletFontSize`, ou o `fontSize` do nível), e esse é o espaço que ela ocupa antes do `gap`; no tamanho do texto, ela se apoia na linha de base da primeira linha do item. O traço segue o `fontWeight` do marcador, e a cor, o `color` do marcador. Os campos a seguir se aplicam só aos itens de tarefa:
 
 <table>
   <thead>
@@ -1821,13 +1827,19 @@ Os itens de tarefa do GFM (`- [ ] …`, `- [x] …`) são renderizados como iten
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>Glifo usado para tarefas não marcadas.</td>
+      <td>Caractere de uma tarefa não marcada. O padrão não é composto como texto: o motor desenha a caixa. Qualquer outro caractere é composto como texto na fonte da lista, que então precisa contê-lo.</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>Glifo usado para tarefas concluídas.</td>
+      <td>Caractere de uma tarefa concluída. O padrão também é desenhado, como uma caixa com marca; qualquer outro caractere é composto como texto na fonte da lista.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>Como os dois caracteres padrão são compostos. <code>'drawn'</code>: o motor desenha a caixa. <code>'character'</code>: <code>☐</code> e <code>☑</code> são texto na fonte da lista, como até o postext 1.28; numa fonte que não os tem, o navegador escolhe uma fonte do sistema, e o texto do item começa depois da largura que essa fonte dá. Uma configuração gravada antes da versão 13 é lida com <code>'character'</code>, então as linhas dela ficam onde estavam.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

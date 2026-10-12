@@ -1537,6 +1537,25 @@ export interface BodyTextConfig {
    *  to postext 1.27 (configurations stored before `configVersion` 12
    *  read with it, see `pinLegacyScriptContext` in `postext/bundle`). */
   scriptContext?: boolean;
+  /** The language the document's text is shaped in (#764): measured,
+   *  painted and embedded. A font answers with other glyphs under a
+   *  language (OpenType `locl`): Noto Serif SC sets its digits otherwise
+   *  in Chinese, a face with a Catalan form draws `l·l` closer, one with the Turkish rule keeps `fi` apart. `'document'` (the
+   *  default): the document's own ({@link PostextConfig.locale}), and a
+   *  block's or a run's own where it names one (`{lang=en}`), on every
+   *  context the layout measures with (the engine's, a layout worker's,
+   *  the plain-paragraph breaker's), on the canvas, in the HTML viewer,
+   *  the EPUB and the PDF (the OpenType language system of the language),
+   *  so the same document has the same lines on a page in any language
+   *  and in a worker. `'host'`: as up to postext 1.28, the measuring
+   *  contexts take the language of the page that hosts the layout (none
+   *  in a worker), and only a Chinese, Japanese, Korean or right-to-left
+   *  document is painted in its own (configurations stored before
+   *  `configVersion` 13 read with it, see `pinLegacyShapingLanguage` in
+   *  `postext/bundle`). A browser whose canvas has no `lang` (Chrome
+   *  before 136, Firefox and Safari where it is missing) measures as it
+   *  always did. */
+  shapingLanguage?: 'document' | 'host';
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
    *  it. A paragraph style or a callout body that sets its own replaces
@@ -2203,6 +2222,9 @@ export interface ResolvedBodyTextConfig {
   /** Present only when switched off (see
    *  {@link BodyTextConfig.scriptContext}). */
   scriptContext?: false;
+  /** Present only when the host's (see
+   *  {@link BodyTextConfig.shapingLanguage}). */
+  shapingLanguage?: 'host';
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */
@@ -4209,9 +4231,31 @@ export interface UnorderedListsConfig {
   snapTopToGrid?: boolean;
   hangingIndent?: boolean;
   levels?: UnorderedListLevelConfig[];
-  /** GFM task list rendering. The bullet glyph is replaced with a checkbox. */
+  /** GFM task list rendering. The bullet glyph is replaced with a checkbox.
+   *  The default characters, ☐ for an open item and ☑ for a done one, are
+   *  not set as text: the engine draws the box, and its tick, itself
+   *  (#765; see `taskBox`). A character of the author's own (`✗`, `[ ]`)
+   *  is set as text in the level's face, which then has to hold it. */
   taskCheckboxChar?: string;
   taskCheckedChar?: string;
+  /**
+   * How the default box of a task item is set (#765). `'drawn'` (default):
+   * the engine draws a square outline, with a tick when the item is done.
+   * Its side is 0.6 em of the marker's size (the level's `fontSize`), and
+   * that is the room it takes before the list's `gap`; it is centred where
+   * a bullet is, so at the text's size it stands on the first line's
+   * baseline; its stroke follows the level's `fontWeight` and its colour
+   * the level's `color`. No font is asked for it, so it is the same on
+   * every machine, on the canvas, in the PDF, in the HTML and in the EPUB;
+   * assistive technology reads ☐ or ☑. `'character'`: ☐ and ☑ are set as
+   * text in the level's face, as up to postext 1.28: a face that lacks
+   * them leaves the browser to pick a font of the system, and the item's
+   * text starts after the width that font gives. A configuration stored
+   * before version 13 reads with `'character'`
+   * (`pinLegacyTaskBox`). A character of the author's own is text either
+   * way.
+   */
+  taskBox?: 'drawn' | 'character';
   taskCompletedStrikethrough?: boolean;
   /** Optional color for the text of completed tasks. When undefined, body color is used. */
   taskCompletedColor?: ColorValue;
@@ -4235,6 +4279,9 @@ export interface ResolvedUnorderedListsConfig {
   levels: ResolvedUnorderedListLevelConfig[];
   taskCheckboxChar: string;
   taskCheckedChar: string;
+  /** Present only when the default box is set as a character
+   *  (`'character'`); absent when the engine draws it. */
+  taskBox?: 'character';
   taskCompletedStrikethrough: boolean;
   /** Undefined => inherit body text color at render time. */
   taskCompletedColor?: ColorValue;

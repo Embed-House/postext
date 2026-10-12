@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "dictionary-thumb-index",
-  "sourceHash": "61e8b48b06efe1ab7bb94597dc2e5e1c993dec974648454dca709175cb2b62fb",
+  "sourceHash": "a072dc94bedbc1aa901b2487e6f196f4a527f24eb1c7d0d4cda88e7b97f3ad64",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.112Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.852Z",
   "variants": {
     "en": {
-      "hash8": "6247da5b",
+      "hash8": "6d8168e8",
       "vdtHash": "bddee317d6e61fcc97473b0c62f9c6ba9d53b62b",
       "timings": {
-        "importMs": 1353,
-        "fontsMs": 2,
-        "buildMs": 308,
-        "totalMs": 3414,
+        "importMs": 198,
+        "fontsMs": 3,
+        "buildMs": 240,
+        "totalMs": 1189,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 152290,
+          "bytes": 152292,
           "alt": "Opening page 1: The Sailor’s Word- Book."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 199512,
+          "bytes": 199526,
           "alt": "Page 2: B."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 196620,
+          "bytes": 196654,
           "alt": "Page 3: C."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 117048,
+          "bytes": 117056,
           "alt": "Page 4."
         }
       ],
@@ -291,17 +291,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9f485775",
+      "hash8": "30eb2290",
       "vdtHash": "023dbe30f6640917d3b3833a72204c7852686692",
       "timings": {
-        "importMs": 1629,
-        "fontsMs": 3,
-        "buildMs": 374,
-        "totalMs": 2847,
+        "importMs": 147,
+        "fontsMs": 2,
+        "buildMs": 337,
+        "totalMs": 1284,
         "builds": 1
       },
       "specimen": {
@@ -335,7 +341,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156988,
+          "bytes": 156976,
           "alt": "Página de apertura 1: Vocabulario del marinero."
         },
         {
@@ -346,7 +352,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 204170,
+          "bytes": 204162,
           "alt": "Página 2: B."
         },
         {
@@ -357,7 +363,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 199394,
+          "bytes": 199408,
           "alt": "Página 3: C."
         },
         {
@@ -368,7 +374,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128184,
+          "bytes": 128202,
           "alt": "Página 4."
         }
       ],
@@ -576,7 +582,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

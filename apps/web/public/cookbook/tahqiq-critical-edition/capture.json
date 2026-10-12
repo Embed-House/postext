@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tahqiq-critical-edition",
-  "sourceHash": "2f9a7695743e21cf33af291b4d24fc668c3b81cd34ee3295a81f70de3f1af82b",
+  "sourceHash": "62cd649d7f54ef0e5c59a8cf5936909917fa04bd379b7fa3d6b42054ff783f07",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.919Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.441Z",
   "variants": {
     "en": {
-      "hash8": "3623b2cb",
+      "hash8": "d40c8f6d",
       "vdtHash": "450e833fb8a7df45805cb108debda8aee3d87a64",
       "timings": {
-        "importMs": 354,
-        "fontsMs": 99,
-        "buildMs": 388,
-        "totalMs": 1425,
+        "importMs": 271,
+        "fontsMs": 116,
+        "buildMs": 316,
+        "totalMs": 1283,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 22318,
+          "bytes": 22304,
           "alt": "Opening page أ: مقدمة ابن خلدون."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 16358,
+          "bytes": 16322,
           "alt": "Opening page ب: الطبعة."
         },
         {
@@ -204,7 +204,7 @@
       },
       "pdf": {
         "file": "tahqiq-critical-edition.pdf",
-        "bytes": 153154,
+        "bytes": 153155,
         "pages": 11
       },
       "sandbox": {
@@ -439,17 +439,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "808ef580",
+      "hash8": "38ea39ff",
       "vdtHash": "67748458f8413e649340d042e072eef7e43cf3de",
       "timings": {
-        "importMs": 378,
-        "fontsMs": 72,
-        "buildMs": 406,
-        "totalMs": 1445,
+        "importMs": 256,
+        "fontsMs": 60,
+        "buildMs": 305,
+        "totalMs": 1256,
         "builds": 1
       },
       "specimen": {
@@ -481,7 +487,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 22186,
+          "bytes": 22176,
           "alt": "Página de apertura أ: مقدمة ابن خلدون."
         },
         {
@@ -492,7 +498,7 @@
           "h": 1412,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 16832,
+          "bytes": 16780,
           "alt": "Página de apertura ب: الطبعة."
         },
         {
@@ -871,7 +877,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

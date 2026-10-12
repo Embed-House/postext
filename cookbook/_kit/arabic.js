@@ -36,9 +36,9 @@ async function isArabicFamily(family) {
 }
 
 /** The arabic file of a face. */
-function arabicFileUrl(family, weight, style) {
+async function arabicFileUrl(family, weight, style) {
   const id = fontsourceId(family);
-  return `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-arabic-${weight}-${style}.woff2`;
+  return `${await fontsourceAt(id)}files/${id}-arabic-${weight}-${style}.woff2`;
 }
 
 /** faces = { Amiri: ['400', '700'] }, as for loadFonts, after it: the whole
@@ -60,7 +60,7 @@ async function loadArabicFonts(faces, text = '') {
       for (const spec of new Set(specs)) {
         const weight = parseInt(spec, 10);
         const style = spec.endsWith('i') ? 'italic' : 'normal';
-        const face = new FontFace(family, `url(${arabicFileUrl(family, weight, style)}) format('woff2')`,
+        const face = new FontFace(family, `url(${await arabicFileUrl(family, weight, style)}) format('woff2')`,
           { weight: String(weight), style, unicodeRange: arabicRange() });
         document.fonts.add(await face.load().catch(() => {
           throw new Error(`Fontsource has no arabic file for ${family} ${weight} ${style}`);
@@ -91,10 +91,11 @@ async function arabicPdfProvider(family, weight, style, request) {
   const wanted = [...(request?.codePoints ?? [])];
   const id = fontsourceId(family);
   const urls = [];
-  if (!wanted.length || wanted.some(inArabicRange)) urls.push(arabicFileUrl(family, w, s));
-  urls.push(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-${w}-${s}.woff2`);
+  if (!wanted.length || wanted.some(inArabicRange)) urls.push(await arabicFileUrl(family, w, s));
+  const at = await fontsourceAt(id);
+  urls.push(`${at}files/${id}-latin-${w}-${s}.woff2`);
   if (meta.subsets.includes('latin-ext') && wanted.some((cp) => /[Ā-˿Ḁ-ỿ]/u.test(String.fromCodePoint(cp)))) {
-    urls.push(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-ext-${w}-${s}.woff2`);
+    urls.push(`${at}files/${id}-latin-ext-${w}-${s}.woff2`);
   }
   return Promise.all(urls.map(async (url) => {
     const res = await fetch(url);

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "qasida-diwan-page",
-  "sourceHash": "ce5c932e719a8e77c0e8b5e5f6c1df96758acde2188be7605a4c4ab478c27d33",
+  "sourceHash": "4a69928b1658c23a93da3edd55c2fe7eb1d37001f8d4804646c0dd5940eaff84",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.753Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.314Z",
   "variants": {
     "en": {
-      "hash8": "e688ec5d",
+      "hash8": "2d03df48",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 1627,
-        "fontsMs": 191,
-        "buildMs": 145,
-        "totalMs": 3079,
+        "importMs": 218,
+        "fontsMs": 158,
+        "buildMs": 90,
+        "totalMs": 1073,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79791,
+        "bytes": 79798,
         "pages": 4
       },
       "sandbox": {
@@ -322,21 +322,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "95470284",
+      "hash8": "dc9b0452",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 2400,
-        "fontsMs": 145,
-        "buildMs": 119,
-        "totalMs": 3636,
+        "importMs": 235,
+        "fontsMs": 67,
+        "buildMs": 82,
+        "totalMs": 1005,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +435,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79966,
+        "bytes": 79968,
         "pages": 4
       },
       "sandbox": {
@@ -641,9 +641,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

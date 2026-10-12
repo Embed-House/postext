@@ -232,6 +232,12 @@ La propiedad `bodyText` controla la tipografía de todo el texto de párrafo.
       <td>Compone una palabra sin letras (<code>46.</code>, <code>1367)</code>, <code>».</code>: cifras, signos de puntuación o símbolos solos) en la escritura del texto que la rodea. Una fuente puede dibujar esos signos según la escritura (Amiri compone el punto y los paréntesis latinos en texto latino y los árabes en el resto, con otros anchos), y un motor que recibe la palabra aislada elige una escritura con su propia regla, distinta entre versiones de navegador y el PDF. Con esto activado, la palabra toma la escritura de la letra más cercana antes de ella dentro de su aislado (y si no, después), la de la letra de derecha a izquierda más cercana cuando se pinta de derecha a izquierda, y la de la lengua del documento si no hay letras cerca; la maquetación la mide en esa escritura, y el canvas, el HTML, el EPUB de maquetación fija y el PDF pintan esas formas con ese ancho. Actúa en contextos latino, griego, cirílico, árabe y hebreo, y solo en una fuente cuya puntuación o cuyas cifras cambian con la escritura; una palabra compuesta en la escritura árabe no lleva espaciado entre letras. Un trozo sin letras de una palabra que sí las tiene (<code>10.1006/</code> y <code>.2001</code> de un DOI que acaba la línea en sus junturas) toma la escritura que tiene dentro de la palabra. En un documento chino o japonés, los puntos suspensivos dobles y la raya doble (<code>……</code>, <code>——</code>) citados en una frase de otra escritura conservan las formas del texto han. No afecta a los marcadores de lista, los rótulos de las referencias cruzadas, el texto de diseño, la rotulación de cómic ni los párrafos del compositor CJK. <code>false</code> compone la palabra aislada, como hasta postext 1.27; una configuración guardada antes de <code>configVersion</code> 12 se lee así (<code>pinLegacyScriptContext</code>). Véase <a href="/es/docs/arabic-layout#palabras-sin-letras">Palabras sin letras</a>.</td>
     </tr>
     <tr>
+      <td><code>shapingLanguage</code></td>
+      <td><code>'document' | 'host'</code></td>
+      <td><code>'document'</code></td>
+      <td>El idioma en el que se compone el texto: en el que se mide, se pinta y se incrusta. Una fuente responde con otros glifos según el idioma (<code>locl</code> de OpenType): Noto Serif SC compone sus cifras de otra manera en chino, una fuente con una forma catalana dibuja <code>l·l</code> más junta, una con la regla turca deja <code>fi</code> sin ligar. <code>'document'</code>: el del propio documento (<code>locale</code> y, si no, el idioma de la separación silábica; un documento que no nombra ninguno es inglés, <code>en-US</code>), y el de un tramo cuando este nombra el suyo (<code>:ltr[…]&#123;lang=en&#125;</code>). La maquetación lo fija en cada contexto con el que mide, así que un documento parte sus líneas igual en una página en cualquier idioma y en un worker de composición; el canvas pinta en él, el visor HTML y el EPUB lo declaran en el documento y en cada página, y el PDF compone con el sistema de idioma OpenType de ese idioma. <code>'host'</code>: como hasta postext 1.28, la maquetación mide en el idioma de la página que la aloja (en ninguno dentro de un worker) y solo un documento chino, japonés, coreano o de derecha a izquierda se pinta en el suyo; una configuración guardada antes de <code>configVersion</code> 13 se lee así (<code>pinLegacyShapingLanguage</code>). Un navegador cuyo canvas no tiene <code>lang</code> (Chrome anterior a la 136, y Firefox y Safari donde falta) mide como siempre, y la línea de comandos mide las formas del idioma por defecto de cada fuente (véase <a href="/es/docs/command-line#diferencias-con-el-sandbox">Diferencias con el Sandbox</a>).</td>
+    </tr>
+    <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>sin fijar</td>
@@ -1803,7 +1809,7 @@ La propiedad `unorderedLists` controla cómo se renderizan las listas con viñet
 
 ### Extensiones para listas de tareas
 
-Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como elementos de lista no ordenada reemplazando la viñeta por una casilla. Los siguientes campos solo aplican a las tareas:
+Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como elementos de lista no ordenada con una casilla en lugar de la viñeta. El motor dibuja la casilla él mismo, un cuadrado en contorno con una marca cuando la tarea está hecha: no se pide a ninguna fuente, así que es igual en todas las máquinas, en el canvas, en el PDF, en el HTML y en el EPUB, y las tecnologías de apoyo leen `☐` o `☑`. Su lado mide 0,6 em del tamaño del marcador (`bulletFontSize`, o el `fontSize` del nivel), y ese es el espacio que ocupa antes del `gap`; al tamaño del texto se apoya en la línea base de la primera línea del elemento. Su trazo sigue el `fontWeight` del marcador y su color, el `color` del marcador. Los siguientes campos solo aplican a las tareas:
 
 <table>
   <thead>
@@ -1819,13 +1825,19 @@ Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como element
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>Glifo para tareas no marcadas.</td>
+      <td>Carácter de una tarea no marcada. El predeterminado no se compone como texto: el motor dibuja la casilla. Cualquier otro carácter se compone como texto en la fuente de la lista, que entonces debe contenerlo.</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>Glifo para tareas completadas.</td>
+      <td>Carácter de una tarea completada. El predeterminado también se dibuja, como casilla con marca; cualquier otro carácter se compone como texto en la fuente de la lista.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>Cómo se componen los dos caracteres predeterminados. <code>'drawn'</code>: el motor dibuja la casilla. <code>'character'</code>: <code>☐</code> y <code>☑</code> son texto en la fuente de la lista, como hasta postext 1.28; en una fuente que no los tiene, el navegador elige una fuente del sistema, y el texto del elemento empieza tras el ancho que esa fuente da. Una configuración guardada antes de la versión 13 se lee con <code>'character'</code>, así que sus líneas siguen donde estaban.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

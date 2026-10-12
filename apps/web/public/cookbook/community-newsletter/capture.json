@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "community-newsletter",
-  "sourceHash": "5b8fb63164968380050ccc12be666b7eeb287d52416f463e4e84756d4b239f34",
+  "sourceHash": "3deb41f2c823580d7f9ba0332d3b2451b3be609864db6e6d2c628188ed244304",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.092Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.838Z",
   "variants": {
     "en": {
-      "hash8": "a6b9a789",
+      "hash8": "bc20340f",
       "vdtHash": "d5f528c1898961589bbd0d00ab128b8154b465c0",
       "timings": {
-        "importMs": 1421,
-        "fontsMs": 98,
-        "buildMs": 90,
-        "totalMs": 2952,
+        "importMs": 199,
+        "fontsMs": 28,
+        "buildMs": 70,
+        "totalMs": 990,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 139118,
+          "bytes": 139024,
           "alt": "Opening page 1: The Allotment Gazette. The top of the Wren Lane site, from the air. The three new bays stand between the hut and the top gate."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140996,
+          "bytes": 141040,
           "alt": "Page 2: What goes into the bays. Bay one in March. Temperature at the centre of the heap, read at nine each morning. In the shaded band, 55 to 65 °C, most weed seeds die. · What goes where. One cabbage to a square; four lettuces, chard or marigolds; nine beetroot, beans or oni…"
         }
       ],
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81199,
+        "bytes": 81167,
         "folio": "0414c868",
         "chapters": [
           {
@@ -310,17 +310,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "67c15b86",
+      "hash8": "4147b1ab",
       "vdtHash": "a62a7faa8305895a7ad2843b3dab7f88b31d12f8",
       "timings": {
-        "importMs": 1176,
-        "fontsMs": 150,
-        "buildMs": 77,
-        "totalMs": 2272,
+        "importMs": 190,
+        "fontsMs": 25,
+        "buildMs": 63,
+        "totalMs": 914,
         "builds": 1
       },
       "specimen": {
@@ -354,7 +360,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 141134,
+          "bytes": 141172,
           "alt": "Página de apertura 1: La Gaceta del Huerto. La parte alta del Soto, desde el aire. Los tres cajones nuevos están entre la caseta y la puerta de arriba."
         },
         {
@@ -365,7 +371,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 141514,
+          "bytes": 141712,
           "alt": "Página 2: Qué va en los cajones. El cajón uno en marzo. Temperatura en el centro, a las nueve. En la franja, de 55 a 65 °C, mueren casi todas las semillas de malas hierbas. · Cómo se planta el bancal. Una col por cuadro; cuatro lechugas, acelgas o caléndulas; nueve remolachas,…"
         }
       ],
@@ -393,7 +399,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81874,
+        "bytes": 81776,
         "folio": "0414c868",
         "chapters": [
           {
@@ -614,7 +620,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

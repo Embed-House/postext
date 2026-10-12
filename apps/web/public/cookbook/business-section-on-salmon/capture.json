@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "business-section-on-salmon",
-  "sourceHash": "4db0940742f5a64e34788014aa7bf248927e194e2b53fa9dbcc20491ff008d29",
+  "sourceHash": "5b58062570b80ff89769a5d15e8c0dc7f5675a929cff276c745b7d00c1f3c814",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.855Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.691Z",
   "variants": {
     "en": {
-      "hash8": "505ba172",
+      "hash8": "7ada52fc",
       "vdtHash": "f92345b194a26c7c38993dd5541eb79acae1b984",
       "timings": {
-        "importMs": 816,
-        "fontsMs": 125,
-        "buildMs": 587,
-        "totalMs": 2961,
+        "importMs": 184,
+        "fontsMs": 48,
+        "buildMs": 456,
+        "totalMs": 1370,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1492,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 195040,
+          "bytes": 195074,
           "alt": "Opening page 1: The Marrowick Ledger. The Marrow Barrier at 9.30pm on Monday, its gates closed against the surge. The river behind them rose by 30 centimetres."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1492,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150696,
+          "bytes": 150666,
           "alt": "Opening page 2: City. First week: apprentices welding a hull section in the fabrication hall at Brackwater. · How a gate turns. Each segment turns on a pin in the pier, from its sill on the riverbed to stand against the sea."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1492,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155728,
+          "bytes": 155808,
           "alt": "Opening page 3: Region. Where the money goes · Weather · Tides at Kingsquay · The Holm Maid leaves Skerra pier on her first crossing since May."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1492,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 201566,
+          "bytes": 201464,
           "alt": "Opening page 4: Opinion. Holding the line, by Kit Carrow."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1492,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 181786,
+          "bytes": 181692,
           "alt": "Opening page 5: Business. The Outer Quay at dawn. The new berth would take ships three times the size of those the port handles now. · Containers through Marrowick, thousands of twenty-foot units a year."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1492,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 111024,
+          "bytes": 110866,
           "alt": "Opening page 6: Markets. The MX 40 over the past year, daily closes. · Sectors on the Marrowick Exchange, change on the day. · Indices · Currencies · Commodities · Most traded."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1492,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 133550,
+          "bytes": 133580,
           "alt": "Opening page 7: Companies. Results · Company diary · Halden’s Quayside plant bakes 1.1 million loaves a week."
         }
       ],
@@ -153,7 +153,7 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218667,
+        "bytes": 1218697,
         "folio": "77d83e3b",
         "chapters": [
           {
@@ -513,9 +513,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 7 −5‰ “Flour costs, which rose by almost half in 2023, …”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

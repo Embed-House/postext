@@ -20,8 +20,9 @@ async function fontsourceResolver(family, weight, style, { text = '' } = {}) {
   const meta = await fontsourceMeta(family);
   if (meta && !(meta.weights.includes(weight) && meta.styles.includes(style))) return null;
   kitStatus('Loading fonts…');
+  const at = await fontsourceAt(id);
   return ['latin', ...kitSubsetsFor(text, meta)].map((subset) => ({
-    source: `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-${subset}-${weight}-${style}.woff2`,
+    source: `${at}files/${id}-${subset}-${weight}-${style}.woff2`,
     unicodeRange: kitRanges()[subset],
   }));
 }
@@ -53,12 +54,13 @@ async function loadFonts(faces, text = '', { optional = false } = {}) {
     const id = fontsourceId(family);
     const todo = [...new Set(specs)].map((spec) => [parseInt(spec, 10), spec.endsWith('i') ? 'italic' : 'normal'])
       .filter(([weight, style]) => !hasFace(family, weight, style)); // before any await
+    const at = fontsourceAt(id);
     const meta = optional || /[^\0-ÿ]/u.test(text) ? await fontsourceMeta(family) : null;
     const subsets = ['latin', ...kitSubsetsFor(text, meta)];
     for (const [weight, style] of todo) {
       if (optional && !(meta?.weights.includes(weight) && meta.styles.includes(style))) continue;
       for (const subset of subsets) {
-        const url = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-${subset}-${weight}-${style}.woff2`;
+        const url = `${await at}files/${id}-${subset}-${weight}-${style}.woff2`;
         const face = new FontFace(family, `url(${url}) format('woff2')`,
           { weight: String(weight), style, unicodeRange: ranges[subset] });
         jobs.push(face.load().catch(() => {
@@ -91,6 +93,12 @@ function kitSubsetsFor(text, meta) {
 
 /** Fontsource's id for a family: 'Source Serif 4' → 'source-serif-4'. */
 function fontsourceId(family) { return family.toLowerCase().replace(/\s+/g, '-'); }
+
+/** A package's folder at the one version @5 names now (#766). */
+function fontsourceAt(id, u = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@`) {
+  return (fontsourceAt.c ??= {})[id] ??= fetch(u + '5/package.json').then((r) => r.json())
+    .then((p) => p.version || 5, () => 5).then((v) => `${u}${v}/`);
+}
 
 /** The family's Fontsource metadata (weights, styles, subsets), or null. */
 function fontsourceMeta(family) {

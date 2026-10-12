@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "02b1c6dbd2c1f44be4b3fd9bf910ed69ff427e82613bcc3bd9dcffe72f171069",
+  "sourceHash": "15bde53416c04fec1928b57193bf651076e3b1ea1887b68c7ebe83666596d6f8",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.641Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.553Z",
   "variants": {
     "en": {
-      "hash8": "3b4657d0",
+      "hash8": "0b6163ad",
       "vdtHash": "4d00faa8c19033ddf8a92f4baef745aee3e0b696",
       "timings": {
-        "importMs": 28106,
-        "fontsMs": 115,
-        "buildMs": 1123,
-        "totalMs": 30411,
+        "importMs": 21258,
+        "fontsMs": 96,
+        "buildMs": 916,
+        "totalMs": 23010,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98972,
+          "bytes": 99042,
           "alt": "Opening page 1: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 200556,
+          "bytes": 200508,
           "alt": "Page 3: 3 Arithmetic Reasoning. Figure 2. PaLM 540B uses chain-of-thought prompting to achieve new state-of-the-art performance on the GSM8K benchmark of math word problems. Finetuned GPT-3 and prior best are from Cobbe et al. (2021)."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 157716,
+          "bytes": 157530,
           "alt": "Page 4: 4 Commonsense Reasoning. Figure 4. Chain-of-thought prompting enables large language models to solve challenging math problems. Notably, chain-of-thought reasoning is an emergent ability of increasing model scale. Prior best numbers are from Cobbe et al. (2021) for GSM…"
         },
         {
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153378,
+        "bytes": 153374,
         "folio": "055119a2",
         "chapters": [
           {
@@ -542,14 +542,9 @@
             "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
           },
           {
-            "check": "C21",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the pen took 30.4 s to finish (warning at 30 s)"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

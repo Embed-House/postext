@@ -170,6 +170,9 @@ describe("package exports", () => {
       "matchContentLocale",
       "canonicalLocaleTag",
       "renderLangOf",
+      // The language a document's text is shaped in (#764).
+      "shapingLanguageOf",
+      "shapingTagOf",
       "stringsFor",
       "directionOf",
       "comicsLocaleDirection",
@@ -535,10 +538,21 @@ describe("package exports", () => {
       "forcedVerticalRuns",
       "segmentOrientation",
       "graphemesOf",
+      // The box of a task-list item, drawn by the renderers (#765).
+      "TASK_BOX_SIDE_EM",
+      "TASK_BOX_TICK",
+      "taskBoxSize",
+      "taskBoxTick",
+      "taskBoxText",
+      "taskBoxSvgBody",
       // A word with no letter shaped in the script of its context (#725).
       "scriptContextUntracked",
       "scriptMark",
       "withScriptMark",
+      // The language the measuring contexts shape in (#764).
+      "setMeasureLanguage",
+      "getMeasureLanguage",
+      "withMeasureLanguage",
       "bidiClassOf",
       "isRtlScriptChar",
       "needsBidi",

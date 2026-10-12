@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "folio-book-on-a-desk",
-  "sourceHash": "892102fe4b3b754f54ab1f9deedb677bf4ddaac62bdea14c17dfb1419fcb9bf0",
+  "sourceHash": "19d012cbc39d320194845b5708412597666bfe8191cdf28a86872d159b2416ea",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.193Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.898Z",
   "variants": {
     "en": {
-      "hash8": "9054ec36",
+      "hash8": "5dd60545",
       "vdtHash": "c9d261ef6effccb705d8915af71348eab856bb11",
       "timings": {
-        "importMs": 2791,
+        "importMs": 1979,
         "fontsMs": 3,
-        "buildMs": 89,
-        "totalMs": 4483,
+        "buildMs": 56,
+        "totalMs": 2777,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "folio-book-on-a-desk.postext",
-        "bytes": 24177,
+        "bytes": 24161,
         "folio": "ae4134af",
         "chapters": [
           {
@@ -329,6 +329,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -17,7 +17,7 @@
 
 import type { CjkRegion, WritingMode } from '../types';
 import type { CjkClass } from './cjkClasses';
-import { measureTextWidth, measureInkBox, onTextWidthCacheClear } from './canvas';
+import { measureTextWidth, measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas';
 import { isVerticalCell, verticalCellEms, verticalRuns, type UprightDigits } from '../writingMode';
 import { graphemesOf } from './graphemes';
 import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
@@ -178,7 +178,8 @@ export function clearCentralBaselineCache(): void {
  * with no ink metrics gives {@link DEFAULT_CENTRAL_BASELINE}.
  */
 export function measureCentralBaseline(family: string): number {
-  const hit = centralCache.get(family);
+  const key = measureLanguageKey() + family;
+  const hit = centralCache.get(key);
   if (hit !== undefined) return hit;
   let value = DEFAULT_CENTRAL_BASELINE;
   const box = measureInkBox('中', `100px ${/^[\w -]+$/.test(family) && !/^\d/.test(family) ? family : JSON.stringify(family)}`);
@@ -186,7 +187,7 @@ export function measureCentralBaseline(family: string): number {
     const centre = (box.ascent - box.descent) / 2 / 100;
     if (centre >= 0.25 && centre <= 0.5) value = Math.round(centre * 1000) / 1000;
   }
-  centralCache.set(family, value);
+  centralCache.set(key, value);
   return value;
 }
 

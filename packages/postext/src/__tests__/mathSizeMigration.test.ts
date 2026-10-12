@@ -179,8 +179,8 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
 
   it('writes bundles for today\'s rules, which read back unpinned', async () => {
     const { manifest, bytes } = await createBundle({ name: 'Now', chapters: [{ markdown: CHAPTER }], config: BODY });
-    expect(CONFIG_VERSION).toBe(12);
-    expect(manifest.configVersion).toBe(12);
+    expect(CONFIG_VERSION).toBe(13);
+    expect(manifest.configVersion).toBe(13);
     const again = await openBundle(bytes);
     expect(again.config.math).toBeUndefined();
     // …and a 1.4 bundle, opened and written again, is read back as it was
@@ -207,10 +207,10 @@ describe('migrateConfig and pinLegacyMathSize', () => {
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     const prose = migrateConfig(plain, 3, { content: ['# One', 'Prose only.'] });
     expect(prose.math).toBeUndefined();
-    expect(prose.bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
+    expect(prose.bodyText).toEqual({ ...plain.bodyText, scriptContext: false, shapingLanguage: 'host' });
     expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
     expect(migrateConfig(plain, 3).math?.fontSizeScale).toBe(LEGACY_MATH_SIZE);
-    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toEqual({ ...plain.bodyText, scriptContext: false });
+    expect(migrateConfig(plain, 3, { content: 'Costs $5.' }).bodyText).toEqual({ ...plain.bodyText, scriptContext: false, shapingLanguage: 'host' });
   });
 
   it('writes only what differs from the defaults', () => {

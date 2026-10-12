@@ -262,7 +262,7 @@ Earlier passes shield their content from later ones. Math is extracted before em
 - A single blank line between items keeps the run. With 2+ blank lines the parser starts a new run of list blocks, but the pipeline only closes runs at a **non-list** block, so the rendered list effectively continues. To really separate two lists, put a paragraph (or another block) between them.
 - A list ends at the first non-list, non-(blank + list) line. A paragraph glued under a list item becomes a separate paragraph.
 - Inside list items the full inline set works: chips, refs, swatches, math, emphasis, scripts.
-- Rendering of task checkboxes uses `taskCheckboxChar` / `taskCheckedChar` (config).
+- The box of a task item is drawn by the engine (a square, ticked when done; no font needed). A character set in `taskCheckboxChar` / `taskCheckedChar` (config) is text in its place.
 
 ---
 

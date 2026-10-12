@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "product-manual-warnings",
-  "sourceHash": "53e34cc570f7ef5c8b73118066d57c95a7792d0dbccb917cb32f334157e0a84e",
+  "sourceHash": "5e0816d5fa9058067f64d44eec9c15ece1bb0bf135fadfd4f3161ba8a403f49d",
   "engine": {
-    "postext": "1.28.5",
+    "postext": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:56.626Z",
+  "capturedAt": "2026-10-12T10:07:47.287Z",
   "variants": {
     "en": {
       "hash8": "b97ee221",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
-        "importMs": 256,
-        "fontsMs": 708,
-        "buildMs": 95,
-        "totalMs": 1739,
+        "importMs": 119,
+        "fontsMs": 31,
+        "buildMs": 91,
+        "totalMs": 916,
         "builds": 1
       },
       "specimen": {
@@ -500,11 +500,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
@@ -513,10 +508,10 @@
       "hash8": "effaf84b",
       "vdtHash": "c6694c75b66054e9d29d93bf956d7dcdc25d9b32",
       "timings": {
-        "importMs": 256,
-        "fontsMs": 706,
-        "buildMs": 95,
-        "totalMs": 1741,
+        "importMs": 171,
+        "fontsMs": 39,
+        "buildMs": 94,
+        "totalMs": 922,
         "builds": 1
       },
       "specimen": {
@@ -1000,11 +995,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

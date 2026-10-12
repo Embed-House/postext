@@ -23,6 +23,7 @@
  * through {@link readFloat}, which moves them to where they are read.
  */
 
+import { taskBoxText } from 'postext';
 import type { VDTBlock } from 'postext';
 import type { StructAttrs, StructElem, StructTree, StructType } from './tagging';
 
@@ -214,6 +215,8 @@ export class StructureFlow {
     }
     const item = top.list.child('LI');
     if (block.bulletText) this.bulletById.set(fragmentKey(block), item.child('Lbl'));
+    // A task item's drawn box (#765) reads as the character it stands for.
+    else if (block.bulletBox) this.bulletById.set(fragmentKey(block), item.child('Lbl', { actualText: taskBoxText(block.bulletBox.checked) }));
     const body = item.child('LBody');
     top.lastBody = body;
     return body;

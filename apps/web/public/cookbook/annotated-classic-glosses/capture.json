@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annotated-classic-glosses",
-  "sourceHash": "bdcbcfb5e708da26a758415b308295fa4618bcba22213a3d48b90f9f28073908",
+  "sourceHash": "8846f14e522191630d908f59affe029a706b4a63e32f0673789aa256b0b39259",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.657Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.564Z",
   "variants": {
     "en": {
-      "hash8": "e30dbd3c",
+      "hash8": "566a9178",
       "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 1016,
-        "fontsMs": 35,
-        "buildMs": 104,
-        "totalMs": 3318,
+        "importMs": 142,
+        "fontsMs": 25,
+        "buildMs": 82,
+        "totalMs": 852,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 204208,
+          "bytes": 204082,
           "alt": "Opening page 81: A Mad Tea-Party."
         },
         {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319055,
+        "bytes": 319053,
         "folio": "923d57f4",
         "chapters": [
           {
@@ -314,6 +314,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

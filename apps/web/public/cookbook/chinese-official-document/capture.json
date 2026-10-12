@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-official-document",
-  "sourceHash": "d8a314f7bcf92caf7f07a7fe0c014834fefb3661adb0a06732255c7bfa6866af",
+  "sourceHash": "2e6c5a0a7cd415d9043e68c7f652d93ce55aee0fbe44997ddd15d749adc86446",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:54:29.871Z",
+  "capturedAt": "2026-10-12T10:07:46.763Z",
   "variants": {
     "en": {
       "hash8": "4a0ea409",
       "vdtHash": "97c6878c40ed282e473e0718ba1584f1af0ffee4",
       "timings": {
-        "importMs": 315,
-        "fontsMs": 404,
-        "buildMs": 45,
-        "totalMs": 1422,
+        "importMs": 263,
+        "fontsMs": 338,
+        "buildMs": 50,
+        "totalMs": 1284,
         "builds": 1
       },
       "specimen": {
@@ -365,16 +365,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
@@ -383,10 +373,10 @@
       "hash8": "535134ea",
       "vdtHash": "a8ae63527a8b45e96dc808e6430c58389553e4d7",
       "timings": {
-        "importMs": 322,
-        "fontsMs": 409,
-        "buildMs": 47,
-        "totalMs": 1408,
+        "importMs": 225,
+        "fontsMs": 190,
+        "buildMs": 48,
+        "totalMs": 1190,
         "builds": 1
       },
       "specimen": {
@@ -734,16 +724,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

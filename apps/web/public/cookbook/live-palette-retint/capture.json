@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "live-palette-retint",
-  "sourceHash": "a226ba0f3371854844ece74675cfee6a5f5af1eaf84e357516c5be8bb3b84c9d",
+  "sourceHash": "7291645f4afa25a0be56d0878120d7e0e21b0792cf27e0157d03bc7e870bc410",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.349Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.001Z",
   "variants": {
     "en": {
-      "hash8": "d694d19d",
+      "hash8": "9f646e9d",
       "vdtHash": "e338e58d4a44c578f39e0a516a05fd3c498c3fc1",
       "timings": {
-        "importMs": 1329,
+        "importMs": 170,
         "fontsMs": 0,
-        "buildMs": 4,
-        "totalMs": 2021,
+        "buildMs": 3,
+        "totalMs": 871,
         "builds": 4
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1000,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 81114,
+          "bytes": 81070,
           "alt": "Page 2: Tuesday 15 June. Table 1. The week at a glance."
         }
       ],
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31015,
+        "bytes": 30981,
         "folio": "de4718c0",
         "chapters": [
           {
@@ -334,17 +334,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "84c50d69",
+      "hash8": "e08eb873",
       "vdtHash": "6eb696cdb53090fbb548c50ef2adad4645bec59b",
       "timings": {
-        "importMs": 793,
+        "importMs": 279,
         "fontsMs": 1,
-        "buildMs": 5,
-        "totalMs": 1632,
+        "buildMs": 4,
+        "totalMs": 1089,
         "builds": 4
       },
       "specimen": {
@@ -388,7 +394,7 @@
           "h": 1000,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 88068,
+          "bytes": 88028,
           "alt": "Página 2: Martes 15 de junio. Tabla 1. La semana de un vistazo."
         }
       ],
@@ -416,7 +422,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31425,
+        "bytes": 31481,
         "folio": "de4718c0",
         "chapters": [
           {
@@ -662,7 +668,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -52,7 +52,7 @@
 
 import type { VDTAnnotationRun, VDTKunten } from '../vdt';
 import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-import { measureInkBox, measureTextWidth, onTextWidthCacheClear } from './canvas';
+import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from './canvas';
 import { flowTextWidth, fontEm, measuringVertically } from './vertical';
 import { graphemesOf } from './graphemes';
 import { latinReadingLift } from './rubyLift';
@@ -146,7 +146,7 @@ onTextWidthCacheClear(() => inkMids.clear());
 
 /** How far above its baseline the ink of `g` is centred in `font`, px. */
 function inkMid(g: string, font: string): number {
-  const key = `${font}\n${g}`;
+  const key = `${measureLanguageKey()}${font}\n${g}`;
   let mid = inkMids.get(key);
   if (mid === undefined) {
     const box = measureInkBox(g, font);

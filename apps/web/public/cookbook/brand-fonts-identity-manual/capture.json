@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "brand-fonts-identity-manual",
-  "sourceHash": "197809507d2b9d1ab5b7cb16fada8f0724cbfebdd3dee1147b48683436e877f2",
+  "sourceHash": "fabbed037b66a89790ef7619baa2bfb2a7a4ae3a6295456b5852f71a55bac1cf",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.823Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.669Z",
   "variants": {
     "en": {
-      "hash8": "d982fb4a",
+      "hash8": "e7334aa9",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 1108,
-        "fontsMs": 266,
-        "buildMs": 107,
-        "totalMs": 3357,
+        "importMs": 238,
+        "fontsMs": 42,
+        "buildMs": 72,
+        "totalMs": 987,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 36556,
+          "bytes": 36398,
           "alt": "Opening page 1: Metro de Alba."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95920,
+          "bytes": 95902,
           "alt": "Opening page 2: 01 Colour. Table 1.1. The colour system. Line colours are fills; only Ink and the two signals set text."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 108030,
+          "bytes": 108040,
           "alt": "Opening page 4: 03 Usage. Do 1. Lines at 0°, 45° and 90°, bent together at an even spacing; one capsule for the interchange. · Don’t 1. Free angles, mixed radii, uneven spacing and stations drawn in the line colour."
         }
       ],
@@ -376,6 +376,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -43,6 +43,7 @@ import { authoredCmykColors } from './color/authored';
 import { resolveContrastConfig } from './defaults/contrast';
 import { parseFontString } from './measure/fontString';
 import { dimensionToPx } from './units';
+import { taskBoxText } from './taskBox';
 
 export type ContrastMedium = 'screen' | 'print';
 
@@ -588,6 +589,9 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
       const ground = groundIn(box);
       if (block.bulletText?.trim()) {
         note(block.bulletColor ?? block.color, block.bulletFontString ?? block.fontString, block.bulletText, ground, box, 'marker', src);
+      } else if (block.bulletBox) {
+        // A task item's drawn box (#765) is checked as the marker it is.
+        note(block.bulletColor ?? block.color, block.fontString, taskBoxText(block.bulletBox.checked), ground, box, 'marker', src);
       }
       if (block.dropCap) note(block.dropCap.color, block.dropCap.fontString, block.dropCap.text, ground, box, role, src);
       noteLines(

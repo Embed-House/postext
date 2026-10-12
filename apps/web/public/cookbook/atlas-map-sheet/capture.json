@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "atlas-map-sheet",
-  "sourceHash": "578c226df063358fe41e16d56d2681ac4a9244caf8a4ba658a698e85a93985eb",
+  "sourceHash": "9d0725230c8b3b849bb184da3fabc0ad597a180fa2c13947a183b49cf07736c1",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.702Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.592Z",
   "variants": {
     "en": {
-      "hash8": "9803d1d7",
+      "hash8": "141993db",
       "vdtHash": "c0198ebf0d4818c7e03a23e60ccabae747e764d0",
       "timings": {
-        "importMs": 805,
-        "fontsMs": 1012,
-        "buildMs": 99,
-        "totalMs": 2767,
+        "importMs": 170,
+        "fontsMs": 820,
+        "buildMs": 75,
+        "totalMs": 1788,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 75168,
+          "bytes": 75216,
           "alt": "Opening page 1: The islands and their waters. Map 1. The islands: relief and roads."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134004,
+          "bytes": 134040,
           "alt": "Page 2: The north end of Brannay. Map 2. The north end of Brannay · Map 3. Kirkwick harbour."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1304,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 56986,
+          "bytes": 56948,
           "alt": "Page 3. Map 4. The islands and their approaches, with the gazetteer’s grid."
         },
         {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512841,
+        "bytes": 512815,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -359,17 +359,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "3ad4b4c7",
+      "hash8": "10725307",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 1470,
-        "fontsMs": 998,
-        "buildMs": 87,
-        "totalMs": 4165,
+        "importMs": 143,
+        "fontsMs": 802,
+        "buildMs": 63,
+        "totalMs": 1683,
         "builds": 1
       },
       "specimen": {
@@ -403,7 +409,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78048,
+          "bytes": 78044,
           "alt": "Página de apertura 1: Las islas y sus aguas. Mapa 1. Las islas: relieve y carreteras."
         },
         {
@@ -414,7 +420,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 135440,
+          "bytes": 135444,
           "alt": "Página 2: El extremo norte de Brannay. Mapa 2. El extremo norte de Brannay · Mapa 3. El puerto de Kirkwick."
         },
         {
@@ -425,7 +431,7 @@
           "h": 1304,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 56820,
+          "bytes": 56810,
           "alt": "Página 3. Mapa 4. Las islas y sus accesos, con la cuadrícula del nomenclátor."
         },
         {
@@ -468,7 +474,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513262,
+        "bytes": 513260,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -712,7 +718,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

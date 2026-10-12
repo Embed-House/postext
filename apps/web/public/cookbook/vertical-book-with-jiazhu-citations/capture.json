@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-book-with-jiazhu-citations",
-  "sourceHash": "86d4c66a808c32fa3543b90da936da5b6cd27ed3911e1995265400ceea319228",
+  "sourceHash": "6f00de2f1c34359b7f2ae9eaf061c843e1a1198333d02e1f5a5ecf3e7200ff6c",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:41.222Z",
+  "capturedAt": "2026-10-12T10:07:47.527Z",
   "variants": {
     "en": {
       "hash8": "be5e75ed",
       "vdtHash": "3968cb918da759615b8e2279e3f304d11d029fbb",
       "timings": {
-        "importMs": 360,
-        "fontsMs": 390,
-        "buildMs": 73,
-        "totalMs": 1460,
+        "importMs": 194,
+        "fontsMs": 203,
+        "buildMs": 71,
+        "totalMs": 1044,
         "builds": 1
       },
       "specimen": {
@@ -295,28 +295,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "11bce435",
       "vdtHash": "5fdae81a492fa9f544a513c13cf8ea92591e5813",
       "timings": {
-        "importMs": 360,
-        "fontsMs": 391,
-        "buildMs": 72,
-        "totalMs": 1464,
+        "importMs": 164,
+        "fontsMs": 271,
+        "buildMs": 70,
+        "totalMs": 1092,
         "builds": 1
       },
       "specimen": {
@@ -594,18 +583,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

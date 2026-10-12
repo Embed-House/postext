@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "balloon-kinds",
-  "sourceHash": "5614dee20ecbcaec459a8aff1ee87ced13945319026ee73967852c9e1ca6460c",
+  "sourceHash": "d2760462625dc6e89d85c3c492ffb4002cf77ce83d441f624d24ce3bc16fd67e",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.724Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.610Z",
   "variants": {
     "en": {
-      "hash8": "f84af731",
+      "hash8": "c1dd7997",
       "vdtHash": "741e9ba1b4cbefe7456e18ce8a09307b09fc17cb",
       "timings": {
-        "importMs": 1786,
-        "fontsMs": 407,
-        "buildMs": 856,
-        "totalMs": 4328,
+        "importMs": 190,
+        "fontsMs": 93,
+        "buildMs": 708,
+        "totalMs": 1614,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 258850,
+          "bytes": 258872,
           "alt": "Page 2."
         }
       ],
@@ -88,12 +88,12 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 994227,
+        "bytes": 994225,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954655,
+        "bytes": 954661,
         "chapters": [
           {
             "pages": 2,
@@ -306,21 +306,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 1 −10‰ “Pinned.  The balloon is centred on that point o…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "dfff82e6",
+      "hash8": "e935e00a",
       "vdtHash": "7e8ad8cefc2dbcf233e8d2ef02662fe7c05cc0ac",
       "timings": {
-        "importMs": 1340,
-        "fontsMs": 459,
-        "buildMs": 788,
-        "totalMs": 3972,
+        "importMs": 209,
+        "fontsMs": 97,
+        "buildMs": 665,
+        "totalMs": 1638,
         "builds": 1
       },
       "specimen": {
@@ -363,7 +363,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 257098,
+          "bytes": 257064,
           "alt": "Página 2."
         }
       ],
@@ -396,7 +396,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954981,
+        "bytes": 954941,
         "chapters": [
           {
             "pages": 2,
@@ -599,21 +599,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "67aefeef",
+      "hash8": "551fbbb6",
       "vdtHash": "09fd22eaefd8eb692bf193bebcd0d01a123efebb",
       "timings": {
-        "importMs": 1925,
-        "fontsMs": 347,
-        "buildMs": 808,
-        "totalMs": 4631,
+        "importMs": 175,
+        "fontsMs": 134,
+        "buildMs": 664,
+        "totalMs": 1592,
         "builds": 1
       },
       "specimen": {
@@ -656,7 +656,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 257580,
+          "bytes": 257496,
           "alt": "Pàgina 2."
         }
       ],
@@ -689,7 +689,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954916,
+        "bytes": 954928,
         "chapters": [
           {
             "pages": 2,
@@ -892,21 +892,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "1fb75c2e",
+      "hash8": "d9164724",
       "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 1612,
-        "fontsMs": 1140,
-        "buildMs": 651,
-        "totalMs": 4121,
+        "importMs": 215,
+        "fontsMs": 203,
+        "buildMs": 546,
+        "totalMs": 1610,
         "builds": 1
       },
       "specimen": {
@@ -949,7 +949,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 256744,
+          "bytes": 256612,
           "alt": "第 2 页。"
         }
       ],
@@ -977,12 +977,12 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1027954,
+        "bytes": 1027949,
         "pages": 2
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955323,
+        "bytes": 955337,
         "chapters": [
           {
             "pages": 2,
@@ -1186,21 +1186,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "9020cd33",
+      "hash8": "dd647108",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 1596,
-        "fontsMs": 1131,
-        "buildMs": 854,
-        "totalMs": 5134,
+        "importMs": 171,
+        "fontsMs": 152,
+        "buildMs": 683,
+        "totalMs": 1630,
         "builds": 1
       },
       "specimen": {
@@ -1243,7 +1243,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 255486,
+          "bytes": 255614,
           "alt": "الصفحة ٢."
         }
       ],
@@ -1277,7 +1277,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955303,
+        "bytes": 955323,
         "chapters": [
           {
             "pages": 2,
@@ -1481,17 +1481,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "81d82b4a",
+      "hash8": "a6ce7d24",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 1438,
-        "fontsMs": 3131,
-        "buildMs": 518,
-        "totalMs": 6507,
+        "importMs": 187,
+        "fontsMs": 249,
+        "buildMs": 404,
+        "totalMs": 1483,
         "builds": 1
       },
       "specimen": {
@@ -1534,7 +1540,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 248022,
+          "bytes": 247944,
           "alt": "2ページ。"
         }
       ],
@@ -1568,7 +1574,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955301,
+        "bytes": 955317,
         "chapters": [
           {
             "pages": 2,
@@ -1773,21 +1779,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "b706755d",
+      "hash8": "512f87ff",
       "vdtHash": "ff3577f055a081d8454805278da37a8ca13309b1",
       "timings": {
-        "importMs": 1704,
-        "fontsMs": 641,
-        "buildMs": 898,
-        "totalMs": 4719,
+        "importMs": 169,
+        "fontsMs": 134,
+        "buildMs": 731,
+        "totalMs": 1594,
         "builds": 1
       },
       "specimen": {
@@ -1830,7 +1836,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 257260,
+          "bytes": 257276,
           "alt": "Página 2."
         }
       ],
@@ -1863,7 +1869,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954897,
+        "bytes": 954905,
         "chapters": [
           {
             "pages": 2,
@@ -2066,9 +2072,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -7,7 +7,7 @@
 
 import { pointInConvex, pathData, rectOf, boundsOf, add, insetConvex, type PathCmd } from './geom';
 import { hasCJK } from '../../measure/cjk';
-import { onTextWidthCacheClear } from '../../measure/canvas';
+import { onTextWidthCacheClear, measureLanguageKey } from '../../measure/canvas';
 import { getCjkLineBreak } from '../../measure/cjkClasses';
 import { getCjkComposition } from '../../measure/cjkPunctuation';
 import { getMeasureArabicNumbers, getMeasureDirection } from '../../measure/bidiLines';
@@ -75,6 +75,7 @@ export function letterPanelDetailed(panel: LetteringPanel, items: readonly Lette
   const key = JSON.stringify([
     panel, local, env,
     getMeasureWritingMode(), getMeasureRegion(), getMeasureDirection(), getMeasureArabicNumbers(), getMeasureUprightDigits(), getCjkLineBreak(), getCjkComposition(),
+    measureLanguageKey(),
   ]);
   let out = lettered.get(key);
   if (out) {

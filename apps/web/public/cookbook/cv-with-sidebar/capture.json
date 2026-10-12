@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "cv-with-sidebar",
-  "sourceHash": "517fa6724d42702fa6d9485efd3794c8dd7b932a889b6d72daa9fb008aef969f",
+  "sourceHash": "6a8276fe1d5abfbd37de7cf81c4daa9a921ad930fc2db19beab98ec88bb26b1d",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.109Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.850Z",
   "variants": {
     "en": {
-      "hash8": "62d64df6",
+      "hash8": "0ebaadec",
       "vdtHash": "92600c27d780bd4fb06c0c104b39322d0186616d",
       "timings": {
-        "importMs": 1168,
+        "importMs": 236,
         "fontsMs": 2,
-        "buildMs": 61,
-        "totalMs": 1856,
+        "buildMs": 52,
+        "totalMs": 946,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 121530,
+          "bytes": 121508,
           "alt": "Page 1: Irene Salcedo."
         }
       ],
@@ -269,17 +269,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "fa054051",
+      "hash8": "45884bbd",
       "vdtHash": "44f7eab9b9c0d2daf9dc1441a3c6b92fbccaef08",
       "timings": {
-        "importMs": 1294,
-        "fontsMs": 3,
-        "buildMs": 49,
-        "totalMs": 2707,
+        "importMs": 191,
+        "fontsMs": 2,
+        "buildMs": 54,
+        "totalMs": 970,
         "builds": 1
       },
       "specimen": {
@@ -312,7 +318,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 132808,
+          "bytes": 132832,
           "alt": "Página 1: Irene Salcedo."
         }
       ],
@@ -532,7 +538,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

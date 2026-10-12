@@ -4,6 +4,7 @@ import type { Resource, VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from 'p
 import { PNG, baseConfig, layOut, layOutBook, pt } from './__tests__/vdt';
 import { checkXml } from './__tests__/xml';
 import { buildReflowablePublication } from '.';
+import { buildOpf } from '../package/pack';
 import { appendLine, appendLines, type InlineContext, type TextSink } from './inline';
 import type { EpubPublication, RenderToEpubOptions } from '../types';
 
@@ -276,6 +277,28 @@ describe('buildReflowablePublication', () => {
     expect(all).toMatch(/<div class="pt-math-display" role="math" aria-label="\\vec\{F\}=m\\vec\{a\}"><svg /);
     expect(all).not.toContain('data-mml-node');
     expect(pub.accessibility.features).toContain('describedMath');
+  });
+
+  it('draws the box of a task item, named by the character it stands for (#765)', async () => {
+    const md = ['- [ ] Buy the paper', '- [x] Set the type', '- A plain bullet'].join('\n');
+    const { pub, files, all } = await render([layOut(md)]);
+    expectSound(pub, files);
+    const items = [...all.matchAll(/<li>(.*?)<\/li>/g)].map((m) => m[1]!);
+    expect(items).toHaveLength(3);
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="0.6em" height="0.6em" aria-hidden="true" focusable="false">';
+    expect(items[0]).toMatch(new RegExp(`^<span class="pt-lbl" role="img" aria-label="\u2610">${svg}<rect [^>]*/></svg></span> .*Buy the paper$`));
+    expect(items[1]).toMatch(new RegExp(`^<span class="pt-lbl" role="img" aria-label="\u2611">${svg}<rect [^>]*/><path d="M22 52L42 72L78 28"[^>]*/></svg></span> `));
+    expect(items[1]).toContain('Set the type');
+    // A bullet is still text; neither box is.
+    expect(items[2]).toMatch(/^<span class="pt-lbl">\u2022<\/span> A plain bullet$/);
+    expect(all).not.toMatch(/>[\u2610\u2611]</);
+    // A document that holds an SVG says so in the manifest.
+    const chapter = pub.items.find((i) => i.mediaType === 'application/xhtml+xml' && String(i.data).includes('aria-label="\u2610"'))!;
+    expect(buildOpf(pub)).toMatch(new RegExp(`<item id="${chapter.id}" [^>]*properties="svg"`));
+    // The character of postext 1.28 stays a text label.
+    const legacy = await render([layOut(md, { ...baseConfig, unorderedLists: { taskBox: 'character' } })]);
+    expect(legacy.all).toMatch(/<li><span class="pt-lbl">\u2610<\/span> .*Buy the paper<\/li>/);
+    expect(legacy.all).not.toContain('role="img" aria-label="\u2610"');
   });
 
   it('joins a paragraph of a box split across pages', async () => {

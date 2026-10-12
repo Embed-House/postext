@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "proof-sheet-diagnostics",
-  "sourceHash": "4589e5e81c39480040be4943faeda3311f0acba3754fb4140cfd5e3e99618427",
+  "sourceHash": "092f94861d06b619581da9f453154bb10457be151fa3abce7303accba6a664dd",
   "engine": {
-    "postext": "1.28.5",
+    "postext": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:50.780Z",
+  "capturedAt": "2026-10-12T10:07:47.296Z",
   "variants": {
     "en": {
       "hash8": "8f251d05",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 263,
-        "fontsMs": 707,
+        "importMs": 159,
+        "fontsMs": 35,
         "buildMs": 9,
-        "totalMs": 1802,
+        "totalMs": 1019,
         "builds": 2
       },
       "specimen": {
@@ -348,23 +348,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "c98b9555",
+      "hash8": "b834a000",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 266,
-        "fontsMs": 702,
-        "buildMs": 12,
-        "totalMs": 1805,
+        "importMs": 169,
+        "fontsMs": 32,
+        "buildMs": 15,
+        "totalMs": 949,
         "builds": 2
       },
       "specimen": {
@@ -437,7 +431,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 104021,
+        "bytes": 104011,
         "folio": "3db66766",
         "chapters": [
           {
@@ -696,13 +690,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

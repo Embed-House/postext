@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "26e0fe2a132b1fdc1daf48c69177cd6c996610e69720a1b6b88e66722da60515",
+  "sourceHash": "859e348f40347064632ab418a4a02f1c659dff6333d990f4440cd7673ecf3c96",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.585Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.168Z",
   "variants": {
     "en": {
-      "hash8": "747765e3",
+      "hash8": "7fe7c9b6",
       "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 1589,
-        "fontsMs": 80,
-        "buildMs": 464,
-        "totalMs": 4454,
+        "importMs": 210,
+        "fontsMs": 52,
+        "buildMs": 353,
+        "totalMs": 1283,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 136454,
+          "bytes": 136458,
           "alt": "Opening page 1: Pneumocystis Pneumonia — Los Angeles. Figure 1. The five patients, September 1980 to May 1981, by month. The illness before the pneumonia is counted back from the month of diagnosis, as each report gives it."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174370,
+          "bytes": 174394,
           "alt": "Page 3: REFERENCES. Table 1. Presenting complaints in 20 patients with Kaposi’s sarcoma."
         },
         {
@@ -454,6 +454,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

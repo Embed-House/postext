@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ieee-conference-paper",
-  "sourceHash": "e3447c69bef3edf1aa1fe76b9ed5fd15c167bac23f4b118aa4c02d09b7429246",
+  "sourceHash": "e12e1f5791bed5ade0348311ac635f5450a5ce91e0b3adabe806f871a51d7aae",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.283Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.949Z",
   "variants": {
     "en": {
       "hash8": "65604a0d",
       "vdtHash": "f224c4793cbb2f7b7f59ac740d7c75a0374c2cee",
       "timings": {
-        "importMs": 1612,
-        "fontsMs": 35,
-        "buildMs": 387,
-        "totalMs": 2790,
+        "importMs": 174,
+        "fontsMs": 29,
+        "buildMs": 266,
+        "totalMs": 1125,
         "builds": 1
       },
       "specimen": {
@@ -319,9 +319,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
@@ -330,10 +330,10 @@
       "hash8": "2a6de9b9",
       "vdtHash": "0990b340cfe5ee060e6246e86fe2cc4abfa70908",
       "timings": {
-        "importMs": 1603,
-        "fontsMs": 38,
-        "buildMs": 184,
-        "totalMs": 2489,
+        "importMs": 351,
+        "fontsMs": 31,
+        "buildMs": 149,
+        "totalMs": 1193,
         "builds": 1
       },
       "specimen": {
@@ -635,9 +635,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

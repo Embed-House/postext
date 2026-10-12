@@ -474,7 +474,7 @@ describe('bodyText.verse and the configurations stored before #620', () => {
   const PLAIN = ':::verse\nA line\nAnother\n:::';
   const BAYT = ':::verse\nA || B\n:::';
   it('pins the 1.22 verse layout when the text holds a poem with no separator', () => {
-    expect(CONFIG_VERSION).toBe(12);
+    expect(CONFIG_VERSION).toBe(13);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 7, 8]) {
       expect(migrateConfig(stored, version, { content: PLAIN }).bodyText?.verse, `${version}`).toEqual({ layout: 'bayt' });
@@ -484,36 +484,36 @@ describe('bodyText.verse and the configurations stored before #620', () => {
     // (A text with a fence gets the pin of the level cut's unit, #711, on
     // its headings; the body text is what this pin would touch.)
     for (const content of [BAYT, 'No poem.', [BAYT, 'Text.']]) {
-      expect(migrateConfig(stored, 8, { content }).bodyText, JSON.stringify(content)).toEqual({ ...stored.bodyText, scriptContext: false });
+      expect(migrateConfig(stored, 8, { content }).bodyText, JSON.stringify(content)).toEqual({ ...stored.bodyText, scriptContext: false, shapingLanguage: 'host' });
     }
     expect(migrateConfig(stored, CONFIG_VERSION, { content: PLAIN })).toBe(stored);
     const named: PostextConfig = { bodyText: { verse: { layout: 'auto' } } };
     expect(pinLegacyVerseLayout(named)).toBe(named);
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Georgia' } }], 8, { content: [PLAIN] });
-    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', verse: { layout: 'bayt' }, scriptContext: false });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', verse: { layout: 'bayt' }, scriptContext: false, shapingLanguage: 'host' });
   });
 
   it('pins the 1.23 turnovers when the text holds a poem set line by line', () => {
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     const LINES = ':::verse{layout=lines}\nA line\n:::';
     for (const content of [PLAIN, LINES, ':::verse{layout="lines" align=start}\nA || B\n:::', [BAYT, PLAIN]]) {
-      expect(migrateConfig(stored, 9, { content }).bodyText, JSON.stringify(content)).toEqual({ fontFamily: 'Georgia', verse: { tighten: false }, scriptContext: false });
+      expect(migrateConfig(stored, 9, { content }).bodyText, JSON.stringify(content)).toEqual({ fontFamily: 'Georgia', verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host' });
     }
     expect(migrateConfig(stored, 9).bodyText?.verse).toEqual({ tighten: false });
     for (const content of [BAYT, 'No poem.', ':::verse{layout=bayt}\nA line\n:::', [BAYT, 'Text.']]) {
-      expect(migrateConfig(stored, 9, { content }).bodyText, JSON.stringify(content)).toEqual({ ...stored.bodyText, scriptContext: false });
+      expect(migrateConfig(stored, 9, { content }).bodyText, JSON.stringify(content)).toEqual({ ...stored.bodyText, scriptContext: false, shapingLanguage: 'host' });
     }
     // Before 1.23 a plain poem is pinned to the bayt layout, which never
     // turned over; a poem that names the line layout is set line by line.
     expect(migrateConfig(stored, 8, { content: LINES }).bodyText?.verse).toEqual({ tighten: false });
     expect(migrateConfig(stored, 8, { content: [PLAIN, LINES] }).bodyText?.verse).toEqual({ layout: 'bayt', tighten: false });
     const bayts: PostextConfig = { bodyText: { verse: { layout: 'bayt' } } };
-    expect(migrateConfig(bayts, 9, { content: PLAIN }).bodyText).toEqual({ ...bayts.bodyText, scriptContext: false });
+    expect(migrateConfig(bayts, 9, { content: PLAIN }).bodyText).toEqual({ ...bayts.bodyText, scriptContext: false, shapingLanguage: 'host' });
     expect(migrateConfig(stored, CONFIG_VERSION, { content: PLAIN })).toBe(stored);
     const named: PostextConfig = { bodyText: { verse: { tighten: true } } };
     expect(pinLegacyVerseTightening(named)).toBe(named);
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Georgia' } }], 9, { content: [PLAIN] });
-    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', verse: { tighten: false }, scriptContext: false });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host' });
     // The pinned configuration lays the line out as 1.23 did.
     const near = ':::verse\nShort line.\nAaaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaaa\n:::';
     const pinned = migrateConfig(config(), 9, { content: near });

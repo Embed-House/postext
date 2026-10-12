@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "living-newspaper-video-loops",
-  "sourceHash": "046afd023b1345985693226d955c37137a45a1639aeeb6b635b3c6315bc0a122",
+  "sourceHash": "7d3bc214eb2f6825376e2010dea7974621d5e06ea9432c69e66ca3f9bfa65c22",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.353Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.004Z",
   "variants": {
     "en": {
-      "hash8": "1a7a51a7",
+      "hash8": "e015e984",
       "vdtHash": "0aa32c7c09fa687cd36cd59d0f36ba18f7d203e6",
       "timings": {
-        "importMs": 744,
-        "fontsMs": 116,
-        "buildMs": 449,
-        "totalMs": 3825,
+        "importMs": 282,
+        "fontsMs": 22,
+        "buildMs": 392,
+        "totalMs": 1359,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1536,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 200306,
+          "bytes": 200402,
           "alt": "Opening page 1: The Wexcombe Lantern. Mrs Edith Rowe speaks from the platform at the foot of Quay Hill before cutting the ribbon. · Miss Constance Lacey waves from the cockpit on Wexcombe Common."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1536,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 269078,
+          "bytes": 268940,
           "alt": "Opening page 2: Town & Harbour. High water at Wexcombe Quay · Twelve o’clock on the Guildhall tower, for the first time since 1924. · Skipper Jacob Hosking and the 82-pound cod on the quay."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1536,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 266354,
+          "bytes": 266406,
           "alt": "Opening page 3: Stage & Screen. This week at the picture houses · The Regional programme · Miss Rosalind Avery as Hester Lane, on the garden steps in Act III."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1536,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 270542,
+          "bytes": 270582,
           "alt": "Opening page 4: Sport. This week’s fixtures · Wexcombe v. St Austell · Fifty miles: the first five · Tom Rundle at Gannet Park, before the penalty he saved."
         }
       ],
@@ -116,7 +116,7 @@
       },
       "sandbox": {
         "file": "living-newspaper-video-loops.postext",
-        "bytes": 297035,
+        "bytes": 296801,
         "folio": "0b15553b",
         "chapters": [
           {
@@ -430,7 +430,7 @@
           {
             "check": "C3",
             "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5/files/libre-caslon-text-latin-700-italic.woff2"
+            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
           },
           {
             "check": "C20",
@@ -443,9 +443,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The fish was sold to Messrs Kitto of the Strand …”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           },
           {
             "check": "sandbox",

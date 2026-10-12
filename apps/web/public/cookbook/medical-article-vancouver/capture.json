@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "687b8759d67575fbbe54e5624900e3ba06d90f310f107b4efb88a5d0271deebd",
+  "sourceHash": "46150f7e03524f139660cb81b7f2e5f244a11464333c639c63bf024d537f8520",
   "engine": {
-    "postext": "1.28.5",
-    "postextPdf": "1.28.5",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T06:55:26.194Z",
+  "capturedAt": "2026-10-12T10:07:47.087Z",
   "variants": {
     "en": {
       "hash8": "887da59d",
       "vdtHash": "ce872ab1a591b03e785f48b21754e94a2ce26ca3",
       "timings": {
-        "importMs": 360,
-        "fontsMs": 253,
-        "buildMs": 128,
-        "totalMs": 1916,
+        "importMs": 171,
+        "fontsMs": 51,
+        "buildMs": 130,
+        "totalMs": 1007,
         "builds": 1
       },
       "specimen": {
@@ -420,16 +420,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “What is already known Self-monitoring lowers blo…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
@@ -438,10 +428,10 @@
       "hash8": "fba72d43",
       "vdtHash": "dd1bcea63030803accfaefd72e3afb18bbba355d",
       "timings": {
-        "importMs": 356,
-        "fontsMs": 255,
-        "buildMs": 123,
-        "totalMs": 1917,
+        "importMs": 166,
+        "fontsMs": 45,
+        "buildMs": 119,
+        "totalMs": 1041,
         "builds": 1
       },
       "specimen": {
@@ -834,18 +824,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

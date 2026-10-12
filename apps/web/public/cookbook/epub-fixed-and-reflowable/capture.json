@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "epub-fixed-and-reflowable",
-  "sourceHash": "ed9a4cc3276c609b4269c4be0600f598dac186f4b7ee4a029c3214f40322fc4d",
+  "sourceHash": "843ca57e79e35a46a8881c372a4c0b480ad5812a32001313177b662683fe9013",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.139Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.867Z",
   "variants": {
     "en": {
-      "hash8": "8c9d4c8b",
+      "hash8": "b8149547",
       "vdtHash": "c96216bea05311b078948a2306d76538cec6bd71",
       "timings": {
-        "importMs": 734,
-        "fontsMs": 224,
-        "buildMs": 114,
-        "totalMs": 1747,
+        "importMs": 224,
+        "fontsMs": 32,
+        "buildMs": 90,
+        "totalMs": 939,
         "builds": 1
       },
       "specimen": {
@@ -140,7 +140,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 21852,
+        "bytes": 21858,
         "chapters": [
           {
             "pages": 2,
@@ -359,19 +359,24 @@
           {
             "check": "C3",
             "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5/files/libre-caslon-text-latin-700-italic.woff2"
+            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "7b28eecc",
+      "hash8": "f751a1d7",
       "vdtHash": "c8c457410ceb3f9647d1d1ca3698831678e7f732",
       "timings": {
-        "importMs": 1002,
-        "fontsMs": 243,
-        "buildMs": 407,
-        "totalMs": 2819,
+        "importMs": 184,
+        "fontsMs": 29,
+        "buildMs": 355,
+        "totalMs": 1158,
         "builds": 1
       },
       "specimen": {
@@ -495,7 +500,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 26883,
+        "bytes": 26885,
         "chapters": [
           {
             "pages": 2,
@@ -719,12 +724,17 @@
           {
             "check": "C3",
             "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5/files/libre-caslon-text-latin-700-italic.woff2"
+            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 15 −10‰ “—¡Adiós, Cordera!—vociferó Pinín con la misma fe…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "8411f7b665bfd03fb1b097ec68e3e0db4784b95a73d7c3c40b397a61401fb6eb",
+  "sourceHash": "ccd23a1a158863beb73952606d02740a971361b58222b19c3ca424272a1d10a5",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.096Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.530Z",
   "variants": {
     "en": {
-      "hash8": "ce198f39",
+      "hash8": "7cd56840",
       "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 300,
-        "fontsMs": 432,
-        "buildMs": 57,
-        "totalMs": 1345,
+        "importMs": 190,
+        "fontsMs": 290,
+        "buildMs": 51,
+        "totalMs": 1125,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 141196,
+          "bytes": 141248,
           "alt": "Opening page 一: 西湖公宴孫中山紀事."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171090,
+          "bytes": 171100,
           "alt": "Page 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -91,12 +91,12 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379312,
+        "bytes": 379308,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22399,
+        "bytes": 22521,
         "folio": "e5cb273f",
         "chapters": [
           {
@@ -347,17 +347,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "5a12f9cd",
+      "hash8": "32b2d2b4",
       "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 221,
-        "fontsMs": 508,
-        "buildMs": 56,
-        "totalMs": 1357,
+        "importMs": 168,
+        "fontsMs": 383,
+        "buildMs": 50,
+        "totalMs": 1190,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +397,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 141196,
+          "bytes": 141248,
           "alt": "Página de apertura 一: 西湖公宴孫中山紀事."
         },
         {
@@ -402,7 +408,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171282,
+          "bytes": 171286,
           "alt": "Página 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -431,12 +437,12 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379449,
+        "bytes": 379442,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22427,
+        "bytes": 22549,
         "folio": "e5cb273f",
         "chapters": [
           {
@@ -687,7 +693,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

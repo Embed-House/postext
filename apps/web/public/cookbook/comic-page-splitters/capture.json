@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-page-splitters",
-  "sourceHash": "03589a31d87e28788ade1efa8fe53944a5278b36e087db7d7b07606337b62d71",
+  "sourceHash": "a833e1b16a31f033adc20ce0d585f0e36e33698623e592e9e60f1a5b087afe34",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.053Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.816Z",
   "variants": {
     "en": {
-      "hash8": "360b523c",
+      "hash8": "ee26aa8f",
       "vdtHash": "f727ec43ba9b71a50f56e00a9d9b89f53d4870b9",
       "timings": {
-        "importMs": 1597,
-        "fontsMs": 620,
-        "buildMs": 484,
-        "totalMs": 4776,
+        "importMs": 252,
+        "fontsMs": 104,
+        "buildMs": 419,
+        "totalMs": 1415,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211388,
+          "bytes": 211210,
           "alt": "Page 2."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 245678,
+          "bytes": 245792,
           "alt": "Page 3."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 212790,
+          "bytes": 210466,
           "alt": "Page 4."
         }
       ],
@@ -119,7 +119,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808783,
+        "bytes": 808789,
         "chapters": [
           {
             "pages": 4,
@@ -301,18 +301,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "80d75ba4",
+      "hash8": "7e32ea1d",
       "vdtHash": "c75d0046fad73ee2c97d9da83f36f3c826b29f60",
       "timings": {
-        "importMs": 2131,
-        "fontsMs": 745,
-        "buildMs": 546,
-        "totalMs": 5047,
+        "importMs": 273,
+        "fontsMs": 87,
+        "buildMs": 449,
+        "totalMs": 1443,
         "builds": 1
       },
       "specimen": {
@@ -355,7 +360,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 212030,
+          "bytes": 212026,
           "alt": "Página 2."
         },
         {
@@ -366,7 +371,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 248172,
+          "bytes": 248096,
           "alt": "Página 3."
         },
         {
@@ -377,7 +382,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 212682,
+          "bytes": 211234,
           "alt": "Página 4."
         }
       ],
@@ -414,7 +419,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808952,
+        "bytes": 808908,
         "chapters": [
           {
             "pages": 4,
@@ -596,18 +601,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "e17845c3",
+      "hash8": "1dbe3495",
       "vdtHash": "cc02701ee828ad1613e20a5959288ae02326c3f9",
       "timings": {
-        "importMs": 1442,
-        "fontsMs": 417,
-        "buildMs": 559,
-        "totalMs": 4302,
+        "importMs": 217,
+        "fontsMs": 105,
+        "buildMs": 428,
+        "totalMs": 1363,
         "builds": 1
       },
       "specimen": {
@@ -650,7 +660,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 210618,
+          "bytes": 211086,
           "alt": "Pàgina 2."
         },
         {
@@ -661,7 +671,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 246436,
+          "bytes": 246682,
           "alt": "Pàgina 3."
         },
         {
@@ -672,7 +682,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 210266,
+          "bytes": 210432,
           "alt": "Pàgina 4."
         }
       ],
@@ -704,12 +714,12 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 849654,
+        "bytes": 849657,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808783,
+        "bytes": 808781,
         "chapters": [
           {
             "pages": 4,
@@ -891,18 +901,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "a89bfaba",
+      "hash8": "26725123",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 1979,
-        "fontsMs": 1067,
-        "buildMs": 431,
-        "totalMs": 5236,
+        "importMs": 230,
+        "fontsMs": 191,
+        "buildMs": 375,
+        "totalMs": 1413,
         "builds": 1
       },
       "specimen": {
@@ -945,7 +960,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 210216,
+          "bytes": 210182,
           "alt": "第 2 页。"
         },
         {
@@ -956,7 +971,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 247238,
+          "bytes": 247186,
           "alt": "第 3 页。"
         },
         {
@@ -967,7 +982,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 212714,
+          "bytes": 212898,
           "alt": "第 4 页。"
         }
       ],
@@ -999,12 +1014,12 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 876074,
+        "bytes": 876069,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809296,
+        "bytes": 809384,
         "chapters": [
           {
             "pages": 4,
@@ -1187,18 +1202,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "986557d7",
+      "hash8": "be7fc6cd",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 1489,
-        "fontsMs": 1037,
-        "buildMs": 539,
-        "totalMs": 5175,
+        "importMs": 188,
+        "fontsMs": 167,
+        "buildMs": 465,
+        "totalMs": 1468,
         "builds": 1
       },
       "specimen": {
@@ -1241,7 +1261,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211310,
+          "bytes": 211364,
           "alt": "الصفحة ٢."
         },
         {
@@ -1252,7 +1272,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 246996,
+          "bytes": 246950,
           "alt": "الصفحة ٣."
         },
         {
@@ -1263,7 +1283,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 212754,
+          "bytes": 212248,
           "alt": "الصفحة ٤."
         }
       ],
@@ -1301,7 +1321,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809488,
+        "bytes": 809690,
         "chapters": [
           {
             "pages": 4,
@@ -1486,18 +1506,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "73d98417",
+      "hash8": "8d12ef61",
       "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 1641,
-        "fontsMs": 1770,
-        "buildMs": 482,
-        "totalMs": 5570,
+        "importMs": 264,
+        "fontsMs": 255,
+        "buildMs": 454,
+        "totalMs": 1651,
         "builds": 1
       },
       "specimen": {
@@ -1540,7 +1565,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 210690,
+          "bytes": 210722,
           "alt": "2ページ。"
         },
         {
@@ -1551,7 +1576,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 244700,
+          "bytes": 244046,
           "alt": "3ページ。"
         },
         {
@@ -1562,7 +1587,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 202844,
+          "bytes": 201950,
           "alt": "4ページ。"
         }
       ],
@@ -1595,12 +1620,12 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 888507,
+        "bytes": 888510,
         "pages": 4
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809606,
+        "bytes": 809556,
         "chapters": [
           {
             "pages": 4,
@@ -1786,21 +1811,21 @@
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages)"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "a7c57236",
+      "hash8": "a661a70e",
       "vdtHash": "7a7072cfd5e293567615cce8aac85d5b262ce8b5",
       "timings": {
-        "importMs": 1580,
-        "fontsMs": 474,
-        "buildMs": 504,
-        "totalMs": 3224,
+        "importMs": 204,
+        "fontsMs": 143,
+        "buildMs": 417,
+        "totalMs": 1380,
         "builds": 1
       },
       "specimen": {
@@ -1843,7 +1868,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 211650,
+          "bytes": 211176,
           "alt": "Página 2."
         },
         {
@@ -1854,7 +1879,7 @@
           "h": 1542,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 244042,
+          "bytes": 243992,
           "alt": "Página 3."
         },
         {
@@ -1865,7 +1890,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 212180,
+          "bytes": 211492,
           "alt": "Página 4."
         }
       ],
@@ -1902,7 +1927,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808929,
+        "bytes": 808919,
         "chapters": [
           {
             "pages": 4,
@@ -2084,6 +2109,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

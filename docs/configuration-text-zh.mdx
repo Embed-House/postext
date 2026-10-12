@@ -232,6 +232,12 @@ export const metadata = {
       <td>让没有字母的词（<code>46.</code>、<code>1367)</code>、<code>».</code>：只有数字、标点或符号）按周围文字的书写系统成形。字体可以按书写系统绘制这些符号（Amiri在拉丁文中用拉丁字形的句点和括号，其他情况下用阿拉伯字形，宽度不同），而排版引擎单独拿到这个词时各按自己的规则选书写系统，浏览器的不同版本和PDF并不一致。开启后，该词取所在隔离段内前面最近字母的书写系统（没有则取后面的）；从右到左绘制时取最近的从右到左字母的书写系统；附近没有字母时取文档语言的书写系统。排版按这个书写系统测量，Canvas、HTML、固定版式EPUB和PDF以这个宽度绘制这些字形。它作用于拉丁文、希腊文、西里尔文、阿拉伯文和希伯来文的上下文，并且只对标点或数字随书写系统变化的字体起作用；按阿拉伯文成形的词不加字距。含有字母的词里不含字母的一段（在连接处换行的DOI中的<code>10.1006/</code>和<code>.2001</code>）取它在词内的书写系统。在中文或日文文档里，在其他书写系统的句子中被引用的连用省略号和破折号（<code>……</code>、<code>——</code>）保持汉字文本的字形。列表标记、交叉引用的标签、设计文本、漫画文字和CJK排版器排的段落不受影响。<code>false</code>让这类词单独成形，与postext 1.27及更早版本相同；在<code>configVersion</code> 12之前保存的配置按此读取（<code>pinLegacyScriptContext</code>）。参见<a href="/zh/docs/arabic-layout#没有字母的词">没有字母的词</a>。</td>
     </tr>
     <tr>
+      <td><code>shapingLanguage</code></td>
+      <td><code>'document' | 'host'</code></td>
+      <td><code>'document'</code></td>
+      <td>文字成形所用的语言：测量、绘制和嵌入都按这种语言进行。字体在不同语言下给出不同的字形（OpenType <code>locl</code>）：Noto Serif SC的数字在中文下是另一套字形，带加泰罗尼亚语字形的字体把<code>l·l</code>画得更紧，带土耳其语规则的字体不把<code>fi</code>连成合字。<code>'document'</code>：取文档自己的语言（<code>locale</code>，没有则取断词语言；两者都没有写明的文档算作英语<code>en-US</code>），一段文字写明了语言时取它自己的（<code>:ltr[…]&#123;lang=en&#125;</code>）。排版把这种语言设在用来测量的每个上下文上，所以一份文档在任何语言的页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML查看器和EPUB把它声明在文档和每一页上，PDF用该语言对应的OpenType语言系统成形。<code>'host'</code>：与postext 1.28及更早版本相同，排版按宿主页面的语言测量（工作线程里没有语言），只有中文、日文、韩文或从右到左的文档按自己的语言绘制；在<code>configVersion</code> 13之前保存的配置按此读取（<code>pinLegacyShapingLanguage</code>）。Canvas没有<code>lang</code>的浏览器（136之前的Chrome，以及缺少它的Firefox和Safari）照旧测量，命令行按每个字体默认语言的字形测量（见<a href="/zh/docs/command-line#与沙盒的区别">与沙盒的区别</a>）。</td>
+    </tr>
+    <tr>
       <td><code>tabStops</code></td>
       <td><code>TabStop[]</code></td>
       <td>未设置</td>
@@ -1803,7 +1809,7 @@ headings: {
 
 ### 任务列表扩展
 
-GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选框字形代替项目符号。以下字段只作用于任务项：
+GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选框代替项目符号。方框由引擎自己绘制：一个方形轮廓，任务完成时加一个勾。它不向任何字体索取字形，所以在每台机器上，在画布、PDF、HTML和EPUB里都一样，辅助技术读出`☐`或`☑`。方框的边长是标记字号（`bulletFontSize`，或该层级的`fontSize`）的0.6 em，这也是它在`gap`之前所占的宽度；标记与正文同字号时，方框立在列表项首行的基线上。线条粗细随标记的`fontWeight`，颜色随标记的`color`。以下字段只作用于任务项：
 
 <table>
   <thead>
@@ -1819,13 +1825,19 @@ GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选�
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>未完成任务所用的字形。</td>
+      <td>未完成任务的字符。默认字符不作为文字排出：方框由引擎绘制。其他任何字符都按列表的字体作为文字排出，该字体须含有这个字符。</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>已完成任务所用的字形。</td>
+      <td>已完成任务的字符。默认字符同样由引擎绘制，是带勾的方框；其他任何字符都按列表的字体作为文字排出。</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>两个默认字符的排法。<code>'drawn'</code>：方框由引擎绘制。<code>'character'</code>：<code>☐</code>和<code>☑</code>按列表的字体作为文字排出，与postext 1.28及更早版本一样；字体里没有这两个字符时，浏览器改用系统里的某个字体，列表项的文字就从那个字体给出的宽度之后开始。版本13之前保存的配置按<code>'character'</code>读取，所以它的各行留在原处。</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

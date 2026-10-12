@@ -17,7 +17,7 @@
  * are.
  */
 import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-import { measureInkBox, onTextWidthCacheClear } from './canvas';
+import { measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas';
 import { fontEm } from './vertical';
 
 /** The room between a Latin reading's descenders and its base's em box,
@@ -34,11 +34,12 @@ onTextWidthCacheClear(() => descents.clear());
 /** How far under its baseline `font`'s descenders ink, px, or null when
  *  the measurer gives no ink box. */
 function descentOf(font: string): number | null {
-  let d = descents.get(font);
+  const key = measureLanguageKey() + font;
+  let d = descents.get(key);
   if (d === undefined) {
     const box = measureInkBox(DESCENDERS, font);
     d = box ? box.descent : null;
-    descents.set(font, d);
+    descents.set(key, d);
   }
   return d;
 }

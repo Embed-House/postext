@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "f9fbed5656212f904178224c030e4d8be819a2c1ddf7583a805c50d6248db912",
+  "sourceHash": "261c26bf46502f42b519c65fa53c74fbadc14bcc5c93a5f7dcb6657ebf0a0369",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.6",
+    "postextPdf": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.673Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.573Z",
   "variants": {
     "en": {
-      "hash8": "f44cab15",
+      "hash8": "691986d4",
       "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
       "timings": {
-        "importMs": 1230,
-        "fontsMs": 35,
-        "buildMs": 347,
-        "totalMs": 3203,
+        "importMs": 292,
+        "fontsMs": 32,
+        "buildMs": 283,
+        "totalMs": 1283,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18635,
+        "bytes": 18629,
         "folio": "2af3feac",
         "chapters": [
           {
@@ -294,17 +294,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "36ab50c8",
+      "hash8": "29ffa91e",
       "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
       "timings": {
-        "importMs": 1336,
-        "fontsMs": 38,
-        "buildMs": 323,
-        "totalMs": 3082,
+        "importMs": 212,
+        "fontsMs": 31,
+        "buildMs": 281,
+        "totalMs": 1228,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +397,7 @@
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18541,
+        "bytes": 18555,
         "folio": "2af3feac",
         "chapters": [
           {
@@ -581,7 +587,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

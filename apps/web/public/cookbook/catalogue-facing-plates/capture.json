@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "catalogue-facing-plates",
-  "sourceHash": "f5b8ed39636bc6993dfcb64d25582dda3de4499b1cef7b64fddf9fb74a4b93a7",
+  "sourceHash": "188f64d00b05169b4242b41015979e2ed4d016f3023cad3a7f32666b307828df",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:29.878Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:46.709Z",
   "variants": {
     "en": {
-      "hash8": "d42d1515",
+      "hash8": "6bb8ef13",
       "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
       "timings": {
-        "importMs": 1418,
-        "fontsMs": 437,
-        "buildMs": 108,
-        "totalMs": 3401,
+        "importMs": 192,
+        "fontsMs": 54,
+        "buildMs": 68,
+        "totalMs": 956,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1217,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 115336,
+          "bytes": 115294,
           "alt": "Opening page 1: Doré."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1217,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 230782,
+          "bytes": 230840,
           "alt": "Page 3. Cat. 1. Don Quixote in His Library."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1217,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 148004,
+          "bytes": 148000,
           "alt": "Page 5. Cat. 2. The Vigil of Arms."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1217,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 257424,
+          "bytes": 257422,
           "alt": "Page 7. Cat. 3. The Adventure of the Windmills."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1217,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 60332,
+          "bytes": 60350,
           "alt": "Opening page 8: Works in the Exhibition."
         }
       ],
@@ -417,6 +417,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

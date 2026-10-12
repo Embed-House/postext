@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "spanish-pocket-novel",
-  "sourceHash": "2e63068a18a0421473262731777a6fb32c5b3d14da8ddc8936f9844bae6a0ab5",
+  "sourceHash": "fb2560f0b1b82c217c3401cae4d87cb84bc213f58459d0769916dc57223c673a",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.873Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.396Z",
   "variants": {
     "es": {
-      "hash8": "c667e256",
+      "hash8": "e012b348",
       "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
       "timings": {
-        "importMs": 904,
-        "fontsMs": 30,
-        "buildMs": 90,
-        "totalMs": 1980,
+        "importMs": 158,
+        "fontsMs": 19,
+        "buildMs": 61,
+        "totalMs": 918,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1565,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 40938,
+          "bytes": 40928,
           "alt": "Página de apertura 8: Las minas de Socartes. Figura 1. El camino de Golfín: de Villafangosa, por la pasadera y el cerro, al talud de las minas de Socartes."
         },
         {
@@ -337,6 +337,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

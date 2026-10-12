@@ -55,6 +55,8 @@ import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import { getMeasureScriptContext, hanMarksOfLocale, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script';
+import { getMeasureLanguage, setMeasureLanguage } from '../measure/canvas';
+import { shapingLanguageOf } from '../locale';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -554,9 +556,11 @@ export function buildDocumentPass(
   const direction = getMeasureDirection();
   const arabicNumbers = getMeasureArabicNumbers();
   const scriptContext = getMeasureScriptContext();
+  const language = getMeasureLanguage();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setMeasureLanguage(language);
     setMeasureScriptContext(scriptContext);
     setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
@@ -644,6 +648,10 @@ function placeDocumentPass(
   setMeasureArabicNumbers(arabicNumbersOf(resolved));
   // A word with no letter is shaped in the script of the text around it,
   // and with no letter near in the script of the document's language (#725).
+  // The text is measured in the document's language on every host, a page
+  // in any language or a worker (#764); in the host's for a configuration
+  // that asks for it, as up to postext 1.28.
+  setMeasureLanguage(shapingLanguageOf(resolved));
   // A Chinese or Japanese document sets its doubled ellipsis and dash as
   // Han text wherever they are cited.
   setMeasureScriptContext({
@@ -7026,8 +7034,12 @@ function placeDocumentPass(
       // Bullet (and its positional metadata) only belongs on the first part of
       // a split list item; continuation parts render without a bullet.
       if (!isFirstPart) return;
-      blk.bulletText = listBullet.bulletText;
-      blk.bulletFontString = listBullet.bulletFontString;
+      // A task item's drawn box (#765) stands for its character and face.
+      if (listBullet.box) blk.bulletBox = listBullet.box;
+      else {
+        blk.bulletText = listBullet.bulletText;
+        blk.bulletFontString = listBullet.bulletFontString;
+      }
       blk.bulletColor = listBullet.bulletColor;
       // `bulletXOffsetInColumn` is `indentPx` for unordered/task, and
       // `indentPx + (maxNumberWidth - thisNumberWidth)` for ordered — giving

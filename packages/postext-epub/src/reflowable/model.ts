@@ -105,6 +105,9 @@ export interface HeadingNode {
 
 export interface ListItemNode {
   marker?: string;
+  /** A task item's drawn box (`VDTBlock.bulletBox`, #765), in place of a
+   *  `marker`: whether it is ticked and its stroke over its side. */
+  box?: { checked: boolean; stroke: number };
   inl: InlineItem[];
   /** Nested lists. */
   children: Node[];

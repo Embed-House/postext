@@ -1067,6 +1067,7 @@ class DocWalker {
       inl: [],
       children: [],
       ...(marker ? { marker } : {}),
+      ...(block.bulletBox ? { box: { checked: block.bulletBox.checked, stroke: block.bulletBox.stroke / block.bulletBox.side } } : {}),
       ...(block.strikethroughText ? { done: true } : {}),
       ...(block.direction ? { dir: block.direction } : {}),
     };

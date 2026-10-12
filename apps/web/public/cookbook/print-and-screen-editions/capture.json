@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "print-and-screen-editions",
-  "sourceHash": "215a84a40ebbf7c873ca67e1b019f536297619cf5e6e12ca99d25427ea938b46",
+  "sourceHash": "9e43f9ac43025f3650819e4f275dc19602c7ed72798cfcda40687fa457808ea3",
   "engine": {
-    "postext": "1.28.1",
+    "postext": "1.28.6",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.716Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T10:07:47.276Z",
   "variants": {
     "en": {
-      "hash8": "b86c8212",
+      "hash8": "d65b3a3f",
       "vdtHash": "60ae331f534d41cc28044aa2c9aacd6a0cd8b8ac",
       "timings": {
-        "importMs": 738,
-        "fontsMs": 280,
-        "buildMs": 320,
-        "totalMs": 2240,
+        "importMs": 164,
+        "fontsMs": 41,
+        "buildMs": 231,
+        "totalMs": 1073,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 38594,
+          "bytes": 38536,
           "alt": "Part title page 1: NOTES ON WEATHER I Autumn."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 110020,
+          "bytes": 109964,
           "alt": "Opening page 2: Rain. Figure 1. The rain gauge in section: the funnel feeds a tube with a tenth of its area."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 124766,
+          "bytes": 124682,
           "alt": "Opening page 3: Fog. Figure 2. Radiation fog at dawn: cold air drains off the hills overnight and fills the valley."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 120972,
+          "bytes": 120970,
           "alt": "Opening page 4: Wind. Figure 3. Where a year of morning winds came from at the garden station: west and south-west."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 186500,
+        "bytes": 186566,
         "folio": "d9a24b31",
         "chapters": [
           {
@@ -343,17 +343,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "2d7156c5",
+      "hash8": "6f64fddb",
       "vdtHash": "b21de88e54730916b7395c401324be276c556e68",
       "timings": {
-        "importMs": 716,
-        "fontsMs": 57,
-        "buildMs": 154,
-        "totalMs": 2503,
+        "importMs": 137,
+        "fontsMs": 42,
+        "buildMs": 106,
+        "totalMs": 1016,
         "builds": 2
       },
       "specimen": {
@@ -387,7 +393,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 36800,
+          "bytes": 36784,
           "alt": "Portadilla de parte 1: APUNTES DEL TIEMPO I Otoño."
         },
         {
@@ -398,7 +404,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 114392,
+          "bytes": 114380,
           "alt": "Página de apertura 2: Lluvia. Figura 1. El pluviómetro en sección: el embudo vierte en un tubo con la décima parte de su área."
         },
         {
@@ -409,7 +415,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130342,
+          "bytes": 130458,
           "alt": "Página de apertura 3: Niebla. Figura 2. Niebla de irradiación al amanecer: el aire frío baja de las lomas y llena el valle."
         },
         {
@@ -420,7 +426,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121880,
+          "bytes": 121888,
           "alt": "Página de apertura 4: Viento. Figura 3. De dónde vino el viento de un año de mañanas en el jardín: del oeste y del suroeste."
         }
       ],
@@ -452,7 +458,7 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 187180,
+        "bytes": 187274,
         "folio": "d9a24b31",
         "chapters": [
           {
@@ -680,7 +686,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

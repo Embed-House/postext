@@ -66,7 +66,7 @@ from typing import Any
 # Japan region. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11.
-CONFIG_VERSION = 12
+CONFIG_VERSION = 13
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -556,7 +556,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 12, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 13, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),
