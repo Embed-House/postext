@@ -317,8 +317,10 @@ H&J / Knuth–Plass
 │                        the measure and the canvas take the host page's language (none in a worker); HTML declares lang for CJK and RTL documents.
 │                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context and on the canvas, so the lines
 │                        are the same on a page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, JAN, CAT…).
-│                        Open case: a hyphenatable word is measured whole and painted in pieces on canvas/HTML; a face whose language form needs both
-│                        neighbours (Crimson Pro's Catalan l·l) shows a gap there. Leave unset when porting unless the book needs it. Below configVersion 13: 'host'.
+│                        A hyphenatable word is measured whole and set whole where it stays on one line (canvas/HTML painted it in pieces ≤ 1.29.2;
+│                        the PDF sets it whole under 'document'). Open case: a word broken at a line end; a face whose language form needs both
+│                        neighbours (Crimson Pro's Catalan l·l) leaves a gap after its rest. Leave unset when porting unless the book needs it.
+│                        Below configVersion 13: 'host'.
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
