@@ -86,6 +86,7 @@ import {
 import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
+import { withSegmentLanguage } from '../shapingLanguage';
 import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
 import type { PrintColorMode } from '../print/colorMode';
 import { embedPrintRaster } from '../print/images';
@@ -712,36 +713,40 @@ function paintLineRuns(
       tagContent(ctx, rubyElem ? rubyElem.child('RB') : holder);
       const baseline = line.baseline + (seg.baselineShift ?? 0);
       const direction = seg.rtl ? 'rtl' : 'ltr';
-      if (seg.runs && drawStyledWordPx(ctx, seg.text, x, baseline, font, size, segColor, wordParts(seg, font, segColor, ctx, (bold, italic) => ({ font: fontCache.get(pickFont(bold, italic, fonts)) ?? undefined, color: segColor })), { direction })) {
-        // A word set in several styles, shaped whole.
-      } else if (directed && (seg.rtl || needsComplexShaping(seg.text)) && paintInScript(ctx, seg.scriptContext, () => drawShapedTextPx(ctx, seg.text, x, baseline, font, size, segColor, { direction }))) {
-        // One run in its direction, shaped by HarfBuzz; a word with no
-        // letter in the script the layout measured it in (#725).
-      } else if (!composed) {
-        paintInScript(ctx, seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline, font, size, segColor));
-      } else {
-        // A justified CJK line spreads its characters per segment.
-        // A compressed CJK mark advances to its box's end (see blockRender).
-        const markSpacing = compressedMarkSpacingPx(font, seg, size);
-        if (markSpacing !== undefined) setTrackingPx(ctx, markSpacing);
-        else if (seg.tracking !== undefined) setTrackingPx(ctx, (tracking + seg.tracking));
-        const stretch = inkScaleOperators(seg.inkScale);
-        ctx.page.pushOperators(...stretch.before);
-        drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), line.baseline + (seg.baselineShift ?? 0), font, size, segColor);
-        ctx.page.pushOperators(...stretch.after);
-        if (markSpacing !== undefined || seg.tracking !== undefined) setTrackingPx(ctx, tracking);
-        if (seg.ruby) {
-          if (tracking !== 0) setTrackingPx(ctx, 0);
-          paintRuby(ctx, seg.ruby, x, line.baseline, segColor, fontCache, baseFont, rubyElem);
-          if (tracking !== 0) setTrackingPx(ctx, tracking);
+      // A segment that names its language is shaped in it (#764), in a
+      // document shaped in its own.
+      withSegmentLanguage(seg.lang, () => {
+        if (seg.runs && drawStyledWordPx(ctx, seg.text, x, baseline, font, size, segColor, wordParts(seg, font, segColor, ctx, (bold, italic) => ({ font: fontCache.get(pickFont(bold, italic, fonts)) ?? undefined, color: segColor })), { direction })) {
+          // A word set in several styles, shaped whole.
+        } else if (directed && (seg.rtl || needsComplexShaping(seg.text)) && paintInScript(ctx, seg.scriptContext, () => drawShapedTextPx(ctx, seg.text, x, baseline, font, size, segColor, { direction }))) {
+          // One run in its direction, shaped by HarfBuzz; a word with no
+          // letter in the script the layout measured it in (#725).
+        } else if (!composed) {
+          paintInScript(ctx, seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline, font, size, segColor));
+        } else {
+          // A justified CJK line spreads its characters per segment.
+          // A compressed CJK mark advances to its box's end (see blockRender).
+          const markSpacing = compressedMarkSpacingPx(font, seg, size);
+          if (markSpacing !== undefined) setTrackingPx(ctx, markSpacing);
+          else if (seg.tracking !== undefined) setTrackingPx(ctx, (tracking + seg.tracking));
+          const stretch = inkScaleOperators(seg.inkScale);
+          ctx.page.pushOperators(...stretch.before);
+          drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), line.baseline + (seg.baselineShift ?? 0), font, size, segColor);
+          ctx.page.pushOperators(...stretch.after);
+          if (markSpacing !== undefined || seg.tracking !== undefined) setTrackingPx(ctx, tracking);
+          if (seg.ruby) {
+            if (tracking !== 0) setTrackingPx(ctx, 0);
+            paintRuby(ctx, seg.ruby, x, line.baseline, segColor, fontCache, baseFont, rubyElem);
+            if (tracking !== 0) setTrackingPx(ctx, tracking);
+          }
+          if (seg.kunten) {
+            // Kanbun marks (#430), with the character's text.
+            if (tracking !== 0) setTrackingPx(ctx, 0);
+            paintKunten(ctx, seg.kunten, x, line.baseline, segColor, fontCache, baseFont, holder);
+            if (tracking !== 0) setTrackingPx(ctx, tracking);
+          }
         }
-        if (seg.kunten) {
-          // Kanbun marks (#430), with the character's text.
-          if (tracking !== 0) setTrackingPx(ctx, 0);
-          paintKunten(ctx, seg.kunten, x, line.baseline, segColor, fontCache, baseFont, holder);
-          if (tracking !== 0) setTrackingPx(ctx, tracking);
-        }
-      }
+      });
       const ref = refId !== undefined ? refRun.leave(seg, segs[i + 1], refId, segs[i + 1] ? resolveRefId(segs[i + 1]!) : undefined) : undefined;
       if (ref && linkRegistry) {
         const { scale, pageHeightPt } = ctx;

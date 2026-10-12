@@ -22,7 +22,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
-import { openTypeLanguageOf, shapingLanguage, withShapingLanguage } from '../shapingLanguage';
+import { shapesSegmentLanguages, withSegmentLanguage } from '../shapingLanguage';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
 export interface ResourceRenderContext {
@@ -171,9 +171,11 @@ function paintComposedText(
  * composed line holding Japanese text (#427).
  *
  * A segment in a language of its own (`VDTLineSegment.lang`) is shaped in
- * that language's OpenType language system (`shapingLanguage.ts`): a
+ * that language, as it was measured (`shapingLanguage.ts`, #764): a
  * Japanese word in a Chinese book takes the Japanese forms of a pan-CJK
- * face, a Chinese quotation in a Japanese book the font's default ones.
+ * face, a Catalan name in an English one its `l·l`. In a document that
+ * keeps the host's language only Japanese has forms of its own, and a
+ * word HarfBuzz shapes is told no language, as before.
  *
  * A word set in several styles (`VDTLineSegment.runs`, a bold letter in an
  * Arabic word) is shaped whole and each glyph painted in its run's style
@@ -353,7 +355,7 @@ function renderSegments(
     // A word with no letter is shaped in the script the layout measured it
     // in (`scriptContext`, #725), by HarfBuzz or by fontkit.
     const shaped = !seg.sideMarker && (seg.runs !== undefined || (directed && (seg.rtl || needsComplexShaping(seg.text))))
-      && paintInScript(ctx, seg.scriptContext, () => paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line)));
+      && withSegmentLanguage(seg.lang, () => paintInScript(ctx, seg.scriptContext, () => paintShapedSegment(ctx, seg, x, baseline + (seg.baselineShift ?? 0), font, size, color, block, fontCache, actualText, kashidaOf(seg, line))));
     if (seg.sideMarker) {
       // Its run, not its text, with no character spacing.
       if (tracking !== 0) setTrackingPx(ctx, 0);
@@ -362,10 +364,10 @@ function renderSegments(
     } else if (shaped) {
       // Painted by HarfBuzz.
     } else {
-      withShapingLanguage(seg.lang === undefined ? shapingLanguage() : openTypeLanguageOf(seg.lang), () => {
+      withSegmentLanguage(seg.lang, () => {
         if (!composed) paintInScript(ctx, seg.scriptContext, () => drawTextPx(ctx, seg.text, x, baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText));
         else paintComposedText(ctx, seg, x, baseline, font, size, color, colorHex, actualText, tracking, fontCache, blockFont, rubyElem, holder);
-      });
+      }, true);
     }
     if (seg.pageLink !== undefined && linkRegistry) {
       const { scale, pageHeightPt } = ctx;
@@ -529,11 +531,12 @@ function renderLineText(
 
   // Ragged (left-aligned) rendering — also used for last lines of justified
   // blocks. Segments are needed when any of them styles differently from the
-  // block (bold/italic/math/ref/own font or colour), and on a line of the
-  // CJK composer when one is in a language of its own (the composer names
-  // it in Japanese text only, #427: it is shaped and tagged in it);
-  // otherwise one text object paints the line.
-  const ownLanguage = line.cjkComposed === true && segments !== undefined && segments.some((s) => s.lang !== undefined);
+  // block (bold/italic/math/ref/own font or colour), and when one is in a
+  // language of its own, which it is shaped in (#764; in a document that
+  // keeps the host's language, on a line of the CJK composer only, which
+  // names it in Japanese text, #427); otherwise one text object paints the
+  // line.
+  const ownLanguage = segments !== undefined && (line.cjkComposed === true || shapesSegmentLanguages()) && segments.some((s) => s.lang !== undefined);
   if (segments && (capLead !== undefined || isDirected(line) || ownLanguage || segments.some(composed ? composedSegmentIsStyled : segmentIsStyled))) {
     renderSegments(ctx, segments, lineX, line.baseline, line, block, blockFont, blockSize, blockColor, fontCache, linkRegistry, elem, undefined, tracking, capLead);
     return;

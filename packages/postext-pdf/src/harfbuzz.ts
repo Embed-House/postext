@@ -86,6 +86,7 @@ interface HbExports {
   hb_buffer_get_glyph_infos(buffer: number, length: number): number;
   hb_buffer_get_glyph_positions(buffer: number, length: number): number;
   hb_shape(font: number, buffer: number, features: number, numFeatures: number): void;
+  hb_version_string(): number;
 }
 
 // hb-common.h, hb-buffer.h, hb-blob.h.
@@ -137,6 +138,16 @@ export class HarfBuzz {
     for (let i = 0; i < str.length; i++) u8[ptr + i] = str.charCodeAt(i) & 0x7f;
     u8[ptr + str.length] = 0;
     return ptr;
+  }
+
+  /** The HarfBuzz the binary was built from (`14.5.0`): the table of
+   *  OpenType language tags (`otLanguageData.ts`) is read from one, and a
+   *  test keeps the two the same. */
+  version(): string {
+    const u8 = this.u8;
+    let version = '';
+    for (let at = this.hb.hb_version_string(); u8[at] !== 0; at++) version += String.fromCharCode(u8[at]!);
+    return version;
   }
 
   /**

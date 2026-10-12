@@ -6,13 +6,22 @@ import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
 import { renderToPdf } from '../pdf-backend';
 import { parseFontString } from '../fontString';
-import { openTypeLanguageOf, shapingKey, shapingLanguage, withShapingLanguage } from '../shapingLanguage';
+import { openTypeLanguagesOf } from '../otLanguages';
+import { shapingKey, shapingLanguage, withDocumentLanguage, withShapingLanguage } from '../shapingLanguage';
 
 // Issue #427: Japanese text is shaped in the OpenType language system
 // `JAN `, so the PDF prints the Japanese forms (`locl`) the canvas and the
 // HTML print through `lang`; any other language keeps the font's default
 // forms. Noto Serif JP sets “ ” of Japanese text in their `JAN ` forms
 // (wider, set higher), which tells the two apart here.
+//
+// Since #764 this is how a document that keeps the host's language
+// (`bodyText.shapingLanguage: 'host'`, every configuration stored before
+// `configVersion` 13) is shaped, which these tests now ask for: its PDF is
+// the one it always had. A document shaped in its own language follows
+// the canvas, which sets “ and ” alone in the forms of no language
+// (`shapingLanguage.test.ts`, `shapingLanguageDocument.test.ts`); its ASCII
+// quotes and its Han take the Japanese forms either way.
 
 const JP = new Uint8Array(fs.readFileSync(new URL('./fixtures/cjk/noto-serif-jp-vertical.ttf', import.meta.url)));
 const face = fontkit.create(Buffer.from(JP));
@@ -41,11 +50,11 @@ class StubCtx {
 };
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
-const config = (locale: string, vertical = false): PostextConfig => ({
+const config = (locale: string, vertical = false, shapingLanguage: 'host' | 'document' = 'host'): PostextConfig => ({
   locale,
   page: { width: pt(300), height: pt(420), dpi: 72, margins: { top: pt(40), bottom: pt(40), left: pt(30), right: pt(30) } },
   layout: { layoutType: 'single', ...(vertical ? { writingMode: 'vertical-rl' as const } : {}) },
-  bodyText: { fontFamily: 'Noto Serif JP', fontSize: pt(16), lineHeight: pt(24), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false } },
+  bodyText: { fontFamily: 'Noto Serif JP', fontSize: pt(16), lineHeight: pt(24), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false }, shapingLanguage },
   headings: { fontFamily: 'Noto Serif JP' },
   header: { elements: [] },
   footer: { elements: [] },
@@ -106,24 +115,35 @@ function structElems(pdf: PDFDocument): Array<{ type: string; lang?: string }> {
 }
 
 describe('the shaping language (#427)', () => {
-  it('is JAN for Japanese and the font’s default for every other language', () => {
-    for (const tag of ['ja', 'ja-JP', 'ja-Jpan']) expect(openTypeLanguageOf(tag), tag).toBe('JAN');
-    for (const tag of ['zh-Hans', 'zh-Hant-TW', 'ko', 'en', 'ar', undefined]) expect(openTypeLanguageOf(tag), String(tag)).toBeUndefined();
+  it('is JAN for Japanese, and each other language has its own (#764)', () => {
+    for (const tag of ['ja', 'ja-JP', 'ja-Jpan']) expect(openTypeLanguagesOf(tag), tag).toEqual(['JAN']);
+    for (const tag of ['zh-Hans', 'zh-Hant-TW', 'ko', 'en', 'ar']) expect(openTypeLanguagesOf(tag), tag).not.toContain('JAN');
+    expect(openTypeLanguagesOf(undefined)).toEqual([]);
   });
 
   it('is in force inside withShapingLanguage only, also when it throws, and keys the caches', () => {
     expect(shapingLanguage()).toBeUndefined();
     expect(shapingKey('本')).toBe('本');
-    withShapingLanguage('JAN', () => {
-      expect(shapingLanguage()).toBe('JAN');
+    withShapingLanguage('ja', () => {
+      expect(shapingLanguage()).toBe('ja');
       expect(shapingKey('本')).not.toBe('本');
       withShapingLanguage(undefined, () => expect(shapingLanguage()).toBeUndefined());
-      expect(shapingLanguage()).toBe('JAN');
+      expect(shapingLanguage()).toBe('ja');
     });
-    expect(() => withShapingLanguage('JAN', () => {
+    expect(() => withShapingLanguage('ja', () => {
       throw new Error('x');
     })).toThrow('x');
     expect(shapingLanguage()).toBeUndefined();
+  });
+
+  it('a Japanese document that keeps the host’s language is shaped in JAN by fontkit, and HarfBuzz is told none', () => {
+    withDocumentLanguage(undefined, 'ja', () => {
+      expect(shapingLanguage()).toBeUndefined();
+      expect(shapingKey('本')).not.toBe('本');
+      expect(shapingKey('本')).not.toBe(withDocumentLanguage('ja', 'ja', () => shapingKey('本')));
+    });
+    // Any other one in no language at all.
+    withDocumentLanguage(undefined, 'zh-Hans', () => expect(shapingKey('本')).toBe('本'));
   });
 });
 

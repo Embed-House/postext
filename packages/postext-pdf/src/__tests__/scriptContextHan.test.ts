@@ -10,7 +10,7 @@ import type { PostextConfig, VDTDocument, VDTLineSegment } from 'postext';
 import { renderToPdf } from '../pdf-backend';
 import { parseFontString } from '../fontString';
 import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingScript } from '../shapingLanguage';
+import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingLanguage, withShapingScript } from '../shapingLanguage';
 import { textAdvancePx } from '../pdf-backend/primitives';
 
 // #725, in a Chinese face. Noto Serif SC draws its digits and its ellipsis
@@ -30,17 +30,23 @@ const EM_DASH = '\u2014';
 /** Measures as a browser does: each word of the text shaped in one run,
  *  in the script of its first character that has one; a word with no
  *  letter beside its mark is then shaped in the mark's script, and alone
- *  in the font's default forms (as Chrome 131's canvas). */
+ *  in the font's default forms (as Chrome 131's canvas). The language the
+ *  engine sets on the context (`lang`, #764) is the one it shapes in, and
+ *  a Han character is shaped apart from what stands beside it, as Chrome
+ *  154's canvas does: in Chinese, `——` beside 一 keeps its default form
+ *  (1.69 em), which the Chinese one of a Han run (2 em) would replace. */
 class HarfBuzzCtx {
   font = '';
   direction = 'ltr';
   letterSpacing = '0px';
+  lang = 'inherit';
   measureText(s: string): { width: number } {
     const size = parseFontString(this.font)?.sizePx ?? 16;
+    const language = this.lang === 'inherit' ? undefined : this.lang;
     let advance = 0;
-    for (const word of s.split(/( )/)) {
+    for (const word of s.split(/( |\p{Script=Han})/u)) {
       if (word === '') continue;
-      const run = shapeRun(SONG, word, { direction: 'ltr' });
+      const run = shapeRun(SONG, word, { direction: 'ltr', ...(language ? { language } : {}) });
       advance += run ? run.glyphs.reduce((sum, g) => sum + g.xAdvance, 0) / run.upem : word.length * 0.5;
     }
     return { width: advance * size };
@@ -138,11 +144,17 @@ describe('a Latin sentence of a Chinese document (#725)', () => {
     const em = SIZE / 1000;
     const widths = Object.fromEntries(segmentsOf(doc).filter((s) => s.scriptContext).map((s) => [s.text, Math.round(s.width / em)]));
     expect(widths[`${ELLIPSIS}${ELLIPSIS}`]).toBe(2000);
-    expect(widths['2001']).toBe(2200);
-    // The PDF's advance in the segment's script is the measured width.
+    // The year is Latin text in Chinese (#764): the face keeps its own
+    // digits there, and sets the proportional ones in any other language.
+    expect(widths['2001']).toBe(2143);
+    // The PDF's advance in the segment's script and the document's
+    // language is the measured width.
     for (const seg of segmentsOf(doc).filter((s) => s.scriptContext)) {
-      expect(withShapingScript(seg.scriptContext, () => textAdvancePx(song, seg.text, SIZE).advance), seg.text).toBeCloseTo(seg.width, 3);
+      expect(withShapingLanguage('zh-Hans', () => withShapingScript(seg.scriptContext, () => textAdvancePx(song, seg.text, SIZE).advance)), seg.text).toBeCloseTo(seg.width, 3);
     }
+    const english = segmentsOf(buildDocument({ markdown: NOTE }, config({ locale: 'en' }))).find((s) => s.text === '2001')!;
+    expect(Math.round(english.width / em)).toBe(2200);
+    expect(withShapingLanguage('en', () => withShapingScript('Latn', () => textAdvancePx(song, '2001', SIZE).advance))).toBeCloseTo(english.width, 3);
     // In an English document the ellipsis is the sentence's: Latin.
     expect(marked(buildDocument({ markdown: NOTE }, config({ locale: 'en' })))).toEqual([[`${ELLIPSIS}${ELLIPSIS}`, 'Latn'], ['2001', 'Latn'], [`${EM_DASH}${EM_DASH}`, 'Latn']]);
   });

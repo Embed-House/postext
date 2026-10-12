@@ -13,10 +13,12 @@ const SONG = fileURLToPath(new URL('../../../postext-pdf/src/__tests__/fixtures/
 
 describe('the language of the text on the command line (#764)', () => {
   it('a book is laid out with the host\'s language, whatever it asks for', () => {
-    expect(shapedBySkia({ locale: 'ca' })).toEqual({ locale: 'ca', bodyText: { shapingLanguage: 'host' } });
-    expect(shapedBySkia({ bodyText: { fontFamily: 'Serif', shapingLanguage: 'document' } })).toEqual({ bodyText: { fontFamily: 'Serif', shapingLanguage: 'host' } });
+    const catalan: { locale: string; bodyText?: object } = { locale: 'ca' };
+    expect(shapedBySkia(catalan)).toEqual({ locale: 'ca', bodyText: { shapingLanguage: 'host' } });
+    const named: { bodyText?: object } = { bodyText: { fontFamily: 'Serif', shapingLanguage: 'document' } };
+    expect(shapedBySkia(named)).toEqual({ bodyText: { fontFamily: 'Serif', shapingLanguage: 'host' } });
     // The book's own configuration is left as it was read.
-    const config = { bodyText: { fontFamily: 'Serif' } };
+    const config: { bodyText?: object } = { bodyText: { fontFamily: 'Serif' } };
     shapedBySkia(config);
     expect(config).toEqual({ bodyText: { fontFamily: 'Serif' } });
   });

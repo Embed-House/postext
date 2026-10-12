@@ -552,7 +552,7 @@ export function showTextShaped(font: PDFFont, text: string): PDFOperator {
     cache = new Map();
     showByFont.set(font, cache);
   }
-  // Text shaped in another language system is another show (`JAN `).
+  // Text shaped in another language or script is another show.
   const key = shapingKey(text);
   const hit = cache.get(key);
   if (hit) return hit;

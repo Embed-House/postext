@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
 import { runPagePrintPass } from '../print/printPass';
 import { writePdfX } from '../print/pdfx';
-import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, computePageTextExtent, dimensionToPx, pageColumnRule, verticalFlowOf } from 'postext';
+import { canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, computePageTextExtent, dimensionToPx, pageColumnRule, shapingLanguageOf, verticalFlowOf } from 'postext';
 import { FontCache, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
 import {
   type PageCtx,
@@ -54,7 +54,7 @@ import {
 import { anchorDestination, LinkRegistry } from './links';
 import { StructTree, tagArtifact, type StructElem } from './tagging';
 import { StructureFlow } from './structureFlow';
-import { openTypeLanguageOf, withShapingLanguage } from '../shapingLanguage';
+import { withDocumentLanguage } from '../shapingLanguage';
 
 export interface RenderToPdfOptions {
   fontProvider: PdfFontProvider;
@@ -390,11 +390,14 @@ function openerTextElem(page: VDTPage, structure: StructureFlow): () => StructEl
   };
 }
 
-/** Paint one page, its text shaped in the language system of its
- *  document's language (`shapingLanguage.ts`: `JAN ` for Japanese, the
- *  font's default for any other). */
+/** Paint one page, its text shaped in its document's language, the one
+ *  the layout measured it in (`shapingLanguage.ts`, #764). A document that
+ *  keeps the host's language (`bodyText.shapingLanguage: 'host'`) is
+ *  shaped as it always was: `JAN ` for Japanese, the font's default for
+ *  any other. */
 function renderPage(...args: Parameters<typeof paintPage>): void {
-  withShapingLanguage(openTypeLanguageOf(languageTag(args[2].config)), () => paintPage(...args));
+  const config = args[2].config;
+  withDocumentLanguage(shapingLanguageOf(config), languageTag(config), () => paintPage(...args));
 }
 
 function paintPage(

@@ -41,7 +41,7 @@ import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNam
 import { lineRuns, resolveParagraph } from 'postext';
 import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
-import { shapingScript } from '../shapingLanguage';
+import { shapingLanguage, shapingScriptOf } from '../shapingLanguage';
 import { toUnicodeCmap } from '../fontCache';
 import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives';
 
@@ -166,14 +166,22 @@ function cached<T>(byFont: WeakMap<PDFFont, Map<string, T>>, font: PDFFont, key:
  * bytes to shape from (a standard font) or HarfBuzz is not loaded.
  */
 function shapingOf(font: PDFFont, text: string, direction: 'ltr' | 'rtl', language: string | undefined): Shaping | null {
-  return cached(shapingsByFont, font, `${direction}|${language ?? ''}|${scriptKey()}${text}`, () => buildShaping(font, text, direction, language));
+  return cached(shapingsByFont, font, `${direction}|${language ?? ''}|${scriptKey(text)}${text}`, () => buildShaping(font, text, direction, language));
 }
 
-/** The script in force (#725, `withShapingScript`) in a cache key: empty
- *  with none, so every other key is unchanged. */
-function scriptKey(): string {
-  const script = shapingScript();
+/** The script `text` is shaped in (`shapingScriptOf`: the one in force,
+ *  #725, or Latin for text the canvas shaped as Latin, #764) in a cache
+ *  key: empty with none, so every other key is unchanged. */
+function scriptKey(text: string): string {
+  const script = shapingScriptOf(text);
   return script === undefined ? '' : `${script}\u0001`;
+}
+
+/** The language a run is shaped in: the one its caller names, else the
+ *  one in force (the document's, a segment's own; #764), none when that
+ *  is no language. */
+function languageOf(named: string | undefined): string | undefined {
+  return named ?? (shapingLanguage() || undefined);
 }
 
 /**
@@ -195,7 +203,7 @@ function shapedShow(
   from?: number,
   to?: number,
 ): ShapedShow | null {
-  const key = `${direction}|${language ?? ''}|${hideTatweel}|${from ?? ''}|${to ?? ''}|${scriptKey()}${text}`;
+  const key = `${direction}|${language ?? ''}|${hideTatweel}|${from ?? ''}|${to ?? ''}|${scriptKey(text)}${text}`;
   return cached(showsByFont, font, key, () => {
     const shaping = shapingOf(font, text, direction, language);
     return shaping ? encodeStretch(font, shaping, from ?? 0, to ?? shaping.run.glyphs.length, hideTatweel) : null;
@@ -264,8 +272,9 @@ function buildShaping(font: PDFFont, text: string, direction: 'ltr' | 'rtl', lan
   const embedder = embedderOf(font);
   if (!embedder) return null;
   // A word with no letter is shaped in the script the layout measured it
-  // in (#725); any other text in the script HarfBuzz reads from it.
-  const script = shapingScript();
+  // in (#725), text the canvas shaped as Latin in the Latin script (#764);
+  // any other text in the script HarfBuzz reads from it.
+  const script = shapingScriptOf(text);
   const run = shapeRun(embedder.fontData!, text, { direction, language, ...(script ? { script } : {}), features: shapeFeatures(embedder.fontFeatures) });
   if (!run) return null;
   noteMissingGlyphs(font, text);
@@ -575,6 +584,7 @@ function layoutShapedText(
   if (!complexShaperReady()) return null;
   const shows: TextShow[] = [];
   const state = { rise: 0 };
+  const language = languageOf(options.language);
   let advance = 0;
   let glyphs = 0;
   for (const run of runsOf(text, options)) {
@@ -582,7 +592,7 @@ function layoutShapedText(
     // The files of a right-to-left run follow each other leftwards.
     if (run.rtl) files.reverse();
     for (const { font: file, text: part } of files) {
-      const shown = shapedShow(file, part, run.rtl ? 'rtl' : 'ltr', options.language, tatweelsToHide(options.hideTatweel));
+      const shown = shapedShow(file, part, run.rtl ? 'rtl' : 'ltr', language, tatweelsToHide(options.hideTatweel));
       if (!shown) {
         // A file HarfBuzz cannot read (a standard font): fontkit's glyphs.
         if (state.rise !== 0) shows.push({ font: file, op: setTextRise(0) });
@@ -711,7 +721,8 @@ export function drawStyledWordPx(
   const direction = options.direction ?? 'ltr';
   const file = singleFile(font, text, direction === 'rtl');
   if (!file) return false;
-  const base = shapingOf(file, text, direction, options.language);
+  const language = languageOf(options.language);
+  const base = shapingOf(file, text, direction, language);
   if (!base) return false;
   const hide = tatweelsToHide(options.hideTatweel);
   const sizePt = sizePx * ctx.scale;
@@ -736,7 +747,7 @@ export function drawStyledWordPx(
     if (other && other !== file && width > 0) {
       // The other face's glyphs of the same characters, in its own shaping
       // of the whole word.
-      const shaping = shapingOf(other, text, direction, options.language);
+      const shaping = shapingOf(other, text, direction, language);
       const owners = new Set(base.owner.slice(a, b));
       let from = -1;
       let to = -1;
@@ -747,14 +758,14 @@ export function drawStyledWordPx(
       });
       if (shaping && from >= 0) {
         const otherWidth = shaping.pen[to]! - shaping.pen[from]!;
-        shown = otherWidth > 0 ? shapedShow(other, text, direction, options.language, hide, from, to) : null;
+        shown = otherWidth > 0 ? shapedShow(other, text, direction, language, hide, from, to) : null;
         if (shown) {
           scale = width / otherWidth;
           showFile = other;
         }
       }
     }
-    shown ??= shapedShow(file, text, direction, options.language, hide, a, b);
+    shown ??= shapedShow(file, text, direction, language, hide, a, b);
     if (!shown) return false;
     const partColor = part?.color ?? color;
     if (partColor !== fill) {
