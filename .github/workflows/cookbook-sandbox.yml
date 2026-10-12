@@ -44,26 +44,39 @@ jobs:
         id: week
         run: echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
 
+      # The newest cache of the week, whatever it holds: a key is written
+      # once, so each run that fetched something saves under a key of its own
+      # (below) and the next one starts from it.
       - uses: actions/cache/restore@v4
         id: net
         with:
           path: apps/web/.cache/cookbook-net
-          key: cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}
+          key: cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}-
           restore-keys: |
+            cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}-
             cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: What the cache holds before the run
+        id: before
+        run: echo "files=$(find apps/web/.cache/cookbook-net -type f 2>/dev/null | sort | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
 
       - name: pnpm cookbook sandbox
         env:
           COOKBOOK_CHROME: /usr/bin/google-chrome
         run: pnpm cookbook sandbox --report "$RUNNER_TEMP/cookbook-sandbox.json"
 
-      # Kept when the check fails too: the next run starts from what this
-      # one fetched.
+      # Kept when the check fails too, and only when this run fetched a
+      # file the cache did not hold: the next run starts from it.
+      - name: What the cache holds after the run
+        id: after
+        if: always()
+        run: echo "files=$(find apps/web/.cache/cookbook-net -type f 2>/dev/null | sort | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/cache/save@v4
-        if: always() && steps.net.outputs.cache-hit != 'true'
+        if: always() && steps.after.outputs.files != steps.before.outputs.files
         with:
           path: apps/web/.cache/cookbook-net
-          key: ${{ steps.net.outputs.cache-primary-key }}
+          key: cookbook-net-${{ hashFiles('pnpm-lock.yaml') }}-${{ steps.week.outputs.week }}-${{ steps.after.outputs.files }}
 
       - uses: actions/upload-artifact@v4
         if: always()
