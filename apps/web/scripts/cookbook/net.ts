@@ -12,6 +12,12 @@
  * reaches fonts.googleapis.com, fonts.gstatic.com and Fontsource's own
  * files on jsDelivr through the cache: where the Sandbox takes its faces.
  *
+ * A Fontsource file asked for by a range (`@fontsource/noto-sans-tc@5/…`,
+ * as the kit and the Sandbox ask) is fetched from one exact version of the
+ * package, the same for every file of the family (`pinnedFontsourceUrl`,
+ * #746): the range is a moving name, answered per file by whatever version
+ * each cache holds.
+ *
  * Interception disables Chrome's own cache, so the allowed hosts are fetched
  * by Node and kept in apps/web/.cache/cookbook-net/ (gitignored), keyed by
  * URL: a second capture of the same engine runs offline. `--refresh-net`
@@ -184,6 +190,55 @@ export function cachedFetch(url: string, { refresh = false, userAgent }: { refre
   return job;
 }
 
+// ─── One version of a Fontsource package ────────────────────────────────────
+
+/** `…/npm/@fontsource/<id>@<version>/<path>`: [whole, head, id, version, path]. */
+const FONTSOURCE_URL = /^(https:\/\/cdn\.jsdelivr\.net\/npm\/@fontsource\/([a-z0-9-]+)@)([^/]+)(\/.*)$/;
+
+/** The package and the range of a Fontsource URL asked for by a range
+ *  (`@5`, `@5.3`, `@latest`); null for any other URL, and for one that
+ *  names an exact version already. */
+export function fontsourceRange(url: string): { id: string; range: string } | null {
+  const m = FONTSOURCE_URL.exec(url);
+  if (!m || /^\d+\.\d+\.\d+/.test(m[3]!)) return null;
+  return { id: m[2]!, range: m[3]! };
+}
+
+/** `url` with its range replaced by `version`. */
+export function withFontsourceVersion(url: string, version: string): string {
+  const m = FONTSOURCE_URL.exec(url);
+  return m ? `${m[1]}${version}${m[4]}` : url;
+}
+
+/**
+ * The URL a Fontsource request is answered from: the same path in the one
+ * exact version its range names now (jsDelivr's resolver, asked once per
+ * package and kept in the disk cache until `--refresh-net`).
+ *
+ * `@fontsource/<id>@5` is a moving name. jsDelivr resolves it for each URL
+ * on its own and keeps each answer for days, and the disk cache here keeps
+ * each URL for ever: after a release of a package a family's style sheet
+ * and its files come from two or three versions. @fontsource/noto-sans-tc
+ * 5.3.1 (2026-10-11) cut the family anew, 102 of 105 files with another
+ * `unicode-range`: a 5.3.0 style sheet beside 5.3.1 files sent 27
+ * characters of a heading to a font of the system, with every check green
+ * (the lines are as long in any CJK face) until C36. Asked for by its
+ * version, a file never changes.
+ *
+ * When the resolver does not answer, the URL is fetched as it was asked.
+ */
+export async function pinnedFontsourceUrl(url: string, options: { refresh?: boolean; userAgent: string }): Promise<string> {
+  const asked = fontsourceRange(url);
+  if (!asked) return url;
+  try {
+    const res = await cachedFetch(`https://data.jsdelivr.com/v1/packages/npm/@fontsource/${asked.id}/resolved?specifier=${encodeURIComponent(asked.range)}`, options);
+    const version = res.status < 400 ? (JSON.parse(res.body.toString("utf-8")) as { version?: unknown }).version : null;
+    return typeof version === "string" && /^\d+\.\d+\.\d+/.test(version) ? withFontsourceVersion(url, version) : url;
+  } catch {
+    return url;
+  }
+}
+
 export interface NetIssue {
   severity: "fail" | "warn";
   detail: string;
@@ -255,7 +310,8 @@ export function interceptor(opts: InterceptorOptions): (request: HTTPRequest) =>
       }
       let res: Cached;
       try {
-        res = await cachedFetch(url, { refresh: opts.refresh, userAgent: opts.userAgent });
+        const from = await pinnedFontsourceUrl(url, { refresh: opts.refresh, userAgent: opts.userAgent });
+        res = await cachedFetch(from, { refresh: opts.refresh, userAgent: opts.userAgent });
       } catch (error) {
         opts.onIssue({ severity: "fail", url, detail: `network error: ${(error as Error).message} (${url})` });
         await request.abort("failed");
