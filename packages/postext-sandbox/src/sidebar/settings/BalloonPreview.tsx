@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ColorPaletteEntry, ColorValue, ResolvedBalloonStyleConfig, ResolvedLetteringConfig } from 'postext';
 import { resolveColorValue } from 'postext';
 import { loadFont } from '../../controls/fontLoader';
+import { measureInLanguage } from '../../controls/measureLanguage';
 import { balloonPreviewGeometry, dimensionToPx, estimateTextWidth } from './balloonPreviewGeometry';
 
 /** Preview px per point: the lettering size (7.5 pt by default) reads at
@@ -14,17 +15,18 @@ const MARGIN = 6;
 
 const BLACK: ColorValue = { hex: '#000000', model: 'hex' };
 
-let measureCanvas: HTMLCanvasElement | null = null;
-
 /** The widest of `lines` set in `font` (a CSS font shorthand), measured in
- *  a canvas; undefined where there is no canvas (server rendering, tests). */
-function measureLines(lines: readonly string[], font: string, tracking: number): number | undefined {
-  if (typeof document === 'undefined') return undefined;
-  measureCanvas ??= document.createElement('canvas');
-  const ctx = measureCanvas.getContext('2d');
-  if (!ctx) return undefined;
-  ctx.font = font;
-  return Math.max(...lines.map((l) => ctx.measureText(l).width + tracking * Math.max(0, [...l].length - 1)));
+ *  a canvas, in `lang` when the sample is drawn in a language of its own
+ *  (undefined: the host's); undefined where there is no canvas (server
+ *  rendering, tests). */
+export function measureLines(lines: readonly string[], font: string, tracking: number, lang?: string): number | undefined {
+  let widest: number | undefined;
+  for (const line of lines) {
+    const width = measureInLanguage(lang, line, font);
+    if (width === null) return undefined;
+    widest = Math.max(widest ?? 0, width + tracking * Math.max(0, [...line].length - 1));
+  }
+  return widest;
 }
 
 interface BalloonPreviewProps {
@@ -35,12 +37,17 @@ interface BalloonPreviewProps {
   text: string;
   /** Accessible name of the drawing. */
   label: string;
+  /** The language the document's lettering is measured in and painted in
+   *  when it is its own (`configShapingLanguage`): the sample is measured
+   *  and drawn in it, with the glyphs the face has for that language, as
+   *  on the page (#770). Absent: the host's, the interface's. */
+  lang?: string;
 }
 
 /** A small drawing of a balloon style: its outline, tail and lettering
  *  around a sample text, on a patch of paper (the look of print, whatever
  *  the interface theme). A sketch, not the lettering engine. */
-export function BalloonPreview({ style, lettering, palette, text, label }: BalloonPreviewProps) {
+export function BalloonPreview({ style, lettering, palette, text, label, lang }: BalloonPreviewProps) {
   const family = style.fontFamily ?? lettering.fontFamily;
   const bold = style.bold ?? lettering.bold;
   const italic = style.italic ?? lettering.italic;
@@ -65,10 +72,10 @@ export function BalloonPreview({ style, lettering, palette, text, label }: Ballo
   const cssFont = `${italic ? 'italic ' : ''}${bold ? 700 : 400} ${fontPx}px "${family}", sans-serif`;
   const sample = lines.join('\n');
   const measured = useMemo(
-    () => measureLines(sample.split('\n'), cssFont, tracking),
+    () => measureLines(sample.split('\n'), cssFont, tracking, lang),
     // fontEpoch: the face finished loading.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sample, cssFont, tracking, fontEpoch],
+    [sample, cssFont, tracking, lang, fontEpoch],
   );
   const textWidth = measured ?? Math.max(...lines.map((l) => estimateTextWidth(l, fontPx, bold)));
   const textHeight = lineHeight * lines.length;
@@ -145,6 +152,7 @@ export function BalloonPreview({ style, lettering, palette, text, label }: Ballo
             fontWeight={bold ? 700 : 400}
             fontStyle={italic ? 'italic' : 'normal'}
             letterSpacing={tracking || undefined}
+            lang={lang}
             direction="ltr"
             style={{ unicodeBidi: 'plaintext' }}
           >

@@ -45,6 +45,7 @@ import {
   composePageBackground,
 } from './constants';
 import { buildHtmlConfigOverride, hasComicPages, measureColumnWidthPx, partTitlesOf } from './configOverride';
+import { configShapingLanguage } from '../../controls/measureLanguage';
 import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry';
 import { cssEscape, measureBodyBaselineOffset } from './baseline';
 import { htmlVideoPlayers, htmlVideoState, playHtmlVideo } from './videos';
@@ -371,6 +372,7 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       bodyFontFamily,
       scaledBodyPx,
       bodyFontWeight,
+      configShapingLanguage(currentConfig, currentLocale),
     );
 
     // Decide page geometry. Single-scroll mode flattens to one continuous

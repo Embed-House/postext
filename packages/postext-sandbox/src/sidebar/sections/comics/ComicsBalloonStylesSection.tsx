@@ -9,6 +9,7 @@ import { Button } from '../../../ui';
 import type { SandboxLabels } from '../../../types/labels';
 import { SearchScope } from '../../search/SearchScope';
 import { BalloonPreview } from '../../settings/BalloonPreview';
+import { configShapingLanguage } from '../../../controls/measureLanguage';
 import {
   isBuiltInBalloonStyle,
   nextFreeId,
@@ -63,6 +64,9 @@ function BalloonStyleCard({ style, own, otherIds, onChange, onResetField, onRena
   const labels = useSandboxLabels();
   const { resolved } = useComics();
   const palette = useSandboxSelector((s) => s.config.colorPalette);
+  // The sample is measured and drawn in the language the page paints the
+  // lettering in (#770).
+  const shapedIn = useSandboxSelector((s) => configShapingLanguage(s.config, s.locale));
   const builtIn = isBuiltInBalloonStyle(style.id);
   const builtInName = builtInBalloonName(style.id, labels);
   const title = own?.name || builtInName || style.name || style.id;
@@ -111,6 +115,7 @@ function BalloonStyleCard({ style, own, otherIds, onChange, onResetField, onRena
               palette={palette}
               text={sample}
               label={labels.comicsBalloonPreviewAria.replace('__style__', title)}
+              lang={shapedIn}
             />
           }
         />

@@ -16,36 +16,28 @@
  * about its box's centre.
  *
  * The block keeps a line's advance, not each glyph's: within a run the
- * characters share its advance as the font measures them (a canvas 2D
- * context in the browser), or evenly where nothing can measure (tests).
+ * characters share its advance as the font measures them in the language
+ * the lettering was measured in and is painted in (a canvas 2D context of
+ * that language in the browser, #770), or evenly where nothing can measure
+ * (tests).
  *
  * Pure apart from the default measurer: sheet px, no DOM.
  */
 
 import type { VDTComicBalloon, VDTDesignTextBlock, VDTPoint } from 'postext';
+import { measureInLanguage } from '../../controls/measureLanguage';
 import { toBalloonFrame } from './balloonDrag';
 
 /** The advance of a text in a CSS font (px), or null when nothing can
  *  measure it (the characters then share a run's advance evenly). */
 export type TextMeasure = (text: string, font: string) => number | null;
 
-let measureCtx: CanvasRenderingContext2D | null | undefined;
-
-/** The browser's measure: a canvas 2D context, null outside a browser
- *  (jsdom has no canvas). */
-export const canvasMeasure: TextMeasure = (text, font) => {
-  if (measureCtx === undefined) {
-    try {
-      measureCtx = typeof document === 'undefined' ? null : document.createElement('canvas').getContext('2d');
-    } catch {
-      measureCtx = null;
-    }
-  }
-  if (!measureCtx) return null;
-  measureCtx.font = font;
-  const w = measureCtx.measureText(text).width;
-  return Number.isFinite(w) ? w : null;
-};
+/** The browser's measure in `lang`, the language the document's text was
+ *  measured in (`documentShapingLanguage`; undefined: the host's): a word
+ *  of the lettering has the widths the layout gave it, so a character's
+ *  share of its run is where the page paints it. Null outside a browser
+ *  (node has no canvas). */
+export const measureIn = (lang: string | undefined): TextMeasure => (text, font) => measureInLanguage(lang, text, font);
 
 /** One printed character of a line: its index in the block's `sourceText`,
  *  where it lies along the line (`a` to `b`, from the line's start: left
@@ -210,7 +202,11 @@ function unturned(balloon: VDTComicBalloon, x: number, y: number): VDTPoint {
 }
 
 export interface BalloonTextOptions {
+  /** How a text is measured; by default the browser's measure in `lang`. */
   measure?: TextMeasure;
+  /** The language the lettering was measured in and is painted in
+   *  (`documentShapingLanguage` of its document). Absent: the host's. */
+  lang?: string;
   /** Room past a line's ends that still counts as its glyphs (sheet px). */
   slop?: number;
 }
@@ -222,7 +218,7 @@ export interface BalloonTextOptions {
  * tail) or its words do not map back to the script.
  */
 export function balloonTextAt(balloon: VDTComicBalloon, x: number, y: number, opts: BalloonTextOptions = {}): number | null {
-  const measure = opts.measure ?? canvasMeasure;
+  const measure = opts.measure ?? measureIn(opts.lang);
   const slop = opts.slop ?? 0;
   const p = unturned(balloon, x, y);
   for (const line of lineFrames(balloon, measure)) {
@@ -242,7 +238,7 @@ export function balloonTextAt(balloon: VDTComicBalloon, x: number, y: number, op
  * back to the script.
  */
 export function balloonTextNearest(balloon: VDTComicBalloon, x: number, y: number, opts: BalloonTextOptions = {}): number | null {
-  const measure = opts.measure ?? canvasMeasure;
+  const measure = opts.measure ?? measureIn(opts.lang);
   const p = unturned(balloon, x, y);
   let best: { line: LineFrame; s: number; d: number } | null = null;
   for (const line of lineFrames(balloon, measure)) {

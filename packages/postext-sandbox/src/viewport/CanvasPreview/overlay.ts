@@ -6,6 +6,7 @@ import { svgSourceOffsetToCaret, svgSourceRangeToBoxes, type SvgCharBox } from '
 import { SVG_NS } from './dom';
 import { plainRangeInLine, sourceToPlainIndex, xForPlainInLine } from './geometry';
 import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, isHiddenUnderBand } from './bandTitle';
+import { documentShapingLanguage } from '../../controls/measureLanguage';
 import {
   contentOffsetToPlain,
   resolveResourceRun,
@@ -280,13 +281,16 @@ export function drawOverlay(
   // visible caret; when it isn't, the rect is still positioned but kept
   // invisible so callers can scroll it into view without drawing anything.
   const bandTitles = bandTitleBlocks(doc, pageIndex);
+  // A band title's characters are measured here, in the language the
+  // layout measured them in and the page paints them in (#770).
+  const bandLang = documentShapingLanguage(doc);
   const hiddenUnderBand = (b: VDTBlock): boolean => isHiddenUnderBand(b, bandTitles);
   const caretBlock = doc.blocks[caretBlockIdx];
   let cursorPositioned = false;
 
   const bandCaretBlock = bandTitles.find((t) => head >= t.sourceStart! && head <= t.sourceEnd!);
   if (bandCaretBlock) {
-    const boxes = bandLineBoxes(bandCaretBlock);
+    const boxes = bandLineBoxes(bandCaretBlock, bandLang);
     const plainCaret = bandSourceToPlain(bandCaretBlock, head);
     const box = boxes.find((b) => plainCaret >= b.plainStart && plainCaret <= b.plainStart + b.text.length)
       ?? boxes[boxes.length - 1];
@@ -347,7 +351,7 @@ export function drawOverlay(
     if (tEnd <= from || tStart > to) continue;
     const plainFrom = bandSourceToPlain(title, from);
     const plainTo = bandSourceToPlain(title, to);
-    for (const box of bandLineBoxes(title)) {
+    for (const box of bandLineBoxes(title, bandLang)) {
       const lineStart = box.plainStart;
       const lineEnd = box.plainStart + box.text.length;
       const lo = Math.max(plainFrom, lineStart);
