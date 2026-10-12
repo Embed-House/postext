@@ -1809,7 +1809,7 @@ headings: {
 
 ### 任务列表扩展
 
-GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选框字形代替项目符号。以下字段只作用于任务项：
+GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选框代替项目符号。方框由引擎自己绘制：一个方形轮廓，任务完成时加一个勾。它不向任何字体索取字形，所以在每台机器上，在画布、PDF、HTML和EPUB里都一样，辅助技术读出`☐`或`☑`。方框的边长是标记字号（`bulletFontSize`，或该层级的`fontSize`）的0.6 em，这也是它在`gap`之前所占的宽度；标记与正文同字号时，方框立在列表项首行的基线上。线条粗细随标记的`fontWeight`，颜色随标记的`color`。以下字段只作用于任务项：
 
 <table>
   <thead>
@@ -1825,13 +1825,19 @@ GFM任务项（`- [ ] …`、`- [x] …`）按无序列表项渲染，用复选�
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>未完成任务所用的字形。</td>
+      <td>未完成任务的字符。默认字符不作为文字排出：方框由引擎绘制。其他任何字符都按列表的字体作为文字排出，该字体须含有这个字符。</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>已完成任务所用的字形。</td>
+      <td>已完成任务的字符。默认字符同样由引擎绘制，是带勾的方框；其他任何字符都按列表的字体作为文字排出。</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>两个默认字符的排法。<code>'drawn'</code>：方框由引擎绘制。<code>'character'</code>：<code>☐</code>和<code>☑</code>按列表的字体作为文字排出，与postext 1.28及更早版本一样；字体里没有这两个字符时，浏览器改用系统里的某个字体，列表项的文字就从那个字体给出的宽度之后开始。版本13之前保存的配置按<code>'character'</code>读取，所以它的各行留在原处。</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

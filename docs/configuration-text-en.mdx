@@ -1809,7 +1809,7 @@ The `unorderedLists` property controls how bullet lists (`-`, `*`, `+`) and GFM 
 
 ### Task list extensions
 
-GFM task items (`- [ ] …`, `- [x] …`) are rendered as unordered items with a checkbox glyph replacing the bullet. The following fields only apply to task items:
+GFM task items (`- [ ] …`, `- [x] …`) are rendered as unordered items with a checkbox in place of the bullet. The engine draws the box itself, a square outline with a tick when the item is done: no font is asked for it, so it is the same on every machine, on the canvas, in the PDF, in the HTML and in the EPUB, and assistive technology reads `☐` or `☑`. Its side is 0.6 em of the marker's size (`bulletFontSize`, or the level's `fontSize`), and that is the room it takes before the `gap`; at the text's size it stands on the baseline of the item's first line. Its stroke follows the marker's `fontWeight` and its colour the marker's `color`. The following fields only apply to task items:
 
 <table>
   <thead>
@@ -1825,13 +1825,19 @@ GFM task items (`- [ ] …`, `- [x] …`) are rendered as unordered items with a
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>Glyph used for unchecked tasks.</td>
+      <td>Character of an unchecked task. The default is not set as text: the engine draws the box. Any other character is set as text in the list's face, which then has to hold it.</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>Glyph used for completed tasks.</td>
+      <td>Character of a completed task. The default is drawn too, as a box with a tick; any other character is set as text in the list's face.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>How the two default characters are set. <code>'drawn'</code>: the engine draws the box. <code>'character'</code>: <code>☐</code> and <code>☑</code> are text in the list's face, as up to postext 1.28; in a face that lacks them the browser picks a font of the system, and the item's text starts after the width that font gives. A configuration stored before version 13 reads with <code>'character'</code>, so its lines stay where they were.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

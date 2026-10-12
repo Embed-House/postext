@@ -1809,7 +1809,7 @@ La propiedad `unorderedLists` controla cómo se renderizan las listas con viñet
 
 ### Extensiones para listas de tareas
 
-Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como elementos de lista no ordenada reemplazando la viñeta por una casilla. Los siguientes campos solo aplican a las tareas:
+Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como elementos de lista no ordenada con una casilla en lugar de la viñeta. El motor dibuja la casilla él mismo, un cuadrado en contorno con una marca cuando la tarea está hecha: no se pide a ninguna fuente, así que es igual en todas las máquinas, en el canvas, en el PDF, en el HTML y en el EPUB, y las tecnologías de apoyo leen `☐` o `☑`. Su lado mide 0,6 em del tamaño del marcador (`bulletFontSize`, o el `fontSize` del nivel), y ese es el espacio que ocupa antes del `gap`; al tamaño del texto se apoya en la línea base de la primera línea del elemento. Su trazo sigue el `fontWeight` del marcador y su color, el `color` del marcador. Los siguientes campos solo aplican a las tareas:
 
 <table>
   <thead>
@@ -1825,13 +1825,19 @@ Los elementos de tarea GFM (`- [ ] …`, `- [x] …`) se renderizan como element
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>Glifo para tareas no marcadas.</td>
+      <td>Carácter de una tarea no marcada. El predeterminado no se compone como texto: el motor dibuja la casilla. Cualquier otro carácter se compone como texto en la fuente de la lista, que entonces debe contenerlo.</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>Glifo para tareas completadas.</td>
+      <td>Carácter de una tarea completada. El predeterminado también se dibuja, como casilla con marca; cualquier otro carácter se compone como texto en la fuente de la lista.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>Cómo se componen los dos caracteres predeterminados. <code>'drawn'</code>: el motor dibuja la casilla. <code>'character'</code>: <code>☐</code> y <code>☑</code> son texto en la fuente de la lista, como hasta postext 1.28; en una fuente que no los tiene, el navegador elige una fuente del sistema, y el texto del elemento empieza tras el ancho que esa fuente da. Una configuración guardada antes de la versión 13 se lee con <code>'character'</code>, así que sus líneas siguen donde estaban.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>

@@ -931,6 +931,15 @@ marginTop = 1.5em, marginBottom = 1.5em, itemSpacing = 0em, hangingIndent = true
 snapTopToGrid = false  (true: the space above rounds up so the first item sits on the grid)
 levels[]: { level 1–5, bulletChar, fontFamily, fontSize, color, fontWeight, italic, indent, verticalOffset }
 taskCheckboxChar '☐', taskCheckedChar '☑', taskCompletedStrikethrough true, taskCompletedColor?
+taskBox 'drawn' | 'character' = 'drawn'  (≥ the release after 1.28) the default ☐ / ☑ of a task item (`- [ ]`, `- [x]`) is
+        drawn by the engine, not set as text: a square outline (a tick when done), side 0.6 em of the marker size
+        (bulletFontSize / level fontSize), which is the room it takes before `gap`; centred where a bullet is (at
+        the text's size it stands on the baseline); stroke follows the marker fontWeight, colour the marker color.
+        No font is asked for it: same box on every machine, in canvas, PDF, HTML and EPUB; read as ☐ / ☑ by
+        assistive technology (PDF `Lbl` /ActualText, HTML/EPUB role=img). Do not ship a symbol font for it.
+        A character of your own in taskCheckboxChar / taskCheckedChar is still text in the list face (which must hold it).
+        'character' = ≤ 1.28: ☐ / ☑ as text in the list face, as wide as whatever font holds them (a system font
+        when the face lacks them); every preset below configVersion 13 with a task item reads 'character'.
 ```
 orderedLists
 ```
@@ -1797,8 +1806,10 @@ too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter s
 `citations.notes: 'warichu'` (#720), and `cjk.latinSpacingEdge: 'letters'` on a config of the `japan` region whose chapters hold
 kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
 reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
-no letter shaped alone); one stamped 12 (postext 1.28), that of rules 13: `bodyText.shapingLanguage: 'host'` on every such
-config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker). The pins keep what those rules changed, not
+no letter shaped alone); one stamped 12 (postext 1.28), those of rules 13: `bodyText.shapingLanguage: 'host'` on every such
+config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker), and
+`unorderedLists.taskBox: 'character'` when a chapter holds a task item (`- [ ]`, `- [x]`) (#765: its box stays the character
+☐ / ☑ in the list face, the item's text after that character's width). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

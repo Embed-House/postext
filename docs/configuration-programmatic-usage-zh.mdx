@@ -1566,6 +1566,8 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 规则13让文字在任何宿主上都按文档自己的语言成形（#764）。标为`12`的清单（由postext 1.28写出）只得到规则13的固定值，更早的清单也都会得到：只要配置没有写明这项设置，不论章节内容如何，都会在生效的`bodyText`上得到`bodyText.shapingLanguage: 'host'`（`pinLegacyShapingLanguage`）。它的文字按承载排版的页面的语言测量，在工作线程里不带语言，与当初排版时一样。字体在不同语言下给出不同的字形，而读取清单时并不知道这本书加载哪些字体。
 
+规则13还由引擎绘制任务项（`- [ ]`、`- [x]`）的方框：一个方形轮廓，任务完成时带一个勾，在列表项文字之前占有自己的宽度（#765）。标为`12`或更早的清单，只要有章节含有任务项而配置没有写明这项设置，就会在生效的`unorderedLists`上得到`unorderedLists.taskBox: 'character'`（`pinLegacyTaskBox`）。它的方框仍是按列表字体排出的字符`☐`或`☑`，列表项的文字从这个字符的宽度之后开始，与当初排版时一样。这个宽度来自含有该字符的字体，多数书里是系统的某个字体，而读取清单时并不知道它。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

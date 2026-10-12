@@ -1805,7 +1805,7 @@ La propietat `unorderedLists` controla com es renderitzen les llistes amb pics (
 
 ### Extensions per a llistes de tasques
 
-Els elements de tasca GFM (`- [ ] …`, `- [x] …`) es renderitzen com a elements de llista no ordenada substituint el pic per una casella. Els camps següents només s'apliquen a les tasques:
+Els elements de tasca GFM (`- [ ] …`, `- [x] …`) es renderitzen com a elements de llista no ordenada amb una casella en lloc del pic. El motor dibuixa la casella ell mateix, un quadrat en contorn amb una marca quan la tasca està feta: no es demana a cap font, de manera que és igual a totes les màquines, al canvas, al PDF, a l'HTML i a l'EPUB, i les tecnologies de suport llegeixen `☐` o `☑`. El costat fa 0,6 em de la mida del marcador (`bulletFontSize`, o el `fontSize` del nivell), i aquest és l'espai que ocupa abans del `gap`; a la mida del text es recolza sobre la línia de base de la primera línia de l'element. El traç segueix el `fontWeight` del marcador i el color, el `color` del marcador. Els camps següents només s'apliquen a les tasques:
 
 <table>
   <thead>
@@ -1821,13 +1821,19 @@ Els elements de tasca GFM (`- [ ] …`, `- [x] …`) es renderitzen com a elemen
       <td><code>taskCheckboxChar</code></td>
       <td><code>string</code></td>
       <td><code>'☐'</code></td>
-      <td>Glif per a tasques no marcades.</td>
+      <td>Caràcter d'una tasca no marcada. El predeterminat no es compon com a text: el motor dibuixa la casella. Qualsevol altre caràcter es compon com a text en la font de la llista, que aleshores l'ha de contenir.</td>
     </tr>
     <tr>
       <td><code>taskCheckedChar</code></td>
       <td><code>string</code></td>
       <td><code>'☑'</code></td>
-      <td>Glif per a tasques completades.</td>
+      <td>Caràcter d'una tasca completada. El predeterminat també es dibuixa, com a casella amb marca; qualsevol altre caràcter es compon com a text en la font de la llista.</td>
+    </tr>
+    <tr>
+      <td><code>taskBox</code></td>
+      <td><code>'drawn' | 'character'</code></td>
+      <td><code>'drawn'</code></td>
+      <td>Com es componen els dos caràcters predeterminats. <code>'drawn'</code>: el motor dibuixa la casella. <code>'character'</code>: <code>☐</code> i <code>☑</code> són text en la font de la llista, com fins a postext 1.28; en una font que no els té, el navegador tria una font del sistema, i el text de l'element comença després de l'amplada que dona aquesta font. Una configuració desada abans de la versió 13 es llegeix amb <code>'character'</code>, de manera que les seves línies continuen on eren.</td>
     </tr>
     <tr>
       <td><code>taskCompletedStrikethrough</code></td>
