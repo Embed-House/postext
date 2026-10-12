@@ -134,6 +134,12 @@ function writeAtomic(file: string, data: string | Buffer): void {
   fs.renameSync(tmp, file);
 }
 
+/** Whether an answer goes to the disk cache: every one but an error,
+ *  and the 404 of a Fontsource font file. */
+export function keptOnDisk(url: string, status: number): boolean {
+  return status < 400 || (status === 404 && /\/@fontsource\/.+\.woff2$/.test(url));
+}
+
 async function fetchAndStore(url: string, userAgent: string): Promise<Cached> {
   const res = await fetch(url, {
     redirect: "manual",
@@ -146,8 +152,11 @@ async function fetchAndStore(url: string, userAgent: string): Promise<Cached> {
     if (value) headers[name] = value;
   }
   const body = Buffer.from(await res.arrayBuffer());
-  // Errors are not cached: a transient 5xx must not stick.
-  if (res.status < 400) {
+  // Errors are not cached: a transient 5xx must not stick. A font file
+  // Fontsource lists and jsDelivr has not is (#757; Libertinus Sans has no
+  // bold italic, #168): every run would ask the network for it again, and
+  // wait when the answer is slow to come.
+  if (keptOnDisk(url, res.status)) {
     const files = cacheFiles(url);
     writeAtomic(files.body, body);
     writeAtomic(files.meta, JSON.stringify({ url, status: res.status, headers }, null, 1));

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sandboxEntry } from "../../../scripts/cookbook/capture.ts";
-import { routeFor } from "../../../scripts/cookbook/net.ts";
+import { keptOnDisk, routeFor } from "../../../scripts/cookbook/net.ts";
 import { compareEdition, extraWarnings, variableFamilies } from "../../../scripts/cookbook/sandbox.ts";
 import type { SandboxExpected, SandboxRun } from "../../../scripts/cookbook/sandbox.ts";
 import type { RecipeMeta } from "./types.ts";
@@ -172,6 +172,16 @@ describe("the network of the Sandbox check (#736)", () => {
       expect(routeFor(url, "pen"), url).toMatchObject({ kind: "blocked" });
       expect(routeFor(url, "sandbox"), url).toEqual({ kind: "network" });
     }
+  });
+
+  it("keeps on disk the 404 of a font file Fontsource lists and jsDelivr has not, and no other error (#757)", () => {
+    const file = "https://cdn.jsdelivr.net/npm/@fontsource/libertinus-sans@5/files/libertinus-sans-latin-700-italic.woff2";
+    expect(keptOnDisk(file, 200)).toBe(true);
+    // Asked of the network at every run otherwise, and waited for when it is slow to say no.
+    expect(keptOnDisk(file, 404)).toBe(true);
+    expect(keptOnDisk(file, 503)).toBe(false);
+    expect(keptOnDisk("https://api.fontsource.org/v1/fonts/libertinus-sans", 404)).toBe(false);
+    expect(keptOnDisk("https://cdn.jsdelivr.net/npm/@fontsource/libertinus-sans@5/700-italic.css", 404)).toBe(false);
   });
 
   it("keeps every other rule of the capture", () => {
