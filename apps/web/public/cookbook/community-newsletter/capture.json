@@ -3,20 +3,20 @@
   "slug": "community-newsletter",
   "sourceHash": "3deb41f2c823580d7f9ba0332d3b2451b3be609864db6e6d2c628188ed244304",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.838Z",
+  "capturedAt": "2026-10-12T13:19:51.246Z",
   "variants": {
     "en": {
-      "hash8": "bc20340f",
+      "hash8": "8047ff4d",
       "vdtHash": "d5f528c1898961589bbd0d00ab128b8154b465c0",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 28,
-        "buildMs": 70,
-        "totalMs": 990,
+        "importMs": 231,
+        "fontsMs": 35,
+        "buildMs": 68,
+        "totalMs": 957,
         "builds": 1
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81167,
+        "bytes": 81170,
         "folio": "0414c868",
         "chapters": [
           {
@@ -310,23 +310,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "4147b1ab",
+      "hash8": "08ac212b",
       "vdtHash": "a62a7faa8305895a7ad2843b3dab7f88b31d12f8",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 25,
-        "buildMs": 63,
-        "totalMs": 914,
+        "importMs": 170,
+        "fontsMs": 27,
+        "buildMs": 59,
+        "totalMs": 989,
         "builds": 1
       },
       "specimen": {
@@ -399,7 +393,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81776,
+        "bytes": 81779,
         "folio": "0414c868",
         "chapters": [
           {
@@ -620,13 +614,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

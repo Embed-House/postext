@@ -3,20 +3,20 @@
   "slug": "proof-sheet-diagnostics",
   "sourceHash": "092f94861d06b619581da9f453154bb10457be151fa3abce7303accba6a664dd",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.296Z",
+  "capturedAt": "2026-10-12T13:19:52.004Z",
   "variants": {
     "en": {
-      "hash8": "8f251d05",
+      "hash8": "25e90bd7",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 35,
-        "buildMs": 9,
-        "totalMs": 1019,
+        "importMs": 168,
+        "fontsMs": 34,
+        "buildMs": 10,
+        "totalMs": 1008,
         "builds": 2
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 103008,
+        "bytes": 103010,
         "folio": "3db66766",
         "chapters": [
           {
@@ -352,13 +352,13 @@
       }
     },
     "es": {
-      "hash8": "b834a000",
+      "hash8": "8dc0b12e",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 169,
+        "importMs": 176,
         "fontsMs": 32,
-        "buildMs": 15,
-        "totalMs": 949,
+        "buildMs": 14,
+        "totalMs": 979,
         "builds": 2
       },
       "specimen": {
@@ -431,7 +431,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 104011,
+        "bytes": 104014,
         "folio": "3db66766",
         "chapters": [
           {

@@ -3,20 +3,20 @@
   "slug": "code-listings-and-keycaps",
   "sourceHash": "133379e68c11f41bfd82b16599504970a7d7f34b06d08a0bb98f5546c1de3dd3",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.770Z",
+  "capturedAt": "2026-10-12T13:19:51.149Z",
   "variants": {
     "en": {
-      "hash8": "d31454b7",
+      "hash8": "b3085fe5",
       "vdtHash": "8b3311fe4bda801d997d19193889d8a025dee896",
       "timings": {
-        "importMs": 236,
-        "fontsMs": 43,
-        "buildMs": 79,
-        "totalMs": 1026,
+        "importMs": 207,
+        "fontsMs": 49,
+        "buildMs": 85,
+        "totalMs": 1002,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24518,
+        "bytes": 24520,
         "folio": "e7298095",
         "chapters": [
           {
@@ -397,11 +397,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -410,13 +405,13 @@
       }
     },
     "es": {
-      "hash8": "6cbc4ea4",
+      "hash8": "ae1b425b",
       "vdtHash": "f61d6e1ac7d69bfb6a85cc1f21905dd10cfc0c68",
       "timings": {
-        "importMs": 152,
-        "fontsMs": 55,
-        "buildMs": 100,
-        "totalMs": 910,
+        "importMs": 171,
+        "fontsMs": 35,
+        "buildMs": 96,
+        "totalMs": 893,
         "builds": 1
       },
       "specimen": {
@@ -500,7 +495,7 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24866,
+        "bytes": 24869,
         "folio": "e7298095",
         "chapters": [
           {
@@ -796,11 +791,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

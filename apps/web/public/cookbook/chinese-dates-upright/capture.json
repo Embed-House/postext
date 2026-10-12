@@ -3,21 +3,21 @@
   "slug": "chinese-dates-upright",
   "sourceHash": "8ba4c6cb6861738e70f1cb5207f586bf01c9e961bb6ea1051779e685d9e318af",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.728Z",
+  "capturedAt": "2026-10-12T13:19:51.098Z",
   "variants": {
     "en": {
-      "hash8": "b39ab4dd",
+      "hash8": "ca469faf",
       "vdtHash": "ec36a99bb1848c89d578e641ede8f72b6d77ab73",
       "timings": {
-        "importMs": 240,
-        "fontsMs": 503,
-        "buildMs": 54,
-        "totalMs": 1428,
+        "importMs": 279,
+        "fontsMs": 589,
+        "buildMs": 56,
+        "totalMs": 1532,
         "builds": 1
       },
       "specimen": {
@@ -360,23 +360,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d95f13ec",
+      "hash8": "a6090dd8",
       "vdtHash": "a7ee20363f99c4ac3349d778e006dd3f48f0873f",
       "timings": {
-        "importMs": 263,
-        "fontsMs": 305,
+        "importMs": 307,
+        "fontsMs": 346,
         "buildMs": 50,
-        "totalMs": 1267,
+        "totalMs": 1356,
         "builds": 1
       },
       "specimen": {
@@ -517,7 +511,7 @@
       },
       "sandbox": {
         "file": "chinese-dates-upright.postext",
-        "bytes": 13189,
+        "bytes": 13191,
         "folio": "90be425d",
         "chapters": [
           {
@@ -719,13 +713,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

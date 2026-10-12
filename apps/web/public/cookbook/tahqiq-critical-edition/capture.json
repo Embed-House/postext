@@ -3,21 +3,21 @@
   "slug": "tahqiq-critical-edition",
   "sourceHash": "62cd649d7f54ef0e5c59a8cf5936909917fa04bd379b7fa3d6b42054ff783f07",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.441Z",
+  "capturedAt": "2026-10-12T13:19:52.178Z",
   "variants": {
     "en": {
-      "hash8": "d40c8f6d",
+      "hash8": "a94482a4",
       "vdtHash": "450e833fb8a7df45805cb108debda8aee3d87a64",
       "timings": {
-        "importMs": 271,
-        "fontsMs": 116,
-        "buildMs": 316,
-        "totalMs": 1283,
+        "importMs": 349,
+        "fontsMs": 85,
+        "buildMs": 340,
+        "totalMs": 1446,
         "builds": 1
       },
       "specimen": {
@@ -209,7 +209,7 @@
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26944,
+        "bytes": 26946,
         "chapters": [
           {
             "pages": 11,
@@ -441,21 +441,21 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "38ea39ff",
+      "hash8": "240713ab",
       "vdtHash": "67748458f8413e649340d042e072eef7e43cf3de",
       "timings": {
-        "importMs": 256,
-        "fontsMs": 60,
-        "buildMs": 305,
-        "totalMs": 1256,
+        "importMs": 424,
+        "fontsMs": 71,
+        "buildMs": 344,
+        "totalMs": 1436,
         "builds": 1
       },
       "specimen": {
@@ -647,7 +647,7 @@
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26980,
+        "bytes": 26982,
         "chapters": [
           {
             "pages": 11,
@@ -879,9 +879,9 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

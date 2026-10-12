@@ -3,20 +3,20 @@
   "slug": "walking-guide-thumb-tabs",
   "sourceHash": "f6b55104c92fedb6245e0a1c6cf362ce7cbb8b7cb5b7e1ae8f5a3641cd85b0b6",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.552Z",
+  "capturedAt": "2026-10-12T13:19:52.334Z",
   "variants": {
     "en": {
-      "hash8": "9d54ce3b",
+      "hash8": "5ef13f8a",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 183,
-        "fontsMs": 22,
-        "buildMs": 59,
-        "totalMs": 951,
+        "importMs": 197,
+        "fontsMs": 20,
+        "buildMs": 52,
+        "totalMs": 964,
         "builds": 1
       },
       "specimen": {
@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52368,
+        "bytes": 52370,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -432,23 +432,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "eacc0453",
+      "hash8": "14d0c52c",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 131,
+        "importMs": 210,
         "fontsMs": 22,
-        "buildMs": 51,
-        "totalMs": 835,
+        "buildMs": 57,
+        "totalMs": 961,
         "builds": 1
       },
       "specimen": {
@@ -583,7 +577,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52558,
+        "bytes": 52560,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -869,11 +863,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

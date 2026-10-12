@@ -3,20 +3,20 @@
   "slug": "pinyin-primer",
   "sourceHash": "e6b59cdd58ed63a6f59bf8e7aaeb05086264291e8a0bd0203532e905773ecb2f",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.265Z",
+  "capturedAt": "2026-10-12T13:19:51.975Z",
   "variants": {
     "en": {
-      "hash8": "204728b1",
+      "hash8": "25e0c9bf",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 147,
-        "fontsMs": 83,
-        "buildMs": 64,
-        "totalMs": 945,
+        "importMs": 234,
+        "fontsMs": 106,
+        "buildMs": 81,
+        "totalMs": 1106,
         "builds": 1
       },
       "specimen": {
@@ -110,7 +110,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 205879,
+        "bytes": 205883,
         "folio": "4f4bf2f0",
         "chapters": [
           {
@@ -312,11 +312,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-HK, the document's language: en names its resource types otherwise"
@@ -330,13 +325,13 @@
       }
     },
     "es": {
-      "hash8": "15b02983",
+      "hash8": "d3849c40",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 74,
-        "buildMs": 65,
-        "totalMs": 931,
+        "importMs": 235,
+        "fontsMs": 97,
+        "buildMs": 68,
+        "totalMs": 1097,
         "builds": 1
       },
       "specimen": {
@@ -430,7 +425,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 206337,
+        "bytes": 206339,
         "folio": "4f4bf2f0",
         "chapters": [
           {
@@ -631,11 +626,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

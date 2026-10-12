@@ -3,20 +3,20 @@
   "slug": "garden-almanac",
   "sourceHash": "b89da44b55163b14814e4217450e5633015c370bd1bbf48ccacf7a92785636b2",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.912Z",
+  "capturedAt": "2026-10-12T13:19:51.368Z",
   "variants": {
     "en": {
-      "hash8": "35061295",
+      "hash8": "d68810e3",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 128,
-        "fontsMs": 68,
-        "buildMs": 69,
-        "totalMs": 906,
+        "importMs": 256,
+        "fontsMs": 84,
+        "buildMs": 77,
+        "totalMs": 1093,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190200,
+        "bytes": 190202,
         "folio": "49229ae8",
         "chapters": [
           {
@@ -400,23 +400,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "79cdae58",
+      "hash8": "f165f52c",
       "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
       "timings": {
-        "importMs": 142,
-        "fontsMs": 115,
-        "buildMs": 75,
-        "totalMs": 936,
+        "importMs": 197,
+        "fontsMs": 142,
+        "buildMs": 83,
+        "totalMs": 1053,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +509,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190201,
+        "bytes": 190203,
         "folio": "49229ae8",
         "chapters": [
           {
@@ -800,13 +794,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

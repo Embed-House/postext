@@ -3,20 +3,20 @@
   "slug": "spanish-pocket-novel",
   "sourceHash": "fb2560f0b1b82c217c3401cae4d87cb84bc213f58459d0769916dc57223c673a",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.396Z",
+  "capturedAt": "2026-10-12T13:19:52.123Z",
   "variants": {
     "es": {
-      "hash8": "e012b348",
+      "hash8": "d88c9d3b",
       "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
       "timings": {
-        "importMs": 158,
-        "fontsMs": 19,
-        "buildMs": 61,
-        "totalMs": 918,
+        "importMs": 201,
+        "fontsMs": 22,
+        "buildMs": 64,
+        "totalMs": 992,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "spanish-pocket-novel.postext",
-        "bytes": 43133,
+        "bytes": 43136,
         "folio": "bb7ddf9c",
         "chapters": [
           {
@@ -337,11 +337,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

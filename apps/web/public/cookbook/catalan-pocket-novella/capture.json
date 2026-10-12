@@ -3,21 +3,21 @@
   "slug": "catalan-pocket-novella",
   "sourceHash": "ab7d0655e38c795c72fd72b6e64b98343f57cca3e66a7c9ea4ed54df9a36f652",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.696Z",
+  "capturedAt": "2026-10-12T13:19:51.064Z",
   "variants": {
     "en": {
-      "hash8": "b65a4da4",
+      "hash8": "53c33349",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 231,
-        "fontsMs": 69,
-        "buildMs": 877,
-        "totalMs": 1802,
+        "importMs": 283,
+        "fontsMs": 74,
+        "buildMs": 978,
+        "totalMs": 2016,
         "builds": 1
       },
       "specimen": {
@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492627,
+        "bytes": 1492630,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -393,21 +393,21 @@
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           },
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b2969687",
+      "hash8": "b21ad938",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 211,
-        "fontsMs": 65,
-        "buildMs": 910,
-        "totalMs": 1865,
+        "importMs": 231,
+        "fontsMs": 67,
+        "buildMs": 964,
+        "totalMs": 1945,
         "builds": 1
       },
       "specimen": {
@@ -562,7 +562,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492641,
+        "bytes": 1492644,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -783,9 +783,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           },
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

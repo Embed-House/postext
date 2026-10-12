@@ -3,20 +3,20 @@
   "slug": "business-section-on-salmon",
   "sourceHash": "5b58062570b80ff89769a5d15e8c0dc7f5675a929cff276c745b7d00c1f3c814",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.691Z",
+  "capturedAt": "2026-10-12T13:19:51.060Z",
   "variants": {
     "en": {
-      "hash8": "7ada52fc",
+      "hash8": "bc005512",
       "vdtHash": "f92345b194a26c7c38993dd5541eb79acae1b984",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 48,
-        "buildMs": 456,
-        "totalMs": 1370,
+        "importMs": 221,
+        "fontsMs": 52,
+        "buildMs": 479,
+        "totalMs": 1420,
         "builds": 1
       },
       "specimen": {
@@ -511,11 +511,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 7 −5‰ “Flour costs, which rose by almost half in 2023, …”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

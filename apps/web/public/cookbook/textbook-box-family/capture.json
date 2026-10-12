@@ -3,20 +3,20 @@
   "slug": "textbook-box-family",
   "sourceHash": "2929067b61fa2bec9953d6cfd743852b4bcf5407ed00623c3f18f3b52c6c62d0",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.500Z",
+  "capturedAt": "2026-10-12T13:19:52.275Z",
   "variants": {
     "en": {
-      "hash8": "83abce99",
+      "hash8": "68ea484f",
       "vdtHash": "dc28595e779ffca5d21fcfb164e4e34256c3f5e4",
       "timings": {
-        "importMs": 155,
-        "fontsMs": 31,
-        "buildMs": 78,
-        "totalMs": 918,
+        "importMs": 198,
+        "fontsMs": 37,
+        "buildMs": 80,
+        "totalMs": 941,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 45562,
+        "bytes": 45565,
         "folio": "4d63ba9f",
         "chapters": [
           {
@@ -389,11 +389,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
@@ -402,13 +397,13 @@
       }
     },
     "es": {
-      "hash8": "22b0f95f",
+      "hash8": "966847ec",
       "vdtHash": "b95d9fed920cda47bd315548b4bf324147383d0b",
       "timings": {
-        "importMs": 199,
+        "importMs": 261,
         "fontsMs": 44,
-        "buildMs": 72,
-        "totalMs": 924,
+        "buildMs": 80,
+        "totalMs": 1043,
         "builds": 1
       },
       "specimen": {
@@ -492,7 +487,7 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 44277,
+        "bytes": 44279,
         "folio": "4d63ba9f",
         "chapters": [
           {
@@ -780,11 +775,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

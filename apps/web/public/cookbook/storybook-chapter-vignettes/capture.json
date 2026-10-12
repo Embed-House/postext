@@ -3,20 +3,20 @@
   "slug": "storybook-chapter-vignettes",
   "sourceHash": "acb476664477ce5433b764ce415ec0963fc79795dcd39651bda40d0475356da8",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.432Z",
+  "capturedAt": "2026-10-12T13:19:52.168Z",
   "variants": {
     "en": {
-      "hash8": "cdd436c0",
+      "hash8": "c3a4f7f6",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 41,
+        "importMs": 259,
+        "fontsMs": 76,
         "buildMs": 61,
-        "totalMs": 1010,
+        "totalMs": 1134,
         "builds": 1
       },
       "specimen": {
@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820977,
+        "bytes": 820978,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -328,11 +328,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -341,13 +336,13 @@
       }
     },
     "es": {
-      "hash8": "6982c695",
+      "hash8": "cc935c8c",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 172,
-        "fontsMs": 29,
-        "buildMs": 54,
-        "totalMs": 949,
+        "importMs": 265,
+        "fontsMs": 31,
+        "buildMs": 62,
+        "totalMs": 1047,
         "builds": 1
       },
       "specimen": {
@@ -456,7 +451,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 821027,
+        "bytes": 821028,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -658,11 +653,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

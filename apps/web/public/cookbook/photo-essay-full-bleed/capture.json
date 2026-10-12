@@ -3,20 +3,20 @@
   "slug": "photo-essay-full-bleed",
   "sourceHash": "ba42bc95a957ecb1f47428c7fa15755b3ddf9c421eae9839c5de5ab80ef6c4ba",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.232Z",
+  "capturedAt": "2026-10-12T13:19:51.933Z",
   "variants": {
     "en": {
-      "hash8": "7a895258",
+      "hash8": "0693e3f5",
       "vdtHash": "1d00ac2f07809ef1dbc262a94650a7453d3692ce",
       "timings": {
-        "importMs": 224,
-        "fontsMs": 40,
-        "buildMs": 47,
-        "totalMs": 947,
+        "importMs": 237,
+        "fontsMs": 49,
+        "buildMs": 51,
+        "totalMs": 958,
         "builds": 1
       },
       "specimen": {
@@ -177,7 +177,7 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718481,
+        "bytes": 1718482,
         "folio": "fb4fa41a",
         "chapters": [
           {
@@ -337,23 +337,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "f06d73e3",
+      "hash8": "7af4879a",
       "vdtHash": "70b8dc3093c70fc1c90d4908e864abcdaa8aacec",
       "timings": {
-        "importMs": 259,
-        "fontsMs": 50,
-        "buildMs": 55,
-        "totalMs": 1043,
+        "importMs": 205,
+        "fontsMs": 48,
+        "buildMs": 57,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -674,13 +668,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

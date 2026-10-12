@@ -3,21 +3,21 @@
   "slug": "technical-datasheet",
   "sourceHash": "4cee82baf7041149ec3a6a0bb8f1fe662b4e27900a03e35a79b1dbd9d20ca911",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.497Z",
+  "capturedAt": "2026-10-12T13:19:52.273Z",
   "variants": {
     "en": {
-      "hash8": "d9166aaa",
+      "hash8": "edaa0a14",
       "vdtHash": "e74bd519f779e7b73780cdecb642841295527226",
       "timings": {
-        "importMs": 227,
-        "fontsMs": 138,
-        "buildMs": 89,
-        "totalMs": 1119,
+        "importMs": 318,
+        "fontsMs": 85,
+        "buildMs": 99,
+        "totalMs": 1150,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78262,
+        "bytes": 78265,
         "folio": "ca48c30e",
         "chapters": [
           {

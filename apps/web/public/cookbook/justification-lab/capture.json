@@ -3,20 +3,20 @@
   "slug": "justification-lab",
   "sourceHash": "d7640adedce544989fe2a6e5f45e4fa43f9aecd63fc13ec869c27bc518c99348",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.968Z",
+  "capturedAt": "2026-10-12T13:19:51.429Z",
   "variants": {
     "en": {
-      "hash8": "6743df81",
+      "hash8": "2e45a6f7",
       "vdtHash": "86cfc166e9e8f9660f2c2d7da71ff06dd39238ba",
       "timings": {
-        "importMs": 153,
-        "fontsMs": 2,
-        "buildMs": 69,
-        "totalMs": 969,
+        "importMs": 176,
+        "fontsMs": 1,
+        "buildMs": 55,
+        "totalMs": 978,
         "builds": 2
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 34444,
+        "bytes": 34446,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -342,23 +342,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Two numbers fence the glue in: a space may shrin…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "3a2264fd",
+      "hash8": "a07476fc",
       "vdtHash": "b6fa89103ba58230a9e7d49ac56c99d00cd8a5a0",
       "timings": {
-        "importMs": 149,
+        "importMs": 258,
         "fontsMs": 2,
-        "buildMs": 117,
-        "totalMs": 989,
+        "buildMs": 167,
+        "totalMs": 1162,
         "builds": 2
       },
       "specimen": {
@@ -442,7 +437,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 35217,
+        "bytes": 35219,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -683,11 +678,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La separación silábica le da al algoritmo más pu…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

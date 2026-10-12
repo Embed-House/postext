@@ -3,20 +3,20 @@
   "slug": "atlas-map-sheet",
   "sourceHash": "9d0725230c8b3b849bb184da3fabc0ad597a180fa2c13947a183b49cf07736c1",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.592Z",
+  "capturedAt": "2026-10-12T13:19:50.951Z",
   "variants": {
     "en": {
-      "hash8": "141993db",
+      "hash8": "4459d9fa",
       "vdtHash": "c0198ebf0d4818c7e03a23e60ccabae747e764d0",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 820,
-        "buildMs": 75,
-        "totalMs": 1788,
+        "importMs": 201,
+        "fontsMs": 828,
+        "buildMs": 90,
+        "totalMs": 1868,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512815,
+        "bytes": 512818,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -359,23 +359,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "10725307",
+      "hash8": "9ef579f6",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 143,
-        "fontsMs": 802,
-        "buildMs": 63,
-        "totalMs": 1683,
+        "importMs": 206,
+        "fontsMs": 829,
+        "buildMs": 74,
+        "totalMs": 1837,
         "builds": 1
       },
       "specimen": {
@@ -474,7 +468,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513260,
+        "bytes": 513263,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -718,13 +712,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

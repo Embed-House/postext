@@ -3,21 +3,21 @@
   "slug": "kanbun-kundoku",
   "sourceHash": "bd204b05d61ac914277cf5493ab6201e06bcae615f43cf861420cd8c6b7f5c51",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.972Z",
+  "capturedAt": "2026-10-12T13:19:51.438Z",
   "variants": {
     "en": {
-      "hash8": "e1406a5d",
+      "hash8": "24e64154",
       "vdtHash": "cea294344d4ba3029b117bd33687c965b41d48c7",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 232,
-        "buildMs": 45,
-        "totalMs": 1103,
+        "importMs": 266,
+        "fontsMs": 238,
+        "buildMs": 42,
+        "totalMs": 1210,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15780,
+        "bytes": 15782,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -301,23 +301,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "04167570",
+      "hash8": "e136b41d",
       "vdtHash": "eeffa96ae9ff865139c37006dc7fc4599bc7e1e1",
       "timings": {
-        "importMs": 270,
-        "fontsMs": 296,
-        "buildMs": 40,
-        "totalMs": 1216,
+        "importMs": 215,
+        "fontsMs": 239,
+        "buildMs": 46,
+        "totalMs": 1221,
         "builds": 1
       },
       "specimen": {
@@ -406,7 +400,7 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15833,
+        "bytes": 15835,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -601,13 +595,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

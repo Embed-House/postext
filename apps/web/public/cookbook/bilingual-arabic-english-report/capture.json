@@ -3,21 +3,21 @@
   "slug": "bilingual-arabic-english-report",
   "sourceHash": "ba3e3a35118a6cb003d4b511ae9bbca3b41fadbfc8d46ce9c0a2b4a4708ffe8f",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.637Z",
+  "capturedAt": "2026-10-12T13:19:50.995Z",
   "variants": {
     "en": {
-      "hash8": "c6cc93d7",
+      "hash8": "fae52c4a",
       "vdtHash": "a88cf196bdbbc73cf272c1914c1d26bb1359c054",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 144,
-        "buildMs": 82,
-        "totalMs": 1047,
+        "importMs": 281,
+        "fontsMs": 70,
+        "buildMs": 91,
+        "totalMs": 1064,
         "builds": 1
       },
       "specimen": {
@@ -348,23 +348,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 3 −10‰ “Training. Each workshop runs for five days, and …”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b9b06e05",
+      "hash8": "aa57af12",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 62,
-        "buildMs": 89,
-        "totalMs": 958,
+        "importMs": 245,
+        "fontsMs": 58,
+        "buildMs": 93,
+        "totalMs": 1074,
         "builds": 1
       },
       "specimen": {
@@ -695,11 +690,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Lo que más nos alegra de estas cifras es que la …”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

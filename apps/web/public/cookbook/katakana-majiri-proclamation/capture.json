@@ -3,21 +3,21 @@
   "slug": "katakana-majiri-proclamation",
   "sourceHash": "819e0b0a425b6c62349cf3dde3381a20008010f193f1bd70934aa93b9b05aa75",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.979Z",
+  "capturedAt": "2026-10-12T13:19:51.446Z",
   "variants": {
     "en": {
-      "hash8": "63b4d851",
+      "hash8": "716219a9",
       "vdtHash": "37b8f33daff8b0376c1b77cf25b87f45bc3eca1d",
       "timings": {
-        "importMs": 187,
-        "fontsMs": 377,
-        "buildMs": 53,
-        "totalMs": 1210,
+        "importMs": 240,
+        "fontsMs": 415,
+        "buildMs": 54,
+        "totalMs": 1324,
         "builds": 1
       },
       "specimen": {
@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 9968,
+        "bytes": 9969,
         "folio": "d5f2cfd5",
         "chapters": [
           {
@@ -395,23 +395,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "f274ffbe",
+      "hash8": "6d976a07",
       "vdtHash": "4720d00e789c69898f7917b7933d75af4082d8d5",
       "timings": {
-        "importMs": 177,
-        "fontsMs": 323,
-        "buildMs": 47,
-        "totalMs": 1158,
+        "importMs": 212,
+        "fontsMs": 341,
+        "buildMs": 51,
+        "totalMs": 1276,
         "builds": 1
       },
       "specimen": {
@@ -566,7 +560,7 @@
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 10003,
+        "bytes": 10004,
         "folio": "d5f2cfd5",
         "chapters": [
           {
@@ -789,13 +783,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

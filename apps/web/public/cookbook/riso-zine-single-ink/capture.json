@@ -3,21 +3,21 @@
   "slug": "riso-zine-single-ink",
   "sourceHash": "aa99bd8ebf035a20a831f5d24a2084c8a0ed8665ada22f59707e51cb6869cfa0",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.342Z",
+  "capturedAt": "2026-10-12T13:19:52.059Z",
   "variants": {
     "en": {
-      "hash8": "e182e7f7",
+      "hash8": "734f198d",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 56,
-        "buildMs": 47,
-        "totalMs": 935,
+        "importMs": 240,
+        "fontsMs": 129,
+        "buildMs": 56,
+        "totalMs": 1092,
         "builds": 1
       },
       "specimen": {
@@ -372,13 +372,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

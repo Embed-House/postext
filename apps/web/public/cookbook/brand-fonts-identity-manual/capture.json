@@ -3,21 +3,21 @@
   "slug": "brand-fonts-identity-manual",
   "sourceHash": "fabbed037b66a89790ef7619baa2bfb2a7a4ae3a6295456b5852f71a55bac1cf",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.669Z",
+  "capturedAt": "2026-10-12T13:19:51.031Z",
   "variants": {
     "en": {
-      "hash8": "e7334aa9",
+      "hash8": "5899141c",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 238,
-        "fontsMs": 42,
-        "buildMs": 72,
-        "totalMs": 987,
+        "importMs": 352,
+        "fontsMs": 48,
+        "buildMs": 78,
+        "totalMs": 1137,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "brand-fonts-identity-manual.postext",
-        "bytes": 106328,
+        "bytes": 106330,
         "folio": "17625bac",
         "chapters": [
           {
@@ -376,11 +376,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

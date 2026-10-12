@@ -3,21 +3,21 @@
   "slug": "medical-article-vancouver",
   "sourceHash": "46150f7e03524f139660cb81b7f2e5f244a11464333c639c63bf024d537f8520",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.087Z",
+  "capturedAt": "2026-10-12T13:19:51.699Z",
   "variants": {
     "en": {
-      "hash8": "887da59d",
+      "hash8": "b65756de",
       "vdtHash": "ce872ab1a591b03e785f48b21754e94a2ce26ca3",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 51,
-        "buildMs": 130,
-        "totalMs": 1007,
+        "importMs": 460,
+        "fontsMs": 66,
+        "buildMs": 150,
+        "totalMs": 1420,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53289,
+        "bytes": 53292,
         "folio": "b245c39c",
         "chapters": [
           {
@@ -425,13 +425,13 @@
       }
     },
     "es": {
-      "hash8": "fba72d43",
+      "hash8": "1a4576a7",
       "vdtHash": "dd1bcea63030803accfaefd72e3afb18bbba355d",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 45,
-        "buildMs": 119,
-        "totalMs": 1041,
+        "importMs": 320,
+        "fontsMs": 69,
+        "buildMs": 133,
+        "totalMs": 1400,
         "builds": 1
       },
       "specimen": {
@@ -520,7 +520,7 @@
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54527,
+        "bytes": 54529,
         "folio": "b245c39c",
         "chapters": [
           {

@@ -3,21 +3,21 @@
   "slug": "arabic-newspaper-two-columns",
   "sourceHash": "55045ad188d6acf5869c07ccf85d40ced60c6ef4beb6a02d17f4ed0a1a84df19",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.578Z",
+  "capturedAt": "2026-10-12T13:19:50.931Z",
   "variants": {
     "en": {
-      "hash8": "fc255540",
+      "hash8": "e25d6656",
       "vdtHash": "57eda6054abf963604d9e51db5f63121091bb9a6",
       "timings": {
-        "importMs": 196,
-        "fontsMs": 120,
-        "buildMs": 133,
-        "totalMs": 1080,
+        "importMs": 219,
+        "fontsMs": 89,
+        "buildMs": 138,
+        "totalMs": 1150,
         "builds": 1
       },
       "specimen": {
@@ -96,7 +96,7 @@
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22510,
+        "bytes": 22513,
         "folio": "7d33b710",
         "chapters": [
           {
@@ -367,23 +367,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "3ef83250",
+      "hash8": "0bed3681",
       "vdtHash": "bfed373063ca5969801b5259a8f0279afb332901",
       "timings": {
-        "importMs": 190,
-        "fontsMs": 102,
-        "buildMs": 128,
-        "totalMs": 1046,
+        "importMs": 233,
+        "fontsMs": 132,
+        "buildMs": 127,
+        "totalMs": 1072,
         "builds": 1
       },
       "specimen": {
@@ -462,7 +456,7 @@
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22554,
+        "bytes": 22557,
         "folio": "7d33b710",
         "chapters": [
           {
@@ -733,13 +727,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

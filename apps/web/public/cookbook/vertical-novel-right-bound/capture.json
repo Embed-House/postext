@@ -3,21 +3,21 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "d35761ee36437984e5307e77519a1b2d011616a3df021e6c76204d3292d8d62a",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.539Z",
+  "capturedAt": "2026-10-12T13:19:52.319Z",
   "variants": {
     "en": {
-      "hash8": "ca80a146",
+      "hash8": "1430d445",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 186,
-        "fontsMs": 244,
-        "buildMs": 46,
-        "totalMs": 1097,
+        "importMs": 232,
+        "fontsMs": 310,
+        "buildMs": 61,
+        "totalMs": 1242,
         "builds": 1
       },
       "specimen": {
@@ -159,7 +159,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279895,
+        "bytes": 279898,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -364,11 +364,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -377,13 +372,13 @@
       }
     },
     "es": {
-      "hash8": "bf46d392",
+      "hash8": "4f8f9087",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 157,
-        "fontsMs": 308,
-        "buildMs": 45,
-        "totalMs": 1114,
+        "importMs": 229,
+        "fontsMs": 433,
+        "buildMs": 47,
+        "totalMs": 1333,
         "builds": 1
       },
       "specimen": {
@@ -525,7 +520,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279917,
+        "bytes": 279920,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -729,11 +724,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

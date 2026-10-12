@@ -3,20 +3,20 @@
   "slug": "folio-book-on-a-desk",
   "sourceHash": "19d012cbc39d320194845b5708412597666bfe8191cdf28a86872d159b2416ea",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.898Z",
+  "capturedAt": "2026-10-12T13:19:51.334Z",
   "variants": {
     "en": {
-      "hash8": "5dd60545",
+      "hash8": "a55b361a",
       "vdtHash": "c9d261ef6effccb705d8915af71348eab856bb11",
       "timings": {
-        "importMs": 1979,
+        "importMs": 3280,
         "fontsMs": 3,
-        "buildMs": 56,
-        "totalMs": 2777,
+        "buildMs": 60,
+        "totalMs": 4016,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "folio-book-on-a-desk.postext",
-        "bytes": 24161,
+        "bytes": 24164,
         "folio": "ae4134af",
         "chapters": [
           {
@@ -329,11 +329,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

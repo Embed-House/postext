@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "section-heads-field-manual",
-  "sourceHash": "c446aa6df81598510d5709f4ebc8cbd8eae7a846a03015bfcb818f3345c5fcd9",
+  "sourceHash": "5db84f7d139fac5cf197878a20a589a8fdf43d079a93d2dc110775ee7aaf1509",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.366Z",
+  "capturedAt": "2026-10-12T13:19:52.085Z",
   "variants": {
     "en": {
-      "hash8": "07799fa1",
-      "vdtHash": "e49da79aeee8d17e20131d359b6a1a8e69ece565",
+      "hash8": "9179914b",
+      "vdtHash": "560f61180d4a8cbee6f40fe780cd310b71d3c4c0",
       "timings": {
-        "importMs": 195,
-        "fontsMs": 4,
-        "buildMs": 80,
-        "totalMs": 914,
+        "importMs": 175,
+        "fontsMs": 5,
+        "buildMs": 78,
+        "totalMs": 957,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 132670,
+          "bytes": 132478,
           "alt": "Page 3: 1.8 Lead-off ditches."
         }
       ],
@@ -100,12 +100,12 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31293,
+        "bytes": 31295,
         "folio": "0260efa6",
         "chapters": [
           {
             "pages": 3,
-            "hash": "7d0e1e3fee313d25",
+            "hash": "3a7346bbf8358165",
             "lines": "7e521f7fc175811f"
           }
         ]
@@ -335,23 +335,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "23c70251",
-      "vdtHash": "e435c4dc3a3581b9691ecb4da3ca88efd1e9587b",
+      "hash8": "e6ffd7c6",
+      "vdtHash": "e89416e5fa997268aceccd39dabfc8bef0c3184b",
       "timings": {
-        "importMs": 150,
+        "importMs": 151,
         "fontsMs": 4,
         "buildMs": 68,
-        "totalMs": 867,
+        "totalMs": 945,
         "builds": 1
       },
       "specimen": {
@@ -407,7 +401,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 169492,
+          "bytes": 168776,
           "alt": "Página 3: 1.7 Escalones de retención."
         }
       ],
@@ -435,12 +429,12 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31491,
+        "bytes": 31493,
         "folio": "0260efa6",
         "chapters": [
           {
             "pages": 3,
-            "hash": "d98ce7f930ab1f15",
+            "hash": "cf0e04b968766d2d",
             "lines": "6494cf66c4968c06"
           }
         ]
@@ -670,13 +664,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "C36",
-            "severity": "info",
-            "detail": "☐ set in a font of the system, as capture.expect.systemFont accepts: the shape is the reader's machine's"
-          }
-        ]
+        "findings": []
       }
     }
   }

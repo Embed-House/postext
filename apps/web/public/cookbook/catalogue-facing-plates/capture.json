@@ -3,20 +3,20 @@
   "slug": "catalogue-facing-plates",
   "sourceHash": "188f64d00b05169b4242b41015979e2ed4d016f3023cad3a7f32666b307828df",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.709Z",
+  "capturedAt": "2026-10-12T13:19:51.080Z",
   "variants": {
     "en": {
-      "hash8": "6bb8ef13",
+      "hash8": "05272e39",
       "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 54,
-        "buildMs": 68,
-        "totalMs": 956,
+        "importMs": 229,
+        "fontsMs": 66,
+        "buildMs": 74,
+        "totalMs": 1019,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,7 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603568,
+        "bytes": 1603570,
         "folio": "2f38e47f",
         "chapters": [
           {
@@ -417,11 +417,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

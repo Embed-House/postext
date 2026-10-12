@@ -3,21 +3,21 @@
   "slug": "accessible-tagged-pdf",
   "sourceHash": "71a90a57fba580f67950e5589f77bb66a65b4aefda7b3ef492008543505f3fde",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.548Z",
+  "capturedAt": "2026-10-12T13:19:50.891Z",
   "variants": {
     "es": {
-      "hash8": "f69c24c8",
+      "hash8": "57c43de5",
       "vdtHash": "b4d90a107216c3f089ce544b14ad07edef22c525",
       "timings": {
-        "importMs": 21256,
-        "fontsMs": 38,
-        "buildMs": 93,
-        "totalMs": 22109,
+        "importMs": 20832,
+        "fontsMs": 31,
+        "buildMs": 88,
+        "totalMs": 21680,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "accessible-tagged-pdf.postext",
-        "bytes": 36304,
+        "bytes": 36307,
         "folio": "ccb10a06",
         "chapters": [
           {
@@ -387,13 +387,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

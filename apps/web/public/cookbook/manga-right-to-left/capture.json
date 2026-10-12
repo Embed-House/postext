@@ -3,21 +3,21 @@
   "slug": "manga-right-to-left",
   "sourceHash": "504bea096773283a19e41a117ddf17ab99195036176cc703807fcddc7e1c11f7",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:47.054Z",
+  "capturedAt": "2026-10-12T13:19:51.631Z",
   "variants": {
     "en": {
-      "hash8": "5f1c97fa",
+      "hash8": "a7671abd",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 214,
-        "fontsMs": 246,
-        "buildMs": 858,
-        "totalMs": 2314,
+        "importMs": 251,
+        "fontsMs": 322,
+        "buildMs": 919,
+        "totalMs": 2634,
         "builds": 2
       },
       "specimen": {
@@ -254,11 +254,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -272,13 +267,13 @@
       }
     },
     "es": {
-      "hash8": "f406a005",
+      "hash8": "95cefd0a",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 156,
-        "fontsMs": 258,
-        "buildMs": 863,
-        "totalMs": 2281,
+        "importMs": 225,
+        "fontsMs": 365,
+        "buildMs": 906,
+        "totalMs": 2536,
         "builds": 2
       },
       "specimen": {
@@ -515,11 +510,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -533,13 +523,13 @@
       }
     },
     "ca": {
-      "hash8": "5c14ea9d",
+      "hash8": "4acc650b",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 178,
-        "fontsMs": 242,
-        "buildMs": 860,
-        "totalMs": 2355,
+        "importMs": 203,
+        "fontsMs": 363,
+        "buildMs": 925,
+        "totalMs": 2705,
         "builds": 2
       },
       "specimen": {
@@ -776,11 +766,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -794,13 +779,13 @@
       }
     },
     "zh": {
-      "hash8": "c65779b4",
+      "hash8": "5fa768d6",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 160,
-        "fontsMs": 200,
-        "buildMs": 861,
-        "totalMs": 2563,
+        "importMs": 279,
+        "fontsMs": 347,
+        "buildMs": 906,
+        "totalMs": 2825,
         "builds": 2
       },
       "specimen": {
@@ -1037,11 +1022,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1055,13 +1035,13 @@
       }
     },
     "ar": {
-      "hash8": "820d37b1",
+      "hash8": "632dffdd",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
         "importMs": 220,
-        "fontsMs": 237,
-        "buildMs": 851,
-        "totalMs": 2329,
+        "fontsMs": 284,
+        "buildMs": 906,
+        "totalMs": 2443,
         "builds": 2
       },
       "specimen": {
@@ -1298,11 +1278,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1316,13 +1291,13 @@
       }
     },
     "ja": {
-      "hash8": "d96c04a9",
+      "hash8": "735bb9eb",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 175,
-        "fontsMs": 210,
-        "buildMs": 927,
-        "totalMs": 2347,
+        "importMs": 398,
+        "fontsMs": 389,
+        "buildMs": 905,
+        "totalMs": 2749,
         "builds": 2
       },
       "specimen": {
@@ -1559,11 +1534,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1582,13 +1552,13 @@
       }
     },
     "pt": {
-      "hash8": "8f4e8858",
+      "hash8": "d1afc695",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 238,
-        "buildMs": 870,
-        "totalMs": 2297,
+        "importMs": 269,
+        "fontsMs": 273,
+        "buildMs": 903,
+        "totalMs": 2485,
         "builds": 2
       },
       "specimen": {
@@ -1824,11 +1794,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

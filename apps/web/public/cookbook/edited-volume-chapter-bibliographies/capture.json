@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "17d5b58e9794cb01c6ca5ce2b73174c210b435b5d6610c4b7e17651b500c3af3",
   "engine": {
-    "postext": "1.28.6",
-    "postextPdf": "1.28.6",
+    "postext": "1.29.1",
+    "postextPdf": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.858Z",
+  "capturedAt": "2026-10-12T13:19:51.272Z",
   "variants": {
     "en": {
-      "hash8": "95ef1880",
+      "hash8": "301c8071",
       "vdtHash": "f76ebbccc75171d40285ea21317c748dbb0ca5a5",
       "timings": {
-        "importMs": 330,
-        "fontsMs": 99,
-        "buildMs": 602,
-        "totalMs": 1608,
+        "importMs": 225,
+        "fontsMs": 59,
+        "buildMs": 539,
+        "totalMs": 1482,
         "builds": 1
       },
       "specimen": {
@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17596,
+        "bytes": 17599,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -505,23 +505,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "00b83b64",
+      "hash8": "f3462351",
       "vdtHash": "854c6589be9fe12d338381a53c07814a5e2893d7",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 57,
-        "buildMs": 605,
-        "totalMs": 1515,
+        "importMs": 220,
+        "fontsMs": 61,
+        "buildMs": 565,
+        "totalMs": 1477,
         "builds": 1
       },
       "specimen": {
@@ -702,7 +697,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17724,
+        "bytes": 17727,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -1009,11 +1004,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }

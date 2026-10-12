@@ -3,20 +3,20 @@
   "slug": "baseline-grid-book-page",
   "sourceHash": "e6242b75f1e0b198be8ac5b30e2015d0f7cc70a2ea87339caa0db023f9695489",
   "engine": {
-    "postext": "1.28.6",
+    "postext": "1.29.1",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T10:07:46.631Z",
+  "capturedAt": "2026-10-12T13:19:50.989Z",
   "variants": {
     "en": {
-      "hash8": "531ae2b9",
+      "hash8": "5d17cdc3",
       "vdtHash": "e34bb0c4f98af58e2a09050a71580f54f4aa2825",
       "timings": {
-        "importMs": 151,
-        "fontsMs": 3,
-        "buildMs": 104,
-        "totalMs": 901,
+        "importMs": 230,
+        "fontsMs": 4,
+        "buildMs": 133,
+        "totalMs": 1046,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43201,
+        "bytes": 43203,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -319,11 +319,6 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The ruling fixed the lines as well as the frame.…”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -332,13 +327,13 @@
       }
     },
     "es": {
-      "hash8": "5b03e4a6",
+      "hash8": "e84e5c16",
       "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 3,
-        "buildMs": 80,
-        "totalMs": 893,
+        "importMs": 193,
+        "fontsMs": 4,
+        "buildMs": 78,
+        "totalMs": 969,
         "builds": 1
       },
       "specimen": {
@@ -631,11 +626,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -644,13 +634,13 @@
       }
     },
     "pt": {
-      "hash8": "e7ff10ab",
+      "hash8": "13a08095",
       "vdtHash": "f1a0564255a404acb4b0129639aefa3c0cc930c6",
       "timings": {
-        "importMs": 202,
+        "importMs": 168,
         "fontsMs": 3,
-        "buildMs": 68,
-        "totalMs": 930,
+        "buildMs": 74,
+        "totalMs": 921,
         "builds": 1
       },
       "specimen": {
@@ -942,11 +932,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",
