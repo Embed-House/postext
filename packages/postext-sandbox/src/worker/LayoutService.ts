@@ -13,9 +13,10 @@ import {
   getCustomFontFamily,
   loadFont,
   onCustomFontsChanged,
-  unansweredFontRequests,
+  fontRequestsUnanswered,
 } from '../controls/fontLoader';
 import { resourcesKeyOf } from '../book/layoutKeys';
+import { markBuiltWithoutFaces } from '../book/withoutFaces';
 import { perfSizeKb, perfSpan } from '../perf/marks';
 
 /** Who is asking, by urgency: what the reader is looking at, what they
@@ -72,25 +73,64 @@ const abortError = (): DOMException => new DOMException('Aborted', 'AbortError')
  *  configuration did not. */
 const FONT_ROUNDS = 2;
 
-/** A build waits this long for the files of its faces (#757). The files
- *  are fetched before the worker lays a chapter out, and one of them on a
- *  connection that stalls would hold the layout as long as the network
- *  cares to: past this, the chapter is laid out with the faces the worker
- *  has, and again when the rest arrive (`onLateFonts`). */
-export const FONT_HOLD_MS = 8_000;
+/**
+ * The longest a build waits for the files of its faces (#757). A build
+ * waits for its font requests while they are answered: the loader gives a
+ * request up only when none of them has received a byte for a while
+ * (`FONT_STALL_MS`), so a book of nine hundred files on a slow line is
+ * waited for in full and a connection that stalls costs its own bound.
+ * This is the last resort behind that rule, for a network that keeps
+ * every request alive and never ends one. Ten minutes: the nine hundred
+ * files of a Japanese book (22 MB) take about two at 1.5 Mbit/s and seven
+ * at 400 kbit/s. Past it the chapter is laid out with the faces the worker
+ * has, as after a request given up, and again when the rest arrive
+ * (`onLateFonts`).
+ */
+export const FONT_WAIT_CEILING_MS = 600_000;
 
 /** Times a family whose files the network did not give is asked for
  *  again, a while apart, without a build asking. */
 const FONT_RETRIES = 3;
 
+/** How long the fonts count as unsettled after late faces were announced:
+ *  the views lay out again in an effect, a moment after they are told. */
+const LATE_RELAYOUT_GRACE_MS = 1_000;
+
+export { builtWithoutFaces } from '../book/withoutFaces';
+
+// Whether the fonts of the builds asked so far are settled: no build is
+// waiting for files, no family short of files is about to be asked for
+// again, no view has just been told to lay out again for late faces.
+let fontsUnsettled = 0;
+const fontsPendingListeners = new Set<() => void>();
+const unsettle = (by: number): void => {
+  const before = fontsUnsettled > 0;
+  fontsUnsettled = Math.max(0, fontsUnsettled + by);
+  if (before !== fontsUnsettled > 0) for (const listener of [...fontsPendingListeners]) listener();
+};
+
+/** True while a build waits for font files, a family the network left
+ *  short of files is due another try, or the views were just told to lay
+ *  out again for faces that arrived late. */
+export function fontsPending(): boolean {
+  return fontsUnsettled > 0;
+}
+
+/** Told when `fontsPending` changes. */
+export function onFontsPending(listener: () => void): () => void {
+  fontsPendingListeners.add(listener);
+  return () => { fontsPendingListeners.delete(listener); };
+}
+
 type LateFontsListener = (families: string[]) => void;
 const lateFontsListeners = new Set<LateFontsListener>();
 
 /**
- * Faces reached a layout worker after a build that could not wait for
- * them (a file slower than `FONT_HOLD_MS`, one the network gave at a later
- * try): the documents built so far were measured without them, and the
- * views lay out again. The listener gets the families.
+ * Faces reached a layout worker after a build that went ahead without
+ * them (a request given up that a later try answered, the ceiling): the
+ * documents built meanwhile were measured without them
+ * (`builtWithoutFaces`), and whoever holds one lays out again. The
+ * listener gets the families.
  */
 export function onLateFonts(listener: LateFontsListener): () => void {
   lateFontsListeners.add(listener);
@@ -121,12 +161,18 @@ function settledWithin(work: Promise<unknown>, ms: number): Promise<boolean> {
  */
 export function createLayoutService(options?: {
   handle?: LayoutWorkerHandle;
-  /** How long a build waits for the files of its faces (`FONT_HOLD_MS`);
-   *  `Infinity` for a host that has nobody to show a first layout to and
-   *  wants the one with every face (the headless entry). */
-  fontHoldMs?: number;
+  /** The longest a build waits for the files of its faces
+   *  (`FONT_WAIT_CEILING_MS`); `Infinity` for a host with a bound of its
+   *  own (the headless entry). */
+  fontCeilingMs?: number;
 }): LayoutService {
-  const fontHoldMs = options?.fontHoldMs ?? FONT_HOLD_MS;
+  const fontCeilingMs = options?.fontCeilingMs ?? FONT_WAIT_CEILING_MS;
+  // What this service holds of `fontsPending`, given back when disposed.
+  let unsettled = 0;
+  const countUnsettled = (by: number): void => {
+    unsettled += by;
+    unsettle(by);
+  };
   // The worker is spawned on first use, not on creation: the provider's
   // state initialiser also runs while the page is rendered on the server
   // (Next.js prerender), where `Worker` does not exist.
@@ -181,6 +227,9 @@ export function createLayoutService(options?: {
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   const announce = (families: readonly string[]): void => {
     if (disposed || families.length === 0) return;
+    // Unsettled until the views have asked for their builds.
+    countUnsettled(1);
+    setTimeout(() => { if (!disposed) countUnsettled(-1); }, LATE_RELAYOUT_GRACE_MS);
     for (const listener of [...lateFontsListeners]) listener([...families]);
   };
   const unsubscribeFonts = onCustomFontsChanged((families) => {
@@ -257,14 +306,13 @@ export function createLayoutService(options?: {
       // later build, and by the service itself a while later.
       const payloads = lacking.length > 0 ? await fetchFacePayloads(lacking) : [];
       const got = new Set(payloads.map(fontPayloadKey));
-      // Short of files: one of its files did not come, or the family has
-      // no face at all while a request went unanswered (its record, its
-      // style sheet).
-      const unanswered = unansweredFontRequests().length > 0;
+      // Short of files: the network did not answer for one of them, or
+      // for the family's record or style sheet. A file the server has not
+      // (a 404) is not one a later try brings.
+      const wasShort = new Set(shortFamilies);
       catalogue.forEach((family, i) => {
         const faces = perFamily[i]!;
-        const short = faces.some((face) => !got.has(fontPayloadKey(face)))
-          || (faces.length === 0 && unanswered && !sentFaces.has(family));
+        const short = fontRequestsUnanswered(family, faces.filter((face) => !got.has(fontPayloadKey(face))).map((face) => face.url));
         if (short) shortFamilies.add(family);
         else {
           shortFamilies.delete(family);
@@ -280,6 +328,9 @@ export function createLayoutService(options?: {
         if (had) had.add(key);
         else sentFaces.set(family, new Set([key]));
       }
+      // Files of a family the builds so far went without: what was laid
+      // out meanwhile is laid out again.
+      announce([...new Set(payloads.map((p) => p.family))].filter((family) => wasShort.has(family)));
       return true;
     } catch (err) {
       console.warn('[LayoutService] font registration failed', err);
@@ -294,14 +345,23 @@ export function createLayoutService(options?: {
     if (retryTimer !== null || disposed) return;
     const due = (): string[] => [...shortFamilies].filter((f) => (retriesLeft.get(f) ?? FONT_RETRIES) > 0);
     if (due().length === 0) return;
+    // Unsettled while a try is due: the pages on show may change.
+    countUnsettled(1);
     retryTimer = setTimeout(() => {
       retryTimer = null;
       const families = due();
-      if (disposed || families.length === 0) return;
+      if (disposed) return;
+      if (families.length === 0) {
+        countUnsettled(-1);
+        return;
+      }
       for (const f of families) retriesLeft.set(f, (retriesLeft.get(f) ?? FONT_RETRIES) - 1);
       const next = fontQueue.then(async () => {
-        if (disposed) return;
-        if (await sendFamilies(families)) announce(families);
+        try {
+          if (!disposed) await sendFamilies(families);
+        } finally {
+          if (!disposed) countUnsettled(-1);
+        }
       });
       fontQueue = next;
     }, FONT_RETRY_MS + 1_000);
@@ -342,10 +402,13 @@ export function createLayoutService(options?: {
     return sent ? families : [];
   };
 
-  /** Wait for `fonts` as long as a build may (`fontHoldMs`); past it, the
-   *  build goes ahead and the views are told when the faces arrive. */
+  /** Wait for `fonts`: as long as its requests are answered, the ceiling
+   *  at most. False past the ceiling: the build goes ahead, and the views
+   *  are told when the faces arrive. */
   const hold = async (fonts: Promise<string[] | boolean>, families: () => string[]): Promise<boolean> => {
-    if (await settledWithin(fonts, fontHoldMs)) return true;
+    countUnsettled(1);
+    void fonts.then(() => {}, () => {}).then(() => { if (!disposed) countUnsettled(-1); });
+    if (await settledWithin(fonts, fontCeilingMs)) return true;
     void fonts.then((sent) => {
       const late = Array.isArray(sent) ? sent : sent ? families() : [];
       announce(late);
@@ -411,8 +474,9 @@ export function createLayoutService(options?: {
     });
     let stats: BuildStats | null = null;
     try {
-      // Bounded (#757): one slow file does not hold the chapter.
-      await hold(ensureFonts(request.config, request.content), () => []);
+      // Waited for while its requests are answered (#757): a request the
+      // loader gives up, or the ceiling, lets the chapter go without.
+      let waited = await hold(ensureFonts(request.config, request.content), () => []);
       if (controller.signal.aborted) throw abortError();
       const buildOptions = {
         signal: controller.signal,
@@ -433,7 +497,11 @@ export function createLayoutService(options?: {
         const families = (): string[] => [...new Set(documentFontFaces(doc!).map((face) => face.family))];
         // A file of theirs that is slow: the document stands as it is, and
         // the views lay out again when it arrives.
-        if (!(await hold(named, families)) || !(await named)) break;
+        if (!(await hold(named, families))) {
+          waited = false;
+          break;
+        }
+        if (!(await named)) break;
         if (controller.signal.aborted) throw abortError();
         doc = await build();
       }
@@ -447,6 +515,12 @@ export function createLayoutService(options?: {
         passes: built?.passes.length,
         passMs: built?.passes.map((p) => Math.round(p.ms)).join('/'),
       });
+      if (doc) {
+        // Laid out without a face it asked for: said of the document, so
+        // nobody takes its pages for the chapter's.
+        const asked = new Set([...configFontUses(request.config, request.content.markdown).keys(), ...documentFontFaces(doc).map((face) => face.family)]);
+        if (!waited || [...asked].some((family) => shortFamilies.has(family))) markBuiltWithoutFaces(doc);
+      }
       entry.resolve(doc as VDTDocument);
     } catch (err) {
       const aborted = (err as { name?: string } | null)?.name === 'AbortError';
@@ -513,6 +587,8 @@ export function createLayoutService(options?: {
       if (disposed) return;
       disposed = true;
       if (retryTimer !== null) clearTimeout(retryTimer);
+      unsettle(-unsettled);
+      unsettled = 0;
       unsubscribeFonts();
       for (const q of queue.splice(0)) q.reject(abortError());
       if (active) interrupt(active, false);

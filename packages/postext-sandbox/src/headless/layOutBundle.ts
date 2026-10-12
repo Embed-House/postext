@@ -163,7 +163,7 @@ export async function layOutBundle(bytes: Uint8Array, options: LayOutBundleOptio
   };
   // Nobody watches a first layout here: the one with every face is waited
   // for, as long as the requests themselves are (#757).
-  const service = createLayoutService({ handle, fontHoldMs: Infinity });
+  const service = createLayoutService({ handle, fontCeilingMs: Infinity });
   const planner = createBookPlanner();
   const layouts: Record<string, ChapterLayout> = {};
   const docs = new Map<string, VDTDocument>();

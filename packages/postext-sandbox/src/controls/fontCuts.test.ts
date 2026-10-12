@@ -99,6 +99,8 @@ let noFile: Set<string>;
 /** The URLs the network does not answer: the request stays out until it
  *  is given up. */
 let stalled: Set<string>;
+/** The URLs the network answers after a while (ms). */
+let slow: Map<string, number>;
 
 const fontsource = (id: string) => `https://api.fontsource.org/v1/fonts/${id}`;
 const google = (family: string) => `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}`;
@@ -110,6 +112,15 @@ function stubFetch(): void {
   vi.stubGlobal('fetch', async (input: string, init?: { signal?: AbortSignal }) => {
     const url = String(input);
     requests.push(url);
+    if (slow.has(url)) {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(resolve, slow.get(url));
+        init?.signal?.addEventListener('abort', () => {
+          clearTimeout(timer);
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      });
+    }
     if (stalled.has(url)) {
       await new Promise<never>((_, reject) => {
         init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
@@ -231,6 +242,7 @@ beforeEach(async () => {
   requests = [];
   noFile = new Set();
   stalled = new Set();
+  slow = new Map();
   stubFetch();
   previous = { document: globals.document, FontFace: globals.FontFace };
   fonts = new CutFontSet();
@@ -590,7 +602,7 @@ describe('a request the network does not answer (#757)', () => {
     let settled = false;
     const got = loader.fetchFacePayloads(faces);
     void got.then(() => { settled = true; });
-    await vi.advanceTimersByTimeAsync(loader.FONT_FETCH_TIMEOUT_MS - 1);
+    await vi.advanceTimersByTimeAsync(loader.FONT_STALL_MS - 1);
     // Still out: nothing bounds `fetch` but the loader.
     expect(settled).toBe(false);
     await vi.advanceTimersByTimeAsync(2);
@@ -603,6 +615,30 @@ describe('a request the network does not answer (#757)', () => {
     await vi.advanceTimersByTimeAsync(loader.FONT_RETRY_MS);
     expect((await loader.fetchFacePayloads(faces)).map((p) => fileOf(p.buffer))).toEqual(faces.map((f) => f.url));
     expect(loader.unansweredFontRequests()).toEqual([]);
+  });
+
+  it('gives no request up while files keep arriving: a file waiting its turn behind the others is alive as long as they come in', async () => {
+    const faces = await loader.familyCutFaces(SERIF, [upright(400), upright(700), italic(400)]);
+    expect(faces.length).toBeGreaterThan(3);
+    // A slow line: a file every ten seconds, the last one two minutes in.
+    faces.forEach((face, i) => slow.set(face.url, (i + 1) * 10_000));
+    const last = faces.length * 10_000;
+    slow.set(faces[faces.length - 1]!.url, 120_000);
+    vi.useFakeTimers();
+    let payloads: { buffer: ArrayBuffer }[] | null = null;
+    void loader.fetchFacePayloads(faces).then((p) => { payloads = p; });
+    await vi.advanceTimersByTimeAsync(last);
+    expect(payloads).toBeNull();
+    expect(loader.unansweredFontRequests()).toEqual([]);
+    // Nothing for fifteen seconds now: the one still out is given up.
+    await vi.advanceTimersByTimeAsync(loader.FONT_STALL_MS - 10_000 - 1);
+    expect(payloads).toBeNull();
+    await vi.advanceTimersByTimeAsync(2);
+    expect(payloads).not.toBeNull();
+    expect(payloads!).toHaveLength(faces.length - 1);
+    expect(loader.unansweredFontRequests()).toEqual([faces[faces.length - 1]!.url]);
+    expect(loader.fontRequestsUnanswered(SERIF, faces.map((f) => f.url))).toBe(true);
+    expect(loader.fontRequestsUnanswered(SERIF, faces.slice(0, -1).map((f) => f.url))).toBe(false);
   });
 
   it('does not count a file the server has not (a 404 is an answer)', async () => {
@@ -618,12 +654,15 @@ describe('a request the network does not answer (#757)', () => {
     vi.useFakeTimers();
     let faces: { url: string }[] | null = null;
     void loader.fetchFamilyFaces(SERIF).then((f) => { faces = f; });
-    await vi.advanceTimersByTimeAsync(loader.FONT_FETCH_TIMEOUT_MS - 1);
+    await vi.advanceTimersByTimeAsync(loader.FONT_STALL_MS - 1);
     expect(faces).toBeNull();
     await vi.advanceTimersByTimeAsync(2);
     expect(faces).not.toBeNull();
     expect(faces!.length).toBeGreaterThan(0);
     expect(faces!.every((f) => f.url.startsWith('https://fonts.gstatic.com/'))).toBe(true);
     expect(loader.unansweredFontRequests()).toEqual([fontsource('source-serif-4')]);
+    // The family may have files a later request brings; another family has not.
+    expect(loader.fontRequestsUnanswered(SERIF, [])).toBe(true);
+    expect(loader.fontRequestsUnanswered('Amiri', [])).toBe(false);
   });
 });

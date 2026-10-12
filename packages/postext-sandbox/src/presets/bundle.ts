@@ -222,7 +222,8 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
   content.chapters.forEach((c, i) => {
     const path = plan.chapterFiles[i]!.path;
     const layout = content.layouts?.[c.id];
-    if (layout && layout.markdown === c.markdown && layout.engine === ENGINE_KEY
+    // Not a layout made without a face it asked for (#757).
+    if (layout && !layout.withoutFaces && layout.markdown === c.markdown && layout.engine === ENGINE_KEY
       && layout.configKey === configKeyOf(content.config) && layout.resourcesKey === resourcesKeyOf(content.resources)) {
       layoutChapters[path] = {
         continuationKey: layout.continuationKey,
