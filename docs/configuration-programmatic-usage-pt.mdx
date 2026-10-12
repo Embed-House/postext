@@ -624,7 +624,7 @@ As faces também podem chegar ao worker depois de um layout: um peso de que as p
 O `collectFontPayloadsForFamilies` do Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) é uma implementação de referência. Ele:
 
 1. Consulta `https://api.fontsource.org/v1/fonts/{family-id}` para saber quais pesos e estilos a família tem.
-2. Lê os subconjuntos da família e o `unicode-range` de cada um no pacote dela no jsDelivr (`@fontsource/{family-id}@5/400.css`), uma vez por família.
+2. Lê os subconjuntos da família e o `unicode-range` de cada um no pacote dela no jsDelivr (`@fontsource/{family-id}@5/400.css`), uma vez por família. Os arquivos são então pedidos à versão exata de onde essa folha de estilos foi respondida (`x-jsd-version` do jsDelivr), de modo que uma família nunca chega de duas versões do seu pacote.
 3. Baixa todos os arquivos do regular, do negrito e dos itálicos de cada família (`files/{family-id}-{subset}-{weight}-{style}.woff2`); já `collectFontPayloadsForConfig(config, markdown)` toma os pesos e estilos que uma configuração pede. São arquivos estáticos, os que o PDF incorpora, de modo que o worker mede com o que o PDF desenha. Um arquivo variável dá outros avanços entre dois dos seus masters, e uma linha a uma fração de pixel da sua medida quebra em outro ponto.
 4. Devolve um `FontPayload[]` em que `buffer` é um `ArrayBuffer` novo a cada chamada, o que importa porque `registerFonts` transfere o buffer e deixa a cópia de quem envia desanexada.
 

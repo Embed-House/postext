@@ -624,7 +624,7 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 Sandboxの`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）は参考実装です。次の処理を行います。
 
 1. `https://api.fontsource.org/v1/fonts/{family-id}`に問い合わせ、ファミリーが持つウェイトとスタイルを調べます。
-2. jsDelivrにあるファミリーのパッケージ（`@fontsource/{family-id}@5/400.css`）から、サブセットとそれぞれの`unicode-range`を読みます。ファミリーごとに1回です。
+2. jsDelivrにあるファミリーのパッケージ（`@fontsource/{family-id}@5/400.css`）から、サブセットとそれぞれの`unicode-range`を読みます。ファミリーごとに1回です。その後、各ファイルはそのスタイルシートを返した正確なバージョン（jsDelivrの`x-jsd-version`）に対して取得するので、ファミリーがパッケージの2つのバージョンから届くことはありません。
 3. 各ファミリーのレギュラー、ボールド、それぞれのイタリックについて、すべてのファイル（`files/{family-id}-{subset}-{weight}-{style}.woff2`）をダウンロードします。`collectFontPayloadsForConfig(config, markdown)`は、代わりに設定が求めるウェイトとスタイルを取得します。どれも静的ファイルで、PDFに埋め込むファイルと同じなので、ワーカーはPDFが描くのと同じフォントで計測します。可変ファイルは2つのマスターの間で送り幅が異なり、行長との差が1ピクセルに満たない行は別の位置で改行されます。
 4. 呼び出しごとに`buffer`が新しい`ArrayBuffer`になっている`FontPayload[]`を返します。`registerFonts`はバッファーを転送し、送信側のコピーを切り離された（detached）状態にするので、これが重要です。
 

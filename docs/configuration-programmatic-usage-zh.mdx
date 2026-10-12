@@ -624,7 +624,7 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 沙盒的`collectFontPayloadsForFamilies`（`packages/postext-sandbox/src/controls/fontLoader.ts`）是一份参考实现。它：
 
 1. 查询`https://api.fontsource.org/v1/fonts/{family-id}`，得知该字族有哪些字重和样式。
-2. 从该字族在jsDelivr上的包（`@fontsource/{family-id}@5/400.css`）读取它的子集及各自的`unicode-range`，每个字族读一次。
+2. 从该字族在jsDelivr上的包（`@fontsource/{family-id}@5/400.css`）读取它的子集及各自的`unicode-range`，每个字族读一次。随后向回应该样式表的确切版本（jsDelivr的`x-jsd-version`）请求各个文件，这样一个字族不会来自其软件包的两个版本。
 3. 下载每个字族的常规体、粗体及两者的斜体的全部文件（`files/{family-id}-{subset}-{weight}-{style}.woff2`）；`collectFontPayloadsForConfig(config, markdown)`则按配置所要求的字重和样式来取。这些都是静态文件，也就是PDF嵌入的文件，所以工作线程测量所用的正是PDF绘制所用的。可变文件在两个母版之间给出的字宽不同，离行宽只差零点几像素的一行就会在别处断开。
 4. 返回一个`FontPayload[]`，每次调用时其中的`buffer`都是新的`ArrayBuffer`。这一点很重要，因为`registerFonts`会转移缓冲区，发送方的副本随之失效。
 

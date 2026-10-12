@@ -623,7 +623,7 @@ Les cares també poden arribar al worker després d'una composició: un pes que 
 `collectFontPayloadsForFamilies` del sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) és una implementació de referència. El que fa:
 
 1. Consulta `https://api.fontsource.org/v1/fonts/{id-de-familia}` per saber quins pesos i estils té la família.
-2. Llegeix els subconjunts de la família i el seu `unicode-range` al seu paquet de jsDelivr (`@fontsource/{id-de-familia}@5/400.css`), una vegada per família.
+2. Llegeix els subconjunts de la família i el seu `unicode-range` al seu paquet de jsDelivr (`@fontsource/{id-de-familia}@5/400.css`), una vegada per família. Els fitxers es demanen després a la versió exacta des de la qual es va servir aquest full d'estils (`x-jsd-version` de jsDelivr), de manera que una família no arriba mai de dues versions del seu paquet.
 3. Baixa tots els fitxers de la rodona, la negreta i les seves cursives de cada família (`files/{id-de-familia}-{subconjunt}-{pes}-{estil}.woff2`); `collectFontPayloadsForConfig(config, markdown)` pren, en canvi, els pesos i estils que demana una configuració. Són fitxers estàtics, els que incrusta el PDF, de manera que el worker mesura amb allò que el PDF dibuixa. Un fitxer variable dona altres avanços entre dos dels seus màsters, i una línia a una fracció de píxel de la seva mida parteix en un altre lloc.
 4. Retorna un `FontPayload[]` on `buffer` és un `ArrayBuffer` nou per crida — important, perquè `registerFonts` transfereix el buffer i deixa la còpia del remitent desvinculada.
 

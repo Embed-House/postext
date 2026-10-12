@@ -624,7 +624,7 @@ const doc = await layout.build({ markdown }, { bodyText: { fontFamily: 'EB Garam
 ودالة `collectFontPayloadsForFamilies` في Sandbox (`packages/postext-sandbox/src/controls/fontLoader.ts`) تطبيق مرجعي. وهي:
 
 1. تستعلم `https://api.fontsource.org/v1/fonts/{family-id}` لمعرفة الأوزان والأنماط التي تملكها العائلة.
-2. تقرأ المجموعات الفرعية للعائلة ونطاق `unicode-range` لكل منها من حزمتها على jsDelivr (`@fontsource/{family-id}@5/400.css`)، مرة لكل عائلة.
+2. تقرأ المجموعات الفرعية للعائلة ونطاق `unicode-range` لكل منها من حزمتها على jsDelivr (`@fontsource/{family-id}@5/400.css`)، مرة لكل عائلة. ثم تُطلب الملفات من الإصدار المحدد الذي أُجيب منه عن ورقة الأنماط تلك (`x-jsd-version` من jsDelivr)، فلا تصل العائلة أبدًا من إصدارين من حزمتها.
 3. تنزّل كل ملفات الوجه العادي والعريض ومائليهما لكل عائلة (`files/{family-id}-{subset}-{weight}-{style}.woff2`)؛ أما `collectFontPayloadsForConfig(config, markdown)` فتأخذ الأوزان والأنماط التي تطلبها الإعدادات. وهي ملفات ثابتة، هي التي يضمّنها ملف PDF، فيقيس العامل بما يرسم به PDF. والملف المتغيّر يعطي عروض تقدّم أخرى بين اثنين من أصوله (masters)، فينقطع في موضع آخر السطرُ الذي لا يفصله عن طول السطر إلا جزء من البكسل.
 4. تُعيد `FontPayload[]` يكون فيها `buffer` كائن `ArrayBuffer` جديدًا في كل استدعاء، وهذا مهم لأن `registerFonts` تنقل المخزن وتترك النسخة في جانب المُرسِل منفصلة (detached).
 
