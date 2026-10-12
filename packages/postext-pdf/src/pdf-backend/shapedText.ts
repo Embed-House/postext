@@ -41,7 +41,7 @@ import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNam
 import { lineRuns, resolveParagraph } from 'postext';
 import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
-import { shapingLanguage, shapingScriptOf } from '../shapingLanguage';
+import { shapingLanguage, shapingScriptOf, withBesideLetter, withinRightToLeftText } from '../shapingLanguage';
 import { toUnicodeCmap } from '../fontCache';
 import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives';
 
@@ -170,8 +170,9 @@ function shapingOf(font: PDFFont, text: string, direction: 'ltr' | 'rtl', langua
 }
 
 /** The script `text` is shaped in (`shapingScriptOf`: the one in force,
- *  #725, or Latin for text the canvas shaped as Latin, #764) in a cache
- *  key: empty with none, so every other key is unchanged. */
+ *  #725, the one of the letter a part was cut from beside or Latin for
+ *  text the canvas shaped as Latin, #764) in a cache key: empty with none,
+ *  so every other key is unchanged. */
 function scriptKey(text: string): string {
   const script = shapingScriptOf(text);
   return script === undefined ? '' : `${script}\u0001`;
@@ -272,7 +273,8 @@ function buildShaping(font: PDFFont, text: string, direction: 'ltr' | 'rtl', lan
   const embedder = embedderOf(font);
   if (!embedder) return null;
   // A word with no letter is shaped in the script the layout measured it
-  // in (#725), text the canvas shaped as Latin in the Latin script (#764);
+  // in (#725), a part with no letter in the script of the word it was cut
+  // out of and text the canvas shaped as Latin in the Latin script (#764);
   // any other text in the script HarfBuzz reads from it.
   const script = shapingScriptOf(text);
   const run = shapeRun(embedder.fontData!, text, { direction, language, ...(script ? { script } : {}), features: shapeFeatures(embedder.fontFeatures) });
@@ -582,6 +584,19 @@ function layoutShapedText(
   spanOp: ((text: string) => PDFOperator) | undefined,
 ): ShapedLayout | null {
   if (!complexShaperReady()) return null;
+  // A piece with no letter of a string with right-to-left letters has no
+  // script, unless a letter stands beside it in its word (#764).
+  return withinRightToLeftText(needsComplexShaping(text), () => layoutRuns(font, text, fontSize, options, spanOp));
+}
+
+/** {@link layoutShapedText}, once HarfBuzz is known to be loaded. */
+function layoutRuns(
+  font: PDFFont,
+  text: string,
+  fontSize: number,
+  options: ShapedTextOptions,
+  spanOp: ((text: string) => PDFOperator) | undefined,
+): ShapedLayout {
   const shows: TextShow[] = [];
   const state = { rise: 0 };
   const language = languageOf(options.language);
@@ -591,8 +606,10 @@ function layoutShapedText(
     const files = fileRuns(font, text.slice(run.start, run.end), run.rtl);
     // The files of a right-to-left run follow each other leftwards.
     if (run.rtl) files.reverse();
-    for (const { font: file, text: part } of files) {
-      const shown = shapedShow(file, part, run.rtl ? 'rtl' : 'ltr', language, tatweelsToHide(options.hideTatweel));
+    for (const { font: file, text: part, beside } of files) {
+      // A part with no letter (the stop and the guillemet of `خالة.»`, in
+      // another file than the letters) is shaped in the word's script.
+      const shown = withBesideLetter(beside, () => shapedShow(file, part, run.rtl ? 'rtl' : 'ltr', language, tatweelsToHide(options.hideTatweel)));
       if (!shown) {
         // A file HarfBuzz cannot read (a standard font): fontkit's glyphs.
         if (state.rise !== 0) shows.push({ font: file, op: setTextRise(0) });

@@ -44,7 +44,7 @@ import type { PageTagger } from './tagging';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
 import { needsComplexShaping } from '../complexShaping';
-import { shapingKey, withShapingScript } from '../shapingLanguage';
+import { shapingKey, withBesideLetter, withShapingScript } from '../shapingLanguage';
 
 export interface PageCtx {
   page: PDFPage;
@@ -583,10 +583,10 @@ export interface TextShow {
  *  text some other way (an `/ActualText` over all of it, a figure's
  *  alternate text). */
 export function textShows(font: PDFFont, text: string, read = true): TextShow[] {
-  return fileRuns(font, text).flatMap((run) => {
+  return fileRuns(font, text).flatMap((run) => withBesideLetter(run.beside, () => {
     const shown = read ? shownRun(run.font, run.text) : undefined;
     return shown?.reads ? partsShows(run.font, shown.parts) : [{ font: run.font, op: showTextShaped(run.font, run.text) }];
-  });
+  }));
 }
 
 function shapingFace(font: PDFFont): { face: ShapingFace & FallbackFace; features: unknown } | undefined {
@@ -902,8 +902,8 @@ function shownRun(font: PDFFont, text: string): ShownRun | undefined {
 export function textAdvancePx(font: PDFFont, text: string, sizePx: number, trackingPx = 0): { advance: number; glyphs: number } {
   let advance = 0;
   let glyphs = 0;
-  for (const { font: file, text: part } of fileRuns(font, text)) {
-    const run = shownRun(file, part);
+  for (const { font: file, text: part, beside } of fileRuns(font, text)) {
+    const run = withBesideLetter(beside, () => shownRun(file, part));
     if (!run) {
       advance += file.widthOfTextAtSize(part, sizePx);
       glyphs += [...part].length;
@@ -968,8 +968,8 @@ export function measuredTextShows(
   for (let i = 0; i < pieces.length; i++) {
     const piece = pieces[i]!;
     let advance = 0;
-    for (const { font: file, text } of fileRuns(font, piece.text)) {
-      const run = shownRun(file, text);
+    for (const { font: file, text, beside } of fileRuns(font, piece.text)) {
+      const run = withBesideLetter(beside, () => shownRun(file, text));
       if (!run) return undefined;
       if (!group || group.font !== file) {
         group = { font: file, parts: [] };

@@ -18,7 +18,7 @@
 import type { PDFFont } from 'pdf-lib';
 import { mirroredCodePoint } from 'postext';
 import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces';
-import { shapingScriptLetter } from './shapingLanguage';
+import { besideLetterOf, shapingScriptLetter } from './shapingLanguage';
 
 /** The fontkit face of an embedded font, as far as coverage needs it. */
 interface CoverageFace {
@@ -107,6 +107,10 @@ export function faceFilesOf(font: PDFFont): FaceFiles | undefined {
 export interface FileRun {
   font: PDFFont;
   text: string;
+  /** A letter of the script the run is shaped in, when it holds no letter
+   *  and the text it was cut out of does (`besideLetterOf`, #764): the
+   *  caller shapes the run inside `withBesideLetter`. */
+  beside?: number;
 }
 
 /**
@@ -142,6 +146,11 @@ export interface FileRun {
  * Latin form for it. A word the file cannot set whole (the `(` of an
  * Arabic sentence, whose mirror only the `latin` file holds) is cut as
  * any other text.
+ *
+ * A run with no letter, cut out of text that has one (the `.»` of
+ * `خالة.»`, which the `latin` file draws), says the letter whose script
+ * the browser shaped it in (`beside`, #764), in a document shaped in its
+ * own language.
  */
 export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   const list = faceFilesOf(font);
@@ -199,6 +208,15 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
   if (pending) {
     if (current) current.text += pending;
     else runs.push({ font, text: pending });
+  }
+  if (runs.length > 1) {
+    // The runs follow each other through the text.
+    let at = 0;
+    for (const run of runs) {
+      const beside = besideLetterOf(text, at, at + run.text.length);
+      if (beside !== undefined) run.beside = beside;
+      at += run.text.length;
+    }
   }
   return runs.length > 0 ? runs : [{ font, text }];
 }
