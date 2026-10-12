@@ -451,13 +451,11 @@ executável deste computador em `packages/postext-cli/bin/`.
   ou da Fontsource (para uma família que o Google Fonts não tem), nunca das
   fontes instaladas no computador, então um livro sai igual em qualquer
   máquina.
-- **O idioma do texto** é, num navegador, o do próprio documento
-  (`bodyText.shapingLanguage`). O canvas do Skia aceita um idioma e dá forma ao
-  texto sem ele, então a linha de comando mede as formas do idioma padrão de
-  cada fonte e diagrama os seus livros com `shapingLanguage: 'host'`, diga o
-  que disser a configuração; o PDF e as imagens de página dela pintam essas
-  mesmas formas. Um livro chinês numa fonte de chinês simplificado, um livro
-  japonês numa fonte japonesa e qualquer livro numa fonte sem formas por idioma
-  saem como no Sandbox. Um livro cuja fonte tem formas para o seu idioma (um
-  `l·l` catalão, um `fi` turco, os algarismos de uma fonte chinesa num livro em
-  inglês) é composto aqui com as formas padrão.
+- **O idioma do texto** é, num navegador, o do host por padrão e o do próprio
+  documento com `bodyText.shapingLanguage: 'document'`. O canvas do Skia aceita
+  um idioma e dá forma ao texto sem ele, então a linha de comando mede as formas
+  do idioma padrão de cada fonte e sempre diagrama os seus livros com
+  `shapingLanguage: 'host'`, diga o que disser a configuração; o PDF e as
+  imagens de página dela pintam essas mesmas formas. Um livro cuja fonte tem
+  formas para um idioma (um `l·l` catalão, um `fi` turco, os algarismos de uma
+  fonte chinesa num livro em inglês) é composto aqui com as formas padrão.

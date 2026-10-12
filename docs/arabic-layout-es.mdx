@@ -40,7 +40,7 @@ const config: PostextConfig = {
 - **énfasis en negrita** en lugar de cursiva, y citas en redonda;
 - **los textos incorporados**: شكل y جدول para figuras y tablas, numeradas por capítulo (شكل ٢-٣), الفصل y ص en las referencias cruzadas, المراجع sobre la bibliografía, انظر y انظر أيضًا en el índice analítico, (تابع) tras el pie de una tabla que continúa;
 - **el orden del índice analítico**, alfabético (hijāʾī), sin tener en cuenta el artículo ال;
-- **la etiqueta de idioma** en el HTML (`lang="ar" dir="rtl"`), en el canvas, en el PDF (`/Lang`) y en los contextos con los que mide la maquetación, para que las formas de la fuente propias del idioma se apliquen donde el texto se mide y donde se pinta: un libro en urdu o en persa toma sus cifras y las formas de sus letras en una página en cualquier idioma y en un worker de composición ([`bodyText.shapingLanguage`](/es/docs/configuration-text#texto-de-cuerpo)).
+- **la etiqueta de idioma** en el HTML (`lang="ar" dir="rtl"`), en el canvas y en el PDF (`/Lang`), para que se apliquen las formas de la fuente propias del idioma. Con [`bodyText.shapingLanguage: 'document'`](/es/docs/configuration-text#texto-de-cuerpo) también la toman los contextos con los que mide la maquetación, en una página en cualquier idioma y en un worker de composición; por defecto toman el idioma de la página que aloja la maquetación.
 
 El Sandbox lo hace en un solo paso: elige العربية en **Diseño › Escritura** y pulsa **Ajustes para árabe › Revisar…** (véase [En el Sandbox](#en-el-sandbox)).
 
