@@ -11,9 +11,10 @@
 function cjkSlices(family, weight, style) {
   cjkSlices.cache ??= new Map();
   const id = fontsourceId(family);
-  const css = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/${weight}${style === 'italic' ? '-italic' : ''}.css`;
+  const css = `${id}/${weight}${style === 'italic' ? '-italic' : ''}.css`;
   if (!cjkSlices.cache.has(css)) {
-    cjkSlices.cache.set(css, fetch(css)
+    let at;
+    cjkSlices.cache.set(css, fontsourceAt(id).then((a) => fetch(at = a + css.slice(id.length + 1)))
       .then((res) => {
         if (!res.ok) throw new Error(`Fontsource has no ${family} ${weight} ${style} (${res.status})`);
         return res.text();
@@ -24,7 +25,7 @@ function cjkSlices(family, weight, style) {
           const [lo, hi = lo] = part.trim().slice(2).split('-');
           return [parseInt(lo, 16), parseInt(hi, 16)];
         });
-        return { url: new URL(/url\(([^)]+?\.woff2)\)/.exec(rule)[1], css).href, range, ranges };
+        return { url: new URL(/url\(([^)]+?\.woff2)\)/.exec(rule)[1], at).href, range, ranges };
       }).reverse()));
   }
   return cjkSlices.cache.get(css);
@@ -136,7 +137,7 @@ async function cjkLatinPdfFiles(family, weight, style, request) {
   const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
   const s = style === 'italic' && !meta.styles.includes('italic') ? 'normal' : style;
   const id = fontsourceId(family);
-  const url = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-latin-ext-${w}-${s}.woff2`;
+  const url = `${await fontsourceAt(id)}files/${id}-latin-ext-${w}-${s}.woff2`;
   const [latin, ext] = await Promise.all([fontsourceProvider(family, weight, style), fetch(url)
     .then(async (res) => (res.ok ? decompressWoff2(new Uint8Array(await res.arrayBuffer())) : null), () => null)]);
   return ext ? [latin, ext] : latin;

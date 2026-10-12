@@ -56,7 +56,8 @@ async function comicFaceFiles(family, weight, style, meta, text) {
     return (await cjkSlices(family, weight, style)).map(({ url, range }) => ({ url, range }));
   }
   const id = fontsourceId(family);
-  const file = (subset) => `https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-${subset}-${weight}-${style}.woff2`;
+  const at = await fontsourceAt(id);
+  const file = (subset) => `${at}files/${id}-${subset}-${weight}-${style}.woff2`;
   const files = ['latin', ...kitSubsetsFor(text, meta)].map((subset) => ({ url: file(subset), range: comicRange(subset) }));
   if (meta.subsets?.includes('arabic') && /\p{Script=Arabic}/u.test(text)) {
     if (typeof arabicRange !== 'function') throw new Error(`${family} sets Arabic: list the arabic kit block`);

@@ -26,7 +26,7 @@ async function svgFaces(family, weight, style, { codePoints = [] } = {}) {
   const w = m?.weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a)) ?? weight;
   const s = m?.styles.includes(style) === false ? 'normal' : style;
   return Promise.all(['latin', ...kitSubsetsFor(String.fromCodePoint(...codePoints), m)].map(async (x) => new Uint8Array(
-    await (await fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-${x}-${w}-${s}.woff2`)).arrayBuffer())));
+    await (await fetch(`${await fontsourceAt(id)}files/${id}-${x}-${w}-${s}.woff2`)).arrayBuffer())));
 }
 
 /** renderToPdf({ resourceBytes: imageBytes }) */

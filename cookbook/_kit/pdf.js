@@ -11,7 +11,7 @@ async function fontsourceProvider(family, weight, style, request) {
   const text = String.fromCodePoint(...(request?.codePoints ?? []));
   const more = kitSubsetsFor(text, meta);
   const files = await Promise.all(['latin', ...more].map(async (subset) => {
-    const res = await fetch(`https://cdn.jsdelivr.net/npm/@fontsource/${id}@5/files/${id}-${subset}-${w}-${s}.woff2`);
+    const res = await fetch(`${await fontsourceAt(id)}files/${id}-${subset}-${w}-${s}.woff2`);
     if (!res.ok) throw new Error(`Fontsource has no ${family} ${w} ${s} ${subset}`);
     return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
   }));
