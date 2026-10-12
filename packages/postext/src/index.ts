@@ -575,7 +575,7 @@ export { buildDocumentWithFonts } from './fonts/buildWithFonts';
 export type { BuildDocumentWithFontsOptions } from './fonts/buildWithFonts';
 export { watchFonts, onFontsChanged, syncFontSet } from './fonts/fontSet';
 export type { FontsChangedListener } from './fonts/fontSet';
-export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet } from './fonts/faces';
+export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet, cssWeightOrder, cssWeightOrderOf } from './fonts/faces';
 export type { FontFaceLike, FontFaceSetLike, FontFallback, FontFallbackReason, FontFallbackOptions, FontFaceRequest } from './fonts/faces';
 export { evictFontFamilies } from './measure/font';
 export { measurementGeneration } from './measure/canvas';

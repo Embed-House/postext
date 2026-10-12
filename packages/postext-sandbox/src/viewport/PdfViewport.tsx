@@ -23,6 +23,7 @@ import { ensureConfigFontsLoaded, onCustomFontsChanged } from '../controls/fontL
 import { readViewHash } from '../storage/viewHash';
 import { withHyphenationLocale } from '../controls/hyphenation';
 import { useLayoutWorker, type BuildProgress } from '../worker/useLayoutWorker';
+import { onLateFonts } from '../worker/LayoutService';
 import { perfMark, perfSpan } from '../perf/marks';
 import { buildPdfResourceBytes } from './pdfResourceBytes';
 import { PdfPreview, generationFraction } from './PdfPreview';
@@ -315,10 +316,18 @@ export function PdfViewport() {
   const regenerateRef = useRef(regenerate);
   regenerateRef.current = regenerate;
   useEffect(() => {
-    return onCustomFontsChanged(() => {
+    const stale = () => {
       if (renderedConfigRef.current !== null) setDirty(true);
       else if (failedRef.current) void regenerateRef.current();
-    });
+    };
+    const offCustom = onCustomFontsChanged(stale);
+    // A file laid out without its faces, which the layout worker got
+    // after the build (#757), is out of date in the same way.
+    const offLate = onLateFonts(stale);
+    return () => {
+      offLate();
+      offCustom();
+    };
   }, []);
 
   // Auto-generate once the store has hydrated: resources arrive from

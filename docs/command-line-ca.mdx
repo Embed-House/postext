@@ -353,18 +353,21 @@ configuració i que el llibre no porta, `postext` busca, per aquest ordre:
    Fonts no té la família (Commit Mono, FiraGO); es guarden a la memòria cau,
    així que cada família es baixa una sola vegada.
 
-Un pes o una inclinació que la família no porta es compon amb la seva font més
-propera tal com és, a les imatges de pàgina igual que al PDF: una família de
-retolació amb un sol pes conserva les seves lletres a la negreta, i una
-família sense cursiva, les rodones.
+Un pes que la família no porta es compon amb la font que triaria un navegador
+(la selecció de fonts de CSS: per sobre de 500 primer les més pesants, per sota
+de 400 primer les més lleugeres, de manera que el 600 d'una família amb 400 i
+700 és el seu 700, i el 550 també), i una inclinació que no porta, amb les
+seves rodones, tal com són en tots dos casos, a les imatges de pàgina igual
+que al PDF: una família de retolació amb un sol pes conserva les seves lletres
+a la negreta, i una família sense cursiva, les rodones.
 
 Es baixen els pesos que anomena la configuració: rodona, negreta i les seves
 cursives per a cada família, i qualsevol altre pes que doni un ajust, inclòs el
 de la negreta (`bodyText.boldFontWeight: 600` demana la font de pes 600). Si
 un pes que la família sí que porta no s'ha pogut carregar (sense connexió i
 sense fitxer a la memòria cau, una baixada fallida, una carpeta de fonts sense
-el fitxer), el text es compon amb la font més propera de la família i
-`postext check` el llista com a avís `fontFallback`: les seves línies poden
+el fitxer), el text es compon amb la font de la família que hi respon segons la
+mateixa regla i `postext check` el llista com a avís `fontFallback`: les seves línies poden
 partir d'una altra manera que al Sandbox.
 
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a

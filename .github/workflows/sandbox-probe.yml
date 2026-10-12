@@ -21,7 +21,11 @@ jobs:
   probe:
     name: Open the recipe bundles on the site
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
+    # macOS, as the captures: a recipe is captured on a Mac, and Chrome
+    # measures text there to fractions of a pixel that Chrome on the Linux
+    # runner does not give (the same 55 editions broke a line elsewhere on
+    # ubuntu before and after #757, none on macOS).
+    runs-on: macos-latest
     timeout-minutes: 45
     env:
       SITE: ${{ inputs.site || 'https://postext.dev' }}
@@ -58,7 +62,7 @@ jobs:
 
       - name: pnpm cookbook sandbox --site
         env:
-          COOKBOOK_CHROME: /usr/bin/google-chrome
+          COOKBOOK_CHROME: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
         run: pnpm cookbook sandbox --site "$SITE" --report "$RUNNER_TEMP/sandbox-probe.json"
 
       - uses: actions/upload-artifact@v4

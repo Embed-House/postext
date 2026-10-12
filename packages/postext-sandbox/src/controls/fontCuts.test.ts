@@ -96,6 +96,9 @@ const MINCHO_CSS = packageCss('noto-serif-jp', 'Noto Serif JP', SLICES);
 let routes: Record<string, string | object | Error | number>;
 let requests: string[];
 let noFile: Set<string>;
+/** The URLs the network does not answer: the request stays out until it
+ *  is given up. */
+let stalled: Set<string>;
 
 const fontsource = (id: string) => `https://api.fontsource.org/v1/fonts/${id}`;
 const google = (family: string) => `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}`;
@@ -104,9 +107,14 @@ const fileOf = (bytes: ArrayBuffer | Uint8Array) => new TextDecoder().decode(byt
 const cps = (text: string) => new Set([...text].map((ch) => ch.codePointAt(0)!));
 
 function stubFetch(): void {
-  vi.stubGlobal('fetch', async (input: string) => {
+  vi.stubGlobal('fetch', async (input: string, init?: { signal?: AbortSignal }) => {
     const url = String(input);
     requests.push(url);
+    if (stalled.has(url)) {
+      await new Promise<never>((_, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+      });
+    }
     if (url.endsWith('.woff2')) {
       if (noFile.has(url)) return { ok: false, status: 404, arrayBuffer: async () => new ArrayBuffer(0) };
       return { ok: true, status: 200, arrayBuffer: async () => new TextEncoder().encode(url).buffer };
@@ -222,6 +230,7 @@ beforeEach(async () => {
   };
   requests = [];
   noFile = new Set();
+  stalled = new Set();
   stubFetch();
   previous = { document: globals.document, FontFace: globals.FontFace };
   fonts = new CutFontSet();
@@ -242,6 +251,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   globals.document = previous.document;
   globals.FontFace = previous.FontFace;
   vi.unstubAllGlobals();
@@ -567,5 +577,53 @@ describe('the Cookbook kit and the Sandbox (#757)', () => {
     routes[fontsource('lora')] = { family: 'Lora', type: 'google', variable: true, weights: [400], styles: ['normal'], subsets: ['cyrillic', 'greek', 'latin', 'latin-ext', 'vietnamese'] };
     routes[fontsourceCssUrl('Lora', 400, 'normal')] = packageCss('lora', 'Lora', [['cyrillic', CYRILLIC], ['greek', 'U+0370-03FF'], ['vietnamese', 'U+0102-0103,U+1EA0-1EF9'], ['latin-ext', LATIN_EXT], ['latin', LATIN]]);
     expect(names(await loader.familyCutFaces('Lora', [upright(400)])).map((n) => n.replace(/^lora-(.+)-400-normal\.woff2$/, '$1'))).toEqual(['cyrillic', 'vietnamese', 'latin', 'latin-ext', 'greek']);
+  });
+});
+
+describe('a request the network does not answer (#757)', () => {
+  it('gives a file up after its bound: the rest of the cut is had, and the file is asked for again a while later', async () => {
+    const faces = await loader.familyCutFaces(SERIF, [upright(400)]);
+    expect(faces.length).toBeGreaterThan(1);
+    const slow = faces[0]!.url;
+    stalled.add(slow);
+    vi.useFakeTimers();
+    let settled = false;
+    const got = loader.fetchFacePayloads(faces);
+    void got.then(() => { settled = true; });
+    await vi.advanceTimersByTimeAsync(loader.FONT_FETCH_TIMEOUT_MS - 1);
+    // Still out: nothing bounds `fetch` but the loader.
+    expect(settled).toBe(false);
+    await vi.advanceTimersByTimeAsync(2);
+    expect((await got).map((p) => fileOf(p.buffer))).toEqual(faces.slice(1).map((f) => f.url));
+    expect(loader.unansweredFontRequests()).toEqual([slow]);
+    // The network answers again. Not asked at once (a file that fails is
+    // not asked for by every build), then had.
+    stalled.clear();
+    expect(await loader.fetchFacePayloads(faces)).toHaveLength(faces.length - 1);
+    await vi.advanceTimersByTimeAsync(loader.FONT_RETRY_MS);
+    expect((await loader.fetchFacePayloads(faces)).map((p) => fileOf(p.buffer))).toEqual(faces.map((f) => f.url));
+    expect(loader.unansweredFontRequests()).toEqual([]);
+  });
+
+  it('does not count a file the server has not (a 404 is an answer)', async () => {
+    const faces = await loader.familyCutFaces(SERIF, [upright(400)]);
+    noFile.add(faces[0]!.url);
+    expect(await loader.fetchFacePayloads(faces)).toHaveLength(faces.length - 1);
+    expect(loader.unansweredFontRequests()).toEqual([]);
+  });
+
+  it('gives a family\'s record up after its bound, and the family is set from Google\'s style sheet', async () => {
+    stalled.add(fontsource('source-serif-4'));
+    routes[google(SERIF)] = SERIF_GOOGLE;
+    vi.useFakeTimers();
+    let faces: { url: string }[] | null = null;
+    void loader.fetchFamilyFaces(SERIF).then((f) => { faces = f; });
+    await vi.advanceTimersByTimeAsync(loader.FONT_FETCH_TIMEOUT_MS - 1);
+    expect(faces).toBeNull();
+    await vi.advanceTimersByTimeAsync(2);
+    expect(faces).not.toBeNull();
+    expect(faces!.length).toBeGreaterThan(0);
+    expect(faces!.every((f) => f.url.startsWith('https://fonts.gstatic.com/'))).toBe(true);
+    expect(loader.unansweredFontRequests()).toEqual([fontsource('source-serif-4')]);
   });
 });

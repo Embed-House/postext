@@ -245,9 +245,9 @@ postext build chapters/ --pdf book.pdf --watch
 3. 下载缓存；
 4. [Google Fonts](https://fonts.google.com)，它提供完整的静态TrueType文件；Google Fonts没有的字体族（Commit Mono、FiraGO）则从[Fontsource](https://fontsource.org)获取。下载的文件保存在缓存中，所以每个字体族只下载一次。
 
-字体族没有的字重或倾斜，用它最接近的字体原样排出，页面图像和PDF都是如此：只有一个字重的标题字体，粗体仍用它自己的字形；没有斜体的字体族，斜体用正体。
+字体族没有的字重，用浏览器会选的那个字体排出（即CSS的字体匹配规则：500以上先取更重的，400以下先取更轻的，所以只有400和700的字体族，600用它的700，550也是）；字体族没有的倾斜用它的正体。两种情况都原样排出，页面图像和PDF都是如此：只有一个字重的标题字体，粗体仍用它自己的字形；没有斜体的字体族，斜体用正体。
 
-下载的是配置里写到的字重：每个字体族的常规体、粗体和它们的斜体，以及各项设置给出的其他字重，粗体的字重也在内（`bodyText.boldFontWeight: 600`会请求600字重的字体）。字体族本来带有某个字重，却没能载入时（离线而缓存里没有文件、下载失败、字体文件夹里缺这个文件），文字改用该字体族最接近的字体排出，`postext check`会把它列为一条`fontFallback`警告：这些行的断行可能与Sandbox里不同。
+下载的是配置里写到的字重：每个字体族的常规体、粗体和它们的斜体，以及各项设置给出的其他字重，粗体的字重也在内（`bodyText.boldFontWeight: 600`会请求600字重的字体）。字体族本来带有某个字重，却没能载入时（离线而缓存里没有文件、下载失败、字体文件夹里缺这个文件），文字改用该字体族中按同一规则应答的字体排出，`postext check`会把它列为一条`fontFallback`警告：这些行的断行可能与Sandbox里不同。
 
 缓存位于`~/.cache/postext`（Windows上为`%LOCALAPPDATA%\postext\cache`）；`POSTEXT_CACHE_DIR`或`--cache-dir`可以改变它的位置。`--offline`跳过下载。在哪里都找不到的字体族以它自己的名称用EB Garamond排版，这样版面和PDF仍然一致，同时一条`missingFont`警告会指出它。`postext info`显示每个字体族的来源。
 

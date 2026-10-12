@@ -27,6 +27,7 @@ import { ensureConfigFontsLoaded, missingConfigFontSpecs, standInsSettled } from
 import { ensureResourceImageUrls, ensureResourceVideoUrls, getResourceImageUrl, getResourceVideoUrl } from '../../controls/resourceImages';
 import { attachHlsPlayers } from '../../controls/hlsPlayers';
 import { useLayoutWorker } from '../../worker/useLayoutWorker';
+import { onLateFonts } from '../../worker/LayoutService';
 import { createOverlaySvg } from '../CanvasPreview/dom';
 import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay';
 import { attachSlotClickHandler } from '../CanvasPreview/interaction';
@@ -285,7 +286,11 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
     // registered faces on its next build.
     const stop = watchFonts(document.fonts);
     const off = onFontsChanged(() => scheduleRelayout(0));
+    // And the faces the layout worker got after a build that could not
+    // wait for their files (#757).
+    const offLate = onLateFonts(() => scheduleRelayout(0));
     return () => {
+      offLate();
       off();
       stop();
     };

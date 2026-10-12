@@ -12,17 +12,20 @@
 //   5. Google Fonts, or Fontsource for a family Google Fonts does not have,
 //      saved to the cache (not with --offline).
 //
-// A weight or a slant a family does not ship is set in its nearest face, as
-// it is (the regular of a one-weight display face for its bold): the files
+// A weight a family does not ship is set in the face CSS font matching
+// settles on for it (the engine's `cssWeightOrder`: the 700 for a 550 of a
+// family with a 400 and a 700, as a browser, the Sandbox and the PDF writer
+// choose, #757), and a slant it does not ship in its upright, each as it
+// is (the regular of a one-weight display face for its bold): the files
 // the Sandbox declares as stand-ins and the PDF embeds. A family found
 // nowhere is measured and drawn with the fallback face under its own name,
 // so the layout and the PDF agree, and a warning says so.
 
-import { GlobalFonts } from '@napi-rs/canvas';
+import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
-import { collectFontUsage, configFontFamilies, documentFontFaces, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
+import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
@@ -71,14 +74,11 @@ export class FontSet {
     return this.faces.filter((f) => f.family.toLowerCase() === key);
   }
 
-  /** The face of `family` closest to the weight and style asked for (the
-   *  browser's matching: same style first, then nearest weight). */
+  /** The face of `family` that answers the weight and style asked for (the
+   *  browser's matching: same style first, then the weight CSS font
+   *  matching settles on, {@link matchedFace}). */
   pick(family: string, weight: number, style: 'normal' | 'italic'): Face | undefined {
-    const faces = this.familyFaces(family);
-    if (faces.length === 0) return undefined;
-    const sameStyle = faces.filter((f) => f.style === style);
-    const pool = sameStyle.length > 0 ? sameStyle : faces;
-    return pool.reduce((best, f) => (Math.abs(f.weight - weight) < Math.abs(best.weight - weight) ? f : best), pool[0]!);
+    return matchedFace(this.familyFaces(family), weight, style);
   }
 
   /** `postext-pdf`'s font provider. */
@@ -91,13 +91,94 @@ export class FontSet {
   }
 }
 
+/**
+ * The face of `faces` (one family's) that answers a weight and a style: of
+ * the style asked when the family has it, else of the other, and among
+ * those the weight CSS font matching settles on (`cssWeightOrder`, CSS
+ * Fonts 4 §5.2). Skia matches the same way when it measures, so the face
+ * the PDF embeds is the one the lines were measured with: the 700 for a
+ * 550 of a family with a 400 and a 700, where the nearest weight would be
+ * the 400.
+ */
+export function matchedFace<T extends { weight: number; style: 'normal' | 'italic' }>(faces: readonly T[], weight: number, style: 'normal' | 'italic'): T | undefined {
+  if (faces.length === 0) return undefined;
+  const sameStyle = faces.filter((f) => f.style === style);
+  const pool = sameStyle.length > 0 ? sameStyle : faces;
+  const matched = cssWeightOrder(weight, pool.map((f) => f.weight))[0];
+  return pool.find((f) => f.weight === matched);
+}
+
 // ---------------------------------------------------------------------------
 // Registering with Skia
 // ---------------------------------------------------------------------------
 
 const registered = new Set<string>();
+/** The weights and slants Skia holds of each family (lower case): the
+ *  faces registered and the copies that stand in for the ones a family
+ *  lacks. */
+const skiaFaces = new Map<string, FontVariantUse[]>();
+
+function noteSkiaFace(family: string, weight: number, style: 'normal' | 'italic'): void {
+  const key = family.toLowerCase();
+  const list = skiaFaces.get(key);
+  if (!list) skiaFaces.set(key, [{ weight, style }]);
+  else if (!list.some((f) => f.weight === weight && f.style === style)) list.push({ weight, style });
+}
+
+const HUNDREDS = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+/**
+ * The font shorthand Skia is given for `font`, as the engine writes it
+ * (`italic 550 12px "Open Sans"`). The canvas reads a weight only when it
+ * is a whole hundred: any other (a 450, a 550) it takes for the size, and
+ * the text was measured hundreds of pixels tall. Such a weight is written
+ * as the hundred that brings Skia to the face CSS font matching settles on
+ * among the faces it holds of the family ({@link matchedFace}): the 700
+ * for a 550 of a family with a 400 and a 700, the face `FontSet.pick`
+ * hands the PDF. A shorthand with a whole hundred, or with no weight, is
+ * left as it is: Skia matches those as CSS does.
+ */
+export function skiaFontShorthand(font: string): string {
+  const face = parseFontString(font);
+  if (!face || HUNDREDS.includes(face.weight)) return font;
+  const token = new RegExp(`(^|\\s)${String(face.weight).replace('.', '\\.')}(?=\\s)`);
+  if (!token.test(font)) return font;
+  const faces = skiaFaces.get(face.family.toLowerCase()) ?? [];
+  const sameStyle = faces.filter((f) => f.style === face.style);
+  const weights = (sameStyle.length > 0 ? sameStyle : faces).map((f) => f.weight);
+  const matched = cssWeightOrder(face.weight, weights)[0];
+  const byNearness = [...HUNDREDS].sort((a, b) => Math.abs(a - face.weight) - Math.abs(b - face.weight));
+  // The hundred Skia answers with that face; with no face of the family
+  // (it is measured with a fallback), the hundred next to the weight.
+  const hundred = (matched !== undefined ? byNearness.find((h) => cssWeightOrder(h, weights)[0] === matched) : undefined) ?? byNearness[0]!;
+  return font.replace(token, `$1${hundred}`);
+}
+
+let skiaShorthandInstalled = false;
+
+/** Put {@link skiaFontShorthand} in front of every `font` set on a canvas
+ *  of this process (the engine's measuring context and the ones pages are
+ *  painted on). Once. */
+function installSkiaShorthand(): void {
+  if (skiaShorthandInstalled) return;
+  skiaShorthandInstalled = true;
+  const prototype = Object.getPrototypeOf(createCanvas(1, 1).getContext('2d')) as object;
+  const descriptor = Object.getOwnPropertyDescriptor(prototype, 'font');
+  const { get, set } = descriptor ?? {};
+  if (!descriptor || !set || descriptor.configurable === false) return;
+  Object.defineProperty(prototype, 'font', {
+    configurable: true,
+    enumerable: descriptor.enumerable,
+    get,
+    set(this: unknown, value: unknown) {
+      set.call(this, typeof value === 'string' ? skiaFontShorthand(value) : value);
+    },
+  });
+}
 
 function register(face: Face): void {
+  installSkiaShorthand();
+  noteSkiaFace(face.family, face.weight, face.style);
   const key = `${face.family}|${face.weight}|${face.style}|${face.source}|${face.bytes.byteLength}`;
   if (registered.has(key)) return;
   registered.add(key);
@@ -156,15 +237,14 @@ export function restyleFace(bytes: Uint8Array, weight: number, style: 'normal' |
 function registerStandIns(family: string, faces: readonly Face[], variants: readonly FontVariantUse[]): void {
   if (faces.length === 0) return;
   for (const v of variants) {
-    const sameStyle = faces.filter((f) => f.style === v.style);
-    const pool = sameStyle.length > 0 ? sameStyle : faces;
-    const nearest = pool.reduce((best, f) => (Math.abs(f.weight - v.weight) < Math.abs(best.weight - v.weight) ? f : best), pool[0]!);
+    const nearest = matchedFace(faces, v.weight, v.style)!;
     if (nearest.style === v.style && v.weight - nearest.weight < SKIA_FAKE_BOLD) continue;
     const key = `${family}|${v.weight}|${v.style}|stand-in|${nearest.weight}|${nearest.style}|${nearest.bytes.byteLength}`;
     if (registered.has(key)) continue;
     const copy = restyleFace(nearest.bytes, v.weight, v.style);
     if (!copy) continue;
     registered.add(key);
+    noteSkiaFace(family, v.weight, v.style);
     GlobalFonts.register(Buffer.from(copy.buffer, copy.byteOffset, copy.byteLength), family);
   }
 }
@@ -328,22 +408,22 @@ async function familyMeta(family: string, dir: string, offline: boolean): Promis
   return meta;
 }
 
-function nearestAvailable(v: FontVariantUse, meta: FamilyMeta): FontVariantUse {
+function matchedAvailable(v: FontVariantUse, meta: FamilyMeta): FontVariantUse {
   const style = meta.styles.includes(v.style) ? v.style : 'normal';
   const weights = meta.weights.length > 0 ? meta.weights : [400];
-  const weight = weights.reduce((best, w) => (Math.abs(w - v.weight) < Math.abs(best - v.weight) ? w : best), weights[0]!);
-  return { weight, style };
+  return { weight: cssWeightOrder(v.weight, weights)[0]!, style };
 }
 
-/** The files that answer `variants` in a family: for each, the nearest
- *  weight and style it ships, each file once (a one-weight family answers
- *  its regular, its bold and their italics with one file). */
-export function nearestVariants(variants: readonly FontVariantUse[], meta: FamilyMeta): FontVariantUse[] {
+/** The files that answer `variants` in a family: for each, the weight CSS
+ *  font matching settles on among those it ships (`cssWeightOrder`), in
+ *  the style asked or its upright, each file once (a one-weight family
+ *  answers its regular, its bold and their italics with one file). */
+export function matchedVariants(variants: readonly FontVariantUse[], meta: FamilyMeta): FontVariantUse[] {
   const out = new Map<string, FontVariantUse>();
   for (const v of variants) {
-    const nearest = nearestAvailable(v, meta);
-    const key = `${nearest.weight}|${nearest.style}`;
-    if (!out.has(key)) out.set(key, nearest);
+    const matched = matchedAvailable(v, meta);
+    const key = `${matched.weight}|${matched.style}`;
+    if (!out.has(key)) out.set(key, matched);
   }
   return [...out.values()];
 }
@@ -472,7 +552,7 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
       const meta = await familyMeta(family, dir, options.offline);
       ships(family, meta);
       if (meta?.available) {
-        const targets = nearestVariants(missing, meta)
+        const targets = matchedVariants(missing, meta)
           .filter((v) => !found.some((f) => f.weight === v.weight && f.style === v.style));
         const absent = targets.filter((v) => !existsSync(join(dir, variantFile(v))));
         if (absent.length > 0 && !options.offline) {
@@ -506,8 +586,8 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
   // The fallback family is always there for the PDF writer.
   if (!has(FALLBACK_FAMILY)) faces.push(...embedded().filter((f) => f.family === FALLBACK_FAMILY));
   for (const face of faces) register(face);
-  // A bold or an italic a family does not ship is drawn from its own
-  // nearest face, as the PDF embeds it (#688). A family the book carries
+  // A bold or an italic a family does not ship is drawn from the face
+  // of its own that answers for it, as the PDF embeds it (#688). A family the book carries
   // is left as its author made it.
   const carried = new Set(book.fonts.map((f) => f.family.toLowerCase()));
   for (const [family, variants] of wanted) {
@@ -521,9 +601,10 @@ export async function resolveFonts(book: Book, options: FontOptions, reporter: R
  * The faces the pages were set in that the set does not hold although
  * their family ships them (#741): offline with no cached file, a download
  * that failed, a font folder without the file. The canvas measured the
- * text with the nearest face of the family, so lines and pages may differ
+ * text with another face of the family, so lines and pages may differ
  * from a host that has the face. A weight or a slant the family does not
- * ship stays silent: its nearest face stands in on purpose (#688).
+ * ship stays silent: the face that answers for it stands in on purpose
+ * (#688).
  */
 export function fontFallbackWarnings(docs: readonly VDTDocument[], fonts: FontSet): Warning[] {
   const out: Warning[] = [];

@@ -176,11 +176,25 @@ async function loadFace(file) {
   return e;
 }
 const families = new Map((manifest.fonts ?? []).map((f) => [f.name, f.variants]));
+// The weight CSS font matching settles on among `weights` (CSS Fonts 4 §5.2,
+// the engine's `cssWeightOrder`, written out here for the releases that do
+// not export it): from 400 to 500 the weights up to 500, then the lighter
+// ones, then the heavier; below 400 lighter first; above 500 heavier first.
+// A browser, the Sandbox and the `postext` command line choose the same face.
+function cssWeight(weight, weights) {
+  const asc = [...new Set(weights)].sort((a, b) => a - b);
+  const lighter = asc.filter((w) => w < weight).reverse();
+  const heavier = asc.filter((w) => w > weight);
+  if (asc.includes(weight)) return weight;
+  if (weight >= 400 && weight <= 500) return [...heavier.filter((w) => w <= 500), ...lighter, ...heavier][0];
+  return (weight < 400 ? [...lighter, ...heavier] : [...heavier, ...lighter])[0];
+}
 function pickVariant(family, weight, style) {
   const vs = families.get(family) ?? families.values().next().value ?? [];
   const pool = vs.filter((v) => (v.style ?? 'normal') === style);
   const list = pool.length ? pool : vs;
-  return list.reduce((b, v) => (Math.abs(v.weight - weight) < Math.abs(b.weight - weight) ? v : b), list[0]);
+  const matched = cssWeight(weight, list.map((v) => v.weight));
+  return list.find((v) => v.weight === matched) ?? list[0];
 }
 for (const vs of families.values()) for (const v of vs) await loadFace(v.file);
 const unknownFamilies = new Set();

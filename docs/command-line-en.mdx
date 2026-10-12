@@ -340,17 +340,20 @@ the book does not carry, `postext` looks, in order:
    Google Fonts does not have (Commit Mono, FiraGO); they are kept in the
    cache, so a family is downloaded once.
 
-A weight or a slant a family does not ship is set in its nearest face as it
-is, in the page images as in the PDF: a display face with one weight keeps its
-own letters for a bold, and an upright family for an italic.
+A weight a family does not ship is set in the face a browser would choose for
+it (CSS font matching: the heavier faces first above 500, the lighter first
+below 400, so a 600 of a family with a 400 and a 700 is its 700, and so is a
+550), and a slant it does not ship in its upright, each as it is, in the page
+images as in the PDF: a display face with one weight keeps its own letters for
+a bold, and an upright family for an italic.
 
 The weights the configuration names are the ones fetched: regular, bold and
 their italics for every family, and any other weight a setting gives, the
 bold's included (`bodyText.boldFontWeight: 600` asks for the 600 face). When a
 weight the family ships could not be loaded (offline with no cached file, a
 download that failed, a font folder without the file), the text is set in the
-family's nearest face and `postext check` lists it as a `fontFallback`
-warning: its lines may break otherwise than in the Sandbox.
+face of the family that answers for it by the same rule and `postext check`
+lists it as a `fontFallback` warning: its lines may break otherwise than in the Sandbox.
 
 The cache is `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows);
 `POSTEXT_CACHE_DIR` or `--cache-dir` moves it. `--offline` skips the download.

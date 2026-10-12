@@ -89,20 +89,42 @@ function distance(range: [number, number], target: number): number {
   return target < range[0] ? range[0] - target : target > range[1] ? target - range[1] : 0;
 }
 
-/** The weight CSS font matching settles on among `faces` for `target`
- *  (CSS Fonts 4, §5.2): between 400 and 500 the weights up to 500 first,
- *  then lighter, then heavier; below 400 lighter first; above 500 heavier
- *  first. */
-function matchWeight(faces: readonly IndexedFace[], target: number): IndexedFace | undefined {
-  const exact = faces.find((f) => distance(f.weight, target) === 0);
-  if (exact) return exact;
-  const lighter = faces.filter((f) => f.weight[1] < target).sort((a, b) => b.weight[1] - a.weight[1]);
-  const heavier = faces.filter((f) => f.weight[0] > target).sort((a, b) => a.weight[0] - b.weight[0]);
-  if (target >= 400 && target <= 500) {
-    const upTo500 = heavier.filter((f) => f.weight[0] <= 500);
-    return upTo500[0] ?? lighter[0] ?? heavier[0];
+/**
+ * `items` in the order CSS font matching tries them for the weight
+ * `desired` (CSS Fonts 4, §5.2), each answering for the weights of
+ * `span(item)` (one weight, or the range of a variable face): first those
+ * that hold `desired`; then, from 400 to 500, the heavier ones up to 500
+ * ascending, the lighter ones descending, the rest of the heavier ones
+ * ascending; below 400, the lighter ones descending and then the heavier
+ * ones ascending; above 500, the heavier ones ascending and then the
+ * lighter ones descending. The one rule the engine's fallback report, the
+ * Sandbox's choice of a static cut, the command line and the PDF writer
+ * all choose a weight by, so they choose the same face a browser does.
+ */
+export function cssWeightOrderOf<T>(desired: number, items: readonly T[], span: (item: T) => readonly [number, number]): T[] {
+  const holds = items.filter((item) => span(item)[0] <= desired && desired <= span(item)[1]);
+  const lighter = items.filter((item) => span(item)[1] < desired).sort((a, b) => span(b)[1] - span(a)[1]);
+  const heavier = items.filter((item) => span(item)[0] > desired).sort((a, b) => span(a)[0] - span(b)[0]);
+  if (desired >= 400 && desired <= 500) {
+    return [...holds, ...heavier.filter((item) => span(item)[0] <= 500), ...lighter, ...heavier.filter((item) => span(item)[0] > 500)];
   }
-  return target < 400 ? lighter[0] ?? heavier[0] : heavier[0] ?? lighter[0];
+  return desired < 400 ? [...holds, ...lighter, ...heavier] : [...holds, ...heavier, ...lighter];
+}
+
+/**
+ * `weights` in the order CSS font matching tries them for `desired`
+ * ({@link cssWeightOrderOf}), each once: the first is the weight a browser
+ * sets `desired` in when a family has those cuts and no other. A 600 of a
+ * family with a 400 and a 700 is its 700, and so is a 550, where the 400
+ * is as near; a 450 between a 400 and a 500 is the 500; a 300 is the 400.
+ */
+export function cssWeightOrder(desired: number, weights: readonly number[]): number[] {
+  return cssWeightOrderOf(desired, [...new Set(weights)].sort((a, b) => a - b), (w) => [w, w]);
+}
+
+/** The face CSS font matching settles on among `faces` for `target`. */
+function matchWeight(faces: readonly IndexedFace[], target: number): IndexedFace | undefined {
+  return cssWeightOrderOf(target, faces, (f) => f.weight)[0];
 }
 
 /** How `faces` answer for a weight and slant: the face CSS matching

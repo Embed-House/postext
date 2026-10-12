@@ -335,6 +335,17 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
     const issues: NetIssue[] = [];
     await within("intercept", () => page.setRequestInterception(true));
     page.on("request", interceptor({ localOrigin: url.replace(/\/$/, ""), userAgent, refresh, profile: "sandbox", onIssue: (issue) => issues.push(issue) }));
+    // The requests still out, for a step that never answers (#757): what
+    // the page waits for is the first thing to know about a stall.
+    const out = new Map<string, number>();
+    page.on("request", (request) => out.set(request.url(), Date.now()));
+    page.on("requestfinished", (request) => out.delete(request.url()));
+    page.on("requestfailed", (request) => out.delete(request.url()));
+    const waitingFor = (): string => {
+      const now = Date.now();
+      const urls = [...out].map(([u, at]) => `${u.replace(/^https?:\/\//, "")} (${Math.round((now - at) / 1000)} s)`);
+      return urls.length ? `the page waits for ${urls.slice(0, 6).join(", ")}${urls.length > 6 ? ` and ${urls.length - 6} more` : ""}` : "no request of the page is out";
+    };
     page.on("pageerror", (error) => errors.push(`page error: ${error instanceof Error ? error.message : String(error)}`));
     page.on("console", (message) => {
       // A font file the loader could not fetch is the warnings' business.
@@ -346,7 +357,7 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
       async (bundle: string, locale: string) => {
         const w = window as unknown as {
           __sbReady?: boolean; __sbErrors: string[];
-          __postextSandbox?: { layOutBundle(bytes: Uint8Array, options: object): Promise<{ chapters: { pages: number; hash?: string; lines?: string; warnings: string[] }[]; fonts: Record<string, { page: string[]; worker: string[] }>; settled: boolean }> };
+          __postextSandbox?: { layOutBundle(bytes: Uint8Array, options: object): Promise<{ chapters: { pages: number; hash?: string; lines?: string; warnings: string[] }[]; fonts: Record<string, { page: string[]; worker: string[] }>; settled: boolean; unanswered: string[] }> };
         };
         if (!w.__sbReady || !w.__postextSandbox) return { error: `the Sandbox entry did not load: ${w.__sbErrors.join(" · ")}` };
         try {
@@ -354,25 +365,29 @@ async function runLocal(browser: Browser, userAgent: string, url: string, editio
           const res = await fetch(bundle);
           if (!res.ok) return { error: `the bundle did not load: HTTP ${res.status}` };
           const bytes = new Uint8Array(await res.arrayBuffer());
-          // A factory: the layout service starts over on a fresh worker when
-          // a chapter's pages are set in a face it was not sent (#757).
-          const worker = () => {
-            const made = new Worker("/__sb/worker.js", { type: "module" });
-            made.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
-            return made;
-          };
+          const worker = new Worker("/__sb/worker.js", { type: "module" });
+          worker.addEventListener("error", (event) => w.__sbErrors.push(`worker error: ${event.message ?? "the layout worker failed to start"}`));
           const out = await w.__postextSandbox.layOutBundle(bytes, { locale, worker, layoutHash: probe.layoutHash, linesHash: probe.linesHash, warningsOf: probe.warningsOf });
-          return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, errors: w.__sbErrors };
+          return { chapters: out.chapters, fonts: out.fonts, settled: out.settled, unanswered: out.unanswered, errors: w.__sbErrors };
         } catch (error) {
           return { error: `the bundle does not open and lay out in the Sandbox: ${String((error as Error)?.message ?? error)}`, errors: w.__sbErrors };
         }
       },
       `/__bundle/${edition.slug}/${edition.variant}`,
       htmlLang(edition.variant),
-    ));
+    )).catch((error: unknown) => {
+      if (error instanceof StepError && error.stalled) throw new StepError(error.step, error.edition, `${error.message.replace(/^step \S+ of [^:]+: /, "")}; ${waitingFor()}`, { stalled: true });
+      throw error;
+    });
     for (const issue of issues) if (issue.severity === "fail") errors.push(`network: ${issue.detail}`);
     if ("error" in laid && laid.error) return { chapters: [], fonts: {}, settled: false, errors: [laid.error, ...(laid.errors ?? []), ...errors] };
-    const ok = laid as { chapters: SandboxChapter[]; fonts: SandboxRun["fonts"]; settled: boolean; errors: string[] };
+    const ok = laid as { chapters: SandboxChapter[]; fonts: SandboxRun["fonts"]; settled: boolean; unanswered?: string[]; errors: string[] };
+    // A font request the network did not answer (#757): the pages were laid
+    // out without that file, which says nothing of the bundle. Tried once
+    // more, as a step that never answered is.
+    if (ok.unanswered?.length) {
+      throw new StepError("layout", name, `the network did not answer ${ok.unanswered.length} font request${ok.unanswered.length === 1 ? "" : "s"} (${ok.unanswered.slice(0, 4).map((u) => u.replace(/^https?:\/\//, "")).join(", ")}${ok.unanswered.length > 4 ? ", …" : ""})`, { stalled: true });
+    }
     return { chapters: ok.chapters, fonts: ok.fonts, settled: ok.settled, errors: [...ok.errors, ...errors] };
   } finally {
     await context.close().catch(() => {});

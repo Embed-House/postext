@@ -19,6 +19,7 @@ import { dockedToolbarReserve } from '../epub/viewer';
 import { useCompactLayout } from '../hooks/useCompactLayout';
 import { useLargeTargets } from '../ui/largeTargets';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
+import { onLateFonts } from '../worker/LayoutService';
 import { perfSpan } from '../perf/marks';
 import { announce } from '../ui/announcer';
 import { EpubPreview, progressFraction, type EpubGenerationProgress } from './EpubPreview';
@@ -244,10 +245,20 @@ export function EpubViewport() {
   // Custom families landing after a generation (see the PDF tab).
   const regenerateRef = useRef(regenerate);
   regenerateRef.current = regenerate;
-  useEffect(() => onCustomFontsChanged(() => {
-    if (renderedRef.current !== null) setDirty(true);
-    else if (failedRef.current) void regenerateRef.current();
-  }), []);
+  useEffect(() => {
+    const stale = () => {
+      if (renderedRef.current !== null) setDirty(true);
+      else if (failedRef.current) void regenerateRef.current();
+    };
+    const offCustom = onCustomFontsChanged(stale);
+    // And the faces the layout worker got after a build that could not
+    // wait for their files (#757).
+    const offLate = onLateFonts(stale);
+    return () => {
+      offLate();
+      offCustom();
+    };
+  }, []);
 
   // The first file once the store has hydrated (resources come from
   // IndexedDB after mount).
