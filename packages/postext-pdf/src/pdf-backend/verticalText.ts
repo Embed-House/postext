@@ -72,7 +72,7 @@ import {
   type PageCtx,
   type TextOutline,
 } from './primitives';
-import { fileRuns, noteMissingGlyphs } from '../faceFiles';
+import { fileRuns, inRun, noteMissingGlyphs, wordRuns } from '../faceFiles';
 import { fontFamilyOf } from '../fontFamilies';
 import { VERTICAL_ORIGIN, verticalTwinOf, type VerticalTwin } from '../verticalFonts';
 
@@ -201,14 +201,17 @@ export function drawVerticalTextPx(
   /** A glyph drawn with the horizontal font under its own text matrix. */
   const drawHorizontal = (t: string, m: [number, number, number, number, number, number], spacingPx: number): void => {
     let first = true;
-    for (const { font: file, text: part } of fileRuns(font, t)) {
+    // Word by word in a document shaped in its own language, as the run
+    // was measured (`wordRuns`, #770).
+    for (const run of wordRuns(font, t)) {
+      const { font: file, text: part } = run;
       useFont(fontKeyOn(ctx.page, file));
       if (first) {
         useTc(spacingPx);
         body.push(setTextMatrix(...m));
         first = false;
       }
-      body.push(showTextShaped(file, part));
+      body.push(inRun(run, () => showTextShaped(file, part)));
     }
   };
 

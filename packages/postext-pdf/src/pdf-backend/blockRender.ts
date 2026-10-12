@@ -4,7 +4,7 @@ import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
 import { paintChip } from './chip';
 import { drawTaskBoxPx } from './taskBox';
 import { drawRightToLeftRun } from './rtlRun';
@@ -122,7 +122,12 @@ function paintComposedText(
   const stretch = inkScaleOperators(seg.inkScale);
   const orient = ctx.vertical && seg.inkScale !== undefined ? 'sideways' : segmentOrientation(seg);
   ctx.page.pushOperators(...stretch.before);
-  drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText, orient);
+  // Characters the composer measured one by one are painted one by one,
+  // each in its place (#770): a face may kern them in one string.
+  const cells = ctx.vertical || markSpacing !== undefined || seg.inkScale !== undefined ? undefined : cellPieces(font, seg.text, seg.width, size, ctx.trackingPx ?? 0);
+  if (!cells || !drawMeasuredTextPx(ctx, cells, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, ctx.trackingPx ?? 0, actualText)) {
+    drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText, orient);
+  }
   ctx.page.pushOperators(...stretch.after);
   if (markSpacing !== undefined || seg.tracking !== undefined) setTrackingPx(ctx, tracking);
   if (seg.ruby) {
@@ -568,7 +573,7 @@ function renderLineText(
   // not loaded, which turns the whole line around.
   const complex = needsComplexShaping(line.text);
   if (segments && segments.length > 0 && !complex
-    && drawMeasuredTextPx(ctx, withLineEndSpace(segments, line.text), plainX, line.baseline, blockFont, blockSize, blockColor, tracking, actualText)) return;
+    && drawMeasuredTextPx(ctx, measuredPieces(ctx, line, segments, blockFont, blockSize, tracking), plainX, line.baseline, blockFont, blockSize, blockColor, tracking, actualText)) return;
   if (complex && drawShapedTextPx(ctx, line.text, plainX, line.baseline, blockFont, blockSize, blockColor, { base: block.direction, actualText })) return;
   drawTextPx(ctx, line.text, plainX, line.baseline, blockFont, blockSize, blockColor, undefined, actualText);
 }
@@ -601,6 +606,29 @@ function repeatedHyphenSegment(line: VDTLine, segments: readonly VDTLineSegment[
   const i = segments.findIndex((s) => s.kind !== 'space');
   const seg = segments[i];
   return seg && seg.kind === 'text' && !seg.chip && seg.text.startsWith('-') ? i : -1;
+}
+
+/** The pieces a line painted as one text is set from: its segments
+ *  ({@link withLineEndSpace}), and on a line of the CJK composer the
+ *  characters of a segment it measured one by one, each a piece of its own
+ *  (`cellPieces`, #770). */
+function measuredPieces(
+  ctx: PageCtx,
+  line: VDTLine,
+  segments: readonly VDTLineSegment[],
+  font: PDFFont,
+  sizePx: number,
+  tracking: number,
+): ReadonlyArray<{ text: string; width: number }> {
+  const pieces = withLineEndSpace(segments, line.text);
+  if (line.cjkComposed !== true || ctx.vertical) return pieces;
+  let cut: Array<{ text: string; width: number }> | undefined;
+  pieces.forEach((piece, i) => {
+    const cells = cellPieces(font, piece.text, piece.width, sizePx, tracking);
+    if (cells) (cut ??= pieces.slice(0, i)).push(...cells);
+    else cut?.push(piece);
+  });
+  return cut ?? pieces;
 }
 
 /** A ragged line's segments, plus the space that ends the line when its

@@ -227,14 +227,15 @@ describe('an Arabic paragraph with quotations, brackets and full stops (#764)', 
     expect([...measured]).toContain('rtl \u00AB\u0623\u0646\u0627');
     // Chrome's widths of these words in Arabic.
     expect(widths).toMatchObject({ '\u00AB\u0623\u0646\u0627': 939.5, '\u062E\u0627\u0644\u0629.\u00BB': 1892.1, '\u0643\u062A\u0627\u0628.': 1708 });
-    // In Persian the face has no forms of its own and draws its marks
-    // the same under every script, so the engine measures the word as any
-    // text, in a left-to-right context: the stop and the guillemet are a
-    // run of their own there, set in the order they are written (0.587 em;
-    // 0.582 in the right-to-left run every output paints them in).
+    // In Persian the face has no forms of its own, and the word is still
+    // measured as the right-to-left run every output paints (#770): the
+    // stop is kerned to the guillemet there (0.582 em; 0.587 when the two
+    // were measured as a left-to-right run of their own, up to 1.29.2).
+    measured.clear();
     const persian = widthsOf(buildDocument({ markdown: ARABIC }, config('fa', 'Markazi Text', fromStart)));
-    expect([...measured]).toContain('ltr \u00AB\u0623\u0646\u0627');
-    expect(persian).toMatchObject({ '\u00AB\u0623\u0646\u0627': 1043.5, '\u062E\u0627\u0644\u0629.\u00BB': 1993.2, '\u0643\u062A\u0627\u0628.': 1714.8 });
+    expect([...measured]).toContain('rtl \u00AB\u0623\u0646\u0627');
+    expect([...measured]).not.toContain('ltr \u00AB\u0623\u0646\u0627');
+    expect(persian).toMatchObject({ '\u00AB\u0623\u0646\u0627': 1043.5, '\u062E\u0627\u0644\u0629.\u00BB': 1988.3, '\u0643\u062A\u0627\u0628.': 1714.8 });
   });
 
   it('Amiri: the stop, the brackets and the guillemets of an Arabic word are the Arabic ones', () => {

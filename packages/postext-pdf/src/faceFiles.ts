@@ -18,7 +18,8 @@
 import type { PDFFont } from 'pdf-lib';
 import { mirroredCodePoint } from 'postext';
 import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces';
-import { besideLetterOf, shapingScriptLetter } from './shapingLanguage';
+import { besideLetterOf, shapesAsCanvas, shapingScript, shapingScriptLetter, withBesideLetter, withinWideText } from './shapingLanguage';
+import { canvasWords } from './canvasWords';
 
 /** The fontkit face of an embedded font, as far as coverage needs it. */
 interface CoverageFace {
@@ -111,6 +112,9 @@ export interface FileRun {
    *  and the text it was cut out of does (`besideLetterOf`, #764): the
    *  caller shapes the run inside `withBesideLetter`. */
   beside?: number;
+  /** The run is a word, or part of one, of a string with a character
+   *  above U+00FF ({@link wordRuns}): with no letter it has no script. */
+  wide?: true;
 }
 
 /**
@@ -219,6 +223,45 @@ export function fileRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
     }
   }
   return runs.length > 0 ? runs : [{ font, text }];
+}
+
+/** A string a browser keeps in eight bits: no character above U+00FF. */
+const LATIN_1_RE = /^[\u0000-\u00FF]*$/;
+
+/**
+ * `text`, a string the canvas was handed whole (a line of a running head,
+ * a word of the body), cut into the runs it is shaped in: its words
+ * (`canvasWords.ts`, #770), each cut by file ({@link fileRuns}). The
+ * canvas shapes every word alone, so no kerned pair and no ligature
+ * crosses a space or stands between two CJK characters, and a word takes
+ * the script of its own letters: one with no letter, a space among them,
+ * has none in a string not kept in eight bits (`wide`).
+ *
+ * {@link fileRuns} itself, the string shaped whole as up to postext-pdf
+ * 1.29, for a string of one word, in a document that keeps the host's
+ * language, and with a script in force (#725: a word with no letter the
+ * layout measured in the script of its context).
+ */
+export function wordRuns(font: PDFFont, text: string, rtl = false): FileRun[] {
+  if (!shapesAsCanvas() || shapingScript() !== undefined) return fileRuns(font, text, rtl);
+  const words = canvasWords(text);
+  if (words.length === 1) return fileRuns(font, text, rtl);
+  const wide = !LATIN_1_RE.test(text);
+  const runs: FileRun[] = [];
+  for (const word of words) {
+    for (const run of fileRuns(font, word, rtl)) {
+      if (wide) run.wide = true;
+      runs.push(run);
+    }
+  }
+  return runs;
+}
+
+/** Run `fn`, the shaping of `run` ({@link wordRuns}), with what the run
+ *  says of its script in force: the letter it was cut from beside, and
+ *  whether it is a word of a string not kept in eight bits. */
+export function inRun<T>(run: FileRun, fn: () => T): T {
+  return run.wide ? withinWideText(true, () => withBesideLetter(run.beside, fn)) : withBesideLetter(run.beside, fn);
 }
 
 /** Opening brackets and initial quotation marks (`Ps`, `Pi`). */

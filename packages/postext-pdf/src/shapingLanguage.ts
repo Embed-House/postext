@@ -36,6 +36,15 @@
  * ({@link shapingScriptOf}). Any other text with no letter (`……`, `—`)
  * was measured in the default script, by the canvas and by both shapers.
  *
+ * The canvas shapes that string word by word (`canvasWords.ts`, #770): it
+ * cuts it at its spaces and around each CJK character, shapes each word
+ * alone, and gives it the script of its own letters. A word with no
+ * letter of a string it did not keep in eight bits has no script
+ * ({@link withinWideText}): the `"` beside a kana keeps the default form
+ * of Noto Serif JP in Japanese, and takes the Japanese one alone or in a
+ * Latin word. Text shaped in a document's language is cut the same way
+ * (`wordRuns` in `faceFiles.ts`).
+ *
  * That rule is for the string the canvas was handed, the word the layout
  * measured, not for what a face made of several files leaves of it.
  * Chrome cuts a string into runs of one direction and each run into words
@@ -305,9 +314,30 @@ export function besideLetterOf(text: string, from: number, to: number): number |
   return found !== undefined && besideScriptOf(found) !== undefined ? found : undefined;
 }
 
-/** Whether the text being shaped is part of a string with right-to-left
- *  letters ({@link withinRightToLeftText}). */
-let rightToLeftText = false;
+/** Whether the text being shaped is part of a string the canvas did not
+ *  keep in eight bits ({@link withinWideText}). */
+let wideText = false;
+
+/**
+ * Run `fn` (the shaping of the words, the runs and the parts of a string)
+ * knowing whether the string holds a character above U+00FF (`wide`).
+ * The canvas shapes a string word by word (`canvasWords.ts`), and gives a
+ * word the script of its own letters; only a string it keeps in eight bits
+ * is Latin text all through. So a word with no letter of a wider string
+ * (the `2012` and the `·` of a running head that opens with a Han
+ * character) is shaped in no script, though the word alone has no
+ * character above U+00FF. Put back afterwards, also when `fn` throws.
+ */
+export function withinWideText<T>(wide: boolean, fn: () => T): T {
+  if (wide === wideText) return fn();
+  const previous = wideText;
+  wideText = wide;
+  try {
+    return fn();
+  } finally {
+    wideText = previous;
+  }
+}
 
 /**
  * Run `fn` (the shaping of the runs and the parts of `text`, a string
@@ -320,27 +350,28 @@ let rightToLeftText = false;
  * 0.255 em as Latin text. Put back afterwards, also when `fn` throws.
  */
 export function withinRightToLeftText<T>(rightToLeft: boolean, fn: () => T): T {
-  if (rightToLeft === rightToLeftText) return fn();
-  const previous = rightToLeftText;
-  rightToLeftText = rightToLeft;
-  try {
-    return fn();
-  } finally {
-    rightToLeftText = previous;
-  }
+  return withinWideText(rightToLeft, fn);
 }
 
 /** Whether `text` is shaped in no script though it has no character above
- *  U+00FF: a piece with no letter of a string with right-to-left letters
- *  ({@link withinRightToLeftText}). */
+ *  U+00FF: a piece with no letter of a string the canvas did not keep in
+ *  eight bits ({@link withinWideText}, {@link withinRightToLeftText}). */
 function unscripted(text: string): boolean {
-  return rightToLeftText && !STRONG_SCRIPT_RE.test(text);
+  return wideText && !STRONG_SCRIPT_RE.test(text);
 }
 
 /** Whether text is shaped as the canvas shaped it (see the module
  *  comment): the text of a document shaped in its own language. */
 function shapedAsCanvas(): boolean {
   return current !== undefined && !current.host;
+}
+
+/** Whether the text being painted is shaped as the canvas shaped it: word
+ *  by word (`canvasWords.ts`), each word in the script of its letters. So
+ *  is the text of a document shaped in its own language; one that keeps
+ *  the host's is shaped string by string, as up to postext-pdf 1.29. */
+export function shapesAsCanvas(): boolean {
+  return shapedAsCanvas();
 }
 
 /**

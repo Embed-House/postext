@@ -39,12 +39,12 @@ import {
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
-import { joinsLetters, scriptContextUntracked, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
+import { graphemesOf, joinsLetters, scriptContextUntracked, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
-import { fileRuns, noteMissingGlyphs } from '../faceFiles';
+import { fileRuns, inRun, noteMissingGlyphs, wordRuns, type FileRun } from '../faceFiles';
 import { needsComplexShaping } from '../complexShaping';
-import { shapingKey, withBesideLetter, withShapingScript } from '../shapingLanguage';
+import { shapesAsCanvas, shapingKey, withShapingScript } from '../shapingLanguage';
 
 export interface PageCtx {
   page: PDFPage;
@@ -581,12 +581,42 @@ export interface TextShow {
  *  font's `/ToUnicode` map reads as other text is shown in a span of its
  *  own ({@link glyphReads}), unless `read` is false: the caller reads the
  *  text some other way (an `/ActualText` over all of it, a figure's
- *  alternate text). */
-export function textShows(font: PDFFont, text: string, read = true): TextShow[] {
-  return fileRuns(font, text).flatMap((run) => withBesideLetter(run.beside, () => {
+ *  alternate text).
+ *
+ *  In a document shaped in its own language the text is shaped word by
+ *  word, as the canvas shaped it (`wordRuns`, #770), and the words that
+ *  follow each other in one file are one operator; with `whole` it is
+ *  shaped as one string, as the text of a drawing is (a browser lays an
+ *  SVG's text out as it does a page's, not as its canvas does). */
+export function textShows(font: PDFFont, text: string, read = true, whole = false): TextShow[] {
+  const runs = whole ? fileRuns(font, text) : wordRuns(font, text);
+  if (runs.length > 1 && !whole && shapesAsCanvas()) {
+    const joined = joinedShows(runs, read);
+    if (joined) return joined;
+  }
+  return runs.flatMap((run) => inRun(run, () => {
     const shown = read ? shownRun(run.font, run.text) : undefined;
     return shown?.reads ? partsShows(run.font, shown.parts) : [{ font: run.font, op: showTextShaped(run.font, run.text) }];
   }));
+}
+
+/** The show-text operators of `runs` (`wordRuns`), the runs that follow
+ *  each other in one file joined into one operator: the pen carries from
+ *  each to the next, and nothing is kerned across. Undefined when a run's
+ *  font carries no shaper (a standard font). */
+function joinedShows(runs: readonly FileRun[], read: boolean): TextShow[] | undefined {
+  const groups: Array<{ font: PDFFont; parts: ShowPart[] }> = [];
+  for (const run of runs) {
+    const shown = inRun(run, () => shownRun(run.font, run.text));
+    if (!shown) return undefined;
+    let group = groups[groups.length - 1];
+    if (!group || group.font !== run.font) {
+      group = { font: run.font, parts: [] };
+      groups.push(group);
+    }
+    for (const part of shown.parts) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
+  }
+  return groups.flatMap((g) => partsShows(g.font, g.parts));
 }
 
 function shapingFace(font: PDFFont): { face: ShapingFace & FallbackFace; features: unknown } | undefined {
@@ -902,8 +932,9 @@ function shownRun(font: PDFFont, text: string): ShownRun | undefined {
 export function textAdvancePx(font: PDFFont, text: string, sizePx: number, trackingPx = 0): { advance: number; glyphs: number } {
   let advance = 0;
   let glyphs = 0;
-  for (const { font: file, text: part, beside } of fileRuns(font, text)) {
-    const run = withBesideLetter(beside, () => shownRun(file, part));
+  for (const word of wordRuns(font, text)) {
+    const { font: file, text: part } = word;
+    const run = inRun(word, () => shownRun(file, part));
     if (!run) {
       advance += file.widthOfTextAtSize(part, sizePx);
       glyphs += [...part].length;
@@ -913,6 +944,53 @@ export function textAdvancePx(font: PDFFont, text: string, sizePx: number, track
     glyphs += run.glyphs;
   }
   return { advance: advance + glyphs * trackingPx, glyphs };
+}
+
+/** How far (px) the characters of a segment, each at its own advance, may
+ *  be from the width the layout gave the segment and still be the ones it
+ *  measured. A browser's sum of advances is not the font's to the last
+ *  digit: Chrome sets an em of Noto Serif JP 15.62 px wide at 15.625 px,
+ *  0.135 px less over a line of 27 characters. Half a thousandth of the
+ *  width covers that and stays under a kerned pair. */
+function cellTolerance(widthPx: number): number {
+  return Math.max(0.02, 0.0005 * Math.abs(widthPx));
+}
+
+/**
+ * The characters of `text`, a segment of a line of the CJK composer
+ * `widthPx` wide, each with its own advance, when the layout measured them
+ * one by one and a shaper sets them otherwise together (#770); undefined
+ * for any other text, which is painted as it is.
+ *
+ * The composer measures every CJK character alone and lets the ones that
+ * advance alike share a segment, which is then one string to a renderer.
+ * A face may kern inside it: Noto Serif JP sets `す。` 0.08 em closer
+ * and `れ、` 0.06 em further apart, Noto Sans JP `す。` 0.1 em closer,
+ * so the glyphs after the pair stood off their places and the segment
+ * ended off its width. A line does not say how its segments were measured,
+ * so the PDF asks its own shaper, as it does for the pieces of a word
+ * (`wordPieces.ts`): the characters are painted one by one, each where the
+ * one before ends, when together they are as wide as the layout measured
+ * the segment ({@link cellTolerance}) and nearer to it than the string
+ * shaped as the canvas shapes it. A Western run, measured whole, keeps its
+ * kerning: whole, it is as wide as it was measured.
+ *
+ * `trackingPx` is the character spacing the segment is painted with. Only
+ * in a document shaped in its own language; one that keeps the host's
+ * prints its segments as it always did.
+ */
+export function cellPieces(font: PDFFont, text: string, widthPx: number, sizePx: number, trackingPx = 0): Array<{ text: string; width: number }> | undefined {
+  if (text.length < 2 || !(sizePx > 0) || !shapesAsCanvas() || needsComplexShaping(text)) return undefined;
+  const graphemes = graphemesOf(text);
+  if (graphemes.length < 2) return undefined;
+  const whole = Math.abs(textAdvancePx(font, text, sizePx, trackingPx).advance - widthPx);
+  // Shaped whole it is where it was measured: nothing kerns inside.
+  if (whole <= 0.02) return undefined;
+  const pieces = graphemes.map((g) => ({ text: g, width: textAdvancePx(font, g, sizePx, trackingPx).advance }));
+  let sum = 0;
+  for (const piece of pieces) sum += piece.width;
+  const apart = Math.abs(sum - widthPx);
+  return apart <= cellTolerance(widthPx) && apart < whole ? pieces : undefined;
 }
 
 /** Below this (thousandths of the font size) the pen is left where the
@@ -968,8 +1046,9 @@ export function measuredTextShows(
   for (let i = 0; i < pieces.length; i++) {
     const piece = pieces[i]!;
     let advance = 0;
-    for (const { font: file, text, beside } of fileRuns(font, piece.text)) {
-      const run = withBesideLetter(beside, () => shownRun(file, text));
+    for (const word of wordRuns(font, piece.text)) {
+      const file = word.font;
+      const run = inRun(word, () => shownRun(file, word.text));
       if (!run) return undefined;
       if (!group || group.font !== file) {
         group = { font: file, parts: [] };

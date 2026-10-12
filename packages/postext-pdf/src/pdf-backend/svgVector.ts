@@ -1573,7 +1573,7 @@ function drawingOps(drawing: VectorDrawing, res: FormResources, colorSpace: Page
         const [a, b, c, d, e, f] = mul(run.matrix, [1, 0, 0, -1, run.x, run.y]);
         // A face of several files switches font per stretch of characters;
         // right-to-left and joining scripts are shaped by HarfBuzz.
-        const shows = (run.base !== undefined ? shapedSvgText(font, run.text, run.size, run.base)?.shows : undefined) ?? textShows(font, run.text, false);
+        const shows = (run.base !== undefined ? shapedSvgText(font, run.text, run.size, run.base)?.shows : undefined) ?? textShows(font, run.text, false, true);
         const body: PDFOperator[] = [];
         let current = shows[0]!.font;
         for (const show of shows) {

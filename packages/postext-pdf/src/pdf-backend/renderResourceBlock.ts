@@ -48,8 +48,10 @@ import {
   type PageCtx,
   type PdfMatrix,
   beginActualTextSpan,
+  cellPieces,
   cjkLineText,
   compressedMarkSpacingPx,
+  drawMeasuredTextPx,
   drawTextPx,
   setTrackingPx,
   endActualTextSpan,
@@ -738,7 +740,12 @@ function paintLineRuns(
           else if (seg.tracking !== undefined) setTrackingPx(ctx, (tracking + seg.tracking));
           const stretch = inkScaleOperators(seg.inkScale);
           ctx.page.pushOperators(...stretch.before);
-          drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), line.baseline + (seg.baselineShift ?? 0), font, size, segColor);
+          // Characters the composer measured one by one, each in its
+          // place (see `paintComposedText` in blockRender.ts, #770).
+          const cells = ctx.vertical || markSpacing !== undefined || seg.inkScale !== undefined ? undefined : cellPieces(font, seg.text, seg.width, size, ctx.trackingPx ?? 0);
+          if (!cells || !drawMeasuredTextPx(ctx, cells, x + (seg.inkOffset ?? 0), line.baseline + (seg.baselineShift ?? 0), font, size, segColor, ctx.trackingPx ?? 0)) {
+            drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), line.baseline + (seg.baselineShift ?? 0), font, size, segColor);
+          }
           ctx.page.pushOperators(...stretch.after);
           if (markSpacing !== undefined || seg.tracking !== undefined) setTrackingPx(ctx, tracking);
           if (seg.ruby) {
