@@ -3,21 +3,21 @@
   "slug": "pepper-and-carrot-page",
   "sourceHash": "eb2f82f2a949610e937a642eb7dffee76ea1fa26c693d7d4431f7b0977b321b1",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.647Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T07:07:28.209Z",
   "variants": {
     "en": {
-      "hash8": "1b493001",
+      "hash8": "241f3127",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 1537,
-        "fontsMs": 877,
-        "buildMs": 188,
-        "totalMs": 4639,
+        "importMs": 464,
+        "fontsMs": 249,
+        "buildMs": 148,
+        "totalMs": 1533,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164720,
+          "bytes": 164572,
           "alt": "Page 2."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 104846,
+          "bytes": 104868,
           "alt": "Page 3."
         }
       ],
@@ -286,17 +286,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "1ff4c965",
+      "hash8": "9c9143cd",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 1254,
-        "fontsMs": 917,
-        "buildMs": 210,
-        "totalMs": 3907,
+        "importMs": 456,
+        "fontsMs": 241,
+        "buildMs": 161,
+        "totalMs": 1536,
         "builds": 1
       },
       "specimen": {
@@ -339,7 +345,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167816,
+          "bytes": 167722,
           "alt": "Página 2."
         },
         {
@@ -350,7 +356,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 104902,
+          "bytes": 104814,
           "alt": "Página 3."
         }
       ],
@@ -378,7 +384,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689887,
+        "bytes": 689889,
         "pages": 3
       },
       "sandbox": {
@@ -565,17 +571,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "7957eebd",
+      "hash8": "4702592d",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 1017,
-        "fontsMs": 1371,
-        "buildMs": 191,
-        "totalMs": 4028,
+        "importMs": 463,
+        "fontsMs": 223,
+        "buildMs": 161,
+        "totalMs": 1522,
         "builds": 1
       },
       "specimen": {
@@ -618,7 +630,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164782,
+          "bytes": 164448,
           "alt": "Pàgina 2."
         },
         {
@@ -629,7 +641,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 105004,
+          "bytes": 104946,
           "alt": "Pàgina 3."
         }
       ],
@@ -657,7 +669,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688151,
+        "bytes": 688144,
         "pages": 3
       },
       "sandbox": {
@@ -844,17 +856,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "4bd1a9d8",
-      "vdtHash": "8b40fa0916623ac081d84978d36feb6c069d0414",
+      "hash8": "c294cb72",
+      "vdtHash": "6d4640c02a77be2578270ee81f7c11cb359284d5",
       "timings": {
-        "importMs": 1085,
-        "fontsMs": 1610,
-        "buildMs": 177,
-        "totalMs": 4568,
+        "importMs": 443,
+        "fontsMs": 529,
+        "buildMs": 134,
+        "totalMs": 1772,
         "builds": 1
       },
       "specimen": {
@@ -886,7 +904,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 29142,
+          "bytes": 29148,
           "alt": "章首页，第 1 页：第8集：小辣椒的生日。"
         },
         {
@@ -897,7 +915,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167388,
+          "bytes": 167344,
           "alt": "第 2 页。"
         },
         {
@@ -908,7 +926,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103772,
+          "bytes": 103642,
           "alt": "第 3 页。"
         }
       ],
@@ -936,16 +954,16 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 743375,
+        "bytes": 743373,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676135,
+        "bytes": 676151,
         "chapters": [
           {
             "pages": 3,
-            "hash": "04c2f35e18133680",
+            "hash": "1bb3f8a56ec69d1d",
             "lines": "4a0b266f7577f83b"
           }
         ]
@@ -1124,17 +1142,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "4945c313",
+      "hash8": "3df0976c",
       "vdtHash": "1b785ccdf3009d9a11a68bd1448b1a5d210bc58c",
       "timings": {
-        "importMs": 1286,
-        "fontsMs": 710,
-        "buildMs": 176,
-        "totalMs": 3212,
+        "importMs": 444,
+        "fontsMs": 288,
+        "buildMs": 153,
+        "totalMs": 1527,
         "builds": 1
       },
       "specimen": {
@@ -1177,7 +1206,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 165276,
+          "bytes": 165024,
           "alt": "الصفحة ٢."
         },
         {
@@ -1188,7 +1217,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103466,
+          "bytes": 103284,
           "alt": "الصفحة ٣."
         }
       ],
@@ -1409,21 +1438,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "dd24f2ba",
-      "vdtHash": "d96a7805773f5919b05691d4d1559da70cc6a370",
+      "hash8": "d8797e7b",
+      "vdtHash": "c6747e7d24ce903aafc04151730f7047754f962a",
       "timings": {
-        "importMs": 1217,
-        "fontsMs": 2076,
-        "buildMs": 206,
-        "totalMs": 4402,
+        "importMs": 452,
+        "fontsMs": 542,
+        "buildMs": 152,
+        "totalMs": 1757,
         "builds": 1
       },
       "specimen": {
@@ -1455,7 +1484,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 35064,
+          "bytes": 35048,
           "alt": "章扉、1ページ：エピソード 8: ペッパーの誕生パーティー。"
         },
         {
@@ -1466,7 +1495,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 165592,
+          "bytes": 165134,
           "alt": "2ページ。"
         },
         {
@@ -1477,7 +1506,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 102300,
+          "bytes": 102332,
           "alt": "3ページ。"
         }
       ],
@@ -1506,16 +1535,16 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 725140,
+        "bytes": 725779,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676817,
+        "bytes": 677107,
         "chapters": [
           {
             "pages": 3,
-            "hash": "5ea37d2632410866",
+            "hash": "d08dabd25f12e812",
             "lines": "e3980f29ce8d40f3"
           }
         ]
@@ -1695,17 +1724,28 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "ee629e01",
+      "hash8": "986c5d72",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 694,
-        "fontsMs": 464,
-        "buildMs": 189,
-        "totalMs": 2272,
+        "importMs": 205,
+        "fontsMs": 160,
+        "buildMs": 156,
+        "totalMs": 1135,
         "builds": 1
       },
       "specimen": {
@@ -1748,7 +1788,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 166516,
+          "bytes": 166554,
           "alt": "Página 2."
         },
         {
@@ -1759,7 +1799,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 106508,
+          "bytes": 106728,
           "alt": "Página 3."
         }
       ],
@@ -1974,7 +2014,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          }
+        ]
       }
     }
   }

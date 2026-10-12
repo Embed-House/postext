@@ -3,21 +3,21 @@
   "slug": "vertical-book-with-jiazhu-citations",
   "sourceHash": "86d4c66a808c32fa3543b90da936da5b6cd27ed3911e1995265400ceea319228",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:31.076Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:41.222Z",
   "variants": {
     "en": {
-      "hash8": "43f4f673",
-      "vdtHash": "bc3e2dfbde8fb9691a5f34d1d9c0220d90d2371f",
+      "hash8": "be5e75ed",
+      "vdtHash": "3968cb918da759615b8e2279e3f304d11d029fbb",
       "timings": {
-        "importMs": 245,
-        "fontsMs": 329,
-        "buildMs": 86,
-        "totalMs": 1280,
+        "importMs": 360,
+        "fontsMs": 390,
+        "buildMs": 73,
+        "totalMs": 1460,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85372,
+          "bytes": 84592,
           "alt": "Opening page 四十五: 第三章 宋刻本的版式."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117156,
+          "bytes": 116950,
           "alt": "Page 四十六."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 47806,
+          "bytes": 47862,
           "alt": "Page 四十七."
         }
       ],
@@ -101,17 +101,17 @@
       },
       "pdf": {
         "file": "vertical-book-with-jiazhu-citations.pdf",
-        "bytes": 179206,
+        "bytes": 179201,
         "pages": 3
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19887,
+        "bytes": 19883,
         "folio": "3a3c9a0c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "a932c60b73e5f50f",
+            "hash": "a94c19ededa96217",
             "lines": "13b592d1626affa3"
           }
         ]
@@ -297,21 +297,26 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ea4533a9",
-      "vdtHash": "d2d03b50f8cde8dc32364367f93fe9936fc25a3d",
+      "hash8": "11bce435",
+      "vdtHash": "5fdae81a492fa9f544a513c13cf8ea92591e5813",
       "timings": {
-        "importMs": 226,
-        "fontsMs": 383,
-        "buildMs": 88,
-        "totalMs": 1258,
+        "importMs": 360,
+        "fontsMs": 391,
+        "buildMs": 72,
+        "totalMs": 1464,
         "builds": 1
       },
       "specimen": {
@@ -344,7 +349,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85506,
+          "bytes": 84786,
           "alt": "Página de apertura 四十五: 第三章 宋刻本的版式."
         },
         {
@@ -355,7 +360,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117156,
+          "bytes": 116950,
           "alt": "Página 四十六."
         },
         {
@@ -366,7 +371,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 47806,
+          "bytes": 47862,
           "alt": "Página 四十七."
         }
       ],
@@ -395,17 +400,17 @@
       },
       "pdf": {
         "file": "vertical-book-with-jiazhu-citations.pdf",
-        "bytes": 179156,
+        "bytes": 179160,
         "pages": 3
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19940,
+        "bytes": 19936,
         "folio": "3a3c9a0c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "6c07bb72350c8d5e",
+            "hash": "b540ed8cf2dd0d46",
             "lines": "1b6f31ccd9788712"
           }
         ]
@@ -591,9 +596,14 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

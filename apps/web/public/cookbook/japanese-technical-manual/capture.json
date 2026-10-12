@@ -3,21 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "aaeb1edf09d822bc0df21d2a502322290b30496b90caf4e3ef7d1d922f350dcf",
   "engine": {
-    "postext": "1.28.1",
-    "postextPdf": "1.28.1",
+    "postext": "1.28.5",
+    "postextPdf": "1.28.5",
     "source": "npm"
   },
-  "chrome": "131.0.6778.204",
-  "capturedAt": "2026-10-11T20:22:30.290Z",
+  "chrome": "154.0.8037.98",
+  "capturedAt": "2026-10-12T06:55:11.918Z",
   "variants": {
     "en": {
-      "hash8": "73aa991b",
-      "vdtHash": "b7b5dc7f120a7d13553747a319a21f2b83ed3e59",
+      "hash8": "0284a571",
+      "vdtHash": "408df2355fa6ab31f93c86cf0b8c3c7688eaaa3f",
       "timings": {
-        "importMs": 1141,
-        "fontsMs": 876,
-        "buildMs": 119,
-        "totalMs": 3065,
+        "importMs": 327,
+        "fontsMs": 31546,
+        "buildMs": 110,
+        "totalMs": 32663,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78542,
+          "bytes": 78454,
           "alt": "Opening page 41: 第3章 文字列の正規化."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86096,
+          "bytes": 86092,
           "alt": "Page 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63362,
+          "bytes": 63236,
           "alt": "Page 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86298,
+          "bytes": 86284,
           "alt": "Page 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 32564,
+          "bytes": 32510,
           "alt": "Page 45."
         }
       ],
@@ -126,18 +126,18 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284618,
+        "bytes": 284620,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41312,
+        "bytes": 41316,
         "folio": "90d2b4f0",
         "chapters": [
           {
             "pages": 5,
-            "hash": "ff84c2570d875925",
-            "lines": "f4b2018eaaeb5ae6"
+            "hash": "40ad2f69e89bad93",
+            "lines": "0e57917605eccbfe"
           }
         ]
       },
@@ -427,9 +427,19 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 32.7 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",
@@ -440,13 +450,13 @@
       }
     },
     "es": {
-      "hash8": "aa02cbca",
-      "vdtHash": "3bc83a4ba4754acfeffd1ded46a83195eefde69f",
+      "hash8": "dfa91db2",
+      "vdtHash": "c37443f092c4e6782997f0f2dafddb3ec87fc23b",
       "timings": {
-        "importMs": 510,
-        "fontsMs": 1191,
-        "buildMs": 118,
-        "totalMs": 2710,
+        "importMs": 322,
+        "fontsMs": 31552,
+        "buildMs": 110,
+        "totalMs": 32665,
         "builds": 1
       },
       "specimen": {
@@ -479,7 +489,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78542,
+          "bytes": 78454,
           "alt": "Página de apertura 41: 第3章 文字列の正規化."
         },
         {
@@ -490,7 +500,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86096,
+          "bytes": 86092,
           "alt": "Página 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -501,7 +511,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63362,
+          "bytes": 63236,
           "alt": "Página 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -512,7 +522,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86298,
+          "bytes": 86284,
           "alt": "Página 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -523,7 +533,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 32848,
+          "bytes": 32722,
           "alt": "Página 45."
         }
       ],
@@ -555,18 +565,18 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 284742,
+        "bytes": 284743,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41371,
+        "bytes": 41375,
         "folio": "90d2b4f0",
         "chapters": [
           {
             "pages": 5,
-            "hash": "8aa91ee89a17ebb6",
-            "lines": "4226654fb0e51b4d"
+            "hash": "51db3e8e1a389160",
+            "lines": "623d4d7b9b3567b5"
           }
         ]
       },
@@ -856,9 +866,19 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 32.7 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 154.0.8037.98, the committed capture used 131.0.6778.204: pixels may differ"
+          },
+          {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",
