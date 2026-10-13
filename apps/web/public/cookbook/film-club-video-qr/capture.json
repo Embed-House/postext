@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "film-club-video-qr",
-  "sourceHash": "4b346b76a7993522ffc80cf7995085cc4578dd2d029392ace7d7d5855a655a43",
+  "sourceHash": "9955c09061c1cd3d45b3e2dffc4925c1a0d92b4fd62dd57838474aa74263b6e3",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.309Z",
+  "capturedAt": "2026-10-13T06:56:14.178Z",
   "variants": {
     "en": {
       "hash8": "9b9bd8a2",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 240,
-        "fontsMs": 106,
-        "buildMs": 68,
-        "totalMs": 1039,
+        "importMs": 499,
+        "fontsMs": 170,
+        "buildMs": 100,
+        "totalMs": 1447,
         "builds": 1
       },
       "specimen": {
@@ -413,13 +413,13 @@
       }
     },
     "es": {
-      "hash8": "86531f6c",
+      "hash8": "ddecb44a",
       "vdtHash": "b1fafd63237b7c42fe8f1d8da62eaa38276b128e",
       "timings": {
-        "importMs": 201,
-        "fontsMs": 169,
-        "buildMs": 74,
-        "totalMs": 1057,
+        "importMs": 689,
+        "fontsMs": 222,
+        "buildMs": 99,
+        "totalMs": 1841,
         "builds": 1
       },
       "specimen": {
@@ -452,7 +452,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95420,
+          "bytes": 95430,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {

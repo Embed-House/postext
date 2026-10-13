@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "front-matter-roman-to-arabic",
-  "sourceHash": "4992ec9f849f943aca85f192ab464cf90a385e520ac159164f6832423188eaab",
+  "sourceHash": "5ebb3449ab6e42fb9f9249380899311917a14de2b9777711537ca070ee669b2a",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.361Z",
+  "capturedAt": "2026-10-13T06:56:14.192Z",
   "variants": {
     "en": {
       "hash8": "cbd1827c",
       "vdtHash": "b08f2e14b353da55f033eeb01d81d2a0de1bca33",
       "timings": {
-        "importMs": 357,
-        "fontsMs": 56,
-        "buildMs": 135,
-        "totalMs": 1322,
+        "importMs": 859,
+        "fontsMs": 70,
+        "buildMs": 182,
+        "totalMs": 2082,
         "builds": 1
       },
       "specimen": {

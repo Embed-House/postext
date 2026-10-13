@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-official-document",
-  "sourceHash": "2e6c5a0a7cd415d9043e68c7f652d93ce55aee0fbe44997ddd15d749adc86446",
+  "sourceHash": "334c8d687cb9808e27e8a2f966c00eee8e4bd4ab4fab5eb0bc7a90fd77dd82c7",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.140Z",
+  "capturedAt": "2026-10-13T06:54:37.599Z",
   "variants": {
     "en": {
-      "hash8": "ee078d6f",
+      "hash8": "848cda8c",
       "vdtHash": "97c6878c40ed282e473e0718ba1584f1af0ffee4",
       "timings": {
-        "importMs": 292,
-        "fontsMs": 393,
-        "buildMs": 50,
-        "totalMs": 1329,
+        "importMs": 498,
+        "fontsMs": 658,
+        "buildMs": 72,
+        "totalMs": 1890,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "chinese-official-document.pdf",
-        "bytes": 130011,
+        "bytes": 127864,
         "pages": 4
       },
       "sandbox": {
@@ -365,23 +365,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "30c31049",
+      "hash8": "5f3f6fdf",
       "vdtHash": "a8ae63527a8b45e96dc808e6430c58389553e4d7",
       "timings": {
-        "importMs": 292,
-        "fontsMs": 190,
-        "buildMs": 47,
-        "totalMs": 1169,
+        "importMs": 499,
+        "fontsMs": 383,
+        "buildMs": 74,
+        "totalMs": 1625,
         "builds": 1
       },
       "specimen": {
@@ -479,7 +474,7 @@
       },
       "pdf": {
         "file": "chinese-official-document.pdf",
-        "bytes": 130284,
+        "bytes": 128143,
         "pages": 4
       },
       "sandbox": {
@@ -729,11 +724,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

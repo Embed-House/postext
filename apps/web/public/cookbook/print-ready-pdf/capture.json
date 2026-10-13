@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "print-ready-pdf",
-  "sourceHash": "2030d5a3a325d2e674fd3080863937dbacab9106a3ea0cffcd919d6e4af29b26",
+  "sourceHash": "e8d6554bd5a024ccf39dde83b07c4f9f4230031113657e5cef0e92f93c4a1943",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.991Z",
+  "capturedAt": "2026-10-13T07:01:35.566Z",
   "variants": {
     "es": {
       "hash8": "2f227610",
       "vdtHash": "731346965b7c574a9b7c70d0d12cb2b5299688cd",
       "timings": {
-        "importMs": 228,
-        "fontsMs": 38,
-        "buildMs": 56,
-        "totalMs": 994,
+        "importMs": 555,
+        "fontsMs": 56,
+        "buildMs": 61,
+        "totalMs": 1402,
         "builds": 1
       },
       "specimen": {

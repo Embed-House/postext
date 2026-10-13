@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "haiku-and-tanka",
-  "sourceHash": "2bb93843a9df6bc9cedb2e3c1196e4d0e27e22bf5704d2a5c4c62e02a32b3c47",
+  "sourceHash": "45e647a2e893725b0d5fde5cbaca857146f8faf5a29bf001b141c2894463abe9",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.383Z",
+  "capturedAt": "2026-10-13T06:57:06.176Z",
   "variants": {
     "en": {
-      "hash8": "7745184a",
+      "hash8": "78ea4171",
       "vdtHash": "351aa50ad42f719591ada45f71b4b1a8ff2d4369",
       "timings": {
-        "importMs": 230,
-        "fontsMs": 300,
-        "buildMs": 59,
-        "totalMs": 1213,
+        "importMs": 616,
+        "fontsMs": 899,
+        "buildMs": 87,
+        "totalMs": 2309,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221315,
+        "bytes": 221269,
         "pages": 8
       },
       "sandbox": {
@@ -359,13 +359,13 @@
       }
     },
     "es": {
-      "hash8": "e9a788f8",
+      "hash8": "319b39bc",
       "vdtHash": "a5d3308460805ad0d7f0cc310898046450ac8fc0",
       "timings": {
-        "importMs": 221,
-        "fontsMs": 211,
-        "buildMs": 54,
-        "totalMs": 1118,
+        "importMs": 747,
+        "fontsMs": 558,
+        "buildMs": 71,
+        "totalMs": 2284,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +515,7 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221334,
+        "bytes": 220650,
         "pages": 8
       },
       "sandbox": {

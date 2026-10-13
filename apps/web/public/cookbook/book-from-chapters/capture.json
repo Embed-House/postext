@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "book-from-chapters",
-  "sourceHash": "5fbfbe08efc2198468f121419a1288ce53e3cc7b3cabd8b47b4b12f3e235b6d7",
+  "sourceHash": "c7c6d4f86b8237d456181aba0576001a55ec60d6df01f33f81daab7323d3134e",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.016Z",
+  "capturedAt": "2026-10-13T06:53:52.253Z",
   "variants": {
     "en": {
       "hash8": "872ca565",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 345,
-        "fontsMs": 235,
+        "importMs": 428,
+        "fontsMs": 80,
         "buildMs": 103,
-        "totalMs": 1311,
+        "totalMs": 1309,
         "builds": 1
       },
       "specimen": {
@@ -497,10 +497,10 @@
       "hash8": "563457d7",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 455,
-        "fontsMs": 66,
-        "buildMs": 102,
-        "totalMs": 1291,
+        "importMs": 483,
+        "fontsMs": 71,
+        "buildMs": 104,
+        "totalMs": 1282,
         "builds": 1
       },
       "specimen": {

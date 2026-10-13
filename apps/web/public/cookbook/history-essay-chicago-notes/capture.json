@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "history-essay-chicago-notes",
-  "sourceHash": "4e6fff42ca51d3899775ff540910cc45ba2777df66cc16183bf43867f7444c7d",
+  "sourceHash": "0a025f997df23b6a00281ee0b30c8b7c23e501bbf962cebbec4bbaa0a10004a8",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.403Z",
+  "capturedAt": "2026-10-13T06:57:06.209Z",
   "variants": {
     "en": {
       "hash8": "8af7c24a",
       "vdtHash": "994aae3a811c99b2205ceb072cb0db1659f464e2",
       "timings": {
-        "importMs": 257,
-        "fontsMs": 32,
-        "buildMs": 448,
-        "totalMs": 1484,
+        "importMs": 657,
+        "fontsMs": 52,
+        "buildMs": 641,
+        "totalMs": 2125,
         "builds": 1
       },
       "specimen": {
@@ -335,10 +335,10 @@
       "hash8": "b1e087d7",
       "vdtHash": "5d4c797d0c8398d84f1c79e2864e796fe0b7cea3",
       "timings": {
-        "importMs": 218,
-        "fontsMs": 32,
-        "buildMs": 470,
-        "totalMs": 1400,
+        "importMs": 929,
+        "fontsMs": 38,
+        "buildMs": 495,
+        "totalMs": 2588,
         "builds": 1
       },
       "specimen": {

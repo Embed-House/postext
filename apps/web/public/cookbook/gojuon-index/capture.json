@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gojuon-index",
-  "sourceHash": "7f461c80bdc910c0f415452f1c53891db051d3dc2fe80e84686fd18ff6154def",
+  "sourceHash": "28a5cabf63c6681b39982c0c6338fe33199727b7588d9e2ae80751bb8dc96888",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.380Z",
+  "capturedAt": "2026-10-13T06:57:06.169Z",
   "variants": {
     "en": {
-      "hash8": "ef2a3c89",
+      "hash8": "da77c7f8",
       "vdtHash": "f8b56a0c3328d7a843fa101f7fd5b623b24105e8",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 284,
-        "buildMs": 87,
-        "totalMs": 1152,
+        "importMs": 747,
+        "fontsMs": 520,
+        "buildMs": 132,
+        "totalMs": 2175,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137200,
+        "bytes": 137287,
         "pages": 3
       },
       "sandbox": {
@@ -328,11 +328,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -341,13 +336,13 @@
       }
     },
     "es": {
-      "hash8": "b576471b",
+      "hash8": "d2eceb59",
       "vdtHash": "ea4f51661750ca2803d83212feef5b3e6cfddca3",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 183,
-        "buildMs": 90,
-        "totalMs": 1184,
+        "importMs": 837,
+        "fontsMs": 471,
+        "buildMs": 126,
+        "totalMs": 2089,
         "builds": 1
       },
       "specimen": {
@@ -429,7 +424,7 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137144,
+        "bytes": 137252,
         "pages": 3
       },
       "sandbox": {
@@ -657,11 +652,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
           {
             "check": "sandbox",
             "severity": "info",

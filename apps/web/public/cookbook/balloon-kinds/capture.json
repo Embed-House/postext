@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "balloon-kinds",
-  "sourceHash": "d2760462625dc6e89d85c3c492ffb4002cf77ce83d441f624d24ce3bc16fd67e",
+  "sourceHash": "4b179fc70b5a53de8b7f6e120c95491abb9296bfac010f06cafee636cdd04cd2",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.969Z",
+  "capturedAt": "2026-10-13T06:53:52.220Z",
   "variants": {
     "en": {
       "hash8": "286602cd",
       "vdtHash": "741e9ba1b4cbefe7456e18ce8a09307b09fc17cb",
       "timings": {
-        "importMs": 281,
-        "fontsMs": 129,
-        "buildMs": 766,
-        "totalMs": 1823,
+        "importMs": 1050,
+        "fontsMs": 318,
+        "buildMs": 1019,
+        "totalMs": 3100,
         "builds": 1
       },
       "specimen": {
@@ -312,10 +312,10 @@
       "hash8": "dd93569b",
       "vdtHash": "7e8ad8cefc2dbcf233e8d2ef02662fe7c05cc0ac",
       "timings": {
-        "importMs": 312,
-        "fontsMs": 127,
-        "buildMs": 704,
-        "totalMs": 1857,
+        "importMs": 1047,
+        "fontsMs": 337,
+        "buildMs": 977,
+        "totalMs": 3068,
         "builds": 1
       },
       "specimen": {
@@ -599,10 +599,10 @@
       "hash8": "14b1db80",
       "vdtHash": "09fd22eaefd8eb692bf193bebcd0d01a123efebb",
       "timings": {
-        "importMs": 228,
-        "fontsMs": 168,
-        "buildMs": 715,
-        "totalMs": 1707,
+        "importMs": 623,
+        "fontsMs": 170,
+        "buildMs": 778,
+        "totalMs": 2318,
         "builds": 1
       },
       "specimen": {
@@ -883,13 +883,13 @@
       }
     },
     "zh": {
-      "hash8": "3f97daaa",
+      "hash8": "f1c4d838",
       "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 332,
-        "fontsMs": 249,
-        "buildMs": 577,
-        "totalMs": 1742,
+        "importMs": 638,
+        "fontsMs": 493,
+        "buildMs": 669,
+        "totalMs": 2493,
         "builds": 1
       },
       "specimen": {
@@ -960,7 +960,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1027949,
+        "bytes": 1027247,
         "pages": 2
       },
       "sandbox": {
@@ -1174,10 +1174,10 @@
       "hash8": "fe25c73e",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 247,
-        "fontsMs": 141,
-        "buildMs": 725,
-        "totalMs": 1747,
+        "importMs": 469,
+        "fontsMs": 541,
+        "buildMs": 805,
+        "totalMs": 2456,
         "builds": 1
       },
       "specimen": {
@@ -1462,13 +1462,13 @@
       }
     },
     "ja": {
-      "hash8": "02fd279c",
+      "hash8": "6cba4be6",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 254,
-        "fontsMs": 312,
-        "buildMs": 457,
-        "totalMs": 1675,
+        "importMs": 350,
+        "fontsMs": 574,
+        "buildMs": 474,
+        "totalMs": 2041,
         "builds": 1
       },
       "specimen": {
@@ -1540,7 +1540,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1060011,
+        "bytes": 1059394,
         "pages": 2
       },
       "sandbox": {
@@ -1755,10 +1755,10 @@
       "hash8": "5ddc43a3",
       "vdtHash": "ff3577f055a081d8454805278da37a8ca13309b1",
       "timings": {
-        "importMs": 257,
-        "fontsMs": 100,
-        "buildMs": 776,
-        "totalMs": 1764,
+        "importMs": 356,
+        "fontsMs": 145,
+        "buildMs": 851,
+        "totalMs": 2035,
         "builds": 1
       },
       "specimen": {

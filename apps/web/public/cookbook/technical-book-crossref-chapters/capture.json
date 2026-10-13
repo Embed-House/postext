@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-book-crossref-chapters",
-  "sourceHash": "e74160d7d7435a18ff8d28cf6c80d68775078ec4ce5070133629f4b51bba2c79",
+  "sourceHash": "439f5d04345523774fe6378c9b5f8f68b5c2a681ad193efa32fcb5c4848ead50",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.262Z",
+  "capturedAt": "2026-10-13T07:04:11.942Z",
   "variants": {
     "en": {
-      "hash8": "73f658ac",
+      "hash8": "7f080c20",
       "vdtHash": "59c6dd7dd77a6609866f88c2db50327fa736cd9d",
       "timings": {
-        "importMs": 263,
-        "fontsMs": 78,
-        "buildMs": 123,
-        "totalMs": 1092,
+        "importMs": 410,
+        "fontsMs": 224,
+        "buildMs": 148,
+        "totalMs": 1610,
         "builds": 1
       },
       "specimen": {
@@ -504,10 +504,10 @@
       "hash8": "ceb1228d",
       "vdtHash": "c4d8c29bb3636be55b1c971518156c61c66db6a6",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 70,
-        "buildMs": 119,
-        "totalMs": 1020,
+        "importMs": 353,
+        "fontsMs": 177,
+        "buildMs": 145,
+        "totalMs": 1321,
         "builds": 1
       },
       "specimen": {

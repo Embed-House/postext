@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "accessible-tagged-pdf",
-  "sourceHash": "71a90a57fba580f67950e5589f77bb66a65b4aefda7b3ef492008543505f3fde",
+  "sourceHash": "388f26eb576733c1a78d936d052bae9438ade999fde81a8a67e03af2b8526414",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.891Z",
+  "capturedAt": "2026-10-13T06:53:16.031Z",
   "variants": {
     "es": {
       "hash8": "57c43de5",
       "vdtHash": "b4d90a107216c3f089ce544b14ad07edef22c525",
       "timings": {
-        "importMs": 20832,
-        "fontsMs": 31,
-        "buildMs": 88,
-        "totalMs": 21680,
+        "importMs": 25506,
+        "fontsMs": 34,
+        "buildMs": 87,
+        "totalMs": 26341,
         "builds": 1
       },
       "specimen": {

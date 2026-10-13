@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ml-paper-theorems-proofs",
-  "sourceHash": "03514934a4a8fa479a015e3854e844a4f824106256aeb8e0f5bf94c5d875b236",
+  "sourceHash": "31be5e4e029b95ed33c98b1c960264ca6233760b279b7df3ab809febadec50a1",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.706Z",
+  "capturedAt": "2026-10-13T07:00:48.745Z",
   "variants": {
     "en": {
       "hash8": "cd2f156b",
       "vdtHash": "128ac7e24b3cff59f2e981b610a048bdfd3766c6",
       "timings": {
-        "importMs": 306,
-        "fontsMs": 138,
-        "buildMs": 290,
-        "totalMs": 1386,
+        "importMs": 1736,
+        "fontsMs": 837,
+        "buildMs": 582,
+        "totalMs": 6422,
         "builds": 1
       },
       "specimen": {

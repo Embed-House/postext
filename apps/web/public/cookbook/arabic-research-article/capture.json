@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-research-article",
-  "sourceHash": "9f2a99212d5ca4676e645bc93dcc918a60cbb7b2414f1e7defe93cedfe1015d8",
+  "sourceHash": "bc512da4e8eb6f7fd56ca82aa485280ec8bd4323c641d1e7ddebc0821d8b1e5a",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.946Z",
+  "capturedAt": "2026-10-13T06:53:16.064Z",
   "variants": {
     "en": {
       "hash8": "59622aef",
       "vdtHash": "fc2fc1949f0cd4a3f42f67d22fe8c64c7a6874b9",
       "timings": {
-        "importMs": 311,
-        "fontsMs": 107,
-        "buildMs": 528,
-        "totalMs": 1562,
+        "importMs": 280,
+        "fontsMs": 73,
+        "buildMs": 517,
+        "totalMs": 1471,
         "builds": 1
       },
       "specimen": {
@@ -396,23 +396,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "f01bdcb5",
       "vdtHash": "4969cce40dbd3f45a1b9ed0bd619bcf50961dd09",
       "timings": {
-        "importMs": 385,
-        "fontsMs": 70,
-        "buildMs": 505,
-        "totalMs": 1636,
+        "importMs": 311,
+        "fontsMs": 67,
+        "buildMs": 521,
+        "totalMs": 1499,
         "builds": 1
       },
       "specimen": {
@@ -791,13 +785,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

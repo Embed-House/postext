@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "one-page-six-languages",
-  "sourceHash": "c852ddf7610ee7898e6fa4cd109dd34828fc4226c1ca44b4e71391f847a7dc5c",
+  "sourceHash": "cabd6533754e602b9241f5ed4d9afe72efc64fae23d4d7a5fba996942e10d1e9",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.797Z",
+  "capturedAt": "2026-10-13T07:00:48.919Z",
   "variants": {
     "en": {
       "hash8": "308a3aec",
       "vdtHash": "f449370ee3262648d8ec670b3847b33451c2fdda",
       "timings": {
-        "importMs": 246,
-        "fontsMs": 166,
-        "buildMs": 171,
-        "totalMs": 1325,
+        "importMs": 1435,
+        "fontsMs": 323,
+        "buildMs": 265,
+        "totalMs": 3077,
         "builds": 2
       },
       "specimen": {
@@ -248,10 +248,10 @@
       "hash8": "3407f47d",
       "vdtHash": "a17aabb0ecf88ff14b0fcb36da2997ab31273c85",
       "timings": {
-        "importMs": 226,
-        "fontsMs": 163,
-        "buildMs": 151,
-        "totalMs": 1296,
+        "importMs": 872,
+        "fontsMs": 757,
+        "buildMs": 237,
+        "totalMs": 2771,
         "builds": 2
       },
       "specimen": {
@@ -479,13 +479,13 @@
       }
     },
     "zh": {
-      "hash8": "bb45dc3f",
+      "hash8": "6dd821fd",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 214,
-        "fontsMs": 279,
-        "buildMs": 170,
-        "totalMs": 1402,
+        "importMs": 752,
+        "fontsMs": 1457,
+        "buildMs": 205,
+        "totalMs": 3326,
         "builds": 2
       },
       "specimen": {
@@ -556,7 +556,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 809978,
+        "bytes": 809224,
         "pages": 1
       },
       "sandbox": {
@@ -723,10 +723,10 @@
       "hash8": "3ee04df6",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 238,
-        "fontsMs": 138,
-        "buildMs": 141,
-        "totalMs": 1273,
+        "importMs": 836,
+        "fontsMs": 408,
+        "buildMs": 247,
+        "totalMs": 2392,
         "builds": 2
       },
       "specimen": {
@@ -964,13 +964,13 @@
       }
     },
     "ja": {
-      "hash8": "278ec66a",
+      "hash8": "b31d7599",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 211,
-        "fontsMs": 236,
-        "buildMs": 138,
-        "totalMs": 1311,
+        "importMs": 710,
+        "fontsMs": 793,
+        "buildMs": 176,
+        "totalMs": 2878,
         "builds": 2
       },
       "specimen": {
@@ -1042,7 +1042,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 820376,
+        "bytes": 819715,
         "pages": 1
       },
       "sandbox": {

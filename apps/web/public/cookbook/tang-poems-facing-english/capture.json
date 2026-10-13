@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tang-poems-facing-english",
-  "sourceHash": "2a49da074bb406e0aed0202f873d77388751b49cc5eee913132651ba89bfe4af",
+  "sourceHash": "3d25f78e52b06419a434fb7926fe043a1a74f566dfa63cb0565ece28c0a7f1fc",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.190Z",
+  "capturedAt": "2026-10-13T07:04:11.842Z",
   "variants": {
     "en": {
-      "hash8": "73d61751",
+      "hash8": "6cb49d80",
       "vdtHash": "f73afc1191d0f48ff501d0738d67cd53a7e8676f",
       "timings": {
-        "importMs": 332,
-        "fontsMs": 330,
+        "importMs": 775,
+        "fontsMs": 318,
         "buildMs": 100,
-        "totalMs": 1381,
+        "totalMs": 2024,
         "builds": 1
       },
       "specimen": {
@@ -74,7 +74,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50706,
+          "bytes": 50686,
           "alt": "Opening page 3: 靜夜思."
         },
         {
@@ -118,7 +118,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35220,
+          "bytes": 35208,
           "alt": "Opening page 7: 絕句."
         },
         {
@@ -195,7 +195,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 153780,
+        "bytes": 152700,
         "pages": 10
       },
       "sandbox": {
@@ -436,23 +436,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "5afd2356",
+      "hash8": "d53750d4",
       "vdtHash": "3c48fce898712cf9a04abcdc3db2d3035fcefcf8",
       "timings": {
-        "importMs": 452,
-        "fontsMs": 253,
-        "buildMs": 97,
-        "totalMs": 1416,
+        "importMs": 770,
+        "fontsMs": 468,
+        "buildMs": 103,
+        "totalMs": 2068,
         "builds": 1
       },
       "specimen": {
@@ -509,7 +503,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 51528,
+          "bytes": 51448,
           "alt": "Página de apertura 3: 靜夜思."
         },
         {
@@ -553,7 +547,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35600,
+          "bytes": 35590,
           "alt": "Página de apertura 7: 絕句."
         },
         {
@@ -630,12 +624,12 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 156278,
+        "bytes": 155065,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15185,
+        "bytes": 15187,
         "folio": "e5860b68",
         "chapters": [
           {
@@ -871,13 +865,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

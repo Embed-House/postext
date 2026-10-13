@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "2e551d9391b802a2d2b6a9781afbc362ce2219e64aa9a5ccc14ae21de7354100",
+  "sourceHash": "60c1bb5420726e1f5d19cccde02dad81c87e8afd7994a034dd25cc74f136cea7",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.462Z",
+  "capturedAt": "2026-10-13T06:59:13.083Z",
   "variants": {
     "en": {
       "hash8": "fd431c5c",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 224,
-        "fontsMs": 31,
-        "buildMs": 147,
-        "totalMs": 1147,
+        "importMs": 726,
+        "fontsMs": 48,
+        "buildMs": 220,
+        "totalMs": 2180,
         "builds": 1
       },
       "specimen": {
@@ -344,10 +344,10 @@
       "hash8": "a3e7ac3a",
       "vdtHash": "dd0b895147d7e0a20e297a1723961914425e2f01",
       "timings": {
-        "importMs": 277,
-        "fontsMs": 37,
-        "buildMs": 557,
-        "totalMs": 1563,
+        "importMs": 909,
+        "fontsMs": 44,
+        "buildMs": 790,
+        "totalMs": 2891,
         "builds": 1
       },
       "specimen": {

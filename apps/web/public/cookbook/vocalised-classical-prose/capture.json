@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "vocalised-classical-prose",
-  "sourceHash": "05e46d35e6d53075cf3089adf8068eb021b94a85a977e56d0ef08be94e0e0fa2",
+  "sourceHash": "5dccd7f233537a373ba20d0d9c68e77f0cdbf943a51a508945a2c59219aac202",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.329Z",
+  "capturedAt": "2026-10-13T07:06:14.185Z",
   "variants": {
     "en": {
       "hash8": "6d38e739",
       "vdtHash": "3ee5260508696be07c239cd7e0ef72102c7c91fe",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 39,
-        "buildMs": 86,
-        "totalMs": 967,
+        "importMs": 1898,
+        "fontsMs": 274,
+        "buildMs": 151,
+        "totalMs": 3667,
         "builds": 1
       },
       "specimen": {
@@ -284,10 +284,10 @@
       "hash8": "40e28a33",
       "vdtHash": "60238519a34f1d62bfad9b498caba15c2afaf7a1",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 39,
-        "buildMs": 91,
-        "totalMs": 936,
+        "importMs": 1219,
+        "fontsMs": 177,
+        "buildMs": 182,
+        "totalMs": 2753,
         "builds": 1
       },
       "specimen": {

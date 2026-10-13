@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tebeo-album-page",
-  "sourceHash": "dc4589f3f38c96e1aff87e1bc078eb6847506f8191a12c493c8249a8589882ec",
+  "sourceHash": "778500aa1dc309b4accede43cca9f92a9efa3f231725389fbfb91a355492f2fe",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.196Z",
+  "capturedAt": "2026-10-13T07:04:11.873Z",
   "variants": {
     "en": {
       "hash8": "6338becf",
       "vdtHash": "3d4f16a94ffba3a564a4a4e255512896aba9d4dc",
       "timings": {
-        "importMs": 248,
-        "fontsMs": 178,
-        "buildMs": 440,
-        "totalMs": 1502,
+        "importMs": 544,
+        "fontsMs": 241,
+        "buildMs": 540,
+        "totalMs": 1984,
         "builds": 1
       },
       "specimen": {
@@ -304,10 +304,10 @@
       "hash8": "b40c0dc3",
       "vdtHash": "816559f29b2f089a5478fb77ff9f71633bd18276",
       "timings": {
-        "importMs": 346,
-        "fontsMs": 289,
-        "buildMs": 343,
-        "totalMs": 1623,
+        "importMs": 581,
+        "fontsMs": 637,
+        "buildMs": 427,
+        "totalMs": 2302,
         "builds": 1
       },
       "specimen": {
@@ -594,10 +594,10 @@
       "hash8": "36de3bb2",
       "vdtHash": "e61eea129a4c07d9e4cf2b7611a7cba4124222aa",
       "timings": {
-        "importMs": 245,
-        "fontsMs": 351,
-        "buildMs": 336,
-        "totalMs": 1576,
+        "importMs": 537,
+        "fontsMs": 572,
+        "buildMs": 374,
+        "totalMs": 2149,
         "builds": 1
       },
       "specimen": {
@@ -886,13 +886,13 @@
       }
     },
     "zh": {
-      "hash8": "5f1acc95",
+      "hash8": "065057ad",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 253,
-        "fontsMs": 307,
-        "buildMs": 400,
-        "totalMs": 1600,
+        "importMs": 475,
+        "fontsMs": 539,
+        "buildMs": 409,
+        "totalMs": 2056,
         "builds": 1
       },
       "specimen": {
@@ -959,7 +959,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157822,
+        "bytes": 1157091,
         "pages": 2
       },
       "sandbox": {
@@ -1180,10 +1180,10 @@
       "hash8": "a760ce73",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 267,
-        "fontsMs": 133,
-        "buildMs": 356,
-        "totalMs": 1365,
+        "importMs": 472,
+        "fontsMs": 206,
+        "buildMs": 411,
+        "totalMs": 1799,
         "builds": 1
       },
       "specimen": {
@@ -1471,13 +1471,13 @@
       }
     },
     "ja": {
-      "hash8": "e1e339ba",
+      "hash8": "73015342",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 222,
-        "fontsMs": 344,
-        "buildMs": 336,
-        "totalMs": 1500,
+        "importMs": 388,
+        "fontsMs": 444,
+        "buildMs": 351,
+        "totalMs": 1854,
         "builds": 1
       },
       "specimen": {
@@ -1545,7 +1545,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1154853,
+        "bytes": 1154274,
         "pages": 2
       },
       "sandbox": {
@@ -1767,10 +1767,10 @@
       "hash8": "e2324c65",
       "vdtHash": "f140d5646d4b07bf163f4cf2c9873b6db7e64670",
       "timings": {
-        "importMs": 254,
-        "fontsMs": 107,
-        "buildMs": 345,
-        "totalMs": 1361,
+        "importMs": 372,
+        "fontsMs": 246,
+        "buildMs": 382,
+        "totalMs": 1707,
         "builds": 1
       },
       "specimen": {

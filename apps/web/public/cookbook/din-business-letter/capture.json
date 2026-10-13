@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "din-business-letter",
-  "sourceHash": "b9d95f9fde6da95efea4168812b897ba25d61eb964b633f56c4659cbd76a5da4",
+  "sourceHash": "844740b13bb49b093b2b84c3a5e5876db52195751807d3acf275727eb8c4cc6f",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.269Z",
+  "capturedAt": "2026-10-13T06:55:39.994Z",
   "variants": {
     "en": {
       "hash8": "41d4ec2d",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 29,
-        "buildMs": 157,
-        "totalMs": 1028,
+        "importMs": 796,
+        "fontsMs": 43,
+        "buildMs": 212,
+        "totalMs": 1805,
         "builds": 1
       },
       "specimen": {
@@ -286,10 +286,10 @@
       "hash8": "e2abb714",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 236,
-        "fontsMs": 30,
-        "buildMs": 155,
-        "totalMs": 1096,
+        "importMs": 620,
+        "fontsMs": 45,
+        "buildMs": 251,
+        "totalMs": 1945,
         "builds": 1
       },
       "specimen": {

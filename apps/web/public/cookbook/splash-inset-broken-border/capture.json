@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "splash-inset-broken-border",
-  "sourceHash": "ff5f1af56939fbc5558252829515ef881acd78409e0905c0a61c911a6b5c2457",
+  "sourceHash": "8ba17965cac50f3918e6c5b353671df4df84cb295a7c5d9fa21e4a38c3bb0345",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.128Z",
+  "capturedAt": "2026-10-13T07:03:05.067Z",
   "variants": {
     "en": {
       "hash8": "5173dc09",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 217,
-        "fontsMs": 112,
-        "buildMs": 97,
-        "totalMs": 1130,
+        "importMs": 406,
+        "fontsMs": 198,
+        "buildMs": 131,
+        "totalMs": 1581,
         "builds": 1
       },
       "specimen": {
@@ -245,10 +245,10 @@
       "hash8": "fa5347d3",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 204,
-        "fontsMs": 139,
-        "buildMs": 102,
-        "totalMs": 1137,
+        "importMs": 372,
+        "fontsMs": 208,
+        "buildMs": 117,
+        "totalMs": 1695,
         "builds": 1
       },
       "specimen": {
@@ -476,10 +476,10 @@
       "hash8": "e7238e4b",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 232,
-        "fontsMs": 180,
-        "buildMs": 99,
-        "totalMs": 1218,
+        "importMs": 544,
+        "fontsMs": 398,
+        "buildMs": 140,
+        "totalMs": 1823,
         "builds": 1
       },
       "specimen": {
@@ -704,13 +704,13 @@
       }
     },
     "zh": {
-      "hash8": "f16818c2",
+      "hash8": "ac635696",
       "vdtHash": "69a714d811223c07ee4617800fe1b6c4129a8924",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 363,
-        "buildMs": 117,
-        "totalMs": 1325,
+        "importMs": 720,
+        "fontsMs": 706,
+        "buildMs": 162,
+        "totalMs": 2603,
         "builds": 1
       },
       "specimen": {
@@ -780,7 +780,7 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 791759,
+        "bytes": 791059,
         "pages": 2
       },
       "sandbox": {
@@ -939,10 +939,10 @@
       "hash8": "a3919169",
       "vdtHash": "7a907b581ba76903673d89d9523d7dd4926f3c7c",
       "timings": {
-        "importMs": 212,
-        "fontsMs": 137,
-        "buildMs": 97,
-        "totalMs": 1033,
+        "importMs": 550,
+        "fontsMs": 343,
+        "buildMs": 120,
+        "totalMs": 1744,
         "builds": 1
       },
       "specimen": {
@@ -1171,13 +1171,13 @@
       }
     },
     "ja": {
-      "hash8": "4ded4ee0",
+      "hash8": "e21a26a1",
       "vdtHash": "a6e280cef897624f349f209d33e1f87e3bbbca57",
       "timings": {
-        "importMs": 296,
-        "fontsMs": 505,
-        "buildMs": 109,
-        "totalMs": 1535,
+        "importMs": 507,
+        "fontsMs": 509,
+        "buildMs": 123,
+        "totalMs": 1926,
         "builds": 1
       },
       "specimen": {
@@ -1248,7 +1248,7 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 783664,
+        "bytes": 783651,
         "pages": 2
       },
       "sandbox": {
@@ -1408,10 +1408,10 @@
       "hash8": "61e50f83",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 265,
-        "fontsMs": 141,
-        "buildMs": 95,
-        "totalMs": 1135,
+        "importMs": 381,
+        "fontsMs": 215,
+        "buildMs": 100,
+        "totalMs": 1390,
         "builds": 1
       },
       "specimen": {

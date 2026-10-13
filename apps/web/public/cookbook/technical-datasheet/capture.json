@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-datasheet",
-  "sourceHash": "4cee82baf7041149ec3a6a0bb8f1fe662b4e27900a03e35a79b1dbd9d20ca911",
+  "sourceHash": "3501ccf6fdf5d131d2826dbd23532fd01d6a294c1edfa5e63f891d26466fdfc8",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.273Z",
+  "capturedAt": "2026-10-13T07:04:11.967Z",
   "variants": {
     "en": {
       "hash8": "edaa0a14",
       "vdtHash": "e74bd519f779e7b73780cdecb642841295527226",
       "timings": {
-        "importMs": 318,
-        "fontsMs": 85,
-        "buildMs": 99,
-        "totalMs": 1150,
+        "importMs": 521,
+        "fontsMs": 213,
+        "buildMs": 134,
+        "totalMs": 1585,
         "builds": 1
       },
       "specimen": {

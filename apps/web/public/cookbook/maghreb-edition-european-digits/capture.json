@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "maghreb-edition-european-digits",
-  "sourceHash": "926916ef35672316e3f309813c3a12dd2ca908219706c41355659cac247def78",
+  "sourceHash": "b630f3de1f79ca84adae622794d6fe9d348baba13c6e57f63b1cda4ba6826f07",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.571Z",
+  "capturedAt": "2026-10-13T06:59:13.155Z",
   "variants": {
     "en": {
-      "hash8": "44708cd3",
+      "hash8": "16f65939",
       "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 288,
-        "fontsMs": 78,
-        "buildMs": 78,
-        "totalMs": 1072,
+        "importMs": 764,
+        "fontsMs": 209,
+        "buildMs": 129,
+        "totalMs": 2354,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 65865,
+        "bytes": 65864,
         "pages": 4
       },
       "sandbox": {
@@ -320,13 +320,13 @@
       }
     },
     "es": {
-      "hash8": "ad1e696c",
+      "hash8": "756e834a",
       "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 221,
-        "fontsMs": 64,
-        "buildMs": 72,
-        "totalMs": 968,
+        "importMs": 811,
+        "fontsMs": 236,
+        "buildMs": 107,
+        "totalMs": 1949,
         "builds": 1
       },
       "specimen": {
@@ -424,7 +424,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 66274,
+        "bytes": 66272,
         "pages": 4
       },
       "sandbox": {

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "859e348f40347064632ab418a4a02f1c659dff6333d990f4440cd7673ecf3c96",
+  "sourceHash": "6c023e9ac30de3d26f462a4f2d3725e722eff4e68bfea53518daa60850aec260",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.859Z",
+  "capturedAt": "2026-10-13T07:00:48.949Z",
   "variants": {
     "en": {
       "hash8": "b48f6add",
       "vdtHash": "8550888ce6a7ea68b42665081df572c8d7f16f10",
       "timings": {
-        "importMs": 244,
-        "fontsMs": 59,
-        "buildMs": 366,
-        "totalMs": 1303,
+        "importMs": 964,
+        "fontsMs": 181,
+        "buildMs": 787,
+        "totalMs": 3346,
         "builds": 1
       },
       "specimen": {

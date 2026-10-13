@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-right-to-left",
-  "sourceHash": "504bea096773283a19e41a117ddf17ab99195036176cc703807fcddc7e1c11f7",
+  "sourceHash": "19eaedbf3c66462877437f5d74a68e4158cce241b463a697cda608c6995fa997",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.631Z",
+  "capturedAt": "2026-10-13T06:59:13.296Z",
   "variants": {
     "en": {
-      "hash8": "a7671abd",
+      "hash8": "675e5831",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 251,
-        "fontsMs": 322,
-        "buildMs": 919,
-        "totalMs": 2634,
+        "importMs": 666,
+        "fontsMs": 940,
+        "buildMs": 1428,
+        "totalMs": 5597,
         "builds": 2
       },
       "specimen": {
@@ -109,7 +109,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521473,
+        "bytes": 1520799,
         "pages": 4
       },
       "sandbox": {
@@ -267,13 +267,13 @@
       }
     },
     "es": {
-      "hash8": "95cefd0a",
+      "hash8": "ae49671a",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 225,
-        "fontsMs": 365,
-        "buildMs": 906,
-        "totalMs": 2536,
+        "importMs": 1522,
+        "fontsMs": 1230,
+        "buildMs": 1537,
+        "totalMs": 5956,
         "builds": 2
       },
       "specimen": {
@@ -365,7 +365,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522840,
+        "bytes": 1522165,
         "pages": 4
       },
       "sandbox": {
@@ -510,6 +510,11 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 1537 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -523,13 +528,13 @@
       }
     },
     "ca": {
-      "hash8": "4acc650b",
+      "hash8": "f74b1863",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 203,
-        "fontsMs": 363,
-        "buildMs": 925,
-        "totalMs": 2705,
+        "importMs": 3685,
+        "fontsMs": 2677,
+        "buildMs": 1600,
+        "totalMs": 18854,
         "builds": 2
       },
       "specimen": {
@@ -621,7 +626,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522194,
+        "bytes": 1521508,
         "pages": 4
       },
       "sandbox": {
@@ -766,6 +771,11 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 1600 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -779,13 +789,13 @@
       }
     },
     "zh": {
-      "hash8": "5fa768d6",
+      "hash8": "9695fc5a",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 279,
-        "fontsMs": 347,
-        "buildMs": 906,
-        "totalMs": 2825,
+        "importMs": 9047,
+        "fontsMs": 16537,
+        "buildMs": 2333,
+        "totalMs": 38253,
         "builds": 2
       },
       "specimen": {
@@ -877,7 +887,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1544569,
+        "bytes": 1542680,
         "pages": 4
       },
       "sandbox": {
@@ -1022,6 +1032,16 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 2333 ms (warning at 1.5 s)"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 38.3 s to finish (warning at 30 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1035,13 +1055,13 @@
       }
     },
     "ar": {
-      "hash8": "632dffdd",
+      "hash8": "e69ac70c",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 284,
-        "buildMs": 906,
-        "totalMs": 2443,
+        "importMs": 4189,
+        "fontsMs": 2417,
+        "buildMs": 1702,
+        "totalMs": 13833,
         "builds": 2
       },
       "specimen": {
@@ -1133,7 +1153,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1530205,
+        "bytes": 1529510,
         "pages": 4
       },
       "sandbox": {
@@ -1278,6 +1298,11 @@
         },
         "findings": [
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the build took 1702 ms (warning at 1.5 s)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1291,13 +1316,13 @@
       }
     },
     "ja": {
-      "hash8": "735bb9eb",
+      "hash8": "902dcd69",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 398,
-        "fontsMs": 389,
-        "buildMs": 905,
-        "totalMs": 2749,
+        "importMs": 1027,
+        "fontsMs": 976,
+        "buildMs": 1304,
+        "totalMs": 4890,
         "builds": 2
       },
       "specimen": {
@@ -1389,7 +1414,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521152,
+        "bytes": 1520473,
         "pages": 4
       },
       "sandbox": {
@@ -1552,13 +1577,13 @@
       }
     },
     "pt": {
-      "hash8": "d1afc695",
+      "hash8": "fc42329d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 269,
-        "fontsMs": 273,
-        "buildMs": 903,
-        "totalMs": 2485,
+        "importMs": 2773,
+        "fontsMs": 1286,
+        "buildMs": 1383,
+        "totalMs": 8008,
         "builds": 2
       },
       "specimen": {
@@ -1650,7 +1675,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522047,
+        "bytes": 1521384,
         "pages": 4
       },
       "sandbox": {

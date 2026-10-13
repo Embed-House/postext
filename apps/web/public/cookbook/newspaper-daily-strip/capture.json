@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "f6ad4776073b627b2aca6499f4da6420a19991cddc3b4afd22e2c46efb5ff27c",
+  "sourceHash": "7f6777d996f73a048251be55bf4f52ba9c0fcdac241bacc30803f56a298693a7",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.736Z",
+  "capturedAt": "2026-10-13T07:00:48.803Z",
   "variants": {
     "en": {
-      "hash8": "347bbbce",
+      "hash8": "1a199084",
       "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
       "timings": {
-        "importMs": 245,
-        "fontsMs": 234,
-        "buildMs": 338,
-        "totalMs": 1559,
+        "importMs": 1092,
+        "fontsMs": 646,
+        "buildMs": 479,
+        "totalMs": 3070,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 880020,
+        "bytes": 879989,
         "pages": 2
       },
       "sandbox": {
@@ -338,13 +338,13 @@
       }
     },
     "es": {
-      "hash8": "f3ff9b51",
+      "hash8": "84d99902",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 234,
-        "fontsMs": 217,
-        "buildMs": 469,
-        "totalMs": 1522,
+        "importMs": 675,
+        "fontsMs": 642,
+        "buildMs": 671,
+        "totalMs": 3545,
         "builds": 1
       },
       "specimen": {
@@ -415,7 +415,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884692,
+        "bytes": 884590,
         "pages": 2
       },
       "sandbox": {
@@ -665,13 +665,13 @@
       }
     },
     "ca": {
-      "hash8": "af77143a",
+      "hash8": "4f3dfb9e",
       "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
       "timings": {
-        "importMs": 243,
-        "fontsMs": 140,
-        "buildMs": 338,
-        "totalMs": 1392,
+        "importMs": 1351,
+        "fontsMs": 957,
+        "buildMs": 522,
+        "totalMs": 4383,
         "builds": 1
       },
       "specimen": {
@@ -742,7 +742,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883903,
+        "bytes": 883857,
         "pages": 2
       },
       "sandbox": {
@@ -992,13 +992,13 @@
       }
     },
     "zh": {
-      "hash8": "21350df5",
+      "hash8": "447de045",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 215,
-        "fontsMs": 595,
-        "buildMs": 325,
-        "totalMs": 1727,
+        "importMs": 1097,
+        "fontsMs": 3185,
+        "buildMs": 625,
+        "totalMs": 6952,
         "builds": 1
       },
       "specimen": {
@@ -1030,7 +1030,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 110588,
+          "bytes": 110634,
           "alt": "第 1 页。"
         },
         {
@@ -1041,7 +1041,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149906,
+          "bytes": 148924,
           "alt": "章首页，第 2 页：浮冰上的十个冬天。"
         }
       ],
@@ -1069,12 +1069,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1016342,
+        "bytes": 1013600,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812316,
+        "bytes": 812338,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1320,13 +1320,13 @@
       }
     },
     "ar": {
-      "hash8": "e2bfb7a6",
+      "hash8": "b2d5af43",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 324,
-        "fontsMs": 172,
-        "buildMs": 336,
-        "totalMs": 1465,
+        "importMs": 2912,
+        "fontsMs": 2353,
+        "buildMs": 997,
+        "totalMs": 8069,
         "builds": 1
       },
       "specimen": {
@@ -1398,7 +1398,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 896977,
+        "bytes": 896591,
         "pages": 2
       },
       "sandbox": {
@@ -1647,13 +1647,13 @@
       }
     },
     "ja": {
-      "hash8": "82aade37",
+      "hash8": "c6c3126a",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 306,
-        "fontsMs": 797,
-        "buildMs": 329,
-        "totalMs": 2045,
+        "importMs": 4388,
+        "fontsMs": 4794,
+        "buildMs": 607,
+        "totalMs": 10692,
         "builds": 1
       },
       "specimen": {
@@ -1685,7 +1685,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116294,
+          "bytes": 116232,
           "alt": "1ページ。"
         },
         {
@@ -1696,7 +1696,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 170672,
+          "bytes": 170592,
           "alt": "章扉、2ページ：流氷の上の十の冬。"
         }
       ],
@@ -1725,12 +1725,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1006750,
+        "bytes": 1005262,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813806,
+        "bytes": 813828,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1977,13 +1977,13 @@
       }
     },
     "pt": {
-      "hash8": "a0172621",
+      "hash8": "c8de017e",
       "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
       "timings": {
-        "importMs": 295,
-        "fontsMs": 225,
-        "buildMs": 367,
-        "totalMs": 1482,
+        "importMs": 1832,
+        "fontsMs": 898,
+        "buildMs": 560,
+        "totalMs": 4369,
         "builds": 1
       },
       "specimen": {
@@ -2054,7 +2054,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882937,
+        "bytes": 882838,
         "pages": 2
       },
       "sandbox": {

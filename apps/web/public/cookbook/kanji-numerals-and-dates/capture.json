@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "kanji-numerals-and-dates",
-  "sourceHash": "257c67a750736270ac038a482b230251ae647fd5b68c8387892ec1685e0c17a4",
+  "sourceHash": "65f7974aa8abaa80c9b97bba30afa6f2494652606db63434cf5e0ea1c9071228",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.441Z",
+  "capturedAt": "2026-10-13T06:57:06.243Z",
   "variants": {
     "en": {
-      "hash8": "7a8a6319",
+      "hash8": "fd97befa",
       "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 232,
-        "fontsMs": 351,
-        "buildMs": 76,
-        "totalMs": 1275,
+        "importMs": 393,
+        "fontsMs": 541,
+        "buildMs": 103,
+        "totalMs": 1712,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 174925,
+        "bytes": 172985,
         "pages": 4
       },
       "sandbox": {
@@ -406,13 +406,13 @@
       }
     },
     "es": {
-      "hash8": "2cff1128",
+      "hash8": "6f28f069",
       "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 206,
-        "fontsMs": 285,
-        "buildMs": 77,
-        "totalMs": 1305,
+        "importMs": 309,
+        "fontsMs": 519,
+        "buildMs": 78,
+        "totalMs": 1578,
         "builds": 1
       },
       "specimen": {
@@ -511,7 +511,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 175035,
+        "bytes": 173095,
         "pages": 4
       },
       "sandbox": {

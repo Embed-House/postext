@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pepper-and-carrot-page",
-  "sourceHash": "9a4faefafe11c962e1dc0e36c170ad2a7af140e24e5037c6fe9b3625550d1345",
+  "sourceHash": "eac2c58cd6f93a2547b84e1730fcb25d8e8a94c19ee025c01622cf386f782350",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.896Z",
+  "capturedAt": "2026-10-13T07:01:35.485Z",
   "variants": {
     "en": {
-      "hash8": "33f3fe77",
+      "hash8": "cc37aa02",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 254,
-        "fontsMs": 161,
-        "buildMs": 158,
-        "totalMs": 1204,
+        "importMs": 1359,
+        "fontsMs": 1707,
+        "buildMs": 247,
+        "totalMs": 4112,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 687850,
+        "bytes": 688484,
         "pages": 3
       },
       "sandbox": {
@@ -291,13 +291,13 @@
       }
     },
     "es": {
-      "hash8": "0da2dc10",
+      "hash8": "a6ff55cc",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 193,
-        "buildMs": 175,
-        "totalMs": 1223,
+        "importMs": 1007,
+        "fontsMs": 661,
+        "buildMs": 239,
+        "totalMs": 2804,
         "builds": 1
       },
       "specimen": {
@@ -379,7 +379,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689889,
+        "bytes": 690513,
         "pages": 3
       },
       "sandbox": {
@@ -571,13 +571,13 @@
       }
     },
     "ca": {
-      "hash8": "e6cbb854",
+      "hash8": "decdeca8",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 226,
-        "buildMs": 165,
-        "totalMs": 1314,
+        "importMs": 713,
+        "fontsMs": 987,
+        "buildMs": 261,
+        "totalMs": 2924,
         "builds": 1
       },
       "specimen": {
@@ -659,7 +659,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688144,
+        "bytes": 688774,
         "pages": 3
       },
       "sandbox": {
@@ -851,13 +851,13 @@
       }
     },
     "zh": {
-      "hash8": "86fc189a",
+      "hash8": "fa719a83",
       "vdtHash": "6d4640c02a77be2578270ee81f7c11cb359284d5",
       "timings": {
-        "importMs": 201,
-        "fontsMs": 452,
-        "buildMs": 143,
-        "totalMs": 1387,
+        "importMs": 666,
+        "fontsMs": 1130,
+        "buildMs": 218,
+        "totalMs": 2731,
         "builds": 1
       },
       "specimen": {
@@ -889,7 +889,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 29148,
+          "bytes": 29136,
           "alt": "章首页，第 1 页：第8集：小辣椒的生日。"
         },
         {
@@ -900,7 +900,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167344,
+          "bytes": 167348,
           "alt": "第 2 页。"
         },
         {
@@ -911,7 +911,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103642,
+          "bytes": 103648,
           "alt": "第 3 页。"
         }
       ],
@@ -939,7 +939,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 743387,
+        "bytes": 739296,
         "pages": 3
       },
       "sandbox": {
@@ -1132,13 +1132,13 @@
       }
     },
     "ar": {
-      "hash8": "15ed65ed",
+      "hash8": "2a69bc6f",
       "vdtHash": "1b785ccdf3009d9a11a68bd1448b1a5d210bc58c",
       "timings": {
-        "importMs": 241,
-        "fontsMs": 148,
-        "buildMs": 162,
-        "totalMs": 1198,
+        "importMs": 590,
+        "fontsMs": 370,
+        "buildMs": 241,
+        "totalMs": 2143,
         "builds": 1
       },
       "specimen": {
@@ -1221,7 +1221,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 692859,
+        "bytes": 692810,
         "pages": 3
       },
       "sandbox": {
@@ -1416,13 +1416,13 @@
       }
     },
     "ja": {
-      "hash8": "fc6bf821",
+      "hash8": "b4bd6bff",
       "vdtHash": "c6747e7d24ce903aafc04151730f7047754f962a",
       "timings": {
-        "importMs": 268,
-        "fontsMs": 698,
-        "buildMs": 168,
-        "totalMs": 1732,
+        "importMs": 544,
+        "fontsMs": 1398,
+        "buildMs": 239,
+        "totalMs": 2893,
         "builds": 1
       },
       "specimen": {
@@ -1454,7 +1454,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 35048,
+          "bytes": 35036,
           "alt": "章扉、1ページ：エピソード 8: ペッパーの誕生パーティー。"
         },
         {
@@ -1465,7 +1465,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 165134,
+          "bytes": 165140,
           "alt": "2ページ。"
         },
         {
@@ -1476,7 +1476,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 102332,
+          "bytes": 102338,
           "alt": "3ページ。"
         }
       ],
@@ -1505,12 +1505,12 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 725779,
+        "bytes": 725162,
         "pages": 3
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 677127,
+        "bytes": 677129,
         "chapters": [
           {
             "pages": 3,
@@ -1699,13 +1699,13 @@
       }
     },
     "pt": {
-      "hash8": "811e61bb",
+      "hash8": "95339347",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 294,
-        "fontsMs": 275,
-        "buildMs": 177,
-        "totalMs": 1403,
+        "importMs": 813,
+        "fontsMs": 602,
+        "buildMs": 228,
+        "totalMs": 2440,
         "builds": 1
       },
       "specimen": {
@@ -1787,7 +1787,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689242,
+        "bytes": 689884,
         "pages": 3
       },
       "sandbox": {

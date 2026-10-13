@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "qasida-diwan-page",
-  "sourceHash": "4a69928b1658c23a93da3edd55c2fe7eb1d37001f8d4804646c0dd5940eaff84",
+  "sourceHash": "39183ba6b4619bb041e181ee2b080abfdb802df7e8626c4c5312d15f0b8e1f99",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.026Z",
+  "capturedAt": "2026-10-13T07:02:07.747Z",
   "variants": {
     "en": {
-      "hash8": "d130fd97",
+      "hash8": "fbdc8e47",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 245,
-        "fontsMs": 201,
-        "buildMs": 90,
-        "totalMs": 1191,
+        "importMs": 372,
+        "fontsMs": 384,
+        "buildMs": 111,
+        "totalMs": 1475,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79798,
+        "bytes": 79791,
         "pages": 4
       },
       "sandbox": {
@@ -324,13 +324,13 @@
       }
     },
     "es": {
-      "hash8": "e9cacb53",
+      "hash8": "0ea4b59f",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 293,
-        "fontsMs": 71,
-        "buildMs": 82,
-        "totalMs": 1104,
+        "importMs": 382,
+        "fontsMs": 117,
+        "buildMs": 113,
+        "totalMs": 1257,
         "builds": 1
       },
       "specimen": {
@@ -429,7 +429,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79968,
+        "bytes": 79966,
         "pages": 4
       },
       "sandbox": {

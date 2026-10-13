@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "physics-letter-two-columns",
-  "sourceHash": "6e3bd522b0144c6f0e86501c213a74304fb62ed6e5696ab27940732f4639e6f1",
+  "sourceHash": "f1a9ce9b010f0811d0c56c0fcefeb7506739c239cba5e7dd0c606a3028801772",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.971Z",
+  "capturedAt": "2026-10-13T07:01:35.546Z",
   "variants": {
     "en": {
       "hash8": "8f959b06",
       "vdtHash": "06767cd7f40ab538a3884f63dec15a13dc2084f8",
       "timings": {
-        "importMs": 338,
-        "fontsMs": 183,
-        "buildMs": 223,
-        "totalMs": 1426,
+        "importMs": 588,
+        "fontsMs": 182,
+        "buildMs": 244,
+        "totalMs": 1745,
         "builds": 1
       },
       "specimen": {

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "15bde53416c04fec1928b57193bf651076e3b1ea1887b68c7ebe83666596d6f8",
+  "sourceHash": "5f5c2e16494e7e34246d6513cda57cdd61c8ee66c58d4090ffde6bb3da98bcdc",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.898Z",
+  "capturedAt": "2026-10-13T06:53:16.040Z",
   "variants": {
     "en": {
       "hash8": "012af07b",
       "vdtHash": "4d00faa8c19033ddf8a92f4baef745aee3e0b696",
       "timings": {
-        "importMs": 20829,
-        "fontsMs": 91,
-        "buildMs": 893,
-        "totalMs": 22591,
+        "importMs": 25504,
+        "fontsMs": 89,
+        "buildMs": 906,
+        "totalMs": 27227,
         "builds": 1
       },
       "specimen": {

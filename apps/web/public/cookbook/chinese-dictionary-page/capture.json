@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-dictionary-page",
-  "sourceHash": "257b2fd4404cd8ba4fae266c98a168600328e7aa12e3f4691b83c2a8d5b1245c",
+  "sourceHash": "c138e1c702325704a11ecb487873ac9289bb2d9348684afd7a827c276493067d",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.106Z",
+  "capturedAt": "2026-10-13T06:54:37.550Z",
   "variants": {
     "en": {
-      "hash8": "34049d76",
+      "hash8": "726bc731",
       "vdtHash": "77fc13a8a6aff79bfe7ab1c0fc8f64a849cace85",
       "timings": {
-        "importMs": 367,
-        "fontsMs": 490,
-        "buildMs": 66,
-        "totalMs": 1559,
+        "importMs": 243,
+        "fontsMs": 239,
+        "buildMs": 62,
+        "totalMs": 1154,
         "builds": 1
       },
       "specimen": {
@@ -112,7 +112,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313330,
+        "bytes": 310336,
         "pages": 4
       },
       "sandbox": {
@@ -304,11 +304,6 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -317,13 +312,13 @@
       }
     },
     "es": {
-      "hash8": "daac2c0f",
+      "hash8": "51aa2d60",
       "vdtHash": "20acac35a92c6e960979044b58b8febea6c50037",
       "timings": {
-        "importMs": 345,
-        "fontsMs": 317,
-        "buildMs": 64,
-        "totalMs": 1341,
+        "importMs": 185,
+        "fontsMs": 207,
+        "buildMs": 66,
+        "totalMs": 1061,
         "builds": 1
       },
       "specimen": {
@@ -418,7 +413,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 313329,
+        "bytes": 310321,
         "pages": 4
       },
       "sandbox": {
@@ -609,11 +604,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
           {
             "check": "sandbox",
             "severity": "info",
