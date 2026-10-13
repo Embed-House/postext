@@ -3,20 +3,20 @@
   "slug": "paper-swatch-book",
   "sourceHash": "c230c9e24b8854c3e728a3e2e1e0fc0fe047b5986048f8b059afe226e51a3ebf",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:02.893Z",
+  "capturedAt": "2026-10-13T15:03:18.040Z",
   "variants": {
     "en": {
-      "hash8": "6b3ddd7a",
-      "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
+      "hash8": "580a62b8",
+      "vdtHash": "f42700b73e71ba6b2b731760fd001dbfce977673",
       "timings": {
-        "importMs": 1171,
-        "fontsMs": 4,
-        "buildMs": 116,
-        "totalMs": 2582,
+        "importMs": 1168,
+        "fontsMs": 5,
+        "buildMs": 89,
+        "totalMs": 2409,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1467,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 93014,
+          "bytes": 93098,
           "alt": "Opening page 2: How to use this book."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1467,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 59340,
+          "bytes": 59240,
           "alt": "Opening page 3: Book Wove, Natural."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1467,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 77670,
+          "bytes": 77652,
           "alt": "Page 4: SPECIMEN."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1467,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 64648,
+          "bytes": 64656,
           "alt": "Opening page 5: Laid Writing, White."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1467,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 68106,
+          "bytes": 68168,
           "alt": "Page 6: SPECIMEN."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1467,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 65772,
+          "bytes": 65776,
           "alt": "Opening page 7: Art Gloss, Bright White."
         },
         {
@@ -137,7 +137,7 @@
           "h": 1467,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66422,
+          "bytes": 66398,
           "alt": "Opening page 9: India Bible, Opaque."
         },
         {
@@ -159,7 +159,7 @@
           "h": 1467,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 48074,
+          "bytes": 48008,
           "alt": "Opening page 11: Ordering."
         },
         {
@@ -218,12 +218,12 @@
       },
       "sandbox": {
         "file": "paper-swatch-book.postext",
-        "bytes": 30830,
+        "bytes": 30829,
         "folio": "c0edc776",
         "chapters": [
           {
             "pages": 12,
-            "hash": "f0e622e75c4c9b3d",
+            "hash": "d96110b20fcefcfa",
             "lines": "f85c14f8c3fbfc98"
           }
         ]
@@ -440,7 +440,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

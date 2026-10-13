@@ -3,21 +3,21 @@
   "slug": "romaji-nikki",
   "sourceHash": "8de2090f2f9580fff9abee626e974cc661542831f9db861d709733d882bbf259",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.954Z",
+  "capturedAt": "2026-10-13T15:03:54.387Z",
   "variants": {
     "en": {
-      "hash8": "9492725a",
+      "hash8": "6fdb534b",
       "vdtHash": "82d693e9a6d7d3ffcdce158b9dfa43e9084eed21",
       "timings": {
-        "importMs": 865,
-        "fontsMs": 511,
-        "buildMs": 121,
-        "totalMs": 2372,
+        "importMs": 477,
+        "fontsMs": 335,
+        "buildMs": 75,
+        "totalMs": 1620,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 133406,
+          "bytes": 133402,
           "alt": "Page 2: 7TH, WEDNESDAY."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130626,
+          "bytes": 130638,
           "alt": "Page 3."
         },
         {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 123390,
+        "bytes": 123253,
         "pages": 4
       },
       "sandbox": {
@@ -318,13 +318,13 @@
       }
     },
     "es": {
-      "hash8": "941baa8b",
+      "hash8": "6b28ec65",
       "vdtHash": "05ba8ba6c5d7b5df7fd90f8904b3f6f58bc75dad",
       "timings": {
-        "importMs": 1820,
-        "fontsMs": 326,
-        "buildMs": 108,
-        "totalMs": 3362,
+        "importMs": 436,
+        "fontsMs": 343,
+        "buildMs": 88,
+        "totalMs": 1594,
         "builds": 1
       },
       "specimen": {
@@ -368,7 +368,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 133406,
+          "bytes": 133402,
           "alt": "Página 2: 7TH, WEDNESDAY."
         },
         {
@@ -379,7 +379,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130626,
+          "bytes": 130638,
           "alt": "Página 3."
         },
         {
@@ -422,7 +422,7 @@
       },
       "pdf": {
         "file": "romaji-nikki.pdf",
-        "bytes": 124017,
+        "bytes": 123879,
         "pages": 4
       },
       "sandbox": {

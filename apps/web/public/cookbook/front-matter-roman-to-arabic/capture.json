@@ -3,21 +3,21 @@
   "slug": "front-matter-roman-to-arabic",
   "sourceHash": "5ebb3449ab6e42fb9f9249380899311917a14de2b9777711537ca070ee669b2a",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.247Z",
+  "capturedAt": "2026-10-13T14:59:09.730Z",
   "variants": {
     "en": {
-      "hash8": "0a8d2a06",
-      "vdtHash": "b08f2e14b353da55f033eeb01d81d2a0de1bca33",
+      "hash8": "f33d2df8",
+      "vdtHash": "782d96fdaadab180c625a3cf0c8de908c464fa48",
       "timings": {
-        "importMs": 738,
-        "fontsMs": 77,
-        "buildMs": 172,
-        "totalMs": 1876,
+        "importMs": 1019,
+        "fontsMs": 235,
+        "buildMs": 157,
+        "totalMs": 2598,
         "builds": 1
       },
       "specimen": {
@@ -127,7 +127,7 @@
           "h": 1535,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 114958,
+          "bytes": 114898,
           "alt": "Opening page ix: Preface."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1535,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 126418,
+          "bytes": 126112,
           "alt": "Page x."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1535,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 127022,
+          "bytes": 127940,
           "alt": "Opening page 1: Letter I."
         },
         {
@@ -160,7 +160,7 @@
           "h": 1535,
           "file": "p13.webp",
           "strip": "p13.s.webp",
-          "bytes": 163106,
+          "bytes": 163068,
           "alt": "Page 3."
         },
         {
@@ -171,7 +171,7 @@
           "h": 1535,
           "file": "p14.webp",
           "strip": "p14.s.webp",
-          "bytes": 136484,
+          "bytes": 136594,
           "alt": "Page 4."
         }
       ],
@@ -223,17 +223,17 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815630,
+        "bytes": 814116,
         "pages": 14
       },
       "sandbox": {
         "file": "front-matter-roman-to-arabic.postext",
-        "bytes": 713676,
+        "bytes": 713677,
         "folio": "ba949066",
         "chapters": [
           {
             "pages": 14,
-            "hash": "d33e2ef746dd06e5",
+            "hash": "d9357d8d7f2afa23",
             "lines": "0b3a5080e38fafa2"
           }
         ]
@@ -466,7 +466,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.71
+          "worst": 1.74
         },
         "raggedLines": {
           "count": 0
@@ -481,6 +481,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 14 −5‰ “This is the most favourable period for travellin…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

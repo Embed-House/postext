@@ -3,20 +3,20 @@
   "slug": "magazine-feature-opener",
   "sourceHash": "882d5972a4fc1920cffed0b2192601ca098c046a56bf78d59199733a418f09bf",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.454Z",
+  "capturedAt": "2026-10-13T15:01:22.640Z",
   "variants": {
     "en": {
-      "hash8": "8aee545f",
-      "vdtHash": "c29f162b8a9663cedb21813b37b0c6fa8504a84b",
+      "hash8": "e8f0b86e",
+      "vdtHash": "d0437403437ef3e1894f5651371c8d1027c48e10",
       "timings": {
-        "importMs": 303,
-        "fontsMs": 46,
-        "buildMs": 270,
-        "totalMs": 1366,
+        "importMs": 651,
+        "fontsMs": 61,
+        "buildMs": 261,
+        "totalMs": 1838,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 172150,
+          "bytes": 172174,
           "alt": "Opening page 57: The Lake That Keeps Time."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237288,
+          "bytes": 237130,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 178858,
+          "bytes": 178834,
           "alt": "Page 59: 31. Early March in the pine wood above the shore: the snow goes first where the sun reaches the ground, weeks before the ice lets go of the lake."
         },
         {
@@ -115,12 +115,12 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768160,
+        "bytes": 768158,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "4669d62319bd65e3",
+            "hash": "abead2abe28ee6a7",
             "lines": "4afb8793d3c96303"
           }
         ]
@@ -394,9 +394,9 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 2
+          "count": 1,
+          "share": 0.007,
+          "worst": 2.0100000000000002
         },
         "raggedLines": {
           "count": 0
@@ -426,13 +426,13 @@
       }
     },
     "es": {
-      "hash8": "194d3656",
-      "vdtHash": "61d56b4268078f91523655f22dd2476e46c85094",
+      "hash8": "5b88ff0f",
+      "vdtHash": "a9a909ac6b6ecc143981e5d669f5f9e02f29a767",
       "timings": {
-        "importMs": 286,
-        "fontsMs": 44,
+        "importMs": 877,
+        "fontsMs": 105,
         "buildMs": 166,
-        "totalMs": 1189,
+        "totalMs": 2188,
         "builds": 1
       },
       "specimen": {
@@ -466,7 +466,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 172270,
+          "bytes": 172164,
           "alt": "Página de apertura 57: El lago que lleva la cuenta."
         },
         {
@@ -477,7 +477,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238036,
+          "bytes": 235178,
           "alt": "Página 58: Un termómetro con tapa."
         },
         {
@@ -488,7 +488,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 182064,
+          "bytes": 181772,
           "alt": "Página 59: 31. Principios de marzo en el pinar sobre la orilla: la nieve se retira primero donde el sol llega al suelo, semanas antes de que el hielo suelte el lago."
         },
         {
@@ -531,13 +531,13 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768208,
+        "bytes": 768138,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "0ef2b16f8e6fd469",
-            "lines": "6d64c02f4df49997"
+            "hash": "21f2d19a2f3a33a2",
+            "lines": "397ed71a38e53ffa"
           }
         ]
       },
@@ -814,7 +814,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.9100000000000001
+          "worst": 1.92
         },
         "raggedLines": {
           "count": 0

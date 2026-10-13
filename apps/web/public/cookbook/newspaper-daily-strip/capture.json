@@ -3,21 +3,21 @@
   "slug": "newspaper-daily-strip",
   "sourceHash": "bd8559a12cb8a27ef7cc9da6a74b98756a2c9951cb88094c027e27b39332f762",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:14.914Z",
+  "capturedAt": "2026-10-13T15:02:23.863Z",
   "variants": {
     "en": {
-      "hash8": "6feddd25",
-      "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
+      "hash8": "acdfb288",
+      "vdtHash": "d9c682beeac52135ee3e4c9c36073f95d284710d",
       "timings": {
-        "importMs": 419,
-        "fontsMs": 339,
-        "buildMs": 535,
-        "totalMs": 2314,
+        "importMs": 841,
+        "fontsMs": 387,
+        "buildMs": 367,
+        "totalMs": 2392,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 163940,
+          "bytes": 163848,
           "alt": "Opening page 2: Ten winters on the floe."
         }
       ],
@@ -88,7 +88,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 880020,
+        "bytes": 879950,
         "pages": 2
       },
       "sandbox": {
@@ -98,7 +98,7 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "92ecb70b8ed7739f",
+            "hash": "2d0eb08f70fefd37",
             "lines": "933cea0d09ff2e5f"
           }
         ]
@@ -333,17 +333,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c036cd58",
-      "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
+      "hash8": "e1633dd9",
+      "vdtHash": "c12bf47ba17eb0f6827eb5cd8e177234c24d5de7",
       "timings": {
-        "importMs": 530,
-        "fontsMs": 286,
-        "buildMs": 518,
-        "totalMs": 1961,
+        "importMs": 797,
+        "fontsMs": 339,
+        "buildMs": 439,
+        "totalMs": 2422,
         "builds": 1
       },
       "specimen": {
@@ -386,7 +392,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 177710,
+          "bytes": 177764,
           "alt": "Página de apertura 2: Diez inviernos en el témpano."
         }
       ],
@@ -414,7 +420,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884663,
+        "bytes": 884312,
         "pages": 2
       },
       "sandbox": {
@@ -424,7 +430,7 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "44d1b5cf13f9f621",
+            "hash": "966a7863af72a871",
             "lines": "60b54e3e22c0f496"
           }
         ]
@@ -659,17 +665,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "6103045f",
-      "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
+      "hash8": "72e1327b",
+      "vdtHash": "22dfffcadc3a976d72fd443f1b3b7d368879d0b9",
       "timings": {
-        "importMs": 818,
-        "fontsMs": 1720,
-        "buildMs": 446,
-        "totalMs": 3796,
+        "importMs": 639,
+        "fontsMs": 446,
+        "buildMs": 351,
+        "totalMs": 2417,
         "builds": 1
       },
       "specimen": {
@@ -712,7 +724,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 169454,
+          "bytes": 169478,
           "alt": "Pàgina d'obertura 2: Deu hiverns al glaç."
         }
       ],
@@ -740,7 +752,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883942,
+        "bytes": 883701,
         "pages": 2
       },
       "sandbox": {
@@ -750,7 +762,7 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "72a30d89ae9ad64f",
+            "hash": "e54fc2bf6809f8bb",
             "lines": "34ab206ad0669aba"
           }
         ]
@@ -978,14 +990,20 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 0,
-          "share": 0,
+          "count": 1,
+          "share": 0.0147,
           "worst": 2
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "zh": {
@@ -1971,13 +1989,13 @@
       }
     },
     "pt": {
-      "hash8": "8a170d36",
-      "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
+      "hash8": "ebd9cc45",
+      "vdtHash": "d9e0f3f92fbe5bf035ffe45dba0eec3d1102a6cf",
       "timings": {
-        "importMs": 1516,
-        "fontsMs": 1048,
-        "buildMs": 609,
-        "totalMs": 4263,
+        "importMs": 826,
+        "fontsMs": 404,
+        "buildMs": 359,
+        "totalMs": 2290,
         "builds": 1
       },
       "specimen": {
@@ -2020,7 +2038,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 176016,
+          "bytes": 176064,
           "alt": "Página de abertura 2: Dez invernos no gelo."
         }
       ],
@@ -2048,7 +2066,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882869,
+        "bytes": 882810,
         "pages": 2
       },
       "sandbox": {
@@ -2058,7 +2076,7 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "3a9bad57505db3c5",
+            "hash": "9eea4f2fb6e205f3",
             "lines": "413a2f9715920d99"
           }
         ]
@@ -2303,6 +2321,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

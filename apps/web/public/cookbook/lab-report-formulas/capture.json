@@ -3,21 +3,21 @@
   "slug": "lab-report-formulas",
   "sourceHash": "f862c11a4c79bf70a97df20cae15933f905d4445b73a2eb56ce0923b51dab8e6",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.351Z",
+  "capturedAt": "2026-10-13T15:01:22.587Z",
   "variants": {
     "en": {
-      "hash8": "62b9fa90",
-      "vdtHash": "78a366fe1aa21b9c025482a889d0ae88a74aba07",
+      "hash8": "63199b27",
+      "vdtHash": "f73d8dee10daea49a07ceb13c14898d9693eeeea",
       "timings": {
-        "importMs": 567,
-        "fontsMs": 132,
-        "buildMs": 135,
-        "totalMs": 1587,
+        "importMs": 837,
+        "fontsMs": 183,
+        "buildMs": 89,
+        "totalMs": 1994,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 120494,
+          "bytes": 120454,
           "alt": "Page 2: 3 Apparatus and chemicals."
         },
         {
@@ -115,17 +115,17 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 193153,
+        "bytes": 193166,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36544,
+        "bytes": 36541,
         "folio": "977c8d61",
         "chapters": [
           {
             "pages": 4,
-            "hash": "9e412622f2379038",
+            "hash": "0a8ebf19295121c7",
             "lines": "64ff4c09fa7eab79"
           }
         ]
@@ -437,17 +437,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "85bc1c1a",
-      "vdtHash": "6be2b97b8c7d9bc8f5a005e8ce47c6f7c091c39b",
+      "hash8": "1aeda061",
+      "vdtHash": "f41577a6b051f323818c469cd027bc4a16f2409e",
       "timings": {
-        "importMs": 571,
-        "fontsMs": 220,
-        "buildMs": 154,
-        "totalMs": 1702,
+        "importMs": 729,
+        "fontsMs": 185,
+        "buildMs": 95,
+        "totalMs": 2374,
         "builds": 1
       },
       "specimen": {
@@ -491,7 +497,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124844,
+          "bytes": 124816,
           "alt": "Página 2: 3 Materiales y reactivos."
         },
         {
@@ -513,7 +519,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 76534,
+          "bytes": 76510,
           "alt": "Página 4: 7 Conclusiones. Figura 1. Curva de valoración de 25,0 cm3 de vinagre diluido con NaOH 0,100 mol·dm−3: lecturas del pH-metro (puntos) y el cálculo con Ka = 1,75 × 10−5 (línea). La banda rosa es el viraje de la fenolftaleína, de pH 8,2 a 10,0."
         }
       ],
@@ -545,18 +551,18 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 203986,
+        "bytes": 203954,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37836,
+        "bytes": 37833,
         "folio": "977c8d61",
         "chapters": [
           {
             "pages": 4,
-            "hash": "9005d167def201e3",
-            "lines": "18791ee43a8e4664"
+            "hash": "2eac02c4cdd63eae",
+            "lines": "5041c7e431b5745c"
           }
         ]
       },
@@ -867,7 +873,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

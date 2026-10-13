@@ -3,20 +3,20 @@
   "slug": "baseline-grid-book-page",
   "sourceHash": "e6242b75f1e0b198be8ac5b30e2015d0f7cc70a2ea87339caa0db023f9695489",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.015Z",
+  "capturedAt": "2026-10-13T14:56:20.708Z",
   "variants": {
     "en": {
-      "hash8": "442f20bf",
-      "vdtHash": "5f43387bffdc9d574bb192eee2b03742a07f8b58",
+      "hash8": "54fd38d6",
+      "vdtHash": "f55297049f1e5f9ea49a89f52e109267aee3fbe3",
       "timings": {
-        "importMs": 666,
-        "fontsMs": 5,
-        "buildMs": 157,
-        "totalMs": 1708,
+        "importMs": 337,
+        "fontsMs": 3,
+        "buildMs": 110,
+        "totalMs": 1123,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 151446,
+          "bytes": 151444,
           "alt": "Opening page 9: The Secret Canon. Figure 1.1. The canon on an open spread of 2:3 pages. The diagonals fix the corners of both text blocks; the circle, as wide as a page, is exactly as tall as its block."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 181964,
+          "bytes": 182158,
           "alt": "Page 10: Lines to stand on."
         },
         {
@@ -100,12 +100,12 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43203,
+        "bytes": 43189,
         "folio": "e8c31713",
         "chapters": [
           {
             "pages": 3,
-            "hash": "25179a978c09fbb7",
+            "hash": "e8f4d8550d94babd",
             "lines": "75b12f1e212bfe54"
           }
         ]
@@ -332,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "82641d34",
-      "vdtHash": "3ec9824bf629a4c985cc966b0148c0d4767ceb63",
+      "hash8": "ecae0af0",
+      "vdtHash": "18cb678cde83a6862dc2b5d160a0456d970249e3",
       "timings": {
-        "importMs": 952,
-        "fontsMs": 6,
-        "buildMs": 102,
-        "totalMs": 2230,
+        "importMs": 150,
+        "fontsMs": 3,
+        "buildMs": 79,
+        "totalMs": 910,
         "builds": 1
       },
       "specimen": {
@@ -372,7 +372,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 153828,
+          "bytes": 153852,
           "alt": "Página de apertura 9: El canon secreto. Figura 1.1. El canon sobre un pliego abierto de páginas 2:3. Las diagonales fijan las esquinas de las dos cajas; el círculo, tan ancho como la página, es tan alto como su caja."
         },
         {
@@ -383,7 +383,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 186024,
+          "bytes": 186418,
           "alt": "Página 10: Líneas en las que apoyarse."
         },
         {
@@ -394,7 +394,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 40946,
+          "bytes": 40906,
           "alt": "Página 11. Figura 1.2. La página de 210 × 280 mm de este libro, dos veces. A la izquierda, dividida en novenos por el canon, con una caja de 140 × 187 mm. A la derecha, tal como la compone el libro: márgenes de 16, 24, 32 y 48 mm y dos columnas de 44 líneas."
         }
       ],
@@ -422,13 +422,13 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 44011,
+        "bytes": 43987,
         "folio": "e8c31713",
         "chapters": [
           {
             "pages": 3,
-            "hash": "c69cb87c7102b906",
-            "lines": "44728e31c4c8e469"
+            "hash": "bb107bcd8d99e6ab",
+            "lines": "3c530bddf8e074f1"
           }
         ]
       },
@@ -631,6 +631,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -639,13 +644,13 @@
       }
     },
     "pt": {
-      "hash8": "014f9342",
-      "vdtHash": "b4637aa225aee4969d830759a211fee1a25ce2ec",
+      "hash8": "58aaa8d3",
+      "vdtHash": "2acdd6b557c1c08659556959a5561aab4bda1812",
       "timings": {
-        "importMs": 839,
-        "fontsMs": 4,
-        "buildMs": 90,
-        "totalMs": 1874,
+        "importMs": 204,
+        "fontsMs": 3,
+        "buildMs": 76,
+        "totalMs": 1038,
         "builds": 1
       },
       "specimen": {
@@ -679,7 +684,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 149354,
+          "bytes": 149382,
           "alt": "Página de abertura 9: O cânone secreto. Figura 1.1. O cânone sobre uma página dupla aberta de páginas 2:3. As diagonais fixam os cantos das duas manchas; o círculo, da largura da página, tem exatamente a altura da mancha."
         },
         {
@@ -690,7 +695,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 187228,
+          "bytes": 187020,
           "alt": "Página 10: Linhas onde se apoiar."
         },
         {
@@ -734,7 +739,7 @@
         "chapters": [
           {
             "pages": 3,
-            "hash": "2e73021428cc3546",
+            "hash": "27d1cb49fd71c26b",
             "lines": "8f18a7a006092cbc"
           }
         ]

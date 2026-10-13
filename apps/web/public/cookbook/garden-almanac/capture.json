@@ -3,20 +3,20 @@
   "slug": "garden-almanac",
   "sourceHash": "b89da44b55163b14814e4217450e5633015c370bd1bbf48ccacf7a92785636b2",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.280Z",
+  "capturedAt": "2026-10-13T14:59:09.738Z",
   "variants": {
     "en": {
-      "hash8": "e927c4a9",
-      "vdtHash": "57df4cea330a7e8b2bc20b0712f299cc1d95d192",
+      "hash8": "893b697f",
+      "vdtHash": "c32fa925a08ee291ed43d029ce1352bbee657327",
       "timings": {
-        "importMs": 262,
-        "fontsMs": 207,
-        "buildMs": 108,
-        "totalMs": 1249,
+        "importMs": 838,
+        "fontsMs": 109,
+        "buildMs": 85,
+        "totalMs": 2047,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116680,
+          "bytes": 116708,
           "alt": "Opening page 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in calante…"
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80986,
+          "bytes": 81020,
           "alt": "Page 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -115,12 +115,12 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190196,
+        "bytes": 190152,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "af2a2fb06e6307da",
+            "hash": "3392fdf90d7747a5",
             "lines": "92963d5c14d8075e"
           }
         ]
@@ -395,7 +395,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.56
+          "worst": 1.6
         },
         "raggedLines": {
           "count": 0
@@ -410,13 +410,13 @@
       }
     },
     "es": {
-      "hash8": "ee824f6f",
-      "vdtHash": "57df4cea330a7e8b2bc20b0712f299cc1d95d192",
+      "hash8": "22afa5c2",
+      "vdtHash": "c32fa925a08ee291ed43d029ce1352bbee657327",
       "timings": {
-        "importMs": 619,
-        "fontsMs": 195,
-        "buildMs": 126,
-        "totalMs": 1675,
+        "importMs": 617,
+        "fontsMs": 144,
+        "buildMs": 94,
+        "totalMs": 1718,
         "builds": 1
       },
       "specimen": {
@@ -450,7 +450,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116680,
+          "bytes": 116708,
           "alt": "Página de apertura 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in c…"
         },
         {
@@ -461,7 +461,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80986,
+          "bytes": 81020,
           "alt": "Página 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -515,12 +515,12 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190197,
+        "bytes": 190153,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "af2a2fb06e6307da",
+            "hash": "3392fdf90d7747a5",
             "lines": "92963d5c14d8075e"
           }
         ]
@@ -795,7 +795,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.56
+          "worst": 1.6
         },
         "raggedLines": {
           "count": 0

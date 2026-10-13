@@ -3,20 +3,20 @@
   "slug": "spanish-pocket-novel",
   "sourceHash": "fb2560f0b1b82c217c3401cae4d87cb84bc213f58459d0769916dc57223c673a",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.179Z",
+  "capturedAt": "2026-10-13T15:04:42.131Z",
   "variants": {
     "es": {
-      "hash8": "96ac3879",
-      "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
+      "hash8": "38e05bc2",
+      "vdtHash": "39306295fc634a2d26c76fd5955a7b560a2e811a",
       "timings": {
-        "importMs": 720,
-        "fontsMs": 59,
-        "buildMs": 103,
-        "totalMs": 2613,
+        "importMs": 385,
+        "fontsMs": 138,
+        "buildMs": 63,
+        "totalMs": 1328,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1565,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 129486,
+          "bytes": 129462,
           "alt": "Página de apertura 9: Perdido."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1565,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 166116,
+          "bytes": 166140,
           "alt": "Página 10."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1565,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 163170,
+          "bytes": 163322,
           "alt": "Página 11."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1565,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 115884,
+          "bytes": 115880,
           "alt": "Página 12."
         }
       ],
@@ -125,12 +125,12 @@
       },
       "sandbox": {
         "file": "spanish-pocket-novel.postext",
-        "bytes": 43136,
+        "bytes": 43143,
         "folio": "bb7ddf9c",
         "chapters": [
           {
             "pages": 5,
-            "hash": "6c661260e30ebb54",
+            "hash": "e95fd266c235b712",
             "lines": "209f5b6f4480b2bb"
           }
         ]
@@ -337,6 +337,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

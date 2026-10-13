@@ -3,20 +3,20 @@
   "slug": "folio-settings-bench",
   "sourceHash": "42de82e5b69080133ae7a1d03839a6cc83334f8d818a4f46a0d704e56e759a43",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.226Z",
+  "capturedAt": "2026-10-13T14:59:09.722Z",
   "variants": {
     "en": {
-      "hash8": "7edf3be5",
-      "vdtHash": "0dd0208791389c884eb7adf699b0c3a5d75b7a5c",
+      "hash8": "6550d91b",
+      "vdtHash": "d06d42ac0ca890229d3e17ecbcf8d7ee9fb36b74",
       "timings": {
-        "importMs": 727,
+        "importMs": 805,
         "fontsMs": 4,
-        "buildMs": 70,
-        "totalMs": 1643,
+        "buildMs": 57,
+        "totalMs": 2202,
         "builds": 1
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1455,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 90822,
+          "bytes": 90808,
           "alt": "Opening page 2: Before you tie."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1455,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 55974,
+          "bytes": 56182,
           "alt": "Opening page 3: The reef knot."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1455,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 66044,
+          "bytes": 65898,
           "alt": "Opening page 4: The bowline."
         },
         {
@@ -92,7 +92,7 @@
           "h": 1455,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 51456,
+          "bytes": 51496,
           "alt": "Opening page 5: The clove hitch."
         },
         {
@@ -103,7 +103,7 @@
           "h": 1455,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 51968,
+          "bytes": 51950,
           "alt": "Opening page 6: The figure-eight."
         },
         {
@@ -114,7 +114,7 @@
           "h": 1455,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 50348,
+          "bytes": 50330,
           "alt": "Opening page 7: The sheet bend."
         },
         {
@@ -125,7 +125,7 @@
           "h": 1455,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 51656,
+          "bytes": 51578,
           "alt": "Opening page 8: The round turn."
         },
         {
@@ -136,7 +136,7 @@
           "h": 1455,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 72604,
+          "bytes": 72486,
           "alt": "Opening page 9: Looking after rope."
         },
         {
@@ -191,13 +191,13 @@
       },
       "sandbox": {
         "file": "folio-settings-bench.postext",
-        "bytes": 18151,
+        "bytes": 18152,
         "folio": "1756b569",
         "chapters": [
           {
             "pages": 10,
-            "hash": "3709509e88cbd3c4",
-            "lines": "6480c5519c26cee7"
+            "hash": "9d3ad261ea011d05",
+            "lines": "b377672c352cc884"
           }
         ]
       },
@@ -394,7 +394,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

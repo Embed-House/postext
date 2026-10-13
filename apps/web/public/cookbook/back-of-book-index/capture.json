@@ -3,21 +3,21 @@
   "slug": "back-of-book-index",
   "sourceHash": "b7b8898605143dba081404bdc21c971175ed3ac1447782e148b81012997991d7",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:35:58.763Z",
+  "capturedAt": "2026-10-13T14:55:41.419Z",
   "variants": {
     "en": {
-      "hash8": "ffbe53c0",
-      "vdtHash": "16ef0011bbeb6c1c08e14726738afce2b5978164",
+      "hash8": "26c72515",
+      "vdtHash": "da5e68fa36c4c6b7e032a5279761de653a60c8db",
       "timings": {
-        "importMs": 2133,
-        "fontsMs": 1310,
-        "buildMs": 70,
-        "totalMs": 5607,
+        "importMs": 377,
+        "fontsMs": 63,
+        "buildMs": 47,
+        "totalMs": 1346,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1319,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 127872,
+          "bytes": 127754,
           "alt": "Opening page 297: 14 The heart as a pump."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117830,
+          "bytes": 117678,
           "alt": "Page 298: 14.2 The pressure–volume loop. Figure 14.1. Pressure–volume loop of the left ventricle at rest: volume from 0 to 150 mL across, pressure from 0 to 140 mmHg up. The dots, anticlockwise from bottom right: mitral valve closes (120 mL), aortic valve opens (80 mmHg), aort…"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1319,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 154058,
+          "bytes": 153536,
           "alt": "Page 299: 14.4 The sinoatrial node and the conduction system."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1319,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 136512,
+          "bytes": 136374,
           "alt": "Page 300: 14.6 Listening to the heart."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1319,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 96200,
+          "bytes": 96212,
           "alt": "Opening page 301: 15 Vessels and blood pressure. Table 15.1. Blood volume and mean pressure along the circulation of a resting adult."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1319,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 152224,
+          "bytes": 152230,
           "alt": "Page 302: 15.2 Flow, pressure and resistance."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1319,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 164890,
+          "bytes": 165090,
           "alt": "Page 303: 15.4 Capillary exchange."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1319,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 92250,
+          "bytes": 92248,
           "alt": "Page 304: 15.6 Venous return."
         },
         {
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 196738,
+        "bytes": 189609,
         "pages": 10
       },
       "sandbox": {
@@ -203,13 +203,13 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "092a71bb9de91ce7",
-            "lines": "e9f0ec38135e36ec"
+            "hash": "e3c7e625f24f0131",
+            "lines": "27b0c560cfe41374"
           },
           {
             "pages": 4,
-            "hash": "c67d6f4a10f3f934",
-            "lines": "686d702d4fed8a2f"
+            "hash": "51d5180585af3547",
+            "lines": "705c066c40e3f57a"
           },
           {
             "pages": 2,
@@ -520,7 +520,7 @@
         "looseLines": {
           "count": 2,
           "share": 0.0092,
-          "worst": 2.0100000000000002
+          "worst": 2.0300000000000002
         },
         "raggedLines": {
           "count": 0
@@ -545,13 +545,13 @@
       }
     },
     "es": {
-      "hash8": "1321ee6a",
-      "vdtHash": "f73028327b4e304cb8a026f4f03c6655125771ce",
+      "hash8": "6be1fe7d",
+      "vdtHash": "4d5c22c35fa3dac3ab919b3a6b3a77f4b913e343",
       "timings": {
-        "importMs": 3284,
-        "fontsMs": 256,
-        "buildMs": 71,
-        "totalMs": 5344,
+        "importMs": 263,
+        "fontsMs": 75,
+        "buildMs": 51,
+        "totalMs": 1203,
         "builds": 2
       },
       "specimen": {
@@ -584,7 +584,7 @@
           "h": 1319,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 125888,
+          "bytes": 125836,
           "alt": "Página de apertura 297: 14 El corazón como bomba."
         },
         {
@@ -595,7 +595,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 114840,
+          "bytes": 114944,
           "alt": "Página 298: 14.2 El bucle presión-volumen. Figura 14.1. Bucle presión-volumen del ventrículo izquierdo en reposo: volumen de 0 a 150 mL en horizontal, presión de 0 a 140 mmHg en vertical. Los puntos, en sentido antihorario desde abajo a la derecha: cierre de la válvula mitral…"
         },
         {
@@ -606,7 +606,7 @@
           "h": 1319,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144612,
+          "bytes": 153026,
           "alt": "Página 299: 14.4 El nódulo sinoauricular y el sistema de conducción."
         },
         {
@@ -617,7 +617,7 @@
           "h": 1319,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 152220,
+          "bytes": 144276,
           "alt": "Página 300: 14.6 La auscultación del corazón."
         },
         {
@@ -628,7 +628,7 @@
           "h": 1319,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 96606,
+          "bytes": 96840,
           "alt": "Página de apertura 301: 15 Los vasos y la presión arterial. Tabla 15.1. Volumen de sangre y presión media a lo largo de la circulación de un adulto en reposo."
         },
         {
@@ -639,7 +639,7 @@
           "h": 1319,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 145714,
+          "bytes": 145310,
           "alt": "Página 302: 15.2 Flujo, presión y resistencia."
         },
         {
@@ -650,7 +650,7 @@
           "h": 1319,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 165332,
+          "bytes": 165134,
           "alt": "Página 303: 15.4 El intercambio capilar."
         },
         {
@@ -661,7 +661,7 @@
           "h": 1319,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 69014,
+          "bytes": 68832,
           "alt": "Página 304: 15.6 El retorno venoso."
         },
         {
@@ -683,7 +683,7 @@
           "h": 1319,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 83044,
+          "bytes": 83010,
           "alt": "Página 306."
         }
       ],
@@ -727,7 +727,7 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 210695,
+        "bytes": 193201,
         "pages": 10
       },
       "sandbox": {
@@ -737,18 +737,18 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "517aa0199615a94f",
-            "lines": "87614b94a5156a20"
+            "hash": "05031fbfeacc247f",
+            "lines": "37715701989da2c5"
           },
           {
             "pages": 4,
-            "hash": "97a6b3196043e535",
-            "lines": "47d7c14f29259c25"
+            "hash": "e3ebee1f95e779e7",
+            "lines": "9dbdd270915afdc4"
           },
           {
             "pages": 2,
-            "hash": "b3b762e1b4252269",
-            "lines": "79c2f35319889951"
+            "hash": "79b987466d92e60e",
+            "lines": "658634d012fb931c"
           }
         ]
       },

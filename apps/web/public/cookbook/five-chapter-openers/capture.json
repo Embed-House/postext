@@ -3,20 +3,20 @@
   "slug": "five-chapter-openers",
   "sourceHash": "62073ca205272ae659bcabe45dc15a85554287d863d65b442d80faa77b40eef2",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.194Z",
+  "capturedAt": "2026-10-13T14:59:09.715Z",
   "variants": {
     "en": {
-      "hash8": "d5a3e1a4",
-      "vdtHash": "45587f7495f542a963e19fb3590dbea4a204e252",
+      "hash8": "d582c085",
+      "vdtHash": "9014e810a9d2abb1b961f39c19095bd6d85ff851",
       "timings": {
-        "importMs": 230,
+        "importMs": 1389,
         "fontsMs": 2,
-        "buildMs": 121,
-        "totalMs": 1068,
+        "buildMs": 113,
+        "totalMs": 2612,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101002,
+          "bytes": 100966,
           "alt": "Opening page 1: The Voice."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161624,
+          "bytes": 161646,
           "alt": "Page 2."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 32356,
+          "bytes": 32390,
           "alt": "Page 3."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 95416,
+          "bytes": 95610,
           "alt": "Opening page 4: The Frame."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66842,
+          "bytes": 67298,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -152,12 +152,12 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28461,
+        "bytes": 28499,
         "folio": "8cdc51df",
         "chapters": [
           {
             "pages": 7,
-            "hash": "585de1796c88cbb7",
+            "hash": "dbb1cf6044b0f56c",
             "lines": "a834fcb395b104b5"
           }
         ]
@@ -409,17 +409,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "2e0d8f2e",
-      "vdtHash": "12a9a52a7154dc26eeb05039fb7610dfba8e4749",
+      "hash8": "9c58fc88",
+      "vdtHash": "11fa061433c14e9f590b12dcc4d32349775405f4",
       "timings": {
-        "importMs": 432,
+        "importMs": 1207,
         "fontsMs": 2,
-        "buildMs": 242,
-        "totalMs": 1584,
+        "buildMs": 217,
+        "totalMs": 3138,
         "builds": 1
       },
       "specimen": {
@@ -453,7 +459,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98738,
+          "bytes": 98784,
           "alt": "Página de apertura 1: La voz."
         },
         {
@@ -464,7 +470,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 159884,
+          "bytes": 159928,
           "alt": "Página 2."
         },
         {
@@ -475,7 +481,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50272,
+          "bytes": 50246,
           "alt": "Página 3."
         },
         {
@@ -486,7 +492,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 87886,
+          "bytes": 88062,
           "alt": "Página de apertura 4: El marco."
         },
         {
@@ -497,7 +503,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 71580,
+          "bytes": 71562,
           "alt": "Página de apertura 5: Salta a la vista."
         },
         {
@@ -555,12 +561,12 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28178,
+        "bytes": 28154,
         "folio": "8cdc51df",
         "chapters": [
           {
             "pages": 7,
-            "hash": "3772352c9982c99e",
+            "hash": "a0cfdbd88f73abbc",
             "lines": "e68890a66a732478"
           }
         ]
@@ -807,12 +813,18 @@
         "looseLines": {
           "count": 1,
           "share": 0.0139,
-          "worst": 1.61
+          "worst": 1.6
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

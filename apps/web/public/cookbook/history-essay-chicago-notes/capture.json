@@ -3,21 +3,21 @@
   "slug": "history-essay-chicago-notes",
   "sourceHash": "0a025f997df23b6a00281ee0b30c8b7c23e501bbf962cebbec4bbaa0a10004a8",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.867Z",
+  "capturedAt": "2026-10-13T15:00:04.749Z",
   "variants": {
     "en": {
-      "hash8": "3bee7fe6",
-      "vdtHash": "994aae3a811c99b2205ceb072cb0db1659f464e2",
+      "hash8": "82363864",
+      "vdtHash": "29dc13684bb9eef8be48a4f8f1737f725d48bb80",
       "timings": {
-        "importMs": 875,
-        "fontsMs": 50,
-        "buildMs": 573,
-        "totalMs": 2338,
+        "importMs": 858,
+        "fontsMs": 36,
+        "buildMs": 464,
+        "totalMs": 2167,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90264,
+          "bytes": 90254,
           "alt": "Opening page 1: Railway Time: How British Towns Came to Keep London’s Hour."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 155658,
+          "bytes": 155720,
           "alt": "Page 2: THE COMPANIES DECIDE."
         },
         {
@@ -114,17 +114,17 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 85350,
+        "bytes": 85235,
         "pages": 4
       },
       "sandbox": {
         "file": "history-essay-chicago-notes.postext",
-        "bytes": 17381,
+        "bytes": 17376,
         "folio": "d7c0312b",
         "chapters": [
           {
             "pages": 4,
-            "hash": "c3f55bde4b7773ee",
+            "hash": "2ac217dfdda407c9",
             "lines": "24c9fe0d2e670d1f"
           }
         ]
@@ -328,17 +328,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "8e19cbd3",
-      "vdtHash": "5d4c797d0c8398d84f1c79e2864e796fe0b7cea3",
+      "hash8": "c7fb8302",
+      "vdtHash": "cdb0858bde029b74174a89d7792780e840664c28",
       "timings": {
-        "importMs": 819,
-        "fontsMs": 42,
-        "buildMs": 505,
-        "totalMs": 2221,
+        "importMs": 880,
+        "fontsMs": 31,
+        "buildMs": 480,
+        "totalMs": 2369,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +376,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 96522,
+          "bytes": 96586,
           "alt": "Página de apertura 1: La hora del ferrocarril: cómo las ciudades británicas adoptaron la hora de Londres."
         },
         {
@@ -381,7 +387,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 152038,
+          "bytes": 152032,
           "alt": "Página 2: LAS COMPAÑÍAS DECIDEN."
         },
         {
@@ -435,17 +441,17 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 89787,
+        "bytes": 89689,
         "pages": 4
       },
       "sandbox": {
         "file": "history-essay-chicago-notes.postext",
-        "bytes": 18108,
+        "bytes": 18089,
         "folio": "d7c0312b",
         "chapters": [
           {
             "pages": 4,
-            "hash": "2cbba35f3ee150b9",
+            "hash": "c6e25bb6d771e276",
             "lines": "5a81e077101cba91"
           }
         ]
@@ -649,7 +655,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

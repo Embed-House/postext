@@ -3,21 +3,21 @@
   "slug": "physics-letter-two-columns",
   "sourceHash": "f1a9ce9b010f0811d0c56c0fcefeb7506739c239cba5e7dd0c606a3028801772",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:03.115Z",
+  "capturedAt": "2026-10-13T15:03:18.157Z",
   "variants": {
     "en": {
-      "hash8": "18ada1d2",
-      "vdtHash": "49847925fefd291ade44099561b2f898eb961505",
+      "hash8": "0c4d011d",
+      "vdtHash": "fdf66b60c6e725575965247f6435d0be3590aecb",
       "timings": {
-        "importMs": 1382,
-        "fontsMs": 369,
-        "buildMs": 300,
-        "totalMs": 3204,
+        "importMs": 929,
+        "fontsMs": 180,
+        "buildMs": 207,
+        "totalMs": 2426,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 250488,
+          "bytes": 250412,
           "alt": "Page 2: II. Observation."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181538,
+          "bytes": 181522,
           "alt": "Page 3: IV. Searches. FIG. 2. Top: Estimated gravitational-wave strain amplitude from GW150914 projected onto H1. This shows the full bandwidth of the waveforms, without the filtering used for Fig. 1. Bottom: The Keplerian effective black hole separation in units of Schwarzsch…"
         },
         {
@@ -126,7 +126,7 @@
       },
       "pdf": {
         "file": "physics-letter-two-columns.pdf",
-        "bytes": 573155,
+        "bytes": 572994,
         "pages": 5
       },
       "sandbox": {
@@ -136,7 +136,7 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "5aa7566531d0c1d5",
+            "hash": "b1234ba4d5fa78c0",
             "lines": "0f6a2ba91c8413df"
           }
         ]

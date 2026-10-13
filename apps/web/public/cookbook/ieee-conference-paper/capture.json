@@ -3,21 +3,21 @@
   "slug": "ieee-conference-paper",
   "sourceHash": "df4e760161c2f68f2a1d9f1475ed24927e382b5b260fa24f8a10a0672c70c844",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.896Z",
+  "capturedAt": "2026-10-13T15:00:04.754Z",
   "variants": {
     "en": {
-      "hash8": "ff466feb",
-      "vdtHash": "f224c4793cbb2f7b7f59ac740d7c75a0374c2cee",
+      "hash8": "3e78a7cb",
+      "vdtHash": "a2bb3d3043b1fe7715d368fea9384d36d5cfcf90",
       "timings": {
-        "importMs": 623,
-        "fontsMs": 33,
-        "buildMs": 319,
-        "totalMs": 1838,
+        "importMs": 963,
+        "fontsMs": 36,
+        "buildMs": 328,
+        "totalMs": 2636,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 181894,
+          "bytes": 181684,
           "alt": "Opening page 1: Optimal Line Breaking in the Browser: What It Costs and When It Pays."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 201934,
+          "bytes": 202062,
           "alt": "Page 2: III. METHOD."
         }
       ],
@@ -89,17 +89,17 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 82135,
+        "bytes": 81384,
         "pages": 2
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29447,
+        "bytes": 29479,
         "folio": "9f7fbdf3",
         "chapters": [
           {
             "pages": 2,
-            "hash": "4c3effcb76032151",
+            "hash": "9c033d6eabfb9efe",
             "lines": "5a712e2d16a688d3"
           }
         ]
@@ -317,17 +317,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "04128829",
-      "vdtHash": "0990b340cfe5ee060e6246e86fe2cc4abfa70908",
+      "hash8": "6f5483dc",
+      "vdtHash": "b1cc021184d53ec26bc70f17dfffeebe62339896",
       "timings": {
-        "importMs": 495,
-        "fontsMs": 32,
-        "buildMs": 177,
-        "totalMs": 1445,
+        "importMs": 693,
+        "fontsMs": 31,
+        "buildMs": 208,
+        "totalMs": 1857,
         "builds": 1
       },
       "specimen": {
@@ -360,7 +366,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 183846,
+          "bytes": 183828,
           "alt": "Página de apertura 1: Corte óptimo de líneas en el navegador: cuánto cuesta y cuándo compensa."
         },
         {
@@ -371,7 +377,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 231830,
+          "bytes": 232112,
           "alt": "Página 2: III. MÉTODO."
         }
       ],
@@ -399,18 +405,18 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 93895,
+        "bytes": 93429,
         "pages": 2
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29962,
+        "bytes": 29964,
         "folio": "9f7fbdf3",
         "chapters": [
           {
             "pages": 2,
-            "hash": "3c80b4b3633f98f5",
-            "lines": "216d300171f8e187"
+            "hash": "2ef3204d62ed9835",
+            "lines": "89a50cf5f77f5b8f"
           }
         ]
       },
@@ -627,7 +633,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

@@ -3,21 +3,21 @@
   "slug": "apa-thesis-with-bibtex",
   "sourceHash": "5934587dfdcebde0ccc9803649eacda3ba934f5f2cf3e1a42468d15430c60918",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:35:58.680Z",
+  "capturedAt": "2026-10-13T14:55:41.400Z",
   "variants": {
     "en": {
-      "hash8": "ddb07ae3",
-      "vdtHash": "fcba8520b771c95762de91ed707a794fb251d7e6",
+      "hash8": "5d9095f5",
+      "vdtHash": "6eab61fb39e6b5522a202291c766c6154967f043",
       "timings": {
-        "importMs": 2546,
-        "fontsMs": 41,
-        "buildMs": 320,
-        "totalMs": 5540,
+        "importMs": 348,
+        "fontsMs": 31,
+        "buildMs": 275,
+        "totalMs": 1351,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 128082,
+          "bytes": 127750,
           "alt": "Opening page 1: 2 Reading on Paper and on Screens: The State of the Evidence."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 141866,
+          "bytes": 141672,
           "alt": "Page 2: 2.2 Speed and line length."
         },
         {
@@ -99,17 +99,17 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 59808,
+        "bytes": 58327,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18645,
+        "bytes": 18653,
         "folio": "2af3feac",
         "chapters": [
           {
             "pages": 3,
-            "hash": "6b22901c712376b6",
+            "hash": "85c76493a8d987d5",
             "lines": "5966a69fbcf378ff"
           }
         ]
@@ -287,14 +287,19 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 1.98
+          "count": 1,
+          "share": 0.0238,
+          "worst": 2.0100000000000002
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
+          {
+            "check": "C24",
+            "severity": "warn",
+            "detail": "1 of 42 justified lines (2.4 %) stretch past 2× (worst 2.0100000000000002×); loosest: p. 2 2.0100000000000002× “Dyson & Haselgrove (2001) measured speed and co…”"
+          },
           {
             "check": "vdt",
             "severity": "warn",
@@ -304,13 +309,13 @@
       }
     },
     "es": {
-      "hash8": "1794a7ff",
-      "vdtHash": "6bedb45b3ce433e964dda4c08994794ead971674",
+      "hash8": "96bf8cc8",
+      "vdtHash": "6e0a6cba13b65060bc3adb3c867358700bf0acc0",
       "timings": {
-        "importMs": 3068,
-        "fontsMs": 42,
-        "buildMs": 326,
-        "totalMs": 4958,
+        "importMs": 433,
+        "fontsMs": 32,
+        "buildMs": 278,
+        "totalMs": 1515,
         "builds": 1
       },
       "specimen": {
@@ -342,7 +347,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126902,
+          "bytes": 126896,
           "alt": "Página de apertura 1: 2 Leer en papel y en pantalla: el estado de la cuestión."
         },
         {
@@ -353,7 +358,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 149914,
+          "bytes": 149792,
           "alt": "Página 2: 2.2 Velocidad y longitud de línea."
         },
         {
@@ -392,17 +397,17 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 64906,
+        "bytes": 59976,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18535,
+        "bytes": 18511,
         "folio": "2af3feac",
         "chapters": [
           {
             "pages": 3,
-            "hash": "9ec9d57cf362c6ca",
+            "hash": "a0abc027ed3d9ea1",
             "lines": "d3c927b74d044925"
           }
         ]

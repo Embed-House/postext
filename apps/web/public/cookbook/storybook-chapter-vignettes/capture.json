@@ -3,20 +3,20 @@
   "slug": "storybook-chapter-vignettes",
   "sourceHash": "acb476664477ce5433b764ce415ec0963fc79795dcd39651bda40d0475356da8",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:18.623Z",
+  "capturedAt": "2026-10-13T15:05:55.175Z",
   "variants": {
     "en": {
-      "hash8": "3fdaf79f",
-      "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
+      "hash8": "14c42f77",
+      "vdtHash": "6a2e4e0f46779e5e3dd234f0be0a161beb25d3d3",
       "timings": {
-        "importMs": 1682,
-        "fontsMs": 109,
-        "buildMs": 126,
-        "totalMs": 3221,
+        "importMs": 872,
+        "fontsMs": 62,
+        "buildMs": 84,
+        "totalMs": 1976,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91492,
+          "bytes": 91510,
           "alt": "Opening page 7: Capitolo I."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130086,
+          "bytes": 129920,
           "alt": "Page 8."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93114,
+          "bytes": 92964,
           "alt": "Page 9."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90900,
+          "bytes": 91126,
           "alt": "Opening page 10: Capitolo II."
         }
       ],
@@ -125,13 +125,13 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820978,
+        "bytes": 820952,
         "folio": "ebfafef3",
         "chapters": [
           {
             "pages": 5,
-            "hash": "91e10ca904d0569d",
-            "lines": "c4fdc5dfe6c0d1b5"
+            "hash": "3e7af32b33b33e6f",
+            "lines": "981f9b8b4b650a5d"
           }
         ]
       },
@@ -328,6 +328,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -336,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "177b1f96",
-      "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
+      "hash8": "0b63db05",
+      "vdtHash": "6a2e4e0f46779e5e3dd234f0be0a161beb25d3d3",
       "timings": {
-        "importMs": 1585,
-        "fontsMs": 174,
-        "buildMs": 94,
-        "totalMs": 3069,
+        "importMs": 777,
+        "fontsMs": 122,
+        "buildMs": 70,
+        "totalMs": 1961,
         "builds": 1
       },
       "specimen": {
@@ -386,7 +391,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91492,
+          "bytes": 91510,
           "alt": "Página de apertura 7: Capitolo I."
         },
         {
@@ -397,7 +402,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130086,
+          "bytes": 129920,
           "alt": "Página 8."
         },
         {
@@ -408,7 +413,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93114,
+          "bytes": 92964,
           "alt": "Página 9."
         },
         {
@@ -419,7 +424,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90900,
+          "bytes": 91126,
           "alt": "Página de apertura 10: Capitolo II."
         }
       ],
@@ -451,13 +456,13 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 821028,
+        "bytes": 821002,
         "folio": "ebfafef3",
         "chapters": [
           {
             "pages": 5,
-            "hash": "91e10ca904d0569d",
-            "lines": "c4fdc5dfe6c0d1b5"
+            "hash": "3e7af32b33b33e6f",
+            "lines": "981f9b8b4b650a5d"
           }
         ]
       },
@@ -653,6 +658,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

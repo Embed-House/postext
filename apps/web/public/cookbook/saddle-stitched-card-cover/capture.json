@@ -3,20 +3,20 @@
   "slug": "saddle-stitched-card-cover",
   "sourceHash": "e4732e5ee8c732f796374bf4656ba893f91764d939f5f38178fc6914110b756f",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.032Z",
+  "capturedAt": "2026-10-13T15:04:42.036Z",
   "variants": {
     "en": {
-      "hash8": "960ffb13",
-      "vdtHash": "8a5df44b6af7d2917161122c80f77d5fbfd388c5",
+      "hash8": "d5d8e635",
+      "vdtHash": "6ad28a26692d724bcc10ec516f01c6a0757409a9",
       "timings": {
-        "importMs": 1032,
-        "fontsMs": 3,
-        "buildMs": 117,
-        "totalMs": 2836,
+        "importMs": 499,
+        "fontsMs": 4,
+        "buildMs": 67,
+        "totalMs": 1575,
         "builds": 1
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1429,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 56876,
+          "bytes": 56970,
           "alt": "Opening page 2: In this issue."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1429,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120038,
+          "bytes": 119996,
           "alt": "Opening page 3: The dunlin come back."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1429,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 104126,
+          "bytes": 103984,
           "alt": "Page 4: How to see them."
         },
         {
@@ -92,7 +92,7 @@
           "h": 1429,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 88844,
+          "bytes": 89024,
           "alt": "Opening page 5: The last boatbuilder."
         },
         {
@@ -103,7 +103,7 @@
           "h": 1429,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 60338,
+          "bytes": 60308,
           "alt": "Opening page 6: Tide table."
         },
         {
@@ -114,7 +114,7 @@
           "h": 1429,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 45400,
+          "bytes": 45406,
           "alt": "Opening page 7: Join us."
         },
         {
@@ -165,12 +165,12 @@
       },
       "sandbox": {
         "file": "saddle-stitched-card-cover.postext",
-        "bytes": 11636,
+        "bytes": 11634,
         "folio": "0753e69b",
         "chapters": [
           {
             "pages": 8,
-            "hash": "f6a8f2f6313042be",
+            "hash": "6930859c2f38d37c",
             "lines": "59d151e57a9ad1c5"
           }
         ]
@@ -374,6 +374,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 8.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

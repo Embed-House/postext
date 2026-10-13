@@ -3,20 +3,20 @@
   "slug": "side-heads-hanging-numbers",
   "sourceHash": "cd5dd8588a41f17309f47bb194bf871c9fb460f53416e6938b80d17bc78af187",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.103Z",
+  "capturedAt": "2026-10-13T15:04:42.086Z",
   "variants": {
     "en": {
-      "hash8": "80c31e29",
-      "vdtHash": "b4ac9f246a4b482f524154867e5b331a204e9587",
+      "hash8": "4c3afd27",
+      "vdtHash": "f3ab73aa5cf443c13c929b7a62488b7f4893a321",
       "timings": {
-        "importMs": 721,
-        "fontsMs": 5,
-        "buildMs": 103,
-        "totalMs": 1909,
+        "importMs": 653,
+        "fontsMs": 4,
+        "buildMs": 66,
+        "totalMs": 1538,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 129670,
+          "bytes": 129580,
           "alt": "Page 2: 2 The site. Figure 1. The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks along the north edge. Red arrows: possible entrances; grey arrow: service."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 73876,
+          "bytes": 73892,
           "alt": "Page 3: 3.2 Staff areas. Figure 2. Quay front, 1:300. In red, the four frames at the east end, where the reinforcement has corroded. · Table 1. Schedule of net floor areas."
         },
         {
@@ -126,12 +126,12 @@
       },
       "sandbox": {
         "file": "side-heads-hanging-numbers.postext",
-        "bytes": 26541,
+        "bytes": 26542,
         "folio": "2324bd6f",
         "chapters": [
           {
             "pages": 5,
-            "hash": "a43e7aeedd20ca90",
+            "hash": "da773caac3be8f70",
             "lines": "7f576375078af4a3"
           }
         ]
@@ -360,7 +360,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {

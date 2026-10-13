@@ -3,20 +3,20 @@
   "slug": "endnotes-instead-of-footnotes",
   "sourceHash": "249059699def7895d7e691fcedf421037cbf99d55db79749ba5a67950e9f4ab3",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:20.024Z",
+  "capturedAt": "2026-10-13T14:58:17.154Z",
   "variants": {
     "en": {
-      "hash8": "a7251df0",
-      "vdtHash": "b140f0552bd36b2893be9238db2a26996fcd1bfc",
+      "hash8": "d4d9cf96",
+      "vdtHash": "a7753d5706a3721afc29144f567ffae5277b1bc5",
       "timings": {
-        "importMs": 888,
-        "fontsMs": 76,
-        "buildMs": 156,
-        "totalMs": 2106,
+        "importMs": 1051,
+        "fontsMs": 182,
+        "buildMs": 106,
+        "totalMs": 2270,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181476,
+          "bytes": 181398,
           "alt": "Page 17."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 123684,
+          "bytes": 123598,
           "alt": "Page 18. Figure 1. A candle flame as it looks under a glass shade (left) and in section (right): the dark core of wax vapour round the wick, the blue foot where the air first meets it, the bright zone where soot glows, and the faint mantle, the hottest part. Heated air rises r…"
         },
         {
@@ -130,8 +130,8 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "ccc71986a16715c0",
-            "lines": "8ddee5263aff5ae4"
+            "hash": "a300a8c593ab1f03",
+            "lines": "2ad289a71ad9a439"
           }
         ]
       },

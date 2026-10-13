@@ -3,20 +3,20 @@
   "slug": "product-manual-warnings",
   "sourceHash": "b5151e1f3afdc6c737edbcb513a87c4aefe8cb8e87f1a93e17049895e3e63b8f",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.685Z",
+  "capturedAt": "2026-10-13T15:03:54.341Z",
   "variants": {
     "en": {
-      "hash8": "5f1cc3bd",
-      "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
+      "hash8": "e8a22a11",
+      "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 1268,
-        "fontsMs": 440,
-        "buildMs": 155,
-        "totalMs": 2679,
+        "importMs": 930,
+        "fontsMs": 149,
+        "buildMs": 101,
+        "totalMs": 2028,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121894,
+          "bytes": 121760,
           "alt": "Page 2: 1 Sicherheitshinweise."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60938,
+          "bytes": 61018,
           "alt": "Page 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91510,
+          "bytes": 91522,
           "alt": "Page 4: 3 Bedienung."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121332,
+          "bytes": 121456,
           "alt": "Page 5: 4 Reinigung und Entkalken."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 79146,
+          "bytes": 79302,
           "alt": "Page 7: 6 Technische Daten. Tabelle 3. Kenndaten des VW-170 · Tabelle 2. Störungen und ihre Behebung (Fortsetzung)."
         }
       ],
@@ -151,12 +151,12 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35987,
+        "bytes": 35989,
         "folio": "6d89ead9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "95dd604f8b67c821",
+            "hash": "7de8d186f7b740fa",
             "lines": "fc502be864ee3b26"
           }
         ]
@@ -485,7 +485,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.59
+          "worst": 1.58
         },
         "raggedLines": {
           "count": 0
@@ -495,18 +495,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "40550a11",
-      "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
+      "hash8": "692b1a98",
+      "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 1533,
-        "fontsMs": 260,
-        "buildMs": 175,
-        "totalMs": 2784,
+        "importMs": 873,
+        "fontsMs": 158,
+        "buildMs": 111,
+        "totalMs": 1966,
         "builds": 1
       },
       "specimen": {
@@ -550,7 +555,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 121894,
+          "bytes": 121760,
           "alt": "Página 2: 1 Sicherheitshinweise."
         },
         {
@@ -561,7 +566,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60938,
+          "bytes": 61018,
           "alt": "Página 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -572,7 +577,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91510,
+          "bytes": 91522,
           "alt": "Página 4: 3 Bedienung."
         },
         {
@@ -583,7 +588,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121332,
+          "bytes": 121456,
           "alt": "Página 5: 4 Reinigung und Entkalken."
         },
         {
@@ -605,7 +610,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 79146,
+          "bytes": 79302,
           "alt": "Página 7: 6 Technische Daten. Tabelle 3. Kenndaten des VW-170 · Tabelle 2. Störungen und ihre Behebung (Fortsetzung)."
         }
       ],
@@ -641,12 +646,12 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 36010,
+        "bytes": 36012,
         "folio": "6d89ead9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "95dd604f8b67c821",
+            "hash": "7de8d186f7b740fa",
             "lines": "fc502be864ee3b26"
           }
         ]
@@ -975,7 +980,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.59
+          "worst": 1.58
         },
         "raggedLines": {
           "count": 0
@@ -985,6 +990,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

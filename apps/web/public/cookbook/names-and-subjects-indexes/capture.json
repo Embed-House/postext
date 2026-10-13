@@ -3,21 +3,21 @@
   "slug": "names-and-subjects-indexes",
   "sourceHash": "f5daada8a35ed8f94027ab741984a94098c009f3b5958cd887b78712c01b66d8",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:14.664Z",
+  "capturedAt": "2026-10-13T15:02:23.840Z",
   "variants": {
     "en": {
-      "hash8": "dadcccf0",
-      "vdtHash": "1ee2d1bee34f81d339504d2e948ad35641b12ecc",
+      "hash8": "129878ea",
+      "vdtHash": "f3b9120542cf43acfd574f62a40343c9018fee44",
       "timings": {
-        "importMs": 1263,
-        "fontsMs": 34,
-        "buildMs": 251,
-        "totalMs": 2678,
+        "importMs": 663,
+        "fontsMs": 26,
+        "buildMs": 171,
+        "totalMs": 1781,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 134578,
+          "bytes": 134590,
           "alt": "Opening page 1: From Textura to Bodoni."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161954,
+          "bytes": 161774,
           "alt": "Page 2: Paris and Antwerp."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 165182,
+          "bytes": 165148,
           "alt": "Page 3: Measuring type."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 157496,
+          "bytes": 157518,
           "alt": "Page 4: Bodoni’s moderns."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 80440,
+          "bytes": 80460,
           "alt": "Page 5."
         },
         {
@@ -152,17 +152,17 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 116237,
+        "bytes": 115749,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 16857,
+        "bytes": 16855,
         "folio": "581a62c9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "7a076c9cd316f43a",
+            "hash": "06a8c770624c0d6c",
             "lines": "d0b84e309446d996"
           }
         ]
@@ -396,17 +396,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "f7b8d88d",
-      "vdtHash": "41c1b576705fe8442f83218e328c6536a3d6ab95",
+      "hash8": "ba0b467e",
+      "vdtHash": "f76220c95da32c4a77284ada4c89083d3ec6062f",
       "timings": {
-        "importMs": 1045,
-        "fontsMs": 43,
-        "buildMs": 265,
-        "totalMs": 2806,
+        "importMs": 878,
+        "fontsMs": 27,
+        "buildMs": 185,
+        "totalMs": 2014,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +445,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 140998,
+          "bytes": 140968,
           "alt": "Página de apertura 1: De la textura a Bodoni."
         },
         {
@@ -450,7 +456,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 162956,
+          "bytes": 162736,
           "alt": "Página 2: París y Amberes."
         },
         {
@@ -461,7 +467,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 169592,
+          "bytes": 169544,
           "alt": "Página 3: Medir la letra."
         },
         {
@@ -472,7 +478,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 164872,
+          "bytes": 165088,
           "alt": "Página 4: Los modernos de Bodoni."
         },
         {
@@ -483,7 +489,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 101008,
+          "bytes": 100974,
           "alt": "Página 5."
         },
         {
@@ -541,17 +547,17 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 129609,
+        "bytes": 128744,
         "pages": 7
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17496,
+        "bytes": 17507,
         "folio": "581a62c9",
         "chapters": [
           {
             "pages": 7,
-            "hash": "8bcb6be7eee92189",
+            "hash": "cb43e0277bf54877",
             "lines": "b9f1a413596d4363"
           }
         ]
@@ -790,6 +796,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

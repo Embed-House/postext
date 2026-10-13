@@ -3,21 +3,21 @@
   "slug": "film-club-video-qr",
   "sourceHash": "9955c09061c1cd3d45b3e2dffc4925c1a0d92b4fd62dd57838474aa74263b6e3",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.144Z",
+  "capturedAt": "2026-10-13T14:59:09.696Z",
   "variants": {
     "en": {
-      "hash8": "2d647274",
-      "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
+      "hash8": "4c3f0ee7",
+      "vdtHash": "630cbf7abaf55b5d4f608ef89bdffd8a81f53da9",
       "timings": {
-        "importMs": 559,
-        "fontsMs": 173,
-        "buildMs": 92,
-        "totalMs": 1705,
+        "importMs": 816,
+        "fontsMs": 234,
+        "buildMs": 81,
+        "totalMs": 1934,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84152,
+          "bytes": 84146,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1424,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 94902,
+          "bytes": 94908,
           "alt": "Opening page 2: Elephants Dream. Film 1. Elephants Dream. Project Orange, Blender Foundation."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84078,
+          "bytes": 84170,
           "alt": "Opening page 3: Big Buck Bunny. Film 2. Big Buck Bunny. Project Peach, Blender Institute."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1424,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 81658,
+          "bytes": 81558,
           "alt": "Opening page 4: Tears of Steel. Film 3. Tears of Steel. Project Mango, Blender Institute."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 78934,
+          "bytes": 78924,
           "alt": "Opening page 5: Spring. Film 4. Spring. Blender Studio."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 86440,
+          "bytes": 86294,
           "alt": "Opening page 6: At the Club."
         }
       ],
@@ -141,18 +141,18 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 305888,
+        "bytes": 304473,
         "pages": 6
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 445237,
+        "bytes": 445249,
         "folio": "edbbafa0",
         "chapters": [
           {
             "pages": 6,
-            "hash": "9062d7af4aafef9f",
-            "lines": "d3e347673fac29b9"
+            "hash": "6c09874f414373ad",
+            "lines": "64ecd8171b8e7681"
           }
         ]
       },
@@ -404,22 +404,28 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.78
+          "worst": 1.79
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "4092e910",
-      "vdtHash": "b1fafd63237b7c42fe8f1d8da62eaa38276b128e",
+      "hash8": "b51035a5",
+      "vdtHash": "afb8c4d66816e2f6e82c4c1c381f187fe3503f7c",
       "timings": {
-        "importMs": 416,
-        "fontsMs": 187,
-        "buildMs": 90,
-        "totalMs": 1356,
+        "importMs": 630,
+        "fontsMs": 201,
+        "buildMs": 71,
+        "totalMs": 1648,
         "builds": 1
       },
       "specimen": {
@@ -452,7 +458,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95328,
+          "bytes": 95282,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {
@@ -463,7 +469,7 @@
           "h": 1424,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 101960,
+          "bytes": 102074,
           "alt": "Página de apertura 2: Elephants Dream. Película 1. Elephants Dream. Proyecto Orange, Blender Foundation."
         },
         {
@@ -474,7 +480,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 90586,
+          "bytes": 90390,
           "alt": "Página de apertura 3: Big Buck Bunny. Película 2. Big Buck Bunny. Proyecto Peach, Blender Institute."
         },
         {
@@ -485,7 +491,7 @@
           "h": 1424,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 92032,
+          "bytes": 91922,
           "alt": "Página de apertura 4: Tears of Steel. Película 3. Tears of Steel. Proyecto Mango, Blender Institute."
         },
         {
@@ -496,7 +502,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 82268,
+          "bytes": 82276,
           "alt": "Página de apertura 5: Spring. Película 4. Spring. Blender Studio."
         },
         {
@@ -507,7 +513,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 95496,
+          "bytes": 95552,
           "alt": "Página de apertura 6: En el cineclub."
         }
       ],
@@ -543,18 +549,18 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 318661,
+        "bytes": 312981,
         "pages": 6
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 453454,
+        "bytes": 453428,
         "folio": "edbbafa0",
         "chapters": [
           {
             "pages": 6,
-            "hash": "4b2ffe83d7e88819",
-            "lines": "713f9984dbac5724"
+            "hash": "ad3296eb655c0ca5",
+            "lines": "a828c40b2bd1bc1d"
           }
         ]
       },
@@ -806,12 +812,18 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.83
+          "worst": 1.75
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

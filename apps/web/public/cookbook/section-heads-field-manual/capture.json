@@ -3,20 +3,20 @@
   "slug": "section-heads-field-manual",
   "sourceHash": "5db84f7d139fac5cf197878a20a589a8fdf43d079a93d2dc110775ee7aaf1509",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.063Z",
+  "capturedAt": "2026-10-13T15:04:42.046Z",
   "variants": {
     "en": {
-      "hash8": "e104725e",
-      "vdtHash": "560f61180d4a8cbee6f40fe780cd310b71d3c4c0",
+      "hash8": "59cd194a",
+      "vdtHash": "d4bdd8df407020ad381dadc37004fdc31437106e",
       "timings": {
-        "importMs": 852,
+        "importMs": 494,
         "fontsMs": 5,
-        "buildMs": 123,
-        "totalMs": 1780,
+        "buildMs": 94,
+        "totalMs": 1375,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1420,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167494,
+          "bytes": 167550,
           "alt": "Page 2: 1.4 Grade dips."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 132632,
+          "bytes": 132492,
           "alt": "Page 3: 1.8 Lead-off ditches."
         }
       ],
@@ -100,12 +100,12 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31295,
+        "bytes": 31225,
         "folio": "0260efa6",
         "chapters": [
           {
             "pages": 3,
-            "hash": "3a7346bbf8358165",
+            "hash": "3dc745c751c3a9ed",
             "lines": "7e521f7fc175811f"
           }
         ]
@@ -335,17 +335,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "000c783d",
-      "vdtHash": "e89416e5fa997268aceccd39dabfc8bef0c3184b",
+      "hash8": "282ce119",
+      "vdtHash": "cb42f1692eacdaa1bf7c25d093febd21f717d3d5",
       "timings": {
-        "importMs": 394,
+        "importMs": 597,
         "fontsMs": 4,
-        "buildMs": 96,
-        "totalMs": 1339,
+        "buildMs": 70,
+        "totalMs": 1507,
         "builds": 1
       },
       "specimen": {
@@ -379,7 +385,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 129172,
+          "bytes": 129132,
           "alt": "Página de apertura 1: 1 Drenaje."
         },
         {
@@ -390,7 +396,7 @@
           "h": 1420,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171296,
+          "bytes": 171332,
           "alt": "Página 2: 1.4 Badenes."
         },
         {
@@ -401,7 +407,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 168880,
+          "bytes": 169598,
           "alt": "Página 3: 1.7 Escalones de retención."
         }
       ],
@@ -429,12 +435,12 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31493,
+        "bytes": 31491,
         "folio": "0260efa6",
         "chapters": [
           {
             "pages": 3,
-            "hash": "cf0e04b968766d2d",
+            "hash": "3f9508214daa1c29",
             "lines": "6494cf66c4968c06"
           }
         ]
@@ -664,7 +670,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

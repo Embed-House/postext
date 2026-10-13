@@ -3,20 +3,20 @@
   "slug": "textbook-margin-column",
   "sourceHash": "db2019aaca18f7ac1335c6b789b6c3d1d99a3bcf74b3d90ae315fa7debaf9585",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:19.520Z",
+  "capturedAt": "2026-10-13T15:05:55.334Z",
   "variants": {
     "en": {
-      "hash8": "f0472104",
-      "vdtHash": "a601945d5147436ead9c994844b45ac4ec76a676",
+      "hash8": "45590cc8",
+      "vdtHash": "144f19caf9c2021887d2422770e4b2cc02ae94a8",
       "timings": {
-        "importMs": 1531,
-        "fontsMs": 10,
-        "buildMs": 139,
-        "totalMs": 2766,
+        "importMs": 783,
+        "fontsMs": 5,
+        "buildMs": 82,
+        "totalMs": 2042,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1310,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 88172,
+          "bytes": 88010,
           "alt": "Page 89: 4.3 Lenses. Figure 4.5. Dispersion. The prism bends every colour towards its base, red least and violet most (the spread is exaggerated). · Figure 4.6. The three principal rays from the tip of an object beyond 2F meet at the tip of a real, inverted, smaller image (gre…"
         },
         {
@@ -82,7 +82,7 @@
           "h": 1310,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 114692,
+          "bytes": 114728,
           "alt": "Page 90: Questions. Figure 4.7. A diverging lens. Parallel rays leave as if they came from the focus in front of the lens (dashed lines), so the image is virtual."
         }
       ],
@@ -114,12 +114,12 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29457,
+        "bytes": 29478,
         "folio": "ccdc6a5d",
         "chapters": [
           {
             "pages": 4,
-            "hash": "22b82023e667a57d",
+            "hash": "d3461422b830904e",
             "lines": "baf2b52ebd2c9a96"
           }
         ]
@@ -386,6 +386,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
@@ -394,13 +399,13 @@
       }
     },
     "es": {
-      "hash8": "9c85a633",
-      "vdtHash": "1939464c860cda40cbec6790c74b9ecf9b535b55",
+      "hash8": "e25912f6",
+      "vdtHash": "78fa29b18b0579cd99543da686a93a8f528b3414",
       "timings": {
-        "importMs": 1704,
-        "fontsMs": 7,
-        "buildMs": 136,
-        "totalMs": 4027,
+        "importMs": 547,
+        "fontsMs": 6,
+        "buildMs": 78,
+        "totalMs": 1588,
         "builds": 1
       },
       "specimen": {
@@ -455,7 +460,7 @@
           "h": 1310,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 89762,
+          "bytes": 89668,
           "alt": "Página 89: 4.3 Lentes. Figura 4.5. Dispersión. El prisma desvía todos los colores hacia su base: el rojo, menos, y el violeta, más (la separación está exagerada). · Figura 4.6. Los tres rayos principales que parten de la punta de un objeto situado más allá de 2F se cortan en l…"
         },
         {
@@ -466,7 +471,7 @@
           "h": 1310,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 118184,
+          "bytes": 118084,
           "alt": "Página 90: Preguntas. Figura 4.7. Una lente divergente. Los rayos paralelos salen como si vinieran del foco situado delante de la lente (líneas a trazos), así que la imagen es virtual."
         }
       ],
@@ -498,13 +503,13 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29894,
+        "bytes": 29846,
         "folio": "ccdc6a5d",
         "chapters": [
           {
             "pages": 4,
-            "hash": "c5516eb0052cceda",
-            "lines": "6cec88ed9006c619"
+            "hash": "25807f31c6733e19",
+            "lines": "47289e789359b2a4"
           }
         ]
       },

@@ -3,21 +3,21 @@
   "slug": "outbreak-report-bulletin",
   "sourceHash": "6c023e9ac30de3d26f462a4f2d3725e722eff4e68bfea53518daa60850aec260",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:15.164Z",
+  "capturedAt": "2026-10-13T15:02:23.944Z",
   "variants": {
     "en": {
-      "hash8": "50e9b70b",
-      "vdtHash": "d293a3e9a5ca67c943aea31271eb09d275bbd64f",
+      "hash8": "ef160801",
+      "vdtHash": "abf87faa6cf04af11985485fa527cff7a72c234f",
       "timings": {
-        "importMs": 917,
-        "fontsMs": 141,
-        "buildMs": 519,
-        "totalMs": 2481,
+        "importMs": 1044,
+        "fontsMs": 158,
+        "buildMs": 365,
+        "totalMs": 2392,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 201796,
+          "bytes": 201734,
           "alt": "Page 2. Table 1. The five case reports at a glance."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174486,
+          "bytes": 174458,
           "alt": "Page 3: REFERENCES. Table 1. Presenting complaints in 20 patients with Kaposi’s sarcoma."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 244724,
+          "bytes": 244706,
           "alt": "Page 4."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1294,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 118194,
+          "bytes": 118212,
           "alt": "Page 5: REFERENCES."
         },
         {
@@ -142,7 +142,7 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 189969,
+        "bytes": 189156,
         "pages": 6
       },
       "sandbox": {
@@ -152,7 +152,7 @@
         "chapters": [
           {
             "pages": 6,
-            "hash": "47b736056320fb23",
+            "hash": "006cacd7385da283",
             "lines": "38884e387a349d1e"
           }
         ]

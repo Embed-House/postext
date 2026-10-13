@@ -3,20 +3,20 @@
   "slug": "photo-essay-full-bleed",
   "sourceHash": "ba42bc95a957ecb1f47428c7fa15755b3ddf9c421eae9839c5de5ab80ef6c4ba",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:03.044Z",
+  "capturedAt": "2026-10-13T15:03:18.104Z",
   "variants": {
     "en": {
-      "hash8": "acc83487",
-      "vdtHash": "1d00ac2f07809ef1dbc262a94650a7453d3692ce",
+      "hash8": "6f8f9ad6",
+      "vdtHash": "c6712977784d27cff846c42380ed434c25df20b1",
       "timings": {
-        "importMs": 995,
-        "fontsMs": 244,
-        "buildMs": 123,
-        "totalMs": 3288,
+        "importMs": 304,
+        "fontsMs": 89,
+        "buildMs": 72,
+        "totalMs": 1276,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
           "h": 750,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 38488,
+          "bytes": 38432,
           "alt": "Page 6: Eleven seconds. IV · Dusk · 19:41."
         },
         {
@@ -126,7 +126,7 @@
           "h": 750,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 37904,
+          "bytes": 37870,
           "alt": "Page 8: First snow."
         },
         {
@@ -177,12 +177,12 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718482,
+        "bytes": 1718483,
         "folio": "fb4fa41a",
         "chapters": [
           {
             "pages": 9,
-            "hash": "38f49456c8c53be4",
+            "hash": "47a6d090a2df515e",
             "lines": "fb4c8f4fbed2e6ab"
           }
         ]
@@ -337,17 +337,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "27ca10aa",
-      "vdtHash": "70b8dc3093c70fc1c90d4908e864abcdaa8aacec",
+      "hash8": "28c2bb44",
+      "vdtHash": "c81a63e9d456f3ea95dd9c3af1cd9ba05190a294",
       "timings": {
-        "importMs": 1854,
-        "fontsMs": 438,
-        "buildMs": 94,
-        "totalMs": 4367,
+        "importMs": 453,
+        "fontsMs": 116,
+        "buildMs": 69,
+        "totalMs": 1440,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +397,7 @@
           "h": 750,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 41430,
+          "bytes": 41952,
           "alt": "Página 2: La subida."
         },
         {
@@ -435,7 +441,7 @@
           "h": 750,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 37674,
+          "bytes": 37626,
           "alt": "Página 6: Once segundos. IV · Atardecer · 19:41."
         },
         {
@@ -457,7 +463,7 @@
           "h": 750,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 39026,
+          "bytes": 39052,
           "alt": "Página 8: Primera nieve."
         },
         {
@@ -508,12 +514,12 @@
       },
       "sandbox": {
         "file": "photo-essay-full-bleed.postext",
-        "bytes": 1718650,
+        "bytes": 1718652,
         "folio": "fb4fa41a",
         "chapters": [
           {
             "pages": 9,
-            "hash": "376a045e2d8a9452",
+            "hash": "b0a744bdff1274cf",
             "lines": "15497ea63ace3600"
           }
         ]
@@ -668,7 +674,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

@@ -3,20 +3,20 @@
   "slug": "trade-paperback-novel",
   "sourceHash": "9500b07f7923b16b03cd4b4c05e97d3aea6a08a5cf6ab3d0be5f06c8c168717e",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:19.578Z",
+  "capturedAt": "2026-10-13T15:05:55.380Z",
   "variants": {
     "en": {
-      "hash8": "1ee9d88f",
-      "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
+      "hash8": "02d3a48d",
+      "vdtHash": "6ac882ad02d8996e2dfea1e69a33f017b078f1bf",
       "timings": {
-        "importMs": 1674,
-        "fontsMs": 63,
-        "buildMs": 100,
-        "totalMs": 4310,
+        "importMs": 395,
+        "fontsMs": 36,
+        "buildMs": 67,
+        "totalMs": 1334,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118204,
+          "bytes": 118280,
           "alt": "Opening page 3: I."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 176124,
+          "bytes": 176334,
           "alt": "Page 4."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 136936,
+          "bytes": 136864,
           "alt": "Page 5."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1543,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 122102,
+          "bytes": 122074,
           "alt": "Opening page 7: II."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 151620,
+          "bytes": 151696,
           "alt": "Page 8."
         }
       ],
@@ -171,7 +171,7 @@
         "chapters": [
           {
             "pages": 8,
-            "hash": "38f1a7d906c6deb1",
+            "hash": "961d7ab561a44739",
             "lines": "7bd272d72bc1223d"
           }
         ]
@@ -361,18 +361,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "ec9e7ca8",
-      "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
+      "hash8": "cf484e6d",
+      "vdtHash": "8818e2cc9920dbada3e4c9a2f47c23d59944f27e",
       "timings": {
-        "importMs": 1571,
-        "fontsMs": 80,
-        "buildMs": 350,
-        "totalMs": 3108,
+        "importMs": 506,
+        "fontsMs": 185,
+        "buildMs": 169,
+        "totalMs": 2188,
         "builds": 1
       },
       "specimen": {
@@ -427,7 +432,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67104,
+          "bytes": 67116,
           "alt": "Página de abertura 3: I."
         },
         {
@@ -449,7 +454,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 44698,
+          "bytes": 44936,
           "alt": "Página de abertura 5: II."
         },
         {
@@ -471,7 +476,7 @@
           "h": 1543,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 107110,
+          "bytes": 107080,
           "alt": "Página de abertura 7: III."
         },
         {
@@ -482,7 +487,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 126082,
+          "bytes": 126092,
           "alt": "Página 8."
         }
       ],
@@ -527,7 +532,7 @@
         "chapters": [
           {
             "pages": 8,
-            "hash": "b80543be64c3d3e2",
+            "hash": "165e8e926f7ebabc",
             "lines": "a04a97f200195038"
           }
         ]
@@ -707,7 +712,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

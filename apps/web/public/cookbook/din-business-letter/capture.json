@@ -3,21 +3,21 @@
   "slug": "din-business-letter",
   "sourceHash": "844740b13bb49b093b2b84c3a5e5876db52195751807d3acf275727eb8c4cc6f",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:20.004Z",
+  "capturedAt": "2026-10-13T14:58:17.136Z",
   "variants": {
     "en": {
-      "hash8": "e3fde9bb",
-      "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
+      "hash8": "7aa09d64",
+      "vdtHash": "e6a91d14ff93ca6e65ab010486f2693a92c7666f",
       "timings": {
-        "importMs": 1460,
-        "fontsMs": 61,
-        "buildMs": 212,
-        "totalMs": 3285,
+        "importMs": 1337,
+        "fontsMs": 36,
+        "buildMs": 155,
+        "totalMs": 2611,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114970,
+          "bytes": 114666,
           "alt": "Opening page 1: Angebot 2026-117: Instandsetzung der 24 Kastenfenster im Vorderhaus Christburger Straße 17."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 77872,
+          "bytes": 77924,
           "alt": "Page 2."
         }
       ],
@@ -89,18 +89,18 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40903,
+        "bytes": 39644,
         "pages": 2
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23166,
+        "bytes": 23198,
         "folio": "2ea14ffd",
         "chapters": [
           {
             "pages": 2,
-            "hash": "1c369a44c9d38146",
-            "lines": "a2cb17d2042dac80"
+            "hash": "9886358e9572ff88",
+            "lines": "6969f3b610a1b020"
           }
         ]
       },
@@ -278,18 +278,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "7d17fa4c",
-      "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
+      "hash8": "5be1b987",
+      "vdtHash": "e6a91d14ff93ca6e65ab010486f2693a92c7666f",
       "timings": {
-        "importMs": 761,
-        "fontsMs": 44,
-        "buildMs": 224,
-        "totalMs": 1913,
+        "importMs": 966,
+        "fontsMs": 33,
+        "buildMs": 156,
+        "totalMs": 2182,
         "builds": 1
       },
       "specimen": {
@@ -322,7 +327,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114970,
+          "bytes": 114666,
           "alt": "Página de apertura 1: Angebot 2026-117: Instandsetzung der 24 Kastenfenster im Vorderhaus Christburger Straße 17."
         },
         {
@@ -333,7 +338,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 77872,
+          "bytes": 77924,
           "alt": "Página 2."
         }
       ],
@@ -361,18 +366,18 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40903,
+        "bytes": 39644,
         "pages": 2
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23190,
+        "bytes": 23222,
         "folio": "2ea14ffd",
         "chapters": [
           {
             "pages": 2,
-            "hash": "1c369a44c9d38146",
-            "lines": "a2cb17d2042dac80"
+            "hash": "9886358e9572ff88",
+            "lines": "6969f3b610a1b020"
           }
         ]
       },
@@ -550,6 +555,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 14.9 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
