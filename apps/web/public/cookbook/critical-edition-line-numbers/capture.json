@@ -3,25 +3,20 @@
   "slug": "critical-edition-line-numbers",
   "sourceHash": "375912d103834b932c907f27bb45a7f6f82b16d95966bf556ce276d432dc9990",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.256Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:55:39.992Z"
-  },
+  "capturedAt": "2026-10-13T10:41:19.981Z",
   "variants": {
     "en": {
-      "hash8": "ae3e675e",
+      "hash8": "a8b4e7d6",
       "vdtHash": "07468e409ef5400855eb4297fb4b8812c1ff05cf",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 14,
-        "buildMs": 78,
-        "totalMs": 946,
+        "importMs": 897,
+        "fontsMs": 22,
+        "buildMs": 132,
+        "totalMs": 2193,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +116,7 @@
           "h": 1565,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 125870,
+          "bytes": 125848,
           "alt": "Page 9."
         }
       ],

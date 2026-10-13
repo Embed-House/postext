@@ -3,21 +3,21 @@
   "slug": "tahqiq-critical-edition",
   "sourceHash": "4aa757f91261e8d0ae52907610228405bfc3f2b58e1df7af3a733a954d01c65b",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:04:11.808Z",
+  "capturedAt": "2026-10-13T10:51:18.835Z",
   "variants": {
     "en": {
-      "hash8": "a94482a4",
-      "vdtHash": "450e833fb8a7df45805cb108debda8aee3d87a64",
+      "hash8": "27db9ac0",
+      "vdtHash": "3a637db169fc089c87a8f255b7df83665a626cd8",
       "timings": {
-        "importMs": 615,
-        "fontsMs": 98,
-        "buildMs": 340,
-        "totalMs": 1740,
+        "importMs": 1371,
+        "fontsMs": 186,
+        "buildMs": 636,
+        "totalMs": 3172,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 22304,
+          "bytes": 22298,
           "alt": "Opening page أ: مقدمة ابن خلدون."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 27520,
+          "bytes": 27534,
           "alt": "Page د."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90286,
+          "bytes": 90180,
           "alt": "Opening page ١: القسم الأول من المقدمة."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 104982,
+          "bytes": 105004,
           "alt": "Page ٢."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1412,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 119378,
+          "bytes": 119388,
           "alt": "Page ٣."
         },
         {
@@ -148,7 +148,7 @@
           "h": 1412,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 111042,
+          "bytes": 111052,
           "alt": "Page ٦."
         },
         {
@@ -204,16 +204,16 @@
       },
       "pdf": {
         "file": "tahqiq-critical-edition.pdf",
-        "bytes": 153155,
+        "bytes": 154799,
         "pages": 11
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26946,
+        "bytes": 26975,
         "chapters": [
           {
             "pages": 11,
-            "hash": "1f5c928a01f5a6bc",
+            "hash": "99f42b42f658bbbe",
             "lines": "1da51885664a65db"
           }
         ]
@@ -439,17 +439,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "240713ab",
-      "vdtHash": "67748458f8413e649340d042e072eef7e43cf3de",
+      "hash8": "9baec435",
+      "vdtHash": "73b127ee59154fe5fc5cd26ed91dd66de7e0d3f2",
       "timings": {
-        "importMs": 626,
-        "fontsMs": 85,
-        "buildMs": 350,
-        "totalMs": 1664,
+        "importMs": 1398,
+        "fontsMs": 159,
+        "buildMs": 583,
+        "totalMs": 2940,
         "builds": 1
       },
       "specimen": {
@@ -481,7 +487,7 @@
           "h": 1412,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 22176,
+          "bytes": 22164,
           "alt": "Página de apertura أ: مقدمة ابن خلدون."
         },
         {
@@ -514,7 +520,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 27520,
+          "bytes": 27534,
           "alt": "Página د."
         },
         {
@@ -525,7 +531,7 @@
           "h": 1412,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 90286,
+          "bytes": 90180,
           "alt": "Página de apertura ١: القسم الأول من المقدمة."
         },
         {
@@ -536,7 +542,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 104982,
+          "bytes": 105004,
           "alt": "Página ٢."
         },
         {
@@ -547,7 +553,7 @@
           "h": 1412,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 119378,
+          "bytes": 119388,
           "alt": "Página ٣."
         },
         {
@@ -580,7 +586,7 @@
           "h": 1412,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 111042,
+          "bytes": 111052,
           "alt": "Página ٦."
         },
         {
@@ -636,16 +642,16 @@
       },
       "pdf": {
         "file": "tahqiq-critical-edition.pdf",
-        "bytes": 151497,
+        "bytes": 153044,
         "pages": 11
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26982,
+        "bytes": 27011,
         "chapters": [
           {
             "pages": 11,
-            "hash": "c7f24abacf0ef2f2",
+            "hash": "38f8f5d639ff9a00",
             "lines": "44d027119153d645"
           }
         ]
@@ -871,7 +877,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

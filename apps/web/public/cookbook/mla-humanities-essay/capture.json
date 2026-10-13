@@ -3,21 +3,21 @@
   "slug": "mla-humanities-essay",
   "sourceHash": "75e49d2ab75c6c1468b7a2933f457ccd70c9535e4a1a7940d477305c3b67a4d6",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.762Z",
+  "capturedAt": "2026-10-13T10:45:14.633Z",
   "variants": {
     "en": {
-      "hash8": "e239e913",
+      "hash8": "b47906aa",
       "vdtHash": "aeeb7aaff771f2fadcc155673cfa79108d5db99d",
       "timings": {
-        "importMs": 2870,
-        "fontsMs": 88,
-        "buildMs": 201,
-        "totalMs": 4752,
+        "importMs": 565,
+        "fontsMs": 34,
+        "buildMs": 139,
+        "totalMs": 1471,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1533,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93306,
+          "bytes": 93312,
           "alt": "Opening page 1: Cold Pastoral."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1533,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 142878,
+          "bytes": 143474,
           "alt": "Page 2: The questions."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1533,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120630,
+          "bytes": 120616,
           "alt": "Page 3: The letters."
         },
         {
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 86106,
+        "bytes": 85591,
         "pages": 4
       },
       "sandbox": {
@@ -344,13 +344,13 @@
       }
     },
     "es": {
-      "hash8": "091495fb",
+      "hash8": "dd5532b1",
       "vdtHash": "7e9d0444b1b469b4a6b5ab616769497245a62456",
       "timings": {
-        "importMs": 1314,
-        "fontsMs": 50,
-        "buildMs": 163,
-        "totalMs": 3109,
+        "importMs": 682,
+        "fontsMs": 36,
+        "buildMs": 172,
+        "totalMs": 1695,
         "builds": 1
       },
       "specimen": {
@@ -393,7 +393,7 @@
           "h": 1533,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150664,
+          "bytes": 151440,
           "alt": "Página 2: Las preguntas."
         },
         {
@@ -404,7 +404,7 @@
           "h": 1533,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 123964,
+          "bytes": 124000,
           "alt": "Página 3: Las cartas."
         },
         {
@@ -447,7 +447,7 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 91216,
+        "bytes": 90443,
         "pages": 4
       },
       "sandbox": {

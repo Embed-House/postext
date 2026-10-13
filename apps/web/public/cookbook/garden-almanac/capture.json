@@ -3,25 +3,20 @@
   "slug": "garden-almanac",
   "sourceHash": "b89da44b55163b14814e4217450e5633015c370bd1bbf48ccacf7a92785636b2",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.368Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.199Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.280Z",
   "variants": {
     "en": {
-      "hash8": "d68810e3",
-      "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
+      "hash8": "e927c4a9",
+      "vdtHash": "57df4cea330a7e8b2bc20b0712f299cc1d95d192",
       "timings": {
-        "importMs": 256,
-        "fontsMs": 84,
-        "buildMs": 77,
-        "totalMs": 1093,
+        "importMs": 262,
+        "fontsMs": 207,
+        "buildMs": 108,
+        "totalMs": 1249,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116672,
+          "bytes": 116680,
           "alt": "Opening page 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in calante…"
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80890,
+          "bytes": 80986,
           "alt": "Page 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -120,12 +115,12 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190202,
+        "bytes": 190196,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ee9e1ec279a02e38",
+            "hash": "af2a2fb06e6307da",
             "lines": "92963d5c14d8075e"
           }
         ]
@@ -405,17 +400,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "f165f52c",
-      "vdtHash": "df789cc4b9478ec7cc59bbd3a745e404a8e8f79f",
+      "hash8": "ee824f6f",
+      "vdtHash": "57df4cea330a7e8b2bc20b0712f299cc1d95d192",
       "timings": {
-        "importMs": 197,
-        "fontsMs": 142,
-        "buildMs": 83,
-        "totalMs": 1053,
+        "importMs": 619,
+        "fontsMs": 195,
+        "buildMs": 126,
+        "totalMs": 1675,
         "builds": 1
       },
       "specimen": {
@@ -449,7 +450,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116672,
+          "bytes": 116680,
           "alt": "Página de apertura 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in c…"
         },
         {
@@ -460,7 +461,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 80890,
+          "bytes": 80986,
           "alt": "Página 28: Consociazioni. Tabella 1. Consociazioni tra dieci ortaggi."
         },
         {
@@ -514,12 +515,12 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190203,
+        "bytes": 190197,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ee9e1ec279a02e38",
+            "hash": "af2a2fb06e6307da",
             "lines": "92963d5c14d8075e"
           }
         ]
@@ -799,7 +800,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

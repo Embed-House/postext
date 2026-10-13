@@ -3,21 +3,21 @@
   "slug": "bulaq-framed-page",
   "sourceHash": "a05be7f36e1f4418ba83b21b13a7997aafb037e775ce98ae5c7897da2682a363",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.270Z",
+  "capturedAt": "2026-10-13T10:37:14.215Z",
   "variants": {
     "en": {
-      "hash8": "66578d39",
+      "hash8": "ad908980",
       "vdtHash": "f209e5eff08c8f19b36eb49188ea00b8a7239131",
       "timings": {
-        "importMs": 369,
-        "fontsMs": 105,
-        "buildMs": 116,
-        "totalMs": 1196,
+        "importMs": 1006,
+        "fontsMs": 173,
+        "buildMs": 152,
+        "totalMs": 2118,
         "builds": 1
       },
       "specimen": {
@@ -142,7 +142,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 109694,
+        "bytes": 110673,
         "pages": 6
       },
       "sandbox": {
@@ -376,13 +376,13 @@
       }
     },
     "es": {
-      "hash8": "02f0b3b6",
+      "hash8": "186af886",
       "vdtHash": "6b8d7055fc41adb04a90a265a431501113ae8f32",
       "timings": {
-        "importMs": 330,
-        "fontsMs": 308,
-        "buildMs": 119,
-        "totalMs": 1401,
+        "importMs": 2156,
+        "fontsMs": 874,
+        "buildMs": 132,
+        "totalMs": 4299,
         "builds": 1
       },
       "specimen": {
@@ -507,7 +507,7 @@
       },
       "pdf": {
         "file": "bulaq-framed-page.pdf",
-        "bytes": 110613,
+        "bytes": 111590,
         "pages": 6
       },
       "sandbox": {

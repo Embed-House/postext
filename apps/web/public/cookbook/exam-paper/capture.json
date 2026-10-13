@@ -3,16 +3,11 @@
   "slug": "exam-paper",
   "sourceHash": "cb2767e34267f660e545ca86db0dfb07105e7f836b865fe681e910b46a6dad4d",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.296Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.175Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.096Z",
   "variants": {
     "en": {
       "hash8": "6a0bb243",
@@ -441,13 +436,13 @@
       }
     },
     "es": {
-      "hash8": "7063e2f2",
+      "hash8": "61d70141",
       "vdtHash": "7066da48c16d318de3498b882396f8d3b4e76f34",
       "timings": {
-        "importMs": 208,
-        "fontsMs": 37,
-        "buildMs": 69,
-        "totalMs": 952,
+        "importMs": 362,
+        "fontsMs": 71,
+        "buildMs": 92,
+        "totalMs": 1247,
         "builds": 1
       },
       "specimen": {
@@ -501,7 +496,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 123648,
+          "bytes": 123656,
           "alt": "Página 3: Comentario de una fuente."
         },
         {

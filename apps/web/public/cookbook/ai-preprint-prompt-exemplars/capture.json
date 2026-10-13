@@ -3,21 +3,21 @@
   "slug": "ai-preprint-prompt-exemplars",
   "sourceHash": "5f5c2e16494e7e34246d6513cda57cdd61c8ee66c58d4090ffde6bb3da98bcdc",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:16.040Z",
+  "capturedAt": "2026-10-13T10:35:58.608Z",
   "variants": {
     "en": {
-      "hash8": "012af07b",
-      "vdtHash": "4d00faa8c19033ddf8a92f4baef745aee3e0b696",
+      "hash8": "e35c5439",
+      "vdtHash": "553cf090b3c2c9b1578eeb9127193b1cb1574966",
       "timings": {
-        "importMs": 25504,
-        "fontsMs": 89,
-        "buildMs": 906,
-        "totalMs": 27227,
+        "importMs": 20169,
+        "fontsMs": 195,
+        "buildMs": 1144,
+        "totalMs": 22628,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1294,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 99042,
+          "bytes": 99024,
           "alt": "Opening page 1: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1294,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 233662,
+          "bytes": 233500,
           "alt": "Page 2: 1 Introduction."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 200508,
+          "bytes": 200452,
           "alt": "Page 3: 3 Arithmetic Reasoning. Figure 2. PaLM 540B uses chain-of-thought prompting to achieve new state-of-the-art performance on the GSM8K benchmark of math word problems. Finetuned GPT-3 and prior best are from Cobbe et al. (2021)."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1294,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 157530,
+          "bytes": 157642,
           "alt": "Page 4: 4 Commonsense Reasoning. Figure 4. Chain-of-thought prompting enables large language models to solve challenging math problems. Notably, chain-of-thought reasoning is an emergent ability of increasing model scale. Prior best numbers are from Cobbe et al. (2021) for GSM…"
         },
         {
@@ -95,7 +95,7 @@
           "h": 1294,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 147020,
+          "bytes": 146848,
           "alt": "Page 5: 5 Symbolic Reasoning. Table 2. Standard prompting versus chain of thought prompting on five arithmetic reasoning benchmarks. Note that chain of thought prompting is an emergent ability of model scale—it does not positively impact performance until used with a model of…"
         },
         {
@@ -106,7 +106,7 @@
           "h": 1294,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208964,
+          "bytes": 209362,
           "alt": "Page 6: 6 Discussion."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1294,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 181230,
+          "bytes": 181186,
           "alt": "Page 7: References."
         }
       ],
@@ -153,17 +153,17 @@
       },
       "pdf": {
         "file": "ai-preprint-prompt-exemplars.pdf",
-        "bytes": 261232,
+        "bytes": 257450,
         "pages": 7
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153375,
+        "bytes": 153374,
         "folio": "055119a2",
         "chapters": [
           {
             "pages": 7,
-            "hash": "ca3d4420dd18a6ba",
+            "hash": "bd4268378f955319",
             "lines": "b49b5757b5042fe7"
           }
         ]
@@ -540,6 +540,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

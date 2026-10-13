@@ -3,25 +3,20 @@
   "slug": "annotated-classic-glosses",
   "sourceHash": "8846f14e522191630d908f59affe029a706b4a63e32f0673789aa256b0b39259",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.912Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:53:16.046Z"
-  },
+  "capturedAt": "2026-10-13T10:35:58.627Z",
   "variants": {
     "en": {
-      "hash8": "22b1a103",
+      "hash8": "be8d9b35",
       "vdtHash": "c1490f453b734305f6ef93e32c04a8eb62c72d45",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 25,
-        "buildMs": 90,
-        "totalMs": 994,
+        "importMs": 2730,
+        "fontsMs": 159,
+        "buildMs": 123,
+        "totalMs": 5337,
         "builds": 1
       },
       "specimen": {
@@ -66,7 +61,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 142120,
+          "bytes": 142142,
           "alt": "Page 82."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116244,
+          "bytes": 116262,
           "alt": "Page 83."
         }
       ],

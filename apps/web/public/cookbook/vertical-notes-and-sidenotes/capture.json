@@ -3,21 +3,21 @@
   "slug": "vertical-notes-and-sidenotes",
   "sourceHash": "17e744a70667837f5876b82adfb411440b9e04ca9d17e7d265cae82592dbc0d5",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.130Z",
+  "capturedAt": "2026-10-13T10:52:28.264Z",
   "variants": {
     "en": {
-      "hash8": "c727aec3",
+      "hash8": "91754710",
       "vdtHash": "1282cfc1c7ae613ee99779b2fdda95956811d982",
       "timings": {
-        "importMs": 1958,
-        "fontsMs": 2655,
-        "buildMs": 85,
-        "totalMs": 5919,
+        "importMs": 1818,
+        "fontsMs": 878,
+        "buildMs": 78,
+        "totalMs": 3798,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 13800,
+          "bytes": 13806,
           "alt": "Opening page 一: たけくらべ."
         },
         {
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "vertical-notes-and-sidenotes.pdf",
-        "bytes": 245948,
+        "bytes": 245997,
         "pages": 4
       },
       "sandbox": {
@@ -316,13 +316,13 @@
       }
     },
     "es": {
-      "hash8": "2e017e0e",
+      "hash8": "9b379105",
       "vdtHash": "e929be3f379b1e3428183f5995c1b03e42b58874",
       "timings": {
-        "importMs": 2356,
-        "fontsMs": 1215,
-        "buildMs": 94,
-        "totalMs": 5264,
+        "importMs": 1784,
+        "fontsMs": 822,
+        "buildMs": 67,
+        "totalMs": 3581,
         "builds": 1
       },
       "specimen": {
@@ -354,7 +354,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 14556,
+          "bytes": 14554,
           "alt": "Página de apertura 一: たけくらべ."
         },
         {
@@ -420,7 +420,7 @@
       },
       "pdf": {
         "file": "vertical-notes-and-sidenotes.pdf",
-        "bytes": 245481,
+        "bytes": 245542,
         "pages": 4
       },
       "sandbox": {

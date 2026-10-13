@@ -3,21 +3,21 @@
   "slug": "bunko-novel-furigana",
   "sourceHash": "b0e2f60391edc9d92a70678450d2f0b0edecc2f1fc8b842939dcd9d9e55b9eb4",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.479Z",
+  "capturedAt": "2026-10-13T10:38:45.115Z",
   "variants": {
     "en": {
-      "hash8": "590a803d",
+      "hash8": "67c4d3a3",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 690,
-        "fontsMs": 473,
-        "buildMs": 57,
-        "totalMs": 1944,
+        "importMs": 2543,
+        "fontsMs": 2001,
+        "buildMs": 62,
+        "totalMs": 5871,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1410,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 16110,
+          "bytes": 16118,
           "alt": "Opening page 一: 夢十夜."
         },
         {
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330644,
+        "bytes": 331437,
         "pages": 9
       },
       "sandbox": {
@@ -352,13 +352,13 @@
       }
     },
     "es": {
-      "hash8": "3beee710",
+      "hash8": "2317343c",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 679,
-        "fontsMs": 464,
-        "buildMs": 58,
-        "totalMs": 1923,
+        "importMs": 2552,
+        "fontsMs": 2090,
+        "buildMs": 65,
+        "totalMs": 6153,
         "builds": 1
       },
       "specimen": {
@@ -390,7 +390,7 @@
           "h": 1410,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 17060,
+          "bytes": 17066,
           "alt": "Página de apertura 一: 夢十夜."
         },
         {
@@ -493,7 +493,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 330775,
+        "bytes": 331570,
         "pages": 9
       },
       "sandbox": {

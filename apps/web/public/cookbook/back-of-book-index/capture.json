@@ -3,21 +3,21 @@
   "slug": "back-of-book-index",
   "sourceHash": "b7b8898605143dba081404bdc21c971175ed3ac1447782e148b81012997991d7",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:16.073Z",
+  "capturedAt": "2026-10-13T10:35:58.763Z",
   "variants": {
     "en": {
-      "hash8": "702898fb",
-      "vdtHash": "567fbe441250ca13ccc219d5f880d9059fa7beae",
+      "hash8": "ffbe53c0",
+      "vdtHash": "16ef0011bbeb6c1c08e14726738afce2b5978164",
       "timings": {
-        "importMs": 271,
-        "fontsMs": 57,
-        "buildMs": 49,
-        "totalMs": 1156,
+        "importMs": 2133,
+        "fontsMs": 1310,
+        "buildMs": 70,
+        "totalMs": 5607,
         "builds": 2
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1319,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 127838,
+          "bytes": 127872,
           "alt": "Opening page 297: 14 The heart as a pump."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117876,
+          "bytes": 117830,
           "alt": "Page 298: 14.2 The pressure–volume loop. Figure 14.1. Pressure–volume loop of the left ventricle at rest: volume from 0 to 150 mL across, pressure from 0 to 140 mmHg up. The dots, anticlockwise from bottom right: mitral valve closes (120 mL), aortic valve opens (80 mmHg), aort…"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1319,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 154094,
+          "bytes": 154058,
           "alt": "Page 299: 14.4 The sinoatrial node and the conduction system."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1319,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 136572,
+          "bytes": 136512,
           "alt": "Page 300: 14.6 Listening to the heart."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1319,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 96108,
+          "bytes": 96200,
           "alt": "Opening page 301: 15 Vessels and blood pressure. Table 15.1. Blood volume and mean pressure along the circulation of a resting adult."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1319,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 152188,
+          "bytes": 152224,
           "alt": "Page 302: 15.2 Flow, pressure and resistance."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1319,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 164824,
+          "bytes": 164890,
           "alt": "Page 303: 15.4 Capillary exchange."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1319,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 92248,
+          "bytes": 92250,
           "alt": "Page 304: 15.6 Venous return."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1319,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 76796,
+          "bytes": 76778,
           "alt": "Opening page 305: Index."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1319,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 77984,
+          "bytes": 78034,
           "alt": "Page 306."
         }
       ],
@@ -193,22 +193,22 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 200923,
+        "bytes": 196738,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 29716,
+        "bytes": 29737,
         "folio": "8dec2b23",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ba9063b87fdc749c",
+            "hash": "092a71bb9de91ce7",
             "lines": "e9f0ec38135e36ec"
           },
           {
             "pages": 4,
-            "hash": "1219ed9cb50162c0",
+            "hash": "c67d6f4a10f3f934",
             "lines": "686d702d4fed8a2f"
           },
           {
@@ -535,18 +535,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "15d97d54",
-      "vdtHash": "3425c1e6734c0df06ad03d5aaa75c71f6e5f237e",
+      "hash8": "1321ee6a",
+      "vdtHash": "f73028327b4e304cb8a026f4f03c6655125771ce",
       "timings": {
-        "importMs": 192,
-        "fontsMs": 57,
-        "buildMs": 57,
-        "totalMs": 1058,
+        "importMs": 3284,
+        "fontsMs": 256,
+        "buildMs": 71,
+        "totalMs": 5344,
         "builds": 2
       },
       "specimen": {
@@ -579,7 +584,7 @@
           "h": 1319,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 125948,
+          "bytes": 125888,
           "alt": "Página de apertura 297: 14 El corazón como bomba."
         },
         {
@@ -590,7 +595,7 @@
           "h": 1319,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 114952,
+          "bytes": 114840,
           "alt": "Página 298: 14.2 El bucle presión-volumen. Figura 14.1. Bucle presión-volumen del ventrículo izquierdo en reposo: volumen de 0 a 150 mL en horizontal, presión de 0 a 140 mmHg en vertical. Los puntos, en sentido antihorario desde abajo a la derecha: cierre de la válvula mitral…"
         },
         {
@@ -601,7 +606,7 @@
           "h": 1319,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144516,
+          "bytes": 144612,
           "alt": "Página 299: 14.4 El nódulo sinoauricular y el sistema de conducción."
         },
         {
@@ -612,7 +617,7 @@
           "h": 1319,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 152256,
+          "bytes": 152220,
           "alt": "Página 300: 14.6 La auscultación del corazón."
         },
         {
@@ -623,7 +628,7 @@
           "h": 1319,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 96658,
+          "bytes": 96606,
           "alt": "Página de apertura 301: 15 Los vasos y la presión arterial. Tabla 15.1. Volumen de sangre y presión media a lo largo de la circulación de un adulto en reposo."
         },
         {
@@ -634,7 +639,7 @@
           "h": 1319,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 145680,
+          "bytes": 145714,
           "alt": "Página 302: 15.2 Flujo, presión y resistencia."
         },
         {
@@ -645,7 +650,7 @@
           "h": 1319,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 165262,
+          "bytes": 165332,
           "alt": "Página 303: 15.4 El intercambio capilar."
         },
         {
@@ -656,7 +661,7 @@
           "h": 1319,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 69018,
+          "bytes": 69014,
           "alt": "Página 304: 15.6 El retorno venoso."
         },
         {
@@ -667,7 +672,7 @@
           "h": 1319,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 84850,
+          "bytes": 84838,
           "alt": "Página de apertura 305: Índice analítico."
         },
         {
@@ -678,7 +683,7 @@
           "h": 1319,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 83030,
+          "bytes": 83044,
           "alt": "Página 306."
         }
       ],
@@ -722,22 +727,22 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 218663,
+        "bytes": 210695,
         "pages": 10
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 30294,
+        "bytes": 30301,
         "folio": "8dec2b23",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ce547cb623a86658",
+            "hash": "517aa0199615a94f",
             "lines": "87614b94a5156a20"
           },
           {
             "pages": 4,
-            "hash": "73b99a6175227861",
+            "hash": "97a6b3196043e535",
             "lines": "47d7c14f29259c25"
           },
           {
@@ -1064,6 +1069,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

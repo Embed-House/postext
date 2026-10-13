@@ -3,21 +3,21 @@
   "slug": "bundle-round-trip",
   "sourceHash": "d47378197e41cddef47ca7a3b0ebec9a806847dd82901aa2c847fa4fc58b9b28",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.276Z",
+  "capturedAt": "2026-10-13T10:37:14.233Z",
   "variants": {
     "en": {
-      "hash8": "72cb9d1f",
+      "hash8": "a54738f6",
       "vdtHash": "9d78aec63b8001efc6fe8ab9462147635d9429b5",
       "timings": {
-        "importMs": 319,
-        "fontsMs": 69,
-        "buildMs": 75,
-        "totalMs": 1249,
+        "importMs": 1269,
+        "fontsMs": 90,
+        "buildMs": 69,
+        "totalMs": 3154,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 2121,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 138092,
+          "bytes": 138098,
           "alt": "Page 2: Two tides a day. Figure 1. Two hours after high water: the pond turns the wheel, and the estuary has fallen below the dashed line. · Table 1. Opening hours. Last entry 45 minutes before closing."
         }
       ],
@@ -89,7 +89,7 @@
       },
       "pdf": {
         "file": "bundle-round-trip.pdf",
-        "bytes": 39052,
+        "bytes": 38934,
         "pages": 2
       },
       "sandbox": {
@@ -327,13 +327,13 @@
       }
     },
     "es": {
-      "hash8": "fe7cbb9f",
+      "hash8": "59024af2",
       "vdtHash": "671bbcedbc544bcd4c4314863a203f82da3b2c79",
       "timings": {
-        "importMs": 419,
-        "fontsMs": 61,
-        "buildMs": 59,
-        "totalMs": 1173,
+        "importMs": 1491,
+        "fontsMs": 153,
+        "buildMs": 76,
+        "totalMs": 2746,
         "builds": 1
       },
       "specimen": {
@@ -366,7 +366,7 @@
           "h": 2121,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85442,
+          "bytes": 85432,
           "alt": "Página de apertura 1: El molino de mareas."
         },
         {
@@ -377,7 +377,7 @@
           "h": 2121,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 144004,
+          "bytes": 143968,
           "alt": "Página 2: Dos mareas al día. Figura 1. Dos horas tras la pleamar: el estanque mueve el rodezno y la ría ha quedado por debajo de la línea discontinua. · Tabla 1. Horario. Última entrada 45 minutos antes del cierre."
         }
       ],
@@ -405,7 +405,7 @@
       },
       "pdf": {
         "file": "bundle-round-trip.pdf",
-        "bytes": 41380,
+        "bytes": 41118,
         "pages": 2
       },
       "sandbox": {

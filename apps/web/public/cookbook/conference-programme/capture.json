@@ -3,25 +3,20 @@
   "slug": "conference-programme",
   "sourceHash": "2673557f0ddef0e2287e2e25ae03ab0c06900bae23429c4441a5596ed37a48ea",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.249Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:55:39.991Z"
-  },
+  "capturedAt": "2026-10-13T10:41:19.948Z",
   "variants": {
     "en": {
-      "hash8": "535837e2",
-      "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
+      "hash8": "cc685ab2",
+      "vdtHash": "0568ab1c030cbc79e8c1f93b7475367cdb814107",
       "timings": {
-        "importMs": 243,
-        "fontsMs": 45,
-        "buildMs": 81,
-        "totalMs": 971,
+        "importMs": 1686,
+        "fontsMs": 334,
+        "buildMs": 163,
+        "totalMs": 3253,
         "builds": 1
       },
       "specimen": {
@@ -77,7 +72,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 75884,
+          "bytes": 75854,
           "alt": "Page 3. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició."
         },
         {
@@ -88,7 +83,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121046,
+          "bytes": 121032,
           "alt": "Page 4: Al vespre. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició (continuació)."
         },
         {
@@ -146,12 +141,12 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32725,
+        "bytes": 32738,
         "folio": "1751ca77",
         "chapters": [
           {
             "pages": 6,
-            "hash": "f2f47d41be30e2f1",
+            "hash": "ee17fd1d66b8f855",
             "lines": "292213d7ef612409"
           }
         ]
@@ -428,13 +423,13 @@
       }
     },
     "es": {
-      "hash8": "9f5da6c1",
-      "vdtHash": "de4ea46dde1c68725e907636d3a4d6b6e0c843dc",
+      "hash8": "488112c6",
+      "vdtHash": "0568ab1c030cbc79e8c1f93b7475367cdb814107",
       "timings": {
-        "importMs": 162,
-        "fontsMs": 33,
-        "buildMs": 79,
-        "totalMs": 928,
+        "importMs": 1893,
+        "fontsMs": 116,
+        "buildMs": 99,
+        "totalMs": 3419,
         "builds": 1
       },
       "specimen": {
@@ -490,7 +485,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 75884,
+          "bytes": 75854,
           "alt": "Página 3. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició."
         },
         {
@@ -501,7 +496,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121046,
+          "bytes": 121032,
           "alt": "Página 4: Al vespre. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició (continuació)."
         },
         {
@@ -559,12 +554,12 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32730,
+        "bytes": 32743,
         "folio": "1751ca77",
         "chapters": [
           {
             "pages": 6,
-            "hash": "f2f47d41be30e2f1",
+            "hash": "ee17fd1d66b8f855",
             "lines": "292213d7ef612409"
           }
         ]

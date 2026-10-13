@@ -3,25 +3,20 @@
   "slug": "poetry-collection",
   "sourceHash": "f9aca0541f57390e692f27fccdbb9da2e0e71030957f3a9dccc0b72a17da58d6",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.981Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:01:35.563Z"
-  },
+  "capturedAt": "2026-10-13T10:47:03.126Z",
   "variants": {
     "en": {
-      "hash8": "389f3163",
+      "hash8": "ce1305d6",
       "vdtHash": "6f34e685fb292bf6fd80f59acad0e217d78802af",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 41,
-        "buildMs": 64,
-        "totalMs": 938,
+        "importMs": 368,
+        "fontsMs": 47,
+        "buildMs": 81,
+        "totalMs": 1527,
         "builds": 1
       },
       "specimen": {
@@ -87,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 62102,
+          "bytes": 62108,
           "alt": "Opening page 4: Contents."
         },
         {

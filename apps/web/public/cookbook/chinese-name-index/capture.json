@@ -3,21 +3,21 @@
   "slug": "chinese-name-index",
   "sourceHash": "dc096587eab46c4a09841cc47b0bedc1ecf55f4c817b6aa426d4988357b4a5ce",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.561Z",
+  "capturedAt": "2026-10-13T10:38:45.340Z",
   "variants": {
     "en": {
-      "hash8": "fe8be2da",
-      "vdtHash": "96886d18327697be821f983cbf205ac32b80b962",
+      "hash8": "3777c457",
+      "vdtHash": "55e30ab4a45b566f212b97f1c44e655eceec9a0f",
       "timings": {
-        "importMs": 352,
-        "fontsMs": 676,
-        "buildMs": 119,
-        "totalMs": 1864,
+        "importMs": 1136,
+        "fontsMs": 1522,
+        "buildMs": 128,
+        "totalMs": 3605,
         "builds": 2
       },
       "specimen": {
@@ -53,7 +53,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101958,
+          "bytes": 101954,
           "alt": "Opening page 1: 甄士隐梦幻识通灵 贾雨村风尘怀闺秀."
         },
         {
@@ -64,7 +64,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 98372,
+          "bytes": 98374,
           "alt": "Page 2."
         },
         {
@@ -75,7 +75,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 96932,
+          "bytes": 96934,
           "alt": "Opening page 3: 贾夫人仙逝扬州城 冷子兴演说荣国府."
         },
         {
@@ -86,7 +86,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 103550,
+          "bytes": 103544,
           "alt": "Page 4."
         },
         {
@@ -108,7 +108,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 111094,
+          "bytes": 111096,
           "alt": "Page 6."
         },
         {
@@ -119,7 +119,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 38434,
+          "bytes": 38492,
           "alt": "Opening page 7: 人名索引."
         },
         {
@@ -130,7 +130,7 @@
           "h": 1450,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 42748,
+          "bytes": 42834,
           "alt": "Page 8."
         },
         {
@@ -152,7 +152,7 @@
           "h": 1450,
           "file": "p14.webp",
           "strip": "p14.s.webp",
-          "bytes": 122236,
+          "bytes": 122238,
           "alt": "Page 6."
         },
         {
@@ -163,7 +163,7 @@
           "h": 1450,
           "file": "p15.webp",
           "strip": "p15.s.webp",
-          "bytes": 40680,
+          "bytes": 40682,
           "alt": "Opening page 7: 人名索引."
         },
         {
@@ -174,7 +174,7 @@
           "h": 1450,
           "file": "p16.webp",
           "strip": "p16.s.webp",
-          "bytes": 44632,
+          "bytes": 44824,
           "alt": "Page 8."
         }
       ],
@@ -226,18 +226,18 @@
       },
       "pdf": {
         "file": "chinese-name-index.pdf",
-        "bytes": 307273,
+        "bytes": 307079,
         "pages": 8
       },
       "sandbox": {
         "file": "chinese-name-index.postext",
-        "bytes": 21659,
+        "bytes": 21710,
         "folio": "8948df8d",
         "pages": 8,
         "chapters": [
           {
             "pages": 8,
-            "hash": "91d56d273cd63189",
+            "hash": "7205781bee4125a1",
             "lines": "31bd2d8017bcd74a"
           }
         ]
@@ -473,17 +473,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "fafc8562",
-      "vdtHash": "faa0bc8df6328dc99a362713506403f6c23a469d",
+      "hash8": "f2642524",
+      "vdtHash": "b3092498bc15450767349f3a8584a7be5c5922e2",
       "timings": {
-        "importMs": 310,
-        "fontsMs": 398,
-        "buildMs": 108,
-        "totalMs": 1528,
+        "importMs": 839,
+        "fontsMs": 1002,
+        "buildMs": 134,
+        "totalMs": 2850,
         "builds": 2
       },
       "specimen": {
@@ -519,7 +525,7 @@
           "h": 1450,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101958,
+          "bytes": 101954,
           "alt": "Página de apertura 1: 甄士隐梦幻识通灵 贾雨村风尘怀闺秀."
         },
         {
@@ -530,7 +536,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 98372,
+          "bytes": 98374,
           "alt": "Página 2."
         },
         {
@@ -541,7 +547,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 96932,
+          "bytes": 96934,
           "alt": "Página de apertura 3: 贾夫人仙逝扬州城 冷子兴演说荣国府."
         },
         {
@@ -552,7 +558,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 103550,
+          "bytes": 103544,
           "alt": "Página 4."
         },
         {
@@ -574,7 +580,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 111094,
+          "bytes": 111096,
           "alt": "Página 6."
         },
         {
@@ -585,7 +591,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 38434,
+          "bytes": 38492,
           "alt": "Página de apertura 7: 人名索引."
         },
         {
@@ -596,7 +602,7 @@
           "h": 1450,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 42124,
+          "bytes": 42220,
           "alt": "Página 8."
         },
         {
@@ -618,7 +624,7 @@
           "h": 1450,
           "file": "p14.webp",
           "strip": "p14.s.webp",
-          "bytes": 122236,
+          "bytes": 122238,
           "alt": "Página 6."
         },
         {
@@ -629,7 +635,7 @@
           "h": 1450,
           "file": "p15.webp",
           "strip": "p15.s.webp",
-          "bytes": 40680,
+          "bytes": 40682,
           "alt": "Página de apertura 7: 人名索引."
         },
         {
@@ -640,7 +646,7 @@
           "h": 1450,
           "file": "p16.webp",
           "strip": "p16.s.webp",
-          "bytes": 45096,
+          "bytes": 45258,
           "alt": "Página 8."
         }
       ],
@@ -692,18 +698,18 @@
       },
       "pdf": {
         "file": "chinese-name-index.pdf",
-        "bytes": 307483,
+        "bytes": 307296,
         "pages": 8
       },
       "sandbox": {
         "file": "chinese-name-index.postext",
-        "bytes": 21680,
+        "bytes": 21732,
         "folio": "8948df8d",
         "pages": 8,
         "chapters": [
           {
             "pages": 8,
-            "hash": "5c9ac61c2e8b45cc",
+            "hash": "be6aaa32cce4d18e",
             "lines": "79d53df40b92f4b2"
           }
         ]
@@ -939,7 +945,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

@@ -3,21 +3,21 @@
   "slug": "book-from-chapters",
   "sourceHash": "c7c6d4f86b8237d456181aba0576001a55ec60d6df01f33f81daab7323d3134e",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.253Z",
+  "capturedAt": "2026-10-13T10:37:14.126Z",
   "variants": {
     "en": {
-      "hash8": "872ca565",
+      "hash8": "6a74c0c5",
       "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
       "timings": {
-        "importMs": 428,
-        "fontsMs": 80,
-        "buildMs": 103,
-        "totalMs": 1309,
+        "importMs": 1034,
+        "fontsMs": 353,
+        "buildMs": 105,
+        "totalMs": 2659,
         "builds": 1
       },
       "specimen": {
@@ -160,7 +160,7 @@
           "h": 1333,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 76394,
+          "bytes": 76144,
           "alt": "Page 11."
         }
       ],
@@ -204,7 +204,7 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 121305,
+        "bytes": 121326,
         "pages": 11
       },
       "sandbox": {
@@ -494,13 +494,13 @@
       }
     },
     "es": {
-      "hash8": "563457d7",
+      "hash8": "2fa7b1b8",
       "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
       "timings": {
-        "importMs": 483,
-        "fontsMs": 71,
-        "buildMs": 104,
-        "totalMs": 1282,
+        "importMs": 1085,
+        "fontsMs": 159,
+        "buildMs": 126,
+        "totalMs": 2146,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +555,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 107314,
+          "bytes": 107336,
           "alt": "Página de apertura 3: 1 Otoño."
         },
         {
@@ -566,7 +566,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 114940,
+          "bytes": 114928,
           "alt": "Página 4: Reservas para el invierno. Figura 1.1. Un cuadro en octubre: la miel (dorada) rodea la última cría (marrón) y el polen (rojizo)."
         },
         {
@@ -599,7 +599,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109414,
+          "bytes": 109418,
           "alt": "Página de apertura 7: 3 Primavera."
         },
         {
@@ -687,7 +687,7 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 130547,
+        "bytes": 130483,
         "pages": 11
       },
       "sandbox": {

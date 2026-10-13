@@ -3,25 +3,20 @@
   "slug": "side-heads-hanging-numbers",
   "sourceHash": "cd5dd8588a41f17309f47bb194bf871c9fb460f53416e6938b80d17bc78af187",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.114Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:03:05.056Z"
-  },
+  "capturedAt": "2026-10-13T10:48:46.103Z",
   "variants": {
     "en": {
-      "hash8": "66dc85f4",
+      "hash8": "80c31e29",
       "vdtHash": "b4ac9f246a4b482f524154867e5b331a204e9587",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 4,
-        "buildMs": 62,
-        "totalMs": 1008,
+        "importMs": 721,
+        "fontsMs": 5,
+        "buildMs": 103,
+        "totalMs": 1909,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 88614,
+          "bytes": 88546,
           "alt": "Opening page 1: Competition brief."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 129596,
+          "bytes": 129670,
           "alt": "Page 2: 2 The site. Figure 1. The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks along the north edge. Red arrows: possible entrances; grey arrow: service."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 73870,
+          "bytes": 73876,
           "alt": "Page 3: 3.2 Staff areas. Figure 2. Quay front, 1:300. In red, the four frames at the east end, where the reinforcement has corroded. · Table 1. Schedule of net floor areas."
         },
         {
@@ -369,13 +364,13 @@
       }
     },
     "es": {
-      "hash8": "633adc97",
+      "hash8": "9f0f9903",
       "vdtHash": "05cd015399770ed6b13ddb7974d9e7a3f9663b69",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 4,
-        "buildMs": 60,
-        "totalMs": 925,
+        "importMs": 686,
+        "fontsMs": 8,
+        "buildMs": 119,
+        "totalMs": 2314,
         "builds": 1
       },
       "specimen": {
@@ -409,7 +404,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93344,
+          "bytes": 93446,
           "alt": "Página de apertura 1: Bases del concurso."
         },
         {
@@ -420,7 +415,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134268,
+          "bytes": 134262,
           "alt": "Página 2: 2 El emplazamiento. Figura 1. La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el borde norte. Flechas rojas: accesos posibles; flecha gris: servicio."
         },
         {
@@ -431,7 +426,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77124,
+          "bytes": 77410,
           "alt": "Página 3: 3.2 Áreas internas. Figura 2. Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con las armaduras corroídas. · Tabla 1. Programa de superficies útiles por zonas."
         },
         {

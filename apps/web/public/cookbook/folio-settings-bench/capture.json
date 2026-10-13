@@ -3,25 +3,20 @@
   "slug": "folio-settings-bench",
   "sourceHash": "42de82e5b69080133ae7a1d03839a6cc83334f8d818a4f46a0d704e56e759a43",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.337Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.191Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.226Z",
   "variants": {
     "en": {
-      "hash8": "1c0296f0",
+      "hash8": "7edf3be5",
       "vdtHash": "0dd0208791389c884eb7adf699b0c3a5d75b7a5c",
       "timings": {
-        "importMs": 2379,
-        "fontsMs": 3,
-        "buildMs": 62,
-        "totalMs": 3146,
+        "importMs": 727,
+        "fontsMs": 4,
+        "buildMs": 70,
+        "totalMs": 1643,
         "builds": 1
       },
       "specimen": {
@@ -86,7 +81,7 @@
           "h": 1455,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 66060,
+          "bytes": 66044,
           "alt": "Opening page 4: The bowline."
         },
         {
@@ -97,7 +92,7 @@
           "h": 1455,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 51448,
+          "bytes": 51456,
           "alt": "Opening page 5: The clove hitch."
         },
         {
@@ -108,7 +103,7 @@
           "h": 1455,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 51986,
+          "bytes": 51968,
           "alt": "Opening page 6: The figure-eight."
         },
         {
@@ -141,7 +136,7 @@
           "h": 1455,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 72464,
+          "bytes": 72604,
           "alt": "Opening page 9: Looking after rope."
         },
         {

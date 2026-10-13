@@ -3,25 +3,20 @@
   "slug": "magazine-feature-opener",
   "sourceHash": "882d5972a4fc1920cffed0b2192601ca098c046a56bf78d59199733a418f09bf",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.526Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:59:13.139Z"
-  },
+  "capturedAt": "2026-10-13T10:43:56.454Z",
   "variants": {
     "en": {
-      "hash8": "3d92cf84",
-      "vdtHash": "1871a690ae43e90d4c3e530d5da43e94d98675cb",
+      "hash8": "8aee545f",
+      "vdtHash": "c29f162b8a9663cedb21813b37b0c6fa8504a84b",
       "timings": {
-        "importMs": 164,
-        "fontsMs": 36,
-        "buildMs": 228,
-        "totalMs": 1105,
+        "importMs": 303,
+        "fontsMs": 46,
+        "buildMs": 270,
+        "totalMs": 1366,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 172178,
+          "bytes": 172150,
           "alt": "Opening page 57: The Lake That Keeps Time."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237362,
+          "bytes": 237288,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 178846,
+          "bytes": 178858,
           "alt": "Page 59: 31. Early March in the pine wood above the shore: the snow goes first where the sun reaches the ground, weeks before the ice lets go of the lake."
         },
         {
@@ -88,7 +83,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 103848,
+          "bytes": 103776,
           "alt": "Opening page 60: Five Kinds of Ice."
         }
       ],
@@ -120,12 +115,12 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768162,
+        "bytes": 768160,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "34a16409afdd06e9",
+            "hash": "4669d62319bd65e3",
             "lines": "4afb8793d3c96303"
           }
         ]
@@ -418,6 +413,11 @@
             "detail": "3 paragraphs set a line short with tracking (worst −5‰): p. 1 −5‰ “The notebook lives in a biscuit tin on the kitch…”, p. 2 −5‰ “The reason lies in an odd habit of water. Most l…”, p. 2 −5‰ “For the first fifty years of the record, the lak…”"
           },
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering"
@@ -426,13 +426,13 @@
       }
     },
     "es": {
-      "hash8": "9fa7398b",
-      "vdtHash": "8cd4f449ddc4be1a9bc7860b0343edd132b9d730",
+      "hash8": "194d3656",
+      "vdtHash": "61d56b4268078f91523655f22dd2476e46c85094",
       "timings": {
-        "importMs": 179,
+        "importMs": 286,
         "fontsMs": 44,
-        "buildMs": 147,
-        "totalMs": 1037,
+        "buildMs": 166,
+        "totalMs": 1189,
         "builds": 1
       },
       "specimen": {
@@ -466,7 +466,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 172314,
+          "bytes": 172270,
           "alt": "Página de apertura 57: El lago que lleva la cuenta."
         },
         {
@@ -477,7 +477,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 238146,
+          "bytes": 238036,
           "alt": "Página 58: Un termómetro con tapa."
         },
         {
@@ -488,7 +488,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 182012,
+          "bytes": 182064,
           "alt": "Página 59: 31. Principios de marzo en el pinar sobre la orilla: la nieve se retira primero donde el sol llega al suelo, semanas antes de que el hielo suelte el lago."
         },
         {
@@ -499,7 +499,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105682,
+          "bytes": 105608,
           "alt": "Página de apertura 60: Cinco clases de hielo."
         }
       ],
@@ -531,12 +531,12 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768206,
+        "bytes": 768208,
         "folio": "da2eb3c6",
         "chapters": [
           {
             "pages": 4,
-            "hash": "6ab9aa75246f9857",
+            "hash": "0ef2b16f8e6fd469",
             "lines": "6d64c02f4df49997"
           }
         ]
@@ -820,6 +820,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

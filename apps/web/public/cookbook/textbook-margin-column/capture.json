@@ -3,25 +3,20 @@
   "slug": "textbook-margin-column",
   "sourceHash": "db2019aaca18f7ac1335c6b789b6c3d1d99a3bcf74b3d90ae315fa7debaf9585",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.278Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:04:11.979Z"
-  },
+  "capturedAt": "2026-10-13T10:51:19.520Z",
   "variants": {
     "en": {
-      "hash8": "3f8d0090",
+      "hash8": "f0472104",
       "vdtHash": "a601945d5147436ead9c994844b45ac4ec76a676",
       "timings": {
-        "importMs": 247,
-        "fontsMs": 5,
-        "buildMs": 72,
-        "totalMs": 1068,
+        "importMs": 1531,
+        "fontsMs": 10,
+        "buildMs": 139,
+        "totalMs": 2766,
         "builds": 1
       },
       "specimen": {
@@ -54,7 +49,7 @@
           "h": 1310,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 125540,
+          "bytes": 125590,
           "alt": "Opening page 87: Light and Lenses. Figure 4.1. A burning glass. A converging lens bends parallel rays of sunlight so that they all meet at one point, the focus, where a card begins to scorch."
         },
         {
@@ -65,7 +60,7 @@
           "h": 1310,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 146768,
+          "bytes": 146866,
           "alt": "Page 88: 4.2 Dispersion. Figure 4.2. Entering glass, a ray bends towards the normal (dashed): the angle of refraction (green) is less than the angle of incidence (amber). · Figure 4.3. Rays aimed at the centre of a semicircular block. At 25° the ray escapes, bent away from the…"
         },
         {
@@ -76,7 +71,7 @@
           "h": 1310,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 88144,
+          "bytes": 88172,
           "alt": "Page 89: 4.3 Lenses. Figure 4.5. Dispersion. The prism bends every colour towards its base, red least and violet most (the spread is exaggerated). · Figure 4.6. The three principal rays from the tip of an object beyond 2F meet at the tip of a real, inverted, smaller image (gre…"
         },
         {
@@ -399,13 +394,13 @@
       }
     },
     "es": {
-      "hash8": "1e1cddda",
-      "vdtHash": "d981da01d244693a337bfbf8fe84d097564a7a42",
+      "hash8": "9c85a633",
+      "vdtHash": "1939464c860cda40cbec6790c74b9ecf9b535b55",
       "timings": {
-        "importMs": 214,
-        "fontsMs": 5,
-        "buildMs": 93,
-        "totalMs": 1066,
+        "importMs": 1704,
+        "fontsMs": 7,
+        "buildMs": 136,
+        "totalMs": 4027,
         "builds": 1
       },
       "specimen": {
@@ -438,7 +433,7 @@
           "h": 1310,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 123600,
+          "bytes": 123522,
           "alt": "Página de apertura 87: Luz y lentes. Figura 4.1. Una lupa al sol. Una lente convergente desvía los rayos paralelos de luz para que coincidan en un punto, el foco, donde una cartulina empieza a quemarse."
         },
         {
@@ -449,7 +444,7 @@
           "h": 1310,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150178,
+          "bytes": 150298,
           "alt": "Página 88: 4.2 Dispersión. Figura 4.2. Al entrar en el vidrio, el rayo se acerca a la normal (a trazos): el ángulo de refracción (verde) es menor que el de incidencia (ámbar). · Figura 4.3. Rayos dirigidos al centro de un bloque semicircular. A 25° el rayo sale, alejándose de…"
         },
         {
@@ -460,7 +455,7 @@
           "h": 1310,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 89790,
+          "bytes": 89762,
           "alt": "Página 89: 4.3 Lentes. Figura 4.5. Dispersión. El prisma desvía todos los colores hacia su base: el rojo, menos, y el violeta, más (la separación está exagerada). · Figura 4.6. Los tres rayos principales que parten de la punta de un objeto situado más allá de 2F se cortan en l…"
         },
         {
@@ -471,7 +466,7 @@
           "h": 1310,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 118106,
+          "bytes": 118184,
           "alt": "Página 90: Preguntas. Figura 4.7. Una lente divergente. Los rayos paralelos salen como si vinieran del foco situado delante de la lente (líneas a trazos), así que la imagen es virtual."
         }
       ],
@@ -503,13 +498,13 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29878,
+        "bytes": 29894,
         "folio": "ccdc6a5d",
         "chapters": [
           {
             "pages": 4,
-            "hash": "2fbaed784674f9d8",
-            "lines": "394e2255a6025091"
+            "hash": "c5516eb0052cceda",
+            "lines": "6cec88ed9006c619"
           }
         ]
       },
@@ -774,6 +769,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,12 +3,12 @@
   "slug": "splash-inset-broken-border",
   "sourceHash": "8ba17965cac50f3918e6c5b353671df4df84cb295a7c5d9fa21e4a38c3bb0345",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:03:05.067Z",
+  "capturedAt": "2026-10-13T10:48:46.203Z",
   "variants": {
     "en": {
       "hash8": "5173dc09",
@@ -936,13 +936,13 @@
       }
     },
     "ar": {
-      "hash8": "a3919169",
+      "hash8": "fd7ef75f",
       "vdtHash": "7a907b581ba76903673d89d9523d7dd4926f3c7c",
       "timings": {
-        "importMs": 550,
-        "fontsMs": 343,
-        "buildMs": 120,
-        "totalMs": 1744,
+        "importMs": 579,
+        "fontsMs": 353,
+        "buildMs": 133,
+        "totalMs": 1724,
         "builds": 1
       },
       "specimen": {
@@ -1013,7 +1013,7 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 769403,
+        "bytes": 768827,
         "pages": 2
       },
       "sandbox": {

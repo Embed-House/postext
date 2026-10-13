@@ -3,21 +3,21 @@
   "slug": "ml-paper-theorems-proofs",
   "sourceHash": "31be5e4e029b95ed33c98b1c960264ca6233760b279b7df3ab809febadec50a1",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.745Z",
+  "capturedAt": "2026-10-13T10:45:14.615Z",
   "variants": {
     "en": {
-      "hash8": "cd2f156b",
-      "vdtHash": "128ac7e24b3cff59f2e981b610a048bdfd3766c6",
+      "hash8": "aa3f0c6a",
+      "vdtHash": "2452c4ff08fe047d012d69a86c92cd3603a063ce",
       "timings": {
-        "importMs": 1736,
-        "fontsMs": 837,
-        "buildMs": 582,
-        "totalMs": 6422,
+        "importMs": 423,
+        "fontsMs": 274,
+        "buildMs": 377,
+        "totalMs": 1813,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1427,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126372,
+          "bytes": 126616,
           "alt": "Opening page 1: Direct Preference Optimization: Your Language Model is Secretly a Reward Model."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1427,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167276,
+          "bytes": 167240,
           "alt": "Page 2: 1 Introduction."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1427,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120648,
+          "bytes": 120624,
           "alt": "Page 3. Figure 1. DPO optimizes for human preferences while avoiding reinforcement learning. Existing methods for fine-tuning language models with human feedback first fit a reward model to a dataset of prompts and human preferences over pairs of responses, and then use RL to…"
         },
         {
@@ -83,7 +83,7 @@
           "h": 1427,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 144372,
+          "bytes": 144288,
           "alt": "Page 4: 4 Direct Preference Optimization."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1427,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 143518,
+          "bytes": 143426,
           "alt": "Page 5."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1427,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140180,
+          "bytes": 140056,
           "alt": "Page 6: 5 Theoretical Analysis of DPO."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1427,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 113158,
+          "bytes": 113202,
           "alt": "Page 7: 6 Experiments. Table 1. GPT-4 win rates vs. ground truth summaries for out-of-distribution CNN/DailyMail input articles."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1427,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 130696,
+          "bytes": 130668,
           "alt": "Page 8: A Mathematical Derivations."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1427,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 92408,
+          "bytes": 92400,
           "alt": "Page 9: A.5 Proof of Lemma 1 and 2."
         },
         {
@@ -193,17 +193,17 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 981341,
+        "bytes": 976639,
         "pages": 10
       },
       "sandbox": {
         "file": "ml-paper-theorems-proofs.postext",
-        "bytes": 86697,
+        "bytes": 86691,
         "folio": "70aa8698",
         "chapters": [
           {
             "pages": 10,
-            "hash": "bf5739e8b65da4f6",
+            "hash": "1a2e46ebc0acdb6d",
             "lines": "887fd11a2de00628"
           }
         ]
@@ -565,6 +565,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Lemma 1. Under the Plackett-Luce, and in particu…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

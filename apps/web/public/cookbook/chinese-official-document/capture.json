@@ -3,21 +3,21 @@
   "slug": "chinese-official-document",
   "sourceHash": "334c8d687cb9808e27e8a2f966c00eee8e4bd4ab4fab5eb0bc7a90fd77dd82c7",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.599Z",
+  "capturedAt": "2026-10-13T10:38:45.396Z",
   "variants": {
     "en": {
-      "hash8": "848cda8c",
-      "vdtHash": "97c6878c40ed282e473e0718ba1584f1af0ffee4",
+      "hash8": "38ab0566",
+      "vdtHash": "80d8a526f7da634513bcf335a6e1537e7fa4f2f7",
       "timings": {
-        "importMs": 498,
-        "fontsMs": 658,
-        "buildMs": 72,
-        "totalMs": 1890,
+        "importMs": 1272,
+        "fontsMs": 1417,
+        "buildMs": 52,
+        "totalMs": 3458,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 56354,
+          "bytes": 56428,
           "alt": "Opening page 1: 示例市出版协会关于举办 2026年中文排版实务培训班的 通知."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 73306,
+          "bytes": 72782,
           "alt": "Page 2: 二、培训地点."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50282,
+          "bytes": 50208,
           "alt": "Page 3: 五、报名办法."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 46200,
+          "bytes": 46456,
           "alt": "Opening page 4: 培训日程安排."
         }
       ],
@@ -115,18 +115,18 @@
       },
       "pdf": {
         "file": "chinese-official-document.pdf",
-        "bytes": 127864,
+        "bytes": 127326,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20554,
+        "bytes": 20528,
         "folio": "f2e4b92d",
         "chapters": [
           {
             "pages": 4,
-            "hash": "76d12c322d4dced2",
-            "lines": "b687df6187e72cf5"
+            "hash": "8b1569b162b4e0bf",
+            "lines": "d961d53bdeef3869"
           }
         ]
       },
@@ -355,7 +355,7 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.08
+          "worst": 0.09
         },
         "raggedLines": {
           "count": 0
@@ -365,18 +365,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "5f3f6fdf",
-      "vdtHash": "a8ae63527a8b45e96dc808e6430c58389553e4d7",
+      "hash8": "c738b283",
+      "vdtHash": "2dcc65ad799e08155e5c0b6dd70622f5e28c1808",
       "timings": {
-        "importMs": 499,
-        "fontsMs": 383,
-        "buildMs": 74,
-        "totalMs": 1625,
+        "importMs": 1004,
+        "fontsMs": 645,
+        "buildMs": 50,
+        "totalMs": 2840,
         "builds": 1
       },
       "specimen": {
@@ -409,7 +414,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 56522,
+          "bytes": 56588,
           "alt": "Página de apertura 1: 示例市出版协会关于举办 2026年中文排版实务培训班的 通知."
         },
         {
@@ -420,7 +425,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 72916,
+          "bytes": 72950,
           "alt": "Página 2: 二、培训地点."
         },
         {
@@ -431,7 +436,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50418,
+          "bytes": 50362,
           "alt": "Página 3: 五、报名办法."
         },
         {
@@ -442,7 +447,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 46244,
+          "bytes": 46454,
           "alt": "Página de apertura 4: 培训日程安排."
         }
       ],
@@ -474,18 +479,18 @@
       },
       "pdf": {
         "file": "chinese-official-document.pdf",
-        "bytes": 128143,
+        "bytes": 127594,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20581,
+        "bytes": 20565,
         "folio": "f2e4b92d",
         "chapters": [
           {
             "pages": 4,
-            "hash": "c011feec897eeed0",
-            "lines": "0031869f5dff0817"
+            "hash": "194d28551d46a651",
+            "lines": "a1e32e15f2bbd2bb"
           }
         ]
       },
@@ -714,7 +719,7 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.08
+          "worst": 0.09
         },
         "raggedLines": {
           "count": 0
@@ -724,6 +729,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

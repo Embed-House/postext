@@ -3,25 +3,20 @@
   "slug": "justification-lab",
   "sourceHash": "d7640adedce544989fe2a6e5f45e4fa43f9aecd63fc13ec869c27bc518c99348",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.429Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:57:06.234Z"
-  },
+  "capturedAt": "2026-10-13T10:42:47.967Z",
   "variants": {
     "en": {
-      "hash8": "2e45a6f7",
+      "hash8": "940e6f7f",
       "vdtHash": "86cfc166e9e8f9660f2c2d7da71ff06dd39238ba",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 1,
-        "buildMs": 55,
-        "totalMs": 978,
+        "importMs": 316,
+        "fontsMs": 3,
+        "buildMs": 69,
+        "totalMs": 1182,
         "builds": 2
       },
       "specimen": {
@@ -66,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167300,
+          "bytes": 167284,
           "alt": "Page 2: Greedy and total fit."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 133748,
+          "bytes": 133754,
           "alt": "Page 3: What the eye forgives."
         }
       ],
@@ -352,13 +347,13 @@
       }
     },
     "es": {
-      "hash8": "a07476fc",
+      "hash8": "c9929d02",
       "vdtHash": "b6fa89103ba58230a9e7d49ac56c99d00cd8a5a0",
       "timings": {
-        "importMs": 258,
+        "importMs": 538,
         "fontsMs": 2,
-        "buildMs": 167,
-        "totalMs": 1162,
+        "buildMs": 199,
+        "totalMs": 1855,
         "builds": 2
       },
       "specimen": {
@@ -392,7 +387,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 117318,
+          "bytes": 117320,
           "alt": "Página de apertura 1: El problema de los ríos."
         },
         {
@@ -403,7 +398,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 168138,
+          "bytes": 168104,
           "alt": "Página 2: Línea a línea o en bloque."
         },
         {

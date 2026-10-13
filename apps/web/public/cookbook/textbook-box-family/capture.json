@@ -3,25 +3,20 @@
   "slug": "textbook-box-family",
   "sourceHash": "2929067b61fa2bec9953d6cfd743852b4bcf5407ed00623c3f18f3b52c6c62d0",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.275Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:04:11.976Z"
-  },
+  "capturedAt": "2026-10-13T10:51:19.454Z",
   "variants": {
     "en": {
-      "hash8": "68ea484f",
+      "hash8": "c409c037",
       "vdtHash": "dc28595e779ffca5d21fcfb164e4e34256c3f5e4",
       "timings": {
-        "importMs": 198,
-        "fontsMs": 37,
-        "buildMs": 80,
-        "totalMs": 941,
+        "importMs": 952,
+        "fontsMs": 76,
+        "buildMs": 132,
+        "totalMs": 2203,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 161776,
+          "bytes": 161856,
           "alt": "Opening page 27: Cells and Membranes."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 138430,
+          "bytes": 138446,
           "alt": "Page 28: 2.3 Crossing the membrane. Figure 2.2. Mouse proteins in green, human proteins in magenta (the red dye): the two cells, the hybrid just after fusion and the same hybrid 40 minutes later. · Figure 2.1. The fluid mosaic: magenta phospholipids, green proteins, an amber c…"
         },
         {
@@ -402,13 +397,13 @@
       }
     },
     "es": {
-      "hash8": "966847ec",
-      "vdtHash": "b95d9fed920cda47bd315548b4bf324147383d0b",
+      "hash8": "4a54bc81",
+      "vdtHash": "b477deda7143f71fb14de391f3e7d6d182f1d2fb",
       "timings": {
-        "importMs": 261,
-        "fontsMs": 44,
-        "buildMs": 80,
-        "totalMs": 1043,
+        "importMs": 1515,
+        "fontsMs": 129,
+        "buildMs": 129,
+        "totalMs": 3249,
         "builds": 1
       },
       "specimen": {
@@ -442,7 +437,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 166890,
+          "bytes": 166934,
           "alt": "Página de apertura 27: Células y membranas."
         },
         {
@@ -497,7 +492,7 @@
         "chapters": [
           {
             "pages": 3,
-            "hash": "5fdaed15330ba4b1",
+            "hash": "33d9de287f63a4d6",
             "lines": "5e40ad5c31b3078a"
           }
         ]
@@ -780,6 +775,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

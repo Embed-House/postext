@@ -3,25 +3,20 @@
   "slug": "dictionary-thumb-index",
   "sourceHash": "a072dc94bedbc1aa901b2487e6f196f4a527f24eb1c7d0d4cda88e7b97f3ad64",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.264Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:55:39.994Z"
-  },
+  "capturedAt": "2026-10-13T10:41:19.996Z",
   "variants": {
     "en": {
-      "hash8": "8add21f4",
-      "vdtHash": "bddee317d6e61fcc97473b0c62f9c6ba9d53b62b",
+      "hash8": "7372ae6b",
+      "vdtHash": "ec4910cae939ec04dcd8ce1991f8aef0ac998179",
       "timings": {
-        "importMs": 308,
-        "fontsMs": 2,
-        "buildMs": 230,
-        "totalMs": 1350,
+        "importMs": 1411,
+        "fontsMs": 3,
+        "buildMs": 443,
+        "totalMs": 3135,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 152292,
+          "bytes": 152294,
           "alt": "Opening page 1: The Sailor’s Word- Book."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 199526,
+          "bytes": 199584,
           "alt": "Page 2: B."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 196654,
+          "bytes": 196422,
           "alt": "Page 3: C."
         },
         {
@@ -88,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 117056,
+          "bytes": 117006,
           "alt": "Page 4."
         }
       ],
@@ -125,7 +120,7 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "7c7c7ceae366165a",
+            "hash": "f717a83f204fac53",
             "lines": "b5a16a060876de1c"
           }
         ]
@@ -296,17 +291,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "1f930bdf",
-      "vdtHash": "023dbe30f6640917d3b3833a72204c7852686692",
+      "hash8": "e225e8cc",
+      "vdtHash": "13a180f6e51e9cd84629c845ede7fc885c7b55c1",
       "timings": {
-        "importMs": 185,
-        "fontsMs": 2,
-        "buildMs": 377,
-        "totalMs": 1288,
+        "importMs": 965,
+        "fontsMs": 5,
+        "buildMs": 534,
+        "totalMs": 2918,
         "builds": 1
       },
       "specimen": {
@@ -340,7 +341,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156976,
+          "bytes": 157094,
           "alt": "Página de apertura 1: Vocabulario del marinero."
         },
         {
@@ -351,7 +352,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 204162,
+          "bytes": 204048,
           "alt": "Página 2: B."
         },
         {
@@ -362,7 +363,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 199408,
+          "bytes": 199322,
           "alt": "Página 3: C."
         },
         {
@@ -373,7 +374,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128202,
+          "bytes": 128376,
           "alt": "Página 4."
         }
       ],
@@ -405,12 +406,12 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 83475,
+        "bytes": 83483,
         "folio": "444e4865",
         "chapters": [
           {
             "pages": 4,
-            "hash": "03136defc8f1d6e1",
+            "hash": "83e5442c4191efda",
             "lines": "fda7738cb1b19b38"
           }
         ]
@@ -581,7 +582,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

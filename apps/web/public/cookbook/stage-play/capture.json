@@ -3,25 +3,20 @@
   "slug": "stage-play",
   "sourceHash": "03ec04599a9752a3488424b48cd414b7473958a9ac36e5c28af1c5c0960e3f2b",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.159Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:03:05.107Z"
-  },
+  "capturedAt": "2026-10-13T10:48:46.266Z",
   "variants": {
     "en": {
-      "hash8": "b43929a3",
+      "hash8": "507755ee",
       "vdtHash": "4ad978657d69393da5b14f4fd35f89ee64564f9f",
       "timings": {
-        "importMs": 266,
+        "importMs": 500,
         "fontsMs": 4,
-        "buildMs": 73,
-        "totalMs": 1144,
+        "buildMs": 126,
+        "totalMs": 1588,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 117860,
+          "bytes": 117836,
           "alt": "Opening page 3: FIRST ACT."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 142938,
+          "bytes": 142902,
           "alt": "Page 4."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 147942,
+          "bytes": 147948,
           "alt": "Page 5."
         }
       ],
@@ -344,13 +339,13 @@
       }
     },
     "es": {
-      "hash8": "bcfb06ca",
-      "vdtHash": "e5b1fe795f2a01b7037caf01111416ac60d66d8d",
+      "hash8": "822b8bba",
+      "vdtHash": "5fadb1936831a534e369bcee9ac4cb0862f56ac3",
       "timings": {
-        "importMs": 306,
-        "fontsMs": 4,
-        "buildMs": 58,
-        "totalMs": 1119,
+        "importMs": 512,
+        "fontsMs": 5,
+        "buildMs": 97,
+        "totalMs": 1413,
         "builds": 1
       },
       "specimen": {
@@ -405,7 +400,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 131040,
+          "bytes": 131056,
           "alt": "Página de apertura 3: PRIMER ACTO."
         },
         {
@@ -416,7 +411,7 @@
           "h": 1543,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 155282,
+          "bytes": 155296,
           "alt": "Página 4."
         },
         {
@@ -427,7 +422,7 @@
           "h": 1543,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121600,
+          "bytes": 121584,
           "alt": "Página 5."
         }
       ],
@@ -464,7 +459,7 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "1caa8a384b41aa80",
+            "hash": "5af9e85ead78372a",
             "lines": "e8db10b2b70e77be"
           }
         ]
@@ -669,7 +664,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

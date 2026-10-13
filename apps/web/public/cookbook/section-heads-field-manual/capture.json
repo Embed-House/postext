@@ -3,25 +3,20 @@
   "slug": "section-heads-field-manual",
   "sourceHash": "5db84f7d139fac5cf197878a20a589a8fdf43d079a93d2dc110775ee7aaf1509",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.085Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:03:05.049Z"
-  },
+  "capturedAt": "2026-10-13T10:48:46.063Z",
   "variants": {
     "en": {
-      "hash8": "9179914b",
+      "hash8": "e104725e",
       "vdtHash": "560f61180d4a8cbee6f40fe780cd310b71d3c4c0",
       "timings": {
-        "importMs": 175,
+        "importMs": 852,
         "fontsMs": 5,
-        "buildMs": 78,
-        "totalMs": 957,
+        "buildMs": 123,
+        "totalMs": 1780,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126402,
+          "bytes": 126412,
           "alt": "Opening page 1: 1 Drainage."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1420,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167522,
+          "bytes": 167494,
           "alt": "Page 2: 1.4 Grade dips."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 132478,
+          "bytes": 132632,
           "alt": "Page 3: 1.8 Lead-off ditches."
         }
       ],
@@ -344,13 +339,13 @@
       }
     },
     "es": {
-      "hash8": "e6ffd7c6",
+      "hash8": "000c783d",
       "vdtHash": "e89416e5fa997268aceccd39dabfc8bef0c3184b",
       "timings": {
-        "importMs": 151,
+        "importMs": 394,
         "fontsMs": 4,
-        "buildMs": 68,
-        "totalMs": 945,
+        "buildMs": 96,
+        "totalMs": 1339,
         "builds": 1
       },
       "specimen": {
@@ -384,7 +379,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 129146,
+          "bytes": 129172,
           "alt": "Página de apertura 1: 1 Drenaje."
         },
         {
@@ -395,7 +390,7 @@
           "h": 1420,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171298,
+          "bytes": 171296,
           "alt": "Página 2: 1.4 Badenes."
         },
         {
@@ -406,7 +401,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 168776,
+          "bytes": 168880,
           "alt": "Página 3: 1.7 Escalones de retención."
         }
       ],

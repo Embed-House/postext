@@ -3,21 +3,21 @@
   "slug": "manga-right-to-left",
   "sourceHash": "19eaedbf3c66462877437f5d74a68e4158cce241b463a697cda608c6995fa997",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:59:13.296Z",
+  "capturedAt": "2026-10-13T10:43:56.594Z",
   "variants": {
     "en": {
-      "hash8": "675e5831",
+      "hash8": "06a79cfd",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 666,
-        "fontsMs": 940,
-        "buildMs": 1428,
-        "totalMs": 5597,
+        "importMs": 680,
+        "fontsMs": 698,
+        "buildMs": 1033,
+        "totalMs": 3795,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "Page 1."
         },
         {
@@ -58,7 +58,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "Page 2."
         },
         {
@@ -109,7 +109,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1520799,
+        "bytes": 1520794,
         "pages": 4
       },
       "sandbox": {
@@ -267,13 +267,13 @@
       }
     },
     "es": {
-      "hash8": "ae49671a",
+      "hash8": "309ca278",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 1522,
-        "fontsMs": 1230,
-        "buildMs": 1537,
-        "totalMs": 5956,
+        "importMs": 433,
+        "fontsMs": 862,
+        "buildMs": 1154,
+        "totalMs": 3525,
         "builds": 2
       },
       "specimen": {
@@ -303,7 +303,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "Página 1."
         },
         {
@@ -314,7 +314,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "Página 2."
         },
         {
@@ -365,7 +365,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522165,
+        "bytes": 1522158,
         "pages": 4
       },
       "sandbox": {
@@ -510,11 +510,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 1537 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -528,13 +523,13 @@
       }
     },
     "ca": {
-      "hash8": "f74b1863",
+      "hash8": "e672ace0",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 3685,
-        "fontsMs": 2677,
-        "buildMs": 1600,
-        "totalMs": 18854,
+        "importMs": 377,
+        "fontsMs": 719,
+        "buildMs": 1155,
+        "totalMs": 3470,
         "builds": 2
       },
       "specimen": {
@@ -564,7 +559,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "Pàgina 1."
         },
         {
@@ -575,7 +570,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "Pàgina 2."
         },
         {
@@ -626,7 +621,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521508,
+        "bytes": 1521505,
         "pages": 4
       },
       "sandbox": {
@@ -771,11 +766,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 1600 ms (warning at 1.5 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -789,13 +779,13 @@
       }
     },
     "zh": {
-      "hash8": "9695fc5a",
+      "hash8": "ff80d035",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 9047,
-        "fontsMs": 16537,
-        "buildMs": 2333,
-        "totalMs": 38253,
+        "importMs": 377,
+        "fontsMs": 716,
+        "buildMs": 976,
+        "totalMs": 3543,
         "builds": 2
       },
       "specimen": {
@@ -825,7 +815,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "第 1 页。"
         },
         {
@@ -836,7 +826,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "第 2 页。"
         },
         {
@@ -847,7 +837,7 @@
           "h": 1422,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 182154,
+          "bytes": 182116,
           "alt": "第 1 页。"
         },
         {
@@ -887,7 +877,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1542680,
+        "bytes": 1542676,
         "pages": 4
       },
       "sandbox": {
@@ -1032,16 +1022,6 @@
         },
         "findings": [
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 2333 ms (warning at 1.5 s)"
-          },
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 38.3 s to finish (warning at 30 s)"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1055,13 +1035,13 @@
       }
     },
     "ar": {
-      "hash8": "e69ac70c",
+      "hash8": "ce3b9579",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 4189,
-        "fontsMs": 2417,
-        "buildMs": 1702,
-        "totalMs": 13833,
+        "importMs": 365,
+        "fontsMs": 480,
+        "buildMs": 969,
+        "totalMs": 2971,
         "builds": 2
       },
       "specimen": {
@@ -1091,7 +1071,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "الصفحة 1."
         },
         {
@@ -1102,7 +1082,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "الصفحة 2."
         },
         {
@@ -1153,7 +1133,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1529510,
+        "bytes": 1528500,
         "pages": 4
       },
       "sandbox": {
@@ -1297,11 +1277,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the build took 1702 ms (warning at 1.5 s)"
-          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -1577,13 +1552,13 @@
       }
     },
     "pt": {
-      "hash8": "fc42329d",
+      "hash8": "c181ead6",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 2773,
-        "fontsMs": 1286,
-        "buildMs": 1383,
-        "totalMs": 8008,
+        "importMs": 386,
+        "fontsMs": 339,
+        "buildMs": 941,
+        "totalMs": 2692,
         "builds": 2
       },
       "specimen": {
@@ -1613,7 +1588,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 174892,
+          "bytes": 175026,
           "alt": "Página 1."
         },
         {
@@ -1624,7 +1599,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164570,
+          "bytes": 164510,
           "alt": "Página 2."
         },
         {
@@ -1675,7 +1650,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521384,
+        "bytes": 1521380,
         "pages": 4
       },
       "sandbox": {

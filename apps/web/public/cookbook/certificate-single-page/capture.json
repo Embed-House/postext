@@ -3,21 +3,21 @@
   "slug": "certificate-single-page",
   "sourceHash": "cd0e6eef6c33a0d61cd8239e830a47b35e5518103d94264332f30175e39c195f",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.524Z",
+  "capturedAt": "2026-10-13T10:38:45.246Z",
   "variants": {
     "en": {
-      "hash8": "9c1e624b",
+      "hash8": "7f68f71f",
       "vdtHash": "9e7f834a65281cc1f4bc902a08b908f9f13a1e9b",
       "timings": {
-        "importMs": 365,
-        "fontsMs": 33,
-        "buildMs": 35,
-        "totalMs": 1115,
+        "importMs": 2711,
+        "fontsMs": 58,
+        "buildMs": 57,
+        "totalMs": 5338,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 259520,
+        "bytes": 259497,
         "pages": 3
       },
       "sandbox": {
@@ -249,13 +249,13 @@
       }
     },
     "es": {
-      "hash8": "3b0ae5ca",
+      "hash8": "ec69379d",
       "vdtHash": "f89d7783c5c82acb318507363bd71fa7dfc00a82",
       "timings": {
-        "importMs": 249,
-        "fontsMs": 36,
+        "importMs": 3033,
+        "fontsMs": 52,
         "buildMs": 46,
-        "totalMs": 1024,
+        "totalMs": 4788,
         "builds": 1
       },
       "specimen": {
@@ -338,7 +338,7 @@
       },
       "pdf": {
         "file": "certificate-single-page.pdf",
-        "bytes": 251273,
+        "bytes": 251234,
         "pages": 3
       },
       "sandbox": {

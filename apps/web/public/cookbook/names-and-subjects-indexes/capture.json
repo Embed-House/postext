@@ -3,21 +3,21 @@
   "slug": "names-and-subjects-indexes",
   "sourceHash": "f5daada8a35ed8f94027ab741984a94098c009f3b5958cd887b78712c01b66d8",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.782Z",
+  "capturedAt": "2026-10-13T10:45:14.664Z",
   "variants": {
     "en": {
-      "hash8": "d8981863",
+      "hash8": "dadcccf0",
       "vdtHash": "1ee2d1bee34f81d339504d2e948ad35641b12ecc",
       "timings": {
-        "importMs": 1430,
-        "fontsMs": 47,
-        "buildMs": 282,
-        "totalMs": 2883,
+        "importMs": 1263,
+        "fontsMs": 34,
+        "buildMs": 251,
+        "totalMs": 2678,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 134572,
+          "bytes": 134578,
           "alt": "Opening page 1: From Textura to Bodoni."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161756,
+          "bytes": 161954,
           "alt": "Page 2: Paris and Antwerp."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 165156,
+          "bytes": 165182,
           "alt": "Page 3: Measuring type."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 157306,
+          "bytes": 157496,
           "alt": "Page 4: Bodoni’s moderns."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 80348,
+          "bytes": 80440,
           "alt": "Page 5."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 40728,
+          "bytes": 40744,
           "alt": "Opening page 6: Index of Names."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 41362,
+          "bytes": 41384,
           "alt": "Opening page 7: Index of Subjects."
         }
       ],
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 116577,
+        "bytes": 116237,
         "pages": 7
       },
       "sandbox": {
@@ -400,13 +400,13 @@
       }
     },
     "es": {
-      "hash8": "d796a38d",
+      "hash8": "f7b8d88d",
       "vdtHash": "41c1b576705fe8442f83218e328c6536a3d6ab95",
       "timings": {
-        "importMs": 1425,
-        "fontsMs": 51,
-        "buildMs": 285,
-        "totalMs": 3012,
+        "importMs": 1045,
+        "fontsMs": 43,
+        "buildMs": 265,
+        "totalMs": 2806,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +439,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 140986,
+          "bytes": 140998,
           "alt": "Página de apertura 1: De la textura a Bodoni."
         },
         {
@@ -450,7 +450,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 162776,
+          "bytes": 162956,
           "alt": "Página 2: París y Amberes."
         },
         {
@@ -461,7 +461,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 169368,
+          "bytes": 169592,
           "alt": "Página 3: Medir la letra."
         },
         {
@@ -472,7 +472,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 164390,
+          "bytes": 164872,
           "alt": "Página 4: Los modernos de Bodoni."
         },
         {
@@ -483,7 +483,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 101006,
+          "bytes": 101008,
           "alt": "Página 5."
         },
         {
@@ -494,7 +494,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 42644,
+          "bytes": 42638,
           "alt": "Página de apertura 6: Índice onomástico."
         },
         {
@@ -505,7 +505,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 44966,
+          "bytes": 44976,
           "alt": "Página de apertura 7: Índice de materias."
         }
       ],
@@ -541,7 +541,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 130390,
+        "bytes": 129609,
         "pages": 7
       },
       "sandbox": {

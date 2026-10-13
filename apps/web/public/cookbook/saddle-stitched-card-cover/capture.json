@@ -3,25 +3,20 @@
   "slug": "saddle-stitched-card-cover",
   "sourceHash": "e4732e5ee8c732f796374bf4656ba893f91764d939f5f38178fc6914110b756f",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.078Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:03:05.046Z"
-  },
+  "capturedAt": "2026-10-13T10:48:46.032Z",
   "variants": {
     "en": {
-      "hash8": "c1100b73",
+      "hash8": "960ffb13",
       "vdtHash": "8a5df44b6af7d2917161122c80f77d5fbfd388c5",
       "timings": {
-        "importMs": 210,
+        "importMs": 1032,
         "fontsMs": 3,
-        "buildMs": 57,
-        "totalMs": 933,
+        "buildMs": 117,
+        "totalMs": 2836,
         "builds": 1
       },
       "specimen": {
@@ -86,7 +81,7 @@
           "h": 1429,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 104098,
+          "bytes": 104126,
           "alt": "Page 4: How to see them."
         },
         {
@@ -97,7 +92,7 @@
           "h": 1429,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 88968,
+          "bytes": 88844,
           "alt": "Opening page 5: The last boatbuilder."
         },
         {
@@ -108,7 +103,7 @@
           "h": 1429,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 60310,
+          "bytes": 60338,
           "alt": "Opening page 6: Tide table."
         },
         {

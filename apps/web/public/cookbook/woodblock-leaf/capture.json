@@ -3,21 +3,21 @@
   "slug": "woodblock-leaf",
   "sourceHash": "07a15030b01f02437704bd2f859bc15ea41cbc0b87395348262672824e375e69",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.209Z",
+  "capturedAt": "2026-10-13T10:52:28.404Z",
   "variants": {
     "en": {
-      "hash8": "1c00f35c",
+      "hash8": "6d43a8c5",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 2447,
-        "fontsMs": 1599,
-        "buildMs": 99,
-        "totalMs": 5200,
+        "importMs": 509,
+        "fontsMs": 207,
+        "buildMs": 51,
+        "totalMs": 1425,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 32962,
+          "bytes": 32956,
           "alt": "Opening page 1: 論語集註."
         },
         {
@@ -126,7 +126,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209068,
+        "bytes": 209048,
         "pages": 7
       },
       "sandbox": {
@@ -316,13 +316,13 @@
       }
     },
     "es": {
-      "hash8": "01fa8236",
+      "hash8": "33273f9e",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 4897,
-        "fontsMs": 2893,
-        "buildMs": 74,
-        "totalMs": 14542,
+        "importMs": 510,
+        "fontsMs": 175,
+        "buildMs": 51,
+        "totalMs": 1430,
         "builds": 1
       },
       "specimen": {
@@ -431,7 +431,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209330,
+        "bytes": 209318,
         "pages": 7
       },
       "sandbox": {

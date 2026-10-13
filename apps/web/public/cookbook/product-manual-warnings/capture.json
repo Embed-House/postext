@@ -3,25 +3,20 @@
   "slug": "product-manual-warnings",
   "sourceHash": "b5151e1f3afdc6c737edbcb513a87c4aefe8cb8e87f1a93e17049895e3e63b8f",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.997Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:02:07.716Z"
-  },
+  "capturedAt": "2026-10-13T10:47:51.685Z",
   "variants": {
     "en": {
-      "hash8": "527e95b0",
+      "hash8": "5f1cc3bd",
       "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 51,
-        "buildMs": 105,
-        "totalMs": 950,
+        "importMs": 1268,
+        "fontsMs": 440,
+        "buildMs": 155,
+        "totalMs": 2679,
         "builds": 1
       },
       "specimen": {
@@ -65,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122002,
+          "bytes": 121894,
           "alt": "Page 2: 1 Sicherheitshinweise."
         },
         {
@@ -76,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60964,
+          "bytes": 60938,
           "alt": "Page 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91412,
+          "bytes": 91510,
           "alt": "Page 4: 3 Bedienung."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121298,
+          "bytes": 121332,
           "alt": "Page 5: 4 Reinigung und Entkalken."
         },
         {
@@ -505,13 +500,13 @@
       }
     },
     "es": {
-      "hash8": "af732b7b",
+      "hash8": "40550a11",
       "vdtHash": "eb7174c222ba588722216ebe63db9402c9c03d5a",
       "timings": {
-        "importMs": 191,
-        "fontsMs": 42,
-        "buildMs": 101,
-        "totalMs": 1030,
+        "importMs": 1533,
+        "fontsMs": 260,
+        "buildMs": 175,
+        "totalMs": 2784,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +550,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 122002,
+          "bytes": 121894,
           "alt": "Página 2: 1 Sicherheitshinweise."
         },
         {
@@ -566,7 +561,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 60964,
+          "bytes": 60938,
           "alt": "Página 3: 2 Gerät im Überblick. Abbildung 1. Der Verra W1 von links, mit Kanne und Sockel · Tabelle 1. Teile des Verra W1."
         },
         {
@@ -577,7 +572,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 91412,
+          "bytes": 91510,
           "alt": "Página 4: 3 Bedienung."
         },
         {
@@ -588,7 +583,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 121298,
+          "bytes": 121332,
           "alt": "Página 5: 4 Reinigung und Entkalken."
         },
         {

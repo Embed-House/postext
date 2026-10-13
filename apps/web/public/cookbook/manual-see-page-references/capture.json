@@ -3,21 +3,21 @@
   "slug": "manual-see-page-references",
   "sourceHash": "42ed96008f6653957f44ca539a059e36a10e5fc5ade932ec93590669bb205a63",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.696Z",
+  "capturedAt": "2026-10-13T10:45:14.578Z",
   "variants": {
     "en": {
-      "hash8": "93fe9e4e",
+      "hash8": "9cd5a2c0",
       "vdtHash": "712ed02bec0ad907138b2588f514fd0f06792975",
       "timings": {
-        "importMs": 2590,
-        "fontsMs": 47,
-        "buildMs": 165,
-        "totalMs": 4235,
+        "importMs": 665,
+        "fontsMs": 39,
+        "buildMs": 95,
+        "totalMs": 1577,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 37220,
+        "bytes": 37215,
         "pages": 4
       },
       "sandbox": {
@@ -332,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "8820b332",
+      "hash8": "fbcac1d3",
       "vdtHash": "db847e4158e9c364fdb1c2fbd1427e13f081f2a7",
       "timings": {
-        "importMs": 2783,
-        "fontsMs": 60,
-        "buildMs": 150,
-        "totalMs": 4749,
+        "importMs": 646,
+        "fontsMs": 32,
+        "buildMs": 90,
+        "totalMs": 1515,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +435,7 @@
       },
       "pdf": {
         "file": "manual-see-page-references.pdf",
-        "bytes": 37217,
+        "bytes": 37174,
         "pages": 4
       },
       "sandbox": {

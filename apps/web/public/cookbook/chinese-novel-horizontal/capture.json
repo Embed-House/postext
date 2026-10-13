@@ -3,21 +3,21 @@
   "slug": "chinese-novel-horizontal",
   "sourceHash": "da2905ae53f2480117af44822a467cc1026fc743055eda83e60d991cfb497419",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.582Z",
+  "capturedAt": "2026-10-13T10:38:45.362Z",
   "variants": {
     "en": {
-      "hash8": "d06eda10",
+      "hash8": "752af8ad",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 347,
-        "fontsMs": 636,
-        "buildMs": 71,
-        "totalMs": 1705,
+        "importMs": 1488,
+        "fontsMs": 1412,
+        "buildMs": 76,
+        "totalMs": 3981,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117706,
+          "bytes": 117702,
           "alt": "Opening page 71: 故乡."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149528,
+          "bytes": 149580,
           "alt": "Page 72."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128422,
+          "bytes": 128420,
           "alt": "Page 73."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1450,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 118314,
+          "bytes": 118320,
           "alt": "Page 74."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 153644,
+          "bytes": 153696,
           "alt": "Page 75."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 84346,
+          "bytes": 84608,
           "alt": "Page 76."
         }
       ],
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 650359,
+        "bytes": 650329,
         "pages": 7
       },
       "sandbox": {
@@ -377,13 +377,13 @@
       }
     },
     "es": {
-      "hash8": "f9e8bcfc",
+      "hash8": "3a2b1733",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 384,
-        "fontsMs": 284,
-        "buildMs": 66,
-        "totalMs": 1429,
+        "importMs": 1784,
+        "fontsMs": 865,
+        "buildMs": 77,
+        "totalMs": 3906,
         "builds": 1
       },
       "specimen": {
@@ -427,7 +427,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117706,
+          "bytes": 117702,
           "alt": "Página de apertura 71: 故乡."
         },
         {
@@ -438,7 +438,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149528,
+          "bytes": 149580,
           "alt": "Página 72."
         },
         {
@@ -449,7 +449,7 @@
           "h": 1450,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128422,
+          "bytes": 128420,
           "alt": "Página 73."
         },
         {
@@ -460,7 +460,7 @@
           "h": 1450,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 118314,
+          "bytes": 118320,
           "alt": "Página 74."
         },
         {
@@ -471,7 +471,7 @@
           "h": 1450,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 153644,
+          "bytes": 153696,
           "alt": "Página 75."
         },
         {
@@ -482,7 +482,7 @@
           "h": 1450,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 84804,
+          "bytes": 84784,
           "alt": "Página 76."
         }
       ],
@@ -518,7 +518,7 @@
       },
       "pdf": {
         "file": "chinese-novel-horizontal.pdf",
-        "bytes": 650238,
+        "bytes": 650294,
         "pages": 7
       },
       "sandbox": {

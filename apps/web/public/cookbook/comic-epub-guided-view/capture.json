@@ -3,12 +3,12 @@
   "slug": "comic-epub-guided-view",
   "sourceHash": "e4f4d3fc410536d06d07a4e9a1ef629de9cebfed264ddd144441fe103b8757f2",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:55:39.911Z",
+  "capturedAt": "2026-10-13T10:41:19.639Z",
   "variants": {
     "en": {
       "hash8": "178c110d",
@@ -1128,13 +1128,13 @@
       }
     },
     "ar": {
-      "hash8": "d59dfae0",
+      "hash8": "9cb593fe",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 412,
-        "fontsMs": 182,
-        "buildMs": 193,
-        "totalMs": 1460,
+        "importMs": 3962,
+        "fontsMs": 1108,
+        "buildMs": 221,
+        "totalMs": 8432,
         "builds": 1
       },
       "specimen": {
@@ -1217,7 +1217,7 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 823543,
+        "bytes": 824687,
         "pages": 3
       },
       "sandbox": {
@@ -1411,13 +1411,13 @@
       }
     },
     "ja": {
-      "hash8": "8b117d57",
+      "hash8": "fe77f625",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 250,
-        "fontsMs": 307,
-        "buildMs": 182,
-        "totalMs": 1665,
+        "importMs": 2329,
+        "fontsMs": 3442,
+        "buildMs": 203,
+        "totalMs": 8351,
         "builds": 1
       },
       "specimen": {
@@ -1500,7 +1500,7 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 846860,
+        "bytes": 846857,
         "pages": 3
       },
       "sandbox": {

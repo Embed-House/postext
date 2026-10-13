@@ -3,21 +3,21 @@
   "slug": "lab-report-formulas",
   "sourceHash": "f862c11a4c79bf70a97df20cae15933f905d4445b73a2eb56ce0923b51dab8e6",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:59:13.061Z",
+  "capturedAt": "2026-10-13T10:43:56.351Z",
   "variants": {
     "en": {
-      "hash8": "f9060209",
+      "hash8": "62b9fa90",
       "vdtHash": "78a366fe1aa21b9c025482a889d0ae88a74aba07",
       "timings": {
-        "importMs": 662,
-        "fontsMs": 172,
-        "buildMs": 143,
-        "totalMs": 1979,
+        "importMs": 567,
+        "fontsMs": 132,
+        "buildMs": 135,
+        "totalMs": 1587,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90040,
+          "bytes": 90044,
           "alt": "Opening page 1: Acid–base titration: how acidic is vinegar?."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 120528,
+          "bytes": 120494,
           "alt": "Page 2: 3 Apparatus and chemicals."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 100164,
+          "bytes": 100160,
           "alt": "Page 3: 5 Results. Table 1. Burette readings, titrating 25.0 cm3 of diluted vinegar with 0.100 mol·dm−3 NaOH."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 63694,
+          "bytes": 63700,
           "alt": "Page 4: 7 Conclusion. Figure 1. Titration curve of 25.0 cm3 of diluted vinegar with 0.100 mol·dm−3 NaOH: pH meter readings (dots) and the model with Ka = 1.75 × 10−5 (line). The pink band is the range over which phenolphthalein turns, pH 8.2 to 10.0."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 193510,
+        "bytes": 193153,
         "pages": 4
       },
       "sandbox": {
@@ -441,13 +441,13 @@
       }
     },
     "es": {
-      "hash8": "794428c2",
+      "hash8": "85bc1c1a",
       "vdtHash": "6be2b97b8c7d9bc8f5a005e8ce47c6f7c091c39b",
       "timings": {
-        "importMs": 1111,
-        "fontsMs": 265,
-        "buildMs": 138,
-        "totalMs": 2388,
+        "importMs": 571,
+        "fontsMs": 220,
+        "buildMs": 154,
+        "totalMs": 1702,
         "builds": 1
       },
       "specimen": {
@@ -480,7 +480,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93968,
+          "bytes": 93952,
           "alt": "Página de apertura 1: Valoración ácido-base: la acidez de un vinagre."
         },
         {
@@ -491,7 +491,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 124794,
+          "bytes": 124844,
           "alt": "Página 2: 3 Materiales y reactivos."
         },
         {
@@ -502,7 +502,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 100294,
+          "bytes": 100320,
           "alt": "Página 3: 5 Resultados. Tabla 1. Lecturas de la bureta: 25,0 cm3 de vinagre diluido frente a NaOH 0,100 mol·dm−3."
         },
         {
@@ -513,7 +513,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 76054,
+          "bytes": 76534,
           "alt": "Página 4: 7 Conclusiones. Figura 1. Curva de valoración de 25,0 cm3 de vinagre diluido con NaOH 0,100 mol·dm−3: lecturas del pH-metro (puntos) y el cálculo con Ka = 1,75 × 10−5 (línea). La banda rosa es el viraje de la fenolftaleína, de pH 8,2 a 10,0."
         }
       ],
@@ -545,7 +545,7 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 205504,
+        "bytes": 203986,
         "pages": 4
       },
       "sandbox": {

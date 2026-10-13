@@ -3,25 +3,20 @@
   "slug": "endnotes-instead-of-footnotes",
   "sourceHash": "249059699def7895d7e691fcedf421037cbf99d55db79749ba5a67950e9f4ab3",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.284Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:55:40.018Z"
-  },
+  "capturedAt": "2026-10-13T10:41:20.024Z",
   "variants": {
     "en": {
-      "hash8": "5b369179",
-      "vdtHash": "e4999498153329210326f1834fe8debf4c9f584d",
+      "hash8": "a7251df0",
+      "vdtHash": "b140f0552bd36b2893be9238db2a26996fcd1bfc",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 42,
-        "buildMs": 116,
-        "totalMs": 992,
+        "importMs": 888,
+        "fontsMs": 76,
+        "buildMs": 156,
+        "totalMs": 2106,
         "builds": 1
       },
       "specimen": {
@@ -54,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 107932,
+          "bytes": 107900,
           "alt": "Opening page 15: A Candle."
         },
         {
@@ -65,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 189468,
+          "bytes": 189396,
           "alt": "Page 16."
         },
         {
@@ -76,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 181436,
+          "bytes": 181476,
           "alt": "Page 17."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 123490,
+          "bytes": 123684,
           "alt": "Page 18. Figure 1. A candle flame as it looks under a glass shade (left) and in section (right): the dark core of wax vapour round the wick, the blue foot where the air first meets it, the bright zone where soot glows, and the faint mantle, the hottest part. Heated air rises r…"
         },
         {
@@ -130,12 +125,12 @@
       },
       "sandbox": {
         "file": "endnotes-instead-of-footnotes.postext",
-        "bytes": 78145,
+        "bytes": 78142,
         "folio": "3d3a1e90",
         "chapters": [
           {
             "pages": 5,
-            "hash": "353c9844bd6dc464",
+            "hash": "ccc71986a16715c0",
             "lines": "8ddee5263aff5ae4"
           }
         ]
@@ -354,6 +349,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

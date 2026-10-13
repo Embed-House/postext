@@ -3,21 +3,21 @@
   "slug": "journal-article-with-maths",
   "sourceHash": "08f5f1e40a417aeb73966d32001ab70c4f847ddce92895b2c2191cacfb76adee",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.225Z",
+  "capturedAt": "2026-10-13T10:42:47.929Z",
   "variants": {
     "en": {
-      "hash8": "8cc2e613",
+      "hash8": "aeae48b0",
       "vdtHash": "5983265a2aefc88ff1af9b6a409f96fc03e06dce",
       "timings": {
-        "importMs": 452,
-        "fontsMs": 150,
-        "buildMs": 164,
-        "totalMs": 1744,
+        "importMs": 373,
+        "fontsMs": 217,
+        "buildMs": 196,
+        "totalMs": 1714,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 109042,
+          "bytes": 109080,
           "alt": "Opening page 213: The period of a pendulum at large amplitudes."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 155484,
+          "bytes": 155486,
           "alt": "Page 214: 2 Theory. Figure 1. The pendulum and its symbols: the length L from the pivot to the centre of the bob, the mass m and the amplitude, the angle between the vertical and either turning point of the swing."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 186574,
+          "bytes": 186530,
           "alt": "Page 215: 4 Results. Table 1. Measured and predicted periods of the one-metre pendulum, in seconds, and their excess and residual in per cent. · Figure 2. The period against the amplitude, as a ratio to T0: Eq. (6) (solid), the first two terms of Eq. (7) (dashed) and the measu…"
         },
         {
@@ -84,7 +84,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105856,
+          "bytes": 106464,
           "alt": "Page 216: AUTHOR CONTRIBUTIONS. Figure 3. The phase plane of the pendulum: one orbit for each amplitude from 30° to 150° in steps of 30°, the 90° orbit of our widest runs in red, and the separatrix of a swing to 180° dashed."
         }
       ],
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "journal-article-with-maths.pdf",
-        "bytes": 286379,
+        "bytes": 285876,
         "pages": 4
       },
       "sandbox": {

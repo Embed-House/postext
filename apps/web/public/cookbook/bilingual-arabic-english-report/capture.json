@@ -3,21 +3,21 @@
   "slug": "bilingual-arabic-english-report",
   "sourceHash": "98bd7741d0aa0fb73952b6f5184326bac35f1b586d736bea9a5e31ed34a9b265",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.239Z",
+  "capturedAt": "2026-10-13T10:37:14.049Z",
   "variants": {
     "en": {
-      "hash8": "ce648105",
+      "hash8": "5af860aa",
       "vdtHash": "a88cf196bdbbc73cf272c1914c1d26bb1359c054",
       "timings": {
-        "importMs": 280,
-        "fontsMs": 79,
-        "buildMs": 98,
-        "totalMs": 1205,
+        "importMs": 726,
+        "fontsMs": 188,
+        "buildMs": 101,
+        "totalMs": 1995,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +100,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 82824,
+        "bytes": 84299,
         "pages": 3
       },
       "sandbox": {
@@ -353,13 +353,13 @@
       }
     },
     "es": {
-      "hash8": "b081dd9e",
+      "hash8": "44cf9cb9",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 381,
-        "fontsMs": 182,
-        "buildMs": 142,
-        "totalMs": 1433,
+        "importMs": 536,
+        "fontsMs": 270,
+        "buildMs": 123,
+        "totalMs": 1764,
         "builds": 1
       },
       "specimen": {
@@ -442,7 +442,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 83714,
+        "bytes": 85210,
         "pages": 3
       },
       "sandbox": {

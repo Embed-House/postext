@@ -3,21 +3,21 @@
   "slug": "bilingual-metascience-essay",
   "sourceHash": "359c03734414b9a8d3e4f2288a9f40306faa3e8091719da10e669ce9986f86a0",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.244Z",
+  "capturedAt": "2026-10-13T10:37:14.094Z",
   "variants": {
     "en": {
-      "hash8": "c518e0bc",
-      "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
+      "hash8": "75a059fd",
+      "vdtHash": "f323927cb97887817f202d460e186988e1de9a8f",
       "timings": {
-        "importMs": 354,
-        "fontsMs": 2417,
-        "buildMs": 531,
-        "totalMs": 3945,
+        "importMs": 679,
+        "fontsMs": 2823,
+        "buildMs": 541,
+        "totalMs": 4853,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 135790,
+          "bytes": 135820,
           "alt": "Opening page 1: Why Most Published Research Findings Are False."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182518,
+          "bytes": 182506,
           "alt": "Page 2: Bias. Table 1. Research Findings and True Relationships."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 114078,
+          "bytes": 113938,
           "alt": "Page 3: Corollaries. Table 2. Research Findings and True Relationships in the Presence of Bias · Figure 1. PPV (Probability That a Research Finding Is True) as a Function of the Pre-Study Odds for Various Levels of Bias, ￼ · Table 3. Research Findings and True Relationships in…"
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 202026,
+          "bytes": 202028,
           "alt": "Page 5: Most Research Findings Are False for Most Research Designs and for Most Fields. Table 4. PPV of Research Findings for Various Combinations of Power (￼), Ratio of True to Not-True Relationships (￼), and Bias (￼)."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 237078,
+          "bytes": 237010,
           "alt": "Page 6: How Can We Improve the Situation?."
         },
         {
@@ -141,7 +141,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 395214,
+        "bytes": 393801,
         "pages": 7
       },
       "sandbox": {
@@ -151,7 +151,7 @@
         "chapters": [
           {
             "pages": 7,
-            "hash": "52f6eade4e9b40b0",
+            "hash": "00ee1b69106bc1ab",
             "lines": "10c501140f000534"
           }
         ]
@@ -510,18 +510,23 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "31fb02ca",
+      "hash8": "dbda0021",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 275,
-        "fontsMs": 1572,
-        "buildMs": 512,
-        "totalMs": 3003,
+        "importMs": 586,
+        "fontsMs": 1459,
+        "buildMs": 523,
+        "totalMs": 3280,
         "builds": 1
       },
       "specimen": {
@@ -645,7 +650,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 425017,
+        "bytes": 423907,
         "pages": 7
       },
       "sandbox": {

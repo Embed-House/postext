@@ -3,25 +3,20 @@
   "slug": "storybook-chapter-vignettes",
   "sourceHash": "acb476664477ce5433b764ce415ec0963fc79795dcd39651bda40d0475356da8",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.168Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:04:11.806Z"
-  },
+  "capturedAt": "2026-10-13T10:51:18.623Z",
   "variants": {
     "en": {
-      "hash8": "c3a4f7f6",
+      "hash8": "3fdaf79f",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 259,
-        "fontsMs": 76,
-        "buildMs": 61,
-        "totalMs": 1134,
+        "importMs": 1682,
+        "fontsMs": 109,
+        "buildMs": 126,
+        "totalMs": 3221,
         "builds": 1
       },
       "specimen": {
@@ -65,7 +60,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91418,
+          "bytes": 91492,
           "alt": "Opening page 7: Capitolo I."
         },
         {
@@ -76,7 +71,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130140,
+          "bytes": 130086,
           "alt": "Page 8."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93102,
+          "bytes": 93114,
           "alt": "Page 9."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 91158,
+          "bytes": 90900,
           "alt": "Opening page 10: Capitolo II."
         }
       ],
@@ -341,13 +336,13 @@
       }
     },
     "es": {
-      "hash8": "cc935c8c",
+      "hash8": "177b1f96",
       "vdtHash": "b70eda5fb5c89f3a2ab4dcdc0bc082e0c45ffe18",
       "timings": {
-        "importMs": 265,
-        "fontsMs": 31,
-        "buildMs": 62,
-        "totalMs": 1047,
+        "importMs": 1585,
+        "fontsMs": 174,
+        "buildMs": 94,
+        "totalMs": 3069,
         "builds": 1
       },
       "specimen": {
@@ -391,7 +386,7 @@
           "h": 1263,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 91418,
+          "bytes": 91492,
           "alt": "Página de apertura 7: Capitolo I."
         },
         {
@@ -402,7 +397,7 @@
           "h": 1263,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130140,
+          "bytes": 130086,
           "alt": "Página 8."
         },
         {
@@ -413,7 +408,7 @@
           "h": 1263,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93102,
+          "bytes": 93114,
           "alt": "Página 9."
         },
         {
@@ -424,7 +419,7 @@
           "h": 1263,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 91158,
+          "bytes": 90900,
           "alt": "Página de apertura 10: Capitolo II."
         }
       ],

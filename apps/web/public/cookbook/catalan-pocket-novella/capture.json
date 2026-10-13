@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "1eb8bc48b33ae1af0f2f0578fe193d3fd0ada08ec8f96a1d2e3e98efba21c013",
+  "sourceHash": "147020a9d895f79da3800a5a8df616c2bc3670fad7ae9eb6357ebd53e8fe2c0b",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.500Z",
+  "capturedAt": "2026-10-13T10:38:45.182Z",
   "variants": {
     "en": {
-      "hash8": "53c33349",
-      "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
+      "hash8": "92e551bb",
+      "vdtHash": "a412c349fd0dabc68c0f87ffb355e698b3437d08",
       "timings": {
-        "importMs": 660,
-        "fontsMs": 90,
-        "buildMs": 1019,
-        "totalMs": 2593,
+        "importMs": 2072,
+        "fontsMs": 425,
+        "buildMs": 1132,
+        "totalMs": 5949,
         "builds": 1
       },
       "specimen": {
@@ -29,14 +29,14 @@
         "layoutType": "single",
         "mirror": true,
         "body": {
-          "family": "Crimson Pro",
-          "sizePt": 10.4,
+          "family": "Gentium Book Plus",
+          "sizePt": 9.8,
           "leadingPt": 14
         },
         "families": [
           "Cormorant Garamond",
           "Cormorant SC",
-          "Crimson Pro"
+          "Gentium Book Plus"
         ],
         "pages": 32,
         "ownLines": 180
@@ -72,7 +72,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38532,
+          "bytes": 38864,
           "alt": "Opening page 4: Nota a aquesta edició."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151886,
+          "bytes": 152020,
           "alt": "Opening page 5: I."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 141024,
+          "bytes": 146072,
           "alt": "Page 6."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 168934,
+          "bytes": 169532,
           "alt": "Opening page 26: IV."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 148506,
+          "bytes": 152192,
           "alt": "Page 27."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1542,
           "file": "p32.webp",
           "strip": "p32.s.webp",
-          "bytes": 38382,
+          "bytes": 39408,
           "alt": "Page 32."
         }
       ],
@@ -167,18 +167,18 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777292,
+        "bytes": 1778207,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492630,
+        "bytes": 1492640,
         "folio": "8e6f438d",
         "chapters": [
           {
             "pages": 32,
-            "hash": "1c1bb2de9cf88892",
-            "lines": "2dee8cd432d556fe"
+            "hash": "bdaca5ee0dbcd6fc",
+            "lines": "e76fa8e5dd37c645"
           }
         ]
       },
@@ -340,12 +340,12 @@
             "style": "normal"
           },
           {
-            "family": "Crimson Pro",
+            "family": "Gentium Book Plus",
             "weight": 400,
             "style": "italic"
           },
           {
-            "family": "Crimson Pro",
+            "family": "Gentium Book Plus",
             "weight": 400,
             "style": "normal"
           }
@@ -371,7 +371,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.0018,
-          "worst": 1.94
+          "worst": 1.8800000000000001
         },
         "raggedLines": {
           "count": 0
@@ -379,30 +379,35 @@
         "runtFixes": {
           "count": 1,
           "tracked": 1,
-          "worst": 10
+          "worst": 5
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.03 MB (warning at 0.9 MB for 8 pages)"
           },
           {
             "check": "C35",
             "severity": "info",
-            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b21ad938",
-      "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
+      "hash8": "deee119a",
+      "vdtHash": "a412c349fd0dabc68c0f87ffb355e698b3437d08",
       "timings": {
-        "importMs": 393,
-        "fontsMs": 74,
-        "buildMs": 981,
-        "totalMs": 2212,
+        "importMs": 2385,
+        "fontsMs": 233,
+        "buildMs": 1239,
+        "totalMs": 5802,
         "builds": 1
       },
       "specimen": {
@@ -414,14 +419,14 @@
         "layoutType": "single",
         "mirror": true,
         "body": {
-          "family": "Crimson Pro",
-          "sizePt": 10.4,
+          "family": "Gentium Book Plus",
+          "sizePt": 9.8,
           "leadingPt": 14
         },
         "families": [
           "Cormorant Garamond",
           "Cormorant SC",
-          "Crimson Pro"
+          "Gentium Book Plus"
         ],
         "pages": 32,
         "ownLines": 180
@@ -457,7 +462,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38532,
+          "bytes": 38864,
           "alt": "Página de apertura 4: Nota a aquesta edició."
         },
         {
@@ -468,7 +473,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 151886,
+          "bytes": 152020,
           "alt": "Página de apertura 5: I."
         },
         {
@@ -479,7 +484,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 141024,
+          "bytes": 146072,
           "alt": "Página 6."
         },
         {
@@ -490,7 +495,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 168934,
+          "bytes": 169532,
           "alt": "Página de apertura 26: IV."
         },
         {
@@ -501,7 +506,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 148506,
+          "bytes": 152192,
           "alt": "Página 27."
         },
         {
@@ -512,7 +517,7 @@
           "h": 1542,
           "file": "p32.webp",
           "strip": "p32.s.webp",
-          "bytes": 38382,
+          "bytes": 39408,
           "alt": "Página 32."
         }
       ],
@@ -552,18 +557,18 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1777292,
+        "bytes": 1778207,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492644,
+        "bytes": 1492653,
         "folio": "8e6f438d",
         "chapters": [
           {
             "pages": 32,
-            "hash": "1c1bb2de9cf88892",
-            "lines": "2dee8cd432d556fe"
+            "hash": "bdaca5ee0dbcd6fc",
+            "lines": "e76fa8e5dd37c645"
           }
         ]
       },
@@ -725,12 +730,12 @@
             "style": "normal"
           },
           {
-            "family": "Crimson Pro",
+            "family": "Gentium Book Plus",
             "weight": 400,
             "style": "italic"
           },
           {
-            "family": "Crimson Pro",
+            "family": "Gentium Book Plus",
             "weight": 400,
             "style": "normal"
           }
@@ -756,7 +761,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.0018,
-          "worst": 1.94
+          "worst": 1.8800000000000001
         },
         "raggedLines": {
           "count": 0
@@ -764,18 +769,23 @@
         "runtFixes": {
           "count": 1,
           "tracked": 1,
-          "worst": 10
+          "worst": 5
         },
         "findings": [
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.02 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.03 MB (warning at 0.9 MB for 8 pages)"
           },
           {
             "check": "C35",
             "severity": "info",
-            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
