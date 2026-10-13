@@ -200,7 +200,7 @@ pré-compilado que permite pintar as páginas do livro direto em JPEG.
 Ferramentas opcionais: `ocrmypdf` para digitalizações, ImageMagick e veraPDF
 para verificações PDF/UA.
 
-O ciclo de trabalho roda na [linha de comando](/pt/docs/command-line), um executável autônomo que não precisa ser instalado: o agente mantém o projeto descompactado e deixa `postext build --watch` rodando sobre as páginas em que está trabalhando, de modo que cada mudança aparece como JPEG cerca de um segundo depois, mesmo num livro longo. Os pacotes do Node são opcionais: eles rodam o `render.mjs`, que acrescenta as verificações extras do Sandbox.
+O ciclo de trabalho roda na [linha de comando](/pt/docs/command-line), um executável autônomo que não precisa ser instalado: o agente mantém o projeto descompactado e deixa `postext build --watch` rodando sobre as páginas em que está trabalhando, de modo que cada mudança aparece como JPEG cerca de um segundo depois, mesmo num livro longo. Os pacotes do Node são opcionais: eles rodam o `render.mjs`, que acrescenta as verificações extras do Sandbox. Os dois diagramam o livro com `bodyText.shapingLanguage: 'host'`, diga o que disser a configuração dele, então uma linha pode quebrar em outra palavra que não a do Sandbox (veja [Diferenças em relação ao Sandbox](/pt/docs/command-line#diferenças-em-relação-ao-sandbox)).
 
 ## Como usar
 

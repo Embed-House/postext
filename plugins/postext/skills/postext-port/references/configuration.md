@@ -313,14 +313,21 @@ H&J / Knuth–Plass
 │                        (`seg.scriptContext` 'Hani'), the stop after it the sentence's: no `:ltr[…]`, no styled span.
 │                        Not for list markers, :ref labels, design text, comics, CJK-composed paragraphs. false = shaped alone as ≤ 1.27, where
 │                        each browser version and the PDF picked its own forms (every preset below configVersion 12 reads false)
-├─ shapingLanguage      'document' | 'host'  'host'       (≥ 1.29) the language the text is measured, painted and embedded in. 'host' (default, = ≤ 1.28):
-│                        the measure and the canvas take the host page's language (none in a worker); HTML declares lang for CJK and RTL documents.
+├─ shapingLanguage      'document' | 'host'  'document'   (≥ 1.29; the default since 1.30) the language the text is measured, painted and embedded in.
 │                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context and on the canvas, so the lines
 │                        are the same on a page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, JAN, CAT…).
-│                        A hyphenatable word is measured whole and set whole where it stays on one line (canvas/HTML painted it in pieces ≤ 1.29.2;
-│                        the PDF sets it whole under 'document'). Open case: a word broken at a line end; a face whose language form needs both
-│                        neighbours (Crimson Pro's Catalan l·l) leaves a gap after its rest. Leave unset when porting unless the book needs it.
-│                        Below configVersion 13: 'host'.
+│                        Since 1.30 the text is measured under it as it is painted: one width per string whatever was measured before, right-to-left
+│                        words measured right to left in any face, a hyphenatable word set whole where it stays on one line (canvas, HTML, PDF), the
+│                        two halves of a word broken at a line end measured as painted (the rest as a text of its own; a Catalan geminate head as
+│                        `col-`), design text measured run by run in the direction each run is painted in. The PDF shapes word by word as Chrome's
+│                        canvas does and takes each character from the font file the browser took it from when the font provider says which
+│                        (postext-pdf `declaredFontFile(bytes, { unicodeRange, order })`).
+│                        'host' (= ≤ 1.28; the default of 1.29.1–1.29.2): the measure and the canvas take the host page's language (none in a worker);
+│                        HTML declares lang for CJK and RTL documents; the widths and the PDF are the ones it had. A word broken at a line end leaves
+│                        a gap after its rest in a face whose language form needs both neighbours (Crimson Pro's Catalan l·l), on a page in that language.
+│                        Set `locale` on every ported book (zh-Hans / zh-Hant / ja / ar / ca …): it decides glyph forms and line breaks, not only
+│                        strings. Leave shapingLanguage unset when porting. Below configVersion 14 with no value named: 'host' (the pin; a named
+│                        value is kept). The `postext` CLI (Skia) and render.mjs (fontkit) measure with no language: they always lay out with 'host'.
 ├─ maxWordSpacing       number   2      × normal space; also the cap for balancing "loose" paragraphs
 ├─ minWordSpacing       number   0.6    × normal space
 ├─ avoidRunts           true;  runtMinCharacters 20;  runtPenalty 1000;  avoidRuntsInLists true
@@ -1766,7 +1773,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
 
 **preset.json** — `version: 2` manifest (full reference: project-format.md):
 ```
-{ version: 2, configVersion: 13, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
+{ version: 2, configVersion: 14, id, name, description?, locale?, locales?, thumbnail?, license?, credits?, tags?,
   default?, view?: { canvasScope?: 'book'|'chapter' },
   start?: { pageIndexOffset?, pageNumbering?: { startAt?, format? }, headings?: { h1..h6 }, part?: { number, title, palette? },
             resourceCounters?, resourceNumbers?, statementCounters?, footnoteNumber?, lineNumber?, afterPartPage? },
@@ -1781,7 +1788,7 @@ fore-edge column: `"layout": {"layoutType": "oneAndHalf", "sideColumnPercent":
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 13` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
+`configVersion: 14` says `config` is written for today's rules (`preset_kit.write_manifest` sets it). Without it
 the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`
 when one is embedded inside a `:::callout`, `headings.inlineMarks: false` when a heading carries `*`, `_`, `^`,
@@ -1809,9 +1816,12 @@ too in the `japan` region (#717), and `cjk.warichu.minChars: 1` when a chapter s
 kana or kanji (#721), and `layout.inlineCaptionSide: false` on a `oneAndHalf` config whose chapters embed a `::resource` (#729), and `crossRefs.breakLabels: false` when a chapter holds a `:ref{`, `\ref{`, `\eqref{` or `@id`
 reference (#702), and `bodyText.scriptContext: false` on every such config, whatever its chapters hold (#725: words with
 no letter shaped alone); one stamped 12 (postext 1.28), those of rules 13: `bodyText.shapingLanguage: 'host'` on every such
-config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker) (the default too since 1.29.1; a preset stamped 13 with no value was laid out in the document's language by 1.29.0 and reads 'host' from 1.29.1 on), and
+config, whatever its chapters hold (#764: text measured in the host page's language, in none in a worker), and
 `unorderedLists.taskBox: 'character'` when a chapter holds a task item (`- [ ]`, `- [x]`) (#765: its box stays the character
-☐ / ☑ in the list face, the item's text after that character's width). The pins keep what those rules changed, not
+☐ / ☑ in the list face, the item's text after that character's width); one stamped 13 (postext 1.29), that of rules 14:
+`bodyText.shapingLanguage: 'host'` on every such config that names no value (#770: from 1.30 the default is 'document', the
+document's own language; 1.29.1 and 1.29.2 laid such a preset out with 'host', 1.29.0 with 'document' and a canvas and a PDF
+that did not follow the measure; a config that names a value keeps it). The pins keep what those rules changed, not
 every 1.4 page: 1.5's layout fixes (page-span opener measure, drop caps in heading designs, tracking in boxes,
 the loose-paragraph limit…) apply to an old bundle too.
 Must NOT go in `config`: `customFonts` (built from `fonts[]`; fileIds are storage-local —

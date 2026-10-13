@@ -204,7 +204,7 @@ canvas precompilat amb què pinta les pàgines del llibre directament en
 JPEG. Eines opcionals: `ocrmypdf` per a
 escanejos, ImageMagick, i veraPDF per comprovar PDF/UA.
 
-El cicle de treball funciona amb la [línia d'ordres](/ca/docs/command-line), un executable autònom que no cal instal·lar: l'agent manté el projecte descomprimit i deixa `postext build --watch` en marxa sobre les pàgines en què treballa, de manera que cada canvi apareix com a JPEG al voltant d'un segon després, fins i tot en un llibre llarg. Els paquets de Node són opcionals: executen `render.mjs`, que afegeix les comprovacions addicionals del Sandbox.
+El cicle de treball funciona amb la [línia d'ordres](/ca/docs/command-line), un executable autònom que no cal instal·lar: l'agent manté el projecte descomprimit i deixa `postext build --watch` en marxa sobre les pàgines en què treballa, de manera que cada canvi apareix com a JPEG al voltant d'un segon després, fins i tot en un llibre llarg. Els paquets de Node són opcionals: executen `render.mjs`, que afegeix les comprovacions addicionals del Sandbox. Tots dos maqueten el llibre amb `bodyText.shapingLanguage: 'host'`, digui el que digui la seva configuració, de manera que una línia es pot partir per una altra paraula que al Sandbox (vegeu [Diferències amb el Sandbox](/ca/docs/command-line#diferències-amb-el-sandbox)).
 
 ## Com fer-la servir
 

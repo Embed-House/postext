@@ -90,6 +90,9 @@ family the project does not bundle is downloaded and cached, from Google
 Fonts or, for a family Google Fonts does not have, from Fontsource, as the
 Sandbox loads it, where `render.mjs` downloads nothing and measures the
 family with a stand-in face; `--offline` keeps it from downloading.
+Both measure with no language (the CLI on Skia, render.mjs with fontkit) and lay the book out
+with `bodyText.shapingLanguage: 'host'` whatever its config says: a line can
+break at another word than in the Sandbox (configuration.md, `shapingLanguage`).
 
 ### `render.mjs` (Node)
 
@@ -210,7 +213,7 @@ those lines, or run the script.
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
   compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 13` and check the pages again when the config is meant for today's rules.
+  Set `"configVersion": 14` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page

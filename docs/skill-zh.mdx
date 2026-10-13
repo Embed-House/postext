@@ -146,7 +146,7 @@ mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && n
 
 Word、PowerPoint、EPUB和HTML源文件需要Pandoc，生成源文件的页面图像需要poppler。Node包驱动无浏览器渲染器（需要Node 22.15或更高版本）；`@napi-rs/canvas`是预编译的画布，渲染器借助它直接把书页画成JPEG。可选工具：用于扫描件的`ocrmypdf`、ImageMagick，以及用于PDF/UA检查的veraPDF。
 
-工作循环用的是[命令行](/zh/docs/command-line)，一个无需安装的独立可执行文件：智能体让项目保持解压状态，并让`postext build --watch`针对正在处理的页面一直运行，这样每次修改大约一秒后就会以JPEG的形式出现，长书也是如此。Node包是可选的：它们运行`render.mjs`，提供沙盒的额外检查。
+工作循环用的是[命令行](/zh/docs/command-line)，一个无需安装的独立可执行文件：智能体让项目保持解压状态，并让`postext build --watch`针对正在处理的页面一直运行，这样每次修改大约一秒后就会以JPEG的形式出现，长书也是如此。Node包是可选的：它们运行`render.mjs`，提供沙盒的额外检查。两者都不论配置怎么写，始终用`bodyText.shapingLanguage: 'host'`排版，所以某一行断开的位置可能与沙盒里不同（见[与沙盒的区别](/zh/docs/command-line#与沙盒的区别)）。
 
 ## 使用
 
