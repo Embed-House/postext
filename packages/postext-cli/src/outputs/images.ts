@@ -184,7 +184,8 @@ export function pageFileName(pattern: string, p: BookPage, format: ImageFormat):
 
 /** Paint `pages` into `dir`: pages are painted one after another (the
  *  painter shares its caches) while up to `jobs` encodes run on Skia's
- *  thread pool. */
+ *  thread pool. With `repaint`, only the pages it picks are painted (a
+ *  rebuild in --watch: the others are already in `dir` as they are). */
 export async function writeImages(
   book: Book,
   layout: Layout,
@@ -192,10 +193,12 @@ export async function writeImages(
   reporter: Reporter,
   dir: string,
   spec: string | undefined,
+  repaint?: (page: BookPage) => boolean,
 ): Promise<void> {
   const options = paintOptions(opts);
-  const pages = selectPages(bookPages(layout), spec);
-  if (pages.length === 0) throw new CliError(`No page matches "${spec}"`);
+  const selected = selectPages(bookPages(layout), spec);
+  if (selected.length === 0) throw new CliError(`No page matches "${spec}"`);
+  const pages = repaint ? selected.filter(repaint) : selected;
   const pattern = opts.string('pattern', 'page-{n:03}');
   const jobs = Math.max(1, opts.number('jobs', availableParallelism()));
   const running = new Set<Promise<void>>();
@@ -216,6 +219,7 @@ export async function writeImages(
     }
     await Promise.all(running);
   });
-  reporter.info(`wrote ${pages.length} ${options.format.toUpperCase()} images to ${dir} (${formatBytes(total)})`);
+  const kept = selected.length - pages.length;
+  reporter.info(`wrote ${pages.length} ${options.format.toUpperCase()} images to ${dir} (${formatBytes(total)})${kept > 0 ? `, ${kept} unchanged` : ''}`);
 }
 
