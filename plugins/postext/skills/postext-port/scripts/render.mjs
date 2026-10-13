@@ -33,6 +33,16 @@
 // The config is read as the Sandbox reads it: a manifest without
 // `configVersion` keeps the postext 1.4 rules it was written for (a NOTE line
 // lists them).
+// The language of the text: a browser shapes a book in its own language
+// (`bodyText.shapingLanguage: 'document'`, the default from postext 1.30).
+// This script measures with fontkit and no language, and the canvas --jpeg
+// paints on (@napi-rs/canvas, Skia) takes a language and shapes without it,
+// so the book is laid out here with `shapingLanguage: 'host'` whatever its
+// config says, as the `postext` command line does, and the PDF sets the
+// forms that were measured: the default forms of each font, not the ones of
+// the book's language (a Catalan `l·l`, a Turkish `fi`, the digits of a
+// Chinese face). Lines can break at other words than in the Sandbox where a
+// face has such forms.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, mkdtempSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -319,6 +329,7 @@ if (typeof bundleApi?.migrateConfig === 'function') {
     [(c) => c.layout?.inlineCaptionSide, 'captions of resources set in the text under them, not in the side column'],
     [(c) => c.crossRefs?.breakLabels, 'reference labels set as one word'],
     [(c) => c.bodyText?.scriptContext, 'words with no letter shaped alone'],
+    [(c) => c.bodyText?.shapingLanguage, 'text shaped in the language of the page that hosts the layout'],
   ].filter(([of]) => of(read) !== of(config)).map(([, what]) => what);
   if (kept.length) {
     const v = manifest.configVersion;
@@ -332,6 +343,12 @@ if (typeof bundleApi?.migrateConfig === 'function') {
   }
   config = read;
 }
+// Laid out with the text shaped in the host's language, whatever the config
+// names (see the header): the widths measured here are the ones of each
+// font's default forms, and the PDF writer and the page painter follow the
+// layout. An engine older than 1.29 has no such setting and shapes this way
+// already.
+config = { ...config, bodyText: { ...config.bodyText, shapingLanguage: 'host' } };
 const customFonts = [...families.entries()].map(([name, vs]) => ({ name, variants: vs.map((v) => ({ weight: v.weight, style: v.style ?? 'normal', fileId: v.file, format: v.file.split('.').pop() })) }));
 if (customFonts.length) config.customFonts = customFonts;
 

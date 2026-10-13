@@ -41,10 +41,11 @@ describe('pinLegacyWideFloatStretch (#708)', () => {
       expect(wide(migrateConfig({}, v, { content: '# One\n\nText with no figure.' })), String(v)).toBeUndefined();
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
-    // read as it is.
+    // One stamped 12 or 13 takes the pin of the language alone (#764, #770);
+    // one stamped 14 is read as it is.
     expect(migrateConfig(current, 12, { content: FIGURE })).toEqual({ bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 13, { content: FIGURE })).toBe(current);
+    expect(migrateConfig(current, 13, { content: FIGURE })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14, { content: FIGURE })).toBe(current);
     expect(resolveAllConfig(current).headings.balancing.stretchAfterWideFloats).toBe('flush');
   });
 

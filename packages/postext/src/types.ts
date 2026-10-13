@@ -1541,30 +1541,39 @@ export interface BodyTextConfig {
    *  painted and embedded. A font answers with other glyphs under a
    *  language (OpenType `locl`): Noto Serif SC sets its digits otherwise
    *  in Chinese, a face with a Catalan form draws `l·l` otherwise, one
-   *  with the Turkish rule keeps `fi` apart. `'host'` (the default): as
-   *  up to postext 1.28, the measuring contexts take the language of the
-   *  page that hosts the layout (none in a worker) and the canvas paints
-   *  in that same language; the HTML viewer declares the language of a
-   *  Chinese, Japanese, Korean or right-to-left document. `'document'`:
-   *  the document's own ({@link PostextConfig.locale}), and a run's own
-   *  where it names one (`{lang=en}`), on every context the layout
-   *  measures with (the engine's, a layout worker's, the plain-paragraph
-   *  breaker's), so the same document has the same lines on a page in any
-   *  language and in a worker; the canvas paints in it through every
-   *  `save()` (`canvas-backend/contextState.ts`), the HTML viewer and the
-   *  EPUB declare it and the PDF shapes with the OpenType language system
-   *  of the language. One case is open: a word the breaker may cut is
-   *  measured whole and painted piece by piece on the canvas and in the
-   *  HTML viewer, so a face whose form for the language needs the letters
-   *  on both sides of a cut (the Catalan `l·l` of Crimson Pro, a wide dot
-   *  set only between two `l`) leaves a gap inside such a word, as it does
-   *  under `'host'` on a page in that language; the PDF sets the word
-   *  whole. `'document'` was the default of postext 1.29.0 alone, whose
-   *  canvas and PDF did not follow the measure (#764). A configuration
-   *  stored before `configVersion` 13 reads with `'host'` written out
-   *  (`pinLegacyShapingLanguage` in `postext/bundle`). A browser whose
-   *  canvas has no `lang` (Chrome before 136, Firefox and Safari where it
-   *  is missing) measures as it always did. */
+   *  with the Turkish rule keeps `fi` apart. `'document'` (the default
+   *  since postext 1.30, #770): the document's own
+   *  ({@link PostextConfig.locale}), and a run's own where it names one
+   *  (`{lang=en}`), on every context the layout measures with (the
+   *  engine's, a layout worker's, the plain-paragraph breaker's), so the
+   *  same document has the same lines on a page in any language and in a
+   *  worker; the canvas paints in it through every `save()`
+   *  (`canvas-backend/contextState.ts`), the HTML viewer and the EPUB
+   *  declare it and the PDF shapes with the OpenType language system of
+   *  the language. Under it the text is measured as it is painted: a
+   *  string has one width whatever was measured before it, a
+   *  right-to-left word is measured right to left, the two parts of a
+   *  word broken at a line end and the runs of a design text are measured
+   *  as the texts that are painted, and the PDF shapes word by word as the
+   *  canvas does and takes each character from the font file the browser
+   *  took it from. `'host'`: as up to postext 1.28, the measuring contexts
+   *  take the language of the page that hosts the layout (none in a
+   *  worker) and the canvas paints in that same language; the HTML viewer
+   *  declares the language of a Chinese, Japanese, Korean or right-to-left
+   *  document; the widths and the PDF are the ones such a document had.
+   *  Under `'host'` the part of a broken word that opens the next line is
+   *  measured as the whole word less its first part, so a face whose form
+   *  for the language needs the letters on both sides of the break (the
+   *  Catalan `l·l` of Crimson Pro, a wide dot set only between two `l`)
+   *  leaves a gap after it on a page in that language. `'host'` was the
+   *  default of postext 1.29.1 and 1.29.2; `'document'` was the default of
+   *  1.29.0 alone, whose canvas and PDF did not follow the measure (#764).
+   *  A configuration stored before `configVersion` 14 that does not name
+   *  the setting reads with `'host'` written out
+   *  (`pinLegacyShapingLanguage` in `postext/bundle`), so a stored
+   *  document keeps its lines. A browser whose canvas has no `lang`
+   *  (Chrome before 136, Firefox and Safari where it is missing) is given
+   *  no language and keeps the forms it always measured. */
   shapingLanguage?: 'document' | 'host';
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
@@ -2232,9 +2241,9 @@ export interface ResolvedBodyTextConfig {
   /** Present only when switched off (see
    *  {@link BodyTextConfig.scriptContext}). */
   scriptContext?: false;
-  /** Present only when the document's (see
+  /** Present only when the host's (see
    *  {@link BodyTextConfig.shapingLanguage}). */
-  shapingLanguage?: 'document';
+  shapingLanguage?: 'host';
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */

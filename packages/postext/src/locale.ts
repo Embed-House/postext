@@ -192,36 +192,40 @@ function sourceTag(config: LanguageSource | undefined): string | undefined {
  *  root): its language in canonical form (`zh-Hant-TW`, `ar-EG`, `ca`),
  *  from `locale`, else the hyphenation tag. The canvas declares nothing:
  *  it paints in the language the layout measured in
- *  ({@link shapingLanguageOf}), the host's unless the document asks for
- *  its own.
+ *  ({@link shapingLanguageOf}), the document's own unless it asks for the
+ *  host's.
  *
- *  A document whose text is shaped in the host's language (the default of
- *  `bodyText.shapingLanguage`) declares one only when it is Chinese,
- *  Japanese or Korean (the browser picks regional glyph forms from it), or
- *  written right to left (the font's `locl` forms and the fallback font
- *  follow it, and assistive technology reads the text in its language),
- *  as up to postext 1.28.
+ *  A document shaped in its own language (the default of
+ *  `bodyText.shapingLanguage` since postext 1.30, #770) declares it
+ *  whatever it is: a font answers with other glyphs under a language (the
+ *  Catalan `l·l`, the Turkish `fi`), and the layout measured those
+ *  ({@link shapingLanguageOf}).
  *
- *  A document shaped in its own (`'document'`, #764) declares it whatever
- *  it is: a font answers with other glyphs under a language (the Catalan
- *  `l·l`, the Turkish `fi`), and the layout measured those
- *  ({@link shapingLanguageOf}). */
+ *  A document whose text is shaped in the host's language (`'host'`, what
+ *  a configuration stored before `configVersion` 14 reads with) declares
+ *  one only when it is Chinese, Japanese or Korean (the browser picks
+ *  regional glyph forms from it), or written right to left (the font's
+ *  `locl` forms and the fallback font follow it, and assistive technology
+ *  reads the text in its language), as up to postext 1.28. */
 export function renderLangOf(config: LanguageSource | undefined): string | undefined {
   const tag = sourceTag(config);
-  if (config?.bodyText?.shapingLanguage === 'document') return canonicalLocaleTag(tag);
+  if (config?.bodyText?.shapingLanguage !== 'host') return canonicalLocaleTag(tag);
   return isCjkLanguage(tag) || isRightToLeftLanguage(tag) ? canonicalLocaleTag(tag) : undefined;
 }
 
 /**
  * The language a document's text is measured in (`setMeasureLanguage`),
- * painted in and embedded in (#764): undefined, the host's (the page's on
- * a page, none in a worker, as up to postext 1.28), unless the document
- * asks for its own (`bodyText.shapingLanguage: 'document'`); then its
- * language ({@link renderLangOf}), or the empty tag (no language at all,
- * the same on every host) when its locale is no tag.
+ * painted in and embedded in (#764): its own ({@link renderLangOf}), or
+ * the empty tag (no language at all, the same on every host) when its
+ * locale is no tag; and undefined, the host's (the page's on a page, none
+ * in a worker, as up to postext 1.28), for a document that asks for it
+ * (`bodyText.shapingLanguage: 'host'`). The document's own is the default
+ * from postext 1.30 (#770), as it was in 1.29.0 alone, whose canvas and
+ * PDF did not follow the measure; 1.29.1 and 1.29.2 shaped in the host's
+ * unless asked otherwise.
  */
 export function shapingLanguageOf(config: LanguageSource | undefined): string | undefined {
-  if (config?.bodyText?.shapingLanguage !== 'document') return undefined;
+  if (config?.bodyText?.shapingLanguage === 'host') return undefined;
   return canonicalLocaleTag(sourceTag(config)) ?? '';
 }
 

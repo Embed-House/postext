@@ -130,13 +130,24 @@ describe('a design text in a face with no Arabic letters (#401)', () => {
     const latin = new Uint8Array(fs.readFileSync(new URL('./fixtures/arabic/amiri-latin-slice.ttf', import.meta.url)));
     const base = config();
     const header = { elements: [{ ...base.header!.elements[0]!, fontFamily: 'Latin Only' }] } as PostextConfig['header'];
-    const doc = buildDocument({ markdown: `# ${TITLE}\n\nكلمة كلمة.` }, { ...base, header });
-    const warnings: unknown[] = [];
-    await renderToPdf(doc, { fontProvider: async (family) => (family === 'Latin Only' ? latin : AMIRI), onWarning: (w) => warnings.push(w) });
-    const missing = warnings.filter((w) => (w as { kind: string }).kind === 'missingGlyph') as { family: string; characters: string[] }[];
+    const missingIn = async (bodyText: PostextConfig['bodyText']): Promise<{ family: string; characters: string[] }[]> => {
+      const doc = buildDocument({ markdown: `# ${TITLE}\n\nكلمة كلمة.` }, { ...base, header, bodyText: { ...base.bodyText, ...bodyText } });
+      const warnings: unknown[] = [];
+      await renderToPdf(doc, { fontProvider: async (family) => (family === 'Latin Only' ? latin : AMIRI), onWarning: (w) => warnings.push(w) });
+      return warnings.filter((w) => (w as { kind: string }).kind === 'missingGlyph') as { family: string; characters: string[] }[];
+    };
+    const missing = await missingIn({});
     expect(missing).toHaveLength(1);
     expect(missing[0]!.family).toBe('Latin Only');
-    // The title's Arabic letters, not its Latin word or the space.
-    expect(missing[0]!.characters.join('')).toBe('السمعيك');
+    // The title's Arabic letters, not its Latin word or the space. The
+    // document is shaped in its own language, word by word (#770): the
+    // letters come in the order its words are set in, the word at the left
+    // of the line first.
+    expect(missing[0]!.characters.join('')).toBe('عليكماس');
+    // Shaped in the host's language the run is one text, read from its
+    // first letter, as up to postext-pdf 1.29.
+    const hosted = await missingIn({ shapingLanguage: 'host' });
+    expect(hosted).toHaveLength(1);
+    expect(hosted[0]!.characters.join('')).toBe('السمعيك');
   });
 });

@@ -43,8 +43,9 @@ describe("capture shims", () => {
 });
 
 // A run can force a configuration on every build (COOKBOOK_FORCE_CONFIG):
-// the paint check of #764 lays the recipes out under
-// `bodyText.shapingLanguage: 'document'`, which no pen names.
+// the paint check of #764 laid the recipes out under
+// `bodyText.shapingLanguage: 'document'`, which no pen names and which is
+// the default from postext 1.30 (#770); `'host'` lays them out as before.
 describe("a forced configuration", () => {
   const FORCE = { bodyText: { shapingLanguage: "document" } };
 

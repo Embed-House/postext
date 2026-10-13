@@ -154,23 +154,24 @@ function paintContext(
   // The canvas was just given its size: its state is new.
   resetContextState(ctx);
   // The page is painted in the language it was measured in (`ctx.lang`,
-  // Chrome 136+; #764): the document's when it asks for its own
-  // (`bodyText.shapingLanguage: 'document'`), so the browser picks the
-  // glyph forms the layout measured, and a run's own where it names one.
-  // The language holds through every `save()` of the page
+  // Chrome 136+; #764): the document's own (the default of
+  // `bodyText.shapingLanguage` since postext 1.30, #770), so the browser
+  // picks the glyph forms the layout measured, and a run's own where it
+  // names one. The language holds through every `save()` of the page
   // (`saveContext`): a context loses it there.
   //
-  // A document shaped in the host's language was measured in the host's,
-  // and is painted in it: the context is left as it comes. Up to postext
-  // 1.29.1 a Chinese, Japanese, Korean or right-to-left document had its
-  // own language set here all the same, and lost it at the first `save()`,
-  // so its columns, its design text and its captions were painted in the
-  // host's, as they still are; only what was painted in no saved state at
-  // all (a floated text box on a page with no cut lines, not vertical and
-  // not mirrored) took the document's language, against its measure.
+  // A document shaped in the host's language (`'host'`) was measured in
+  // the host's, and is painted in it: the context is left as it comes. Up
+  // to postext 1.29.1 a Chinese, Japanese, Korean or right-to-left
+  // document had its own language set here all the same, and lost it at
+  // the first `save()`, so its columns, its design text and its captions
+  // were painted in the host's, as they still are; only what was painted
+  // in no saved state at all (a floated text box on a page with no cut
+  // lines, not vertical and not mirrored) took the document's language,
+  // against its measure.
   const lang = langOf(doc.config);
   if (lang !== undefined && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
-  setSegmentLanguages(doc.config.bodyText?.shapingLanguage === 'document');
+  setSegmentLanguages(doc.config.bodyText?.shapingLanguage !== 'host');
   // The bitmap is a whole number of pixels; the page rarely is. Drawing at
   // `scale` would leave the last column (and row) of pixels only partly
   // covered — a light hairline at the edge of a dark or coloured page — so

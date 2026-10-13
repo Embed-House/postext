@@ -4,6 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument } from 'postext';
+import { createBlankBookConfig } from '../context/defaultConfig';
+import { createPostextGuideConfig } from '../context/guideConfig';
+import { BUILTIN_PRESET_LOCALES } from '../presets/builtin';
 import { installLanguageCanvas, LanguageContext } from './languageCanvasStub';
 import { configShapingLanguage, documentShapingLanguage, measureInLanguage } from './measureLanguage';
 
@@ -12,14 +15,15 @@ installLanguageCanvas();
 const docOf = (config: PostextConfig): VDTDocument => ({ config }) as unknown as VDTDocument;
 
 describe('documentShapingLanguage', () => {
-  it('is the document\'s language when it asks for its own', () => {
+  it('is the document\'s language, the default, and when it asks for its own', () => {
     expect(documentShapingLanguage(docOf({ locale: 'zh-Hans', bodyText: { shapingLanguage: 'document' } }))).toBe('zh-Hans');
     expect(documentShapingLanguage(docOf({ locale: 'ca', bodyText: { shapingLanguage: 'document' } }))).toBe('ca');
+    expect(documentShapingLanguage(docOf({ locale: 'zh-Hans' }))).toBe('zh-Hans');
+    expect(documentShapingLanguage(docOf({ locale: 'ca', bodyText: { fontFamily: 'Literata' } }))).toBe('ca');
   });
 
   it('is undefined, the host\'s, for a document shaped in the host\'s language', () => {
     expect(documentShapingLanguage(docOf({ locale: 'zh-Hans', bodyText: { shapingLanguage: 'host' } }))).toBeUndefined();
-    expect(documentShapingLanguage(docOf({ locale: 'zh-Hans' }))).toBeUndefined();
     // A document cut down to its pages and blocks, as the tests make them.
     expect(documentShapingLanguage({} as unknown as VDTDocument)).toBeUndefined();
   });
@@ -30,11 +34,41 @@ describe('configShapingLanguage', () => {
     expect(configShapingLanguage({ locale: 'zh-Hans', bodyText: { shapingLanguage: 'document' } }, 'en')).toBe('zh-Hans');
     expect(configShapingLanguage({ bodyText: { shapingLanguage: 'document', hyphenation: { locale: 'ca' } } }, 'en')).toBe('ca');
     expect(configShapingLanguage({ locale: 'zh-Hans', bodyText: { shapingLanguage: 'host' } }, 'en')).toBeUndefined();
+    // A configuration that names neither is shaped in its own (#770).
+    expect(configShapingLanguage({ locale: 'zh-Hans' }, 'en')).toBe('zh-Hans');
+    expect(configShapingLanguage({ bodyText: { hyphenation: { locale: 'ca' } } }, 'en')).toBe('ca');
   });
 
   it('reads a document that names no language in the interface\'s', () => {
     expect(configShapingLanguage({ bodyText: { shapingLanguage: 'document' } }, 'es')).toBe('es');
     expect(configShapingLanguage({ bodyText: { shapingLanguage: 'document' } }, 'zh')).toBe('zh-Hans');
+    expect(configShapingLanguage({}, 'es')).toBe('es');
+    expect(configShapingLanguage({ bodyText: { shapingLanguage: 'host' } }, 'es')).toBeUndefined();
+  });
+});
+
+describe('a new book and the built-in guide (#770)', () => {
+  // Neither is stored under an older number, and neither names the
+  // setting: both are shaped in their own language, the default from
+  // postext 1.30. A stored book keeps the host's through the pin of
+  // `configVersion` 14 (`pinLegacyShapingLanguage`).
+  it('a blank book is shaped in the language of the interface that starts it', () => {
+    for (const [interfaceLocale, tag] of [['en', 'en-US'], ['es', 'es'], ['ca', 'ca'], ['zh-Hans', 'zh-Hans'], ['ar', 'ar'], ['ja', 'ja'], ['pt-BR', 'pt-BR']] as const) {
+      const config = createBlankBookConfig(interfaceLocale);
+      expect(config.bodyText?.shapingLanguage, interfaceLocale).toBeUndefined();
+      expect(configShapingLanguage(config, interfaceLocale), interfaceLocale).toBe(tag);
+    }
+  });
+
+  it('every edition of the guide is shaped in its own language, whatever the interface', () => {
+    const tags: Record<string, string> = { es: 'es', ca: 'ca', en: 'en-US', ar: 'ar', 'zh-Hans': 'zh-Hans', ja: 'ja', 'pt-BR': 'pt-BR' };
+    expect([...BUILTIN_PRESET_LOCALES].sort()).toEqual(Object.keys(tags).sort());
+    for (const edition of BUILTIN_PRESET_LOCALES) {
+      const config = createPostextGuideConfig(edition);
+      expect(config.bodyText?.shapingLanguage, edition).toBeUndefined();
+      for (const interfaceLocale of ['en', 'es', 'ja']) expect(configShapingLanguage(config, interfaceLocale), edition).toBe(tags[edition]);
+      expect(documentShapingLanguage(docOf(config)), edition).toBe(tags[edition]);
+    }
   });
 });
 

@@ -16,9 +16,9 @@ import { shapingKey, shapingLanguage, withDocumentLanguage, withShapingLanguage 
 // (wider, set higher), which tells the two apart here.
 //
 // Since #764 this is how a document that keeps the host's language
-// (`bodyText.shapingLanguage: 'host'`, every configuration stored before
-// `configVersion` 13) is shaped, which these tests now ask for: its PDF is
-// the one it always had. A document shaped in its own language follows
+// (`bodyText.shapingLanguage: 'host'`, what a configuration stored before
+// `configVersion` 14 reads with) is shaped, which these tests ask for: its
+// PDF is the one it always had. A document shaped in its own language follows
 // the canvas, which sets “ and ” alone in the forms of no language
 // (`shapingLanguage.test.ts`, `shapingLanguageDocument.test.ts`); its ASCII
 // quotes and its Han take the Japanese forms either way.

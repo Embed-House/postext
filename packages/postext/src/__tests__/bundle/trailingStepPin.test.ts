@@ -41,10 +41,11 @@ describe('pinLegacyTrailingStep (#711)', () => {
       expect(step(migrateConfig({}, v, { content: '# One\n\nProse.\n\n## Two\n\nMore prose, 3 > 2.' })), String(v)).toBeUndefined();
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
-    // read as it is.
+    // One stamped 12 or 13 takes the pin of the language alone (#764, #770);
+    // one stamped 14 is read as it is.
     expect(migrateConfig(current, 12, { content: INDEX })).toEqual({ bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 13, { content: INDEX })).toBe(current);
+    expect(migrateConfig(current, 13, { content: INDEX })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14, { content: INDEX })).toBe(current);
     expect(resolveAllConfig(current).headings.balancing.trailingStep).toBe('lines');
   });
 

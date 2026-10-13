@@ -2298,8 +2298,8 @@ def main() -> None:
     if m.get("version") not in (1, 2):
         rep.error("preset.json", "version must be 1 or 2")
     cv = m.get("configVersion")
-    if isinstance(cv, bool) or not isinstance(cv, (int, float)) or cv < 13:
-        rep.warn("preset.json", "configVersion is missing or below 13: the bundle reads with older rules "
+    if isinstance(cv, bool) or not isinstance(cv, (int, float)) or cv < 14:
+        rep.warn("preset.json", "configVersion is missing or below 14: the bundle reads with older rules "
                  "(up to 1.4: H1 breaks pinned, maths x 1.1312, inline gap 'above'; below 6: heading marks plain, "
                  "drop caps at the 1.4 size, one line of room under a colon line before its list, no gap around "
                  "inline figures in boxes, box cuts that may leave one line of a paragraph; below 7: no line "
@@ -2314,9 +2314,11 @@ def main() -> None:
                  "grid balanced unless the config says otherwise; below 12: the widow rule on a character grid, and "
                  "the orphan rule too in the Japan region, on unless the config says otherwise, and a :warichu note "
                  "broken where one of its characters is left alone on a line, and in Japanese text no quarter em next to "
-                 "the brackets and signs of a Western word; below 13: the text measured in the language of the "
-                 "page that hosts the layout, and in none in a worker, instead of the document's own); "
-                 "set \"configVersion\": 13 for today's rules")
+                 "the brackets and signs of a Western word; below 13: the box of a task item set as a character "
+                 "of the list's face instead of drawn; below 14: the text measured in the language of the "
+                 "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
+                 "the config names bodyText.shapingLanguage); "
+                 "set \"configVersion\": 14 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

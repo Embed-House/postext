@@ -54,6 +54,10 @@ import type { ProjectThumbnail } from './projects';
  *  column breaks between any
  *  two entries of a group of their indexes (see
  *  `pinLegacyIndexGroupSplit`, #712).
+ *  Records saved before 14 that name no language for their text keep the
+ *  language of the page that hosted the layout (see
+ *  `pinLegacyShapingLanguage`, #764 and #770): records 12 by postext 1.28,
+ *  records 13 by 1.29, whose default was the host's from 1.29.1.
  *  Records 1 and 2 were numbered by the Sandbox alone, before 1.5; they
  *  are older than 3 on every count. Records 3 to 7 were written by the 1.5
  *  prereleases: 3 before the maths size changed, 4 before the inline gap

@@ -114,19 +114,32 @@ describe('working configuration', () => {
     expect(config.headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
     // A save stamps the copy, so the next load reads it as it is.
     saveConfig(config);
-    expect(map.get('postext-sandbox-config-version')).toBe('13');
+    expect(map.get('postext-sandbox-config-version')).toBe('14');
     expect(loadConfig()).toEqual(config);
   });
   it('reads a stamped copy as it is', async () => {
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
-      'postext-sandbox-config-version': '13',
+      'postext-sandbox-config-version': '14',
     });
     const { loadConfig } = await import('./persistence');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
-    // Today's stamp is 13: a copy stamped 12 gets the pins of rules 13, its
-    // text shaped in the language of the host (#764) and, with no saved
-    // book to read, the box of its task items kept as a character (#765).
+    // Today's stamp is 14: a copy stamped 13 (postext 1.29) that names no
+    // language for its text keeps the host's (#770), and one that names its
+    // own keeps that.
+    installStorage({
+      'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
+      'postext-sandbox-config-version': '13',
+    });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' } });
+    installStorage({
+      'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'document' } }),
+      'postext-sandbox-config-version': '13',
+    });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'document' } });
+    // A copy stamped 12 gets the pins of rules 13 and 14, its text shaped
+    // in the language of the host (#764, #770) and, with no saved book to
+    // read, the box of its task items kept as a character (#765).
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '12',
@@ -147,8 +160,8 @@ describe('working configuration', () => {
       layout: { inlineResourceGap: 'above' },
       tableStyle: { splitInline: false },
       // (every copy stamped before 12 shapes its words with no letter alone,
-      // #725, and every copy stamped before 13 its text in the language of
-      // the host, #764)
+      // #725, and every copy stamped before 14 its text in the language of
+      // the host, #764 and #770)
       bodyText: { scriptContext: false, shapingLanguage: 'host' },
     });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Prose only.') });
@@ -173,7 +186,7 @@ describe('working configuration', () => {
     });
     // A book without a formula keeps its configuration as it was saved
     // (but for the pins every copy stamped before 12 takes, #725, and
-    // before 13, #764).
+    // before 14, #764 and #770).
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-book': book('Prose only.') });
     expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host' } });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-markdown': 'Prose only.' });
@@ -270,26 +283,31 @@ describe('working configuration', () => {
     // an opener (#639).
     const opener = { ...legacy, config: { headings: { levels: [{ level: 1, span: 'page' as const }] } } };
     expect(configFromExport({ ...opener, configVersion: 10 })).toMatchObject({ layout: { floatsUnderOpener: false } });
-    // (One stamped 12, postext 1.28, gets the version-13 pins alone: its
-    // text is shaped in the language of the host, #764, and the box of a
-    // task item it may hold stays a character, #765.)
+    // (One stamped 12, postext 1.28, gets the version-13 and version-14
+    // pins alone: its text is shaped in the language of the host, #764 and
+    // #770, and the box of a task item it may hold stays a character, #765.
+    // One stamped 13, postext 1.29, gets the language alone.)
     expect(configFromExport({ ...opener, configVersion: 12 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(configFromExport({ ...opener, configVersion: 13 })).toEqual(opener.config);
+    expect(configFromExport({ ...opener, configVersion: 13 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...opener, configVersion: 14 })).toEqual(opener.config);
     // Exports carry the version since 1.5, and read back as they are.
     // One stamped 11 (postext 1.25 to 1.27) gets the version-12 pins: a
     // two-row note it may hold breaks where 1.27 broke it (#720).
     expect(configFromExport({ ...legacy, configVersion: 11 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, cjk: { warichu: { minChars: 1 } } });
     expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(configFromExport({ ...legacy, configVersion: 13 })).toEqual({ headings: { fontFamily: 'Georgia' } });
+    expect(configFromExport({ ...legacy, configVersion: 13 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...legacy, configVersion: 14 })).toEqual({ headings: { fontFamily: 'Georgia' } });
     // And a column-and-a-half layout keeps the caption of a resource set in
     // the text under it, where 1.27 set it (#729); other layouts take no pin.
     const sided = { ...legacy, config: { layout: { layoutType: 'oneAndHalf' as const, sideColumnRole: 'floats' as const } } };
     expect(configFromExport({ ...sided, configVersion: 11 })).toMatchObject({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats', inlineCaptionSide: false } });
     expect(configFromExport({ ...sided, configVersion: 12 })).toEqual({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(configFromExport({ ...sided, configVersion: 13 })).toEqual(sided.config);
+    expect(configFromExport({ ...sided, configVersion: 13 })).toEqual({ ...sided.config, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...sided, configVersion: 14 })).toEqual(sided.config);
     expect(configFromExport({ ...legacy, configVersion: 11 }).layout?.inlineCaptionSide).toBeUndefined();
     expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(configFromExport({ ...styled, configVersion: 13 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
+    expect(configFromExport({ ...styled, configVersion: 13 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ ...styled, configVersion: 14 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
   });
   // The applied preset's snapshot hashed the copy as it was stored; once the
   // copy is migrated on load, an untouched book must still read untouched

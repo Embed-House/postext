@@ -70,10 +70,10 @@ describe('renderToHtmlIndexed paint order', () => {
 
     // The header is emitted after the blocks (on top), and the block list
     // still drives per-block patching.
-    // A space inside one box of text is a box of its own (#770): the
-    // browser would kern the letters beside it, where the canvas that
-    // measured the head shapes word by word.
-    const head = 'Running<span style="display:inline-block;"> </span>head';
+    // The head is set a box per word, each where the canvas that measured
+    // it puts it (#770): the browser would kern the letters beside a
+    // space, where the canvas shapes word by word.
+    const head = '<span style="position:absolute;left:0.000px;top:0;">Running</span>';
     const headerAt = page.innerHtml.indexOf(head);
     expect(headerAt).toBeGreaterThan(firstBlockAt);
     expect(page.blocks.map((b) => b.id)).toEqual(part.columns[0]!.blocks.map((b) => b.id));

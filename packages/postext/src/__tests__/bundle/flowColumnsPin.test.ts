@@ -36,10 +36,11 @@ describe('pinLegacyFlowColumns (#634)', () => {
     const current: PostextConfig = {};
     // (one stamped 11 gets the pins of rules 12 alone, none on its layout)
     expect(migrateConfig(current, 11, { content: GROUP }).layout).toBeUndefined();
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
-    // read as it is.
+    // One stamped 12 or 13 takes the pin of the language alone (#764, #770);
+    // one stamped 14 is read as it is.
     expect(migrateConfig(current, 12, { content: GROUP })).toEqual({ bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 13, { content: GROUP })).toBe(current);
+    expect(migrateConfig(current, 13, { content: GROUP })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14, { content: GROUP })).toBe(current);
   });
 
   it('pins a bundle on its merged layers', () => {

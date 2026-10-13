@@ -136,6 +136,9 @@ afterEach(() => {
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 const OWN = { shapingLanguage: 'document' as const };
+// What a document stored before postext 1.30 reads with; a configuration
+// that names neither is shaped in its own language (#770).
+const HOST = { shapingLanguage: 'host' as const };
 function config(locale: string, width: number, extra: PostextConfig = {}): PostextConfig {
   return {
     locale,
@@ -442,7 +445,7 @@ describe('the canvas paints the pieces of a word measured whole as one text', ()
 
   it('a document shaped in the host\'s language on a Catalan page too', () => {
     host = 'ca';
-    const doc = build(STYLED, config('ca', 600, { bodyText: CATALAN }));
+    const doc = build(STYLED, config('ca', 600, { bodyText: { ...HOST, ...CATALAN } }));
     expect(engine.shapingLanguageOf(doc.config)).toBeUndefined();
     expect(piecesOf(doc, 'ins', 4)).toEqual([['ins', 1.5], ['tal\u00B7', 1.75], ['la', 1.35], ['ci\u00F3', 1.5]]);
     const painted = paint(doc);
@@ -452,7 +455,7 @@ describe('the canvas paints the pieces of a word measured whole as one text', ()
     // and the pieces are as wide alone as their places: nothing to join.
     host = 'en';
     clearMeasurementCache();
-    const english = build(STYLED, config('ca', 600, { bodyText: CATALAN }));
+    const english = build(STYLED, config('ca', 600, { bodyText: { ...HOST, ...CATALAN } }));
     const texts = paint(english).map((p) => p.text);
     expect(texts).toContain('tal\u00B7');
     expect(boxesAgainstInk(paragraphs(english)[0]!, paint(english)).off).toEqual([]);
@@ -606,7 +609,7 @@ describe('the HTML sets the pieces of a word measured whole in one box', () => {
 
   it('a document shaped in the host\'s language: on its page, not where no page is known', () => {
     host = 'ca';
-    const doc = build(STYLED, config('ca', 600, { bodyText: CATALAN }));
+    const doc = build(STYLED, config('ca', 600, { bodyText: { ...HOST, ...CATALAN } }));
     // In a worker nobody knows the language of the page that will show
     // the text: its pieces stay as they were.
     expect(boxes(renderToHtml(doc))).toContain('tal\u00B7');
@@ -730,7 +733,7 @@ describe('the HTML sets a text of several words as the canvas measured it', () =
   });
 
   it('where the language of the page is not known: one box, each space in a box of its own', () => {
-    const html = renderToHtml(build('Body.', config('en', 300, { header })));
+    const html = renderToHtml(build('Body.', config('en', 300, { header, bodyText: HOST })));
     const apart = '<span style="display:inline-block;"> </span>';
     expect(html).toContain(`line-height:1;white-space:pre;">The${apart}Art${apart}of${apart}War</span>`);
     expect(html.replace(/<[^>]+>/g, '')).toContain('The Art of War');
@@ -766,7 +769,7 @@ describe('a doubled dash given the forms of Han text is set alone where it was m
     globals.document = {};
     expect(renderToHtml(withDashes(13))).toContain('font-size:0');
     delete globals.document;
-    const host = withDashes(10, {});
+    const host = withDashes(10, HOST);
     expect(renderToHtml(host)).toContain('font-size:0');
   });
 });

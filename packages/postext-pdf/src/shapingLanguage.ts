@@ -22,10 +22,11 @@
  * synchronously, so the language in force is the page's.
  *
  * A document that keeps the host's language (`bodyText.shapingLanguage:
- * 'host'`, every configuration stored before `configVersion` 13) is
- * shaped as postext-pdf shaped up to 1.28, so it prints the same bytes:
- * `JAN ` through fontkit for Japanese, with punctuation alone shaped as
- * Han, and no language at all for any other document or through HarfBuzz.
+ * 'host'`, which a configuration stored before `configVersion` 14 reads
+ * with unless it names the document's) is shaped as postext-pdf shaped up
+ * to 1.28, so it prints the same bytes: `JAN ` through fontkit for
+ * Japanese, with punctuation alone shaped as Han, and no language at all
+ * for any other document or through HarfBuzz.
  *
  * The script: a browser's canvas shapes a string with no character above
  * U+00FF as Latin text whatever it holds (Chrome keeps such a string in

@@ -67,9 +67,9 @@ function config(overrides: Partial<PostextConfig> = {}): PostextConfig {
     layout: { layoutType: 'single' },
     header: { elements: [] },
     footer: { elements: [] },
-    // Shaped in its own language (#764): the measure and the PDF take the
-    // Chinese forms of the face.
-    bodyText: { fontFamily: 'Song', fontSize: pt(SIZE), lineHeight: pt(36), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false }, shapingLanguage: 'document' },
+    // Shaped in its own language, the default (#764, #770): the measure
+    // and the PDF take the Chinese forms of the face.
+    bodyText: { fontFamily: 'Song', fontSize: pt(SIZE), lineHeight: pt(36), firstLineIndent: pt(0), textAlign: 'left', hyphenation: { enabled: false } },
     ...overrides,
   };
 }

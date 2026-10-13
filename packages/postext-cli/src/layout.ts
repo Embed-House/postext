@@ -47,11 +47,12 @@ export function selectChapters(book: Book, opts: Options): BookChapter[] {
 
 /**
  * `config` as the command line lays it out: with the text shaped in the
- * host's language (`bodyText.shapingLanguage: 'host'`, #764). A browser
- * shapes a document in its own language; Skia's canvas takes a language
- * and shapes without it (@napi-rs/canvas 1.0: the widths of Noto Serif SC,
- * of Noto Serif JP and of a face with Catalan and Turkish forms are the
- * same under every `lang`), so what is measured here is the forms of each
+ * host's language (`bodyText.shapingLanguage: 'host'`, #764), whatever it
+ * names. A browser shapes a document in its own language, the default
+ * from postext 1.30 (#770); Skia's canvas takes a language and shapes
+ * without it (@napi-rs/canvas 1.0: the widths of Noto Serif SC, of Noto
+ * Serif JP and of a face with Catalan and Turkish forms are the same
+ * under every `lang`), so what is measured here is the forms of each
  * font's default language. The outputs are told so: a PDF shaped in the
  * document's language would set a Catalan `l·l` or a Turkish `fi` in
  * other glyphs than the ones their places were measured for.

@@ -346,9 +346,9 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     // Present only when off (#725): a document that shapes its words with
     // no letter in the script of their context resolves as before.
     ...(partial.scriptContext === false ? { scriptContext: false as const } : {}),
-    // Present only for the document's language (#764): one shaped in the
-    // host's, the default, resolves as before.
-    ...(partial.shapingLanguage === 'document' ? { shapingLanguage: 'document' as const } : {}),
+    // Present only for the host's language (#764): a document shaped in
+    // its own, the default since postext 1.30 (#770), resolves as before.
+    ...(partial.shapingLanguage === 'host' ? { shapingLanguage: 'host' as const } : {}),
     // Absent unless set, so a document without tab stops resolves as before (#622).
     ...(Array.isArray(partial.tabStops) ? { tabStops: partial.tabStops } : {}),
     ...(partial.tabInterval ? { tabInterval: partial.tabInterval } : {}),
@@ -548,8 +548,9 @@ export function stripBodyTextDefaults(
     hasOverride = true;
   }
   // Kept as written, the default too (#764): the default of this key was
-  // the document's in postext 1.29.0 and may be again, so a stored value
-  // says which language the document was laid out in.
+  // the document's in postext 1.29.0, the host's in 1.29.1 and 1.29.2 and
+  // the document's again from 1.30 (#770), so a stored value says which
+  // language the document was laid out in.
   if (bodyText.shapingLanguage === 'host' || bodyText.shapingLanguage === 'document') {
     result.shapingLanguage = bodyText.shapingLanguage;
     hasOverride = true;

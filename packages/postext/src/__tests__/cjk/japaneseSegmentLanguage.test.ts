@@ -60,6 +60,9 @@ describe('isolate languages on composed Japanese lines (#427)', () => {
     expect(languages(ja)).toEqual([['他說', null], ['本当', 'ja'], ['。', null]]);
     const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, own());
     expect(languages(en)).toEqual([['他說', null], ['the', 'en'], ['end', 'en'], ['。', null]]);
+    // Its own is the default (#770).
+    const plain = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, config('zh-Hans'));
+    expect(languages(plain)).toEqual(languages(en));
   });
 
   it('carries a Japanese isolate’s language in a Chinese document shaped in the language of the host, and no other', () => {
@@ -71,8 +74,5 @@ describe('isolate languages on composed Japanese lines (#427)', () => {
     expect(languages(ja)).toContainEqual(['本当', 'ja']);
     const en = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, host());
     expect(segments(en).some((s) => s.lang !== undefined)).toBe(false);
-    // The host's is the default.
-    const plain = buildDocument({ markdown: '他說:ltr[the end]{lang=en}。' }, config('zh-Hans'));
-    expect(segments(plain).some((s) => s.lang !== undefined)).toBe(false);
   });
 });

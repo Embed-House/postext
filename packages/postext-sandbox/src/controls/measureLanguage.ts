@@ -6,8 +6,9 @@ import { withHyphenationLocale } from './hyphenation';
  * The language the Sandbox measures a document's text in (#770).
  *
  * The layout measures every text in one language and the canvas paints in
- * it: the document's own under `bodyText.shapingLanguage: 'document'`, the
- * host's otherwise. A face answers with other glyphs under a language
+ * it: the document's own (`bodyText.shapingLanguage: 'document'`, the
+ * default since postext 1.30), the host's under `'host'`, which a book
+ * stored before keeps. A face answers with other glyphs under a language
  * (Noto Serif SC sets `1` 0.471 em wide in Chinese and 0.55 em in a
  * language it has no forms for; Crimson Pro sets the Catalan dot of `l·l`
  * only in Catalan), so whatever the Sandbox measures to place a mark of
@@ -30,8 +31,8 @@ const byConfig = new WeakMap<object, string | undefined>();
 
 /**
  * The language the text of `doc` was measured in and is painted in:
- * undefined for the host's (a document that does not ask for its own),
- * else the document's tag, or the empty string when its locale is no tag.
+ * undefined for the host's (a document that asks for it), else the
+ * document's tag, or the empty string when its locale is no tag.
  */
 export function documentShapingLanguage(doc: Pick<VDTDocument, 'config'>): string | undefined {
   const config = doc.config;
@@ -60,9 +61,9 @@ export function configShapingLanguage(config: PostextConfig, appLocale: string):
   // Resolved first: the default of `shapingLanguage` is the engine's to
   // decide, not read off the key here.
   const shaped = resolveBodyTextConfig(config.bodyText, config.locale).shapingLanguage;
-  if (shaped === 'document') {
+  if (shaped !== 'host') {
     const effective = withHyphenationLocale(config, appLocale);
-    lang = shapingLanguageOf({ locale: effective.locale, bodyText: { shapingLanguage: shaped, hyphenation: effective.bodyText?.hyphenation } });
+    lang = shapingLanguageOf({ locale: effective.locale, bodyText: { hyphenation: effective.bodyText?.hyphenation } });
   }
   byLocale.set(appLocale, lang);
   return lang;

@@ -1004,6 +1004,7 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
   const KHALA = '\u062E\u0627\u0644\u0629';
   const WORD = `${KHALA}.\u00BB`;
   const OWN = { shapingLanguage: 'document' as const };
+  const HOST = { shapingLanguage: 'host' as const };
   const cfg = (family: string, bodyText: PostextConfig['bodyText'] = {}): PostextConfig => config(family, { direction: 'rtl', locale: 'fa', bodyText });
   /** What the canvas gives a segment as it paints it: alone, in a context
    *  set right to left. */
@@ -1024,24 +1025,25 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
     for (const version of [131, 154] as const) {
       on(version);
       expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, OWN))).toEqual([painted(WORD, FONT)]);
+      // Its own language is the default (#770).
+      expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI))).toEqual([painted(WORD, FONT)]);
     }
     expect(painted(WORD, FONT)).toBe(26.21);
   });
 
   it('in a document shaped in its host\'s language it keeps the width it had: two runs on a current browser', () => {
     on(154);
-    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI))).toEqual([26.7]);
-    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, { shapingLanguage: 'host' }))).toEqual([26.7]);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, HOST))).toEqual([26.7]);
     // Chrome 131 read a word as one run.
     on(131);
-    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI))).toEqual([26.21]);
+    expect(widthOf(`${AR} ${WORD} ${AR}`, WORD, cfg(MARKAZI, HOST))).toEqual([26.21]);
   });
 
   it('marks that stand alone between right-to-left words likewise', () => {
     const md = `${AR} .\u00BB ${AR}`;
     expect(widthOf(md, '.\u00BB', cfg(MARKAZI, OWN))).toEqual([painted('.\u00BB', FONT)]);
     expect(painted('.\u00BB', FONT)).toBe(6.21);
-    expect(widthOf(md, '.\u00BB', cfg(MARKAZI))).toEqual([6.7]);
+    expect(widthOf(md, '.\u00BB', cfg(MARKAZI, HOST))).toEqual([6.7]);
   });
 
   it('a Hebrew word too', () => {
@@ -1049,7 +1051,7 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
     const md = `\u05D0\u05D1 ${hebrew} \u05D0\u05D1`;
     const own = config(MARKAZI, { direction: 'rtl', locale: 'he', bodyText: OWN });
     expect(widthOf(md, hebrew, own)).toEqual([painted(hebrew, FONT)]);
-    expect(widthOf(md, hebrew, config(MARKAZI, { direction: 'rtl', locale: 'he' }))).toEqual([16.7]);
+    expect(widthOf(md, hebrew, config(MARKAZI, { direction: 'rtl', locale: 'he', bodyText: HOST }))).toEqual([16.7]);
   });
 
   it('carries no field, and is cut where it was', () => {
@@ -1058,7 +1060,7 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
     expect('scriptContext' in seg).toBe(false);
     expect('scriptRtl' in seg).toBe(false);
     const texts = (config: PostextConfig): string[] => segmentsOf(build(`${AR} (${KHALA}) ${WORD} 46. ${AR}`, config)).map((s) => s.text);
-    expect(texts(cfg(MARKAZI, OWN))).toEqual(texts(cfg(MARKAZI)));
+    expect(texts(cfg(MARKAZI, OWN))).toEqual(texts(cfg(MARKAZI, HOST)));
   });
 
   it('with the rule off a word is measured as up to postext 1.27', () => {
@@ -1071,7 +1073,7 @@ describe('a right-to-left word in a face that draws its marks one way (#770)', (
       on(version);
       const md = `${AR} (1367\u0645) ${AR}. 46. ${WORD}`;
       const widths = (config: PostextConfig): unknown => segmentsOf(build(md, config)).map((s) => [s.text, +s.width.toFixed(4), s.scriptContext]);
-      expect(widths(cfg('Amiri', OWN))).toEqual(widths(cfg('Amiri')));
+      expect(widths(cfg('Amiri', OWN))).toEqual(widths(cfg('Amiri', HOST)));
     }
   });
 });
@@ -1103,7 +1105,9 @@ describe('a design text with no letter is set in the HTML in the forms the canva
     on(131);
     expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)'), ...OWN })))).not.toContain('font-size:0');
     on(154);
-    expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)') })))).not.toContain('font-size:0');
+    expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)'), bodyText: { shapingLanguage: 'host' } })))).not.toContain('font-size:0');
+    // The language is known by default (#770).
+    expect(renderToHtml(build('Text.', config('Amiri', { locale: 'en', header: head('(1)') })))).toContain(`>(1)${MARK}</span>`);
   });
 });
 
