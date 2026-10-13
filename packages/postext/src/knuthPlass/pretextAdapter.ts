@@ -18,6 +18,12 @@ import { breaksAfterDash, breaksAfterHardHyphen, isDash } from '../measure/break
 import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate';
 import { joiningScriptIn } from '../measure/joining';
 
+/** The room the dot of an `l·l` takes at the end of `piece`: a width, or
+ *  what the caller's measurer says for that piece. */
+function dotRoomOf(room: number | ((piece: string) => number), piece: string): number {
+  return typeof room === 'number' ? room : room(piece);
+}
+
 /** Characters tracking may spread over in a segment: none in a word of a
  *  joining script, whose letters connect (`measure/joining.ts`). */
 function trackedChars(seg: string): number {
@@ -89,8 +95,11 @@ export function pretextSegmentsToItems(
   hardHyphenMinLetters = 1,
   /** Width of the middle dot in the text's font: a break inside a Catalan
    *  `l·l` prints the hyphen in its place (`il-` | `lusió`), so the line
-   *  ending there is that much narrower. */
-  geminateDotWidth = 0,
+   *  ending there is that much narrower. A function gives the room the
+   *  dot takes in the piece the line ends on (a document shaped in its
+   *  own language, #770: a face may set the dot after an `l` otherwise
+   *  than alone). */
+  geminateDotWidth: number | ((piece: string) => number) = 0,
 ): KPItem[] {
   const items: KPItem[] = [];
   const segments = prepared.segments;
@@ -145,7 +154,7 @@ export function pretextSegmentsToItems(
       case 'soft-hyphen':
         items.push({
           type: 'penalty',
-          width: discretionaryHyphenWidth - (i > 0 && endsInsideGeminate(segments[i - 1]!) ? geminateDotWidth : 0),
+          width: discretionaryHyphenWidth - (i > 0 && endsInsideGeminate(segments[i - 1]!) ? dotRoomOf(geminateDotWidth, segments[i - 1]!) : 0),
           penalty: HYPHEN_PENALTY,
           flagged: true,
           sourceIndex: i,
@@ -215,7 +224,7 @@ export function reconstructPretextLines(
    *  (`lineBaselineOffset`); 0.8 of the line height by default. */
   baselineOffsetPx = lineHeightPx * 0.8,
   /** See `pretextSegmentsToItems`. */
-  geminateDotWidth = 0,
+  geminateDotWidth: number | ((piece: string) => number) = 0,
 ): VDTLine[] {
   const segments = prepared.segments;
   const widths = (prepared as unknown as { widths: number[] }).widths;
@@ -283,7 +292,7 @@ export function reconstructPretextLines(
         lineSegments[lastIdx] = {
           kind: 'text',
           text,
-          width: last.width + discretionaryHyphenWidth - (endsInsideGeminate(last.text) ? geminateDotWidth : 0),
+          width: last.width + discretionaryHyphenWidth - (endsInsideGeminate(last.text) ? dotRoomOf(geminateDotWidth, last.text) : 0),
         };
         textParts[textParts.length - 1] = text;
       }
