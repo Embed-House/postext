@@ -11,7 +11,7 @@ import { fillFlowText, verticalPaintActive } from './verticalText';
 import { counterFlipBox, mirroredPaintActive } from './mirrorFrame';
 import { rasterScaleOf } from './deviceScale';
 import { paintRunInDirection } from './runDirection';
-import { markerRuns } from '../bidi';
+import { markerSetText } from '../bidi';
 import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
@@ -22,7 +22,7 @@ import { joiningScriptIn } from '../measure/joining';
 import { taskBoxTick } from '../taskBox';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
 import { paintedSegments, paintsAsOneText } from './wordPieces';
-import { contextTextWidth, fillContextText } from './contextText';
+import { fillContextText } from './contextText';
 
 function pickSegmentFont(
   bold: boolean,
@@ -629,21 +629,21 @@ function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
 
 /**
  * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
- * `x`, its left edge in the flow: its runs (`markerRuns`, one bidi level
- * each) painted one after the other along the flow's x axis, each
- * advancing by its own width, a right-to-left one with the context set
- * right to left so its brackets are mirrored. The runs come in visual
- * order, from the sheet's left; a mirrored flow's x axis runs from the
- * sheet's right, so there they are painted last to first.
+ * `x`, its left edge in the flow: one text set right to left
+ * (`markerSetText`), which the browser orders and mirrors as it does the
+ * HTML's box of the same text; a mirrored flow turns it back once, about
+ * its box.
+ *
+ * Up to postext 1.29 it was painted run by run (`markerRuns`), each run a
+ * text of its own, and a run with no letter set alone takes the face's
+ * Latin forms where in the marker it takes the ones of the text around
+ * it: in Amiri bold at 27.08 px `(١)` is 40.65 px wide as one text, in
+ * the layout and in the HTML, and 31.22 px as its three runs; `١.` 24.43
+ * against 22.02. A marker whose runs are as wide alone (`1-`, `•`,
+ * `الفصل 3`) is painted on the same pixels either way (#770).
  */
 function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, direction: 'rtl' | 'rtl-arabic'): void {
-  const runs = markerRuns(text, direction);
-  if (mirroredPaintActive()) runs.reverse();
-  let at = x;
-  for (const run of runs) {
-    paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y), run.text);
-    if (runs.length > 1) at += contextTextWidth(ctx, run.text);
-  }
+  paintRunInDirection(ctx, true, () => fillFlowText(ctx, markerSetText(text, direction), x, y), text);
 }
 
 /** A paragraph's drop cap (#623) on its baseline, and an opening mark

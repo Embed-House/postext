@@ -574,6 +574,8 @@ describe("package exports", () => {
       "lineVisualOrder",
       "lineRuns",
       "markerRuns",
+      "markerSetText",
+      "arabicMarkNeeded",
       "BIDI_CLASS_NAMES",
       "computeColumnEdges",
       "findAnnotations",

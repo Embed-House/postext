@@ -98,3 +98,29 @@ describe('#770: a contents number is measured as it is painted', () => {
     }
   });
 });
+
+describe('the marker of a right-to-left list item is measured as it is painted (#770)', () => {
+  // `«١»`: 13.2 px as the one right-to-left text the outputs set, 14.4 px
+  // measured left to right, its guillemets runs apart.
+  const list = (shapingLanguage: 'host' | 'document'): VDTBlock => buildDocument(
+    { markdown: '1. باب\n2. باب' },
+    {
+      locale: 'ar',
+      page: { dpi: 72, width: pt(360), height: pt(400), margins: { top: pt(18), bottom: pt(18), left: pt(18), right: pt(18) } },
+      layout: { layoutType: 'single' },
+      bodyText: { shapingLanguage, fontSize: pt(10) },
+      orderedLists: { levels: [{ level: 1, numberFormat: 'arabic', prefix: '«', separator: '»' }] },
+    } as PostextConfig,
+  ).blocks.find((b) => b.type === 'listItem')!;
+  /** From the marker's start to the text's: its width and the gap. */
+  const room = (item: VDTBlock): number => Math.abs(item.lines[0]!.bbox.x - item.bulletOffsetX!);
+
+  it('shaped in its own language: the width of the text set right to left; keeping its host\'s: left to right, as it was', () => {
+    const own = list('document');
+    const host = list('host');
+    expect(own.bulletText).toBe('«١»');
+    expect(own.bulletDirection).toBe('rtl-arabic');
+    expect(room(host) - room(own)).toBeCloseTo(14.4 - 13.2, 6);
+  });
+});
+

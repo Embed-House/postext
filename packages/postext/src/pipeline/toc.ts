@@ -10,10 +10,11 @@
  * design `buildHeadersAndFooters` lays out from `toc.parts.design`.
  */
 
-import { flowTextWidth } from '../measure/vertical';
+import { flowTextWidth, measuringVertically } from '../measure/vertical';
+import { getMeasureArabicNumbers } from '../measure/bidiLines';
 import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import { fitLeader } from '../measure/leader';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, rtlTextWidth, scriptTextWidth, type ScriptContext } from '../measure/script';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
 import { measuresRunsAsPainted } from '../design/bidiText';
 import type { ContentBlock, InlineSpan, TocBlockInfo } from '../parse';
 import type { OutlineEntry, ResolvedTocEntryStyleConfig } from '../types';
@@ -23,7 +24,7 @@ import { buildFontString, measureRichBlock } from '../measure';
 import type { ResolvedConfig } from '../vdt';
 import type { BlockStyle } from './styles';
 import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock';
-import type { ListBulletStyle } from './lists';
+import { markerTextWidth, type ListBulletStyle } from './lists';
 import { stampSourceRanges } from './buildHelpers';
 import { resolvedDirection } from './config';
 
@@ -125,7 +126,7 @@ function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[],
  * had, and so does a number of a vertical page, set in cells.
  */
 function numberTextWidth(text: string, font: string, rtl: boolean): number {
-  return rtl && measuresRunsAsPainted() ? rtlTextWidth(text, font) : flowTextWidth(text, font);
+  return markerTextWidth(text, font, rtl && !measuringVertically() ? (getMeasureArabicNumbers() ? 'rtl-arabic' : 'rtl') : undefined);
 }
 
 /** The widest of a level's numbers in `font`, memoised per array, font

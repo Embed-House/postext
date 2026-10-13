@@ -489,6 +489,24 @@ describe('the canvas paints the pieces of a word measured whole as one text', ()
     expect(paint(even).map((p) => p.text)).toEqual(['Una casa de sala i un cami.']);
   });
 
+  it('a ragged line that ends on an added hyphen with no two pieces touching: the hyphen apart, as measured', () => {
+    // A word wider than the measure is cut at its soft hyphen and `se-`
+    // ends the first line: the face kerns the hyphen 0.6 px into the `e`,
+    // and the layout measured the two apart. As one text the line was
+    // 0.6 px short of its boxes.
+    for (const [mode, bodyText] of [['document', OWN], ['host', HOST]] as const) {
+      clearMeasurementCache();
+      const doc = build(`Una casa de se${SHY}dadadadadadada.`, config('en', 70, { bodyText: { ...bodyText, textAlign: 'left' } }));
+      const block = paragraphs(doc)[0]!;
+      const line = block.lines[0]!;
+      expect(line.hyphenated, mode).toBe(true);
+      expect(textSegments(line).map((s) => s.text), mode).toEqual(['Una', 'casa', 'de', 'se-']);
+      const pieces = paint(doc).filter((p) => Math.abs(p.y - line.baseline) < 0.01);
+      expect(pieces.map((p) => p.text), mode).toEqual(['Una', 'casa', 'de', 'se', '-']);
+      expect(boxesAgainstInk(block, paint(doc)).off, mode).toEqual([]);
+    }
+  });
+
   it('a paragraph broken inside its words: every text as wide as its boxes, the hyphen where it was measured', () => {
     let broken = 0;
     let hyphens = 0;

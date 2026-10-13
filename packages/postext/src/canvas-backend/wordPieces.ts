@@ -108,9 +108,16 @@ const LETTER_RE = /\p{L}/u;
 
 /** Whether the browser may set the line's text otherwise as one text than
  *  segment by segment: two of its pieces touch (a pair kerned across the
- *  cut), or its text holds a character past U+00FF and one of its words
- *  is of Latin-1 characters with no letter among them. */
+ *  cut), the line ends on a hyphen the layout added (measured apart from
+ *  its word, and a face may kern the two: at 20 px Fira Sans sets `lec-`
+ *  0.86 px narrower than `lec` and `-`, Crimson Pro `bo-` 0.29 px wider),
+ *  or its text holds a character past U+00FF and one of its words is of
+ *  Latin-1 characters with no letter among them. */
 function mayDifferWhole(line: VDTLine, segments: VDTLineSegment[]): boolean {
+  if (line.hyphenated === true && !line.hardHyphen) {
+    const last = segments[segments.length - 1];
+    if (last?.kind === 'text' && last.text.length > 1 && last.text.endsWith('-')) return true;
+  }
   const wide = WIDE_RE.test(line.text);
   for (let i = 0; i < segments.length; i++) {
     const seg = segments[i]!;

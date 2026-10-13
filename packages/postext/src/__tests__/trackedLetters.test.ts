@@ -351,6 +351,29 @@ describe('other texts the HTML sets as they were measured (#770)', () => {
   });
 });
 
+describe('a right-to-left run of a design line (#770)', () => {
+  it('is a box per word from the run\'s right, in a run box as wide as the run', () => {
+    const config: PostextConfig = {
+      ...OWN, locale: 'ar',
+      page: { ...OWN.page, width: pt(300), margins: { top: pt(40), bottom: pt(10), left: pt(10), right: pt(10) } },
+      header: { elements: [{ kind: 'text', id: 'rh', content: '\u0628\u0627\u0628 \u0643\u062A\u0627\u0628 \u0628\u0627\u0628', fontSize: pt(10), overflow: 'wrap', placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'auto' } } } as never] },
+    };
+    const doc = buildDocument({ markdown: '\u0628\u0627\u0628.' }, config);
+    const block = doc.pages[0]!.header!.blocks.find((b): b is VDTDesignTextBlock => b.kind === 'text')!;
+    const run = block.lines[0]!.runs![0]!;
+    expect(run.rtl).toBe(true);
+    const html = renderToHtml(doc);
+    // باب 15 px, a space 2.5 px, كتاب 20 px: each word from the right.
+    expect(html).toContain(`white-space:pre;width:${run.width.toFixed(3)}px;"><span style="position:absolute;right:0.000px;top:0;">\u0628\u0627\u0628</span><span style="position:absolute;right:15.000px;top:0;"> </span><span style="position:absolute;right:17.500px;top:0;">\u0643\u062A\u0627\u0628</span>`);
+    expect(html).not.toContain('display:inline-block;"> </span>\u0643');
+    // A run the layout holds at another width than its words set so is
+    // written as it was.
+    run.width += 1;
+    block.lines[0]!.width += 1;
+    expect(renderToHtml(doc)).toContain('display:inline-block;"> </span>\u0643');
+  });
+});
+
 describe('a sideways word down a vertical line (#770)', () => {
   it('its pieces are one box where the word was measured whole', () => {
     const config: PostextConfig = { ...OWN, layout: { writingMode: 'vertical-rl', layoutType: 'single' }, bodyText: { ...OWN.bodyText, textAlign: 'left' } };

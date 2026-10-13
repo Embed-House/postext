@@ -551,7 +551,7 @@ export type { ScriptContext } from './measure/script';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {
   bidiClassOf, isRtlScriptChar, needsBidi, mirroredChar, mirroredCodePoint, joiningTypeOf, hasJoiningScript, joinsWithNext,
-  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, markerRuns, BIDI_CLASS_NAMES,
+  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, markerRuns, markerSetText, arabicMarkNeeded, BIDI_CLASS_NAMES,
 } from './bidi';
 export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions, BidiRun, JoiningType, MarkerRun } from './bidi';
 export { computeColumnEdges } from './pipeline/resourceLayout';

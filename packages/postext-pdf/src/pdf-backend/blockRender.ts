@@ -1,5 +1,5 @@
 import { popGraphicsState, pushGraphicsState } from 'pdf-lib';
-import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, segmentOrientation } from 'postext';
+import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, markerSetText, segmentOrientation } from 'postext';
 import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
@@ -22,7 +22,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
-import { shapesSegmentLanguages, withSegmentLanguage } from '../shapingLanguage';
+import { shapesAsCanvas, shapesSegmentLanguages, withinWideText, withSegmentLanguage } from '../shapingLanguage';
 import { wordSegments } from './wordPieces';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
@@ -706,6 +706,10 @@ function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem:
   }
 }
 
+/** A character past Latin-1: a text that holds one is cut into script
+ *  runs by the canvas (see `shapingLanguage.ts`). */
+const WIDE_MARKER_RE = /[^\u0000-\u00FF]/;
+
 /**
  * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
  * `xPx`, its left edge in the flow: its runs (`markerRuns`, one bidi level
@@ -716,19 +720,31 @@ function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem:
  * extraction reads `1-` whatever side the hyphen stands on.
  */
 function drawMarkerRuns(ctx: PageCtx, text: string, xPx: number, baselinePx: number, font: PDFFont, sizePx: number, color: Color, direction: 'rtl' | 'rtl-arabic'): void {
-  const runs = markerRuns(text, direction);
-  if (ctx.mirror) runs.reverse();
-  let at = xPx;
-  const placed = runs.map((run) => {
-    const x = at;
-    at += textAdvancePx(font, run.text, sizePx, joinsLetters(run.text) ? 0 : ctx.trackingPx ?? 0).advance;
-    return { run, x };
-  });
-  placed.sort((a, b) => a.run.start - b.run.start);
-  for (const { run, x } of placed) {
-    if (run.rtl) drawRightToLeftRun(ctx, run.text, x, baselinePx, font, sizePx, color);
-    else drawTextPx(ctx, run.text, x, baselinePx, font, sizePx, color);
-  }
+  const draw = (): void => {
+    const runs = markerRuns(text, direction);
+    if (ctx.mirror) runs.reverse();
+    let at = xPx;
+    const placed = runs.map((run) => {
+      const x = at;
+      at += textAdvancePx(font, run.text, sizePx, joinsLetters(run.text) ? 0 : ctx.trackingPx ?? 0).advance;
+      return { run, x };
+    });
+    placed.sort((a, b) => a.run.start - b.run.start);
+    for (const { run, x } of placed) {
+      if (run.rtl) drawRightToLeftRun(ctx, run.text, x, baselinePx, font, sizePx, color);
+      else drawTextPx(ctx, run.text, x, baselinePx, font, sizePx, color);
+    }
+  };
+  // In a document shaped in its own language the layout measures the
+  // marker, and the canvas paints it, as one text set right to left
+  // (`markerSetText`, #770). A run of it with no letter is shaped there as
+  // a piece of that text, not as a word of its own: when the text holds a
+  // character past U+00FF (an Arabic letter or digit, the Arabic letter
+  // mark before European digits read as an Arabic number) such a piece
+  // has no script and takes the face's default forms. Amiri bold: `(١)`
+  // is 1.501 em wide so, and 1.153 em with its brackets in Latin forms.
+  if (shapesAsCanvas() && WIDE_MARKER_RE.test(markerSetText(text, direction))) withinWideText(true, draw);
+  else draw();
 }
 
 /** The first line of a paragraph a drop cap opens (#623): its first

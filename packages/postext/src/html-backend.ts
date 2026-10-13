@@ -33,9 +33,9 @@ import { lineInkExtent, lineTrailingTracking } from './lineInk';
 import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
 import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale';
 import { hasCJK } from './measure/cjk';
-import { markerRuns, needsBidi } from './bidi';
+import { arabicMarkNeeded, needsBidi } from './bidi';
 import { joiningScriptIn } from './measure/joining';
-import { faceReadsScript, isLetterless, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script';
+import { faceReadsScript, isLetterless, rtlTextWidth, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script';
 import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
@@ -472,15 +472,56 @@ function directedDesignRunsHtml(line: VDTDesignTextBlock['lines'][number], block
   return runs.map((run, i) => {
     const runFont = quoteFontString(run.fontString);
     const cjkDecl = hasCJK(run.text) ? cjkTextDecl(tracked) : '';
-    const text = letterlessRunHtml(run.text, run.fontString, run.rtl === true, run.width, block.letterSpacingPx ?? 0) ?? wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
+    // A run of several words in the line's font: a box per word, in a run
+    // box as wide as the run (see `runWordBoxesHtml`).
+    const words = runFont === font && !cjkDecl && !tracked ? runWordBoxesHtml(run.text, run.fontString, run.rtl === true, run.width) : undefined;
+    const text = words ?? letterlessRunHtml(run.text, run.fontString, run.rtl === true, run.width, block.letterSpacingPx ?? 0) ?? wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
     const top = run.baselineShift ? `${run.baselineShift.toFixed(3)}px` : '0';
-    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${cjkDecl}`;
+    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${words !== undefined ? `width:${run.width.toFixed(3)}px;` : ''}${cjkDecl}`;
     // A run in another face sits on the baseline of the line's own.
     const inner = runFont !== font
       ? `<span style="font:${runFont};line-height:0;${cjkDecl ? cjkFeaturesDecl(tracked) : tracked ? ligaturesDecl() : ''}">${text}</span>`
       : text;
     return `<span dir="${run.rtl ? 'rtl' : 'ltr'}" style="${pos}">${inner}</span>`;
   }).join('');
+}
+
+/**
+ * A run of a directed design line as a box per word and per run of
+ * spaces, each at the place the canvas gives it (#770), or undefined
+ * where {@link wordsHtml} sets it.
+ *
+ * {@link wordsHtml} puts each run of spaces in an inline box, and a box
+ * in a line is as wide as a whole number of layout units: the opener
+ * `الإخراج مجموعة صفحات، …` of the Arabic guide, 17 words in Amiri at
+ * 47.92 px, has 16 spaces of 13.98 px, each 14 px in its box, and the
+ * run ended 0.30 px past its 1699.42 px. With every word at its own
+ * place nothing adds up ({@link wordBoxesHtml}, which sets a line with no
+ * runs so). The places are the canvas's, which shapes a run word by
+ * word: each word alone in the run's direction, each run of spaces
+ * alone, from the run's start side (its right for a right-to-left run);
+ * the caller gives the run's box its width. Only where the words set so
+ * add up to the run as the layout measured it (0.01 px), so a run
+ * measured otherwise (a document that keeps its host's language, a
+ * tracked text) is written as it was; not for a run with a word with no
+ * letter, which alone takes other forms than in its text, nor where the
+ * language is not known.
+ */
+function runWordBoxesHtml(text: string, font: string, rtl: boolean, width: number): string | undefined {
+  const shaped = shapedText;
+  if (!shaped || text.indexOf(' ') < 0 || text.trim() === '') return undefined;
+  const parts = text.split(/( +)/).filter((part) => part !== '');
+  if (parts.some((part) => part[0] !== ' ' && isLetterless(part))) return undefined;
+  return withMeasureLanguage(shaped.lang, () => {
+    const side = rtl ? 'right' : 'left';
+    let x = 0;
+    let out = '';
+    for (const part of parts) {
+      out += `<span style="position:absolute;${side}:${x.toFixed(3)}px;top:0;">${esc(part)}</span>`;
+      x += part[0] !== ' ' && rtl ? rtlTextWidth(part, font) : measureTextWidth(part, font);
+    }
+    return Math.abs(x - width) <= 0.01 ? out : undefined;
+  });
 }
 
 /**
@@ -1691,15 +1732,6 @@ function renderChip(
     tx += run.width;
   }
   return parts.join('');
-}
-
-/** Whether a marker's order differs when its leading European digits read
- *  as Arabic numbers (`BidiOptions.arabicNumbers`, #665). */
-function arabicMarkNeeded(text: string): boolean {
-  if (!/[0-9]/.test(text)) return false;
-  const plain = markerRuns(text, 'rtl');
-  const arabic = markerRuns(text, 'rtl-arabic');
-  return plain.length !== arabic.length || plain.some((r, i) => r.text !== arabic[i]!.text);
 }
 
 /**
