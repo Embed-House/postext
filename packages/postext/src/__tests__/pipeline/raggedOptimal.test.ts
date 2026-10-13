@@ -228,10 +228,11 @@ describe('optimalRagged in the configuration', () => {
     for (let width = 60; width <= 110; width += 2) {
       const pinned = migrateConfig(stored(width), undefined, { content: md });
       expect(pinned.bodyText?.optimalRagged).toBe(false);
-      // The section's paragraph, set line by line.
-      const old = paragraphs(md, { ...stored(width), bodyText: { ...stored(width).bodyText, optimalLineBreaking: false } });
+      // The section's paragraph, set line by line in the host's language,
+      // as 1.4 set it (the pin writes that language out too, #770).
+      const old = paragraphs(md, { ...stored(width), bodyText: { ...stored(width).bodyText, optimalLineBreaking: false, shapingLanguage: 'host' } });
       expect(paragraphs(md, pinned)).toEqual(old);
-      if (JSON.stringify(paragraphs(md, stored(width))) !== JSON.stringify(old)) differs++;
+      if (JSON.stringify(paragraphs(md, { ...stored(width), bodyText: { ...stored(width).bodyText, shapingLanguage: 'host' } })) !== JSON.stringify(old)) differs++;
     }
     expect(differs).toBeGreaterThan(0);
   });
@@ -240,7 +241,8 @@ describe('optimalRagged in the configuration', () => {
     for (let width = 60; width <= 110; width += 5) {
       const stored = config(width);
       const pinned = migrateConfig(stored, undefined, { content: COMPOST });
-      expect(texts(linesOf(COMPOST, pinned))).toEqual(texts(linesOf(COMPOST, config(width, { optimalLineBreaking: false }))));
+      // 1.4 measured in the host's language, which the pin writes out (#770).
+      expect(texts(linesOf(COMPOST, pinned))).toEqual(texts(linesOf(COMPOST, config(width, { optimalLineBreaking: false, shapingLanguage: 'host' }))));
     }
   });
 });

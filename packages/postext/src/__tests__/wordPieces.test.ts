@@ -394,12 +394,21 @@ describe('the segments a line is set from (lineWordSegments)', () => {
   });
 });
 
-describe('a styled paragraph is laid out with its words measured whole, a plain one piece by piece', () => {
+describe('a paragraph is laid out with its words measured whole, styled or plain, in a document shaped in its own language', () => {
   it('the Catalan dot is in the piece after it, the ligature in the second of its letters', () => {
     const styled = build(STYLED, config('ca', 600, { bodyText: { ...OWN, ...CATALAN } }));
     expect(piecesOf(styled, 'ins', 4)).toEqual([['ins', 1.5], ['tal\u00B7', 1.75], ['la', 1.35], ['ci\u00F3', 1.5]]);
+    // #772: a plain paragraph is measured as a styled one.
     const plain = build(PLAIN, config('ca', 600, { bodyText: { ...OWN, ...CATALAN } }));
-    expect(piecesOf(plain, 'ins', 4)).toEqual([['ins', 1.5], ['tal\u00B7', 1.75], ['la', 1], ['ci\u00F3', 1.5]]);
+    expect(piecesOf(plain, 'ins', 4)).toEqual([['ins', 1.5], ['tal\u00B7', 1.75], ['la', 1.35], ['ci\u00F3', 1.5]]);
+    // One shaped in the host's language keeps its pieces measured alone,
+    // on a Catalan page too: `la` without the dot that draws into it.
+    host = 'ca';
+    clearMeasurementCache();
+    const hosted = build(PLAIN, config('ca', 600, { bodyText: { ...HOST, ...CATALAN } }));
+    expect(piecesOf(hosted, 'ins', 4)).toEqual([['ins', 1.5], ['tal\u00B7', 1.75], ['la', 1], ['ci\u00F3', 1.5]]);
+    host = 'en';
+    clearMeasurementCache();
     const latin = build(LATIN, config('en', 600, { bodyText: OWN }));
     expect(piecesOf(latin, 'of', 4)).toEqual([['of', 1], ['fi', 0.8], ['ci', 1], ['na', 1]]);
     expect(piecesOf(latin, 'Toy', 2)).toEqual([['Toy', 1.5], ['ota', 1.4]]);
@@ -461,8 +470,9 @@ describe('the canvas paints the pieces of a word measured whole as one text', ()
     expect(boxesAgainstInk(paragraphs(english)[0]!, paint(english)).off).toEqual([]);
   });
 
-  it('a plain paragraph, measured piece by piece, is painted piece by piece', () => {
-    const doc = build(PLAIN, config('ca', 200, { bodyText: { ...OWN, ...CATALAN } }));
+  it('a plain paragraph shaped in the host\'s language, measured piece by piece, is painted piece by piece', () => {
+    host = 'ca';
+    const doc = build(PLAIN, config('ca', 200, { bodyText: { ...HOST, ...CATALAN } }));
     const painted = paint(doc);
     const block = paragraphs(doc)[0]!;
     // A justified line of it with a dot at a cut: every piece at its place.
@@ -475,18 +485,37 @@ describe('the canvas paints the pieces of a word measured whole as one text', ()
     expect(boxesAgainstInk(block, painted).off).toEqual([]);
   });
 
+  it('a plain paragraph shaped in its own language is painted as its words, as a styled one (#772)', () => {
+    const doc = build(PLAIN, config('ca', 200, { bodyText: { ...OWN, ...CATALAN } }));
+    const painted = paint(doc);
+    const block = paragraphs(doc)[0]!;
+    expect(block.lines.length).toBeGreaterThan(1);
+    // No dot is painted without the `l` after it, but where a line ends
+    // inside the word.
+    const lineEnds = block.lines.filter((l) => l.hyphenated).length;
+    expect(painted.filter((p) => p.text.endsWith('\u00B7')).length).toBeLessThanOrEqual(lineEnds);
+    expect(painted.map((p) => p.text).some((t) => t.includes('l\u00B7l'))).toBe(true);
+    expect(boxesAgainstInk(block, painted).off).toEqual([]);
+  });
+
   it('a ragged line is one text where that text is as wide as its words were measured, and its pieces where it is not', () => {
     // A last line in one style with a kerned pair across a cut, measured
-    // piece by piece: as one text it would be 1 px short.
-    const kerned = build(`Una casa de sa${SHY}la i un Toy${SHY}ota.`, config('en', 400, { bodyText: { ...OWN, textAlign: 'left' } }));
+    // piece by piece (shaped in the host's language): as one text it would
+    // be 1 px short.
+    const kerned = build(`Una casa de sa${SHY}la i un Toy${SHY}ota.`, config('en', 400, { bodyText: { ...HOST, textAlign: 'left' } }));
     const line = paragraphs(kerned)[0]!.lines[0]!;
     expect(textSegments(line).map((s) => s.text)).toContain('Toy');
     const pieces = paint(kerned);
     expect(pieces.map((p) => p.text)).toEqual(textSegments(line).map((s) => s.text));
     expect(boxesAgainstInk(paragraphs(kerned)[0]!, pieces).off).toEqual([]);
     // Nothing across its cuts: one fillText, as before.
-    const even = build(`Una casa de sa${SHY}la i un ca${SHY}mi.`, config('en', 400, { bodyText: { ...OWN, textAlign: 'left' } }));
+    const even = build(`Una casa de sa${SHY}la i un ca${SHY}mi.`, config('en', 400, { bodyText: { ...HOST, textAlign: 'left' } }));
     expect(paint(even).map((p) => p.text)).toEqual(['Una casa de sala i un cami.']);
+    // Shaped in its own language the words are measured whole (#772): the
+    // kerned word is as wide as the face sets it, and the line one text.
+    const whole = build(`Una casa de sa${SHY}la i un Toy${SHY}ota.`, config('en', 400, { bodyText: { ...OWN, textAlign: 'left' } }));
+    expect(paint(whole).map((p) => p.text)).toEqual(['Una casa de sala i un Toyota.']);
+    expect(boxesAgainstInk(paragraphs(whole)[0]!, paint(whole)).off).toEqual([]);
   });
 
   it('a ragged line that ends on an added hyphen with no two pieces touching: the hyphen apart, as measured', () => {
@@ -604,8 +633,15 @@ describe('the HTML sets the pieces of a word measured whole in one box', () => {
     expect(latin).not.toContain('fi');
   });
 
-  it('a plain paragraph keeps a box per piece', () => {
+  it('a plain paragraph is set as a styled one in a document shaped in its own language (#772)', () => {
     const texts = boxes(renderToHtml(build(PLAIN, config('ca', 600, { bodyText: { ...OWN, ...CATALAN } }))));
+    expect(texts.filter((t) => t === 'instal\u00B7laci\u00F3')).toHaveLength(1);
+    for (const piece of ['ins', 'tal\u00B7', 'ci\u00F3']) expect(texts, piece).not.toContain(piece);
+  });
+
+  it('a plain paragraph shaped in the host\'s language keeps a box per piece', () => {
+    host = 'ca';
+    const texts = boxes(renderToHtml(build(PLAIN, config('ca', 600, { bodyText: { ...HOST, ...CATALAN } }))));
     for (const piece of ['ins', 'tal\u00B7', 'ci\u00F3']) expect(texts, piece).toContain(piece);
     expect(texts).not.toContain('instal\u00B7laci\u00F3');
   });

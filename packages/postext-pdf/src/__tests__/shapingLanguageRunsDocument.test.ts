@@ -323,11 +323,13 @@ describe('a justified Catalan paragraph in Crimson Pro (#764)', () => {
     expect(wordWidths(spanish)).toMatchObject({ 'instal\u00B7laci\u00F3': 4381.8, 'il\u00B7lusi\u00F3': 2708, 'col\u00B7legi.': 3085 });
   });
 
-  it('and piece by piece in a plain paragraph: each as wide as it is alone', () => {
+  it('and in a plain paragraph too (#772); piece by piece, each as wide as it is alone, only under \'host\'', () => {
+    const pieces = (doc: VDTDocument) => firstBlock(doc).lines[0]!.segments!.filter((s) => s.kind !== 'space').map((s) => [s.text, Math.round((s.width / EM) * 10) / 10]);
     const doc = buildDocument({ markdown: PLAIN }, config('ca', 'Crimson Pro', hyphenated('ca')));
     expectNoWordBroken(doc);
-    const pieces = firstBlock(doc).lines[0]!.segments!.filter((s) => s.kind !== 'space').map((s) => [s.text, Math.round((s.width / EM) * 10) / 10]);
-    expect(pieces.slice(1, 5)).toEqual([['ins', 1191.4], ['tal\u00B7', 1292], ['la', 725.6], ['ci\u00F3', 1172.9]]);
+    expect(pieces(doc).slice(1, 5)).toEqual([['ins', 1191.4], ['tal\u00B7', 1292], ['la', 1071.3], ['ci\u00F3', 1172.9]]);
+    const host = buildDocument({ markdown: PLAIN }, config('ca', 'Crimson Pro', { ...hyphenated('ca'), shapingLanguage: 'host' }));
+    expect(pieces(host).slice(1, 5)).toEqual([['ins', 1191.4], ['tal\u00B7', 1292], ['la', 725.6], ['ci\u00F3', 1172.9]]);
   });
 
   it.skipIf(!hasPdftotext)('the PDF prints each word where the layout put it, as wide as measured: no hole after the dot', async () => {
