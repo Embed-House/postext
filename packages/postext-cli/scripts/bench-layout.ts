@@ -10,13 +10,13 @@
 // --warm, which reuses the first run's cache (what the Sandbox's worker
 // sees after the first build).
 
-import { createHash } from 'node:crypto';
-import { createMeasurementCache, type MeasurementCache, type VDTDocument } from 'postext';
+import { createMeasurementCache, type MeasurementCache } from 'postext';
 import { Options } from '../src/args';
 import type { CommandContext } from '../src/context';
 import { layOut } from '../src/layout';
 import { Reporter } from '../src/log';
 import { openBook } from '../src/session';
+import { vdtHash } from './vdtHash';
 
 const argv = process.argv.slice(2);
 let runs = 3;
@@ -35,20 +35,6 @@ process.env.DISABLE_SYSTEM_FONTS_LOAD = '1';
 await import('../src/env');
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
-
-/** What a reader sees of the layout: every block's place, every line's
- *  text and place, page by page. */
-export function vdtHash(docs: VDTDocument[]): string {
-  const h = createHash('sha256');
-  for (const doc of docs) {
-    h.update(`doc ${doc.pages.length}\n`);
-    for (const b of doc.blocks) {
-      h.update(`${b.id} ${b.type} ${b.pageIndex}/${b.columnIndex} ${r2(b.bbox.x)},${r2(b.bbox.y)},${r2(b.bbox.width)},${r2(b.bbox.height)}\n`);
-      for (const l of b.lines) h.update(` ${l.text}|${r2(l.bbox.x)},${r2(l.bbox.y)},${r2(l.bbox.width)}|${r2(l.baseline)}|${l.hyphenated ? 1 : 0}\n`);
-    }
-  }
-  return h.digest('hex').slice(0, 16);
-}
 
 const results = [];
 for (const path of books) {
