@@ -317,11 +317,18 @@ H&J / Knuth–Plass
 │                        'document': the document's `locale` (a run's own with `{lang=…}`) on every measuring context and on the canvas, so the lines
 │                        are the same on a page in any language and in a layout worker; HTML/EPUB `lang`, PDF OpenType language system (ZHS, JAN, CAT…).
 │                        Since 1.30 the text is measured under it as it is painted: one width per string whatever was measured before, right-to-left
-│                        words measured right to left in any face, a hyphenatable word set whole where it stays on one line (canvas, HTML, PDF), the
-│                        two halves of a word broken at a line end measured as painted (the rest as a text of its own; a Catalan geminate head as
-│                        `col-`), design text measured run by run in the direction each run is painted in. The PDF shapes word by word as Chrome's
-│                        canvas does and takes each character from the font file the browser took it from when the font provider says which
-│                        (postext-pdf `declaredFontFile(bytes, { unicodeRange, order })`).
+│                        words measured right to left in any face, a hyphenatable word of a paragraph with formatting (a bold or italic run, a link,
+│                        a note) set whole where it stays on one line (canvas, HTML, PDF), the two halves of a word broken at a line end measured as
+│                        painted (the rest as a text of its own; a Catalan geminate head as `col-`), design text measured run by run in the direction
+│                        each run is painted in. The PDF shapes word by word as Chrome's canvas does and takes each character from the font file the
+│                        browser took it from when the font provider says which (postext-pdf `declaredFontFile(bytes, { unicodeRange, order })`).
+│                        In a paragraph without formatting each piece of a hyphenatable word is measured by itself and set as measured, so what a
+│                        face draws across a hyphenation point (EB Garamond's `ff` in of·fice, a kerned pair, the Catalan l·l: Crimson Pro's wide
+│                        dot, Lora's `l·` ligature) shows in a word of a paragraph with an italic in it and not in the same word of a plain one
+│                        (Crimson Pro `col·locada`: 94.89 px whole, 87.40 px in pieces at one size); the same under 'host' on a page in that
+│                        language. Measure and paint agree in both; the form differs. Such a face sets a word two ways in one book: for Catalan
+│                        pick a face that measures l·l the same whole and in pieces (Gentium Book Plus, Charis SIL, Spectral, PT Serif), or check
+│                        the pages.
 │                        'host' (= ≤ 1.28; the default of 1.29.1–1.29.2): the measure and the canvas take the host page's language (none in a worker);
 │                        HTML declares lang for CJK and RTL documents; the widths and the PDF are the ones it had. A word broken at a line end leaves
 │                        a gap after its rest in a face whose language form needs both neighbours (Crimson Pro's Catalan l·l), on a page in that language.
