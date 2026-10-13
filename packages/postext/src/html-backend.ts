@@ -1727,9 +1727,13 @@ function leaderHtml(seg: VDTLineSegment, x: number, baselineOffset: number, bloc
   // one inside it changes nothing) the leader is 441.47 px and 318.34 px.
   // In a document shaped in its own language (#770); one that keeps its
   // host's measured the stop as the page had it and is written as it was.
-  const pos = `position:absolute;left:${x.toFixed(3)}px;top:0;white-space:pre;${ownShaping ? 'direction:ltr;' : ''}${noSelect}`;
-  if (fontDecl) return `<span ${hidden} style="${pos}"><span style="${fontDecl}line-height:0;${colorDecl}">${esc(seg.text)}</span></span>`;
-  return `<span ${hidden} style="${pos}${colorDecl}">${esc(seg.text)}</span>`;
+  // The direction is the box's `dir`, not a `direction` declaration, which
+  // an EPUB's pages may not carry (EPUBCheck CSS-001); Chrome sets the
+  // leader the same with either (882.92 px for 66 `. ` in Amiri).
+  const pos = `position:absolute;left:${x.toFixed(3)}px;top:0;white-space:pre;${noSelect}`;
+  const dir = ownShaping ? ' dir="ltr"' : '';
+  if (fontDecl) return `<span ${hidden}${dir} style="${pos}"><span style="${fontDecl}line-height:0;${colorDecl}">${esc(seg.text)}</span></span>`;
+  return `<span ${hidden}${dir} style="${pos}${colorDecl}">${esc(seg.text)}</span>`;
 }
 
 /** Inline colour swatch (`:swatch{…}`): a square of `side` px on the line's

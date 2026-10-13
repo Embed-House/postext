@@ -309,13 +309,16 @@ describe('a callout title set by the CJK composer (#770)', () => {
 describe('other texts the HTML sets as they were measured (#770)', () => {
   const TOC = '# Contents {toc="false"}\n\n:::toc\n\n# The lantern\n\nText.\n\n# The second lantern\n\nText.';
   it('a leader of dots takes its own direction in a document shaped in its own language', () => {
-    const leader = (config: PostextConfig): string[] => [...renderToHtml(buildDocument({ markdown: TOC }, { ...config, page: { ...config.page, width: pt(300) } })).matchAll(/<span aria-hidden="true" style="([^"]*)">(?:<span[^>]*>)?[. ]{4,}/g)].map((m) => m[1]!);
+    // The opening tag of each leader box. Its direction is a `dir`: an
+    // EPUB's pages may carry no `direction` declaration (EPUBCheck CSS-001).
+    const leader = (config: PostextConfig): string[] => [...renderToHtml(buildDocument({ markdown: TOC }, { ...config, page: { ...config.page, width: pt(300) } })).matchAll(/<span aria-hidden="true"[^>]*>(?:<span[^>]*>)?[. ]{4,}/g)].map((m) => m[0]!);
     const own = leader(OWN);
     expect(own.length).toBeGreaterThan(0);
-    for (const style of own) expect(style).toContain('white-space:pre;direction:ltr;');
+    for (const tag of own) expect(tag).toContain(' dir="ltr" style="position:absolute;');
     const host = leader(HOST);
     expect(host).toHaveLength(own.length);
-    for (const style of host) expect(style).not.toContain('direction');
+    for (const tag of [...own, ...host]) expect(tag).not.toContain('direction');
+    for (const tag of host) expect(tag).not.toContain(' dir=');
   });
 
   it('a drop cap of a tracked line is set with no tracking, as it was measured', () => {
