@@ -275,3 +275,105 @@ describe('a word wider than its line', () => {
     expect(round(words(host[at]!)[0]!.width)).toBe(round(ink(rest.text, 'en') - 0.5));
   });
 });
+
+// A word over three lines: its middle line opens with the rest of the
+// first break and ends on a hyphen of its own. Knuth–Plass counts that
+// line while it chooses breaks as the rest's shift, the boxes between the
+// two cuts and the second break's hyphen, and the line set is the text
+// between the cuts measured alone, and its hyphen. The two are one number:
+// both leave out what the word draws from the second cut on, so they part
+// only where the start of the rest changes the glyphs at the second cut.
+// In Chrome 154, over 9 700 such lines in Crimson Pro, Lora, Fira Sans and
+// EB Garamond at measures of 40 to 300 pt (Catalan `l·l`, `ffi`, addresses,
+// repeated hyphens, a soft hyphen after every letter), the breaker's count,
+// the widths written and the text painted were equal to 0.001 px.
+//
+// Each case here sets the middle line in a measure it fills to a
+// thousandth: the breaker takes it when it counts the width set, and may
+// not when the measure is that much narrower.
+describe.each([['line by line', GREEDY], ['Knuth–Plass', OPTIMAL]])('a word over three lines, %s', (_name, options) => {
+  /** The lines with no word space: their boxes, summed, to a thousandth. */
+  const oneWordLines = (lines: VDTLine[]): [string, number][] => lines
+    .filter((l) => !(l.segments ?? []).some((s) => s.kind === 'space'))
+    .map((l) => [l.text, round((l.segments ?? []).reduce((sum, s) => sum + s.width, 0))]);
+  /** What a line paints: its text measured alone, the hyphen the layout
+   *  added measured apart. */
+  const painted = (line: VDTLine, lang: string, font = PUNT): number => {
+    const added = line.hyphenated === true && !line.hardHyphen && line.text.endsWith('-');
+    const body = added ? line.text.slice(0, -1) : line.text;
+    return round(ink(body, lang, font) + (added ? HYPHEN : 0));
+  };
+
+  it('the middle line of a word whose ligature the first break undoes fills its measure', () => {
+    // `of|ficial|ly`: the middle line paints `ficial` (29 px, its `fi`
+    // ligature) and a hyphen, 32 px. As what `official` grew by after
+    // `of` it was 27 px and a hyphen.
+    const text = `aa of${SHY}ficial${SHY}ly bb`;
+    const own = lay(text, 32.001, DOCUMENT_EN, options);
+    expect(own.map((l) => l.text)).toEqual(['aa of-', 'ficial-', 'ly bb']);
+    expect(closing(own[1]!)).toEqual(['ficial-', 32]);
+    expect(pieces(own[1]!)).toEqual([['ficial-', 32]]);
+    // A thousandth narrower it does not fit, and nothing set is past the
+    // measure.
+    const narrow = lay(text, 31.999, DOCUMENT_EN, options);
+    expect(narrow.map((l) => l.text)).not.toContain('ficial-');
+    for (const [, width] of oneWordLines(narrow)) expect(width).toBeLessThanOrEqual(31.999);
+    // The host's language keeps the count it had: 30 px, set in 31.999.
+    const host = lay(text, 31.999, HOST_EN, options);
+    expect(host.map((l) => l.text)).toEqual(['aa of-', 'ficial-', 'ly bb']);
+    expect(closing(host[1]!)).toEqual(['ficial-', 30]);
+  });
+
+  it('a middle line that ends inside an l·l: the text before the dot and its hyphen', () => {
+    // `ins|tal·|lar` in Catalan: `tal` alone is 15 px, 18 with its hyphen.
+    // The word grew by 17.5 px from `ins` to `instal·` (the dot 2.5 px at
+    // the end of a text), and the rest after the dot is `lar`, 15 px.
+    const text = `instal${DOT}lar`;
+    host = 'ca';
+    clearMeasurementCache();
+    const own = lay(text, 18.001, DOCUMENT_CA, options);
+    expect(oneWordLines(own)).toEqual([['ins-', 18], ['tal-', 18], ['lar', 15]]);
+    for (const line of own) expect(round((line.segments ?? []).reduce((sum, s) => sum + s.width, 0))).toBe(painted(line, 'ca'));
+    clearMeasurementCache();
+    const narrow = lay(text, 17.999, DOCUMENT_CA, options);
+    for (const [, width] of oneWordLines(narrow)) expect(width).toBeLessThanOrEqual(17.999);
+    // A face that ligates `l·` (Lora): the same lines, the same widths.
+    clearMeasurementCache();
+    const lliga = lay(text, 18.001, DOCUMENT_CA, options, LLIGA);
+    expect(oneWordLines(lliga)).toEqual([['ins-', 18], ['tal-', 18], ['lar', 15]]);
+  });
+
+  it('a middle line between two hyphens of a compound, the first repeated', () => {
+    // `yoyo-yoyo-yoyo`: the middle line paints `-yoyo-`, 23.6 px (the
+    // pair `-y` kerned 0.4 px).
+    const text = 'yoyo-yoyo-yoyo';
+    const repeat = { ...options, repeatHyphen: true };
+    const own = lay(text, 23.601, DOCUMENT_EN, repeat);
+    expect(oneWordLines(own)).toEqual([['yoyo-', 21], ['-yoyo-', 23.6], ['-yoyo', 20.6]]);
+    expect(own.map((l) => round(ink(l.text, 'en')))).toEqual([21, 23.6, 20.6]);
+    const narrow = lay(text, 23.599, DOCUMENT_EN, repeat);
+    expect(narrow.map((l) => l.text)).not.toContain('-yoyo-');
+    for (const [, width] of oneWordLines(narrow)) expect(width).toBeLessThanOrEqual(23.599);
+  });
+
+  it('an address over several lines, each longer than the rest is measured from its break', () => {
+    // 80 joints, 243 characters: at these measures a line holds more than
+    // the 32 characters measured from the break it opens at, and the rest
+    // of it is what the whole address grew by from there on.
+    const text = `www${'.oo'.repeat(80)}`;
+    let longMiddles = 0;
+    for (let measure = 190; measure <= 260; measure += 3.5) {
+      clearMeasurementCache();
+      const lines = lay(text, measure, DOCUMENT_EN, options);
+      expect(lines.length).toBeGreaterThan(2);
+      expect(lines.map((l) => l.text).join('')).toBe(text);
+      lines.forEach((line, i) => {
+        const width = round((line.segments ?? []).reduce((sum, s) => sum + s.width, 0));
+        expect([line.text, width]).toEqual([line.text, round(ink(line.text, 'en'))]);
+        expect(width).toBeLessThanOrEqual(measure);
+        if (i > 0 && i < lines.length - 1 && line.text.length > 32) longMiddles++;
+      });
+    }
+    expect(longMiddles).toBeGreaterThan(20);
+  });
+});

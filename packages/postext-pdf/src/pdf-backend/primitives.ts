@@ -546,7 +546,13 @@ function tjNumber(n: number): number {
  * Emit a `TJ` array instead whose numbers restore every glyph's
  * `xAdvance` / `xOffset`; a run without adjustments stays a plain `Tj`.
  */
-export function showTextShaped(font: PDFFont, text: string): PDFOperator {
+export function showTextShaped(font: PDFFont, text: string, letterTj = 0): PDFOperator {
+  // A tracked text with a ligature is another show at each tracking
+  // ({@link letterTrackedParts}); it is not kept.
+  if (letterTj !== 0) {
+    const spaced = shownRun(font, text);
+    if (spaced && spaced.joined.length > 0) return partsOperator(font, plainParts(letterTrackedParts(spaced, letterTj)));
+  }
   let cache = showByFont.get(font);
   if (!cache) {
     cache = new Map();
@@ -588,23 +594,82 @@ export interface TextShow {
  *  follow each other in one file are one operator; with `whole` it is
  *  shaped as one string, as the text of a drawing is (a browser lays an
  *  SVG's text out as it does a page's, not as its canvas does). */
-export function textShows(font: PDFFont, text: string, read = true, whole = false): TextShow[] {
+export function textShows(font: PDFFont, text: string, read = true, whole = false, letterTj = 0): TextShow[] {
   const runs = whole ? fileRuns(font, text) : wordRuns(font, text);
   if (runs.length > 1 && !whole && shapesAsCanvas()) {
-    const joined = joinedShows(runs, read);
+    const joined = joinedShows(runs, read, letterTj);
     if (joined) return joined;
   }
   return runs.flatMap((run) => inRun(run, () => {
     const shown = read ? shownRun(run.font, run.text) : undefined;
-    return shown?.reads ? partsShows(run.font, shown.parts) : [{ font: run.font, op: showTextShaped(run.font, run.text) }];
+    return shown?.reads ? partsShows(run.font, letterTrackedParts(shown, letterTj)) : [{ font: run.font, op: showTextShaped(run.font, run.text, letterTj) }];
   }));
+}
+
+/**
+ * The character spacing a ligature is owed for the letters it joins, as a
+ * `TJ` number (thousandths of the font size), for a text of `sizePx`
+ * painted under a character spacing of `trackingPx` (#770); 0 when it is
+ * owed none.
+ *
+ * The layout counts the tracking once a letter, and `Tc` follows every
+ * glyph: a ligature, one glyph for two or three letters, advanced by one
+ * tracking, and the word ended a tracking short of the width measured for
+ * each letter joined (`shift` in Source Serif 4 at 19.58 px, 0.39 px a
+ * letter: 0.39 px short). In a document shaped in its own language the
+ * pen moves on after a ligature by the tracking of its other letters
+ * ({@link letterTrackedParts}), as the canvas and the HTML set it; one
+ * that keeps the host's language prints as it did.
+ */
+export function letterTrackingTj(trackingPx: number, sizePx: number): number {
+  return trackingPx !== 0 && sizePx > 0 && shapesAsCanvas() ? (trackingPx / sizePx) * 1000 : 0;
+}
+
+/**
+ * The parts of `run` with, after each glyph that stands for several
+ * letters ({@link ShownRun.joined}), a pen movement of `letterTj` for
+ * each letter but the first: the tracking `Tc` gave the glyph once and
+ * the layout counted once a letter. The run's own parts when it holds no
+ * such glyph or is not tracked.
+ */
+function letterTrackedParts(run: ShownRun, letterTj: number): ShowPart[] {
+  if (letterTj === 0 || run.joined.length === 0) return run.parts;
+  const out: ShowPart[] = [];
+  // Glyphs shown so far, and the next entry of `joined` to place.
+  let glyph = 0;
+  let next = 0;
+  for (const part of run.parts) {
+    if (typeof part === 'number') {
+      pushPart(out, part);
+      continue;
+    }
+    const hex = typeof part === 'string' ? part : part.hex;
+    const count = hex.length / 4;
+    if (typeof part === 'object') {
+      out.push(part);
+      for (; next < run.joined.length && run.joined[next]![0] < glyph + count; next++) pushPart(out, tjNumber(-run.joined[next]![1] * letterTj));
+      glyph += count;
+      continue;
+    }
+    let from = 0;
+    for (let k = 0; k < count && next < run.joined.length; k++) {
+      if (run.joined[next]![0] !== glyph + k) continue;
+      pushPart(out, hex.slice(from * 4, (k + 1) * 4));
+      pushPart(out, tjNumber(-run.joined[next]![1] * letterTj));
+      from = k + 1;
+      next++;
+    }
+    if (from < count) pushPart(out, hex.slice(from * 4));
+    glyph += count;
+  }
+  return out;
 }
 
 /** The show-text operators of `runs` (`wordRuns`), the runs that follow
  *  each other in one file joined into one operator: the pen carries from
  *  each to the next, and nothing is kerned across. Undefined when a run's
  *  font carries no shaper (a standard font). */
-function joinedShows(runs: readonly FileRun[], read: boolean): TextShow[] | undefined {
+function joinedShows(runs: readonly FileRun[], read: boolean, letterTj = 0): TextShow[] | undefined {
   const groups: Array<{ font: PDFFont; parts: ShowPart[] }> = [];
   for (const run of runs) {
     const shown = inRun(run, () => shownRun(run.font, run.text));
@@ -614,7 +679,7 @@ function joinedShows(runs: readonly FileRun[], read: boolean): TextShow[] | unde
       group = { font: run.font, parts: [] };
       groups.push(group);
     }
-    for (const part of shown.parts) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
+    for (const part of letterTrackedParts(shown, letterTj)) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
   }
   return groups.flatMap((g) => partsShows(g.font, g.parts));
 }
@@ -711,7 +776,7 @@ function cmapGlyphId(face: ShapingFace, cp: number): number {
  *  of the font size; undefined when the shaper's positions cannot be
  *  matched to its glyphs. A glyph the font's map reads as other text is a
  *  part of its own ({@link glyphReads}). */
-function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts: ShowPart[]; widths: number } | undefined {
+function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts: ShowPart[]; widths: number; joined: Array<[number, number]> } | undefined {
   const shaping = shapingFace(font);
   if (!shaping) return undefined;
   const { face } = shaping;
@@ -733,7 +798,15 @@ function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts:
     pendingHex = '';
   };
   let widths = 0;
+  // The glyphs that stand for several letters (a ligature), by index,
+  // with the letters each joins beyond its first.
+  const joined: Array<[number, number]> = [];
   for (let i = 0; i < count; i++) {
+    const own = run.glyphs[i]!.codePoints;
+    if (own && own.length > 1) {
+      const letters = graphemesOf(String.fromCodePoint(...own)).length;
+      if (letters > 1) joined.push([i, letters - 1]);
+    }
     const pos = run.positions[i]!;
     const lead = tjNumber(pendingAdjust - pos.xOffset * toText);
     if (lead !== 0) {
@@ -750,7 +823,7 @@ function shapedRun(font: PDFFont, text: string, encoded: PDFHexString): { parts:
     widths += cid === '0000' && subsetFont ? MISSING_WIDTH : run.glyphs[i]!.advanceWidth * toText;
   }
   flushHex();
-  return { parts, widths };
+  return { parts, widths, joined };
 }
 
 /** The width a viewer gives a glyph with no `W` entry (no `DW` is written). */
@@ -800,11 +873,17 @@ interface ShownRun {
   glyphs: number;
   /** A glyph of it is read through a span ({@link ReadGlyph}). */
   reads: boolean;
+  /** Its glyphs that stand for several letters (a ligature): the glyph's
+   *  index among the run's and the letters it joins beyond its first, in
+   *  order. A tracked text owes each of those a tracking (#770). */
+  joined: ReadonlyArray<readonly [number, number]>;
+  /** The letters of {@link joined} together. */
+  letters: number;
 }
 
 /** Glyphs and pen advance of a run of parts whose glyph widths sum to
  *  `widths` (thousandths of the font size). */
-function shownRunOf(parts: ShowPart[], widths: number): ShownRun {
+function shownRunOf(parts: ShowPart[], widths: number, joined: ReadonlyArray<readonly [number, number]> = []): ShownRun {
   let advance = widths;
   let glyphs = 0;
   let reads = false;
@@ -816,7 +895,9 @@ function shownRunOf(parts: ShowPart[], widths: number): ShownRun {
       reads = true;
     }
   }
-  return { parts, advance, glyphs, reads };
+  let letters = 0;
+  for (const [, more] of joined) letters += more;
+  return { parts, advance, glyphs, reads, joined, letters };
 }
 
 /** `parts` with every glyph read through the font's map: one show-text
@@ -871,13 +952,19 @@ function fallbackRun(font: PDFFont, face: FallbackFace, pieces: TextPiece[]): Sh
   const spaceGlyph = face.hasGlyphForCodePoint(0x20) ? face.glyphForCodePoint(0x20) : undefined;
   const parts: ShowPart[] = [];
   let widths = 0;
+  // The ligatures of the pieces, by their glyphs' index in the whole run.
+  const joined: Array<[number, number]> = [];
+  let glyphs = 0;
+  const glyphsOf = (shown: readonly ShowPart[]): number => shown.reduce<number>((n, part) => n + (typeof part === 'number' ? 0 : (typeof part === 'string' ? part : part.hex).length / 4), 0);
   for (const piece of pieces) {
     if ('space' in piece) {
       if (spaceGlyph) {
         // The face's space glyph, read as a space whatever the font's map
         // gives it (a no-break space set before any space, #755).
         const space = font.encodeText(' ');
-        for (const part of shapedRun(font, ' ', space)?.parts ?? [space.asString()]) pushPart(parts, part);
+        const shown = shapedRun(font, ' ', space)?.parts ?? [space.asString()];
+        for (const part of shown) pushPart(parts, part);
+        glyphs += glyphsOf(shown);
         pushPart(parts, tjNumber((spaceGlyph.advanceWidth - piece.space) * toText));
         widths += spaceGlyph.advanceWidth * toText;
       } else {
@@ -887,10 +974,13 @@ function fallbackRun(font: PDFFont, face: FallbackFace, pieces: TextPiece[]): Sh
     }
     const encoded = font.encodeText(piece.text);
     const shaped = shapedRun(font, piece.text, encoded);
-    for (const part of shaped?.parts ?? [encoded.asString()]) pushPart(parts, part);
+    const shown = shaped?.parts ?? [encoded.asString()];
+    for (const part of shown) pushPart(parts, part);
+    for (const [at, more] of shaped?.joined ?? []) joined.push([glyphs + at, more]);
+    glyphs += glyphsOf(shown);
     widths += shaped?.widths ?? font.widthOfTextAtSize(piece.text, 1000);
   }
-  return shownRunOf(parts, widths);
+  return shownRunOf(parts, widths, joined);
 }
 
 const runsByFont = new WeakMap<PDFFont, Map<string, ShownRun>>();
@@ -918,7 +1008,7 @@ function shownRun(font: PDFFont, text: string): ShownRun | undefined {
     const encoded = font.encodeText(text);
     const hex = encoded.asString();
     const shaped = shapedRun(font, text, encoded);
-    run = shownRunOf(shaped?.parts ?? (hex ? [hex] : []), shaped?.widths ?? font.widthOfTextAtSize(text, 1000));
+    run = shownRunOf(shaped?.parts ?? (hex ? [hex] : []), shaped?.widths ?? font.widthOfTextAtSize(text, 1000), shaped?.joined);
   }
   if (cache.size >= ENCODE_CACHE_SLOTS) cache.clear();
   cache.set(key, run);
@@ -927,11 +1017,15 @@ function shownRun(font: PDFFont, text: string): ShownRun | undefined {
 
 /** How far `text` moves the pen in `font`'s face at `sizePx`, px, with
  *  `trackingPx` after every glyph (as {@link showTextShaped} paints it,
- *  each run in the file of the face that has it); and how many glyphs it
- *  shows. */
+ *  each run in the file of the face that has it), and after every letter
+ *  a ligature joins in a document shaped in its own language
+ *  ({@link letterTrackingTj}); and how many glyphs it shows. */
 export function textAdvancePx(font: PDFFont, text: string, sizePx: number, trackingPx = 0): { advance: number; glyphs: number } {
   let advance = 0;
   let glyphs = 0;
+  // Letters of ligatures beyond each one's first.
+  let letters = 0;
+  const perLetter = trackingPx !== 0 && shapesAsCanvas();
   for (const word of wordRuns(font, text)) {
     const { font: file, text: part } = word;
     const run = inRun(word, () => shownRun(file, part));
@@ -942,8 +1036,9 @@ export function textAdvancePx(font: PDFFont, text: string, sizePx: number, track
     }
     advance += (run.advance / 1000) * sizePx;
     glyphs += run.glyphs;
+    if (perLetter) letters += run.letters;
   }
-  return { advance: advance + glyphs * trackingPx, glyphs };
+  return { advance: advance + (glyphs + letters) * trackingPx, glyphs };
 }
 
 /** How far (px) the characters of a segment, each at its own advance, may
@@ -1041,6 +1136,8 @@ export function measuredTextShows(
   const groups: Array<{ font: PDFFont; parts: ShowPart[] }> = [];
   let group: { font: PDFFont; parts: ShowPart[] } | undefined;
   const tracking = (trackingPx / sizePx) * 1000;
+  // What a ligature is owed for the letters it joins (#770).
+  const letterTj = letterTrackingTj(trackingPx, sizePx);
   // How far the pen is right of where the layout wants it, in thousandths.
   let ahead = 0;
   for (let i = 0; i < pieces.length; i++) {
@@ -1054,8 +1151,8 @@ export function measuredTextShows(
         group = { font: file, parts: [] };
         groups.push(group);
       }
-      for (const part of run.parts) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
-      advance += run.advance + run.glyphs * tracking;
+      for (const part of letterTrackedParts(run, letterTj)) pushPart(group.parts, read || typeof part !== 'object' ? part : part.hex);
+      advance += run.advance + run.glyphs * tracking + (letterTj !== 0 ? run.letters * letterTj : 0);
     }
     ahead += advance - (piece.width / sizePx) * 1000;
     if (i < pieces.length - 1 && Math.abs(ahead) >= MEASURED_TOLERANCE) {
@@ -1129,7 +1226,7 @@ export function drawTextPx(
     // Right-to-left and joining scripts are shaped with HarfBuzz when the
     // document loaded it (`shapedText.ts`).
     if (complexPainter?.(ctx, text, xPx, baselinePx, font, sizePx, color, outline, actualText, direction)) return;
-    pushTextObject(ctx, textShows(font, text, actualText === undefined && !ctx.readSpans), xPx, baselinePx, font, sizePx, color, outline, actualText);
+    pushTextObject(ctx, textShows(font, text, actualText === undefined && !ctx.readSpans, false, letterTrackingTj(ctx.trackingPx ?? 0, sizePx)), xPx, baselinePx, font, sizePx, color, outline, actualText);
   } finally {
     ctx.runAdvancePx = outer;
   }

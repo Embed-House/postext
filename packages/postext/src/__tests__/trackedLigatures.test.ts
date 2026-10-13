@@ -99,8 +99,8 @@ describe('the pieces of a tracked word (#663)', () => {
     const { ctx } = paintingCtx();
     expect(shapedOtherwise(ctx, 'first')).toBe(true);
     expect(trackedPieces(ctx, 'first')).toEqual([
-      { text: 'fi', offset: 0, glyphsBefore: 0, ligature: true },
-      { text: 'rst', offset: 5, glyphsBefore: 1, ligature: false },
+      { text: 'fi', offset: 0, glyphsBefore: 0, lettersBefore: 0, ligature: true },
+      { text: 'rst', offset: 5, glyphsBefore: 1, lettersBefore: 2, ligature: false },
     ]);
     // o | ffi | ces: the three letters of one ligature stay together.
     expect(trackedPieces(ctx, 'offices')!.map((p) => [p.text, p.offset, p.glyphsBefore, p.ligature])).toEqual([
@@ -130,13 +130,17 @@ describe('the pieces of a tracked word (#663)', () => {
 });
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
-// 72 dpi: 1 pt = 1 px.
+// 72 dpi: 1 pt = 1 px. The documents of this file keep their host's
+// language: a ligature takes one tracking, as one glyph, and the HTML asks
+// for the ligatures as features, as up to postext 1.29. A document shaped
+// in its own language gives a ligature the tracking of each letter
+// (`trackedLetters.test.ts`, #770).
 const CONFIG: PostextConfig = {
   page: { width: pt(160), height: pt(900), dpi: 72, margins: { top: pt(10), bottom: pt(10), left: pt(10), right: pt(10) } },
   layout: { layoutType: 'single' },
   header: { elements: [] },
   footer: { elements: [] },
-  bodyText: { fontSize: pt(10), lineHeight: pt(14), firstLineIndent: pt(0), hyphenation: { enabled: false } },
+  bodyText: { fontSize: pt(10), lineHeight: pt(14), firstLineIndent: pt(0), hyphenation: { enabled: false }, shapingLanguage: 'host' },
 };
 // Four lines set naturally, the last a runt; three with 10‰ of negative
 // tracking (`tightenRunts`). Justified, the second line holds no ligature;
@@ -938,8 +942,15 @@ describe('a tracked design text in HTML (#703)', () => {
   it('asks for its ligatures after the letter-spacing', () => {
     const html = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('first office')));
     expect(html).toContain(`letter-spacing:${T}px;${LIGA}`);
-    // Its word space in a box of its own, so nothing kerns across it (#770).
+    // One box, its word space in a box of its own, so nothing kerns across
+    // it (#770).
     expect(html).toContain('>first<span style="display:inline-block;"> </span>office</span>');
+    // Shaped in its own language: a box per word, and no feature asked
+    // for (the ligatures are boxes of their own, `trackedLetters.test.ts`).
+    const own = renderToHtml(buildDocument({ markdown: 'Text.' }, withHead('first office', {}, { ...CONFIG, bodyText: { ...CONFIG.bodyText, shapingLanguage: 'document' } })));
+    expect(own).toContain(`letter-spacing:${T}px;`);
+    expect(own).not.toContain(LIGA);
+    expect(own).toMatch(/<span style="position:absolute;left:0\.000px;top:0;"><span [^>]+>fi<\/span>rst<\/span><span style="position:absolute;left:[\d.]+px;top:0;"> <\/span><span style="position:absolute;left:[\d.]+px;top:0;">o<span [^>]+>ffi<\/span>ce<\/span>/);
   });
 
   it('a run in another face asks again after its own font', () => {

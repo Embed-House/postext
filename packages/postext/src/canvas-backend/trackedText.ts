@@ -45,6 +45,25 @@ import { contextTextWidth } from './contextText';
  *   like any other, where the painter set the context right to left for
  *   it (`fillSegmentWord`, `paintRunInDirection`): its pieces are set from
  *   the right end of its box, each painted right to left.
+ *
+ * The tracking of a ligature (#770). The layout counts the tracking once
+ * a letter: a word is its natural width and the tracking times its
+ * letters, and that is what the browser paints wherever the
+ * letter-spacing dissolves nothing (Geist's `fi` is one glyph as wide as
+ * `f` and `i`: under a letter-spacing the two letters are set apart, each
+ * with the tracking after it). A ligature painted alone advanced by one
+ * tracking, as one glyph, so a word that held one ended a tracking short
+ * of its box for each letter the ligature had joined: `shift` in Source
+ * Serif 4 at 19.58 px on a line justified with 0.39 px a letter, box
+ * 43.37 px, painted 42.98 px, and `efit` on a line tightened by 0.34 px
+ * ran 0.34 px over the word after it. In a document shaped in its own
+ * language ({@link setLetterTracking}) the piece after a ligature starts
+ * the tracking of every letter before it further on, the ligature's
+ * letters each counted: the word ends where its box does, and the HTML
+ * and the PDF set it the same. A document that keeps its host's language
+ * is painted as it was, and so is a right-to-left word of any document
+ * (a Hebrew face with a ligature): one tracking a ligature in the three
+ * outputs.
  */
 
 /** One piece of a word painted apart from the rest. */
@@ -54,8 +73,12 @@ export interface TrackedPiece {
    *  start: its left end, or its right end for a right-to-left word. */
   offset: number;
   /** Glyphs of the word before the piece: each takes the tracking once (a
-   *  ligature is one glyph, as in the PDF). */
+   *  ligature is one glyph, as in the PDF of a document that keeps its
+   *  host's language). */
   glyphsBefore: number;
+  /** Letters (graphemes) of the word before the piece, the letters of a
+   *  ligature each counted: what the layout counted the tracking of. */
+  lettersBefore: number;
   /** A ligature: painted with no letter-spacing. */
   ligature: boolean;
 }
@@ -88,6 +111,18 @@ interface Known {
 
 /** Font string → what is known of each text set in it. */
 const knownByFont = new Map<string, Known>();
+
+/** Whether a ligature takes the tracking of each of its letters (see
+ *  {@link setLetterTracking}). */
+let letterTracking = false;
+
+/** Give a ligature of a tracked word the tracking of every letter it
+ *  joins from now on (`on`), as the layout counted it, or of one glyph as
+ *  up to postext 1.29: the page painter says which for the document it
+ *  paints (`bodyText.shapingLanguage`, through `setSegmentLanguages`). */
+export function setLetterTracking(on: boolean): void {
+  letterTracking = on;
+}
 
 type Ctx = Pick<CanvasRenderingContext2D, 'font' | 'letterSpacing' | 'measureText'>;
 
@@ -177,7 +212,7 @@ function wordOf(ctx: Ctx, font: string, text: string): TrackedWord | null {
     // Up to the piece's first letter in the natural shaping, the kerning
     // before it counted: the pieces meet as the whole word's letters do.
     const offset = g.start === 0 ? 0 : natural(0, g.start + 1) - natural(g.start, g.start + 1);
-    const piece = { text: letters.slice(g.start, g.end).join(''), offset, glyphsBefore: glyphs, ligature: g.ligature };
+    const piece = { text: letters.slice(g.start, g.end).join(''), offset, glyphsBefore: glyphs, lettersBefore: g.start, ligature: g.ligature };
     glyphs += g.ligature ? 1 : g.end - g.start;
     return piece;
   });
@@ -270,7 +305,9 @@ export function fillTrackedWord(
     // Each piece of a right-to-left word from its own right end.
     if (word.rtl) ctx.textAlign = 'right';
     for (const piece of word.pieces) {
-      const at = piece.offset + tracking * piece.glyphsBefore;
+      // A right-to-left word keeps one tracking a ligature, as in the
+      // HTML and the PDF.
+      const at = piece.offset + tracking * (letterTracking && !word.rtl ? piece.lettersBefore : piece.glyphsBefore);
       if (piece.ligature) setLetterSpacing(ctx, 0);
       paint(piece.text, word.rtl ? x + width - at : x + at, y);
       if (piece.ligature) setLetterSpacing(ctx, tracking);

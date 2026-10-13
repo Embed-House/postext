@@ -115,7 +115,7 @@ export function canvasText(text: string): string {
  *  context its kind of string is measured on (see above). `rtl`: in a
  *  context set right to left, as a right-to-left word is painted (its
  *  brackets mirrored). */
-function metricsOf(text: string, font: string, rtl = false): TextMetrics {
+function metricsOf(text: string, font: string, rtl = false, spacingPx = 0): TextMetrics {
   let measurer: Measurer;
   let handed = text;
   if (_language === undefined) {
@@ -136,12 +136,36 @@ function metricsOf(text: string, font: string, rtl = false): TextMetrics {
     ctx.font = font;
     measurer.font = font;
   }
+  if (spacingPx !== 0) {
+    // Only {@link measureSpacedWidth} asks, of a context that has the
+    // attribute: it goes back to no spacing, what every other measure is
+    // taken at.
+    ctx.letterSpacing = `${spacingPx}px`;
+    const metrics = ctx.measureText(handed);
+    ctx.letterSpacing = '0px';
+    return metrics;
+  }
   if (!rtl || !('direction' in ctx)) return ctx.measureText(handed);
   const direction = ctx.direction;
   ctx.direction = 'rtl';
   const metrics = ctx.measureText(handed);
   ctx.direction = direction;
   return metrics;
+}
+
+/**
+ * The width of `text` in `font` under a letter-spacing of `spacingPx`
+ * (`ctx.letterSpacing`: the spacing after every letter counted in), in
+ * the language measured in and on the context its kind of string is
+ * measured on, kept nowhere. Undefined where the canvas has no
+ * letter-spacing. For what asks how the browser shapes a tracked text
+ * (`measure/trackedLigatures.ts`): under a letter-spacing it sets no
+ * optional ligature.
+ */
+export function measureSpacedWidth(text: string, font: string, spacingPx: number): number | undefined {
+  const probe = _language === undefined ? (_host ??= newMeasurer()) : WIDE_RE.test(text) ? (_wide ??= newMeasurer()) : (_narrow ??= newMeasurer());
+  if (!('letterSpacing' in probe.ctx)) return undefined;
+  return metricsOf(text, font, false, spacingPx).width;
 }
 
 /**

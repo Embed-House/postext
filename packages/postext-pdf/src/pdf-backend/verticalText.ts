@@ -64,6 +64,7 @@ import {
   alphaOf,
   alphaStateOp,
   fontKeyOn,
+  letterTrackingTj,
   opt,
   registerVerticalPainter,
   showTextShaped,
@@ -211,7 +212,7 @@ export function drawVerticalTextPx(
         body.push(setTextMatrix(...m));
         first = false;
       }
-      body.push(inRun(run, () => showTextShaped(file, part)));
+      body.push(inRun(run, () => showTextShaped(file, part, letterTrackingTj(spacingPx, sizePx))));
     }
   };
 

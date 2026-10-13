@@ -40,7 +40,8 @@
  */
 
 import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical';
-import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
+import { getMeasureLanguage, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
+import { designLineOf } from '../design/cjkText';
 import type { ContentBlock, DirectiveAttrs } from '../parse';
 import { suffixJoiner } from '../parse/inlineFormatting';
 import { spaceDirectiveLines } from '../parse/attrs';
@@ -57,6 +58,7 @@ import {
   createVDTBlock,
   pictureTraits,
   type ResolvedConfig,
+  type VDTLine,
   type ResolvedResourceBlock,
   type VDTBlock,
   type VDTDesignBlock,
@@ -718,17 +720,35 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       ? measured.lines
       : [{ text: titleText, bbox: createBoundingBox(0, 0, titleW, titleLineHeight), baseline: lineBaselineOffset(titleLineHeight, titleFont), hyphenated: false }];
     const titleHeight = lines.length * titleLineHeight;
+    // A line the CJK composer set carries what it spaced in its segments:
+    // a Han–Latin space, a mark that gave up blank. A design line with no
+    // runs is painted at its glyphs' own advances, so the line was as
+    // wide as the composer made it and its text ended short of that: the
+    // title `Sandboxでやってみよう` at 31.25 px, 360.91 px wide, was
+    // painted 353.09 px, the quarter em between `Sandbox` and `で` gone.
+    // Such a line takes the runs a design text has (`designLineOf`), each
+    // with its box, as a heading design with the same text does (#770).
+    // In a document shaped in its own language; one that keeps its host's
+    // keeps the lines it had.
+    const titleFonts = { normal: titleFont, bold: titleFont, italic: titleFont, boldItalic: titleFont };
+    const composedRuns = getMeasureLanguage() !== undefined
+      ? (ln: VDTLine) => (ln.cjkComposed ? designLineOf(ln, titleFonts, (t, font) => flowTextWidth(t, font) + titleTrackingPx * graphemeCount(t)).runs : undefined)
+      : () => undefined;
     titleBlock = directText({
       kind: 'text',
       bbox: createBoundingBox(innerX + titleIndentPx, cursorY, titleW, titleHeight),
       fontString: titleFont,
       color: style.titleStyle.color.hex,
-      lines: lines.map((ln, i) => ({
-        text: ln.text,
-        xOffset: 0,
-        baselineY: cursorY + i * titleLineHeight + lineBaselineOffset(titleLineHeight, titleFont),
-        width: ln.bbox.width,
-      })),
+      lines: lines.map((ln, i) => {
+        const runs = composedRuns(ln as VDTLine);
+        return {
+          text: ln.text,
+          xOffset: 0,
+          baselineY: cursorY + i * titleLineHeight + lineBaselineOffset(titleLineHeight, titleFont),
+          width: ln.bbox.width,
+          ...(runs ? { runs } : {}),
+        };
+      }),
       clip: false,
       ...(titleTrackingPx > 0 ? { letterSpacingPx: titleTrackingPx } : {}),
       ...(repeatedTitle ? { artifact: true } : {}),

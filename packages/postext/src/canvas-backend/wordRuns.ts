@@ -2,7 +2,7 @@ import { shapingTagOf } from '../locale';
 import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
-import { fillTrackedWord } from './trackedText';
+import { fillTrackedWord, setLetterTracking } from './trackedText';
 import { fillScriptWord } from './scriptText';
 import { scriptContextUntracked } from '../measure/script';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
@@ -90,9 +90,12 @@ let segmentLanguages = false;
 
 /** Paint the segments that name a language in it from now on (`on`), or
  *  in the page's as up to postext 1.28: the page painter says which for
- *  the document it paints (`bodyText.shapingLanguage`). */
+ *  the document it paints (`bodyText.shapingLanguage`). The same
+ *  documents have the ligatures of their tracked words take the tracking
+ *  of each letter (`setLetterTracking`, #770). */
 export function setSegmentLanguages(on: boolean): void {
   segmentLanguages = on;
+  setLetterTracking(on);
 }
 
 /** Whether a segment that names its language is painted on its own. */
