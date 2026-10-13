@@ -9,6 +9,7 @@ import { UsageError } from '../args';
 import type { CommandContext } from '../context';
 import { resolveFonts, type Face, type FontSet } from '../fonts';
 import { isProjectOnlyFile, loadBook, type Book } from '../input';
+import { sameBytes, sameFiles } from '../io';
 import { layOut, selectChapters } from '../layout';
 import { Reporter, style } from '../log';
 import { writeDocx } from '../outputs/docx';
@@ -43,15 +44,8 @@ function assetsOf(book: Book, fonts: FontSet): Assets {
   return { files: new Map([...book.files].filter(([path]) => !TEXT_FILE.test(path))), faces: fonts.faces };
 }
 
-const sameBytes = (a: Uint8Array, b: Uint8Array): boolean =>
-  a === b || (a.byteLength === b.byteLength && Buffer.from(a.buffer, a.byteOffset, a.byteLength).equals(Buffer.from(b.buffer, b.byteOffset, b.byteLength)));
-
 function sameAssets(a: Assets, b: Assets): boolean {
-  if (a.files.size !== b.files.size || a.faces.length !== b.faces.length) return false;
-  for (const [path, bytes] of a.files) {
-    const other = b.files.get(path);
-    if (!other || !sameBytes(bytes, other)) return false;
-  }
+  if (!sameFiles(a.files, b.files) || a.faces.length !== b.faces.length) return false;
   return a.faces.every((f, i) => {
     const g = b.faces[i]!;
     return f.family === g.family && f.weight === g.weight && f.style === g.style && f.source === g.source && sameBytes(f.bytes, g.bytes);

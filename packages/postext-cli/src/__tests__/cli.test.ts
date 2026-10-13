@@ -227,10 +227,14 @@ describe('postext cli', () => {
       expect(Number(unchanged)).toBeGreaterThan(0);
       // The first chapter's page is left as it was.
       expect(stamp()[0]).toBe(before[0]);
+      const last = join(dir, 'out', pages[pages.length - 1]!);
+      const red = readFileSync(last);
       writeFileSync(join(dir, 'res', 'sq.svg'), square('#00c'));
       const picture = await until(/rebuilt in/);
       expect(picture).not.toContain('chapters laid out');
       expect(picture).toMatch(new RegExp(`wrote ${pages.length} PNG images`));
+      // The picture is drawn anew.
+      expect(readFileSync(last).equals(red)).toBe(false);
     } finally {
       proc.kill('SIGINT');
       await proc.exited;

@@ -15,6 +15,7 @@ import {
   registerResourceImage,
   renderPageToCanvas,
   resolvePrintConfig,
+  type Resource,
   type VDTDocument,
   type VDTPage,
 } from 'postext';
@@ -22,7 +23,7 @@ import { diagramInkHex } from 'postext/bundle';
 import { CliError, UsageError, type Options } from '../args';
 import { iccProfile } from '../assets';
 import type { Book } from '../input';
-import { writeOut } from '../io';
+import { sameFiles, writeOut } from '../io';
 import type { Layout } from '../layout';
 import { formatBytes, type Reporter } from '../log';
 import { drawsSvgAtSize, loadSvgImage } from '../svgImage';
@@ -98,18 +99,30 @@ export function formatFromName(path: string | undefined, explicit: string | unde
 
 const EXT: Record<ImageFormat, string> = { png: '.png', jpeg: '.jpg', webp: '.webp' };
 
-let registeredFor: Book | undefined;
+/** The pictures handed to the canvas renderer: the bytes of each file and
+ *  the ink the diagrams were drawn in. A rebuild in --watch that changed
+ *  none of them keeps them, and the rasters made of them. */
+let registered: { files: Map<string, Uint8Array>; inkHex: string | null } | undefined;
+
+const pictureFileId = (r: Resource): string | undefined =>
+  r.kind === 'svg' ? r.svg?.fileId : r.kind === 'bitmap' ? r.bitmap?.fileId : r.kind === 'video' ? r.video?.poster?.fileId : undefined;
 
 /** Decode the book's pictures and hand them to the canvas renderer (once
- *  per book). */
+ *  per set of pictures). */
 async function registerImages(book: Book, reporter: Reporter): Promise<void> {
-  if (registeredFor === book) return;
-  clearResourceImages();
-  registeredFor = book;
-  const inkHex = diagramInkHex(book.config);
-  await Promise.all(book.resources.map(async (r) => {
-    const fileId = r.kind === 'svg' ? r.svg?.fileId : r.kind === 'bitmap' ? r.bitmap?.fileId : r.kind === 'video' ? r.video?.poster?.fileId : undefined;
+  const files = new Map<string, Uint8Array>();
+  for (const r of book.resources) {
+    const fileId = pictureFileId(r);
     const bytes = fileId ? book.files.get(fileId) : undefined;
+    if (fileId && bytes) files.set(fileId, bytes);
+  }
+  const inkHex = diagramInkHex(book.config);
+  if (registered && registered.inkHex === inkHex && sameFiles(registered.files, files)) return;
+  clearResourceImages();
+  registered = { files, inkHex };
+  await Promise.all(book.resources.map(async (r) => {
+    const fileId = pictureFileId(r);
+    const bytes = fileId ? files.get(fileId) : undefined;
     if (!fileId || !bytes) return;
     try {
       if (r.kind === 'svg') {
