@@ -10,7 +10,7 @@ pageNotes: { "2": "O frontispício: uma gravura de um padeiro robusto, de aventa
 
 ## O que você vai compor
 
-*El transplantat*, de Narcís Oller, completo, com o texto das suas *Obres completes* (Barcelona, 1928), num livro de bolso de 12 × 18,5 cm e 32 páginas. Antes dos quatro capítulos vêm uma falsa folha de rosto, um frontispício com o padeiro diante do forno, a folha de rosto em Cormorant Garamond itálico vermelho e uma nota sobre a edição. Cada capítulo abre sob uma gravura de doze linhas de altura, com o seu número romano em vermelho. O texto, em Crimson Pro de 10,4 pt, se divide pelas sílabas catalãs como pede o Institut d’Estudis Catalans: no mínimo duas letras de cada lado, nenhuma quebra entre vogais em hiato nem logo depois de um apóstrofo, e *titil·laven* quebra como *titil-* | *laven*, com o hífen no lugar do ponto alto. Os diálogos levam travessão, e as citações, «cometes baixes».
+*El transplantat*, de Narcís Oller, completo, com o texto das suas *Obres completes* (Barcelona, 1928), num livro de bolso de 12 × 18,5 cm e 32 páginas. Antes dos quatro capítulos vêm uma falsa folha de rosto, um frontispício com o padeiro diante do forno, a folha de rosto em Cormorant Garamond itálico vermelho e uma nota sobre a edição. Cada capítulo abre sob uma gravura de doze linhas de altura, com o seu número romano em vermelho. O texto, em Gentium Book Plus de 9,85 pt, se divide pelas sílabas catalãs como pede o Institut d’Estudis Catalans: no mínimo duas letras de cada lado, nenhuma quebra entre vogais em hiato nem logo depois de um apóstrofo, e *titil·laven* quebra como *titil-* | *laven*, com o hífen no lugar do ponto alto. Os diálogos levam travessão, e as citações, «cometes baixes».
 
 ## Preparo
 
@@ -20,13 +20,13 @@ O código é [a resposta curta](#a-resposta-curta) lá em cima. `locale: 'ca'` e
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Página 27: titil·laven no fim da linha, composto titil- | laven. É o único l·l que cai no fim de uma linha nestas 32 páginas." />
 
-`compounds: false` mantém o verbo e o seu pronome inteiros, a não ser pelo hífen que já os une (*arrossegar-* | *se*), a quebra que o IEC prefere ([hifenização](/pt/docs/configuration-text#hifenização)). Custa uma linha frouxa: na página 7, a linha anterior a *d’inaugurar-se* abre os espaços até 1,94 vez, mesmo com `maxJustifyTracking: 10` absorvendo o excesso nas outras linhas.
+`compounds: false` mantém o verbo e o seu pronome inteiros, a não ser pelo hífen que já os une (*arrossegar-* | *se*), a quebra que o IEC prefere ([hifenização](/pt/docs/configuration-text#hifenização)). Custa uma linha frouxa: na página 7, a linha anterior a *d’inaugurar-se* abre os espaços até 1,88 vez, mesmo com `maxJustifyTracking: 10` absorvendo o excesso nas outras linhas.
 
 ### 2 · Uma página de bolso feita de linhas inteiras
 
 <Excerpt region="page" />
 
-A margem inferior sai do formato de refile, da margem superior e de `LINES`, de modo que a mancha comporta 29 linhas de 14 pt e toda página cheia termina na mesma linha de base. A medida de 89 mm dá cerca de 64 caracteres de Crimson Pro. `mirror: true` mantém a margem de 16 mm no lado da lombada nas duas páginas da página dupla ([margens espelhadas](/pt/docs/configuration-page-layout#margens-espelhadas)).
+A margem inferior sai do formato de refile, da margem superior e de `LINES`, de modo que a mancha comporta 29 linhas de 14 pt e toda página cheia termina na mesma linha de base. A medida de 89 mm dá cerca de 63 caracteres de Gentium Book Plus. `mirror: true` mantém a margem de 16 mm no lado da lombada nas duas páginas da página dupla ([margens espelhadas](/pt/docs/configuration-page-layout#margens-espelhadas)).
 
 ### 3 · Uma abertura para os quatro capítulos
 
@@ -56,7 +56,7 @@ As imagens pertencem a um tipo de recurso com `captionPrefix` vazio, então nada
 
 ### Deixar que os pronomes também se dividam
 
-Com o padrão `compounds: true`, *d’inaugurar-se* pode quebrar como *d’inau-gurar-se* e a página 7 perde a sua linha frouxa. Em troca, nestas páginas a quebra `titil-` | `laven` deixa de cair no fim da linha.
+Com o padrão `compounds: true`, *d’inaugurar-se* quebra dentro do verbo, *d’i-* | *naugurar-se*, e a página 7 perde a sua linha frouxa: nenhuma linha do livro passa de 1,6 vez. A quebra `titil-` | `laven` continua na página 27. O preço é um *i* sozinho depois do apóstrofo no fim da linha.
 
 ```diff
 -  hyphenation: { compounds: false },
@@ -74,5 +74,6 @@ Com o padrão `compounds: true`, *d’inaugurar-se* pode quebrar como *d’inau-
 
 ## Erros comuns
 
+- Veja como uma fonte de texto compõe *l·l* antes de ficar com ela. Desde o postext 1.30 o `locale` do documento é também o idioma em que o texto é composto (até a 1.29 era o da página que mostrava o livro), e cada fonte responde ao catalão do seu jeito. A Gentium Book Plus tem um único ponto alto para todos os idiomas, com 0,17 em entre os dois *l*. A Crimson Pro, que compôs este livro até a 1.29, alarga o ponto para 0,59 em em catalão e deixa um buraco em *intel·ligent*. A Alegreya e a Literata desenham um ponto mais fechado só onde os dois *l* chegam a elas numa mesma peça, então *il·lustrats* sai de um jeito num parágrafo com itálicos e de outro num parágrafo sem eles.
 - Copie o texto do Viquitexts com os itálicos: Oller marca *tentu*, *Ensanxe* e *palacio* como coloquiais ou castelhanas, e uma exportação em texto simples perde essas marcas. Confira as palavras duvidosas com o fac-símile do volume de 1928: seis vezes a transcrição traz *tom-* onde o verbo é *tornar* (*tomà*, *tomaré*, *tomar*), e uma vez *jom* em vez de *jorn*.
 - Com 6.800 palavras, os cinco arquivos de conteúdo e o kit deixam o script composto com cerca de 69 KB. Um livro inteiro é a maior amostra que um pen comporta; uma obra mais longa vai num pacote `.postext`.

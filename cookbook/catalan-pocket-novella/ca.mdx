@@ -10,7 +10,7 @@ pageNotes: { "2": "El frontispici: un gravat d'un forner gras, amb davantal blan
 
 ## Què compondràs
 
-*El transplantat* de Narcís Oller sencer, amb el text de les seves *Obres completes* (Barcelona, 1928), en un llibre de butxaca de 12 × 18,5 cm i 32 pàgines. Abans dels quatre capítols hi ha una avantportada, un frontispici amb el forner davant del seu forn, la portada en Cormorant Garamond cursiva i vermella, i una nota sobre l'edició. Cada capítol s'obre sota un gravat de dotze línies d'alçada, amb el seu número romà en vermell. El text, en Crimson Pro de 10,4 pt, es parteix per síl·labes catalanes com demana l'Institut d’Estudis Catalans: almenys dues lletres a cada costat, cap tall entre vocals en hiat ni just després d'un apòstrof, i *titil·laven* es talla *titil-* | *laven*, amb el guionet al lloc del punt volat. Els diàlegs porten guió i les citacions, «cometes baixes».
+*El transplantat* de Narcís Oller sencer, amb el text de les seves *Obres completes* (Barcelona, 1928), en un llibre de butxaca de 12 × 18,5 cm i 32 pàgines. Abans dels quatre capítols hi ha una avantportada, un frontispici amb el forner davant del seu forn, la portada en Cormorant Garamond cursiva i vermella, i una nota sobre l'edició. Cada capítol s'obre sota un gravat de dotze línies d'alçada, amb el seu número romà en vermell. El text, en Gentium Book Plus de 9,85 pt, es parteix per síl·labes catalanes com demana l'Institut d’Estudis Catalans: almenys dues lletres a cada costat, cap tall entre vocals en hiat ni just després d'un apòstrof, i *titil·laven* es talla *titil-* | *laven*, amb el guionet al lloc del punt volat. Els diàlegs porten guió i les citacions, «cometes baixes».
 
 ## Elaboració
 
@@ -20,13 +20,13 @@ El codi és [la resposta curta](#la-resposta-curta) de dalt. `locale: 'ca'` tria
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Pàgina 27: titil·laven a final de línia, compost titil- | laven. És l'única l·l que cau a final de línia en aquestes 32 pàgines." />
 
-`compounds: false` deixa sencers el verb i el seu pronom llevat del seu propi guionet (*arrossegar-* | *se*), que és el tall que prefereix l'IEC ([partició de mots](/ca/docs/configuration-text#partició-de-mots)). Costa una línia fluixa: a la pàgina 7, la línia anterior a *d’inaugurar-se* obre els seus espais fins a 1,94 vegades, tot i que `maxJustifyTracking: 10` absorbeix l'excés a les altres.
+`compounds: false` deixa sencers el verb i el seu pronom llevat del seu propi guionet (*arrossegar-* | *se*), que és el tall que prefereix l'IEC ([partició de mots](/ca/docs/configuration-text#partició-de-mots)). Costa una línia fluixa: a la pàgina 7, la línia anterior a *d’inaugurar-se* obre els seus espais fins a 1,88 vegades, tot i que `maxJustifyTracking: 10` absorbeix l'excés a les altres.
 
 ### 2 · Una pàgina de butxaca de línies senceres
 
 <Excerpt region="page" />
 
-El marge inferior surt del format, el marge superior i `LINES`, així que la caixa admet 29 línies de 14 pt i tota pàgina plena acaba a la mateixa línia de base. La mesura de 89 mm dona uns 64 caràcters de Crimson Pro. `mirror: true` manté el marge de 16 mm al llom a les dues pàgines del plec ([marges simètrics](/ca/docs/configuration-page-layout#marges-simètrics-mirall)).
+El marge inferior surt del format, el marge superior i `LINES`, així que la caixa admet 29 línies de 14 pt i tota pàgina plena acaba a la mateixa línia de base. La mesura de 89 mm dona uns 63 caràcters de Gentium Book Plus. `mirror: true` manté el marge de 16 mm al llom a les dues pàgines del plec ([marges simètrics](/ca/docs/configuration-page-layout#marges-simètrics-mirall)).
 
 ### 3 · Una obertura per als quatre capítols
 
@@ -56,7 +56,7 @@ Les imatges són d'un tipus de recurs amb `captionPrefix` buit, així que res no
 
 ### Que els pronoms també es tallin
 
-Amb el `compounds: true` per defecte, *d’inaugurar-se* es pot tallar *d’inau-gurar-se* i la pàgina 7 perd la seva línia fluixa. A canvi, en aquestes pàgines el tall `titil-` | `laven` deixa de caure a final de línia.
+Amb el `compounds: true` per defecte, *d’inaugurar-se* es talla dins del verb, *d’i-* | *naugurar-se*, i la pàgina 7 perd la seva línia fluixa: cap línia del llibre passa d'1,6 vegades. El tall `titil-` | `laven` continua a la pàgina 27. El preu és una *i* sola després de l'apòstrof a final de línia.
 
 ```diff
 -  hyphenation: { compounds: false },
@@ -74,5 +74,6 @@ Amb el `compounds: true` per defecte, *d’inaugurar-se* es pot tallar *d’inau
 
 ## Errors freqüents
 
+- Mira com compon *l·l* una font de text abans de quedar-te-la. Des de postext 1.30 el `locale` del document és també la llengua en què es compon el text (fins a 1.29 era la de la pàgina que mostrava el llibre), i cada font respon al català a la seva manera. Gentium Book Plus té un sol punt volat per a totes les llengües, amb 0,17 em entre les dues *l*. Crimson Pro, que va compondre aquest llibre fins a 1.29, eixampla el punt a 0,59 em en català i deixa un forat a *intel·ligent*. Alegreya i Literata dibuixen un punt més tancat només on els arriben les dues *l* en una mateixa peça, així que *il·lustrats* surt d'una manera en un paràgraf amb cursives i d'una altra en un que no en té.
 - Copia el text de Viquitexts amb les seves cursives: Oller marca *tentu*, *Ensanxe* i *palacio* com a col·loquials o castellanes, i una exportació en text pla les perd. Acara els mots dubtosos amb el facsímil del volum de 1928: sis vegades la transcripció porta *tom-* on el verb és *tornar* (*tomà*, *tomaré*, *tomar*), i una vegada *jom* per *jorn*.
 - Amb 6800 paraules, els cinc fitxers de contingut i el kit deixen l'script compost en uns 69 KB. Un llibre sencer és la mostra més llarga que cap en un pen; una obra més llarga va en un paquet `.postext`.

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 146 · A daily strip and a Sunday half page in the newspaper ═══
 // https://postext.dev/en/cookbook/newspaper-daily-strip
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Newsreader, Archivo Narrow, Comic Neue, Bangers and 12 more (OFL) · Needs postext ≥ 1.29.0
+// Fonts: Newsreader, Archivo Narrow, Comic Neue, Bangers and 12 more (OFL) · Needs postext ≥ 1.30.0
 //
 // Two pages of a newspaper's pull-out comics section: a four-panel daily strip across a
 // four-column page, under its article, and a Sunday half page with its own panel grid. Both
@@ -105,9 +105,7 @@ const config = () => ({
     backgroundColor: col('paper'),
     margins: { top: mm(MARGIN.top), bottom: mm(MARGIN.bottom), left: mm(MARGIN.side),
       right: mm(MARGIN.side) } },
-  // The edition's own language shapes its text on every page and in a worker (#764).
   bodyText: { fontFamily: TEXT, fontSize: pt(CJK ? 8.5 : 9), lineHeight: pt(LEAD),
-    shapingLanguage: 'document',
     color: col('ink'), boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'),
     textAlign: 'justify', firstLineIndent: CJK ? em(1) : mm(3), indentAfterHeading: false,
     hyphenation: { enabled: true }, optimalLineBreaking: true,
