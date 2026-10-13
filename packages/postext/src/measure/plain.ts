@@ -71,6 +71,40 @@ function hasOverwideMixedWord(text: string, font: string, widthPx: number): bool
   return false;
 }
 
+/** Where the text library cuts a word into pieces it measures one by
+ *  one: at a soft hyphen (the dictionary's or the author's), after a
+ *  hyphen and around a dash. */
+const WORD_CUT_RE = /[\u00AD\-\u2010-\u2015]/;
+
+/**
+ * Whether a paragraph with no formatting is measured as one with a style
+ * in it, word by word, in a document shaped in its own language (#772):
+ * when a line may end inside one of its words (`text` is the paragraph
+ * with the dictionary's soft hyphens in it).
+ *
+ * The text library measures each piece of such a word alone, so the word
+ * is as wide as its pieces set apart, and is painted so. The word-by-word
+ * breaker measures the word whole and its pieces as the word grows by
+ * them, so it carries what the face draws across a place a line may end
+ * at: the Catalan form of `l·l`, a ligature, a kerned pair. One book then
+ * set the same word two ways, by whether its paragraph held a word in
+ * italics. Crimson Pro in Catalan at 21 px: `il·luminació,` 107.65 px in a
+ * paragraph with no formatting (the dot 0.24 em) and 115.14 px in one with
+ * a style (the dot 0.586 em); of the thirteen such words of the Catalan
+ * pocket novella seven were set the first way and six the second.
+ * Measured in Chrome 154.
+ *
+ * Such a paragraph now takes the lines a styled one would for the same
+ * text, and the two halves of a word broken at a line end are measured as
+ * the texts painted (`ownRest` in `measure/rich.ts`). A paragraph no line
+ * can end inside a word of keeps the text library, which measures its
+ * words whole too. A document that keeps the host's language keeps every
+ * width it had, and so does vertical text.
+ */
+function measuresWordsWhole(text: string): boolean {
+  return getMeasureLanguage() !== undefined && !measuringVertically() && WORD_CUT_RE.test(text);
+}
+
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 const FIGURE_SPACE = '\u2007';
 /** The no-break spaces pretext glues its neighbours to (EF-66). */
@@ -384,6 +418,15 @@ export function measureBlock(
   // edge or next to punctuation is no break and is left out (#700). The
   // block's plain text keeps it, as it keeps the ones inside a line.
   const processedText = text.includes(SOFT_HYPHEN) ? withoutEdgeSoftHyphens(text, hyphenatedText) : hyphenatedText;
+  // In a document shaped in its own language a word a line may end inside
+  // is measured whole, as in a paragraph with a style (#772). A justified
+  // paragraph whose document keeps the lines of postext 1.4 at a compound's
+  // hyphen (`breakAfterHyphens: false`) stays here: the word-by-word
+  // breaker always breaks there.
+  const keepsCompoundLines = options?.optimal === true && textAlign === 'justify' && options.breakAfterHyphens !== true && !keepCompounds && hasCompound(text);
+  if (!keepsCompoundLines && measuresWordsWhole(processedText)) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
 
   // Measured in the document's language, like every other text (#764).
   const prepared = prepareInLanguage(processedText, font);
