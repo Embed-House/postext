@@ -1732,8 +1732,8 @@ function leaderHtml(seg: VDTLineSegment, x: number, baselineOffset: number, bloc
   // leader the same with either (882.92 px for 66 `. ` in Amiri).
   const pos = `position:absolute;left:${x.toFixed(3)}px;top:0;white-space:pre;${noSelect}`;
   const dir = ownShaping ? ' dir="ltr"' : '';
-  if (fontDecl) return `<span ${hidden}${dir} style="${pos}"><span style="${fontDecl}line-height:0;${colorDecl}">${esc(seg.text)}</span></span>`;
-  return `<span ${hidden}${dir} style="${pos}${colorDecl}">${esc(seg.text)}</span>`;
+  if (fontDecl) return `<span ${hidden} style="${pos}"${dir}><span style="${fontDecl}line-height:0;${colorDecl}">${esc(seg.text)}</span></span>`;
+  return `<span ${hidden} style="${pos}${colorDecl}"${dir}>${esc(seg.text)}</span>`;
 }
 
 /** Inline colour swatch (`:swatch{…}`): a square of `side` px on the line's

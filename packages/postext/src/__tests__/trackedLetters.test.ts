@@ -314,7 +314,7 @@ describe('other texts the HTML sets as they were measured (#770)', () => {
     const leader = (config: PostextConfig): string[] => [...renderToHtml(buildDocument({ markdown: TOC }, { ...config, page: { ...config.page, width: pt(300) } })).matchAll(/<span aria-hidden="true"[^>]*>(?:<span[^>]*>)?[. ]{4,}/g)].map((m) => m[0]!);
     const own = leader(OWN);
     expect(own.length).toBeGreaterThan(0);
-    for (const tag of own) expect(tag).toContain(' dir="ltr" style="position:absolute;');
+    for (const tag of own) expect(tag).toMatch(/^<span aria-hidden="true" style="position:absolute;[^"]*" dir="ltr">/);
     const host = leader(HOST);
     expect(host).toHaveLength(own.length);
     for (const tag of [...own, ...host]) expect(tag).not.toContain('direction');
