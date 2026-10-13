@@ -6,8 +6,10 @@ import { execFileSync } from 'node:child_process';
 import { buildDocument, lineRuns, resolveParagraph } from 'postext';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTLine, VDTPage } from 'postext';
 import { renderToPdf } from '../pdf-backend';
+import { browserSizePx } from '../pdf-backend/wordPieces';
 import { parseFontString } from '../fontString';
 import { loadComplexShaper, shapeRun } from '../complexShaping';
+import { paintedGlyphs } from './glyphPositions';
 
 // #764, end to end, in the faces the page review found off: an Arabic
 // paragraph with quotations in guillemets, brackets and full stops in
@@ -25,7 +27,12 @@ const FACES: Record<string, Uint8Array[]> = {
   'Markazi Text': [fixture('markazi-text-latin.ttf'), fixture('markazi-text-arabic.ttf')],
   Amiri: [fixture('amiri-latin.ttf'), fixture('amiri-arabic.ttf')],
   'Crimson Pro': [fixture('crimson-pro-latin.ttf')],
+  // The same file under a name the measurer sets as a browser does: at
+  // its size cut to a hundredth of a pixel (see `CanvasCtx`).
+  'Crimson Pro Cut': [fixture('crimson-pro-latin.ttf')],
 };
+/** The families the measurer sets at the size a browser does. */
+const CUT_SIZES = /Cut$/;
 const fontProvider = async (family: string) => FACES[family] ?? FACES.Amiri!;
 
 /** The file the browser takes a character from: the `arabic` one for the
@@ -96,7 +103,10 @@ class CanvasCtx {
         if (word !== '') advance += wordAdvance(files, word, (run.level & 1) === 1, language, latin);
       }
     }
-    return { width: advance * (parsed?.sizePx ?? 16) };
+    // Chrome sets a face at its size cut to a hundredth of a pixel
+    // (11.4583 px at 11.45); a measurer with no browser at the size asked.
+    const sizePx = parsed?.sizePx ?? 16;
+    return { width: advance * (CUT_SIZES.test(parsed?.family ?? '') ? Math.floor(sizePx * 100) / 100 : sizePx) };
   }
 }
 const host = globalThis as unknown as { OffscreenCanvas: unknown; OffscreenCanvasRenderingContext2D: unknown };
@@ -340,4 +350,148 @@ describe('a justified Catalan paragraph in Crimson Pro (#764)', () => {
     expect(wordWidths(doc)).toMatchObject({ 'instal\u00B7laci\u00F3': 4381.8, 'il\u00B7lusi\u00F3': 2708 });
     await expectInPlace(doc, 'host ca', true);
   }, 120_000);
+});
+
+describe('a word cut at its hyphen, on a line painted as one text (#770)', () => {
+  // A compound may end a line at its hyphen, so a line carries it in two
+  // pieces. In a paragraph with a style in it (the word in italics goes to
+  // the second line) the first is as wide as it is alone and the second as
+  // wide as the word grew by it, with whatever the face does across the
+  // hyphen: Crimson Pro kerns it against the `o` after it by +14.6
+  // thousandths of the em and against an `x` by -4.9. The first line has
+  // no style of its own and is painted as one text, as the canvas paints
+  // it in one `fillText`: Chrome 154 puts the `l` of `revisar-los.` in
+  // Schibsted Grotesk (kerned -0.765 px at 19.58 px) 0.765 px before the
+  // place of `los.`, and ends the word where that place ends.
+  const TEXT = 'un porta-objectes de vidre i un para-xocs de *goma* negra.';
+  const laidOut = (shapingLanguage: 'document' | 'host'): VDTDocument => buildDocument({ markdown: TEXT }, config('ca', 'Crimson Pro', { textAlign: 'left', shapingLanguage }));
+  /** Where the layout starts and ends each text of the first line,
+   *  thousandths of the em from the sheet's left. */
+  const places = (doc: VDTDocument): Record<string, { start: number; end: number; width: number }> => {
+    const line = firstBlock(doc).lines[0]!;
+    const out: Record<string, { start: number; end: number; width: number }> = {};
+    let x = line.bbox.x;
+    for (const seg of line.segments!) {
+      if (seg.kind !== 'space') out[seg.text] = { start: x / EM, end: (x + seg.width) / EM, width: Math.round((seg.width / EM) * 10) / 10 };
+      x += seg.width;
+    }
+    return out;
+  };
+  /** Where the PDF sets the rest of each compound of the first line: the
+   *  origin of the glyph after the hyphen, the pen the hyphen left, and
+   *  the pen after the word's last glyph. */
+  const rests = async (doc: VDTDocument): Promise<Array<{ start: number; afterHyphen: number; end: number }>> => {
+    const glyphs = (await paintedGlyphs(await renderToPdf(doc, { fontProvider, accessible: false })))[0]!.filter((g) => g.object === 0);
+    // The line is one text object, and reads as its text.
+    expect(glyphs.map((g) => g.text).join('')).toBe(firstBlock(doc).lines[0]!.text);
+    const out: Array<{ start: number; afterHyphen: number; end: number }> = [];
+    glyphs.forEach((g, i) => {
+      if (g.text !== '-') return;
+      let last = i + 1;
+      while (glyphs[last + 1] && glyphs[last + 1]!.text !== ' ') last++;
+      out.push({ start: glyphs[i + 1]!.x / EM, afterHyphen: (g.x + g.advance) / EM, end: (glyphs[last]!.x + glyphs[last]!.advance) / EM });
+    });
+    return out;
+  };
+
+  it('the layout holds the head as wide as alone and the rest as wide as the word grew by it', () => {
+    for (const mode of ['document', 'host'] as const) {
+      const doc = laidOut(mode);
+      expect(firstBlock(doc).lines.map((line) => line.text)).toEqual(['un porta-objectes de vidre i un para-xocs de', 'goma negra.']);
+      // `objectes` is 3267.6 wide alone, `xocs` 1756.9.
+      expect(places(doc)).toMatchObject({ 'porta-': { width: 2529.3 }, objectes: { width: 3282.2 }, 'para-': { width: 2150.4 }, xocs: { width: 1752 } });
+    }
+  });
+
+  it('the PDF sets the word as one text: the rest stands the kerning from its place and ends where its place ends', async () => {
+    const doc = laidOut('document');
+    const at = places(doc);
+    const [objectes, xocs] = await rests(doc);
+    expect(objectes!.afterHyphen).toBeCloseTo(at.objectes!.start, 0);
+    expect(objectes!.start - at.objectes!.start).toBeCloseTo(14.6, 0);
+    expect(objectes!.end).toBeCloseTo(at.objectes!.end, 0);
+    expect(xocs!.afterHyphen).toBeCloseTo(at.xocs!.start, 0);
+    expect(xocs!.start - at.xocs!.start).toBeCloseTo(-4.9, 0);
+    expect(xocs!.end).toBeCloseTo(at.xocs!.end, 0);
+  }, 120_000);
+
+  it('a document that keeps the host\u2019s language sets the rest alone at its place: it ends the kerning short of its place, or past it', async () => {
+    const doc = laidOut('host');
+    const at = places(doc);
+    const [objectes, xocs] = await rests(doc);
+    expect(objectes!.start).toBeCloseTo(at.objectes!.start, 0);
+    expect(objectes!.end - at.objectes!.end).toBeCloseTo(-14.6, 0);
+    expect(xocs!.start).toBeCloseTo(at.xocs!.start, 0);
+    expect(xocs!.end - at.xocs!.end).toBeCloseTo(4.9, 0);
+  }, 120_000);
+});
+
+describe('the size a browser sets a face at (#770)', () => {
+  // Chrome measures and paints 11.4583 px text at 11.45 px: every width of
+  // the layout is 0.072 % under the PDF's advance at the size asked for,
+  // more than the half thousandth the word rule allows two widths of one
+  // text. `Crimson Pro Cut` is measured so; `Crimson Pro` at the size
+  // asked for, as a layout made with no browser is.
+  const SIZE_PX = 11.4583;
+  const UNIT = SIZE_PX / 1000;
+  const laidOut = (markdown: string, fontFamily: string, bodyText: Partial<PostextConfig['bodyText']> = {}, width = PAGE): VDTDocument => {
+    const base = config('ca', fontFamily, { fontSize: pt(SIZE_PX), lineHeight: pt(20), ...bodyText });
+    return buildDocument({ markdown }, { ...base, page: { ...base.page, width: pt(width) } });
+  };
+  /** The glyphs of the first line, by what they read as. */
+  const firstLine = async (doc: VDTDocument) => {
+    const glyphs = (await paintedGlyphs(await renderToPdf(doc, { fontProvider, accessible: false })))[0]!;
+    return glyphs.filter((g) => Math.abs(g.y - glyphs[0]!.y) < 0.5);
+  };
+
+  it('is the size cut to a hundredth of a pixel, in single precision', () => {
+    // Chrome 154, the advance of thirty letters against the em.
+    expect([20.208333333333332, 19.583333333333336, 21.666666666666668, 15.4167, 11.4583, 20.3, 20.22, 20.23, 15.42, 20.25, 20, 12].map(browserSizePx))
+      .toEqual([20.2, 19.58, 21.66, 15.41, 11.45, 20.29, 20.21, 20.23, 15.42, 20.25, 20, 12]);
+  });
+
+  // The compound of the test above, on a line with no style of its own.
+  const COMPOUND = 'un porta-objectes de vidre i un para-xocs de goma negra per a la casa gran de la vila vella, *nova* i bona.';
+  for (const family of ['Crimson Pro Cut', 'Crimson Pro']) {
+    it(`a word cut at its hyphen is set as one text, measured ${family === 'Crimson Pro' ? 'at the size asked for' : 'as a browser sets the face'}`, async () => {
+      const doc = laidOut(COMPOUND, family, { textAlign: 'left' });
+      const line = firstBlock(doc).lines[0]!;
+      expect(line.text).toBe('un porta-objectes de vidre i un para-xocs de goma negra per a la casa gran de la vila');
+      const head = line.segments!.findIndex((seg) => seg.text === 'porta-');
+      const start = line.bbox.x + line.segments!.slice(0, head + 1).reduce((sum, seg) => sum + seg.width, 0);
+      // The rest is as wide as the word grew by it: its 3267.6 alone and
+      // the 14.6 of the hyphen against its `o`, at the size measured.
+      const measuredAt = family === 'Crimson Pro' ? SIZE_PX : 11.45;
+      expect(line.segments![head + 1]!.width / (measuredAt / 1000)).toBeCloseTo(3282.2, 0);
+      const glyphs = await firstLine(doc);
+      const hyphen = glyphs.findIndex((g) => g.text === '-');
+      // The `o` stands the kerning after the hyphen's pen, which is where
+      // the place of the rest starts, to the 2 units the head is wider at
+      // the size asked for than at the size cut.
+      expect((glyphs[hyphen + 1]!.x - (glyphs[hyphen]!.x + glyphs[hyphen]!.advance)) / UNIT).toBeCloseTo(14.6, 0);
+      expect(Math.abs(glyphs[hyphen]!.x + glyphs[hyphen]!.advance - start) / UNIT).toBeLessThan(2.5);
+    }, 120_000);
+
+    it(`the hyphen a line ends on is set apart, measured ${family === 'Crimson Pro' ? 'at the size asked for' : 'as a browser sets the face'}`, async () => {
+      // `po-`: the head 1020.5 and the hyphen 364.3, measured apart;
+      // Crimson Pro kerns the hyphen against the `o` before it by +14.6.
+      const WIDTH = 104;
+      const doc = laidOut('el noi no po\u00ADdria venir a la casa del *pare* avui', family, {}, WIDTH);
+      const line = firstBlock(doc).lines[0]!;
+      expect(line.text).toBe('el noi no po-');
+      expect(line.hyphenated).toBe(true);
+      const measuredAt = family === 'Crimson Pro' ? SIZE_PX : 11.45;
+      expect(line.segments![line.segments!.length - 1]!.width / (measuredAt / 1000)).toBeCloseTo(1384.8, 0);
+      const glyphs = await firstLine(doc);
+      expect(glyphs.map((g) => g.text).join('').replace(/ /g, '')).toBe('elnoinopo-');
+      const hyphen = glyphs[glyphs.length - 1]!;
+      const o = glyphs[glyphs.length - 2]!;
+      // The hyphen starts where the `o` left the pen, to the unit the head
+      // is wider at the size asked for than at the size cut, and the
+      // justified line ends at its measure; set in the head's text the
+      // hyphen stood 14.6 further on.
+      expect(Math.abs(hyphen.x - (o.x + o.advance)) / UNIT).toBeLessThan(1.5);
+      expect(Math.abs(hyphen.x + hyphen.advance - (WIDTH - MARGIN)) / UNIT).toBeLessThan(1.5);
+    }, 120_000);
+  }
 });

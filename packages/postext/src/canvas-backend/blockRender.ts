@@ -509,7 +509,15 @@ function renderComposedLine(
   const lineIndent = line.bbox.x - columnX;
   // A line beside a wrapped picture (#627) fills its own span.
   const effectiveWidth = line.measure?.wrap ? line.measure.width : columnWidth - lineIndent;
-  const segments = line.segments;
+  // A line set word by word down a vertical page: the pieces of a word the
+  // layout measured whole are painted as that word (#770,
+  // `paintedSegments`), as on a horizontal line and as the HTML sets them.
+  // A line of the composer, which measures a Western run whole, and a line
+  // that carries an order are painted as they are.
+  const segments = verticalPaintActive() && !line.cjkComposed && line.order === undefined && line.segments
+    ? paintedSegments(ctx, line, false, tracking, (seg) =>
+      seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont)).segments
+    : line.segments;
   // A line of the CJK composer was measured character by character, any
   // other word by word: two marks that meet are painted apart where they
   // were measured apart.

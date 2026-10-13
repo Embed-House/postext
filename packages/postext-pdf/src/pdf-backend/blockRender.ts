@@ -506,9 +506,9 @@ function renderLineText(
   const composed = line.cjkComposed === true || ctx.vertical !== undefined;
   // The pieces of a word the layout measured whole are painted as that
   // word, in a document shaped in its own language (#764).
-  const segments = wordSegments(line, composed, (seg, text) => {
+  const segments = wordSegments(line, composed, (seg, text, sizeOf) => {
     const fontStr = seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, block);
-    return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? blockFont, text, parseFontString(fontStr)?.sizePx ?? blockSize, tracking).advance);
+    return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? blockFont, text, sizeOf(parseFontString(fontStr)?.sizePx ?? blockSize), tracking).advance);
   });
 
   // Last lines render ragged at natural width — except when overfull:

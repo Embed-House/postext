@@ -20,6 +20,18 @@
  * nothing: set apart under the letter-spacing its letters stand where the
  * layout counted them.
  *
+ * A form by the neighbours is no ligature. Under a letter-spacing the
+ * browser takes the contextual alternates of a face away with its
+ * ligatures, and two neighbours with such forms read as a ligature to the
+ * probe above (Playpen Sans: `FO`, `OR`, most pairs). A zero width
+ * non-joiner between the two tells: it dissolves a ligature and leaves a
+ * form by the neighbours (`canvas-backend/trackedText.ts` has the widths
+ * measured). Two neighbours as wide across a non-joiner as without one
+ * are left in the letters around them: the HTML sets a word with such
+ * forms whole, at the letter-spacing that ends it where it was measured,
+ * as the canvas paints it in a document shaped in its own language. Only
+ * such a document asks here.
+ *
  * In the language measured in (`getMeasureLanguage`): a face ligates
  * otherwise under a language (no `fi` in Turkish).
  */
@@ -80,6 +92,17 @@ function shapedOtherwise(text: string, font: string): boolean {
   return Math.abs(one - step - measureTextWidth(text, font)) > TOLERANCE;
 }
 
+/** ZERO WIDTH NON-JOINER: between two letters it asks for no ligature of
+ *  them. */
+const ZWNJ = '\u200C';
+
+/** Whether two neighbours the letter-spacing reshapes are a ligature: a
+ *  non-joiner between them changes their natural width (see the module
+ *  comment). */
+function ligated(first: string, second: string, font: string): boolean {
+  return Math.abs(measureTextWidth(first + ZWNJ + second, font) - measureTextWidth(first + second, font)) > TOLERANCE;
+}
+
 function piecesOf(text: string, font: string): readonly LigaturePiece[] | null {
   if (!divisible(text)) return null;
   const letters = graphemesOf(text);
@@ -88,7 +111,7 @@ function piecesOf(text: string, font: string): readonly LigaturePiece[] | null {
   let ligatures = 0;
   for (let k = 0; k < letters.length;) {
     let end = k + 1;
-    while (end < letters.length && shapedOtherwise(letters[end - 1]! + letters[end]!, font)) end++;
+    while (end < letters.length && shapedOtherwise(letters[end - 1]! + letters[end]!, font) && ligated(letters[end - 1]!, letters[end]!, font)) end++;
     const ligature = end - k > 1;
     const last = groups[groups.length - 1];
     if (!ligature && last && !last.ligature) last.end = end;
@@ -96,7 +119,8 @@ function piecesOf(text: string, font: string): readonly LigaturePiece[] | null {
     if (ligature) ligatures++;
     k = end;
   }
-  // Shaped otherwise as a whole but by no pair of neighbours: left whole.
+  // Shaped otherwise as a whole but by no ligature of two neighbours: left
+  // whole.
   if (ligatures === 0) return null;
   const natural = (from: number, to: number): number => measureTextWidth(letters.slice(from, to).join(''), font);
   return groups.map((g) => ({

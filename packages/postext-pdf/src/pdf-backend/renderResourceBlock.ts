@@ -647,9 +647,9 @@ function paintLineRuns(
     const composed = line.cjkComposed === true || ctx.vertical !== undefined;
     // The pieces of a word the layout measured whole are painted as that
     // word, in a document shaped in its own language (#764).
-    const segs = wordSegments(line, composed, (seg, text) => {
+    const segs = wordSegments(line, composed, (seg, text, sizeOf) => {
       const fontStr = seg.fontString ?? pickFont(!!seg.bold, !!seg.italic, fonts);
-      return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? baseFont, text, parseFontString(fontStr)?.sizePx ?? baseSize, tracking).advance);
+      return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? baseFont, text, sizeOf(parseFontString(fontStr)?.sizePx ?? baseSize), tracking).advance);
     }) ?? line.segments;
     // A composed CJK line reads as written, not with its gaps.
     const actualLine = composed ? cjkLineText(segs) : undefined;

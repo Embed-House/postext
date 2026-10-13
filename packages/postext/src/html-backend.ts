@@ -40,8 +40,8 @@ import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
 import type { CjkRegion, ResourceSafeArea } from './types';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
 import { graphemeCount, graphemesOf } from './measure/graphemes';
-import { measureTextWidth, withMeasureLanguage } from './measure/canvas';
-import { trackedLigaturePieces } from './measure/trackedLigatures';
+import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas';
+import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
 import { fontFamilyOf } from './measure/vertical';
 import { lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
@@ -796,11 +796,26 @@ function trackedIn(font: string, tracking: number | undefined): TrackedText | un
  * Serif 4 at 40 px: 0.39 px between `pipe` and `fi`). A word with no
  * ligature the letter-spacing dissolves, a word of a joining or a
  * right-to-left script, and any word where nothing measures, is its text.
+ *
+ * A letter-spacing takes the contextual alternates of a face away too
+ * (see `canvas-backend/trackedText.ts`): a word whose pieces do not end
+ * where the word was measured to end, or that the letter-spacing reshapes
+ * with no ligature to keep, is set whole in a box at the letter-spacing
+ * that ends it there, as the canvas paints it. `TEA-PARTY` in Cormorant
+ * SC at 17.71 px, tracked 2.5 px: 2.66 px a letter, the 1.47 px its
+ * hyphen is narrower by under a letter-spacing shared among its nine
+ * letters.
  */
 function trackedWordHtml(word: string, tracked: TrackedText): string {
   const shaped = shapedText;
   if (!shaped || word.length < 2) return esc(word);
-  const pieces = withMeasureLanguage(tracked.lang !== undefined ? shapingTagOf(tracked.lang) : shaped.lang, () => trackedLigaturePieces(word, tracked.font));
+  const set = withMeasureLanguage(tracked.lang !== undefined ? shapingTagOf(tracked.lang) : shaped.lang, () => {
+    const cut = trackedLigaturePieces(word, tracked.font);
+    if (cut && piecesFit(cut, word, tracked.font)) return { pieces: cut };
+    return { pieces: cut, spacing: fittedLetterSpacing(word, tracked) };
+  });
+  if (set.spacing !== undefined) return `<span style="letter-spacing:${set.spacing.toFixed(4)}px;">${esc(word)}</span>`;
+  const pieces = set.pieces;
   if (!pieces) return esc(word);
   let out = '';
   // Where the piece before ends in the natural shaping.
@@ -813,6 +828,50 @@ function trackedWordHtml(word: string, tracked: TrackedText): string {
     else out += lead ? `<span style="${lead}">${esc(piece.text)}</span>` : esc(piece.text);
   }
   return out;
+}
+
+/** The width of `text` in `font` under a letter-spacing, that spacing
+ *  taken off, and what one px of letter-spacing adds to it; undefined
+ *  where the measurer takes no letter-spacing. */
+function spacedTextWidth(text: string, font: string): { width: number; step: number } | undefined {
+  const one = measureSpacedWidth(text, font, 1);
+  const two = measureSpacedWidth(text, font, 2);
+  if (one === undefined || two === undefined || !(two - one > 0.5)) return undefined;
+  return { width: one - (two - one), step: two - one };
+}
+
+/** Least difference, px, that counts as another shaping
+ *  (`measure/trackedLigatures.ts`). */
+const RESHAPED_PX = 0.05;
+
+/** Whether the pieces of `word`, each set as it is alone, end where the
+ *  natural shaping ends the word (`TrackedWord.fits` of the canvas). */
+function piecesFit(pieces: readonly LigaturePiece[], word: string, font: string): boolean {
+  const last = pieces[pieces.length - 1]!;
+  const width = last.ligature ? last.width : spacedTextWidth(last.text, font)?.width;
+  return width !== undefined && Math.abs(last.offset + width - measureTextWidth(word, font)) <= RESHAPED_PX;
+}
+
+/** The letter-spacing, px, at which `word`, as the browser shapes it
+ *  under one, is as wide as it was measured: its natural width and the
+ *  tracking after each letter. Undefined for a word the letter-spacing
+ *  does not reshape, a word of a joining or a right-to-left script, and
+ *  where nothing measures a letter-spacing. Nor for a text with a CJK
+ *  character, which is not measured so: the composer and a vertical line
+ *  count cells, and two marks that meet are as wide set whole as the
+ *  browser trims them, under no letter-spacing only (the lines of the
+ *  Chinese guide set down the page stood 0.4 to 1.3 px off their cells). */
+function fittedLetterSpacing(word: string, tracked: TrackedText): number | undefined {
+  if (joiningScriptIn(word) || needsBidi(word) || hasCJK(word)) return undefined;
+  const letters = graphemeCount(word);
+  if (letters < 2) return undefined;
+  const under = spacedTextWidth(word, tracked.font);
+  if (!under) return undefined;
+  const natural = measureTextWidth(word, tracked.font);
+  if (Math.abs(under.width - natural) <= RESHAPED_PX) return undefined;
+  const spacing = (natural + tracked.tracking * letters - under.width) / under.step;
+  // At no letter-spacing the browser would shape it naturally again.
+  return Math.abs(spacing) < 1e-6 ? undefined : spacing;
 }
 
 /** {@link wordsHtml} of a tracked text whose ligatures take the tracking
@@ -2845,8 +2904,18 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     // per run (see `directedDesignRunsHtml`), unless a run is set otherwise
     // than as its text at its advance (a stacked script, a box of the CJK
     // composer).
-    const directed = line.runs !== undefined && (line.order !== undefined || line.runs.some((run) => run.rtl))
+    const apartable = line.runs !== undefined
       && line.runs.every((run) => !run.stacked && run.inkOffset === undefined && run.inkScale === undefined && !run.tcy && !run.orientation);
+    // So is a line of several runs with no CJK text, in a document shaped
+    // in its own language: the canvas starts each run where the widths
+    // before it end, and inline every run, every space in its box and
+    // every span is as wide as a whole number of 64ths of a pixel. The
+    // byline `John Jumper¹,⁴, Richard Evans¹,⁴, …` in Noto Sans at 15.42
+    // px, fifteen runs and fourteen spaces, had its last run 0.32 px past
+    // its place, and three more lines of it 0.30 to 0.46 px; a box per
+    // run, 0.02 px at most.
+    const apart = ownShaping && apartable && words === undefined && line.runs!.length > 1 && !line.runs!.some((run) => hasCJK(run.text));
+    const directed = apart || (apartable && (line.order !== undefined || line.runs!.some((run) => run.rtl)));
     const lineDecl = !line.runs && hasCJK(line.text) ? cjkTextDecl(tracked) + designCellsDecl(line.text, block.fontString, line.width, block.letterSpacingPx ?? 0) : '';
     // A justified line: its word spaces widened as the canvas and the PDF
     // advance its runs (EF-109).

@@ -108,10 +108,17 @@ describe('design text in HTML (EF-25)', () => {
   };
 
   it('sets runs as inline spans (scripts shifted) and outlines with -webkit-text-stroke', () => {
-    const doc = buildDocument({ markdown: 'Body text.' }, config);
+    // A document that keeps its host's language: the runs inline.
+    const doc = buildDocument({ markdown: 'Body text.' }, { ...config, bodyText: { shapingLanguage: 'host' } });
     const html = renderToHtmlIndexed(doc).pages[0]!.decorationHtml;
     expect(html).toMatch(/>Ana<span style="font:[^"]*5\.8\d*px[^"]*;position:relative;top:-3\.33\dpx;">1<\/span> <span style="font:700 10px[^"]*;">bold<\/span>/);
     expect(html).toContain('-webkit-text-stroke:1px #aa0000;-webkit-text-fill-color:transparent;');
+    // One shaped in its own language, the default: a box per run, each
+    // where the canvas starts it, a script shifted by its box (#770).
+    const own = renderToHtmlIndexed(buildDocument({ markdown: 'Body text.' }, config)).pages[0]!.decorationHtml;
+    expect(own).toMatch(/<span dir="ltr" style="position:absolute;left:0\.000px;top:0;white-space:pre;">Ana<\/span><span dir="ltr" style="position:absolute;left:[\d.]+px;top:-3\.33\dpx;white-space:pre;"><span style="font:[^"]*5\.8\d*px[^"]*;line-height:0;">1<\/span><\/span>/);
+    expect(own).toMatch(/<span style="font:700 10px[^"]*;line-height:0;">bold<\/span><\/span>/);
+    expect(own).toContain('-webkit-text-stroke:1px #aa0000;-webkit-text-fill-color:transparent;');
   });
 
   it('turns the browser’s punctuation trimming off on the lines and runs holding CJK text only', () => {

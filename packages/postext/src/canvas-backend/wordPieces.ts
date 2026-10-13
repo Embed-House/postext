@@ -5,6 +5,7 @@ import { measurementGeneration } from '../measure/canvas';
 import { languageOf, setLetterSpacing } from './contextState';
 import { inSegmentLanguage } from './wordRuns';
 import { contextTextWidth } from './contextText';
+import { verticalFlowAdvance } from './verticalText';
 
 /**
  * The segments the canvas paints a line from (#770): the line's own, the
@@ -65,9 +66,15 @@ function knownOf(ctx: CanvasRenderingContext2D, line: VDTLine, segments: VDTLine
  * them in when the line carries one (`VDTLine.order`: a line with
  * right-to-left text, any line of a mirrored page; the pieces of a
  * left-to-right word are joined there too, and the order written for the
- * segments that result). `composed`: a line of the CJK composer or down a
- * vertical page, painted as it is. `tracking` is the context's
- * `letterSpacing` on entry, px, and on return; `fontOf` gives the font
+ * segments that result). `composed`: a line of the CJK composer, painted
+ * as it is. A line set word by word down a vertical page is asked as any
+ * other, each text at the advance the vertical painter gives it: a Latin
+ * word runs sideways down the column, shaped as on a horizontal line, and
+ * a piece of it is as wide as the word grew by it. Chrome 154, Noto Sans
+ * JP at 14.58 px under `ja`: the layout holds `BY-` 21.01 and `SA` 17.23
+ * px, `BY-SA` being 38.24 px, where `SA` alone is 17.55 px; painted piece
+ * by piece `SA` ran 0.32 px into the space after it. `tracking` is the
+ * context's `letterSpacing` on entry, px, and on return; `fontOf` gives the font
  * string a segment is painted in. The context's font is left at any
  * value: the painter sets its own before each text.
  */
@@ -94,9 +101,12 @@ export function paintedSegments(
     inSegmentLanguage(ctx, seg, () => {
       const own = fontOf(seg);
       if (own !== font) ctx.font = font = own;
-      width = contextTextWidth(ctx, text);
+      // Down a vertical page a text advances as its cells and its
+      // sideways runs do (`verticalFlowAdvance`).
+      width = verticalFlowAdvance(ctx, text, tracking)
+        ?? contextTextWidth(ctx, text) + (tracking === 0 ? 0 : tracking * graphemeCount(text));
     });
-    return width + (tracking === 0 ? 0 : tracking * graphemeCount(text));
+    return width;
   });
   if (tracking !== 0 && !spaced) setLetterSpacing(ctx, tracking);
   return known.set;

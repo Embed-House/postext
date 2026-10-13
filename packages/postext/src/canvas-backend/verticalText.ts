@@ -65,6 +65,27 @@ export function verticalPaintActive(): boolean {
   return paintState !== null;
 }
 
+/**
+ * How far the pen moves down the line for `text` painted now in the
+ * context's font, as the layout measured it (`verticalTextWidth`): each
+ * sideways run at the advance the context gives it, each cell at its
+ * length in ems, `tracking` px after every character and every cell.
+ * The context's `letterSpacing` is 0 (the tracking is counted here).
+ * Undefined on a horizontal page.
+ */
+export function verticalFlowAdvance(ctx: CanvasRenderingContext2D, text: string, tracking: number): number | undefined {
+  const state = paintState;
+  if (!state) return undefined;
+  const em = parseFont(ctx.font).em;
+  let width = 0;
+  for (const run of verticalRuns(graphemesOf(text), state.region, state.uprightDigits ?? 0)) {
+    width += run.cell === undefined
+      ? contextTextWidth(ctx, run.text) + (tracking === 0 ? 0 : tracking * graphemeCount(run.text))
+      : em * run.cell + tracking;
+  }
+  return width;
+}
+
 // ---------------------------------------------------------------------------
 // Vertical alternates through a twin face
 // ---------------------------------------------------------------------------
