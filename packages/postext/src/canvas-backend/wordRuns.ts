@@ -2,10 +2,11 @@ import { shapingTagOf } from '../locale';
 import type { VDTLineSegment } from '../vdt';
 import { joiningScriptIn } from '../measure/joining';
 import { mirroredPaintActive } from './mirrorFrame';
-import { fillTrackedWord } from './trackedText';
+import { fillTrackedWord, setLetterTracking } from './trackedText';
 import { fillScriptWord } from './scriptText';
 import { scriptContextUntracked } from '../measure/script';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { contextTextWidth } from './contextText';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];
@@ -89,9 +90,12 @@ let segmentLanguages = false;
 
 /** Paint the segments that name a language in it from now on (`on`), or
  *  in the page's as up to postext 1.28: the page painter says which for
- *  the document it paints (`bodyText.shapingLanguage`). */
+ *  the document it paints (`bodyText.shapingLanguage`). The same
+ *  documents have the ligatures of their tracked words take the tracking
+ *  of each letter (`setLetterTracking`, #770). */
 export function setSegmentLanguages(on: boolean): void {
   segmentLanguages = on;
+  setLetterTracking(on);
 }
 
 /** Whether a segment that names its language is painted on its own. */
@@ -159,7 +163,7 @@ export function paintWordRuns(
 ): void {
   const text = seg.text;
   const runs = seg.runs!;
-  const whole = ctx.measureText(text).width;
+  const whole = contextTextWidth(ctx, text);
   if (!(whole > 0)) return;
   const rtl = seg.rtl === true;
   let at = 0;
@@ -171,8 +175,8 @@ export function paintWordRuns(
     // A cluster is a letter and its marks: widen the run to whole ones.
     while (from > 0 && MARK_RE.test(text[from]!)) from--;
     while (to < text.length && MARK_RE.test(text[to]!)) to++;
-    const before = whole - ctx.measureText(text.slice(from)).width;
-    const after = whole - ctx.measureText(text.slice(0, to)).width;
+    const before = whole - contextTextWidth(ctx, text.slice(from));
+    const after = whole - contextTextWidth(ctx, text.slice(0, to));
     let left = x + Math.max(0, rtl ? after : before);
     let right = x + whole - Math.max(0, rtl ? before : after);
     if (mirroredPaintActive()) [left, right] = [2 * x + whole - right, 2 * x + whole - left];
@@ -184,7 +188,7 @@ export function paintWordRuns(
     ctx.clip();
     ctx.font = font;
     ctx.fillStyle = fill;
-    const w = ctx.measureText(text).width;
+    const w = contextTextWidth(ctx, text);
     if (w > 0 && Math.abs(w - whole) > 0.01) {
       ctx.translate(x, 0);
       ctx.scale(whole / w, 1);

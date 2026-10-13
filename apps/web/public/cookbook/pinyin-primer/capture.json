@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "pinyin-primer",
-  "sourceHash": "e6b59cdd58ed63a6f59bf8e7aaeb05086264291e8a0bd0203532e905773ecb2f",
+  "sourceHash": "75ebd0cefdb209e2ca7328d29b8e9c77d5483aab4319aeb14ff8d16792477108",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.975Z",
+  "capturedAt": "2026-10-13T07:01:35.555Z",
   "variants": {
     "en": {
       "hash8": "25e0c9bf",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 234,
-        "fontsMs": 106,
-        "buildMs": 81,
-        "totalMs": 1106,
+        "importMs": 204,
+        "fontsMs": 115,
+        "buildMs": 66,
+        "totalMs": 1075,
         "builds": 1
       },
       "specimen": {
@@ -328,10 +328,10 @@
       "hash8": "d3849c40",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 235,
-        "fontsMs": 97,
-        "buildMs": 68,
-        "totalMs": 1097,
+        "importMs": 441,
+        "fontsMs": 309,
+        "buildMs": 77,
+        "totalMs": 1481,
         "builds": 1
       },
       "specimen": {

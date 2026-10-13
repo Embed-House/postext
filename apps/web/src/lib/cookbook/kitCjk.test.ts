@@ -119,8 +119,11 @@ describe("kit block cjk: showBook", () => {
 // for Noto Serif JP (checked 2026-10-05). The subsets list `japanese` among
 // others; the stylesheet declares about 120 numbered files by frequency,
 // with lowercase ranges and no spaces, then cyrillic, vietnamese, latin-ext
-// and latin, so a character in both a numbered file and latin (S, the
-// space) is taken from latin, as the browser does.
+// and latin. loadCjkFonts adds them from the last of the sheet to the
+// first, so a character in both a numbered file and latin (S, the space)
+// is taken from the numbered file, the one added last: Chrome 154 sets
+// `Shift_JIS` 4252 thousandths wide that way, from two numbered files, and
+// 4318 from latin alone (#770).
 const JP_META = { subsets: ["cyrillic", "japanese", "latin", "latin-ext", "vietnamese"], weights: [200, 300, 400, 500, 600, 700, 800, 900], styles: ["normal"] };
 const JP_FILES: [string, string][] = [
   ["0-400-normal", "U+25ee8,U+25f23"],
@@ -129,6 +132,15 @@ const JP_FILES: [string, string][] = [
   ["119-400-normal", "U+20,U+2027,U+3001-3002,U+3041-307f,U+3081-308f,U+3091-3093,U+30a1-30e1,U+30fc"],
   ["latin-400-normal", "U+0000-00FF,U+2000-206F"],
 ];
+
+/** A font file as the kit hands it: its bytes, marked with the
+ *  unicode-range and the place the screen declared it with (#770). */
+type Marked = Uint8Array & { unicodeRange?: string; order?: number };
+/** What a file is (the tests' "bytes" are the file's name). */
+const named = (file: unknown) => new TextDecoder().decode(file as Uint8Array);
+/** The files of an answer of several: what each is, the first code points
+ *  of its unicode-range and its place among the files of the screen. */
+const described = (files: unknown) => (files as Marked[]).map((file) => [named(file), file.unicodeRange?.split(",")[0], file.order]);
 
 describe("kit block cjk: Japanese faces", () => {
   const served = new Map([
@@ -149,7 +161,7 @@ describe("kit block cjk: Japanese faces", () => {
     const file = /\/files\/([\w-]+)\.woff2$/.exec(url);
     return file ? response(file[1]) : response("", 404);
   };
-  const decompressWoff2 = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
+  const decompressWoff2 = (bytes: Uint8Array) => bytes;
 
   it("loads a Japanese face by its files, kana and kanji alike", async () => {
     const { loadCjkFonts, added } = kitWith(serve);
@@ -178,11 +190,22 @@ describe("kit block cjk: Japanese faces", () => {
     expect(new Set(twins[0][1].map((f) => f.weight))).toEqual(new Set(["400"]));
   });
 
-  it("hands the PDF the files of the characters it sets, Latin from the latin file", async () => {
+  it("hands the PDF the files the screen set its characters in, each marked with its range and its place", async () => {
     const fontsourceProvider = vi.fn(async () => "latin face");
     const { cjkPdfProvider } = kitWith(serve, { decompressWoff2, fontsourceProvider });
-    const files = await cjkPdfProvider("Noto Serif JP", 400, "normal", { codePoints: [..."先生とS 、"].map((ch) => ch.codePointAt(0)!) });
-    expect(files).toEqual(["noto-serif-jp-latin-400-normal", "noto-serif-jp-119-400-normal", "noto-serif-jp-60-400-normal"]);
+    const files = (await cjkPdfProvider("Noto Serif JP", 400, "normal", { codePoints: [..."先生とS 、"].map((ch) => ch.codePointAt(0)!) })) as Marked[];
+    // S from file 118 and the space from 119, which repeat them and are
+    // added after latin; the place is the file's in the order they are
+    // added (latin 0, then 119, 118, 60, 0).
+    expect(files.every((file) => file instanceof Uint8Array)).toBe(true);
+    expect(files.map((file) => [named(file), file.unicodeRange, file.order])).toEqual([
+      ["noto-serif-jp-119-400-normal", JP_FILES[3][1], 1],
+      ["noto-serif-jp-118-400-normal", JP_FILES[2][1], 2],
+      ["noto-serif-jp-60-400-normal", JP_FILES[1][1], 3],
+    ]);
+    // A character latin alone holds comes from latin, the first one added.
+    const latin = (await cjkPdfProvider("Noto Serif JP", 400, "normal", { codePoints: [0xe9, 0x2014] })) as Marked[];
+    expect(latin.map((file) => [named(file), file.unicodeRange, file.order])).toEqual([["noto-serif-jp-latin-400-normal", JP_FILES[4][1], 0]]);
     expect(fontsourceProvider).not.toHaveBeenCalled();
     // A weight the family lacks takes the nearest; no italic, so upright.
     fetched.length = 0;
@@ -206,20 +229,23 @@ describe("kit block cjk: Latin faces in the PDF", () => {
     const file = /\/files\/([\w-]+)\.woff2$/.exec(url);
     return file && !missing.includes(file[1]) ? response(file[1]) : response("", 404);
   };
-  const decompressWoff2 = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
+  const decompressWoff2 = (bytes: Uint8Array) => bytes;
   const codes = (text: string) => ({ codePoints: [...text].map((ch) => ch.codePointAt(0)!) });
 
   it("adds the latin-ext file after latin for letters only it has", async () => {
-    const fontsourceProvider = vi.fn(async () => "latin face");
+    const fontsourceProvider = vi.fn(async () => new TextEncoder().encode("latin face"));
     const { cjkPdfProvider } = kitWith(serve(), { decompressWoff2, fontsourceProvider });
     fetched.length = 0;
-    expect(await cjkPdfProvider("Newsreader", 400, "normal", codes("Tōkyō, Rōmaji Nikki"))).toEqual([
-      "latin face", "newsreader-latin-ext-400-normal",
+    // Each marked with its unicode-range and its place on screen (latin,
+    // then latin-ext): postext-pdf sets a character in the file the
+    // browser did.
+    expect(described(await cjkPdfProvider("Newsreader", 400, "normal", codes("Tōkyō, Rōmaji Nikki")))).toEqual([
+      ["latin face", "U+0000-00FF", 0], ["newsreader-latin-ext-400-normal", "U+0100-02BA", 1],
     ]);
     expect(fontsourceProvider).toHaveBeenCalledWith("Newsreader", 400, "normal");
     // Pinyin tone marks, and a letter of Latin Extended Additional (ḥ).
-    expect(await cjkPdfProvider("Newsreader", 700, "italic", codes("zhāi yǎn ḥ"))).toEqual([
-      "latin face", "newsreader-latin-ext-700-italic",
+    expect(described(await cjkPdfProvider("Newsreader", 700, "italic", codes("zhāi yǎn ḥ")))).toEqual([
+      ["latin face", "U+0000-00FF", 0], ["newsreader-latin-ext-700-italic", "U+0100-02BA", 1],
     ]);
     // The nearest weight the family ships, as fontsourceProvider snaps it.
     await cjkPdfProvider("Newsreader", 600, "normal", codes("ū"));

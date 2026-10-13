@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "thesis-back-matter",
-  "sourceHash": "faa4c2982dba44d9a380f057c73e5e7681194f38b0ed6e6519f04c6ef3151e57",
+  "sourceHash": "ce78e97fa5a596518244a9dca73e92839fc6a15677c6faad1f90bb77fa0bd785",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.284Z",
+  "capturedAt": "2026-10-13T07:04:11.982Z",
   "variants": {
     "en": {
-      "hash8": "c7fc0d45",
+      "hash8": "9a21ff13",
       "vdtHash": "58bdbc7a44d770d70948ab18b7146ec729340d9f",
       "timings": {
-        "importMs": 290,
-        "fontsMs": 26,
-        "buildMs": 114,
-        "totalMs": 1139,
+        "importMs": 1298,
+        "fontsMs": 43,
+        "buildMs": 189,
+        "totalMs": 2302,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 81948,
+          "bytes": 81938,
           "alt": "Opening page 173: A Interview guide. Table A.1. Timing of an interview session."
         },
         {

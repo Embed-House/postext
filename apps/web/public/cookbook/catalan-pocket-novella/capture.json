@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "ab7d0655e38c795c72fd72b6e64b98343f57cca3e66a7c9ea4ed54df9a36f652",
+  "sourceHash": "1eb8bc48b33ae1af0f2f0578fe193d3fd0ada08ec8f96a1d2e3e98efba21c013",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.064Z",
+  "capturedAt": "2026-10-13T06:54:37.500Z",
   "variants": {
     "en": {
       "hash8": "53c33349",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 283,
-        "fontsMs": 74,
-        "buildMs": 978,
-        "totalMs": 2016,
+        "importMs": 660,
+        "fontsMs": 90,
+        "buildMs": 1019,
+        "totalMs": 2593,
         "builds": 1
       },
       "specimen": {
@@ -391,11 +391,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
@@ -404,10 +399,10 @@
       "hash8": "b21ad938",
       "vdtHash": "57deb9289ed6af951ec6e95bd1b54e6064c60eee",
       "timings": {
-        "importMs": 231,
-        "fontsMs": 67,
-        "buildMs": 964,
-        "totalMs": 1945,
+        "importMs": 393,
+        "fontsMs": 74,
+        "buildMs": 981,
+        "totalMs": 2212,
         "builds": 1
       },
       "specimen": {
@@ -781,11 +776,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 18 −10‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

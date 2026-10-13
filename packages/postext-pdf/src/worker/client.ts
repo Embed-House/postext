@@ -1,5 +1,5 @@
 import type { VDTDocument } from 'postext';
-import type { PdfFontProvider } from '../fontCache';
+import { declarationOf, type PdfFontProvider } from '../fontCache';
 import type { RenderToPdfOptions } from '../pdf-backend';
 import { sourceBase } from '../harfbuzz';
 import { rasterizeSvgWithDom, type SvgRasterizer } from '../pdf-backend/renderResourceBlock';
@@ -65,10 +65,12 @@ export function createPdfWorker(options?: CreatePdfWorkerOptions): PdfWorkerHand
   const answer = async (askId: number, job: () => Promise<Uint8Array | Uint8Array[] | null>): Promise<void> => {
     try {
       const bytes = await job();
-      // Copies: the provider may keep the originals in a cache.
+      // Copies: the provider may keep the originals in a cache. What a
+      // font file says of itself goes beside them, since a copy drops it.
       const copy = Array.isArray(bytes) ? bytes.map((b) => b.slice()) : bytes ? bytes.slice() : null;
       const buffers = Array.isArray(copy) ? copy.map((b) => b.buffer) : copy ? [copy.buffer] : undefined;
-      send({ kind: 'answer', askId, bytes: copy }, buffers);
+      const declared = (Array.isArray(bytes) ? bytes : bytes ? [bytes] : []).map((b) => declarationOf(b) ?? null);
+      send({ kind: 'answer', askId, bytes: copy, ...(declared.some((d) => d !== null) ? { declared } : {}) }, buffers);
     } catch (err) {
       send({ kind: 'answer', askId, bytes: null, error: err instanceof Error ? err.message : String(err) });
     }

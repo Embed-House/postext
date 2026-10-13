@@ -272,11 +272,11 @@ describe('lang in the output', () => {
     expect(renderLangOf({ bodyText: { hyphenation: { tag: 'ja-JP' } } })).toBe('ja-JP');
   });
 
-  it('other documents declare theirs when shaped in their own language (#764), and print as before in the language of the host', () => {
+  it('other documents declare theirs when shaped in their own language, the default (#764, #770), and print as before in the language of the host', () => {
     expect(renderToHtml(docOf({ locale: 'es', bodyText: { shapingLanguage: 'document' } }))).toContain('<div class="pt-doc" lang="es" data-mode=');
     expect(renderLangOf({ locale: 'en-us', bodyText: { shapingLanguage: 'document' } })).toBe('en-US');
-    expect(renderToHtml(docOf({ locale: 'es' }))).toContain('<div class="pt-doc" data-mode=');
-    expect(renderLangOf({ locale: 'en-us' })).toBeUndefined();
+    expect(renderToHtml(docOf({ locale: 'es' }))).toContain('<div class="pt-doc" lang="es" data-mode=');
+    expect(renderLangOf({ locale: 'en-us' })).toBe('en-US');
     expect(renderToHtml(docOf({ locale: 'es', bodyText: { shapingLanguage: 'host' } }))).toContain('<div class="pt-doc" data-mode=');
     expect(renderLangOf({ locale: 'en-us', bodyText: { shapingLanguage: 'host' } })).toBeUndefined();
     // A Chinese document declared its language before, and still does.
@@ -284,7 +284,7 @@ describe('lang in the output', () => {
   });
 
   // The canvas paints in the language the layout measured in (#764): the
-  // document's when it asks for its own, and the host's otherwise, which
+  // document's own, the default, and the host's when it asks for it, which
   // is the context as it comes (`inherit`). Up to postext 1.29.1 a Chinese
   // document shaped in the host's language had `zh-Hant` set on its
   // context all the same, and lost it at the first `save()` of the page.
@@ -303,15 +303,17 @@ describe('lang in the output', () => {
   };
 
   it('the canvas paints a document shaped in its own language in it', async () => {
-    const set = await languagesSet(docOf({ locale: 'zh-Hant', bodyText: { shapingLanguage: 'document' } }));
-    // Set for the page and again in each state saved, then the context
-    // gets back the language it came in.
-    expect(set.length).toBeGreaterThan(1);
-    expect(set[set.length - 1]).toBe('inherit');
-    expect(new Set(set.slice(0, -1))).toEqual(new Set(['zh-Hant']));
+    for (const bodyText of [undefined, { shapingLanguage: 'document' as const }]) {
+      const set = await languagesSet(docOf({ locale: 'zh-Hant', ...(bodyText ? { bodyText } : {}) }));
+      // Set for the page and again in each state saved, then the context
+      // gets back the language it came in.
+      expect(set.length).toBeGreaterThan(1);
+      expect(set[set.length - 1]).toBe('inherit');
+      expect(new Set(set.slice(0, -1))).toEqual(new Set(['zh-Hant']));
+    }
   });
 
   it('the canvas leaves a document shaped in the host\'s language in the host\'s', async () => {
-    expect(await languagesSet(docOf({ locale: 'zh-Hant' }))).toEqual([]);
+    expect(await languagesSet(docOf({ locale: 'zh-Hant', bodyText: { shapingLanguage: 'host' } }))).toEqual([]);
   });
 });

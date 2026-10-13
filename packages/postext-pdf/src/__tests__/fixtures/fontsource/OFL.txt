@@ -1,6 +1,8 @@
 Copyright 2017 The Markazi Text Project Authors (https://github.com/BornaIz/markazitext)
 Copyright 2010-2022 The Amiri Project Authors (https://github.com/aliftype/amiri).
 Copyright 2018 The Crimson Pro Project Authors (https://github.com/Fonthausen/CrimsonPro)
+Copyright 2015-2021 The Aref Ruqaa Project Authors (https://github.com/alif-type/aref-ruqaa), with Reserved Font Name EURM10.
+Copyright 2017-2024 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

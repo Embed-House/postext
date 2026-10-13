@@ -1,4 +1,5 @@
 import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from 'postext';
+import { measureInLanguage } from '../../controls/measureLanguage';
 
 /**
  * Geometry and source mapping for design-band text that mirrors document
@@ -15,6 +16,10 @@ export interface BandLineBox {
   font: string;
   /** Index of the line's first character in the block's title text. */
   plainStart: number;
+  /** The language the layout measured the line in and the page paints it
+   *  in (`documentShapingLanguage`), which its characters are measured in
+   *  here (#770). Absent: the host's. */
+  lang?: string;
 }
 
 /** Design text blocks of a page that carry a source range: the opener
@@ -60,8 +65,10 @@ function titleTextOf(block: VDTDesignTextBlock): string {
  *  absolute baselines only, so the line pitch comes from consecutive
  *  baselines (or lineHeight × fontSize for a single line). Each box also
  *  records where its text starts in the title text, so characters can be
- *  mapped to source offsets. */
-export function bandLineBoxes(block: VDTDesignTextBlock): BandLineBox[] {
+ *  mapped to source offsets, and `lang`, the language the document's text
+ *  was measured in (`documentShapingLanguage(doc)`; undefined: the
+ *  host's), which the caret and the hit test measure its characters in. */
+export function bandLineBoxes(block: VDTDesignTextBlock, lang?: string): BandLineBox[] {
   const lines = block.lines;
   const fontPx = /(\d+(?:\.\d+)?)px/.exec(block.fontString);
   const fontSizePx = fontPx ? Number(fontPx[1]) : block.bbox.height;
@@ -84,29 +91,23 @@ export function bandLineBoxes(block: VDTDesignTextBlock): BandLineBox[] {
       text: l.text,
       font: block.fontString,
       plainStart,
+      ...(lang !== undefined ? { lang } : {}),
     };
   });
 }
 
-let measureCtx: CanvasRenderingContext2D | null | undefined;
-function measureContext(): CanvasRenderingContext2D | null {
-  if (measureCtx !== undefined) return measureCtx;
-  measureCtx = typeof document === 'undefined' ? null : document.createElement('canvas').getContext('2d');
-  return measureCtx;
-}
-
 /** Width of the first `chars` characters of a line, measured with its font
+ *  in the language the layout measured the line in ({@link BandLineBox.lang})
  *  and scaled so the whole text spans the laid-out line width (absorbing
  *  letter-spacing or kerning applied by the layout). */
 function prefixWidth(box: BandLineBox, chars: number): number {
   const n = Math.max(0, Math.min(box.text.length, chars));
   if (box.text.length === 0) return 0;
-  const ctx = measureContext();
-  if (!ctx) return (n / box.text.length) * box.width;
-  ctx.font = box.font;
-  const full = ctx.measureText(box.text).width;
-  if (!(full > 0)) return (n / box.text.length) * box.width;
-  return (ctx.measureText(box.text.slice(0, n)).width / full) * box.width;
+  const full = measureInLanguage(box.lang, box.text, box.font);
+  if (full === null || !(full > 0)) return (n / box.text.length) * box.width;
+  const prefix = measureInLanguage(box.lang, box.text.slice(0, n), box.font);
+  if (prefix === null) return (n / box.text.length) * box.width;
+  return (prefix / full) * box.width;
 }
 
 /** X coordinate of the caret placed before character `chars` of the line. */

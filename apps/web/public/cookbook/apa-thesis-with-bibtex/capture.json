@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "261c26bf46502f42b519c65fa53c74fbadc14bcc5c93a5f7dcb6657ebf0a0369",
+  "sourceHash": "5934587dfdcebde0ccc9803649eacda3ba934f5f2cf3e1a42468d15430c60918",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.924Z",
+  "capturedAt": "2026-10-13T06:53:16.047Z",
   "variants": {
     "en": {
       "hash8": "0ff9a31b",
       "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
       "timings": {
-        "importMs": 271,
-        "fontsMs": 33,
-        "buildMs": 283,
-        "totalMs": 1274,
+        "importMs": 232,
+        "fontsMs": 30,
+        "buildMs": 293,
+        "totalMs": 1247,
         "builds": 1
       },
       "specimen": {
@@ -301,10 +301,10 @@
       "hash8": "30c5edf9",
       "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
       "timings": {
-        "importMs": 282,
-        "fontsMs": 32,
-        "buildMs": 280,
-        "totalMs": 1233,
+        "importMs": 285,
+        "fontsMs": 30,
+        "buildMs": 279,
+        "totalMs": 1248,
         "builds": 1
       },
       "specimen": {

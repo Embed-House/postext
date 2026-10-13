@@ -14,6 +14,7 @@ import { fillTrackedWord } from './trackedText';
 import { hasCJK } from '../measure/cjk';
 import { markCuts } from '../measure/markCuts';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { fillCellRuns } from './cellText';
 
 /** Adds a rounded rectangle to the current path, as a closed subpath. */
 function traceRoundedRect(
@@ -169,7 +170,12 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
       const runX = x + (run.inkOffset ?? 0);
       const runY = line.baselineY + (run.baselineShift ?? 0);
       if (run.inkScale === undefined) {
-        paintRunInDirection(ctx, run.rtl, () => paint(run.text, runX, runY, segmentOrientation(run)), run.text);
+        // A run whose width is its box (`inkOffset`) comes from the CJK
+        // composer, which measured its characters one by one: its cells
+        // are painted where they were measured (#770, `cellText.ts`).
+        const cells = run.inkOffset !== undefined && !run.rtl && !verticalPaintActive()
+          && fillCellRuns(ctx, run.text, runX, runY, (cell, cx, cy) => put(cell, cx, cy));
+        if (!cells) paintRunInDirection(ctx, run.rtl, () => paint(run.text, runX, runY, segmentOrientation(run)), run.text);
       } else {
         // A dash of a 破折号 (#652): stretched along the line from where
         // its glyph starts, and turned with the column down a vertical

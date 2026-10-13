@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "46150f7e03524f139660cb81b7f2e5f244a11464333c639c63bf024d537f8520",
+  "sourceHash": "3891e9de9b3c02eeae6f503313f4ad3df8c4769622529f302bfa9320df730941",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.699Z",
+  "capturedAt": "2026-10-13T07:00:48.724Z",
   "variants": {
     "en": {
-      "hash8": "b65756de",
+      "hash8": "f23d6977",
       "vdtHash": "ce872ab1a591b03e785f48b21754e94a2ce26ca3",
       "timings": {
-        "importMs": 460,
-        "fontsMs": 66,
-        "buildMs": 150,
-        "totalMs": 1420,
+        "importMs": 2940,
+        "fontsMs": 176,
+        "buildMs": 257,
+        "totalMs": 5250,
         "builds": 1
       },
       "specimen": {
@@ -101,7 +101,7 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 123029,
+        "bytes": 123036,
         "pages": 3
       },
       "sandbox": {
@@ -428,10 +428,10 @@
       "hash8": "1a4576a7",
       "vdtHash": "dd1bcea63030803accfaefd72e3afb18bbba355d",
       "timings": {
-        "importMs": 320,
-        "fontsMs": 69,
-        "buildMs": 133,
-        "totalMs": 1400,
+        "importMs": 1743,
+        "fontsMs": 171,
+        "buildMs": 221,
+        "totalMs": 3348,
         "builds": 1
       },
       "specimen": {

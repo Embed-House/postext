@@ -1,10 +1,10 @@
 import { popGraphicsState, pushGraphicsState } from 'pdf-lib';
-import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, segmentOrientation } from 'postext';
+import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, markerSetText, segmentOrientation } from 'postext';
 import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
 import { parseFontString } from '../fontString';
 import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawSwatchPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
 import { paintChip } from './chip';
 import { drawTaskBoxPx } from './taskBox';
 import { drawRightToLeftRun } from './rtlRun';
@@ -22,7 +22,7 @@ import { inkScaleOperators } from './inkScale';
 import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
 import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
 import { needsComplexShaping } from '../complexShaping';
-import { shapesSegmentLanguages, withSegmentLanguage } from '../shapingLanguage';
+import { shapesAsCanvas, shapesSegmentLanguages, withinWideText, withSegmentLanguage } from '../shapingLanguage';
 import { wordSegments } from './wordPieces';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
@@ -122,7 +122,12 @@ function paintComposedText(
   const stretch = inkScaleOperators(seg.inkScale);
   const orient = ctx.vertical && seg.inkScale !== undefined ? 'sideways' : segmentOrientation(seg);
   ctx.page.pushOperators(...stretch.before);
-  drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText, orient);
+  // Characters the composer measured one by one are painted one by one,
+  // each in its place (#770): a face may kern them in one string.
+  const cells = ctx.vertical || markSpacing !== undefined || seg.inkScale !== undefined ? undefined : cellPieces(font, seg.text, seg.width, size, ctx.trackingPx ?? 0);
+  if (!cells || !drawMeasuredTextPx(ctx, cells, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, ctx.trackingPx ?? 0, actualText)) {
+    drawTextPx(ctx, seg.text, x + (seg.inkOffset ?? 0), baseline + (seg.baselineShift ?? 0), font, size, color, undefined, actualText, orient);
+  }
   ctx.page.pushOperators(...stretch.after);
   if (markSpacing !== undefined || seg.tracking !== undefined) setTrackingPx(ctx, tracking);
   if (seg.ruby) {
@@ -501,9 +506,9 @@ function renderLineText(
   const composed = line.cjkComposed === true || ctx.vertical !== undefined;
   // The pieces of a word the layout measured whole are painted as that
   // word, in a document shaped in its own language (#764).
-  const segments = wordSegments(line, composed, (seg, text) => {
+  const segments = wordSegments(line, composed, (seg, text, sizeOf) => {
     const fontStr = seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, block);
-    return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? blockFont, text, parseFontString(fontStr)?.sizePx ?? blockSize, tracking).advance);
+    return withSegmentLanguage(seg.lang, () => textAdvancePx(fontCache.get(fontStr) ?? blockFont, text, sizeOf(parseFontString(fontStr)?.sizePx ?? blockSize), tracking).advance);
   });
 
   // Last lines render ragged at natural width — except when overfull:
@@ -568,7 +573,7 @@ function renderLineText(
   // not loaded, which turns the whole line around.
   const complex = needsComplexShaping(line.text);
   if (segments && segments.length > 0 && !complex
-    && drawMeasuredTextPx(ctx, withLineEndSpace(segments, line.text), plainX, line.baseline, blockFont, blockSize, blockColor, tracking, actualText)) return;
+    && drawMeasuredTextPx(ctx, measuredPieces(ctx, line, segments, blockFont, blockSize, tracking), plainX, line.baseline, blockFont, blockSize, blockColor, tracking, actualText)) return;
   if (complex && drawShapedTextPx(ctx, line.text, plainX, line.baseline, blockFont, blockSize, blockColor, { base: block.direction, actualText })) return;
   drawTextPx(ctx, line.text, plainX, line.baseline, blockFont, blockSize, blockColor, undefined, actualText);
 }
@@ -601,6 +606,29 @@ function repeatedHyphenSegment(line: VDTLine, segments: readonly VDTLineSegment[
   const i = segments.findIndex((s) => s.kind !== 'space');
   const seg = segments[i];
   return seg && seg.kind === 'text' && !seg.chip && seg.text.startsWith('-') ? i : -1;
+}
+
+/** The pieces a line painted as one text is set from: its segments
+ *  ({@link withLineEndSpace}), and on a line of the CJK composer the
+ *  characters of a segment it measured one by one, each a piece of its own
+ *  (`cellPieces`, #770). */
+function measuredPieces(
+  ctx: PageCtx,
+  line: VDTLine,
+  segments: readonly VDTLineSegment[],
+  font: PDFFont,
+  sizePx: number,
+  tracking: number,
+): ReadonlyArray<{ text: string; width: number }> {
+  const pieces = withLineEndSpace(segments, line.text);
+  if (line.cjkComposed !== true || ctx.vertical) return pieces;
+  let cut: Array<{ text: string; width: number }> | undefined;
+  pieces.forEach((piece, i) => {
+    const cells = cellPieces(font, piece.text, piece.width, sizePx, tracking);
+    if (cells) (cut ??= pieces.slice(0, i)).push(...cells);
+    else cut?.push(piece);
+  });
+  return cut ?? pieces;
 }
 
 /** A ragged line's segments, plus the space that ends the line when its
@@ -678,6 +706,10 @@ function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem:
   }
 }
 
+/** A character past Latin-1: a text that holds one is cut into script
+ *  runs by the canvas (see `shapingLanguage.ts`). */
+const WIDE_MARKER_RE = /[^\u0000-\u00FF]/;
+
 /**
  * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
  * `xPx`, its left edge in the flow: its runs (`markerRuns`, one bidi level
@@ -688,19 +720,31 @@ function renderBullet(ctx: PageCtx, block: VDTBlock, fontCache: FontCache, elem:
  * extraction reads `1-` whatever side the hyphen stands on.
  */
 function drawMarkerRuns(ctx: PageCtx, text: string, xPx: number, baselinePx: number, font: PDFFont, sizePx: number, color: Color, direction: 'rtl' | 'rtl-arabic'): void {
-  const runs = markerRuns(text, direction);
-  if (ctx.mirror) runs.reverse();
-  let at = xPx;
-  const placed = runs.map((run) => {
-    const x = at;
-    at += textAdvancePx(font, run.text, sizePx, joinsLetters(run.text) ? 0 : ctx.trackingPx ?? 0).advance;
-    return { run, x };
-  });
-  placed.sort((a, b) => a.run.start - b.run.start);
-  for (const { run, x } of placed) {
-    if (run.rtl) drawRightToLeftRun(ctx, run.text, x, baselinePx, font, sizePx, color);
-    else drawTextPx(ctx, run.text, x, baselinePx, font, sizePx, color);
-  }
+  const draw = (): void => {
+    const runs = markerRuns(text, direction);
+    if (ctx.mirror) runs.reverse();
+    let at = xPx;
+    const placed = runs.map((run) => {
+      const x = at;
+      at += textAdvancePx(font, run.text, sizePx, joinsLetters(run.text) ? 0 : ctx.trackingPx ?? 0).advance;
+      return { run, x };
+    });
+    placed.sort((a, b) => a.run.start - b.run.start);
+    for (const { run, x } of placed) {
+      if (run.rtl) drawRightToLeftRun(ctx, run.text, x, baselinePx, font, sizePx, color);
+      else drawTextPx(ctx, run.text, x, baselinePx, font, sizePx, color);
+    }
+  };
+  // In a document shaped in its own language the layout measures the
+  // marker, and the canvas paints it, as one text set right to left
+  // (`markerSetText`, #770). A run of it with no letter is shaped there as
+  // a piece of that text, not as a word of its own: when the text holds a
+  // character past U+00FF (an Arabic letter or digit, the Arabic letter
+  // mark before European digits read as an Arabic number) such a piece
+  // has no script and takes the face's default forms. Amiri bold: `(١)`
+  // is 1.501 em wide so, and 1.153 em with its brackets in Latin forms.
+  if (shapesAsCanvas() && WIDE_MARKER_RE.test(markerSetText(text, direction))) withinWideText(true, draw);
+  else draw();
 }
 
 /** The first line of a paragraph a drop cap opens (#623): its first

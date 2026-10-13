@@ -47,6 +47,7 @@ const DOC_PAGES: Record<string, string> = {
   sandbox: "Sandbox",
   skill: "Agent-Skill",
   "command-line": "Command-Line",
+  webmcp: "WebMCP",
 };
 
 /** The Configuration reference in reading order: the entry page, then the

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-novel-right-bound",
-  "sourceHash": "d35761ee36437984e5307e77519a1b2d011616a3df021e6c76204d3292d8d62a",
+  "sourceHash": "63f14120452459e4e9a896d821a8de3ac61872157dc4b38e3056b9195f1e6dd0",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.319Z",
+  "capturedAt": "2026-10-13T07:06:14.155Z",
   "variants": {
     "en": {
-      "hash8": "1430d445",
+      "hash8": "1f44827b",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 232,
-        "fontsMs": 310,
-        "buildMs": 61,
-        "totalMs": 1242,
+        "importMs": 1430,
+        "fontsMs": 2267,
+        "buildMs": 101,
+        "totalMs": 4613,
         "builds": 1
       },
       "specimen": {
@@ -154,7 +154,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 755450,
+        "bytes": 754810,
         "pages": 11
       },
       "sandbox": {
@@ -372,13 +372,13 @@
       }
     },
     "es": {
-      "hash8": "4f8f9087",
+      "hash8": "de456af7",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 229,
-        "fontsMs": 433,
-        "buildMs": 47,
-        "totalMs": 1333,
+        "importMs": 1325,
+        "fontsMs": 1925,
+        "buildMs": 85,
+        "totalMs": 4225,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +515,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754840,
+        "bytes": 754210,
         "pages": 11
       },
       "sandbox": {

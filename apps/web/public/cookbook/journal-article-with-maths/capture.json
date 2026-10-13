@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "journal-article-with-maths",
-  "sourceHash": "a4aa50311bbe973da28b47932a41747b3a9f77f7610dd54d323015eea159d1e4",
+  "sourceHash": "08f5f1e40a417aeb73966d32001ab70c4f847ddce92895b2c2191cacfb76adee",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.422Z",
+  "capturedAt": "2026-10-13T06:57:06.225Z",
   "variants": {
     "en": {
       "hash8": "8cc2e613",
       "vdtHash": "5983265a2aefc88ff1af9b6a409f96fc03e06dce",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 126,
-        "buildMs": 151,
-        "totalMs": 1140,
+        "importMs": 452,
+        "fontsMs": 150,
+        "buildMs": 164,
+        "totalMs": 1744,
         "builds": 1
       },
       "specimen": {

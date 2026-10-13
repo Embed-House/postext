@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
+import { arabicMarkNeeded, buildDocument, markerSetText, renderPageToCanvas, renderToHtml } from '../../index';
 import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
 
 // #664: the marker of a right-to-left list item reads in its item's
@@ -106,40 +106,42 @@ describe('layout: how a marker reads', () => {
 });
 
 describe('canvas: the marker of a right-to-left item', () => {
-  it('sets the hyphen on the number\'s left, between the number and the text', () => {
+  // The marker is one text set right to left (#770): the browser orders
+  // its runs and mirrors its brackets, as it does in the HTML's box, and a
+  // mark with no letter takes the forms it has in that text. Up to postext
+  // 1.29 each run was a text of its own.
+  it('is one text set right to left, in the box the layout gave it', () => {
     for (const [locale, one] of [['ar-MA', '1'], ['ar', '١']] as const) {
       const doc = buildDocument({ markdown: LIST }, base({ locale, ...hyphen }));
       const painted = paint(doc);
-      // Never the marker as one left-to-right string.
-      expect(painted.some((p) => p.text === `${one}-`)).toBe(false);
-      const number = run(painted, one);
-      const sep = painted.find((p) => p.text === '-' && Math.abs(p.right - number.left) < 1e-6)!;
-      expect(sep, locale).toBeDefined();
-      expect(sep.rtl).toBe(true);
-      expect(number.rtl).toBe(false);
-      // The item's text stands on the left of both.
+      const marker = run(painted, `${one}-`);
+      expect(marker.rtl, locale).toBe(true);
+      expect(painted.some((p) => p.text === '-' || p.text === one), locale).toBe(false);
+      // The item's text stands on the left of it.
       const word = run(painted, 'باب');
-      expect(word.right).toBeLessThan(sep.left);
-      // And the marker keeps its box: the number ends where the marker did.
+      expect(word.right).toBeLessThan(marker.left);
+      // And the marker keeps its box.
       const item = items(doc)[0]!;
       const W = doc.pages[0]!.width;
-      expect(number.right).toBeCloseTo(W - item.bulletOffsetX!, 6);
-      expect(sep.left).toBeCloseTo(W - item.bulletOffsetX! - 14, 6);
+      expect(marker.right).toBeCloseTo(W - item.bulletOffsetX!, 6);
+      expect(marker.left).toBeCloseTo(W - item.bulletOffsetX! - 14, 6);
     }
   });
 
-  it('keeps the digits of a number in order and mirrors brackets', () => {
+  it('a number in brackets is one text too: the browser keeps its digits in order and mirrors the brackets', () => {
     const md = Array.from({ length: 12 }, (_, i) => `${i + 1}. باب`).join('\n');
     const doc = buildDocument({ markdown: md }, base({ locale: 'ar-MA', orderedLists: { levels: [{ level: 1, numberFormat: 'arabic', prefix: '(', separator: ')' }] } } as unknown as PostextConfig));
     expect(items(doc)[11]!.bulletText).toBe('(12)');
     const painted = paint(doc);
-    const twelve = run(painted, '12');
-    // The opening bracket on the right, the closing one on the left, each
-    // painted right to left so the browser mirrors it.
-    const open = painted.find((p) => p.text === '(' && Math.abs(p.left - twelve.right) < 1e-6)!;
-    const close = painted.find((p) => p.text === ')' && Math.abs(p.right - twelve.left) < 1e-6)!;
-    expect(open?.rtl).toBe(true);
-    expect(close?.rtl).toBe(true);
+    expect(run(painted, '(12)').rtl).toBe(true);
+    expect(painted.some((p) => p.text === '12' || p.text === '(' || p.text === ')')).toBe(false);
+  });
+
+  it('European digits an Arabic-script document reads as an Arabic number take the Arabic letter mark', () => {
+    expect(markerSetText('3-1', 'rtl-arabic')).toBe('\u061C3-1');
+    expect(markerSetText('3-1', 'rtl')).toBe('3-1');
+    expect(markerSetText('1-', 'rtl-arabic')).toBe('1-');
+    expect(arabicMarkNeeded('١-')).toBe(false);
   });
 
   it('reads a separator and a prefix styled apart from the number the same way', () => {
@@ -155,15 +157,14 @@ describe('canvas: the marker of a right-to-left item', () => {
     expect(close.rtl).toBe(true);
   });
 
-  it('an Arabic list in an English book: the hyphen on the left of its number', () => {
+  it('an Arabic list in an English book: the marker set right to left on the text\'s right', () => {
     const doc = buildDocument({ markdown: ':::paragraphs{dir=rtl}\n1. باب\n2. باب\n:::' }, base({ locale: 'en', ...hyphen }));
     const painted = paint(doc);
-    const number = run(painted, '1');
-    const sep = painted.find((p) => p.text === '-' && Math.abs(p.right - number.left) < 1e-6)!;
-    expect(sep).toBeDefined();
+    const marker = run(painted, '1-');
+    expect(marker.rtl).toBe(true);
     const item = items(doc)[0]!;
-    expect(sep.left).toBeCloseTo(item.bulletOffsetX!, 6);
-    expect(run(painted, 'باب').right).toBeLessThan(sep.left);
+    expect(marker.left).toBeCloseTo(item.bulletOffsetX!, 6);
+    expect(run(painted, 'باب').right).toBeLessThan(marker.left);
   });
 
   it('paints a left-to-right list as before, in any book', () => {

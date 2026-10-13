@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "nights-ordinal-headings",
-  "sourceHash": "6b0bd6659462c705362ec412ebb92e20e7a1647ade2057ece0ed11da96039e33",
+  "sourceHash": "7538c66d79ca587b9c4e72736f0e17790cc1417e85a35ab5865b1e005a06e428",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.780Z",
+  "capturedAt": "2026-10-13T07:00:48.855Z",
   "variants": {
     "en": {
-      "hash8": "b4eade1a",
+      "hash8": "a3ec8134",
       "vdtHash": "fe5e674ff0e9a96395add1ca76fc84dc9cad8c6a",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 83,
-        "buildMs": 112,
-        "totalMs": 983,
+        "importMs": 1513,
+        "fontsMs": 271,
+        "buildMs": 241,
+        "totalMs": 2756,
         "builds": 1
       },
       "specimen": {
@@ -194,7 +194,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 157728,
+        "bytes": 157729,
         "pages": 10
       },
       "sandbox": {
@@ -395,23 +395,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "08bb7a9f",
+      "hash8": "9f042dba",
       "vdtHash": "82db57898ac3341cba6efde729976c7ed9423b12",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 77,
-        "buildMs": 109,
-        "totalMs": 982,
+        "importMs": 1159,
+        "fontsMs": 500,
+        "buildMs": 191,
+        "totalMs": 2754,
         "builds": 1
       },
       "specimen": {
@@ -588,7 +583,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 158454,
+        "bytes": 158459,
         "pages": 10
       },
       "sandbox": {
@@ -789,11 +784,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

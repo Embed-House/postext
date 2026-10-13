@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "4b07cd66e749adfbf71bb4e022cb534ce4938eb5de7a92a17f662a305482d293",
+  "sourceHash": "359c03734414b9a8d3e4f2288a9f40306faa3e8091719da10e669ce9986f86a0",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.005Z",
+  "capturedAt": "2026-10-13T06:53:52.244Z",
   "variants": {
     "en": {
       "hash8": "c518e0bc",
       "vdtHash": "80e73be3647a2be6dd1e547f584fb4e5b10fcb5e",
       "timings": {
-        "importMs": 235,
-        "fontsMs": 2680,
-        "buildMs": 485,
-        "totalMs": 4047,
+        "importMs": 354,
+        "fontsMs": 2417,
+        "buildMs": 531,
+        "totalMs": 3945,
         "builds": 1
       },
       "specimen": {
@@ -518,10 +518,10 @@
       "hash8": "31fb02ca",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 223,
-        "fontsMs": 1954,
-        "buildMs": 445,
-        "totalMs": 3259,
+        "importMs": 275,
+        "fontsMs": 1572,
+        "buildMs": 512,
+        "totalMs": 3003,
         "builds": 1
       },
       "specimen": {

@@ -72,10 +72,11 @@ describe('document root and pages', () => {
     expect(renderToHtml(doc, { mode: 'multi' })).toContain('flex-direction:row-reverse;');
   });
 
-  it('a left-to-right document shaped in its own language declares it, and no direction (#764)', () => {
+  it('a left-to-right document shaped in its own language, the default, declares it, and no direction (#764)', () => {
     const own = config('ltr');
     const doc = buildDocument({ markdown: 'Plain English words.' }, { ...own, bodyText: { ...own.bodyText, shapingLanguage: 'document' } });
     const html = renderToHtml(doc);
+    expect(renderToHtml(buildDocument({ markdown: 'Plain English words.' }, own))).toBe(html);
     // No locale: the language of the hyphenation default.
     expect(html).toMatch(/^<div class="pt-doc" lang="en-US" data-mode="multi" style="/);
     expect(html).toMatch(/<div class="pt-page" id="[^"]+" data-page="0" lang="en-US" style="/);
@@ -83,11 +84,10 @@ describe('document root and pages', () => {
     expect(html).not.toContain(' dir=');
   });
 
-  it('a left-to-right document shaped in the language of the host, the default, is marked as before', () => {
+  it('a left-to-right document shaped in the language of the host is marked as before', () => {
     const base = config('ltr');
     const doc = buildDocument({ markdown: 'Plain English words.' }, { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } });
     const html = renderToHtml(doc);
-    expect(renderToHtml(buildDocument({ markdown: 'Plain English words.' }, base))).toBe(html);
     expect(html).toMatch(/^<div class="pt-doc" data-mode="multi" style="/);
     expect(html).toContain(HTML_TEXT_RESET);
     expect(html).not.toContain(' dir=');

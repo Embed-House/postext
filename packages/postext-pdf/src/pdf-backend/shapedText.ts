@@ -41,7 +41,8 @@ import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNam
 import { lineRuns, resolveParagraph } from 'postext';
 import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping';
 import { fileRuns, noteMissingGlyphs } from '../faceFiles';
-import { shapingLanguage, shapingScriptOf, withBesideLetter, withinRightToLeftText } from '../shapingLanguage';
+import { shapesAsCanvas, shapingLanguage, shapingScriptOf, withBesideLetter, withinRightToLeftText } from '../shapingLanguage';
+import { canvasWords } from '../canvasWords';
 import { toUnicodeCmap } from '../fontCache';
 import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives';
 
@@ -496,6 +497,10 @@ export interface ShapedTextOptions {
   base?: 'ltr' | 'rtl';
   /** BCP 47 language of the text, for the font's `locl` forms. */
   language?: string;
+  /** Shape each run as one string, also in a document shaped in its own
+   *  language, whose text is otherwise shaped word by word (#770): the
+   *  text of a drawing. */
+  whole?: boolean;
   /** What copying and text extraction read for the glyphs: by default
    *  each glyph's characters, with the clusters that cannot be read so (see
    *  the module comment) under spans of their own; the whole text under one
@@ -603,9 +608,18 @@ function layoutRuns(
   let advance = 0;
   let glyphs = 0;
   for (const run of runsOf(text, options)) {
-    const files = fileRuns(font, text.slice(run.start, run.end), run.rtl);
-    // The files of a right-to-left run follow each other leftwards.
-    if (run.rtl) files.reverse();
+    // Word by word, as the canvas shapes a run (`canvasWords.ts`, #770): a
+    // space is a word of its own, with no script (Aref Ruqaa sets it wider
+    // than inside Arabic text). The words of a right-to-left run follow
+    // each other leftwards, and so do the files of each.
+    const runText = text.slice(run.start, run.end);
+    const words = options.whole || !shapesAsCanvas() ? [runText] : canvasWords(runText);
+    if (run.rtl) words.reverse();
+    const files = words.length === 1 ? fileRuns(font, runText, run.rtl) : words.flatMap((word) => {
+      const parts = fileRuns(font, word, run.rtl);
+      return run.rtl ? parts.reverse() : parts;
+    });
+    if (run.rtl && words.length === 1) files.reverse();
     for (const { font: file, text: part, beside } of files) {
       // A part with no letter (the stop and the guillemet of `خالة.»`, in
       // another file than the letters) is shaped in the word's script.
@@ -675,7 +689,7 @@ export function drawShapedTextPx(
  * HarfBuzz is not loaded.
  */
 export function shapedSvgText(font: PDFFont, text: string, size: number, base?: 'ltr' | 'rtl'): { shows: TextShow[]; advance: number } | null {
-  const layout = layoutShapedText(font, text, size, { base }, undefined);
+  const layout = layoutShapedText(font, text, size, { base, whole: true }, undefined);
   return layout ? { shows: layout.shows, advance: (layout.advance / 1000) * size } : null;
 }
 

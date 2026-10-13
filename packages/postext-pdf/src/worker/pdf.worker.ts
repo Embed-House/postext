@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 
 import { renderToPdf } from '../pdf-backend';
+import { declaredFontFile } from '../fontCache';
 import type { PdfRequestMessage, PdfResponseMessage } from './protocol';
 
 const ctx: DedicatedWorkerGlobalScope = self as unknown as DedicatedWorkerGlobalScope;
@@ -36,7 +37,12 @@ ctx.addEventListener('message', async (event: MessageEvent<PdfRequestMessage>) =
       if (!pending) return;
       asks.delete(msg.askId);
       if (msg.error) pending.reject(new Error(msg.error));
-      else pending.resolve(msg.bytes);
+      else if (msg.declared) {
+        // Each file takes back what it said of itself on the host.
+        const declared = msg.declared;
+        const files = (Array.isArray(msg.bytes) ? msg.bytes : msg.bytes ? [msg.bytes] : []).map((bytes, i) => (declared[i] ? declaredFontFile(bytes, declared[i]) : bytes));
+        pending.resolve(Array.isArray(msg.bytes) ? files : files[0] ?? null);
+      } else pending.resolve(msg.bytes);
       return;
     }
     case 'render': {

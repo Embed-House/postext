@@ -1,0 +1,660 @@
+{/* docs/webmcp-pt.mdx */}
+
+export const metadata = {
+  title: 'WebMCP: um agente trabalhando no Sandbox',
+  sidebarTitle: 'WebMCP',
+  description: 'O que um agente de IA no navegador pode fazer com o Sandbox por meio das suas 36 ferramentas WebMCP (olhar as páginas, mudar qualquer ajuste, editar o texto, adicionar imagens, tabelas e fontes, rodar as verificações, exportar) e como chamar cada uma, com argumentos e respostas reais',
+  lang: 'pt',
+  lastUpdated: '2026-10-13',
+  readingTime: '14 min',
+  order: 23,
+  plainSummary: "Esta página é para quem quer que um assistente de inteligência artificial trabalhe por você em um livro no Sandbox. Enquanto o Sandbox está aberto, ele entrega ao assistente um conjunto de ferramentas para olhar qualquer página, mudar o design, editar o texto, adicionar imagens e tabelas, encontrar problemas e salvar arquivos. Você pede com as suas palavras, por exemplo \"aumente um pouco a letra e confira se o livro continua cabendo em 40 páginas\", e o assistente usa as ferramentas e mostra as páginas para você. Tudo fica no seu navegador. A página explica como conectar um assistente, o que ele pode fazer e como cada ferramenta é chamada.",
+};
+
+# WebMCP
+
+**Um agente no seu navegador trabalha no livro aberto no Sandbox: olha as páginas, muda o que precisa e olha de novo.**
+
+O [Sandbox](/pt/docs/sandbox) entrega a um agente as suas próprias ferramentas
+por meio do [WebMCP](https://webmachinelearning.github.io/webmcp/), um rascunho
+de padrão da web que permite a uma página oferecer ferramentas ao modelo de IA
+com que o navegador conversa. Com elas o agente não sai clicando pela
+interface: ele lê o livro, pede uma imagem da página 12, define
+`bodyText.fontSize` como 10,5 pt, vê que o capítulo passou de 18 para 19
+páginas e volta ao valor anterior. Ele faz o que você faz a olho, com o seu
+livro e no seu navegador.
+
+São 36 ferramentas com nomes que começam por `sandbox_`, registradas enquanto
+o Sandbox está na tela, e 8 ferramentas do site, `site_*`, em todas as páginas
+do postext.dev. Esta página as organiza pelo que você pediria a um agente e
+mostra a chamada de cada uma.
+
+## Conectar um agente
+
+### Em um navegador com WebMCP
+
+As ferramentas são registradas em `document.modelContext` quando o Sandbox é
+montado e retiradas quando você sai dele. Um agente a quem o navegador entrega
+as ferramentas da página as encontra ali. Não é preciso instalar nem
+configurar nada do lado do Postext.
+
+O WebMCP ainda é um rascunho. O Chrome o oferece como teste de origem e atrás
+da flag `chrome://flags/#enable-webmcp-testing`. As ferramentas acompanham a
+página: na página inicial ou na documentação o agente tem as ferramentas
+`site_*`; quando o Sandbox está na tela, aparecem também as 36 ferramentas
+`sandbox_*`.
+
+### Em qualquer outro navegador: `window.postextWebMcp`
+
+A página também coloca as mesmas ferramentas em `window.postextWebMcp`, com ou
+sem WebMCP. Qualquer agente capaz de executar código na página pode usá-las:
+uma ferramenta de automação como Puppeteer ou Playwright, um servidor MCP que
+controla o navegador e avalia código (Chrome DevTools MCP), uma extensão do
+navegador ou você mesmo, no console do desenvolvedor:
+
+```js
+// O que há nesta página
+postextWebMcp.listTools().map((t) => t.name);
+
+// Executar uma ferramenta: o nome e depois um objeto com os argumentos
+await postextWebMcp.executeTool('sandbox_get_state', {});
+await postextWebMcp.executeTool('sandbox_set_config', {
+  changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }],
+});
+```
+
+O mesmo a partir de um script do Puppeteer, que salva uma página como imagem:
+
+```js
+import fs from 'node:fs';
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+await page.goto('https://postext.dev/pt/sandbox');
+await page.waitForFunction(() => window.postextWebMcp?.listTools().some((t) => t.name === 'sandbox_get_state'));
+await page.waitForFunction(async () => (await window.postextWebMcp.executeTool('sandbox_get_state', {})).ready);
+
+const result = await page.evaluate(() =>
+  window.postextWebMcp.executeTool('sandbox_render_page', { chapter: 1, position: 1, width: 1200, format: 'png' }),
+);
+const picture = result.content.find((part) => part.type === 'image');
+fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
+await browser.close();
+```
+
+Um perfil de navegador novo tem o próprio armazenamento, então começa pelas
+amostras, não pelos seus projetos. Para trabalhar nos seus livros, use o
+navegador em que você os criou.
+
+### Como é cada resposta
+
+Uma ferramenta responde com um objeto JSON: `ok: true` e o que foi pedido, ou
+`ok: false` e um `error` que diz o que estava errado e o que pedir no lugar:
+
+```json
+{
+  "ok": false,
+  "error": "bodyText.fontSize is a length: give { \"value\": 11, \"unit\": \"pt\" }, a number (in pt) or a text such as \"11pt\". The units: cm, mm, in, pt, px, em, rem."
+}
+```
+
+Os argumentos são conferidos com o esquema da ferramenta antes de qualquer
+execução, de modo que um parâmetro escrito errado é recusado com a lista dos
+corretos. Uma ferramenta que devolve imagens (`sandbox_render_page`) responde
+no formato do MCP, `{ content: [...] }`: uma parte de texto com um JSON que
+descreve as páginas e depois uma parte de imagem por página, codificada em
+base64.
+
+## O ciclo de trabalho
+
+Toda ferramenta que muda o livro espera a diagramação acompanhar antes de
+responder e informa quantas páginas cada capítulo passou a ocupar. Assim, o
+olhar seguinte é sempre sobre as páginas novas, e o agente pode trabalhar como
+um designer:
+
+1. **Ver em que pé está**: `sandbox_get_state` dá o livro, os capítulos com as
+   suas páginas, o capítulo e a página na tela e o painel aberto.
+2. **Olhar**: `sandbox_render_page` pinta uma página, `sandbox_inspect_pages`
+   a descreve como dados, `sandbox_get_warnings` lista o que as verificações
+   encontraram.
+3. **Mudar**: `sandbox_set_config`, `sandbox_edit_text`,
+   `sandbox_save_resource`…
+4. **Olhar de novo** e manter a mudança ou desfazê-la.
+
+A página é diagramada e pintada para a ferramenta seja qual for o
+visualizador na tela, então o agente pode olhar o capítulo 7 enquanto você lê
+o capítulo 2.
+
+## O que você pode pedir e como é feito
+
+### Saber o que está aberto
+
+```jsonc
+// sandbox_get_state
+{}
+```
+
+```json
+{
+  "ok": true,
+  "ready": true,
+  "book": { "kind": "sample", "id": "postext-guide", "name": "Guia" },
+  "pages": 3,
+  "chapters": [
+    { "chapter": 1, "id": "a", "title": "Abertura", "onScreen": true, "words": 1007, "pages": 2 },
+    { "chapter": 2, "id": "b", "title": "Segundo", "words": 101, "pages": 1 }
+  ],
+  "view": { "viewer": "canvas", "panel": "none", "scope": "chapter", "chapter": 1 },
+  "resources": 0,
+  "warnings": 0
+}
+```
+
+`ready: false` vem acompanhado de `waitingFor`, que diz o motivo (um livro
+ainda carregando). `question` e `notice` aparecem quando o Sandbox está
+esperando por você; veja [Perguntas e mensagens](#perguntas-e-mensagens).
+
+Toda ferramenta que recebe um `chapter` aceita a posição dele no livro (a
+partir de 1), o título ou o id. Se ele for omitido, vale o capítulo na tela.
+
+### Olhar uma página
+
+**Uma imagem.** "Mostre a abertura do capítulo 3", "como fica a página dupla
+das páginas 24 e 25?":
+
+```jsonc
+// sandbox_render_page: uma página dupla, 1200 px de largura por página
+{ "chapter": 3, "page": 24, "count": 2, "width": 1200 }
+```
+
+`page` é o número impresso na página; `position` é o lugar da página entre as
+do capítulo (a partir de 1), para as páginas sem número. Sem nenhum dos dois,
+vale a página na tela. `crop` amplia uma parte da página, em frações da
+largura e da altura contadas a partir do canto superior esquerdo, para julgar
+de perto a letra e os espaços:
+
+```jsonc
+// sandbox_render_page: o quarto inferior direito, ampliado
+{ "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
+```
+
+`printPreview: true` pinta a prova na tela do perfil de impressão com as guias
+de refile, sangria e área de segurança; `trimmed: true` deixa de fora a margem
+com as marcas de corte.
+
+**A mesma página como dados.** "Quais linhas desta página estão frouxas?", "a
+segunda coluna está cheia?":
+
+```jsonc
+// sandbox_inspect_pages: sem página, uma linha por página do capítulo
+{ "chapter": 1 }
+```
+
+```json
+{
+  "chapter": 1, "title": "Abertura", "chapterPages": 2, "converged": true,
+  "pages": [
+    { "position": 1, "label": "1", "role": "opener", "blank": false, "lines": 45, "figures": 0, "starts": "Abertura" },
+    { "position": 2, "label": "2", "role": "body", "blank": false, "lines": 37, "figures": 0, "starts": "décadas. A tipografia impressa passou cinco séculos…" }
+  ]
+}
+```
+
+Com `page` ou `position`, ela lista cada bloco da página: o tipo, a coluna, o
+texto, o número de linhas, as linhas que terminam em hífen e as linhas
+justificadas frouxas com a largura dos seus espaços, a caixa do bloco na
+página e, ainda, quanto cada coluna está cheia (`fill: 0.99`).
+
+**O que há em um ponto.** Quando o agente vê algo em uma imagem, ele pergunta
+o que é com as mesmas frações que usou no recorte:
+
+```jsonc
+// sandbox_inspect_point
+{ "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
+```
+
+A resposta traz o bloco, a linha e a coluna do texto-fonte Markdown naquele
+ponto (e a palavra), um link e a página aonde ele leva, a célula de tabela ou
+a legenda de um recurso. Com `select: true`, ela também faz o que um clique
+faz: o painel Texto se abre com o cursor naquele lugar (`word: true` seleciona
+a palavra, `to` seleciona até um segundo ponto).
+
+### Mudar o design
+
+Qualquer ajuste da [configuração](/pt/docs/configuration) pode ser mudado
+pelo seu caminho. Um agente raramente sabe o caminho de cara, então ele o
+procura:
+
+```jsonc
+// sandbox_find_setting
+{ "query": "orphans" }
+```
+
+```json
+{
+  "ok": true,
+  "paths": [
+    { "path": "bodyText.avoidOrphans", "effective": true },
+    { "path": "bodyText.avoidOrphansInLists", "effective": true }
+  ],
+  "sections": [{ "section": "Body text", "group": "Typography", "settingsGroup": "text", "configKeys": ["bodyText"] }]
+}
+```
+
+`sandbox_get_config` lê um ajuste ou uma seção inteira: `set` é o que o livro
+armazena, `effective` é o valor resultante com os padrões preenchidos, o que
+também mostra todos os ajustes que a seção tem.
+
+```jsonc
+// sandbox_get_config
+{ "path": "headings.levels[level=2]" }
+```
+
+Os caminhos nomeiam um item de uma lista pelo que o distingue dos outros:
+`headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`,
+`calloutStyles[id=note].title`. Depois, `sandbox_set_config` muda quantos
+ajustes você quiser em uma só chamada:
+
+```jsonc
+// sandbox_set_config
+{
+  "changes": [
+    { "path": "bodyText.fontSize", "value": "10.5pt" },
+    { "path": "page.margins.top", "value": { "value": 2.5, "unit": "cm" } },
+    { "path": "headings.levels[level=2].color", "value": "#1f3a5f" },
+    { "path": "bodyText.avoidOrphans", "value": true }
+  ]
+}
+```
+
+Uma medida é `"2.5cm"`, `{ "value": 2.5, "unit": "cm" }` ou um número na
+unidade do ajuste; uma cor é `"#1f3a5f"`. Um valor `null` remove o ajuste, e o
+valor do design volta a valer. A resposta traz o que é preciso para julgar a
+mudança e para desfazê-la:
+
+```json
+{
+  "ok": true,
+  "changed": [
+    {
+      "path": "bodyText.fontSize",
+      "from": null,
+      "to": { "value": 10.5, "unit": "pt" },
+      "effective": { "from": { "value": 10, "unit": "pt" }, "to": { "value": 10.5, "unit": "pt" } }
+    }
+  ],
+  "followed": [
+    { "path": "captionStyle.fontSize.value", "from": 10, "to": 10.5 },
+    { "path": "tableStyle.bodyFontSize.value", "from": 10, "to": 10.5 }
+  ],
+  "pagesBefore": 212,
+  "pagesAfter": 219,
+  "chapters": [{ "chapter": 1, "title": "Abertura", "pages": 19, "pagesBefore": 18 }]
+}
+```
+
+`from` é o valor armazenado antes (aqui `null`: o livro não o definia), então a
+mesma chamada com `from` como valor desfaz a mudança. `followed` lista os
+ajustes que dependem deste e se moveram com ele. Aparece uma `note` quando o
+motor resolveu algo diferente do que foi pedido (um limite, um ajuste que
+depende de outro), e um valor com o formato errado, ou uma configuração que o
+motor não consegue resolver, é recusado sem mudar nada.
+
+Para mudanças maiores, `patch` mescla um objeto na configuração (os objetos se
+mesclam, `null` remove, as listas são substituídas inteiras) e `replace`
+coloca uma configuração inteira no lugar da do livro, como um
+`postext-config.json` exportado. `sandbox_reset_to_original` com
+`part: "config"` restaura o design com que o livro começou.
+
+As fontes também são ajustes: `sandbox_list_fonts` com `search: "Garamond"`
+encontra famílias no catálogo aberto, e escrever o nome em um ajuste
+`fontFamily` a carrega.
+
+### Editar o texto
+
+O texto de cada capítulo é Markdown com as extensões do Postext (veja
+[Formato do documento](/pt/docs/document-format)). O agente o lê com números
+de linha, encontra um trecho e substitui trechos exatos:
+
+```jsonc
+// sandbox_read_text: linhas 40 a 80 do capítulo 2
+{ "chapter": 2, "fromLine": 40, "toLine": 80 }
+```
+
+```jsonc
+// sandbox_search_text: onde um trecho aparece, e em que página
+{ "query": "grade de linhas de base", "pages": true }
+```
+
+```jsonc
+// sandbox_edit_text
+{
+  "chapter": 2,
+  "edits": [
+    { "find": "As últimas palavras da abertura.", "replace": "As palavras finais da abertura." },
+    { "find": "facto", "replace": "fato", "all": true }
+  ]
+}
+```
+
+Cada `find` precisa coincidir exatamente com o texto-fonte e aparecer uma só
+vez, a menos que `all` esteja definido. Ou todas as edições se aplicam, ou
+nenhuma: um trecho que não está lá é recusado com a sugestão de ler o capítulo
+de novo. A chamada inteira conta como um passo para `sandbox_undo_text`, que a
+desfaz (`redo: true` a refaz). `sandbox_write_text` substitui um capítulo
+inteiro, a partir de `markdown` ou de um arquivo `.md`.
+
+Para mostrar a você um lugar do texto, `sandbox_select_text` abre o painel
+Texto com aquele trecho selecionado (por `text`, `line` ou `offset`), como faz
+um clique em um achado do painel Verificações.
+
+### Organizar os capítulos
+
+`sandbox_manage_chapters` adiciona, renomeia, move, divide, junta e mostra
+capítulos:
+
+```jsonc
+// adicionar um capítulo em terceiro lugar
+{ "action": "add", "title": "Epílogo", "markdown": "# Epílogo\n\nFim.\n", "position": 3 }
+
+// dividir um capítulo onde começa um trecho
+{ "action": "split", "chapter": "Abertura", "before": "## Segunda parte" }
+
+// um capítulo por título de nível 1
+{ "action": "split_at_headings", "chapter": 1 }
+```
+
+`sandbox_remove_chapter` apaga um capítulo, o que não pode ser desfeito.
+
+### Adicionar imagens, tabelas, vídeos e fontes
+
+`sandbox_save_resource` adiciona um recurso ou muda um existente, como faz o
+painel Recursos. Um arquivo chega por `url` (um endereço `https:` que a página
+consiga buscar, ou uma URL `data:`) ou como `base64`:
+
+```jsonc
+// uma imagem com legenda e texto alternativo
+{
+  "id": "harbour",
+  "image": { "url": "https://example.org/harbour.jpg" },
+  "caption": "O porto ao amanhecer",
+  "altText": "Barcos de pesca atracados em um cais de pedra, com névoa sobre a água",
+  "placement": { "position": "top", "span": "page" }
+}
+```
+
+```jsonc
+// uma tabela a partir de linhas de texto; a primeira linha é o cabeçalho
+{
+  "id": "prices",
+  "caption": "Preços em 1850",
+  "table": { "rows": [["Item", "Preço"], ["Pão", "2 d"], ["Tinta", "6 d"]], "columnWidths": [2, 1] }
+}
+```
+
+```jsonc
+// um vídeo do YouTube: o pôster, o tamanho do quadro e o título são buscados
+{ "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "O autor trabalhando" }
+```
+
+A resposta traz o registro armazenado e a linha que o posiciona,
+`::resource{id="prices"}`, que o agente depois escreve no texto com
+`sandbox_edit_text`. Em um `id` que já existe, a chamada muda só o que ela
+traz: uma legenda, as células de uma tabela, a posição, a área segura de uma
+imagem. `newId` renomeia um recurso e, por padrão, todas as referências a ele
+no livro. `sandbox_list_resources` lista os recursos e, com um `id`, mostra um
+deles por inteiro (as células de uma tabela com a sua formatação, o código de
+um SVG).
+
+As fontes enviadas para o livro passam por `sandbox_save_font`:
+
+```json
+{ "action": "add", "family": "My Serif", "weight": 700, "style": "italic", "file": { "url": "https://example.org/MySerif-BoldItalic.woff2" } }
+```
+
+### Verificar o livro
+
+```jsonc
+// sandbox_get_warnings: todos os capítulos
+{ "scope": "book" }
+```
+
+A resposta é o que diz o painel Verificações, para qualquer capítulo ou para o
+livro inteiro, seja qual for o que está na tela: fontes e imagens ausentes,
+marcação que o motor não conseguiu ler, elementos de design que não cabem,
+texto claro demais para o fundo, linhas frouxas, viúvas, caixas que
+transbordam e o preflight de impressão. Cada aviso traz a categoria, o
+capítulo, a linha e os deslocamentos, a página e o ajuste ou recurso que ele
+menciona:
+
+```json
+{
+  "ok": true,
+  "scope": "book",
+  "total": 3,
+  "byCategory": { "typesetting": 2, "design": 1 },
+  "warnings": [
+    {
+      "kind": "headerFooterMetadataMissing",
+      "category": "design",
+      "title": "Placeholder metadata missing",
+      "detail": "header · {title} — The metadata referenced by this placeholder is not set — it will render empty."
+    }
+  ]
+}
+```
+
+A partir de um aviso, o agente pode ir até o lugar dele (`sandbox_select_text`
+com `offset` e `toOffset`, ou `sandbox_go_to_page`), olhar a página e mudar o
+texto ou o ajuste. `category` restringe a lista; em um livro longo,
+`scope: "book"` diagrama todos os capítulos e leva um tempo.
+
+### Mostrar ao leitor
+
+O que o agente muda, você vê. Para chamar a sua atenção para algo:
+
+```jsonc
+// sandbox_set_view: o Canvas em páginas duplas, com as linhas frouxas destacadas
+{ "viewer": "canvas", "pages": "spread", "fit": "height", "guides": { "looseLines": true, "baselineGrid": true } }
+```
+
+```jsonc
+// sandbox_go_to_page: onde uma figura está posicionada
+{ "anchor": "harbour" }
+```
+
+`sandbox_set_view` também escolhe o visualizador (`canvas`, `pdf`, `folio`,
+`html`, `epub`), o painel lateral, capítulo ou livro inteiro, o zoom, o
+tamanho da letra do leitor, a prévia de impressão e o grupo do painel Design.
+`sandbox_go_to_page` vira as páginas por `step`, `page`, `position`, um trecho
+em `text`, uma `anchor` ou uma entrada `contents` de um EPUB.
+`sandbox_run_viewer` aperta um botão da barra de ferramentas: `regenerate`
+gera de novo o PDF ou o EPUB e espera por ele, `print` abre a caixa de
+impressão para você confirmar, `play_video` reproduz um vídeo de uma página.
+
+### Páginas de quadrinhos
+
+`sandbox_inspect_comic` dá os quadros, as linhas de divisão e os balões de uma
+página de quadrinhos com as suas posições; `sandbox_edit_comic` faz as edições
+que uma pessoa faz com o ponteiro, gravadas no texto-fonte:
+
+```jsonc
+// mover o centro de um balão para um ponto da imagem do seu quadro, em porcentagem
+{ "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
+
+// mover a primeira linha de divisão para 45 % da sua célula
+{ "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
+```
+
+A resposta avisa quando um balão cai sobre um rosto ou sai do seu quadro. Veja
+[Quadrinhos](/pt/docs/comics) para o formato.
+
+### Livros, arquivos e Word
+
+- **Abrir e salvar livros.** `sandbox_list_books` lista as amostras e seus
+  projetos; `sandbox_open_book` abre um deles (`{ "kind": "sample", "id":
+  "postext-guide", "language": "es" }`); `sandbox_save_book` com
+  `action: "copy_current"` salva o livro da tela como projeto seu, e
+  `new_blank` começa um vazio.
+- **Exportar.** `sandbox_export` gera `pdf`, `epub`, `postext`, `docx`,
+  `markdown` ou `config`. Por padrão o navegador baixa o arquivo; com
+  `deliver: "data"`, um PDF ou um EPUB volta para o agente codificado em
+  base64:
+
+  ```json
+  { "format": "pdf", "scope": "book", "deliver": "data" }
+  ```
+
+- **Importar um arquivo `.postext`** com `sandbox_import_book` (`inspect: true`
+  diz quais idiomas ele traz sem importá-lo).
+- **Trazer um manuscrito do Word** com `sandbox_import_word`. Execute-a
+  primeiro com `dryRun: true`: ela não muda nada e responde com o relatório de
+  qualidade, cada estilo do Word com aquilo em que se tornaria e os capítulos
+  e recursos que criaria. Depois corrija o mapeamento e execute de verdade:
+
+  ```json
+  {
+    "file": { "url": "https://example.org/manuscript.docx" },
+    "destination": "book",
+    "mapping": { "paragraphs": { "Epígrafe": { "kind": "quote" }, "Título do capítulo": { "kind": "chapter" } } },
+    "saveTemplateAs": "Minha editora"
+  }
+  ```
+
+  `sandbox_word_templates` lista, lê, salva e apaga os mapeamentos salvos, que
+  a exportação para Word também usa.
+
+### Perguntas e mensagens
+
+Quando um link abre um livro do qual você já tem uma versão própria, o Sandbox
+pergunta se deve substituir a sua cópia, e `sandbox_get_state` informa isso
+como `question` com `ready: false`. `sandbox_answer` responde:
+`replaceCopy: false` mantém a sua, `true` a substitui pelo livro publicado e
+apaga a sua cópia. `dismissNotice: true` fecha a mensagem do painel Livros.
+
+## Três sessões do começo ao fim
+
+**"Aumente um pouco a letra, mas mantenha o livro abaixo de 220 páginas."**
+`sandbox_get_state` (212 páginas) → `sandbox_set_config` com
+`bodyText.fontSize` em `"10.5pt"` (219 páginas) → `sandbox_render_page` em uma
+página densa para julgá-la → `sandbox_get_warnings` com
+`category: "typesetting"` para ver se surgiram viúvas → se algo deu errado,
+`sandbox_set_config` de novo com os valores `from` da primeira resposta.
+
+**"Corrija o que as verificações encontraram no capítulo 4."**
+`sandbox_get_warnings` com `chapter: 4` → para cada aviso, `sandbox_read_text`
+em torno da sua `line` e `sandbox_render_page` da sua `page` →
+`sandbox_edit_text` ou `sandbox_set_config` → `sandbox_get_warnings` de novo,
+até a lista voltar vazia.
+
+**"Faça um livro com este arquivo do Word e me dê o PDF."** `sandbox_save_book`
+com `action: "new_blank"` → `sandbox_import_word` com `dryRun: true` →
+`mapping` corrigido e depois a importação de verdade com
+`destination: "book"` → `sandbox_get_warnings` com `scope: "book"` →
+`sandbox_export` com `format: "pdf"` e `scope: "book"`.
+
+## O que pede o seu consentimento
+
+Seis ferramentas fazem o que não tem volta e vão marcadas como consequentes
+(`consequentialHint`), para que o navegador possa perguntar a você antes de
+executá-las: `sandbox_remove_chapter`, `sandbox_delete_resource`,
+`sandbox_delete_book`, `sandbox_reset_to_original`, `sandbox_import_word`
+(pode substituir o livro inteiro) e `sandbox_answer` (pode apagar a sua cópia
+de um livro). Na dúvida, peça ao agente que exporte antes uma cópia
+`.postext`.
+
+As ferramentas que só leem vão marcadas com `readOnlyHint`, e aquelas cuja
+resposta traz texto que a página não escreveu (o texto do próprio livro, um
+arquivo buscado) vão marcadas com `untrustedContentHint`, para que o navegador
+evite que esse texto seja tomado por instruções.
+
+## Limites
+
+- **Tudo fica no seu navegador.** As ferramentas não alcançam nada que o
+  próprio Sandbox não alcance: os seus livros estão no armazenamento deste
+  navegador, e um arquivo indicado por `url` é buscado pela página, então o
+  servidor dele precisa permitir isso (CORS). Uma URL `data:` ou `base64`
+  sempre funciona.
+- **Trabalho longo leva tempo.** Uma ferramenta espera a diagramação antes de
+  responder; `wait: false` responde na hora. O PDF ou o EPUB de um livro longo
+  leva minutos.
+- **O que `sandbox_undo_text` desfaz**: as edições de texto das ferramentas
+  (uma chamada por vez) e as edições feitas nas prévias. Não desfaz o que você
+  digita no editor do painel Texto (o desfazer do próprio editor cuida disso),
+  capítulos adicionados ou movidos, nem mudanças no design e nos recursos:
+  para essas, use o `from` de cada resposta. A lista se perde quando a página
+  é recarregada.
+- **O livro na tela.** As ferramentas trabalham sobre o livro aberto. Só
+  `sandbox_export` de um arquivo `.postext`, `sandbox_save_book` com
+  `duplicate` e `sandbox_reset_to_original` com `sample` alcançam outro livro
+  sem abri-lo.
+
+## As ferramentas do site
+
+Em todas as páginas do postext.dev, incluindo o Sandbox:
+
+- `site_get_context`: a página na tela, o idioma e o tema dela, as seções e
+  todas as páginas da documentação.
+- `site_search`: a documentação e as Receitas, por palavras, por nomes de
+  ajustes (`bodyText.avoidOrphans`) ou por diretivas (`::resource`).
+- `site_read_page`: uma página do site como Markdown, sem sair da página na
+  tela.
+- `site_open_page`: mostrar uma página, com `#título` para cair em uma seção.
+- `site_list_recipes` e `site_open_recipe_in_sandbox`: encontrar uma receita
+  das Receitas e abri-la no Sandbox como um livro editável.
+- `site_lookup_term`: um termo do glossário (viúva, kerning, kinsoku…).
+- `site_set_preferences`: o idioma e o tema do site.
+
+Um agente que começa na página inicial pode, portanto, buscar nas Receitas,
+abrir uma receita no Sandbox e continuar ali com as ferramentas `sandbox_*`.
+
+## Todas as ferramentas
+
+Agrupadas como o Sandbox as registra. A descrição completa e o esquema de
+cada uma vêm com `postextWebMcp.listTools()`.
+
+- **O que está aberto**: `sandbox_get_state`.
+- **As páginas**: `sandbox_render_page`, `sandbox_inspect_pages`,
+  `sandbox_inspect_point`.
+- **O texto**: `sandbox_read_text`, `sandbox_write_text`, `sandbox_edit_text`,
+  `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
+  `sandbox_manage_chapters`, `sandbox_remove_chapter`.
+- **O design**: `sandbox_get_config`, `sandbox_set_config`,
+  `sandbox_find_setting`, `sandbox_reset_to_original`.
+- **Como é mostrado**: `sandbox_set_view`, `sandbox_go_to_page`,
+  `sandbox_run_viewer`.
+- **Recursos e fontes**: `sandbox_list_resources`, `sandbox_save_resource`,
+  `sandbox_delete_resource`, `sandbox_list_fonts`, `sandbox_save_font`.
+- **Quadrinhos**: `sandbox_inspect_comic`, `sandbox_edit_comic`.
+- **Livros e arquivos**: `sandbox_list_books`, `sandbox_open_book`,
+  `sandbox_save_book`, `sandbox_delete_book`, `sandbox_import_book`,
+  `sandbox_export`.
+- **Word**: `sandbox_import_word`, `sandbox_word_templates`.
+- **Perguntas**: `sandbox_answer`.
+- **As verificações**: `sandbox_get_warnings`.
+
+## Ao incorporar o Sandbox
+
+`<PostextSandbox>` registra as ferramentas enquanto está montado;
+`webmcp={false}` as deixa de fora (veja [Props](/pt/docs/sandbox#props)). Uma
+página hospedeira pode adicionar ferramentas próprias pelo mesmo módulo:
+
+```ts
+import { registerWebMcpTools } from 'postext-sandbox/webmcp';
+
+const controller = new AbortController();
+registerWebMcpTools([
+  {
+    name: 'shop_list_titles',
+    description: 'Os títulos desta loja, com o id do projeto Postext de cada um.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true },
+    execute: async () => ({ titles: await fetchTitles() }),
+  },
+], controller.signal);
+// controller.abort() as retira
+```
+
+Elas são registradas no WebMCP onde o navegador o oferece e sempre em
+`window.postextWebMcp`, com os argumentos conferidos com o `inputSchema`.

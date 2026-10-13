@@ -43,9 +43,10 @@ function kitWith(fetch: Fetch, { failLoads = false } = {}) {
   };
   const kitFail = vi.fn();
   // The PDF block's provider and decoder, stubbed: the latin file of a
-  // Latin family, and the "bytes" are the file's URL.
+  // Latin family, and the "bytes" are the file's URL, kept as bytes (the
+  // provider marks them, #770).
   const fontsourceProvider = vi.fn(async (family: string) => `latin:${family}`);
-  const decompressWoff2 = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
+  const decompressWoff2 = (bytes: Uint8Array) => bytes;
   const run = new Function(
     "fetch", "document", "FontFace", "kitStatus", "kitFail", "fontsourceProvider", "decompressWoff2",
     `${kit.fonts}\n${kit.arabic}\nreturn { loadArabicFonts, arabicPdfProvider, inArabicRange };`,
@@ -101,23 +102,35 @@ describe("kit block arabic: loadArabicFonts", () => {
 });
 
 describe("kit block arabic: arabicPdfProvider", () => {
+  /** The files of an answer: what each is (its "bytes" are its URL), and
+   *  the marks it carries: the first code points of its unicode-range and
+   *  its place among the files the screen declared. */
+  const described = (files: unknown) => (files as (Uint8Array & { unicodeRange: string; order: number })[])
+    .map((file) => [new TextDecoder().decode(file), file.unicodeRange.split(",")[0], file.order]);
+
   it("hands the PDF the arabic file first, then latin, and latin-ext only for letters beyond latin", async () => {
     const { arabicPdfProvider } = kitWith(serve({ amiri: AMIRI }));
-    expect(await arabicPdfProvider("Amiri", 400, "normal", codePoints("كتاب (1) ١"))).toEqual([
-      `${FILES}/amiri@5/files/amiri-arabic-400-normal.woff2`,
-      `${FILES}/amiri@5/files/amiri-latin-400-normal.woff2`,
+    // Each file marked with its range and its place on screen: latin and
+    // latin-ext from loadFonts, then arabic, which is declared last. The
+    // arabic file has a space and a bracket its range does not claim, and
+    // postext-pdf sets them from latin, as the browser does (#770).
+    expect(described(await arabicPdfProvider("Amiri", 400, "normal", codePoints("كتاب (1) ١")))).toEqual([
+      [`${FILES}/amiri@5/files/amiri-arabic-400-normal.woff2`, "U+0600-06FF", 3],
+      [`${FILES}/amiri@5/files/amiri-latin-400-normal.woff2`, "U+0000-00FF", 0],
     ]);
-    expect(await arabicPdfProvider("Amiri", 700, "normal", codePoints("ابن البَيْطار, al-Ḥasan ibn ʿAlī"))).toEqual([
-      `${FILES}/amiri@5/files/amiri-arabic-700-normal.woff2`,
-      `${FILES}/amiri@5/files/amiri-latin-700-normal.woff2`,
-      `${FILES}/amiri@5/files/amiri-latin-ext-700-normal.woff2`,
+    expect(described(await arabicPdfProvider("Amiri", 700, "normal", codePoints("ابن البَيْطار, al-Ḥasan ibn ʿAlī")))).toEqual([
+      [`${FILES}/amiri@5/files/amiri-arabic-700-normal.woff2`, "U+0600-06FF", 3],
+      [`${FILES}/amiri@5/files/amiri-latin-700-normal.woff2`, "U+0000-00FF", 0],
+      [`${FILES}/amiri@5/files/amiri-latin-ext-700-normal.woff2`, "U+0100-02BA", 1],
     ]);
   });
 
   it("asks only for the latin file when the face sets no Arabic, and for both when it cannot tell", async () => {
     const { arabicPdfProvider } = kitWith(serve({ amiri: AMIRI }));
-    expect(await arabicPdfProvider("Amiri", 400, "normal", codePoints("Chapter 1"))).toEqual([`${FILES}/amiri@5/files/amiri-latin-400-normal.woff2`]);
-    expect(await arabicPdfProvider("Amiri", 400, "normal", { codePoints: new Set() })).toEqual([
+    expect(described(await arabicPdfProvider("Amiri", 400, "normal", codePoints("Chapter 1")))).toEqual([
+      [`${FILES}/amiri@5/files/amiri-latin-400-normal.woff2`, "U+0000-00FF", 0],
+    ]);
+    expect(described(await arabicPdfProvider("Amiri", 400, "normal", { codePoints: new Set() })).map(([file]) => file)).toEqual([
       `${FILES}/amiri@5/files/amiri-arabic-400-normal.woff2`,
       `${FILES}/amiri@5/files/amiri-latin-400-normal.woff2`,
     ]);
@@ -125,7 +138,7 @@ describe("kit block arabic: arabicPdfProvider", () => {
 
   it("snaps to a shipped weight, falls back from a missing italic and leaves Latin families to fontsourceProvider", async () => {
     const { arabicPdfProvider, fontsourceProvider } = kitWith(serve({ "noto-naskh-arabic": NASKH, newsreader: NEWSREADER }));
-    expect(await arabicPdfProvider("Noto Naskh Arabic", 800, "italic", codePoints("ب"))).toEqual([
+    expect(described(await arabicPdfProvider("Noto Naskh Arabic", 800, "italic", codePoints("ب"))).map(([file]) => file)).toEqual([
       `${FILES}/noto-naskh-arabic@5/files/noto-naskh-arabic-arabic-700-normal.woff2`,
       `${FILES}/noto-naskh-arabic@5/files/noto-naskh-arabic-latin-700-normal.woff2`,
     ]);

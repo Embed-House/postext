@@ -6,6 +6,8 @@ import type { PostextConfig } from 'postext';
 import { parseFontString } from '../fontString';
 import type { PdfFontFallbackWarning, PdfWarning, RenderProgress } from '../pdf-backend';
 import type { createPdfWorker as CreatePdfWorker } from '../worker/client';
+import { declaredFontFile } from '../fontCache';
+import { paintedGlyphs } from './glyphPositions';
 
 // EF-52: `postext-pdf/worker` end to end, with the worker run in-process
 // behind a message channel that clones every message the way a real
@@ -139,6 +141,32 @@ describe('createPdfWorker (EF-52)', () => {
     expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe('%PDF-');
     expect(heard).toEqual(['Noto Serif TC: 。《》之也']);
     expect(warnings).toEqual([]);
+  });
+
+  it('takes a file with its unicode-range and its place in the declaration, and sets as the page did (#770)', async () => {
+    // Noto Serif JP as a pen declares it: `latin`, then slice 118 (the
+    // letters) and slice 113 (the `_`), which answer for what they repeat.
+    const file = (name: string) => new Uint8Array(fs.readFileSync(new URL(`./fixtures/fontsource/${name}`, import.meta.url)));
+    // Each file's bytes carry its range and its place (`PdfFontFile`).
+    const files = [
+      declaredFontFile(file('noto-serif-jp-latin.ttf'), { unicodeRange: 'U+0000-00FF', order: 0 }),
+      declaredFontFile(file('noto-serif-jp-118.ttf'), { unicodeRange: 'U+41-5A,U+61-7A', order: 1 }),
+      declaredFontFile(file('noto-serif-jp-113.ttf'), { unicodeRange: 'U+5F', order: 2 }),
+    ];
+    const lengths = files.map((f) => f.length);
+    const body = (shapingLanguage: 'host' | 'document') => ({ ...config, bodyText: { fontFamily: 'Noto Serif JP', shapingLanguage }, footer: { elements: [] } });
+    const fontsOf = async (shapingLanguage: 'host' | 'document'): Promise<number> => {
+      const bytes = await pdf.render(buildDocument({ markdown: 'Shift_JIS' }, body(shapingLanguage)), { fontProvider: async () => files, onWarning: () => undefined });
+      const glyphs = (await paintedGlyphs(bytes))[0]!;
+      expect(glyphs.map((g) => g.text).join('')).toBe('Shift_JIS');
+      return new Set(glyphs.map((g) => g.font)).size;
+    };
+    // The letters from one file and the `_` from another, across the
+    // worker's boundary; one file for a document in the host's language.
+    expect(await fontsOf('document')).toBe(2);
+    expect(await fontsOf('host')).toBe(1);
+    // The provider keeps its files: the worker was sent copies.
+    expect(files.map((f) => f.length)).toEqual(lengths);
   });
 
   it('rejects when a family cannot be had at all', async () => {

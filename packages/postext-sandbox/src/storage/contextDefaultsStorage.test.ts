@@ -316,7 +316,7 @@ describe('the break rules of a character grid survive a save (#717)', () => {
     const raw = rows.get(PROJECTS_STORE)!.get('old') as ProjectRecord;
     expect(raw.version).toBe(PROJECT_RECORD_VERSION);
     // (With the pins every record stored before 12 takes, #725, and before
-    // 13, #764.)
+    // 14, #764 and #770.)
     expect(raw.config.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
     expect(laidOut((await getProject('old'))!.config)).toEqual(ON);
   });
@@ -329,7 +329,9 @@ describe('the break rules of a character grid survive a save (#717)', () => {
     const current = configFromExport({ type: 'postext-config', version: 1, configVersion: 12, config: japanese() });
     expect(laidOut(current)).toEqual(OFF);
     const today = japanese();
-    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 13, config: today })).toBe(today);
+    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 14, config: today })).toBe(today);
+    // One stamped 13 (postext 1.29) keeps the language of the host (#770).
+    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 13, config: today })).toEqual({ ...today, bodyText: { shapingLanguage: 'host' } });
   });
 
   it('the layout key sees a rule turned on where it is off by default', () => {

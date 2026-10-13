@@ -62,16 +62,17 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(13);
+    expect(CONFIG_VERSION).toBe(14);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
     const current = grid('ja');
-    // One stamped 12 takes the pins of rules 13 alone: the language (#764)
-    // and, its text not being known, the task box (#765). One stamped 13 is
-    // read as it is.
+    // One stamped 12 takes the pins of rules 13 and 14 alone: the language
+    // (#764, #770) and, its text not being known, the task box (#765). One
+    // stamped 13 takes the language alone; one stamped 14 is read as it is.
     expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(migrateConfig(current, 13)).toBe(current);
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14)).toBe(current);
   });
 
   it('survives a save: the stripped configuration keeps the rules it was pinned to', () => {
@@ -100,9 +101,12 @@ describe('pinLegacyGridBreakRules (#717)', () => {
     // A layer that takes the grid away leaves nothing to pin.
     const plain = migrateBundleConfig(base, [grid('zh-Hans'), { cjk: { grid: { enabled: false } } }], 11);
     expect(plain.bodyText).toEqual({ ...base.bodyText, scriptContext: false, shapingLanguage: 'host' });
-    // One stored under 12 takes the pin of rules 13 alone (#764).
-    expect(migrateBundleConfig(base, [grid('zh-Hans')], 12).bodyText).toEqual({ fontFamily: 'Noto Serif SC', shapingLanguage: 'host' });
-    expect(migrateBundleConfig(base, [grid('zh-Hans')], 13).bodyText).toBe(base.bodyText);
+    // One stored under 12 or 13 takes the pin of the language alone (#764,
+    // #770); one stored under 14 is read as written.
+    for (const v of [12, 13]) {
+      expect(migrateBundleConfig(base, [grid('zh-Hans')], v).bodyText, String(v)).toEqual({ fontFamily: 'Noto Serif SC', shapingLanguage: 'host' });
+    }
+    expect(migrateBundleConfig(base, [grid('zh-Hans')], 14).bodyText).toBe(base.bodyText);
   });
 });
 
@@ -121,9 +125,9 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     const old = zipSync({ ...files, 'preset.json': new TextEncoder().encode(JSON.stringify(manifest)) });
     const opened = await openBundle(old);
     expect(rules(opened.config)).toEqual(ON);
-    // Written again from what was read: stamped 13, the rules spelled out.
+    // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(13);
+    expect(again.manifest.configVersion).toBe(14);
     expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });

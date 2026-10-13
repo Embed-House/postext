@@ -124,3 +124,48 @@ describe('collectFontUsage: the bold weight a configuration names (#741)', () =>
     expect(faces).toContainEqual({ family: 'Red Hat Text', weight: 600, style: 'italic' });
   });
 });
+
+// #770: the summaries of the contents are set slanted by default
+// (`resolveTocConfig`: `subtitle.italic ?? true`), and the reading of the
+// configuration as written gave the upright face. The Arabic guide sets them
+// in Amiri, a family its body asks for no italics of: no host had the italic
+// before the first layout named it, and the Sandbox's page set the summaries
+// in a fallback face until the file came (at 39.58 px, «والصفحة» painted
+// 121.44 px wide in a box of 111.02).
+describe('collectFontUsage: the summaries of the contents (#770)', () => {
+  const arabic = (subtitle: NonNullable<PostextConfig['toc']>['subtitle']): PostextConfig => ({
+    locale: 'ar',
+    bodyText: { fontFamily: 'Amiri' },
+    toc: { levels: [{ level: 1, fontFamily: 'Noto Kufi Arabic', fontWeight: 600 }], subtitle },
+  });
+
+  it('asks the summaries\' family for its italic when the configuration does not say upright', () => {
+    const usage = collectFontUsage(arabic({ enabled: true, attr: 'summary', fontFamily: 'Amiri' }));
+    expect(has(usage, 'Amiri', 400, 'italic')).toBe(true);
+    // Nothing else of an Arabic book asks the family for an italic.
+    expect((usage.get('Amiri') ?? []).filter((u) => u.style === 'italic')).toEqual([{ weight: 400, style: 'italic' }]);
+    expect(configFontFaces(arabic({ enabled: true, fontFamily: 'Amiri' }))).toContainEqual({ family: 'Amiri', weight: 400, style: 'italic' });
+  });
+
+  it('asks for the weight the summaries are set at', () => {
+    expect(has(collectFontUsage(arabic({ enabled: true, fontFamily: 'Amiri', fontWeight: 700 })), 'Amiri', 700, 'italic')).toBe(true);
+    // No weight of their own: the body's.
+    const light = collectFontUsage({ ...arabic({ enabled: true, fontFamily: 'Amiri' }), bodyText: { fontFamily: 'Amiri', fontWeight: 300 } });
+    expect(has(light, 'Amiri', 300, 'italic')).toBe(true);
+  });
+
+  it('asks the first level\'s family, else the body\'s, when the summaries name none', () => {
+    expect(has(collectFontUsage(arabic({ enabled: true })), 'Noto Kufi Arabic', 400, 'italic')).toBe(true);
+    const body = collectFontUsage({ locale: 'ar', bodyText: { fontFamily: 'Amiri' }, toc: { subtitle: { enabled: true } } });
+    expect(has(body, 'Amiri', 400, 'italic')).toBe(true);
+  });
+
+  it('asks for no italic of summaries set upright, nor of summaries the contents leave out', () => {
+    const upright = collectFontUsage(arabic({ enabled: true, fontFamily: 'Amiri', italic: false }));
+    expect((upright.get('Amiri') ?? []).some((u) => u.style === 'italic')).toBe(false);
+    expect(has(upright, 'Amiri', 400)).toBe(true);
+    for (const off of [arabic({ fontFamily: 'Amiri' }), arabic({ enabled: false, fontFamily: 'Amiri' }), arabic(undefined)]) {
+      expect((collectFontUsage(off).get('Amiri') ?? []).some((u) => u.style === 'italic')).toBe(false);
+    }
+  });
+});

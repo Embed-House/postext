@@ -10,10 +10,12 @@
  * design `buildHeadersAndFooters` lays out from `toc.parts.design`.
  */
 
-import { flowTextWidth } from '../measure/vertical';
+import { flowTextWidth, measuringVertically } from '../measure/vertical';
+import { getMeasureArabicNumbers } from '../measure/bidiLines';
 import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
 import { fitLeader } from '../measure/leader';
 import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
+import { measuresRunsAsPainted } from '../design/bidiText';
 import type { ContentBlock, InlineSpan, TocBlockInfo } from '../parse';
 import type { OutlineEntry, ResolvedTocEntryStyleConfig } from '../types';
 import type { VDTLine, VDTLineSegment } from '../vdt';
@@ -22,8 +24,9 @@ import { buildFontString, measureRichBlock } from '../measure';
 import type { ResolvedConfig } from '../vdt';
 import type { BlockStyle } from './styles';
 import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock';
-import type { ListBulletStyle } from './lists';
+import { markerTextWidth, type ListBulletStyle } from './lists';
 import { stampSourceRanges } from './buildHelpers';
+import { resolvedDirection } from './config';
 
 /** The content blocks with every `:::toc` directive replaced by the blocks
  *  of the contents it prints. Without an outline (no directive) the input
@@ -107,25 +110,44 @@ function tocBlocksFor(directive: ContentBlock, outline: readonly OutlineEntry[],
   return out;
 }
 
-/** The widest of a level's numbers in `font`, memoised per array and
- *  font (every entry of the level asks with the same array). */
+/**
+ * The advance of a contents number in `font`. `rtl`: the entry reads right
+ * to left, so its number is painted right to left
+ * (`VDTBlock.bulletDirection`): the canvas sets it with its context right
+ * to left, the HTML in a box of that direction.
+ *
+ * Measured left to right, the marks at the ends of such a number are runs
+ * apart, shaped alone. `«الفصل الأول»` in Markazi Text bold at 28.125 px
+ * is 126.17 px wide left to right and 120.32 px as the one right-to-left
+ * run the canvas and the HTML set (Chrome 154, in `ar`): the number stood
+ * 5.85 px short of the edge of its column. In a document shaped in its own
+ * language it is measured in the direction it is painted in (#770,
+ * `rtlTextWidth`); one shaped in its host's language keeps the width it
+ * had, and so does a number of a vertical page, set in cells.
+ */
+function numberTextWidth(text: string, font: string, rtl: boolean): number {
+  return markerTextWidth(text, font, rtl && !measuringVertically() ? (getMeasureArabicNumbers() ? 'rtl-arabic' : 'rtl') : undefined);
+}
+
+/** The widest of a level's numbers in `font`, memoised per array, font
+ *  and direction (every entry of the level asks with the same array). */
 let widestCache = new WeakMap<readonly string[], Map<string, number>>();
 // Widths: dropped with the engine's when faces change (#629).
 onTextWidthCacheClear(() => {
   widestCache = new WeakMap();
 });
-function widestNumber(numbers: readonly string[], font: string): number {
+function widestNumber(numbers: readonly string[], font: string, rtl: boolean): number {
   let byFont = widestCache.get(numbers);
   if (!byFont) {
     byFont = new Map();
     widestCache.set(numbers, byFont);
   }
-  // The widths of a language (#764).
-  const key = measureLanguageKey() + font;
+  // The widths of a language (#764), in the direction they are painted in.
+  const key = measureLanguageKey() + (rtl && measuresRunsAsPainted() ? 'rtl\x00' : '') + font;
   let widest = byFont.get(key);
   if (widest === undefined) {
     widest = 0;
-    for (const n of numbers) widest = Math.max(widest, flowTextWidth(n, font));
+    for (const n of numbers) widest = Math.max(widest, numberTextWidth(n, font, rtl));
     byFont.set(key, widest);
   }
   return widest;
@@ -236,8 +258,10 @@ export function measureTocBlock(
   const numberFont = hasNumber
     ? buildFontString(entry.numberFontFamily, dimensionToPx(entry.numberFontSize, dpi), entry.numberFontWeight.toString())
     : '';
+  // The direction the number is painted in (`directListMarker`).
+  const numberRtl = (rawBlock.direction ?? resolvedDirection(resolved)) === 'rtl';
   const numberWidthPx = hasNumber
-    ? Math.max(dimensionToPx(entry.numberWidth, dpi, fontSizePx), widestNumber(info.levelNumbers ?? [info.number], numberFont))
+    ? Math.max(dimensionToPx(entry.numberWidth, dpi, fontSizePx), widestNumber(info.levelNumbers ?? [info.number], numberFont, numberRtl))
     : 0;
   const numberGapPx = hasNumber ? dimensionToPx(entry.numberGap, dpi, fontSizePx) : 0;
   const textX = indentPx + numberWidthPx + numberGapPx;
@@ -245,7 +269,7 @@ export function measureTocBlock(
   let listBullet: ListBulletStyle | undefined;
   let bulletXOffsetInColumn = 0;
   if (hasNumber) {
-    const numberW = flowTextWidth(info.number, numberFont);
+    const numberW = numberTextWidth(info.number, numberFont, numberRtl);
     listBullet = {
       indentPx, bulletText: info.number, bulletFontString: numberFont, bulletColor: entry.numberColor.hex,
       bulletWidthPx: numberWidthPx, gapPx: numberGapPx, hangingIndent: true, itemSpacingPx: 0,

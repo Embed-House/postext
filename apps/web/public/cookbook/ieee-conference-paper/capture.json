@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "ieee-conference-paper",
-  "sourceHash": "e12e1f5791bed5ade0348311ac635f5450a5ce91e0b3adabe806f871a51d7aae",
+  "sourceHash": "df4e760161c2f68f2a1d9f1475ed24927e382b5b260fa24f8a10a0672c70c844",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.412Z",
+  "capturedAt": "2026-10-13T06:57:06.215Z",
   "variants": {
     "en": {
       "hash8": "cc862088",
       "vdtHash": "f224c4793cbb2f7b7f59ac740d7c75a0374c2cee",
       "timings": {
-        "importMs": 256,
-        "fontsMs": 30,
-        "buildMs": 301,
-        "totalMs": 1375,
+        "importMs": 634,
+        "fontsMs": 36,
+        "buildMs": 317,
+        "totalMs": 1908,
         "builds": 1
       },
       "specimen": {
@@ -324,10 +324,10 @@
       "hash8": "094cd842",
       "vdtHash": "0990b340cfe5ee060e6246e86fe2cc4abfa70908",
       "timings": {
-        "importMs": 222,
-        "fontsMs": 36,
-        "buildMs": 166,
-        "totalMs": 1187,
+        "importMs": 520,
+        "fontsMs": 34,
+        "buildMs": 169,
+        "totalMs": 1528,
         "builds": 1
       },
       "specimen": {

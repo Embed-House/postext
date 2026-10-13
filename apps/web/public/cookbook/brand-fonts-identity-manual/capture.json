@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "brand-fonts-identity-manual",
-  "sourceHash": "fabbed037b66a89790ef7619baa2bfb2a7a4ae3a6295456b5852f71a55bac1cf",
+  "sourceHash": "ecabae7cbb213556ffcce1a210a9359e37644ba325ff2a2dcc751d2c8a6451e5",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.031Z",
+  "capturedAt": "2026-10-13T06:53:52.264Z",
   "variants": {
     "en": {
-      "hash8": "5899141c",
+      "hash8": "f9564e72",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 352,
-        "fontsMs": 48,
-        "buildMs": 78,
-        "totalMs": 1137,
+        "importMs": 371,
+        "fontsMs": 61,
+        "buildMs": 90,
+        "totalMs": 1174,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 99504,
+          "bytes": 99490,
           "alt": "Opening page 3: 02 Type."
         },
         {

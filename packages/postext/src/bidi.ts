@@ -908,3 +908,28 @@ export function markerRuns(text: string, direction: 'rtl' | 'rtl-arabic'): Marke
   const par = resolveParagraph(text, 'rtl', undefined, direction === 'rtl-arabic' ? { arabicNumbers: true } : undefined);
   return lineRuns(par).map((r) => ({ text: text.slice(r.start, r.end), start: r.start, ...(r.level & 1 ? { rtl: true as const } : {}) }));
 }
+
+/** Whether a marker's order differs when its leading European digits read
+ *  as Arabic numbers (`BidiOptions.arabicNumbers`, #665). */
+export function arabicMarkNeeded(text: string): boolean {
+  if (!/[0-9]/.test(text)) return false;
+  const plain = markerRuns(text, 'rtl');
+  const arabic = markerRuns(text, 'rtl-arabic');
+  return plain.length !== arabic.length || plain.some((r, i) => r.text !== arabic[i]!.text);
+}
+
+/** The Arabic letter mark: no width, and rule W2 reads the European
+ *  number after it as an Arabic one. */
+const ARABIC_LETTER_MARK = '\u061C';
+
+/**
+ * A marker that reads right to left as the one text a browser sets right
+ * to left in that order ({@link markerRuns}): its own, with an Arabic
+ * letter mark before it where an Arabic-script document reads its leading
+ * European digits as an Arabic number (`3-1`, the 3 on the right). What
+ * the canvas paints, the HTML writes and, in a document shaped in its own
+ * language, the layout measures (#770).
+ */
+export function markerSetText(text: string, direction: 'rtl' | 'rtl-arabic'): string {
+  return direction === 'rtl-arabic' && arabicMarkNeeded(text) ? ARABIC_LETTER_MARK + text : text;
+}

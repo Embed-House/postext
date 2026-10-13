@@ -1,6 +1,6 @@
 import { createLayoutWorker } from 'postext/worker';
 import type { BuildProgress, BuildStats, LayoutWorkerHandle } from 'postext/worker';
-import { documentFontFaces } from 'postext';
+import { documentFontFaces, fontSampleText } from 'postext';
 import type { FontVariantUse, PostextConfig, PostextContent, VDTDocument } from 'postext';
 import {
   collectFontPayloadsForFamilies,
@@ -11,6 +11,7 @@ import {
   fetchFacePayloads,
   fontPayloadKey,
   getCustomFontFamily,
+  loadFacesForText,
   loadFont,
   onCustomFontsChanged,
   fontRequestsUnanswered,
@@ -115,6 +116,44 @@ const FONT_RETRIES = 3;
 const LATE_RELAYOUT_GRACE_MS = 1_000;
 
 export { builtWithoutFaces } from '../book/withoutFaces';
+
+/** Keys of a laid-out document that hold no text it sets (its
+ *  configuration, raw sources, pictures). */
+const TEXTLESS_KEYS = new Set(['config', 'sourceMap', 'attrSources', 'resource', 'svg', 'mathRender', 'palette', 'structure']);
+
+/**
+ * The characters a laid-out document sets, once each: the `text` of its
+ * lines and segments, of its captions, notes and cells, of its running
+ * heads and design texts. More than the chapter's own source holds: the
+ * titles and summaries of a contents page, the part title of a running
+ * head and the entries of an index come from the other chapters.
+ */
+export function documentCharacters(doc: VDTDocument): string {
+  const seen = new Set<string>();
+  const visited = new WeakSet<object>();
+  const walk = (node: unknown): void => {
+    if (!node || typeof node !== 'object' || visited.has(node)) return;
+    visited.add(node);
+    if (Array.isArray(node)) {
+      // Arrays of numbers (source maps, break lists) hold no text.
+      if (node.length > 0 && (node[0] === null || typeof node[0] !== 'object')) return;
+      for (const item of node) walk(item);
+      return;
+    }
+    const rec = node as Record<string, unknown>;
+    for (const key in rec) {
+      const value = rec[key];
+      if (typeof value === 'string') {
+        if (key === 'text') for (const ch of value) if (ch > ' ') seen.add(ch);
+      } else if (value && typeof value === 'object' && !TEXTLESS_KEYS.has(key)) {
+        walk(value);
+      }
+    }
+  };
+  walk(doc.blocks);
+  walk(doc.pages);
+  return [...seen].join('');
+}
 
 // Whether the fonts of the builds asked so far are settled: no build is
 // waiting for files, no family short of files is about to be asked for
@@ -461,7 +500,11 @@ export function createLayoutService(options?: {
    * With the variable file every weight was there; with a file per weight
    * the pages say which ones they need. The service notes those faces (the
    * page declares them) and sends the worker their files; true when it
-   * got any, and the document is then laid out again with them.
+   * got any, and the document is then laid out again with them. The page
+   * loads those faces for the characters the document sets before the
+   * document is handed back (#770): the first paint that follows has
+   * them, where it set a script other than Latin in a fallback face until
+   * the file its text needed had come.
    */
   const ensureDocumentFonts = async (doc: VDTDocument, config: PostextConfig, content: PostextContent): Promise<boolean> => {
     const asked = new Map<string, FontVariantUse[]>();
@@ -479,6 +522,7 @@ export function createLayoutService(options?: {
     }
     if (fresh.length === 0) return false;
     noteUses(fresh);
+    const onPage = loadFacesForText(fresh, fontSampleText(content, config) + documentCharacters(doc)).catch(() => {});
     let sent = false;
     const next = fontQueue.then(async () => {
       try {
@@ -490,6 +534,9 @@ export function createLayoutService(options?: {
     });
     fontQueue = next;
     await next;
+    fontsAt('the faces the page loads for the document\'s text');
+    await onPage;
+    fontsAt(null);
     return sent;
   };
 

@@ -128,10 +128,11 @@ describe('pin of #720', () => {
       expect(migrateConfig(zh(), v, { content: NOTE }).cjk?.warichu, String(v)).toEqual({ minChars: 1 });
     }
     const current = zh();
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
-    // read as it is.
+    // One stamped 12 or 13 takes the pin of the language alone (#764, #770);
+    // one stamped 14 is read as it is.
     expect(migrateConfig(current, 12, { content: NOTE })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 13, { content: NOTE })).toBe(current);
+    expect(migrateConfig(current, 13, { content: NOTE })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14, { content: NOTE })).toBe(current);
   });
 
   it('pins a bundle on its merged cjk and citations', () => {
@@ -205,10 +206,11 @@ describe('pin of #721', () => {
       expect(migrateConfig(ja(), v, { content: TEXT }).cjk?.latinSpacingEdge, String(v)).toBe('letters');
     }
     const current = ja();
-    // One stamped 12 takes the pin of rules 13 alone (#764); one stamped 13 is
-    // read as it is.
+    // One stamped 12 or 13 takes the pin of the language alone (#764, #770);
+    // one stamped 14 is read as it is.
     expect(migrateConfig(current, 12, { content: TEXT })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 13, { content: TEXT })).toBe(current);
+    expect(migrateConfig(current, 13, { content: TEXT })).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14, { content: TEXT })).toBe(current);
   });
 
   it('pins a bundle on the merged configuration of each locale', () => {

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pendulum-lab-video-players",
-  "sourceHash": "b519a2e2d8e2e4d71d603734cf5d93556c42d6583a6e2270df9922f0179024ca",
+  "sourceHash": "ec280b7bd0360373234db05d7ef64739ff8309cb606edd4b151cb9557f492f0b",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.890Z",
+  "capturedAt": "2026-10-13T07:01:35.478Z",
   "variants": {
     "en": {
       "hash8": "8923f290",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 278,
-        "fontsMs": 59,
-        "buildMs": 157,
-        "totalMs": 1220,
+        "importMs": 1251,
+        "fontsMs": 292,
+        "buildMs": 278,
+        "totalMs": 3239,
         "builds": 2
       },
       "specimen": {
@@ -453,10 +453,10 @@
       "hash8": "5c703a49",
       "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
       "timings": {
-        "importMs": 288,
-        "fontsMs": 68,
-        "buildMs": 146,
-        "totalMs": 1339,
+        "importMs": 1076,
+        "fontsMs": 189,
+        "buildMs": 238,
+        "totalMs": 2503,
         "builds": 2
       },
       "specimen": {

@@ -190,6 +190,8 @@ export function hasLatinEmphasis(blocks: readonly ContentBlock[]): boolean {
  * `doc` does not say the text holds no Latin letter or digit in emphasis.
  * Where `bodyText.emphasis` sets `*…*` in bold, a colour or an overline
  * (an Arabic document's default), the body family is asked for no italics.
+ * The summaries of the contents (`toc.subtitle`) are asked for in the
+ * slant they are set in, italic unless the configuration says upright.
  */
 export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument): Map<string, FontVariantUse[]> {
   const usage = new Map<string, FontVariantUse[]>();
@@ -240,6 +242,22 @@ export function collectFontUsage(config: PostextConfig, doc?: FontUsageDocument)
   if (ln?.enabled && !(typeof ln.fontFamily === 'string' && ln.fontFamily.trim())) {
     const bodyText = resolveBodyTextConfig(config.bodyText, config.locale);
     add(primaryFontFamily(bodyText.fontFamily), { weight: typeof ln.fontWeight === 'number' ? ln.fontWeight : bodyText.fontWeight, style: ln.italic === true ? 'italic' : 'normal' });
+  }
+  // The summaries of the contents (`toc.subtitle`, #770) are set slanted
+  // unless `italic: false` says otherwise (`resolveTocConfig`), in their
+  // own family (else the first level's, else the body's) at their own
+  // weight (else the body's). Read as written, the node gave the upright
+  // face: where nothing else asks the family for its italic (an Arabic
+  // book, whose `*…*` is set in bold), no host had that face before the
+  // first layout named it.
+  const subtitle = config.toc?.subtitle;
+  if (subtitle?.enabled === true) {
+    const bodyText = resolveBodyTextConfig(config.bodyText, config.locale);
+    const named = [subtitle.fontFamily, config.toc?.levels?.[0]?.fontFamily].find((f) => typeof f === 'string' && f.trim());
+    add(primaryFontFamily(named ?? bodyText.fontFamily), {
+      weight: typeof subtitle.fontWeight === 'number' ? subtitle.fontWeight : bodyText.fontWeight,
+      style: subtitle.italic === false ? 'normal' : 'italic',
+    });
   }
   // Drop caps (#623) with no face of their own: the paragraph's family (a
   // paragraph style's, else the body's), in the cap's weight and slant.

@@ -11,7 +11,7 @@ import { fillFlowText, verticalPaintActive } from './verticalText';
 import { counterFlipBox, mirroredPaintActive } from './mirrorFrame';
 import { rasterScaleOf } from './deviceScale';
 import { paintRunInDirection } from './runDirection';
-import { markerRuns } from '../bidi';
+import { markerSetText } from '../bidi';
 import { fillSegmentText, fillWordsText } from './segmentText';
 import { lineMarkCuts, type MarkCutRule } from '../measure/markCuts';
 import { hasCJK } from '../measure/cjk';
@@ -21,6 +21,8 @@ import { shapedOtherwise } from './trackedText';
 import { joiningScriptIn } from '../measure/joining';
 import { taskBoxTick } from '../taskBox';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import { paintedSegments, paintsAsOneText } from './wordPieces';
+import { fillContextText } from './contextText';
 
 function pickSegmentFont(
   bold: boolean,
@@ -157,7 +159,7 @@ function renderSegments(
   let currentFill = '';
   const paint = cjk
     ? (text: string, px: number, py: number): void => fillWordsText(ctx, text, px, py)
-    : (text: string, px: number, py: number): void => ctx.fillText(text, px, py);
+    : (text: string, px: number, py: number): void => fillContextText(ctx, text, px, py);
   const runStyle = (run: WordRun): { font: string; fill: string } => ({
     font: pickSegmentFont(!!run.bold, !!run.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont),
     fill: pickSegmentColor(!!run.bold, !!run.italic, style.color, style.boldColor, style.italicColor),
@@ -407,8 +409,15 @@ function renderLine(
   // Right-to-left runs on the line: painted in `order`, never as one text.
   // A line with none (a Latin line of a mirrored page, whose `order` only
   // turns the flow around) reads the same painted as one text.
-  const order = segments && line.order?.length === segments.length ? line.order : undefined;
   const directed = segments?.some((s) => s.rtl) ?? false;
+  // The pieces of a word the layout measured whole are painted as that
+  // word (#770), on a line painted segment by segment: asked for there.
+  // On a line with an order they are joined too, and the order with them.
+  const paintPieces = (x: number, justifiedSpaceWidth?: number): void => {
+    const set = paintedSegments(ctx, line, false, tracking, (seg) =>
+      seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont));
+    renderSegments(ctx, set.segments!, x, line.baseline, style, justifiedSpaceWidth, cjk, tracking, set.order);
+  };
 
   // Justified rendering with per-segment spacing. Last lines render ragged at
   // natural width — except when overfull: Knuth-Plass may accept a final line
@@ -426,7 +435,7 @@ function renderLine(
     }
     if (spaceCount > 0 && !line.tabbed && ((!line.isLastLine && !line.ragged) || naturalWidth > effectiveWidth)) {
       const justifiedSpaceWidth = (effectiveWidth - wordWidth) / spaceCount;
-      renderSegments(ctx, segments, lineX, line.baseline, style, justifiedSpaceWidth, cjk, tracking, order);
+      paintPieces(lineX, justifiedSpaceWidth);
       return;
     }
   }
@@ -440,7 +449,7 @@ function renderLine(
     for (const seg of segments) contentWidth += seg.width;
     const slack = Math.max(0, effectiveWidth - (contentWidth - trailing));
     const startX = lineX + (align === 'center' ? slack / 2 : slack);
-    renderSegments(ctx, segments, startX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(startX);
     return;
   }
 
@@ -451,7 +460,7 @@ function renderLine(
   // a line of verse tightened its word spaces to fit (#620); otherwise one
   // fillText paints the line.
   if (segments && (directed || line.verseLine?.spaceRatio !== undefined || segments.some(segmentIsStyled) || (tracking !== 0 && joiningScriptIn(line.text)))) {
-    renderSegments(ctx, segments, lineX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(lineX);
     return;
   }
 
@@ -462,11 +471,24 @@ function renderLine(
   // A tracked line that would lose a ligature to the letter-spacing is
   // painted word by word, each as it was measured (#663).
   if (tracking !== 0 && segments && segments.length > 0 && shapedOtherwise(ctx, line.text)) {
-    renderSegments(ctx, segments, plainX, line.baseline, style, undefined, cjk, tracking, order);
+    paintPieces(plainX);
     return;
   }
-  if (cjk) fillWordsText(ctx, line.text, plainX, line.baseline);
-  else ctx.fillText(line.text, plainX, line.baseline);
+  // One text, where it is as wide as the line's words were measured: the
+  // pieces of a plain paragraph's words were measured one by one, and a
+  // face that kerns across a cut sets the line shorter; in a line with a
+  // Han character the browser draws a word with no letter (a number, a
+  // bracketed figure) by other rules than in the string it was measured
+  // in (#770).
+  if (segments && !paintsAsOneText(ctx, line, tracking, style.font)) {
+    paintPieces(plainX);
+    return;
+  }
+  if (cjk) {
+    fillWordsText(ctx, line.text, plainX, line.baseline);
+    return;
+  }
+  fillContextText(ctx, line.text, plainX, line.baseline);
 }
 
 /** {@link renderLine} for a line of the CJK composer or any line down a
@@ -487,7 +509,15 @@ function renderComposedLine(
   const lineIndent = line.bbox.x - columnX;
   // A line beside a wrapped picture (#627) fills its own span.
   const effectiveWidth = line.measure?.wrap ? line.measure.width : columnWidth - lineIndent;
-  const segments = line.segments;
+  // A line set word by word down a vertical page: the pieces of a word the
+  // layout measured whole are painted as that word (#770,
+  // `paintedSegments`), as on a horizontal line and as the HTML sets them.
+  // A line of the composer, which measures a Western run whole, and a line
+  // that carries an order are painted as they are.
+  const segments = verticalPaintActive() && !line.cjkComposed && line.order === undefined && line.segments
+    ? paintedSegments(ctx, line, false, tracking, (seg) =>
+      seg.fontString ?? pickSegmentFont(!!seg.bold, !!seg.italic, style.font, style.boldFont, style.italicFont, style.boldItalicFont)).segments
+    : line.segments;
   // A line of the CJK composer was measured character by character, any
   // other word by word: two marks that meet are painted apart where they
   // were measured apart.
@@ -521,7 +551,14 @@ function renderComposedLine(
     return;
   }
 
-  if (segments && segments.some(composedSegmentIsStyled)) {
+  // Segment by segment: a line of the composer on a horizontal page always
+  // (#770), each segment where the layout put it. Painted as one text, a
+  // kana drew up to the mark after it and every character after the pair
+  // stood off its place (`fillSegmentText`), and a number among Han
+  // characters took other forms than in the string it was measured in
+  // (`contextText.ts`). Down a vertical page a line in one style is one
+  // call: the vertical painter sets it cell by cell.
+  if (segments && segments.length > 0 && (!verticalPaintActive() || segments.some(composedSegmentIsStyled))) {
     renderComposedSegments(ctx, segments, line.bbox.x, line.baseline, style, undefined, tracking, cuts);
     return;
   }
@@ -600,21 +637,21 @@ function renderBullet(ctx: CanvasRenderingContext2D, block: VDTBlock): void {
 
 /**
  * A marker that reads right to left (`VDTBlock.bulletDirection`, #664) at
- * `x`, its left edge in the flow: its runs (`markerRuns`, one bidi level
- * each) painted one after the other along the flow's x axis, each
- * advancing by its own width, a right-to-left one with the context set
- * right to left so its brackets are mirrored. The runs come in visual
- * order, from the sheet's left; a mirrored flow's x axis runs from the
- * sheet's right, so there they are painted last to first.
+ * `x`, its left edge in the flow: one text set right to left
+ * (`markerSetText`), which the browser orders and mirrors as it does the
+ * HTML's box of the same text; a mirrored flow turns it back once, about
+ * its box.
+ *
+ * Up to postext 1.29 it was painted run by run (`markerRuns`), each run a
+ * text of its own, and a run with no letter set alone takes the face's
+ * Latin forms where in the marker it takes the ones of the text around
+ * it: in Amiri bold at 27.08 px `(١)` is 40.65 px wide as one text, in
+ * the layout and in the HTML, and 31.22 px as its three runs; `١.` 24.43
+ * against 22.02. A marker whose runs are as wide alone (`1-`, `•`,
+ * `الفصل 3`) is painted on the same pixels either way (#770).
  */
 function fillMarkerRuns(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, direction: 'rtl' | 'rtl-arabic'): void {
-  const runs = markerRuns(text, direction);
-  if (mirroredPaintActive()) runs.reverse();
-  let at = x;
-  for (const run of runs) {
-    paintRunInDirection(ctx, run.rtl, () => fillFlowText(ctx, run.text, at, y), run.text);
-    if (runs.length > 1) at += ctx.measureText(run.text).width;
-  }
+  paintRunInDirection(ctx, true, () => fillFlowText(ctx, markerSetText(text, direction), x, y), text);
 }
 
 /** A paragraph's drop cap (#623) on its baseline, and an opening mark

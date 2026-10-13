@@ -16,7 +16,7 @@ import {
 import { SOFT_HYPHEN } from './types';
 import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate';
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, maxLineIndent, maxLineInset, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
-import { cleanSoftHyphens, measureTextWidth, normalSpaceWidthFor } from './canvas';
+import { cleanSoftHyphens, getMeasureLanguage, measureTextWidth, normalSpaceWidthFor } from './canvas';
 import { isRuntLastLine } from './runts';
 import { justifiedSpaceRatios } from './spaceRatios';
 import { measureRichBlock } from './rich';
@@ -190,10 +190,31 @@ function extractSegments(
   return { segments: result, hyphenated };
 }
 
-/** The middle dot's width when `text` has a Catalan `l·l` (see
- *  `pretextSegmentsToItems`), else 0. */
-function geminateDotWidth(text: string, font: string): number {
-  return text.includes(GEMINATE_DOT) ? measureTextWidth(GEMINATE_DOT, font) : 0;
+/**
+ * What a line that breaks inside a Catalan `l·l` gives back: it ends on
+ * `piece`, whose last character is the dot, and the hyphen is printed in
+ * the dot's place (`il-` | `lusió`).
+ *
+ * Up to postext 1.29, and in a document shaped in the host's language,
+ * the dot set alone. But a face may set the dot after an `l` otherwise
+ * than alone (#770): Castoro's is 0.129 em there in Catalan and 0.297 em
+ * alone, so the head `til-` was 22.02 px for 25.28 painted at 19.4 px;
+ * Lora ligates `l·`. A document shaped in its own language gives back the
+ * room the dot takes in that piece, so the head is the text painted, the
+ * letters before the dot and the hyphen, as a styled paragraph measures
+ * it (`wordBreakPoints` in `rich.ts`).
+ */
+function geminateDotRoom(piece: string, font: string): number {
+  if (getMeasureLanguage() === undefined) return measureTextWidth(GEMINATE_DOT, font);
+  return Math.max(0, measureTextWidth(piece, font) - measureTextWidth(piece.slice(0, -1), font));
+}
+
+/** {@link geminateDotRoom} for the pieces of `text` when it has a Catalan
+ *  `l·l` (see `pretextSegmentsToItems`), else 0. */
+function geminateDotWidth(text: string, font: string): number | ((piece: string) => number) {
+  if (!text.includes(GEMINATE_DOT)) return 0;
+  if (getMeasureLanguage() === undefined) return measureTextWidth(GEMINATE_DOT, font);
+  return (piece) => geminateDotRoom(piece, font);
 }
 
 function findLastTextSegmentIndex(segments: VDTLineSegment[]): number {
@@ -449,6 +470,8 @@ export function measureBlock(
 
     const { segments, hyphenated } = extractSegments(prepared, cursor, nextCursor, font);
 
+    /** What the break inside an `l·l` gave back on this line, if it ends there. */
+    let geminateRoom: number | undefined;
     if (hyphenated) {
       const lastTextIdx = findLastTextSegmentIndex(segments);
       if (lastTextIdx >= 0) {
@@ -457,7 +480,7 @@ export function measureBlock(
           kind: 'text',
           text: withLineEndHyphen(lastSeg.text),
           width: lastSeg.width + getHyphenWidth(prepared, font)
-            - (endsInsideGeminate(lastSeg.text) ? measureTextWidth(GEMINATE_DOT, font) : 0),
+            - (endsInsideGeminate(lastSeg.text) ? (geminateRoom = geminateDotRoom(lastSeg.text, font)) : 0),
         };
       }
     }
@@ -474,7 +497,7 @@ export function measureBlock(
     let lineWidth = line.width;
     if (hyphenated) {
       const body = lineText.endsWith('-') ? lineText.slice(0, -1) : lineText;
-      if (endsInsideGeminate(body)) lineWidth -= measureTextWidth(GEMINATE_DOT, font);
+      if (endsInsideGeminate(body)) lineWidth -= geminateRoom ?? measureTextWidth(GEMINATE_DOT, font);
       lineText = withLineEndHyphen(body);
     }
     lines.push({

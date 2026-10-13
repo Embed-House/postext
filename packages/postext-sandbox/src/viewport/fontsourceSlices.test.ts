@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { PdfFontAnswer, PdfFontFile } from 'postext-pdf';
 import { parseFontsourceCss, parseUnicodeRange, pickSlices } from './fontsourceSlices';
 
 vi.mock('../controls/fontLoader', () => ({
@@ -100,7 +101,10 @@ describe('createPdfFontProvider (#196)', () => {
   const unreachable = new Set<string>();
   /** A file of the stub stylesheet, served from `family`'s package. */
   const fileUrl = (family: string, slice: string) => `https://cdn.jsdelivr.net/npm/@fontsource/${family}@5/files/noto-serif-tc-${slice}-400-normal.woff2`;
-  const names = (files: Uint8Array | Uint8Array[]) => (Array.isArray(files) ? files : [files]).map((b) => new TextDecoder().decode(b));
+  /** The files of an answer: each is its bytes, and may say its range and
+   *  its place in the declaration (#770). */
+  const filesOf = (files: PdfFontAnswer): PdfFontFile[] => (Array.isArray(files) ? files : [files]);
+  const names = (files: PdfFontAnswer) => filesOf(files).map((f) => new TextDecoder().decode(f));
   beforeEach(() => {
     fetched.length = 0;
     failing.clear();
@@ -124,12 +128,35 @@ describe('createPdfFontProvider (#196)', () => {
     const { createPdfFontProvider } = await import('./pdfFontProvider');
     const provider = createPdfFontProvider();
     const files = await provider('Noto Serif TC', 400, 'normal', { codePoints: cps('之也，') });
-    const names = (Array.isArray(files) ? files : [files]).map((b) => new TextDecoder().decode(b));
-    expect(names).toEqual(['noto-serif-tc-123-400-normal.woff2', 'noto-serif-tc-122-400-normal.woff2']);
+    expect(names(files)).toEqual(['noto-serif-tc-123-400-normal.woff2', 'noto-serif-tc-122-400-normal.woff2']);
     // A face with no italic stylesheet sets its italic from the upright files.
     const italic = await provider('Noto Serif TC', 400, 'italic', { codePoints: cps('Ab') });
-    expect((Array.isArray(italic) ? italic : [italic]).map((b) => new TextDecoder().decode(b))).toEqual(['noto-serif-tc-latin-400-normal.woff2']);
+    expect(names(italic)).toEqual(['noto-serif-tc-latin-400-normal.woff2']);
     expect(fetched.filter((u) => u.endsWith('.css'))).toContain('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-tc@5/400-italic.css');
+  });
+
+  it('hands each file with its unicode-range and its place in the style sheet (#770)', async () => {
+    // The PDF sets a character two files hold in the one declared last
+    // among those whose range holds it, as the page does: it needs the
+    // range of each file and where its rule stands (122, 123, latin-ext,
+    // latin: 0 to 3), whatever files an answer leaves out.
+    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const provider = createPdfFontProvider();
+    const files = filesOf(await provider('Noto Serif TC', 400, 'normal', { codePoints: cps('之也， A') }));
+    expect(files.every((f) => f instanceof Uint8Array)).toBe(true);
+    expect(files.map((f) => [new TextDecoder().decode(f).replace(/^noto-serif-tc-|-400-normal\.woff2$/g, ''), f.order, f.unicodeRange])).toEqual([
+      ['latin', 3, 'U+0000-00FF,U+0131,U+2000-206F'],
+      ['123', 1, 'U+20-22,U+27-2a,U+2c-3b,U+3f,U+41-5d,U+61-7b,U+3002,U+4e00,U+ff0c,U+ff1a'],
+      ['122', 0, 'U+d,U+2b,U+7c,U+a0,U+a9,U+300c-300d,U+4e4b,U+4e5f,U+ff01,U+ff08-ff09,U+ff1f'],
+    ]);
+    // The same file asked for again says the same, and the bytes kept
+    // for the next answer are not the ones marked.
+    const again = filesOf(await provider('Noto Serif TC', 400, 'normal', { codePoints: cps('A') }));
+    expect([again[0]!.order, again[0]!.unicodeRange]).toEqual([3, 'U+0000-00FF,U+0131,U+2000-206F']);
+    expect(again[0]).not.toBe(files[0]);
+    // An SVG picture's provider answers bytes that say nothing.
+    const raw = filesOf(await createPdfFontProvider({ raw: true })('Noto Serif TC', 400, 'normal', { codePoints: cps('之') }));
+    expect(raw.map((f) => [f.order, f.unicodeRange])).toEqual([[undefined, undefined]]);
   });
 
   it('fetches a file that failed once again, and leaves out one that fails twice', async () => {

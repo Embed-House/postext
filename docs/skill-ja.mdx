@@ -160,7 +160,7 @@ mkdir -p ~/.cache/postext-tools && cd ~/.cache/postext-tools && npm init -y && n
 
 Pandocは、Word、PowerPoint、EPUB、HTMLの原稿に必要です。popplerは原稿のページ画像に使います。Nodeのパッケージはヘッドレスレンダラーを動かします（Node 22.15以降）。`@napi-rs/canvas`はビルド済みのcanvasで、これがあれば本のページを直接JPEGに描画できます。任意のツールとして、スキャン原稿には`ocrmypdf`、ほかにImageMagick、PDF/UAの検査にはveraPDFがあります。
 
-作業のループは[コマンドライン](/ja/docs/command-line)で回します。インストール不要の単体の実行ファイルです。エージェントはプロジェクトを展開したまま、作業中のページを対象に`postext build --watch`を動かし続けるので、変更は長い本でもおよそ1秒後にJPEGとして現れます。Nodeのパッケージは任意で、Sandboxの追加チェックを行う`render.mjs`を動かします。
+作業のループは[コマンドライン](/ja/docs/command-line)で回します。インストール不要の単体の実行ファイルです。エージェントはプロジェクトを展開したまま、作業中のページを対象に`postext build --watch`を動かし続けるので、変更は長い本でもおよそ1秒後にJPEGとして現れます。Nodeのパッケージは任意で、Sandboxの追加チェックを行う`render.mjs`を動かします。どちらも、設定の内容にかかわらず`bodyText.shapingLanguage: 'host'`で本をレイアウトするので、行の切れる位置がSandboxと違うことがあります（[Sandboxとの違い](/ja/docs/command-line#sandboxとの違い)を参照）。
 
 ## 使い方
 

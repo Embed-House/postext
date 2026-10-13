@@ -1,8 +1,11 @@
-export { renderToPdf } from './pdf-backend';
+export { renderToPdf, declaredFontFile } from './pdf-backend';
 export type {
   RenderToPdfOptions,
   RenderProgress,
   PdfFontProvider,
+  PdfFontAnswer,
+  PdfFontFile,
+  PdfFontFileDeclaration,
   PdfFontRequest,
   PdfWarning,
   PdfFontWarning,

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "woodblock-leaf",
-  "sourceHash": "7f581c9f677f7dc25d8793ffa7577a86cfbd95bb49a606157ef0cbf629dd6f06",
+  "sourceHash": "07a15030b01f02437704bd2f859bc15ea41cbc0b87395348262672824e375e69",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.347Z",
+  "capturedAt": "2026-10-13T07:06:14.209Z",
   "variants": {
     "en": {
-      "hash8": "b92abf69",
+      "hash8": "1c00f35c",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 222,
-        "fontsMs": 116,
-        "buildMs": 47,
-        "totalMs": 994,
+        "importMs": 2447,
+        "fontsMs": 1599,
+        "buildMs": 99,
+        "totalMs": 5200,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 32954,
+          "bytes": 32962,
           "alt": "Opening page 1: 論語集註."
         },
         {
@@ -126,7 +126,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209484,
+        "bytes": 209068,
         "pages": 7
       },
       "sandbox": {
@@ -316,13 +316,13 @@
       }
     },
     "es": {
-      "hash8": "249f5076",
+      "hash8": "01fa8236",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 315,
-        "fontsMs": 116,
-        "buildMs": 48,
-        "totalMs": 1127,
+        "importMs": 4897,
+        "fontsMs": 2893,
+        "buildMs": 74,
+        "totalMs": 14542,
         "builds": 1
       },
       "specimen": {
@@ -354,7 +354,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33764,
+          "bytes": 33770,
           "alt": "Página de apertura 1: 論語集註."
         },
         {
@@ -431,7 +431,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209726,
+        "bytes": 209330,
         "pages": 7
       },
       "sandbox": {

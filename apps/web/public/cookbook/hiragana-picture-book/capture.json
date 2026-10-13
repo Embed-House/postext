@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "hiragana-picture-book",
-  "sourceHash": "0c4170b13376a5e539e0f3bae0eaa4de2b672eea2724c68fe7787d3a9e2d0fac",
+  "sourceHash": "461d3c7bcf14143c8cad2c5cfd5329ddb5201712edcc4c56894aa7940668843e",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.390Z",
+  "capturedAt": "2026-10-13T06:57:06.186Z",
   "variants": {
     "en": {
-      "hash8": "285c2fd1",
+      "hash8": "b90b3cff",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 246,
-        "fontsMs": 157,
-        "buildMs": 52,
-        "totalMs": 1040,
+        "importMs": 547,
+        "fontsMs": 978,
+        "buildMs": 82,
+        "totalMs": 2277,
         "builds": 1
       },
       "specimen": {
@@ -194,7 +194,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1737040,
+        "bytes": 1736992,
         "pages": 10
       },
       "sandbox": {
@@ -380,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "75a67952",
+      "hash8": "e649aaee",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 248,
-        "fontsMs": 165,
-        "buildMs": 54,
-        "totalMs": 1185,
+        "importMs": 650,
+        "fontsMs": 511,
+        "buildMs": 60,
+        "totalMs": 1907,
         "builds": 1
       },
       "specimen": {
@@ -563,7 +563,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736572,
+        "bytes": 1736535,
         "pages": 10
       },
       "sandbox": {

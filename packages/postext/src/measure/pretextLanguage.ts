@@ -24,12 +24,23 @@
 //   another key to the library, so two languages never share a width and
 //   going from one to the other drops nothing.
 //
+// - The context found, its `measureText` is answered by the engine's own
+//   measurer while a text is prepared in a language (#770). Chrome keeps
+//   the words a context shaped under their text alone, and a word with no
+//   letter has two shapes, by the kind of string it came in
+//   (`measure/canvas.ts`): on one context a segment's width depended on
+//   the segments measured before it, in this paragraph or in any other.
+//   The engine's measurer keeps the two kinds of string on two contexts,
+//   and the library's segments go through it. The library sets its font
+//   and measures inside `prepare` only, so the font of the call under way
+//   is the one to measure in.
+//
 // Where the classes cannot be reached (no canvas classes: a measurer stub,
 // a platform whose contexts have no `lang`) the library measures as it
 // always did.
 
 import { prepareWithSegments, type PreparedTextWithSegments } from '@chenglou/pretext';
-import { getMeasureLanguage } from './canvas';
+import { getMeasureLanguage, measureUncachedWidth } from './canvas';
 
 const HOST_LANGUAGE = 'inherit';
 
@@ -39,6 +50,30 @@ let context: { lang: string } | null | undefined;
 let contextLanguage = HOST_LANGUAGE;
 /** How many spaces follow the font of each language met. */
 const variants = new Map<string, number>();
+/** The font of the text being prepared in a language, as the engine
+ *  writes it; undefined outside such a call. */
+let preparing: string | undefined;
+
+/** Have the engine's measurer answer the library's context while a text
+ *  is prepared in a language; at any other time the context measures as
+ *  it was made to. */
+function measureThroughEngine(ctx: object): void {
+  type Measures = { measureText?: (this: object, text: string) => unknown };
+  if (typeof (Object.getPrototypeOf(ctx) as Measures | null)?.measureText !== 'function') return;
+  try {
+    Object.defineProperty(ctx, 'measureText', {
+      configurable: true,
+      writable: true,
+      value(this: object, text: string): unknown {
+        if (preparing !== undefined) return { width: measureUncachedWidth(text, preparing) };
+        // The class's own method, as it stands now.
+        return (Object.getPrototypeOf(this) as Required<Measures>).measureText.call(this, text);
+      },
+    });
+  } catch {
+    // A context that takes no property of its own measures as it did.
+  }
+}
 
 interface ContextClass {
   prototype: object;
@@ -68,6 +103,7 @@ function findContext<T>(language: string, prepare: () => T): T {
             context = this as { lang: string };
             context.lang = language;
             contextLanguage = language;
+            measureThroughEngine(this);
           }
           set.call(this, value);
         },
@@ -104,15 +140,18 @@ export function prepareInLanguage(text: string, font: string): PreparedTextWithS
     }
     keyed = font + ' '.repeat(spaces);
   }
-  if (context === undefined) {
-    // Nothing to find while the host's language is all that was asked for.
-    return language === undefined ? prepareWithSegments(text, font) : findContext(language, () => prepareWithSegments(text, keyed));
-  }
-  if (context !== null && contextLanguage !== wanted) {
+  // Nothing to find while the host's language is all that was asked for.
+  if (language === undefined && context === undefined) return prepareWithSegments(text, font);
+  if (context !== undefined && context !== null && contextLanguage !== wanted) {
     context.lang = wanted;
     contextLanguage = wanted;
   }
-  return prepareWithSegments(text, keyed);
+  preparing = language === undefined ? undefined : font;
+  try {
+    return context === undefined ? findContext(wanted, () => prepareWithSegments(text, keyed)) : prepareWithSegments(text, keyed);
+  } finally {
+    preparing = undefined;
+  }
 }
 
 /** Whether the library's context was found and follows the engine's

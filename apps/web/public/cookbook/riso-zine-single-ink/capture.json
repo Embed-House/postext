@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "riso-zine-single-ink",
-  "sourceHash": "aa99bd8ebf035a20a831f5d24a2084c8a0ed8665ada22f59707e51cb6869cfa0",
+  "sourceHash": "221521a17047fb4c4e917934f218fcce8434b615fc085f686e33da256f8f1601",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.059Z",
+  "capturedAt": "2026-10-13T07:02:07.791Z",
   "variants": {
     "en": {
-      "hash8": "734f198d",
+      "hash8": "16c722a6",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 240,
-        "fontsMs": 129,
-        "buildMs": 56,
-        "totalMs": 1092,
+        "importMs": 856,
+        "fontsMs": 86,
+        "buildMs": 85,
+        "totalMs": 2134,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58456,
+          "bytes": 58462,
           "alt": "Opening page 1: Night Buses."
         },
         {

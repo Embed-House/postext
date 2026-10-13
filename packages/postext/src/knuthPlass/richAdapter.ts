@@ -34,6 +34,10 @@ interface RichBreakPoint {
   cjk?: boolean;
   /** Inside a Catalan `l·l`: the hyphen replaces the middle dot, this wide. */
   replacesWidth?: number;
+  /** What the rest of the word, opening the next line as a text of its
+   *  own, is wider than the pieces after this break (#770, see
+   *  `measure/rich.ts`). */
+  restShift?: number;
 }
 
 interface RichToken {
@@ -174,8 +178,10 @@ export function richTokensToItems(
         // Penalty at the break: a soft hyphen adds one, a hard hyphen the
         // word carries ends the line as it is, and a break between
         // ideographs costs nothing and adds nothing.
+        // The rest of the word as the text that opens the next line (#770).
+        const rest = breakPoint.restShift !== undefined ? { postShift: breakPoint.restShift } : {};
         items.push(breakPoint.free
-          ? { type: 'penalty', width: 0, penalty: 0, flagged: false, sourceIndex: t, meta: { ...meta, free: true, ...(breakPoint.cjk ? { cjk: true } : {}) } }
+          ? { type: 'penalty', width: 0, penalty: 0, flagged: false, sourceIndex: t, meta: { ...meta, free: true, ...(breakPoint.cjk ? { cjk: true } : {}) }, ...rest }
           : {
             type: 'penalty',
             width: breakPoint.bare ? 0 : hyphenW - (token.bareBreaks ? 0 : breakPoint.replacesWidth ?? 0),
@@ -195,6 +201,7 @@ export function richTokensToItems(
             ...(breakPoint.bare || token.bareBreaks || breakPoint.author ? {} : { zoned: true }),
             // The compound's hyphen, repeated at the start of the next line.
             ...(repeatHyphen && breakPoint.bare && !token.bareBreaks ? { postWidth: hyphenW, postChars: 1 } : {}),
+            ...rest,
           });
 
         prevCharIndex = breakPoint.charIndex;
@@ -263,6 +270,14 @@ export function reconstructRichLines(
   /** How far below its top each line has its baseline
    *  (`lineBaselineOffset`); 0.8 of the line height by default. */
   baselineOffsetPx = lineHeightPx * 0.8,
+  /** A document shaped in its own language (#770): the widths of the
+   *  pieces a line opens with when it starts inside a word, measured as
+   *  the text painted. The rest of token `tokenIndex` from its character
+   *  `from`, `lead` (the repeated hyphen of a compound, or nothing)
+   *  before it, cut at `cuts` (offsets into the token, ascending): each
+   *  piece as that text grew by it. Asked only after a break whose penalty
+   *  carries `postShift`, so the pieces add up to what the breaker counted. */
+  restPieces?: (tokenIndex: number, from: number, cuts: readonly number[], lead: string) => number[],
 ): VDTLine[] {
   const lines: VDTLine[] = [];
   let lineStart = 0;
@@ -287,6 +302,43 @@ export function reconstructRichLines(
     const lineSegments: (VDTLineSegment & { smallCaps?: boolean })[] = [];
     const textParts: string[] = [];
 
+    // The line opens with the rest of a word broken at the line before:
+    // its pieces are as wide as that rest grows by them, set as a text of
+    // its own (#770). `restWidths` maps their boxes to those widths.
+    const breakMeta0 = breakItem.meta as RichTokenMeta | undefined;
+    let restWidths: Map<number, number> | undefined;
+    // The repeated hyphen was measured with the rest it opens.
+    let restLed = false;
+    // The line also ends inside that word, at the dot of an `l·l`, and its
+    // last piece was measured without the dot.
+    let restDotOut = false;
+    if (restPieces && before?.type === 'penalty' && before.postShift !== undefined) {
+      const tokenIndex = (before.meta as RichTokenMeta).originalTokenIndex;
+      const boxes: number[] = [];
+      const cuts: number[] = [];
+      let j = lineStart;
+      for (; j < breakAt && items[j]!.sourceIndex === tokenIndex; j++) {
+        const it = items[j]!;
+        const meta = it.meta as RichTokenMeta | undefined;
+        if (it.type !== 'box' || meta?.subEnd === undefined) continue;
+        boxes.push(j);
+        cuts.push(meta.subEnd);
+      }
+      if (boxes.length > 0) {
+        const token = tokens[tokenIndex]!;
+        const endsInside = j === breakAt && breakItem.type === 'penalty' && breakItem.sourceIndex === tokenIndex;
+        if (endsInside && breakItem.flagged && !token.bareBreaks && !breakMeta0?.bare && breakMeta0?.replacesWidth !== undefined
+          && endsInsideGeminate(token.text.slice(0, cuts[cuts.length - 1]!))) {
+          cuts[cuts.length - 1]!--;
+          restDotOut = true;
+        }
+        const from = (items[boxes[0]!]!.meta as RichTokenMeta).subStart ?? 0;
+        restLed = repeated > 0;
+        const widths = restPieces(tokenIndex, from, cuts, restLed ? '-' : '');
+        restWidths = new Map(boxes.map((box, k) => [box, widths[k]!]));
+      }
+    }
+
     for (let j = lineStart; j < breakAt; j++) {
       const it = items[j]!;
       if (it.sourceIndex < 0) continue;
@@ -307,7 +359,7 @@ export function reconstructRichLines(
         lineSegments.push({
           kind: token.mathRender ? 'math' : token.swatch ? 'swatch' : token.chip ? 'chip' : 'text',
           text: cleanText,
-          width: it.width,
+          width: restWidths?.get(j) ?? it.width,
           bold: meta.bold || undefined,
           italic: meta.italic || undefined,
           ...(token.mathRender ? { mathRender: token.mathRender } : {}),
@@ -353,7 +405,7 @@ export function reconstructRichLines(
     // The repeated hyphen opens the line, on the tail of the compound.
     const opensRepeated = repeated > 0 && lineSegments[0]?.kind === 'text';
     if (opensRepeated) {
-      lineSegments[0] = { ...lineSegments[0]!, text: `-${lineSegments[0]!.text}`, width: lineSegments[0]!.width + repeated };
+      lineSegments[0] = { ...lineSegments[0]!, text: `-${lineSegments[0]!.text}`, width: lineSegments[0]!.width + (restLed ? 0 : repeated) };
       textParts[0] = `-${textParts[0]}`;
     }
 
@@ -372,7 +424,7 @@ export function reconstructRichLines(
         lineSegments[lastIdx] = {
           ...last,
           text,
-          width: last.width + hyphenW - (geminate ? breakMeta!.replacesWidth! : 0),
+          width: last.width + hyphenW - (geminate && !restDotOut ? breakMeta!.replacesWidth! : 0),
         };
         textParts[textParts.length - 1] = text;
       }

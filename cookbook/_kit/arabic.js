@@ -1,4 +1,4 @@
-// ─── Kit · arabic v1 ── Arabic-script faces · postext.dev/cookbook
+// ─── Kit · arabic v2 ── Arabic-script faces · postext.dev/cookbook
 // Fontsource ships an Arabic family as one file per subset and weight: the
 // `arabic` file holds the letters, the harakat, the Arabic-Indic digits, the
 // Arabic punctuation and the presentation forms; `latin` and `latin-ext`
@@ -78,9 +78,11 @@ async function loadArabicFonts(faces, text = '') {
 /** The PDF font provider for recipes with Arabic faces: a family with an
  *  arabic subset gets its arabic file when its pages set Arabic letters
  *  (`request.codePoints`), then its latin file, and its latin-ext file for
- *  the letters beyond latin (transliteration: ā ḥ ʿ). The arabic file comes
- *  first: it also holds the space and the brackets, so a line of Arabic is
- *  shaped as one run and not cut at every space. Any other family goes to
+ *  the letters beyond latin (transliteration: ā ḥ ʿ), each marked with its
+ *  unicode-range and its place in the order the screen added them (latin
+ *  and latin-ext by loadFonts, then arabic): the arabic file also has a
+ *  space and brackets, which the browser takes from latin, the file whose
+ *  range holds them, and postext-pdf follows it. Any other family goes to
  *  fontsourceProvider (the "pdf" block). */
 async function arabicPdfProvider(family, weight, style, request) {
   if (!(await isArabicFamily(family))) return fontsourceProvider(family, weight, style, request);
@@ -90,16 +92,17 @@ async function arabicPdfProvider(family, weight, style, request) {
   const s = style === 'italic' && !meta.styles.includes('italic') ? 'normal' : style;
   const wanted = [...(request?.codePoints ?? [])];
   const id = fontsourceId(family);
-  const urls = [];
-  if (!wanted.length || wanted.some(inArabicRange)) urls.push(await arabicFileUrl(family, w, s));
-  const at = await fontsourceAt(id);
-  urls.push(`${at}files/${id}-latin-${w}-${s}.woff2`);
+  const subsets = !wanted.length || wanted.some(inArabicRange) ? ['arabic', 'latin'] : ['latin'];
   if (meta.subsets.includes('latin-ext') && wanted.some((cp) => /[Ā-˿Ḁ-ỿ]/u.test(String.fromCodePoint(cp)))) {
-    urls.push(`${at}files/${id}-latin-ext-${w}-${s}.woff2`);
+    subsets.push('latin-ext');
   }
-  return Promise.all(urls.map(async (url) => {
+  const at = await fontsourceAt(id);
+  return Promise.all(subsets.map(async (subset) => {
+    const url = `${at}files/${id}-${subset}-${w}-${s}.woff2`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Fontsource file ${url} (${res.status})`);
-    return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    const bytes = await decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    return Object.assign(bytes, { unicodeRange: subset === 'arabic' ? arabicRange() : kitRanges()[subset],
+      order: ['latin', 'latin-ext', 'greek', 'arabic'].indexOf(subset) });
   }));
 }

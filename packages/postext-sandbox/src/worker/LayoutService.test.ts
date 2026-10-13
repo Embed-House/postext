@@ -15,6 +15,10 @@ const fontLoader = vi.hoisted(() => ({
   changed: null as ((families: string[]) => void) | null,
   /** The faces the page was told to declare. */
   pageLoads: [] as string[],
+  /** The faces the page was told to load for a document's characters, with those characters. */
+  textLoads: [] as { faces: string[]; text: string }[],
+  /** What the page's load of them waits for. */
+  pageFiles: null as Promise<void> | null,
   /** What the files of a registration wait for before they are had. */
   files: null as Promise<void> | null,
   /** The files the network does not give (by URL), and the requests made
@@ -54,6 +58,10 @@ vi.mock('../controls/fontLoader', () => {
     loadFont: async (family: string, uses: { weight: number; style: string }[]) => {
       fontLoader.pageLoads.push(...uses.map((u) => `${family} ${u.weight} ${u.style}`));
     },
+    loadFacesForText: async (uses: Iterable<[string, { weight: number; style: string }[]]>, text: string) => {
+      fontLoader.textLoads.push({ faces: [...uses].flatMap(([family, list]) => list.map((u) => `${family} ${u.weight} ${u.style}`)), text });
+      if (fontLoader.pageFiles) await fontLoader.pageFiles;
+    },
     onCustomFontsChanged: (cb: (families: string[]) => void) => {
       fontLoader.changed = cb;
       return () => {};
@@ -61,7 +69,7 @@ vi.mock('../controls/fontLoader', () => {
   };
 });
 
-import { builtWithoutFaces, createLayoutService, FONT_WAIT_CEILING_MS, fontsPending, onFontsPending, onLateFonts } from './LayoutService';
+import { builtWithoutFaces, createLayoutService, documentCharacters, FONT_WAIT_CEILING_MS, fontsPending, onFontsPending, onLateFonts } from './LayoutService';
 
 interface FakeBuild {
   markdown: string;
@@ -234,6 +242,8 @@ describe('the static cuts a build is sent (#757)', () => {
     fontLoader.subsets = ['latin'];
     fontLoader.sliced = [];
     fontLoader.pageLoads = [];
+    fontLoader.textLoads = [];
+    fontLoader.pageFiles = null;
   };
 
   it('sends every file of each cut the configuration asks for, and of the regular, the bold and their italics, before the build', async () => {
@@ -322,6 +332,76 @@ describe('the static cuts a build is sent (#757)', () => {
       expect(registered).toHaveLength(1);
       // The page is told all the same: it declares a cut when it is set.
       expect(fontLoader.pageLoads.sort()).toEqual(['Geist 400 italic', 'Geist 500 normal', 'Geist 700 italic', 'Geist 700 normal']);
+      service.dispose();
+    } finally {
+      reset();
+    }
+  });
+
+  // #770: the worker has the regular, the bold and their italics of a
+  // family from the start, so a face the pages alone name (the italic the
+  // contents set their summaries in by default) asks for no second layout:
+  // the document went back at once, the page had declared that cut a moment
+  // before and loaded its Latin file, and the first paint set the Arabic
+  // summaries in the system's face until the Arabic file came.
+  it('hands a document back once the page has loaded the faces its pages name, for the characters it sets', async () => {
+    const { handle, builds, registered } = recording();
+    fontLoader.uses = { Amiri: [{ weight: 400, style: 'normal' }, { weight: 700, style: 'normal' }] };
+    let landed!: () => void;
+    fontLoader.pageFiles = new Promise<void>((resolve) => { landed = resolve; });
+    try {
+      const service = createLayoutService({ handle });
+      let done = false;
+      const build = service.build({ clientId: 'canvas', priority: 'preview', content: content(':::toc'), config: {} });
+      void build.then(() => { done = true; });
+      await tick();
+      // A contents page: its summaries come from the other chapters.
+      const doc = {
+        pages: [],
+        blocks: [{ fontString: '400 12px Amiri', lines: [
+          { text: 'لماذا', segments: [{ text: 'لماذا' }] },
+          { text: 'الفجوة', segments: [{ text: 'الفجوة', fontString: 'italic 400 10px Amiri' }] },
+        ] }],
+      } as unknown as VDTDocument;
+      builds[0]!.finish(doc);
+      await tick();
+      await tick();
+      // The worker lacks nothing, so there is one layout; the page is asked
+      // for the italic, with the letters of the summary.
+      expect(registered).toHaveLength(1);
+      expect(builds).toHaveLength(1);
+      expect(fontLoader.textLoads.map((l) => l.faces)).toEqual([['Amiri 400 italic']]);
+      for (const ch of 'الفجوة') expect(fontLoader.textLoads[0]!.text).toContain(ch);
+      // Held while the page's file is on its way.
+      expect(done).toBe(false);
+      expect(service.state!().fonts?.step).toBe('the faces the page loads for the document\'s text');
+      landed();
+      await expect(build).resolves.toBe(doc);
+      // The same face in a later document is not waited for again.
+      const next = service.build({ clientId: 'canvas', priority: 'preview', content: content(':::toc'), config: {} });
+      await tick();
+      builds[1]!.finish(doc);
+      await next;
+      expect(fontLoader.textLoads).toHaveLength(1);
+      service.dispose();
+    } finally {
+      reset();
+    }
+  });
+
+  it('hands the document back when the page cannot load them', async () => {
+    const { handle, builds } = recording();
+    fontLoader.uses = { Amiri: [{ weight: 400, style: 'normal' }] };
+    fontLoader.pageFiles = Promise.reject(new Error('offline'));
+    fontLoader.pageFiles.catch(() => {});
+    try {
+      const service = createLayoutService({ handle });
+      const build = service.build({ clientId: 'canvas', priority: 'preview', content: content(':::toc'), config: {} });
+      await tick();
+      const doc = docSetIn('400 12px Amiri', 'italic 400 10px Amiri');
+      builds[0]!.finish(doc);
+      await expect(build).resolves.toBe(doc);
+      expect(builtWithoutFaces(doc)).toBe(false);
       service.dispose();
     } finally {
       reset();
@@ -662,5 +742,20 @@ describe('a build and a file that is slow or does not come (#757)', () => {
     await tick();
     expect(service.state!()).toMatchObject({ active: null, queued: [], worker: [], short: [], retryDue: false, fontsPending: false });
     service.dispose();
+  });
+});
+
+describe('documentCharacters (#770)', () => {
+  it('gives every character the pages set, once: lines, segments, captions and running heads, not the configuration', () => {
+    const doc = {
+      config: { header: { elements: [{ text: 'ZZZ' }] } },
+      blocks: [{
+        lines: [{ text: 'ab', segments: [{ text: 'a', sourceMap: [0, 1] }, { text: 'b' }] }],
+        resourceBlock: { captionLines: [{ text: 'cα' }], resource: { text: 'QQQ' } },
+      }],
+      pages: [{ header: { elements: [{ lines: [{ text: 'الجزء' }] }] }, columns: [{ sourceMap: [1, 2, 3] }] }],
+    } as unknown as VDTDocument;
+    const chars = documentCharacters(doc);
+    expect([...chars].sort()).toEqual([...new Set('abcαالجزء')].sort());
   });
 });

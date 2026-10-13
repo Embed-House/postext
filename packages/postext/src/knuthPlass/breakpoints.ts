@@ -282,8 +282,10 @@ export function computeBreakpoints(items: KPItem[], options: KPOptions): number[
     // adds the penalty's width (e.g. a discretionary hyphen).
     const breakWidth = item.type === 'penalty' ? item.width : 0;
     const isFlagged = item.type === 'penalty' && item.flagged;
-    // What the break adds at the start of the next line (a repeated hyphen).
-    const postWidth = item.type === 'penalty' ? item.postWidth ?? 0 : 0;
+    // What the break adds at the start of the next line: a repeated
+    // hyphen, and what the rest of a word broken here is wider, set as a
+    // text of its own, than its boxes (`KPPenalty.postShift`).
+    const postWidth = item.type === 'penalty' ? (item.postWidth ?? 0) + (item.postShift ?? 0) : 0;
     const postChars = item.type === 'penalty' ? item.postChars ?? 0 : 0;
 
     bestNewNodeByKey.clear();

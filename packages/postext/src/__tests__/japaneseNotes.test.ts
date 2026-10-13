@@ -332,9 +332,11 @@ describe('markers in the renderers', () => {
     const run = segs[i]!.sideMarker!.runs[0]!;
     const { canvas, calls } = recordingCanvas();
     renderPageToCanvas(doc.pages[0]!, doc, canvas);
-    const ones = calls.filter((c) => c.op === 'fillText' && c.args[0] === '1');
+    // The marker at its size; the other 1 is the note's own number, a
+    // segment of its line (a line of the composer is painted segment by
+    // segment, #770).
+    const ones = calls.filter((c) => c.op === 'fillText' && c.args[0] === '1' && c.font.includes('6px'));
     expect(ones).toHaveLength(1);
-    expect(ones[0]!.font).toContain('6px');
     expect(ones[0]!.args[1]).toBeCloseTo(x + run.dx, 3);
     expect(ones[0]!.args[2]).toBeCloseTo(line.baseline + run.dy, 3);
   });

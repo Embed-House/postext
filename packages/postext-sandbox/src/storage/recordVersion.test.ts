@@ -35,7 +35,7 @@ const deps = { ids: () => 'x', untitled: (n: number) => `Chapter ${n}` };
 describe('record version follows the engine\'s CONFIG_VERSION', () => {
   it('is the engine constant', async () => {
     const { PROJECT_RECORD_VERSION } = await import('./projectMigration');
-    expect(CONFIG_VERSION).toBe(13);
+    expect(CONFIG_VERSION).toBe(14);
     expect(PROJECT_RECORD_VERSION).toBe(CONFIG_VERSION);
   });
 
@@ -49,7 +49,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
     const first = loadConfig()!;
     expect(first.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     saveConfig(first);
-    expect(map.get('postext-sandbox-config-version')).toBe('13');
+    expect(map.get('postext-sandbox-config-version')).toBe('14');
     const second = loadConfig()!;
     expect(second).toEqual(first);
     saveConfig(second);
@@ -65,7 +65,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       config: { math: { fontSizeScale: 1.2 } },
     };
     const once = migrateProjectRecord(saved, deps)!;
-    expect(once.version).toBe(13);
+    expect(once.version).toBe(14);
     expect(once.config.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     const twice = migrateProjectRecord(once, deps)!;
     expect(twice.config).toEqual(once.config);
@@ -84,7 +84,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       chapters: [chapter('Prose only.')], activeChapterId: 'a', config,
     };
     // (But for the pins every record stored before 12 takes, #725, and
-    // before 13, #764.)
+    // before 14, #764 and #770.)
     expect(migrateProjectRecord(saved, deps)!.config).toEqual({ bodyText: { fontFamily: 'Georgia', scriptContext: false, shapingLanguage: 'host' } });
   });
 

@@ -1,4 +1,4 @@
-// ─── Kit · cjk v1 ── Chinese, Japanese and Korean books · postext.dev/cookbook
+// ─── Kit · cjk v2 ── Chinese, Japanese and Korean books · postext.dev/cookbook
 // Fontsource ships a CJK family as about a hundred files per weight, each
 // declared in its stylesheet with the unicode-range it covers. The screen
 // loads the files the sample touches; the PDF gets the same files for the
@@ -31,9 +31,12 @@ function cjkSlices(family, weight, style) {
   return cjkSlices.cache.get(css);
 }
 
-/** The file of `slices` that holds code point `cp`, if any. */
+/** The file of `slices` the screen sets code point `cp` in, if any: the
+ *  last one loadCjkFonts adds whose range holds it. A numbered file that
+ *  repeats a letter of latin is added after latin, and wins it. */
 function cjkSliceFor(slices, cp) {
-  return slices.find((slice) => slice.ranges.some(([lo, hi]) => cp >= lo && cp <= hi));
+  const holds = (slice) => slice.ranges.some(([lo, hi]) => cp >= lo && cp <= hi);
+  return slices.reduce((last, slice) => (holds(slice) ? slice : last), undefined);
 }
 
 /** Whether Fontsource serves `family` as a Chinese, Japanese or Korean
@@ -98,10 +101,13 @@ async function loadCjkFonts(faces, text, { vertical = false } = {}) {
 }
 
 /** The PDF font provider for recipes with CJK faces: a family whose
- *  Fontsource subsets are Chinese, Japanese or Korean gets the files that
- *  hold the characters its pages set (`request.codePoints`); any other
- *  family gets the latin file fontsourceProvider fetches (the "pdf" block)
- *  and, when the face sets letters only latin-ext has, that file too. */
+ *  Fontsource subsets are Chinese, Japanese or Korean gets the files the
+ *  screen set its pages' characters in (`request.codePoints`), each marked
+ *  with its unicode-range and its place in the order loadCjkFonts added
+ *  them: postext-pdf sets a character two files hold in the one added
+ *  last, as the browser does. Any other family gets the latin file
+ *  fontsourceProvider fetches (the "pdf" block) and, when the face sets
+ *  letters only latin-ext has, that file too. */
 async function cjkPdfProvider(family, weight, style, request) {
   if (!(await isCjkFamily(family))) return cjkLatinPdfFiles(family, weight, style, request);
   const meta = await fontsourceMeta(family);
@@ -115,20 +121,22 @@ async function cjkPdfProvider(family, weight, style, request) {
     if (slice) picked.add(slice);
   }
   if (!picked.size) picked.add(slices[0]);
-  return Promise.all(slices.filter((slice) => picked.has(slice)).map(async (slice) => {
+  return Promise.all(slices.map(async (slice, order) => {
+    if (!picked.has(slice)) return null;
     const res = await fetch(slice.url);
     if (!res.ok) throw new Error(`Fontsource file ${slice.url} (${res.status})`);
-    return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
-  }));
+    const bytes = await decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    return Object.assign(bytes, { unicodeRange: slice.range, order });
+  })).then((files) => files.filter(Boolean));
 }
 
 /** A Latin family set next to the CJK faces: its latin file, then its
  *  latin-ext file when the face sets letters only latin-ext has (ō ū in
  *  Hepburn rōmaji, ǎ in pinyin), the file loadFonts adds on screen for
- *  them. Latin comes first: postext-pdf draws a character from the first
- *  file that has it, as the browser takes a character both files hold from
- *  latin. A face Fontsource ships without latin-ext, or whose file does
- *  not come, gets latin alone, and the PDF names the letters it lacks. */
+ *  them, each marked with its unicode-range and its place in that order:
+ *  the PDF sets a character in the file the browser took it from. A face
+ *  Fontsource ships without latin-ext, or whose file does not come, gets
+ *  latin alone, and the PDF names the letters it lacks. */
 async function cjkLatinPdfFiles(family, weight, style, request) {
   const meta = await fontsourceMeta(family);
   const beyond = [...(request?.codePoints ?? [])].some(cjkLatinExtOnly);
@@ -140,7 +148,9 @@ async function cjkLatinPdfFiles(family, weight, style, request) {
   const url = `${await fontsourceAt(id)}files/${id}-latin-ext-${w}-${s}.woff2`;
   const [latin, ext] = await Promise.all([fontsourceProvider(family, weight, style), fetch(url)
     .then(async (res) => (res.ok ? decompressWoff2(new Uint8Array(await res.arrayBuffer())) : null), () => null)]);
-  return ext ? [latin, ext] : latin;
+  const ranges = kitRanges();
+  return ext ? [Object.assign(latin, { unicodeRange: ranges.latin, order: 0 }),
+    Object.assign(ext, { unicodeRange: ranges['latin-ext'], order: 1 })] : latin;
 }
 
 /** Whether code point `cp` is in Fontsource's latin-ext file and not in

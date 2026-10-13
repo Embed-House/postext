@@ -1,4 +1,8 @@
-import { flowTextWidth } from '../measure/vertical';
+import { flowTextWidth, measuringVertically } from '../measure/vertical';
+import { getMeasureArabicNumbers, getMeasureDirection } from '../measure/bidiLines';
+import { rtlTextWidth } from '../measure/script';
+import { markerSetText } from '../bidi';
+import { measuresRunsAsPainted } from '../design/bidiText';
 import type { ResolvedUnorderedListLevelConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, Dimension, DigitSystem } from '../types';
 import type { ContentBlock, ListKind } from '../parse';
 import { dimensionToPx } from '../units';
@@ -51,6 +55,34 @@ export interface ListBulletStyle {
  * its parent list's spacing on both sides of it, after its last item as
  * before its first. Between two items of one depth it is the first one's.
  */
+/** How the marker of a block whose text runs in `direction` (the frame's
+ *  when it names none) is painted, as `directListMarker` then says on the
+ *  block: at a right-to-left level, Arabic numbers read as an Arabic-script
+ *  document reads them, or undefined for a marker set left to right or
+ *  down a column. */
+function markerDirection(direction: 'ltr' | 'rtl' = getMeasureDirection()): 'rtl' | 'rtl-arabic' | undefined {
+  if (direction !== 'rtl' || measuringVertically()) return undefined;
+  return getMeasureArabicNumbers() ? 'rtl-arabic' : 'rtl';
+}
+
+/**
+ * The advance of a marker (a bullet, a number, its prefix or separator, a
+ * contents number) in `font`, as it is painted (#770).
+ *
+ * A marker that reads right to left is one text set right to left on the
+ * canvas and in the HTML (`markerSetText`), and a document shaped in its
+ * own language measures that text so: the browser gives a mark with no
+ * letter the forms of the text it stands in, and orders and mirrors it
+ * there. Measured left to right, `«الفصل الأول»` in Markazi Text bold at
+ * 28.13 px is 126.17 px for 120.32 px painted, its guillemets runs apart;
+ * `أ.` 10.92 px for 10.72 px. A marker set left to right or down a
+ * column, and every marker of a document that keeps its host's language,
+ * is measured as it was.
+ */
+export function markerTextWidth(text: string, font: string, direction: 'rtl' | 'rtl-arabic' | undefined = markerDirection()): number {
+  return direction !== undefined && measuresRunsAsPainted() ? rtlTextWidth(markerSetText(text, direction), font) : flowTextWidth(text, font);
+}
+
 export function listItemGapPx(
   prev: { spacingPx: number; depth: number },
   next: { spacingPx: number; depth: number },
@@ -220,7 +252,7 @@ export function computeLevelIndentsPx(resolved: ResolvedConfig, bodyFontSizePx: 
     dimensionToPx(lists.gap, dpi, bodyFontSizePx),
     dpi,
     bodyFontSizePx,
-    (prev, prevFontString) => flowTextWidth(prev.bulletChar, prevFontString),
+    (prev, prevFontString) => markerTextWidth(prev.bulletChar, prevFontString),
   );
 }
 
@@ -248,9 +280,9 @@ export function computeOrderedLevelIndentsPx(
       if (measured !== undefined) return measured;
       const sep = resolveSeparatorRun(prev, prevFontString, dpi, bodyFontSizePx);
       const sample = withDigits('99', resolved.numerals);
-      if (!sep) return flowTextWidth(prev.prefix + sample + prev.separator, prevFontString);
-      return (prev.prefix ? flowTextWidth(prev.prefix, sep.fontString) : 0)
-        + flowTextWidth(sample, prevFontString) + sep.gapPx + flowTextWidth(prev.separator, sep.fontString);
+      if (!sep) return markerTextWidth(prev.prefix + sample + prev.separator, prevFontString);
+      return (prev.prefix ? markerTextWidth(prev.prefix, sep.fontString) : 0)
+        + markerTextWidth(sample, prevFontString) + sep.gapPx + markerTextWidth(prev.separator, sep.fontString);
     },
   );
 }
@@ -323,14 +355,17 @@ export function computeOrderedListRunMetrics(
     const prefix = lists.levels[levelIdx]!.prefix;
     // The separator (and prefix) is the same string in the same font for
     // the whole run.
-    const separatorWidthPx = sepRun ? flowTextWidth(separator, sepRun.fontString) : 0;
-    const prefixWidthPx = sepRun && prefix ? flowTextWidth(prefix, sepRun.fontString) : 0;
+    // The run's markers read as its first item does (a list set against
+    // its frame's direction says so on every item).
+    const reads = markerDirection(contentBlocks[run.itemIdxs[0] ?? -1]?.direction);
+    const separatorWidthPx = sepRun ? markerTextWidth(separator, sepRun.fontString, reads) : 0;
+    const prefixWidthPx = sepRun && prefix ? markerTextWidth(prefix, sepRun.fontString, reads) : 0;
     let maxWidth = 0;
     const widths = new Map<number, number>();
     for (const idx of run.itemIdxs) {
       const entry = perBlock.get(idx);
       if (!entry) continue;
-      const w = flowTextWidth(entry.numberText, fontString);
+      const w = markerTextWidth(entry.numberText, fontString, markerDirection(contentBlocks[idx]?.direction));
       widths.set(idx, w);
       if (w > maxWidth) maxWidth = w;
     }
@@ -458,7 +493,7 @@ export function resolveUnorderedListItemStyle(
 
   const indentPx = levelIndentsPx[levelIdx] ?? 0;
   const gapPx = dimensionToPx(lists.gap, dpi, bodyStyle.fontSizePx);
-  const bulletWidthPx = box ? box.side : flowTextWidth(bulletChar, bulletFontString);
+  const bulletWidthPx = box ? box.side : markerTextWidth(bulletChar, bulletFontString);
   const itemSpacingPx = dimensionToPx(lists.itemSpacing, dpi, bodyStyle.fontSizePx);
   const verticalOffsetPx = dimensionToPx(levelConfig.verticalOffset, dpi, bodyStyle.fontSizePx);
   const marginTopPx = dimensionToPx(lists.marginTop, dpi, bodyStyle.fontSizePx);
@@ -614,11 +649,14 @@ export function mirrorListMarker(blk: VDTBlock): void {
   const flip = (x: number, w: number): number => left + right - x - w;
   const bulletFont = blk.bulletFontString ?? blk.fontString;
   const markFont = blk.separatorFontString ?? bulletFont;
+  // The block reads against its frame: its marker was measured in the
+  // block's own direction.
+  const reads = markerDirection(getMeasureDirection() === 'rtl' ? 'ltr' : 'rtl');
   if (blk.separatorText !== undefined && blk.separatorX !== undefined) {
-    blk.separatorX = flip(blk.separatorX, flowTextWidth(blk.separatorText, markFont));
+    blk.separatorX = flip(blk.separatorX, markerTextWidth(blk.separatorText, markFont, reads));
   }
   if (blk.prefixText !== undefined && blk.prefixX !== undefined) {
-    blk.prefixX = flip(blk.prefixX, flowTextWidth(blk.prefixText, markFont));
+    blk.prefixX = flip(blk.prefixX, markerTextWidth(blk.prefixText, markFont, reads));
   }
-  blk.bulletOffsetX = flip(blk.bulletOffsetX, flowTextWidth(blk.bulletText, bulletFont));
+  blk.bulletOffsetX = flip(blk.bulletOffsetX, markerTextWidth(blk.bulletText, bulletFont, reads));
 }

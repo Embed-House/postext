@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "sist02-research-paper",
-  "sourceHash": "c734f8ca769c36bf01289fa2014be0c3a3e3dc9f2af3102a4c86e0216301cc72",
+  "sourceHash": "1a757ab7064ebf6b7b8072952c87c4c362fbdfd2baae839aa51e3eda6559eebb",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.118Z",
+  "capturedAt": "2026-10-13T07:03:05.057Z",
   "variants": {
     "en": {
-      "hash8": "33b40347",
+      "hash8": "5b500952",
       "vdtHash": "d256f9085b8c49ebe024fcc10d882b884a679883",
       "timings": {
-        "importMs": 264,
-        "fontsMs": 244,
-        "buildMs": 159,
-        "totalMs": 1270,
+        "importMs": 587,
+        "fontsMs": 860,
+        "buildMs": 238,
+        "totalMs": 2378,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106220,
+          "bytes": 106224,
           "alt": "Opening page 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89772,
+          "bytes": 89774,
           "alt": "Page 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -90,7 +90,7 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 227335,
+        "bytes": 226670,
         "pages": 2
       },
       "sandbox": {
@@ -394,23 +394,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “A specimen article written for the Postext Cookb…”"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "78b1ee23",
+      "hash8": "19029a93",
       "vdtHash": "c7d625899867fbca93a218c3f4f2edee96e08f04",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 203,
-        "buildMs": 140,
-        "totalMs": 1210,
+        "importMs": 698,
+        "fontsMs": 374,
+        "buildMs": 216,
+        "totalMs": 2046,
         "builds": 1
       },
       "specimen": {
@@ -444,7 +439,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106220,
+          "bytes": 106224,
           "alt": "Página de apertura 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -455,7 +450,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89522,
+          "bytes": 89524,
           "alt": "Página 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -483,7 +478,7 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226974,
+        "bytes": 226321,
         "pages": 2
       },
       "sandbox": {
@@ -777,13 +772,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

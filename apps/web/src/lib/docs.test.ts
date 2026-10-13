@@ -40,6 +40,7 @@ describe("docs table of contents", () => {
       "sandbox",
       "skill",
       "command-line",
+      "webmcp",
     ]);
     for (const doc of docs) {
       expect(Object.keys(doc.locales).sort(), doc.slug).toEqual(["ar", "ca", "en", "es", "ja", "pt", "zh"]);
@@ -67,7 +68,7 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 22 and gives Part II the Configuration reference, the craft pages and Comics", () => {
+  it("numbers the pages 1 to 23 and gives Part II the Configuration reference, the craft pages and Comics", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
     expect(order("configuration")).toBe(3);
     expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual([4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -82,10 +83,10 @@ describe("docs table of contents", () => {
     for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", "chinese-layout", "arabic-layout", "japanese-layout", "comics"]) {
       expect(docPart(order(slug)!).key, slug).toBe("craft");
     }
-    for (const slug of ["contributing", "sandbox", "skill", "command-line"]) {
+    for (const slug of ["contributing", "sandbox", "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line")]).toEqual([19, 20, 21, 22]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([19, 20, 21, 22, 23]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {

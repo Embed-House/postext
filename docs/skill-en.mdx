@@ -196,7 +196,7 @@ newer); `@napi-rs/canvas` is a prebuilt canvas that lets it paint the book's
 pages straight to JPEG. Optional tools: `ocrmypdf` for scans, ImageMagick, and veraPDF for
 PDF/UA checks.
 
-The work loop runs on the [command line](/en/docs/command-line), one self-contained executable with nothing to install: the agent keeps the project unpacked and leaves `postext build --watch` running on the pages it is working on, so every change shows up as a JPEG about a second later, even in a long book. The Node packages are optional: they run `render.mjs`, which adds the Sandbox's extra checks.
+The work loop runs on the [command line](/en/docs/command-line), one self-contained executable with nothing to install: the agent keeps the project unpacked and leaves `postext build --watch` running on the pages it is working on, so every change shows up as a JPEG about a second later, even in a long book. The Node packages are optional: they run `render.mjs`, which adds the Sandbox's extra checks. Both lay the book out with `bodyText.shapingLanguage: 'host'`, whatever its configuration says, so a line can break at another word than in the Sandbox (see [Differences from the Sandbox](/en/docs/command-line#differences-from-the-sandbox)).
 
 ## Using it
 

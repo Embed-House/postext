@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "edited-volume-chapter-bibliographies",
-  "sourceHash": "17d5b58e9794cb01c6ca5ce2b73174c210b435b5d6610c4b7e17651b500c3af3",
+  "sourceHash": "243115501305e95914962430c285ebfb1d8971ddbbe77ed9bd63f1e97853f57d",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.272Z",
+  "capturedAt": "2026-10-13T06:55:40.002Z",
   "variants": {
     "en": {
       "hash8": "301c8071",
       "vdtHash": "f76ebbccc75171d40285ea21317c748dbb0ca5a5",
       "timings": {
-        "importMs": 225,
-        "fontsMs": 59,
-        "buildMs": 539,
-        "totalMs": 1482,
+        "importMs": 583,
+        "fontsMs": 108,
+        "buildMs": 830,
+        "totalMs": 2298,
         "builds": 1
       },
       "specimen": {
@@ -513,10 +513,10 @@
       "hash8": "f3462351",
       "vdtHash": "854c6589be9fe12d338381a53c07814a5e2893d7",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 61,
-        "buildMs": 565,
-        "totalMs": 1477,
+        "importMs": 548,
+        "fontsMs": 115,
+        "buildMs": 800,
+        "totalMs": 2250,
         "builds": 1
       },
       "specimen": {

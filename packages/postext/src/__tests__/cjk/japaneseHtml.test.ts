@@ -82,7 +82,7 @@ describe('semantic ruby in horizontal HTML (#428)', () => {
       // The base box (painted from its ink offset), then the reading's box
       // at its place (the segment's start plus the run's dx), without
       // aria-hidden.
-      const m = new RegExp(`(?:${RUBY_OPEN})?(?:<a [^>]*>)?<span style="position:absolute;left:([\\d.]+)px;top:0;white-space:pre;">${s.text}</span>${RT_OPEN}<span style="position:absolute;left:([\\d.]+)px;top:(-?[\\d.]+)px;white-space:pre;"><span style="font:[^"]*">${s.ruby!.text}</span></span></rt>`).exec(html);
+      const m = new RegExp(`(?:${RUBY_OPEN})?(?:<a [^>]*>)?<span style="position:absolute;left:([\\d.]+)px;top:0;white-space:pre;(?:font-kerning:none;)?">${s.text}</span>${RT_OPEN}<span style="position:absolute;left:([\\d.]+)px;top:(-?[\\d.]+)px;white-space:pre;"><span style="font:[^"]*">${s.ruby!.text}</span></span></rt>`).exec(html);
       expect(m, s.text).not.toBeNull();
       expect(+m![2]! - +m![1]!).toBeCloseTo(run.dx - (s.inkOffset ?? 0), 3);
       expect(+m![3]!).toBeCloseTo(run.dy, 3);
@@ -173,6 +173,8 @@ describe('page language (#428)', () => {
       const base = config({ locale });
       return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'document' } };
     };
+    // Its own is the default (#770).
+    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).toMatch(/ data-page="0" lang="en" style="/);
     expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, own('zh-Hans'))))).toMatch(/ data-page="0" lang="zh-Hans" style="/);
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, own('en'))))).toMatch(/ data-page="0" lang="en" style="/);
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, own('ar'))))).toContain(' dir="rtl" lang="ar"');
@@ -183,8 +185,6 @@ describe('page language (#428)', () => {
       const base = config({ locale });
       return { ...base, bodyText: { ...base.bodyText, shapingLanguage: 'host' } };
     };
-    // The default is the host's.
-    expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, config({ locale: 'en' }))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: '天地玄黄。' }, host('zh-Hans'))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'Plain text.' }, host('en'))))).not.toContain('lang=');
     expect(pageTag(renderToHtml(buildDocument({ markdown: 'نص عربي.' }, host('ar'))))).toContain(' dir="rtl" lang="ar"');

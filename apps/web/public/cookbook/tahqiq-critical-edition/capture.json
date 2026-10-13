@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tahqiq-critical-edition",
-  "sourceHash": "62cd649d7f54ef0e5c59a8cf5936909917fa04bd379b7fa3d6b42054ff783f07",
+  "sourceHash": "4aa757f91261e8d0ae52907610228405bfc3f2b58e1df7af3a733a954d01c65b",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.178Z",
+  "capturedAt": "2026-10-13T07:04:11.808Z",
   "variants": {
     "en": {
       "hash8": "a94482a4",
       "vdtHash": "450e833fb8a7df45805cb108debda8aee3d87a64",
       "timings": {
-        "importMs": 349,
-        "fontsMs": 85,
+        "importMs": 615,
+        "fontsMs": 98,
         "buildMs": 340,
-        "totalMs": 1446,
+        "totalMs": 1740,
         "builds": 1
       },
       "specimen": {
@@ -439,23 +439,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "240713ab",
       "vdtHash": "67748458f8413e649340d042e072eef7e43cf3de",
       "timings": {
-        "importMs": 424,
-        "fontsMs": 71,
-        "buildMs": 344,
-        "totalMs": 1436,
+        "importMs": 626,
+        "fontsMs": 85,
+        "buildMs": 350,
+        "totalMs": 1664,
         "builds": 1
       },
       "specimen": {
@@ -877,13 +871,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

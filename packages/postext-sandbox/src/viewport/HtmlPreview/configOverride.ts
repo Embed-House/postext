@@ -11,6 +11,7 @@ import type { Dimension, DesignSlot, LayoutType, PageMargins, PostextConfig, Res
 import { htmlViewerDpi, PADDING_PX, type ColumnMode } from './constants';
 import { viewerLayoutType } from './pageGeometry';
 import { defaultDocumentLocale } from '../../controls/hyphenation';
+import { configShapingLanguage, measureInLanguage } from '../../controls/measureLanguage';
 
 /** The leaf a heading design was drawn on: its size and the margins that
  *  place the design's container (the band under the text block's top-left
@@ -284,18 +285,27 @@ function partTitleFace(headings: ResolvedHeadingsConfig, dpi: number) {
   return { h1, fontSizePx, lineHeight, linePx: fontSizePx * lineHeight };
 }
 
+/** The width of `text` in `font`, px, in the language the viewer's layout
+ *  measures in (#770): `lang` when the document is shaped in its own
+ *  (`configShapingLanguage`), on a context of that language; the host's
+ *  otherwise, through the engine as before. */
+function widthIn(lang: string | undefined, text: string, font: string): number {
+  if (lang === undefined) return measureGlyphWidth(text, font);
+  return measureInLanguage(lang, text, font) ?? measureGlyphWidth(text, font);
+}
+
 /** Lines a part title takes at `widthPx` in the given font, word-wrapped
  *  the way the design text element wraps it; forced breaks (`\\` in the
- *  title, `\n` here) start a new line. */
-function countTitleLines(text: string, font: string, widthPx: number): number {
-  const space = measureGlyphWidth(' ', font);
+ *  title, `\n` here) start a new line. `lang`: see {@link widthIn}. */
+function countTitleLines(text: string, font: string, widthPx: number, lang?: string): number {
+  const space = widthIn(lang, ' ', font);
   let lines = 0;
   for (const segment of text.split('\n')) {
     const words = segment.split(/\s+/).filter(Boolean);
     lines++;
     let x = 0;
     for (const word of words) {
-      const w = measureGlyphWidth(word, font);
+      const w = widthIn(lang, word, font);
       if (x > 0 && x + space + w > widthPx) {
         lines++;
         x = w;
@@ -492,8 +502,11 @@ export function buildHtmlConfigOverride(
     String(partFace.h1.fontWeight),
     partFace.h1.italic ? 'italic' : 'normal',
   );
+  // Measured in the language the layout sets them in (#770), so the band
+  // does not depend on the language of the page that hosts the Sandbox.
+  const shapedIn = configShapingLanguage(base, locale);
   const partLines = partTitles && partTitles.length > 0
-    ? Math.max(...partTitles.map((t) => countTitleLines(t, partFont, pageWidthPx)))
+    ? Math.max(...partTitles.map((t) => countTitleLines(t, partFont, pageWidthPx, shapedIn)))
     : 2;
   const partBandPx = partFace.linePx * partLines;
   const parts: PostextConfig['parts'] = {
@@ -635,14 +648,19 @@ export function comicsViewerLeaf(
   };
 }
 
+/** The width of `sample` in the body face, px: the viewer's column. `lang`
+ *  is the language the layout measures the text in
+ *  (`configShapingLanguage`; undefined: the host's), so the column does
+ *  not depend on the language of the page that hosts the Sandbox (#770). */
 export function measureColumnWidthPx(
   sample: string,
   fontFamily: string,
   fontSizePx: number,
   fontWeight: number,
+  lang?: string,
 ): number {
   const font = buildFontString(fontFamily, fontSizePx, String(fontWeight), 'normal');
-  return measureGlyphWidth(sample, font);
+  return widthIn(lang, sample, font);
 }
 
 /** Whether `markdown` may hold a comic page (a `:::page` fence). */

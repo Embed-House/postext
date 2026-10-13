@@ -13,15 +13,29 @@ the characters of the tests with every OpenType layout rule kept:
   sets a Latin stop, brackets and guillemets under `latn` only.
 - Crimson Pro 400 (1.003), its `latin` file, whose Catalan `l·l` takes a
   dot of its own between two `l` (`latn`, `CAT `).
+- Aref Ruqaa 700 (1.003), its `arabic` file, whose space is 0.146 em wide
+  in Arabic text (`arab`) and 0.333 em in any other: the space between two
+  Arabic words, which a browser's canvas shapes as a word of its own
+  (postext #770).
+- Noto Serif JP 400 (2.003), its `latin` file and its slices 118 and 113,
+  three files of one face whose ranges overlap: `latin` holds every
+  character of `Shift_JIS` and kerns `t_` and `_J`, slice 118 repeats the
+  letters and slice 113 the `_`. A browser sets each character in the file
+  declared last among those whose range holds it (postext #770).
 
     python3 make_fixtures.py <folder>
 
 `<folder>` holds `markazi-text-latin-400-normal.woff2`,
 `markazi-text-arabic-400-normal.woff2`, `amiri-latin-400-normal.woff2`,
-`amiri-arabic-400-normal.woff2` and `crimson-pro-latin-400-normal.woff2`,
-as `@fontsource/<family>@5.3.0/files/` names them. Writes
-`markazi-text-latin.ttf`, `markazi-text-arabic.ttf`, `amiri-latin.ttf`,
-`amiri-arabic.ttf` and `crimson-pro-latin.ttf`.
+`amiri-arabic-400-normal.woff2`, `crimson-pro-latin-400-normal.woff2` and
+`aref-ruqaa-arabic-700-normal.woff2`, as `@fontsource/<family>@5.3.0/files/`
+names them, and `noto-serif-jp-latin-400-normal.woff2`,
+`noto-serif-jp-118-400-normal.woff2` and
+`noto-serif-jp-113-400-normal.woff2` of `@fontsource/noto-serif-jp@5.3.1`.
+Writes `markazi-text-latin.ttf`, `markazi-text-arabic.ttf`,
+`amiri-latin.ttf`, `amiri-arabic.ttf`, `crimson-pro-latin.ttf`,
+`aref-ruqaa-arabic.ttf`, `noto-serif-jp-latin.ttf`, `noto-serif-jp-118.ttf`
+and `noto-serif-jp-113.ttf`.
 """
 import os
 import sys
@@ -36,6 +50,10 @@ ARABIC = ('قلت أنا يا خالة '
           'سافرت إلى البيوت '
           'ثم مشيت ب ،؟ـ')
 MARKS = '  «»().:!?[]"-0123456789abcdn“”—…'
+# The title of the Aref Ruqaa test, and the spaces between its words.
+TITLE = 'ألف ليلة وليلة \u00a0'
+# The word of the Japanese manual set from three files, and a space.
+SHIFT_JIS = 'Shift_JIS '
 # The words of the Catalan tests.
 CATALAN = ('La instal·lació de la il·luminació col·lectiva fou una '
            'il·lusió paral·lela del COL·LEGI que vacil·lava. ,;-— '
@@ -69,3 +87,6 @@ if __name__ == '__main__':
         build(folder, f'{family}-latin-400-normal.woff2', MARKS, f'{family}-latin.ttf')
         build(folder, f'{family}-arabic-400-normal.woff2', ARABIC, f'{family}-arabic.ttf')
     build(folder, 'crimson-pro-latin-400-normal.woff2', CATALAN, 'crimson-pro-latin.ttf')
+    build(folder, 'aref-ruqaa-arabic-700-normal.woff2', TITLE, 'aref-ruqaa-arabic.ttf')
+    for part in ('latin', '118', '113'):
+        build(folder, f'noto-serif-jp-{part}-400-normal.woff2', SHIFT_JIS, f'noto-serif-jp-{part}.ttf')

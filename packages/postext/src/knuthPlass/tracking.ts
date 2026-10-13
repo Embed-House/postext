@@ -43,10 +43,11 @@ export function lineTracking(items: readonly KPItem[], lineStart: number, breakA
     width += brk.width;
     chars += brk.chars ?? 0;
   }
-  // What the break before the line added at its start (a repeated hyphen).
+  // What the break before the line added at its start (a repeated hyphen,
+  // and the rest of a word as a text of its own: `KPPenalty.postShift`).
   const before = items[lineStart - 1];
   if (before?.type === 'penalty') {
-    width += before.postWidth ?? 0;
+    width += (before.postWidth ?? 0) + (before.postShift ?? 0);
     chars += before.postChars ?? 0;
   }
   return adjustLine(lineWidth - width, stretch, shrink, chars, trackingPerChar, spaces > 0 && !noTracking).tracking;

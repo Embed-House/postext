@@ -21,7 +21,7 @@ import { hasOverfullLine } from './plain';
 import { justifiedSpaceRatios } from './spaceRatios';
 import { quoteFamily } from './font';
 import { trimChipLineEdges } from './chipEdges';
-import { directChipRuns } from '../design/bidiText';
+import { directChipRuns, measuresRunsAsPainted, paintedRunWidth } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
 import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose';
 import { getCjkComposition } from './cjkPunctuation';
@@ -63,8 +63,16 @@ export interface RichBreakPoint {
   cjk?: boolean;
   /** A syllable break inside a Catalan `l·l`: the hyphen takes the place of
    *  the middle dot (`il-` | `lusió`), whose width, here, the line ending
-   *  at this break gives back. */
+   *  at this break gives back. In a document shaped in its own language
+   *  it is what the text up to the dot is narrower than the text with it
+   *  (`col` against `col·`): the head is then as wide as `col` and its
+   *  hyphen, the two texts painted (#770). */
   replacesWidth?: number;
+  /** Knuth–Plass, in a document shaped in its own language (#770): what
+   *  the rest of the word, set from this break at a line's start as a text
+   *  of its own, is wider than the pieces after the break measured inside
+   *  the word (negative: narrower). See {@link RichToken.ownPieces}. */
+  restShift?: number;
 }
 
 export interface RichToken {
@@ -193,6 +201,15 @@ export interface RichToken {
    *  which such a piece takes when no letter stands before it in the text
    *  (`pieceScriptContext`). */
   wordScript?: ScriptContext;
+  /** In a document shaped in its own language (#770): the two halves of
+   *  this word, broken at a line end, are each measured as the text
+   *  painted. The rest that opens the next line is measured from the break
+   *  on (`lar`, not `instal·lar` less `instal·`), and its later pieces as
+   *  that text grows by them ({@link ownRest}). The value is the tracking
+   *  each of its characters was measured with, px. Absent in a document
+   *  that keeps the host's language, and on a word that holds CJK
+   *  characters (measured unit by unit, so its rest is already its own). */
+  ownPieces?: number;
 }
 
 /** Whether a resolved swatch colour can fill the square: a six- or
@@ -333,9 +350,11 @@ function pieceScriptFields(token: Pick<RichToken, 'text' | 'scriptContext' | 'sc
 /** The width of a word of a joining script (Arabic…), always painted
  *  right to left: measured so too in a face that draws its punctuation by
  *  script (#725, `rtlTextWidth`), so the bracket or the stop at its edge
- *  takes the forms it is painted in; as any text otherwise. */
+ *  takes the forms it is painted in, and in every face in a document
+ *  shaped in its own language (#770, see `rtlTextWidth`); as any text
+ *  otherwise. */
 function rtlWordWidth(text: string, font: string): number {
-  return getMeasureScriptContext().enabled && !measuringVertically() && faceReadsScript(font) ? rtlTextWidth(text, font) : textWidth(text, font, false);
+  return getMeasureScriptContext().enabled && !measuringVertically() && (faceReadsScript(font) || getMeasureLanguage() !== undefined) ? rtlTextWidth(text, font) : textWidth(text, font, false);
 }
 
 /** How a token's text is measured: in its script when it is a word with
@@ -355,6 +374,103 @@ function tokenTextWidth(token: Pick<RichToken, 'scriptContext' | 'scriptRtl' | '
   const word = token.wordScript;
   if (word) return (text) => (isLetterless(text) ? scriptTextWidth(text, font, word, false) : textWidth(text, font, token.smallCaps));
   return (text) => textWidth(text, font, token.smallCaps);
+}
+
+/** How many characters of the rest of a word are measured with what
+ *  follows the break (see {@link ownRest}): past any kerned pair,
+ *  ligature or contextual form a face draws across one cut. */
+const REST_WINDOW = 32;
+
+/**
+ * The rest of a word from the break at `from`, measured as the text a
+ * line opens with (#770): the function gives the width of the word's
+ * characters `[from, to)` set as a text of their own, `lead` (the hyphen
+ * a compound repeats at the line's start) before them, with the tracking
+ * the word was measured with.
+ *
+ * Up to postext 1.29 that rest was the whole word less what stayed on the
+ * line above, and its pieces what the whole word grew by. The browser
+ * measured those strings whole, so whatever the face draws across the
+ * break stayed in the rest's box, and nothing paints it there. Crimson
+ * Pro sets the dot of a Catalan `l·l` 0.586 em wide: `instal·lar` broken
+ * as `instal-` | `lar` left `lar` a box of 28.54 px at 20 px for a text
+ * painted 21.62 px wide. EB Garamond's `of-` | `fice` left 24.7 px for
+ * 25.9 (the `ffi` ligature undone by the break), and Fira Sans's `lar`
+ * 20.74 px for 24.36 (its `l·` ligature). Measured in Chrome 154.
+ *
+ * The pieces after the break are measured as that text grows, so a rest
+ * that breaks again is right too, and the pieces a line carries add up to
+ * the text painted. Only the first {@link REST_WINDOW} characters are
+ * measured from the break; a piece that ends past them is what the word
+ * grew by from there on, which no break before it changes. A word many
+ * lines long then costs what a line of it does.
+ *
+ * `token` is the word as it stands (itself the rest of an earlier break,
+ * or the whole word); a document that keeps the host's language never
+ * asks.
+ */
+function ownRest(token: RichToken, from: number, font: string, lead = ''): (to: number) => number {
+  const text = token.text;
+  const spacing = token.ownPieces ?? 0;
+  const tracked = (width: number, piece: string): number => (spacing === 0 ? width : width + spacing * graphemeCount(piece));
+  const whole = tokenTextWidth(token, font);
+  const before = (idx: number): number => (idx >= text.length ? token.width : tracked(whole(text.slice(0, idx)), text.slice(0, idx)));
+  const rest = tokenTextWidth({ ...scriptOf(token), ...pieceScriptFields(token, from, text.length) }, font);
+  const own = (piece: string): number => tracked(rest(piece), piece);
+  let end = Math.min(text.length, from + REST_WINDOW);
+  // Not between the two halves of a character outside the BMP.
+  if (end < text.length && (text.charCodeAt(end) & 0xFC00) === 0xDC00) end++;
+  let window: number | undefined;
+  let anchor: number | undefined;
+  return (to) => {
+    if (to <= end) return own(lead + text.slice(from, to));
+    window ??= own(lead + text.slice(from, end));
+    anchor ??= before(end);
+    return window + before(to) - anchor;
+  };
+}
+
+/** The break points of `token` after `at`, for its rest measured as a
+ *  text of its own (`width`, see {@link ownRest}): each as far into that
+ *  text as it is, the dot of an `l·l` measured there too. */
+function ownRestBreaks(token: RichToken, at: number, width: (to: number) => number, shift = 0): RichBreakPoint[] {
+  return (token.breakPoints ?? [])
+    .filter((b) => b.charIndex > at)
+    .map((b) => {
+      const { restShift: _shift, ...rest } = b;
+      void _shift;
+      const widthBefore = width(b.charIndex);
+      return {
+        ...rest,
+        charIndex: b.charIndex - at + shift,
+        widthBefore,
+        ...(b.replacesWidth !== undefined ? { replacesWidth: widthBefore - width(b.charIndex - 1) } : {}),
+      };
+    });
+}
+
+/**
+ * Knuth–Plass in a document shaped in its own language (#770): give each
+ * break point of the words measured so ({@link RichToken.ownPieces}) what
+ * the rest of its word is wider, opening the next line as a text of its
+ * own, than the pieces after the break add up to
+ * (`RichBreakPoint.restShift`). `lead`: the hyphen a compound repeats at
+ * that line's start (`repeatHyphen`) is part of the text measured, and its
+ * own width, which the breaker counts apart, is taken off.
+ * One measure a break point, two for a rest longer than
+ * {@link REST_WINDOW} characters.
+ */
+function markRestShifts(tokens: readonly RichToken[], fontOf: (token: RichToken) => string, repeatHyphen: boolean): void {
+  for (const token of tokens) {
+    if (token.ownPieces === undefined || !token.breakPoints) continue;
+    const font = fontOf(token);
+    for (const bp of token.breakPoints) {
+      if (bp.greedyOnly) continue;
+      const repeated = repeatHyphen && bp.bare === true && !token.bareBreaks;
+      const own = ownRest(token, bp.charIndex, font, repeated ? '-' : '')(token.text.length);
+      bp.restShift = own - (repeated ? token.hyphenWidth ?? 0 : 0) - (token.width - bp.widthBefore);
+    }
+  }
 }
 
 /** Small capitals are synthesised, the same way on every backend: a
@@ -556,8 +672,16 @@ export function chipToken(
   }
   // Right-to-left runs cut where the direction changes, and their order
   // (`VDTChip.order`).
-  const directed = directChipRuns(runs, (t, f) => measureTextWidth(t, f) + wordLetterSpacing(t, letterSpacingPx) * graphemeCount(t));
-  const textWidth = runs.reduce((sum, r) => sum + r.width, 0);
+  // In a document shaped in its own language each is as wide as it is
+  // painted, in its own direction, and the chip as wide as its runs (#770,
+  // `measuresRunsAsPainted`).
+  const asPainted = measuresRunsAsPainted();
+  const directed = directChipRuns(
+    runs,
+    (t, f, rtl) => (asPainted ? paintedRunWidth(t, f, rtl) : measureTextWidth(t, f)) + wordLetterSpacing(t, letterSpacingPx) * graphemeCount(t),
+    asPainted,
+  );
+  const textWidth = (asPainted ? directed.runs : runs).reduce((sum, r) => sum + r.width, 0);
   const paddingX = box?.paddingXPx ?? 0;
   const paddingY = box?.paddingYPx ?? 0;
   // A style may pad the top and the bottom apart (EF-172).
@@ -745,6 +869,13 @@ function wordBreakPoints(
   /** How the word's pieces are measured when not as any text: in the
    *  script of a word with no letter (#725). */
   measure?: (text: string) => number,
+  /** A document shaped in its own language (#770): the head of a break
+   *  inside an `l·l` is as wide as the text painted, `col` and its hyphen.
+   *  Taking the dot's own width off `col·` is short of it where the face
+   *  draws the two together: Lora ligates `l·`, and left `col-` 1.32 px
+   *  narrower than painted at 20 px (36.14 px for 37.46); Fira Sans,
+   *  0.2 px. */
+  ownHeads = false,
 ): RichBreakPoint[] {
   const widthBefore = cjk
     ? cjk.widthBefore
@@ -771,7 +902,7 @@ function wordBreakPoints(
   }
   for (const s of soft) {
     const geminate = endsInsideGeminate(clean.slice(0, s.index))
-      ? { replacesWidth: textWidth(GEMINATE_DOT, font, smallCaps) + letterSpacingPx }
+      ? { replacesWidth: ownHeads ? widthBefore(s.index) - widthBefore(s.index - 1) : textWidth(GEMINATE_DOT, font, smallCaps) + letterSpacingPx }
       : {};
     add(s.author ? { charIndex: s.index, author: true, ...geminate } : { charIndex: s.index, ...geminate });
   }
@@ -814,6 +945,11 @@ export function emergencySplit(
   const measure = tokenTextWidth(token, font);
   const widthBefore = (idx: number): number => measure(text.slice(0, idx)) + (spacing === 0 ? 0 : spacing * graphemeCount(text.slice(0, idx)));
   const flags = { bold: token.bold, italic: token.italic, captionLabel: token.captionLabel, ...scriptOf(token) };
+  // In a document shaped in its own language the rest is measured as the
+  // text that opens the next line (#770, `ownRest`), with the tracking
+  // this division measures the word with.
+  const own = getMeasureLanguage() !== undefined && !measuringVertically() && !hasCJK(text) ? { ...token, ownPieces: spacing } : undefined;
+  const restFrom = (at: number): RichToken => (own ? tailAfter(own, at, 0, font) : tailAfter(token, at, widthBefore(at)));
   // A group glued by no-break spaces too wide for any line: the space is
   // the least bad place to part it (EF-66). The line ends before it and the
   // next one opens after it.
@@ -823,7 +959,7 @@ export function emergencySplit(
     if (headWidth > lineMaxWidth) continue;
     return {
       head: { ...flags, ...pieceScriptFields(token, 0, idx), text: text.slice(0, idx), kind: 'text', width: headWidth },
-      tail: { ...tailAfter(token, idx + 1, widthBefore(idx + 1)), ...flags, ...pieceScriptFields(token, idx + 1, text.length) },
+      tail: { ...restFrom(idx + 1), ...flags, ...pieceScriptFields(token, idx + 1, text.length) },
     };
   }
   // No hyphen where the cut falls next to an ideograph, or right after a
@@ -887,7 +1023,7 @@ export function emergencySplit(
     head: geminate
       ? { ...flags, text: withLineEndHyphen(text.slice(0, at)), kind: 'text', width: widthBefore(at - 1) + markW(at) }
       : { ...flags, ...pieceScriptFields(token, 0, at), text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
-    tail: { ...tailAfter(token, at, widthBefore(at)), ...flags, ...pieceScriptFields(token, at, text.length) },
+    tail: { ...restFrom(at), ...flags, ...pieceScriptFields(token, at, text.length) },
     ...(afterHyphen(at) ? { hard: true } : {}),
   };
 }
@@ -895,20 +1031,27 @@ export function emergencySplit(
 /** What is left of `token` after a cut at `at` (`cutWidth` px in): its text
  *  and width from there, the break points after the cut moved with it, and
  *  what they need (the hyphen's width; a web address's joints stay bare),
- *  so the next line breaks the rest where it could break the whole. */
-function tailAfter(token: RichToken, at: number, cutWidth: number): RichToken {
-  const residual = (token.breakPoints ?? [])
-    .filter((b) => b.charIndex > at)
-    .map((b) => ({ ...b, charIndex: b.charIndex - at, widthBefore: b.widthBefore - cutWidth }));
+ *  so the next line breaks the rest where it could break the whole.
+ *  With `font`, for a word whose halves are measured as the texts painted
+ *  (`RichToken.ownPieces`, #770): the rest and its break points are
+ *  measured from the cut on ({@link ownRest}), and `cutWidth` is not read. */
+function tailAfter(token: RichToken, at: number, cutWidth: number, font?: string): RichToken {
+  const own = font !== undefined && token.ownPieces !== undefined ? ownRest(token, at, font) : undefined;
+  const residual = own
+    ? ownRestBreaks(token, at, own)
+    : (token.breakPoints ?? [])
+      .filter((b) => b.charIndex > at)
+      .map((b) => ({ ...b, charIndex: b.charIndex - at, widthBefore: b.widthBefore - cutWidth }));
   return {
     text: token.text.slice(at),
     bold: token.bold,
     italic: token.italic,
     kind: 'text',
-    width: token.width - cutWidth,
+    width: own ? own(token.text.length) : token.width - cutWidth,
     ...(residual.length > 0 ? { breakPoints: residual, hyphenWidth: token.hyphenWidth } : {}),
     ...(token.bareBreaks ? { bareBreaks: true } : {}),
     ...(token.dashJoin ? { dashJoin: true } : {}),
+    ...(own ? { ownPieces: token.ownPieces } : {}),
   };
 }
 
@@ -1300,6 +1443,9 @@ function tokenizeSpans(
   // in a face that draws its punctuation by script; the paragraph's text
   // and isolates are read when the first such word turns up.
   const scriptState = getMeasureScriptContext();
+  // A document shaped in its own language measures the two halves of a
+  // word broken at a line end as the texts painted (#770).
+  const ownPieces = getMeasureLanguage() !== undefined && !measuringVertically();
   let paragraphText: string | undefined;
   let isolates: BidiIsolate[] | undefined;
   // `script` undefined: a word with letters. Right to left, it is measured
@@ -1309,8 +1455,12 @@ function tokenizeSpans(
   const contextOf = !scriptState.enabled || measuringVertically()
     ? undefined
     : (word: string, at: number, length: number, font: string): { script: ScriptContext | undefined; rtl: boolean; pieces?: ScriptContext } | undefined => {
-        if (!faceReadsScript(font) || hasCJK(word)) return undefined;
         const rtl = bidi !== undefined && (bidi.levels[at]! & 1) === 1;
+        // A face whose marks are the same in every script: no word of it
+        // is given one, and a right-to-left word is still measured as it
+        // is painted in a document shaped in its own language (#770).
+        if (!faceReadsScript(font)) return rtl && getMeasureLanguage() !== undefined && !hasCJK(word) ? { script: undefined, rtl } : undefined;
+        if (hasCJK(word)) return undefined;
         if (!isLetterless(word)) {
           if (rtl) return { script: undefined, rtl };
           const pieces = wordPieceScript(word);
@@ -1446,6 +1596,9 @@ function tokenizeSpans(
           kind: 'text',
           width: (inScript.whole ? inScript.whole(clean) : textWidth(clean, font, sc)) + (inScript.untracked ? 0 : track(clean)),
           ...(breakPoints.length > 0 ? { breakPoints, hyphenWidth: 0, bareBreaks: true } : {}),
+          // The rest of an address divided at a joint is measured as the
+          // text that opens the next line (#770).
+          ...(ownPieces && breakPoints.length > 0 ? { ownPieces: spacing } : {}),
         });
         continue;
       }
@@ -1471,7 +1624,7 @@ function tokenizeSpans(
       const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
       const inScript = measured.whole;
       const contextFields = measured.fields;
-      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo);
+      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo, ownPieces && !cjk);
       if (breakPoints.length > 0) {
         tokens.push({
           text: clean,
@@ -1485,6 +1638,9 @@ function tokenizeSpans(
           width: cjk ? cjk.width : (inScript ? inScript(clean) : textWidth(clean, font, sc)) + (untracked ? 0 : track(clean)),
           breakPoints,
           hyphenWidth: measureTextWidth('-', font) + letterSpacingPx,
+          // A word that holds CJK characters is measured unit by unit:
+          // its rest is already the text that opens the next line.
+          ...(ownPieces && !cjk ? { ownPieces: wordSpacing } : {}),
         });
       } else {
         // A word of a joining script loses the soft hyphens it may not
@@ -1710,11 +1866,15 @@ function isDivisible(token: RichToken): boolean {
 /** Cut a word at one of its break points: the head ends the line (with
  *  `mark`, `markWidth` px wide, appended — or in place of the middle dot of
  *  an `l·l`), the tail keeps the break points after the cut. */
-function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidth: number): { head: RichToken; tail: RichToken } {
+function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidth: number, font?: string): { head: RichToken; tail: RichToken } {
   const flags = { bold: token.bold, italic: token.italic, captionLabel: token.captionLabel, ...scriptOf(token) };
-  const residual = (token.breakPoints ?? [])
-    .filter((b) => b.charIndex > bp.charIndex)
-    .map((b) => ({ ...b, charIndex: b.charIndex - bp.charIndex, widthBefore: b.widthBefore - bp.widthBefore }));
+  // The rest measured as the text that opens the next line (#770).
+  const own = font !== undefined && token.ownPieces !== undefined ? ownRest(token, bp.charIndex, font) : undefined;
+  const residual = own
+    ? ownRestBreaks(token, bp.charIndex, own)
+    : (token.breakPoints ?? [])
+      .filter((b) => b.charIndex > bp.charIndex)
+      .map((b) => ({ ...b, charIndex: b.charIndex - bp.charIndex, widthBefore: b.widthBefore - bp.widthBefore }));
   return {
     head: mark !== '' && bp.replacesWidth !== undefined
       ? { ...flags, text: withLineEndHyphen(token.text.slice(0, bp.charIndex)), kind: 'text', width: bp.widthBefore - bp.replacesWidth + markWidth }
@@ -1724,10 +1884,11 @@ function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidt
       ...pieceScriptFields(token, bp.charIndex, token.text.length),
       text: token.text.slice(bp.charIndex),
       kind: 'text',
-      width: token.width - bp.widthBefore,
+      width: own ? own(token.text.length) : token.width - bp.widthBefore,
       ...(residual.length > 0 ? { breakPoints: residual, hyphenWidth: token.hyphenWidth } : {}),
       ...(token.bareBreaks ? { bareBreaks: true } : {}),
       ...(token.dashJoin ? { dashJoin: true } : {}),
+      ...(own ? { ownPieces: token.ownPieces } : {}),
     },
   };
 }
@@ -1735,7 +1896,16 @@ function splitToken(token: RichToken, bp: RichBreakPoint, mark: string, markWidt
 /** `token` (the tail of a compound broken after its hyphen) opening with
  *  that hyphen repeated, `hyphenWidth` px wide; its break points move with
  *  it. */
-function withLeadingHyphen(token: RichToken, hyphenWidth: number): RichToken {
+function withLeadingHyphen(token: RichToken, hyphenWidth: number, font?: string): RichToken {
+  // A word measured as the text painted (#770): the hyphen is part of the
+  // text the line opens with, and the word is measured with it.
+  if (font !== undefined && token.ownPieces !== undefined) {
+    const own = ownRest(token, 0, font, '-');
+    const breakPoints = ownRestBreaks(token, 0, own, 1);
+    const { breakPoints: _points, ...rest } = token;
+    void _points;
+    return { ...rest, text: `-${token.text}`, width: own(token.text.length), ...(breakPoints.length > 0 ? { breakPoints } : {}) };
+  }
   return {
     ...token,
     text: `-${token.text}`,
@@ -1911,6 +2081,24 @@ function measureRichText(
   const tokens = tokenizeSpans(spans, normalFont, boldFont, italicFont, boldItalicFont, shouldHyphenate, letterSpacingPx, options?.breakAfterDashes === true, options?.hyphenateCompounds === false, cjkText, bidi, keepAll);
   if (options?.labelColumnPx !== undefined) setLabelTabs(tokens, (t) => t.labelTab, options.labelColumnPx, (t, w) => { t.width = w; });
   const repeatHyphen = options?.repeatHyphen === true;
+  // Words whose halves at a line end are measured as the texts painted, in
+  // a document shaped in its own language (#770, `RichToken.ownPieces`):
+  // the font each is measured in, and the pieces of the rest of one that
+  // opens a line, for the lines Knuth–Plass sets (`reconstructRichLines`).
+  const ownTokens = tokens.some((t) => t.ownPieces !== undefined);
+  const fontOfToken = (t: RichToken): string => tokenFont(t, normalFont, boldFont, italicFont, boldItalicFont);
+  const ownFont = (t: RichToken): string | undefined => (t.ownPieces !== undefined ? fontOfToken(t) : undefined);
+  const restPieces = (tokenIndex: number, from: number, cuts: readonly number[], lead: string): number[] => {
+    const token = tokens[tokenIndex]!;
+    const width = ownRest(token, from, fontOfToken(token), lead);
+    let before = 0;
+    return cuts.map((to) => {
+      const upTo = width(to);
+      const piece = upTo - before;
+      before = upTo;
+      return piece;
+    });
+  };
   const hasSmallCaps = tokens.some((t) => t.smallCaps);
   const normalSpaceWidth = textAlign === 'justify' ? normalSpaceWidthFor(normalFont) + letterSpacingPx : 0;
 
@@ -1942,6 +2130,8 @@ function measureRichText(
     const minShrinkRatio = ragged ? 1 : options.minShrinkRatio ?? 0.8;
     // The runt threshold counts word spaces on ragged text too.
     const spaceWidth = ragged ? normalSpaceWidthFor(normalFont) + letterSpacingPx : normalSpaceWidth;
+    // The rest of a word broken at a line end, as the text painted (#770).
+    if (ownTokens) markRestShifts(tokens, fontOfToken, repeatHyphen);
     const items = richTokensToItems(tokens, spaceWidth, maxStretchRatio, minShrinkRatio, repeatHyphen);
     const lineWidthFn = lineWidthFunction(maxWidthPx, options);
     const lineIndentFn = indentOf;
@@ -1971,6 +2161,7 @@ function measureRichText(
         items, breaks, tokens, lineHeightPx,
         lineWidthFn, lineIndentFn, normalSpaceWidth, textAlign,
         trackingPerChar, lineBaselineOffset(lineHeightPx, normalFont),
+        ownTokens ? restPieces : undefined,
       );
       if (!hasOverfullLine(kpLines, lineWidthFn, ragged)) {
         if (hasSmallCaps) expandSmallCaps(kpLines, normalFont, boldFont, italicFont, boldItalicFont, letterSpacingPx);
@@ -2031,7 +2222,7 @@ function measureRichText(
     const lineRepeated = repeatPending && tokens[tokenIdx]?.kind === 'text';
     if (lineRepeated) {
       const tail = tokens[tokenIdx]!;
-      tokens[tokenIdx] = withLeadingHyphen(tail, tail.hyphenWidth ?? measureTextWidth('-', tokenFont(tail, normalFont, boldFont, italicFont, boldItalicFont)) + letterSpacingPx);
+      tokens[tokenIdx] = withLeadingHyphen(tail, tail.hyphenWidth ?? measureTextWidth('-', tokenFont(tail, normalFont, boldFont, italicFont, boldItalicFont)) + letterSpacingPx, ownFont(tail));
     }
     repeatPending = false;
     // This line ends after a compound's hyphen the next one repeats.
@@ -2129,7 +2320,7 @@ function measureRichText(
         }
         if (chosen) {
           const mark = plainBreak(chosen) ? '' : '-';
-          const split = splitToken(token, chosen, mark, markW(chosen));
+          const split = splitToken(token, chosen, mark, markW(chosen), ownFont(token));
           lineTokens.push(split.head);
           lineWidth += split.head.width;
           lineHyphenated = chosen.cjk !== true;
@@ -2184,7 +2375,7 @@ function measureRichText(
         if (back) {
           const origIdx = tokenIdx - (lineTokens.length - back.at);
           while (lineTokens.length > back.at) lineWidth -= lineTokens.pop()!.width;
-          const split = splitToken(back.token, back.bp, '', 0);
+          const split = splitToken(back.token, back.bp, '', 0, ownFont(back.token));
           lineTokens.push(split.head);
           lineWidth += split.head.width;
           tokens[origIdx] = split.tail;
@@ -2222,7 +2413,7 @@ function measureRichText(
         if (syllable) {
           const origIdx = tokenIdx - (lineTokens.length - syllable.at);
           while (lineTokens.length > syllable.at) lineWidth -= lineTokens.pop()!.width;
-          const split = splitToken(syllable.token, syllable.bp, '-', syllable.token.hyphenWidth ?? 0);
+          const split = splitToken(syllable.token, syllable.bp, '-', syllable.token.hyphenWidth ?? 0, ownFont(syllable.token));
           lineTokens.push(split.head);
           lineWidth += split.head.width;
           tokens[origIdx] = split.tail;

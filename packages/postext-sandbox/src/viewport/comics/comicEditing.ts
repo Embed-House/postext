@@ -64,6 +64,7 @@ import {
 import { canMergeNext, canSplitPanel } from './comicSource';
 import { comicBySource, comicHitAt, comicPressAt, panelKeyAction, type ArtOpacity, type ComicHit, type ComicPress } from './comicHit';
 import { balloonTextNearest, type TextMeasure } from './balloonText';
+import { documentShapingLanguage } from '../../controls/measureLanguage';
 import { registryArtOpacity } from './artAlpha';
 import {
   BALLOON_NUDGE_PERCENT,
@@ -143,8 +144,8 @@ export interface ComicEditOptions {
   /** Whether a pop-out cut-out shows ink at a point (its opaque pixels
    *  open it); the image registry's pictures when left out. */
   artOpacity?: ArtOpacity;
-  /** How the balloon words are measured; a canvas 2D context when left
-   *  out. */
+  /** How the balloon words are measured; a canvas 2D context in the
+   *  language the document's text is measured in when left out. */
   measure?: TextMeasure;
 }
 
@@ -1352,10 +1353,16 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
     return comicHitAt(comics, at.x, at.y, { band: minBand(at.pageIndex), tipRadius: tipRadius(at.pageIndex) });
   };
 
-  const textOptions = (page: number) => ({
-    slop: GLYPH_SLOP_SCREEN_PX * surface.sheetPxPerCssPx(page),
-    ...(opts.measure ? { measure: opts.measure } : {}),
-  });
+  const textOptions = (page: number) => {
+    // The words are measured in the language the lettering was measured
+    // in and the page paints it in (#770).
+    const lang = docRef.current ? documentShapingLanguage(docRef.current) : undefined;
+    return {
+      slop: GLYPH_SLOP_SCREEN_PX * surface.sheetPxPerCssPx(page),
+      ...(opts.measure ? { measure: opts.measure } : {}),
+      ...(lang !== undefined ? { lang } : {}),
+    };
+  };
   /** What a press under a point does (#594, #595): the hit refined to a
    *  balloon's words (`text`) or a panel's picture (`art`). */
   const pressAt = (at: ComicPointer | null): ComicPress | null => {

@@ -68,10 +68,12 @@ export function resolveEngine(spec: string = "npm"): EngineSpec {
 /**
  * The configuration forced on every build of a run: the JSON object of
  * `COOKBOOK_FORCE_CONFIG`, merged key by key over each configuration a pen
- * builds with (`{"bodyText":{"shapingLanguage":"document"}}` lays every
- * recipe out in its document's language, #764), or null. Such a run shows
- * what the recipes would do under a setting none of them names; it is
- * never written as a capture (capture.ts).
+ * builds with (`{"bodyText":{"shapingLanguage":"host"}}` lays every recipe
+ * out in the host's language, as postext 1.29.2 did by default and as a
+ * stored document still is, #770; `"document"` in its own, the default
+ * from 1.30), or null. Such a run shows what the recipes would do under a
+ * setting none of them names; it is never written as a capture
+ * (capture.ts).
  */
 export function forcedConfig(raw: string | undefined = process.env.COOKBOOK_FORCE_CONFIG): Record<string, unknown> | null {
   if (!raw?.trim()) return null;

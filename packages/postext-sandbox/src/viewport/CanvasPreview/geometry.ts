@@ -1,6 +1,7 @@
 import type { VDTDocument } from 'postext';
 import { lineTextAlign, pageIsMirrored, pageToFlow, resourceBlockToLocal } from 'postext';
 import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, isHiddenUnderBand } from './bandTitle';
+import { documentShapingLanguage } from '../../controls/measureLanguage';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTLine = VDTBlock['lines'][number];
@@ -617,7 +618,9 @@ export function pixelToSourceOffset(
   //    heading's invisible lines hidden under the band.
   const bandTitles = bandTitleBlocks(doc, pageIndex);
   for (const b of bandTitles) {
-    const boxes = bandLineBoxes(b);
+    // Their characters are measured in the language the page paints them
+    // in (#770).
+    const boxes = bandLineBoxes(b, documentShapingLanguage(doc));
     // Hit either the element box or any of its line boxes (a small author
     // line has a thin element box; the line box covers the full leading).
     const inside = (r: { x: number; y: number; width: number; height: number }) =>

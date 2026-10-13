@@ -1,7 +1,7 @@
-// ─── Kit · pdf v2 ── the same in every recipe that exports a PDF
-/** The Fontsource files the screen used, as TrueType: the nearest weight the
- *  family ships, upright if it has no italic; latin, then what the face's
- *  letters need (kitSubsetsFor). */
+// ─── Kit · pdf v3 ── the same in every recipe that exports a PDF
+/** The Fontsource files the screen used, as TrueType, with their range and
+ *  place: the nearest weight the family ships, upright with no italic;
+ *  latin, then what its letters need (kitSubsetsFor). */
 async function fontsourceProvider(family, weight, style, request) {
   const id = fontsourceId(family);
   const meta = await fontsourceMeta(family);
@@ -9,11 +9,11 @@ async function fontsourceProvider(family, weight, style, request) {
   const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
   const s = style === 'italic' && meta && !meta.styles.includes('italic') ? 'normal' : style;
   const text = String.fromCodePoint(...(request?.codePoints ?? []));
-  const more = kitSubsetsFor(text, meta);
-  const files = await Promise.all(['latin', ...more].map(async (subset) => {
+  const files = await Promise.all(['latin', ...kitSubsetsFor(text, meta)].map(async (subset, order) => {
     const res = await fetch(`${await fontsourceAt(id)}files/${id}-${subset}-${w}-${s}.woff2`);
     if (!res.ok) throw new Error(`Fontsource has no ${family} ${w} ${s} ${subset}`);
-    return decompressWoff2(new Uint8Array(await res.arrayBuffer()));
+    return Object.assign(await decompressWoff2(new Uint8Array(await res.arrayBuffer())),
+      { unicodeRange: kitRanges()[subset], order });
   }));
   return files.length === 1 ? files[0] : files;
 }

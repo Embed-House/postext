@@ -41,6 +41,10 @@ export type { BitmapInfo, BitmapFileResolution, BitmapResolutionSource } from '.
 export type { CropMarkSegment } from './cropMarks';
 export { columnClipRect, designOverlayOverhang, headingDesignOverhangAbove, hangingPunctuationOverhang } from './columnClip';
 export { lineInkExtent } from './lineInk';
+// The pieces of a word set as the word the layout measured (#770): the one
+// rule of the canvas, the HTML and the PDF.
+export { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder, cellsOf } from './wordPieces';
+export type { WordPiece, SetLine } from './wordPieces';
 export { applyCjkGrid, cjkGridGeometry, cjkGridCells, CHARACTER_GRID_COLOR } from './pipeline/cjkGrid';
 export type { CjkGridGeometry, CjkGridCells } from './pipeline/cjkGrid';
 export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault } from './pipeline/config';
@@ -547,7 +551,7 @@ export type { ScriptContext } from './measure/script';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode';
 export {
   bidiClassOf, isRtlScriptChar, needsBidi, mirroredChar, mirroredCodePoint, joiningTypeOf, hasJoiningScript, joinsWithNext,
-  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, markerRuns, BIDI_CLASS_NAMES,
+  joinsLetters, resolveParagraph, resolveSpans, spanIsolates, lineLevels, visualOrder, lineVisualOrder, lineRuns, markerRuns, markerSetText, arabicMarkNeeded, BIDI_CLASS_NAMES,
 } from './bidi';
 export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions, BidiRun, JoiningType, MarkerRun } from './bidi';
 export { computeColumnEdges } from './pipeline/resourceLayout';

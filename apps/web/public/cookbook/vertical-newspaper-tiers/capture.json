@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "ccd23a1a158863beb73952606d02740a971361b58222b19c3ca424272a1d10a5",
+  "sourceHash": "93f1678702f2f38da294e22e21a2be79153b474ae5673701d7bc6ae3ccd8a7b4",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.313Z",
+  "capturedAt": "2026-10-13T07:06:14.111Z",
   "variants": {
     "en": {
-      "hash8": "5b2443ce",
+      "hash8": "711ea846",
       "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 220,
-        "fontsMs": 337,
-        "buildMs": 53,
-        "totalMs": 1280,
+        "importMs": 7007,
+        "fontsMs": 6453,
+        "buildMs": 105,
+        "totalMs": 15317,
         "builds": 1
       },
       "specimen": {
@@ -91,7 +91,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379308,
+        "bytes": 378594,
         "pages": 2
       },
       "sandbox": {
@@ -351,13 +351,13 @@
       }
     },
     "es": {
-      "hash8": "0cd2706f",
+      "hash8": "6dc755df",
       "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 470,
-        "buildMs": 53,
-        "totalMs": 1335,
+        "importMs": 6937,
+        "fontsMs": 6334,
+        "buildMs": 107,
+        "totalMs": 14378,
         "builds": 1
       },
       "specimen": {
@@ -431,7 +431,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 379442,
+        "bytes": 378743,
         "pages": 2
       },
       "sandbox": {

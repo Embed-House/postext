@@ -36,7 +36,7 @@ Postext用同一份Markdown源文件和同一套配置，既能横排中文，�
 
 请写出完整的标签：`zh-Hans`或`zh-Hant`，知道地区时再加上地区（`zh-Hans-CN`、`zh-Hant-TW`、`zh-Hant-HK`）。同一个标签会声明在HTML（文档的`lang`）和PDF（`/Lang`）中，浏览器和PDF阅读器据此选用该地区的字形：Unicode只给“骨”一个码位，大陆字体和台湾字体的写法却不同。中文文档默认关闭断词，除非你为其中的拉丁单词打开它。
 
-这个语言也可以是文字整形所用的语言。中文字体在不同语言下给出不同的字形：Noto Serif SC的数字在中文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。默认情况下，排版按宿主页面的语言测量，所以一本中文书在中文页面上是一种断行，在显示它的英文页面上或在排版工作线程里可能是另一种。设了[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，排版在每个上下文上都按文档的语言测量，Canvas按它绘制，HTML和EPUB声明它，PDF用它对应的OpenType语言系统整形（`zh-Hans`、`zh-CN`和`zh-SG`对应`ZHS`，`zh-Hant`和`zh-TW`对应`ZHT`，`zh-HK`对应`ZHH`）；其他语言的一段文字要写明语言（`:ltr[…]`加`lang=en`），并按那种语言测量。还有什么没有解决，它的条目里写着。
+这个语言也是文字整形所用的语言。中文字体在不同语言下给出不同的字形：Noto Serif SC的数字在中文下宽0.47 em，在它没有专门字形的语言下宽0.55 em。排版在每个上下文上都按文档的语言测量，所以一本中文书在中文页面上、在显示它的英文页面上和在排版工作线程里断行都相同；Canvas按它绘制，HTML和EPUB声明它，PDF用它对应的OpenType语言系统整形（`zh-Hans`、`zh-CN`和`zh-SG`对应`ZHS`，`zh-Hant`和`zh-TW`对应`ZHT`，`zh-HK`对应`ZHH`）；其他语言的一段文字要写明语言（`:ltr[…]`加`lang=en`），并按那种语言测量。这是[`bodyText.shapingLanguage: 'document'`](/zh/docs/configuration-text#正文)，postext 1.30起的默认值。设为`'host'`时（1.30之前保存的书保持这个值），排版按宿主页面的语言测量，一本中文书在中文页面上是一种断行，在显示它的英文页面上或在排版工作线程里可能是另一种。
 
 <table>
   <thead>

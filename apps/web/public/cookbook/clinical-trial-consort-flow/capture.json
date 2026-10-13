@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "clinical-trial-consort-flow",
-  "sourceHash": "60355b2f3fb5c71c2f7531bdab48ab8d484f96935eefdc630bece25ab39051bb",
+  "sourceHash": "9f80fc47fec2abff9676a37e7888a7e79c2b5d833ef7dcbb0bb15b5ff1463dce",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.143Z",
+  "capturedAt": "2026-10-13T06:54:37.611Z",
   "variants": {
     "en": {
       "hash8": "c6ecda50",
       "vdtHash": "e2b79b2cc68d99505d9039556f876b16c8771b53",
       "timings": {
-        "importMs": 350,
-        "fontsMs": 257,
-        "buildMs": 472,
-        "totalMs": 1771,
+        "importMs": 551,
+        "fontsMs": 192,
+        "buildMs": 653,
+        "totalMs": 2154,
         "builds": 1
       },
       "specimen": {

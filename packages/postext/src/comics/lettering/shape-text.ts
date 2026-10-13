@@ -20,7 +20,7 @@ import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from 
 import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText';
 import { cjkCompositionKey, getCjkComposition, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
 import { layoutTextElementAt } from '../../design/layout';
-import { designBaseDirection } from '../../design/bidiText';
+import { designBaseDirection, directedTextWidth, measuresRunsAsPainted } from '../../design/bidiText';
 import { primitiveToBlock } from '../../pipeline/headerFooter';
 import { cjkRegionOf, directionOf, isJapaneseLanguage, languageOf } from '../../locale';
 import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
@@ -162,9 +162,9 @@ function measuringComposition(c: CjkComposition): CjkComposition {
  * title in two (the comparison of #723). A text whose lines hold no pair
  * is shaped as it was.
  */
-function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesignFonts, pitch: number, tracking: number): number | undefined {
+function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesignFonts, pitch: number, tracking: number, flowIn: FlowMeasure): number | undefined {
   if (text.includes('\n') || !composesDesignAsCjk(text)) return undefined;
-  const measureIn = (t: string, font: string): number => Math.max(0, flowTextWidth(t, font) + tracking * graphemeCount(t));
+  const measureIn = (t: string, font: string): number => Math.max(0, flowIn(t, font) + tracking * graphemeCount(t));
   const own = getCjkComposition();
   setCjkComposition(measuringComposition(own));
   try {
@@ -175,6 +175,31 @@ function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesign
   }
 }
 
+/** The advance of a text in a font, untracked. */
+type FlowMeasure = (text: string, font: string) => number;
+
+/**
+ * How the lines a shaping tries are measured, untracked: as the layout
+ * that sets the chosen ones measures them (`layoutTextElement`).
+ *
+ * That is `flowTextWidth`, the text whole and left to right, in a document
+ * shaped in its host's language and down a column. In a document shaped
+ * in its own language the layout sets a line as wide as its runs are
+ * painted, each in its own direction (#770, `measuresRunsAsPainted`), and
+ * the shaping measures the same: the line's bidi levels resolved at
+ * `base`, the direction the balloon is set at, each run in the direction
+ * it is painted in. Measured left to right, the line
+ * `منارة بورثكوف، هنا «غانيت».` of an Arabic balloon in Playpen Sans
+ * Arabic at 15.625 px is 176.82 px wide, and it is set and painted
+ * 177.18 px wide (Chrome 154, in `ar`): its stop and its closing guillemet
+ * are a run apart there, and one run with the words when painted. A line
+ * with no right-to-left character at a left-to-right base is measured
+ * whole either way.
+ */
+function flowMeasure(base: 'ltr' | 'rtl' | undefined): FlowMeasure {
+  return base !== undefined && measuresRunsAsPainted() ? (t, font) => directedTextWidth(t, font, base) : flowTextWidth;
+}
+
 /** A measurer of line widths over the prepared text, in the writing mode
  *  in force (call inside `withMeasureWritingMode`). Rich text is measured
  *  through the design-text measurer of its own markup, so that what is
@@ -183,16 +208,18 @@ function composedWidth(text: string, spans: () => InlineSpan[], fonts: CjkDesign
  *  sets with the CJK composer is measured by composing it (#723, see
  *  `composedWidth`): the shaping asks for it, the ruby does not (it
  *  places a reading along a line, and the start of a line is no line of
- *  its own). */
-function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): Measurer {
+ *  its own). `base`: the direction the lines are set at, for a measurer
+ *  of whole lines ({@link flowMeasure}); the ruby gives none. */
+function measurerFor(p: PreparedText, style: LetteringStyle, composed = false, base?: 'ltr' | 'rtl'): Measurer {
   const tracking = trackingOf(p, style);
   const pitch = style.fontSizePx * style.lineHeight;
   const memo = new Map<number, number>();
   const key = (a: number, b: number) => a * 100003 + b;
+  const flowIn = flowMeasure(base);
   if (hasMarks(p)) {
     const rt = parseRichDesignText(wholeMarkup(p), fontSpec(style));
     if (rt.text === p.text) {
-      const m = new RichMeasurer(rt, tracking);
+      const m = new RichMeasurer(rt, tracking, flowIn === flowTextWidth ? undefined : flowIn);
       const fonts = composed ? richFontSet(fontSpec(style)) : undefined;
       return {
         rich: true,
@@ -200,7 +227,7 @@ function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): 
           const k = key(a, b);
           let w = memo.get(k);
           if (w === undefined) {
-            w = a >= b ? 0 : (fonts && composedWidth(p.text.slice(a, b), () => richDesignSpans(rt, a, b), fonts, pitch, tracking)) ?? m.measure(a, b);
+            w = a >= b ? 0 : (fonts && composedWidth(p.text.slice(a, b), () => richDesignSpans(rt, a, b), fonts, pitch, tracking, flowIn)) ?? m.measure(a, b);
             memo.set(k, w);
           }
           return w;
@@ -218,8 +245,10 @@ function measurerFor(p: PreparedText, style: LetteringStyle, composed = false): 
       if (w === undefined) {
         const row = p.text.slice(a, b);
         const s = row.replace(/[\u2066-\u2069]/g, '');
-        w = a >= b ? 0 : (fonts && composedWidth(row, () => [{ text: row, bold: false, italic: false }], fonts, pitch, tracking))
-          ?? Math.max(0, flowTextWidth(s, font) + tracking * graphemeCount(s));
+        // The isolates of a line set its runs' levels and print nothing:
+        // they stay in the text whose runs are resolved, as in the layout.
+        w = a >= b ? 0 : (fonts && composedWidth(row, () => [{ text: row, bold: false, italic: false }], fonts, pitch, tracking, flowIn))
+          ?? Math.max(0, (flowIn === flowTextWidth ? flowTextWidth(s, font) : flowIn(row, font)) + tracking * graphemeCount(s));
         memo.set(k, w);
       }
       return w;
@@ -534,9 +563,12 @@ export function shapeTextCandidates(p: PreparedText, style: LetteringStyle, opts
     if (!byKey) breakings.set(p, (byKey = new Map()));
     // The composition is part of the key: a line the CJK composer sets is
     // measured by composing it (#723).
-    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0, style.lineHeight, cjkCompositionKey(getCjkComposition())].join('|');
+    // So is the direction the lines are set at, which a document shaped
+    // in its own language measures them in (`flowMeasure`).
+    const base = vertical ? undefined : baseDirection(p.text, opts.locale);
+    const key = [mode, region, level, lang === 'ja', fontString(style), style.letterSpacing ?? 0, style.lineHeight, cjkCompositionKey(getCjkComposition()), base ?? ''].join('|');
     let b = byKey.get(key);
-    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style, true))));
+    if (!b) byKey.set(key, (b = breakingOf(p, breakPoints(p, level, lang === 'ja'), measurerFor(p, style, true, base))));
     // Japanese phrase breaks weigh more than a perfect profile: columns
     // move by whole characters.
     const penaltyWeight = lang === 'ja' ? 1 : 0.5;

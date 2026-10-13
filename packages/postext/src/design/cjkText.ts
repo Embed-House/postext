@@ -78,7 +78,7 @@ export function composeCjkDesignParagraph(
 }
 
 /** A composed line as design runs (see the module comment). */
-function designLineOf(line: VDTLine, fonts: CjkDesignFonts, measureIn: (text: string, font: string) => number): CjkDesignLine {
+export function designLineOf(line: VDTLine, fonts: CjkDesignFonts, measureIn: (text: string, font: string) => number): CjkDesignLine {
   const runs: DesignTextRun[] = [];
   // Room a Han–Latin space (no text) left before the first run.
   let lead = 0;

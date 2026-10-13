@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "katakana-majiri-proclamation",
-  "sourceHash": "819e0b0a425b6c62349cf3dde3381a20008010f193f1bd70934aa93b9b05aa75",
+  "sourceHash": "702e58d1a17703a3608287a4258d0b5fab1ceac26d64393748771013744dc4f8",
   "engine": {
-    "postext": "1.29.1",
-    "postextPdf": "1.29.1",
+    "postext": "1.29.2",
+    "postextPdf": "1.29.2",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.446Z",
+  "capturedAt": "2026-10-13T06:59:13.026Z",
   "variants": {
     "en": {
-      "hash8": "716219a9",
+      "hash8": "945b736b",
       "vdtHash": "37b8f33daff8b0376c1b77cf25b87f45bc3eca1d",
       "timings": {
-        "importMs": 240,
-        "fontsMs": 415,
-        "buildMs": 54,
-        "totalMs": 1324,
+        "importMs": 954,
+        "fontsMs": 1475,
+        "buildMs": 96,
+        "totalMs": 3470,
         "builds": 1
       },
       "specimen": {
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 341011,
+        "bytes": 341752,
         "pages": 8
       },
       "sandbox": {
@@ -399,13 +399,13 @@
       }
     },
     "es": {
-      "hash8": "6d976a07",
+      "hash8": "bf7acd97",
       "vdtHash": "4720d00e789c69898f7917b7933d75af4082d8d5",
       "timings": {
-        "importMs": 212,
-        "fontsMs": 341,
-        "buildMs": 51,
-        "totalMs": 1276,
+        "importMs": 953,
+        "fontsMs": 1358,
+        "buildMs": 92,
+        "totalMs": 3206,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +555,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 341459,
+        "bytes": 342210,
         "pages": 8
       },
       "sandbox": {

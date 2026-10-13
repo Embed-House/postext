@@ -40,11 +40,12 @@ describe('pinLegacyRefLabelBreaks (#702)', () => {
       expect(kept(migrateConfig({}, v, { content: 'Write to ana@example.org. A [phrase]{#anchor} and a heading {#sec}.' })), String(v)).toBeUndefined();
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pins of rules 13 alone: the language (#764)
-    // and, its text not being known, the task box (#765). One stamped 13 is
-    // read as it is.
+    // One stamped 12 takes the pins of rules 13 and 14 alone: the language
+    // (#764, #770) and, its text not being known, the task box (#765). One
+    // stamped 13 takes the language alone; one stamped 14 is read as it is.
     expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(migrateConfig(current, 13)).toBe(current);
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(current, 14)).toBe(current);
     expect(resolveAllConfig(current).crossRefs.breakLabels).toBe(true);
     expect(resolveAllConfig(migrateConfig({}, 11)).crossRefs.breakLabels).toBe(false);
   });

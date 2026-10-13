@@ -6,6 +6,8 @@ import { fillFlowText, verticalPaintActive } from './verticalText';
 import { fillTrackedWord } from './trackedText';
 import { inSegmentLanguage } from './wordRuns';
 import { letterSpacingOf, restoreContext, saveContext } from './contextState';
+import { fillContextText } from './contextText';
+import { fillCellRuns } from './cellText';
 
 /**
  * Paint `text` of a line set word by word (not `VDTLine.cjkComposed`) on
@@ -17,7 +19,7 @@ import { letterSpacingOf, restoreContext, saveContext } from './contextState';
  */
 export function fillWordsText(ctx: CanvasRenderingContext2D, text: string, x: number, baseline: number): void {
   if (hasCJK(text)) fillFlowText(ctx, text, x, baseline, 'fill', undefined, 'words');
-  else ctx.fillText(text, x, baseline);
+  else fillContextText(ctx, text, x, baseline);
 }
 
 /**
@@ -57,7 +59,12 @@ function fillSegmentGlyphs(
     // vertical painter does it for each sideways run.
     const tracking = !verticalPaintActive() && !seg.rtl && !hasCJK(seg.text) ? letterSpacingOf(ctx) : 0;
     if (tracking !== 0) fillTrackedWord(ctx, seg.text, px, py, tracking, (piece, x, y) => fillFlowText(ctx, piece, x, y, 'fill', undefined, cuts));
-    else fillFlowText(ctx, seg.text, px, py, 'fill', undefined, cuts, segmentOrientation(seg));
+    // The cells of a line of the composer where it measured them, one by
+    // one: cut where the browser would kern a kana against its neighbour
+    // (#770, `cellText.ts`).
+    else if (cuts !== 'composed' || verticalPaintActive() || seg.rtl || !fillCellRuns(ctx, seg.text, px, py, (run, x, y) => fillContextText(ctx, run, x, y))) {
+      fillFlowText(ctx, seg.text, px, py, 'fill', undefined, cuts, segmentOrientation(seg));
+    }
     return;
   }
   saveContext(ctx);

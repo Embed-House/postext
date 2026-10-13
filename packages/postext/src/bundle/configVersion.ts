@@ -17,8 +17,8 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 13 since #764 (12 from
- * postext 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
+ * The configuration rules this engine writes: 14 since #770 (13 from
+ * postext 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
  * number (or none) is read through {@link migrateConfig}:
@@ -175,6 +175,21 @@ import { hasCJK } from '../measure/cjk';
  *     its own (`unorderedLists.taskBox`, #765), where up to 1.28 it was the
  *     character ☐ or ☑ in the list's face, as wide as the font the system
  *     gave for it ({@link pinLegacyTaskBox});
+ * - 14 (#770), the rule of postext 1.30:
+ *   - the text is shaped in the document's own language unless the
+ *     configuration says otherwise (`bodyText.shapingLanguage:
+ *     'document'`, the default), where 1.29.1 and 1.29.2 shaped it in the
+ *     host's, as up to 1.28, and 1.29.0 in the document's with a canvas
+ *     and a PDF that did not follow the measure; a configuration stored
+ *     under 13 or an older number that does not name the setting has the
+ *     host's written out ({@link pinLegacyShapingLanguage}). The measure
+ *     rules that came with it apply only to a document shaped in its own
+ *     language, so the same pin keeps them off a stored one: one width
+ *     for a string whatever was measured before it, a right-to-left word
+ *     measured right to left, the two parts of a word broken at a line end
+ *     and the runs of a design text measured as they are painted, and in
+ *     the PDF the shaping word by word and each character from the file
+ *     the browser took it from.
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -190,9 +205,11 @@ import { hasCJK } from '../measure/cjk';
  * every older one gets too); one stored under 11 was written by postext
  * 1.25 to 1.27 and gets the version-12 pins (which every older one gets
  * too); one stored under 12 was written by postext 1.28 and gets the
- * version-13 pins (which every older one gets too).
+ * version-13 pins (which every older one gets too); one stored under 13
+ * was written by postext 1.29 and gets the version-14 pin (which every
+ * older one gets too).
  */
-export const CONFIG_VERSION = 13;
+export const CONFIG_VERSION = 14;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -290,8 +307,11 @@ const BALLOON_PLACEMENT_RULES = 12;
  *  context (#725). */
 const SCRIPT_CONTEXT_RULES = 12;
 /** The rules that shape the text in the document's own language on every
- *  host (#764). */
-const SHAPING_LANGUAGE_RULES = 13;
+ *  host unless the configuration names the host's (#770). The setting
+ *  came with the rules of 13 (#764), whose default was the host's from
+ *  postext 1.29.1 on: a configuration stored under 13 that does not name
+ *  it gets the pin as an older one does. */
+const SHAPING_LANGUAGE_RULES = 14;
 /** The rules that draw the box of a task item (#765). */
 const TASK_BOX_RULES = 13;
 
@@ -1503,21 +1523,28 @@ export function pinLegacyScriptContext<T extends Partial<PostextConfig>>(config:
 }
 
 /**
- * A configuration written before #764 (postext 1.28 or earlier), pinned to
+ * A configuration written before #770 (postext 1.29 or earlier), pinned to
  * the language its text was shaped in: `bodyText.shapingLanguage: 'host'`,
  * the measuring contexts left with the language of the page that hosts
- * the layout (none in a worker) and only a Chinese, Japanese, Korean or
- * right-to-left document painted and embedded in its own. That is the
- * default again since postext 1.29.1 (in 1.29.0 alone it was the
- * document's own language), and the pin writes it out, so such a
- * configuration keeps it when the default changes. Every such
- * configuration gets it: a face answers with other glyphs under a
- * language, and which faces a document loads is not known here. A
- * configuration that names the setting already is returned as it is (the
- * same object). One stored under 13 with no value was written by postext
- * 1.29.0, which laid it out in the document's language, or by a later one,
- * which lays it out in the host's: it reads with the default of the
- * engine that reads it.
+ * the layout (none in a worker), the canvas painting in that same
+ * language, and only a Chinese, Japanese, Korean or right-to-left
+ * document declared and embedded in its own, where from postext 1.30 a
+ * document is measured, painted and embedded in its own language. Up to
+ * 1.28 there was no other way; 1.29.1 and 1.29.2 had the setting with the
+ * host's as its default. Every such configuration gets it: a face answers
+ * with other glyphs under a language, and which faces a document loads is
+ * not known here. The rules that measure a text as it is painted (one
+ * width for a string, right-to-left words, the parts of a broken word,
+ * the runs of a design text, the PDF's shaping word by word and its
+ * choice of file) apply only to a document shaped in its own language, so
+ * a pinned one keeps every width and its PDF. A configuration that names
+ * the setting already is returned as it is (the same object): `'host'`,
+ * or `'document'`, which postext 1.29.1 and 1.29.2 stored for a document
+ * that asked for it. One stored under 13 with no value was laid out in
+ * the host's language by 1.29.1 and 1.29.2, and in the document's by
+ * 1.29.0, whose canvas and PDF did not follow that measure: it reads with
+ * the host's too. One stored under 14 with no value takes the default,
+ * the document's.
  */
 export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(config: T): T {
   const bodyText: NonNullable<PostextConfig['bodyText']> = isRecord(config.bodyText) ? config.bodyText : {};
@@ -1742,10 +1769,11 @@ export interface MigrateConfigOptions {
  * and its comic balloons placed as 1.27 placed them by {@link
  * pinLegacyBalloonPlacement}, unless `options.content` shows no comic page
  * or strip, and its words with no letter shaped alone by {@link
- * pinLegacyScriptContext}, and its text shaped in the host's language by
- * {@link pinLegacyShapingLanguage}, and the box of its task items set as a
- * character by {@link pinLegacyTaskBox}, unless `options.content` shows no
- * task item.
+ * pinLegacyScriptContext}; one older than 13 has the box of its task items
+ * set as a character by {@link pinLegacyTaskBox}, unless `options.content`
+ * shows no task item; one older than 14 has its text shaped in the host's
+ * language by {@link pinLegacyShapingLanguage}, unless it names the
+ * language its text is shaped in.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1833,8 +1861,9 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * from the merged `cjk`, `locale` and hyphenation locale) on the `cjk` in
  * force, the side caption of a resource set in the text on the `layout` in
  * force, and the labels of cross-references on the `crossRefs` in force,
- * and the shaping of words with no letter on the `bodyText` in force, and
- * the box of a task item on the `unorderedLists` in force.
+ * and the shaping of words with no letter and the language the text is
+ * shaped in on the `bodyText` in force, and the box of a task item on the
+ * `unorderedLists` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(

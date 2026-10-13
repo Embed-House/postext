@@ -2,10 +2,16 @@ import { cjkMarkPieces } from './cjkClasses';
 import { hasCJK } from './cjk';
 import { fontStringFamily } from './fontString';
 
-let _measureCtx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null = null;
-/** Font string currently set on the measure context, to skip redundant
- *  `ctx.font` assignments (each assignment re-parses the shorthand). */
-let _currentFont = '';
+type Context2D = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
+
+/** A measuring context and what was last set on it: the font string, to
+ *  skip redundant `ctx.font` assignments (each assignment re-parses the
+ *  shorthand), and the language. */
+interface Measurer {
+  ctx: Context2D;
+  font: string;
+  language: string;
+}
 
 // The language text is measured in (#764).
 //
@@ -30,30 +36,145 @@ let _currentFont = '';
 const HOST_LANGUAGE = 'inherit';
 /** The language set by {@link setMeasureLanguage}; undefined: the host's. */
 let _language: string | undefined;
-/** What `lang` of the measuring context was last set to. */
-let _ctxLanguage = HOST_LANGUAGE;
 
 /** Give `ctx` the language measured in, where the context has one. */
 function applyLanguage(ctx: object, language: string | undefined): void {
   if ('lang' in ctx) (ctx as { lang: string }).lang = language ?? HOST_LANGUAGE;
 }
 
-function getMeasureCtx(): OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D {
-  if (!_measureCtx) {
-    if (typeof OffscreenCanvas !== 'undefined') {
-      _measureCtx = new OffscreenCanvas(1, 1).getContext('2d')!;
-    } else {
-      _measureCtx = document.createElement('canvas').getContext('2d')!;
-    }
-    _currentFont = '';
-    _ctxLanguage = HOST_LANGUAGE;
+// A width that does not depend on what was measured before (#770).
+//
+// Chrome's canvas keeps the words it shaped, by context, font and
+// language, under the word's text alone: a word is what stands between
+// two spaces in one bidi run, cut before a Han character. The key says
+// nothing of how the word was shaped, and there are two ways. A string of
+// Latin-1 characters reaches the shaper one byte a character and is all
+// Latin script to it. A string with any character past U+00FF, and a long
+// slice of such a text (13 characters or more are a view of their parent
+// in V8, still two bytes each), is cut into script runs word by word, and
+// a word with no letter (`2026`, `(1)`, `.`, `"`) has no script there:
+// the font draws it by its default rules, not its Latin ones. Noto Serif
+// SC sets `2026` 22 px wide at 10 px in English the first way and
+// 22.31 px the second, Amiri a full stop 2.02 px and 3.17 px. The first
+// shape to enter the cache answers for both from then on: `2026` after
+// `2026 — 2027`, the stop of `كتاب.` (a run of its own in a left-to-right
+// context) after `.` was measured alone. So a width depended on the
+// strings measured before it on the page: on the chapter laid out first,
+// on the document the worker had before this one.
+//
+// A document shaped in its own language is measured on two contexts: one
+// that only ever takes strings of Latin-1 characters, each rebuilt
+// character by character so that it is one byte a character whatever text
+// it was cut from, and one that only takes strings with a wider character.
+// On each of them a word has one shape, so a string has one width: the one
+// a context that never measured anything gives it. Measured in Chrome 154,
+// on a page and in a worker: 182 strings in six orders, twelve pairs of
+// face and language, no width moves (30 to 37 of them move on one context
+// in Noto Serif SC and Amiri).
+//
+// A document in its host's language (`_language` undefined) is measured on
+// one context, as up to postext 1.29: its widths are the ones it had.
+
+/** A character past Latin-1: a string that holds one is two bytes a
+ *  character to the browser. */
+const WIDE_RE = /[^\u0000-\u00FF]/;
+
+/** The one context of a document measured in its host's language. */
+let _host: Measurer | null = null;
+/** The contexts of a document measured in its own: Latin-1 strings on one,
+ *  strings with a wider character on the other. */
+let _narrow: Measurer | null = null;
+let _wide: Measurer | null = null;
+
+function newMeasurer(): Measurer {
+  const ctx = typeof OffscreenCanvas !== 'undefined'
+    ? new OffscreenCanvas(1, 1).getContext('2d')!
+    : document.createElement('canvas').getContext('2d')!;
+  return { ctx, font: '', language: HOST_LANGUAGE };
+}
+
+/** `text` as a string of one byte a character (V8 keeps a string built
+ *  from single Latin-1 characters that way; a slice of a text with a wider
+ *  character is two bytes a character, and Chrome shapes it otherwise).
+ *  For a text of Latin-1 characters only. */
+function oneByte(text: string): string {
+  let out = '';
+  for (let i = 0; i < text.length; i++) out += text[i];
+  return out;
+}
+
+/** `text` as the measurer hands it to the canvas in a document shaped in
+ *  its own language: a Latin-1 text one byte a character, any other as it
+ *  is. A painter that hands its strings the same way has them shaped as
+ *  they were measured. */
+export function canvasText(text: string): string {
+  return _language === undefined || WIDE_RE.test(text) ? text : oneByte(text);
+}
+
+/** The metrics of `text` in `font`, in the language measured in: on the
+ *  context its kind of string is measured on (see above). `rtl`: in a
+ *  context set right to left, as a right-to-left word is painted (its
+ *  brackets mirrored). */
+function metricsOf(text: string, font: string, rtl = false, spacingPx = 0): TextMetrics {
+  let measurer: Measurer;
+  let handed = text;
+  if (_language === undefined) {
+    measurer = _host ??= newMeasurer();
+  } else if (WIDE_RE.test(text)) {
+    measurer = _wide ??= newMeasurer();
+  } else {
+    measurer = _narrow ??= newMeasurer();
+    handed = oneByte(text);
   }
+  const ctx = measurer.ctx;
   const wanted = _language ?? HOST_LANGUAGE;
-  if (wanted !== _ctxLanguage) {
-    applyLanguage(_measureCtx, _language);
-    _ctxLanguage = wanted;
+  if (wanted !== measurer.language) {
+    applyLanguage(ctx, _language);
+    measurer.language = wanted;
   }
-  return _measureCtx;
+  if (font !== measurer.font) {
+    ctx.font = font;
+    measurer.font = font;
+  }
+  if (spacingPx !== 0) {
+    // Only {@link measureSpacedWidth} asks, of a context that has the
+    // attribute: it goes back to no spacing, what every other measure is
+    // taken at.
+    ctx.letterSpacing = `${spacingPx}px`;
+    const metrics = ctx.measureText(handed);
+    ctx.letterSpacing = '0px';
+    return metrics;
+  }
+  if (!rtl || !('direction' in ctx)) return ctx.measureText(handed);
+  const direction = ctx.direction;
+  ctx.direction = 'rtl';
+  const metrics = ctx.measureText(handed);
+  ctx.direction = direction;
+  return metrics;
+}
+
+/**
+ * The width of `text` in `font` under a letter-spacing of `spacingPx`
+ * (`ctx.letterSpacing`: the spacing after every letter counted in), in
+ * the language measured in and on the context its kind of string is
+ * measured on, kept nowhere. Undefined where the canvas has no
+ * letter-spacing. For what asks how the browser shapes a tracked text
+ * (`measure/trackedLigatures.ts`): under a letter-spacing it sets no
+ * optional ligature.
+ */
+export function measureSpacedWidth(text: string, font: string, spacingPx: number): number | undefined {
+  const probe = _language === undefined ? (_host ??= newMeasurer()) : WIDE_RE.test(text) ? (_wide ??= newMeasurer()) : (_narrow ??= newMeasurer());
+  if (!('letterSpacing' in probe.ctx)) return undefined;
+  return metricsOf(text, font, false, spacingPx).width;
+}
+
+/**
+ * The width of `text` in `font` as the canvas gives it, in the language
+ * measured in, kept nowhere: for a caller with a cache of its own (the
+ * text library's segments, `measure/pretextLanguage.ts`).
+ */
+export function measureUncachedWidth(text: string, font: string): number {
+  return metricsOf(text, font).width;
 }
 
 /** The widths measured in one language: every cache below is one of
@@ -140,18 +261,13 @@ export function measureTextWidth(text: string, font: string): number {
   const cached = byText.get(text);
   if (cached !== undefined) return cached;
 
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
   // Two CJK marks side by side (`）》`, `”“`) are measured apart: the
   // browser would set the first half width in one run (see
   // `cjkMarkCuts`), and the renderers paint them apart. Text with no CJK
   // is never cut (`markCuts`): one measure, with no cut to look for.
   let width = 0;
-  if (!hasCJK(text)) width += ctx.measureText(text).width;
-  else for (const piece of cjkMarkPieces(text, true)) width += ctx.measureText(piece).width;
+  if (!hasCJK(text)) width += metricsOf(text, font).width;
+  else for (const piece of cjkMarkPieces(text, true)) width += metricsOf(piece, font).width;
 
   if (C.widthEntries >= MAX_WIDTH_CACHE_ENTRIES) {
     C.width = new Map();
@@ -180,12 +296,7 @@ export function measureRunWidth(text: string, font: string): number {
   }
   const cached = byText.get(text);
   if (cached !== undefined) return cached;
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
-  const width = ctx.measureText(text).width;
+  const width = metricsOf(text, font).width;
   if (C.runEntries >= MAX_WIDTH_CACHE_ENTRIES) {
     C.run = new Map();
     C.runEntries = 0;
@@ -198,16 +309,6 @@ export function measureRunWidth(text: string, font: string): number {
 }
 
 // Widths of words with no letter, measured in a script (#725): `C.marked`.
-
-function rawWidth(ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D, text: string, rtl: boolean): number {
-  // A right-to-left word is measured as it is painted: its brackets mirrored.
-  if (!rtl || !('direction' in ctx)) return ctx.measureText(text).width;
-  const direction = ctx.direction;
-  ctx.direction = 'rtl';
-  const width = ctx.measureText(text).width;
-  ctx.direction = direction;
-  return width;
-}
 
 /**
  * The width of `text` set between `lead` and `trail`, less theirs: `text`
@@ -226,19 +327,15 @@ export function measureMarkedWidth(text: string, font: string, lead: string, tra
   const key = `${rtl ? '<' : '>'}${lead}\x00${trail}\x00${text}`;
   const cached = byText.get(key);
   if (cached !== undefined) return cached;
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
+  // A right-to-left word is measured as it is painted: its brackets mirrored.
   const markKey = `${rtl ? '<' : '>'}${lead}\x00${trail}`;
   let mark = byText.get(markKey);
   if (mark === undefined) {
-    mark = rawWidth(ctx, lead + trail, rtl);
+    mark = metricsOf(lead + trail, font, rtl).width;
     byText.set(markKey, mark);
     C.markedEntries++;
   }
-  const width = Math.max(0, rawWidth(ctx, lead + text + trail, rtl) - mark);
+  const width = Math.max(0, metricsOf(lead + text + trail, font, rtl).width - mark);
   if (C.markedEntries >= MAX_WIDTH_CACHE_ENTRIES) {
     C.marked = new Map();
     C.markedEntries = 0;
@@ -269,15 +366,10 @@ const PROBE_TOLERANCE = 0.0005;
 export function scriptSensitive(font: string, marks: readonly string[]): boolean {
   const known = C.sensitive.get(font);
   if (known !== undefined) return known;
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
   let lo = Infinity;
   let hi = -Infinity;
   for (const mark of marks) {
-    const width = ctx.measureText(SCRIPT_PROBE + mark).width - ctx.measureText(mark).width;
+    const width = metricsOf(SCRIPT_PROBE + mark, font).width - metricsOf(mark, font).width;
     if (width < lo) lo = width;
     if (width > hi) hi = width;
   }
@@ -357,8 +449,8 @@ export function evictTextWidths(families: Iterable<string> | null): void {
       }
     }
   }
-  // The context resolves its font again on the next measure.
-  _currentFont = '';
+  // Each context resolves its font again on the next measure.
+  for (const measurer of [_host, _narrow, _wide]) if (measurer) measurer.font = '';
   _generation++;
   _evictions.push({ generation: _generation, families: set });
   if (_evictions.length > MAX_EVICTIONS) _evictions.shift();
@@ -377,12 +469,7 @@ export function onTextWidthCacheClear(listener: () => void): void {
  *  baseline (px), or null when the measurer gives no ink metrics. Not
  *  cached. */
 export function measureInkBox(text: string, font: string): { ascent: number; descent: number } | null {
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
-  const m = ctx.measureText(text) as Partial<TextMetrics>;
+  const m = metricsOf(text, font) as Partial<TextMetrics>;
   const ascent = m.actualBoundingBoxAscent;
   const descent = m.actualBoundingBoxDescent;
   if (typeof ascent !== 'number' || typeof descent !== 'number' || !Number.isFinite(ascent) || !Number.isFinite(descent)) return null;
@@ -403,7 +490,26 @@ export interface InkProfile {
   below: Float32Array;
 }
 
-let _profileCtx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null | undefined;
+/** The contexts inks are painted on and read back from, made on first use
+ *  (null: none can be made): one for each kind of string, as the measuring
+ *  ones (#770), so the ink is the ink of the shape that was measured. */
+const _profileCtx: { host?: Context2D | null; narrow?: Context2D | null; wide?: Context2D | null } = {};
+
+function profileContext(kind: 'host' | 'narrow' | 'wide'): Context2D | null {
+  let ctx = _profileCtx[kind];
+  if (ctx === undefined) {
+    ctx = null;
+    try {
+      const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(1, 1) : typeof document !== 'undefined' ? document.createElement('canvas') : null;
+      const made = canvas?.getContext('2d', { willReadFrequently: true } as CanvasRenderingContext2DSettings) as Context2D | null | undefined;
+      if (made && typeof made.fillText === 'function' && typeof made.getImageData === 'function') ctx = made;
+    } catch {
+      ctx = null;
+    }
+    _profileCtx[kind] = ctx;
+  }
+  return ctx;
+}
 
 /** Alpha under which a pixel is left out: a faint fringe. */
 const INK_ALPHA = 32;
@@ -416,20 +522,12 @@ const INK_ALPHA = 32;
  * the text has no ink. Not cached.
  */
 export function measureInkProfile(text: string, font: string): InkProfile | null {
-  if (_profileCtx === undefined) {
-    _profileCtx = null;
-    try {
-      const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(1, 1) : typeof document !== 'undefined' ? document.createElement('canvas') : null;
-      const ctx = canvas?.getContext('2d', { willReadFrequently: true } as CanvasRenderingContext2DSettings) as OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null | undefined;
-      if (ctx && typeof ctx.fillText === 'function' && typeof ctx.getImageData === 'function') _profileCtx = ctx;
-    } catch {
-      _profileCtx = null;
-    }
-  }
-  const ctx = _profileCtx;
+  const ctx = profileContext(_language === undefined ? 'host' : WIDE_RE.test(text) ? 'wide' : 'narrow');
   if (!ctx) return null;
   try {
-    // The ink is the ink of the glyphs measured: the same language.
+    // The ink is the ink of the glyphs measured: the same language, and
+    // the string handed over the same way.
+    text = canvasText(text);
     applyLanguage(ctx, _language);
     ctx.font = font;
     const m = ctx.measureText(text);
@@ -484,12 +582,7 @@ export function measureInkProfile(text: string, font: string): InkProfile | null
  *  it), or null when the measurer gives no ink metrics or the text has no
  *  ink. Not cached. */
 export function measureInkExtent(text: string, font: string): { start: number; end: number } | null {
-  const ctx = getMeasureCtx();
-  if (font !== _currentFont) {
-    ctx.font = font;
-    _currentFont = font;
-  }
-  const m = ctx.measureText(text) as Partial<TextMetrics>;
+  const m = metricsOf(text, font) as Partial<TextMetrics>;
   const left = m.actualBoundingBoxLeft;
   const right = m.actualBoundingBoxRight;
   if (typeof left !== 'number' || typeof right !== 'number' || !Number.isFinite(left) || !Number.isFinite(right)) return null;
