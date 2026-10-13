@@ -3,20 +3,20 @@
   "slug": "epub-fixed-and-reflowable",
   "sourceHash": "843ca57e79e35a46a8881c372a4c0b480ad5812a32001313177b662683fe9013",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.066Z",
+  "capturedAt": "2026-10-13T14:59:09.671Z",
   "variants": {
     "en": {
-      "hash8": "a2e35e1a",
-      "vdtHash": "c96216bea05311b078948a2306d76538cec6bd71",
+      "hash8": "80f2e468",
+      "vdtHash": "fda08c8e832d042c9b4c5d2350d7a3ce3cf4fc17",
       "timings": {
-        "importMs": 869,
-        "fontsMs": 137,
-        "buildMs": 137,
-        "totalMs": 1868,
+        "importMs": 1530,
+        "fontsMs": 88,
+        "buildMs": 108,
+        "totalMs": 2970,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1583,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 79252,
+          "bytes": 79186,
           "alt": "Opening page 3: The Lion’s Court."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1583,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 146080,
+          "bytes": 146026,
           "alt": "Page 4: The Lion in Love."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1583,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 146962,
+          "bytes": 146912,
           "alt": "Page 5: The Lion, the Fox, and the Ass."
         },
         {
@@ -104,7 +104,7 @@
           "h": 1583,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 66846,
+          "bytes": 66762,
           "alt": "Page 6: The Old Lion."
         }
       ],
@@ -140,7 +140,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 21860,
+        "bytes": 21853,
         "chapters": [
           {
             "pages": 2,
@@ -149,17 +149,17 @@
           },
           {
             "pages": 4,
-            "hash": "6d49790bc1a89d07",
+            "hash": "ff93a658dc6a2c30",
             "lines": "9e2b0d56e506b402"
           },
           {
             "pages": 4,
-            "hash": "129e289a8ddaa39a",
-            "lines": "8aa0421091414366"
+            "hash": "5f627f8ba307a377",
+            "lines": "265e5f112f846173"
           },
           {
             "pages": 4,
-            "hash": "89c327040fcba284",
+            "hash": "45f1dec2ca28c01e",
             "lines": "1306b9cb1d0b12d3"
           }
         ]
@@ -360,18 +360,23 @@
             "check": "C3",
             "severity": "warn",
             "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ee83e4d3",
-      "vdtHash": "941f73c65a0e939c25662a259dbd2b7b479d486e",
+      "hash8": "6414402c",
+      "vdtHash": "fdf6ad4e0afe6090995fb0d1295cd4afe31a2099",
       "timings": {
-        "importMs": 958,
-        "fontsMs": 73,
-        "buildMs": 480,
-        "totalMs": 2226,
+        "importMs": 1432,
+        "fontsMs": 294,
+        "buildMs": 380,
+        "totalMs": 3243,
         "builds": 1
       },
       "specimen": {
@@ -448,7 +453,7 @@
           "h": 1583,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 159074,
+          "bytes": 158968,
           "alt": "Página 5."
         },
         {
@@ -459,7 +464,7 @@
           "h": 1583,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 165308,
+          "bytes": 165284,
           "alt": "Página 6."
         }
       ],
@@ -504,17 +509,17 @@
           },
           {
             "pages": 6,
-            "hash": "5e99e2fc55de6a5c",
-            "lines": "e45476d314a38c17"
+            "hash": "b49289d5b8178023",
+            "lines": "6a1d65d665d36912"
           },
           {
             "pages": 6,
-            "hash": "97aaf5cb6f691e07",
+            "hash": "f790430b606280d1",
             "lines": "9d827efb7e61ca95"
           },
           {
             "pages": 3,
-            "hash": "e7f0c8e578c04fef",
+            "hash": "7070c5298f9a6d51",
             "lines": "b07a3aaeafb5b408"
           }
         ]

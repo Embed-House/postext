@@ -3,12 +3,12 @@
   "slug": "bilingual-arabic-english-report",
   "sourceHash": "98bd7741d0aa0fb73952b6f5184326bac35f1b586d736bea9a5e31ed34a9b265",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.049Z",
+  "capturedAt": "2026-10-13T14:56:20.723Z",
   "variants": {
     "en": {
       "hash8": "5af860aa",
@@ -353,13 +353,13 @@
       }
     },
     "es": {
-      "hash8": "44cf9cb9",
+      "hash8": "eeff3ce2",
       "vdtHash": "23138a49dba738cc5567addb3b024cdc1df3d5c8",
       "timings": {
-        "importMs": 536,
-        "fontsMs": 270,
-        "buildMs": 123,
-        "totalMs": 1764,
+        "importMs": 244,
+        "fontsMs": 68,
+        "buildMs": 102,
+        "totalMs": 1022,
         "builds": 1
       },
       "specimen": {
@@ -442,7 +442,7 @@
       },
       "pdf": {
         "file": "bilingual-arabic-english-report.pdf",
-        "bytes": 85210,
+        "bytes": 85218,
         "pages": 3
       },
       "sandbox": {

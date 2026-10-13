@@ -3,25 +3,20 @@
   "slug": "short-chapters-run-on",
   "sourceHash": "4215a62f835bd117d137d675164274d39dc7f79a237ea40adaf2e19492ad9db8",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.100Z",
-  "verified": {
-    "postext": "1.30.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T10:48:46.097Z"
-  },
+  "capturedAt": "2026-10-13T15:04:42.062Z",
   "variants": {
     "en": {
-      "hash8": "4664871e",
-      "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
+      "hash8": "686485db",
+      "vdtHash": "ab112423bc99922fae874651579bb0aa31ba51f1",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 32,
-        "buildMs": 74,
-        "totalMs": 935,
+        "importMs": 543,
+        "fontsMs": 96,
+        "buildMs": 79,
+        "totalMs": 1396,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1618,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155850,
+          "bytes": 155878,
           "alt": "Page 213: CXIX Não faça isso, querida."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1618,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 139990,
+          "bytes": 139952,
           "alt": "Page 215: CXXII O enterro."
         },
         {
@@ -109,7 +104,7 @@
           "h": 1618,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 147212,
+          "bytes": 147264,
           "alt": "Page 216: CXXIII Olhos de ressaca."
         },
         {
@@ -156,12 +151,12 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322288,
+        "bytes": 322270,
         "folio": "badc8643",
         "chapters": [
           {
             "pages": 7,
-            "hash": "79a3cd883e01ceb0",
+            "hash": "03a3ca6ca6b0b89a",
             "lines": "d96e5640de5a94c2"
           }
         ]
@@ -354,6 +349,11 @@
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
           },
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale pt, the document's language: en names its resource types otherwise"
@@ -367,13 +367,13 @@
       }
     },
     "es": {
-      "hash8": "4ec36565",
-      "vdtHash": "0a4e888018b89eeec4134d4772ee19072b16797c",
+      "hash8": "00ba7151",
+      "vdtHash": "ab112423bc99922fae874651579bb0aa31ba51f1",
       "timings": {
-        "importMs": 165,
-        "fontsMs": 29,
-        "buildMs": 74,
-        "totalMs": 923,
+        "importMs": 413,
+        "fontsMs": 40,
+        "buildMs": 73,
+        "totalMs": 1338,
         "builds": 1
       },
       "specimen": {
@@ -428,7 +428,7 @@
           "h": 1618,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155850,
+          "bytes": 155878,
           "alt": "Página 213: CXIX Não faça isso, querida."
         },
         {
@@ -450,7 +450,7 @@
           "h": 1618,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 139990,
+          "bytes": 139952,
           "alt": "Página 215: CXXII O enterro."
         },
         {
@@ -461,7 +461,7 @@
           "h": 1618,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 147212,
+          "bytes": 147264,
           "alt": "Página 216: CXXIII Olhos de ressaca."
         },
         {
@@ -508,12 +508,12 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322301,
+        "bytes": 322282,
         "folio": "badc8643",
         "chapters": [
           {
             "pages": 7,
-            "hash": "79a3cd883e01ceb0",
+            "hash": "03a3ca6ca6b0b89a",
             "lines": "d96e5640de5a94c2"
           }
         ]
@@ -704,6 +704,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",

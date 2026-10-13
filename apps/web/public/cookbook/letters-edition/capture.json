@@ -3,20 +3,20 @@
   "slug": "letters-edition",
   "sourceHash": "2656475dd1dbe55f4a68e65df34ac6fab87244daf3d0bfad1356bd40ff2c4cce",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.382Z",
+  "capturedAt": "2026-10-13T15:01:22.602Z",
   "variants": {
     "en": {
-      "hash8": "85bf45ad",
-      "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
+      "hash8": "fe2fbdd1",
+      "vdtHash": "78593deb741abfaf4ae17baef2d92a4d4b0aa817",
       "timings": {
-        "importMs": 547,
-        "fontsMs": 55,
-        "buildMs": 81,
-        "totalMs": 1428,
+        "importMs": 817,
+        "fontsMs": 49,
+        "buildMs": 68,
+        "totalMs": 1991,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 130702,
+          "bytes": 130718,
           "alt": "Page 2: I Frédéric à Voltaire."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 87772,
+          "bytes": 87756,
           "alt": "Page 3: II Frédéric à Voltaire."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 112582,
+          "bytes": 112560,
           "alt": "Page 4: III Voltaire à Frédéric."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 85748,
+          "bytes": 85688,
           "alt": "Page 5."
         }
       ],
@@ -125,12 +125,12 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212090,
+        "bytes": 212089,
         "folio": "a3ceaa8c",
         "chapters": [
           {
             "pages": 5,
-            "hash": "d12d40d077319a26",
+            "hash": "290c1f40ecbc296a",
             "lines": "a6778fa7be8e124b"
           }
         ]
@@ -285,12 +285,17 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.97
+          "worst": 1.98
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -300,13 +305,13 @@
       }
     },
     "es": {
-      "hash8": "ebbf3496",
-      "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
+      "hash8": "092af1cb",
+      "vdtHash": "78593deb741abfaf4ae17baef2d92a4d4b0aa817",
       "timings": {
-        "importMs": 408,
-        "fontsMs": 35,
-        "buildMs": 84,
-        "totalMs": 1286,
+        "importMs": 581,
+        "fontsMs": 40,
+        "buildMs": 56,
+        "totalMs": 1481,
         "builds": 1
       },
       "specimen": {
@@ -350,7 +355,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 130702,
+          "bytes": 130718,
           "alt": "Página 2: I Frédéric à Voltaire."
         },
         {
@@ -361,7 +366,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 87772,
+          "bytes": 87756,
           "alt": "Página 3: II Frédéric à Voltaire."
         },
         {
@@ -372,7 +377,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 112582,
+          "bytes": 112560,
           "alt": "Página 4: III Voltaire à Frédéric."
         },
         {
@@ -383,7 +388,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 85748,
+          "bytes": 85688,
           "alt": "Página 5."
         }
       ],
@@ -415,12 +420,12 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212125,
+        "bytes": 212124,
         "folio": "a3ceaa8c",
         "chapters": [
           {
             "pages": 5,
-            "hash": "d12d40d077319a26",
+            "hash": "290c1f40ecbc296a",
             "lines": "a6778fa7be8e124b"
           }
         ]
@@ -575,12 +580,17 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.97
+          "worst": 1.98
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

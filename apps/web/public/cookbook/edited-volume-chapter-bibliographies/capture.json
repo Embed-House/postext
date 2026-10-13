@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "243115501305e95914962430c285ebfb1d8971ddbbe77ed9bd63f1e97853f57d",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:20.013Z",
+  "capturedAt": "2026-10-13T14:58:17.140Z",
   "variants": {
     "en": {
-      "hash8": "69f07da5",
-      "vdtHash": "962f64153b474ae3c8149bd77cf43ee029337f94",
+      "hash8": "67d3cdf8",
+      "vdtHash": "58997a2cbc15aa06efcdbdbe1d9c4c5cbbeb8f4f",
       "timings": {
-        "importMs": 862,
-        "fontsMs": 155,
-        "buildMs": 678,
-        "totalMs": 2418,
+        "importMs": 1316,
+        "fontsMs": 258,
+        "buildMs": 563,
+        "totalMs": 2910,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 138452,
+          "bytes": 138546,
           "alt": "Opening page 3: 1 The Compositor’s Day."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 174660,
+          "bytes": 174546,
           "alt": "Page 4: Printers of the mind."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 136966,
+          "bytes": 136886,
           "alt": "Opening page 6: 2 What Fixity Meant."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 174936,
+          "bytes": 174842,
           "alt": "Page 7: Circuits and models."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1516,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 61772,
+          "bytes": 61796,
           "alt": "Page 8: REFERENCES."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 139116,
+          "bytes": 139174,
           "alt": "Opening page 9: 3 Punches, Matrices and the Name Garamond."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 148384,
+          "bytes": 148562,
           "alt": "Page 10: Whose letters."
         }
       ],
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143689,
+        "bytes": 143170,
         "pages": 10
       },
       "sandbox": {
@@ -208,17 +208,17 @@
           },
           {
             "pages": 3,
-            "hash": "b290da2cfbe08b76",
+            "hash": "2e511cf835937f3a",
             "lines": "67233e6beb0bdca1"
           },
           {
             "pages": 3,
-            "hash": "4770441117e6b9e5",
+            "hash": "ebe095fd75567d9b",
             "lines": "adf506e8a639835c"
           },
           {
             "pages": 2,
-            "hash": "eb9f22eee4896426",
+            "hash": "2af442364b00a9c8",
             "lines": "9454feb324240c6f"
           }
         ]
@@ -515,13 +515,13 @@
       }
     },
     "es": {
-      "hash8": "362812e1",
-      "vdtHash": "03f3ea410f3c966c4f24d721f0a4e644be45eb38",
+      "hash8": "c6fb4db7",
+      "vdtHash": "06dab4d023c24fa868062edd94a3176adb471b90",
       "timings": {
-        "importMs": 418,
-        "fontsMs": 138,
-        "buildMs": 808,
-        "totalMs": 2090,
+        "importMs": 1149,
+        "fontsMs": 183,
+        "buildMs": 559,
+        "totalMs": 2790,
         "builds": 1
       },
       "specimen": {
@@ -576,7 +576,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 139818,
+          "bytes": 139890,
           "alt": "Página de apertura 3: 1 La jornada del cajista."
         },
         {
@@ -587,7 +587,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 175044,
+          "bytes": 175274,
           "alt": "Página 4: Impresores imaginarios."
         },
         {
@@ -598,7 +598,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 83764,
+          "bytes": 83740,
           "alt": "Página 5: REFERENCIAS."
         },
         {
@@ -609,7 +609,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 139572,
+          "bytes": 139500,
           "alt": "Página de apertura 6: 2 Lo que significaba la fijeza."
         },
         {
@@ -620,7 +620,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 177612,
+          "bytes": 177724,
           "alt": "Página 7: Circuitos y modelos."
         },
         {
@@ -631,7 +631,7 @@
           "h": 1516,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 69450,
+          "bytes": 69524,
           "alt": "Página 8: REFERENCIAS."
         },
         {
@@ -642,7 +642,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 136478,
+          "bytes": 136344,
           "alt": "Página de apertura 9: 3 Punzones, matrices y el nombre de Garamond."
         },
         {
@@ -653,7 +653,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 147612,
+          "bytes": 147678,
           "alt": "Página 10: De quién son las letras."
         }
       ],
@@ -697,7 +697,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 157749,
+        "bytes": 156833,
         "pages": 10
       },
       "sandbox": {
@@ -712,17 +712,17 @@
           },
           {
             "pages": 3,
-            "hash": "3f34b3db50a0f405",
+            "hash": "2f8e81703d0980e4",
             "lines": "c0c0432f5e8d23bf"
           },
           {
             "pages": 3,
-            "hash": "381593adcf544377",
-            "lines": "3e3c74947d6c148a"
+            "hash": "64675f8bf6883d2d",
+            "lines": "c06d9ebb0dd76f53"
           },
           {
             "pages": 2,
-            "hash": "51e58e891170a1eb",
+            "hash": "ef29f0419ca19ca1",
             "lines": "06bcc8c543c14001"
           }
         ]

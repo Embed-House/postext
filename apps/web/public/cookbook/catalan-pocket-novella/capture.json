@@ -3,21 +3,21 @@
   "slug": "catalan-pocket-novella",
   "sourceHash": "147020a9d895f79da3800a5a8df616c2bc3670fad7ae9eb6357ebd53e8fe2c0b",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.182Z",
+  "capturedAt": "2026-10-13T14:57:00.560Z",
   "variants": {
     "en": {
-      "hash8": "92e551bb",
-      "vdtHash": "a412c349fd0dabc68c0f87ffb355e698b3437d08",
+      "hash8": "cb35be33",
+      "vdtHash": "58f7d3077a4c3a708d7b06576243e2511f7158b0",
       "timings": {
-        "importMs": 2072,
-        "fontsMs": 425,
-        "buildMs": 1132,
-        "totalMs": 5949,
+        "importMs": 388,
+        "fontsMs": 96,
+        "buildMs": 854,
+        "totalMs": 2157,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38864,
+          "bytes": 38824,
           "alt": "Opening page 4: Nota a aquesta edició."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 152020,
+          "bytes": 151816,
           "alt": "Opening page 5: I."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 146072,
+          "bytes": 146086,
           "alt": "Page 6."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 169532,
+          "bytes": 169634,
           "alt": "Opening page 26: IV."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 152192,
+          "bytes": 152292,
           "alt": "Page 27."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1542,
           "file": "p32.webp",
           "strip": "p32.s.webp",
-          "bytes": 39408,
+          "bytes": 39418,
           "alt": "Page 32."
         }
       ],
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1778207,
+        "bytes": 1772779,
         "pages": 32
       },
       "sandbox": {
@@ -177,8 +177,8 @@
         "chapters": [
           {
             "pages": 32,
-            "hash": "bdaca5ee0dbcd6fc",
-            "lines": "e76fa8e5dd37c645"
+            "hash": "6066ce6da74afe75",
+            "lines": "659b1e4771437da1"
           }
         ]
       },
@@ -394,20 +394,20 @@
           },
           {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "deee119a",
-      "vdtHash": "a412c349fd0dabc68c0f87ffb355e698b3437d08",
+      "hash8": "26cdb057",
+      "vdtHash": "58f7d3077a4c3a708d7b06576243e2511f7158b0",
       "timings": {
-        "importMs": 2385,
-        "fontsMs": 233,
-        "buildMs": 1239,
-        "totalMs": 5802,
+        "importMs": 289,
+        "fontsMs": 73,
+        "buildMs": 896,
+        "totalMs": 1932,
         "builds": 1
       },
       "specimen": {
@@ -462,7 +462,7 @@
           "h": 1542,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 38864,
+          "bytes": 38824,
           "alt": "Página de apertura 4: Nota a aquesta edició."
         },
         {
@@ -473,7 +473,7 @@
           "h": 1542,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 152020,
+          "bytes": 151816,
           "alt": "Página de apertura 5: I."
         },
         {
@@ -484,7 +484,7 @@
           "h": 1542,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 146072,
+          "bytes": 146086,
           "alt": "Página 6."
         },
         {
@@ -495,7 +495,7 @@
           "h": 1542,
           "file": "p26.webp",
           "strip": "p26.s.webp",
-          "bytes": 169532,
+          "bytes": 169634,
           "alt": "Página de apertura 26: IV."
         },
         {
@@ -506,7 +506,7 @@
           "h": 1542,
           "file": "p27.webp",
           "strip": "p27.s.webp",
-          "bytes": 152192,
+          "bytes": 152292,
           "alt": "Página 27."
         },
         {
@@ -517,7 +517,7 @@
           "h": 1542,
           "file": "p32.webp",
           "strip": "p32.s.webp",
-          "bytes": 39408,
+          "bytes": 39418,
           "alt": "Página 32."
         }
       ],
@@ -557,7 +557,7 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1778207,
+        "bytes": 1772779,
         "pages": 32
       },
       "sandbox": {
@@ -567,8 +567,8 @@
         "chapters": [
           {
             "pages": 32,
-            "hash": "bdaca5ee0dbcd6fc",
-            "lines": "e76fa8e5dd37c645"
+            "hash": "6066ce6da74afe75",
+            "lines": "659b1e4771437da1"
           }
         ]
       },
@@ -784,8 +784,8 @@
           },
           {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

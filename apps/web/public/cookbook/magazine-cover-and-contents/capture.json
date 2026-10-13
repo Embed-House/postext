@@ -3,20 +3,20 @@
   "slug": "magazine-cover-and-contents",
   "sourceHash": "e5b136541ab844d334dd0e37d89320b753a8217e4cc9bf4534167965ce01b5e2",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.414Z",
+  "capturedAt": "2026-10-13T15:01:22.620Z",
   "variants": {
     "en": {
-      "hash8": "65af7063",
-      "vdtHash": "df0858ff3432514c448b2daceae76992cfffce7a",
+      "hash8": "50a1d0da",
+      "vdtHash": "84f25bbc81be7a687b7e53f57517c7eaf5925e7f",
       "timings": {
-        "importMs": 411,
-        "fontsMs": 69,
-        "buildMs": 581,
-        "totalMs": 2526,
+        "importMs": 683,
+        "fontsMs": 71,
+        "buildMs": 524,
+        "totalMs": 2271,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 242774,
+          "bytes": 242790,
           "alt": "Opening page 1: Fallow."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 109454,
+          "bytes": 109468,
           "alt": "Opening page 2: Contents. On the cover: the hills below Castellina in Chianti, where our feature is set."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1304,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 164432,
+          "bytes": 164436,
           "alt": "Opening page 3: The Grain Archive."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1304,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 279044,
+          "bytes": 279010,
           "alt": "Opening page 4: The Year of Rest."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1304,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 192816,
+          "bytes": 192824,
           "alt": "Page 5. Vines and cypresses by a farmhouse near Castellina in Chianti, in summer."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1304,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140580,
+          "bytes": 140424,
           "alt": "Opening page 6: Threshing-Day Bread."
         }
       ],
@@ -141,12 +141,12 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2084674,
+        "bytes": 2084673,
         "folio": "c6787b35",
         "chapters": [
           {
             "pages": 6,
-            "hash": "af067cfa438b7830",
+            "hash": "76eb23adf21a2589",
             "lines": "45fd06e8d8cefa12"
           }
         ]
@@ -449,18 +449,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "a48c9503",
-      "vdtHash": "7cf855457f629268dafb733e24cbed20a4d00ef3",
+      "hash8": "8bcd526e",
+      "vdtHash": "ae8b921db82218cb7709788a12dec74df2bcb44f",
       "timings": {
-        "importMs": 533,
-        "fontsMs": 79,
-        "buildMs": 201,
-        "totalMs": 1531,
+        "importMs": 677,
+        "fontsMs": 95,
+        "buildMs": 188,
+        "totalMs": 1837,
         "builds": 1
       },
       "specimen": {
@@ -505,7 +510,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 115992,
+          "bytes": 116122,
           "alt": "Página de apertura 2: Sumario. En la portada: las colinas de Castellina in Chianti, escenario del reportaje."
         },
         {
@@ -516,7 +521,7 @@
           "h": 1304,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 171278,
+          "bytes": 171300,
           "alt": "Página de apertura 3: El archivo del grano."
         },
         {
@@ -527,7 +532,7 @@
           "h": 1304,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 284676,
+          "bytes": 284688,
           "alt": "Página de apertura 4: El año del descanso."
         },
         {
@@ -538,7 +543,7 @@
           "h": 1304,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 200874,
+          "bytes": 200866,
           "alt": "Página 5. Viñas y cipreses junto a una casa de campo de Castellina in Chianti, en verano."
         },
         {
@@ -549,7 +554,7 @@
           "h": 1304,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 148292,
+          "bytes": 148342,
           "alt": "Página de apertura 6: El pan de la trilla."
         }
       ],
@@ -585,12 +590,12 @@
       },
       "sandbox": {
         "file": "magazine-cover-and-contents.postext",
-        "bytes": 2085387,
+        "bytes": 2085386,
         "folio": "c6787b35",
         "chapters": [
           {
             "pages": 6,
-            "hash": "0f9e8f365c59356c",
+            "hash": "46d745842719a41e",
             "lines": "3d5072d321b7c1fd"
           }
         ]
@@ -903,6 +908,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Si no encuentras trigo antiguo, sirve cualquier …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

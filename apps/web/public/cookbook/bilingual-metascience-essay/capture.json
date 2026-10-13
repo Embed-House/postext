@@ -3,21 +3,21 @@
   "slug": "bilingual-metascience-essay",
   "sourceHash": "359c03734414b9a8d3e4f2288a9f40306faa3e8091719da10e669ce9986f86a0",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.094Z",
+  "capturedAt": "2026-10-13T14:56:20.743Z",
   "variants": {
     "en": {
-      "hash8": "75a059fd",
-      "vdtHash": "f323927cb97887817f202d460e186988e1de9a8f",
+      "hash8": "15f77178",
+      "vdtHash": "e5c62e19f30871186585ad147e30cacb1c3c8d84",
       "timings": {
-        "importMs": 679,
-        "fontsMs": 2823,
-        "buildMs": 541,
-        "totalMs": 4853,
+        "importMs": 215,
+        "fontsMs": 2991,
+        "buildMs": 523,
+        "totalMs": 4373,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 135820,
+          "bytes": 135728,
           "alt": "Opening page 1: Why Most Published Research Findings Are False."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 182506,
+          "bytes": 182516,
           "alt": "Page 2: Bias. Table 1. Research Findings and True Relationships."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 202028,
+          "bytes": 201972,
           "alt": "Page 5: Most Research Findings Are False for Most Research Designs and for Most Fields. Table 4. PPV of Research Findings for Various Combinations of Power (￼), Ratio of True to Not-True Relationships (￼), and Bias (￼)."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 237010,
+          "bytes": 236980,
           "alt": "Page 6: How Can We Improve the Situation?."
         },
         {
@@ -141,7 +141,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 393801,
+        "bytes": 393142,
         "pages": 7
       },
       "sandbox": {
@@ -151,8 +151,8 @@
         "chapters": [
           {
             "pages": 7,
-            "hash": "00ee1b69106bc1ab",
-            "lines": "10c501140f000534"
+            "hash": "b13793bfa23b66e1",
+            "lines": "c8810d1c2c99c9ec"
           }
         ]
       },
@@ -520,13 +520,13 @@
       }
     },
     "es": {
-      "hash8": "dbda0021",
+      "hash8": "e488a5c6",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 586,
-        "fontsMs": 1459,
-        "buildMs": 523,
-        "totalMs": 3280,
+        "importMs": 434,
+        "fontsMs": 1601,
+        "buildMs": 483,
+        "totalMs": 3290,
         "builds": 1
       },
       "specimen": {
@@ -650,7 +650,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 423907,
+        "bytes": 423875,
         "pages": 7
       },
       "sandbox": {

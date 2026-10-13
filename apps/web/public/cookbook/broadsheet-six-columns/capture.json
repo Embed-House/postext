@@ -3,20 +3,20 @@
   "slug": "broadsheet-six-columns",
   "sourceHash": "40da5972450c6a95d05664a35d772dd2092e460e9431cb7565d53b049b26cef7",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.203Z",
+  "capturedAt": "2026-10-13T14:56:20.796Z",
   "variants": {
     "en": {
-      "hash8": "dfba510d",
-      "vdtHash": "a7a7409bd8d227b26352cba48e0416e00a37e7d2",
+      "hash8": "5da12b35",
+      "vdtHash": "6b3db9e8c1b78fb5765747ea202eb4c4e2fb5b84",
       "timings": {
-        "importMs": 842,
-        "fontsMs": 71,
-        "buildMs": 133,
-        "totalMs": 3247,
+        "importMs": 426,
+        "fontsMs": 61,
+        "buildMs": 157,
+        "totalMs": 2073,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1592,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 259392,
+          "bytes": 259448,
           "alt": "Opening page 1: The Corrington Despatch. The end of the line. The Eastern Quays at sunrise. The trams will run on the old dock railway’s route past the bonded warehouses. · Paying for the line · Holding. Engineers watch the gate at 6.40 yesterday morning."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1592,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 203498,
+          "bytes": 203820,
           "alt": "Opening page 2: City. Moving day on Albion Terrace, where a two-bedroom flat now lets for £1,240."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1592,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 194478,
+          "bytes": 194126,
           "alt": "Opening page 3: Opinion. Forty lengths. The Albert Baths, opened in 1894, on a weekday morning."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1592,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 153958,
+          "bytes": 153048,
           "alt": "Opening page 4: Arts & Weather. Ledgers and lies. The shipping office of The Tally Clerk. · The next five days in Corrington."
         }
       ],
@@ -116,13 +116,13 @@
       },
       "sandbox": {
         "file": "broadsheet-six-columns.postext",
-        "bytes": 1366174,
+        "bytes": 1366212,
         "folio": "ac94dacf",
         "chapters": [
           {
             "pages": 4,
-            "hash": "9fa345249bd2c3cc",
-            "lines": "c4464fa9318043b3"
+            "hash": "05483f787befd7ca",
+            "lines": "a1208e992e35eed3"
           }
         ]
       },

@@ -3,20 +3,20 @@
   "slug": "magazine-three-column-feature",
   "sourceHash": "8352f28c6e2b483d9592b0240f2b1b62df2bedc5ef471efd5cc1cde6ce88810b",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.465Z",
+  "capturedAt": "2026-10-13T15:01:22.652Z",
   "variants": {
     "en": {
-      "hash8": "0f919df7",
-      "vdtHash": "a268cc56c27924347d8618776d996fd357512b8f",
+      "hash8": "793be530",
+      "vdtHash": "e99bed70a03a36125954ecc3d8d6aa2a9057ca83",
       "timings": {
-        "importMs": 312,
-        "fontsMs": 78,
-        "buildMs": 111,
-        "totalMs": 1198,
+        "importMs": 879,
+        "fontsMs": 155,
+        "buildMs": 99,
+        "totalMs": 1910,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 147988,
+          "bytes": 147974,
           "alt": "Opening page 85: On a flat island at the edge of the Atlantic, nine families still make salt by hand, with sun, wind and a wooden rake. Their season lasts eleven weeks, and every year it starts a little later."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 228440,
+          "bytes": 228410,
           "alt": "Page 86: Water, sun and wind. Raking the crystallisers at dawn. The salt rolls up in a ridge; a rake that digs in tears the clay floor and greys the harvest."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 177232,
+          "bytes": 177014,
           "alt": "Page 87: The flower of the salt. The Alvarra flats from the lighthouse hill. The pink basins are nearly ready: an alga colours the brine once it holds more than 200 grams of salt a litre."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1320,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 222274,
+          "bytes": 223160,
           "alt": "Page 88: The herons’ share. Skimming the flower: the sieve works the downwind edge of the pan, where the breeze has drifted the crust. · Amélia Sousa with an afternoon’s flor de sal, about four kilos from two pans."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1320,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 152038,
+          "bytes": 152042,
           "alt": "Page 89. The Alvarra pans (pink) lie on the eastern flats, 6 km from Porto Velho (the squares) by the coast road. The lighthouse hill is the triangle; the ferry, dashed. · Porto Velho, the last week of September: fifty-kilo sacks wait for the mainland boat."
         }
       ],
@@ -138,12 +138,12 @@
       },
       "sandbox": {
         "file": "magazine-three-column-feature.postext",
-        "bytes": 1847634,
+        "bytes": 1847636,
         "folio": "579e6f1a",
         "chapters": [
           {
             "pages": 6,
-            "hash": "af86e51b04378d31",
+            "hash": "efbfd693f5edeaa1",
             "lines": "e41a1ed6612808dc"
           }
         ]

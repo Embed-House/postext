@@ -3,20 +3,20 @@
   "slug": "web-worker-live-editor",
   "sourceHash": "002c496f8994aeced54329ac9b240b3205c98cb7b6e2ea7248e15bf95d3e7523",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.356Z",
+  "capturedAt": "2026-10-13T15:06:54.607Z",
   "variants": {
     "en": {
-      "hash8": "3628e19d",
-      "vdtHash": "f28c72ad1821926ff80cada74187bed204248786",
+      "hash8": "de9838e2",
+      "vdtHash": "e003e73311d4ccebd7d9a4512d26acf8fa8c4d47",
       "timings": {
-        "importMs": 1340,
-        "fontsMs": 1477,
-        "buildMs": 171,
-        "totalMs": 3776,
+        "importMs": 2191,
+        "fontsMs": 1776,
+        "buildMs": 170,
+        "totalMs": 5069,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1336,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 93122,
+          "bytes": 93094,
           "alt": "Opening page 2: I Introduction."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1336,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118694,
+          "bytes": 118768,
           "alt": "Page 3."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1336,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 142478,
+          "bytes": 142536,
           "alt": "Page 4."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1336,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 141522,
+          "bytes": 141498,
           "alt": "Page 5."
         }
       ],
@@ -125,12 +125,12 @@
       },
       "sandbox": {
         "file": "web-worker-live-editor.postext",
-        "bytes": 218775,
+        "bytes": 218777,
         "folio": "ddaa1eeb",
         "chapters": [
           {
             "pages": 9,
-            "hash": "089c4ca98e18c9b9",
+            "hash": "63b4a07cec32bf02",
             "lines": "019c97f1fb6045e3"
           }
         ]
@@ -318,6 +318,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ ““The experiment!” cried Filby, who was getting b…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

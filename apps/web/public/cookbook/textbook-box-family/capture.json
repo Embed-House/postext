@@ -3,20 +3,20 @@
   "slug": "textbook-box-family",
   "sourceHash": "2929067b61fa2bec9953d6cfd743852b4bcf5407ed00623c3f18f3b52c6c62d0",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:19.454Z",
+  "capturedAt": "2026-10-13T15:05:55.306Z",
   "variants": {
     "en": {
-      "hash8": "c409c037",
-      "vdtHash": "dc28595e779ffca5d21fcfb164e4e34256c3f5e4",
+      "hash8": "e0639c86",
+      "vdtHash": "09c04836e71cc304192bbb52f849307f6ea07dbf",
       "timings": {
-        "importMs": 952,
-        "fontsMs": 76,
-        "buildMs": 132,
-        "totalMs": 2203,
+        "importMs": 772,
+        "fontsMs": 140,
+        "buildMs": 118,
+        "totalMs": 1689,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 161856,
+          "bytes": 161880,
           "alt": "Opening page 27: Cells and Membranes."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 138446,
+          "bytes": 138456,
           "alt": "Page 28: 2.3 Crossing the membrane. Figure 2.2. Mouse proteins in green, human proteins in magenta (the red dye): the two cells, the hybrid just after fusion and the same hybrid 40 minutes later. · Figure 2.1. The fluid mosaic: magenta phospholipids, green proteins, an amber c…"
         },
         {
@@ -100,12 +100,12 @@
       },
       "sandbox": {
         "file": "textbook-box-family.postext",
-        "bytes": 45565,
+        "bytes": 45564,
         "folio": "4d63ba9f",
         "chapters": [
           {
             "pages": 3,
-            "hash": "715b76acc1149fe2",
+            "hash": "557ed7c7c48906d7",
             "lines": "6893de22e7cc097e"
           }
         ]
@@ -388,6 +388,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",
@@ -775,11 +780,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,21 +3,21 @@
   "slug": "mla-humanities-essay",
   "sourceHash": "75e49d2ab75c6c1468b7a2933f457ccd70c9535e4a1a7940d477305c3b67a4d6",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:14.633Z",
+  "capturedAt": "2026-10-13T15:02:23.827Z",
   "variants": {
     "en": {
-      "hash8": "b47906aa",
-      "vdtHash": "aeeb7aaff771f2fadcc155673cfa79108d5db99d",
+      "hash8": "a6a00578",
+      "vdtHash": "a9a48bca20e493671256705de8901765d09e0bc4",
       "timings": {
-        "importMs": 565,
-        "fontsMs": 34,
-        "buildMs": 139,
-        "totalMs": 1471,
+        "importMs": 1490,
+        "fontsMs": 36,
+        "buildMs": 121,
+        "totalMs": 2586,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1533,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93312,
+          "bytes": 93268,
           "alt": "Opening page 1: Cold Pastoral."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1533,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 143474,
+          "bytes": 142780,
           "alt": "Page 2: The questions."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1533,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120616,
+          "bytes": 120612,
           "alt": "Page 3: The letters."
         },
         {
@@ -114,17 +114,17 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 85591,
+        "bytes": 85044,
         "pages": 4
       },
       "sandbox": {
         "file": "mla-humanities-essay.postext",
-        "bytes": 16907,
+        "bytes": 16894,
         "folio": "070584e0",
         "chapters": [
           {
             "pages": 4,
-            "hash": "edca0ca4e3f600a6",
+            "hash": "ac9a4aa0da7238a8",
             "lines": "c6c2fb6f0a0f2a9b"
           }
         ]
@@ -340,17 +340,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "dd5532b1",
-      "vdtHash": "7e9d0444b1b469b4a6b5ab616769497245a62456",
+      "hash8": "ce6fa01b",
+      "vdtHash": "1bbdbb377ff7e84e8a109c50ae22a472a1689a06",
       "timings": {
-        "importMs": 682,
-        "fontsMs": 36,
-        "buildMs": 172,
-        "totalMs": 1695,
+        "importMs": 905,
+        "fontsMs": 41,
+        "buildMs": 110,
+        "totalMs": 2149,
         "builds": 1
       },
       "specimen": {
@@ -382,7 +388,7 @@
           "h": 1533,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93594,
+          "bytes": 93608,
           "alt": "Página de apertura 1: Fría pastoral."
         },
         {
@@ -393,7 +399,7 @@
           "h": 1533,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151440,
+          "bytes": 151572,
           "alt": "Página 2: Las preguntas."
         },
         {
@@ -404,7 +410,7 @@
           "h": 1533,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 124000,
+          "bytes": 123934,
           "alt": "Página 3: Las cartas."
         },
         {
@@ -447,17 +453,17 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 90443,
+        "bytes": 89435,
         "pages": 4
       },
       "sandbox": {
         "file": "mla-humanities-essay.postext",
-        "bytes": 17040,
+        "bytes": 17030,
         "folio": "070584e0",
         "chapters": [
           {
             "pages": 4,
-            "hash": "c356297c72bd1178",
+            "hash": "e9c04e1d050658e7",
             "lines": "005391be7678a47a"
           }
         ]
@@ -673,7 +679,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

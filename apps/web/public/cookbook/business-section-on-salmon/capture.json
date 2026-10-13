@@ -3,20 +3,20 @@
   "slug": "business-section-on-salmon",
   "sourceHash": "5b58062570b80ff89769a5d15e8c0dc7f5675a929cff276c745b7d00c1f3c814",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.156Z",
+  "capturedAt": "2026-10-13T14:57:00.552Z",
   "variants": {
     "en": {
-      "hash8": "470c4c05",
-      "vdtHash": "5de6966bb7418ee531c890d9c8307822a03d44c1",
+      "hash8": "20f0f265",
+      "vdtHash": "a237f56bf659bc50de2e3f6dbaba793088bb7e4b",
       "timings": {
-        "importMs": 1895,
-        "fontsMs": 454,
-        "buildMs": 593,
-        "totalMs": 5949,
+        "importMs": 233,
+        "fontsMs": 126,
+        "buildMs": 460,
+        "totalMs": 1546,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1492,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 195084,
+          "bytes": 194928,
           "alt": "Opening page 1: The Marrowick Ledger. The Marrow Barrier at 9.30pm on Monday, its gates closed against the surge. The river behind them rose by 30 centimetres."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1492,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150688,
+          "bytes": 150692,
           "alt": "Opening page 2: City. First week: apprentices welding a hull section in the fabrication hall at Brackwater. · How a gate turns. Each segment turns on a pin in the pier, from its sill on the riverbed to stand against the sea."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1492,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 155798,
+          "bytes": 155712,
           "alt": "Opening page 3: Region. Where the money goes · Weather · Tides at Kingsquay · The Holm Maid leaves Skerra pier on her first crossing since May."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1492,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 201498,
+          "bytes": 201444,
           "alt": "Opening page 4: Opinion. Holding the line, by Kit Carrow."
         },
         {
@@ -95,7 +95,7 @@
           "h": 1492,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 182010,
+          "bytes": 181998,
           "alt": "Opening page 5: Business. The Outer Quay at dawn. The new berth would take ships three times the size of those the port handles now. · Containers through Marrowick, thousands of twenty-foot units a year."
         },
         {
@@ -106,7 +106,7 @@
           "h": 1492,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 110834,
+          "bytes": 110782,
           "alt": "Opening page 6: Markets. The MX 40 over the past year, daily closes. · Sectors on the Marrowick Exchange, change on the day. · Indices · Currencies · Commodities · Most traded."
         },
         {
@@ -117,7 +117,7 @@
           "h": 1492,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 133584,
+          "bytes": 133716,
           "alt": "Opening page 7: Companies. Results · Company diary · Halden’s Quayside plant bakes 1.1 million loaves a week."
         }
       ],
@@ -153,13 +153,13 @@
       },
       "sandbox": {
         "file": "business-section-on-salmon.postext",
-        "bytes": 1218679,
+        "bytes": 1218753,
         "folio": "77d83e3b",
         "chapters": [
           {
             "pages": 8,
-            "hash": "e58e476def10a91b",
-            "lines": "2f7f352f1407f0b1"
+            "hash": "56fb59fd128415e7",
+            "lines": "de23b46b296d6f79"
           }
         ]
       },
@@ -484,8 +484,8 @@
         "converged": true,
         "iterationCount": 6,
         "looseLines": {
-          "count": 15,
-          "share": 0.0278,
+          "count": 16,
+          "share": 0.0297,
           "worst": 2.98
         },
         "raggedLines": {
@@ -505,7 +505,7 @@
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "15 of 539 justified lines (2.8 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 7 2.71× “The company estimated”, p. 3 2.65× “terday, raises on-street parking”"
+            "detail": "16 of 539 justified lines (3.0 %) stretch past 2× (worst 2.98×); loosest: p. 3 2.98× “Saltmarsh, Fenner’s Green and”, p. 7 2.73× “The company estimated”, p. 6 2.68× “In the currency market”"
           },
           {
             "check": "C35",

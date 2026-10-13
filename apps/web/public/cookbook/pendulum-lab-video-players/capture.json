@@ -3,21 +3,21 @@
   "slug": "pendulum-lab-video-players",
   "sourceHash": "ec280b7bd0360373234db05d7ef64739ff8309cb606edd4b151cb9557f492f0b",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:03.000Z",
+  "capturedAt": "2026-10-13T15:03:18.083Z",
   "variants": {
     "en": {
-      "hash8": "6deb202f",
+      "hash8": "26fbe6c2",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 2226,
-        "fontsMs": 256,
-        "buildMs": 332,
-        "totalMs": 6505,
+        "importMs": 865,
+        "fontsMs": 115,
+        "buildMs": 194,
+        "totalMs": 2443,
         "builds": 2
       },
       "specimen": {
@@ -90,7 +90,7 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 83716,
+        "bytes": 83719,
         "pages": 2
       },
       "sandbox": {
@@ -450,13 +450,13 @@
       }
     },
     "es": {
-      "hash8": "b3784e5b",
-      "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
+      "hash8": "b0cd9db1",
+      "vdtHash": "10cd14ef0d513ace0d097b55baa885993a7f6ac3",
       "timings": {
-        "importMs": 4288,
-        "fontsMs": 311,
-        "buildMs": 262,
-        "totalMs": 7213,
+        "importMs": 1234,
+        "fontsMs": 71,
+        "buildMs": 150,
+        "totalMs": 2473,
         "builds": 2
       },
       "specimen": {
@@ -490,7 +490,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126726,
+          "bytes": 126648,
           "alt": "Página de apertura 1: El periodo de un péndulo. Vídeo 1. Soltado desde el reposo a 10°. · Vídeo 2. Soltado desde el reposo a 80°."
         },
         {
@@ -529,16 +529,16 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 85695,
+        "bytes": 85466,
         "pages": 2
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 30267,
+        "bytes": 30287,
         "chapters": [
           {
             "pages": 2,
-            "hash": "523988ddbaddf88f",
+            "hash": "c24ee49bd63f5023",
             "lines": "1f37529a69049fd0"
           }
         ]
@@ -884,6 +884,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La primera corrección a la fórmula de las oscila…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
           {
             "check": "sandbox",

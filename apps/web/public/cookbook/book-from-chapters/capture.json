@@ -3,21 +3,21 @@
   "slug": "book-from-chapters",
   "sourceHash": "c7c6d4f86b8237d456181aba0576001a55ec60d6df01f33f81daab7323d3134e",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.126Z",
+  "capturedAt": "2026-10-13T14:56:20.752Z",
   "variants": {
     "en": {
-      "hash8": "6a74c0c5",
-      "vdtHash": "f30a948b0460cc11bb87a060ab7f7d4773874543",
+      "hash8": "38ea31f1",
+      "vdtHash": "24d82cacdebf87b8ec0b6f2ae99b8598807ffd51",
       "timings": {
-        "importMs": 1034,
-        "fontsMs": 353,
-        "buildMs": 105,
-        "totalMs": 2659,
+        "importMs": 725,
+        "fontsMs": 136,
+        "buildMs": 159,
+        "totalMs": 1758,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 109614,
+          "bytes": 109606,
           "alt": "Opening page 3: 1 Autumn."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 101352,
+          "bytes": 100130,
           "alt": "Page 4: Stores for winter. Figure 1.1. A frame in October: honey (gold) round the last brood (brown) and pollen (russet)."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109020,
+          "bytes": 108998,
           "alt": "Opening page 7: 3 Spring."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 93914,
+          "bytes": 93950,
           "alt": "Page 8: Room to grow. Figure 3.1. The same frame in late April: brood across the middle, the winter honey nearly gone."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 126592,
+          "bytes": 126586,
           "alt": "Page 10: Swarm season."
         },
         {
@@ -160,7 +160,7 @@
           "h": 1333,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 76144,
+          "bytes": 76190,
           "alt": "Page 11."
         }
       ],
@@ -204,12 +204,12 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 121326,
+        "bytes": 121211,
         "pages": 11
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 46851,
+        "bytes": 46852,
         "folio": "0459f0ab",
         "chapters": [
           {
@@ -219,7 +219,7 @@
           },
           {
             "pages": 2,
-            "hash": "6a4e58e6c402ce68",
+            "hash": "611f837b4bb7109b",
             "lines": "931235badc9ce328"
           },
           {
@@ -229,12 +229,12 @@
           },
           {
             "pages": 3,
-            "hash": "27290abe813451c2",
+            "hash": "f3f112fbc14b6a03",
             "lines": "183cb1dcd4c9f6de"
           },
           {
             "pages": 3,
-            "hash": "f3440a4e233fb6fe",
+            "hash": "4e541d9a1b81e456",
             "lines": "0e814b858c4f7ca1"
           }
         ]
@@ -490,17 +490,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "2fa7b1b8",
-      "vdtHash": "4318a5ee42febf16ef120e79bed345170046a19a",
+      "hash8": "13b40b3d",
+      "vdtHash": "035013c15b611e53a364b8e803e9801bd71b5fd0",
       "timings": {
-        "importMs": 1085,
-        "fontsMs": 159,
-        "buildMs": 126,
-        "totalMs": 2146,
+        "importMs": 736,
+        "fontsMs": 132,
+        "buildMs": 149,
+        "totalMs": 1772,
         "builds": 1
       },
       "specimen": {
@@ -555,7 +561,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 107336,
+          "bytes": 107346,
           "alt": "Página de apertura 3: 1 Otoño."
         },
         {
@@ -566,7 +572,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 114928,
+          "bytes": 114912,
           "alt": "Página 4: Reservas para el invierno. Figura 1.1. Un cuadro en octubre: la miel (dorada) rodea la última cría (marrón) y el polen (rojizo)."
         },
         {
@@ -599,7 +605,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 109418,
+          "bytes": 109396,
           "alt": "Página de apertura 7: 3 Primavera."
         },
         {
@@ -632,7 +638,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 137806,
+          "bytes": 137818,
           "alt": "Página 10: La enjambrazón."
         },
         {
@@ -643,7 +649,7 @@
           "h": 1333,
           "file": "p11.webp",
           "strip": "p11.s.webp",
-          "bytes": 89260,
+          "bytes": 89264,
           "alt": "Página 11: Del panal al tarro."
         }
       ],
@@ -687,12 +693,12 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 130483,
+        "bytes": 130235,
         "pages": 11
       },
       "sandbox": {
         "file": "book-from-chapters.postext",
-        "bytes": 47124,
+        "bytes": 47125,
         "folio": "0459f0ab",
         "chapters": [
           {
@@ -702,7 +708,7 @@
           },
           {
             "pages": 2,
-            "hash": "e885bf42525f1b54",
+            "hash": "442d3de87327e304",
             "lines": "005e3c7b3198c395"
           },
           {
@@ -712,12 +718,12 @@
           },
           {
             "pages": 3,
-            "hash": "b712efcc7247a05a",
+            "hash": "1875b3802d4c10e2",
             "lines": "76e91d499d872953"
           },
           {
             "pages": 3,
-            "hash": "05b5cdc0de6a4b60",
+            "hash": "3ecee2a6427da532",
             "lines": "fd89ef56d37e1f98"
           }
         ]
@@ -973,7 +979,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

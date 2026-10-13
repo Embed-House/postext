@@ -3,20 +3,20 @@
   "slug": "atlas-map-sheet",
   "sourceHash": "9d0725230c8b3b849bb184da3fabc0ad597a180fa2c13947a183b49cf07736c1",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:35:58.747Z",
+  "capturedAt": "2026-10-13T14:55:41.410Z",
   "variants": {
     "en": {
-      "hash8": "99ce933b",
-      "vdtHash": "4ba3e4d8ef68d10a4a4f917608b0290f362fa3e4",
+      "hash8": "036973fd",
+      "vdtHash": "f72f19ab5bbd43934956780cd70f644ab365a901",
       "timings": {
-        "importMs": 2479,
-        "fontsMs": 886,
-        "buildMs": 100,
-        "totalMs": 5623,
+        "importMs": 257,
+        "fontsMs": 852,
+        "buildMs": 81,
+        "totalMs": 1942,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134054,
+          "bytes": 134040,
           "alt": "Page 2: The north end of Brannay. Map 2. The north end of Brannay · Map 3. Kirkwick harbour."
         },
         {
@@ -120,7 +120,7 @@
         "chapters": [
           {
             "pages": 4,
-            "hash": "9b920a0faf4dcdc3",
+            "hash": "b8bccd283df703a0",
             "lines": "378b45c8c0a1dff0"
           }
         ]

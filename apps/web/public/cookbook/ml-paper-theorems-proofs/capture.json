@@ -3,21 +3,21 @@
   "slug": "ml-paper-theorems-proofs",
   "sourceHash": "31be5e4e029b95ed33c98b1c960264ca6233760b279b7df3ab809febadec50a1",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:14.615Z",
+  "capturedAt": "2026-10-13T15:02:23.813Z",
   "variants": {
     "en": {
-      "hash8": "aa3f0c6a",
-      "vdtHash": "2452c4ff08fe047d012d69a86c92cd3603a063ce",
+      "hash8": "7a59e982",
+      "vdtHash": "19e8320d3f74f487ded3f754b0e48848187a07fc",
       "timings": {
-        "importMs": 423,
-        "fontsMs": 274,
-        "buildMs": 377,
-        "totalMs": 1813,
+        "importMs": 1181,
+        "fontsMs": 327,
+        "buildMs": 319,
+        "totalMs": 2904,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1427,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 167240,
+          "bytes": 167244,
           "alt": "Page 2: 1 Introduction."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1427,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 144288,
+          "bytes": 144246,
           "alt": "Page 4: 4 Direct Preference Optimization."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1427,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140056,
+          "bytes": 140094,
           "alt": "Page 6: 5 Theoretical Analysis of DPO."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1427,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 113202,
+          "bytes": 113210,
           "alt": "Page 7: 6 Experiments. Table 1. GPT-4 win rates vs. ground truth summaries for out-of-distribution CNN/DailyMail input articles."
         },
         {
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 976639,
+        "bytes": 975853,
         "pages": 10
       },
       "sandbox": {
@@ -203,8 +203,8 @@
         "chapters": [
           {
             "pages": 10,
-            "hash": "1a2e46ebc0acdb6d",
-            "lines": "887fd11a2de00628"
+            "hash": "d53116de8943c036",
+            "lines": "69606300bc438a34"
           }
         ]
       },
@@ -545,7 +545,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.93
+          "worst": 1.94
         },
         "raggedLines": {
           "count": 0

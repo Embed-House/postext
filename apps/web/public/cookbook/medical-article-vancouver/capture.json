@@ -3,21 +3,21 @@
   "slug": "medical-article-vancouver",
   "sourceHash": "3891e9de9b3c02eeae6f503313f4ad3df8c4769622529f302bfa9320df730941",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:14.603Z",
+  "capturedAt": "2026-10-13T15:02:23.800Z",
   "variants": {
     "en": {
-      "hash8": "6514f38b",
-      "vdtHash": "5a6dc93405aa201145db311701f30563cdb9a1b0",
+      "hash8": "a0242509",
+      "vdtHash": "b5a88b75988b0357901a1282d307f9902af9b1d7",
       "timings": {
-        "importMs": 446,
-        "fontsMs": 297,
-        "buildMs": 184,
-        "totalMs": 1614,
+        "importMs": 1131,
+        "fontsMs": 282,
+        "buildMs": 186,
+        "totalMs": 2592,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 190262,
+          "bytes": 190286,
           "alt": "Page 182: Outcomes and analysis. Table 1. Characteristics of the patients at baseline. · Figure 1. Mean home systolic pressure by week in the telemonitoring group, with its 95% confidence interval. The dashed line is the home target of 135 mm Hg."
         },
         {
@@ -101,18 +101,18 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 122543,
+        "bytes": 122327,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53296,
+        "bytes": 53304,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "2fc7ddc12fe52911",
-            "lines": "50cb3855ae3ffbdf"
+            "hash": "736b69052aced2b5",
+            "lines": "99ffe51a53df030e"
           }
         ]
       },
@@ -430,13 +430,13 @@
       }
     },
     "es": {
-      "hash8": "dad3d663",
-      "vdtHash": "f079a038fd10e920b7438d60418f215d293e5b74",
+      "hash8": "98a98caa",
+      "vdtHash": "81cf1725dfd96bd2ca1e99f7b3b87c7579fa19f8",
       "timings": {
-        "importMs": 372,
-        "fontsMs": 70,
-        "buildMs": 165,
-        "totalMs": 1498,
+        "importMs": 1356,
+        "fontsMs": 90,
+        "buildMs": 168,
+        "totalMs": 2429,
         "builds": 1
       },
       "specimen": {
@@ -481,7 +481,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 189632,
+          "bytes": 189722,
           "alt": "Página 182: Intervenciones. Tabla 1. Características de los pacientes al inicio. · Figura 1. Presión sistólica domiciliaria media por semana en el grupo de telemonitorización, con su intervalo de confianza del 95 %. La línea discontinua es el objetivo de 135 mm Hg."
         },
         {
@@ -492,7 +492,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149496,
+          "bytes": 149454,
           "alt": "Página 183: Información del artículo."
         }
       ],
@@ -520,17 +520,17 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 132001,
+        "bytes": 131482,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54549,
+        "bytes": 54557,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "3f19121ae87132c4",
+            "hash": "73bb51b337b08f5b",
             "lines": "e16a9b9775999b6d"
           }
         ]

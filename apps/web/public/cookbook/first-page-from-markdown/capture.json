@@ -3,20 +3,20 @@
   "slug": "first-page-from-markdown",
   "sourceHash": "83c4f58b098c4c0ba56270a438fd7c50599b1dae73f333dbda6008e0f98c8825",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.176Z",
+  "capturedAt": "2026-10-13T14:59:09.707Z",
   "variants": {
     "en": {
-      "hash8": "86cb991e",
-      "vdtHash": "07c56b8d23023596323db7886c283256ac133054",
+      "hash8": "1cce50ff",
+      "vdtHash": "b17bae9c514158d959680bef33b904542824380b",
       "timings": {
-        "importMs": 486,
-        "fontsMs": 28,
-        "buildMs": 191,
-        "totalMs": 1926,
+        "importMs": 871,
+        "fontsMs": 37,
+        "buildMs": 169,
+        "totalMs": 2597,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 149966,
+          "bytes": 149960,
           "alt": "Opening page 1: The Salt Road."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 136758,
+          "bytes": 136712,
           "alt": "Page 2: What came back."
         }
       ],
@@ -89,12 +89,12 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193208,
+        "bytes": 193224,
         "folio": "579e6f1a",
         "chapters": [
           {
             "pages": 2,
-            "hash": "192ce29c8c2728f0",
+            "hash": "6993688cee5a008c",
             "lines": "831758c4d3c7a910"
           }
         ]
@@ -295,18 +295,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "3 paragraphs set a line short with tracking (worst −4‰, the cap): p. 2 −4‰ “We slept that night in a hollow of the dunes tha…”, p. 2 −4‰ “The ledger is written in three hands. The first …”, p. 2 −4‰ “The last entry in the ledger, halfway down a pag…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2184a877",
-      "vdtHash": "f79b28ea57102489f2e44ffb58278d9d84a9b058",
+      "hash8": "c343a89d",
+      "vdtHash": "073c3f4bd83fcbf8654dd6065e803279b577b633",
       "timings": {
-        "importMs": 673,
-        "fontsMs": 40,
-        "buildMs": 117,
-        "totalMs": 1621,
+        "importMs": 903,
+        "fontsMs": 70,
+        "buildMs": 79,
+        "totalMs": 2022,
         "builds": 1
       },
       "specimen": {
@@ -340,7 +345,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156404,
+          "bytes": 156422,
           "alt": "Página de apertura 1: La ruta de la sal."
         },
         {
@@ -351,7 +356,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140322,
+          "bytes": 140174,
           "alt": "Página 2: La carga de retorno."
         }
       ],
@@ -379,13 +384,13 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193514,
+        "bytes": 193502,
         "folio": "579e6f1a",
         "chapters": [
           {
             "pages": 2,
-            "hash": "f23d16bf276be2e9",
-            "lines": "a57c5d244a9a7358"
+            "hash": "005ebdb24103b918",
+            "lines": "f17f1040890db898"
           }
         ]
       },
@@ -585,13 +590,13 @@
       }
     },
     "pt": {
-      "hash8": "e5d3f285",
-      "vdtHash": "e0adb9fecd13a0fc4c60faa93b63baaf7b57aed8",
+      "hash8": "ea4d8462",
+      "vdtHash": "3c13368de844c4ec267b6db597cabe4e839852d4",
       "timings": {
-        "importMs": 598,
-        "fontsMs": 34,
-        "buildMs": 153,
-        "totalMs": 1574,
+        "importMs": 1405,
+        "fontsMs": 76,
+        "buildMs": 134,
+        "totalMs": 2964,
         "builds": 1
       },
       "specimen": {
@@ -625,7 +630,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160068,
+          "bytes": 160066,
           "alt": "Página de abertura 1: A trilha do sal."
         },
         {
@@ -636,7 +641,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 139512,
+          "bytes": 139426,
           "alt": "Página 2: A carga da volta."
         }
       ],
@@ -664,12 +669,12 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193619,
+        "bytes": 193635,
         "folio": "579e6f1a",
         "chapters": [
           {
             "pages": 2,
-            "hash": "657b9a244b90c92a",
+            "hash": "0669042f3e7229ff",
             "lines": "686988f1035b9711"
           }
         ]
@@ -855,7 +860,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.73
+          "worst": 1.74
         },
         "raggedLines": {
           "count": 0
@@ -870,6 +875,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −4‰, the cap): p. 1 −4‰ “Durante seis séculos, o sal de Arvela saiu do li…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

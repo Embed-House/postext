@@ -3,25 +3,20 @@
   "slug": "proof-sheet-diagnostics",
   "sourceHash": "092f94861d06b619581da9f453154bb10457be151fa3abce7303accba6a664dd",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.004Z",
-  "verified": {
-    "postext": "1.30.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T10:47:51.733Z"
-  },
+  "capturedAt": "2026-10-13T15:03:54.355Z",
   "variants": {
     "en": {
-      "hash8": "25e90bd7",
+      "hash8": "81c032fe",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 168,
-        "fontsMs": 34,
-        "buildMs": 10,
-        "totalMs": 1008,
+        "importMs": 967,
+        "fontsMs": 268,
+        "buildMs": 8,
+        "totalMs": 2287,
         "builds": 2
       },
       "specimen": {
@@ -66,7 +61,7 @@
           "h": 1332,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151306,
+          "bytes": 151300,
           "alt": "Page 2."
         }
       ],

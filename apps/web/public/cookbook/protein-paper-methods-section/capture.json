@@ -3,21 +3,21 @@
   "slug": "protein-paper-methods-section",
   "sourceHash": "3277a1b10aeb1f71fabfb9e9327945775124158cfec0182a13e019d5c9c52a19",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.765Z",
+  "capturedAt": "2026-10-13T15:03:54.369Z",
   "variants": {
     "en": {
-      "hash8": "5a4a067a",
-      "vdtHash": "96d3b9576795b81bf1c68c84d3ef7e9c758b349c",
+      "hash8": "5a7e5a43",
+      "vdtHash": "c6a91251811d0b7f32b17d49934df966dc76f9d4",
       "timings": {
-        "importMs": 1273,
-        "fontsMs": 156,
-        "buildMs": 1143,
-        "totalMs": 3508,
+        "importMs": 979,
+        "fontsMs": 361,
+        "buildMs": 827,
+        "totalMs": 3254,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 189406,
+          "bytes": 189428,
           "alt": "Opening page 1: Highly accurate protein structure prediction with AlphaFold. Fig. 1 | AlphaFold produces highly accurate structures. a, Median accuracy on the CASP14 domains of AlphaFold and of the next best method, as r.m.s.d.95 over Cα atoms (backbone) and over all atoms, wi…"
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 267450,
+          "bytes": 267428,
           "alt": "Page 3: End-to-end structure prediction."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 264380,
+          "bytes": 264396,
           "alt": "Page 4: Methods. Table 1 | Inference times. One model on one V100 GPU, by protein length."
         },
         {
@@ -126,17 +126,17 @@
       },
       "pdf": {
         "file": "protein-paper-methods-section.pdf",
-        "bytes": 203848,
+        "bytes": 203707,
         "pages": 5
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77606,
+        "bytes": 77602,
         "folio": "9eaee533",
         "chapters": [
           {
             "pages": 5,
-            "hash": "368a206c56d08e66",
+            "hash": "52b1796f9f0380a9",
             "lines": "e820e612a3bf9fa2"
           }
         ]

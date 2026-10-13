@@ -3,21 +3,21 @@
   "slug": "technical-datasheet",
   "sourceHash": "3501ccf6fdf5d131d2826dbd23532fd01d6a294c1edfa5e63f891d26466fdfc8",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:19.436Z",
+  "capturedAt": "2026-10-13T15:05:55.301Z",
   "variants": {
     "en": {
-      "hash8": "53098a37",
-      "vdtHash": "e74bd519f779e7b73780cdecb642841295527226",
+      "hash8": "e4d84103",
+      "vdtHash": "7df32176e0a262d80da59a96330d0558ba1d3b8c",
       "timings": {
-        "importMs": 1328,
-        "fontsMs": 800,
-        "buildMs": 147,
-        "totalMs": 3496,
+        "importMs": 1379,
+        "fontsMs": 111,
+        "buildMs": 110,
+        "totalMs": 2717,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1292,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 103732,
+          "bytes": 103692,
           "alt": "Opening page 1: PX-7021. Figure 1. Pin configuration, 8-pin DFN, top view. · Figure 2. Typical application, bus address 48h."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1292,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 124654,
+          "bytes": 124566,
           "alt": "Page 4: 6.3 Alert output. Table 3. Register map (continued) · Figure 3. Package outline and land pattern, 8-pin DFN, in mm. · Table 4. Order codes."
         }
       ],
@@ -121,12 +121,12 @@
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78265,
+        "bytes": 78264,
         "folio": "ca48c30e",
         "chapters": [
           {
             "pages": 4,
-            "hash": "0d6778e9cb4bfe77",
+            "hash": "e428b777ccb3858d",
             "lines": "7679bf24b5d23574"
           }
         ]
@@ -442,6 +442,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

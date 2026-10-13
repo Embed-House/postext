@@ -3,20 +3,20 @@
   "slug": "newspaper-front-page",
   "sourceHash": "3be32d110eb6114ae2fb38aa0fcb022f59926438bcf2b53a2f571669f09982d2",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:15.028Z",
+  "capturedAt": "2026-10-13T15:02:23.910Z",
   "variants": {
     "en": {
-      "hash8": "9c472b9a",
-      "vdtHash": "4f9d3577c2f86f3c219c3113504231ed24fa64d4",
+      "hash8": "0470a0e4",
+      "vdtHash": "82096ab3ca1f22d2840439f11b06ef3d54c1b266",
       "timings": {
-        "importMs": 631,
-        "fontsMs": 116,
-        "buildMs": 238,
-        "totalMs": 2750,
+        "importMs": 658,
+        "fontsMs": 148,
+        "buildMs": 132,
+        "totalMs": 2030,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 154384,
+          "bytes": 154392,
           "alt": "Opening page 1: The Elverdale Courier. File picture: turbines on an upland ridge. Each of the three planned for Harrow Ridge would generate 2.3 megawatts."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 184432,
+          "bytes": 185570,
           "alt": "Opening page 2: Town & Valley. The rebuilt pier. Its new concrete footing (red) goes six metres below the riverbed. Both arches were relaid with their own stones. · The next five days · How the wards voted."
         }
       ],
@@ -89,12 +89,12 @@
       },
       "sandbox": {
         "file": "newspaper-front-page.postext",
-        "bytes": 200641,
+        "bytes": 200640,
         "folio": "7d33b710",
         "chapters": [
           {
             "pages": 2,
-            "hash": "12105c9e05415b78",
+            "hash": "cb5990c32164e325",
             "lines": "8ca7aab6bf920f98"
           }
         ]
@@ -385,7 +385,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

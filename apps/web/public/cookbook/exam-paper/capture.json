@@ -3,20 +3,20 @@
   "slug": "exam-paper",
   "sourceHash": "cb2767e34267f660e545ca86db0dfb07105e7f836b865fe681e910b46a6dad4d",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.096Z",
+  "capturedAt": "2026-10-13T14:59:09.681Z",
   "variants": {
     "en": {
-      "hash8": "6a0bb243",
-      "vdtHash": "f49cc0ea280bbd27748cd242d2cffc82ec625700",
+      "hash8": "9ec357fb",
+      "vdtHash": "5dc15f53a7659d1a847d37fa73ff2ad3258192ec",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 37,
-        "buildMs": 71,
-        "totalMs": 978,
+        "importMs": 995,
+        "fontsMs": 99,
+        "buildMs": 72,
+        "totalMs": 2124,
         "builds": 1
       },
       "specimen": {
@@ -70,7 +70,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 120764,
+          "bytes": 120802,
           "alt": "Page 3: Source-based questions."
         },
         {
@@ -113,12 +113,12 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 45456,
+        "bytes": 45458,
         "folio": "059452bc",
         "chapters": [
           {
             "pages": 4,
-            "hash": "3345f38ce31f27d8",
+            "hash": "7d6bf63d519ceb0d",
             "lines": "e1f63f4d72f3e15b"
           }
         ]
@@ -432,17 +432,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "61d70141",
-      "vdtHash": "7066da48c16d318de3498b882396f8d3b4e76f34",
+      "hash8": "982807a3",
+      "vdtHash": "32157745d24344c64614996ca7ec7d5714c8c651",
       "timings": {
-        "importMs": 362,
-        "fontsMs": 71,
-        "buildMs": 92,
-        "totalMs": 1247,
+        "importMs": 1018,
+        "fontsMs": 101,
+        "buildMs": 75,
+        "totalMs": 2180,
         "builds": 1
       },
       "specimen": {
@@ -496,7 +502,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 123656,
+          "bytes": 123592,
           "alt": "Página 3: Comentario de una fuente."
         },
         {
@@ -539,12 +545,12 @@
       },
       "sandbox": {
         "file": "exam-paper.postext",
-        "bytes": 46076,
+        "bytes": 46079,
         "folio": "059452bc",
         "chapters": [
           {
             "pages": 4,
-            "hash": "fdb9c9bb34983dd1",
+            "hash": "0b45cf7ba1649ca9",
             "lines": "571a773afc2a291a"
           }
         ]
@@ -858,7 +864,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

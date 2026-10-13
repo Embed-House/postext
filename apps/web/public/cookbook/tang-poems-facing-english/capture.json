@@ -3,21 +3,21 @@
   "slug": "tang-poems-facing-english",
   "sourceHash": "3d25f78e52b06419a434fb7926fe043a1a74f566dfa63cb0565ece28c0a7f1fc",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:18.884Z",
+  "capturedAt": "2026-10-13T15:05:55.199Z",
   "variants": {
     "en": {
-      "hash8": "9b2a6c13",
+      "hash8": "e0655ce7",
       "vdtHash": "15e7223af4029b7119f93bfea6aa701acd417534",
       "timings": {
-        "importMs": 1672,
-        "fontsMs": 619,
-        "buildMs": 172,
-        "totalMs": 3522,
+        "importMs": 1779,
+        "fontsMs": 684,
+        "buildMs": 118,
+        "totalMs": 3653,
         "builds": 1
       },
       "specimen": {
@@ -151,7 +151,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 96204,
+          "bytes": 96178,
           "alt": "Opening page 10: A note on the text."
         }
       ],
@@ -195,7 +195,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 152575,
+        "bytes": 152547,
         "pages": 10
       },
       "sandbox": {
@@ -436,23 +436,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "6dcb9472",
-      "vdtHash": "b977be171e69a4861162a7c0af491e27bf6aee7d",
+      "hash8": "370099ab",
+      "vdtHash": "4c379d391176e97074a39ae6eccbd6cb5ca9a74f",
       "timings": {
-        "importMs": 1696,
-        "fontsMs": 1031,
-        "buildMs": 198,
-        "totalMs": 4236,
+        "importMs": 1784,
+        "fontsMs": 927,
+        "buildMs": 105,
+        "totalMs": 3971,
         "builds": 1
       },
       "specimen": {
@@ -586,7 +580,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 101100,
+          "bytes": 101018,
           "alt": "Página de apertura 10: Nota sobre el texto."
         }
       ],
@@ -630,7 +624,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 154625,
+        "bytes": 154517,
         "pages": 10
       },
       "sandbox": {
@@ -640,7 +634,7 @@
         "chapters": [
           {
             "pages": 10,
-            "hash": "b2b2cc162d9e4d24",
+            "hash": "5ff71afb0abec833",
             "lines": "8bb84554261eef08"
           }
         ]

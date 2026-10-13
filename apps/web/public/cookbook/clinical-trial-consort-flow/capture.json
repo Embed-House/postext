@@ -3,21 +3,21 @@
   "slug": "clinical-trial-consort-flow",
   "sourceHash": "9f80fc47fec2abff9676a37e7888a7e79c2b5d833ef7dcbb0bb15b5ff1463dce",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.31.0",
+    "postextPdf": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.400Z",
+  "capturedAt": "2026-10-13T14:57:00.597Z",
   "variants": {
     "en": {
-      "hash8": "ad7d3674",
-      "vdtHash": "0f7e95a436979b697a70a3578c30568d195df6d2",
+      "hash8": "94c598d4",
+      "vdtHash": "206f83bff0ca00c15bf4d0f569852973a130a3e5",
       "timings": {
-        "importMs": 901,
-        "fontsMs": 227,
-        "buildMs": 513,
-        "totalMs": 2465,
+        "importMs": 226,
+        "fontsMs": 114,
+        "buildMs": 454,
+        "totalMs": 1432,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 157216,
+          "bytes": 157230,
           "alt": "Opening page 1: Delivering Cognitive Behavior Therapy to Young Adults With Symptoms of Depression and Anxiety Using a Fully Automated Conversational Agent (Woebot): A Randomized Controlled Trial."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 199920,
+          "bytes": 200056,
           "alt": "Page 3: Woebot."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 114078,
+          "bytes": 114106,
           "alt": "Page 5: Completer Analysis. Figure 1. Participant flow through the trial (CONSORT diagram). · Table 1. Demographic and clinical variables of participants at baseline."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 147722,
+          "bytes": 147520,
           "alt": "Page 6: Qualitative Results. Table 2. Results of ITT analysis of entire sample on primary outcomes in the study at T2. · Figure 2. Best features of the Woebot experience: themes of the answers to “What was the best thing about your experience using Woebot?” · Figure 3. Least f…"
         },
         {
@@ -94,7 +94,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 210488,
+          "bytes": 210642,
           "alt": "Page 7: Conclusions."
         }
       ],
@@ -130,7 +130,7 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 234142,
+        "bytes": 225556,
         "pages": 8
       },
       "sandbox": {
@@ -140,8 +140,8 @@
         "chapters": [
           {
             "pages": 8,
-            "hash": "8ef62cb9cf1f579b",
-            "lines": "c83c91d83f27234a"
+            "hash": "ff62be70d97c3a96",
+            "lines": "91633a31a55cc60f"
           }
         ]
       },
@@ -483,9 +483,9 @@
         "converged": true,
         "iterationCount": 3,
         "looseLines": {
-          "count": 1,
-          "share": 0.003,
-          "worst": 2.15
+          "count": 0,
+          "share": 0,
+          "worst": 1.9000000000000001
         },
         "raggedLines": {
           "count": 0

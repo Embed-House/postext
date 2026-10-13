@@ -3,20 +3,20 @@
   "slug": "catalogue-facing-plates",
   "sourceHash": "188f64d00b05169b4242b41015979e2ed4d016f3023cad3a7f32666b307828df",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.216Z",
+  "capturedAt": "2026-10-13T14:57:00.575Z",
   "variants": {
     "en": {
-      "hash8": "cd4937a0",
-      "vdtHash": "8e0e638256cb9320cfa59a7c23ecbb5e33d424c7",
+      "hash8": "ad2b947c",
+      "vdtHash": "4dd5392768204ac0ca124f36dc7bf6e5abf40800",
       "timings": {
-        "importMs": 1440,
-        "fontsMs": 243,
-        "buildMs": 121,
-        "totalMs": 3444,
+        "importMs": 241,
+        "fontsMs": 57,
+        "buildMs": 75,
+        "totalMs": 994,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1217,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86780,
+          "bytes": 86834,
           "alt": "Opening page 2: 1 Don Quixote in His Library."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1217,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 80010,
+          "bytes": 80104,
           "alt": "Opening page 4: 2 The Vigil of Arms."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1217,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 76974,
+          "bytes": 76946,
           "alt": "Opening page 6: 3 The Adventure of the Windmills."
         },
         {
@@ -167,12 +167,12 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603568,
+        "bytes": 1603556,
         "folio": "2f38e47f",
         "chapters": [
           {
             "pages": 8,
-            "hash": "8dca6760c0896370",
+            "hash": "9276c0805ef8d4c2",
             "lines": "d3d507604329fa96"
           }
         ],

@@ -3,20 +3,20 @@
   "slug": "folio-book-on-a-desk",
   "sourceHash": "19d012cbc39d320194845b5708412597666bfe8191cdf28a86872d159b2416ea",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:57.221Z",
+  "capturedAt": "2026-10-13T14:59:09.720Z",
   "variants": {
     "en": {
-      "hash8": "e55b1192",
-      "vdtHash": "6e3769e9d4af498af4216185e7c14e001ef57d21",
+      "hash8": "cbe7361c",
+      "vdtHash": "12371c8615b0283d270854e49faa6d7d64cdf4a1",
       "timings": {
-        "importMs": 2404,
+        "importMs": 3623,
         "fontsMs": 3,
-        "buildMs": 72,
-        "totalMs": 3309,
+        "buildMs": 62,
+        "totalMs": 4733,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1535,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 111648,
+          "bytes": 111610,
           "alt": "Opening page 1: The Last Crossing."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1535,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151062,
+          "bytes": 151514,
           "alt": "Page 2: Six o’clock."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1535,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149842,
+          "bytes": 149872,
           "alt": "Page 3: The other ledger."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1535,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 141230,
+          "bytes": 140336,
           "alt": "Page 4: After."
         }
       ],
@@ -114,13 +114,13 @@
       },
       "sandbox": {
         "file": "folio-book-on-a-desk.postext",
-        "bytes": 24138,
+        "bytes": 24190,
         "folio": "ae4134af",
         "chapters": [
           {
             "pages": 4,
-            "hash": "a36f901fe0fa760d",
-            "lines": "b6036bf6de93dcbe"
+            "hash": "0db7b0555c48c96b",
+            "lines": "b23cfee616a4f0a6"
           }
         ]
       },
@@ -319,7 +319,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.97
+          "worst": 1.98
         },
         "raggedLines": {
           "count": 0

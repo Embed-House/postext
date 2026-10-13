@@ -3,20 +3,20 @@
   "slug": "conference-programme",
   "sourceHash": "2673557f0ddef0e2287e2e25ae03ab0c06900bae23429c4441a5596ed37a48ea",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:19.948Z",
+  "capturedAt": "2026-10-13T14:58:17.122Z",
   "variants": {
     "en": {
-      "hash8": "cc685ab2",
-      "vdtHash": "0568ab1c030cbc79e8c1f93b7475367cdb814107",
+      "hash8": "9b3f919d",
+      "vdtHash": "d1f68a520dcf5124e4cc465f06abe6b97231b935",
       "timings": {
-        "importMs": 1686,
-        "fontsMs": 334,
-        "buildMs": 163,
-        "totalMs": 3253,
+        "importMs": 812,
+        "fontsMs": 93,
+        "buildMs": 91,
+        "totalMs": 2163,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121032,
+          "bytes": 121046,
           "alt": "Page 4: Al vespre. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició (continuació)."
         },
         {
@@ -146,7 +146,7 @@
         "chapters": [
           {
             "pages": 6,
-            "hash": "ee17fd1d66b8f855",
+            "hash": "a994467f6c018901",
             "lines": "292213d7ef612409"
           }
         ]
@@ -423,13 +423,13 @@
       }
     },
     "es": {
-      "hash8": "488112c6",
-      "vdtHash": "0568ab1c030cbc79e8c1f93b7475367cdb814107",
+      "hash8": "d2a543f6",
+      "vdtHash": "d1f68a520dcf5124e4cc465f06abe6b97231b935",
       "timings": {
-        "importMs": 1893,
-        "fontsMs": 116,
-        "buildMs": 99,
-        "totalMs": 3419,
+        "importMs": 734,
+        "fontsMs": 68,
+        "buildMs": 85,
+        "totalMs": 1671,
         "builds": 1
       },
       "specimen": {
@@ -496,7 +496,7 @@
           "h": 1412,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121032,
+          "bytes": 121046,
           "alt": "Página 4: Al vespre. Taula 1. Dijous 12 de novembre. ⁤ Tipografia · ⁤ Digital · ⁤ Edició (continuació)."
         },
         {
@@ -559,7 +559,7 @@
         "chapters": [
           {
             "pages": 6,
-            "hash": "ee17fd1d66b8f855",
+            "hash": "a994467f6c018901",
             "lines": "292213d7ef612409"
           }
         ]

@@ -3,20 +3,20 @@
   "slug": "zotero-bibtex-nocite",
   "sourceHash": "67e7cf6d42976cd0823c892ca745effdbe071fa4c08259e77dd8253bceff41e5",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.566Z",
+  "capturedAt": "2026-10-13T15:06:54.631Z",
   "variants": {
     "en": {
-      "hash8": "9ceb60b3",
-      "vdtHash": "10505a386e642468e6aa7a1e3120bc391a8605af",
+      "hash8": "a4407678",
+      "vdtHash": "9c12350cd4451185f5f8d2428661609ca85f8a5f",
       "timings": {
-        "importMs": 410,
+        "importMs": 571,
         "fontsMs": 5,
-        "buildMs": 572,
-        "totalMs": 1857,
+        "buildMs": 658,
+        "totalMs": 2078,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 111394,
+          "bytes": 111438,
           "alt": "Opening page 1: Science as a Social Practice."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 127162,
+          "bytes": 127008,
           "alt": "Page 2: Week 5 · Objectivity has a history."
         }
       ],
@@ -88,12 +88,12 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19092,
+        "bytes": 19082,
         "folio": "059452bc",
         "chapters": [
           {
             "pages": 2,
-            "hash": "3ed522a7d8f8aaa3",
+            "hash": "8015fd82d74ca6ac",
             "lines": "aa08299490045286"
           }
         ]
@@ -281,13 +281,13 @@
       }
     },
     "es": {
-      "hash8": "240a38de",
-      "vdtHash": "2bab29610ab35252c6972cb689fffb8b12e76836",
+      "hash8": "52ac8bd6",
+      "vdtHash": "b810b887425fbfad3e8c177b9b65dd79c0f61b1e",
       "timings": {
-        "importMs": 520,
+        "importMs": 468,
         "fontsMs": 6,
-        "buildMs": 765,
-        "totalMs": 1998,
+        "buildMs": 553,
+        "totalMs": 1812,
         "builds": 1
       },
       "specimen": {
@@ -320,7 +320,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114666,
+          "bytes": 114622,
           "alt": "Página de apertura 1: La ciencia como práctica social."
         },
         {
@@ -331,7 +331,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 133052,
+          "bytes": 133150,
           "alt": "Página 2: Semana 5 · La objetividad tiene historia."
         }
       ],
@@ -359,12 +359,12 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19728,
+        "bytes": 19700,
         "folio": "059452bc",
         "chapters": [
           {
             "pages": 2,
-            "hash": "c69094dd74a43e95",
+            "hash": "4fc6e90b514ade55",
             "lines": "9dfc41012210061d"
           }
         ]

@@ -3,20 +3,20 @@
   "slug": "one-text-four-citation-styles",
   "sourceHash": "156cf50d5c86a14e2bcd3a71836502b6856f7061a587f9ebc093c79e6d22520e",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:15.144Z",
+  "capturedAt": "2026-10-13T15:02:23.939Z",
   "variants": {
     "en": {
-      "hash8": "3b223382",
-      "vdtHash": "e2ab5f1e45d7e85e8394662fa4a051927baf5b89",
+      "hash8": "03594731",
+      "vdtHash": "178a19ff9c1a2e821bb2cb07aae401ab53b81e1c",
       "timings": {
-        "importMs": 1522,
-        "fontsMs": 11,
-        "buildMs": 392,
-        "totalMs": 3738,
+        "importMs": 674,
+        "fontsMs": 5,
+        "buildMs": 311,
+        "totalMs": 2532,
         "builds": 4
       },
       "specimen": {
@@ -48,7 +48,7 @@
           "h": 1516,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 141164,
+          "bytes": 141084,
           "alt": "Opening page 1: The page that is not seen."
         },
         {
@@ -59,7 +59,7 @@
           "h": 1516,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 145468,
+          "bytes": 145436,
           "alt": "Opening page 1: The page that is not seen."
         },
         {
@@ -70,7 +70,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 138650,
+          "bytes": 138594,
           "alt": "Opening page 1: The page that is not seen."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 145130,
+          "bytes": 145006,
           "alt": "Opening page 1: The page that is not seen."
         }
       ],
@@ -109,15 +109,302 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17118,
+        "bytes": 17129,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
         "chapters": [
           {
             "pages": 1,
-            "hash": "95b2b4ffe2f8a747",
+            "hash": "7013988137bce1d3",
             "lines": "338bdb6d6ba35125"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "LOCALES",
+          "STYLES",
+          "buildDocumentWithFonts",
+          "createCiteprocEngine",
+          "registerCitationEngine",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "citations",
+          "citations.bibliography",
+          "citations.bibliography.doi",
+          "citations.bibliography.entrySpacing",
+          "citations.bibliography.fontSize",
+          "citations.bibliography.hangingIndent",
+          "citations.bibliography.labelWidth",
+          "citations.bibliography.lineHeight",
+          "citations.hyphenateNames",
+          "citations.link",
+          "citations.style",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "citations",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 132,
+        "designElements": 5,
+        "directives": [
+          ":::references"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Source Sans 3",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Source Sans 3",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Source Serif 4",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "citation-styles",
+          "generated-bibliography",
+          "opener-design"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.68
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "capture.sandbox keeps build 1 of 4; build 2 (The page that is not seen), build 3 (The page that is not seen) and build 4 (The page that is not seen) left out (another configuration)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "0d910e1b",
+      "vdtHash": "b52aefae7a2325712114cbd2adba2a44ecfb222c",
+      "timings": {
+        "importMs": 613,
+        "fontsMs": 5,
+        "buildMs": 291,
+        "totalMs": 2703,
+        "builds": 4
+      },
+      "specimen": {
+        "trimMm": [
+          155,
+          235
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": false,
+        "body": {
+          "family": "Source Serif 4",
+          "sizePt": 10,
+          "leadingPt": 14
+        },
+        "families": [
+          "Source Sans 3",
+          "Source Serif 4"
+        ],
+        "pages": 4,
+        "ownLines": 115
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1516,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 146208,
+          "alt": "Página de apertura 1: La página que no se ve."
+        },
+        {
+          "n": 2,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1516,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 150862,
+          "alt": "Página de apertura 1: La página que no se ve."
+        },
+        {
+          "n": 3,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1516,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 144750,
+          "alt": "Página de apertura 1: La página que no se ve."
+        },
+        {
+          "n": 4,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1516,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 150008,
+          "alt": "Página de apertura 1: La página que no se ve."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "one-text-four-citation-styles.postext",
+        "bytes": 17897,
+        "folio": "973c2e27",
+        "keep": "first",
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "9dc06166593f0e08",
+            "lines": "b58c2616975113ac"
           }
         ]
       },
@@ -267,289 +554,12 @@
         "raggedLines": {
           "count": 0
         },
-        "runtFixes": {
-          "count": 1,
-          "tracked": 1,
-          "worst": 5
-        },
         "findings": [
           {
-            "check": "C35",
-            "severity": "info",
-            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “LUPTON, Ellen, 2010. Thinking with Type. 2. New …”"
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "capture.sandbox keeps build 1 of 4; build 2 (The page that is not seen), build 3 (The page that is not seen) and build 4 (The page that is not seen) left out (another configuration)"
-          },
-          {
-            "check": "sandbox",
-            "severity": "info",
-            "detail": "continuation carried as the bundle's start: pageIndexOffset"
-          }
-        ]
-      }
-    },
-    "es": {
-      "hash8": "06ff1d4f",
-      "vdtHash": "ebef93da2548d5e1f314a5886ee23b7c4ba14867",
-      "timings": {
-        "importMs": 938,
-        "fontsMs": 9,
-        "buildMs": 491,
-        "totalMs": 3042,
-        "builds": 4
-      },
-      "specimen": {
-        "trimMm": [
-          155,
-          235
-        ],
-        "dpi": 150,
-        "layoutType": "single",
-        "mirror": false,
-        "body": {
-          "family": "Source Serif 4",
-          "sizePt": 10,
-          "leadingPt": 14
-        },
-        "families": [
-          "Source Sans 3",
-          "Source Serif 4"
-        ],
-        "pages": 4,
-        "ownLines": 115
-      },
-      "pages": [
-        {
-          "n": 1,
-          "label": "1",
-          "role": "opener",
-          "w": 1000,
-          "h": 1516,
-          "file": "p01.webp",
-          "strip": "p01.s.webp",
-          "bytes": 146410,
-          "alt": "Página de apertura 1: La página que no se ve."
-        },
-        {
-          "n": 2,
-          "label": "1",
-          "role": "opener",
-          "w": 1000,
-          "h": 1516,
-          "file": "p02.webp",
-          "strip": "p02.s.webp",
-          "bytes": 150918,
-          "alt": "Página de apertura 1: La página que no se ve."
-        },
-        {
-          "n": 3,
-          "label": "1",
-          "role": "opener",
-          "w": 1000,
-          "h": 1516,
-          "file": "p03.webp",
-          "strip": "p03.s.webp",
-          "bytes": 144994,
-          "alt": "Página de apertura 1: La página que no se ve."
-        },
-        {
-          "n": 4,
-          "label": "1",
-          "role": "opener",
-          "w": 1000,
-          "h": 1516,
-          "file": "p04.webp",
-          "strip": "p04.s.webp",
-          "bytes": 150142,
-          "alt": "Página de apertura 1: La página que no se ve."
-        }
-      ],
-      "spreads": [
-        [
-          0,
-          1
-        ],
-        [
-          2,
-          3
-        ]
-      ],
-      "card": {
-        "file": "card.webp",
-        "file480": "card.480.webp",
-        "w": 960,
-        "h": 720,
-        "mode": "page"
-      },
-      "og": {
-        "file": "og.jpg",
-        "w": 580,
-        "h": 622
-      },
-      "sandbox": {
-        "file": "one-text-four-citation-styles.postext",
-        "bytes": 17919,
-        "folio": "973c2e27",
-        "keep": "first",
-        "pages": 1,
-        "chapters": [
-          {
-            "pages": 1,
-            "hash": "f035ffd70cfecedd",
-            "lines": "b58c2616975113ac"
-          }
-        ]
-      },
-      "detected": {
-        "apis": [
-          "LOCALES",
-          "STYLES",
-          "buildDocumentWithFonts",
-          "createCiteprocEngine",
-          "registerCitationEngine",
-          "renderPageToCanvas"
-        ],
-        "configKeys": [
-          "bodyText",
-          "bodyText.avoidOrphans",
-          "bodyText.avoidRunts",
-          "bodyText.avoidWidows",
-          "bodyText.boldColor",
-          "bodyText.color",
-          "bodyText.firstLineIndent",
-          "bodyText.fontFamily",
-          "bodyText.fontSize",
-          "bodyText.hyphenation",
-          "bodyText.hyphenation.enabled",
-          "bodyText.indentAfterHeading",
-          "bodyText.italicColor",
-          "bodyText.lineHeight",
-          "bodyText.optimalLineBreaking",
-          "bodyText.referenceColor",
-          "bodyText.textAlign",
-          "citations",
-          "citations.bibliography",
-          "citations.bibliography.doi",
-          "citations.bibliography.entrySpacing",
-          "citations.bibliography.fontSize",
-          "citations.bibliography.hangingIndent",
-          "citations.bibliography.labelWidth",
-          "citations.bibliography.lineHeight",
-          "citations.hyphenateNames",
-          "citations.link",
-          "citations.style",
-          "colorPalette",
-          "colorPalette[].id",
-          "colorPalette[].name",
-          "colorPalette[].value",
-          "footer",
-          "footer.elements",
-          "footer.elements[].color",
-          "footer.elements[].content",
-          "footer.elements[].fontFamily",
-          "footer.elements[].fontSize",
-          "footer.elements[].id",
-          "footer.elements[].kind",
-          "footer.elements[].placement",
-          "header",
-          "header.elements",
-          "headings",
-          "headings.color",
-          "headings.fontFamily",
-          "headings.levels",
-          "headings.levels[].advancedDesign",
-          "headings.levels[].breakBefore",
-          "headings.levels[].level",
-          "layout",
-          "layout.layoutType",
-          "locale",
-          "page",
-          "page.dpi",
-          "page.height",
-          "page.margins",
-          "page.margins.bottom",
-          "page.margins.left",
-          "page.margins.right",
-          "page.margins.top",
-          "page.sizePreset",
-          "page.width"
-        ],
-        "configSections": [
-          "bodyText",
-          "citations",
-          "colorPalette",
-          "footer",
-          "header",
-          "headings",
-          "layout",
-          "locale",
-          "page"
-        ],
-        "configLeaves": 132,
-        "designElements": 5,
-        "directives": [
-          ":::references"
-        ],
-        "inline": [],
-        "resources": {
-          "svg": 0,
-          "bitmap": 0,
-          "table": 0
-        },
-        "fonts": [
-          {
-            "family": "Source Sans 3",
-            "weight": 400,
-            "style": "normal"
-          },
-          {
-            "family": "Source Sans 3",
-            "weight": 600,
-            "style": "normal"
-          },
-          {
-            "family": "Source Serif 4",
-            "weight": 400,
-            "style": "italic"
-          },
-          {
-            "family": "Source Serif 4",
-            "weight": 400,
-            "style": "normal"
-          },
-          {
-            "family": "Source Serif 4",
-            "weight": 600,
-            "style": "normal"
-          },
-          {
-            "family": "Source Serif 4",
-            "weight": 700,
-            "style": "normal"
-          }
-        ],
-        "features": [
-          "citation-styles",
-          "generated-bibliography",
-          "opener-design"
-        ],
-        "suggestedLevel": 2
-      },
-      "diagnostics": {
-        "converged": true,
-        "iterationCount": 1,
-        "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 1.6600000000000001
-        },
-        "raggedLines": {
-          "count": 0
-        },
-        "findings": [
           {
             "check": "sandbox",
             "severity": "info",

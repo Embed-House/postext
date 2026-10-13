@@ -3,20 +3,20 @@
   "slug": "bilingual-facing-verse",
   "sourceHash": "57759ee59866598d3edbcafa1598b7dda3c470143978754ac8983901ae869200",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:37:14.062Z",
+  "capturedAt": "2026-10-13T14:56:20.732Z",
   "variants": {
     "en": {
-      "hash8": "878cdacc",
-      "vdtHash": "129547437132769e83b543787acbd0ea6bd5d8fe",
+      "hash8": "9429f3a3",
+      "vdtHash": "5442132a17c4f136038d86759f7cfd49b79a3aa3",
       "timings": {
-        "importMs": 674,
-        "fontsMs": 43,
-        "buildMs": 61,
-        "totalMs": 1900,
+        "importMs": 209,
+        "fontsMs": 24,
+        "buildMs": 55,
+        "totalMs": 924,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 93052,
+          "bytes": 93048,
           "alt": "Opening page 2: Author’s Note."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82170,
+          "bytes": 82202,
           "alt": "Page 4."
         },
         {
@@ -93,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 76820,
+          "bytes": 76806,
           "alt": "Page 5."
         }
       ],
@@ -130,7 +130,7 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "97e687f2d88b8616",
+            "hash": "c2b3ec018cf690bb",
             "lines": "9df7d951c1edb535"
           }
         ]
@@ -326,17 +326,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d303efa7",
-      "vdtHash": "ca557f462a56e6869b897a41818d29d6b2669d3d",
+      "hash8": "dd519d59",
+      "vdtHash": "13aa8fbb11dfe08e87a8ccb6ad4afcbc32fc492e",
       "timings": {
-        "importMs": 821,
-        "fontsMs": 85,
-        "buildMs": 69,
-        "totalMs": 1936,
+        "importMs": 177,
+        "fontsMs": 23,
+        "buildMs": 51,
+        "totalMs": 926,
         "builds": 1
       },
       "specimen": {
@@ -402,7 +408,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82170,
+          "bytes": 82202,
           "alt": "Página 4."
         },
         {
@@ -445,12 +451,12 @@
       },
       "sandbox": {
         "file": "bilingual-facing-verse.postext",
-        "bytes": 212906,
+        "bytes": 212907,
         "folio": "ee93f084",
         "chapters": [
           {
             "pages": 5,
-            "hash": "ef02a812deca8ea2",
+            "hash": "385b7837c5bfb175",
             "lines": "310d993d99b3c52d"
           }
         ]
@@ -646,7 +652,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

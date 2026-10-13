@@ -3,20 +3,20 @@
   "slug": "parts-in-colour",
   "sourceHash": "611d4803637019d703d726db20cdb9925dcdf61ca8589d3ee1eda83694290665",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.31.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:02.922Z",
+  "capturedAt": "2026-10-13T15:03:18.058Z",
   "variants": {
     "en": {
-      "hash8": "325a3f5d",
-      "vdtHash": "619f902096812d84db96eb8eb3345bac84aed7ad",
+      "hash8": "246b26b1",
+      "vdtHash": "924f92d61e954f07b0c670e23d3fb3861eb18a81",
       "timings": {
-        "importMs": 1116,
+        "importMs": 1181,
         "fontsMs": 98,
-        "buildMs": 181,
-        "totalMs": 2403,
+        "buildMs": 100,
+        "totalMs": 2352,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 94272,
+          "bytes": 94060,
           "alt": "Page 6: 2 Common Redshank. Plate 2. Adult by a saltmarsh creek, on the red legs that give it its name."
         },
         {
@@ -197,7 +197,7 @@
         "chapters": [
           {
             "pages": 10,
-            "hash": "fa99c9814a10c78d",
+            "hash": "d31529f0beb1efd4",
             "lines": "0775f587bdf14401"
           }
         ]
@@ -489,17 +489,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "a942a031",
-      "vdtHash": "e8472f4ee1ee490f6911bb6b044692e4cd2fb61d",
+      "hash8": "01869af4",
+      "vdtHash": "1f9c6d4254a60842d4dd95860aa5001d805e8a8c",
       "timings": {
-        "importMs": 496,
-        "fontsMs": 61,
-        "buildMs": 182,
-        "totalMs": 1700,
+        "importMs": 631,
+        "fontsMs": 67,
+        "buildMs": 86,
+        "totalMs": 1858,
         "builds": 1
       },
       "specimen": {
@@ -576,7 +582,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 104776,
+          "bytes": 104680,
           "alt": "Página 5: 1 Zarapito real. Lámina 1. Adulto en bajamar. La hembra tiene el pico más largo."
         },
         {
@@ -587,7 +593,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 88072,
+          "bytes": 88156,
           "alt": "Página 6: 2 Archibebe común. Lámina 2. Adulto junto a un caño de la marisma, sobre las patas rojas que lo delatan."
         },
         {
@@ -620,7 +626,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 76496,
+          "bytes": 76448,
           "alt": "Página 9: 3 Bigotudo. Lámina 3. Macho en un tallo de carrizo. La hembra tiene la cabeza parda."
         },
         {
@@ -680,7 +686,7 @@
         "chapters": [
           {
             "pages": 10,
-            "hash": "bce3587147b84c8f",
+            "hash": "256c9b29d3399c37",
             "lines": "4dd2b236a7cd7a62"
           }
         ]
@@ -967,12 +973,18 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.54
+          "worst": 1.55
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }
