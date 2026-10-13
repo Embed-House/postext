@@ -325,4 +325,45 @@ describe('a sideways word down a vertical line, on canvas (#770)', () => {
       expect(texts).not.toContain('of');
     }
   });
+
+  // The Chinese guide's contents page opens on `**《Postext指南》**是Sandbox…`:
+  // bold marks and a bold word beside plain text, down the column. Asking
+  // which pieces to join sets the context's font to each style it measures
+  // in and leaves it there; a text is painted in the font of its own
+  // segment all the same, and pieces are joined inside one style only.
+  it('every text in the font of its own segment, a bold one beside a plain one', () => {
+    // The last pieces measured are bold and the first text painted is
+    // plain; then bold marks around a plain word, and a word half bold.
+    const STYLED = 'of­fice 是 **《**of­ficer**》** **of­**fice **of­ficer**';
+    for (const config of [OWN, HOST]) {
+      const doc = buildDocument({ markdown: STYLED }, { ...config, layout: { writingMode: 'vertical-rl', layoutType: 'single' }, bodyText: { ...config.bodyText, textAlign: 'left' } });
+      const block = paragraph(doc);
+      const line = block.lines[0]!;
+      expect(line.cjkComposed).toBeFalsy();
+      expect(line.segments!.filter((s) => s.kind === 'text').map((s) => (s.bold ? `[${s.text}]` : s.text)).join('|'))
+        .toBe('of|fice|是|[《]|of|ficer|[》]|[of]|fice|[of]|[ficer]');
+      const { ctx, seen } = paintingCtx();
+      const fonts: [text: string, font: string][] = [];
+      const fill = ctx.fillText.bind(ctx);
+      Object.assign(ctx, {
+        translate() {}, rotate() {}, scale() {},
+        fillText(text: string, x: number, y: number) {
+          fonts.push([text, ctx.font]);
+          fill(text, x, y);
+        },
+      });
+      const outer = setVerticalPaint({ region: 'mainland' });
+      setSegmentLanguages(config === OWN);
+      renderBlock(ctx, block, block.bbox.width, block.bbox.x);
+      setSegmentLanguages(false);
+      setVerticalPaint(outer);
+      expect(seen.map((p) => p.text)).toEqual(['office', '是', '《', 'officer', '》', 'of', 'fice', 'officer']);
+      const plain = fonts[0]![1];
+      const bold = fonts[2]![1];
+      expect(bold).not.toBe(plain);
+      expect(bold).toMatch(/bold|[6-9]00/);
+      expect(fonts.map(([, font]) => (font === bold ? 'bold' : font === plain ? 'plain' : font)))
+        .toEqual(['plain', 'plain', 'bold', 'plain', 'bold', 'bold', 'plain', 'bold']);
+    }
+  });
 });
