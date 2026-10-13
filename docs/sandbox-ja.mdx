@@ -701,6 +701,8 @@ Sandboxは、[WebMCP](https://webmachinelearning.github.io/webmcp/)（`document.
 
 WebMCPは草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`で使えます。WebMCPのないブラウザーでは、同じツールが`window.postextWebMcp`にあり（`listTools()`、`executeTool(name, args)`）、ページ内でスクリプトを実行できるエージェントが使えます。Sandboxを埋め込むときは、`webmcp={false}`でツールを登録しないようにできます（[Props](#props)を参照）。
 
+[WebMCP](/ja/docs/webmcp)のページでは、エージェントに頼めることと各ツールの呼び出し方を例とともに説明しています。
+
 ## 単体での利用
 
 Sandboxは単体のReactパッケージ（`postext-sandbox`）としても提供されており、任意のReactアプリケーションに組み込めます。

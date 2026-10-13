@@ -1,0 +1,475 @@
+{/* docs/webmcp-zh.mdx */}
+
+export const metadata = {
+  title: 'WebMCP：在沙盒里工作的智能体',
+  sidebarTitle: 'WebMCP',
+  description: '浏览器里的AI智能体借助沙盒的36个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
+  lang: 'zh',
+  lastUpdated: '2026-10-13',
+  readingTime: '14分钟',
+  order: 23,
+  plainSummary: "本页写给想让AI助手替自己在沙盒里处理一本书的人。沙盒打开时，会交给助手一套工具，用来查看任意一页、修改设计、编辑文字、添加图片和表格、找出问题和保存文件。你用自己的话提出要求，比如“把字稍微放大一点，再看看书是不是还能排在40页以内”，助手就去使用这些工具，并把页面给你看。一切都留在你的浏览器里。本页说明怎样接入助手、它能做什么，以及每个工具怎样调用。",
+};
+
+# WebMCP
+
+**浏览器里的智能体直接处理沙盒中打开的书：看页面，改页面，再看一遍。**
+
+[沙盒](/zh/docs/sandbox)通过[WebMCP](https://webmachinelearning.github.io/webmcp/)把专门的工具交给智能体。WebMCP是一项Web标准草案，让网页可以把工具交给浏览器所连接的AI模型。有了这些工具，智能体不必在界面上一下一下地点：它读这本书，要一张第12页的图像，把`bodyText.fontSize`设为10.5 pt，看到这一章从18页变成了19页，再把值改回去。你凭眼睛做的事，它也照样做，用的是你的书，在你的浏览器里。
+
+以`sandbox_`开头的工具共有36个，沙盒显示在屏幕上时注册；另有8个网站工具`site_*`，postext.dev的每一页上都有。本页按你会请智能体做的事情给它们分类，并给出每个工具的调用方式。
+
+## 接入智能体
+
+### 在支持WebMCP的浏览器中
+
+沙盒挂载时把这些工具注册到`document.modelContext`，离开沙盒时收回。浏览器向其提供页面工具的智能体会在那里找到它们。Postext这边不需要安装或设置任何东西。
+
+WebMCP还是草案。Chrome以来源试用的方式提供它，也可以通过`chrome://flags/#enable-webmcp-testing`标志开启。工具随页面而变：在首页或文档中，智能体拿到的是`site_*`工具；沙盒一出现在屏幕上，36个`sandbox_*`工具也随之出现。
+
+### 在其他浏览器中：`window.postextWebMcp`
+
+无论有没有WebMCP，页面都会把同样的工具放在`window.postextWebMcp`上。凡是能在页面中运行脚本的智能体都可以使用它们：Puppeteer或Playwright这类自动化工具、驱动浏览器并执行脚本的MCP服务器（Chrome DevTools MCP）、浏览器扩展，或者在开发者控制台里操作的你：
+
+```js
+// 这个页面上有哪些工具
+postextWebMcp.listTools().map((t) => t.name);
+
+// 运行一个工具：先给名称，再给一个装着参数的对象
+await postextWebMcp.executeTool('sandbox_get_state', {});
+await postextWebMcp.executeTool('sandbox_set_config', {
+  changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }],
+});
+```
+
+在Puppeteer脚本里做同样的事，把一页保存为图片：
+
+```js
+import fs from 'node:fs';
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+await page.goto('https://postext.dev/zh/sandbox');
+await page.waitForFunction(() => window.postextWebMcp?.listTools().some((t) => t.name === 'sandbox_get_state'));
+await page.waitForFunction(async () => (await window.postextWebMcp.executeTool('sandbox_get_state', {})).ready);
+
+const result = await page.evaluate(() =>
+  window.postextWebMcp.executeTool('sandbox_render_page', { chapter: 1, position: 1, width: 1200, format: 'png' }),
+);
+const picture = result.content.find((part) => part.type === 'image');
+fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
+await browser.close();
+```
+
+新建的浏览器配置文件有自己的存储，所以打开的是示例书，而不是你的项目。要处理你自己的书，请使用你当初制作这些书的那个浏览器。
+
+### 回答的格式
+
+工具用一个JSON对象回答：要么是`ok: true`加上所要的内容，要么是`ok: false`加上一个`error`，说明哪里不对、应该改为怎样请求：
+
+```json
+{
+  "ok": false,
+  "error": "bodyText.fontSize is a length: give { \"value\": 11, \"unit\": \"pt\" }, a number (in pt) or a text such as \"11pt\". The units: cm, mm, in, pt, px, em, rem."
+}
+```
+
+参数在任何操作开始之前就按工具的模式（schema）校验，所以拼错的参数会被拒绝，回答里附有正确参数的列表。返回图片的工具（`sandbox_render_page`）按MCP的格式回答，即`{ content: [...] }`：先是一个文本部分，用JSON描述各页，然后每页一个图像部分，以base64编码。
+
+## 工作循环
+
+每个修改书的工具都会等排版跟上之后才回答，并告诉你每一章排成了多少页。因此下一次看到的总是新的页面，智能体可以像设计者那样工作：
+
+1. **看清现状**：`sandbox_get_state`给出这本书、各章及其页数、屏幕上的章和页，以及打开的面板。
+2. **查看**：`sandbox_render_page`绘制一页，`sandbox_inspect_pages`把它描述成数据，`sandbox_get_warnings`列出检查发现的问题。
+3. **修改**：`sandbox_set_config`、`sandbox_edit_text`、`sandbox_save_resource`……
+4. **再看一遍**，然后保留修改或者撤回。
+
+无论屏幕上是哪个查看器，页面都会为工具单独排版和绘制，所以你在读第2章的时候，智能体可以去看第7章。
+
+## 可以请智能体做的事及其做法
+
+### 查看打开了什么
+
+```jsonc
+// sandbox_get_state
+{}
+```
+
+```json
+{
+  "ok": true,
+  "ready": true,
+  "book": { "kind": "sample", "id": "postext-guide", "name": "指南" },
+  "pages": 3,
+  "chapters": [
+    { "chapter": 1, "id": "a", "title": "开篇", "onScreen": true, "words": 1007, "pages": 2 },
+    { "chapter": 2, "id": "b", "title": "第二章", "words": 101, "pages": 1 }
+  ],
+  "view": { "viewer": "canvas", "panel": "none", "scope": "chapter", "chapter": 1 },
+  "resources": 0,
+  "warnings": 0
+}
+```
+
+`ready: false`时会附带`waitingFor`，说明原因（比如书还在加载）。沙盒在等你回应时，会出现`question`和`notice`，见[询问与提示](#询问与提示)。
+
+凡是接受`chapter`的工具，都可以用这一章在书中的位置（从1开始）、标题或id来指定。省略时，指的是屏幕上的那一章。
+
+### 查看一页
+
+**图像**。比如“给我看第3章的开头”，或者“第24、25页这个跨页看起来怎么样？”：
+
+```jsonc
+// sandbox_render_page：一个跨页，每页宽1200 px
+{ "chapter": 3, "page": 24, "count": 2, "width": 1200 }
+```
+
+`page`是印在页面上的页码；`position`是这一页在本章各页中的位置（从1开始），用于没有页码的页面。两者都不给时，就是屏幕上的那一页。`crop`放大页面的一部分，用从左上角算起、占页面宽度和高度的比例来表示，便于近距离判断字形和间距：
+
+```jsonc
+// sandbox_render_page：放大右下角的四分之一
+{ "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
+```
+
+`printPreview: true`绘制印刷特性文件的软打样，带成品线、出血线和安全区参考线；`trimmed: true`去掉带裁切标记的那圈边缘。
+
+**同一页的数据**。比如“这一页哪些行排得太松？”“第二栏排满了吗？”：
+
+```jsonc
+// sandbox_inspect_pages：不给页码时，本章每页一行
+{ "chapter": 1 }
+```
+
+```json
+{
+  "chapter": 1, "title": "开篇", "chapterPages": 2, "converged": true,
+  "pages": [
+    { "position": 1, "label": "1", "role": "opener", "blank": false, "lines": 45, "figures": 0, "starts": "开篇" },
+    { "position": 2, "label": "2", "role": "body", "blank": false, "lines": 37, "figures": 0, "starts": "数十年。印刷字体排印用了五个世纪……" }
+  ]
+}
+```
+
+给出`page`或`position`时，它会列出这一页上的每个块：类型、所在栏、文字、行数、以连字符结尾的行、两端对齐的稀松行及其空格的宽度、它在页面上的框，另外还有每一栏排了多满（`fill: 0.99`）。
+
+**某一点上是什么**。智能体在图像里看到什么东西时，就用裁切时同样的比例去问那是什么：
+
+```jsonc
+// sandbox_inspect_point
+{ "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
+```
+
+回答给出那里的块、Markdown源文本中对应的行号和列号（以及那个词）、链接及其通往的页面、资源的表格单元格或图注。加上`select: true`时，它还会做点击所做的事：打开正文面板，把光标放在那个位置（`word: true`选中那个词，`to`一直选到第二个点）。
+
+### 修改设计
+
+[配置](/zh/docs/configuration)中的任何设置都可以按路径修改。智能体起初很少知道路径，所以先去查找：
+
+```jsonc
+// sandbox_find_setting
+{ "query": "orphans" }
+```
+
+```json
+{
+  "ok": true,
+  "paths": [
+    { "path": "bodyText.avoidOrphans", "effective": true },
+    { "path": "bodyText.avoidOrphansInLists", "effective": true }
+  ],
+  "sections": [{ "section": "Body text", "group": "Typography", "settingsGroup": "text", "configKeys": ["bodyText"] }]
+}
+```
+
+`sandbox_get_config`读取一项设置或一整个部分：`set`是书里保存的值，`effective`是补上默认值之后的实际值，从中也能看到这个部分的每一项设置。
+
+```jsonc
+// sandbox_get_config
+{ "path": "headings.levels[level=2]" }
+```
+
+路径用列表项之间的区别来指明其中某一项：`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`、`calloutStyles[id=note].title`。接着，`sandbox_set_config`在一次调用中修改任意多项设置：
+
+```jsonc
+// sandbox_set_config
+{
+  "changes": [
+    { "path": "bodyText.fontSize", "value": "10.5pt" },
+    { "path": "page.margins.top", "value": { "value": 2.5, "unit": "cm" } },
+    { "path": "headings.levels[level=2].color", "value": "#1f3a5f" },
+    { "path": "bodyText.avoidOrphans", "value": true }
+  ]
+}
+```
+
+长度可以写成`"2.5cm"`、`{ "value": 2.5, "unit": "cm" }`，或者以该设置的单位计的数字；颜色写成`"#1f3a5f"`。值为`null`时删除这项设置，设计本身的值随之恢复。回答告诉你怎样判断这次修改，以及怎样撤回：
+
+```json
+{
+  "ok": true,
+  "changed": [
+    {
+      "path": "bodyText.fontSize",
+      "from": null,
+      "to": { "value": 10.5, "unit": "pt" },
+      "effective": { "from": { "value": 10, "unit": "pt" }, "to": { "value": 10.5, "unit": "pt" } }
+    }
+  ],
+  "followed": [
+    { "path": "captionStyle.fontSize.value", "from": 10, "to": 10.5 },
+    { "path": "tableStyle.bodyFontSize.value", "from": 10, "to": 10.5 }
+  ],
+  "pagesBefore": 212,
+  "pagesAfter": 219,
+  "chapters": [{ "chapter": 1, "title": "开篇", "pages": 19, "pagesBefore": 18 }]
+}
+```
+
+`from`是修改前保存的值（这里是`null`，即书没有设置它），所以拿`from`作为值再调用一次，就能撤销这次修改。`followed`列出依赖这项设置、随它一起变动的其他设置。引擎解析出的结果与所要求的不同时（碰到了限度，或者这项设置取决于另一项），会出现`note`；形状不对的值，或者引擎无法解析的配置，会被拒绝，什么都不改。
+
+改动较大时，`patch`把一个对象合并进配置（对象合并，`null`删除，列表整个替换），`replace`则用一整份配置取代书的配置，比如导出的`postext-config.json`。`sandbox_reset_to_original`加上`part: "config"`，会恢复这本书最初的设计。
+
+字体也是设置：`sandbox_list_fonts`加上`search: "Garamond"`在开放字体目录中查找字族，把字族名写进某个`fontFamily`设置，字体就会加载。
+
+### 编辑文字
+
+每一章的文字都是带有Postext扩展的Markdown（见[文档格式](/zh/docs/document-format)）。智能体带着行号读取文字，找到要改的段落，再按原文精确替换：
+
+```jsonc
+// sandbox_read_text：第2章的第40到80行
+{ "chapter": 2, "fromLine": 40, "toLine": 80 }
+```
+
+```jsonc
+// sandbox_search_text：一段文字出现在哪里，在哪一页
+{ "query": "基线网格", "pages": true }
+```
+
+```jsonc
+// sandbox_edit_text
+{
+  "chapter": 2,
+  "edits": [
+    { "find": "这是开篇的最后几句话。", "replace": "这是开篇的结束语。" },
+    { "find": "颜色", "replace": "色彩", "all": true }
+  ]
+}
+```
+
+除非设置了`all`，每个`find`都必须与源文本完全一致，并且只出现一次。这些修改要么全部生效，要么一条也不生效：找不到的段落会被拒绝，回答建议重新读一遍这一章。整个调用在`sandbox_undo_text`看来是一步，用它即可撤回（`redo: true`再恢复）。`sandbox_write_text`替换整章，内容来自`markdown`或一个`.md`文件。
+
+要在文字中给你指出某个位置，`sandbox_select_text`会打开正文面板并选中那段文字（按`text`、`line`或`offset`定位），效果和点击检查面板里的一条结果相同。
+
+### 整理章节
+
+`sandbox_manage_chapters`可以添加、重命名、移动、拆分、合并和显示章节：
+
+```jsonc
+// 在第三个位置添加一章
+{ "action": "add", "title": "尾声", "markdown": "# 尾声\n\n全书完。\n", "position": 3 }
+
+// 在某段文字开始的地方把一章拆开
+{ "action": "split", "chapter": "开篇", "before": "## 第二部分" }
+
+// 每个一级标题拆成一章
+{ "action": "split_at_headings", "chapter": 1 }
+```
+
+`sandbox_remove_chapter`删除一章，删除后无法撤销。
+
+### 添加图片、表格、视频和字体
+
+`sandbox_save_resource`添加或修改资源，和资源面板的做法一样。文件可以通过`url`提供（页面能够获取的`https:`地址，或者`data:` URL），也可以用`base64`提供：
+
+```jsonc
+// 一张带图注和替代文本的图片
+{
+  "id": "harbour",
+  "image": { "url": "https://example.org/harbour.jpg" },
+  "caption": "黎明时的港口",
+  "altText": "渔船系在石砌码头边，水面上笼着薄雾",
+  "placement": { "position": "top", "span": "page" }
+}
+```
+
+```jsonc
+// 由几行文字组成的表格，第一行是表头
+{
+  "id": "prices",
+  "caption": "1850年的物价",
+  "table": { "rows": [["物品", "价格"], ["面包", "2便士"], ["墨水", "6便士"]], "columnWidths": [2, 1] }
+}
+```
+
+```jsonc
+// YouTube视频：它的封面、画面尺寸和标题会自动获取
+{ "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "工作中的作者" }
+```
+
+回答给出保存下来的记录，以及安放它的那一行`::resource{id="prices"}`，智能体随后用`sandbox_edit_text`把这一行写进文字。对已有的`id`，调用只改动它给出的部分：图注、表格的单元格、安放位置、图片的安全区。`newId`给资源改名，默认同时改掉书中对它的所有引用。`sandbox_list_resources`列出全部资源；给出`id`时，返回其中一个的完整内容（表格的单元格及其格式、SVG的源代码）。
+
+上传到书里的字体通过`sandbox_save_font`处理：
+
+```json
+{ "action": "add", "family": "My Serif", "weight": 700, "style": "italic", "file": { "url": "https://example.org/MySerif-BoldItalic.woff2" } }
+```
+
+### 检查这本书
+
+```jsonc
+// sandbox_get_warnings：所有章
+{ "scope": "book" }
+```
+
+回答的内容就是检查面板所显示的，适用于任意一章或整本书，不管屏幕上显示的是什么：缺少的字体和图片、引擎读不懂的标记、放不下的设计元素、相对于背景太淡的文字、稀松行、段首孤行、溢出的框，以及印前检查。每条警告都带有类别、章、行号和偏移量、所在页，以及它涉及的设置或资源：
+
+```json
+{
+  "ok": true,
+  "scope": "book",
+  "total": 3,
+  "byCategory": { "typesetting": 2, "design": 1 },
+  "warnings": [
+    {
+      "kind": "headerFooterMetadataMissing",
+      "category": "design",
+      "title": "Placeholder metadata missing",
+      "detail": "header · {title} — The metadata referenced by this placeholder is not set — it will render empty."
+    }
+  ]
+}
+```
+
+智能体可以从一条警告跳到它所在的位置（`sandbox_select_text`加上`offset`和`toOffset`，或者用`sandbox_go_to_page`），查看那一页，然后修改文字或设置。`category`可以缩小列表的范围；书很长时，`scope: "book"`要把每一章都排一遍，需要一段时间。
+
+### 指给你看
+
+智能体改了什么，你都看得见。要把你的目光引到某处：
+
+```jsonc
+// sandbox_set_view：Canvas，对页显示，标出稀松行和基线网格
+{ "viewer": "canvas", "pages": "spread", "fit": "height", "guides": { "looseLines": true, "baselineGrid": true } }
+```
+
+```jsonc
+// sandbox_go_to_page：某张图所在的位置
+{ "anchor": "harbour" }
+```
+
+`sandbox_set_view`还能选择查看器（`canvas`、`pdf`、`folio`、`html`、`epub`，分别对应Canvas、PDF、书页、HTML和EPUB标签页）、侧面板、单章或整本书、缩放、阅读字号、印刷预览，以及版面设计面板中的组。`sandbox_go_to_page`按`step`、`page`、`position`、一段`text`、一个`anchor`或EPUB的`contents`条目翻页。`sandbox_run_viewer`按下工具栏上的按钮：`regenerate`重新生成PDF或EPUB并等它完成，`print`打开打印对话框，由你确认，`play_video`播放页面上的视频。
+
+### 漫画页
+
+`sandbox_inspect_comic`给出漫画页的分格、分格线和对白框及其位置；`sandbox_edit_comic`完成人用指针所做的那些编辑，并写进源文本：
+
+```jsonc
+// 把对白框的中心移到它所在分格画面中的某一点，单位为百分比
+{ "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
+
+// 把第一条分格线移到它所在格子的45 %处
+{ "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
+```
+
+对白框落在人脸上或伸出分格时，回答会给出警告。格式见[漫画](/zh/docs/comics)。
+
+### 书、文件和Word
+
+- **打开和保存书**。`sandbox_list_books`列出示例书和你的项目；`sandbox_open_book`打开其中一本（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）；`sandbox_save_book`加上`action: "copy_current"`把屏幕上的书保存为你自己的项目，加上`new_blank`则新建一本空书。
+- **导出**。`sandbox_export`写出`pdf`、`epub`、`postext`、`docx`、`markdown`或`config`。默认由浏览器下载文件；加上`deliver: "data"`时，PDF或EPUB以base64编码返回给智能体：
+
+  ```json
+  { "format": "pdf", "scope": "book", "deliver": "data" }
+  ```
+
+- **导入`.postext`文件**用`sandbox_import_book`（加上`inspect: true`只报告文件里有哪些语言，并不导入）。
+- **导入Word书稿**用`sandbox_import_word`。先加上`dryRun: true`运行一次：它什么都不改，回答质量报告、每种Word样式会转换成什么，以及将会生成的章节和资源。然后修正对应关系，再正式运行：
+
+  ```json
+  {
+    "file": { "url": "https://example.org/manuscript.docx" },
+    "destination": "book",
+    "mapping": { "paragraphs": { "Epigraph": { "kind": "quote" }, "Chapter Title": { "kind": "chapter" } } },
+    "saveTemplateAs": "我的出版社"
+  }
+  ```
+
+  `sandbox_word_templates`列出、读取、保存和删除已保存的对应关系，Word导出也会用到它们。
+
+### 询问与提示
+
+通过链接打开一本你已经有自己版本的书时，沙盒会询问是否替换你的副本，`sandbox_get_state`把这件事报告为`question`，同时给出`ready: false`。`sandbox_answer`回答这个询问：`replaceCopy: false`保留你的副本，`true`用发布的书替换它，并删除你的副本。`dismissNotice: true`清除书库面板中的消息。
+
+## 三个完整的例子
+
+“**把字稍微放大一点，但书要控制在220页以内**”：`sandbox_get_state`（212页）→ `sandbox_set_config`把`bodyText.fontSize`设为`"10.5pt"`（219页）→ 对一个排得很密的页面运行`sandbox_render_page`，看看效果 → `sandbox_get_warnings`加上`category: "typesetting"`，查有没有新出现的段首孤行 → 如果哪里不对，再调用一次`sandbox_set_config`，用第一次回答中的`from`值。
+
+“**把检查在第4章发现的问题改掉**”：`sandbox_get_warnings`加上`chapter: 4` → 对每条警告，围绕它的`line`运行`sandbox_read_text`，对它的`page`运行`sandbox_render_page` → `sandbox_edit_text`或`sandbox_set_config` → 再次运行`sandbox_get_warnings`，直到返回空列表。
+
+“**用这个Word文件做一本书，把PDF给我**”：`sandbox_save_book`加上`action: "new_blank"` → `sandbox_import_word`加上`dryRun: true` → 修正`mapping`，再用`destination: "book"`正式导入 → `sandbox_get_warnings`加上`scope: "book"` → `sandbox_export`加上`format: "pdf"`和`scope: "book"`。
+
+## 哪些操作要先征得你的同意
+
+有六个工具做的事无法撤回，它们标记为有后果的操作（`consequentialHint`），浏览器可以在运行前先问你：`sandbox_remove_chapter`、`sandbox_delete_resource`、`sandbox_delete_book`、`sandbox_reset_to_original`、`sandbox_import_word`（它可能替换整本书）和`sandbox_answer`（它可能删除你手里的一本书的副本）。拿不准的时候，先让智能体导出一份`.postext`副本。
+
+只读的工具标记为`readOnlyHint`；回答中带有并非页面自己写出的文字（书本身的文字、获取来的文件）的工具标记为`untrustedContentHint`，浏览器据此可以避免把这些文字当成指令。
+
+## 限制
+
+- **一切都留在你的浏览器里**。沙盒本身触及不到的东西，工具也触及不到：你的书保存在这个浏览器的存储里，通过`url`提供的文件由页面去获取，所以文件所在的服务器必须允许这样做（CORS）。`data:` URL或`base64`总是可用。
+- **耗时的工作要等**。工具会等排版完成再回答；加上`wait: false`则立即回答。一本长书的PDF或EPUB要花几分钟。
+- **`sandbox_undo_text`能撤回什么**：工具对文字的修改（每次撤回一次调用）和在预览上做的编辑。你在正文编辑器里输入的内容不在此列（用编辑器自己的撤销），添加或移动的章节、对设计和资源的修改也不在此列：这些修改要用每次回答中的`from`撤回。页面重新加载后，这份记录就不在了。
+- **屏幕上的书**。工具作用于打开的那本书。只有导出`.postext`文件的`sandbox_export`、带`duplicate`的`sandbox_save_book`和带`sample`的`sandbox_reset_to_original`，可以不打开另一本书就对它操作。
+
+## 网站的工具
+
+在postext.dev的每一页上都有，沙盒也包括在内：
+
+- `site_get_context`：屏幕上的页面、它的语言和主题、文档的各个部分和每一页。
+- `site_search`：按词语、设置名（`bodyText.avoidOrphans`）或指令（`::resource`）搜索文档和排版食谱。
+- `site_read_page`：把网站的某一页读成Markdown，不离开屏幕上的页面。
+- `site_open_page`：显示某一页，加上`#heading`可以直接跳到其中一节。
+- `site_list_recipes`和`site_open_recipe_in_sandbox`：找到一道排版食谱，在沙盒里把它作为一本可以编辑的书打开。
+- `site_lookup_term`：查术语表中的术语（段首孤行、字距调整、禁则……）。
+- `site_set_preferences`：网站的语言和主题。
+
+所以，从首页开始工作的智能体可以先搜索排版食谱，在沙盒里打开一道食谱，再接着用`sandbox_*`工具在那里工作。
+
+## 全部工具
+
+按沙盒注册时的分组排列。每个工具的完整说明和模式可以通过`postextWebMcp.listTools()`获得。
+
+- **打开的内容**：`sandbox_get_state`。
+- **页面**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
+- **文字**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
+- **设计**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`。
+- **显示方式**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
+- **资源和字体**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。
+- **漫画**：`sandbox_inspect_comic`、`sandbox_edit_comic`。
+- **书和文件**：`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_delete_book`、`sandbox_import_book`、`sandbox_export`。
+- **Word**：`sandbox_import_word`、`sandbox_word_templates`。
+- **询问**：`sandbox_answer`。
+- **检查**：`sandbox_get_warnings`。
+
+## 嵌入沙盒时
+
+`<PostextSandbox>`在挂载期间注册这些工具；`webmcp={false}`则不注册（见[属性](/zh/docs/sandbox#属性)）。宿主页面可以通过同一个模块添加自己的工具：
+
+```ts
+import { registerWebMcpTools } from 'postext-sandbox/webmcp';
+
+const controller = new AbortController();
+registerWebMcpTools([
+  {
+    name: 'shop_list_titles',
+    description: '这家书店的所有书名，以及每本书对应的Postext项目的id。',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true },
+    execute: async () => ({ titles: await fetchTitles() }),
+  },
+], controller.signal);
+// controller.abort()会收回这些工具
+```
+
+浏览器提供WebMCP时，这些工具注册到WebMCP；无论如何，它们都会放在`window.postextWebMcp`上，参数按`inputSchema`校验。

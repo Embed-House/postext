@@ -1,0 +1,475 @@
+{/* docs/webmcp-ja.mdx */}
+
+export const metadata = {
+  title: 'WebMCP：Sandboxで作業するエージェント',
+  sidebarTitle: 'WebMCP',
+  description: 'ブラウザーで動くAIエージェントが、36のWebMCPツールでSandboxを相手にできること（ページを見る、任意の設定を変える、本文を編集する、画像、表、フォントを加える、検査を実行する、書き出す）と、各ツールの呼び出し方を、実際の引数と答えで示します',
+  lang: 'ja',
+  lastUpdated: '2026-10-13',
+  readingTime: '14分',
+  order: 23,
+  plainSummary: "このページは、Sandboxでの本の作業をAIの助手に任せたい人のためのものです。Sandboxを開いている間、助手には、ページを見る、デザインを変える、本文を直す、画像や表を加える、問題を見つける、ファイルを保存するための道具が渡されます。たとえば「本文を少し大きくして、本が40ページに収まるか確かめて」と普段の言葉で頼むと、助手が道具を使い、そのページを見せてくれます。作業はすべてお使いのブラウザーの中で行われます。このページでは、助手のつなぎ方、助手にできること、各ツールの呼び出し方を説明します。",
+};
+
+# WebMCP
+
+**ブラウザーの中のエージェントが、Sandboxで開いている本を扱います。ページを見て、変えて、もう一度見ます。**
+
+[Sandbox](/ja/docs/sandbox)は、[WebMCP](https://webmachinelearning.github.io/webmcp/)を通じてエージェントに専用のツールを渡します。WebMCPはWeb標準の草案で、ページがブラウザーとやり取りしているAIモデルにツールを渡せるようにするものです。エージェントはこのツールを使うので、画面をクリックしてたどる必要がありません。本を読み、12ページの画像を求め、`bodyText.fontSize`を10.5 ptにし、章が18ページから19ページに増えたのを見て、元に戻します。人が目で確かめながらすることを、あなたの本に対して、あなたのブラウザーの中で行います。
+
+ツールは、名前が`sandbox_`で始まるものが36個あり、Sandboxが画面にある間だけ登録されます。ほかに、postext.devのどのページにもあるサイトのツール`site_*`が8個あります。このページでは、エージェントに頼みたい内容ごとにツールを分け、それぞれの呼び出し方を示します。
+
+## エージェントをつなぐ
+
+### WebMCPのあるブラウザー
+
+ツールはSandboxがマウントされたときに`document.modelContext`に登録され、Sandboxを離れると取り下げられます。ブラウザーからページのツールを受け取るエージェントは、そこでツールを見つけます。Postext側でインストールや設定をするものはありません。
+
+WebMCPはまだ草案の段階です。Chromeではオリジントライアルとして、また`chrome://flags/#enable-webmcp-testing`のフラグで使えます。ツールはページに従います。ホームページやドキュメントでは、エージェントが使えるのは`site_*`のツールで、Sandboxが画面に出ると36個の`sandbox_*`のツールが加わります。
+
+### そのほかのブラウザー：`window.postextWebMcp`
+
+ページは、WebMCPの有無にかかわらず、同じツールを`window.postextWebMcp`にも置きます。ページ内でスクリプトを実行できるエージェントなら、これを使えます。PuppeteerやPlaywrightのような自動化ツール、ブラウザーを操作してスクリプトを評価するMCPサーバー（Chrome DevTools MCP）、ブラウザー拡張機能、あるいは開発者コンソールに向かうあなた自身です。
+
+```js
+// このページにあるツール
+postextWebMcp.listTools().map((t) => t.name);
+
+// ツールを1つ実行する：名前と、引数を収めたオブジェクト
+await postextWebMcp.executeTool('sandbox_get_state', {});
+await postextWebMcp.executeTool('sandbox_set_config', {
+  changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }],
+});
+```
+
+同じことをPuppeteerのスクリプトで行い、ページを画像として保存する例です。
+
+```js
+import fs from 'node:fs';
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+await page.goto('https://postext.dev/ja/sandbox');
+await page.waitForFunction(() => window.postextWebMcp?.listTools().some((t) => t.name === 'sandbox_get_state'));
+await page.waitForFunction(async () => (await window.postextWebMcp.executeTool('sandbox_get_state', {})).ready);
+
+const result = await page.evaluate(() =>
+  window.postextWebMcp.executeTool('sandbox_render_page', { chapter: 1, position: 1, width: 1200, format: 'png' }),
+);
+const picture = result.content.find((part) => part.type === 'image');
+fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
+await browser.close();
+```
+
+新しいブラウザープロファイルは保存領域も別なので、あなたのプロジェクトではなく見本の本から始まります。自分の本で作業するときは、その本を作ったブラウザーを使ってください。
+
+### ツールの答えの形
+
+ツールはJSONのオブジェクトで答えます。成功すれば`ok: true`と求められた内容、失敗すれば`ok: false`と、何が誤りで代わりに何を求めればよいかを述べる`error`です。
+
+```json
+{
+  "ok": false,
+  "error": "bodyText.fontSize is a length: give { \"value\": 11, \"unit\": \"pt\" }, a number (in pt) or a text such as \"11pt\". The units: cm, mm, in, pt, px, em, rem."
+}
+```
+
+引数は、何かを実行する前にツールのスキーマと照合されます。パラメーター名を書き誤ると、正しい名前の一覧を添えて拒否されます。画像を返すツール（`sandbox_render_page`）は、MCPの形`{ content: [...] }`で答えます。最初にページを説明するJSONを収めたテキストの部分があり、続いてページごとに1つ、base64でエンコードした画像の部分が並びます。
+
+## 作業の繰り返し
+
+本を変えるツールは、どれもレイアウトが追いつくのを待ってから答え、各章が何ページになったかを伝えます。そのため次に見るのはいつも新しいページで、エージェントはデザイナーと同じように作業を進められます。
+
+1. **現状を知る**：`sandbox_get_state`は、本、その章と各章のページ、画面に出ている章とページ、開いているパネルを返します。
+2. **見る**：`sandbox_render_page`はページを描き、`sandbox_inspect_pages`はページをデータとして説明し、`sandbox_get_warnings`は検査で見つかったものを一覧にします。
+3. **変える**：`sandbox_set_config`、`sandbox_edit_text`、`sandbox_save_resource`など。
+4. **もう一度見る**：そして変更を残すか、元に戻します。
+
+ページは、画面にどのビューアーが出ていても、ツールのために組まれて描かれます。あなたが第2章を読んでいる間に、エージェントは第7章を見ることができます。
+
+## 頼めることと、そのやり方
+
+### 開いているものを知る
+
+```jsonc
+// sandbox_get_state
+{}
+```
+
+```json
+{
+  "ok": true,
+  "ready": true,
+  "book": { "kind": "sample", "id": "postext-guide", "name": "ガイド" },
+  "pages": 3,
+  "chapters": [
+    { "chapter": 1, "id": "a", "title": "はじめに", "onScreen": true, "words": 1007, "pages": 2 },
+    { "chapter": 2, "id": "b", "title": "第二章", "words": 101, "pages": 1 }
+  ],
+  "view": { "viewer": "canvas", "panel": "none", "scope": "chapter", "chapter": 1 },
+  "resources": 0,
+  "warnings": 0
+}
+```
+
+`ready: false`のときは、理由を示す`waitingFor`が付きます（本がまだ読み込み中、など）。Sandboxがあなたの返事を待っているときは`question`と`notice`が現れます。[確認と通知](#確認と通知)を参照してください。
+
+`chapter`を受け取るツールは、本の中での位置（1から）、章のタイトル、章のidのどれでも受け付けます。省略すると、画面に出ている章になります。
+
+### ページを見る
+
+**画像**：「第3章の冒頭を見せて」「24ページと25ページの見開きはどう見える？」といった頼みには、次のように呼びます。
+
+```jsonc
+// sandbox_render_page：見開き、1ページあたり幅1200 px
+{ "chapter": 3, "page": 24, "count": 2, "width": 1200 }
+```
+
+`page`はページに印刷されている番号、`position`はその章のページの中での順番（1から）で、番号のないページに使います。どちらもなければ、画面に出ているページになります。`crop`はページの一部を拡大します。位置と大きさは左上の角からの、ページの幅と高さに対する割合で指定し、文字やアキを間近で確かめるのに使います。
+
+```jsonc
+// sandbox_render_page：右下の4分の1を拡大
+{ "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
+```
+
+`printPreview: true`は、印刷プロファイルによるソフトプルーフを、仕上がり、裁ち落とし、セーフエリアのガイドとともに描きます。`trimmed: true`は、トンボのある余白を省きます。
+
+**データとしての同じページ**：「このページで間延びしている行は？」「2段目は埋まっている？」といった問いには、次のように呼びます。
+
+```jsonc
+// sandbox_inspect_pages：ページを指定しなければ、章のページごとに1行
+{ "chapter": 1 }
+```
+
+```json
+{
+  "chapter": 1, "title": "はじめに", "chapterPages": 2, "converged": true,
+  "pages": [
+    { "position": 1, "label": "1", "role": "opener", "blank": false, "lines": 45, "figures": 0, "starts": "はじめに" },
+    { "position": 2, "label": "2", "role": "body", "blank": false, "lines": 37, "figures": 0, "starts": "数十年が過ぎた。活版印刷は五百年をかけて…" }
+  ]
+}
+```
+
+`page`か`position`を指定すると、そのページのブロックをすべて一覧にします。ブロックごとに、種類、段、テキスト、行数、ハイフンで終わる行、間延びした両端そろえの行とその語間の幅、ページ上の枠が示され、さらに各段がどこまで埋まっているか（`fill: 0.99`）も示されます。
+
+**ある点にあるもの**：エージェントは画像の中に何かを見つけると、切り抜きと同じ割合を使って、それが何かを尋ねます。
+
+```jsonc
+// sandbox_inspect_point
+{ "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
+```
+
+答えには、そこにあるブロック、Markdownのソースの行と桁（と語）、リンクとその行き先のページ、リソースの表のセルやキャプションが入ります。`select: true`を付けると、クリックと同じことも行います。**本文**パネルが開き、その位置にキャレットが置かれます（`word: true`でその語を選択し、`to`で2つ目の点までを選択します）。
+
+### デザインを変える
+
+[設定](/ja/docs/configuration)のどの項目も、パスで指定して変えられます。エージェントは最初からパスを知っていることはまずないので、まず探します。
+
+```jsonc
+// sandbox_find_setting
+{ "query": "orphans" }
+```
+
+```json
+{
+  "ok": true,
+  "paths": [
+    { "path": "bodyText.avoidOrphans", "effective": true },
+    { "path": "bodyText.avoidOrphansInLists", "effective": true }
+  ],
+  "sections": [{ "section": "Body text", "group": "Typography", "settingsGroup": "text", "configKeys": ["bodyText"] }]
+}
+```
+
+`sandbox_get_config`は、1つの設定またはセクション全体を読みます。`set`は本が保存している値、`effective`は既定値を補った結果の値で、後者からはそのセクションにあるすべての設定もわかります。
+
+```jsonc
+// sandbox_get_config
+{ "path": "headings.levels[level=2]" }
+```
+
+パスでは、リストの項目をほかと区別する値で指定します。`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`、`calloutStyles[id=note].title`のようにです。そのうえで`sandbox_set_config`を使えば、1回の呼び出しでいくつでも設定を変えられます。
+
+```jsonc
+// sandbox_set_config
+{
+  "changes": [
+    { "path": "bodyText.fontSize", "value": "10.5pt" },
+    { "path": "page.margins.top", "value": { "value": 2.5, "unit": "cm" } },
+    { "path": "headings.levels[level=2].color", "value": "#1f3a5f" },
+    { "path": "bodyText.avoidOrphans", "value": true }
+  ]
+}
+```
+
+長さは`"2.5cm"`、`{ "value": 2.5, "unit": "cm" }`、またはその設定の単位での数値で、色は`"#1f3a5f"`です。値に`null`を渡すと設定が取り除かれ、デザインの値に戻ります。答えには、変更の良し悪しを判断する材料と、元に戻す方法が入っています。
+
+```json
+{
+  "ok": true,
+  "changed": [
+    {
+      "path": "bodyText.fontSize",
+      "from": null,
+      "to": { "value": 10.5, "unit": "pt" },
+      "effective": { "from": { "value": 10, "unit": "pt" }, "to": { "value": 10.5, "unit": "pt" } }
+    }
+  ],
+  "followed": [
+    { "path": "captionStyle.fontSize.value", "from": 10, "to": 10.5 },
+    { "path": "tableStyle.bodyFontSize.value", "from": 10, "to": 10.5 }
+  ],
+  "pagesBefore": 212,
+  "pagesAfter": 219,
+  "chapters": [{ "chapter": 1, "title": "はじめに", "pages": 19, "pagesBefore": 18 }]
+}
+```
+
+`from`は変更前に保存されていた値です（ここでは`null`で、本はこの設定を持っていませんでした）。`from`を値にして同じ呼び出しをすれば、変更が元に戻ります。`followed`には、この設定に連動して変わった設定が並びます。エンジンが求められたものと違う値に解決したとき（上限に当たった、ほかの設定に依存している、など）は`note`が付きます。形の合わない値や、エンジンが解決できない設定は拒否され、何も変わりません。
+
+大きな変更には、設定にオブジェクトをマージする`patch`（オブジェクトはマージされ、`null`は取り除き、リストは丸ごと置き換わります）と、本の設定を丸ごと別の設定に置き換える`replace`があります。後者には、たとえば書き出した`postext-config.json`を渡せます。`sandbox_reset_to_original`に`part: "config"`を渡すと、本の最初のデザインに戻ります。
+
+フォントも設定です。`sandbox_list_fonts`に`search: "Garamond"`を渡すと公開カタログからファミリーを探し、その名前を`fontFamily`の設定に書き込むとフォントが読み込まれます。
+
+### 本文を編集する
+
+各章の本文は、Postextの拡張を加えたMarkdownです（[文書形式](/ja/docs/document-format)を参照）。エージェントは行番号付きで本文を読み、該当する一節を探し、一節を厳密に指定して置き換えます。
+
+```jsonc
+// sandbox_read_text：第2章の40行目から80行目
+{ "chapter": 2, "fromLine": 40, "toLine": 80 }
+```
+
+```jsonc
+// sandbox_search_text：一節が現れる場所と、そのページ
+{ "query": "ベースライングリッド", "pages": true }
+```
+
+```jsonc
+// sandbox_edit_text
+{
+  "chapter": 2,
+  "edits": [
+    { "find": "冒頭の最後の言葉。", "replace": "冒頭を締めくくる言葉。" },
+    { "find": "コンピュータ", "replace": "コンピューター", "all": true }
+  ]
+}
+```
+
+それぞれの`find`はソースと完全に一致し、`all`を指定しない限り1回だけ現れる必要があります。編集はすべて適用されるか、1つも適用されないかのどちらかです。見つからない一節があると、章を読み直すよう勧める答えとともに拒否されます。1回の呼び出し全体が`sandbox_undo_text`の1ステップになり、このツールで取り消せます（`redo: true`でやり直せます）。`sandbox_write_text`は章全体を、`markdown`または`.md`ファイルの内容で置き換えます。
+
+本文のある場所をあなたに示すときは、`sandbox_select_text`が**本文**パネルを開き、その一節を選択します（`text`、`line`、`offset`で指定）。**検査**パネルで見つかった項目をクリックしたときと同じ動きです。
+
+### 章を整理する
+
+`sandbox_manage_chapters`は、章の追加、名前の変更、移動、分割、結合、表示を行います。
+
+```jsonc
+// 3番目に章を加える
+{ "action": "add", "title": "エピローグ", "markdown": "# エピローグ\n\nおわり。\n", "position": 3 }
+
+// ある一節が始まる位置で章を分ける
+{ "action": "split", "chapter": "はじめに", "before": "## 第二部" }
+
+// レベル1の見出しごとに1つの章にする
+{ "action": "split_at_headings", "chapter": 1 }
+```
+
+`sandbox_remove_chapter`は章を1つ削除します。この操作は取り消せません。
+
+### 画像、表、動画、フォントを加える
+
+`sandbox_save_resource`は、**リソース**パネルと同じように、リソースを加えたり変えたりします。ファイルは`url`（ページが取得できる`https:`のアドレス、または`data:` URL）か、`base64`で渡します。
+
+```jsonc
+// キャプションと代替テキストの付いた画像
+{
+  "id": "harbour",
+  "image": { "url": "https://example.org/harbour.jpg" },
+  "caption": "夜明けの港",
+  "altText": "石の岸壁に係留された漁船。水面に霧がかかっている",
+  "placement": { "position": "top", "span": "page" }
+}
+```
+
+```jsonc
+// テキストの行から作る表。最初の行が見出し行になる
+{
+  "id": "prices",
+  "caption": "1850年の価格",
+  "table": { "rows": [["品目", "価格"], ["パン", "2ペンス"], ["インク", "6ペンス"]], "columnWidths": [2, 1] }
+}
+```
+
+```jsonc
+// YouTubeの動画：ポスター画像、フレームの大きさ、タイトルは取得される
+{ "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "仕事中の著者" }
+```
+
+答えには、保存されたレコードと、それを配置する行`::resource{id="prices"}`が入ります。エージェントはこの行を`sandbox_edit_text`で本文に書き込みます。既存の`id`に対して呼ぶと、渡したものだけが変わります。キャプション、表のセル、配置、画像のセーフエリアなどです。`newId`はリソースの名前を変え、既定では本の中のそのリソースへの参照もすべて書き換えます。`sandbox_list_resources`はリソースを一覧にし、`id`を渡すとその1つを詳しく返します（表なら書式付きのセル、SVGならそのソース）。
+
+本にアップロードするフォントは`sandbox_save_font`で扱います。
+
+```json
+{ "action": "add", "family": "My Serif", "weight": 700, "style": "italic", "file": { "url": "https://example.org/MySerif-BoldItalic.woff2" } }
+```
+
+### 本を検査する
+
+```jsonc
+// sandbox_get_warnings：すべての章
+{ "scope": "book" }
+```
+
+答えは**検査**パネルが示す内容と同じで、画面に何が出ていても、任意の章または本全体について返ります。見つからないフォントや画像、エンジンが読めなかったマークアップ、収まらないデザイン要素、地に対して薄すぎる文字、間延びした行、ウィドウ、はみ出した囲み、印刷のプリフライトです。各警告には、分類、章、行とオフセット、ページ、そして警告が名指しする設定やリソースが付きます。
+
+```json
+{
+  "ok": true,
+  "scope": "book",
+  "total": 3,
+  "byCategory": { "typesetting": 2, "design": 1 },
+  "warnings": [
+    {
+      "kind": "headerFooterMetadataMissing",
+      "category": "design",
+      "title": "Placeholder metadata missing",
+      "detail": "header · {title} — The metadata referenced by this placeholder is not set — it will render empty."
+    }
+  ]
+}
+```
+
+エージェントは警告からその場所に移り（`sandbox_select_text`に`offset`と`toOffset`を渡すか、`sandbox_go_to_page`を使います）、ページを見て、本文か設定を直せます。`category`で一覧を絞り込めます。長い本では、`scope: "book"`はすべての章を組むので時間がかかります。
+
+### 画面で見せる
+
+エージェントが変えたものは、あなたにも見えます。何かを指し示したいときは次のようにします。
+
+```jsonc
+// sandbox_set_view：Canvasで見開き表示にし、間延びした行を強調する
+{ "viewer": "canvas", "pages": "spread", "fit": "height", "guides": { "looseLines": true, "baselineGrid": true } }
+```
+
+```jsonc
+// sandbox_go_to_page：図が置かれている場所
+{ "anchor": "harbour" }
+```
+
+`sandbox_set_view`では、ほかに、ビューアー（`canvas`、`pdf`、`folio`、`html`、`epub`）、サイドパネル、章か本全体か、拡大率、読者側の文字サイズ、印刷プレビュー、**デザイン**パネルのグループも選べます。`sandbox_go_to_page`は、`step`、`page`、`position`、本文の一節`text`、`anchor`、EPUBの目次の項目`contents`でページを移します。`sandbox_run_viewer`はツールバーのボタンを押します。`regenerate`はPDFやEPUBを作り直してそれを待ち、`print`は印刷ダイアログを開いてあなたの確認を待ち、`play_video`はページ上の動画を再生します。
+
+### 漫画のページの編集
+
+`sandbox_inspect_comic`は、漫画のページのコマ、割り線、吹き出しを位置とともに返します。`sandbox_edit_comic`は、人がポインターで行う編集を行い、ソースに書き込みます。
+
+```jsonc
+// 吹き出しの中心を、そのコマの絵の中の一点に動かす（パーセントで指定）
+{ "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
+
+// 1本目の割り線を、そのセルの45 %の位置に動かす
+{ "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
+```
+
+吹き出しが顔に重なったり、コマからはみ出したりすると、答えで警告します。形式については[漫画](/ja/docs/comics)を参照してください。
+
+### 本、ファイル、Word
+
+- **本を開いて保存する**：`sandbox_list_books`は見本の本とあなたのプロジェクトを一覧にし、`sandbox_open_book`はそのうちの1冊を開きます（`{ "kind": "sample", "id": "postext-guide", "language": "es" }`）。`sandbox_save_book`に`action: "copy_current"`を渡すと画面の本を自分のプロジェクトとして保存し、`new_blank`を渡すと空の本を始めます。
+- **書き出す**：`sandbox_export`は`pdf`、`epub`、`postext`、`docx`、`markdown`、`config`を書き出します。既定ではブラウザーがファイルをダウンロードします。`deliver: "data"`を渡すと、PDFやEPUBがbase64でエンコードされてエージェントに返ります。
+
+  ```json
+  { "format": "pdf", "scope": "book", "deliver": "data" }
+  ```
+
+- **`.postext`ファイルを読み込む**：`sandbox_import_book`を使います（`inspect: true`を渡すと、読み込まずに、どの言語が入っているかを答えます）。
+- **Wordの原稿を取り込む**：`sandbox_import_word`を使います。最初に`dryRun: true`で実行してください。何も変えずに、品質レポート、Wordのスタイルごとに何になるか、作られる章とリソースを答えます。そのあとで対応づけを直し、本番の読み込みを実行します。
+
+  ```json
+  {
+    "file": { "url": "https://example.org/manuscript.docx" },
+    "destination": "book",
+    "mapping": { "paragraphs": { "Epigraph": { "kind": "quote" }, "Chapter Title": { "kind": "chapter" } } },
+    "saveTemplateAs": "わたしの出版社"
+  }
+  ```
+
+  `sandbox_word_templates`は、保存した対応づけの一覧表示、読み取り、保存、削除を行います。この対応づけはWordへの書き出しでも使われます。
+
+### 確認と通知
+
+リンクから開いた本について、あなたがすでに自分の版を持っている場合、Sandboxは手元の複製を置き換えるかどうかを尋ねます。`sandbox_get_state`はこれを`question`として、`ready: false`とともに伝えます。`sandbox_answer`がこれに答えます。`replaceCopy: false`は手元の複製を残し、`true`は公開版で置き換えて手元の複製を削除します。`dismissNotice: true`は**本**パネルのメッセージを消します。
+
+## 最初から最後まで、3つの作業例
+
+**「本文を少し大きくして。ただし本は220ページ未満に収めて」**：`sandbox_get_state`（212ページ）→ `bodyText.fontSize`を`"10.5pt"`にする`sandbox_set_config`（219ページ）→ 文字の詰まったページを`sandbox_render_page`で描いて確かめる → `category: "typesetting"`を渡した`sandbox_get_warnings`で新しいウィドウを探す → うまくいかなければ、最初の答えの`from`の値でもう一度`sandbox_set_config`。
+
+**「第4章で検査が見つけたものを直して」**：`chapter: 4`を渡した`sandbox_get_warnings` → 警告ごとに、その`line`の周りを`sandbox_read_text`で読み、その`page`を`sandbox_render_page`で描く → `sandbox_edit_text`または`sandbox_set_config` → 空の答えが返るまで、もう一度`sandbox_get_warnings`。
+
+**「このWordファイルから本を作って、PDFをちょうだい」**：`action: "new_blank"`を渡した`sandbox_save_book` → `dryRun: true`を渡した`sandbox_import_word` → `mapping`を直し、`destination: "book"`で本番の読み込み → `scope: "book"`を渡した`sandbox_get_warnings` → `format: "pdf"`と`scope: "book"`を渡した`sandbox_export`。
+
+## あなたの同意を求めるツール
+
+元に戻せない操作をする6つのツールには、重大な操作の印（`consequentialHint`）が付いており、実行の前にブラウザーがあなたに確認を求められます。`sandbox_remove_chapter`、`sandbox_delete_resource`、`sandbox_delete_book`、`sandbox_reset_to_original`、`sandbox_import_word`（本全体を置き換えることがあります）、`sandbox_answer`（手元の本の複製を削除することがあります）です。迷うときは、先に`.postext`の複製を書き出すようエージェントに頼んでください。
+
+読み取るだけのツールには`readOnlyHint`が付いています。ページ自身が書いたのではないテキスト（本の本文、取得したファイル）を答えに含むツールには`untrustedContentHint`が付いており、ブラウザーはそのテキストが指示として扱われないようにできます。
+
+## 制限
+
+- **すべてはブラウザーの中にとどまります**：ツールが届くのは、Sandbox自身が届く範囲だけです。本はこのブラウザーの保存領域にあり、`url`で渡したファイルはページが取得するので、そのサーバーが許可している必要があります（CORS）。`data:` URLや`base64`なら必ず使えます。
+- **長い作業には時間がかかります**：ツールはレイアウトを待ってから答えます。`wait: false`を渡すとすぐに答えます。長い本のPDFやEPUBには数分かかります。
+- **`sandbox_undo_text`が取り消せるもの**：ツールによる本文の編集（1回の呼び出しずつ）と、プレビュー上で行った編集です。**本文**エディターで入力した内容（エディター自身の取り消しで戻します）、章の追加や移動、デザインやリソースの変更は取り消せません。これらには、各答えの`from`を使います。取り消しの履歴は、ページを再読み込みすると失われます。
+- **画面の本が対象です**：ツールは開いている本に対して働きます。開かずに別の本に届くのは、`.postext`ファイルを書き出す`sandbox_export`、`duplicate`を渡した`sandbox_save_book`、`sample`を渡した`sandbox_reset_to_original`だけです。
+
+## サイトのツール
+
+Sandboxを含む、postext.devのすべてのページにあります。
+
+- `site_get_context`：画面に出ているページ、その言語とテーマ、ドキュメントのセクションとすべてのページ。
+- `site_search`：ドキュメントとレシピ集を、語、設定名（`bodyText.avoidOrphans`）、ディレクティブ（`::resource`）で検索します。
+- `site_read_page`：サイトのページを、画面のページを離れずにMarkdownとして読みます。
+- `site_open_page`：ページを表示します。`#heading`を付けると、そのセクションに移ります。
+- `site_list_recipes`と`site_open_recipe_in_sandbox`：レシピ集のレシピを探し、編集できる本としてSandboxで開きます。
+- `site_lookup_term`：用語集の用語（ウィドウ、カーニング、禁則など）。
+- `site_set_preferences`：サイトの言語とテーマ。
+
+ホームページから始めたエージェントは、レシピ集を検索し、レシピをSandboxで開き、そのまま`sandbox_*`のツールで作業を続けられます。
+
+## ツールの一覧
+
+Sandboxが登録するときのまとまりで並べています。各ツールの詳しい説明とスキーマは、`postextWebMcp.listTools()`で得られます。
+
+- **開いているもの**：`sandbox_get_state`。
+- **ページ**：`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`。
+- **本文**：`sandbox_read_text`、`sandbox_write_text`、`sandbox_edit_text`、`sandbox_undo_text`、`sandbox_select_text`、`sandbox_search_text`、`sandbox_manage_chapters`、`sandbox_remove_chapter`。
+- **デザイン**：`sandbox_get_config`、`sandbox_set_config`、`sandbox_find_setting`、`sandbox_reset_to_original`。
+- **表示**：`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`。
+- **リソースとフォント**：`sandbox_list_resources`、`sandbox_save_resource`、`sandbox_delete_resource`、`sandbox_list_fonts`、`sandbox_save_font`。
+- **漫画**：`sandbox_inspect_comic`、`sandbox_edit_comic`。
+- **本とファイル**：`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_delete_book`、`sandbox_import_book`、`sandbox_export`。
+- **Word**：`sandbox_import_word`、`sandbox_word_templates`。
+- **確認**：`sandbox_answer`。
+- **検査**：`sandbox_get_warnings`。
+
+## Sandboxを埋め込むとき
+
+`<PostextSandbox>`はマウントされている間ツールを登録し、`webmcp={false}`でツールを登録しないようにできます（[Props](/ja/docs/sandbox#props)を参照）。ホストのページは、同じモジュールを通じて独自のツールを加えられます。
+
+```ts
+import { registerWebMcpTools } from 'postext-sandbox/webmcp';
+
+const controller = new AbortController();
+registerWebMcpTools([
+  {
+    name: 'shop_list_titles',
+    description: 'The titles of this shop, with the id of the Postext project of each one.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true },
+    execute: async () => ({ titles: await fetchTitles() }),
+  },
+], controller.signal);
+// controller.abort()でツールを取り下げる
+```
+
+これらのツールは、ブラウザーがWebMCPを提供していればWebMCPに登録され、`window.postextWebMcp`には常に登録されます。引数は`inputSchema`と照合されます。

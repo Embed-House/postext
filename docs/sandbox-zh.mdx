@@ -700,6 +700,8 @@ EPUB 3有两种版式，由包文件的`rendition:layout`属性声明：
 
 WebMCP还是草案：Chrome以来源试用的方式提供，也可通过`chrome://flags/#enable-webmcp-testing`开启。在没有WebMCP的浏览器里，同样的工具放在`window.postextWebMcp`上（`listTools()`、`executeTool(name, args)`），供能在页面里运行脚本的智能体使用。嵌入沙盒时，`webmcp={false}`可不注册这些工具（见[属性](#属性)）。
 
+[WebMCP](/zh/docs/webmcp)页面说明可以让智能体做哪些事，以及每个工具的调用方式，并附有示例。
+
 ## 独立使用
 
 沙盒提供为独立的React包（`postext-sandbox`），可以嵌入任何React应用：

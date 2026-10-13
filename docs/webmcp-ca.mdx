@@ -1,0 +1,658 @@
+{/* docs/webmcp-ca.mdx */}
+
+export const metadata = {
+  title: 'WebMCP: un agent treballant al Sandbox',
+  sidebarTitle: 'WebMCP',
+  description: "Què pot fer un agent d'IA al navegador amb el Sandbox mitjançant les seves 36 eines WebMCP (mirar les pàgines, canviar qualsevol ajust, editar el text, afegir imatges, taules i fonts, executar la revisió, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  lang: 'ca',
+  lastUpdated: '2026-10-13',
+  readingTime: '14 min',
+  order: 23,
+  plainSummary: "Aquesta pàgina és per a qui vol que un assistent d'intel·ligència artificial treballi per ell en un llibre del Sandbox. Mentre el Sandbox és obert, dona a l'assistent un joc d'eines per mirar qualsevol pàgina, canviar el disseny, editar el text, afegir imatges i taules, trobar problemes i desar fitxers. Li demanes les coses amb les teves paraules, per exemple «fes la lletra una mica més grossa i comprova que el llibre encara cap en 40 pàgines», i l'assistent fa servir les eines i et mostra les pàgines. Tot es queda al teu navegador. La pàgina explica com connectar-hi un assistent, què pot fer i com es crida cada eina.",
+};
+
+# WebMCP
+
+**Un agent al teu navegador treballa en el llibre obert al Sandbox: en mira les pàgines, les canvia i les torna a mirar.**
+
+El [Sandbox](/ca/docs/sandbox) dona a un agent eines pròpies mitjançant
+[WebMCP](https://webmachinelearning.github.io/webmcp/), un esborrany d'estàndard
+web que permet a una pàgina oferir eines al model d'IA amb què parla el
+navegador. Amb aquestes eines l'agent no va fent clic per la interfície: llegeix
+el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 pt,
+veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
+Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
+
+Hi ha 36 eines amb el nom començat per `sandbox_`, registrades mentre el Sandbox
+és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
+postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
+dona la crida de cadascuna.
+
+## Connectar un agent
+
+### En un navegador amb WebMCP
+
+Les eines es registren a `document.modelContext` quan es munta el Sandbox i es
+retiren quan en surts. Un agent a qui el navegador ofereix les eines de la
+pàgina les troba allà. A Postext no cal instal·lar ni configurar res.
+
+WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
+de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
+pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
+quan el Sandbox és a la pantalla, apareixen també les 36 eines `sandbox_*`.
+
+### En qualsevol altre navegador: `window.postextWebMcp`
+
+La pàgina també posa les mateixes eines a `window.postextWebMcp`, hi hagi WebMCP
+o no. Les pot fer servir qualsevol agent capaç d'executar codi a la pàgina: una
+eina d'automatització com Puppeteer o Playwright, un servidor MCP que controla
+el navegador i avalua codi (Chrome DevTools MCP), una extensió del navegador o
+tu mateix, a la consola de desenvolupament:
+
+```js
+// Què hi ha en aquesta pàgina
+postextWebMcp.listTools().map((t) => t.name);
+
+// Executar una eina: el nom i, després, un objecte amb els seus arguments
+await postextWebMcp.executeTool('sandbox_get_state', {});
+await postextWebMcp.executeTool('sandbox_set_config', {
+  changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }],
+});
+```
+
+El mateix des d'un script de Puppeteer, que desa una pàgina com a imatge:
+
+```js
+import fs from 'node:fs';
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+await page.goto('https://postext.dev/ca/sandbox');
+await page.waitForFunction(() => window.postextWebMcp?.listTools().some((t) => t.name === 'sandbox_get_state'));
+await page.waitForFunction(async () => (await window.postextWebMcp.executeTool('sandbox_get_state', {})).ready);
+
+const result = await page.evaluate(() =>
+  window.postextWebMcp.executeTool('sandbox_render_page', { chapter: 1, position: 1, width: 1200, format: 'png' }),
+);
+const picture = result.content.find((part) => part.type === 'image');
+fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
+await browser.close();
+```
+
+Un perfil de navegador nou té el seu propi emmagatzematge, així que comença
+amb els exemples i no amb els teus projectes. Per treballar en els teus
+llibres, fes servir el navegador on els has fet.
+
+### Com són les respostes
+
+Una eina respon amb un objecte JSON: `ok: true` i el que s'ha demanat, o
+`ok: false` i un `error` que diu què no anava bé i què cal demanar en lloc
+d'això:
+
+```json
+{
+  "ok": false,
+  "error": "bodyText.fontSize is a length: give { \"value\": 11, \"unit\": \"pt\" }, a number (in pt) or a text such as \"11pt\". The units: cm, mm, in, pt, px, em, rem."
+}
+```
+
+Els arguments es comproven amb l'esquema de l'eina abans d'executar res, de
+manera que un paràmetre mal escrit es rebutja amb la llista dels correctes. Una
+eina que retorna imatges (`sandbox_render_page`) respon amb la forma de MCP, `{ content: [...] }`: una
+part de text amb un JSON que descriu les pàgines i, després, una part d'imatge
+per pàgina, codificada en base64.
+
+## El cicle de treball
+
+Totes les eines que canvien el llibre esperen que la maquetació s'actualitzi
+abans de respondre, i diuen quantes pàgines ocupa cada capítol. Així, la mirada
+següent sempre és sobre les pàgines noves, i l'agent pot treballar com ho fa un
+dissenyador:
+
+1. **Veure com està tot**: `sandbox_get_state` dona el llibre, els seus
+   capítols amb les pàgines, el capítol i la pàgina que hi ha a la pantalla i
+   el tauler obert.
+2. **Mirar**: `sandbox_render_page` pinta una pàgina, `sandbox_inspect_pages`
+   la descriu com a dades i `sandbox_get_warnings` llista el que ha trobat la
+   revisió.
+3. **Canviar**: `sandbox_set_config`, `sandbox_edit_text`,
+   `sandbox_save_resource`…
+4. **Tornar a mirar**, i quedar-se el canvi o desfer-lo.
+
+La pàgina es maqueta i es pinta per a l'eina sigui quin sigui el visor a la
+pantalla, de manera que l'agent pot mirar el capítol 7 mentre tu llegeixes el
+capítol 2.
+
+## Què es pot demanar i com es fa
+
+### Saber què hi ha obert
+
+```jsonc
+// sandbox_get_state
+{}
+```
+
+```json
+{
+  "ok": true,
+  "ready": true,
+  "book": { "kind": "sample", "id": "postext-guide", "name": "Guia" },
+  "pages": 3,
+  "chapters": [
+    { "chapter": 1, "id": "a", "title": "Obertura", "onScreen": true, "words": 1007, "pages": 2 },
+    { "chapter": 2, "id": "b", "title": "Segon", "words": 101, "pages": 1 }
+  ],
+  "view": { "viewer": "canvas", "panel": "none", "scope": "chapter", "chapter": 1 },
+  "resources": 0,
+  "warnings": 0
+}
+```
+
+`ready: false` arriba amb `waitingFor`, que en diu el motiu (un llibre que encara
+es carrega). `question` i `notice` apareixen quan el Sandbox espera alguna cosa
+de tu; vegeu [Preguntes i avisos](#preguntes-i-avisos).
+
+Totes les eines que prenen un `chapter` n'accepten la posició al llibre
+(començant per 1), el títol o l'id. Si no s'indica, és el capítol que hi ha a la
+pantalla.
+
+### Mirar una pàgina
+
+**Una imatge.** «Ensenya'm l'obertura del capítol 3», «com queda la doble
+pàgina 24-25?»:
+
+```jsonc
+// sandbox_render_page: una doble pàgina, 1200 px d'amplada per pàgina
+{ "chapter": 3, "page": 24, "count": 2, "width": 1200 }
+```
+
+`page` és el número imprès a la pàgina; `position` és el lloc de la pàgina
+entre les del capítol (començant per 1), per a les pàgines sense número. Sense
+cap dels dos, és la pàgina que hi ha a la pantalla. `crop` amplia una part de
+la pàgina, en fraccions de l'amplada i l'alçada comptades des de la cantonada
+superior esquerra, per jutjar de prop la lletra i els espais:
+
+```jsonc
+// sandbox_render_page: el quart inferior dret, ampliat
+{ "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
+```
+
+`printPreview: true` pinta la prova en pantalla del perfil d'impressió amb les
+guies de tall, sang i zona de seguretat; `trimmed: true` deixa fora el marge de
+les marques de tall.
+
+**La mateixa pàgina com a dades.** «Quines línies d'aquesta pàgina queden
+fluixes?», «la segona columna és plena?»:
+
+```jsonc
+// sandbox_inspect_pages: sense pàgina, una línia per cada pàgina del capítol
+{ "chapter": 1 }
+```
+
+```json
+{
+  "chapter": 1, "title": "Obertura", "chapterPages": 2, "converged": true,
+  "pages": [
+    { "position": 1, "label": "1", "role": "opener", "blank": false, "lines": 45, "figures": 0, "starts": "Obertura" },
+    { "position": 2, "label": "2", "role": "body", "blank": false, "lines": 37, "figures": 0, "starts": "dècades. La tipografia impresa va dedicar cinc segles…" }
+  ]
+}
+```
+
+Amb `page` o `position` llista tots els blocs de la pàgina: el tipus, la
+columna, el text, el nombre de línies, les línies que acaben en guionet i les
+línies justificades fluixes amb l'amplada dels seus espais, la caixa que ocupa
+a la pàgina i, a més, com s'omple cada columna (`fill: 0.99`).
+
+**Què hi ha en un punt.** Quan l'agent veu alguna cosa en una imatge, pregunta
+què és amb les mateixes fraccions que ha fet servir per al retall:
+
+```jsonc
+// sandbox_inspect_point
+{ "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
+```
+
+La resposta dona el bloc, la línia i la columna del text font en Markdown en
+aquell punt (i la paraula), un enllaç i la pàgina on porta, la cel·la de taula
+o el peu d'un recurs. Amb `select: true` també fa el que fa un clic: s'obre el
+tauler Text amb el cursor en aquell lloc (`word: true` selecciona la paraula,
+`to` selecciona fins a un segon punt).
+
+### Canviar el disseny
+
+Qualsevol ajust de la [configuració](/ca/docs/configuration) es pot canviar per
+la seva ruta. Un agent poques vegades sap la ruta d'entrada, així que la busca:
+
+```jsonc
+// sandbox_find_setting
+{ "query": "orphans" }
+```
+
+```json
+{
+  "ok": true,
+  "paths": [
+    { "path": "bodyText.avoidOrphans", "effective": true },
+    { "path": "bodyText.avoidOrphansInLists", "effective": true }
+  ],
+  "sections": [{ "section": "Body text", "group": "Typography", "settingsGroup": "text", "configKeys": ["bodyText"] }]
+}
+```
+
+`sandbox_get_config` llegeix un ajust o una secció sencera: `set` és el que
+desa el llibre, i `effective`, el valor que en resulta un cop afegits els
+valors per defecte, que també mostra tots els ajustos de la secció.
+
+```jsonc
+// sandbox_get_config
+{ "path": "headings.levels[level=2]" }
+```
+
+Les rutes identifiquen un element d'una llista pel que el distingeix:
+`headings.levels[level=2].fontSize`, `header.elements[id=titleOdd].italic`,
+`calloutStyles[id=note].title`. Després, `sandbox_set_config` canvia tants
+ajustos com vulguis en una sola crida:
+
+```jsonc
+// sandbox_set_config
+{
+  "changes": [
+    { "path": "bodyText.fontSize", "value": "10.5pt" },
+    { "path": "page.margins.top", "value": { "value": 2.5, "unit": "cm" } },
+    { "path": "headings.levels[level=2].color", "value": "#1f3a5f" },
+    { "path": "bodyText.avoidOrphans", "value": true }
+  ]
+}
+```
+
+Una longitud s'escriu `"2.5cm"`, `{ "value": 2.5, "unit": "cm" }` o com un
+nombre en la unitat de l'ajust; un color, `"#1f3a5f"`. Un valor `null` elimina
+l'ajust, i torna el valor del disseny. La resposta dona el que cal per jutjar
+el canvi i per desfer-lo:
+
+```json
+{
+  "ok": true,
+  "changed": [
+    {
+      "path": "bodyText.fontSize",
+      "from": null,
+      "to": { "value": 10.5, "unit": "pt" },
+      "effective": { "from": { "value": 10, "unit": "pt" }, "to": { "value": 10.5, "unit": "pt" } }
+    }
+  ],
+  "followed": [
+    { "path": "captionStyle.fontSize.value", "from": 10, "to": 10.5 },
+    { "path": "tableStyle.bodyFontSize.value", "from": 10, "to": 10.5 }
+  ],
+  "pagesBefore": 212,
+  "pagesAfter": 219,
+  "chapters": [{ "chapter": 1, "title": "Obertura", "pages": 19, "pagesBefore": 18 }]
+}
+```
+
+`from` és el valor desat abans del canvi (aquí `null`: el llibre no el fixava),
+de manera que la mateixa crida amb `from` com a valor el desfà. `followed`
+llista els ajustos que depenen d'aquest i s'hi han mogut. Apareix una `note`
+quan el motor ha resolt una cosa diferent de la demanada (un límit, un ajust
+que en depèn d'un altre), i un valor amb una forma equivocada, o una
+configuració que el motor no pot resoldre, es rebutja sense canviar res.
+
+Per a canvis més grans, `patch` fusiona un objecte amb la configuració (els
+objectes es fusionen, `null` elimina i les llistes se substitueixen senceres) i
+`replace` posa una configuració sencera en lloc de la del llibre, com ara un
+`postext-config.json` exportat. `sandbox_reset_to_original` amb `part: "config"`
+restaura el disseny amb què va començar el llibre.
+
+Les fonts també són ajustos: `sandbox_list_fonts` amb `search: "Garamond"`
+troba famílies al catàleg obert, i escriure el nom en un ajust `fontFamily` la
+carrega.
+
+### Editar el text
+
+El text de cada capítol és Markdown amb les extensions de Postext (vegeu
+[Format del document](/ca/docs/document-format)). L'agent el llegeix amb
+números de línia, troba un passatge i en substitueix passatges exactes:
+
+```jsonc
+// sandbox_read_text: les línies 40 a 80 del capítol 2
+{ "chapter": 2, "fromLine": 40, "toLine": 80 }
+```
+
+```jsonc
+// sandbox_search_text: on apareix un passatge, i a quina pàgina
+{ "query": "retícula de base", "pages": true }
+```
+
+```jsonc
+// sandbox_edit_text
+{
+  "chapter": 2,
+  "edits": [
+    { "find": "Les últimes paraules de l'obertura.", "replace": "Les paraules que tanquen l'obertura." },
+    { "find": "aixó", "replace": "això", "all": true }
+  ]
+}
+```
+
+Cada `find` ha de coincidir exactament amb el text font i aparèixer-hi una sola
+vegada, tret que s'indiqui `all`. O s'apliquen totes les edicions o no se
+n'aplica cap: un passatge que no hi és es rebutja amb el consell de tornar a
+llegir el capítol. Tota la crida és un sol pas per a `sandbox_undo_text`, que
+la desfà (`redo: true` la refà). `sandbox_write_text` substitueix un capítol
+sencer, a partir de `markdown` o d'un fitxer `.md`.
+
+Per ensenyar-te un lloc del text, `sandbox_select_text` obre el tauler Text amb
+aquell passatge seleccionat (per `text`, `line` o `offset`), tal com fa un clic
+sobre una troballa del tauler Revisió.
+
+### Organitzar els capítols
+
+`sandbox_manage_chapters` afegeix, reanomena, mou, divideix, uneix i mostra
+capítols:
+
+```jsonc
+// afegir un capítol en tercer lloc
+{ "action": "add", "title": "Epíleg", "markdown": "# Epíleg\n\nFi.\n", "position": 3 }
+
+// dividir un capítol on comença un passatge
+{ "action": "split", "chapter": "Obertura", "before": "## Segona part" }
+
+// un capítol per cada títol de nivell 1
+{ "action": "split_at_headings", "chapter": 1 }
+```
+
+`sandbox_remove_chapter` n'esborra un, i això no es pot desfer.
+
+### Afegir imatges, taules, vídeos i fonts
+
+`sandbox_save_resource` afegeix un recurs o en canvia un, com el tauler
+Recursos. Un fitxer arriba per `url` (una adreça `https:` que la pàgina pugui
+obtenir, o una URL `data:`) o en `base64`:
+
+```jsonc
+// una imatge amb el peu i el text alternatiu
+{
+  "id": "harbour",
+  "image": { "url": "https://example.org/harbour.jpg" },
+  "caption": "El port a trenc d'alba",
+  "altText": "Barques de pesca amarrades a un moll de pedra, amb boira sobre l'aigua",
+  "placement": { "position": "top", "span": "page" }
+}
+```
+
+```jsonc
+// una taula a partir de files de text; la primera fila és la capçalera
+{
+  "id": "prices",
+  "caption": "Preus el 1850",
+  "table": { "rows": [["Article", "Preu"], ["Pa", "2 d"], ["Tinta", "6 d"]], "columnWidths": [2, 1] }
+}
+```
+
+```jsonc
+// un vídeo de YouTube: se n'obtenen la portada, la mida del fotograma i el títol
+{ "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "L'autora treballant" }
+```
+
+La resposta dona el registre desat i la línia que el col·loca,
+`::resource{id="prices"}`, que l'agent escriu després al text amb
+`sandbox_edit_text`. Sobre un `id` que ja existeix, la crida només canvia el
+que indica: un peu, les cel·les d'una taula, la col·locació, la zona segura
+d'una imatge. `newId` reanomena un recurs i, per defecte, totes les referències
+que en fa el llibre. `sandbox_list_resources` els llista i, amb un `id`, en
+dona un de complet (les cel·les d'una taula amb el seu format, el codi font
+d'un SVG).
+
+Les fonts que es pugen al llibre passen per `sandbox_save_font`:
+
+```json
+{ "action": "add", "family": "My Serif", "weight": 700, "style": "italic", "file": { "url": "https://example.org/MySerif-BoldItalic.woff2" } }
+```
+
+### Revisar el llibre
+
+```jsonc
+// sandbox_get_warnings: tots els capítols
+{ "scope": "book" }
+```
+
+La resposta és el que diu el tauler Revisió, per a qualsevol capítol o per al
+llibre sencer, sigui quin sigui el que hi ha a la pantalla: fonts i imatges que
+falten, marcatge que el motor no ha pogut llegir, elements de disseny que no hi
+caben, text massa pàl·lid per al fons, línies fluixes, vídues, caixes que
+desborden i la verificació d'impressió (preflight). Cada avís porta la
+categoria, el capítol, la línia i les posicions, la pàgina i l'ajust o el
+recurs que esmenta:
+
+```json
+{
+  "ok": true,
+  "scope": "book",
+  "total": 3,
+  "byCategory": { "typesetting": 2, "design": 1 },
+  "warnings": [
+    {
+      "kind": "headerFooterMetadataMissing",
+      "category": "design",
+      "title": "Placeholder metadata missing",
+      "detail": "header · {title} — The metadata referenced by this placeholder is not set — it will render empty."
+    }
+  ]
+}
+```
+
+A partir d'un avís, l'agent pot anar al seu lloc (`sandbox_select_text` amb
+`offset` i `toOffset`, o `sandbox_go_to_page`), mirar la pàgina i canviar el
+text o l'ajust. `category` restringeix la llista; en un llibre llarg,
+`scope: "book"` maqueta tots els capítols i triga una estona.
+
+### Mostrar-te les pàgines
+
+El que canvia l'agent, ho veus tu. Per assenyalar-te alguna cosa:
+
+```jsonc
+// sandbox_set_view: el Canvas amb pàgines encarades i les línies fluixes ressaltades
+{ "viewer": "canvas", "pages": "spread", "fit": "height", "guides": { "looseLines": true, "baselineGrid": true } }
+```
+
+```jsonc
+// sandbox_go_to_page: on s'ha col·locat una figura
+{ "anchor": "harbour" }
+```
+
+`sandbox_set_view` també tria el visor (`canvas`, `pdf`, `folio`, `html`,
+`epub`), el tauler lateral, capítol o llibre sencer, el zoom, la mida de lletra
+del lector, la previsualització d'impressió i el grup del tauler Disseny.
+`sandbox_go_to_page` passa pàgines per `step`, `page`, `position`, un passatge
+de `text`, una `anchor` o una entrada `contents` del sumari d'un EPUB.
+`sandbox_run_viewer` prem un botó de la barra d'eines: `regenerate` torna a
+generar el PDF o l'EPUB i n'espera el resultat, `print` obre el diàleg
+d'impressió perquè el confirmis tu i `play_video` reprodueix un vídeo d'una
+pàgina.
+
+### Pàgines de còmic
+
+`sandbox_inspect_comic` dona les vinyetes, les línies de divisió i les bafarades
+d'una pàgina de còmic amb les seves posicions; `sandbox_edit_comic` fa les
+edicions que una persona fa amb el punter, i les escriu al text font:
+
+```jsonc
+// moure el centre d'una bafarada a un punt de la imatge de la seva vinyeta, en percentatge
+{ "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
+
+// moure la primera línia de divisió al 45 % de la seva cel·la
+{ "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
+```
+
+La resposta avisa quan una bafarada cau sobre una cara o surt de la seva
+vinyeta. El format és a [Còmics](/ca/docs/comics).
+
+### Llibres, fitxers i Word
+
+- **Obrir i desar llibres.** `sandbox_list_books` llista els exemples i els teus
+  projectes; `sandbox_open_book` n'obre un (`{ "kind": "sample", "id": "postext-guide", "language": "es" }`);
+  `sandbox_save_book` amb `action: "copy_current"` desa el llibre de la pantalla
+  com a projecte teu, i `new_blank` en comença un de buit.
+- **Exportar.** `sandbox_export` escriu `pdf`, `epub`, `postext`, `docx`,
+  `markdown` o `config`. Per defecte, el navegador baixa el fitxer; amb
+  `deliver: "data"`, un PDF o un EPUB torna a l'agent codificat en base64:
+
+  ```json
+  { "format": "pdf", "scope": "book", "deliver": "data" }
+  ```
+
+- **Importar un fitxer `.postext`** amb `sandbox_import_book` (`inspect: true`
+  diu quins idiomes porta sense importar-lo).
+- **Portar un manuscrit de Word** amb `sandbox_import_word`. Executa'l primer
+  amb `dryRun: true`: no canvia res i respon amb l'informe de qualitat, cada
+  estil de Word amb el que esdevindria, i els capítols i els recursos que
+  crearia. Després corregeix l'assignació i executa'l de debò:
+
+  ```json
+  {
+    "file": { "url": "https://example.org/manuscrit.docx" },
+    "destination": "book",
+    "mapping": { "paragraphs": { "Epígraf": { "kind": "quote" }, "Títol de capítol": { "kind": "chapter" } } },
+    "saveTemplateAs": "La meva editorial"
+  }
+  ```
+
+  `sandbox_word_templates` llista, llegeix, desa i esborra les assignacions
+  desades, que també fa servir l'exportació a Word.
+
+### Preguntes i avisos
+
+Quan un enllaç obre un llibre del qual ja tens una versió pròpia, el Sandbox et
+pregunta si vols substituir la teva còpia, i `sandbox_get_state` ho indica com a
+`question` amb `ready: false`. `sandbox_answer` hi respon: `replaceCopy: false`
+conserva la teva, i `true` la substitueix pel llibre publicat i esborra la teva
+còpia. `dismissNotice: true` tanca el missatge del tauler Llibres.
+
+## Tres sessions de principi a fi
+
+**«Fes la lletra una mica més grossa, però que el llibre no passi de 220
+pàgines.»** `sandbox_get_state` (212 pàgines) → `sandbox_set_config` amb
+`bodyText.fontSize` a `"10.5pt"` (219 pàgines) → `sandbox_render_page` d'una
+pàgina densa per jutjar-la → `sandbox_get_warnings` amb
+`category: "typesetting"` per si hi ha vídues noves → si alguna cosa ha anat
+malament, `sandbox_set_config` un altre cop amb els valors `from` de la primera
+resposta.
+
+**«Corregeix el que ha trobat la revisió al capítol 4.»** `sandbox_get_warnings`
+amb `chapter: 4` → per a cada avís, `sandbox_read_text` al voltant de la seva
+`line` i `sandbox_render_page` de la seva `page` → `sandbox_edit_text` o
+`sandbox_set_config` → `sandbox_get_warnings` un altre cop fins que torni buit.
+
+**«Fes un llibre amb aquest fitxer de Word i dona'm el PDF.»**
+`sandbox_save_book` amb `action: "new_blank"` → `sandbox_import_word` amb
+`dryRun: true` → `mapping` corregit i, després, la importació real amb
+`destination: "book"` → `sandbox_get_warnings` amb `scope: "book"` →
+`sandbox_export` amb `format: "pdf"` i `scope: "book"`.
+
+## El que necessita el teu consentiment
+
+Sis eines fan coses que no es poden desfer i van marcades com a conseqüents
+(`consequentialHint`), perquè el navegador et pugui preguntar abans
+d'executar-les: `sandbox_remove_chapter`, `sandbox_delete_resource`,
+`sandbox_delete_book`, `sandbox_reset_to_original`, `sandbox_import_word` (pot
+substituir el llibre sencer) i `sandbox_answer` (pot esborrar la teva còpia
+d'un llibre). Si tens dubtes, demana a l'agent que abans n'exporti una còpia
+`.postext`.
+
+Les eines que només llegeixen van marcades amb `readOnlyHint`, i les que
+retornen text que no ha escrit la pàgina (el text del llibre mateix, un fitxer
+obtingut d'una adreça) van marcades amb `untrustedContentHint`, perquè el
+navegador pugui evitar que aquest text es prengui per instruccions.
+
+## Límits
+
+- **Tot es queda al teu navegador.** Les eines no arriben a res a què el
+  Sandbox mateix no arribi: els teus llibres són a l'emmagatzematge d'aquest
+  navegador, i un fitxer indicat per `url` l'obté la pàgina, de manera que el
+  seu servidor ho ha de permetre (CORS). Una URL `data:` o `base64` sempre
+  funcionen.
+- **La feina llarga triga.** Una eina espera la maquetació abans de respondre;
+  `wait: false` respon de seguida. Un PDF o un EPUB d'un llibre llarg triga
+  minuts.
+- **Què desfà `sandbox_undo_text`**: les edicions de text de les eines (una
+  crida cada vegada) i les edicions fetes a les previsualitzacions. No desfà el
+  que escrius a l'editor del tauler Text (ho fa el desfer de l'editor), els
+  capítols afegits o moguts, ni els canvis al disseny i als recursos: per a
+  això hi ha el `from` de cada resposta. La llista es perd quan es torna a
+  carregar la pàgina.
+- **El llibre de la pantalla.** Les eines treballen sobre el llibre obert.
+  Només `sandbox_export` d'un fitxer `.postext`, `sandbox_save_book` amb
+  `duplicate` i `sandbox_reset_to_original` amb `sample` arriben a un altre
+  llibre sense obrir-lo.
+
+## Les eines del lloc
+
+A totes les pàgines de postext.dev, el Sandbox inclòs:
+
+- `site_get_context`: la pàgina de la pantalla, el seu idioma i el tema, les
+  seccions i totes les pàgines de la documentació.
+- `site_search`: la documentació i el Receptari, per paraules, per noms
+  d'ajustos (`bodyText.avoidOrphans`) o per directives (`::resource`).
+- `site_read_page`: una pàgina del lloc com a Markdown, sense sortir de la
+  pàgina de la pantalla.
+- `site_open_page`: mostrar una pàgina, amb `#títol` per anar a parar a una
+  secció.
+- `site_list_recipes` i `site_open_recipe_in_sandbox`: trobar una recepta del
+  Receptari i obrir-la al Sandbox com un llibre que pots editar.
+- `site_lookup_term`: un terme del glossari (vídua, kerning, kinsoku…).
+- `site_set_preferences`: l'idioma i el tema del lloc.
+
+Un agent que comença a la pàgina d'inici pot, doncs, cercar al Receptari, obrir
+una recepta al Sandbox i continuar-hi amb les eines `sandbox_*`.
+
+## Totes les eines
+
+Agrupades tal com les registra el Sandbox. La descripció completa i l'esquema
+de cadascuna s'obtenen amb `postextWebMcp.listTools()`.
+
+- **Què hi ha obert**: `sandbox_get_state`.
+- **Les pàgines**: `sandbox_render_page`, `sandbox_inspect_pages`,
+  `sandbox_inspect_point`.
+- **El text**: `sandbox_read_text`, `sandbox_write_text`, `sandbox_edit_text`,
+  `sandbox_undo_text`, `sandbox_select_text`, `sandbox_search_text`,
+  `sandbox_manage_chapters`, `sandbox_remove_chapter`.
+- **El disseny**: `sandbox_get_config`, `sandbox_set_config`,
+  `sandbox_find_setting`, `sandbox_reset_to_original`.
+- **Com es mostra**: `sandbox_set_view`, `sandbox_go_to_page`,
+  `sandbox_run_viewer`.
+- **Recursos i fonts**: `sandbox_list_resources`, `sandbox_save_resource`,
+  `sandbox_delete_resource`, `sandbox_list_fonts`, `sandbox_save_font`.
+- **Còmics**: `sandbox_inspect_comic`, `sandbox_edit_comic`.
+- **Llibres i fitxers**: `sandbox_list_books`, `sandbox_open_book`,
+  `sandbox_save_book`, `sandbox_delete_book`, `sandbox_import_book`,
+  `sandbox_export`.
+- **Word**: `sandbox_import_word`, `sandbox_word_templates`.
+- **Preguntes**: `sandbox_answer`.
+- **La revisió**: `sandbox_get_warnings`.
+
+## Quan incrustes el Sandbox
+
+`<PostextSandbox>` registra les eines mentre està muntat; `webmcp={false}` les
+deixa fora (vegeu [Props](/ca/docs/sandbox#props)). Una pàgina amfitriona hi pot
+afegir eines pròpies amb el mateix mòdul:
+
+```ts
+import { registerWebMcpTools } from 'postext-sandbox/webmcp';
+
+const controller = new AbortController();
+registerWebMcpTools([
+  {
+    name: 'shop_list_titles',
+    description: 'Els títols d’aquesta botiga, cadascun amb l’id del seu projecte de Postext.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true },
+    execute: async () => ({ titles: await fetchTitles() }),
+  },
+], controller.signal);
+// controller.abort() les retira
+```
+
+Es registren a WebMCP on el navegador l'ofereix i sempre a
+`window.postextWebMcp`, amb els arguments comprovats amb `inputSchema`.

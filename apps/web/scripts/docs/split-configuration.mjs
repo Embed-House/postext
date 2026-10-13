@@ -60,6 +60,7 @@ const ORDER = [
   "sandbox",
   "skill",
   "command-line",
+  "webmcp",
 ];
 
 const listArg = (flag) => {

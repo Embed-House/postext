@@ -1,0 +1,622 @@
+{/* docs/webmcp-ar.mdx */}
+
+export const metadata = {
+  title: 'WebMCP: وكيل يعمل في Sandbox',
+  sidebarTitle: 'WebMCP',
+  description: 'ما يستطيع وكيل ذكاء اصطناعي في المتصفح أن يفعله في Sandbox بأدوات WebMCP الست والثلاثين: أن ينظر إلى الصفحات، ويغيّر أي إعداد، ويحرّر النص، ويضيف الصور والجداول والخطوط، ويشغّل الفحوص، ويصدّر الكتاب، مع طريقة استدعاء كل أداة بوسائط وأجوبة حقيقية',
+  lang: 'ar',
+  lastUpdated: '2026-10-13',
+  readingTime: '14 دقيقة',
+  order: 23,
+  plainSummary: "هذه الصفحة لمن يريد أن يكلّف مساعدًا ذكيًا بالعمل على كتاب في Sandbox نيابةً عنه. ما دام Sandbox مفتوحًا، يضع بين يدي المساعد مجموعة من الأدوات: لينظر إلى أي صفحة، ويغيّر التصميم، ويحرّر النص، ويضيف الصور والجداول، ويجد المشكلات، ويحفظ الملفات. تطلب منه ما تريد بكلماتك، كأن تقول «كبّر الخط قليلًا وتأكّد أن الكتاب ما زال في 40 صفحة»، فيستعمل المساعد الأدوات ويريك الصفحات. ويبقى كل شيء في متصفحك. وتشرح الصفحة كيف تربط مساعدًا، وما يستطيع فعله، وكيف تُستدعى كل أداة.",
+};
+
+# WebMCP
+
+**وكيل في متصفحك يعمل على الكتاب المفتوح في Sandbox: ينظر إلى الصفحات، ويغيّرها، ثم ينظر إليها من جديد.**
+
+يمنح [Sandbox](/ar/docs/sandbox) الوكيلَ أدوات خاصة به عبر
+[WebMCP](https://webmachinelearning.github.io/webmcp/)، وهو مسودة معيار ويب
+تتيح للصفحة أن تسلّم أدواتها لنموذج الذكاء الاصطناعي الذي يتحدث إليه المتصفح.
+وبهذه الأدوات لا يتنقّل الوكيل بالنقر في الواجهة، بل يقرأ الكتاب، ويطلب صورة
+للصفحة 12، ويضبط `bodyText.fontSize` على 10.5 pt، فيرى أن الفصل صار 19 صفحة
+بعد أن كان 18، فيعيد القيمة كما كانت. يفعل ما تفعله أنت حين تنظر وتقارن،
+ويفعله بكتابك أنت وفي متصفحك.
+
+هناك 36 أداة تبدأ أسماؤها بـ`sandbox_`، تُسجَّل ما دام Sandbox على الشاشة، و8
+أدوات للموقع، `site_*`، في كل صفحة من postext.dev. وترتّب هذه الصفحة الأدوات
+بحسب ما قد تطلبه من الوكيل، وتعطي طريقة استدعاء كل واحدة منها.
+
+## ربط وكيل
+
+### في متصفح يدعم WebMCP
+
+تُسجَّل الأدوات في `document.modelContext` حين يُركَّب Sandbox في الصفحة،
+وتُسحب حين تغادره. والوكيل الذي يسلّمه المتصفح أدوات الصفحات يجدها هناك. ولا
+يلزم تثبيت شيء ولا إعداده من جهة Postext.
+
+ما زال WebMCP مسودة. يتيحه Chrome في تجربة المصدر (origin trial)، وخلف العلم
+`chrome://flags/#enable-webmcp-testing`. والأدوات تتبع الصفحة: في الصفحة
+الرئيسية أو في التوثيق تكون لدى الوكيل أدوات `site_*`، وحين يظهر Sandbox على
+الشاشة تظهر معها أدوات `sandbox_*` الست والثلاثون.
+
+### في أي متصفح آخر: `window.postextWebMcp`
+
+وتضع الصفحة الأدوات نفسها أيضًا في `window.postextWebMcp`، سواء دعم المتصفح
+WebMCP أم لم يدعمه. فيستطيع استعمالها أي وكيل يقدر على تشغيل شيفرة في الصفحة:
+أداة أتمتة مثل Puppeteer أو Playwright، أو خادم MCP يقود المتصفح ويقيّم
+الشيفرة فيه (Chrome DevTools MCP)، أو إضافة للمتصفح، أو أنت نفسك في وحدة تحكم
+المطوّر:
+
+```js
+// الأدوات الموجودة في هذه الصفحة
+postextWebMcp.listTools().map((t) => t.name);
+
+// تشغيل أداة: اسمها، ثم كائن فيه وسائطها
+await postextWebMcp.executeTool('sandbox_get_state', {});
+await postextWebMcp.executeTool('sandbox_set_config', {
+  changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }],
+});
+```
+
+والشيء نفسه من برنامج Puppeteer نصي يحفظ صفحةً صورة:
+
+```js
+import fs from 'node:fs';
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+await page.goto('https://postext.dev/ar/sandbox');
+await page.waitForFunction(() => window.postextWebMcp?.listTools().some((t) => t.name === 'sandbox_get_state'));
+await page.waitForFunction(async () => (await window.postextWebMcp.executeTool('sandbox_get_state', {})).ready);
+
+const result = await page.evaluate(() =>
+  window.postextWebMcp.executeTool('sandbox_render_page', { chapter: 1, position: 1, width: 1200, format: 'png' }),
+);
+const picture = result.content.find((part) => part.type === 'image');
+fs.writeFileSync('page-1.png', Buffer.from(picture.data, 'base64'));
+await browser.close();
+```
+
+لملف تعريف المتصفح الجديد تخزينه الخاص، فيبدأ من الكتب النموذجية لا من
+مشاريعك. ولتعمل على كتبك أنت، استعمل المتصفح الذي صنعتها فيه.
+
+### شكل كل جواب
+
+تجيب الأداة بكائن JSON: إما `ok: true` ومعه ما طُلب، وإما `ok: false` ومعه
+`error` يذكر الخطأ وما ينبغي طلبه بدلًا منه:
+
+```json
+{
+  "ok": false,
+  "error": "bodyText.fontSize is a length: give { \"value\": 11, \"unit\": \"pt\" }, a number (in pt) or a text such as \"11pt\". The units: cm, mm, in, pt, px, em, rem."
+}
+```
+
+تُفحص الوسائط مقابل مخطط الأداة قبل أن يجري أي شيء، فيُرفض المعامل المكتوب
+خطأً مع قائمة بالمعاملات الصحيحة. والأداة التي تعيد صورًا
+(`sandbox_render_page`) تجيب بصيغة MCP، `{ content: [...] }`: جزء نصي فيه JSON
+يصف الصفحات، ثم جزء صورة لكل صفحة مرمّز بـbase64.
+
+## حلقة العمل
+
+كل أداة تغيّر الكتاب تنتظر أن يلحق بها التنضيد قبل أن تجيب، وتذكر عدد الصفحات
+التي صار إليها كل فصل. فتقع النظرة التالية دائمًا على الصفحات الجديدة، ويستطيع
+الوكيل أن يعمل كما يعمل المصمّم:
+
+1. **معرفة الحال**: يعطي `sandbox_get_state` الكتاب، وفصوله بصفحاتها، والفصل
+   والصفحة المعروضين على الشاشة، واللوحة المفتوحة.
+2. **النظر**: يرسم `sandbox_render_page` صفحة، ويصفها `sandbox_inspect_pages`
+   بيانات، ويسرد `sandbox_get_warnings` ما وجدته الفحوص.
+3. **التغيير**: `sandbox_set_config`، و`sandbox_edit_text`،
+   و`sandbox_save_resource`…
+4. **النظر من جديد**، ثم إبقاء التغيير أو التراجع عنه.
+
+تُنضَّد الصفحة وتُرسم للأداة أيًّا كان العارض المعروض على الشاشة، فيستطيع
+الوكيل أن ينظر في الفصل 7 وأنت تقرأ الفصل 2.
+
+## ما تستطيع طلبه وطريقة تنفيذه
+
+### معرفة ما هو مفتوح
+
+```jsonc
+// sandbox_get_state
+{}
+```
+
+```json
+{
+  "ok": true,
+  "ready": true,
+  "book": { "kind": "sample", "id": "postext-guide", "name": "Postext guide" },
+  "pages": 3,
+  "chapters": [
+    { "chapter": 1, "id": "a", "title": "Opening", "onScreen": true, "words": 1007, "pages": 2 },
+    { "chapter": 2, "id": "b", "title": "Second", "words": 101, "pages": 1 }
+  ],
+  "view": { "viewer": "canvas", "panel": "none", "scope": "chapter", "chapter": 1 },
+  "resources": 0,
+  "warnings": 0
+}
+```
+
+يأتي `ready: false` ومعه `waitingFor` الذي يذكر السبب (كتاب ما زال يُحمَّل).
+ويظهر `question` و`notice` حين ينتظرك Sandbox؛ انظر
+[الأسئلة والإشعارات](#الأسئلة-والإشعارات).
+
+كل أداة تأخذ `chapter` تقبل موضع الفصل في الكتاب (بدءًا من 1)، أو عنوانه، أو
+معرّفه. وإن أُغفل فهو الفصل المعروض على الشاشة.
+
+### النظر إلى صفحة
+
+**صورة.** «أرني افتتاحية الفصل 3»، «كيف تبدو الصفحتان المتقابلتان 24 و25؟»:
+
+```jsonc
+// sandbox_render_page: صفحتان متقابلتان، بعرض 1200 px لكل صفحة
+{ "chapter": 3, "page": 24, "count": 2, "width": 1200 }
+```
+
+`page` هو الرقم المطبوع على الصفحة، و`position` هو موضع الصفحة بين صفحات الفصل
+(بدءًا من 1)، للصفحات التي لا رقم لها. وإن لم يُعطَ أيٌّ منهما فهي الصفحة
+المعروضة على الشاشة. ويكبّر `crop` جزءًا من الصفحة، بكسور من عرضها وارتفاعها
+تبدأ من الزاوية العليا اليسرى، للحكم على الحروف والمسافات عن قرب:
+
+```jsonc
+// sandbox_render_page: الربع السفلي الأيمن مكبَّرًا
+{ "chapter": 3, "page": 24, "crop": { "x": 0.5, "y": 0.5, "width": 0.5, "height": 0.5 }, "width": 1600 }
+```
+
+ويرسم `printPreview: true` البروفة الشاشية (soft proof) لملف تعريف الطباعة مع
+أدلة القص والنزف والمنطقة الآمنة، ويستبعد `trimmed: true` الهامش الذي تقع فيه
+علامات القص.
+
+**الصفحة نفسها بيانات.** «أي الأسطر في هذه الصفحة متراخية؟»، «هل امتلأ العمود
+الثاني؟»:
+
+```jsonc
+// sandbox_inspect_pages: بلا صفحة، سطر واحد لكل صفحة من الفصل
+{ "chapter": 1 }
+```
+
+```json
+{
+  "chapter": 1, "title": "Opening", "chapterPages": 2, "converged": true,
+  "pages": [
+    { "position": 1, "label": "1", "role": "opener", "blank": false, "lines": 45, "figures": 0, "starts": "Opening" },
+    { "position": 2, "label": "2", "role": "body", "blank": false, "lines": 37, "figures": 0, "starts": "decades. Print typography spent five centuries…" }
+  ]
+}
+```
+
+ومع `page` أو `position` يسرد كل كتلة في الصفحة: نوعها، وعمودها، ونصها، وعدد
+أسطرها، والأسطر التي تنتهي بشرطة، والأسطر المضبوطة المتراخية مع عرض مسافاتها،
+وصندوقها في الصفحة، ومعها مدى امتلاء كل عمود (`fill: 0.99`).
+
+**ما يقع عند نقطة.** حين يرى الوكيل شيئًا في صورة، يسأل عنه بالكسور نفسها التي
+استعملها في الاقتطاع:
+
+```jsonc
+// sandbox_inspect_point
+{ "chapter": 3, "page": 24, "x": 0.71, "y": 0.42 }
+```
+
+يعطي الجواب الكتلة، وسطر مصدر Markdown وعموده في ذلك الموضع (والكلمة)، والرابط
+والصفحة التي يقود إليها، وخلية الجدول أو التعليق التوضيحي لمورد. ومع
+`select: true` يفعل أيضًا ما تفعله النقرة: تُفتح لوحة النص والمؤشر في ذلك
+الموضع (يحدّد `word: true` الكلمة، ويحدّد `to` ما يمتد حتى نقطة ثانية).
+
+### تغيير التصميم
+
+يمكن تغيير أي إعداد من [الإعدادات](/ar/docs/configuration) بمساره. ونادرًا ما
+يعرف الوكيل المسار من البداية، فيبحث عنه:
+
+```jsonc
+// sandbox_find_setting
+{ "query": "orphans" }
+```
+
+```json
+{
+  "ok": true,
+  "paths": [
+    { "path": "bodyText.avoidOrphans", "effective": true },
+    { "path": "bodyText.avoidOrphansInLists", "effective": true }
+  ],
+  "sections": [{ "section": "Body text", "group": "Typography", "settingsGroup": "text", "configKeys": ["bodyText"] }]
+}
+```
+
+يقرأ `sandbox_get_config` إعدادًا أو قسمًا كاملًا: `set` هو ما يخزّنه الكتاب،
+و`effective` ما ينتهي إليه بعد ملء القيم الافتراضية، وهو يُظهر أيضًا كل إعداد
+في القسم.
+
+```jsonc
+// sandbox_get_config
+{ "path": "headings.levels[level=2]" }
+```
+
+تسمّي المسارات عنصرًا من قائمة بما يميّزه عن غيره:
+`headings.levels[level=2].fontSize`، و`header.elements[id=titleOdd].italic`،
+و`calloutStyles[id=note].title`. ثم يغيّر `sandbox_set_config` في استدعاء
+واحد ما شئت من الإعدادات:
+
+```jsonc
+// sandbox_set_config
+{
+  "changes": [
+    { "path": "bodyText.fontSize", "value": "10.5pt" },
+    { "path": "page.margins.top", "value": { "value": 2.5, "unit": "cm" } },
+    { "path": "headings.levels[level=2].color", "value": "#1f3a5f" },
+    { "path": "bodyText.avoidOrphans", "value": true }
+  ]
+}
+```
+
+يُكتب الطول `"2.5cm"` أو `{ "value": 2.5, "unit": "cm" }` أو رقمًا بوحدة
+الإعداد، واللون `"#1f3a5f"`. والقيمة `null` تحذف الإعداد فتعود قيمة التصميم.
+ويعطي الجواب ما يلزم للحكم على التغيير وللتراجع عنه:
+
+```json
+{
+  "ok": true,
+  "changed": [
+    {
+      "path": "bodyText.fontSize",
+      "from": null,
+      "to": { "value": 10.5, "unit": "pt" },
+      "effective": { "from": { "value": 10, "unit": "pt" }, "to": { "value": 10.5, "unit": "pt" } }
+    }
+  ],
+  "followed": [
+    { "path": "captionStyle.fontSize.value", "from": 10, "to": 10.5 },
+    { "path": "tableStyle.bodyFontSize.value", "from": 10, "to": 10.5 }
+  ],
+  "pagesBefore": 212,
+  "pagesAfter": 219,
+  "chapters": [{ "chapter": 1, "title": "Opening", "pages": 19, "pagesBefore": 18 }]
+}
+```
+
+`from` هو القيمة المخزّنة قبل التغيير (هنا `null`: لم يضبطها الكتاب)، فالاستدعاء
+نفسه بقيمة `from` يلغيه. ويسرد `followed` الإعدادات التي تعتمد على هذا الإعداد
+وتحرّكت معه. ويظهر `note` حين يحلّ المحرّك شيئًا غير المطلوب (حدًّا أقصى، أو
+إعدادًا يعتمد على آخر)، وتُرفض القيمة ذات الشكل الخاطئ، أو الإعدادات التي لا
+يستطيع المحرّك حلّها، دون أن يتغيّر شيء.
+
+وللتغييرات الأكبر، يدمج `patch` كائنًا في الإعدادات (تُدمج الكائنات، ويحذف
+`null`، وتُستبدل القوائم كاملة)، ويضع `replace` إعدادات كاملة مكان إعدادات
+الكتاب، كملف `postext-config.json` مُصدَّر. ويعيد `sandbox_reset_to_original`
+مع `part: "config"` التصميمَ الذي بدأ منه الكتاب.
+
+والخطوط إعدادات أيضًا: يجد `sandbox_list_fonts` مع `search: "Garamond"`
+العائلات في فهرس الخطوط المفتوحة، وكتابة الاسم في إعداد `fontFamily` تحمّل
+الخط.
+
+### تحرير النص
+
+نص كل فصل مكتوب بـMarkdown مع امتدادات Postext (انظر
+[صيغة المستند](/ar/docs/document-format)). يقرؤه الوكيل بأرقام أسطره، ويجد
+مقطعًا، ويستبدل مقاطع مطابقة تمامًا:
+
+```jsonc
+// sandbox_read_text: الأسطر من 40 إلى 80 في الفصل 2
+{ "chapter": 2, "fromLine": 40, "toLine": 80 }
+```
+
+```jsonc
+// sandbox_search_text: أين يرد مقطع، وفي أي صفحة
+{ "query": "شبكة خطوط الأساس", "pages": true }
+```
+
+```jsonc
+// sandbox_edit_text
+{
+  "chapter": 2,
+  "edits": [
+    { "find": "الكلمات الأخيرة في الافتتاحية.", "replace": "كلمات الختام في الافتتاحية." },
+    { "find": "مسئول", "replace": "مسؤول", "all": true }
+  ]
+}
+```
+
+يجب أن يطابق كل `find` المصدر تمامًا وأن يرد فيه مرة واحدة، ما لم يُضبط `all`.
+فإما أن تُطبَّق التعديلات كلها وإما ألا يُطبَّق شيء منها: المقطع غير الموجود
+يُرفض مع نصيحة بإعادة قراءة الفصل. والاستدعاء كله خطوة واحدة لـ`sandbox_undo_text`
+الذي يتراجع عنه (و`redo: true` يعيده). ويستبدل `sandbox_write_text` فصلًا
+كاملًا، من `markdown` أو من ملف `.md`.
+
+ولكي يريك الوكيل موضعًا في النص، يفتح `sandbox_select_text` لوحة النص وذلك
+المقطع محدَّد (بـ`text` أو `line` أو `offset`)، كما تفعل النقرة على نتيجة في
+لوحة الفحوص.
+
+### تنظيم الفصول
+
+يضيف `sandbox_manage_chapters` الفصول، ويعيد تسميتها، وينقلها، ويقسمها،
+ويدمجها، ويعرضها:
+
+```jsonc
+// إضافة فصل في الموضع الثالث
+{ "action": "add", "title": "خاتمة", "markdown": "# خاتمة\n\nالنهاية.\n", "position": 3 }
+
+// قسمة فصل حيث يبدأ مقطع
+{ "action": "split", "chapter": "Opening", "before": "## الجزء الثاني" }
+
+// فصل لكل عنوان من المستوى الأول
+{ "action": "split_at_headings", "chapter": 1 }
+```
+
+ويحذف `sandbox_remove_chapter` فصلًا، ولا يمكن التراجع عن ذلك.
+
+### إضافة الصور والجداول ومقاطع الفيديو والخطوط
+
+يضيف `sandbox_save_resource` موردًا أو يغيّره، كما تفعل لوحة الموارد. ويأتي
+الملف عبر `url` (عنوان `https:` تستطيع الصفحة جلبه، أو عنوان `data:`) أو بصيغة
+`base64`:
+
+```jsonc
+// صورة مع تعليقها التوضيحي ونصها البديل
+{
+  "id": "harbour",
+  "image": { "url": "https://example.org/harbour.jpg" },
+  "caption": "الميناء عند الفجر",
+  "altText": "قوارب صيد راسية عند رصيف حجري، والضباب فوق الماء",
+  "placement": { "position": "top", "span": "page" }
+}
+```
+
+```jsonc
+// جدول من صفوف نصية، والصف الأول هو الترويسة
+{
+  "id": "prices",
+  "caption": "الأسعار في عام 1850",
+  "table": { "rows": [["الصنف", "السعر"], ["الخبز", "2 بنس"], ["الحبر", "6 بنسات"]], "columnWidths": [2, 1] }
+}
+```
+
+```jsonc
+// فيديو على يوتيوب: يُجلب غلافه وأبعاد إطاره وعنوانه
+{ "id": "interview", "video": { "url": "https://www.youtube.com/watch?v=…" }, "caption": "المؤلف أثناء عمله" }
+```
+
+يعطي الجواب السجلّ المخزَّن والسطر الذي يضع المورد في النص،
+`::resource{id="prices"}`، فيكتبه الوكيل بعد ذلك في موضعه بـ`sandbox_edit_text`.
+ومع `id` موجود لا يغيّر الاستدعاء إلا ما يعطيه: تعليقًا توضيحيًا، أو خلايا جدول،
+أو الموضع، أو المنطقة الآمنة لصورة. ويعيد `newId` تسمية المورد، ومعه افتراضيًا
+كل إحالة إليه في الكتاب. ويسرد `sandbox_list_resources` الموارد، ومع `id` يعطي
+موردًا واحدًا كاملًا (خلايا الجدول بتنسيقها، ومصدر SVG).
+
+والخطوط المرفوعة إلى الكتاب تمرّ عبر `sandbox_save_font`:
+
+```json
+{ "action": "add", "family": "My Serif", "weight": 700, "style": "italic", "file": { "url": "https://example.org/MySerif-BoldItalic.woff2" } }
+```
+
+### فحص الكتاب
+
+```jsonc
+// sandbox_get_warnings: كل الفصول
+{ "scope": "book" }
+```
+
+الجواب هو ما تقوله لوحة الفحوص، لأي فصل أو للكتاب كله أيًّا كان المعروض على
+الشاشة: الخطوط والصور المفقودة، والترميز الذي لم يستطع المحرّك قراءته، وعناصر
+التصميم التي لا تتسع، والنص الباهت على خلفيته، والأسطر المتراخية، والأسطر
+الأرملة، والصناديق الفائضة، وفحص ما قبل الطباعة (preflight). ولكل تحذير فئته،
+وفصله، وسطره وإزاحاته، وصفحته، والإعداد أو المورد الذي يسمّيه:
+
+```json
+{
+  "ok": true,
+  "scope": "book",
+  "total": 3,
+  "byCategory": { "typesetting": 2, "design": 1 },
+  "warnings": [
+    {
+      "kind": "headerFooterMetadataMissing",
+      "category": "design",
+      "title": "Placeholder metadata missing",
+      "detail": "header · {title} — The metadata referenced by this placeholder is not set — it will render empty."
+    }
+  ]
+}
+```
+
+ومن التحذير يستطيع الوكيل الذهاب إلى موضعه (`sandbox_select_text` مع `offset`
+و`toOffset`، أو `sandbox_go_to_page`)، والنظر إلى الصفحة، ثم تغيير النص أو
+الإعداد. ويضيّق `category` القائمة، وفي الكتاب الطويل ينضّد `scope: "book"` كل
+الفصول فيستغرق بعض الوقت.
+
+### العرض على الشاشة
+
+ما يغيّره الوكيل تراه أنت. وحين يريد أن يوجّه نظرك إلى شيء:
+
+```jsonc
+// sandbox_set_view: تبويب Canvas بصفحات متقابلة مع إبراز الأسطر المتراخية
+{ "viewer": "canvas", "pages": "spread", "fit": "height", "guides": { "looseLines": true, "baselineGrid": true } }
+```
+
+```jsonc
+// sandbox_go_to_page: حيث صُفّ شكل
+{ "anchor": "harbour" }
+```
+
+ويختار `sandbox_set_view` أيضًا العارض (`canvas` أو `pdf` أو `folio` أو `html`
+أو `epub`)، واللوحة الجانبية، والفصل أو الكتاب كله، والتكبير، وحجم خط القارئ،
+ومعاينة الطباعة، والمجموعة المفتوحة في لوحة التصميم. ويقلّب `sandbox_go_to_page`
+الصفحات بـ`step` أو `page` أو `position` أو مقطع `text` أو `anchor` أو مدخل
+`contents` في EPUB. ويضغط `sandbox_run_viewer` زرًا في شريط الأدوات: يعيد
+`regenerate` كتابة PDF أو EPUB وينتظر اكتماله، ويفتح `print` نافذة الطباعة
+لتؤكّد أنت، ويشغّل `play_video` فيديو في صفحة.
+
+### صفحات القصص المصورة
+
+يعطي `sandbox_inspect_comic` إطارات صفحة القصة المصورة وخطوط تقسيمها وفقاعاتها
+بمواضعها، ويُجري `sandbox_edit_comic` التعديلات التي يجريها الشخص بالمؤشر،
+فتُكتب في المصدر:
+
+```jsonc
+// نقل مركز فقاعة إلى نقطة من صورة إطارها، بالنسبة المئوية
+{ "comic": 1, "action": "move_balloon", "balloon": 2, "at": { "x": 30, "y": 18 } }
+
+// نقل خط التقسيم الأول إلى 45 % من خليته
+{ "comic": 1, "action": "move_splitter", "splitter": 1, "start": 45 }
+```
+
+وينبّه الجواب حين تقع فقاعة على وجه أو تخرج من إطارها. وانظر
+[القصص المصورة](/ar/docs/comics) لمعرفة الصيغة.
+
+### الكتب والملفات وWord
+
+- **فتح الكتب والاحتفاظ بها.** يسرد `sandbox_list_books` الكتب النموذجية
+  ومشاريعك، ويفتح `sandbox_open_book` واحدًا منها
+  (`{ "kind": "sample", "id": "postext-guide", "language": "ar" }`)، ويحتفظ
+  `sandbox_save_book` مع `action: "copy_current"` بالكتاب المعروض مشروعًا خاصًا
+  بك، ويبدأ `new_blank` كتابًا فارغًا.
+- **التصدير.** يكتب `sandbox_export` الصيغ `pdf` و`epub` و`postext` و`docx`
+  و`markdown` و`config`. افتراضيًا ينزّل المتصفح الملف، ومع `deliver: "data"`
+  يعود ملف PDF أو EPUB إلى الوكيل مرمّزًا بـbase64:
+
+  ```json
+  { "format": "pdf", "scope": "book", "deliver": "data" }
+  ```
+
+- **استيراد ملف `.postext`** بـ`sandbox_import_book` (ومع `inspect: true` يذكر
+  اللغات التي يحملها الملف دون استيراده).
+- **إدخال مخطوطة Word** بـ`sandbox_import_word`. شغّله أولًا مع `dryRun: true`:
+  لا يغيّر شيئًا، ويجيب بتقرير الجودة، وبكل نمط من أنماط Word وما سيصير إليه،
+  وبالفصول والموارد التي سيصنعها. ثم صحّح المطابقة وشغّله فعلًا:
+
+  ```json
+  {
+    "file": { "url": "https://example.org/manuscript.docx" },
+    "destination": "book",
+    "mapping": { "paragraphs": { "اقتباس افتتاحي": { "kind": "quote" }, "عنوان الفصل": { "kind": "chapter" } } },
+    "saveTemplateAs": "دار النشر"
+  }
+  ```
+
+  ويسرد `sandbox_word_templates` المطابقات المحفوظة ويقرؤها ويحفظها ويحذفها،
+  وهي المطابقات التي يستعملها تصدير Word أيضًا.
+
+### الأسئلة والإشعارات
+
+حين يفتح رابطٌ كتابًا لديك منه نسخة خاصة بك، يسألك Sandbox هل يستبدل نسختك،
+ويذكر `sandbox_get_state` ذلك في `question` مع `ready: false`. ويجيب عنه
+`sandbox_answer`: يحتفظ `replaceCopy: false` بنسختك، ويستبدلها `true` بالكتاب
+المنشور ويحذف نسختك. ويمسح `dismissNotice: true` رسالة لوحة الكتب.
+
+## ثلاث جلسات من البداية إلى النهاية
+
+**«كبّر النص قليلًا، لكن أبقِ الكتاب دون 220 صفحة».**
+`sandbox_get_state` (212 صفحة) ← `sandbox_set_config` مع `bodyText.fontSize`
+على `"10.5pt"` (219 صفحة) ← `sandbox_render_page` لصفحة كثيفة للحكم عليها ←
+`sandbox_get_warnings` مع `category: "typesetting"` بحثًا عن أسطر أرملة جديدة ←
+وإن ساء شيء، `sandbox_set_config` من جديد بقيم `from` من الجواب الأول.
+
+**«أصلح ما وجدته الفحوص في الفصل 4».** `sandbox_get_warnings` مع `chapter: 4` ←
+لكل تحذير، `sandbox_read_text` حول سطره `line` و`sandbox_render_page` لصفحته
+`page` ← `sandbox_edit_text` أو `sandbox_set_config` ← `sandbox_get_warnings`
+من جديد حتى يعود فارغًا.
+
+**«اصنع كتابًا من ملف Word هذا وأعطني ملف PDF».** `sandbox_save_book` مع
+`action: "new_blank"` ← `sandbox_import_word` مع `dryRun: true` ← تصحيح
+`mapping`، ثم الاستيراد الفعلي مع `destination: "book"` ← `sandbox_get_warnings`
+مع `scope: "book"` ← `sandbox_export` مع `format: "pdf"` و`scope: "book"`.
+
+## ما يحتاج إلى موافقتك
+
+ست أدوات تفعل ما لا يمكن التراجع عنه، وهي موسومة بأنها ذات عواقب
+(`consequentialHint`)، ليتمكّن المتصفح من سؤالك قبل أن تعمل:
+`sandbox_remove_chapter`، و`sandbox_delete_resource`، و`sandbox_delete_book`،
+و`sandbox_reset_to_original`، و`sandbox_import_word` (إذ قد يستبدل الكتاب كله)،
+و`sandbox_answer` (إذ قد يحذف نسختك من كتاب). وإن ساورك شك، فاطلب من الوكيل أن
+يصدّر نسخة `.postext` أولًا.
+
+والأدوات التي تقرأ فقط موسومة بـ`readOnlyHint`، والأدوات التي يحمل جوابها نصًا
+لم تكتبه الصفحة (نص الكتاب نفسه، أو ملفًا مجلوبًا) موسومة بـ`untrustedContentHint`،
+ليتمكّن المتصفح من منع أخذ ذلك النص على أنه تعليمات.
+
+## الحدود
+
+- **يبقى كل شيء في متصفحك.** لا تصل الأدوات إلى شيء لا يصل إليه Sandbox نفسه:
+  كتبك في تخزين هذا المتصفح، والملف المعطى عبر `url` تجلبه الصفحة، فلا بد أن
+  يسمح خادمه بذلك (CORS). أما عنوان `data:` أو `base64` فيعمل دائمًا.
+- **العمل الطويل يستغرق وقتًا.** تنتظر الأداة التنضيد قبل أن تجيب، ومع
+  `wait: false` تجيب فورًا. وملف PDF أو EPUB لكتاب طويل يستغرق دقائق.
+- **ما يتراجع عنه `sandbox_undo_text`**: تعديلات النص التي تجريها الأدوات
+  (استدعاءً واحدًا في كل مرة) والتعديلات المُجراة على المعاينات. لا ما تكتبه في
+  محرّر لوحة النص (فلهذا المحرّر تراجعه الخاص)، ولا الفصول المضافة أو المنقولة،
+  ولا تغييرات التصميم والموارد: لهذه كلها استعمل `from` في كل جواب. وتضيع
+  القائمة عند إعادة تحميل الصفحة.
+- **الكتاب المعروض.** تعمل الأدوات على الكتاب المفتوح. ولا يصل إلى كتاب آخر دون
+  فتحه إلا `sandbox_export` لملف `.postext`، و`sandbox_save_book` مع `duplicate`،
+  و`sandbox_reset_to_original` مع `sample`.
+
+## أدوات الموقع
+
+في كل صفحة من postext.dev، ومنها Sandbox:
+
+- `site_get_context`: الصفحة المعروضة، ولغتها ومظهرها، وأقسام التوثيق وكل
+  صفحاته.
+- `site_search`: التوثيق ودليل الوصفات، بالكلمات، أو بأسماء الإعدادات
+  (`bodyText.avoidOrphans`)، أو بالتوجيهات (`::resource`).
+- `site_read_page`: صفحة من الموقع بصيغة Markdown، دون مغادرة الصفحة المعروضة.
+- `site_open_page`: عرض صفحة، مع `#heading` للوصول إلى قسم منها.
+- `site_list_recipes` و`site_open_recipe_in_sandbox`: إيجاد وصفة في دليل الوصفات
+  وفتحها في Sandbox كتابًا يمكنك تحريره.
+- `site_lookup_term`: مصطلح من المسرد (السطر الأرمل، تقنين الأزواج، الكينسوكو…).
+- `site_set_preferences`: لغة الموقع ومظهره.
+
+فيستطيع وكيل يبدأ من الصفحة الرئيسية أن يبحث في دليل الوصفات، ويفتح وصفة في
+Sandbox، ويواصل العمل هناك بأدوات `sandbox_*`.
+
+## كل الأدوات
+
+مجمّعة كما يسجّلها Sandbox. ويأتي الوصف الكامل لكل أداة ومخططها مع
+`postextWebMcp.listTools()`.
+
+- **ما هو مفتوح**: `sandbox_get_state`.
+- **الصفحات**: `sandbox_render_page`، و`sandbox_inspect_pages`،
+  و`sandbox_inspect_point`.
+- **النص**: `sandbox_read_text`، و`sandbox_write_text`، و`sandbox_edit_text`،
+  و`sandbox_undo_text`، و`sandbox_select_text`، و`sandbox_search_text`،
+  و`sandbox_manage_chapters`، و`sandbox_remove_chapter`.
+- **التصميم**: `sandbox_get_config`، و`sandbox_set_config`،
+  و`sandbox_find_setting`، و`sandbox_reset_to_original`.
+- **طريقة العرض**: `sandbox_set_view`، و`sandbox_go_to_page`،
+  و`sandbox_run_viewer`.
+- **الموارد والخطوط**: `sandbox_list_resources`، و`sandbox_save_resource`،
+  و`sandbox_delete_resource`، و`sandbox_list_fonts`، و`sandbox_save_font`.
+- **القصص المصورة**: `sandbox_inspect_comic`، و`sandbox_edit_comic`.
+- **الكتب والملفات**: `sandbox_list_books`، و`sandbox_open_book`،
+  و`sandbox_save_book`، و`sandbox_delete_book`، و`sandbox_import_book`،
+  و`sandbox_export`.
+- **Word**: `sandbox_import_word`، و`sandbox_word_templates`.
+- **الأسئلة**: `sandbox_answer`.
+- **الفحوص**: `sandbox_get_warnings`.
+
+## عند تضمين Sandbox
+
+يسجّل `<PostextSandbox>` الأدوات ما دام مركّبًا، ويستبعدها `webmcp={false}`
+(انظر [الخصائص](/ar/docs/sandbox#الخصائص-props)). ويستطيع التطبيق المضيف أن
+يضيف أدواته الخاصة عبر الوحدة نفسها:
+
+```ts
+import { registerWebMcpTools } from 'postext-sandbox/webmcp';
+
+const controller = new AbortController();
+registerWebMcpTools([
+  {
+    name: 'shop_list_titles',
+    description: 'عناوين هذا المتجر، مع معرّف مشروع Postext لكل عنوان.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    annotations: { readOnlyHint: true },
+    execute: async () => ({ titles: await fetchTitles() }),
+  },
+], controller.signal);
+// يسحبها controller.abort()
+```
+
+تُسجَّل هذه الأدوات في WebMCP حيث يتيحه المتصفح، ودائمًا في
+`window.postextWebMcp`، وتُفحص وسائطها مقابل `inputSchema`.
