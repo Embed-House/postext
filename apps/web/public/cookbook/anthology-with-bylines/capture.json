@@ -3,25 +3,20 @@
   "slug": "anthology-with-bylines",
   "sourceHash": "cd8fbe80a9ab5bbfa56853ec52d261ed97d86e2e74186e37201140832a59673e",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.919Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:53:16.046Z"
-  },
+  "capturedAt": "2026-10-13T10:35:58.658Z",
   "variants": {
     "en": {
-      "hash8": "92195a44",
+      "hash8": "127bfe1d",
       "vdtHash": "3a20b04ee50cb20bae50c8931025b36e54967128",
       "timings": {
-        "importMs": 181,
-        "fontsMs": 39,
-        "buildMs": 76,
-        "totalMs": 992,
+        "importMs": 1563,
+        "fontsMs": 216,
+        "buildMs": 110,
+        "totalMs": 3069,
         "builds": 1
       },
       "specimen": {
@@ -65,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 70024,
+          "bytes": 70102,
           "alt": "Opening page 2: Contents."
         },
         {
@@ -109,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 129858,
+          "bytes": 129840,
           "alt": "Page 6."
         },
         {

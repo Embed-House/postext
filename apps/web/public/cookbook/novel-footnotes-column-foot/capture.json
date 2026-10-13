@@ -3,21 +3,21 @@
   "slug": "novel-footnotes-column-foot",
   "sourceHash": "355d35ec4312c55d75abe2616bd7e4d97f5882b245245973c1ccca00a07907d3",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.897Z",
+  "capturedAt": "2026-10-13T10:45:15.080Z",
   "variants": {
     "en": {
-      "hash8": "3143cb0f",
+      "hash8": "cf3f8da8",
       "vdtHash": "5e2f78d12d75f69073655b3d404ccb6b754adca5",
       "timings": {
-        "importMs": 816,
-        "fontsMs": 47,
-        "buildMs": 168,
-        "totalMs": 2434,
+        "importMs": 1869,
+        "fontsMs": 42,
+        "buildMs": 176,
+        "totalMs": 3752,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 108282,
+          "bytes": 108286,
           "alt": "Opening page 1: Prologue."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 187676,
+          "bytes": 187690,
           "alt": "Opening page 2: Lazaro relates the way of his birth and tells whose son he is."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 161586,
+          "bytes": 161612,
           "alt": "Page 3: How Lazaro took service with a blind man."
         }
       ],
@@ -101,7 +101,7 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 105457,
+        "bytes": 104977,
         "pages": 3
       },
       "sandbox": {
@@ -313,13 +313,13 @@
       }
     },
     "es": {
-      "hash8": "7403519a",
-      "vdtHash": "7b765a6fa54d1b01d92ef9092ae0b3f291a372dd",
+      "hash8": "13eddfa3",
+      "vdtHash": "d19c6d1c6cffb4ba5a00d1b17b59ef8e12485eb4",
       "timings": {
-        "importMs": 1078,
+        "importMs": 1239,
         "fontsMs": 36,
-        "buildMs": 464,
-        "totalMs": 3449,
+        "buildMs": 356,
+        "totalMs": 3184,
         "builds": 1
       },
       "specimen": {
@@ -353,7 +353,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 99186,
+          "bytes": 99248,
           "alt": "Página de apertura 1: Prólogo."
         },
         {
@@ -364,7 +364,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 178078,
+          "bytes": 178070,
           "alt": "Página de apertura 2: Cuenta Lázaro su vida, y cuyo hijo fue."
         },
         {
@@ -375,7 +375,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 125556,
+          "bytes": 125540,
           "alt": "Página 3."
         }
       ],
@@ -403,17 +403,17 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 103542,
+        "bytes": 102494,
         "pages": 3
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 38338,
+        "bytes": 38317,
         "folio": "5dc5724f",
         "chapters": [
           {
             "pages": 3,
-            "hash": "96b6fbf10f8e4aff",
+            "hash": "cd210c08c681f4b0",
             "lines": "3deb2117efcabe61"
           }
         ]
@@ -611,7 +611,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

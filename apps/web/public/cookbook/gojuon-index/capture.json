@@ -3,21 +3,21 @@
   "slug": "gojuon-index",
   "sourceHash": "28a5cabf63c6681b39982c0c6338fe33199727b7588d9e2ae80751bb8dc96888",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.169Z",
+  "capturedAt": "2026-10-13T10:42:47.787Z",
   "variants": {
     "en": {
-      "hash8": "da77c7f8",
-      "vdtHash": "f8b56a0c3328d7a843fa101f7fd5b623b24105e8",
+      "hash8": "ea935335",
+      "vdtHash": "7556b4a7dc3b73735932746bb03fbec5e5a6e4af",
       "timings": {
-        "importMs": 747,
-        "fontsMs": 520,
-        "buildMs": 132,
-        "totalMs": 2175,
+        "importMs": 1090,
+        "fontsMs": 1161,
+        "buildMs": 131,
+        "totalMs": 3231,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78838,
+          "bytes": 78852,
           "alt": "Opening page 9: 紙面を呼ぶ言葉."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118690,
+          "bytes": 118596,
           "alt": "Page 10: 1.3 約物と組版の規則."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35614,
+          "bytes": 35650,
           "alt": "Opening page 11: 索引."
         }
       ],
@@ -99,18 +99,18 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137287,
+        "bytes": 137104,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15429,
+        "bytes": 15428,
         "folio": "3266640a",
         "chapters": [
           {
             "pages": 3,
-            "hash": "f6c96c39a0c82139",
-            "lines": "57f00fd2dd90169a"
+            "hash": "103c408de13932f9",
+            "lines": "2a320ea87652fd86"
           }
         ]
       },
@@ -328,6 +328,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -336,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "d2eceb59",
-      "vdtHash": "ea4f51661750ca2803d83212feef5b3e6cfddca3",
+      "hash8": "1f04f655",
+      "vdtHash": "901fcb413553333ee76fc85109634f24cbbf9f0d",
       "timings": {
-        "importMs": 837,
-        "fontsMs": 471,
-        "buildMs": 126,
-        "totalMs": 2089,
+        "importMs": 1038,
+        "fontsMs": 516,
+        "buildMs": 125,
+        "totalMs": 2384,
         "builds": 1
       },
       "specimen": {
@@ -374,7 +379,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78838,
+          "bytes": 78852,
           "alt": "Página de apertura 9: 紙面を呼ぶ言葉."
         },
         {
@@ -385,7 +390,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118690,
+          "bytes": 118596,
           "alt": "Página 10: 1.3 約物と組版の規則."
         },
         {
@@ -396,7 +401,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 35842,
+          "bytes": 35872,
           "alt": "Página de apertura 11: 索引."
         }
       ],
@@ -424,18 +429,18 @@
       },
       "pdf": {
         "file": "gojuon-index.pdf",
-        "bytes": 137252,
+        "bytes": 137078,
         "pages": 3
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15484,
+        "bytes": 15504,
         "folio": "3266640a",
         "chapters": [
           {
             "pages": 3,
-            "hash": "6415d45dd06fd655",
-            "lines": "ec1f02b4a92f9056"
+            "hash": "831a30c13f247895",
+            "lines": "98430d466934de42"
           }
         ]
       },
@@ -652,6 +657,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -3,25 +3,20 @@
   "slug": "web-worker-live-editor",
   "sourceHash": "002c496f8994aeced54329ac9b240b3205c98cb7b6e2ea7248e15bf95d3e7523",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.343Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:06:14.208Z"
-  },
+  "capturedAt": "2026-10-13T10:52:28.356Z",
   "variants": {
     "en": {
-      "hash8": "eb039ec6",
+      "hash8": "3628e19d",
       "vdtHash": "f28c72ad1821926ff80cada74187bed204248786",
       "timings": {
-        "importMs": 1677,
-        "fontsMs": 1393,
-        "buildMs": 137,
-        "totalMs": 3824,
+        "importMs": 1340,
+        "fontsMs": 1477,
+        "buildMs": 171,
+        "totalMs": 3776,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1336,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118778,
+          "bytes": 118694,
           "alt": "Page 3."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1336,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 142584,
+          "bytes": 142478,
           "alt": "Page 4."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1336,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 141530,
+          "bytes": 141522,
           "alt": "Page 5."
         }
       ],

@@ -3,21 +3,21 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "63f14120452459e4e9a896d821a8de3ac61872157dc4b38e3056b9195f1e6dd0",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.155Z",
+  "capturedAt": "2026-10-13T10:52:28.317Z",
   "variants": {
     "en": {
-      "hash8": "1f44827b",
+      "hash8": "bd1926fe",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 1430,
-        "fontsMs": 2267,
-        "buildMs": 101,
-        "totalMs": 4613,
+        "importMs": 1759,
+        "fontsMs": 1471,
+        "buildMs": 88,
+        "totalMs": 4574,
         "builds": 1
       },
       "specimen": {
@@ -154,7 +154,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754810,
+        "bytes": 754811,
         "pages": 11
       },
       "sandbox": {
@@ -372,13 +372,13 @@
       }
     },
     "es": {
-      "hash8": "de456af7",
+      "hash8": "af7a504b",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 1325,
-        "fontsMs": 1925,
-        "buildMs": 85,
-        "totalMs": 4225,
+        "importMs": 1768,
+        "fontsMs": 1455,
+        "buildMs": 64,
+        "totalMs": 4531,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +515,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754210,
+        "bytes": 754204,
         "pages": 11
       },
       "sandbox": {

@@ -3,12 +3,12 @@
   "slug": "one-page-six-languages",
   "sourceHash": "cabd6533754e602b9241f5ed4d9afe72efc64fae23d4d7a5fba996942e10d1e9",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.919Z",
+  "capturedAt": "2026-10-13T10:45:15.109Z",
   "variants": {
     "en": {
       "hash8": "308a3aec",
@@ -479,13 +479,13 @@
       }
     },
     "zh": {
-      "hash8": "6dd821fd",
+      "hash8": "129f7e59",
       "vdtHash": "965e9d9f675437e307a4f6b60577836d19cc3680",
       "timings": {
-        "importMs": 752,
-        "fontsMs": 1457,
-        "buildMs": 205,
-        "totalMs": 3326,
+        "importMs": 552,
+        "fontsMs": 632,
+        "buildMs": 252,
+        "totalMs": 2338,
         "builds": 2
       },
       "specimen": {
@@ -556,7 +556,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 809224,
+        "bytes": 809205,
         "pages": 1
       },
       "sandbox": {
@@ -720,13 +720,13 @@
       }
     },
     "ar": {
-      "hash8": "3ee04df6",
+      "hash8": "c6112c46",
       "vdtHash": "1d414c377facb28050190ad6c02af58bbc3e0a09",
       "timings": {
-        "importMs": 836,
-        "fontsMs": 408,
-        "buildMs": 247,
-        "totalMs": 2392,
+        "importMs": 1059,
+        "fontsMs": 1800,
+        "buildMs": 231,
+        "totalMs": 3901,
         "builds": 2
       },
       "specimen": {
@@ -798,7 +798,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 806249,
+        "bytes": 805583,
         "pages": 1
       },
       "sandbox": {
@@ -964,13 +964,13 @@
       }
     },
     "ja": {
-      "hash8": "b31d7599",
+      "hash8": "da28b8eb",
       "vdtHash": "6b576972cb22932447af736fc3e9eeeb34cf423d",
       "timings": {
-        "importMs": 710,
-        "fontsMs": 793,
-        "buildMs": 176,
-        "totalMs": 2878,
+        "importMs": 1100,
+        "fontsMs": 1096,
+        "buildMs": 179,
+        "totalMs": 3298,
         "builds": 2
       },
       "specimen": {
@@ -1042,7 +1042,7 @@
       },
       "pdf": {
         "file": "one-page-six-languages.pdf",
-        "bytes": 819715,
+        "bytes": 819707,
         "pages": 1
       },
       "sandbox": {

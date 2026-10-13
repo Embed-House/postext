@@ -3,21 +3,21 @@
   "slug": "yonkoma",
   "sourceHash": "58138e65fea493bc74632b2f1a4a77607d7ac98bff729f6748fa61e59261117f",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.235Z",
+  "capturedAt": "2026-10-13T10:52:28.450Z",
   "variants": {
     "en": {
-      "hash8": "b586d74e",
+      "hash8": "27864b55",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 3914,
-        "fontsMs": 2426,
-        "buildMs": 580,
-        "totalMs": 8754,
+        "importMs": 762,
+        "fontsMs": 547,
+        "buildMs": 359,
+        "totalMs": 2777,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "Page 1."
         },
         {
@@ -83,7 +83,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1323036,
+        "bytes": 1323034,
         "pages": 2
       },
       "sandbox": {
@@ -246,13 +246,13 @@
       }
     },
     "es": {
-      "hash8": "6260360e",
+      "hash8": "f9871a8a",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 1560,
-        "fontsMs": 1384,
-        "buildMs": 519,
-        "totalMs": 5354,
+        "importMs": 414,
+        "fontsMs": 583,
+        "buildMs": 355,
+        "totalMs": 2241,
         "builds": 2
       },
       "specimen": {
@@ -282,7 +282,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "Página 1."
         },
         {
@@ -481,13 +481,13 @@
       }
     },
     "ca": {
-      "hash8": "20809159",
+      "hash8": "aa580d84",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 1404,
-        "fontsMs": 1365,
-        "buildMs": 542,
-        "totalMs": 4872,
+        "importMs": 442,
+        "fontsMs": 484,
+        "buildMs": 404,
+        "totalMs": 2655,
         "builds": 2
       },
       "specimen": {
@@ -517,7 +517,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "Pàgina 1."
         },
         {
@@ -716,13 +716,13 @@
       }
     },
     "zh": {
-      "hash8": "8ce829f8",
+      "hash8": "d6f8b1c3",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 1136,
-        "fontsMs": 2479,
-        "buildMs": 624,
-        "totalMs": 8683,
+        "importMs": 648,
+        "fontsMs": 475,
+        "buildMs": 324,
+        "totalMs": 3294,
         "builds": 2
       },
       "specimen": {
@@ -752,7 +752,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "第 1 页。"
         },
         {
@@ -951,13 +951,13 @@
       }
     },
     "ar": {
-      "hash8": "0022caff",
+      "hash8": "5b29df63",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 1486,
-        "fontsMs": 1444,
-        "buildMs": 521,
-        "totalMs": 5673,
+        "importMs": 694,
+        "fontsMs": 652,
+        "buildMs": 328,
+        "totalMs": 2823,
         "builds": 2
       },
       "specimen": {
@@ -987,7 +987,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "الصفحة 1."
         },
         {
@@ -1023,7 +1023,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1328933,
+        "bytes": 1327874,
         "pages": 2
       },
       "sandbox": {
@@ -1426,13 +1426,13 @@
       }
     },
     "pt": {
-      "hash8": "a436fe0b",
+      "hash8": "cc051033",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 1405,
-        "fontsMs": 2428,
-        "buildMs": 619,
-        "totalMs": 5906,
+        "importMs": 505,
+        "fontsMs": 592,
+        "buildMs": 363,
+        "totalMs": 2356,
         "builds": 2
       },
       "specimen": {
@@ -1462,7 +1462,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160662,
+          "bytes": 160602,
           "alt": "Página 1."
         },
         {

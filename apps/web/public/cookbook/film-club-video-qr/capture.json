@@ -3,21 +3,21 @@
   "slug": "film-club-video-qr",
   "sourceHash": "9955c09061c1cd3d45b3e2dffc4925c1a0d92b4fd62dd57838474aa74263b6e3",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:56:14.178Z",
+  "capturedAt": "2026-10-13T10:41:57.144Z",
   "variants": {
     "en": {
-      "hash8": "9b9bd8a2",
+      "hash8": "2d647274",
       "vdtHash": "3a0bdec19ce7c4f9ff84113449547eb0830ba503",
       "timings": {
-        "importMs": 499,
-        "fontsMs": 170,
-        "buildMs": 100,
-        "totalMs": 1447,
+        "importMs": 559,
+        "fontsMs": 173,
+        "buildMs": 92,
+        "totalMs": 1705,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84092,
+          "bytes": 84152,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1424,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 94922,
+          "bytes": 94902,
           "alt": "Opening page 2: Elephants Dream. Film 1. Elephants Dream. Project Orange, Blender Foundation."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 84192,
+          "bytes": 84078,
           "alt": "Opening page 3: Big Buck Bunny. Film 2. Big Buck Bunny. Project Peach, Blender Institute."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1424,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 81586,
+          "bytes": 81658,
           "alt": "Opening page 4: Tears of Steel. Film 3. Tears of Steel. Project Mango, Blender Institute."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 86948,
+          "bytes": 86440,
           "alt": "Opening page 6: At the Club."
         }
       ],
@@ -141,7 +141,7 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 306069,
+        "bytes": 305888,
         "pages": 6
       },
       "sandbox": {
@@ -413,13 +413,13 @@
       }
     },
     "es": {
-      "hash8": "ddecb44a",
+      "hash8": "4092e910",
       "vdtHash": "b1fafd63237b7c42fe8f1d8da62eaa38276b128e",
       "timings": {
-        "importMs": 689,
-        "fontsMs": 222,
-        "buildMs": 99,
-        "totalMs": 1841,
+        "importMs": 416,
+        "fontsMs": 187,
+        "buildMs": 90,
+        "totalMs": 1356,
         "builds": 1
       },
       "specimen": {
@@ -452,7 +452,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95430,
+          "bytes": 95328,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {
@@ -463,7 +463,7 @@
           "h": 1424,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 102018,
+          "bytes": 101960,
           "alt": "Página de apertura 2: Elephants Dream. Película 1. Elephants Dream. Proyecto Orange, Blender Foundation."
         },
         {
@@ -474,7 +474,7 @@
           "h": 1424,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 90232,
+          "bytes": 90586,
           "alt": "Página de apertura 3: Big Buck Bunny. Película 2. Big Buck Bunny. Proyecto Peach, Blender Institute."
         },
         {
@@ -485,7 +485,7 @@
           "h": 1424,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 92006,
+          "bytes": 92032,
           "alt": "Página de apertura 4: Tears of Steel. Película 3. Tears of Steel. Proyecto Mango, Blender Institute."
         },
         {
@@ -496,7 +496,7 @@
           "h": 1424,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 82386,
+          "bytes": 82268,
           "alt": "Página de apertura 5: Spring. Película 4. Spring. Blender Studio."
         },
         {
@@ -507,7 +507,7 @@
           "h": 1424,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 95544,
+          "bytes": 95496,
           "alt": "Página de apertura 6: En el cineclub."
         }
       ],
@@ -543,7 +543,7 @@
       },
       "pdf": {
         "file": "film-club-video-qr.pdf",
-        "bytes": 319207,
+        "bytes": 318661,
         "pages": 6
       },
       "sandbox": {

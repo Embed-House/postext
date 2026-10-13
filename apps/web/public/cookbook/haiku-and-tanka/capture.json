@@ -3,21 +3,21 @@
   "slug": "haiku-and-tanka",
   "sourceHash": "45e647a2e893725b0d5fde5cbaca857146f8faf5a29bf001b141c2894463abe9",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.176Z",
+  "capturedAt": "2026-10-13T10:42:47.798Z",
   "variants": {
     "en": {
-      "hash8": "78ea4171",
+      "hash8": "62488d2e",
       "vdtHash": "351aa50ad42f719591ada45f71b4b1a8ff2d4369",
       "timings": {
-        "importMs": 616,
-        "fontsMs": 899,
-        "buildMs": 87,
-        "totalMs": 2309,
+        "importMs": 764,
+        "fontsMs": 1473,
+        "buildMs": 88,
+        "totalMs": 3121,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1480,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 65890,
+          "bytes": 65894,
           "alt": "Opening page 一: おくのほそ道."
         },
         {
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 221269,
+        "bytes": 221277,
         "pages": 8
       },
       "sandbox": {
@@ -359,13 +359,13 @@
       }
     },
     "es": {
-      "hash8": "319b39bc",
+      "hash8": "7642b58a",
       "vdtHash": "a5d3308460805ad0d7f0cc310898046450ac8fc0",
       "timings": {
-        "importMs": 747,
-        "fontsMs": 558,
-        "buildMs": 71,
-        "totalMs": 2284,
+        "importMs": 625,
+        "fontsMs": 1054,
+        "buildMs": 61,
+        "totalMs": 2532,
         "builds": 1
       },
       "specimen": {
@@ -515,7 +515,7 @@
       },
       "pdf": {
         "file": "haiku-and-tanka.pdf",
-        "bytes": 220650,
+        "bytes": 220663,
         "pages": 8
       },
       "sandbox": {

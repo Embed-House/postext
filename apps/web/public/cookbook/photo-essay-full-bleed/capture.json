@@ -3,25 +3,20 @@
   "slug": "photo-essay-full-bleed",
   "sourceHash": "ba42bc95a957ecb1f47428c7fa15755b3ddf9c421eae9839c5de5ab80ef6c4ba",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.933Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:01:35.511Z"
-  },
+  "capturedAt": "2026-10-13T10:47:03.044Z",
   "variants": {
     "en": {
-      "hash8": "0693e3f5",
+      "hash8": "acc83487",
       "vdtHash": "1d00ac2f07809ef1dbc262a94650a7453d3692ce",
       "timings": {
-        "importMs": 237,
-        "fontsMs": 49,
-        "buildMs": 51,
-        "totalMs": 958,
+        "importMs": 995,
+        "fontsMs": 244,
+        "buildMs": 123,
+        "totalMs": 3288,
         "builds": 1
       },
       "specimen": {
@@ -131,7 +126,7 @@
           "h": 750,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 37876,
+          "bytes": 37904,
           "alt": "Page 8: First snow."
         },
         {
@@ -346,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "7af4879a",
+      "hash8": "27ca10aa",
       "vdtHash": "70b8dc3093c70fc1c90d4908e864abcdaa8aacec",
       "timings": {
-        "importMs": 205,
-        "fontsMs": 48,
-        "buildMs": 57,
-        "totalMs": 1061,
+        "importMs": 1854,
+        "fontsMs": 438,
+        "buildMs": 94,
+        "totalMs": 4367,
         "builds": 1
       },
       "specimen": {
@@ -440,7 +435,7 @@
           "h": 750,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 37626,
+          "bytes": 37674,
           "alt": "Página 6: Once segundos. IV · Atardecer · 19:41."
         },
         {

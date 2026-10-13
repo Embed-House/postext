@@ -3,21 +3,21 @@
   "slug": "arabic-research-article",
   "sourceHash": "bc512da4e8eb6f7fd56ca82aa485280ec8bd4323c641d1e7ddebc0821d8b1e5a",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:16.064Z",
+  "capturedAt": "2026-10-13T10:35:58.738Z",
   "variants": {
     "en": {
-      "hash8": "59622aef",
-      "vdtHash": "fc2fc1949f0cd4a3f42f67d22fe8c64c7a6874b9",
+      "hash8": "4fa99642",
+      "vdtHash": "83f924f767437bceda389050c85f0b62c13cc3be",
       "timings": {
-        "importMs": 280,
-        "fontsMs": 73,
-        "buildMs": 517,
-        "totalMs": 1471,
+        "importMs": 3573,
+        "fontsMs": 346,
+        "buildMs": 674,
+        "totalMs": 6476,
         "builds": 1
       },
       "specimen": {
@@ -71,7 +71,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 92848,
+          "bytes": 92824,
           "alt": "Page ٨٩: ٣- منهج التجربة."
         },
         {
@@ -126,17 +126,17 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 99059,
+        "bytes": 99389,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14408,
+        "bytes": 14407,
         "folio": "baed3d35",
         "chapters": [
           {
             "pages": 5,
-            "hash": "8e77f2725f7b38f6",
+            "hash": "8d74560ec5c2e23a",
             "lines": "a31f9500cfa59cb4"
           }
         ]
@@ -396,17 +396,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "f01bdcb5",
-      "vdtHash": "4969cce40dbd3f45a1b9ed0bd619bcf50961dd09",
+      "hash8": "d5e7bfb2",
+      "vdtHash": "c6ecf63c1e19e3f63e497ec1918159ac542e6e05",
       "timings": {
-        "importMs": 311,
-        "fontsMs": 67,
-        "buildMs": 521,
-        "totalMs": 1499,
+        "importMs": 3705,
+        "fontsMs": 204,
+        "buildMs": 652,
+        "totalMs": 5927,
         "builds": 1
       },
       "specimen": {
@@ -460,7 +466,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 92848,
+          "bytes": 92824,
           "alt": "Página ٨٩: ٣- منهج التجربة."
         },
         {
@@ -515,17 +521,17 @@
       },
       "pdf": {
         "file": "arabic-research-article.pdf",
-        "bytes": 98878,
+        "bytes": 99199,
         "pages": 5
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14482,
+        "bytes": 14480,
         "folio": "baed3d35",
         "chapters": [
           {
             "pages": 5,
-            "hash": "8ad4d29107c529fd",
+            "hash": "f4ff14b507828c31",
             "lines": "7d7e57aab533828a"
           }
         ]
@@ -785,7 +791,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

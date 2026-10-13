@@ -59,5 +59,5 @@ Fi
 :::
 
 :::paragraphs{style="colofo"}
-Compost en Crimson Pro, Cormorant Garamond i Cormorant SC (SIL OFL). Text: Narcís Oller, *Obres completes*, vol. VI, Barcelona, 1928, domini públic (Viquitexts). Il·lustracions generades amb models de difusió.
+Compost en Gentium Book Plus, Cormorant Garamond i Cormorant SC (SIL OFL). Text: Narcís Oller, *Obres completes*, vol. VI, Barcelona, 1928, domini públic (Viquitexts). Il·lustracions generades amb models de difusió.
 :::

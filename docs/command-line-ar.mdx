@@ -389,7 +389,7 @@ postext build chapters/ --pdf book.pdf --watch
 [المستودع](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
 يترجمه [Bun](https://bun.sh)، مع المحرّك وكاتباته، إلى ملف تنفيذي واحد لكل نظام،
 ويقيس [Skia](https://skia.org) (عبر `@napi-rs/canvas`) النص ويرسمه، كما تفعل لوحة
-الرسم في المتصفح داخل Sandbox. وفي كل إصدار تُبنى الملفات التنفيذية، وتُشغَّل على
+الرسم في المتصفح داخل Sandbox. أما صورة SVG التي تحمل صورة نقطية (PNG أو JPEG مضمّنة على هيئة data URI، كما يكتب `pdftocairo -svg` الرسوم المقتطعة من ملف PDF) فيرسمها [resvg](https://github.com/linebender/resvg)، لأن عارض SVG في Skia يُسقط هذه الصور. وفي كل إصدار تُبنى الملفات التنفيذية، وتُشغَّل على
 Linux وAlpine وmacOS وWindows، وتُرفق بإصدار GitHub؛ ويتلقى npm الحزمة `postext-cli`
 وحزمة `postext-cli-<system>` لكل ملف تنفيذي.
 

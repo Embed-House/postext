@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-daily-strip",
-  "sourceHash": "7f6777d996f73a048251be55bf4f52ba9c0fcdac241bacc30803f56a298693a7",
+  "sourceHash": "bd8559a12cb8a27ef7cc9da6a74b98756a2c9951cb88094c027e27b39332f762",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.803Z",
+  "capturedAt": "2026-10-13T10:45:14.914Z",
   "variants": {
     "en": {
-      "hash8": "1a199084",
+      "hash8": "6feddd25",
       "vdtHash": "de904ea062ea3dc43718e8dffb87ec53e8334fb4",
       "timings": {
-        "importMs": 1092,
-        "fontsMs": 646,
-        "buildMs": 479,
-        "totalMs": 3070,
+        "importMs": 419,
+        "fontsMs": 339,
+        "buildMs": 535,
+        "totalMs": 2314,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -60,7 +60,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 163910,
+          "bytes": 163940,
           "alt": "Opening page 2: Ten winters on the floe."
         }
       ],
@@ -88,12 +88,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 879989,
+        "bytes": 880020,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 811825,
+        "bytes": 811808,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -129,7 +129,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -259,7 +258,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -338,13 +337,13 @@
       }
     },
     "es": {
-      "hash8": "84d99902",
+      "hash8": "c036cd58",
       "vdtHash": "1c7192db4fb6073e51da64e02f556454cfa22911",
       "timings": {
-        "importMs": 675,
-        "fontsMs": 642,
-        "buildMs": 671,
-        "totalMs": 3545,
+        "importMs": 530,
+        "fontsMs": 286,
+        "buildMs": 518,
+        "totalMs": 1961,
         "builds": 1
       },
       "specimen": {
@@ -365,7 +364,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -387,7 +386,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 177788,
+          "bytes": 177710,
           "alt": "Página de apertura 2: Diez inviernos en el témpano."
         }
       ],
@@ -415,12 +414,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 884590,
+        "bytes": 884663,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812426,
+        "bytes": 812407,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -456,7 +455,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -586,7 +584,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -665,13 +663,13 @@
       }
     },
     "ca": {
-      "hash8": "4f3dfb9e",
+      "hash8": "6103045f",
       "vdtHash": "58a1ff6ec6aeb80c851d5460d30827d1f876ca16",
       "timings": {
-        "importMs": 1351,
-        "fontsMs": 957,
-        "buildMs": 522,
-        "totalMs": 4383,
+        "importMs": 818,
+        "fontsMs": 1720,
+        "buildMs": 446,
+        "totalMs": 3796,
         "builds": 1
       },
       "specimen": {
@@ -692,7 +690,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -714,7 +712,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 169340,
+          "bytes": 169454,
           "alt": "Pàgina d'obertura 2: Deu hiverns al glaç."
         }
       ],
@@ -742,12 +740,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883857,
+        "bytes": 883942,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812386,
+        "bytes": 812367,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -783,7 +781,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -913,7 +910,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -992,13 +989,13 @@
       }
     },
     "zh": {
-      "hash8": "447de045",
+      "hash8": "efb09123",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 1097,
-        "fontsMs": 3185,
-        "buildMs": 625,
-        "totalMs": 6952,
+        "importMs": 1143,
+        "fontsMs": 1621,
+        "buildMs": 447,
+        "totalMs": 4119,
         "builds": 1
       },
       "specimen": {
@@ -1019,7 +1016,7 @@
           "Noto Serif SC"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1074,7 +1071,7 @@
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812338,
+        "bytes": 812318,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1110,7 +1107,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1240,7 +1236,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1320,13 +1316,13 @@
       }
     },
     "ar": {
-      "hash8": "b2d5af43",
+      "hash8": "1673293c",
       "vdtHash": "6c016a25c753301988483d60448950e8670557a4",
       "timings": {
-        "importMs": 2912,
-        "fontsMs": 2353,
-        "buildMs": 997,
-        "totalMs": 8069,
+        "importMs": 715,
+        "fontsMs": 1898,
+        "buildMs": 518,
+        "totalMs": 4729,
         "builds": 1
       },
       "specimen": {
@@ -1347,7 +1343,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1398,12 +1394,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 896591,
+        "bytes": 895507,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813699,
+        "bytes": 813681,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1439,7 +1435,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1569,7 +1564,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1647,13 +1642,13 @@
       }
     },
     "ja": {
-      "hash8": "c6c3126a",
+      "hash8": "cd3735e6",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 4388,
-        "fontsMs": 4794,
-        "buildMs": 607,
-        "totalMs": 10692,
+        "importMs": 1096,
+        "fontsMs": 2375,
+        "buildMs": 546,
+        "totalMs": 5053,
         "builds": 1
       },
       "specimen": {
@@ -1674,7 +1669,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -1685,7 +1680,7 @@
           "h": 1348,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116232,
+          "bytes": 116188,
           "alt": "1ページ。"
         },
         {
@@ -1696,7 +1691,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 170592,
+          "bytes": 170624,
           "alt": "章扉、2ページ：流氷の上の十の冬。"
         }
       ],
@@ -1725,12 +1720,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1005262,
+        "bytes": 1004863,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 813828,
+        "bytes": 813805,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -1766,7 +1761,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -1896,7 +1890,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",
@@ -1977,13 +1971,13 @@
       }
     },
     "pt": {
-      "hash8": "c8de017e",
+      "hash8": "8a170d36",
       "vdtHash": "23563184c94303faf1de3667a1a667a676ded1de",
       "timings": {
-        "importMs": 1832,
-        "fontsMs": 898,
-        "buildMs": 560,
-        "totalMs": 4369,
+        "importMs": 1516,
+        "fontsMs": 1048,
+        "buildMs": 609,
+        "totalMs": 4263,
         "builds": 1
       },
       "specimen": {
@@ -2004,7 +1998,7 @@
           "Newsreader"
         ],
         "pages": 2,
-        "ownLines": 179
+        "ownLines": 177
       },
       "pages": [
         {
@@ -2026,7 +2020,7 @@
           "h": 1348,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 176128,
+          "bytes": 176016,
           "alt": "Página de abertura 2: Dez invernos no gelo."
         }
       ],
@@ -2054,12 +2048,12 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 882838,
+        "bytes": 882869,
         "pages": 2
       },
       "sandbox": {
         "file": "newspaper-daily-strip.postext",
-        "bytes": 812421,
+        "bytes": 812405,
         "folio": "bebc74ee",
         "chapters": [
           {
@@ -2095,7 +2089,6 @@
           "bodyText.lineHeight",
           "bodyText.optimalLineBreaking",
           "bodyText.referenceColor",
-          "bodyText.shapingLanguage",
           "bodyText.textAlign",
           "calloutStyles",
           "calloutStyles[].background",
@@ -2225,7 +2218,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 4,
         "directives": [
           ":::strip",

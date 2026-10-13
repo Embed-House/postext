@@ -3,12 +3,12 @@
   "slug": "tebeo-album-page",
   "sourceHash": "778500aa1dc309b4accede43cca9f92a9efa3f231725389fbfb91a355492f2fe",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:04:11.873Z",
+  "capturedAt": "2026-10-13T10:51:18.967Z",
   "variants": {
     "en": {
       "hash8": "6338becf",
@@ -886,13 +886,13 @@
       }
     },
     "zh": {
-      "hash8": "065057ad",
+      "hash8": "54f4f1c2",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 475,
-        "fontsMs": 539,
-        "buildMs": 409,
-        "totalMs": 2056,
+        "importMs": 635,
+        "fontsMs": 617,
+        "buildMs": 492,
+        "totalMs": 2424,
         "builds": 1
       },
       "specimen": {
@@ -924,7 +924,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 96380,
+          "bytes": 96382,
           "alt": "章首页，第 2 页：卡门的橙子。"
         },
         {
@@ -935,7 +935,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 246114,
+          "bytes": 246116,
           "alt": "第 3 页。"
         }
       ],
@@ -959,7 +959,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157091,
+        "bytes": 1157099,
         "pages": 2
       },
       "sandbox": {
@@ -1177,13 +1177,13 @@
       }
     },
     "ar": {
-      "hash8": "a760ce73",
+      "hash8": "dda87a84",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 472,
-        "fontsMs": 206,
-        "buildMs": 411,
-        "totalMs": 1799,
+        "importMs": 1177,
+        "fontsMs": 491,
+        "buildMs": 576,
+        "totalMs": 3318,
         "builds": 1
       },
       "specimen": {
@@ -1226,7 +1226,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 242832,
+          "bytes": 242826,
           "alt": "الصفحة ٣."
         }
       ],
@@ -1251,7 +1251,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1135148,
+        "bytes": 1132943,
         "pages": 2
       },
       "sandbox": {
@@ -1471,13 +1471,13 @@
       }
     },
     "ja": {
-      "hash8": "73015342",
+      "hash8": "050fb4e9",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 388,
-        "fontsMs": 444,
-        "buildMs": 351,
-        "totalMs": 1854,
+        "importMs": 1401,
+        "fontsMs": 1442,
+        "buildMs": 595,
+        "totalMs": 4260,
         "builds": 1
       },
       "specimen": {
@@ -1545,7 +1545,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1154274,
+        "bytes": 1154241,
         "pages": 2
       },
       "sandbox": {

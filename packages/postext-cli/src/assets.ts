@@ -15,6 +15,7 @@ import os600 from '../fonts/OpenSans-600.ttf' with { type: 'file' };
 import os700 from '../fonts/OpenSans-700.ttf' with { type: 'file' };
 import os700i from '../fonts/OpenSans-700i.ttf' with { type: 'file' };
 import harfbuzz from '../../postext-pdf/dist/harfbuzz.wasm' with { type: 'file' };
+import resvg from '@resvg/resvg-wasm/index_bg.wasm' with { type: 'file' };
 import fogra27 from 'postext/icc/fogra27.icc' with { type: 'file' };
 import fogra28 from 'postext/icc/fogra28.icc' with { type: 'file' };
 import fogra29 from 'postext/icc/fogra29.icc' with { type: 'file' };
@@ -71,4 +72,9 @@ export function iccProfile(name: string): Uint8Array | undefined {
 
 export function harfbuzzWasm(): Uint8Array {
   return readEmbedded(harfbuzz);
+}
+
+/** resvg, for the SVG pictures Skia leaves part of (#771). */
+export function resvgWasm(): Uint8Array {
+  return readEmbedded(resvg);
 }

@@ -3,12 +3,12 @@
   "slug": "comic-page-splitters",
   "sourceHash": "0277e04aeaa8f2e59ab1f4099226a17cbc30c3d6032828e0ac43da324f3255e8",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:55:39.945Z",
+  "capturedAt": "2026-10-13T10:41:19.747Z",
   "variants": {
     "en": {
       "hash8": "9e72e3cc",
@@ -1192,13 +1192,13 @@
       }
     },
     "ar": {
-      "hash8": "e7efebdd",
+      "hash8": "06ea5966",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 275,
-        "fontsMs": 133,
-        "buildMs": 458,
-        "totalMs": 1467,
+        "importMs": 2334,
+        "fontsMs": 2191,
+        "buildMs": 539,
+        "totalMs": 6316,
         "builds": 1
       },
       "specimen": {
@@ -1296,7 +1296,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 864081,
+        "bytes": 865903,
         "pages": 4
       },
       "sandbox": {
@@ -1491,13 +1491,13 @@
       }
     },
     "ja": {
-      "hash8": "7b95c45d",
+      "hash8": "d47b2f4e",
       "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 282,
-        "fontsMs": 404,
-        "buildMs": 405,
-        "totalMs": 1711,
+        "importMs": 1798,
+        "fontsMs": 1401,
+        "buildMs": 692,
+        "totalMs": 5571,
         "builds": 1
       },
       "specimen": {
@@ -1595,7 +1595,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 888495,
+        "bytes": 888458,
         "pages": 4
       },
       "sandbox": {

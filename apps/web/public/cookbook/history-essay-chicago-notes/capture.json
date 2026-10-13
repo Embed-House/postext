@@ -3,21 +3,21 @@
   "slug": "history-essay-chicago-notes",
   "sourceHash": "0a025f997df23b6a00281ee0b30c8b7c23e501bbf962cebbec4bbaa0a10004a8",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.209Z",
+  "capturedAt": "2026-10-13T10:42:47.867Z",
   "variants": {
     "en": {
-      "hash8": "8af7c24a",
+      "hash8": "3bee7fe6",
       "vdtHash": "994aae3a811c99b2205ceb072cb0db1659f464e2",
       "timings": {
-        "importMs": 657,
-        "fontsMs": 52,
-        "buildMs": 641,
-        "totalMs": 2125,
+        "importMs": 875,
+        "fontsMs": 50,
+        "buildMs": 573,
+        "totalMs": 2338,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 90250,
+          "bytes": 90264,
           "alt": "Opening page 1: Railway Time: How British Towns Came to Keep London’s Hour."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 155756,
+          "bytes": 155658,
           "alt": "Page 2: THE COMPANIES DECIDE."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 152430,
+          "bytes": 152204,
           "alt": "Page 3: THE TOWNS HESITATE."
         },
         {
@@ -82,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 126492,
+          "bytes": 126536,
           "alt": "Page 4: A SETTLEMENT, NOT A CONQUEST."
         }
       ],
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 86005,
+        "bytes": 85350,
         "pages": 4
       },
       "sandbox": {
@@ -332,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "b1e087d7",
+      "hash8": "8e19cbd3",
       "vdtHash": "5d4c797d0c8398d84f1c79e2864e796fe0b7cea3",
       "timings": {
-        "importMs": 929,
-        "fontsMs": 38,
-        "buildMs": 495,
-        "totalMs": 2588,
+        "importMs": 819,
+        "fontsMs": 42,
+        "buildMs": 505,
+        "totalMs": 2221,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +370,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 96556,
+          "bytes": 96522,
           "alt": "Página de apertura 1: La hora del ferrocarril: cómo las ciudades británicas adoptaron la hora de Londres."
         },
         {
@@ -381,7 +381,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 152028,
+          "bytes": 152038,
           "alt": "Página 2: LAS COMPAÑÍAS DECIDEN."
         },
         {
@@ -392,7 +392,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 144158,
+          "bytes": 144194,
           "alt": "Página 3: LAS CIUDADES DUDAN."
         },
         {
@@ -403,7 +403,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 131420,
+          "bytes": 131406,
           "alt": "Página 4: UN ACUERDO, NO UNA CONQUISTA."
         }
       ],
@@ -435,7 +435,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 90662,
+        "bytes": 89787,
         "pages": 4
       },
       "sandbox": {

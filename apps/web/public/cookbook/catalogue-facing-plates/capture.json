@@ -3,25 +3,20 @@
   "slug": "catalogue-facing-plates",
   "sourceHash": "188f64d00b05169b4242b41015979e2ed4d016f3023cad3a7f32666b307828df",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.080Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:54:37.523Z"
-  },
+  "capturedAt": "2026-10-13T10:38:45.216Z",
   "variants": {
     "en": {
-      "hash8": "05272e39",
-      "vdtHash": "bf99b7e82877d64c06b215348160a803ddaa2bc9",
+      "hash8": "cd4937a0",
+      "vdtHash": "8e0e638256cb9320cfa59a7c23ecbb5e33d424c7",
       "timings": {
-        "importMs": 229,
-        "fontsMs": 66,
-        "buildMs": 74,
-        "totalMs": 1019,
+        "importMs": 1440,
+        "fontsMs": 243,
+        "buildMs": 121,
+        "totalMs": 3444,
         "builds": 1
       },
       "specimen": {
@@ -66,7 +61,7 @@
           "h": 1217,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86814,
+          "bytes": 86780,
           "alt": "Opening page 2: 1 Don Quixote in His Library."
         },
         {
@@ -88,7 +83,7 @@
           "h": 1217,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 80022,
+          "bytes": 80010,
           "alt": "Opening page 4: 2 The Vigil of Arms."
         },
         {
@@ -110,7 +105,7 @@
           "h": 1217,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 76968,
+          "bytes": 76974,
           "alt": "Opening page 6: 3 The Adventure of the Windmills."
         },
         {
@@ -132,7 +127,7 @@
           "h": 1217,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 60350,
+          "bytes": 60418,
           "alt": "Opening page 8: Works in the Exhibition."
         }
       ],
@@ -172,12 +167,12 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603570,
+        "bytes": 1603568,
         "folio": "2f38e47f",
         "chapters": [
           {
             "pages": 8,
-            "hash": "69be6b26300b9292",
+            "hash": "8dca6760c0896370",
             "lines": "d3d507604329fa96"
           }
         ],
@@ -422,6 +417,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

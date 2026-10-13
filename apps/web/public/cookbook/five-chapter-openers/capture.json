@@ -3,25 +3,20 @@
   "slug": "five-chapter-openers",
   "sourceHash": "62073ca205272ae659bcabe45dc15a85554287d863d65b442d80faa77b40eef2",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.325Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.189Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.194Z",
   "variants": {
     "en": {
-      "hash8": "1105a5f7",
+      "hash8": "d5a3e1a4",
       "vdtHash": "45587f7495f542a963e19fb3590dbea4a204e252",
       "timings": {
-        "importMs": 163,
+        "importMs": 230,
         "fontsMs": 2,
-        "buildMs": 138,
-        "totalMs": 959,
+        "buildMs": 121,
+        "totalMs": 1068,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100996,
+          "bytes": 101002,
           "alt": "Opening page 1: The Voice."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161650,
+          "bytes": 161624,
           "alt": "Page 2."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 32372,
+          "bytes": 32356,
           "alt": "Page 3."
         },
         {
@@ -99,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 66788,
+          "bytes": 66842,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -418,13 +413,13 @@
       }
     },
     "es": {
-      "hash8": "2b112667",
+      "hash8": "2e0d8f2e",
       "vdtHash": "12a9a52a7154dc26eeb05039fb7610dfba8e4749",
       "timings": {
-        "importMs": 157,
+        "importMs": 432,
         "fontsMs": 2,
-        "buildMs": 211,
-        "totalMs": 1127,
+        "buildMs": 242,
+        "totalMs": 1584,
         "builds": 1
       },
       "specimen": {
@@ -458,7 +453,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98458,
+          "bytes": 98738,
           "alt": "Página de apertura 1: La voz."
         },
         {
@@ -469,7 +464,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 159958,
+          "bytes": 159884,
           "alt": "Página 2."
         },
         {
@@ -480,7 +475,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50262,
+          "bytes": 50272,
           "alt": "Página 3."
         },
         {
@@ -491,7 +486,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 88788,
+          "bytes": 87886,
           "alt": "Página de apertura 4: El marco."
         },
         {
@@ -502,7 +497,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 71564,
+          "bytes": 71580,
           "alt": "Página de apertura 5: Salta a la vista."
         },
         {

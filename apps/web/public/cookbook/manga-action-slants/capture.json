@@ -3,21 +3,21 @@
   "slug": "manga-action-slants",
   "sourceHash": "affbb5af864fb95403f52680e70eb90d607824dda2514d888d7261464ad47d4f",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:59:13.206Z",
+  "capturedAt": "2026-10-13T10:43:56.508Z",
   "variants": {
     "en": {
-      "hash8": "5cc9c806",
+      "hash8": "292c6516",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1068,
-        "fontsMs": 1441,
-        "buildMs": 272,
-        "totalMs": 3856,
+        "importMs": 326,
+        "fontsMs": 454,
+        "buildMs": 180,
+        "totalMs": 1816,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "Page 1."
         },
         {
@@ -83,7 +83,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 972516,
+        "bytes": 972493,
         "pages": 2
       },
       "sandbox": {
@@ -242,13 +242,13 @@
       }
     },
     "es": {
-      "hash8": "c2dafd91",
+      "hash8": "ca0c5efe",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 772,
-        "fontsMs": 767,
-        "buildMs": 210,
-        "totalMs": 2840,
+        "importMs": 313,
+        "fontsMs": 300,
+        "buildMs": 168,
+        "totalMs": 1515,
         "builds": 2
       },
       "specimen": {
@@ -278,7 +278,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "Página 1."
         },
         {
@@ -314,7 +314,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 972939,
+        "bytes": 972941,
         "pages": 2
       },
       "sandbox": {
@@ -473,13 +473,13 @@
       }
     },
     "ca": {
-      "hash8": "85bed41e",
+      "hash8": "b6118fc1",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 467,
-        "fontsMs": 366,
-        "buildMs": 162,
-        "totalMs": 1902,
+        "importMs": 356,
+        "fontsMs": 685,
+        "buildMs": 173,
+        "totalMs": 2011,
         "builds": 2
       },
       "specimen": {
@@ -509,7 +509,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "Pàgina 1."
         },
         {
@@ -545,7 +545,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 972893,
+        "bytes": 972874,
         "pages": 2
       },
       "sandbox": {
@@ -704,13 +704,13 @@
       }
     },
     "zh": {
-      "hash8": "5600ca8e",
+      "hash8": "25dcee29",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1230,
-        "fontsMs": 1619,
-        "buildMs": 268,
-        "totalMs": 4615,
+        "importMs": 350,
+        "fontsMs": 380,
+        "buildMs": 171,
+        "totalMs": 1817,
         "builds": 2
       },
       "specimen": {
@@ -740,7 +740,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "第 1 页。"
         },
         {
@@ -776,7 +776,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 972037,
+        "bytes": 972029,
         "pages": 2
       },
       "sandbox": {
@@ -935,13 +935,13 @@
       }
     },
     "ar": {
-      "hash8": "4bd4183c",
+      "hash8": "bab00b64",
       "vdtHash": "08247c9074426635127f197675bbff6d2e99ae28",
       "timings": {
-        "importMs": 733,
-        "fontsMs": 1171,
-        "buildMs": 225,
-        "totalMs": 3256,
+        "importMs": 482,
+        "fontsMs": 786,
+        "buildMs": 206,
+        "totalMs": 2406,
         "builds": 2
       },
       "specimen": {
@@ -971,7 +971,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "الصفحة 1."
         },
         {
@@ -1007,7 +1007,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 973147,
+        "bytes": 973080,
         "pages": 2
       },
       "sandbox": {
@@ -1402,13 +1402,13 @@
       }
     },
     "pt": {
-      "hash8": "e5112dbd",
+      "hash8": "1c5db5f3",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 756,
-        "fontsMs": 1175,
-        "buildMs": 259,
-        "totalMs": 3172,
+        "importMs": 452,
+        "fontsMs": 520,
+        "buildMs": 273,
+        "totalMs": 2019,
         "builds": 2
       },
       "specimen": {
@@ -1438,7 +1438,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 199554,
+          "bytes": 199380,
           "alt": "Página 1."
         },
         {
@@ -1474,7 +1474,7 @@
       },
       "pdf": {
         "file": "manga-action-slants.pdf",
-        "bytes": 972571,
+        "bytes": 972562,
         "pages": 2
       },
       "sandbox": {

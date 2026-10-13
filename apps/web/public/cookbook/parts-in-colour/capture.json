@@ -3,25 +3,20 @@
   "slug": "parts-in-colour",
   "sourceHash": "611d4803637019d703d726db20cdb9925dcdf61ca8589d3ee1eda83694290665",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.869Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:01:35.473Z"
-  },
+  "capturedAt": "2026-10-13T10:47:02.922Z",
   "variants": {
     "en": {
-      "hash8": "088f48c5",
+      "hash8": "325a3f5d",
       "vdtHash": "619f902096812d84db96eb8eb3345bac84aed7ad",
       "timings": {
-        "importMs": 575,
-        "fontsMs": 30,
-        "buildMs": 97,
-        "totalMs": 1357,
+        "importMs": 1116,
+        "fontsMs": 98,
+        "buildMs": 181,
+        "totalMs": 2403,
         "builds": 1
       },
       "specimen": {
@@ -109,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 94056,
+          "bytes": 94272,
           "alt": "Page 6: 2 Common Redshank. Plate 2. Adult by a saltmarsh creek, on the red legs that give it its name."
         },
         {
@@ -153,7 +148,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 79452,
+          "bytes": 79428,
           "alt": "Page 10: 4 Eurasian Reed Warbler. Plate 4. Singing from the reeds, one foot on each stem."
         }
       ],
@@ -498,13 +493,13 @@
       }
     },
     "es": {
-      "hash8": "c8336f6e",
+      "hash8": "a942a031",
       "vdtHash": "e8472f4ee1ee490f6911bb6b044692e4cd2fb61d",
       "timings": {
-        "importMs": 163,
-        "fontsMs": 27,
-        "buildMs": 72,
-        "totalMs": 983,
+        "importMs": 496,
+        "fontsMs": 61,
+        "buildMs": 182,
+        "totalMs": 1700,
         "builds": 1
       },
       "specimen": {
@@ -581,7 +576,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 104622,
+          "bytes": 104776,
           "alt": "Página 5: 1 Zarapito real. Lámina 1. Adulto en bajamar. La hembra tiene el pico más largo."
         },
         {
@@ -592,7 +587,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 88116,
+          "bytes": 88072,
           "alt": "Página 6: 2 Archibebe común. Lámina 2. Adulto junto a un caño de la marisma, sobre las patas rojas que lo delatan."
         },
         {
@@ -625,7 +620,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 76546,
+          "bytes": 76496,
           "alt": "Página 9: 3 Bigotudo. Lámina 3. Macho en un tallo de carrizo. La hembra tiene la cabeza parda."
         },
         {
@@ -636,7 +631,7 @@
           "h": 1333,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 75920,
+          "bytes": 75916,
           "alt": "Página 10: 4 Carricero común. Lámina 4. Cantando en el carrizal, con una pata en cada tallo."
         }
       ],

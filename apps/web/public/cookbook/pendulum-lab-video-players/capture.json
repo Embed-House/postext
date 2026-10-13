@@ -3,21 +3,21 @@
   "slug": "pendulum-lab-video-players",
   "sourceHash": "ec280b7bd0360373234db05d7ef64739ff8309cb606edd4b151cb9557f492f0b",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:01:35.478Z",
+  "capturedAt": "2026-10-13T10:47:03.000Z",
   "variants": {
     "en": {
-      "hash8": "8923f290",
+      "hash8": "6deb202f",
       "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
       "timings": {
-        "importMs": 1251,
-        "fontsMs": 292,
-        "buildMs": 278,
-        "totalMs": 3239,
+        "importMs": 2226,
+        "fontsMs": 256,
+        "buildMs": 332,
+        "totalMs": 6505,
         "builds": 2
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 122404,
+          "bytes": 122424,
           "alt": "Opening page 1: The period of a pendulum. Video 1. Released from rest at 10°. · Video 2. Released from rest at 80°."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65500,
+          "bytes": 65508,
           "alt": "Page 2: Method. Table 1. Your measurements. · Table 2. Exact periods of a pendulum 1.00 m long."
         }
       ],
@@ -90,7 +90,7 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 84027,
+        "bytes": 83716,
         "pages": 2
       },
       "sandbox": {
@@ -450,13 +450,13 @@
       }
     },
     "es": {
-      "hash8": "5c703a49",
+      "hash8": "b3784e5b",
       "vdtHash": "3319433561377b893b4c0d9f9f215b446b89ed68",
       "timings": {
-        "importMs": 1076,
-        "fontsMs": 189,
-        "buildMs": 238,
-        "totalMs": 2503,
+        "importMs": 4288,
+        "fontsMs": 311,
+        "buildMs": 262,
+        "totalMs": 7213,
         "builds": 2
       },
       "specimen": {
@@ -490,7 +490,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126662,
+          "bytes": 126726,
           "alt": "Página de apertura 1: El periodo de un péndulo. Vídeo 1. Soltado desde el reposo a 10°. · Vídeo 2. Soltado desde el reposo a 80°."
         },
         {
@@ -501,7 +501,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 70140,
+          "bytes": 70142,
           "alt": "Página 2: Procedimiento. Tabla 1. Tus medidas. · Tabla 2. Periodos exactos de un péndulo de 1,00 m."
         }
       ],
@@ -529,7 +529,7 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 86781,
+        "bytes": 85695,
         "pages": 2
       },
       "sandbox": {

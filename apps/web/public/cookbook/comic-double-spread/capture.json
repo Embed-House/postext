@@ -3,12 +3,12 @@
   "slug": "comic-double-spread",
   "sourceHash": "505bbcd9aef012473bc97444f1092d6f37aa953ca71f2dad1f8f7c7bfd8e5792",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:55:39.868Z",
+  "capturedAt": "2026-10-13T10:41:19.547Z",
   "variants": {
     "en": {
       "hash8": "45a60eb3",
@@ -773,13 +773,13 @@
       }
     },
     "zh": {
-      "hash8": "61c22303",
+      "hash8": "453eb46d",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 912,
-        "fontsMs": 919,
-        "buildMs": 377,
-        "totalMs": 2987,
+        "importMs": 2350,
+        "fontsMs": 2487,
+        "buildMs": 363,
+        "totalMs": 6427,
         "builds": 1
       },
       "specimen": {
@@ -810,7 +810,7 @@
           "h": 1304,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 228830,
+          "bytes": 228834,
           "alt": "第 2 页。"
         },
         {
@@ -821,7 +821,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 215676,
+          "bytes": 215678,
           "alt": "第 3 页。"
         }
       ],
@@ -1028,13 +1028,13 @@
       }
     },
     "ar": {
-      "hash8": "5b6c1de6",
+      "hash8": "18d8840a",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 602,
-        "fontsMs": 392,
-        "buildMs": 308,
-        "totalMs": 2005,
+        "importMs": 2689,
+        "fontsMs": 3657,
+        "buildMs": 409,
+        "totalMs": 8487,
         "builds": 1
       },
       "specimen": {
@@ -1101,7 +1101,7 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 885242,
+        "bytes": 884094,
         "pages": 2
       },
       "sandbox": {
@@ -1286,13 +1286,13 @@
       }
     },
     "ja": {
-      "hash8": "290e8589",
+      "hash8": "f9570c88",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 1042,
-        "fontsMs": 476,
-        "buildMs": 241,
-        "totalMs": 2635,
+        "importMs": 2347,
+        "fontsMs": 1964,
+        "buildMs": 295,
+        "totalMs": 6036,
         "builds": 1
       },
       "specimen": {
@@ -1359,7 +1359,7 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895124,
+        "bytes": 895109,
         "pages": 2
       },
       "sandbox": {

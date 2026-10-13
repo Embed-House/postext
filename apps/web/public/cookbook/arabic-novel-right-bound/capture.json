@@ -3,21 +3,21 @@
   "slug": "arabic-novel-right-bound",
   "sourceHash": "6954adcadfe0c11df9b11d92dc53657c171edfd478a23b28eb124f2372dc8158",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:16.058Z",
+  "capturedAt": "2026-10-13T10:35:58.723Z",
   "variants": {
     "en": {
-      "hash8": "f568d8eb",
-      "vdtHash": "c6a02a8a6f28959dd8ec0ac174534c5721eac10a",
+      "hash8": "88bfffdc",
+      "vdtHash": "384908a02d828591848009d167bdde19f002a016",
       "timings": {
-        "importMs": 194,
-        "fontsMs": 62,
-        "buildMs": 87,
-        "totalMs": 961,
+        "importMs": 2560,
+        "fontsMs": 308,
+        "buildMs": 162,
+        "totalMs": 4633,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 41750,
+          "bytes": 41716,
           "alt": "Opening page ١٠: الدرب."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 67408,
+          "bytes": 67424,
           "alt": "Opening page ١١: الفصل الأول الباب الأزرق."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 91208,
+          "bytes": 90818,
           "alt": "Page ١٢."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 81538,
+          "bytes": 81440,
           "alt": "Page ١٣."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 63680,
+          "bytes": 63676,
           "alt": "Opening page ١٤: الفصل الثاني صندوق الحروف."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1500,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 96684,
+          "bytes": 96258,
           "alt": "Page ١٥."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1500,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 71820,
+          "bytes": 71810,
           "alt": "Page ١٦."
         }
       ],
@@ -153,18 +153,18 @@
       },
       "pdf": {
         "file": "arabic-novel-right-bound.pdf",
-        "bytes": 85142,
+        "bytes": 87525,
         "pages": 7
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34613,
+        "bytes": 34588,
         "folio": "217e1225",
         "chapters": [
           {
             "pages": 7,
-            "hash": "c1c7843afdb7adc4",
-            "lines": "1129e77589922571"
+            "hash": "d0e51db52983dbb5",
+            "lines": "5ecb660df381b901"
           }
         ]
       },
@@ -355,6 +355,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar, the document's language: en names its resource types otherwise"
@@ -368,13 +373,13 @@
       }
     },
     "es": {
-      "hash8": "2506169d",
-      "vdtHash": "e562550e168ab8ad0da1e6d7ee8cc3b80226c331",
+      "hash8": "a2913b11",
+      "vdtHash": "21d7b277eaa905c2950b60e5e55080a23fd76db3",
       "timings": {
-        "importMs": 180,
-        "fontsMs": 55,
-        "buildMs": 86,
-        "totalMs": 923,
+        "importMs": 2658,
+        "fontsMs": 206,
+        "buildMs": 149,
+        "totalMs": 4563,
         "builds": 1
       },
       "specimen": {
@@ -407,7 +412,7 @@
           "h": 1500,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 41750,
+          "bytes": 41716,
           "alt": "Página de apertura ١٠: الدرب."
         },
         {
@@ -418,7 +423,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 67408,
+          "bytes": 67424,
           "alt": "Página de apertura ١١: الفصل الأول الباب الأزرق."
         },
         {
@@ -429,7 +434,7 @@
           "h": 1500,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 91208,
+          "bytes": 90818,
           "alt": "Página ١٢."
         },
         {
@@ -440,7 +445,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 81538,
+          "bytes": 81440,
           "alt": "Página ١٣."
         },
         {
@@ -451,7 +456,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 63680,
+          "bytes": 63676,
           "alt": "Página de apertura ١٤: الفصل الثاني صندوق الحروف."
         },
         {
@@ -462,7 +467,7 @@
           "h": 1500,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 96684,
+          "bytes": 96258,
           "alt": "Página ١٥."
         },
         {
@@ -473,7 +478,7 @@
           "h": 1500,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 72528,
+          "bytes": 72538,
           "alt": "Página ١٦."
         }
       ],
@@ -510,18 +515,18 @@
       },
       "pdf": {
         "file": "arabic-novel-right-bound.pdf",
-        "bytes": 85095,
+        "bytes": 87469,
         "pages": 7
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34671,
+        "bytes": 34646,
         "folio": "217e1225",
         "chapters": [
           {
             "pages": 7,
-            "hash": "744402caa0169d74",
-            "lines": "9865e5c23adbd7a2"
+            "hash": "a4013e9f4133a2f1",
+            "lines": "1df861ba37e1e032"
           }
         ]
       },
@@ -711,6 +716,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

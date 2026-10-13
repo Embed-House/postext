@@ -3,21 +3,21 @@
   "slug": "vertical-newspaper-tiers",
   "sourceHash": "93f1678702f2f38da294e22e21a2be79153b474ae5673701d7bc6ae3ccd8a7b4",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.111Z",
+  "capturedAt": "2026-10-13T10:52:28.238Z",
   "variants": {
     "en": {
-      "hash8": "711ea846",
+      "hash8": "0f3700f2",
       "vdtHash": "8333f6b90056be51dea2b4e79b47aeeeb444f9f5",
       "timings": {
-        "importMs": 7007,
-        "fontsMs": 6453,
-        "buildMs": 105,
-        "totalMs": 15317,
+        "importMs": 3926,
+        "fontsMs": 3273,
+        "buildMs": 72,
+        "totalMs": 8723,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171100,
+          "bytes": 171112,
           "alt": "Page 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -91,7 +91,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378594,
+        "bytes": 378606,
         "pages": 2
       },
       "sandbox": {
@@ -351,13 +351,13 @@
       }
     },
     "es": {
-      "hash8": "6dc755df",
+      "hash8": "c01690cf",
       "vdtHash": "0621269af61693c903a59511185e9facf1ed8d3a",
       "timings": {
-        "importMs": 6937,
-        "fontsMs": 6334,
-        "buildMs": 107,
-        "totalMs": 14378,
+        "importMs": 3937,
+        "fontsMs": 3287,
+        "buildMs": 91,
+        "totalMs": 8718,
         "builds": 1
       },
       "specimen": {
@@ -402,7 +402,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171286,
+          "bytes": 171302,
           "alt": "Página 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -431,7 +431,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378743,
+        "bytes": 378753,
         "pages": 2
       },
       "sandbox": {

@@ -426,7 +426,7 @@ A linha de comando é o pacote `postext-cli` do
 O [Bun](https://bun.sh) a compila, com o motor e os seus geradores, em um
 executável por sistema, e o [Skia](https://skia.org) (por meio de
 `@napi-rs/canvas`) mede e pinta o texto, como o canvas do navegador faz no
-Sandbox. A cada versão, os executáveis são construídos, executados no Linux,
+Sandbox. Uma ilustração SVG que contém um bitmap (um PNG ou JPEG incorporado como URI de dados, como o `pdftocairo -svg` escreve a arte recortada de um PDF) é desenhada pelo [resvg](https://github.com/linebender/resvg), porque o renderizador de SVG do Skia omite essas imagens. A cada versão, os executáveis são construídos, executados no Linux,
 no Alpine, no macOS e no Windows, e anexados à GitHub Release; o npm recebe o
 `postext-cli` e um pacote `postext-cli-<system>` por executável.
 

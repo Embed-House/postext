@@ -414,7 +414,7 @@ The command line is the `postext-cli` package of the
 [repository](https://github.com/drnachio/postext/tree/main/packages/postext-cli).
 [Bun](https://bun.sh) compiles it, with the engine and its writers, into one
 executable per system, and [Skia](https://skia.org) (through `@napi-rs/canvas`)
-measures and paints the text, as the browser's canvas does in the Sandbox. On
+measures and paints the text, as the browser's canvas does in the Sandbox. An SVG picture that holds a raster image (a PNG or JPEG embedded as a data URI, as `pdftocairo -svg` writes artwork cut from a PDF) is drawn by [resvg](https://github.com/linebender/resvg) instead, because Skia's SVG renderer leaves such images out. On
 every release the executables are built, run on Linux, Alpine, macOS and
 Windows, and attached to the GitHub Release; npm receives `postext-cli` and
 one `postext-cli-<system>` package per executable.

@@ -3,21 +3,21 @@
   "slug": "chinese-dates-upright",
   "sourceHash": "eef4e5eb748704ab7d9347f7e548ad0c6dbeeefbeef2fe078af435dae410fa4a",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:54:37.535Z",
+  "capturedAt": "2026-10-13T10:38:45.284Z",
   "variants": {
     "en": {
-      "hash8": "24f0bee1",
+      "hash8": "3fe1e1cd",
       "vdtHash": "ec36a99bb1848c89d578e641ede8f72b6d77ab73",
       "timings": {
-        "importMs": 212,
-        "fontsMs": 303,
-        "buildMs": 49,
-        "totalMs": 1180,
+        "importMs": 1585,
+        "fontsMs": 2348,
+        "buildMs": 56,
+        "totalMs": 5034,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 28296,
+          "bytes": 29066,
           "alt": "Opening page 一: 民國元年文告二種."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 105310,
+          "bytes": 105342,
           "alt": "Opening page 二: 臨時大總統宣言書."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 58972,
+          "bytes": 58942,
           "alt": "Opening page 五: 中華民國臨時約法."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1413,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 19830,
+          "bytes": 19836,
           "alt": "Page 七: 注釋."
         }
       ],
@@ -153,7 +153,7 @@
       },
       "pdf": {
         "file": "chinese-dates-upright.pdf",
-        "bytes": 308148,
+        "bytes": 308172,
         "pages": 7
       },
       "sandbox": {
@@ -364,13 +364,13 @@
       }
     },
     "es": {
-      "hash8": "0e7db5f4",
+      "hash8": "bd8eb3cf",
       "vdtHash": "a7ee20363f99c4ac3349d778e006dd3f48f0873f",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 314,
-        "buildMs": 50,
-        "totalMs": 1168,
+        "importMs": 1519,
+        "fontsMs": 1485,
+        "buildMs": 58,
+        "totalMs": 4264,
         "builds": 1
       },
       "specimen": {
@@ -403,7 +403,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 28868,
+          "bytes": 28882,
           "alt": "Página de apertura 一: 民國元年文告二種."
         },
         {
@@ -414,7 +414,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 104968,
+          "bytes": 104950,
           "alt": "Página de apertura 二: 臨時大總統宣言書."
         },
         {
@@ -447,7 +447,7 @@
           "h": 1413,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 59032,
+          "bytes": 59006,
           "alt": "Página de apertura 五: 中華民國臨時約法."
         },
         {
@@ -506,7 +506,7 @@
       },
       "pdf": {
         "file": "chinese-dates-upright.pdf",
-        "bytes": 308171,
+        "bytes": 308189,
         "pages": 7
       },
       "sandbox": {

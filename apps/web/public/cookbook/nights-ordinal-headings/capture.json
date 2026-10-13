@@ -3,21 +3,21 @@
   "slug": "nights-ordinal-headings",
   "sourceHash": "7538c66d79ca587b9c4e72736f0e17790cc1417e85a35ab5865b1e005a06e428",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:00:48.855Z",
+  "capturedAt": "2026-10-13T10:45:15.045Z",
   "variants": {
     "en": {
-      "hash8": "a3ec8134",
-      "vdtHash": "fe5e674ff0e9a96395add1ca76fc84dc9cad8c6a",
+      "hash8": "f3e9325a",
+      "vdtHash": "02a53f2f4908a5650b1e6b2ca380f6c93c2d9b4c",
       "timings": {
-        "importMs": 1513,
-        "fontsMs": 271,
-        "buildMs": 241,
-        "totalMs": 2756,
+        "importMs": 1186,
+        "fontsMs": 572,
+        "buildMs": 212,
+        "totalMs": 4073,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +105,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 97216,
+          "bytes": 97204,
           "alt": "Page ٦: حكاية الشيخ الثاني صاحب الكلبتين."
         },
         {
@@ -194,16 +194,16 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 157729,
+        "bytes": 159931,
         "pages": 10
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32635,
+        "bytes": 32634,
         "chapters": [
           {
             "pages": 10,
-            "hash": "24e8fa0a708643ec",
+            "hash": "da4b2e155ec7a1e3",
             "lines": "e32f6509743b30ab"
           }
         ]
@@ -395,18 +395,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9f042dba",
-      "vdtHash": "82db57898ac3341cba6efde729976c7ed9423b12",
+      "hash8": "c9a7ad10",
+      "vdtHash": "dc91c77630dbc968f4aace80653bfed7690aa62c",
       "timings": {
-        "importMs": 1159,
-        "fontsMs": 500,
-        "buildMs": 191,
-        "totalMs": 2754,
+        "importMs": 1810,
+        "fontsMs": 279,
+        "buildMs": 206,
+        "totalMs": 3064,
         "builds": 1
       },
       "specimen": {
@@ -494,7 +499,7 @@
           "h": 1412,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 97216,
+          "bytes": 97204,
           "alt": "Página ٦: حكاية الشيخ الثاني صاحب الكلبتين."
         },
         {
@@ -583,16 +588,16 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 158459,
+        "bytes": 160669,
         "pages": 10
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32684,
+        "bytes": 32690,
         "chapters": [
           {
             "pages": 10,
-            "hash": "ddf5915cb87c87ae",
+            "hash": "a7a1cd6f168897c1",
             "lines": "886931f9763e2a71"
           }
         ]
@@ -784,6 +789,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 155 · A Pepper&Carrot page re-lettered from its transcript ═══
 // https://postext.dev/en/cookbook/pepper-and-carrot-page
 // Code: MIT · Text and art: David Revoy and translators, Pepper&Carrot ep. 8 (CC BY 4.0)
-// Fonts: Comic Neue, Bangers, Grenze Gotisch and 11 more (OFL) · Needs postext ≥ 1.29.0
+// Fonts: Comic Neue, Bangers, Grenze Gotisch and 11 more (OFL) · Needs postext ≥ 1.30.0
 //
 // Two pages of an open-licensed webcomic, Pepper&Carrot episode 8 by David Revoy, set again
 // from his text-free artwork: the panels are cut from his pages, the speakers' anchors come
@@ -92,9 +92,7 @@ const config = () => ({
     backgroundColor: col('paper'),
     margins: { top: mm(8.5), bottom: mm(8.7), left: mm(8.5), right: mm(8.2) } },
   layout: { layoutType: 'single' },
-  // The edition's own language shapes its text on every page and in a worker (#764).
   bodyText: { fontFamily: TEXT, fontSize: pt(10), lineHeight: pt(15), color: col('ink'),
-    shapingLanguage: 'document',
     boldColor: col('ink'), italicColor: col('ink'), referenceColor: col('ink'), textAlign: 'left',
     firstLineIndent: pt(0), paragraphSpacing: true, hyphenation: { enabled: false } },
   headings: { fontFamily: LETTERING, color: col('ink'), fontWeight: 700,

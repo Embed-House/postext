@@ -3,21 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "581682393a06e9e3307a9bccbb37d4301b29930d43e8affcdc736cfe065c101b",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.219Z",
+  "capturedAt": "2026-10-13T10:42:47.914Z",
   "variants": {
     "en": {
-      "hash8": "af0519ba",
-      "vdtHash": "408df2355fa6ab31f93c86cf0b8c3c7688eaaa3f",
+      "hash8": "19211ab0",
+      "vdtHash": "9b4fdab31f73c05f0707629400d3f726155a49f2",
       "timings": {
-        "importMs": 425,
-        "fontsMs": 696,
-        "buildMs": 111,
-        "totalMs": 1874,
+        "importMs": 665,
+        "fontsMs": 614,
+        "buildMs": 118,
+        "totalMs": 2112,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78454,
+          "bytes": 78888,
           "alt": "Opening page 41: 第3章 文字列の正規化."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86086,
+          "bytes": 86230,
           "alt": "Page 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63236,
+          "bytes": 63336,
           "alt": "Page 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86284,
+          "bytes": 86202,
           "alt": "Page 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 32514,
+          "bytes": 32496,
           "alt": "Page 45."
         }
       ],
@@ -126,18 +126,18 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 299070,
+        "bytes": 298717,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41317,
+        "bytes": 41329,
         "folio": "90d2b4f0",
         "chapters": [
           {
             "pages": 5,
-            "hash": "40ad2f69e89bad93",
-            "lines": "0e57917605eccbfe"
+            "hash": "9484e4eb3eb12065",
+            "lines": "f4b2018eaaeb5ae6"
           }
         ]
       },
@@ -427,6 +427,11 @@
         },
         "findings": [
           {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
@@ -435,13 +440,13 @@
       }
     },
     "es": {
-      "hash8": "41e65280",
-      "vdtHash": "c37443f092c4e6782997f0f2dafddb3ec87fc23b",
+      "hash8": "fea4b10e",
+      "vdtHash": "21bbc8c7f62c85daf5c9b42a8e86b6aec1d2a29f",
       "timings": {
-        "importMs": 411,
-        "fontsMs": 262,
+        "importMs": 570,
+        "fontsMs": 226,
         "buildMs": 107,
-        "totalMs": 1475,
+        "totalMs": 1737,
         "builds": 1
       },
       "specimen": {
@@ -474,7 +479,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 78454,
+          "bytes": 78888,
           "alt": "Página de apertura 41: 第3章 文字列の正規化."
         },
         {
@@ -485,7 +490,7 @@
           "h": 1419,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86086,
+          "bytes": 86230,
           "alt": "Página 42: 3.2 四つの正規化形式. 図3-1 「が」の二つの表し方。上段が符号位置、下段がUTF-8のバイト列."
         },
         {
@@ -496,7 +501,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 63236,
+          "bytes": 63336,
           "alt": "Página 43: 3.3 Pythonで正規化する. 表3-1 日本語の文字と四つの正規化形式（NFKDは、NFKCで合成された文字を分解した 形になる）."
         },
         {
@@ -507,7 +512,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86284,
+          "bytes": 86202,
           "alt": "Página 44: 3.4 検索キーを作るときの注意."
         },
         {
@@ -518,7 +523,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 32730,
+          "bytes": 32776,
           "alt": "Página 45."
         }
       ],
@@ -550,18 +555,18 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 299202,
+        "bytes": 298844,
         "pages": 5
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41375,
+        "bytes": 41388,
         "folio": "90d2b4f0",
         "chapters": [
           {
             "pages": 5,
-            "hash": "51db3e8e1a389160",
-            "lines": "623d4d7b9b3567b5"
+            "hash": "f765bf9c7723f476",
+            "lines": "4226654fb0e51b4d"
           }
         ]
       },
@@ -850,6 +855,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
           {
             "check": "sandbox",
             "severity": "info",

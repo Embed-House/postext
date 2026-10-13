@@ -10,7 +10,7 @@ pageNotes: { "2": "The frontispiece: an engraving of a stout baker in a white ap
 
 ## What you'll build
 
-Narcís Oller’s *El transplantat* in full, in the text of his *Obres completes* (Barcelona, 1928), as a 12 × 18.5 cm pocket book of 32 pages. A half-title, a frontispiece of the baker at his oven, a title page in red italic Cormorant Garamond and a note on the edition come before the four chapters. Each chapter opens under an engraving twelve lines deep, with its Roman numeral in red. The text, Crimson Pro at 10.4 pt, breaks at Catalan syllables as the Institut d’Estudis Catalans asks: two letters at least on each side, no split between vowels in hiatus, none right after an apostrophe, and *titil·laven* breaks as *titil-* | *laven*, the hyphen taking the place of the middle dot. Dialogue is set with em dashes and quotations in «cometes baixes».
+Narcís Oller’s *El transplantat* in full, in the text of his *Obres completes* (Barcelona, 1928), as a 12 × 18.5 cm pocket book of 32 pages. A half-title, a frontispiece of the baker at his oven, a title page in red italic Cormorant Garamond and a note on the edition come before the four chapters. Each chapter opens under an engraving twelve lines deep, with its Roman numeral in red. The text, Gentium Book Plus at 9.85 pt, breaks at Catalan syllables as the Institut d’Estudis Catalans asks: two letters at least on each side, no split between vowels in hiatus, none right after an apostrophe, and *titil·laven* breaks as *titil-* | *laven*, the hyphen taking the place of the middle dot. Dialogue is set with em dashes and quotations in «cometes baixes».
 
 ## Method
 
@@ -20,13 +20,13 @@ The code is [the short answer](#the-short-answer) above. `locale: 'ca'` selects 
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Page 27: titil·laven at a line end, set titil- | laven. It is the one l·l that falls at a line end in these 32 pages." />
 
-`compounds: false` keeps a verb and its pronoun whole but for their own hyphen (*arrossegar-* | *se*), which the IEC prefers ([hyphenation](/en/docs/configuration-text#hyphenation)). It costs one loose line: on page 7, the line before *d’inaugurar-se* opens its spaces to 1.94×, even with `maxJustifyTracking: 10` taking the excess on the other lines.
+`compounds: false` keeps a verb and its pronoun whole but for their own hyphen (*arrossegar-* | *se*), which the IEC prefers ([hyphenation](/en/docs/configuration-text#hyphenation)). It costs one loose line: on page 7, the line before *d’inaugurar-se* opens its spaces to 1.88×, even with `maxJustifyTracking: 10` taking the excess on the other lines.
 
 ### 2 · A pocket page of whole lines
 
 <Excerpt region="page" />
 
-The bottom margin comes from the trim, the top margin and `LINES`, so the text block holds 29 lines of 14 pt and every full page ends on the same baseline. The 89 mm measure holds about 64 characters of Crimson Pro. `mirror: true` keeps the 16 mm margin at the spine on both pages of a spread ([mirrored margins](/en/docs/configuration-page-layout#mirrored-margins)).
+The bottom margin comes from the trim, the top margin and `LINES`, so the text block holds 29 lines of 14 pt and every full page ends on the same baseline. The 89 mm measure holds about 63 characters of Gentium Book Plus. `mirror: true` keeps the 16 mm margin at the spine on both pages of a spread ([mirrored margins](/en/docs/configuration-page-layout#mirrored-margins)).
 
 ### 3 · One opener for four chapters
 
@@ -56,7 +56,7 @@ The pictures belong to a resource type with an empty `captionPrefix`, so nothing
 
 ### Let pronouns divide too
 
-With the default `compounds: true`, *d’inaugurar-se* can break as *d’inau-gurar-se* and page 7 loses its loose line. On these pages the `titil-` | `laven` break moves off the line end in exchange.
+With the default `compounds: true`, *d’inaugurar-se* divides inside the verb, as *d’i-* | *naugurar-se*, and page 7 loses its loose line: no line of the book opens past 1.6×. The `titil-` | `laven` break stays on page 27. The price is a lone *i* after the apostrophe at the end of a line.
 
 ```diff
 -  hyphenation: { compounds: false },
@@ -74,5 +74,6 @@ With the default `compounds: true`, *d’inaugurar-se* can break as *d’inau-gu
 
 ## Pitfalls
 
+- Look at *l·l* in a text face before you settle on it. From postext 1.30 the document’s `locale` is also the language its text is shaped in (up to 1.29 that was the language of the page showing the book), and each face answers Catalan in its own way. Gentium Book Plus has one middle dot for every language, 0.17 em between the two *l*. Crimson Pro, which set this book up to 1.29, widens the dot to 0.59 em in Catalan and leaves a gap in *intel·ligent*. Alegreya and Literata draw a closer dot only where both *l* reach them in one piece, so *il·lustrats* comes out one way in a paragraph with italics and another in a paragraph without.
 - Copy the text from Viquitexts with its italics: Oller marks *tentu*, *Ensanxe* and *palacio* as colloquial or Spanish, and a plain-text export drops them. Check doubtful words against the scan of the 1928 volume: six times the transcription has *tom-* where the verb is *tornar* (*tomà*, *tomaré*, *tomar*), and once *jom* for *jorn*.
 - With 6,800 words, the five content files and the kit make the composed script about 69 KB. A whole book is the largest sample a pen can carry; a longer work belongs in a `.postext` bundle.

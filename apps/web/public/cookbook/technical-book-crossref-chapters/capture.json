@@ -3,21 +3,21 @@
   "slug": "technical-book-crossref-chapters",
   "sourceHash": "439f5d04345523774fe6378c9b5f8f68b5c2a681ad193efa32fcb5c4848ead50",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:04:11.942Z",
+  "capturedAt": "2026-10-13T10:51:19.155Z",
   "variants": {
     "en": {
-      "hash8": "7f080c20",
+      "hash8": "36873d51",
       "vdtHash": "59c6dd7dd77a6609866f88c2db50327fa736cd9d",
       "timings": {
-        "importMs": 410,
-        "fontsMs": 224,
-        "buildMs": 148,
-        "totalMs": 1610,
+        "importMs": 1868,
+        "fontsMs": 274,
+        "buildMs": 199,
+        "totalMs": 3879,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1309,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 117798,
+          "bytes": 117814,
           "alt": "Opening page 3: 1 The daily load."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1309,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93274,
+          "bytes": 93246,
           "alt": "Page 4: 1.2 When the energy is used. Table 1.1. Daily loads of the example cabin on a winter day."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1309,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 31108,
+          "bytes": 31110,
           "alt": "Page 5. Figure 1.1. Average draw, hour by hour, on a winter day. Grey: the constant floor of fridge, router and inverter; orange: everything else; pale band: daylight."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1309,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 83722,
+          "bytes": 83746,
           "alt": "Opening page 6: 2 The array. Figure 2.1. Peak sun hours a day by month at 42° N, panels tilted at 60°. December is the design month."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1309,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 86590,
+          "bytes": 86568,
           "alt": "Page 7: 2.2 Losses between panel and socket. Table 2.1. Losses between the panels and the sockets, multiplied."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1309,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 111342,
+          "bytes": 111526,
           "alt": "Opening page 8: 3 The battery bank."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1309,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 80298,
+          "bytes": 80310,
           "alt": "Page 9: 3.3 A week of cloud. Table 3.1. Three battery chemistries for 3,480 Wh of usable energy · Figure 3.1. State of charge of the 5.1 kWh bank over five December days: clear, three overcast, clear. Shaded: night. Dashed: the 20% floor."
         }
       ],
@@ -178,7 +178,7 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 446282,
+        "bytes": 445514,
         "pages": 9
       },
       "sandbox": {
@@ -501,13 +501,13 @@
       }
     },
     "es": {
-      "hash8": "ceb1228d",
+      "hash8": "df90617e",
       "vdtHash": "c4d8c29bb3636be55b1c971518156c61c66db6a6",
       "timings": {
-        "importMs": 353,
-        "fontsMs": 177,
-        "buildMs": 145,
-        "totalMs": 1321,
+        "importMs": 1529,
+        "fontsMs": 420,
+        "buildMs": 212,
+        "totalMs": 3384,
         "builds": 1
       },
       "specimen": {
@@ -562,7 +562,7 @@
           "h": 1309,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 127200,
+          "bytes": 127230,
           "alt": "Página de apertura 3: 1 El consumo diario."
         },
         {
@@ -573,7 +573,7 @@
           "h": 1309,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 86890,
+          "bytes": 86916,
           "alt": "Página 4: 1.2 Cuándo se gasta la energía. Tabla 1.1. Consumos diarios de la cabaña de ejemplo en un día de invierno."
         },
         {
@@ -584,7 +584,7 @@
           "h": 1309,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 50702,
+          "bytes": 50734,
           "alt": "Página 5. Figura 1.1. Consumo medio, hora a hora, en un día de invierno. Gris: el suelo constante de frigorífico, rúter e inversor; naranja: todo lo demás; banda clara: horas de luz."
         },
         {
@@ -595,7 +595,7 @@
           "h": 1309,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 84684,
+          "bytes": 84698,
           "alt": "Página de apertura 6: 2 El campo solar. Figura 2.1. Horas de sol pico al día por mes a 42° N, con los paneles inclinados 60°. Diciembre es el mes de diseño."
         },
         {
@@ -606,7 +606,7 @@
           "h": 1309,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 86170,
+          "bytes": 86038,
           "alt": "Página 7: 2.2 Pérdidas entre el panel y el enchufe. Tabla 2.1. Pérdidas entre los paneles y los enchufes, multiplicadas."
         },
         {
@@ -617,7 +617,7 @@
           "h": 1309,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 111414,
+          "bytes": 111134,
           "alt": "Página de apertura 8: 3 El banco de baterías."
         },
         {
@@ -628,7 +628,7 @@
           "h": 1309,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 85680,
+          "bytes": 85664,
           "alt": "Página 9: 3.3 Una semana de nubes. Tabla 3.1. Tres químicas de batería para 3480 Wh de energía útil · Figura 3.1. Estado de carga del banco de 5,1 kWh durante cinco días de diciembre: despejado, tres nublados, despejado. Sombreado: noche. Discontinua: el suelo del 20 %."
         }
       ],
@@ -668,7 +668,7 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 454483,
+        "bytes": 452539,
         "pages": 9
       },
       "sandbox": {

@@ -3,21 +3,21 @@
   "slug": "hiragana-picture-book",
   "sourceHash": "461d3c7bcf14143c8cad2c5cfd5329ddb5201712edcc4c56894aa7940668843e",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:57:06.186Z",
+  "capturedAt": "2026-10-13T10:42:47.823Z",
   "variants": {
     "en": {
-      "hash8": "b90b3cff",
+      "hash8": "1f767d0c",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 547,
-        "fontsMs": 978,
-        "buildMs": 82,
-        "totalMs": 2277,
+        "importMs": 717,
+        "fontsMs": 1014,
+        "buildMs": 60,
+        "totalMs": 2476,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 769,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 121802,
+          "bytes": 121346,
           "alt": "Opening page 1: かみの ふね."
         },
         {
@@ -149,7 +149,7 @@
           "h": 769,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 74186,
+          "bytes": 74286,
           "alt": "Page 10."
         }
       ],
@@ -194,7 +194,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736992,
+        "bytes": 1736991,
         "pages": 10
       },
       "sandbox": {
@@ -380,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "e649aaee",
+      "hash8": "b616b500",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 650,
-        "fontsMs": 511,
-        "buildMs": 60,
-        "totalMs": 1907,
+        "importMs": 910,
+        "fontsMs": 357,
+        "buildMs": 55,
+        "totalMs": 2050,
         "builds": 1
       },
       "specimen": {
@@ -419,7 +419,7 @@
           "h": 769,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 121980,
+          "bytes": 121440,
           "alt": "Página de apertura 1: かみの ふね."
         },
         {
@@ -518,7 +518,7 @@
           "h": 769,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 74350,
+          "bytes": 74452,
           "alt": "Página 10."
         }
       ],
@@ -563,7 +563,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736535,
+        "bytes": 1736534,
         "pages": 10
       },
       "sandbox": {

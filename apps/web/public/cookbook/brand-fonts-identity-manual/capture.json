@@ -3,21 +3,21 @@
   "slug": "brand-fonts-identity-manual",
   "sourceHash": "ecabae7cbb213556ffcce1a210a9359e37644ba325ff2a2dcc751d2c8a6451e5",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.264Z",
+  "capturedAt": "2026-10-13T10:37:14.197Z",
   "variants": {
     "en": {
-      "hash8": "f9564e72",
+      "hash8": "96f21c1f",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 371,
-        "fontsMs": 61,
-        "buildMs": 90,
-        "totalMs": 1174,
+        "importMs": 622,
+        "fontsMs": 85,
+        "buildMs": 85,
+        "totalMs": 1768,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "brand-fonts-identity-manual.pdf",
-        "bytes": 51483,
+        "bytes": 51431,
         "pages": 4
       },
       "sandbox": {

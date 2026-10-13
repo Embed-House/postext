@@ -3,21 +3,21 @@
   "slug": "red-ink-commentary",
   "sourceHash": "f0c7a1f5238fc322b0903f1a526c4599ab6b5163b6970f59b6da6a6ebd63f86b",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:02:07.774Z",
+  "capturedAt": "2026-10-13T10:47:51.925Z",
   "variants": {
     "en": {
-      "hash8": "db4646f2",
+      "hash8": "9c79b3e6",
       "vdtHash": "7def34376af266dd12ad436268b0a41daca7ad39",
       "timings": {
-        "importMs": 381,
-        "fontsMs": 580,
-        "buildMs": 86,
-        "totalMs": 1682,
+        "importMs": 752,
+        "fontsMs": 1239,
+        "buildMs": 66,
+        "totalMs": 2761,
         "builds": 1
       },
       "specimen": {
@@ -143,7 +143,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 512435,
+        "bytes": 512461,
         "pages": 6
       },
       "sandbox": {
@@ -367,13 +367,13 @@
       }
     },
     "es": {
-      "hash8": "c7406494",
+      "hash8": "649517be",
       "vdtHash": "cfe780efe70a07358783d8838a77a783afac2a11",
       "timings": {
-        "importMs": 538,
-        "fontsMs": 813,
-        "buildMs": 84,
-        "totalMs": 2123,
+        "importMs": 630,
+        "fontsMs": 880,
+        "buildMs": 76,
+        "totalMs": 2754,
         "builds": 1
       },
       "specimen": {
@@ -499,7 +499,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 512515,
+        "bytes": 512545,
         "pages": 6
       },
       "sandbox": {

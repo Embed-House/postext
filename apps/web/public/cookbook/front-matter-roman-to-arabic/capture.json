@@ -3,21 +3,21 @@
   "slug": "front-matter-roman-to-arabic",
   "sourceHash": "5ebb3449ab6e42fb9f9249380899311917a14de2b9777711537ca070ee669b2a",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:56:14.192Z",
+  "capturedAt": "2026-10-13T10:41:57.247Z",
   "variants": {
     "en": {
-      "hash8": "cbd1827c",
+      "hash8": "0a8d2a06",
       "vdtHash": "b08f2e14b353da55f033eeb01d81d2a0de1bca33",
       "timings": {
-        "importMs": 859,
-        "fontsMs": 70,
-        "buildMs": 182,
-        "totalMs": 2082,
+        "importMs": 738,
+        "fontsMs": 77,
+        "buildMs": 172,
+        "totalMs": 1876,
         "builds": 1
       },
       "specimen": {
@@ -127,7 +127,7 @@
           "h": 1535,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 114944,
+          "bytes": 114958,
           "alt": "Opening page ix: Preface."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1535,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 126434,
+          "bytes": 126418,
           "alt": "Page x."
         },
         {
@@ -171,7 +171,7 @@
           "h": 1535,
           "file": "p14.webp",
           "strip": "p14.s.webp",
-          "bytes": 136566,
+          "bytes": 136484,
           "alt": "Page 4."
         }
       ],
@@ -223,7 +223,7 @@
       },
       "pdf": {
         "file": "front-matter-roman-to-arabic.pdf",
-        "bytes": 815988,
+        "bytes": 815630,
         "pages": 14
       },
       "sandbox": {

@@ -3,25 +3,20 @@
   "slug": "newspaper-front-page",
   "sourceHash": "3be32d110eb6114ae2fb38aa0fcb022f59926438bcf2b53a2f571669f09982d2",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.779Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:00:48.854Z"
-  },
+  "capturedAt": "2026-10-13T10:45:15.028Z",
   "variants": {
     "en": {
-      "hash8": "fb17cb1c",
+      "hash8": "9c472b9a",
       "vdtHash": "4f9d3577c2f86f3c219c3113504231ed24fa64d4",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 42,
-        "buildMs": 143,
-        "totalMs": 1023,
+        "importMs": 631,
+        "fontsMs": 116,
+        "buildMs": 238,
+        "totalMs": 2750,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 154380,
+          "bytes": 154384,
           "alt": "Opening page 1: The Elverdale Courier. File picture: turbines on an upland ridge. Each of the three planned for Harrow Ridge would generate 2.3 megawatts."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 185590,
+          "bytes": 184432,
           "alt": "Opening page 2: Town & Valley. The rebuilt pier. Its new concrete footing (red) goes six metres below the riverbed. Both arches were relaid with their own stones. · The next five days · How the wards voted."
         }
       ],

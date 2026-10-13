@@ -3,21 +3,21 @@
   "slug": "technical-datasheet",
   "sourceHash": "3501ccf6fdf5d131d2826dbd23532fd01d6a294c1edfa5e63f891d26466fdfc8",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:04:11.967Z",
+  "capturedAt": "2026-10-13T10:51:19.436Z",
   "variants": {
     "en": {
-      "hash8": "edaa0a14",
+      "hash8": "53098a37",
       "vdtHash": "e74bd519f779e7b73780cdecb642841295527226",
       "timings": {
-        "importMs": 521,
-        "fontsMs": 213,
-        "buildMs": 134,
-        "totalMs": 1585,
+        "importMs": 1328,
+        "fontsMs": 800,
+        "buildMs": 147,
+        "totalMs": 3496,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1292,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 103692,
+          "bytes": 103732,
           "alt": "Opening page 1: PX-7021. Figure 1. Pin configuration, 8-pin DFN, top view. · Figure 2. Typical application, bus address 48h."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1292,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 124566,
+          "bytes": 124654,
           "alt": "Page 4: 6.3 Alert output. Table 3. Register map (continued) · Figure 3. Package outline and land pattern, 8-pin DFN, in mm. · Table 4. Order codes."
         }
       ],

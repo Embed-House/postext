@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "243115501305e95914962430c285ebfb1d8971ddbbe77ed9bd63f1e97853f57d",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:55:40.002Z",
+  "capturedAt": "2026-10-13T10:41:20.013Z",
   "variants": {
     "en": {
-      "hash8": "301c8071",
-      "vdtHash": "f76ebbccc75171d40285ea21317c748dbb0ca5a5",
+      "hash8": "69f07da5",
+      "vdtHash": "962f64153b474ae3c8149bd77cf43ee029337f94",
       "timings": {
-        "importMs": 583,
-        "fontsMs": 108,
-        "buildMs": 830,
-        "totalMs": 2298,
+        "importMs": 862,
+        "fontsMs": 155,
+        "buildMs": 678,
+        "totalMs": 2418,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 138454,
+          "bytes": 138452,
           "alt": "Opening page 3: 1 The Compositor’s Day."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 174650,
+          "bytes": 174660,
           "alt": "Page 4: Printers of the mind."
         },
         {
@@ -94,7 +94,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 64870,
+          "bytes": 64862,
           "alt": "Page 5: REFERENCES."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 136990,
+          "bytes": 136966,
           "alt": "Opening page 6: 2 What Fixity Meant."
         },
         {
@@ -116,7 +116,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 174920,
+          "bytes": 174936,
           "alt": "Page 7: Circuits and models."
         },
         {
@@ -127,7 +127,7 @@
           "h": 1516,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 61796,
+          "bytes": 61772,
           "alt": "Page 8: REFERENCES."
         },
         {
@@ -138,7 +138,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 139162,
+          "bytes": 139116,
           "alt": "Opening page 9: 3 Punches, Matrices and the Name Garamond."
         },
         {
@@ -149,7 +149,7 @@
           "h": 1516,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 148406,
+          "bytes": 148384,
           "alt": "Page 10: Whose letters."
         }
       ],
@@ -193,12 +193,12 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143835,
+        "bytes": 143689,
         "pages": 10
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17599,
+        "bytes": 17598,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -208,7 +208,7 @@
           },
           {
             "pages": 3,
-            "hash": "c6cff502fb9aabbc",
+            "hash": "b290da2cfbe08b76",
             "lines": "67233e6beb0bdca1"
           },
           {
@@ -505,18 +505,23 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "f3462351",
-      "vdtHash": "854c6589be9fe12d338381a53c07814a5e2893d7",
+      "hash8": "362812e1",
+      "vdtHash": "03f3ea410f3c966c4f24d721f0a4e644be45eb38",
       "timings": {
-        "importMs": 548,
-        "fontsMs": 115,
-        "buildMs": 800,
-        "totalMs": 2250,
+        "importMs": 418,
+        "fontsMs": 138,
+        "buildMs": 808,
+        "totalMs": 2090,
         "builds": 1
       },
       "specimen": {
@@ -571,7 +576,7 @@
           "h": 1516,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 139862,
+          "bytes": 139818,
           "alt": "Página de apertura 3: 1 La jornada del cajista."
         },
         {
@@ -582,7 +587,7 @@
           "h": 1516,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 175010,
+          "bytes": 175044,
           "alt": "Página 4: Impresores imaginarios."
         },
         {
@@ -593,7 +598,7 @@
           "h": 1516,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 83772,
+          "bytes": 83764,
           "alt": "Página 5: REFERENCIAS."
         },
         {
@@ -604,7 +609,7 @@
           "h": 1516,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 139582,
+          "bytes": 139572,
           "alt": "Página de apertura 6: 2 Lo que significaba la fijeza."
         },
         {
@@ -615,7 +620,7 @@
           "h": 1516,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 177828,
+          "bytes": 177612,
           "alt": "Página 7: Circuitos y modelos."
         },
         {
@@ -637,7 +642,7 @@
           "h": 1516,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 136410,
+          "bytes": 136478,
           "alt": "Página de apertura 9: 3 Punzones, matrices y el nombre de Garamond."
         },
         {
@@ -692,7 +697,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 158048,
+        "bytes": 157749,
         "pages": 10
       },
       "sandbox": {
@@ -707,7 +712,7 @@
           },
           {
             "pages": 3,
-            "hash": "06a11c7afbd29e64",
+            "hash": "3f34b3db50a0f405",
             "lines": "c0c0432f5e8d23bf"
           },
           {
@@ -1004,6 +1009,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

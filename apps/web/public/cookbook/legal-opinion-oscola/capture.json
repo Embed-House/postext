@@ -3,21 +3,21 @@
   "slug": "legal-opinion-oscola",
   "sourceHash": "60c1bb5420726e1f5d19cccde02dad81c87e8afd7994a034dd25cc74f136cea7",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:59:13.083Z",
+  "capturedAt": "2026-10-13T10:43:56.367Z",
   "variants": {
     "en": {
-      "hash8": "fd431c5c",
+      "hash8": "8cf741b4",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 726,
-        "fontsMs": 48,
-        "buildMs": 220,
-        "totalMs": 2180,
+        "importMs": 475,
+        "fontsMs": 35,
+        "buildMs": 241,
+        "totalMs": 1506,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1481,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161786,
+          "bytes": 161756,
           "alt": "Page 2: There is no “Caparo test”."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1481,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 173066,
+          "bytes": 173014,
           "alt": "Page 3: The statutory route."
         },
         {
@@ -83,7 +83,7 @@
           "h": 1481,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 166886,
+          "bytes": 166802,
           "alt": "Page 4: Comment."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 89511,
+        "bytes": 88970,
         "pages": 4
       },
       "sandbox": {
@@ -341,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "a3e7ac3a",
-      "vdtHash": "dd0b895147d7e0a20e297a1723961914425e2f01",
+      "hash8": "3c5491b6",
+      "vdtHash": "1411220aaa1cd2cebf6c32ef4c490c732961644b",
       "timings": {
-        "importMs": 909,
-        "fontsMs": 44,
-        "buildMs": 790,
-        "totalMs": 2891,
+        "importMs": 650,
+        "fontsMs": 47,
+        "buildMs": 720,
+        "totalMs": 2294,
         "builds": 1
       },
       "specimen": {
@@ -380,7 +380,7 @@
           "h": 1481,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 99398,
+          "bytes": 99360,
           "alt": "Página de apertura 1: Acción, omisión y policía."
         },
         {
@@ -391,7 +391,7 @@
           "h": 1481,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 155874,
+          "bytes": 155872,
           "alt": "Página 2: No existe un «test de Caparo»."
         },
         {
@@ -402,7 +402,7 @@
           "h": 1481,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 176302,
+          "bytes": 176290,
           "alt": "Página 3: Actos y omisiones."
         },
         {
@@ -413,7 +413,7 @@
           "h": 1481,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 152776,
+          "bytes": 152492,
           "alt": "Página 4: La vía legal."
         }
       ],
@@ -445,17 +445,17 @@
       },
       "pdf": {
         "file": "legal-opinion-oscola.pdf",
-        "bytes": 93498,
+        "bytes": 92574,
         "pages": 4
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23008,
+        "bytes": 23002,
         "folio": "223edec1",
         "chapters": [
           {
             "pages": 4,
-            "hash": "a44123828b0745b2",
+            "hash": "8ea68e52784d77a2",
             "lines": "f747e798a0625164"
           }
         ]
@@ -677,6 +677,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “7 Lord Bridge hizo suyas las palabras del juez B…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

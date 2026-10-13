@@ -3,21 +3,21 @@
   "slug": "tang-poems-facing-english",
   "sourceHash": "3d25f78e52b06419a434fb7926fe043a1a74f566dfa63cb0565ece28c0a7f1fc",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:04:11.842Z",
+  "capturedAt": "2026-10-13T10:51:18.884Z",
   "variants": {
     "en": {
-      "hash8": "6cb49d80",
-      "vdtHash": "f73afc1191d0f48ff501d0738d67cd53a7e8676f",
+      "hash8": "9b2a6c13",
+      "vdtHash": "15e7223af4029b7119f93bfea6aa701acd417534",
       "timings": {
-        "importMs": 775,
-        "fontsMs": 318,
-        "buildMs": 100,
-        "totalMs": 2024,
+        "importMs": 1672,
+        "fontsMs": 619,
+        "buildMs": 172,
+        "totalMs": 3522,
         "builds": 1
       },
       "specimen": {
@@ -74,7 +74,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 50686,
+          "bytes": 50794,
           "alt": "Opening page 3: 靜夜思."
         },
         {
@@ -118,7 +118,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35208,
+          "bytes": 35186,
           "alt": "Opening page 7: 絕句."
         },
         {
@@ -151,7 +151,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 96254,
+          "bytes": 96204,
           "alt": "Opening page 10: A note on the text."
         }
       ],
@@ -195,17 +195,17 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 152700,
+        "bytes": 152575,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 14901,
+        "bytes": 14904,
         "folio": "e5860b68",
         "chapters": [
           {
             "pages": 10,
-            "hash": "5b5478115ca79515",
+            "hash": "e12d0233eb2114c1",
             "lines": "9fa575e72e8103d3"
           }
         ]
@@ -436,17 +436,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "d53750d4",
-      "vdtHash": "3c48fce898712cf9a04abcdc3db2d3035fcefcf8",
+      "hash8": "6dcb9472",
+      "vdtHash": "b977be171e69a4861162a7c0af491e27bf6aee7d",
       "timings": {
-        "importMs": 770,
-        "fontsMs": 468,
-        "buildMs": 103,
-        "totalMs": 2068,
+        "importMs": 1696,
+        "fontsMs": 1031,
+        "buildMs": 198,
+        "totalMs": 4236,
         "builds": 1
       },
       "specimen": {
@@ -503,7 +509,7 @@
           "h": 1419,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 51448,
+          "bytes": 51514,
           "alt": "Página de apertura 3: 靜夜思."
         },
         {
@@ -547,7 +553,7 @@
           "h": 1419,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 35590,
+          "bytes": 35604,
           "alt": "Página de apertura 7: 絕句."
         },
         {
@@ -580,7 +586,7 @@
           "h": 1419,
           "file": "p10.webp",
           "strip": "p10.s.webp",
-          "bytes": 101062,
+          "bytes": 101100,
           "alt": "Página de apertura 10: Nota sobre el texto."
         }
       ],
@@ -624,17 +630,17 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 155065,
+        "bytes": 154625,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15187,
+        "bytes": 15161,
         "folio": "e5860b68",
         "chapters": [
           {
             "pages": 10,
-            "hash": "46ad8745ef7cb007",
+            "hash": "b2b2cc162d9e4d24",
             "lines": "8bb84554261eef08"
           }
         ]
@@ -865,7 +871,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

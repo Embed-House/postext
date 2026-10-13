@@ -3,25 +3,20 @@
   "slug": "spanish-pocket-novel",
   "sourceHash": "fb2560f0b1b82c217c3401cae4d87cb84bc213f58459d0769916dc57223c673a",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.123Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:03:05.065Z"
-  },
+  "capturedAt": "2026-10-13T10:48:46.179Z",
   "variants": {
     "es": {
-      "hash8": "d88c9d3b",
+      "hash8": "96ac3879",
       "vdtHash": "bb126315f9ebc5c6545bba48f33c62e9e98b73ef",
       "timings": {
-        "importMs": 201,
-        "fontsMs": 22,
-        "buildMs": 64,
-        "totalMs": 992,
+        "importMs": 720,
+        "fontsMs": 59,
+        "buildMs": 103,
+        "totalMs": 2613,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1565,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 166100,
+          "bytes": 166116,
           "alt": "Página 10."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1565,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 163164,
+          "bytes": 163170,
           "alt": "Página 11."
         },
         {

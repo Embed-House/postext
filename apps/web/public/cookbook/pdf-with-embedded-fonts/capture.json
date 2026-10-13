@@ -3,21 +3,21 @@
   "slug": "pdf-with-embedded-fonts",
   "sourceHash": "8530fa0936b38d289ddfed0ef0c4ba9fcada4ece151c2eb8592aed30b01849aa",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:01:35.474Z",
+  "capturedAt": "2026-10-13T10:47:02.973Z",
   "variants": {
     "en": {
-      "hash8": "935a43cf",
+      "hash8": "fb03800f",
       "vdtHash": "6614b01a37d0ff6a777bd67b097f1a4e32a7cf36",
       "timings": {
-        "importMs": 1086,
-        "fontsMs": 129,
-        "buildMs": 117,
-        "totalMs": 2162,
+        "importMs": 902,
+        "fontsMs": 124,
+        "buildMs": 122,
+        "totalMs": 1903,
         "builds": 1
       },
       "specimen": {
@@ -83,7 +83,7 @@
           "h": 1419,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 75224,
+          "bytes": 75228,
           "alt": "Page 4: Crossing the Bar."
         }
       ],
@@ -115,7 +115,7 @@
       },
       "pdf": {
         "file": "pdf-with-embedded-fonts.pdf",
-        "bytes": 89367,
+        "bytes": 89352,
         "pages": 4
       },
       "sandbox": {

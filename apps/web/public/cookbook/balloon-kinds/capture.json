@@ -3,12 +3,12 @@
   "slug": "balloon-kinds",
   "sourceHash": "4b179fc70b5a53de8b7f6e120c95491abb9296bfac010f06cafee636cdd04cd2",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:52.220Z",
+  "capturedAt": "2026-10-13T10:37:13.918Z",
   "variants": {
     "en": {
       "hash8": "286602cd",
@@ -1171,13 +1171,13 @@
       }
     },
     "ar": {
-      "hash8": "fe25c73e",
+      "hash8": "8861f5b7",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 469,
-        "fontsMs": 541,
-        "buildMs": 805,
-        "totalMs": 2456,
+        "importMs": 848,
+        "fontsMs": 325,
+        "buildMs": 866,
+        "totalMs": 2724,
         "builds": 1
       },
       "specimen": {
@@ -1220,7 +1220,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 255614,
+          "bytes": 255458,
           "alt": "الصفحة ٢."
         }
       ],
@@ -1249,7 +1249,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1012790,
+        "bytes": 1014110,
         "pages": 2
       },
       "sandbox": {
@@ -1462,13 +1462,13 @@
       }
     },
     "ja": {
-      "hash8": "6cba4be6",
+      "hash8": "c77b3e42",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 350,
-        "fontsMs": 574,
-        "buildMs": 474,
-        "totalMs": 2041,
+        "importMs": 1095,
+        "fontsMs": 1109,
+        "buildMs": 543,
+        "totalMs": 3571,
         "builds": 1
       },
       "specimen": {
@@ -1540,7 +1540,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1059394,
+        "bytes": 1059393,
         "pages": 2
       },
       "sandbox": {

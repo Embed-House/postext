@@ -3,25 +3,20 @@
   "slug": "folio-book-on-a-desk",
   "sourceHash": "19d012cbc39d320194845b5708412597666bfe8191cdf28a86872d159b2416ea",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.334Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.190Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.221Z",
   "variants": {
     "en": {
-      "hash8": "a55b361a",
-      "vdtHash": "c9d261ef6effccb705d8915af71348eab856bb11",
+      "hash8": "e55b1192",
+      "vdtHash": "6e3769e9d4af498af4216185e7c14e001ef57d21",
       "timings": {
-        "importMs": 3280,
+        "importMs": 2404,
         "fontsMs": 3,
-        "buildMs": 60,
-        "totalMs": 4016,
+        "buildMs": 72,
+        "totalMs": 3309,
         "builds": 1
       },
       "specimen": {
@@ -54,7 +49,7 @@
           "h": 1535,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 111608,
+          "bytes": 111648,
           "alt": "Opening page 1: The Last Crossing."
         },
         {
@@ -65,7 +60,7 @@
           "h": 1535,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 151110,
+          "bytes": 151062,
           "alt": "Page 2: Six o’clock."
         },
         {
@@ -76,7 +71,7 @@
           "h": 1535,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149828,
+          "bytes": 149842,
           "alt": "Page 3: The other ledger."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1535,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 141232,
+          "bytes": 141230,
           "alt": "Page 4: After."
         }
       ],
@@ -119,12 +114,12 @@
       },
       "sandbox": {
         "file": "folio-book-on-a-desk.postext",
-        "bytes": 24164,
+        "bytes": 24138,
         "folio": "ae4134af",
         "chapters": [
           {
             "pages": 4,
-            "hash": "30d4443f12c836dd",
+            "hash": "a36f901fe0fa760d",
             "lines": "b6036bf6de93dcbe"
           }
         ]
@@ -334,6 +329,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

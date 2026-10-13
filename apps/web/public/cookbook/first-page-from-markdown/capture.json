@@ -3,25 +3,20 @@
   "slug": "first-page-from-markdown",
   "sourceHash": "83c4f58b098c4c0ba56270a438fd7c50599b1dae73f333dbda6008e0f98c8825",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.319Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.188Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.176Z",
   "variants": {
     "en": {
-      "hash8": "4a031497",
+      "hash8": "86cb991e",
       "vdtHash": "07c56b8d23023596323db7886c283256ac133054",
       "timings": {
-        "importMs": 219,
-        "fontsMs": 30,
-        "buildMs": 143,
-        "totalMs": 1133,
+        "importMs": 486,
+        "fontsMs": 28,
+        "buildMs": 191,
+        "totalMs": 1926,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 149990,
+          "bytes": 149966,
           "alt": "Opening page 1: The Salt Road."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 136754,
+          "bytes": 136758,
           "alt": "Page 2: What came back."
         }
       ],
@@ -305,13 +300,13 @@
       }
     },
     "es": {
-      "hash8": "23ea83d9",
-      "vdtHash": "1e26a3350d2d18641aafd17b9408bbe5a95fba4b",
+      "hash8": "2184a877",
+      "vdtHash": "f79b28ea57102489f2e44ffb58278d9d84a9b058",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 22,
-        "buildMs": 75,
-        "totalMs": 902,
+        "importMs": 673,
+        "fontsMs": 40,
+        "buildMs": 117,
+        "totalMs": 1621,
         "builds": 1
       },
       "specimen": {
@@ -345,7 +340,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 156414,
+          "bytes": 156404,
           "alt": "Página de apertura 1: La ruta de la sal."
         },
         {
@@ -356,7 +351,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 140246,
+          "bytes": 140322,
           "alt": "Página 2: La carga de retorno."
         }
       ],
@@ -384,12 +379,12 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193515,
+        "bytes": 193514,
         "folio": "579e6f1a",
         "chapters": [
           {
             "pages": 2,
-            "hash": "88802f8aeac5bf66",
+            "hash": "f23d16bf276be2e9",
             "lines": "a57c5d244a9a7358"
           }
         ]
@@ -580,17 +575,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "777683ac",
+      "hash8": "e5d3f285",
       "vdtHash": "e0adb9fecd13a0fc4c60faa93b63baaf7b57aed8",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 22,
-        "buildMs": 115,
-        "totalMs": 985,
+        "importMs": 598,
+        "fontsMs": 34,
+        "buildMs": 153,
+        "totalMs": 1574,
         "builds": 1
       },
       "specimen": {
@@ -624,7 +625,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160070,
+          "bytes": 160068,
           "alt": "Página de abertura 1: A trilha do sal."
         },
         {
@@ -635,7 +636,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 139520,
+          "bytes": 139512,
           "alt": "Página 2: A carga da volta."
         }
       ],

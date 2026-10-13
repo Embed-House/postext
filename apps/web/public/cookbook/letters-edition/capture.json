@@ -3,25 +3,20 @@
   "slug": "letters-edition",
   "sourceHash": "2656475dd1dbe55f4a68e65df34ac6fab87244daf3d0bfad1356bd40ff2c4cce",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.469Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:59:13.116Z"
-  },
+  "capturedAt": "2026-10-13T10:43:56.382Z",
   "variants": {
     "en": {
-      "hash8": "244a4190",
+      "hash8": "85bf45ad",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 27,
-        "buildMs": 59,
-        "totalMs": 965,
+        "importMs": 547,
+        "fontsMs": 55,
+        "buildMs": 81,
+        "totalMs": 1428,
         "builds": 1
       },
       "specimen": {
@@ -65,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 130756,
+          "bytes": 130702,
           "alt": "Page 2: I Frédéric à Voltaire."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 112584,
+          "bytes": 112582,
           "alt": "Page 4: III Voltaire à Frédéric."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 85752,
+          "bytes": 85748,
           "alt": "Page 5."
         }
       ],
@@ -305,13 +300,13 @@
       }
     },
     "es": {
-      "hash8": "9a5a4f0a",
+      "hash8": "ebbf3496",
       "vdtHash": "cd3757a1960ba4fe8b139544dda3df9fb9421819",
       "timings": {
-        "importMs": 211,
-        "fontsMs": 33,
-        "buildMs": 61,
-        "totalMs": 983,
+        "importMs": 408,
+        "fontsMs": 35,
+        "buildMs": 84,
+        "totalMs": 1286,
         "builds": 1
       },
       "specimen": {
@@ -355,7 +350,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 130756,
+          "bytes": 130702,
           "alt": "Página 2: I Frédéric à Voltaire."
         },
         {
@@ -377,7 +372,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 112584,
+          "bytes": 112582,
           "alt": "Página 4: III Voltaire à Frédéric."
         },
         {
@@ -388,7 +383,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 85752,
+          "bytes": 85748,
           "alt": "Página 5."
         }
       ],

@@ -3,21 +3,21 @@
   "slug": "apa-thesis-with-bibtex",
   "sourceHash": "5934587dfdcebde0ccc9803649eacda3ba934f5f2cf3e1a42468d15430c60918",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:53:16.047Z",
+  "capturedAt": "2026-10-13T10:35:58.680Z",
   "variants": {
     "en": {
-      "hash8": "0ff9a31b",
-      "vdtHash": "ae7360adf78faeccb62d8dba84c410a5e5ebabd9",
+      "hash8": "ddb07ae3",
+      "vdtHash": "fcba8520b771c95762de91ed707a794fb251d7e6",
       "timings": {
-        "importMs": 232,
-        "fontsMs": 30,
-        "buildMs": 293,
-        "totalMs": 1247,
+        "importMs": 2546,
+        "fontsMs": 41,
+        "buildMs": 320,
+        "totalMs": 5540,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 128106,
+          "bytes": 128082,
           "alt": "Opening page 1: 2 Reading on Paper and on Screens: The State of the Evidence."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 141920,
+          "bytes": 141866,
           "alt": "Page 2: 2.2 Speed and line length."
         },
         {
@@ -71,7 +71,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 68674,
+          "bytes": 68712,
           "alt": "Page 3."
         }
       ],
@@ -99,17 +99,17 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 60467,
+        "bytes": 59808,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18631,
+        "bytes": 18645,
         "folio": "2af3feac",
         "chapters": [
           {
             "pages": 3,
-            "hash": "7cc03c7582f64c97",
+            "hash": "6b22901c712376b6",
             "lines": "5966a69fbcf378ff"
           }
         ]
@@ -294,17 +294,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "30c5edf9",
-      "vdtHash": "8676e32888e6c684fc0f21e155f9501718398087",
+      "hash8": "1794a7ff",
+      "vdtHash": "6bedb45b3ce433e964dda4c08994794ead971674",
       "timings": {
-        "importMs": 285,
-        "fontsMs": 30,
-        "buildMs": 279,
-        "totalMs": 1248,
+        "importMs": 3068,
+        "fontsMs": 42,
+        "buildMs": 326,
+        "totalMs": 4958,
         "builds": 1
       },
       "specimen": {
@@ -336,7 +342,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 126882,
+          "bytes": 126902,
           "alt": "Página de apertura 1: 2 Leer en papel y en pantalla: el estado de la cuestión."
         },
         {
@@ -347,7 +353,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150060,
+          "bytes": 149914,
           "alt": "Página 2: 2.2 Velocidad y longitud de línea."
         },
         {
@@ -358,7 +364,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77012,
+          "bytes": 76998,
           "alt": "Página 3."
         }
       ],
@@ -386,17 +392,17 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 66525,
+        "bytes": 64906,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18557,
+        "bytes": 18535,
         "folio": "2af3feac",
         "chapters": [
           {
             "pages": 3,
-            "hash": "559b36ffe8eef5b9",
+            "hash": "9ec9d57cf362c6ca",
             "lines": "d3c927b74d044925"
           }
         ]
@@ -576,12 +582,18 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.8
+          "worst": 1.79
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

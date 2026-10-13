@@ -3,21 +3,21 @@
   "slug": "qasida-diwan-page",
   "sourceHash": "39183ba6b4619bb041e181ee2b080abfdb802df7e8626c4c5312d15f0b8e1f99",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:02:07.747Z",
+  "capturedAt": "2026-10-13T10:47:51.773Z",
   "variants": {
     "en": {
-      "hash8": "fbdc8e47",
+      "hash8": "beeae2e3",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 372,
-        "fontsMs": 384,
-        "buildMs": 111,
-        "totalMs": 1475,
+        "importMs": 625,
+        "fontsMs": 149,
+        "buildMs": 101,
+        "totalMs": 1596,
         "builds": 1
       },
       "specimen": {
@@ -72,7 +72,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103156,
+          "bytes": 103148,
           "alt": "Page ٣."
         },
         {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79791,
+        "bytes": 81806,
         "pages": 4
       },
       "sandbox": {
@@ -324,13 +324,13 @@
       }
     },
     "es": {
-      "hash8": "0ea4b59f",
+      "hash8": "ab32b851",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 382,
+        "importMs": 513,
         "fontsMs": 117,
-        "buildMs": 113,
-        "totalMs": 1257,
+        "buildMs": 141,
+        "totalMs": 1500,
         "builds": 1
       },
       "specimen": {
@@ -385,7 +385,7 @@
           "h": 1412,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 103156,
+          "bytes": 103148,
           "alt": "Página ٣."
         },
         {
@@ -429,7 +429,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 79966,
+        "bytes": 81995,
         "pages": 4
       },
       "sandbox": {

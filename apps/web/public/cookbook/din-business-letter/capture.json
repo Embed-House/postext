@@ -3,21 +3,21 @@
   "slug": "din-business-letter",
   "sourceHash": "844740b13bb49b093b2b84c3a5e5876db52195751807d3acf275727eb8c4cc6f",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:55:39.994Z",
+  "capturedAt": "2026-10-13T10:41:20.004Z",
   "variants": {
     "en": {
-      "hash8": "41d4ec2d",
+      "hash8": "e3fde9bb",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 796,
-        "fontsMs": 43,
+        "importMs": 1460,
+        "fontsMs": 61,
         "buildMs": 212,
-        "totalMs": 1805,
+        "totalMs": 3285,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114974,
+          "bytes": 114970,
           "alt": "Opening page 1: Angebot 2026-117: Instandsetzung der 24 Kastenfenster im Vorderhaus Christburger Straße 17."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 77816,
+          "bytes": 77872,
           "alt": "Page 2."
         }
       ],
@@ -89,7 +89,7 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40904,
+        "bytes": 40903,
         "pages": 2
       },
       "sandbox": {
@@ -283,13 +283,13 @@
       }
     },
     "es": {
-      "hash8": "e2abb714",
+      "hash8": "7d17fa4c",
       "vdtHash": "1843330dc1b83fc595899999ece815ea9c29bda1",
       "timings": {
-        "importMs": 620,
-        "fontsMs": 45,
-        "buildMs": 251,
-        "totalMs": 1945,
+        "importMs": 761,
+        "fontsMs": 44,
+        "buildMs": 224,
+        "totalMs": 1913,
         "builds": 1
       },
       "specimen": {
@@ -322,7 +322,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 114974,
+          "bytes": 114970,
           "alt": "Página de apertura 1: Angebot 2026-117: Instandsetzung der 24 Kastenfenster im Vorderhaus Christburger Straße 17."
         },
         {
@@ -333,7 +333,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 77816,
+          "bytes": 77872,
           "alt": "Página 2."
         }
       ],
@@ -361,7 +361,7 @@
       },
       "pdf": {
         "file": "din-business-letter.pdf",
-        "bytes": 40904,
+        "bytes": 40903,
         "pages": 2
       },
       "sandbox": {

@@ -3,21 +3,21 @@
   "slug": "katakana-majiri-proclamation",
   "sourceHash": "702e58d1a17703a3608287a4258d0b5fab1ceac26d64393748771013744dc4f8",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T06:59:13.026Z",
+  "capturedAt": "2026-10-13T10:43:56.318Z",
   "variants": {
     "en": {
-      "hash8": "945b736b",
+      "hash8": "2d6612db",
       "vdtHash": "37b8f33daff8b0376c1b77cf25b87f45bc3eca1d",
       "timings": {
-        "importMs": 954,
-        "fontsMs": 1475,
-        "buildMs": 96,
-        "totalMs": 3470,
+        "importMs": 850,
+        "fontsMs": 1120,
+        "buildMs": 60,
+        "totalMs": 2687,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 16826,
+          "bytes": 16830,
           "alt": "Opening page 一: 大日本帝國憲法."
         },
         {
@@ -126,7 +126,7 @@
           "h": 1419,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 49160,
+          "bytes": 49124,
           "alt": "Page 八."
         }
       ],
@@ -167,7 +167,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 341752,
+        "bytes": 341755,
         "pages": 8
       },
       "sandbox": {
@@ -399,13 +399,13 @@
       }
     },
     "es": {
-      "hash8": "bf7acd97",
+      "hash8": "21f0d27b",
       "vdtHash": "4720d00e789c69898f7917b7933d75af4082d8d5",
       "timings": {
-        "importMs": 953,
-        "fontsMs": 1358,
-        "buildMs": 92,
-        "totalMs": 3206,
+        "importMs": 869,
+        "fontsMs": 1124,
+        "buildMs": 69,
+        "totalMs": 2723,
         "builds": 1
       },
       "specimen": {
@@ -437,7 +437,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 16930,
+          "bytes": 16934,
           "alt": "Página de apertura 一: 大日本帝國憲法."
         },
         {
@@ -514,7 +514,7 @@
           "h": 1419,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 50834,
+          "bytes": 50822,
           "alt": "Página 八."
         }
       ],
@@ -555,7 +555,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 342210,
+        "bytes": 342219,
         "pages": 8
       },
       "sandbox": {

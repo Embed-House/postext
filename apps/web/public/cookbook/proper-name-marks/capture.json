@@ -3,21 +3,21 @@
   "slug": "proper-name-marks",
   "sourceHash": "46cabb7a2251ced0f275e8037f1291cc1391aa4297d1413bc89b5eae015356a4",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:02:07.718Z",
+  "capturedAt": "2026-10-13T10:47:51.737Z",
   "variants": {
     "en": {
-      "hash8": "8de7ff94",
+      "hash8": "cfb2246c",
       "vdtHash": "666b14ae1706626f3a5dda2a0371d7dcbd4dd76e",
       "timings": {
-        "importMs": 368,
-        "fontsMs": 712,
-        "buildMs": 61,
-        "totalMs": 1760,
+        "importMs": 695,
+        "fontsMs": 1112,
+        "buildMs": 79,
+        "totalMs": 2566,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1450,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 85552,
+          "bytes": 85546,
           "alt": "Opening page 二: 項羽本紀."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 97164,
+          "bytes": 97168,
           "alt": "Opening page 三: 項羽本紀."
         }
       ],
@@ -101,7 +101,7 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170213,
+        "bytes": 170219,
         "pages": 3
       },
       "sandbox": {
@@ -318,13 +318,13 @@
       }
     },
     "es": {
-      "hash8": "2b8e0ebc",
+      "hash8": "91b8e674",
       "vdtHash": "4ef88f23fb888f40f39312aab00daabe9b7c9bf4",
       "timings": {
-        "importMs": 321,
-        "fontsMs": 512,
-        "buildMs": 56,
-        "totalMs": 1811,
+        "importMs": 892,
+        "fontsMs": 826,
+        "buildMs": 69,
+        "totalMs": 2815,
         "builds": 1
       },
       "specimen": {
@@ -379,7 +379,7 @@
           "h": 1450,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 97972,
+          "bytes": 97964,
           "alt": "Página de apertura 三: 項羽本紀."
         }
       ],
@@ -408,7 +408,7 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170805,
+        "bytes": 170802,
         "pages": 3
       },
       "sandbox": {

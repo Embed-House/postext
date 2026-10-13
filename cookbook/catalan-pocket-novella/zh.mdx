@@ -10,7 +10,7 @@ pageNotes: { "2": "卷首插图：一幅版画，一个系白围裙的胖面包�
 
 ## 成品一览
 
-Narcís Oller的《El transplantat》全文，依据他的《Obres completes》（巴塞罗那，1928年）文本，排成12 × 18.5 cm、32页的口袋本。四章之前依次是半书名页、面包师站在炉前的卷首插图、红色斜体Cormorant Garamond的书名页，以及一篇版本说明。每章在一幅十二行高的版画下开始，章号是红色罗马数字。正文为10.4 pt的Crimson Pro，按加泰罗尼亚研究院（IEC）的要求在音节处断开：断点两侧至少各留两个字母，元音分立处不拆，撇号之后不断，*titil·laven*断为*titil-* | *laven*，连字符取代中间的间隔点。对白用破折号，引文用«cometes baixes»。
+Narcís Oller的《El transplantat》全文，依据他的《Obres completes》（巴塞罗那，1928年）文本，排成12 × 18.5 cm、32页的口袋本。四章之前依次是半书名页、面包师站在炉前的卷首插图、红色斜体Cormorant Garamond的书名页，以及一篇版本说明。每章在一幅十二行高的版画下开始，章号是红色罗马数字。正文为9.85 pt的Gentium Book Plus，按加泰罗尼亚研究院（IEC）的要求在音节处断开：断点两侧至少各留两个字母，元音分立处不拆，撇号之后不断，*titil·laven*断为*titil-* | *laven*，连字符取代中间的间隔点。对白用破折号，引文用«cometes baixes»。
 
 ## 做法
 
@@ -20,13 +20,13 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 <PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="第27页：行末的titil·laven排为titil- | laven。这32页中只有这一处l·l落在行末。" />
 
-`compounds: false`让动词和它的代词只在自身的连字符处断开（*arrossegar-* | *se*），这是IEC推荐的断法（[断词](/zh/docs/configuration-text#断词)）。代价是一行偏松：第7页*d’inaugurar-se*前面的那一行，词间距放宽到1.94倍，尽管`maxJustifyTracking: 10`已经让其他行用字距吸收了多出的部分。
+`compounds: false`让动词和它的代词只在自身的连字符处断开（*arrossegar-* | *se*），这是IEC推荐的断法（[断词](/zh/docs/configuration-text#断词)）。代价是一行偏松：第7页*d’inaugurar-se*前面的那一行，词间距放宽到1.88倍，尽管`maxJustifyTracking: 10`已经让其他行用字距吸收了多出的部分。
 
 ### 2 · 由整行构成的口袋本页面
 
 <Excerpt region="page" />
 
-下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳29行14 pt，每个满页都止于同一条基线。89 mm的行长约容纳64个Crimson Pro字符。`mirror: true`让16 mm的页边距在跨页两面都留在书脊一侧（[镜像页边距](/zh/docs/configuration-page-layout#镜像页边距)）。
+下页边距由成品尺寸、上页边距和`LINES`算出，所以版心恰好容纳29行14 pt，每个满页都止于同一条基线。89 mm的行长约容纳63个Gentium Book Plus字符。`mirror: true`让16 mm的页边距在跨页两面都留在书脊一侧（[镜像页边距](/zh/docs/configuration-page-layout#镜像页边距)）。
 
 ### 3 · 四章共用一个章首设计
 
@@ -56,7 +56,7 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 ### 让代词也能断开
 
-改用默认的`compounds: true`后，*d’inaugurar-se*可以断为*d’inau-gurar-se*，第7页的松行随之消失。代价是在这几页里，`titil-` | `laven`这个断点不再落在行末。
+改用默认的`compounds: true`后，*d’inaugurar-se*在动词内部断开，成为*d’i-* | *naugurar-se*，第7页的松行随之消失：全书没有一行的词间距超过1.6倍。`titil-` | `laven`这个断点仍在第27页。代价是行末的撇号后面只剩一个*i*。
 
 ```diff
 -  hyphenation: { compounds: false },
@@ -74,5 +74,6 @@ Narcís Oller的《El transplantat》全文，依据他的《Obres completes》�
 
 ## 常见问题
 
+- 选定正文字体之前，先看它怎样排*l·l*。postext 1.30起，文档的`locale`也是文字成形所用的语言（1.29及以前用的是展示这本书的网页的语言），而各款字体对加泰罗尼亚语的回应并不相同。Gentium Book Plus在所有语言里只有一个间隔点，两个*l*之间占0.17 em。这本书在1.29及以前用的Crimson Pro，在加泰罗尼亚语里把间隔点加宽到0.59 em，*intel·ligent*中间就空出一块。Alegreya和Literata只有当两个*l*作为一整段文字一起成形时才画出更紧的间隔点，所以*il·lustrats*在带斜体的段落里是一种样子，在不带斜体的段落里是另一种。
 - 从Viquitexts复制文本时要保留斜体：Oller用斜体标出*tentu*、*Ensanxe*和*palacio*这些口语词或西班牙语词，导出纯文本会丢掉它们。可疑的词要对照1928年版的扫描件核对：转录本有六处把动词*tornar*写成了*tom-*（*tomà*、*tomaré*、*tomar*），还有一处把*jorn*写成了*jom*。
 - 6800个词的正文分在五个内容文件里，加上工具包，合成后的脚本约69 KB。整本书已是一个pen能容纳的最长样例；更长的作品应放进`.postext`包。

@@ -433,7 +433,7 @@ La línia d'ordres és el paquet `postext-cli` del
 [Bun](https://bun.sh) el compila, amb el motor i els seus generadors, en un
 executable per sistema, i [Skia](https://skia.org) (a través de
 `@napi-rs/canvas`) mesura i pinta el text, com ho fa el canvas del navegador al
-Sandbox. A cada versió, els executables es construeixen, s'executen a Linux,
+Sandbox. Una il·lustració SVG que conté un mapa de bits (un PNG o un JPEG incrustat com a URI de dades, com escriu `pdftocairo -svg` les il·lustracions retallades d'un PDF) la dibuixa [resvg](https://github.com/linebender/resvg), perquè el renderitzador d'SVG de Skia omet aquestes imatges. A cada versió, els executables es construeixen, s'executen a Linux,
 Alpine, macOS i Windows i s'adjunten a la GitHub Release; npm rep
 `postext-cli` i un paquet `postext-cli-<system>` per executable.
 

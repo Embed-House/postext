@@ -59,8 +59,8 @@
   ],
   "workarounds": [],
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0"
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0"
   },
   "kit": [
     "core",
@@ -167,7 +167,7 @@
     ],
     "fonts": [
       {
-        "family": "Crimson Pro",
+        "family": "Gentium Book Plus",
         "license": "OFL-1.1"
       },
       {

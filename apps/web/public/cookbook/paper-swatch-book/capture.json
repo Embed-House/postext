@@ -3,25 +3,20 @@
   "slug": "paper-swatch-book",
   "sourceHash": "c230c9e24b8854c3e728a3e2e1e0fc0fe047b5986048f8b059afe226e51a3ebf",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.863Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:01:35.470Z"
-  },
+  "capturedAt": "2026-10-13T10:47:02.893Z",
   "variants": {
     "en": {
-      "hash8": "b6b767c2",
+      "hash8": "6b3ddd7a",
       "vdtHash": "76ce16796df71442b0100532e61ba59798198381",
       "timings": {
-        "importMs": 184,
-        "fontsMs": 3,
-        "buildMs": 67,
-        "totalMs": 902,
+        "importMs": 1171,
+        "fontsMs": 4,
+        "buildMs": 116,
+        "totalMs": 2582,
         "builds": 1
       },
       "specimen": {
@@ -98,7 +93,7 @@
           "h": 1467,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 64642,
+          "bytes": 64648,
           "alt": "Opening page 5: Laid Writing, White."
         },
         {
@@ -109,7 +104,7 @@
           "h": 1467,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 68148,
+          "bytes": 68106,
           "alt": "Page 6: SPECIMEN."
         },
         {
@@ -120,7 +115,7 @@
           "h": 1467,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 65776,
+          "bytes": 65772,
           "alt": "Opening page 7: Art Gloss, Bright White."
         },
         {
@@ -142,7 +137,7 @@
           "h": 1467,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 66398,
+          "bytes": 66422,
           "alt": "Opening page 9: India Bible, Opaque."
         },
         {

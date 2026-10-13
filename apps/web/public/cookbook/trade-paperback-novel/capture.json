@@ -3,25 +3,20 @@
   "slug": "trade-paperback-novel",
   "sourceHash": "9500b07f7923b16b03cd4b4c05e97d3aea6a08a5cf6ab3d0be5f06c8c168717e",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.287Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:04:11.998Z"
-  },
+  "capturedAt": "2026-10-13T10:51:19.578Z",
   "variants": {
     "en": {
-      "hash8": "3ae25494",
+      "hash8": "1ee9d88f",
       "vdtHash": "943e25adaaeece018d1454fa9c4a4ef08ac53672",
       "timings": {
-        "importMs": 257,
-        "fontsMs": 33,
-        "buildMs": 63,
-        "totalMs": 1061,
+        "importMs": 1674,
+        "fontsMs": 63,
+        "buildMs": 100,
+        "totalMs": 4310,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 118200,
+          "bytes": 118204,
           "alt": "Opening page 3: I."
         },
         {
@@ -120,7 +115,7 @@
           "h": 1543,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 122078,
+          "bytes": 122102,
           "alt": "Opening page 7: II."
         },
         {
@@ -131,7 +126,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 151612,
+          "bytes": 151620,
           "alt": "Page 8."
         }
       ],
@@ -371,13 +366,13 @@
       }
     },
     "pt": {
-      "hash8": "213e2407",
+      "hash8": "ec9e7ca8",
       "vdtHash": "527f0f79e6bd928a5f104d91d82b5f67304b5ac9",
       "timings": {
-        "importMs": 208,
-        "fontsMs": 32,
-        "buildMs": 211,
-        "totalMs": 1105,
+        "importMs": 1571,
+        "fontsMs": 80,
+        "buildMs": 350,
+        "totalMs": 3108,
         "builds": 1
       },
       "specimen": {
@@ -432,7 +427,7 @@
           "h": 1543,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 67102,
+          "bytes": 67104,
           "alt": "Página de abertura 3: I."
         },
         {
@@ -476,7 +471,7 @@
           "h": 1543,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 107118,
+          "bytes": 107110,
           "alt": "Página de abertura 7: III."
         },
         {
@@ -487,7 +482,7 @@
           "h": 1543,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 126080,
+          "bytes": 126082,
           "alt": "Página 8."
         }
       ],

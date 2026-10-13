@@ -3,21 +3,21 @@
   "slug": "zhuyin-vertical-reader",
   "sourceHash": "36db93296e8b089ae5b78c83ead02e3ba989452f898691950987c1f975b8adaa",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.286Z",
+  "capturedAt": "2026-10-13T10:52:28.543Z",
   "variants": {
     "en": {
-      "hash8": "f62885c0",
+      "hash8": "14f4436c",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 1288,
-        "fontsMs": 2051,
-        "buildMs": 96,
-        "totalMs": 4357,
+        "importMs": 346,
+        "fontsMs": 555,
+        "buildMs": 81,
+        "totalMs": 1640,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100146,
+          "bytes": 100148,
           "alt": "Opening page 86: 第十二課 寓言兩則."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86810,
+          "bytes": 86814,
           "alt": "Page 87: 語譯."
         },
         {
@@ -73,7 +73,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116486,
+          "bytes": 116476,
           "alt": "Page 88: 語譯."
         },
         {
@@ -84,7 +84,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82944,
+          "bytes": 82300,
           "alt": "Page 89: 語文天地."
         }
       ],
@@ -390,13 +390,13 @@
       }
     },
     "es": {
-      "hash8": "88ea1116",
+      "hash8": "fdef3ae9",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 964,
-        "fontsMs": 1169,
-        "buildMs": 101,
-        "totalMs": 3094,
+        "importMs": 461,
+        "fontsMs": 433,
+        "buildMs": 62,
+        "totalMs": 1549,
         "builds": 1
       },
       "specimen": {
@@ -430,7 +430,7 @@
           "h": 1413,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 100146,
+          "bytes": 100148,
           "alt": "Página de apertura 86: 第十二課 寓言兩則."
         },
         {
@@ -441,7 +441,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86810,
+          "bytes": 86814,
           "alt": "Página 87: 語譯."
         },
         {
@@ -452,7 +452,7 @@
           "h": 1413,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116486,
+          "bytes": 116476,
           "alt": "Página 88: 語譯."
         },
         {
@@ -463,7 +463,7 @@
           "h": 1413,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 83198,
+          "bytes": 83216,
           "alt": "Página 89: 語文天地."
         }
       ],

@@ -3,25 +3,20 @@
   "slug": "epub-fixed-and-reflowable",
   "sourceHash": "843ca57e79e35a46a8881c372a4c0b480ad5812a32001313177b662683fe9013",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.287Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.173Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.066Z",
   "variants": {
     "en": {
-      "hash8": "045373af",
+      "hash8": "a2e35e1a",
       "vdtHash": "c96216bea05311b078948a2306d76538cec6bd71",
       "timings": {
-        "importMs": 239,
-        "fontsMs": 101,
-        "buildMs": 95,
-        "totalMs": 1032,
+        "importMs": 869,
+        "fontsMs": 137,
+        "buildMs": 137,
+        "totalMs": 1868,
         "builds": 1
       },
       "specimen": {
@@ -76,7 +71,7 @@
           "h": 1583,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 79232,
+          "bytes": 79252,
           "alt": "Opening page 3: The Lion’s Court."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1583,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 146056,
+          "bytes": 146080,
           "alt": "Page 4: The Lion in Love."
         },
         {
@@ -370,13 +365,13 @@
       }
     },
     "es": {
-      "hash8": "2c26f578",
-      "vdtHash": "c8c457410ceb3f9647d1d1ca3698831678e7f732",
+      "hash8": "ee83e4d3",
+      "vdtHash": "941f73c65a0e939c25662a259dbd2b7b479d486e",
       "timings": {
-        "importMs": 242,
-        "fontsMs": 27,
-        "buildMs": 327,
-        "totalMs": 1211,
+        "importMs": 958,
+        "fontsMs": 73,
+        "buildMs": 480,
+        "totalMs": 2226,
         "builds": 1
       },
       "specimen": {
@@ -431,7 +426,7 @@
           "h": 1583,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 101446,
+          "bytes": 101460,
           "alt": "Página de apertura 3: I."
         },
         {
@@ -442,7 +437,7 @@
           "h": 1583,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 166084,
+          "bytes": 166034,
           "alt": "Página 4."
         },
         {
@@ -453,7 +448,7 @@
           "h": 1583,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 158876,
+          "bytes": 159074,
           "alt": "Página 5."
         },
         {
@@ -464,7 +459,7 @@
           "h": 1583,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 165298,
+          "bytes": 165308,
           "alt": "Página 6."
         }
       ],
@@ -500,7 +495,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 26887,
+        "bytes": 26884,
         "chapters": [
           {
             "pages": 2,
@@ -514,7 +509,7 @@
           },
           {
             "pages": 6,
-            "hash": "6318becaa90b2cd6",
+            "hash": "97aaf5cb6f691e07",
             "lines": "9d827efb7e61ca95"
           },
           {
@@ -730,6 +725,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 15 −10‰ “—¡Adiós, Cordera!—vociferó Pinín con la misma fe…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

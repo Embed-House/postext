@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 104 · A Catalan novella, hyphenated by the IEC rules ═══════
 // https://postext.dev/en/cookbook/catalan-pocket-novella
 // Code: MIT · Text: N. Oller, El transplantat, 1928 (PD, Viquitexts) · Pictures: diffusion models
-// Fonts: Crimson Pro, Cormorant Garamond, Cormorant SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Gentium Book Plus, Cormorant Garamond, Cormorant SC (OFL) · Needs postext ≥ 1.30.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -23,8 +23,8 @@ const colorPalette = [
   ...Object.entries(palette).map(([id, hex]) => ({ id, name: id, value: { hex, model: 'hex' } })),
   { id: 'main-color', name: 'vermell (defaults)', value: { hex: palette.vermell, model: 'hex' } },
 ];
-const [TEXT, DISPLAY, LABEL] = ['Crimson Pro', 'Cormorant Garamond', 'Cormorant SC'];
-const [BODY, LEAD] = [10.4, 14]; // pt: body and leading, the pitch of every vertical measure
+const [TEXT, DISPLAY, LABEL] = ['Gentium Book Plus', 'Cormorant Garamond', 'Cormorant SC'];
+const [BODY, LEAD] = [9.85, 14]; // pt: body and leading, the pitch of every vertical measure
 const LINE = (LEAD * 25.4) / 72; // mm: one line, 4.94
 const at = (to, edge, x = 0, y = 0, size) => ({ anchor: { to, edge },
   offset: { x: mm(x), y: mm(y) }, ...(size && { size }) });
@@ -37,7 +37,7 @@ const caps = (size, tracking, color = 'vermell') => ({ fontFamily: LABEL, fontSi
 // #region page: a 12 × 18.5 cm pocket book; the text block holds 29 whole lines
 const TRIM = { width: 120, height: 185 }; // mm
 const [TOP, INNER, OUTER, LINES] = [18, 16, 15, 29];
-const MEASURE = TRIM.width - INNER - OUTER; // 89 mm: about 64 characters of Crimson Pro
+const MEASURE = TRIM.width - INNER - OUTER; // 89 mm: about 63 characters of Gentium Book Plus
 const page = {
   width: mm(TRIM.width), height: mm(TRIM.height), dpi: 150, backgroundColor: col('paper'),
   margins: { top: mm(TOP), bottom: mm(TRIM.height - TOP - LINES * LINE),
@@ -53,9 +53,9 @@ const bodyText = { // config().bodyText
   firstLineIndent: mm(4.5), indentAfterHeading: false,
   // The defaults justify, hyphenate in config().locale and break by Knuth–Plass. With 'ca'
   // the dictionary follows the IEC: two letters on each side (ter-ra, cai-xa), no split in
-  // a hiatus (cièn-cia), none after an apostrophe (s’ha-via), and l·l breaks with the hyphen
-  // in place of the dot. compounds: false keeps arrossegar-se whole but for its own hyphen,
-  // the break the IEC prefers for a verb and its pronoun (Llibre d’estil, VI 2.5).
+  // a hiatus (cièn-cia) or after an apostrophe (s’ha-via), l·l broken with the hyphen for the
+  // dot. From 1.30 the face is asked for its Catalan forms too: this one has a single dot.
+  // compounds: false divides arrossegar-se only at its own hyphen (Llibre d’estil, VI 2.5).
   hyphenation: { compounds: false },
   // Spaces from 0.7× to 1.6×, then up to 10‰ of tracking; a last line under 22 characters is
   // a runt. A line that must keep d’inaugurar-se whole still opens to 1.94× on page 7.
@@ -155,11 +155,11 @@ const resources = Object.entries(PICTURES).map(([id, [fileId, w, h, altText]]) =
 // #endregion
 
 const paragraphStyles = [
-  { id: 'nota', fontSize: pt(9), lineHeight: pt(LEAD * 0.9), color: col('muted'),
+  { id: 'nota', fontSize: pt(8.5), lineHeight: pt(LEAD * 0.9), color: col('muted'),
     italicColor: col('muted'), firstLineIndent: mm(4.5) },
   { id: 'fi', fontFamily: LABEL, fontSize: pt(9), color: col('vermell'),
     textAlign: 'center', firstLineIndent: pt(0), marginTop: pt(LEAD) },
-  { id: 'colofo', fontSize: pt(7.5), lineHeight: pt(10), color: col('muted'),
+  { id: 'colofo', fontSize: pt(7), lineHeight: pt(10), color: col('muted'),
     italicColor: col('muted'), textAlign: 'center', firstLineIndent: pt(0),
     marginTop: pt(2 * LEAD) },
 ];
@@ -182,7 +182,7 @@ const markdown = [/* @content */ '', /* @content:c1a */ '', /* @content:c1b */ '
 
 // ─── 3 · Fonts ──────────────────────────────────────────────────────────────
 const FONTS = { // every face the pages use, loaded before the build
-  'Crimson Pro': ['400', '400i'], // the text, the note, the colophon, the folios
+  'Gentium Book Plus': ['400', '400i'], // the text, the note, the colophon, the folios
   'Cormorant Garamond': ['500i', '600'], // half-title and title; the chapter numerals
   'Cormorant SC': ['400', '600'], // the closing Fi; author, labels, running heads
 };

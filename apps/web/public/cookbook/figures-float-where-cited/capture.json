@@ -3,25 +3,20 @@
   "slug": "figures-float-where-cited",
   "sourceHash": "51c8fef185e46fe769d0083355a86c37ef7fce4b1b121f92551cc6d2c64c72aa",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.300Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:56:14.177Z"
-  },
+  "capturedAt": "2026-10-13T10:41:57.118Z",
   "variants": {
     "en": {
-      "hash8": "991a4388",
+      "hash8": "9c5065cf",
       "vdtHash": "08ca59610cbec5bcb94bf491bc1c3fdb643f5207",
       "timings": {
-        "importMs": 176,
-        "fontsMs": 141,
-        "buildMs": 343,
-        "totalMs": 1410,
+        "importMs": 277,
+        "fontsMs": 162,
+        "buildMs": 400,
+        "totalMs": 1511,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1250,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 118674,
+          "bytes": 118802,
           "alt": "Opening page 27: How glaciers carve mountain valleys. Figure 2.1. A river cuts a V; a glacier widens the valley into a U. Dashed, the V the ice wore away."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1250,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 159048,
+          "bytes": 159142,
           "alt": "Page 28: 2.2 Where glaciers are born. Figure 2.2. Profile of a valley glacier: ice fed above the equilibrium line flows down to melt below it. · Figure 2.3. A cirque in section. The ice rotates in the basin and deepens it below the rock lip."
         },
         {
@@ -77,7 +72,7 @@
           "h": 1250,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174194,
+          "bytes": 174180,
           "alt": "Page 29: 2.3 The tools of the ice. Figure 2.6. Roche moutonnée. The ice polished the gentle face and plucked the steep one. · Figure 2.4. Abrasion: stones held in the base of the ice scratch the bed. · Figure 2.5. Plucking: water freezes in the joints and the ice carries block…"
         },
         {
@@ -88,7 +83,7 @@
           "h": 1250,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 143954,
+          "bytes": 144034,
           "alt": "Page 30: 2.6 Reading a glacial landscape. Figure 2.7. Two glaciers join: their lateral moraines become a medial one, and the terminal moraine dams a lake."
         }
       ],
@@ -338,13 +333,13 @@
       }
     },
     "es": {
-      "hash8": "31f228a0",
+      "hash8": "81b9c5d6",
       "vdtHash": "5fd084613038889d2716b192c6cbbf8aae18a49e",
       "timings": {
-        "importMs": 161,
-        "fontsMs": 149,
-        "buildMs": 253,
-        "totalMs": 1225,
+        "importMs": 432,
+        "fontsMs": 234,
+        "buildMs": 315,
+        "totalMs": 1647,
         "builds": 1
       },
       "specimen": {
@@ -378,7 +373,7 @@
           "h": 1250,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 120834,
+          "bytes": 120774,
           "alt": "Página de apertura 27: Cómo esculpen los glaciares el paisaje. Figura 2.1. Un río abre un valle en V; un glaciar lo ensancha en U. A trazos, la V que borró el hielo."
         },
         {
@@ -389,7 +384,7 @@
           "h": 1250,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 161994,
+          "bytes": 161912,
           "alt": "Página 28: 2.2 Donde nacen los glaciares. Figura 2.2. Perfil de un glaciar: el hielo nacido sobre la línea de equilibrio baja a fundirse bajo ella. · Figura 2.3. Circo glaciar en sección. El hielo gira en la cubeta y la ahonda por debajo del umbral."
         },
         {
@@ -400,7 +395,7 @@
           "h": 1250,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 175740,
+          "bytes": 175752,
           "alt": "Página 29: 2.3 Las herramientas del hielo. Figura 2.6. Roca aborregada. El hielo pulió la cara tendida y arrancó bloques de la abrupta. · Figura 2.4. Abrasión: los cantos presos en la base del hielo rayan el lecho. · Figura 2.5. Arranque: el agua se hiela en las diaclasas y el…"
         },
         {
@@ -411,7 +406,7 @@
           "h": 1250,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 144230,
+          "bytes": 144246,
           "alt": "Página 30: 2.6 Cómo leer un paisaje glaciar. Figura 2.7. Dos glaciares se unen: sus morrenas laterales forman la central, y la frontal represa un lago."
         }
       ],

@@ -3,21 +3,21 @@
   "slug": "sist02-research-paper",
   "sourceHash": "1a757ab7064ebf6b7b8072952c87c4c362fbdfd2baae839aa51e3eda6559eebb",
   "engine": {
-    "postext": "1.29.2",
-    "postextPdf": "1.29.2",
+    "postext": "1.30.0",
+    "postextPdf": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:03:05.057Z",
+  "capturedAt": "2026-10-13T10:48:46.165Z",
   "variants": {
     "en": {
-      "hash8": "5b500952",
-      "vdtHash": "d256f9085b8c49ebe024fcc10d882b884a679883",
+      "hash8": "70385cc1",
+      "vdtHash": "5952d7e7ba5a11716c051c1d1a377a700c5a5059",
       "timings": {
-        "importMs": 587,
-        "fontsMs": 860,
-        "buildMs": 238,
-        "totalMs": 2378,
+        "importMs": 1116,
+        "fontsMs": 642,
+        "buildMs": 266,
+        "totalMs": 4006,
         "builds": 1
       },
       "specimen": {
@@ -51,7 +51,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106224,
+          "bytes": 106404,
           "alt": "Opening page 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89774,
+          "bytes": 90128,
           "alt": "Page 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -90,17 +90,17 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226670,
+        "bytes": 226699,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32367,
+        "bytes": 32362,
         "folio": "5f42a5f6",
         "chapters": [
           {
             "pages": 2,
-            "hash": "fa340d65bbd890af",
+            "hash": "7fc3b37746649ac1",
             "lines": "f186d43aec4849e0"
           }
         ]
@@ -394,18 +394,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “A specimen article written for the Postext Cookb…”"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "19029a93",
-      "vdtHash": "c7d625899867fbca93a218c3f4f2edee96e08f04",
+      "hash8": "e7a776a7",
+      "vdtHash": "f3218b0fa5e1bb8f0cb8f16daf7a4c60af76d94d",
       "timings": {
-        "importMs": 698,
-        "fontsMs": 374,
-        "buildMs": 216,
-        "totalMs": 2046,
+        "importMs": 2050,
+        "fontsMs": 1082,
+        "buildMs": 202,
+        "totalMs": 4028,
         "builds": 1
       },
       "specimen": {
@@ -439,7 +444,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 106224,
+          "bytes": 106404,
           "alt": "Página de apertura 23: 号数活字の三つの系列： 近代日本の活字の大きさは どう決められたか. 表1 号数活字の大きさ。新号数はJIS Z 8305（1962）による."
         },
         {
@@ -450,7 +455,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 89524,
+          "bytes": 89622,
           "alt": "Página 24: 4. ポイントへの移行. 図1 号数活字の三つの系列。上から初号系、一号系、三号系。正 方形は旧号数の大きさを実寸で示す."
         }
       ],
@@ -478,17 +483,17 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226321,
+        "bytes": 226345,
         "pages": 2
       },
       "sandbox": {
         "file": "sist02-research-paper.postext",
-        "bytes": 32438,
+        "bytes": 32432,
         "folio": "5f42a5f6",
         "chapters": [
           {
             "pages": 2,
-            "hash": "4922fdadb8ae748d",
+            "hash": "e3448c63ed580383",
             "lines": "675759caeaed5916"
           }
         ]
@@ -772,7 +777,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          }
+        ]
       }
     }
   }

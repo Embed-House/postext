@@ -3,25 +3,20 @@
   "slug": "print-and-screen-editions",
   "sourceHash": "9e43f9ac43025f3650819e4f275dc19602c7ed72798cfcda40687fa457808ea3",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.985Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T07:01:35.565Z"
-  },
+  "capturedAt": "2026-10-13T10:47:03.139Z",
   "variants": {
     "en": {
-      "hash8": "feb53b7d",
+      "hash8": "bc1efdce",
       "vdtHash": "60ae331f534d41cc28044aa2c9aacd6a0cd8b8ac",
       "timings": {
-        "importMs": 169,
-        "fontsMs": 43,
-        "buildMs": 252,
-        "totalMs": 1143,
+        "importMs": 416,
+        "fontsMs": 90,
+        "buildMs": 326,
+        "totalMs": 1637,
         "builds": 2
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 38536,
+          "bytes": 38622,
           "alt": "Part title page 1: NOTES ON WEATHER I Autumn."
         },
         {
@@ -66,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 109964,
+          "bytes": 109982,
           "alt": "Opening page 2: Rain. Figure 1. The rain gauge in section: the funnel feeds a tube with a tenth of its area."
         },
         {
@@ -88,7 +83,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 120970,
+          "bytes": 120922,
           "alt": "Opening page 4: Wind. Figure 3. Where a year of morning winds came from at the garden station: west and south-west."
         }
       ],
@@ -352,13 +347,13 @@
       }
     },
     "es": {
-      "hash8": "84232663",
+      "hash8": "be562c65",
       "vdtHash": "b21de88e54730916b7395c401324be276c556e68",
       "timings": {
-        "importMs": 174,
-        "fontsMs": 65,
-        "buildMs": 122,
-        "totalMs": 982,
+        "importMs": 585,
+        "fontsMs": 120,
+        "buildMs": 164,
+        "totalMs": 1686,
         "builds": 2
       },
       "specimen": {
@@ -392,7 +387,7 @@
           "h": 1320,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 36784,
+          "bytes": 36802,
           "alt": "Portadilla de parte 1: APUNTES DEL TIEMPO I Otoño."
         },
         {
@@ -403,7 +398,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 114380,
+          "bytes": 114370,
           "alt": "Página de apertura 2: Lluvia. Figura 1. El pluviómetro en sección: el embudo vierte en un tubo con la décima parte de su área."
         },
         {
@@ -414,7 +409,7 @@
           "h": 1320,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 130458,
+          "bytes": 130572,
           "alt": "Página de apertura 3: Niebla. Figura 2. Niebla de irradiación al amanecer: el aire frío baja de las lomas y llena el valle."
         },
         {
@@ -425,7 +420,7 @@
           "h": 1320,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 121888,
+          "bytes": 121942,
           "alt": "Página de apertura 4: Viento. Figura 3. De dónde vino el viento de un año de mañanas en el jardín: del oeste y del suroeste."
         }
       ],

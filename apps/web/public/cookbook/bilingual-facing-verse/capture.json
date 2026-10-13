@@ -3,25 +3,20 @@
   "slug": "bilingual-facing-verse",
   "sourceHash": "57759ee59866598d3edbcafa1598b7dda3c470143978754ac8983901ae869200",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.30.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:50.999Z",
-  "verified": {
-    "postext": "1.29.2",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T06:53:52.244Z"
-  },
+  "capturedAt": "2026-10-13T10:37:14.062Z",
   "variants": {
     "en": {
-      "hash8": "40fab095",
+      "hash8": "878cdacc",
       "vdtHash": "129547437132769e83b543787acbd0ea6bd5d8fe",
       "timings": {
-        "importMs": 213,
-        "fontsMs": 28,
-        "buildMs": 59,
-        "totalMs": 1041,
+        "importMs": 674,
+        "fontsMs": 43,
+        "buildMs": 61,
+        "totalMs": 1900,
         "builds": 1
       },
       "specimen": {
@@ -65,7 +60,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 92984,
+          "bytes": 93052,
           "alt": "Opening page 2: Author’s Note."
         },
         {
@@ -87,7 +82,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82202,
+          "bytes": 82170,
           "alt": "Page 4."
         },
         {
@@ -98,7 +93,7 @@
           "h": 1500,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 76806,
+          "bytes": 76820,
           "alt": "Page 5."
         }
       ],
@@ -335,13 +330,13 @@
       }
     },
     "es": {
-      "hash8": "7f95ce35",
+      "hash8": "d303efa7",
       "vdtHash": "ca557f462a56e6869b897a41818d29d6b2669d3d",
       "timings": {
-        "importMs": 195,
-        "fontsMs": 67,
-        "buildMs": 59,
-        "totalMs": 1037,
+        "importMs": 821,
+        "fontsMs": 85,
+        "buildMs": 69,
+        "totalMs": 1936,
         "builds": 1
       },
       "specimen": {
@@ -385,7 +380,7 @@
           "h": 1500,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 94014,
+          "bytes": 94044,
           "alt": "Página de apertura 2: Nota de la autora."
         },
         {
@@ -407,7 +402,7 @@
           "h": 1500,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 82202,
+          "bytes": 82170,
           "alt": "Página 4."
         },
         {
