@@ -50,6 +50,32 @@ describe('postext cli', () => {
     expect(existsSync(join(dir, 'out/p/page-001.png'))).toBe(true);
   }, 60_000);
 
+  // #771: a raster inside an SVG picture, as `pdftocairo -svg` writes it.
+  it('paints the rasters an SVG picture holds in the page images', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'res'));
+    const { createCanvas, loadImage } = await import('@napi-rs/canvas');
+    const square = createCanvas(4, 4);
+    const sq = square.getContext('2d');
+    sq.fillStyle = '#dc1e1e';
+    sq.fillRect(0, 0, 4, 4);
+    const red = `data:image/png;base64,${(await square.encode('png')).toString('base64')}`;
+    const open = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="60" viewBox="0 0 60 60">';
+    writeFileSync(join(dir, 'res', 'a-href.svg'), `${open}<image href="${red}" width="60" height="60"/></svg>`);
+    writeFileSync(join(dir, 'res', 'c-defs-use.svg'), `${open}<defs><image id="s" width="60" height="60" xlink:href="${red}"/></defs><use xlink:href="#s"/></svg>`);
+    writeFileSync(join(dir, 'book.md'), '# Pictures\n\n::resource{id="a-href"}\n\n::resource{id="c-defs-use"}\n');
+    expect(run(['pack', 'book.md', '--resources', 'res', '-o', 'b.postext', '-q', '--offline'], dir).code).toBe(0);
+    expect(run(['images', 'b.postext', '-o', 'pages', '--dpi', '72', '-q', '--offline'], dir).code).toBe(0);
+    const page = await loadImage(readFileSync(join(dir, 'pages', 'page-001.png')));
+    const canvas = createCanvas(page.width, page.height);
+    canvas.getContext('2d').drawImage(page, 0, 0);
+    const { data } = canvas.getContext('2d').getImageData(0, 0, page.width, page.height);
+    let reds = 0;
+    for (let i = 0; i < data.length; i += 4) if (data[i]! > 200 && data[i + 1]! < 60 && data[i + 2]! < 60) reds++;
+    // Two squares of 60 × 60 px at 72 dpi or more; none before #771.
+    expect(reds).toBeGreaterThan(2 * 50 * 50);
+  }, 60_000);
+
   it('packs, unpacks and reads the bundle back', () => {
     const dir = book();
     expect(run(['pack', 'ch', '--name', 'Test', '-o', 'b.postext', '-q'], dir).code).toBe(0);

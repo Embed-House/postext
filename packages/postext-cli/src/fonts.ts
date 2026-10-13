@@ -31,6 +31,7 @@ import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
 import { ensureDir } from './io';
 import type { Reporter, Warning } from './log';
+import { noteSvgFont } from './svgImage';
 
 export type FaceSource = 'book' | 'font-dir' | 'embedded' | 'cache' | 'download' | 'fallback';
 
@@ -185,6 +186,7 @@ function register(face: Face): void {
   // Skia reads the weight and the slant from the file itself, as the
   // browser does from @font-face; the alias is the family the book names.
   GlobalFonts.register(Buffer.from(face.bytes.buffer, face.bytes.byteOffset, face.bytes.byteLength), face.family);
+  noteSvgFont(face.bytes);
 }
 
 /** How much heavier than the face it is drawn from a weight must be for
@@ -246,6 +248,7 @@ function registerStandIns(family: string, faces: readonly Face[], variants: read
     registered.add(key);
     noteSkiaFace(family, v.weight, v.style);
     GlobalFonts.register(Buffer.from(copy.buffer, copy.byteOffset, copy.byteLength), family);
+    noteSvgFont(copy);
   }
 }
 

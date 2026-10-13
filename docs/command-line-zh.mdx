@@ -287,7 +287,7 @@ postext build chapters/ --pdf book.pdf --watch
 
 ## 构建方式
 
-命令行是[仓库](https://github.com/drnachio/postext/tree/main/packages/postext-cli)中的`postext-cli`包。[Bun](https://bun.sh)把它连同引擎及其写入器编译成每个系统一个的可执行文件，[Skia](https://skia.org)（通过`@napi-rs/canvas`）测量并绘制文字，就像沙盒中浏览器的canvas那样。每次发布时，这些可执行文件都会被构建出来，在Linux、Alpine、macOS和Windows上运行，并附加到GitHub Release；npm收到`postext-cli`，以及每个可执行文件对应的一个`postext-cli-<system>`包。
+命令行是[仓库](https://github.com/drnachio/postext/tree/main/packages/postext-cli)中的`postext-cli`包。[Bun](https://bun.sh)把它连同引擎及其写入器编译成每个系统一个的可执行文件，[Skia](https://skia.org)（通过`@napi-rs/canvas`）测量并绘制文字，就像沙盒中浏览器的canvas那样。包含位图的SVG图片（以data URI嵌入的PNG或JPEG，`pdftocairo -svg`从PDF裁出的图稿就是这样写的）则由[resvg](https://github.com/linebender/resvg)绘制，因为Skia的SVG渲染器会漏掉这类图像。每次发布时，这些可执行文件都会被构建出来，在Linux、Alpine、macOS和Windows上运行，并附加到GitHub Release；npm收到`postext-cli`，以及每个可执行文件对应的一个`postext-cli-<system>`包。
 
 在仓库的副本中运行它：
 

@@ -5,15 +5,80 @@
 // rasterises again when its width and height are set, so the pictures
 // loaded here are given, before each draw, the size they are drawn at on
 // the device.
+//
+// Skia's SVG renderer draws no `<image>` (#771): a raster given as a data
+// URI, with `href` or `xlink:href`, alone or through `<defs>` and `<use>`
+// (what `pdftocairo -svg` writes for artwork cut from a PDF), came out
+// transparent while the PDF and the Sandbox painted it. An SVG that holds
+// one is rasterised by resvg instead, at each size it is drawn at, with the
+// faces registered with Skia; every other SVG stays with Skia. The image
+// handed to the engine is resvg's raster at the size the SVG declares; a
+// draw at a larger size is given a canvas holding resvg's raster at that
+// size (an `Image` decodes its `src` a tick later, too late for the draw).
 
-import { loadImage, type Canvas, type Image } from '@napi-rs/canvas';
+import { createCanvas, ImageData, loadImage, type Canvas, type Image } from '@napi-rs/canvas';
+import { initWasm, Resvg } from '@resvg/resvg-wasm';
+import { FALLBACK_FAMILY, resvgWasm } from './assets';
 
 const svgImages = new WeakSet<object>();
 /** Past this many pixels on a side the image stays as it is. */
 const SVG_MAX_SIDE = 8192;
 
+/** A raster `<image>` given as a data URI, which Skia leaves out. */
+const RASTER_IMAGE = /<image\b[^>]*?\bhref\s*=\s*["']\s*data:image\//i;
+
+/** Whether Skia would leave part of this SVG out: it holds a raster
+ *  `<image>` given as a data URI. */
+export function holdsRasterImage(svgText: string): boolean {
+  return RASTER_IMAGE.test(svgText);
+}
+
+/** The images resvg rasterises: their SVG, the size the SVG declares, and
+ *  the largest raster drawn so far (`drawn` pixels wide). */
+const resvgImages = new WeakMap<object, { svg: string; width: number; height: number; drawn: number; raster?: Canvas }>();
+let resvgReady: Promise<void> | undefined;
+const svgFonts: Uint8Array[] = [];
+
+/** A face registered with Skia, handed to resvg for the text of the SVGs
+ *  it rasterises. */
+export function noteSvgFont(bytes: Uint8Array): void {
+  svgFonts.push(bytes);
+}
+
+/** `svgText` rendered by resvg, `width` pixels wide (the size the SVG
+ *  declares when none is given). */
+function resvgRender(svgText: string, width?: number) {
+  return new Resvg(svgText, {
+    fitTo: width ? { mode: 'width', value: width } : { mode: 'original' },
+    font: { loadSystemFonts: false, fontBuffers: /<text\b/i.test(svgText) ? svgFonts : [], defaultFontFamily: FALLBACK_FAMILY },
+  }).render();
+}
+
+/** A canvas holding resvg's raster of `svgText`, `width` pixels wide.
+ *  resvg's pixels are premultiplied; `ImageData` is not. */
+function resvgCanvas(svgText: string, width: number): Canvas {
+  const rendered = resvgRender(svgText, width);
+  const pixels = new Uint8ClampedArray(rendered.pixels);
+  for (let i = 0; i < pixels.length; i += 4) {
+    const a = pixels[i + 3]!;
+    if (a === 0 || a === 255) continue;
+    for (let c = i; c < i + 3; c++) pixels[c] = Math.round((pixels[c]! * 255) / a);
+  }
+  const canvas = createCanvas(rendered.width, rendered.height);
+  canvas.getContext('2d').putImageData(new ImageData(pixels, rendered.width, rendered.height), 0, 0);
+  return canvas;
+}
+
 /** Decode an SVG, remembered as one: see {@link sizeSvgImage}. */
 export async function loadSvgImage(svgText: string): Promise<Image> {
+  if (holdsRasterImage(svgText)) {
+    resvgReady ??= initWasm(resvgWasm());
+    await resvgReady;
+    const image = await loadImage(Buffer.from(resvgRender(svgText).asPng()));
+    resvgImages.set(image, { svg: svgText, width: image.width, height: image.height, drawn: image.width });
+    svgImages.add(image);
+    return image;
+  }
   const image = await loadImage(Buffer.from(svgText));
   svgImages.add(image);
   return image;
@@ -23,10 +88,21 @@ export async function loadSvgImage(svgText: string): Promise<Image> {
  *  pixels: Skia rasterises the SVG again at that size. It only ever grows
  *  (a later draw at a smaller size reduces the larger bitmap), keeps the
  *  proportions the SVG declares and stops at {@link SVG_MAX_SIDE}. Any
- *  other image is left alone. */
+ *  other image is left alone. An image resvg rasterises keeps the size the
+ *  SVG declares; the larger raster is what {@link svgSource} draws. */
 export function sizeSvgImage(image: unknown, width: number, height: number): void {
   if (typeof image !== 'object' || image === null || !svgImages.has(image)) return;
   const img = image as Image;
+  const resvg = resvgImages.get(img);
+  if (resvg) {
+    if (!(resvg.width > 0) || !(resvg.height > 0) || !Number.isFinite(width) || !Number.isFinite(height)) return;
+    const k = Math.min(Math.max(width / resvg.width, height / resvg.height), SVG_MAX_SIDE / Math.max(resvg.width, resvg.height));
+    const w = Math.ceil(resvg.width * k);
+    if (w <= resvg.drawn) return;
+    resvg.raster = resvgCanvas(resvg.svg, w);
+    resvg.drawn = w;
+    return;
+  }
   const nw = img.naturalWidth;
   const nh = img.naturalHeight;
   if (!(nw > 0) || !(nh > 0) || !Number.isFinite(width) || !Number.isFinite(height)) return;
@@ -36,6 +112,14 @@ export function sizeSvgImage(image: unknown, width: number, height: number): voi
   if (w <= img.width && h <= img.height) return;
   img.width = Math.max(w, img.width);
   img.height = Math.max(h, img.height);
+}
+
+/** What to draw for `image`: the largest raster resvg made of it, when it
+ *  is an image resvg rasterises and was drawn larger than its SVG says;
+ *  the image itself otherwise. */
+export function svgSource(image: unknown): unknown {
+  if (typeof image !== 'object' || image === null) return image;
+  return resvgImages.get(image)?.raster ?? image;
 }
 
 type Draw = (...args: unknown[]) => void;
@@ -57,6 +141,7 @@ export function drawsSvgAtSize<T extends Canvas>(canvas: T): T {
       if (draw.length === 5) {
         const m = ctx.getTransform();
         sizeSvgImage(draw[0], Math.abs(draw[3] as number) * Math.hypot(m.a, m.b), Math.abs(draw[4] as number) * Math.hypot(m.c, m.d));
+        draw[0] = svgSource(draw[0]);
       }
       drawImage.apply(ctx, draw);
     };

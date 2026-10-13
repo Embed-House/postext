@@ -14,7 +14,7 @@ import type { Book } from '../input';
 import { byteLength, writeOut } from '../io';
 import type { Layout } from '../layout';
 import type { Reporter } from '../log';
-import { loadSvgImage, sizeSvgImage } from '../svgImage';
+import { drawsSvgAtSize, loadSvgImage } from '../svgImage';
 
 const PDFX = { none: 'none', x1a: 'pdfx1a', x4: 'pdfx4', pdfx1a: 'pdfx1a', pdfx4: 'pdfx4' } as const;
 
@@ -22,9 +22,9 @@ const PDFX = { none: 'none', x1a: 'pdfx1a', x4: 'pdfx4', pdfx1a: 'pdfx1a', pdfx4
 async function rasterizeSvg(svgText: string, width: number, height: number): Promise<Uint8Array | null> {
   try {
     const image = await loadSvgImage(svgText);
-    const canvas = createCanvas(Math.max(1, Math.round(width)), Math.max(1, Math.round(height)));
-    // Rasterised at the raster's size, not stretched from the SVG's own (#678).
-    sizeSvgImage(image, canvas.width, canvas.height);
+    // Rasterised at the raster's size, not stretched from the SVG's own
+    // (#678), by resvg when Skia would leave a raster out (#771).
+    const canvas = drawsSvgAtSize(createCanvas(Math.max(1, Math.round(width)), Math.max(1, Math.round(height))));
     canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
     return new Uint8Array(await canvas.encode('png'));
   } catch {

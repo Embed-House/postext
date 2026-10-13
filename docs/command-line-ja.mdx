@@ -287,7 +287,7 @@ postext build chapters/ --pdf book.pdf --watch
 
 ## しくみ
 
-コマンドラインは、[リポジトリ](https://github.com/drnachio/postext/tree/main/packages/postext-cli)の`postext-cli`パッケージです。[Bun](https://bun.sh)がそれをエンジンと書き出し機能とともに、システムごとに1つの実行ファイルにコンパイルします。テキストの計測と描画は、Sandboxでブラウザーのcanvasが行うのと同じように、[Skia](https://skia.org)（`@napi-rs/canvas`経由）が行います。リリースのたびに実行ファイルがビルドされ、Linux、Alpine、macOS、Windowsで実行されてから、GitHub Releaseに添付されます。npmには`postext-cli`と、実行ファイルごとに1つの`postext-cli-<system>`パッケージが公開されます。
+コマンドラインは、[リポジトリ](https://github.com/drnachio/postext/tree/main/packages/postext-cli)の`postext-cli`パッケージです。[Bun](https://bun.sh)がそれをエンジンと書き出し機能とともに、システムごとに1つの実行ファイルにコンパイルします。テキストの計測と描画は、Sandboxでブラウザーのcanvasが行うのと同じように、[Skia](https://skia.org)（`@napi-rs/canvas`経由）が行います。ビットマップを含むSVG画像（data URIとして埋め込まれたPNGやJPEG。PDFから切り出した図版を`pdftocairo -svg`で書き出すとこの形になります）は、SkiaのSVGレンダラーがそうした画像を描かないため、代わりに[resvg](https://github.com/linebender/resvg)が描画します。リリースのたびに実行ファイルがビルドされ、Linux、Alpine、macOS、Windowsで実行されてから、GitHub Releaseに添付されます。npmには`postext-cli`と、実行ファイルごとに1つの`postext-cli-<system>`パッケージが公開されます。
 
 リポジトリのコピーから実行するには次のようにします。
 
