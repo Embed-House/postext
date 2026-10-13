@@ -663,6 +663,7 @@ describe("package exports", () => {
       "openBundle",
       "createBundle",
       "buildBundle",
+      "createBundleLayoutCache",
       "loadBundleFonts",
       "registerBundleImages",
       "bundleImageUrl",
