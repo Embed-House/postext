@@ -186,12 +186,11 @@ function frontmatterErrorMessage(error: unknown): string {
   return typeof line === 'number' && typeof column === 'number' ? `${reason} (${line + 1}:${column + 1})` : reason;
 }
 
-/** gray-matter caches a text before parsing it, so a text whose block
- *  throws is cached half-made: asked again, it comes back unparsed, block
- *  and all, with no error. */
-function forgetFailedParse(markdown: string): void {
-  const cache = (matter as unknown as { cache?: Record<string, unknown> }).cache;
-  if (cache) delete cache[markdown.replace(/^\uFEFF/, '')];
+/** gray-matter runs a block opened with `---js` or `---javascript` as
+ *  code (`eval`). A document is data, never a program: such a block is
+ *  refused, and reported, as one that does not parse. */
+function refuseCode(): never {
+  throw new Error('a JavaScript front-matter block is not run');
 }
 
 /**
@@ -205,9 +204,11 @@ export function extractFrontmatter(markdown: string): ParsedFrontmatter {
   let content: string;
   let error: FrontmatterError | undefined;
   try {
-    ({ data, content } = matter(markdown));
+    // With options gray-matter caches nothing either: a text whose block
+    // throws used to come back from its cache half-made (no error) when
+    // asked again.
+    ({ data, content } = matter(markdown, { engines: { js: refuseCode, javascript: refuseCode } }));
   } catch (e) {
-    forgetFailedParse(markdown);
     const bom = markdown.startsWith('\uFEFF') ? 1 : 0;
     const split = splitFrontmatter(markdown.slice(bom));
     data = {};
