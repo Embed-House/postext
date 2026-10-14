@@ -15,6 +15,7 @@ import {
   registerResourceImage,
   renderPageToCanvas,
   resolvePrintConfig,
+  type Resource,
   type VDTDocument,
   type VDTPage,
 } from 'postext';
@@ -22,7 +23,7 @@ import { diagramInkHex } from 'postext/bundle';
 import { CliError, UsageError, type Options } from '../args';
 import { iccProfile } from '../assets';
 import type { Book } from '../input';
-import { writeOut } from '../io';
+import { sameFiles, writeOut } from '../io';
 import type { Layout } from '../layout';
 import { formatBytes, type Reporter } from '../log';
 import { drawsSvgAtSize, loadSvgImage } from '../svgImage';
@@ -98,25 +99,61 @@ export function formatFromName(path: string | undefined, explicit: string | unde
 
 const EXT: Record<ImageFormat, string> = { png: '.png', jpeg: '.jpg', webp: '.webp' };
 
-let registeredFor: Book | undefined;
+/** The pictures handed to the canvas renderer: the bytes of each file, the
+ *  ink the diagrams were drawn in, and the files decoded so far. A picture
+ *  is decoded the first time a page that shows it is painted (#788):
+ *  decoding them all up front rasterised every SVG of the book with resvg,
+ *  even for a range of a few pages. A rebuild in --watch that changed none
+ *  of them keeps them, and the rasters made of them. */
+let registered: { files: Map<string, Uint8Array>; inkHex: string | null; loaded: Set<string> } | undefined;
 
-/** Decode the book's pictures and hand them to the canvas renderer (once
- *  per book). */
-async function registerImages(book: Book, reporter: Reporter): Promise<void> {
-  if (registeredFor === book) return;
-  clearResourceImages();
-  registeredFor = book;
-  const inkHex = diagramInkHex(book.config);
-  await Promise.all(book.resources.map(async (r) => {
-    const fileId = r.kind === 'svg' ? r.svg?.fileId : r.kind === 'bitmap' ? r.bitmap?.fileId : r.kind === 'video' ? r.video?.poster?.fileId : undefined;
+const pictureFileId = (r: Resource): string | undefined =>
+  r.kind === 'svg' ? r.svg?.fileId : r.kind === 'bitmap' ? r.bitmap?.fileId : r.kind === 'video' ? r.video?.poster?.fileId : undefined;
+
+/** The book's pictures, by file: drop what was decoded when they changed. */
+function currentPictures(book: Book): NonNullable<typeof registered> {
+  const files = new Map<string, Uint8Array>();
+  for (const r of book.resources) {
+    const fileId = pictureFileId(r);
     const bytes = fileId ? book.files.get(fileId) : undefined;
-    if (!fileId || !bytes) return;
+    if (fileId && bytes) files.set(fileId, bytes);
+  }
+  const inkHex = diagramInkHex(book.config);
+  if (registered && registered.inkHex === inkHex && sameFiles(registered.files, files)) return registered;
+  clearResourceImages();
+  registered = { files, inkHex, loaded: new Set() };
+  return registered;
+}
+
+/** Decode and hand to the canvas renderer the pictures `p` may draw: the
+ *  ones whose file id its page or its document's configuration names (a
+ *  figure, a cell's picture, a callout's icon, a design element), the rest
+ *  of the book's pictures left for the pages that show them. */
+async function registerImages(book: Book, p: BookPage, reporter: Reporter): Promise<void> {
+  const pictures = currentPictures(book);
+  if (pictures.loaded.size === pictures.files.size) return;
+  let text: string | undefined;
+  try {
+    text = `${JSON.stringify(p.page)}\u0000${JSON.stringify(p.doc.config)}`;
+  } catch {
+    // A page that cannot be written out: every picture, as before.
+  }
+  const wanted = book.resources.filter((r) => {
+    const fileId = pictureFileId(r);
+    if (fileId === undefined || !pictures.files.has(fileId) || pictures.loaded.has(fileId)) return false;
+    return text === undefined || text.includes(fileId) || text.includes(r.id);
+  });
+  await Promise.all(wanted.map(async (r) => {
+    const fileId = pictureFileId(r)!;
+    if (pictures.loaded.has(fileId)) return;
+    pictures.loaded.add(fileId);
+    const bytes = pictures.files.get(fileId)!;
     try {
       if (r.kind === 'svg') {
-        let text = new TextDecoder().decode(bytes);
-        if (inkHex) text = applySingleInkToSvg(text, inkHex);
+        let svg = new TextDecoder().decode(bytes);
+        if (pictures.inkHex) svg = applySingleInkToSvg(svg, pictures.inkHex);
         // Loaded as an SVG: Skia rasterises it at each size it is drawn at (#678).
-        registerResourceImage(fileId, await loadSvgImage(text) as unknown as CanvasImageSource, { vector: true, singleInk: false });
+        registerResourceImage(fileId, await loadSvgImage(svg) as unknown as CanvasImageSource, { vector: true, singleInk: false });
       } else {
         registerResourceImage(fileId, await loadImage(Buffer.from(bytes)) as unknown as CanvasImageSource, { singleInk: false });
       }
@@ -156,7 +193,7 @@ function printPreviewFor(book: Book, doc: VDTDocument) {
 }
 
 export async function paintPage(book: Book, p: BookPage, options: PaintOptions, reporter: Reporter): Promise<Canvas> {
-  await registerImages(book, reporter);
+  await registerImages(book, p, reporter);
   // A picture too large for the engine's cache is drawn on the page itself.
   const canvas = drawsSvgAtSize(createCanvas(1, 1));
   renderPageToCanvas(p.page, p.doc, canvas as unknown as HTMLCanvasElement, {
@@ -184,7 +221,8 @@ export function pageFileName(pattern: string, p: BookPage, format: ImageFormat):
 
 /** Paint `pages` into `dir`: pages are painted one after another (the
  *  painter shares its caches) while up to `jobs` encodes run on Skia's
- *  thread pool. */
+ *  thread pool. With `repaint`, only the pages it picks are painted (a
+ *  rebuild in --watch: the others are already in `dir` as they are). */
 export async function writeImages(
   book: Book,
   layout: Layout,
@@ -192,10 +230,12 @@ export async function writeImages(
   reporter: Reporter,
   dir: string,
   spec: string | undefined,
+  repaint?: (page: BookPage) => boolean,
 ): Promise<void> {
   const options = paintOptions(opts);
-  const pages = selectPages(bookPages(layout), spec);
-  if (pages.length === 0) throw new CliError(`No page matches "${spec}"`);
+  const selected = selectPages(bookPages(layout), spec);
+  if (selected.length === 0) throw new CliError(`No page matches "${spec}"`);
+  const pages = repaint ? selected.filter(repaint) : selected;
   const pattern = opts.string('pattern', 'page-{n:03}');
   const jobs = Math.max(1, opts.number('jobs', availableParallelism()));
   const running = new Set<Promise<void>>();
@@ -216,6 +256,7 @@ export async function writeImages(
     }
     await Promise.all(running);
   });
-  reporter.info(`wrote ${pages.length} ${options.format.toUpperCase()} images to ${dir} (${formatBytes(total)})`);
+  const kept = selected.length - pages.length;
+  reporter.info(`wrote ${pages.length} ${options.format.toUpperCase()} images to ${dir} (${formatBytes(total)})${kept > 0 ? `, ${kept} unchanged` : ''}`);
 }
 

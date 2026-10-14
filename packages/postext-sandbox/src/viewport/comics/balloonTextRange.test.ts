@@ -90,6 +90,7 @@ describe('the rects of a selection in a balloon\'s words (#796)', () => {
 
   it('skips a block whose words do not map back to the script', () => {
     const { sourceMap: _dropped, ...unmapped } = horizontal;
+    void _dropped;
     expect(balloonTextRangeRects(balloonOf([unmapped]), 10, 20, opts)).toEqual([]);
   });
 

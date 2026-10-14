@@ -3,21 +3,21 @@
   "slug": "outbreak-report-bulletin",
   "sourceHash": "6c023e9ac30de3d26f462a4f2d3725e722eff4e68bfea53518daa60850aec260",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.32.0",
+    "postextPdf": "1.32.0",
     "source": "npm"
   },
   "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.944Z",
+  "capturedAt": "2026-10-13T22:44:15.530Z",
   "variants": {
     "en": {
-      "hash8": "ef160801",
-      "vdtHash": "abf87faa6cf04af11985485fa527cff7a72c234f",
+      "hash8": "2bec385d",
+      "vdtHash": "4765a064c79d1bfe8c38ee93c73aeef4b143fc19",
       "timings": {
-        "importMs": 1044,
-        "fontsMs": 158,
-        "buildMs": 365,
-        "totalMs": 2392,
+        "importMs": 53775,
+        "fontsMs": 61,
+        "buildMs": 204,
+        "totalMs": 54662,
         "builds": 1
       },
       "specimen": {
@@ -73,7 +73,7 @@
           "h": 1294,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 174458,
+          "bytes": 174520,
           "alt": "Page 3: REFERENCES. Table 1. Presenting complaints in 20 patients with Kaposi’s sarcoma."
         },
         {
@@ -142,7 +142,7 @@
       },
       "pdf": {
         "file": "outbreak-report-bulletin.pdf",
-        "bytes": 189156,
+        "bytes": 189445,
         "pages": 6
       },
       "sandbox": {
@@ -152,8 +152,8 @@
         "chapters": [
           {
             "pages": 6,
-            "hash": "006cacd7385da283",
-            "lines": "38884e387a349d1e"
+            "hash": "a1c0ab296027430b",
+            "lines": "46417c128295285c"
           }
         ]
       },
@@ -454,6 +454,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 54.7 s to finish (warning at 30 s)"
           },
           {
             "check": "vdt",

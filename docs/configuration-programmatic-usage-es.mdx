@@ -435,6 +435,24 @@ clearMeasurementCache();              // todas las familias
 
 Para aplicaciones que miden el texto pieza a pieza, `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` y `cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` reciben los argumentos de `measureBlock` y `measureRichBlock` más la caché, al final.
 
+### El separador de líneas (WebAssembly)
+
+Los párrafos se dividen en líneas con Knuth–Plass. Desde postext 1.33 el motor lo ejecuta en un separador de líneas escrito en Rust y compilado a WebAssembly (30 KB, dentro del paquete). Elige los mismos cortes que el separador en TypeScript, con la misma aritmética en el mismo orden, y un libro entero se maqueta alrededor de un 15 % más rápido. No hay nada que configurar:
+
+- En un worker, en Node y en Bun, el módulo se compila en el primer párrafo.
+- En el hilo principal de una página, donde el navegador solo compila un módulo de este tamaño de forma asíncrona, se compila en segundo plano y hasta entonces responde el separador en TypeScript. `await initLineBreaker()` antes de la primera maquetación lo pone a trabajar desde el primer párrafo; devuelve `false` donde no hay WebAssembly.
+- Donde falta WebAssembly, o una política de seguridad de contenido lo rechaza (`script-src` sin `'wasm-unsafe-eval'`), el separador en TypeScript responde en todos los párrafos.
+
+Los dos eligen los mismos cortes, así que cuál responda nunca cambia una maquetación. `useWasmLineBreaker(false)` mantiene el separador en TypeScript, para comparar los dos.
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // opcional: la primera maquetación ya lo usa
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### Estado global compartido en una página
 
 Parte del estado de Postext vive en variables de módulo. Todo lo que importa `postext` en el mismo contexto de JavaScript (*realm*) lo comparte: una página y sus scripts comparten una copia, mientras que cada iframe y cada worker tienen la suya. Con un documento por página no se nota. Con varios documentos en la misma página —dos vistas previas en vivo, una galería de ejemplos— sí:
@@ -444,6 +462,7 @@ Parte del estado de Postext vive en variables de módulo. Todo lo que importa `p
 - **Configuraciones resueltas.** Cada objeto de configuración se resuelve una vez y el resultado queda en caché asociado a ese objeto. Antes de nada, cada build compara el objeto con el texto que tenía cuando se resolvió (un `JSON.stringify`, unos 0,1 ms para una configuración de libro de 55 KB y 1,5 ms para una de 240 KB), así que una configuración modificada en el sitio, a cualquier profundidad (`config.bodyText.fontSize = …`, un color de la paleta), se vuelve a resolver. `invalidateConfig(config)` descarta la resolución a mano. `stableStringify` y `hashString` dan una clave de contenido que no depende del orden de las claves, para los anfitriones que guardan composiciones en caché por configuración.
 - **Idioma de la separación silábica.** Cada build fija el idioma de separación silábica de todo el proceso al `bodyText.hyphenation.locale` de su documento. Las funciones exportadas `hyphenateText(text)` y `layoutDesignSlot` usan el idioma del último build salvo que les pases uno: llama a `hyphenateText(text, 'es')`.
 - **Motor de fórmulas.** Hay un único motor MathJax y una única caché de fórmulas renderizadas por contexto; `initMathEngine()` lo arranca para todos.
+- **Separador de líneas.** Hay un único separador de líneas WebAssembly por contexto, compilado una vez; `useWasmLineBreaker(false)` lo desactiva para todos.
 
 El aislamiento más sencillo es un contexto por documento: un iframe por ejemplo en vivo (una inserción de CodePen lo es), o un [worker de composición](#ejecutar-la-composición-en-un-web-worker) por documento para las medidas y la separación silábica (las imágenes se siguen registrando en la página).
 
