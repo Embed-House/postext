@@ -22454,7 +22454,52 @@
  "localized": {
   "en": {
    "config": {
-    "locale": "en",
+    "locale": "en-us",
+    "bodyText": {
+     "fontFamily": "Adobe Garamond Pro 110",
+     "fontSize": {
+      "value": 10,
+      "unit": "pt"
+     },
+     "lineHeight": {
+      "value": 12,
+      "unit": "pt"
+     },
+     "boldFontWeight": 600,
+     "textAlign": "justify",
+     "firstLineIndent": {
+      "value": 4,
+      "unit": "mm"
+     },
+     "indentAfterHeading": false,
+     "paragraphSpacing": false,
+     "color": {
+      "hex": "#231f20",
+      "model": "hex",
+      "paletteId": "text"
+     },
+     "boldColor": {
+      "hex": "#231f20",
+      "model": "hex",
+      "paletteId": "text"
+     },
+     "italicColor": {
+      "hex": "#231f20",
+      "model": "hex",
+      "paletteId": "text"
+     },
+     "referenceColor": {
+      "hex": "#f36f21",
+      "model": "hex",
+      "paletteId": "accent"
+     },
+     "referenceBold": true,
+     "referenceItalic": false,
+     "hyphenation": {
+      "enabled": true,
+      "locale": "en-us"
+     }
+    },
     "colorPalette": [
      {
       "id": "band",

@@ -197,7 +197,11 @@ def build_chapters(manifest: dict) -> dict[str, list[dict]]:
 def localized_config(config: dict, strings: dict) -> dict:
     """The configuration keys whose wording is Spanish, in English."""
     words = strings.get("config", {})
-    out: dict = {"locale": "en"}
+    # The edition's language and its hyphenation rules: an explicit
+    # hyphenation locale wins over `locale`, so the Spanish one is
+    # overridden too (keys merge whole, hence the full `bodyText`).
+    out: dict = {"locale": "en-us"}
+    out["bodyText"] = {**config["bodyText"], "hyphenation": {**config["bodyText"]["hyphenation"], "locale": "en-us"}}
 
     palette = words.get("colorPalette", {})
     out["colorPalette"] = [{**c, "name": palette.get(c["id"], c["name"])} for c in config["colorPalette"]]
