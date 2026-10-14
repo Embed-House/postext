@@ -14,7 +14,7 @@ import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, ve
 import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
 import { getBlob } from '../storage/blobStore';
 import { usePrintSetup } from '../print/printSetup';
-import { viewerPreview } from '../print/viewerPreview';
+import { printsGrayscale, viewerPreview } from '../print/viewerPreview';
 import { usePrintPreview } from '../print/printPreviewToggle';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
 import { onLateFonts } from '../worker/LayoutService';
@@ -485,12 +485,14 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   // instead of tinting the proofed paper a second time.
   const [printPreviewOn] = usePrintPreview();
   const printSetup = usePrintSetup(deferredConfig.print, printPreviewOn);
-  const printPreviewKey = printPreviewOn && printSetup.transform ? JSON.stringify(printSetup.print) : 'off';
+  // A PDF forced to grayscale prints in black alone (#800).
+  const printGray = printsGrayscale(deferredConfig.pdfGeneration, printSetup);
+  const printPreviewKey = printPreviewOn && printSetup.transform ? `${printGray}|${JSON.stringify(printSetup.print)}` : 'off';
   const resourcesRef = useRef(deferredResources);
   resourcesRef.current = deferredResources;
   const printPreview = useMemo(
     () => (printPreviewOn
-      ? viewerPreview(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, deferredConfig.print, () => resourcesRef.current, () => viewerDocRef.current?.doc ?? null)
+      ? viewerPreview(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, deferredConfig.print, () => resourcesRef.current, () => viewerDocRef.current?.doc ?? null, printGray)
       : undefined),
     // The key names the setup; the object is new on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps

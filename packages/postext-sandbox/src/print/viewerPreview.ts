@@ -5,9 +5,17 @@
  * show the same proof (#799).
  */
 
-import { dimensionToPx, preflightDocument, type BoundingBox, type PrintConfig, type PrintPreview, type Resource, type VDTDocument } from 'postext';
+import { dimensionToPx, preflightDocument, type BoundingBox, type PdfGenerationConfig, type PrintConfig, type PrintPreview, type Resource, type VDTDocument } from 'postext';
 import { preflightInputs } from './preflightInputs';
 import { previewFor, type PrintSetup } from './printSetup';
+
+/**
+ * Whether the PDF prints in grays (#800): forced to DeviceGray, and not a
+ * PDF/X file (which is written in CMYK whatever the colour space says).
+ */
+export function printsGrayscale(pdf: PdfGenerationConfig | undefined, setup: PrintSetup): boolean {
+  return pdf?.forceColorSpace === true && pdf.colorSpace === 'grayscale' && setup.print.standard === 'none';
+}
 
 /**
  * The preview of a loaded setup, or undefined while its profile loads.
@@ -21,8 +29,10 @@ export function viewerPreview(
   raw: PrintConfig | undefined,
   resourcesOf: () => Resource[],
   docOf: () => VDTDocument | null,
+  /** Proof the pages as a grayscale print ({@link printsGrayscale}). */
+  grayscale = false,
 ): PrintPreview | undefined {
-  const base = previewFor(setup, dpi, true);
+  const base = previewFor(setup, dpi, true, grayscale);
   if (!base || !setup.transform) return undefined;
   const transform = setup.transform;
   const marks = new WeakMap<VDTDocument, Map<number, BoundingBox[]>>();

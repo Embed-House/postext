@@ -923,7 +923,7 @@
     "pdfForceColorSpace": "فرض فضاء الألوان",
     "pdfForceColorSpaceTooltip": "حوّل كل لون في ملف PDF المُنتَج إلى فضاء الألوان المحدّد",
     "pdfColorSpace": "فضاء الألوان",
-    "pdfColorSpaceTooltip": "فضاء الألوان المستخدم لكل لون يُكتب في PDF. يُفصَل CMYK بملف تعريف الإخراج المختار في «التجهيز للطباعة»، ومعيار PDF/X المختار هناك يكتب CMYK دائمًا.",
+    "pdfColorSpaceTooltip": "فضاء الألوان المستخدم لكل لون وصورة يُكتبان في PDF. يُفصَل CMYK بملف تعريف الإخراج المختار في «التجهيز للطباعة»، ومعيار PDF/X المختار هناك يكتب CMYK دائمًا.",
     "printCustomRegistryName": "ظروف الطباعة",
     "printCustomRegistryNameTooltip": "ظروف الطباعة التي يصفها الملف المرفوع، باسمها في سجل ICC ‏(FOGRA51، FOGRA52، CGATS TR 006…). يكتبها PDF/X في نية الإخراج؛ اتركه فارغًا لملف خاص بآلتك (Custom).",
     "printProfileRemove": "إزالة الملف المرفوع",

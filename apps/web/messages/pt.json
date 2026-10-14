@@ -923,7 +923,7 @@
     "pdfForceColorSpace": "Forçar espaço de cor",
     "pdfForceColorSpaceTooltip": "Converter todas as cores do PDF gerado para o espaço de cor selecionado",
     "pdfColorSpace": "Espaço de cor",
-    "pdfColorSpaceTooltip": "Espaço de cor de destino usado em todas as cores gravadas no PDF. O CMYK é separado com o perfil de saída escolhido em Preparação para impressão, e um padrão PDF/X escolhido lá sempre grava CMYK.",
+    "pdfColorSpaceTooltip": "Espaço de cor de destino usado em todas as cores e imagens gravadas no PDF. O CMYK é separado com o perfil de saída escolhido em Preparação para impressão, e um padrão PDF/X escolhido lá sempre grava CMYK.",
     "printPreview": "Simular impressão",
     "printPreviewLoading": "Carregando o perfil de saída…",
     "printSection": "Preparação para impressão",

@@ -2,7 +2,8 @@
  * Soft proofing (#606): how a page will print, painted on screen. The
  * canvas renderer paints the page as usual, then every pixel goes through
  * a proof lookup — sRGB separated through the output profile (K-only
- * neutrals, as the PDF sets them) and the separation shown back on screen,
+ * neutrals, as the PDF sets them; black alone in a grayscale print, #800)
+ * and the separation shown back on screen,
  * on the paper's own white when paper is simulated. Black areas large
  * enough for the PDF's rich black (a square of `richBlackMinSize` fits in
  * them) show as rich black.
@@ -34,20 +35,26 @@ export interface PrintPreviewOptions {
   paper: boolean;
   /** Page px per inch, for the rich-black minimum size. */
   dpi: number;
+  /** Proof a grayscale print (#800): a PDF forced to DeviceGray, whose
+   *  grays print in black ink alone (the luma of each colour, as the PDF
+   *  sets it, as K), without rich black. */
+  grayscale?: boolean;
 }
 
 const previewCache = new WeakMap<OutputTransform, Map<string, PrintPreview>>();
 
 /** The proof of a print setup (memoized per transform and options). */
 export function createPrintPreview(transform: OutputTransform, print: ResolvedPrintConfig, options: PrintPreviewOptions): PrintPreview {
-  const key = `${options.paper}|${options.dpi}|${print.black.richBlack}|${JSON.stringify(print.black.richBlackColor)}|${JSON.stringify(print.black.richBlackMinSize)}`;
+  const key = `${options.paper}|${options.dpi}|${options.grayscale === true}|${print.black.richBlack}|${JSON.stringify(print.black.richBlackColor)}|${JSON.stringify(print.black.richBlackMinSize)}`;
   let perTransform = previewCache.get(transform);
   if (!perTransform) previewCache.set(transform, (perTransform = new Map()));
   const hit = perTransform.get(key);
   if (hit) return hit;
-  const lut = buildRgbLut(17, 3, (r, g, b) => transform.proof(transform.fromRgb(r, g, b), options.paper));
+  const lut = options.grayscale
+    ? buildRgbLut(17, 3, (r, g, b) => transform.proof({ c: 0, m: 0, y: 0, k: 1 - (0.299 * r + 0.587 * g + 0.114 * b) }, options.paper))
+    : buildRgbLut(17, 3, (r, g, b) => transform.proof(transform.fromRgb(r, g, b), options.paper));
   const preview: PrintPreview = { lut };
-  if (print.black.richBlack) {
+  if (print.black.richBlack && !options.grayscale) {
     const rb = print.black.richBlackColor;
     const [r, g, b] = transform.proof({ c: rb.c / 100, m: rb.m / 100, y: rb.y / 100, k: rb.k / 100 }, options.paper);
     preview.richBlack = { rgb: [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)], minSidePx: dimensionToPx(print.black.richBlackMinSize, options.dpi) };
