@@ -606,16 +606,48 @@ function withoutComments(markup: string): string {
   }
 }
 
+const isNameChar = (c: string | undefined): boolean => c !== undefined && /[\w:-]/.test(c);
+
+/** The quoted attributes of a tag's inside, by name: what a global
+ *  `/([\w:-]+)\s*=\s*("([^"]*)"|'([^']*)')/` finds, read in one pass. A
+ *  name is only tried from the start of its run (a shorter one inside it
+ *  fails the same way), so a long run of name characters with no `=`
+ *  costs one step per character. */
+function svgAttributes(inside: string): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  let i = 0;
+  while (i < inside.length) {
+    if (!isNameChar(inside[i]) || isNameChar(inside[i - 1])) {
+      i++;
+      continue;
+    }
+    let j = i;
+    while (isNameChar(inside[j])) j++;
+    let k = j;
+    while (k < inside.length && /\s/.test(inside[k]!)) k++;
+    if (inside[k] === '=') {
+      k++;
+      while (k < inside.length && /\s/.test(inside[k]!)) k++;
+      const quote = inside[k];
+      const close = quote === '"' || quote === "'" ? inside.indexOf(quote, k + 1) : -1;
+      if (close >= 0) {
+        attrs[inside.slice(i, j)] = inside.slice(k + 1, close);
+        i = close + 1;
+        continue;
+      }
+    }
+    i = j;
+  }
+  return attrs;
+}
+
 /** An SVG's intrinsic pixel size from its root element: explicit
  *  `width`/`height`, else the `viewBox` extent; undefined when neither
  *  gives one. Reads the markup textually, so it runs anywhere. */
 export function svgSize(markup: string): BundleImageSize | undefined {
   const tag = /<svg\b([^>]*)>/i.exec(withoutComments(markup));
   if (!tag) return undefined;
-  const attrs: Record<string, string> = {};
-  for (const m of tag[1]!.matchAll(/([\w:-]+)\s*=\s*("([^"]*)"|'([^']*)')/g)) {
-    attrs[m[1]!] = m[3] ?? m[4] ?? '';
-  }
+  const attrs = svgAttributes(tag[1]!);
   const w = parseSvgLength(attrs.width);
   const h = parseSvgLength(attrs.height);
   if (w && h) return { width: w, height: h };
