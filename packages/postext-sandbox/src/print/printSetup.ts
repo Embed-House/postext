@@ -117,8 +117,8 @@ export function usePrintSetup(raw: PrintConfig | undefined, enabled = true): Pri
   };
 }
 
-/** The proof a viewer paints with: paper simulated in Canvas, not in
- *  Folio (whose paper shade tints the pages). */
+/** The soft proof of a loaded setup, on the paper's white (`paper`) or
+ *  relative to it; `viewerPreview` adds the guides and the marks. */
 export function previewFor(setup: PrintSetup, dpi: number, paper: boolean): PrintPreview | undefined {
   if (!setup.transform) return undefined;
   return createPrintPreview(setup.transform, setup.print, { paper, dpi });

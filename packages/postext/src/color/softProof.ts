@@ -28,8 +28,9 @@ export interface PrintPreview {
 }
 
 export interface PrintPreviewOptions {
-  /** Simulate the paper's white (absolute colorimetric): the Canvas
-   *  proof. Off for Folio, whose paper shade tints the page already. */
+  /** Simulate the paper's white (absolute colorimetric), as the
+   *  Sandbox's Canvas and Folio proofs do. Off: relative to the paper,
+   *  white stays white (a host that tints the page itself). */
   paper: boolean;
   /** Page px per inch, for the rich-black minimum size. */
   dpi: number;

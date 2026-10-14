@@ -14,8 +14,9 @@ export interface FolioDocumentOptions extends Omit<FolioOptions, "pages" | "firs
   /** Passed to `renderPageToCanvas` (see its `RenderPageOptions`). */
   singleInk?: boolean;
   pageNegative?: boolean;
-  /** The print preview (soft proof) of the pages (`createPrintPreview`
-   *  with `paper: false`: the paper shade of the book tints them). */
+  /** The print preview (soft proof) of the pages (`createPrintPreview`).
+   *  With `paper: true` the proof brings the paper's white: give the book
+   *  a neutral paper shade meanwhile, or it tints that paper again. */
   printPreview?: PrintPreview;
   /** A page's text alternative. Default `Page n`. */
   alt?: (index: number) => string;
