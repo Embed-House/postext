@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useRef, useState, useEffect, useLayoutEffect, useCallback, type ReactNode, type RefObject } from 'react';
 import { BookOpen, FileText, LayoutTemplate, TextWrap } from 'lucide-react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
 import type { LayoutScope } from '../book/types';
@@ -73,46 +73,97 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
     return () => observer.disconnect();
   }, [updateIndicator]);
 
+  // The labelled scope (or rendition) switch keeps its full width, so in a
+  // narrow preview pane it would run over the tabs: there it shows as the
+  // phone bar's icons, and where even those do not fit, the switch and the
+  // tabs take thinner margins. Hidden copies of both forms give their
+  // widths, compared with the bar less the tabs at their usual margins
+  // (kept while the margins are thin, so the choice cannot flip back and
+  // forth); the copies follow the locale and large targets.
+  const slotRef = useRef<HTMLDivElement>(null);
+  const labelsRef = useRef<HTMLDivElement>(null);
+  const iconsRef = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState<'labels' | 'icons' | 'tight'>('labels');
+  const fitRef = useRef(fit);
+  fitRef.current = fit;
+  const tabsWidthRef = useRef(0);
+  const useIcons = compact || fit !== 'labels';
+  const tight = !compact && fit === 'tight';
+  useLayoutEffect(() => {
+    const slot = slotRef.current;
+    const tabs = containerRef.current;
+    if (compact || !slot || !tabs) return;
+    const measure = () => {
+      const labelled = labelsRef.current?.offsetWidth;
+      const icons = iconsRef.current?.offsetWidth;
+      if (labelled === undefined || icons === undefined) return;
+      if (fitRef.current !== 'tight') tabsWidthRef.current = tabs.offsetWidth;
+      // The slot's usual margin (px-3) at both ends.
+      const room = (slot.parentElement?.clientWidth ?? 0) - tabsWidthRef.current - 24;
+      setFit(labelled <= room ? 'labels' : icons <= room ? 'icons' : 'tight');
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(slot);
+    observer.observe(tabs);
+    if (labelsRef.current) observer.observe(labelsRef.current);
+    if (iconsRef.current) observer.observe(iconsRef.current);
+    return () => observer.disconnect();
+  }, [compact, activeViewport, multiChapter]);
+
+  const scopeControl = (icons: boolean, measureRef?: RefObject<HTMLDivElement | null>) => {
+    const control = activeViewport === 'epub' ? (
+      <SegmentedControl<EpubLayout>
+        value={epubLayout}
+        onValueChange={(next) => dispatch({ type: 'SET_EPUB_LAYOUT', payload: next })}
+        ariaLabel={labels.epubLayout}
+        size="sm"
+        options={icons
+          ? [
+              { value: 'fixed', label: <LayoutTemplate size={13} aria-hidden="true" />, title: labels.epubLayoutFixed },
+              { value: 'reflowable', label: <TextWrap size={13} aria-hidden="true" />, title: labels.epubLayoutReflowable },
+            ]
+          : [
+              { value: 'fixed', label: labels.epubLayoutFixed, title: labels.epubLayoutFixedHint },
+              { value: 'reflowable', label: labels.epubLayoutReflowable, title: labels.epubLayoutReflowableHint },
+            ]}
+      />
+    ) : multiChapter ? (
+      <SegmentedControl<LayoutScope>
+        value={activeViewport === 'pdf' ? pdfScope : canvasScope}
+        onValueChange={(next) => dispatch({ type: activeViewport === 'pdf' ? 'SET_PDF_SCOPE' : 'SET_CANVAS_SCOPE', payload: next })}
+        ariaLabel={activeViewport === 'pdf' ? labels.pdfScope : labels.canvasScope}
+        size="sm"
+        options={icons
+          ? [
+              { value: 'chapter', label: <FileText size={13} aria-hidden="true" />, title: labels.pdfScopeChapter },
+              { value: 'book', label: <BookOpen size={13} aria-hidden="true" />, title: bookScopeTitle ?? labels.pdfScopeBook, disabled: bookScopeBlocked },
+            ]
+          : [
+              { value: 'chapter', label: labels.pdfScopeChapter },
+              { value: 'book', label: labels.pdfScopeBook, ...(bookScopeTitle ? { title: bookScopeTitle } : {}), disabled: bookScopeBlocked },
+            ]}
+      />
+    ) : null;
+    if (!measureRef || !control) return control;
+    return (
+      <div ref={measureRef} aria-hidden="true" className="pointer-events-none invisible absolute start-0 top-0 flex w-max">
+        {control}
+      </div>
+    );
+  };
+
   return (
     <div
       className={cn('flex shrink-0 items-stretch justify-between', compact ? 'flex-wrap' : 'h-9 pt-large:min-h-12')}
       style={{ borderBottom: '1px solid var(--rule)', backgroundColor: 'var(--background)' }}
     >
       {leading && <div className={cn('flex shrink-0 items-center border-e px-1 pt-large:px-0', compact && 'h-11 pt-large:min-h-12')} style={{ borderColor: 'var(--rule)' }}>{leading}</div>}
-      <div className={cn('flex min-w-0 flex-1 items-center', compact ? 'h-11 px-1.5 pt-large:min-h-12' : 'px-3')}>
-        {activeViewport === 'epub' ? (
-          <SegmentedControl<EpubLayout>
-            value={epubLayout}
-            onValueChange={(next) => dispatch({ type: 'SET_EPUB_LAYOUT', payload: next })}
-            ariaLabel={labels.epubLayout}
-            size="sm"
-            options={compact
-              ? [
-                  { value: 'fixed', label: <LayoutTemplate size={13} aria-hidden="true" />, title: labels.epubLayoutFixed },
-                  { value: 'reflowable', label: <TextWrap size={13} aria-hidden="true" />, title: labels.epubLayoutReflowable },
-                ]
-              : [
-                  { value: 'fixed', label: labels.epubLayoutFixed, title: labels.epubLayoutFixedHint },
-                  { value: 'reflowable', label: labels.epubLayoutReflowable, title: labels.epubLayoutReflowableHint },
-                ]}
-          />
-        ) : multiChapter && (
-          <SegmentedControl<LayoutScope>
-            value={activeViewport === 'pdf' ? pdfScope : canvasScope}
-            onValueChange={(next) => dispatch({ type: activeViewport === 'pdf' ? 'SET_PDF_SCOPE' : 'SET_CANVAS_SCOPE', payload: next })}
-            ariaLabel={activeViewport === 'pdf' ? labels.pdfScope : labels.canvasScope}
-            size="sm"
-            options={compact
-              ? [
-                  { value: 'chapter', label: <FileText size={13} aria-hidden="true" />, title: labels.pdfScopeChapter },
-                  { value: 'book', label: <BookOpen size={13} aria-hidden="true" />, title: bookScopeTitle ?? labels.pdfScopeBook, disabled: bookScopeBlocked },
-                ]
-              : [
-                  { value: 'chapter', label: labels.pdfScopeChapter },
-                  { value: 'book', label: labels.pdfScopeBook, ...(bookScopeTitle ? { title: bookScopeTitle } : {}), disabled: bookScopeBlocked },
-                ]}
-          />
-        )}
+      <div ref={slotRef} className={cn('relative flex min-w-0 flex-1 items-center overflow-hidden', compact ? 'h-11 px-1.5 pt-large:min-h-12' : tight ? 'px-1' : 'px-3')}>
+        {scopeControl(useIcons)}
+        {/* Both forms of the switch, unseen, to learn which one fits. */}
+        {!compact && scopeControl(false, labelsRef)}
+        {!compact && scopeControl(true, iconsRef)}
       </div>
       <div
         ref={containerRef}
@@ -154,7 +205,7 @@ export function ViewportTabs({ compact = false, leading, trailing }: { compact?:
                 'flex pt-large:min-w-11 cursor-pointer items-center justify-center text-[0.68rem]',
                 // On the second row of a phone bar the tabs share its width
                 // (the first one without a rule at the window's edge).
-                compact ? 'flex-1 px-1 first:border-s-0! min-[640px]:px-2 min-[640px]:flex-none min-[640px]:first:border-s!' : 'px-3',
+                compact ? 'flex-1 px-1 first:border-s-0! min-[640px]:px-2 min-[640px]:flex-none min-[640px]:first:border-s!' : tight ? 'px-2' : 'px-3',
                 ' font-medium tracking-[0.01em] transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 outline-(--brand)',
                 isActive ? 'text-(--foreground)' : 'text-(--slate) hover:text-(--foreground)',
               )}
