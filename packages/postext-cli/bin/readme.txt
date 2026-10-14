@@ -3,8 +3,8 @@ postext command line 1.33.1
 
 One self-contained executable per system: no installation, no runtime and
 no libraries. The postext engine, the PDF, EPUB, HTML and Word writers,
-the page painter (Skia), the default fonts (EB Garamond, Open Sans) and the
-print colour profiles are all inside.
+the page painter (Skia), the SVG rasteriser (resvg), the default fonts
+(EB Garamond, Open Sans) and the print colour profiles are all inside.
 
 Executables (115 to 140 MB each)
 --------------------------------

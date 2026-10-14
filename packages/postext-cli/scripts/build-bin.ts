@@ -1,15 +1,16 @@
 // Build the self-contained executables: one per platform, each with the Bun
-// runtime, the engine, Skia (@napi-rs/canvas), HarfBuzz, the ICC profiles
-// and the default fonts inside. Cross-compiles from any machine.
+// runtime, the engine, Skia (@napi-rs/canvas), resvg (@resvg/resvg-js),
+// HarfBuzz, the ICC profiles and the default fonts inside. Cross-compiles
+// from any machine.
 //
 //   bun scripts/build-bin.ts                 every target
 //   bun scripts/build-bin.ts macos-arm64     some targets (by name)
 //   bun scripts/build-bin.ts --current       this machine's target only
 //
-// Skia's native addon differs per platform: its package for each target is
-// fetched from the npm registry (cached in node_modules/.cache) and the
-// addon's loader is swapped for a static require of that file, which
-// `bun build --compile` embeds.
+// Skia's and resvg's native addons differ per platform: the package of each
+// for each target is fetched from the npm registry (cached in
+// node_modules/.cache) and the addon's loader is swapped for a static
+// require of that file, which `bun build --compile` embeds.
 
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -20,13 +21,14 @@ const ROOT = resolve(import.meta.dir, '..');
 const BIN = join(ROOT, 'bin');
 const CACHE = join(ROOT, 'node_modules', '.cache', 'postext-cli');
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as { version: string };
-const napiPkg = JSON.parse(readFileSync(join(ROOT, 'node_modules', '@napi-rs', 'canvas', 'package.json'), 'utf8')) as { version: string };
+const versionOf = (pkgName: string) => (JSON.parse(readFileSync(join(ROOT, 'node_modules', pkgName, 'package.json'), 'utf8')) as { version: string }).version;
 
 export interface Target {
   /** Name in the file and on the command line. */
   name: string;
   bun: string;
-  /** Suffix of the @napi-rs/canvas platform package. */
+  /** Suffix of the platform packages of @napi-rs/canvas and
+   *  @resvg/resvg-js (the same napi-rs platform names). */
   napi: string;
   os: 'macos' | 'linux' | 'windows';
   label: string;
@@ -52,16 +54,56 @@ function currentTarget(): Target {
   return t;
 }
 
-/** The Skia addon of a platform: from node_modules when installed, else
- *  from the npm registry. */
-async function napiAddon(t: Target): Promise<string> {
-  const file = `skia.${t.napi}.node`;
-  const installed = join(ROOT, 'node_modules', '@napi-rs', `canvas-${t.napi}`, file);
+/** A native addon embedded in the executables: the package whose loader it
+ *  replaces, the platform package it comes from, and the cache name it is
+ *  copied under. */
+interface Addon {
+  /** The package's loader, swapped for one that loads the embedded file. */
+  loader: RegExp;
+  /** The virtual module the swapped loader imports the file from. */
+  module: string;
+  /** The platform package, e.g. `@napi-rs/canvas-darwin-arm64`. */
+  pkg: (t: Target) => string;
+  /** The addon's file name inside it. */
+  file: (t: Target) => string;
+  /** The name it is copied under in the cache folder. */
+  cacheName: (t: Target) => string;
+  version: string;
+}
+
+const ADDONS: Addon[] = [
+  {
+    loader: /@napi-rs[\\/]canvas[\\/]js-binding\.js$/,
+    module: 'postext-skia-addon',
+    pkg: (t) => `@napi-rs/canvas-${t.napi}`,
+    file: (t) => `skia.${t.napi}.node`,
+    cacheName: (t) => `skia-${versionOf('@napi-rs/canvas')}-${t.napi}.node`,
+    version: versionOf('@napi-rs/canvas'),
+  },
+  // SVG pictures that hold a raster (#771), five times faster than resvg's
+  // WebAssembly build (#788).
+  {
+    loader: /@resvg[\\/]resvg-js[\\/]js-binding\.js$/,
+    module: 'postext-resvg-addon',
+    pkg: (t) => `@resvg/resvg-js-${t.napi}`,
+    file: (t) => `resvgjs.${t.napi}.node`,
+    cacheName: (t) => `resvg-${versionOf('@resvg/resvg-js')}-${t.napi}.node`,
+    version: versionOf('@resvg/resvg-js'),
+  },
+];
+
+/** An addon of a platform: from node_modules when installed, else from the
+ *  npm registry. */
+async function addonFile(addon: Addon, t: Target): Promise<string> {
+  const pkgName = addon.pkg(t);
+  const file = addon.file(t);
+  const installed = join(ROOT, 'node_modules', pkgName, file);
   if (existsSync(installed)) return installed;
-  const dir = join(CACHE, `canvas-${t.napi}-${napiPkg.version}`);
+  const bare = pkgName.split('/')[1]!;
+  const dir = join(CACHE, `${bare}-${addon.version}`);
   const cached = join(dir, 'package', file);
   if (existsSync(cached)) return cached;
-  const url = `https://registry.npmjs.org/@napi-rs/canvas-${t.napi}/-/canvas-${t.napi}-${napiPkg.version}.tgz`;
+  const url = `https://registry.npmjs.org/${pkgName}/-/${bare}-${addon.version}.tgz`;
   console.log(`  fetching ${url}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${url}: ${res.status}`);
@@ -75,38 +117,47 @@ async function napiAddon(t: Target): Promise<string> {
   return cached;
 }
 
-/** Load the given Skia addon instead of searching for one at run time.
- *  The addon is embedded as a plain file and copied once into the cache
- *  folder (~/.cache/postext/skia-<version>-<platform>.node): loaded from
- *  there, it starts in a few milliseconds instead of being unpacked to a
- *  temporary file on every run. Data files the platform package ships
- *  beside the addon (Windows: Skia's ICU data, `icudtl.dat`, without which
- *  it cannot set a paragraph) are embedded and copied next to it. Where the
- *  cache cannot be written, the embedded copy is loaded as it is. */
-function napiPlugin(addon: string, t: Target): BunPlugin {
-  const name = `skia-${napiPkg.version}-${t.napi}.node`;
-  const pkgDir = dirname(addon);
-  const extras = readdirSync(pkgDir).filter((f) => !f.endsWith('.node') && !['README.md', 'package.json', 'LICENSE'].includes(f));
+/** Load the given addons instead of searching for them at run time. Each
+ *  is embedded as a plain file and copied once into the cache folder
+ *  (~/.cache/postext/<cacheName>): loaded from there, it starts in a few
+ *  milliseconds instead of being unpacked to a temporary file on every
+ *  run. Data files a platform package ships beside its addon (Windows:
+ *  Skia's ICU data, `icudtl.dat`, without which it cannot set a paragraph)
+ *  are embedded and copied next to it. Where the cache cannot be written,
+ *  the embedded copy is loaded as it is. */
+function addonsPlugin(files: { addon: Addon; path: string }[], t: Target): BunPlugin {
   return {
-    name: 'napi-canvas-addon',
+    name: 'native-addons',
     setup(build) {
-      build.onResolve({ filter: /^postext-skia-addon$/ }, () => ({ path: 'postext-skia-addon', namespace: 'postext-skia' }));
-      build.onLoad({ filter: /.*/, namespace: 'postext-skia' }, () => ({
-        contents: [
-          `import path from ${JSON.stringify(addon)} with { type: 'file' };`,
-          ...extras.map((f, i) => `import extra${i} from ${JSON.stringify(join(pkgDir, f))} with { type: 'file' };`),
-          'export default path;',
-          `export const extras = [${extras.map((f, i) => `[${JSON.stringify(f)}, extra${i}]`).join(', ')}];`,
-          '',
-        ].join('\n'),
-        loader: 'js',
-      }));
-      build.onLoad({ filter: /@napi-rs[\\/]canvas[\\/]js-binding\.js$/ }, () => ({
-        contents: `
+      for (const { addon, path } of files) {
+        const pkgDir = dirname(path);
+        const extras = readdirSync(pkgDir).filter((f) => !f.endsWith('.node') && !['README.md', 'package.json', 'LICENSE'].includes(f));
+        const filter = new RegExp(`^${addon.module}$`);
+        build.onResolve({ filter }, () => ({ path: addon.module, namespace: addon.module }));
+        build.onLoad({ filter: /.*/, namespace: addon.module }, () => ({
+          contents: [
+            `import path from ${JSON.stringify(path)} with { type: 'file' };`,
+            ...extras.map((f, i) => `import extra${i} from ${JSON.stringify(join(pkgDir, f))} with { type: 'file' };`),
+            'export default path;',
+            `export const extras = [${extras.map((f, i) => `[${JSON.stringify(f)}, extra${i}]`).join(', ')}];`,
+            '',
+          ].join('\n'),
+          loader: 'js',
+        }));
+        build.onLoad({ filter: addon.loader }, () => ({ contents: loaderSource(addon.module, addon.cacheName(t)), loader: 'js' }));
+      }
+    },
+  };
+}
+
+/** The loader that replaces an addon package's own: the embedded file,
+ *  copied once into the cache folder, with its data files beside it. */
+function loaderSource(module: string, name: string): string {
+  return `
 const fs = require('fs');
 const nodePath = require('path');
 const os = require('os');
-const { default: embedded, extras } = require('postext-skia-addon');
+const { default: embedded, extras } = require(${JSON.stringify(module)});
 function cacheDir() {
   if (process.env.POSTEXT_CACHE_DIR) return process.env.POSTEXT_CACHE_DIR;
   if (process.platform === 'win32') return nodePath.join(process.env.LOCALAPPDATA || nodePath.join(os.homedir(), 'AppData', 'Local'), 'postext', 'cache');
@@ -142,15 +193,11 @@ function load() {
   }
 }
 module.exports = load();
-`,
-        loader: 'js',
-      }));
-    },
-  };
+`;
 }
 
 async function buildTarget(t: Target): Promise<string> {
-  const addon = await napiAddon(t);
+  const addons = await Promise.all(ADDONS.map(async (addon) => ({ addon, path: await addonFile(addon, t) })));
   const outfile = join(BIN, fileName(t));
   const result = await Bun.build({
     entrypoints: [join(ROOT, 'src', 'main.ts')],
@@ -162,7 +209,7 @@ async function buildTarget(t: Target): Promise<string> {
     minify: true,
     bytecode: true,
     define: { 'process.env.NODE_ENV': '"production"' },
-    plugins: [napiPlugin(addon, t)],
+    plugins: [addonsPlugin(addons, t)],
   });
   if (!result.success) {
     for (const log of result.logs) console.error(log);
@@ -194,8 +241,8 @@ ${'='.repeat(`postext command line ${version}`.length)}
 
 One self-contained executable per system: no installation, no runtime and
 no libraries. The postext engine, the PDF, EPUB, HTML and Word writers,
-the page painter (Skia), the default fonts (EB Garamond, Open Sans) and the
-print colour profiles are all inside.
+the page painter (Skia), the SVG rasteriser (resvg), the default fonts
+(EB Garamond, Open Sans) and the print colour profiles are all inside.
 
 Executables (115 to 140 MB each)
 --------------------------------

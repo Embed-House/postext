@@ -15,10 +15,19 @@
 // handed to the engine is resvg's raster at the size the SVG declares; a
 // draw at a larger size is given a canvas holding resvg's raster at that
 // size (an `Image` decodes its `src` a tick later, too late for the draw).
+// resvg is the native addon (@resvg/resvg-js, embedded as Skia's is, #788):
+// the release of the WebAssembly build it replaces, the same pixels, about
+// five times faster on artwork cut from PDFs (the 40 such figures of a
+// 721-page book took 26 minutes of its page images). It reads faces from
+// files only: the ones it is handed are written to a folder of this process.
 
 import { createCanvas, ImageData, loadImage, type Canvas, type Image } from '@napi-rs/canvas';
-import { initWasm, Resvg } from '@resvg/resvg-wasm';
-import { FALLBACK_FAMILY, resvgWasm } from './assets';
+import { Resvg } from '@resvg/resvg-js';
+import { createHash } from 'node:crypto';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { FALLBACK_FAMILY } from './assets';
 
 const svgImages = new WeakSet<object>();
 /** Past this many pixels on a side the image stays as it is. */
@@ -36,13 +45,34 @@ export function holdsRasterImage(svgText: string): boolean {
 /** The images resvg rasterises: their SVG, the size the SVG declares, and
  *  the largest raster drawn so far (`drawn` pixels wide). */
 const resvgImages = new WeakMap<object, { svg: string; width: number; height: number; drawn: number; raster?: Canvas }>();
-let resvgReady: Promise<void> | undefined;
 const svgFonts: Uint8Array[] = [];
+/** The files of {@link svgFonts}, in the same order. Written the first time
+ *  an SVG with text is rasterised, into a folder of this process removed
+ *  when it exits. */
+let svgFontFiles: string[] | undefined;
+let svgFontDir: string | undefined;
 
 /** A face registered with Skia, handed to resvg for the text of the SVGs
  *  it rasterises. */
 export function noteSvgFont(bytes: Uint8Array): void {
   svgFonts.push(bytes);
+  svgFontFiles = undefined;
+}
+
+function fontFiles(): string[] {
+  if (svgFontFiles) return svgFontFiles;
+  if (!svgFontDir) {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-svg-fonts-'));
+    process.on('exit', () => rmSync(dir, { recursive: true, force: true }));
+    svgFontDir = dir;
+  }
+  const dir = svgFontDir;
+  svgFontFiles = svgFonts.map((bytes, i) => {
+    const file = join(dir, `${i}-${createHash('sha1').update(bytes).digest('hex').slice(0, 16)}.ttf`);
+    writeFileSync(file, bytes);
+    return file;
+  });
+  return svgFontFiles;
 }
 
 /** `svgText` rendered by resvg, `width` pixels wide (the size the SVG
@@ -50,7 +80,7 @@ export function noteSvgFont(bytes: Uint8Array): void {
 function resvgRender(svgText: string, width?: number) {
   return new Resvg(svgText, {
     fitTo: width ? { mode: 'width', value: width } : { mode: 'original' },
-    font: { loadSystemFonts: false, fontBuffers: /<text\b/i.test(svgText) ? svgFonts : [], defaultFontFamily: FALLBACK_FAMILY },
+    font: { loadSystemFonts: false, fontFiles: /<text\b/i.test(svgText) ? fontFiles() : [], defaultFontFamily: FALLBACK_FAMILY },
   }).render();
 }
 
@@ -72,8 +102,6 @@ function resvgCanvas(svgText: string, width: number): Canvas {
 /** Decode an SVG, remembered as one: see {@link sizeSvgImage}. */
 export async function loadSvgImage(svgText: string): Promise<Image> {
   if (holdsRasterImage(svgText)) {
-    resvgReady ??= initWasm(resvgWasm());
-    await resvgReady;
     const image = await loadImage(Buffer.from(resvgRender(svgText).asPng()));
     resvgImages.set(image, { svg: svgText, width: image.width, height: image.height, drawn: image.width });
     svgImages.add(image);
