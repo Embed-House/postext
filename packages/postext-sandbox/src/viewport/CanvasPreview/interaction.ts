@@ -219,6 +219,8 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
         ...(resourcesRef ? { resourcesRef } : {}),
         labelsRef: opts.labelsRef,
         enabled: () => (opts.comicEnabled ?? on)(),
+        // A balloon's words select wherever the page's text does (#797).
+        textEnabled: on,
         onDragEnd: (pointerId) => {
           try { target.releasePointerCapture(pointerId); } catch { /* not captured */ }
         },
