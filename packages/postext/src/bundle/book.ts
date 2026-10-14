@@ -172,7 +172,14 @@ export function buildBundle(
   const { pageIndexOffset: startOffset = 0, pageNumbering: _startNumbering, ...startCounters } = start ?? {};
   void _startNumbering;
 
-  let outline: OutlineEntry[] | undefined;
+  // The contents before any chapter is laid out (#787): every chapter's
+  // headings, parts and anchors, numbered as the book numbers them, without
+  // their pages. A contents chapter set with it takes, but for its page
+  // labels, the room it takes in the end, so the chapters after it are laid
+  // out at their final pages on the first round instead of once short of
+  // them and again (Terapia Ocupacional laid 120 chapters out for its 62).
+  // The rounds then settle the labels as before.
+  let outline: OutlineEntry[] | undefined = anyToc ? provisionalOutline() : undefined;
   let bookPageCount: number | undefined;
   for (let round = 0; ; round++) {
     if (round > 0) build.nextRound();
@@ -228,8 +235,8 @@ export function buildBundle(
         return next ? entries.map((e) => (e.kind === 'part' && e.pageIndex === undefined ? { ...e, ...next } : e)) : entries;
       });
       outlineMoved = !outline || outlineKey(outline) !== outlineKey(bookOutline);
-      // The first round laid the contents out from its own chapter alone:
-      // always lay the book out once more with the whole outline.
+      // The first round laid the contents out from the provisional outline,
+      // which has no pages: always lay the book out once more with them.
       if (outlineMoved) outline = bookOutline;
     }
     const totalMoved = usesBookTotal && bookPageCount !== physical;
@@ -240,4 +247,16 @@ export function buildBundle(
   const docs = build.finish();
   if (onChapter) docs.forEach((doc, index) => onChapter(index, doc));
   return docs;
+
+  /** Every chapter's outline entries as its text gives them, the counters
+   *  chained from chapter to chapter as the rounds chain them. */
+  function provisionalOutline(): OutlineEntry[] {
+    let before: LayoutContinuation | undefined = Object.keys(startCounters).length > 0 ? startCounters : undefined;
+    return sources.flatMap((markdown) => {
+      const prior = before;
+      const priorKey = jsonKey(prior);
+      before = build.derive(priorKey === undefined ? undefined : `next\u0000${priorKey}\u0000${markdown}`, () => continuationAfter({ markdown, resources }, config, prior));
+      return contentOutline({ markdown, resources }, config, prior).outline;
+    });
+  }
 }

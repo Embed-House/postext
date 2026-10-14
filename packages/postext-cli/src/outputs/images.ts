@@ -99,17 +99,19 @@ export function formatFromName(path: string | undefined, explicit: string | unde
 
 const EXT: Record<ImageFormat, string> = { png: '.png', jpeg: '.jpg', webp: '.webp' };
 
-/** The pictures handed to the canvas renderer: the bytes of each file and
- *  the ink the diagrams were drawn in. A rebuild in --watch that changed
- *  none of them keeps them, and the rasters made of them. */
-let registered: { files: Map<string, Uint8Array>; inkHex: string | null } | undefined;
+/** The pictures handed to the canvas renderer: the bytes of each file, the
+ *  ink the diagrams were drawn in, and the files decoded so far. A picture
+ *  is decoded the first time a page that shows it is painted (#788):
+ *  decoding them all up front rasterised every SVG of the book with resvg,
+ *  even for a range of a few pages. A rebuild in --watch that changed none
+ *  of them keeps them, and the rasters made of them. */
+let registered: { files: Map<string, Uint8Array>; inkHex: string | null; loaded: Set<string> } | undefined;
 
 const pictureFileId = (r: Resource): string | undefined =>
   r.kind === 'svg' ? r.svg?.fileId : r.kind === 'bitmap' ? r.bitmap?.fileId : r.kind === 'video' ? r.video?.poster?.fileId : undefined;
 
-/** Decode the book's pictures and hand them to the canvas renderer (once
- *  per set of pictures). */
-async function registerImages(book: Book, reporter: Reporter): Promise<void> {
+/** The book's pictures, by file: drop what was decoded when they changed. */
+function currentPictures(book: Book): NonNullable<typeof registered> {
   const files = new Map<string, Uint8Array>();
   for (const r of book.resources) {
     const fileId = pictureFileId(r);
@@ -117,19 +119,41 @@ async function registerImages(book: Book, reporter: Reporter): Promise<void> {
     if (fileId && bytes) files.set(fileId, bytes);
   }
   const inkHex = diagramInkHex(book.config);
-  if (registered && registered.inkHex === inkHex && sameFiles(registered.files, files)) return;
+  if (registered && registered.inkHex === inkHex && sameFiles(registered.files, files)) return registered;
   clearResourceImages();
-  registered = { files, inkHex };
-  await Promise.all(book.resources.map(async (r) => {
+  registered = { files, inkHex, loaded: new Set() };
+  return registered;
+}
+
+/** Decode and hand to the canvas renderer the pictures `p` may draw: the
+ *  ones whose file id its page or its document's configuration names (a
+ *  figure, a cell's picture, a callout's icon, a design element), the rest
+ *  of the book's pictures left for the pages that show them. */
+async function registerImages(book: Book, p: BookPage, reporter: Reporter): Promise<void> {
+  const pictures = currentPictures(book);
+  if (pictures.loaded.size === pictures.files.size) return;
+  let text: string | undefined;
+  try {
+    text = `${JSON.stringify(p.page)}\u0000${JSON.stringify(p.doc.config)}`;
+  } catch {
+    // A page that cannot be written out: every picture, as before.
+  }
+  const wanted = book.resources.filter((r) => {
     const fileId = pictureFileId(r);
-    const bytes = fileId ? files.get(fileId) : undefined;
-    if (!fileId || !bytes) return;
+    if (fileId === undefined || !pictures.files.has(fileId) || pictures.loaded.has(fileId)) return false;
+    return text === undefined || text.includes(fileId) || text.includes(r.id);
+  });
+  await Promise.all(wanted.map(async (r) => {
+    const fileId = pictureFileId(r)!;
+    if (pictures.loaded.has(fileId)) return;
+    pictures.loaded.add(fileId);
+    const bytes = pictures.files.get(fileId)!;
     try {
       if (r.kind === 'svg') {
-        let text = new TextDecoder().decode(bytes);
-        if (inkHex) text = applySingleInkToSvg(text, inkHex);
+        let svg = new TextDecoder().decode(bytes);
+        if (pictures.inkHex) svg = applySingleInkToSvg(svg, pictures.inkHex);
         // Loaded as an SVG: Skia rasterises it at each size it is drawn at (#678).
-        registerResourceImage(fileId, await loadSvgImage(text) as unknown as CanvasImageSource, { vector: true, singleInk: false });
+        registerResourceImage(fileId, await loadSvgImage(svg) as unknown as CanvasImageSource, { vector: true, singleInk: false });
       } else {
         registerResourceImage(fileId, await loadImage(Buffer.from(bytes)) as unknown as CanvasImageSource, { singleInk: false });
       }
@@ -169,7 +193,7 @@ function printPreviewFor(book: Book, doc: VDTDocument) {
 }
 
 export async function paintPage(book: Book, p: BookPage, options: PaintOptions, reporter: Reporter): Promise<Canvas> {
-  await registerImages(book, reporter);
+  await registerImages(book, p, reporter);
   // A picture too large for the engine's cache is drawn on the page itself.
   const canvas = drawsSvgAtSize(createCanvas(1, 1));
   renderPageToCanvas(p.page, p.doc, canvas as unknown as HTMLCanvasElement, {
