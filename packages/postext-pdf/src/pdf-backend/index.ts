@@ -799,7 +799,7 @@ export async function renderToPdf(
   // is embedded once.
   const resourceImages: ResourceImageMap = new Map();
   for (const doc of docs) {
-    await preloadResourceImages(pdfDoc, doc, options.resourceBytes, fontCache, fontProvider, resourceImages, options.rasterizeSvg, printMode);
+    await preloadResourceImages(pdfDoc, doc, options.resourceBytes, fontCache, fontProvider, resourceImages, options.rasterizeSvg, printMode, printMode ? undefined : settings.colorSpace);
   }
   options.onProgress?.({ phase: 'prepare', pages: 0, totalPages });
 

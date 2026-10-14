@@ -158,4 +158,30 @@ describe('soft proof', () => {
     expect(rich[0]! + rich[1]! + rich[2]!).toBeLessThan(kOnly[0]! + kOnly[1]! + kOnly[2]!);
     expect(rich).toEqual(preview.richBlack!.rgb);
   });
+
+  it('proofs a grayscale print in black ink alone, by luma, without rich black (#800)', async () => {
+    const { createPrintPreview, proofPixels } = await import('../color');
+    const { resolvePrintConfig } = await import('../defaults/print');
+    const t = outputTransform(load('fogra39'));
+    const preview = createPrintPreview(t, resolvePrintConfig(), { paper: true, dpi: 72, grayscale: true });
+    expect(preview.richBlack).toBeUndefined();
+    // Pure red, green, blue and a gray of red's luma (0.299 → 76).
+    const data = new Uint8ClampedArray([255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 76, 76, 76, 255]);
+    proofPixels(data, 4, 1, preview);
+    const px = (i: number) => Array.from(data.subarray(i * 4, i * 4 + 3));
+    const spread = (c: number[]) => Math.max(...c) - Math.min(...c);
+    // Every colour comes out neutral (K on the paper's white, which is a
+    // little warm), ordered by luma: green lightest, blue darkest.
+    for (let i = 0; i < 4; i++) expect(spread(px(i))).toBeLessThan(12);
+    const sum = (c: number[]) => c[0]! + c[1]! + c[2]!;
+    expect(sum(px(1))).toBeGreaterThan(sum(px(0)));
+    expect(sum(px(0))).toBeGreaterThan(sum(px(2)));
+    // Red prints as the gray of its luma.
+    expect(Math.abs(sum(px(0)) - sum(px(3)))).toBeLessThanOrEqual(3);
+    // The colour proof keeps red red.
+    const colour = createPrintPreview(t, resolvePrintConfig(), { paper: true, dpi: 72 });
+    const red = new Uint8ClampedArray([255, 0, 0, 255]);
+    proofPixels(red, 1, 1, colour);
+    expect(spread(Array.from(red.subarray(0, 3)))).toBeGreaterThan(100);
+  });
 });

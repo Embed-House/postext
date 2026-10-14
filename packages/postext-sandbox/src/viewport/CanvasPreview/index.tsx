@@ -10,7 +10,7 @@ import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook';
 import { renderPageToCanvas, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
 import type { PrintPreview } from 'postext';
 import { usePrintSetup } from '../../print/printSetup';
-import { viewerPreview } from '../../print/viewerPreview';
+import { printsGrayscale, viewerPreview } from '../../print/viewerPreview';
 import { usePrintPreview } from '../../print/printPreviewToggle';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { clearOverlay, drawOverlay } from './overlay';
@@ -229,13 +229,15 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   const [printPreviewOn] = usePrintPreview();
   const printSetup = usePrintSetup(config.print, printPreviewOn);
   const printPreviewRef = useRef<PrintPreview | undefined>(undefined);
-  const printPreviewKey = printPreviewOn ? `${printSetup.transform ? 'ready' : 'loading'}|${JSON.stringify(printSetup.print)}` : 'off';
+  // A PDF forced to grayscale prints in black alone (#800).
+  const printGray = printsGrayscale(config.pdfGeneration, printSetup);
+  const printPreviewKey = printPreviewOn ? `${printSetup.transform ? 'ready' : 'loading'}|${printGray}|${JSON.stringify(printSetup.print)}` : 'off';
   useEffect(() => {
     if (!printPreviewOn || !printSetup.transform) {
       printPreviewRef.current = undefined;
     } else {
       const dpi = (config.page?.dpi as number | undefined) ?? 300;
-      printPreviewRef.current = viewerPreview(printSetup, dpi, config.print, () => resourcesRef.current, () => docRef.current);
+      printPreviewRef.current = viewerPreview(printSetup, dpi, config.print, () => resourcesRef.current, () => docRef.current, printGray);
     }
     setPaintKey((k) => k + 1);
     // The key says when the preview changes; the setup object is new on

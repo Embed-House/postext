@@ -118,8 +118,9 @@ export function usePrintSetup(raw: PrintConfig | undefined, enabled = true): Pri
 }
 
 /** The soft proof of a loaded setup, on the paper's white (`paper`) or
- *  relative to it; `viewerPreview` adds the guides and the marks. */
-export function previewFor(setup: PrintSetup, dpi: number, paper: boolean): PrintPreview | undefined {
+ *  relative to it, as a grayscale print (`grayscale`) or in colour;
+ *  `viewerPreview` adds the guides and the marks. */
+export function previewFor(setup: PrintSetup, dpi: number, paper: boolean, grayscale = false): PrintPreview | undefined {
   if (!setup.transform) return undefined;
-  return createPrintPreview(setup.transform, setup.print, { paper, dpi });
+  return createPrintPreview(setup.transform, setup.print, { paper, dpi, grayscale });
 }

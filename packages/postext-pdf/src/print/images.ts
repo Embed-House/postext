@@ -6,10 +6,11 @@
  * grayscale JPEGs pass through untouched (they are already print data).
  */
 
-import { PDFDocument, PDFImage, PDFName, PDFRef, type PDFContext } from 'pdf-lib';
+import { PDFDocument, PDFImage, PDFName, PDFRef } from 'pdf-lib';
 import UPNG from '@pdf-lib/upng';
 import { buildRgbLut, outputTransform, sampleRgbLut, type RgbLut } from 'postext';
 import type { PrintColorMode } from './colorMode';
+import { rgbToCmyk, rgbToGrayscale } from '../colors';
 
 /** Decoded pixels, 8-bit RGBA, rows top-down. */
 export interface RgbaPixels {
@@ -155,24 +156,31 @@ export function separatePixels(px: RgbaPixels, mode: PrintColorMode): { cmyk: Ui
   return alpha ? { cmyk, alpha } : { cmyk };
 }
 
-/** A pdf-lib PDFImage over an image XObject already written to `ref`. */
+/** A pdf-lib PDFImage over an image XObject already written to `ref`.
+ *  `PDFImage.of` takes only pdf-lib's own JPEG and PNG embedders (any
+ *  other throws, and every converted picture was dropped for a
+ *  placeholder, #800), so the image is made on its prototype: the page's
+ *  `drawImage` accepts it, and with no embedder there is nothing left to
+ *  embed when the document is saved. */
 function imageOf(pdfDoc: PDFDocument, ref: PDFRef, width: number, height: number): PDFImage {
-  const embedder = {
-    width,
-    height,
-    bitsPerComponent: 8,
-    embedIntoContext: async (_context: PDFContext, r?: PDFRef) => r ?? ref,
-  };
-  return (PDFImage as unknown as { of(ref: PDFRef, doc: PDFDocument, embedder: unknown): PDFImage }).of(ref, pdfDoc, embedder);
+  const image = Object.create(PDFImage.prototype) as PDFImage;
+  Object.assign(image, { ref, doc: pdfDoc, width, height, embedder: undefined });
+  return image;
 }
 
 /** Write separated pixels as a DeviceCMYK image XObject. */
 export function embedCmykPixels(pdfDoc: PDFDocument, width: number, height: number, sep: { cmyk: Uint8Array; alpha?: Uint8Array }): PDFImage {
+  return embedDevicePixels(pdfDoc, width, height, 'DeviceCMYK', sep.cmyk, sep.alpha);
+}
+
+/** Write device pixels (one byte a channel) as an image XObject, its alpha
+ *  plane as a DeviceGray soft mask. */
+function embedDevicePixels(pdfDoc: PDFDocument, width: number, height: number, space: 'DeviceCMYK' | 'DeviceGray', pixels: Uint8Array, alpha?: Uint8Array): PDFImage {
   const context = pdfDoc.context;
   let smask: PDFRef | undefined;
-  if (sep.alpha) {
+  if (alpha) {
     smask = context.register(
-      context.flateStream(sep.alpha, { Type: 'XObject', Subtype: 'Image', Width: width, Height: height, ColorSpace: 'DeviceGray', BitsPerComponent: 8 }),
+      context.flateStream(alpha, { Type: 'XObject', Subtype: 'Image', Width: width, Height: height, ColorSpace: 'DeviceGray', BitsPerComponent: 8 }),
     );
   }
   const dict: Record<string, unknown> = {
@@ -180,10 +188,10 @@ export function embedCmykPixels(pdfDoc: PDFDocument, width: number, height: numb
     Subtype: 'Image',
     Width: width,
     Height: height,
-    ColorSpace: 'DeviceCMYK',
+    ColorSpace: space,
     BitsPerComponent: 8,
   };
-  const stream = context.flateStream(sep.cmyk, dict as never);
+  const stream = context.flateStream(pixels, dict as never);
   if (smask) stream.dict.set(PDFName.of('SMask'), smask);
   const ref = context.register(stream);
   return imageOf(pdfDoc, ref, width, height);
@@ -211,4 +219,54 @@ export async function embedPrintRaster(
   const px = await decodeRgba(bytes, format);
   if (!px) return format === 'png' ? pdfDoc.embedPng(bytes) : pdfDoc.embedJpg(bytes);
   return embedCmykPixels(pdfDoc, px.width, px.height, separatePixels(px, mode));
+}
+
+/** RGBA pixels as device pixels with the flat colours' formulas (#800):
+ *  grayscale the Rec. 601 luma, CMYK the naive separation; an alpha plane
+ *  when any pixel is translucent. */
+export function devicePixels(px: RgbaPixels, space: 'grayscale' | 'cmyk'): { pixels: Uint8Array; alpha?: Uint8Array } {
+  const n = px.width * px.height;
+  const channels = space === 'grayscale' ? 1 : 4;
+  const pixels = new Uint8Array(n * channels);
+  const alpha = new Uint8Array(n);
+  let translucent = false;
+  const d = px.data;
+  for (let p = 0; p < n; p++) {
+    const i = p * 4;
+    const a = d[i + 3]!;
+    alpha[p] = a;
+    if (a < 255) translucent = true;
+    const rgb = { r: d[i]! / 255, g: d[i + 1]! / 255, b: d[i + 2]! / 255 };
+    if (space === 'grayscale') {
+      pixels[p] = Math.round(rgbToGrayscale(rgb) * 255);
+    } else {
+      const k = rgbToCmyk(rgb);
+      const o = p * 4;
+      pixels[o] = Math.round(k.c * 255);
+      pixels[o + 1] = Math.round(k.m * 255);
+      pixels[o + 2] = Math.round(k.y * 255);
+      pixels[o + 3] = Math.round(k.k * 255);
+    }
+  }
+  return translucent ? { pixels, alpha } : { pixels };
+}
+
+/**
+ * Embed a raster picture in a render forced to a device colour space with
+ * no output profile behind it (#800): a grayscale PDF writes its pictures
+ * in DeviceGray, a plain CMYK one (its profile unavailable) in DeviceCMYK,
+ * as their text and flat colours already are. A JPEG already in that space
+ * passes through; one that cannot be decoded is embedded as it is.
+ */
+export async function embedDeviceRaster(
+  pdfDoc: PDFDocument,
+  bytes: Uint8Array,
+  format: 'png' | 'jpeg',
+  space: 'grayscale' | 'cmyk',
+): Promise<PDFImage> {
+  if (format === 'jpeg' && jpegComponents(bytes) === (space === 'grayscale' ? 1 : 4)) return pdfDoc.embedJpg(bytes);
+  const px = await decodeRgba(bytes, format);
+  if (!px) return format === 'png' ? pdfDoc.embedPng(bytes) : pdfDoc.embedJpg(bytes);
+  const { pixels, alpha } = devicePixels(px, space);
+  return embedDevicePixels(pdfDoc, px.width, px.height, space === 'grayscale' ? 'DeviceGray' : 'DeviceCMYK', pixels, alpha);
 }

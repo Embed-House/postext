@@ -55,7 +55,7 @@ function config(extra: PostextConfig = {}): PostextConfig {
   };
 }
 
-async function render(print: PrintConfig | undefined, opts: { colorSpace?: 'cmyk'; accessible?: boolean; date?: Date | number | string } = {}) {
+async function render(print: PrintConfig | undefined, opts: { colorSpace?: 'cmyk' | 'grayscale'; accessible?: boolean; date?: Date | number | string } = {}) {
   const doc = buildDocument({ markdown: 'Black text on the page, and a [link](https://example.com).\n\n::resource{id="pic"}', resources }, config());
   const warnings: PdfWarning[] = [];
   const bytes = await renderToPdf(doc, {
@@ -91,6 +91,18 @@ function extGStates(pdf: PDFDocument): Map<string, PDFDict> {
     if (d instanceof PDFDict) out.set(name.asString().slice(1), d);
   }
   return out;
+}
+
+/** The image XObjects the first page draws (its resources), by colour
+ *  space: a picture embedded but never placed is not among them. */
+function placed(pdf: PDFDocument): string[] {
+  const xobjects = pdf.getPage(0).node.Resources()?.lookup(PDFName.of('XObject'));
+  if (!(xobjects instanceof PDFDict)) return [];
+  return xobjects.values().map((ref) => {
+    const obj = pdf.context.lookup(ref);
+    const dict = obj instanceof PDFStream ? obj.dict : obj instanceof PDFDict ? obj : undefined;
+    return dict?.lookup(PDFName.of('Subtype'))?.toString() === '/Image' ? dict.lookup(PDFName.of('ColorSpace'))?.toString() ?? '?' : '';
+  }).filter(Boolean);
 }
 
 function images(pdf: PDFDocument): PDFDict[] {
@@ -131,6 +143,8 @@ describe('ICC CMYK output', () => {
     const pics = images(pdf).filter((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() === '/DeviceCMYK');
     expect(pics.length).toBe(1);
     expect(pics[0]!.get(PDFName.of('SMask'))).toBeDefined();
+    // And the page draws it (#800: it used to fall back to a placeholder).
+    expect(placed(pdf)).toEqual(['/DeviceCMYK']);
   });
 
   it('leaves RGB output alone', async () => {
@@ -172,6 +186,7 @@ describe('PDF/X-1a', () => {
       expect(d.get(PDFName.of('CA'))).toBeUndefined();
     }
     expect(images(pdf).every((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() !== '/DeviceRGB')).toBe(true);
+    expect(placed(pdf)).toEqual(['/DeviceCMYK']);
   });
 
   it('keeps the PDF/UA tagging and its identification in the merged XMP', async () => {
@@ -199,6 +214,49 @@ describe('PDF/X-4', () => {
     const def = spaces.lookup(PDFName.of('DefaultRGB'), PDFArray);
     expect(def.lookup(0)?.toString()).toBe('/ICCBased');
     expect(images(pdf).some((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() === '/DeviceRGB')).toBe(true);
+  });
+});
+
+describe('pictures in a forced device colour space (#800)', () => {
+  /** The decoded samples of an image XObject. */
+  const samples = (pdf: PDFDocument, dict: PDFDict): Uint8Array => {
+    let found: Uint8Array | undefined;
+    pdf.context.enumerateIndirectObjects().forEach(([, obj]) => {
+      if (obj instanceof PDFRawStream && obj.dict === dict) found = decodePDFRawStream(obj).decode();
+    });
+    return found!;
+  };
+
+  it('writes the pictures of a grayscale PDF in DeviceGray, with the flat colours\' luma and their alpha', async () => {
+    const { pdf, content } = await render(undefined, { colorSpace: 'grayscale' });
+    // The flat colours are gray already.
+    expect(content).not.toMatch(/ rg\b/);
+    const pics = images(pdf).filter((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() === '/DeviceGray' && d.get(PDFName.of('SMask')) !== undefined);
+    expect(pics).toHaveLength(1);
+    expect(images(pdf).some((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() === '/DeviceRGB')).toBe(false);
+    // Red, green, blue, white through Rec. 601.
+    expect([...samples(pdf, pics[0]!)]).toEqual([76, 150, 29, 255]);
+    expect(placed(pdf)).toEqual(['/DeviceGray']);
+  });
+
+  it('separates the pictures of a plain CMYK PDF whose profile is unavailable, as its flat colours are', async () => {
+    const doc = buildDocument({ markdown: 'Text.\n\n::resource{id="pic"}', resources }, config());
+    const warnings: PdfWarning[] = [];
+    const bytes = await renderToPdf(doc, {
+      fontProvider: async () => new Uint8Array(fontBytes),
+      resourceBytes: (id) => (id === 'pic.png' ? PNG : undefined),
+      profileBaseUrl: 'http://127.0.0.1:9/icc/',
+      colorSpace: 'cmyk',
+      onWarning: (w) => warnings.push(w),
+    });
+    expect(warnings.map((w) => w.kind)).toContain('outputProfileUnavailable');
+    const pdf = await PDFDocument.load(bytes);
+    const pics = images(pdf).filter((d) => d.lookup(PDFName.of('ColorSpace'))?.toString() === '/DeviceCMYK');
+    expect(pics).toHaveLength(1);
+    // Red is M + Y; white no ink.
+    expect([...samples(pdf, pics[0]!)].slice(0, 4)).toEqual([0, 255, 255, 0]);
+    expect([...samples(pdf, pics[0]!)].slice(12)).toEqual([0, 0, 0, 0]);
+    expect(placed(pdf)).toEqual(['/DeviceCMYK']);
   });
 });
 
