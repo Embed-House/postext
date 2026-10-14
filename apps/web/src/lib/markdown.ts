@@ -725,14 +725,15 @@ function inlineMarkdown(
 function inlineHtmlToMarkdown(html: string, pageUrl: string): string {
   const flat = unwrapJsxStrings(html.replace(/\s*\n\s*/g, " ").trim());
   // Code and prose each decode and escape their own pipes, so the GFM row
-  // stays intact.
+  // stays intact. Prose escapes its backslashes first (a literal `\` before
+  // a pipe would otherwise eat the pipe's escape); a code span shows
+  // backslashes as written, and the table extension only unescapes `\|`.
   return inlineMarkdown(flat, pageUrl, {
     code: (s) => decodeEntities(s).replace(/\|/g, "\\|"),
     text: (s) =>
-      decodeEntities(s.replace(/<br\s*\/?>/g, " ").replace(/<\/?(?:span|bdi|p|div|small|sup|sub)\b[^>]*>/g, "")).replace(
-        /\|/g,
-        "\\|"
-      ),
+      decodeEntities(s.replace(/<br\s*\/?>/g, " ").replace(/<\/?(?:span|bdi|p|div|small|sup|sub)\b[^>]*>/g, ""))
+        .replace(/\\/g, "\\\\")
+        .replace(/\|/g, "\\|"),
   });
 }
 
@@ -1100,8 +1101,13 @@ const html = renderToHtml(doc);`;
 
 const BUNDLE_PARTS = ["config", "chapters", "fonts", "resources", "images"] as const;
 
+/** Message markup (`<code>`, `<em>`) → plain Markdown text. Any angle
+ *  bracket a removal leaves behind goes too, so no tag can reassemble. */
 function stripTags(text: string): string {
-  return text.replace(/<code>(.*?)<\/code>/g, "`$1`").replace(/<[^>]+>/g, "");
+  return text
+    .replace(/<code>(.*?)<\/code>/g, "`$1`")
+    .replace(/<[^>]+>/g, "")
+    .replace(/[<>]/g, "");
 }
 
 export function homeMarkdown(locale: string): string {

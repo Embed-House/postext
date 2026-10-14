@@ -67,11 +67,18 @@ export function saveReading(prefs: ReadingPrefs) {
   window.dispatchEvent(new Event(READING_EVENT));
 }
 
+/** A value as a JavaScript literal safe inside an inline `<script>`: the
+ *  characters that could close the element or end a line in older parsers
+ *  are written as `\u` escapes. */
+function scriptLiteral(value: unknown): string {
+  return JSON.stringify(value).replace(/[<>/\u2028\u2029]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`);
+}
+
 /** Inline script emitted by the root layout, before the first paint: the
  *  stored reading preferences and the stored (or system) theme, so neither
  *  flashes the designed default first. */
-export const READING_PREPAINT_SCRIPT = `(function(){try{var d=document.documentElement,o=${JSON.stringify(
+export const READING_PREPAINT_SCRIPT = `(function(){try{var d=document.documentElement,o=${scriptLiteral(
   READING_OPTIONS,
-)},f=${JSON.stringify(DEFAULT_READING)},r=localStorage.getItem(${JSON.stringify(
+)},f=${scriptLiteral(DEFAULT_READING)},r=localStorage.getItem(${scriptLiteral(
   READING_KEY,
 )}),p={};try{p=r?JSON.parse(r)||{}:{}}catch(e){}for(var k in o){var v=p[k];if(v!==f[k]&&o[k].indexOf(v)>=0)d.setAttribute("data-rp-"+k,v);else d.removeAttribute("data-rp-"+k)}var t=localStorage.getItem("postext-theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";d.classList.remove("dark","light");d.classList.add(t)}catch(e){}})();`;
