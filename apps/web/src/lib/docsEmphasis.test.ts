@@ -34,16 +34,17 @@ async function strayEmphasis(source: string): Promise<string[]> {
 }
 
 describe("docs emphasis", () => {
-  it("leaves no literal ** on any page, CJK text included", async () => {
+  // One test per language: every page goes through the MDX compiler, about
+  // ten seconds for all of them on a workstation and ten to fifteen times as
+  // long on CI, where every package's suite runs at once (#805).
+  const locales = [...new Set(getAllDocs().flatMap((doc) => Object.keys(doc.locales)))].sort();
+  it.each(locales)("leaves no literal ** on any %s page, CJK text included", async (locale) => {
     const stray: string[] = [];
     for (const doc of getAllDocs()) {
-      for (const locale of Object.keys(doc.locales)) {
-        const page = getDocSource(doc.slug, locale)!;
-        for (const hit of await strayEmphasis(page.source)) stray.push(`${doc.slug}-${locale}.mdx:${hit}`);
-      }
+      if (!(locale in doc.locales)) continue;
+      const page = getDocSource(doc.slug, locale)!;
+      for (const hit of await strayEmphasis(page.source)) stray.push(`${doc.slug}-${locale}.mdx:${hit}`);
     }
     expect(stray).toEqual([]);
-    // Every page of every language goes through the MDX compiler: about
-    // half a minute for the ninety-odd pages, more on a busy machine.
   }, 120_000);
 });
