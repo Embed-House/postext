@@ -7,10 +7,10 @@ import { chapterLayoutFromDoc, leadingBlankPageCount } from '../../book/paginati
 import { stitchDocuments, type StitchedBook } from '../../book/stitch';
 import type { ComposedBook } from '../../book/types';
 import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook';
-import { preflightInputs } from '../../print/preflightInputs';
-import { dimensionToPx, preflightDocument, renderPageToCanvas, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
-import type { BoundingBox, PrintPreview } from 'postext';
-import { previewFor, usePrintSetup } from '../../print/printSetup';
+import { renderPageToCanvas, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
+import type { PrintPreview } from 'postext';
+import { usePrintSetup } from '../../print/printSetup';
+import { viewerPreview } from '../../print/viewerPreview';
 import { usePrintPreview } from '../../print/printPreviewToggle';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { clearOverlay, drawOverlay } from './overlay';
@@ -235,31 +235,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
       printPreviewRef.current = undefined;
     } else {
       const dpi = (config.page?.dpi as number | undefined) ?? 300;
-      const base = previewFor(printSetup, dpi, true);
-      const marks = new WeakMap<VDTDocument, Map<number, BoundingBox[]>>();
-      const marksOf = (doc: VDTDocument): Map<number, BoundingBox[]> => {
-        let byPage = marks.get(doc);
-        if (!byPage) {
-          byPage = new Map();
-          // The files' real pixels, as the Checks panel reads them (#631).
-          const { imageSize } = preflightInputs(config.print, resourcesRef.current);
-          const issues = preflightDocument(doc, { print: printSetup.print, transform: printSetup.transform, resources: resourcesRef.current, imageSize, cmyk: true });
-          const offset = doc.pageIndexOffset ?? 0;
-          for (const issue of issues) {
-            if (!issue.rect) continue;
-            const list = byPage.get(issue.pageIndex - offset) ?? [];
-            list.push(issue.rect);
-            byPage.set(issue.pageIndex - offset, list);
-          }
-          marks.set(doc, byPage);
-        }
-        return byPage;
-      };
-      printPreviewRef.current = base && {
-        ...base,
-        guides: { safeZonePx: dimensionToPx(printSetup.print.preflight.safeZone, dpi) },
-        marksFor: (pageIndex) => (docRef.current ? marksOf(docRef.current).get(pageIndex) ?? [] : []),
-      };
+      printPreviewRef.current = viewerPreview(printSetup, dpi, config.print, () => resourcesRef.current, () => docRef.current);
     }
     setPaintKey((k) => k + 1);
     // The key says when the preview changes; the setup object is new on

@@ -13,7 +13,8 @@ import { stitchDocuments, type StitchedBook } from '../book/stitch';
 import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../controls/fontLoader';
 import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
 import { getBlob } from '../storage/blobStore';
-import { previewFor, usePrintSetup } from '../print/printSetup';
+import { usePrintSetup } from '../print/printSetup';
+import { viewerPreview } from '../print/viewerPreview';
 import { usePrintPreview } from '../print/printPreviewToggle';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
 import { onLateFonts } from '../worker/LayoutService';
@@ -124,6 +125,10 @@ function samePage(from: ShownDoc, index: number, to: ShownDoc): number {
 /** The scanned desk textures the site serves (apps/web/public). */
 const FOLIO_TEXTURES = '/folio/textures';
 
+/** The book's paper while the print preview proofs the pages on the
+ *  paper's own white (#799): neutral, so that white is the one shown. */
+const PROOF_PAPER = { hex: '#ffffff', model: 'hex' } as const;
+
 const fill = (template: string, values: Record<string, string | number>) =>
   template.replace(/__(\w+)__/g, (m, key: string) => (key in values ? String(values[key]) : m));
 
@@ -146,7 +151,6 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   // viewer as it changes, never laid out.
   const folioConfig = config.folio;
   const folioConfigRef = useRef(folioConfig);
-  folioConfigRef.current = folioConfig;
   const resources = useSandboxSelector((s) => s.resources);
   // The picture on the spine (none on a saddle stitch or a folded
   // newspaper): its stored image, handed to the viewer as an object URL.
@@ -475,17 +479,29 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   }, [deferredResources, diagramInkHex, inlineSvgFonts]);
 
   const pageNegative = useMemo(() => resolveDebugConfig(deferredConfig.debug).pageNegative.enabled, [deferredConfig]);
-  // The print preview (#606): the pages proofed through the output profile,
-  // relative to the paper (the book's paper shade tints them in 3D).
+  // The print preview (#606): the Canvas's proof (#799) — the output
+  // profile on the paper's own white, the safe-zone guides and the
+  // preflight marks — so the book's paper is shown neutral meanwhile
+  // instead of tinting the proofed paper a second time.
   const [printPreviewOn] = usePrintPreview();
   const printSetup = usePrintSetup(deferredConfig.print, printPreviewOn);
   const printPreviewKey = printPreviewOn && printSetup.transform ? JSON.stringify(printSetup.print) : 'off';
+  const resourcesRef = useRef(deferredResources);
+  resourcesRef.current = deferredResources;
   const printPreview = useMemo(
-    () => (printPreviewOn ? previewFor(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, false) : undefined),
+    () => (printPreviewOn
+      ? viewerPreview(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, deferredConfig.print, () => resourcesRef.current, () => viewerDocRef.current?.doc ?? null)
+      : undefined),
     // The key names the setup; the object is new on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [printPreviewKey, deferredConfig.page?.dpi],
   );
+  const proofing = printPreview !== undefined;
+  const shownFolio = useMemo(
+    () => (proofing ? { ...folioConfig, paper: { ...folioConfig?.paper, shade: PROOF_PAPER } } : folioConfig),
+    [proofing, folioConfig],
+  );
+  folioConfigRef.current = shownFolio;
   const folioLabels = useMemo((): FolioLabels => ({
     region: labels.folioRegion,
     prev: labels.folioPrev,
@@ -627,8 +643,8 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
   }, [folioLabels]);
 
   useEffect(() => {
-    viewerRef.current?.setAppearance({ folio: folioConfig, spineImage: spineUrl });
-  }, [folioConfig, spineUrl]);
+    viewerRef.current?.setAppearance({ folio: shownFolio, spineImage: spineUrl });
+  }, [shownFolio, spineUrl]);
 
   useEffect(() => () => {
     viewerRef.current?.dispose();
