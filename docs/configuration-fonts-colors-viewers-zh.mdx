@@ -685,7 +685,7 @@ const master = await inspectPrintMaster(masterBytes);
 
 ### 印刷预览
 
-Canvas页面可以按印出来的样子绘制。`createPrintPreview(transform, print, { paper, dpi })`为一套设置构建软打样：每个像素都经特性文件分色（中性色只用K，与PDF相同），再显示回屏幕上；`paper`为true时，显示在纸张自身的白色上；大到足以用复合黑的黑色区域显示为复合黑。把它作为`printPreview`交给`renderPageToCanvas`；`guides`加上成品线、出血线和安全区线，`marksFor`勾出页面上的区域（印前检查给出的`rect`）。`postext-folio`接受同一个对象作为`printPreview`（`paper: false`，因为书本身的纸色会给书页着色）。
+Canvas页面可以按印出来的样子绘制。`createPrintPreview(transform, print, { paper, dpi, grayscale })`为一套设置构建软打样：每个像素都经特性文件分色（中性色只用K，与PDF相同），再显示回屏幕上；`paper`为true时，显示在纸张自身的白色上；大到足以用复合黑的黑色区域显示为复合黑。设置`grayscale`时，打样的是灰度印刷：强制为灰度的PDF把每种颜色的明度只用黑墨印出，不用复合黑。把它作为`printPreview`交给`renderPageToCanvas`。作为工作视图而不是打样时，`guides`加上成品线、出血线和安全区线，`marksFor`勾出页面上的区域（印前检查给出的`rect`）；Sandbox两者都不用，因此它的预览只显示印出来的内容。`postext-folio`接受同一个对象作为`printPreview`；`paper`为true时，期间请给书设置中性的纸色（`folio.paper.shade`），否则纸张会被着色两次。
 
 ```ts
 import { createPrintPreview, renderPageToCanvas } from 'postext';
