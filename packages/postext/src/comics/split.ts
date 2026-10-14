@@ -571,7 +571,9 @@ export function mergeComicCells(src: string, path: readonly number[], boundary: 
     // A bracketed list of one cell: the brackets go.
     if (path.length > 0) {
       const parent = comicSplitListAt(root, path.slice(0, -1))!;
-      const owner = parent.items[path[path.length - 1]!]!;
+      // The path is an index list; read as a number, an index from outside
+      // never names a property such as `__proto__`.
+      const owner = parent.items[Number(path[path.length - 1])]!;
       if (merged.children && merged.children.items.length > 1) owner.children = merged.children;
       else delete owner.children;
     }
