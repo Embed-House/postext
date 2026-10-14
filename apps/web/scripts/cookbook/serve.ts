@@ -246,7 +246,9 @@ export async function startSandboxServer({ buildDir, bundleFile, port }: { build
       if (route === "/favicon.ico") return send(res, 204, "text/plain", "");
       return send(res, 404, "text/plain", `not found: ${route}`);
     } catch (error) {
-      return send(res, 500, "text/plain", String((error as Error).stack ?? error));
+      // The stack stays in the terminal; the client gets a plain status.
+      console.error(`[cookbook] ${route}:`, error);
+      return send(res, 500, "text/plain", `internal error: ${route} (see the terminal)`);
     }
   });
   await new Promise<void>((resolve, reject) => {
@@ -331,7 +333,10 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
         if (found.path === MATHJAX_MODULE) {
           localMathJaxModule(fs.readFileSync(found.file, "utf-8")).then(
             (code) => send(res, 200, type, code),
-            (error) => send(res, 500, "text/plain", `the MathJax bundle of the local engine failed: ${String((error as Error).stack ?? error)}`),
+            (error) => {
+              console.error("[cookbook] the MathJax bundle of the local engine failed:", error);
+              send(res, 500, "text/plain", "the MathJax bundle of the local engine failed (see the terminal)");
+            },
           );
           return;
         }
@@ -342,7 +347,9 @@ export async function startPenServer(opts: PenServerOptions): Promise<PenServer>
       if (route === "/favicon.ico") return send(res, 204, "text/plain", "");
       return send(res, 404, "text/plain", `not found: ${route}`);
     } catch (error) {
-      return send(res, 500, "text/plain", String((error as Error).stack ?? error));
+      // The stack stays in the terminal; the client gets a plain status.
+      console.error(`[cookbook] ${route}:`, error);
+      return send(res, 500, "text/plain", `internal error: ${route} (see the terminal)`);
     }
   });
 
