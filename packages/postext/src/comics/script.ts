@@ -22,7 +22,7 @@ import { BREAK_PLACEHOLDER } from '../parse/inlineFormatting';
 import { COMIC_RESERVED_KEYS, type ComicScriptItem, type ComicScriptRole, type ComicSourceRange, type ComicTailSide } from './types';
 
 /** `key`, an optional `{attrs}`, then the colon. */
-const SCRIPT_LINE_RE = /^([\p{L}\p{N}_.-]+)[ \t]*(?:\{([^}\n]*)\})?[ \t]*[:：]/u;
+const SCRIPT_LINE_RE = /^([\p{L}\p{N}_.-]+)(?:[ \t]*\{([^}\n]*)\})?[ \t]*[:：]/u;
 
 /** One source line of a script, as the page parser hands it over: its text
  *  (comments blanked out) and where it starts. */
@@ -48,7 +48,10 @@ function isContinuation(text: string): boolean {
  *  two numbers. */
 export function parseComicPoint(value: string | undefined): { x: number; y: number } | undefined {
   if (value === undefined) return undefined;
-  const m = /^\s*(-?[0-9.]+)\s*(%?)\s*[ ,]\s*(-?[0-9.]+)\s*(%?)\s*$/.exec(value);
+  // The two numbers, each with an optional `%`, apart by a comma or by
+  // spaces holding a plain one. Every run of spaces matches one way only,
+  // so a long one stays linear.
+  const m = /^(-?[0-9.]+)(?:\s*(%))?(?:\s*,\s*|[^\S ]* \s*)(-?[0-9.]+)(?:\s*(%))?$/.exec(value.trim());
   if (!m) return undefined;
   const a = Number(m[1]);
   const b = Number(m[3]);

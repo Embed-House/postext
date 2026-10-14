@@ -74,6 +74,14 @@ const withRows = (m: TableModel, rows: TableCell[][]): TableModel => {
 const averageWeight = (weights: number[]): number =>
   weights.length > 0 ? weights.reduce((sum, w) => sum + w, 0) / weights.length : 1;
 
+/** A position as grid coordinates: a coordinate that is no number (one
+ *  read from outside, say `__proto__`) becomes NaN, which no bounds check
+ *  passes, so it never names a property of the grid. */
+const gridPos = (pos: CellPos): CellPos => ({
+  row: typeof pos.row === 'number' ? Number(pos.row) : Number.NaN,
+  col: typeof pos.col === 'number' ? Number(pos.col) : Number.NaN,
+});
+
 const inBounds = (rows: TableCell[][], pos: CellPos): boolean =>
   pos.row >= 0 &&
   pos.row < rows.length &&
@@ -292,6 +300,7 @@ export const setCellContent = (
   at: CellPos,
   content: string,
 ): TableModel => {
+  at = gridPos(at);
   const rows = cloneRows(m);
   if (!inBounds(rows, at)) return withRows(m, rows);
   rows[at.row][at.col] = { ...rows[at.row][at.col], content };
@@ -308,6 +317,7 @@ export const setCellImage = (
   at: CellPos,
   image: TableCellImage | undefined,
 ): TableModel => {
+  at = gridPos(at);
   const rows = cloneRows(m);
   if (!inBounds(rows, at)) return withRows(m, rows);
   const cell = cloneCell(rows[at.row][at.col]);
@@ -327,6 +337,7 @@ export const setCellBackground = (
   at: CellPos,
   background: ColorValue | undefined,
 ): TableModel => {
+  at = gridPos(at);
   const rows = cloneRows(m);
   if (!inBounds(rows, at)) return withRows(m, rows);
   const cell = cloneCell(rows[at.row][at.col]);
@@ -346,6 +357,7 @@ export const setAlignment = (
   align?: Align,
   vAlign?: VAlign,
 ): TableModel => {
+  at = gridPos(at);
   const rows = cloneRows(m);
   if (!inBounds(rows, at)) return withRows(m, rows);
   const cell = cloneCell(rows[at.row][at.col]);
@@ -411,13 +423,12 @@ export const mergeCells = (m: TableModel, range: CellRange): TableModel => {
  * `hiddenBy` markers removed. A non-merged cell is left unchanged.
  */
 export const unmergeCell = (m: TableModel, at: CellPos): TableModel => {
+  at = gridPos(at);
   const rows = cloneRows(m);
   if (!inBounds(rows, at)) return withRows(m, rows);
 
   const cell = rows[at.row][at.col];
-  const primaryPos: CellPos = cell.hiddenBy
-    ? { row: cell.hiddenBy.row, col: cell.hiddenBy.col }
-    : { row: at.row, col: at.col };
+  const primaryPos: CellPos = cell.hiddenBy ? gridPos(cell.hiddenBy) : { row: at.row, col: at.col };
   if (!inBounds(rows, primaryPos)) return withRows(m, rows);
 
   const primary = rows[primaryPos.row][primaryPos.col];

@@ -108,7 +108,12 @@ function writeEtAl(html: string, and: string, etAl: string, italic: boolean): st
 }
 
 function numericStyle(xml: string): boolean {
-  return /citation-format="numeric"/.test(xml) || /<citation[\s\S]*variable="citation-number"[\s\S]*<\/citation>/.test(xml);
+  if (/citation-format="numeric"/.test(xml)) return true;
+  // `<citation…variable="citation-number"…</citation>` in that order, found
+  // by plain searches (the regex with two `[\s\S]*` is quadratic).
+  const open = xml.indexOf('<citation');
+  const number = open < 0 ? -1 : xml.indexOf('variable="citation-number"', open + '<citation'.length);
+  return number >= 0 && xml.indexOf('</citation>', number + 'variable="citation-number"'.length) >= 0;
 }
 
 /** The `<citation>` element of a style. */
@@ -132,12 +137,69 @@ export function adjustStyle(xml: string, options: { collapseRanges?: boolean; un
   if (options.unnumberedNotes) {
     // A branch for a later citation that points back to the first note
     // never applies: the work is written out again.
-    out = out.replace(
-      /<(if|else-if) position="subsequent">((?:(?!<\/?\1[\s>])[\s\S])*?first-reference-note-number[\s\S]*?)<\/\1>/g,
-      (_m, tag: string, body: string) => `<${tag} variable="postext-unnumbered-note">${body}</${tag}>`,
-    );
+    out = unnumberedNoteBranches(out);
   }
   return out;
+}
+
+const NOTE_NUMBER = 'first-reference-note-number';
+
+/**
+ * Every `<if position="subsequent">` (or `<else-if …>`) branch that names
+ * the first note's number before any nested `<if>` of its kind opens or
+ * closes, turned into a branch on a variable no item has: what a global
+ * replace of
+ * `/<(if|else-if) position="subsequent">((?:(?!<\/?\1[\s>])[\s\S])*?first-reference-note-number[\s\S]*?)<\/\1>/`
+ * gives, by searches that each read the style once (from every branch,
+ * the regex reads on to the end when nothing closes it).
+ */
+function unnumberedNoteBranches(xml: string): string {
+  // Searches whose answers carry over: the first match at or after `from`
+  // stands for every later `from` up to it.
+  const memo = new Map<string, { from: number; at: number }>();
+  const find = (key: string, re: RegExp, from: number): number => {
+    const m = memo.get(key);
+    if (m && m.from <= from && (m.at < 0 || m.at >= from)) return m.at;
+    re.lastIndex = from;
+    const at = re.exec(xml)?.index ?? -1;
+    memo.set(key, { from, at });
+    return at;
+  };
+  const noteNumber = new RegExp(NOTE_NUMBER, 'g');
+  const nested = { if: /<\/?if[\s>]/g, 'else-if': /<\/?else-if[\s>]/g };
+  const closing = { if: /<\/if>/g, 'else-if': /<\/else-if>/g };
+  const branch = /<(if|else-if) position="subsequent">/g;
+  let out = '';
+  let last = 0;
+  for (let m = branch.exec(xml); m; m = branch.exec(xml)) {
+    const tag = m[1] as 'if' | 'else-if';
+    const bodyStart = m.index + m[0].length;
+    const note = find('note', noteNumber, bodyStart);
+    // No nested branch of the kind may open or close before the note.
+    const blocked = note < 0 ? -1 : find(`nested-${tag}`, nested[tag], bodyStart);
+    const close = note < 0 || (blocked >= 0 && blocked < note) ? -1 : find(`close-${tag}`, closing[tag], note + NOTE_NUMBER.length);
+    if (close < 0) {
+      // The regex retries from the next character.
+      branch.lastIndex = m.index + 1;
+      continue;
+    }
+    out += `${xml.slice(last, m.index)}<${tag} variable="postext-unnumbered-note">${xml.slice(bodyStart, close)}</${tag}>`;
+    last = close + `</${tag}>`.length;
+    branch.lastIndex = last;
+  }
+  return out + xml.slice(last);
+}
+
+/** Whether a `macro="…"` attribute's value names a locator (as
+ *  `/macro="[^"]*locator[^"]*"/` tests, without its quadratic retries). */
+function macroNamesLocator(xml: string): boolean {
+  for (let at = xml.indexOf('macro="'); at >= 0; at = xml.indexOf('macro="', at + 1)) {
+    const end = xml.indexOf('"', at + 'macro="'.length);
+    // No closing quote: none for a later attribute either.
+    if (end < 0) return false;
+    if (xml.slice(at + 'macro="'.length, end).includes('locator')) return true;
+  }
+  return false;
 }
 
 /** Short locator labels, for a numbered style whose citation leaves the
@@ -188,7 +250,8 @@ export function createCiteprocEngine(sources: CslSources): CitationEngine {
       );
       // A numbered style whose citation prints no locator (Vancouver,
       // Nature, GB/T 7714): the wrapper adds it.
-      const dropsLocator = !/variable="locator"|macro="[^"]*locator[^"]*"/.test(citationElement(xml));
+      const citation = citationElement(xml);
+      const dropsLocator = !(citation.includes('variable="locator"') || macroNamesLocator(citation));
       const items = new Map(options.items.map((i) => [i.id, markEtAl(i)]));
       const locale = pickLocale(sources.locales, options.locale);
       const sys = {

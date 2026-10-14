@@ -6,6 +6,7 @@
 
 import type { ColorValue, Dimension, ResolvedConfig, ResolvedTableStyleConfig } from 'postext';
 import { dimensionToPx, primaryFontFamily, resolvedCodeStyle } from 'postext';
+import { cssString } from '../shared/assets';
 import { idOf, round } from './inline';
 
 /** What the walk found that decides the writing mode of the book. */
@@ -76,7 +77,7 @@ const MONO = /\b(mono|code|courier|consol)/i;
 export function familyStack(family: string): string {
   const name = primaryFontFamily(family).trim().replace(/^['"]|['"]$/g, '');
   const generic = MONO.test(name) ? 'monospace' : SANS.test(name) ? 'sans-serif' : 'serif';
-  return `"${name.replace(/"/g, '\\"')}", ${generic}`;
+  return `${cssString(name)}, ${generic}`;
 }
 
 /** The family names the stylesheet asks for (to warn about missing

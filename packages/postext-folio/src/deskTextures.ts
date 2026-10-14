@@ -42,7 +42,12 @@ interface Manifest {
 const manifests = new Map<string, Promise<Manifest | null>>();
 const deskMaps = new Map<string, Promise<DeskMaps | null>>();
 
-const trimSlash = (url: string) => url.replace(/\/+$/, "");
+const trimSlash = (url: string) => {
+  // A scan, not `/\/+$/` (quadratic on a long run of slashes).
+  let end = url.length;
+  while (end > 0 && url.charCodeAt(end - 1) === 47) end--;
+  return url.slice(0, end);
+};
 
 /** Remember a promise, but forget it if it settles on null so a later call
  *  tries again (a dropped connection should not cost the session its desk). */

@@ -21,7 +21,7 @@ import { parseComicSplit } from './split';
 import type { ComicPageSource, ComicPanelSource, ComicSourceRange } from './types';
 
 /** `:::page` / `:::strip` with an optional attribute block. */
-const COMIC_FENCE_RE = /^:::\s*(page|strip)\s*(?:\{([^}]*)\})?\s*$/;
+const COMIC_FENCE_RE = /^:::\s*(page|strip)(?:\s*\{([^}]*)\})?\s*$/;
 /** `::panel` with an optional attribute block, alone on its line. */
 const PANEL_RE = /^::panel\s*(?:\{([^}]*)\})?\s*$/;
 /** The bare `:::` that closes the page. */

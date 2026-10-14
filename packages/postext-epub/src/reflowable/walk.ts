@@ -785,7 +785,7 @@ class DocWalker {
     if (cap) {
       const shape = `${cap.lines}-${cap.sink}`;
       (this.book.dropCaps ??= new Set()).add(shape);
-      const font = /^(?:(italic)\s+)?(?:(\d{3}|bold)\s+)?[\d.]+px\s+(.+)$/.exec(cap.fontString.trim());
+      const font = /^(?:(italic)\s+)?(?:(\d{3}|bold)\s+)?[\d.]+px\s+(\S.*)$/.exec(cap.fontString.trim());
       const decls = [
         ...(font ? [`font-family:${font[3]!.replace(/"/g, "'")}`] : []),
         ...(font?.[2] && font[2] !== '400' ? [`font-weight:${font[2]}`] : []),
@@ -1419,7 +1419,57 @@ function escapeText(text: string): string {
 
 /** A resource caption as plain text (its Markdown marks dropped). */
 function plainCaption(caption: string | undefined): string {
-  return (caption ?? '').replace(/[*_`~^]/g, '').replace(/:\w+\[([^\]]*)\]\{[^}]*\}/g, '$1').replace(/:\w+\{[^}]*\}/g, '').trim();
+  return dropDirectives(dropDirectives((caption ?? '').replace(/[*_`~^]/g, ''), true), false).trim();
+}
+
+/** `text` with every inline directive `:name[label]{attrs}` set as its
+ *  label (`labelled`), or every `:name{attrs}` dropped: what a global
+ *  replace of `/:\w+\[([^\]]*)\]\{[^}]*\}/` by `$1` (or of `/:\w+\{[^}]*\}/` by
+ *  nothing) gives, in one scan. The regex reads from every colon to the
+ *  next `]` or `}`, quadratic on a long caption with none; here the next
+ *  `]` and `}` are found once and shared by the colons before them. */
+function dropDirectives(text: string, labelled: boolean): string {
+  const memo = new Map<string, { from: number; at: number }>();
+  // The first `ch` at or after `from` (-1: none).
+  const next = (ch: string, from: number): number => {
+    const m = memo.get(ch);
+    if (m && m.from <= from && (m.at < 0 || m.at >= from)) return m.at;
+    const at = text.indexOf(ch, from);
+    memo.set(ch, { from, at });
+    return at;
+  };
+  const isWord = (c: number): boolean => (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c === 95;
+  let out = '';
+  let last = 0;
+  for (let p = text.indexOf(':'); p >= 0; ) {
+    let j = p + 1;
+    while (j < text.length && isWord(text.charCodeAt(j))) j++;
+    let end = -1;
+    let keep = '';
+    if (j > p + 1 && labelled && text[j] === '[') {
+      const r = next(']', j + 1);
+      // No `]` (or `}`) left: no later colon opens a directive either.
+      if (r < 0) break;
+      if (text[r + 1] === '{') {
+        const b = next('}', r + 2);
+        if (b < 0) break;
+        end = b + 1;
+        keep = text.slice(j + 1, r);
+      }
+    } else if (j > p + 1 && !labelled && text[j] === '{') {
+      const b = next('}', j + 1);
+      if (b < 0) break;
+      end = b + 1;
+    }
+    if (end < 0) {
+      p = text.indexOf(':', p + 1);
+      continue;
+    }
+    out += text.slice(last, p) + keep;
+    last = end;
+    p = text.indexOf(':', end);
+  }
+  return out + text.slice(last);
 }
 
 /** The paragraph style a block of a `:::paragraphs` container was set in,

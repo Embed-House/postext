@@ -18,7 +18,10 @@ import type {
 export const FINGERPRINT_FILE = 'fingerprint.json';
 
 function trimSlashes(s: string): string {
-  return s.replace(/\/+$/, '');
+  // A scan, not `/\/+$/` (quadratic on a long run of slashes).
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47) end--;
+  return s.slice(0, end);
 }
 
 /** Join URL path parts, URI-encoding every segment of each part. */

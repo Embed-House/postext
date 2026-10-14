@@ -335,7 +335,12 @@ export async function loadVerticalAlternates(family: string, faces: readonly Ver
 // The painter
 // ---------------------------------------------------------------------------
 
-const SIZE_RE = /(\d*\.?\d+)px(\s*\/\s*[^\s]+)?\s*/;
+/** The size of a CSS font shorthand (`12px`, `12.5px`, `.5px`, with any
+ *  `/line-height` and the spaces after), in group 2; group 1 is what comes
+ *  before the number (nothing or one character that is no digit), so a
+ *  match starts at a number's first digit only and a long run of digits
+ *  stays linear. */
+const SIZE_RE = /(^|\D)(\d+(?:\.\d+)?|\.\d+)px(\s*\/\s*[^\s]+)?\s*/;
 
 /** The em (px) and the first family of a CSS font shorthand. */
 function parseFont(font: string): { em: number; family: string; prefix: string } {
@@ -345,7 +350,7 @@ function parseFont(font: string): { em: number; family: string; prefix: string }
   const rest = font.slice(m.index + m[0].length);
   let first = rest.split(',')[0]!.trim();
   if (first.length >= 2 && /^["']/.test(first) && first.endsWith(first[0]!)) first = first.slice(1, -1);
-  return { em: parseFloat(m[1]!), family: first, prefix };
+  return { em: parseFloat(m[2]!), family: first, prefix };
 }
 
 /** How text is put on the canvas: filled, stroked (an outline), or both
@@ -486,7 +491,7 @@ function paintVertical(
  *  one: their ink at 100 px differs. Cached per family pair. */
 const formCache = new Map<string, boolean>();
 function twinHasForm(ctx: CanvasRenderingContext2D, face: string, twin: string, char: string): boolean {
-  const at100 = (font: string) => font.replace(SIZE_RE, '100px ');
+  const at100 = (font: string) => font.replace(SIZE_RE, (_size, before: string) => `${before}100px `);
   const key = `${at100(face)}|${at100(twin)}|${char}`;
   const hit = formCache.get(key);
   if (hit !== undefined) return hit;

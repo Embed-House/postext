@@ -79,9 +79,35 @@ export function latexToText(value: string): string {
   return s.replace(/\s+/g, ' ').trim();
 }
 
-/** Split `text` at `sep` (a regular expression of one separator) where the
- *  brace depth is zero. */
-function splitTopLevel(text: string, sep: RegExp): string[] {
+/** A separator for {@link splitTopLevel}: the length of the one that
+ *  starts at `i` of `text`, 0 when none does. */
+type Separator = (text: string, i: number) => number;
+
+const isSpace = (c: string | undefined): boolean => c !== undefined && /\s/.test(c);
+
+/** Where the run of white space that starts at `i` ends (`i` when none). */
+function spaceRunEnd(text: string, i: number): number {
+  while (isSpace(text[i])) i++;
+  return i;
+}
+
+/** `,`. */
+const COMMA: Separator = (text, i) => (text[i] === ',' ? 1 : 0);
+/** A run of white space. */
+const SPACES: Separator = (text, i) => spaceRunEnd(text, i) - i;
+/** `and` (any case) with white space on both sides. Inside a run of white
+ *  space it fails as it did at the run's start, so only the start is read:
+ *  a long run stays linear. */
+const AND: Separator = (text, i) => {
+  if (i > 0 && isSpace(text[i - 1])) return 0;
+  const word = spaceRunEnd(text, i);
+  if (word === i || !/^and$/i.test(text.slice(word, word + 3))) return 0;
+  const end = spaceRunEnd(text, word + 3);
+  return end === word + 3 ? 0 : end - i;
+};
+
+/** Split `text` at `sep` where the brace depth is zero. */
+function splitTopLevel(text: string, sep: Separator): string[] {
   const out: string[] = [];
   let depth = 0;
   let last = 0;
@@ -90,11 +116,10 @@ function splitTopLevel(text: string, sep: RegExp): string[] {
     if (c === '{') depth++;
     else if (c === '}') depth = Math.max(0, depth - 1);
     else if (depth === 0) {
-      sep.lastIndex = 0;
-      const m = sep.exec(text.slice(i));
-      if (m && m.index === 0) {
+      const length = sep(text, i);
+      if (length > 0) {
         out.push(text.slice(last, i));
-        i += m[0].length - 1;
+        i += length - 1;
         last = i + 1;
       }
     }
@@ -121,10 +146,10 @@ const CJK = /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}]/u;
  *  braced corporate name) as a CSL name. */
 function parseName(raw: string): CslName {
   const trimmed = raw.trim();
-  if (/^\{.*\}$/.test(trimmed) && splitTopLevel(trimmed.slice(1, -1), /,/g).length >= 1 && !trimmed.slice(1, -1).includes('{')) {
+  if (/^\{.*\}$/.test(trimmed) && splitTopLevel(trimmed.slice(1, -1), COMMA).length >= 1 && !trimmed.slice(1, -1).includes('{')) {
     return { literal: latexToText(trimmed) };
   }
-  const parts = splitTopLevel(trimmed, /,/g).map(latexToText);
+  const parts = splitTopLevel(trimmed, COMMA).map(latexToText);
   if (parts.length >= 2) {
     const [last, ...rest] = parts;
     const given = rest.length === 2 ? rest[1]! : rest[0]!;
@@ -134,7 +159,7 @@ function parseName(raw: string): CslName {
   const text = parts[0] ?? '';
   // A Chinese, Japanese or Korean name written whole is one family name.
   if (CJK.test(text) && !/\s/.test(text)) return { family: text };
-  const words = splitTopLevel(trimmed, /\s+/g).map(latexToText);
+  const words = splitTopLevel(trimmed, SPACES).map(latexToText);
   if (words.length === 1) return { family: words[0]! };
   // One with a space between its parts is written as it is said, family
   // name first: "夏目 漱石" is 夏目 (family) 漱石 (given) (#426).
@@ -158,7 +183,7 @@ function withParticle(name: CslName): CslName {
 /** A name list; `and others` after the first name stands for the names
  *  left out ({@link ET_AL_NAME}: the style prints "et al.", #533). */
 function parseNames(value: string): CslName[] {
-  return splitTopLevel(value, /\s+and\s+/gi).map((raw, i) => (i > 0 && raw.trim().toLowerCase() === 'others' ? { ...ET_AL_NAME } : parseName(raw)));
+  return splitTopLevel(value, AND).map((raw, i) => (i > 0 && raw.trim().toLowerCase() === 'others' ? { ...ET_AL_NAME } : parseName(raw)));
 }
 
 function parseDate(fields: Readonly<Record<string, string>>): CslDate | undefined {

@@ -20,9 +20,8 @@ import type { CjkClass } from './cjkClasses';
 import { measureTextWidth, measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas';
 import { isVerticalCell, verticalCellEms, verticalRuns, type UprightDigits } from '../writingMode';
 import { graphemesOf } from './graphemes';
+import { findPxSize } from './fontString';
 import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-
-const FONT_SIZE_RE = /(\d*\.?\d+)px/;
 
 let measureWritingMode: WritingMode = 'horizontal-tb';
 let measureRegion: CjkRegion = 'mainland';
@@ -84,8 +83,8 @@ export function withMeasureWritingMode<T>(mode: WritingMode, fn: () => T, region
 
 /** The em of a font string (its size in px), 16 when it names none. */
 export function fontEm(font: string): number {
-  const m = FONT_SIZE_RE.exec(font);
-  return m ? parseFloat(m[1]!) : 16;
+  const m = findPxSize(font);
+  return m ? parseFloat(m.value) : 16;
 }
 
 /**
@@ -152,8 +151,8 @@ export function mayHoldVerticalCell(text: string): boolean {
 /** A font string's first family, unquoted: the key of
  *  `VDTFlowFrame.centralBaselines`. */
 export function fontFamilyOf(font: string): string {
-  const m = FONT_SIZE_RE.exec(font);
-  const rest = (m ? font.slice(m.index + m[0].length) : font).replace(/^\s*(\/\s*\S+\s*)?/, '');
+  const m = findPxSize(font);
+  const rest = (m ? font.slice(m.end) : font).replace(/^\s*(\/\s*\S+\s*)?/, '');
   const first = rest.split(',')[0]!.trim();
   return first.length >= 2 && /^["']/.test(first) && first.endsWith(first[0]!) ? first.slice(1, -1) : first;
 }

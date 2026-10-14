@@ -70,7 +70,7 @@ def expand_inputs(patterns: list[str]) -> list[str]:
 def _parse_length(value: str | None) -> float | None:
     if not value:
         return None
-    match = re.fullmatch(r"\s*([0-9.+-eE]+)\s*([a-zA-Z%]*)\s*", value)
+    match = re.fullmatch(r"\s*([+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)\s*([a-zA-Z%]*)\s*", value)
     if not match:
         return None
     try:

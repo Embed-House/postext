@@ -313,11 +313,16 @@ export function isEngineUrl(url: string): boolean {
   return /^https:\/\/esm\.sh\/postext(-pdf|-citeproc|-folio|-epub)?(@[^/?]*)?(\/worker)?(\?.*)?$/.test(url);
 }
 
+/** `text` as a literal inside a regular expression (backslash included). */
+function escapeRegExp(text: string): string {
+  return text.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+}
+
 /** True when `name` appears in `code` as an identifier of its own: not part
  *  of a longer name and not a property access (`x.name`), though a spread
  *  (`...name`) counts. */
 export function referencesIdentifier(code: string, name: string): boolean {
-  const escaped = name.replace(/[$]/g, "\\$");
+  const escaped = escapeRegExp(name);
   return new RegExp(`(^|[^\\w$.]|\\.\\.\\.)${escaped}(?![\\w$])`).test(code);
 }
 
@@ -426,7 +431,7 @@ function stringAt(code: string, at: number, depth: number): string | undefined {
   const edition = editionString(code, head);
   if (edition !== undefined || depth <= 0) return edition;
   const name = /^([A-Za-z_$][\w$]*)\s*[,}\n]/.exec(head)?.[1];
-  const decl = name ? new RegExp(`^const ${name.replace(/\$/g, "\\$")}\\s*=\\s*`, "m").exec(code) : null;
+  const decl = name ? new RegExp(`^const ${escapeRegExp(name)}\\s*=\\s*`, "m").exec(code) : null;
   return decl ? stringAt(code, decl.index + decl[0].length, depth - 1) : undefined;
 }
 

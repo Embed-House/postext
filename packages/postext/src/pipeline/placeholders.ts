@@ -1,4 +1,4 @@
-import { BREAK_PLACEHOLDER, charBefore, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, TITLE_BREAK_RE } from '../parse/inlineFormatting';
+import { BREAK_PLACEHOLDER, charBefore, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, replaceTitleBreaks } from '../parse/inlineFormatting';
 import { collapseBreakingSpaces, collapseTitleSpaces } from '../measure/spaces';
 import type { InlineSpan } from '../parse';
 import type { DigitSystem, DocumentMetadata } from '../types';
@@ -454,13 +454,13 @@ export function computePartValues(
   const partTitleByPageIndex = new Array<string>(pages.length).fill('');
   const partNumberByPageIndex = new Array<string>(pages.length).fill('');
   const partPaletteByPageIndex = new Array<Record<string, string>>(pages.length).fill({});
-  let title = start?.title.replace(TITLE_BREAK_RE, ' ') ?? '';
+  let title = start ? replaceTitleBreaks(start.title, ' ') : '';
   let number = start?.number ?? '';
   let palette: Record<string, string> = start?.palette ?? {};
   for (let p = 0; p < pages.length; p++) {
     const info = pages[p]!.partInfo;
     if (info) {
-      title = info.title.replace(TITLE_BREAK_RE, ' ');
+      title = replaceTitleBreaks(info.title, ' ');
       number = info.number;
       palette = info.palette ?? {};
       for (let q = p - 1; q >= 0; q--) {
@@ -646,7 +646,7 @@ function plainBreaksOf(text: string, block: VDTBlock, inserted: readonly boolean
  *  words. The PDF bookmarks of the parts read their titles this way, as
  *  those of the headings read theirs (#221). */
 export function plainTitleText(title: string): string {
-  return plainTitleBreaks(title.replace(TITLE_BREAK_RE, BREAK_PLACEHOLDER));
+  return plainTitleBreaks(replaceTitleBreaks(title, BREAK_PLACEHOLDER));
 }
 
 /** The breaking whitespace a line ends / starts with. */

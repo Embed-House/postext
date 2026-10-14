@@ -559,10 +559,13 @@ async function changedPages(page: Page, dir: string, pages: RenderedPage[]): Pro
  *  the viewport and DPR 2 set when the page opened. */
 async function screenshotOf(page: Page, selector: string): Promise<string> {
   await page.evaluate("window.scrollTo(0, 0)");
-  const box = (await page.evaluate(
-    `(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return null;
-      const r = el.getBoundingClientRect(); return { x: r.left + scrollX, y: r.top + scrollY, width: r.width, height: r.height }; })()`,
-  )) as { x: number; y: number; width: number; height: number } | null;
+  // The selector goes in as an argument, never spliced into the code.
+  const box = (await page.evaluate((sel: string) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: r.left + window.scrollX, y: r.top + window.scrollY, width: r.width, height: r.height };
+  }, selector)) as { x: number; y: number; width: number; height: number } | null;
   if (!box || box.width < 1 || box.height < 1) throw new Error(`capture.selector matches nothing visible: ${selector}`);
   const height = Math.min(box.height, (box.width * 3) / 4);
   // Capturing beyond the viewport resizes it for the shot, and a page that

@@ -18,6 +18,11 @@ on:
       - apps/web/scripts/cookbook/**
       - .github/workflows/cookbook-sandbox.yml
 
+# Read-only token: no job here writes to the repository (artifacts and
+# caches use the runner's own token).
+permissions:
+  contents: read
+
 jobs:
   sandbox:
     name: Lay out the recipe bundles

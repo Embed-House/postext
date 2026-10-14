@@ -592,11 +592,25 @@ function parseSvgLength(value: string | undefined): number | null {
   return num * factor;
 }
 
+/** `markup` without its `<!-- … -->` comments; an unclosed one is left
+ *  as it is (as `/<!--[\s\S]*?-->/g` would), read in one pass. */
+function withoutComments(markup: string): string {
+  let out = '';
+  let at = 0;
+  for (;;) {
+    const open = markup.indexOf('<!--', at);
+    const close = open < 0 ? -1 : markup.indexOf('-->', open + 4);
+    if (close < 0) return out + markup.slice(at);
+    out += markup.slice(at, open);
+    at = close + 3;
+  }
+}
+
 /** An SVG's intrinsic pixel size from its root element: explicit
  *  `width`/`height`, else the `viewBox` extent; undefined when neither
  *  gives one. Reads the markup textually, so it runs anywhere. */
 export function svgSize(markup: string): BundleImageSize | undefined {
-  const tag = /<svg\b([^>]*)>/i.exec(markup.replace(/<!--[\s\S]*?-->/g, ''));
+  const tag = /<svg\b([^>]*)>/i.exec(withoutComments(markup));
   if (!tag) return undefined;
   const attrs: Record<string, string> = {};
   for (const m of tag[1]!.matchAll(/([\w:-]+)\s*=\s*("([^"]*)"|'([^']*)')/g)) {

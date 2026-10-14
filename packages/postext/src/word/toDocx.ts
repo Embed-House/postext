@@ -92,6 +92,47 @@ function attrPairs(blob: string): Array<[string, string | true]> {
   return out;
 }
 
+/** Whether a blob is attributes and nothing else — what
+ *  `/^(?:[A-Za-z_][\w-]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"']+))?\s*)*$/`
+ *  accepts. Read as a set of states in one pass: the expression's nested
+ *  repetitions backtrack exponentially on a long blob that fails (a name
+ *  runs into the next one, an unquoted value may hold a name). */
+function isAttributeBlob(blob: string): boolean {
+  // At the start (a name, no space, first), between attributes (after a
+  // value), in a name, after a name and the spaces that may lead to its
+  // `=`, after `=`, inside "…" or '…', in an unquoted value.
+  const START = 128, BETWEEN = 1, NAME = 2, AFTER_NAME = 4, EQUALS = 8, DOUBLE = 16, SINGLE = 32, VALUE = 64;
+  let states = START;
+  for (const c of blob) {
+    const space = c.trim() === '';
+    const nameStart = /[A-Za-z_]/.test(c);
+    const quote = c === '"' || c === "'";
+    let next = 0;
+    if (states & (START | BETWEEN | AFTER_NAME) && nameStart) next |= NAME;
+    if (space) next |= states & (BETWEEN | AFTER_NAME | EQUALS);
+    if (states & (NAME | AFTER_NAME) && c === '=') next |= EQUALS;
+    if (states & NAME) {
+      if (/[\w-]/.test(c)) next |= NAME;
+      else if (space) next |= AFTER_NAME;
+    }
+    if (states & EQUALS && !space) {
+      if (c === '"') next |= DOUBLE;
+      else if (c === "'") next |= SINGLE;
+      else next |= VALUE;
+    }
+    if (states & DOUBLE) next |= c === '"' ? BETWEEN : DOUBLE;
+    if (states & SINGLE) next |= c === "'" ? BETWEEN : SINGLE;
+    if (states & VALUE) {
+      // A value may run straight into the next attribute's name.
+      if (space) next |= BETWEEN;
+      else if (!quote) next |= nameStart ? VALUE | NAME : VALUE;
+    }
+    states = next;
+    if (states === 0) return false;
+  }
+  return (states & (START | BETWEEN | NAME | AFTER_NAME | VALUE)) !== 0;
+}
+
 /** A paragraph's lines as one text: joined with a space, or with a line
  *  feed after a line that ends in a backslash, a forced line break (#620)
  *  `parseInline` reads. */
@@ -266,7 +307,7 @@ function parseChapter(markdown: string, listRunBase: { n: number }): ParsedChapt
         const s = pairs.find(([k]) => k === 'style');
         // Only a blob the grammar reads whole is attributes.
         const reconstructed = attrs[2]!.trim();
-        if (s && typeof s[1] === 'string' && /^(?:[A-Za-z_][\w-]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"']+))?\s*)*$/.test(reconstructed)) {
+        if (s && typeof s[1] === 'string' && isAttributeBlob(reconstructed)) {
           style = s[1];
           const rest = reconstructed.replace(/(^|\s)style\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"']+)/, '').trim();
           text = text.slice(0, attrs.index) + (rest ? `${attrs[1]}{${rest}}` : '');

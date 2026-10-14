@@ -47,7 +47,7 @@ const HYPHENS = /[-‐]$/;
 
 /** Size of a CSS font shorthand in px (16 when it has none). */
 export function fontPx(fontString: string | undefined): number {
-  const m = fontString ? /(\d+(?:\.\d+)?)px/.exec(fontString) : null;
+  const m = fontString ? /(?:^|\D)(\d+(?:\.\d+)?)px/.exec(fontString) : null;
   return m ? Number(m[1]) : 16;
 }
 
@@ -146,7 +146,9 @@ export function mathSvg(render: MathRender, basePx: number, inline: boolean): st
   const vb = render.viewBox;
   let body = render.svg.replace(/^[\s\S]*?<svg\b[^>]*>/, '').replace(/<\/svg>\s*$/, '');
   body = body
-    .replace(/\s+data-[\w-]+="[^"]*"/g, '')
+    // A whitespace run is matched whole and kept unless an attribute
+    // follows it: `/\s+data-…/g` retries from every blank of a long run.
+    .replace(/(\s+)(data-[\w-]+="[^"]*")?/g, (m: string, _ws: string, attr: string | undefined) => (attr ? '' : m))
     .replace(/&nbsp;/g, '&#160;')
     .replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;');
   const xlink = /\bxlink:/.test(body) ? ' xmlns:xlink="http://www.w3.org/1999/xlink"' : '';

@@ -127,7 +127,10 @@ export function parseLocator(rest: string): Pick<CitationItemInput, 'locator' | 
  *  ends kept. */
 export function affixSpans(text: string): InlineSpan[] {
   const lead = /^\s*/.exec(text)![0];
-  const trail = /\s*$/.exec(text.slice(lead.length))![0];
+  // The spaces at the end, read back from it (`/\s*$/` would backtrack).
+  let end = text.length;
+  while (end > lead.length && text[end - 1]!.trim() === '') end--;
+  const trail = text.slice(end);
   const spans = parseInlineFormatting(text.slice(lead.length, text.length - trail.length)).filter((s) => s.text.length > 0);
   const plain = (t: string): InlineSpan => ({ text: t, bold: false, italic: false });
   return [...(lead ? [plain(lead)] : []), ...spans, ...(trail ? [plain(trail)] : [])];

@@ -292,7 +292,7 @@ export function sampleBook(markdown: string, ids: () => string, fallbackTitle: s
   }
   pieces.push(markdown.slice(prev));
   const chapters = pieces.map((text, i) => {
-    const body = i === 0 ? text.replace(/\s+$/, '') : text.replace(/^\s+/, '').replace(/\s+$/, '');
+    const body = i === 0 ? text.trimEnd() : text.trim();
     return newChapter(ids(), deriveChapterTitle(body, fallbackTitle), body, now);
   });
   return { chapters, activeChapterId: chapters[0]!.id };
