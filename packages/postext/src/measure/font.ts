@@ -85,7 +85,8 @@ export function primaryFontFamily(fontFamily: string): string {
 export function quoteFamily(fontFamily: string): string {
   const f = primaryFontFamily(fontFamily).trim();
   if (/^["'].*["']$/.test(f)) return f;
-  if (/(^|\s)\d/.test(f) || /[^\w\s-]/.test(f)) return `"${f.replace(/"/g, '\\"')}"`;
+  // A CSS string: a backslash escapes, so it is escaped first.
+  if (/(^|\s)\d/.test(f) || /[^\w\s-]/.test(f)) return `"${f.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
   return f;
 }
 

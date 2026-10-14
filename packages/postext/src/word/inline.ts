@@ -213,12 +213,26 @@ function renderLeaf(runs: InlineRun[], ctx: RenderContext): string {
   return out;
 }
 
+/** Markdown set inside a directive's `[…]`: each `]` that closes nothing
+ *  escaped. The text is Markdown already, so a backslash pair (`\*`, `\]`)
+ *  is an escape kept as written, never escaped twice. */
+function escapeClosingBrackets(markdown: string): string {
+  let out = '';
+  for (let i = 0; i < markdown.length; i++) {
+    const c = markdown[i]!;
+    if (c === '\\' && i + 1 < markdown.length) {
+      out += c + markdown[++i];
+    } else out += c === ']' ? '\\]' : c;
+  }
+  return out;
+}
+
 function renderSmallCaps(runs: InlineRun[], ctx: RenderContext): string {
   return groups(runs, (r) => (r.smallCaps ? 'sc' : null)).map((g) => {
     if (g.key === null) return renderLeaf(g.runs, ctx);
     const { lead, inner, trail } = edges(g.runs.map((r) => ({ ...r, smallCaps: undefined })), ctx.tidy);
     if (!inner.length) return renderLeaf(g.runs.map((r) => ({ ...r, smallCaps: undefined })), ctx);
-    const body = renderLeaf(inner, { before: '', tidy: ctx.tidy }).replace(/\]/g, '\\]');
+    const body = escapeClosingBrackets(renderLeaf(inner, { before: '', tidy: ctx.tidy }));
     const s = `${lead}:smallcaps[${body}]${trail}`;
     ctx.before += s;
     return s;
@@ -275,7 +289,7 @@ export function renderInline(input: InlineRun[], opts: { collapseSpaces?: boolea
       ctx.before += s;
     } else {
       const { lead, inner: body, trail } = edges(inner, ctx.tidy);
-      const text = renderInline(body, { tidy: opts.tidy }).replace(/\]/g, '\\]').replace(/\s+/g, ' ');
+      const text = escapeClosingBrackets(renderInline(body, { tidy: opts.tidy })).replace(/\s+/g, ' ');
       const s = text ? `${lead}:chip[${text}]{style="${first.chip}"}${trail}` : lead + trail;
       out += s;
       ctx.before += s;

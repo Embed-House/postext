@@ -3479,8 +3479,10 @@ export function renderToHtmlIndexed(
   // browser picks the region's glyph forms, and so does a right-to-left one,
   // with its direction (see `renderLangOf`).
   const reset = rtl ? HTML_TEXT_RESET.replace('direction:ltr;', 'direction:rtl;') : HTML_TEXT_RESET;
+  // The mode, gap and padding come from the caller, typed but not checked:
+  // escaped, they cannot leave their attributes.
   const html =
-    `<div class="pt-doc"${docLang !== undefined ? ` lang="${docLang}"` : ''}${rtl ? ' dir="rtl"' : ''} data-mode="${mode}" style="${reset}${docStyle}">` +
+    `<div class="pt-doc"${docLang !== undefined ? ` lang="${docLang}"` : ''}${rtl ? ' dir="rtl"' : ''} data-mode="${esc(mode)}" style="${esc(reset + docStyle)}">` +
     pageHtmlParts.join('') +
     `</div>`;
 
