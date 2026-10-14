@@ -15,6 +15,7 @@ import {
   resolvePrintConfig,
   type IccProfile,
   type OutputTransform,
+  type PdfGenerationConfig,
   type PrintConfig,
   type PrintPreview,
   type ResolvedPrintConfig,
@@ -117,9 +118,18 @@ export function usePrintSetup(raw: PrintConfig | undefined, enabled = true): Pri
   };
 }
 
+/**
+ * Whether the PDF prints in grays (#800): forced to DeviceGray, and not a
+ * PDF/X file (which is written in CMYK whatever the colour space says).
+ */
+export function printsGrayscale(pdf: PdfGenerationConfig | undefined, setup: PrintSetup): boolean {
+  return pdf?.forceColorSpace === true && pdf.colorSpace === 'grayscale' && setup.print.standard === 'none';
+}
+
 /** The soft proof of a loaded setup, on the paper's white (`paper`) or
- *  relative to it, as a grayscale print (`grayscale`) or in colour;
- *  `viewerPreview` adds the guides and the marks. */
+ *  relative to it, as a grayscale print (`grayscale`) or in colour. The
+ *  Sandbox's viewers show the print alone: no screen guides, no preflight
+ *  outlines (#802; the findings are in the Checks panel). */
 export function previewFor(setup: PrintSetup, dpi: number, paper: boolean, grayscale = false): PrintPreview | undefined {
   if (!setup.transform) return undefined;
   return createPrintPreview(setup.transform, setup.print, { paper, dpi, grayscale });

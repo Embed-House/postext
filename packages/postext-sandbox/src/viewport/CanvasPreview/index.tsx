@@ -9,8 +9,7 @@ import type { ComposedBook } from '../../book/types';
 import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook';
 import { renderPageToCanvas, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
 import type { PrintPreview } from 'postext';
-import { usePrintSetup } from '../../print/printSetup';
-import { printsGrayscale, viewerPreview } from '../../print/viewerPreview';
+import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSetup';
 import { usePrintPreview } from '../../print/printPreviewToggle';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
 import { clearOverlay, drawOverlay } from './overlay';
@@ -224,8 +223,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   // in view and marks the rest stale, exactly as for a new docVersion.
   const [paintKey, setPaintKey] = useState(0);
   // The print preview (#606): the soft proof of the output profile on the
-  // paper's white, the trim / bleed / safe-zone guides and the preflight
-  // marks of each page. Repaints, never relays.
+  // paper's white, the print alone (#802). Repaints, never relays.
   const [printPreviewOn] = usePrintPreview();
   const printSetup = usePrintSetup(config.print, printPreviewOn);
   const printPreviewRef = useRef<PrintPreview | undefined>(undefined);
@@ -236,8 +234,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     if (!printPreviewOn || !printSetup.transform) {
       printPreviewRef.current = undefined;
     } else {
-      const dpi = (config.page?.dpi as number | undefined) ?? 300;
-      printPreviewRef.current = viewerPreview(printSetup, dpi, config.print, () => resourcesRef.current, () => docRef.current, printGray);
+      printPreviewRef.current = previewFor(printSetup, (config.page?.dpi as number | undefined) ?? 300, true, printGray);
     }
     setPaintKey((k) => k + 1);
     // The key says when the preview changes; the setup object is new on

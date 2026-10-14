@@ -13,8 +13,7 @@ import { stitchDocuments, type StitchedBook } from '../book/stitch';
 import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../controls/fontLoader';
 import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
 import { getBlob } from '../storage/blobStore';
-import { usePrintSetup } from '../print/printSetup';
-import { printsGrayscale, viewerPreview } from '../print/viewerPreview';
+import { previewFor, printsGrayscale, usePrintSetup } from '../print/printSetup';
 import { usePrintPreview } from '../print/printPreviewToggle';
 import { useLayoutWorker } from '../worker/useLayoutWorker';
 import { onLateFonts } from '../worker/LayoutService';
@@ -480,20 +479,16 @@ export const FolioPreview = forwardRef<FolioPreviewHandle, FolioPreviewProps>(fu
 
   const pageNegative = useMemo(() => resolveDebugConfig(deferredConfig.debug).pageNegative.enabled, [deferredConfig]);
   // The print preview (#606): the Canvas's proof (#799) — the output
-  // profile on the paper's own white, the safe-zone guides and the
-  // preflight marks — so the book's paper is shown neutral meanwhile
-  // instead of tinting the proofed paper a second time.
+  // profile on the paper's own white, the print alone (#802) — so the
+  // book's paper is shown neutral meanwhile instead of tinting the proofed
+  // paper a second time.
   const [printPreviewOn] = usePrintPreview();
   const printSetup = usePrintSetup(deferredConfig.print, printPreviewOn);
   // A PDF forced to grayscale prints in black alone (#800).
   const printGray = printsGrayscale(deferredConfig.pdfGeneration, printSetup);
   const printPreviewKey = printPreviewOn && printSetup.transform ? `${printGray}|${JSON.stringify(printSetup.print)}` : 'off';
-  const resourcesRef = useRef(deferredResources);
-  resourcesRef.current = deferredResources;
   const printPreview = useMemo(
-    () => (printPreviewOn
-      ? viewerPreview(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, deferredConfig.print, () => resourcesRef.current, () => viewerDocRef.current?.doc ?? null, printGray)
-      : undefined),
+    () => (printPreviewOn ? previewFor(printSetup, (deferredConfig.page?.dpi as number | undefined) ?? 300, true, printGray) : undefined),
     // The key names the setup; the object is new on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [printPreviewKey, deferredConfig.page?.dpi],
