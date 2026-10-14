@@ -434,6 +434,24 @@ clearMeasurementCache();              // totes les famílies
 
 Per a aplicacions que mesuren el text peça a peça, `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` i `cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` reben els arguments de `measureBlock` i `measureRichBlock` més la memòria cau, al final.
 
+### El separador de línies (WebAssembly)
+
+Els paràgrafs es divideixen en línies amb Knuth–Plass. Des de postext 1.33 el motor l'executa en un separador de línies escrit en Rust i compilat a WebAssembly (30 KB, dins del paquet). Tria els mateixos talls que el separador en TypeScript, amb la mateixa aritmètica en el mateix ordre, i un llibre sencer es compon al voltant d'un 15 % més de pressa. No cal configurar res:
+
+- En un worker, a Node i a Bun, el mòdul es compila al primer paràgraf.
+- Al fil principal d'una pàgina, on el navegador només compila un mòdul d'aquesta mida de manera asíncrona, es compila en segon pla i fins aleshores respon el separador en TypeScript. `await initLineBreaker()` abans de la primera composició el posa a treballar des del primer paràgraf; retorna `false` on no hi ha WebAssembly.
+- On falta WebAssembly, o una política de seguretat de contingut el rebutja (`script-src` sense `'wasm-unsafe-eval'`), el separador en TypeScript respon a tots els paràgrafs.
+
+Tots dos trien els mateixos talls, de manera que quin respongui no canvia mai una composició. `useWasmLineBreaker(false)` manté el separador en TypeScript, per comparar-los.
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // opcional: la primera composició ja l'usa
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### Estat global compartit en una pàgina
 
 Part de l'estat de Postext viu en variables de mòdul. Tot el que importa `postext` en el mateix context de JavaScript (*realm*) el comparteix: una pàgina i els seus scripts comparteixen una còpia, mentre que cada iframe i cada worker tenen la seva. Amb un document per pàgina no es nota. Amb diversos documents a la mateixa pàgina —dues previsualitzacions en directe, una galeria d'exemples— sí:
@@ -443,6 +461,7 @@ Part de l'estat de Postext viu en variables de mòdul. Tot el que importa `poste
 - **Configuracions resoltes.** Cada objecte de configuració es resol una vegada i el resultat queda a la memòria cau associat a aquest objecte. Abans de res, cada build compara l'objecte amb el text que tenia quan es va resoldre (un `JSON.stringify`, uns 0,1 ms per a una configuració de llibre de 55 KB i 1,5 ms per a una de 240 KB), de manera que una configuració modificada al lloc, a qualsevol profunditat (`config.bodyText.fontSize = …`, un color de la paleta), es torna a resoldre. `invalidateConfig(config)` descarta la resolució a mà. `stableStringify` i `hashString` donen una clau de contingut que no depèn de l'ordre de les claus, per als amfitrions que desen composicions a la memòria cau per configuració.
 - **Llengua de la partició de mots.** Cada build fixa la llengua de partició de mots de tot el procés al `bodyText.hyphenation.locale` del seu document. Les funcions exportades `hyphenateText(text)` i `layoutDesignSlot` fan servir la llengua de l'últim build tret que els en passis una: crida `hyphenateText(text, 'es')`.
 - **Motor de fórmules.** Hi ha un únic motor MathJax i una única memòria cau de fórmules renderitzades per context; `initMathEngine()` l'engega per a tots.
+- **Separador de línies.** Hi ha un únic separador de línies WebAssembly per context, compilat una vegada; `useWasmLineBreaker(false)` el desactiva per a tots.
 
 L'aïllament més senzill és un context per document: un iframe per exemple en directe (una inserció de CodePen ho és), o un [worker de composició](#executar-la-composició-en-un-web-worker) per document per a les mesures i la partició de mots (les imatges es continuen registrant a la pàgina).
 
