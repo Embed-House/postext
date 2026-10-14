@@ -124,10 +124,18 @@ export function defaultCrossRefStrings(locale: unknown): CrossRefStrings {
   return stringsFor(CROSS_REF_STRINGS, locale);
 }
 
+/** What a heading number may end with besides spaces that a reference
+ *  drops: a stop, a colon, a closing parenthesis, the ideographic comma and
+ *  full stop. */
+const NUMBER_TAIL: ReadonlySet<string> = new Set(['.', ':', ')', '、', '。']);
+
 /** A heading number as a reference prints it: without the stop or the
  *  space a numbering template may end with ("1.2." → "1.2"). */
 function bareNumber(number: string): string {
-  return number.replace(/[\s.:)、。]+$/u, '').trim();
+  // `/[\s.:)、。]+$/u` read back from the end, without its backtracking.
+  let end = number.length;
+  while (end > 0 && (NUMBER_TAIL.has(number[end - 1]!) || number[end - 1]!.trim() === '')) end--;
+  return number.slice(0, end).trim();
 }
 
 function applyCase(text: string, refCase: RefCase | undefined): string {

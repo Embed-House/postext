@@ -26,6 +26,7 @@ import type { OutputTransform } from './color/transform';
 import { authoredCmykColors } from './color/authored';
 import { resolvePrintConfig } from './defaults/print';
 import { dimensionToPx } from './units';
+import { findPxSize } from './measure/fontString';
 
 export type PreflightSeverity = 'critical' | 'warning' | 'info';
 
@@ -82,8 +83,8 @@ const MM_PER_IN = 25.4;
 const EPS = 0.5;
 
 function fontSizePx(fontString: string | undefined): number | undefined {
-  const m = fontString ? /(\d+(?:\.\d+)?)px/.exec(fontString) : null;
-  return m ? Number(m[1]) : undefined;
+  const m = fontString ? findPxSize(fontString, 0, true) : null;
+  return m ? Number(m.value) : undefined;
 }
 
 function hex6(color: string | undefined): string | undefined {

@@ -18,7 +18,7 @@
 import type { ContentBlock, InlineSpan } from '../parse';
 import { MATH_PLACEHOLDER } from '../parse';
 import { isMathReady } from '../math/engine';
-import { TEX_LABEL_RE } from '../parse/equationLabels';
+import { texLabelMatches } from '../parse/equationLabels';
 import type { HeadingCounters, ResolvedCalloutNumberingConfig, ResolvedCalloutStyleConfig } from '../types';
 import type { ResolvedConfig, VDTLine, VDTLineSegment } from '../vdt';
 import type { MeasuredBlock } from '../measure';
@@ -172,10 +172,7 @@ export function numberStatements(
     /** Number one row (or the whole formula): its first label becomes the
      *  tag, unless the row says `\nonumber` or tags itself. */
     const numberRow = (row: string): string => {
-      const labels: string[] = [];
-      TEX_LABEL_RE.lastIndex = 0;
-      let m: RegExpExecArray | null;
-      while ((m = TEX_LABEL_RE.exec(row)) !== null) if (m[1]) labels.push(m[1]);
+      const labels = texLabelMatches(row).map((m) => m.label).filter((label) => label);
       const suppressed = HAS_NO_NUMBER_RE.test(row);
       let out = row.replace(NO_NUMBER_RE, '');
       if (labels.length === 0) return out;
@@ -195,12 +192,10 @@ export function numberStatements(
       }
       // The first label becomes the tag where it stands (inside the row's
       // own group, where MathJax takes a tag); the others go.
-      let first = true;
-      out = out.replace(TEX_LABEL_RE, () => {
-        const put = first ? tagText : '';
-        first = false;
-        return put;
-      });
+      const found = texLabelMatches(out);
+      for (let k = found.length - 1; k >= 0; k--) {
+        out = out.slice(0, found[k]!.start) + (k === 0 ? tagText : '') + out.slice(found[k]!.end);
+      }
       return out;
     };
     const env = ROW_ENV_RE.exec(b.tex);

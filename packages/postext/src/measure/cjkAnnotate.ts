@@ -55,6 +55,7 @@ import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
 import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from './canvas';
 import { flowTextWidth, fontEm, measuringVertically } from './vertical';
 import { graphemesOf } from './graphemes';
+import { splitAtFontSize } from './fontString';
 import { latinReadingLift } from './rubyLift';
 
 /** The central axis of a face, in em above its baseline. */
@@ -77,9 +78,9 @@ export function isZhuyin(reading: string): boolean {
 
 /** `font` at `sizePx`, style, weight and family kept. */
 export function withFontSize(font: string, sizePx: number): string {
-  const m = /^(.*?)(\d*\.?\d+)px(\s*\/\s*[^\s]+)?\s+(.+)$/.exec(font);
+  const m = splitAtFontSize(font, true);
   if (!m) return font;
-  return `${m[1]}${sizePx}px ${m[4]}`;
+  return `${m.prefix}${sizePx}px ${m.family}`;
 }
 
 /** The baseline, px from the line's baseline, of text of em `rowEm` whose

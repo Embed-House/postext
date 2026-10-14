@@ -41,7 +41,7 @@ import { flowRectToPage, tableCellFill } from './vdt';
 import { labToXyz, type OutputTransform } from './color/transform';
 import { authoredCmykColors } from './color/authored';
 import { resolveContrastConfig } from './defaults/contrast';
-import { parseFontString } from './measure/fontString';
+import { findPxSize, parseFontString } from './measure/fontString';
 import { dimensionToPx } from './units';
 import { taskBoxText } from './taskBox';
 
@@ -292,8 +292,8 @@ interface TextStyle {
 }
 
 function fontSizePx(fontString: string | undefined): number | undefined {
-  const m = fontString ? /(\d*\.?\d+)px/.exec(fontString) : null;
-  return m ? Number(m[1]) : undefined;
+  const m = fontString ? findPxSize(fontString) : null;
+  return m ? Number(m.value) : undefined;
 }
 
 const normal = (color: string) => color.trim().toLowerCase();

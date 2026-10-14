@@ -3,7 +3,7 @@ import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWrit
 import type { PartPageInfo } from './placeholders';
 import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
 import { recolorLineNumbers } from './lineNumbers';
-import { TITLE_BREAK_RE, applyTitleBreaks, parseInlineFormatting } from '../parse/inlineFormatting';
+import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
 import type { ColorPaletteEntry, ColorValue, DesignTextAlign, DocumentMetadata, Resource, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
 import {
   createBoundingBox,
@@ -1231,7 +1231,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partNumberByPageIndex,
         partPaletteByPageIndex,
         heading: {
-          titleText: title.replace(TITLE_BREAK_RE, '\n'),
+          titleText: replaceTitleBreaks(title, '\n'),
           formattedNumber: number,
           numericValue: parsePartNumber(number),
           locale,
@@ -1269,7 +1269,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         partNumberByPageIndex,
         partPaletteByPageIndex,
         heading: {
-          titleText: title.replace(TITLE_BREAK_RE, '\n'),
+          titleText: replaceTitleBreaks(title, '\n'),
           formattedNumber: number,
           numericValue: parsePartNumber(number),
           locale,

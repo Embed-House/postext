@@ -72,7 +72,8 @@ export type ComicStripAlign = 'start' | 'center' | 'end';
 /** A positive ratio written `3`, `3.2`, `4/1` or `4:1`; undefined when
  *  unreadable. */
 export function parseComicAspect(value: string | undefined): number | undefined {
-  const m = /^\s*([0-9]*\.?[0-9]+)\s*(?:[/:]\s*([0-9]*\.?[0-9]+))?\s*$/.exec(value ?? '');
+  // A number is `3`, `3.2` or `.2`, each written one way only (linear).
+  const m = /^([0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:\s*[/:]\s*([0-9]+(?:\.[0-9]+)?|\.[0-9]+))?$/.exec((value ?? '').trim());
   if (!m) return undefined;
   const r = Number(m[1]) / (m[2] !== undefined ? Number(m[2]) : 1);
   return Number.isFinite(r) && r > 0 ? r : undefined;
@@ -82,7 +83,7 @@ export function parseComicAspect(value: string | undefined): number | undefined 
  *  (a bare number in millimetres); undefined when unreadable or not
  *  positive. */
 export function parseComicStripWidth(value: string | undefined): ComicStripPlacement['width'] {
-  const pct = /^\s*([0-9]*\.?[0-9]+)\s*%\s*$/.exec(value ?? '');
+  const pct = /^([0-9]+(?:\.[0-9]+)?|\.[0-9]+)\s*%$/.exec((value ?? '').trim());
   if (pct) {
     const f = Number(pct[1]) / 100;
     return f > 0 ? { fraction: Math.min(1, f) } : undefined;

@@ -1,16 +1,33 @@
 import type { AnchorMark, ContentBlock } from './types';
 
-/** `\label{…}` in TeX: the identifier a `\eqref`, `\ref` or `:ref` names
- *  (#530). */
-export const TEX_LABEL_RE = /\\label\{\s*([^{}]*?)\s*\}/g;
+/** A `\label{…}` in TeX: the identifier a `\eqref`, `\ref` or `:ref`
+ *  names (#530), trimmed; `tex.slice(start, end)` is the whole command. */
+export interface TexLabel {
+  label: string;
+  start: number;
+  end: number;
+}
+
+/** Every `\label{…}` of a TeX source, in order, as
+ *  `/\\label\{\s*([^{}]*?)\s*\}/g` finds them: a braced group holding no
+ *  brace. A scan in one pass (the expression backtracks over spaces). */
+export function texLabelMatches(tex: string): TexLabel[] {
+  const out: TexLabel[] = [];
+  for (let i = tex.indexOf('\\label{'); i >= 0; ) {
+    let j = i + 7;
+    while (j < tex.length && tex[j] !== '{' && tex[j] !== '}') j++;
+    if (j === tex.length) break;
+    if (tex[j] === '}') {
+      out.push({ label: tex.slice(i + 7, j).trim(), start: i, end: j + 1 });
+      i = tex.indexOf('\\label{', j + 1);
+    } else i = tex.indexOf('\\label{', i + 1);
+  }
+  return out;
+}
 
 /** The labels of a TeX source, in order. */
 export function texLabels(tex: string): string[] {
-  const out: string[] = [];
-  TEX_LABEL_RE.lastIndex = 0;
-  let m: RegExpExecArray | null;
-  while ((m = TEX_LABEL_RE.exec(tex)) !== null) if (m[1]) out.push(m[1]);
-  return out;
+  return texLabelMatches(tex).map((m) => m.label).filter((label) => label);
 }
 
 /**
@@ -24,14 +41,12 @@ export function attachEquationAnchors<T extends { blocks: ContentBlock[] }>(resu
     if (b.type !== 'mathDisplay' || !b.tex || !b.tex.includes('\\label')) continue;
     const marks: AnchorMark[] = [];
     const source = markdown.slice(b.sourceStart, b.sourceEnd);
-    TEX_LABEL_RE.lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = TEX_LABEL_RE.exec(source)) !== null) {
-      if (!m[1]) continue;
+    for (const m of texLabelMatches(source)) {
+      if (!m.label) continue;
       marks.push({
-        anchorId: m[1],
-        sourceStart: b.sourceStart + m.index,
-        sourceEnd: b.sourceStart + m.index + m[0].length,
+        anchorId: m.label,
+        sourceStart: b.sourceStart + m.start,
+        sourceEnd: b.sourceStart + m.end,
         anchor: b.sourceStart,
         attach: 'after',
       });

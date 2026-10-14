@@ -984,14 +984,55 @@ function refAnchorHref(key: string): string {
   return `#${encodeURIComponent(resourceAnchorId(key))}`;
 }
 
+const isDigit = (c: string | undefined): boolean => c !== undefined && c >= '0' && c <= '9';
+const isLineTerminator = (c: string): boolean => c === '\n' || c === '\r' || c === '\u2028' || c === '\u2029';
+
+/**
+ * A font shorthand split at its first size followed by white space and a
+ * family: what comes before the size, the size (`16px`, `12.5px`) and the
+ * family. The same as `/^(.*?)(\d+(?:\.\d+)?px)\s+(.+)$/` (`.` stops at a
+ * line terminator), read in one pass so that long runs of digits or
+ * spaces stay linear; null when there is none.
+ */
+function splitFontSize(font: string): [prefix: string, size: string, family: string] | null {
+  const n = font.length;
+  let lastBreak = -1;
+  for (let i = n - 1; i >= 0 && lastBreak < 0; i--) if (isLineTerminator(font[i]!)) lastBreak = i;
+  for (let i = 0; i < n; i++) {
+    const c = font[i]!;
+    // The prefix holds no line terminator.
+    if (isLineTerminator(c)) return null;
+    // A size starts at a run's first digit: one inside the run would end
+    // where the run's does.
+    if (!isDigit(c) || isDigit(font[i - 1])) continue;
+    let j = i;
+    while (isDigit(font[j])) j++;
+    if (font[j] === '.' && isDigit(font[j + 1])) {
+      j++;
+      while (isDigit(font[j])) j++;
+    }
+    if (!font.startsWith('px', j)) continue;
+    const sizeEnd = j + 2;
+    let spaces = sizeEnd;
+    while (spaces < n && /\s/.test(font[spaces]!)) spaces++;
+    // The spaces take all they can and leave the family one character
+    // (the last space when nothing else follows); the family holds no
+    // line terminator.
+    const familyStart = spaces < n ? spaces : n - 1;
+    if (familyStart <= sizeEnd || lastBreak >= familyStart) continue;
+    return [font.slice(0, i), font.slice(i, sizeEnd), font.slice(familyStart)];
+  }
+  return null;
+}
+
 function quoteFontString(fontString: string): string {
   // Canvas accepts unquoted multi-word families; CSS is stricter. Wrap family in
   // single quotes (double quotes would collide with the outer HTML attribute
   // delimiter) if it contains a space and isn't already quoted. If the family
   // arrives already wrapped in double quotes, rewrite them to single quotes.
-  const match = fontString.match(/^(.*?)(\d+(?:\.\d+)?px)\s+(.+)$/);
+  const match = splitFontSize(fontString);
   if (!match) return fontString;
-  const [, prefix, size, family] = match;
+  const [prefix, size, family] = match;
   const trimmed = (family ?? '').trim();
   let quoted: string;
   if (trimmed.startsWith("'")) {
@@ -2803,7 +2844,8 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
 }
 
 function extractFontSizePx(fontString: string): number {
-  const m = fontString.match(/(\d+(?:\.\d+)?)px/);
+  // From a number's first digit only (`\D` before it): linear on long digit runs.
+  const m = fontString.match(/(?:^|\D)(\d+(?:\.\d+)?)px/);
   return m ? parseFloat(m[1]) : 16;
 }
 

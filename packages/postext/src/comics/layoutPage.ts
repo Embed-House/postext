@@ -78,7 +78,8 @@ export function comicViewerLeaf(
  *  bare number in mm), or undefined. */
 export function parseComicDimension(value: string | undefined): Dimension | undefined {
   if (value === undefined) return undefined;
-  const m = /^\s*([0-9]*\.?[0-9]+)\s*(mm|cm|in|pt|px)?\s*$/.exec(value);
+  // The number is `4`, `0.5` or `.5`, each written one way only (linear).
+  const m = /^([0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:\s*(mm|cm|in|pt|px))?$/.exec(value.trim());
   if (!m) return undefined;
   return { value: Number(m[1]), unit: (m[2] as Dimension['unit'] | undefined) ?? 'mm' };
 }

@@ -706,7 +706,7 @@ function wrapToWidth(
           remaining = split.tail;
         }
       } else {
-        out.push(current.replace(/\s+$/, ''));
+        out.push(current.trimEnd());
         // New line starts with this part; if the part itself doesn't fit, split it.
         const trimmed = part.replace(/^\s+/, '');
         if (measure(trimmed) <= maxWidth) {
@@ -730,7 +730,7 @@ function wrapToWidth(
         }
       }
     }
-    if (current.length > 0) out.push(current.replace(/\s+$/, ''));
+    if (current.length > 0) out.push(current.trimEnd());
     else out.push('');
   }
   return out.length > 0 ? out : [''];

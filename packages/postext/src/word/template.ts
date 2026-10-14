@@ -158,6 +158,57 @@ function builtinRole(name: string): ParagraphTarget | undefined {
   return undefined;
 }
 
+const CALLOUT_EXPORT_RE = /^(?:callout|recuadro|requadre|boxe|标注框|囲み|إطار)\s*[:·]/i;
+const TITLE_WORD_RE = /(?:title|título|títol|标题|見出し|عنوان)$/i;
+
+const isSpace = (c: string | undefined): boolean => c !== undefined && c !== '' && c.trim() === '';
+const isLineTerminator = (c: string | undefined): boolean => c === '\n' || c === '\r' || c === '\u2028' || c === '\u2029';
+
+/**
+ * The callout type a style name the export wrote names (`Callout: Note`),
+ * and whether it is the box's title style (`Callout: Note: title`): what
+ * `/^(?:callout|…)\s*[:·]\s*(.+?)(\s*[:·]\s*(?:title|…))?$/i` reads from a
+ * trimmed name, read in one pass (the expression backtracks over runs of
+ * spaces).
+ */
+function exportedCalloutName(name: string): { type: string; title: boolean } | null {
+  const head = CALLOUT_EXPORT_RE.exec(name);
+  if (!head) return null;
+  const c = head[0].length;
+  // Where a title suffix (`: title`) may begin: anywhere in [from, to].
+  let from = -1;
+  let to = -1;
+  const word = TITLE_WORD_RE.exec(name);
+  if (word) {
+    let q = word.index;
+    while (q > 0 && isSpace(name[q - 1])) q--;
+    if (q > 0 && (name[q - 1] === ':' || name[q - 1] === '·')) {
+      to = q - 1;
+      from = to;
+      while (from > 0 && isSpace(name[from - 1])) from--;
+    }
+  }
+  let j = c;
+  while (j < name.length && isSpace(name[j])) j++;
+  // The first line terminator at or after the type's start (`.` stops there).
+  let stop = name.length;
+  for (let i = j; i < name.length; i++) {
+    if (isLineTerminator(name[i])) {
+      stop = i;
+      break;
+    }
+  }
+  // The spaces after the colon go to the type only when the type cannot
+  // start after them; the type is as short as a title suffix lets it be.
+  for (let x = j; x >= c; x--) {
+    if (x < j && isLineTerminator(name[x])) stop = x;
+    const k = Math.max(x + 1, from);
+    if (from >= 0 && k <= to && k <= stop) return { type: name.slice(x, k), title: true };
+    if (stop === name.length && x < name.length) return { type: name.slice(x), title: false };
+  }
+  return null;
+}
+
 /** The target a paragraph style gets when no template names it: the
  *  Sandbox's own export styles, Postext styles with the same name, Word's
  *  built-in roles along the `basedOn` chain, and the outline level. */
@@ -166,10 +217,10 @@ export function guessParagraphTarget(name: string, config: PostextConfig, doc?: 
   if (k === key(MARKUP_STYLE)) return { kind: 'markup' };
   if (k === key(CHAPTER_STYLE)) return { kind: 'chapter' };
   // `Callout: Note` / `Callout: Note: title`, as the export names them.
-  const exported = /^(?:callout|recuadro|requadre|boxe|标注框|囲み|إطار)\s*[:·]\s*(.+?)(\s*[:·]\s*(?:title|título|títol|标题|見出し|عنوان))?$/i.exec(name.trim());
+  const exported = exportedCalloutName(name.trim());
   if (exported) {
-    const type = findNamed(calloutStylesOf(config), exported[1]!);
-    if (type) return exported[2] ? { kind: 'calloutTitle', type: type.id } : { kind: 'callout', type: type.id };
+    const type = findNamed(calloutStylesOf(config), exported.type);
+    if (type) return exported.title ? { kind: 'calloutTitle', type: type.id } : { kind: 'callout', type: type.id };
   }
   const styles = style ? chain(doc, style) : [];
   const levelFromChain = (): number => {
@@ -204,7 +255,9 @@ export function guessParagraphTarget(name: string, config: PostextConfig, doc?: 
 export function guessCharacterTarget(name: string, config: PostextConfig, doc?: WordDocument, style?: WordStyle): CharacterTarget {
   const k = key(name);
   if (k === key(MARKUP_CHAR_STYLE)) return { kind: 'markup' };
-  const exportChip = /^(?:chip|etiqueta|标签|チップ|شارة)\s*[:·]\s*(.+)$/i.exec(name.trim());
+  // The name is trimmed: what follows the spaces after the colon opens
+  // with a non-space, and `\S.*` reads it without backtracking into them.
+  const exportChip = /^(?:chip|etiqueta|标签|チップ|شارة)\s*[:·]\s*(\S.*)$/i.exec(name.trim());
   const chip = findNamed(chipStylesOf(config), exportChip ? exportChip[1]! : name);
   if (chip) return { kind: 'chip', style: chip.id };
   if (k === 'strong' || k === 'intense emphasis' || k === 'book title') return { kind: 'bold' };

@@ -377,6 +377,13 @@ function destinationEnd(text: string, from: number): number {
 }
 
 const ESCAPABLE = new Set(['*', '_', '^', '~', '$', '`']);
+
+/** `s` without the spaces and tabs it ends with. */
+function trimBlanksEnd(s: string): string {
+  let end = s.length;
+  while (end > 0 && (s[end - 1] === ' ' || s[end - 1] === '\t')) end--;
+  return s.slice(0, end);
+}
 const CJK_BASE = /[\p{sc=Han}\p{sc=Hira}\p{sc=Kana}㄀-ㄯ]/u;
 
 /** Tokenise the constructs Word has no emphasis for into atoms, leaving a
@@ -410,7 +417,7 @@ function protect(text: string, opts: ParseInlineOptions): { s: string; atoms: At
       // space. Not at the paragraph's end, where the engine prints it.
       const brk = opts.heading ? null : /^\\(?:\n|\\(?:[ \t]+|\n|$))\s*/.exec(rest);
       if (brk && text.slice(i + brk[0].length).trim() !== '' && s.trim() !== '') {
-        s = s.replace(/[ \t]+$/, '');
+        s = trimBlanksEnd(s);
         add({ kind: 'char', text: LINE_BREAK });
         i += brk[0].length;
         continue;
@@ -482,7 +489,7 @@ function protect(text: string, opts: ParseInlineOptions): { s: string; atoms: At
       // a stop of its own (`:tab{at=…}`) travels verbatim.
       const tab = /^:tab(?![\p{L}{])/u.exec(rest);
       if (tab && text[i - 1] !== '\\') {
-        s = s.replace(/[ \t]+$/, '');
+        s = trimBlanksEnd(s);
         add({ kind: 'char', text: '\t' });
         i += tab[0].length;
         while (text[i] === ' ' || text[i] === '\t') i++;

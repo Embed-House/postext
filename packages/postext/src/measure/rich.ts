@@ -20,6 +20,7 @@ import { isRuntLastLine } from './runts';
 import { hasOverfullLine } from './plain';
 import { justifiedSpaceRatios } from './spaceRatios';
 import { quoteFamily } from './font';
+import { findPxSize, splitAtFontSize, withPxSize } from './fontString';
 import { trimChipLineEdges } from './chipEdges';
 import { directChipRuns, measuresRunsAsPainted, paintedRunWidth } from '../design/bidiText';
 import { cjkJoinBreaks, hasCJK } from './cjk';
@@ -222,8 +223,8 @@ export function isSwatchFill(color: string): boolean {
 /** Side of an inline colour swatch: three quarters of the font size (the
  *  height of a capital), read from the `px` size of the CSS font string. */
 export function swatchSidePx(font: string): number {
-  const m = /(\d*\.?\d+)px/.exec(font);
-  const size = m ? Number(m[1]) : 16;
+  const m = findPxSize(font);
+  const size = m ? Number(m.value) : 16;
   return Math.max(1, size * 0.75);
 }
 
@@ -256,21 +257,18 @@ export const SUBSCRIPT_SHIFT_RATIO = 0.15;
  *  of the text size instead: 0.25 em, TeX's drop for a subscript with a
  *  superscript over it (σ17, 0.247 em), which clears room between the two. */
 export const STACKED_SUBSCRIPT_SHIFT_RATIO = 0.25;
-const FONT_SIZE_RE = /(\d*\.?\d+)px/;
-
 /** `font` at `scale` times its size. */
 export function scaledFont(font: string, scale: number): string {
-  const m = FONT_SIZE_RE.exec(font);
-  return m ? font.replace(FONT_SIZE_RE, `${parseFloat(m[1]!) * scale}px`) : font;
+  return withPxSize(font, (size) => parseFloat(size) * scale);
 }
 
 /** The font a script token is measured and painted with (`font` at the
  *  script size) and its baseline shift in px (negative: up). `stacked`: a
  *  subscript with a superscript set over it, which drops further. */
 export function scriptMetrics(font: string, script: 'sup' | 'sub', stacked = false): { font: string; baselineShift: number } {
-  const m = FONT_SIZE_RE.exec(font);
-  const size = m ? parseFloat(m[1]!) : 0;
-  const scaled = m ? font.replace(FONT_SIZE_RE, `${size * SCRIPT_SIZE_RATIO}px`) : font;
+  const m = findPxSize(font);
+  const size = m ? parseFloat(m.value) : 0;
+  const scaled = withPxSize(font, () => size * SCRIPT_SIZE_RATIO);
   const ratio = script === 'sup'
     ? -SUPERSCRIPT_SHIFT_RATIO
     : stacked ? STACKED_SUBSCRIPT_SHIFT_RATIO : SUBSCRIPT_SHIFT_RATIO;
@@ -481,8 +479,7 @@ export const SMALL_CAPS_SIZE_RATIO = 0.7;
 
 /** `font` at the small-caps size. */
 export function smallCapsFont(font: string): string {
-  const m = FONT_SIZE_RE.exec(font);
-  return m ? font.replace(FONT_SIZE_RE, `${parseFloat(m[1]!) * SMALL_CAPS_SIZE_RATIO}px`) : font;
+  return withPxSize(font, (size) => parseFloat(size) * SMALL_CAPS_SIZE_RATIO);
 }
 
 /** A lowercase letter with a one-unit capital (`ß` and the like, whose
@@ -598,9 +595,9 @@ export const CHIP_DESCENT_RATIO = 0.25;
 /** `font` set in `family` (when given) at `sizePx`: the style and weight
  *  words of the CSS shorthand are kept. */
 function withFace(font: string, family: string | undefined, sizePx: number): string {
-  const m = /^(.*?)(\d*\.?\d+)px\s+(.+)$/.exec(font);
+  const m = splitAtFontSize(font);
   if (!m) return font;
-  return `${m[1]}${sizePx}px ${family ? quoteFamily(family) : m[3]}`;
+  return `${m.prefix}${sizePx}px ${family ? quoteFamily(family) : m.family}`;
 }
 
 /**
@@ -621,8 +618,8 @@ export function chipToken(
 ): RichToken {
   const chip = span.chip!;
   const box = chip.box;
-  const sizeMatch = FONT_SIZE_RE.exec(normalFont);
-  const sizePx = box?.fontSizePx ?? (sizeMatch ? parseFloat(sizeMatch[1]!) : 16);
+  const sizeMatch = findPxSize(normalFont);
+  const sizePx = box?.fontSizePx ?? (sizeMatch ? parseFloat(sizeMatch.value) : 16);
   const runs: VDTChipRun[] = [];
   // The script of each run, and the unscaled font of a subscript's (which
   // drops further when a superscript is stacked over it).

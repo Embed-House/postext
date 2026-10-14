@@ -1,8 +1,7 @@
 import type { VDTBlock, VDTDocument, VDTLine, VDTPage } from './vdt';
 import { DEFAULT_DEBUG_CONFIG } from './defaults/debug';
 import { restoreContext, saveContext } from './canvas-backend/contextState';
-
-const FONT_SIZE_RE = /(\d*\.?\d+)px/;
+import { findPxSize } from './measure/fontString';
 
 /**
  * The word spacing of a justified line in the units of
@@ -82,7 +81,7 @@ export function findLooseLines(doc: VDTDocument, options: FindLooseLinesOptions 
     for (const line of block.lines) {
       let ratio = lineWordSpacing(line);
       if (line.segments?.some((s) => s.tracking !== undefined)) {
-        fontSizePx ??= Number(FONT_SIZE_RE.exec(block.fontString ?? '')?.[1] ?? 16);
+        fontSizePx ??= Number(findPxSize(block.fontString ?? '')?.value ?? 16);
         ratio = lineLooseness(line, fontSizePx);
       }
       if (ratio === undefined || ratio <= threshold) continue;

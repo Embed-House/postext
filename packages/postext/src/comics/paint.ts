@@ -131,7 +131,9 @@ export function comicBalloonKind(balloon: Pick<VDTComicBalloon, 'style' | 'speak
   return balloon.speaker ? 'speech' : 'caption';
 }
 
-const CJK_EDGE = /[⺀-鿿　-〿豈-﫿＀-￯]/;
+/** CJK radicals to unified ideographs (CJK punctuation and kana among
+ *  them), compatibility ideographs and full-width forms. */
+const CJK_EDGE = /[\u2E80-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]/;
 
 /** The words of a balloon as plain text: its lines in order, joined by a
  *  space, or by nothing between two Chinese or Japanese characters (a

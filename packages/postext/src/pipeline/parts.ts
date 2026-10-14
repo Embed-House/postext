@@ -99,6 +99,18 @@ const ROMAN_VALUES: Record<string, number> = {
   M: 1000, D: 500, C: 100, L: 50, X: 10, V: 5, I: 1,
 };
 
+/** The words a Chinese or Japanese part number may end with (`十二部`). */
+const PART_COUNT_WORDS: ReadonlySet<string> = new Set(['卷', '巻', '部', '篇', '编', '編', '册', '冊', '章', '回', '节', '節', '集']);
+
+/** `s` without its closing count word and the spaces before it: what
+ *  `/\s*(?:卷|巻|…)$/` removes, read back from the end. */
+function withoutCountWord(s: string): string {
+  if (!PART_COUNT_WORDS.has(s[s.length - 1] ?? '')) return s;
+  let end = s.length - 1;
+  while (end > 0 && s[end - 1]!.trim() === '') end--;
+  return s.slice(0, end);
+}
+
 /** Numeric value of a part number written as a decimal (`'3'`, fullwidth
  *  `'３'`, Arabic-Indic `'٣'`, Persian `'۳'`), a roman numeral (`'III'`, `'iv'`) or Chinese numerals (`'三'`,
  *  `'十二'`, `'一二〇'`, Japanese `'百一'`), the latter also with the words
@@ -109,7 +121,7 @@ export function parsePartNumber(raw: string): number | undefined {
   let s = asciiDigits(raw.trim().replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xfee0)));
   if (s.length === 0) return undefined;
   if (/[^\x00-\x7f]/.test(s)) {
-    s = s.replace(/^(?:第|卷|巻)\s*/, '').replace(/\s*(?:卷|巻|部|篇|编|編|册|冊|章|回|节|節|集)$/, '');
+    s = withoutCountWord(s.replace(/^(?:第|卷|巻)\s*/, ''));
     if (/^\d+$/.test(s)) return Number(s);
     return parseChineseNumeral(s);
   }

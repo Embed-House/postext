@@ -1,6 +1,8 @@
 // Break opportunities and costs shared by the plain and the rich line
 // breakers.
 
+import { findPxSize } from './fontString';
+
 const EM_DASH = '—';
 const EN_DASH = '–';
 
@@ -114,8 +116,8 @@ export const RAGGED_STRETCH_EM = 3;
 /** The size of a CSS font string, in px (the `16px` of `italic 16px Serif`);
  *  16 when it names none. */
 export function fontSizePxOf(font: string): number {
-  const m = /(\d*\.?\d+)px/.exec(font);
-  const size = m ? Number(m[1]) : 16;
+  const m = findPxSize(font);
+  const size = m ? Number(m.value) : 16;
   return Number.isFinite(size) && size > 0 ? size : 16;
 }
 

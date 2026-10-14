@@ -1279,8 +1279,17 @@ const HEADING_LINE_RE = /^[^\S\n]*#{1,6}[^\S\n]+(.*)$/gm;
 /** A mark a heading's title may carry: `*`, `_`, `^`, `~`, `:smallcaps[`
  *  or the `](` of a link. */
 const HEADING_MARK_RE = /[*_^~]|:smallcaps\[|\]\(/;
-/** The trailing `{…}` attributes of a heading line. */
-const HEADING_ATTRS_TAIL_RE = /\s*\{[^{}]*\}\s*$/;
+/** The trailing `{…}` attributes of a heading line (the spaces before
+ *  them go too, see `withoutHeadingAttrs`). */
+const HEADING_ATTRS_TAIL_RE = /\{[^{}]*\}\s*$/;
+
+/** A heading title without its trailing `{…}` attributes and the spaces
+ *  before them. Searching from the brace (not from the spaces) keeps a
+ *  long run of spaces linear. */
+function withoutHeadingAttrs(title: string): string {
+  const at = title.search(HEADING_ATTRS_TAIL_RE);
+  return at < 0 ? title : title.slice(0, at).trimEnd();
+}
 
 /** Whether markdown may hold a heading whose title carries an inline mark
  *  (its attributes left out). Unknown content (undefined) may. */
@@ -1288,7 +1297,7 @@ function mayHaveHeadingMarks(content: string | readonly string[] | undefined): b
   if (content === undefined) return true;
   const test = (text: string): boolean => {
     for (const m of text.matchAll(HEADING_LINE_RE)) {
-      if (HEADING_MARK_RE.test(m[1]!.replace(HEADING_ATTRS_TAIL_RE, ''))) return true;
+      if (HEADING_MARK_RE.test(withoutHeadingAttrs(m[1]!))) return true;
     }
     return false;
   };
@@ -1311,7 +1320,7 @@ const RESOURCE_EMBED_LINE_RE = /^[^\S\n]*::resource[^\S\n]*\{id="[^"\n]+"\}[^\S\
 const RESOURCE_EMBED_RE = /^[^\S\n]*::resource[^\S\n]*\{id="[^"\n]+"\}[^\S\n]*$/;
 /** A container's opening fence (`:::callout{…}`) and its bare closing
  *  fence, as the block parser reads them (the line trimmed). */
-const FENCE_OPEN_RE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{[^}]*\})?\s*$/;
+const FENCE_OPEN_RE = /^:::\s*([a-z][a-z0-9-]*)(?:\s*\{[^}]*\})?\s*$/;
 const FENCE_CLOSE_RE = /^:::\s*$/;
 
 /** A `:::callout` opening fence on a line of its own, as the block parser

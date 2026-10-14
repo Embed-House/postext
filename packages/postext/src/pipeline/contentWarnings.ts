@@ -18,6 +18,7 @@ import { computeChapterTitles } from './placeholders';
 import type { ContentBlock } from '../parse';
 import { KNOWN_CONTAINERS, KNOWN_DIRECTIVES, parseInlineSnippetSpans, parseMarkdownMemo } from '../parse';
 import { invalidAttributeKeys } from '../parse/attrs';
+import { directiveAttrRanges } from '../parse/inlineFormatting';
 import { parsePaperAttrs } from './paper';
 import { extractFrontmatter } from '../frontmatter';
 import { tableGridIssues } from '../table/model';
@@ -102,11 +103,9 @@ function attributeBlobs(line: string): { blob: string; at: number }[] {
   if (fence) out.push({ blob: fence[1]!, at: fence[0].length - 1 - fence[1]!.length });
   const heading = /^\s*#{1,6}\s.*?\{([^{}]*)\}\s*$/.exec(line);
   if (heading) out.push({ blob: heading[1]!, at: line.lastIndexOf('{') + 1 });
-  const inline = /:(?:ref|swatch|index)\{([^}\n]*)\}|:(?:chip|index)\[(?:\\.|[^\]\\\n])*\]\{([^}\n]*)\}/g;
-  let m: RegExpExecArray | null;
-  while ((m = inline.exec(line)) !== null) {
-    const blob = m[1] ?? m[2]!;
-    out.push({ blob, at: m.index + m[0].length - 1 - blob.length });
+  // `:ref{…}`, `:swatch{…}`, `:index{…}`, `:chip[…]{…}`, `:index[…]{…}`.
+  for (const [start, end] of directiveAttrRanges(line, ['ref', 'swatch', 'index'], ['chip', 'index'], true)) {
+    out.push({ blob: line.slice(start, end), at: start });
   }
   return out;
 }

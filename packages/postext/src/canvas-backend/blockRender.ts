@@ -242,7 +242,8 @@ function segmentIsStyled(s: VDTLineSegment): boolean {
 /** A rule leader (#622): a line across `width` px under the baseline, its
  *  geometry from the block's text size (`leaderRuleGeometry`). */
 function paintRuleLeader(ctx: CanvasRenderingContext2D, x: number, baseline: number, width: number, color: string, font: string): void {
-  const m = /(\d*\.?\d+)px/.exec(font);
+  // From a number's first digit only (`\D` before it): linear on long digit runs.
+  const m = /(?:^|\D)(\d+(?:\.\d+)?|\.\d+)px/.exec(font);
   const { dy, thickness } = leaderRuleGeometry(m ? Number(m[1]) : 16);
   ctx.fillStyle = color;
   ctx.fillRect(x, baseline + dy - thickness / 2, width, thickness);

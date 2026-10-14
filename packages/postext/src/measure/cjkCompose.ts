@@ -40,6 +40,7 @@ import { isJapaneseLanguage } from '../locale';
 import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredBlock, type MeasureBlockOptions } from './types';
 import { getMeasureLanguage, measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage } from './canvas';
 import { spanShapingLanguage } from './spanLanguage';
+import { findPxSize } from './fontString';
 import {
   atomicSpanToken,
   refLabelTokens,
@@ -116,8 +117,6 @@ import {
 /** Fit tolerance of the breaker (px): running sums of many widths may
  *  land a hair past a measure they fill exactly. */
 const FIT_EPS = 1e-6;
-
-const FONT_SIZE_RE = /(\d*\.?\d+)px/;
 
 /** Letters of the scripts set without spaces (Han, kana, bopomofo, hangul),
  *  as {@link isCjkParagraph} counts them. */
@@ -1427,8 +1426,8 @@ function dashRule(
 
 /** The em (px) of a font shorthand: its size. */
 function emOfFont(font: string): number {
-  const m = FONT_SIZE_RE.exec(font);
-  return m ? parseFloat(m[1]!) : 16;
+  const m = findPxSize(font);
+  return m ? parseFloat(m.value) : 16;
 }
 
 /** Whether a unit is a single CJK mark (a bracket, a pause, stop or
@@ -3136,8 +3135,8 @@ export function composeCjkParagraph(
   const insetOf = (li: number) => lineInsetsAt(options?.lineInsets, li);
   const indentOf = (li: number): number => (li === 0 ? firstIndent : lineIndentAt(options, li)) + insetOf(li).start;
   const measureOf = (li: number): number => lineMeasure(maxWidthPx, options?.restWidths, li) - insetOf(li).end - indentOf(li);
-  const sizeMatch = FONT_SIZE_RE.exec(normalFont);
-  const em = sizeMatch ? parseFloat(sizeMatch[1]!) : 16;
+  const sizeMatch = findPxSize(normalFont);
+  const em = sizeMatch ? parseFloat(sizeMatch.value) : 16;
   const trackingCap = options?.justifyTrackingPx && options.justifyTrackingPx > 0 ? Math.min(em / 2, options.justifyTrackingPx) : em / 2;
   const textAlign = options?.textAlign ?? 'left';
   const ctx: ComposeContext = {

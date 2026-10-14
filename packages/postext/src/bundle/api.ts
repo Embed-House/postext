@@ -90,17 +90,58 @@ export async function openBundle(
   };
 }
 
+const isSpace = (c: string): boolean => /\s/.test(c);
+const isLineTerminator = (c: string): boolean => c === '\n' || c === '\r' || c === '\u2028' || c === '\u2029';
+
+/** The title of a `# Title #` heading line, what `/^#\s+(.+?)\s*#*\s*$/`
+ *  captures, read in one pass so that a long run of spaces stays linear;
+ *  undefined when the line is no such heading or holds spaces alone. */
+function headingTitle(line: string): string | undefined {
+  if (line[0] !== '#') return undefined;
+  let start = 1;
+  while (start < line.length && isSpace(line[start]!)) start++;
+  if (start === 1 || start === line.length) return undefined;
+  // The closing `#`s and the spaces around them stay out; the title keeps
+  // one character at least.
+  let end = line.length;
+  while (end > start && isSpace(line[end - 1]!)) end--;
+  while (end > start && line[end - 1] === '#') end--;
+  while (end > start && isSpace(line[end - 1]!)) end--;
+  end = Math.max(end, start + 1);
+  for (let i = start; i < end; i++) if (isLineTerminator(line[i]!)) return undefined;
+  return line.slice(start, end);
+}
+
+/** `title` without its trailing `{…}` attributes, as
+ *  `.replace(/\{[^}]*\}\s*$/, '')` leaves it, found from the end. */
+function withoutTrailingAttrs(title: string): string {
+  const end = title.trimEnd();
+  if (!end.endsWith('}')) return title;
+  const close = end.length - 1;
+  const open = end.indexOf('{', end.lastIndexOf('}', close - 1) + 1);
+  return open < 0 ? title : title.slice(0, open);
+}
+
+/** Each `\\` line break, with the spaces around it, read as one space. */
+function breaksAsSpaces(text: string): string {
+  const parts = text.split('\\\\');
+  return parts
+    .map((part, i) => {
+      const head = i > 0 ? part.trimStart() : part;
+      return i < parts.length - 1 ? head.trimEnd() : head;
+    })
+    .join(' ');
+}
+
 /** The text of a chapter's first `# ` heading, else `Chapter n`. */
 function chapterTitle(markdown: string, n: number): string {
   let inFence = false;
   for (const line of markdown.split('\n')) {
     if (/^\s*(```|~~~)/.test(line)) inFence = !inFence;
     if (inFence) continue;
-    const m = /^#\s+(.+?)\s*#*\s*$/.exec(line);
-    if (m) {
-      const text = m[1]!
-        .replace(/\{[^}]*\}\s*$/, '')
-        .replace(/\s*\\\\\s*/g, ' ') // a `\\` line break reads as a space
+    const title = headingTitle(line);
+    if (title !== undefined) {
+      const text = breaksAsSpaces(withoutTrailingAttrs(title))
         .replace(/[*_`]/g, '')
         .replace(/\\([\\`*_{}[\]()#+\-.!])/g, '$1')
         .trim();

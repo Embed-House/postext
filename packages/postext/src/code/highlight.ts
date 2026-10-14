@@ -378,18 +378,64 @@ function markdownTokens(code: string): CodeToken[] {
       const gap = lead[3] ?? lead[5];
       if (gap) out.push({ text: gap });
     }
-    let rest = line.slice(lead[0].length);
-    const inline = /(`[^`]+`)|(!?\[[^\]]*\]\([^)]*\))|(\*\*|__|\*|_)/;
-    while (rest.length > 0) {
-      const m = inline.exec(rest);
-      if (!m) {
-        out.push({ text: rest });
-        break;
-      }
-      if (m.index > 0) out.push({ text: rest.slice(0, m.index) });
-      out.push({ text: m[0], token: m[1] ? 'string' : m[2] ? 'function' : 'operator' });
-      rest = rest.slice(m.index + m[0].length);
+    const rest = line.slice(lead[0].length);
+    const next = markdownInlineScanner(rest);
+    let at = 0;
+    for (let m = next(0); m; m = next(at)) {
+      if (m.start > at) out.push({ text: rest.slice(at, m.start) });
+      out.push({ text: rest.slice(m.start, m.end), token: m.token });
+      at = m.end;
     }
+    if (at < rest.length) out.push({ text: rest.slice(at) });
   });
   return out;
+}
+
+/**
+ * The inline marks of a Markdown line, one after another: `next(from)`
+ * gives the first at or after `from`, the leftmost match of
+ * `` /(`[^`]+`)|(!?\[[^\]]*\]\([^)]*\))|(\*\*|__|\*|_)/ `` (a code span,
+ * a link or picture, an emphasis mark), or null. The `]` and `)` that
+ * close a link are looked up once for every `[` before them, so a line of
+ * many `[` stays linear.
+ */
+function markdownInlineScanner(text: string): (from: number) => { start: number; end: number; token: CodeTokenKind } | null {
+  // The first `]` (`)`) at or after `bracketFrom` (`parenFrom`), -1 for none.
+  let bracketFrom = Infinity;
+  let bracketAt = -1;
+  let parenFrom = Infinity;
+  let parenAt = -1;
+  const closingBracket = (from: number): number => {
+    if (from < bracketFrom || (bracketAt >= 0 && from > bracketAt)) {
+      bracketFrom = from;
+      bracketAt = text.indexOf(']', from);
+    }
+    return bracketAt;
+  };
+  const closingParen = (from: number): number => {
+    if (from < parenFrom || (parenAt >= 0 && from > parenAt)) {
+      parenFrom = from;
+      parenAt = text.indexOf(')', from);
+    }
+    return parenAt;
+  };
+  return (from) => {
+    for (let i = from; i < text.length; i++) {
+      const c = text[i];
+      if (c === '`') {
+        const close = text.indexOf('`', i + 1);
+        if (close > i + 1) return { start: i, end: close + 1, token: 'string' };
+      } else if (c === '[' || (c === '!' && text[i + 1] === '[')) {
+        const open = c === '!' ? i + 1 : i;
+        const bracket = closingBracket(open + 1);
+        if (bracket >= 0 && text[bracket + 1] === '(') {
+          const paren = closingParen(bracket + 2);
+          if (paren >= 0) return { start: i, end: paren + 1, token: 'function' };
+        }
+      } else if (c === '*' || c === '_') {
+        return { start: i, end: text[i + 1] === c ? i + 2 : i + 1, token: 'operator' };
+      }
+    }
+    return null;
+  };
 }

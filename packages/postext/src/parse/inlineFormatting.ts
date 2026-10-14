@@ -96,6 +96,122 @@ export const TITLE_BREAK_RE = /[ \t]*\\\\[ \t]*/g;
  *  and notes. */
 export const SNIPPET_BREAK_RE = /[ \t]*(?:\\\\[ \t]*(?:\r?\n)?|\\\r?\n)/g;
 
+const isBlank = (c: string | undefined): boolean => c === ' ' || c === '\t';
+
+/**
+ * `text` with each title break ({@link TITLE_BREAK_RE}: `\\` and the
+ * spaces and tabs around it) replaced by `by`, as
+ * `text.replace(TITLE_BREAK_RE, by)` replaces them. A scan in one pass: the
+ * expression's leading run of spaces is tried again from each position of
+ * a long run that no break ends.
+ */
+export function replaceTitleBreaks(text: string, by: string): string {
+  let out = '';
+  let pos = 0;
+  for (let at = text.indexOf('\\\\'); at >= 0; at = text.indexOf('\\\\', pos)) {
+    let start = at;
+    while (start > pos && isBlank(text[start - 1])) start--;
+    let end = at + 2;
+    while (isBlank(text[end])) end++;
+    out += text.slice(pos, start) + by;
+    pos = end;
+  }
+  return pos === 0 ? text : out + text.slice(pos);
+}
+
+/** `[start, end)` of the next snippet break ({@link SNIPPET_BREAK_RE}) from
+ *  `from` on, as the expression finds it, in one pass. */
+function nextSnippetBreak(text: string, from: number): readonly [number, number] | null {
+  for (let at = text.indexOf('\\', from); at >= 0; at = text.indexOf('\\', at + 1)) {
+    let end: number;
+    if (text[at + 1] === '\\') {
+      end = at + 2;
+      while (isBlank(text[end])) end++;
+      if (text[end] === '\r' && text[end + 1] === '\n') end += 2;
+      else if (text[end] === '\n') end++;
+    } else if (text[at + 1] === '\n') end = at + 2;
+    else if (text[at + 1] === '\r' && text[at + 2] === '\n') end = at + 3;
+    else continue;
+    let start = at;
+    while (start > from && isBlank(text[start - 1])) start--;
+    return [start, end];
+  }
+  return null;
+}
+
+/** Where a directive's `[…]` text that opens at `from` stops, read as
+ *  `(?:\\.|[^\]\\\n])*` reads it: at its closing `]` (`closed`), or at a
+ *  line feed, a backslash before a line end, or the end of the text. */
+function bracketTextEnd(text: string, from: number): { at: number; closed: boolean } {
+  let i = from;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === ']') return { at: i, closed: true };
+    if (c === '\n') break;
+    if (c === '\\') {
+      const next = text[i + 1];
+      if (next === undefined || next === '\n' || next === '\r' || next === '\u2028' || next === '\u2029') break;
+      i += 2;
+    } else i++;
+  }
+  return { at: i, closed: false };
+}
+
+/**
+ * `[start, end)` of the text between the braces of each inline directive's
+ * `{…}` attributes in `text`, in order: the directives named in `braced`
+ * take them right after the name (`:ref{…}`), those in `bracketed` after a
+ * `[…]` text (`:chip[…]{…}`, the text never empty unless `emptyText`). What
+ * a global expression of those alternatives finds — the attributes on one
+ * line, a `\\]` in the text no bracket — read in one pass, where the
+ * expression would read a long line again from every unclosed directive.
+ */
+export function directiveAttrRanges(
+  text: string,
+  braced: readonly string[],
+  bracketed: readonly string[],
+  emptyText = false,
+): Array<[number, number]> {
+  const out: Array<[number, number]> = [];
+  // The first `}` or line feed from each position (-1: none), built on
+  // first use.
+  let stops: Int32Array | undefined;
+  const attrsEnd = (from: number): number => {
+    if (!stops) {
+      stops = new Int32Array(text.length + 1).fill(-1);
+      for (let k = text.length - 1; k >= 0; k--) stops[k] = text[k] === '}' || text[k] === '\n' ? k : stops[k + 1]!;
+    }
+    const at = from <= text.length ? stops[from]! : -1;
+    return at >= 0 && text[at] === '}' ? at : -1;
+  };
+  // A `[…]` text read from any start between the last read's start and
+  // where it stopped stops at the same place (see `bracketTextEnd`).
+  let read: { at: number; closed: boolean } | undefined;
+  for (let i = text.indexOf(':'); i >= 0; ) {
+    let found: [number, number] | undefined;
+    const name = braced.find((n) => text.startsWith(n, i + 1) && text[i + 1 + n.length] === '{');
+    if (name !== undefined) {
+      const open = i + 1 + name.length;
+      const close = attrsEnd(open + 1);
+      if (close >= 0) found = [open + 1, close];
+    }
+    const bracketName = found ? undefined : bracketed.find((n) => text.startsWith(n, i + 1) && text[i + 1 + n.length] === '[');
+    if (bracketName !== undefined) {
+      const from = i + 2 + bracketName.length;
+      if (!read || from > read.at) read = bracketTextEnd(text, from);
+      if (read.closed && (emptyText || read.at > from) && text[read.at + 1] === '{') {
+        const close = attrsEnd(read.at + 2);
+        if (close >= 0) found = [read.at + 2, close];
+      }
+    }
+    if (found) {
+      out.push(found);
+      i = text.indexOf(':', found[1] + 1);
+    } else i = text.indexOf(':', i + 1);
+  }
+  return out;
+}
+
 /** Positions of the break placeholder in a plain text. */
 export function titleBreakIndices(text: string): number[] {
   const out: number[] = [];
@@ -223,10 +339,20 @@ export interface RefMeta {
   sourceEnd: number;
 }
 
-/** `:ref{…}` — the attribute blob is parsed with the shared directive
+/** The next `<open>…}` from `from` on, as `/<open>([^}]*)\}/g` finds it
+ *  (`open`: `:ref{`, `:swatch{`), with the text between the braces. A scan
+ *  in one pass: once no `}` follows an opening, none follows a later one.
+ *
+ *  `:ref{…}` — the attribute blob is parsed with the shared directive
  *  attribute grammar, so attributes may come in any order and use either
  *  quote style. A ref without an `id` is not a reference (left as text). */
-const INLINE_REF_RE = /:ref\{([^}]*)\}/g;
+function nextBraced(text: string, open: string, from: number): { index: number; end: number; body: string } | null {
+  const index = text.indexOf(open, from);
+  if (index < 0) return null;
+  const close = text.indexOf('}', index + open.length);
+  return close < 0 ? null : { index, end: close + 1, body: text.slice(index + open.length, close) };
+}
+
 /** A pandoc-crossref reference (#262): `@sec:intro`, `[@fig:map]`, and
  *  `[-@tbl:x]` for the bare number; a capital (`@Sec:intro`) capitalises
  *  the label. The `@` follows no letter, digit or backslash (an e-mail
@@ -286,10 +412,8 @@ export function extractInlineRefs(
 ): { cleaned: string; refs: RefMeta[] } {
   if (!text.includes(':ref{') && !text.includes('@') && !text.includes('ref{')) return { cleaned: text, refs: [] };
   const found: { index: number; length: number; meta: Omit<RefMeta, 'sourceStart' | 'sourceEnd'>; tie?: boolean }[] = [];
-  INLINE_REF_RE.lastIndex = 0;
-  let m: RegExpExecArray | null;
-  while ((m = INLINE_REF_RE.exec(text)) !== null) {
-    const attrs = parseDirectiveAttrs(m[1]!);
+  for (let r = nextBraced(text, ':ref{', 0); r; r = nextBraced(text, ':ref{', r.end)) {
+    const attrs = parseDirectiveAttrs(r.body);
     const id = attrs.id;
     // Malformed (no id): keep the literal text so the author sees it.
     if (id === undefined || id.length === 0) continue;
@@ -306,8 +430,9 @@ export function extractInlineRefs(
     if (attrs.case !== undefined && REF_CASES.has(attrs.case)) {
       meta.case = attrs.case as RefCase;
     }
-    found.push({ index: m.index, length: m[0].length, meta });
+    found.push({ index: r.index, length: r.end - r.index, meta });
   }
+  let m: RegExpExecArray | null;
   if (text.includes('@')) {
     CROSSREF_RE.lastIndex = 0;
     while ((m = CROSSREF_RE.exec(text)) !== null) {
@@ -359,13 +484,11 @@ export interface SwatchMeta {
   sourceEnd: number;
 }
 
-/** `:swatch{…}` — same attribute grammar as `:ref{…}`. A swatch without a
- *  `color` is not a swatch (left as text). */
-const INLINE_SWATCH_RE = /:swatch\{([^}]*)\}/g;
-
 /**
  * Extract inline `:swatch{…}` colour swatches from a line's text, replacing
  * each by `SWATCH_PLACEHOLDER` and returning the swatch metadata in order.
+ * `:swatch{…}` takes the same attribute grammar as `:ref{…}`; a swatch
+ * without a `color` is not a swatch (left as text).
  * Runs right after {@link extractInlineRefs} on its cleaned text.
  */
 export function extractInlineSwatches(
@@ -375,20 +498,18 @@ export function extractInlineSwatches(
   const swatches: SwatchMeta[] = [];
   let out = '';
   let last = 0;
-  INLINE_SWATCH_RE.lastIndex = 0;
-  let m: RegExpExecArray | null;
-  while ((m = INLINE_SWATCH_RE.exec(text)) !== null) {
-    const attrs = parseDirectiveAttrs(m[1]!);
+  for (let m = nextBraced(text, ':swatch{', 0); m; m = nextBraced(text, ':swatch{', m.end)) {
+    const attrs = parseDirectiveAttrs(m.body);
     const color = attrs.color?.trim();
     if (color === undefined || color.length === 0) continue;
     out += text.slice(last, m.index);
     swatches.push({
       color,
       sourceStart: fallbackStart + m.index,
-      sourceEnd: fallbackStart + m.index + m[0].length,
+      sourceEnd: fallbackStart + m.end,
     });
     out += SWATCH_PLACEHOLDER;
-    last = m.index + m[0].length;
+    last = m.end;
   }
   out += text.slice(last);
   return { cleaned: out, swatches };
@@ -464,13 +585,13 @@ export interface ChipMeta {
   sourceEnd: number;
 }
 
-/** `:chip[text]` with an optional `{attrs}` right after the bracket. The
- *  text is one line, may not be empty (`:chip[]` stays literal text) and
- *  takes `\]` for a literal bracket. Text of spaces alone (NBSP included)
- *  makes an empty chip: a blank box as wide as its style's padding. */
-const INLINE_CHIP_RE = /:chip\[((?:\\.|[^\]\\\n])+)\](?:\{([^}\n]*)\})?/g;
-
 /**
+ * `:chip[text]` with an optional `{attrs}` right after the bracket
+ * (`/:chip\[((?:\\.|[^\]\\\n])+)\](?:\{([^}\n]*)\})?/g`). The text is
+ * one line, may not be empty (`:chip[]` stays literal text) and takes `\]`
+ * for a literal bracket. Text of spaces alone (NBSP included) makes an empty
+ * chip: a blank box as wide as its style's padding.
+ *
  * Extract inline `:chip[…]` chips from a line's text, replacing each by
  * `CHIP_PLACEHOLDER` and returning the chip metadata in order. Runs first,
  * before {@link extractInlineRefs}, so the chip text (which may hold marks
@@ -483,20 +604,42 @@ export function extractInlineChips(
   const chips: ChipMeta[] = [];
   let out = '';
   let last = 0;
-  INLINE_CHIP_RE.lastIndex = 0;
-  let m: RegExpExecArray | null;
-  while ((m = INLINE_CHIP_RE.exec(text)) !== null) {
-    const inner = m[1]!.replace(/\\([\[\]])/g, '$1').replace(/\s+/g, ' ').trim();
-    const style = m[2] !== undefined ? parseDirectiveAttrs(m[2]).style?.trim() : undefined;
-    out += text.slice(last, m.index);
+  // Read as the expression above reads it, in one pass: an opening whose text
+  // does not close skips to where that text stopped (a later opening inside
+  // it stops there too), and the search for an attributes' `}` resumes
+  // where the last one stopped.
+  let stop = -1;
+  for (let index = text.indexOf(':chip['); index >= 0; ) {
+    const from = index + 6;
+    const read = bracketTextEnd(text, from);
+    if (!read.closed || read.at === from) {
+      index = text.indexOf(':chip[', Math.max(read.at, index + 1));
+      continue;
+    }
+    let end = read.at + 1;
+    let attrs: string | undefined;
+    if (text[end] === '{') {
+      if (stop < end + 1) {
+        stop = end + 1;
+        while (stop < text.length && text[stop] !== '}' && text[stop] !== '\n') stop++;
+      }
+      if (text[stop] === '}') {
+        attrs = text.slice(end + 1, stop);
+        end = stop + 1;
+      }
+    }
+    const inner = text.slice(from, read.at).replace(/\\([\[\]])/g, '$1').replace(/\s+/g, ' ').trim();
+    const style = attrs !== undefined ? parseDirectiveAttrs(attrs).style?.trim() : undefined;
+    out += text.slice(last, index);
     chips.push({
       text: inner,
       ...(style ? { style } : {}),
-      sourceStart: fallbackStart + m.index,
-      sourceEnd: fallbackStart + m.index + m[0].length,
+      sourceStart: fallbackStart + index,
+      sourceEnd: fallbackStart + end,
     });
     out += CHIP_PLACEHOLDER;
-    last = m.index + m[0].length;
+    last = end;
+    index = text.indexOf(':chip[', end);
   }
   out += text.slice(last);
   return { cleaned: out, chips };
@@ -926,23 +1069,30 @@ function replaceLinkSyntax(
  *  {@link replaceLinkSyntax} reads it. */
 function linkDestinationRanges(text: string): Array<readonly [number, number]> {
   const out: Array<readonly [number, number]> = [];
-  const start = /\[[^\]]*\]\(/g;
-  let m: RegExpExecArray | null;
-  while ((m = start.exec(text)) !== null) {
-    const from = m.index + m[0].length;
+  // Each `[…](` as `/\[[^\]]*\]\(/g` finds it, in one pass: every `[`
+  // before a `]` that no `(` follows fails at that same `]`.
+  let pos = 0;
+  for (let open = text.indexOf('['); open >= 0; open = text.indexOf('[', pos)) {
+    const close = text.indexOf(']', open + 1);
+    if (close < 0) break;
+    pos = close + 1;
+    if (text[close + 1] !== '(') continue;
+    const from = close + 2;
     const end = destinationEnd(text, from);
+    pos = from;
     if (end > from + 1) {
       out.push([from, end]);
-      start.lastIndex = end;
+      pos = end;
     }
   }
   return out;
 }
 
-/** The `{…}` attributes of an inline directive — `:ref{…}`, `:swatch{…}`,
- *  a chip's `:chip[…]{…}`, an annotation's `:ruby[…]{…}` — in group 1:
- *  data, never text to break. */
-const DIRECTIVE_ATTRS_RE = /(?::ref|:swatch|:(?:chip|dots|name|book|ruby|warichu|ltr|rtl|sideline|kunten)\[(?:\\.|[^\]\\\n])+\])(\{[^}\n]*\})/g;
+/** The inline directives whose `{…}` attributes are data, never text to
+ *  break: `:ref{…}`, `:swatch{…}`, a chip's `:chip[…]{…}`, an annotation's
+ *  `:ruby[…]{…}` (read by {@link directiveAttrRanges}). */
+const DIRECTIVE_BRACED = ['ref', 'swatch'];
+const DIRECTIVE_BRACKETED = ['chip', 'dots', 'name', 'book', 'ruby', 'warichu', 'ltr', 'rtl', 'sideline', 'kunten'];
 
 /**
  * Turn the forced line breaks of a resource snippet ({@link SNIPPET_BREAK_RE})
@@ -954,10 +1104,15 @@ const DIRECTIVE_ATTRS_RE = /(?::ref|:swatch|:(?:chip|dots|name|book|ruby|warichu
 export function replaceSnippetBreaks(text: string): string {
   if (!text.includes('\\')) return text;
   const kept = dataRanges(text);
-  return text.replace(SNIPPET_BREAK_RE, (match: string, offset: number) => {
-    const at = offset + match.indexOf('\\');
-    return kept.some(([s, e]) => at >= s && at < e) ? match : BREAK_PLACEHOLDER;
-  });
+  let out = '';
+  let pos = 0;
+  for (let m = nextSnippetBreak(text, 0); m; m = nextSnippetBreak(text, pos)) {
+    const [start, end] = m;
+    const at = text.indexOf('\\', start);
+    out += text.slice(pos, start) + (kept.some(([s, e]) => at >= s && at < e) ? text.slice(start, end) : BREAK_PLACEHOLDER);
+    pos = end;
+  }
+  return out + text.slice(pos);
 }
 
 /** A forced line break in body text (#620): `\\` before a space or the end
@@ -1014,12 +1169,7 @@ export function bodyBreakSpans(spans: InlineSpan[]): InlineSpan[] {
 function dataRanges(text: string): Array<readonly [number, number]> {
   const kept: Array<readonly [number, number]> = text.includes('](') ? linkDestinationRanges(text) : [];
   if (text.includes('{')) {
-    DIRECTIVE_ATTRS_RE.lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = DIRECTIVE_ATTRS_RE.exec(text)) !== null) {
-      const end = m.index + m[0].length;
-      kept.push([end - m[1]!.length, end]);
-    }
+    for (const [start, end] of directiveAttrRanges(text, DIRECTIVE_BRACED, DIRECTIVE_BRACKETED)) kept.push([start - 1, end + 1]);
   }
   return kept;
 }
