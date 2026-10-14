@@ -17,6 +17,11 @@ on:
         default: https://postext.dev
         required: false
 
+# Read-only token: no job here writes to the repository (artifacts and
+# caches use the runner's own token).
+permissions:
+  contents: read
+
 jobs:
   probe:
     name: Open the recipe bundles on the site
