@@ -435,6 +435,24 @@ clearMeasurementCache();              // every family
 
 For applications that measure text piece by piece, `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` and `cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` take the arguments of `measureBlock` and `measureRichBlock` plus the cache, last.
 
+### The line breaker (WebAssembly)
+
+Paragraphs are broken into lines by Knuth–Plass. Since postext 1.33 the engine runs it in a line breaker written in Rust and compiled to WebAssembly (30 KB, inside the package). It chooses the same breaks as the TypeScript breaker, with the same arithmetic in the same order, and a whole book lays out about 15 % faster. Nothing has to be set up:
+
+- In a worker, in Node and in Bun, the module is compiled on the first paragraph.
+- On a page's main thread, where a browser compiles a module this size only asynchronously, it compiles in the background and the TypeScript breaker answers until then. `await initLineBreaker()` before the first layout puts it to work from the first paragraph; it resolves `false` where WebAssembly is unavailable.
+- Where WebAssembly is missing, or a Content Security Policy refuses it (`script-src` without `'wasm-unsafe-eval'`), the TypeScript breaker answers every paragraph.
+
+Both choose the same breaks, so which one answered never changes a layout. `useWasmLineBreaker(false)` keeps the TypeScript breaker, to compare the two.
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // optional: the first layout already uses it
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### Global state shared in one page
 
 Some of Postext's state lives in module-level variables. Everything that imports `postext` in the same JavaScript realm shares it: a page and its scripts share one copy, while each iframe and each worker has its own. One document per page never notices. Several documents in one page — two live previews, a gallery of examples — do:
@@ -444,6 +462,7 @@ Some of Postext's state lives in module-level variables. Everything that imports
 - **Resolved configurations.** Each configuration object is resolved once and the result is cached against that object. Every build first compares the object with the text it had when it was resolved (one `JSON.stringify`, about 0.1 ms for a 55 KB book configuration and 1.5 ms for a 240 KB one), so a configuration changed in place, at any depth (`config.bodyText.fontSize = …`, a palette colour), is resolved again. `invalidateConfig(config)` drops the resolution by hand. `stableStringify` and `hashString` give a content key that does not depend on key order, for hosts that cache layouts by configuration.
 - **Hyphenation language.** Every build sets the process-wide hyphenation language to its document's `bodyText.hyphenation.locale`. The exported `hyphenateText(text)` and `layoutDesignSlot` use the language of the last build unless you pass one: call `hyphenateText(text, 'es')`.
 - **Math engine.** There is one MathJax engine and one cache of rendered formulas for the realm; `initMathEngine()` starts it for everyone.
+- **Line breaker.** There is one WebAssembly line breaker for the realm, compiled once; `useWasmLineBreaker(false)` turns it off for everyone.
 
 The simplest isolation is a realm per document: an iframe per live example (a CodePen embed is one), or a [layout worker](#running-layout-in-a-web-worker) per document for the measurements and the hyphenation (images are still registered on the page).
 

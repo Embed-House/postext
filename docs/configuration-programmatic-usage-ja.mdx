@@ -435,6 +435,24 @@ clearMeasurementCache();              // すべてのファミリー
 
 テキストを少しずつ計測するアプリケーション向けに、`cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)`と`cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)`があります。`measureBlock`と`measureRichBlock`の引数に加えて、最後にキャッシュを取ります。
 
+### 改行器（WebAssembly）
+
+段落はKnuth–Plassで行に分けられます。postext 1.33からは、Rustで書かれWebAssemblyにコンパイルされた改行器（30 KB、パッケージに同梱）がこれを実行します。TypeScriptの改行器と同じ演算を同じ順序で行い、同じ改行位置を選びます。本1冊の組版は約15 %速くなります。設定は不要です。
+
+- worker、Node、Bunでは、最初の段落でモジュールがコンパイルされます。
+- ページのメインスレッドでは、ブラウザがこの大きさのモジュールを非同期でしかコンパイルしないため、バックグラウンドでコンパイルされ、それまではTypeScriptの改行器が処理します。最初の組版の前に`await initLineBreaker()`を呼ぶと、最初の段落から使われます。WebAssemblyが使えない環境では`false`を返します。
+- WebAssemblyがない環境や、コンテンツセキュリティポリシーが拒否する環境（`'wasm-unsafe-eval'`のない`script-src`）では、すべての段落をTypeScriptの改行器が処理します。
+
+両者は同じ改行位置を選ぶので、どちらが処理しても組版は変わりません。`useWasmLineBreaker(false)`はTypeScriptの改行器を使い続けます。両者の比較用です。
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // 任意: 最初の組版からすでに使われます
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### 1つのページで共有されるグローバルな状態
 
 Postextの状態の一部は、モジュールレベルの変数にあります。同じJavaScriptのレルム（realm）で`postext`をインポートするものは、すべてこれを共有します。ページとそのスクリプトは1つのコピーを共有し、iframeやワーカーはそれぞれ自分のコピーを持ちます。1ページに1文書なら問題は起きません。1ページに複数の文書がある場合（2つのライブプレビュー、サンプルのギャラリーなど）は影響が出ます。
@@ -444,6 +462,7 @@ Postextの状態の一部は、モジュールレベルの変数にあります�
 - **解決済みの設定**。設定オブジェクトはそれぞれ1回だけ解決され、その結果がオブジェクトに結び付けてキャッシュされます。ビルドのたびに、まずオブジェクトを解決したときのテキストと比べるので（`JSON.stringify`を1回。55 KBの本の設定で約0.1 ms、240 KBの設定で約1.5 ms）、その場で書き換えた設定は、どの深さの変更でも（`config.bodyText.fontSize = …`、パレットの色）解決し直されます。`invalidateConfig(config)`を呼べば、解決結果を手動で捨てられます。`stableStringify`と`hashString`は、キーの順序に左右されない内容のキーを返します。設定ごとにレイアウトをキャッシュするホスト向けです。
 - **ハイフネーションの言語**。ビルドのたびに、プロセス全体のハイフネーション言語が、その文書の`bodyText.hyphenation.locale`に設定されます。公開されている`hyphenateText(text)`と`layoutDesignSlot`は、言語を渡さなければ最後のビルドの言語を使います。`hyphenateText(text, 'es')`のように呼んでください。
 - **数式エンジン**。MathJaxのエンジンと描画済み数式のキャッシュは、レルムに1つずつです。`initMathEngine()`は全員のためにそれを起動します。
+- **改行器**。WebAssemblyの改行器はレルムに1つで、コンパイルは1回だけです。`useWasmLineBreaker(false)`は全員に対してこれを無効にします。
 
 最も簡単な分離は、文書ごとにレルムを分けることです。ライブサンプルごとにiframeを使う（CodePenの埋め込みがこれにあたります）か、計測とハイフネーションのために文書ごとに[レイアウトのワーカー](#web-workerでレイアウトを実行する)を使います（画像は引き続きページに登録されます）。
 

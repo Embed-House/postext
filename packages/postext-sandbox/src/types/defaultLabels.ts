@@ -322,7 +322,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
     'Convert every colour in the generated PDF to the selected colour space',
   pdfColorSpace: 'Color space',
   pdfColorSpaceTooltip:
-    'Target colour space used for every colour written into the PDF. CMYK is separated with the output profile chosen in Print preparation, and a PDF/X standard there always writes CMYK.',
+    'Target colour space used for every colour and picture written into the PDF. CMYK is separated with the output profile chosen in Print preparation, and a PDF/X standard there always writes CMYK.',
   printCustomRegistryName: 'Printing condition',
   printCustomRegistryNameTooltip: 'The condition the uploaded profile describes, as the ICC registry names it (FOGRA51, FOGRA52, CGATS TR 006…). PDF/X writes it in the output intent; leave it empty for a profile of your own press (Custom).',
   printProfileRemove: 'Remove the uploaded profile',

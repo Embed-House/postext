@@ -38,6 +38,7 @@ import type {
   VDTComicArt,
   VDTPage,
 } from 'postext';
+import type { PdfColorSpace } from 'postext';
 import { applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
 import { roundedRectSvgPath } from './headerFooter';
 import { pdfUri } from './links';
@@ -94,7 +95,7 @@ import { withSegmentLanguage } from '../shapingLanguage';
 import { wordSegments } from './wordPieces';
 import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
 import type { PrintColorMode } from '../print/colorMode';
-import { embedPrintRaster } from '../print/images';
+import { embedDeviceRaster, embedPrintRaster } from '../print/images';
 
 /** Raw bytes of a resource binary, keyed by `fileId`. */
 export type ResourceBytesProvider = (fileId: string) => Uint8Array | undefined;
@@ -384,12 +385,19 @@ export async function preloadResourceImages(
   /** A colour-managed print render: pictures are separated into CMYK
    *  through its profile (and flattened for PDF/X-1a). */
   printMode?: PrintColorMode,
+  /** The device colour space a render without a print mode is forced to
+   *  (#800): its pictures are written in it, as its flat colours are. */
+  deviceSpace?: PdfColorSpace,
 ): Promise<ResourceImageMap> {
   const out: ResourceImageMap = into ?? new Map();
   if (!bytesProvider) return out;
   /** A bitmap embedded as the render wants it. */
   const embedRaster = (data: Uint8Array, format: 'png' | 'jpeg'): Promise<PDFImage> =>
-    printMode ? embedPrintRaster(pdfDoc, data, format, printMode) : format === 'png' ? pdfDoc.embedPng(data) : pdfDoc.embedJpg(data);
+    printMode
+      ? embedPrintRaster(pdfDoc, data, format, printMode)
+      : deviceSpace === 'grayscale' || deviceSpace === 'cmyk'
+        ? embedDeviceRaster(pdfDoc, data, format, deviceSpace)
+        : format === 'png' ? pdfDoc.embedPng(data) : pdfDoc.embedJpg(data);
   // Inline resources live in doc.blocks; floated resources only exist on
   // their page's float band (page.floats), so both must be walked.
   const blocks: VDTBlock[] = [...doc.blocks];

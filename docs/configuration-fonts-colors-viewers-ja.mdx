@@ -685,7 +685,7 @@ const master = await inspectPrintMaster(masterBytes);
 
 ### 印刷プレビュー
 
-canvasのページは、印刷される見た目で描けます。`createPrintPreview(transform, print, { paper, dpi })`は、設定からソフトプルーフを作ります。各ピクセルをプロファイルで分版し（PDFと同じく、無彩色はK版のみ）、画面の色に戻して表示します。`paper`がtrueなら、紙そのものの白の上に表示します。リッチブラックにする大きさの黒い面は、リッチブラックで表示されます。これを`renderPageToCanvas`に`printPreview`として渡します。`guides`は仕上がり線、塗り足し、セーフゾーンの線を加え、`marksFor`はページ上の領域（プリフライトの`rect`）を枠で囲みます。`postext-folio`も同じオブジェクトを`printPreview`として受け取ります（本の紙の色合いがページに付くので、`paper: false`にします）。
+canvasのページは、印刷される見た目で描けます。`createPrintPreview(transform, print, { paper, dpi, grayscale })`は、設定からソフトプルーフを作ります。各ピクセルをプロファイルで分版し（PDFと同じく、無彩色はK版のみ）、画面の色に戻して表示します。`paper`がtrueなら、紙そのものの白の上に表示します。リッチブラックにする大きさの黒い面は、リッチブラックで表示されます。`grayscale`を指定すると、グレースケール印刷の校正になります。グレースケールに固定したPDFは、各色の明度を黒インキだけで刷り、リッチブラックは使いません。これを`renderPageToCanvas`に`printPreview`として渡します。校正ではなく作業用の表示には、`guides`で仕上がり線、塗り足し、セーフゾーンの線を加え、`marksFor`でページ上の領域（プリフライトの`rect`）を枠で囲めます。Sandboxはどちらも使わないので、そのプレビューには印刷されるものだけが表示されます。`postext-folio`も同じオブジェクトを`printPreview`として受け取ります。`paper: true`のときは、そのあいだ本の紙の色合いを中性にしてください（`folio.paper.shade`）。そうしないと紙が二重に色付きます。
 
 ```ts
 import { createPrintPreview, renderPageToCanvas } from 'postext';

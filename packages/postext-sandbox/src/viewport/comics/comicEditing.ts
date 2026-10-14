@@ -138,6 +138,11 @@ export interface ComicEditOptions {
   labelsRef: MutableRefObject<SandboxLabels>;
   /** Whether the tools are on now (the Folio: its select mode). */
   enabled: () => boolean;
+  /** Whether a press on a balloon's words selects them, a click on a
+   *  balloon puts the caret in its line and one on a panel's picture opens
+   *  it (the Folio: its select and magnify modes, #797); `enabled` when
+   *  left out. */
+  textEnabled?: () => boolean;
   /** A drag ended (released, cancelled, Escape): the caller lets the
    *  pointer go. */
   onDragEnd?: (pointerId: number) => void;
@@ -359,6 +364,7 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   editorOfHost.get(host)?.dispose();
   let disposed = false;
   const enabled = () => !disposed && opts.enabled();
+  const textEnabled = () => !disposed && (opts.textEnabled ?? opts.enabled)();
   const label = (key: keyof SandboxLabels) => labelsRef.current[key];
 
   let hover: { page: number; splitter?: VDTComicSplitter; panel?: VDTComicPanel; balloons?: VDTComicBalloon[]; tail?: VDTComicBalloon } | null = null;
@@ -1366,7 +1372,7 @@ export function createComicEditor(opts: ComicEditOptions): ComicEditor {
   /** What a press under a point does (#594, #595): the hit refined to a
    *  balloon's words (`text`) or a panel's picture (`art`). */
   const pressAt = (at: ComicPointer | null): ComicPress | null => {
-    if (!at || !enabled()) return null;
+    if (!at || !textEnabled()) return null;
     const comics = comicsOf(at.pageIndex);
     if (comics.length === 0) return null;
     return comicPressAt(comics, at.x, at.y, {

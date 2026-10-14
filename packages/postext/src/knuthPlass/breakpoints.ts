@@ -3,6 +3,8 @@
  */
 
 import type { KPItem, KPOptions, KPPenalty } from './types';
+import type { Breaker } from './wasm/abi';
+import { readyWasmBreaker } from './wasm/engine';
 import {
   BADNESS_CAP,
   COLUMN_END_HYPHEN_BADNESS,
@@ -122,7 +124,36 @@ function traceBreaks(node: ActiveNode): number[] {
   return breaks.reverse();
 }
 
+/** Research hooks (#779), read once per call and absent in normal runs:
+ *  `__postextKpTap` sees every call with its breaks, so a benchmark can
+ *  record a book's calls and replay them against another implementation;
+ *  `__postextKpImpl` answers the calls instead. */
+type BreakpointsTap = (items: KPItem[], options: KPOptions, breaks: number[]) => void;
+interface BreakpointsHooks {
+  __postextKpTap?: BreakpointsTap;
+  __postextKpImpl?: Breaker;
+}
+
+/**
+ * The breaks of a paragraph: the index of the item each line ends at. Set
+ * by the Rust line breaker compiled to WebAssembly when it is available
+ * (see `wasm/engine.ts`), else by {@link breakpoints}; the two choose the
+ * same breaks.
+ */
 export function computeBreakpoints(items: KPItem[], options: KPOptions): number[] {
+  const hooks = globalThis as BreakpointsHooks;
+  const breaks = (hooks.__postextKpImpl ?? readyWasmBreaker() ?? breakpoints)(items, options);
+  hooks.__postextKpTap?.(items, options, breaks);
+  return breaks;
+}
+
+/** {@link computeBreakpoints} in TypeScript: the reference the WebAssembly
+ *  breaker is tested against. */
+export function computeBreakpointsTs(items: KPItem[], options: KPOptions): number[] {
+  return breakpoints(items, options);
+}
+
+function breakpoints(items: KPItem[], options: KPOptions): number[] {
   const looseness = options.looseness ?? 0;
   if (looseness <= 0) return search(items, options) ?? [];
   // A longer setting (TeX \looseness > 0: one line more, to fill a short

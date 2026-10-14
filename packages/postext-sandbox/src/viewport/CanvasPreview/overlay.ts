@@ -1,5 +1,5 @@
 import type { VDTBlock, VDTDocument, ResolvedDebugConfig } from 'postext';
-import { findLooseLines, resourceBlockRectToPage } from 'postext';
+import { comicBalloonMatrix, findLooseLines, pageComics, resourceBlockRectToPage } from 'postext';
 import type { ResourceSelection } from '../../context/SandboxContext';
 import { getSvgTextIndex } from '../../controls/svgTextIndex';
 import { svgSourceOffsetToCaret, svgSourceRangeToBoxes, type SvgCharBox } from '../../controls/svgSource';
@@ -7,6 +7,7 @@ import { SVG_NS } from './dom';
 import { plainRangeInLine, sourceToPlainIndex, xForPlainInLine } from './geometry';
 import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, isHiddenUnderBand } from './bandTitle';
 import { documentShapingLanguage } from '../../controls/measureLanguage';
+import { balloonTextRangeRects } from '../comics/balloonText';
 import {
   contentOffsetToPlain,
   resolveResourceRun,
@@ -222,6 +223,28 @@ export function clearOverlay(svg: SVGSVGElement): void {
   }
 }
 
+/** A 2D affine matrix `[a b c d e f]`, as SVG's `matrix()` takes it. */
+export type Affine = [number, number, number, number, number, number];
+
+/** The matrix of a parent transform `p` and a child transform `q` inside
+ *  it, as SVG composes them (`q` applies first). */
+export function multiplyAffine(p: Affine, q: Affine): Affine {
+  return [
+    p[0] * q[0] + p[2] * q[1],
+    p[1] * q[0] + p[3] * q[1],
+    p[0] * q[2] + p[2] * q[3],
+    p[1] * q[2] + p[3] * q[3],
+    p[0] * q[4] + p[2] * q[5] + p[4],
+    p[1] * q[4] + p[3] * q[5] + p[5],
+  ];
+}
+
+/** The matrix that undoes `m`. */
+function invertAffine([a, b, c, d, e, f]: Affine): Affine {
+  const det = a * d - b * c;
+  return [d / det, -b / det, -c / det, a / det, (c * f - d * e) / det, (b * e - a * f) / det];
+}
+
 export function drawOverlay(
   svg: SVGSVGElement,
   doc: VDTDocument,
@@ -244,11 +267,12 @@ export function drawOverlay(
   // becomes a bar across the column, between two characters. A
   // right-to-left page's are mirrored with its flow.
   const flow = doc.pages[pageIndex]?.flow;
-  const frame = !flow
+  const frameMatrix: Affine | null = !flow
     ? null
     : flow.writingMode === 'vertical-rl'
-      ? `matrix(0 1 -1 0 ${flow.rotation.originX} ${flow.rotation.originY})`
-      : `matrix(-1 0 0 1 ${flow.mirror.originX} 0)`;
+      ? [0, 1, -1, 0, flow.rotation.originX, flow.rotation.originY]
+      : [-1, 0, 0, 1, flow.mirror.originX, 0];
+  const frame = frameMatrix ? `matrix(${frameMatrix.join(' ')})` : null;
   const mirrored = flow?.writingMode === 'horizontal-tb';
   for (const g of [selectionGroup, cursorGroup, looseLineGroup]) {
     if (!g) continue;
@@ -366,6 +390,33 @@ export function drawOverlay(
         rect.setAttribute('height', String(box.height));
         rect.setAttribute('fill', debug.selectionSync.color.hex);
         selectionGroup.appendChild(rect);
+      }
+    }
+  }
+
+  // The words lettered in a comic's balloons (#796): their rects lie in
+  // each balloon's own frame, put on the sheet by its turn and lean; the
+  // comics are laid out on the sheet, so the group's flow frame (a
+  // vertical or mirrored page) is undone first.
+  const page = doc.pages[pageIndex];
+  if (page) {
+    const unframe = frameMatrix ? invertAffine(frameMatrix) : null;
+    for (const comic of pageComics(page)) {
+      for (const balloon of comic.balloons) {
+        const rects = balloonTextRangeRects(balloon, from, to, { lang: bandLang });
+        if (rects.length === 0) continue;
+        const turn = comicBalloonMatrix(balloon) ?? null;
+        const m = unframe && turn ? multiplyAffine(unframe, turn) : unframe ?? turn;
+        for (const r of rects) {
+          const rect = document.createElementNS(SVG_NS, 'rect');
+          rect.setAttribute('x', String(r.x));
+          rect.setAttribute('y', String(r.y));
+          rect.setAttribute('width', String(Math.max(1, r.width)));
+          rect.setAttribute('height', String(r.height));
+          rect.setAttribute('fill', debug.selectionSync.color.hex);
+          if (m) rect.setAttribute('transform', `matrix(${m.join(' ')})`);
+          selectionGroup.appendChild(rect);
+        }
       }
     }
   }

@@ -923,7 +923,7 @@
     "pdfForceColorSpace": "Forçar espai de color",
     "pdfForceColorSpaceTooltip": "Converteix tots els colors del PDF generat a l'espai de color seleccionat",
     "pdfColorSpace": "Espai de color",
-    "pdfColorSpaceTooltip": "Espai de color aplicat a cada color escrit al PDF. El CMYK se separa amb el perfil de sortida triat a Preparació per a impremta, i una norma PDF/X triada allà escriu sempre CMYK.",
+    "pdfColorSpaceTooltip": "Espai de color aplicat a cada color i imatge escrits al PDF. El CMYK se separa amb el perfil de sortida triat a Preparació per a impremta, i una norma PDF/X triada allà escriu sempre CMYK.",
     "printCustomRegistryName": "Condició d’impressió",
     "printCustomRegistryNameTooltip": "La condició que descriu el perfil pujat, amb el nom del registre ICC (FOGRA51, FOGRA52, CGATS TR 006…). El PDF/X l’escriu a la condició de sortida; deixa-ho buit per a un perfil propi de la teva màquina (Custom).",
     "printProfileRemove": "Treu el perfil pujat",

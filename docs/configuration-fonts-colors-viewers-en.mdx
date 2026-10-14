@@ -685,7 +685,7 @@ const master = await inspectPrintMaster(masterBytes);
 
 ### Print preview
 
-A canvas page can be painted as it will print. `createPrintPreview(transform, print, { paper, dpi })` builds the soft proof of a setup: every pixel is separated through the profile (K-only neutrals, as in the PDF) and shown back on screen, on the paper's own white when `paper` is true; black areas large enough for rich black show as rich black. Hand it to `renderPageToCanvas` as `printPreview`; `guides` adds the trim, bleed and safe-zone lines and `marksFor` outlines areas of a page (the preflight's `rect`s). `postext-folio` takes the same object as `printPreview` (with `paper: false`, since the book's paper shade tints its pages).
+A canvas page can be painted as it will print. `createPrintPreview(transform, print, { paper, dpi, grayscale })` builds the soft proof of a setup: every pixel is separated through the profile (K-only neutrals, as in the PDF) and shown back on screen, on the paper's own white when `paper` is true; black areas large enough for rich black show as rich black. With `grayscale`, the proof is a grayscale print — a PDF forced to grayscale prints each colour's luma in black ink alone, without rich black. Hand it to `renderPageToCanvas` as `printPreview`. For a working view, not a proof, `guides` adds the trim, bleed and safe-zone lines and `marksFor` outlines areas of a page (the preflight's `rect`s); the Sandbox leaves both out, so its preview shows only the print. `postext-folio` takes the same object as `printPreview`; with `paper: true`, give the book a neutral paper shade meanwhile (`folio.paper.shade`), or the paper is tinted twice.
 
 ```ts
 import { createPrintPreview, renderPageToCanvas } from 'postext';

@@ -685,7 +685,7 @@ const master = await inspectPrintMaster(masterBytes);
 
 ### معاينة الطباعة
 
-يمكن رسم صفحة Canvas كما ستُطبع. تبني `createPrintPreview(transform, print, { paper, dpi })` البروفة الشاشية (soft proof) لإعداد ما: يُفصَل كل بكسل عبر ملف التعريف (والمحايدات بالأسود K وحده، كما في PDF) ثم يُعرض على الشاشة، على بياض الورق نفسه حين تكون قيمة `paper` هي true؛ وتظهر بالأسود الغني المساحاتُ السوداء الكبيرة بما يكفي له. مرّرها إلى `renderPageToCanvas` باسم `printPreview`؛ ويضيف `guides` خطوط القص والنزف والمنطقة الآمنة، ويحدّد `marksFor` مناطق من الصفحة (مستطيلات `rect` التي يعيدها الفحص قبل الطباعة). ويأخذ `postext-folio` الكائن نفسه في `printPreview` (مع `paper: false`، لأن لون ورق الكتاب يصبغ صفحاته).
+يمكن رسم صفحة Canvas كما ستُطبع. تبني `createPrintPreview(transform, print, { paper, dpi, grayscale })` البروفة الشاشية (soft proof) لإعداد ما: يُفصَل كل بكسل عبر ملف التعريف (والمحايدات بالأسود K وحده، كما في PDF) ثم يُعرض على الشاشة، على بياض الورق نفسه حين تكون قيمة `paper` هي true؛ وتظهر بالأسود الغني المساحاتُ السوداء الكبيرة بما يكفي له. ومع `grayscale` تكون البروفة لطباعة بالتدرج الرمادي: ملف PDF المفروض عليه التدرج الرمادي يطبع إضاءة كل لون بالحبر الأسود وحده، دون الأسود الغني. مرّرها إلى `renderPageToCanvas` باسم `printPreview`. ولعرضٍ للعمل لا للبروفة، يضيف `guides` خطوط القص والنزف والمنطقة الآمنة، ويحدّد `marksFor` مناطق من الصفحة (مستطيلات `rect` التي يعيدها الفحص قبل الطباعة)؛ ويترك Sandbox الاثنين، فلا تعرض معاينته إلا ما يُطبع. ويأخذ `postext-folio` الكائن نفسه في `printPreview`؛ ومع `paper: true` أعطِ الكتاب في أثناء ذلك لون ورق محايدًا (`folio.paper.shade`)، وإلا صُبغ الورق مرتين.
 
 ```ts
 import { createPrintPreview, renderPageToCanvas } from 'postext';

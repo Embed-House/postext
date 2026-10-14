@@ -435,6 +435,24 @@ clearMeasurementCache();              // todas as famílias
 
 Para aplicações que medem texto pedaço por pedaço, `cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)` e `cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)` recebem os argumentos de `measureBlock` e de `measureRichBlock` mais o cache, por último.
 
+### O quebrador de linhas (WebAssembly)
+
+Os parágrafos são quebrados em linhas pelo Knuth–Plass. Desde o postext 1.33 o motor o executa em um quebrador de linhas escrito em Rust e compilado para WebAssembly (30 KB, dentro do pacote). Ele escolhe as mesmas quebras que o quebrador em TypeScript, com a mesma aritmética na mesma ordem, e um livro inteiro é diagramado cerca de 15 % mais rápido. Não há nada a configurar:
+
+- Em um worker, no Node e no Bun, o módulo é compilado no primeiro parágrafo.
+- Na thread principal de uma página, onde o navegador só compila um módulo deste tamanho de forma assíncrona, ele é compilado em segundo plano e, até lá, o quebrador em TypeScript responde. `await initLineBreaker()` antes da primeira diagramação o põe para trabalhar desde o primeiro parágrafo; resolve `false` onde não há WebAssembly.
+- Onde falta WebAssembly, ou uma política de segurança de conteúdo o recusa (`script-src` sem `'wasm-unsafe-eval'`), o quebrador em TypeScript responde em todos os parágrafos.
+
+Os dois escolhem as mesmas quebras, então qual deles respondeu nunca muda uma diagramação. `useWasmLineBreaker(false)` mantém o quebrador em TypeScript, para comparar os dois.
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // opcional: a primeira diagramação já o usa
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### Estado global compartilhado em uma página
 
 Parte do estado do Postext fica em variáveis de módulo. Tudo o que importa `postext` no mesmo realm de JavaScript o compartilha: uma página e seus scripts compartilham uma cópia, enquanto cada iframe e cada worker têm a sua. Com um documento por página, isso passa despercebido. Com vários documentos em uma página (duas visualizações ao vivo, uma galeria de exemplos), não:
@@ -444,6 +462,7 @@ Parte do estado do Postext fica em variáveis de módulo. Tudo o que importa `po
 - **Configurações resolvidas.** Cada objeto de configuração é resolvido uma vez, e o resultado fica em cache associado a esse objeto. Cada compilação compara antes o objeto com o texto que ele tinha quando foi resolvido (um `JSON.stringify`, cerca de 0,1 ms para uma configuração de livro de 55 KB e 1,5 ms para uma de 240 KB), então uma configuração alterada no próprio objeto, em qualquer profundidade (`config.bodyText.fontSize = …`, uma cor da paleta), é resolvida de novo. `invalidateConfig(config)` descarta a resolução manualmente. `stableStringify` e `hashString` dão uma chave de conteúdo que não depende da ordem das chaves, para hosts que guardam layouts em cache por configuração.
 - **Idioma de hifenização.** Cada compilação define o idioma de hifenização global do processo como o `bodyText.hyphenation.locale` do seu documento. As funções exportadas `hyphenateText(text)` e `layoutDesignSlot` usam o idioma da última compilação, a menos que você passe um: chame `hyphenateText(text, 'es')`.
 - **Motor de matemática.** Há um único motor MathJax e um único cache de fórmulas renderizadas para o realm; `initMathEngine()` o inicia para todos.
+- **Quebrador de linhas.** Há um único quebrador de linhas WebAssembly para o realm, compilado uma vez; `useWasmLineBreaker(false)` o desliga para todos.
 
 O isolamento mais simples é um realm por documento: um iframe por exemplo ao vivo (uma inserção do CodePen é um iframe), ou um [worker de layout](#executar-o-layout-em-um-web-worker) por documento para as medidas e a hifenização (as imagens continuam sendo registradas na página).
 

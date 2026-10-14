@@ -435,6 +435,24 @@ clearMeasurementCache();              // 所有字体族
 
 对于逐段测量文本的应用，`cachedMeasureBlock(text, font, maxWidthPx, lineHeightPx, options, cache)`和`cachedMeasureRichBlock(spans, normalFont, boldFont, italicFont, boldItalicFont, maxWidthPx, lineHeightPx, options, cache)`接受与`measureBlock`、`measureRichBlock`相同的参数，最后再加上缓存。
 
+### 断行器（WebAssembly）
+
+段落按Knuth–Plass算法断行。自postext 1.33起，引擎用一个以Rust编写、编译为WebAssembly的断行器来执行它（30 KB，随包提供）。它与TypeScript断行器选出相同的断点：同样的运算，同样的顺序；整本书的排版快约15 %。无需任何设置：
+
+- 在worker、Node和Bun中，模块在第一个段落时编译。
+- 在页面主线程上，浏览器只能异步编译这个大小的模块，因此它在后台编译，在此之前由TypeScript断行器处理。在第一次排版前`await initLineBreaker()`，即可从第一个段落起使用它；在没有WebAssembly的环境中它返回`false`。
+- 在没有WebAssembly，或内容安全策略拒绝它（`script-src`中没有`'wasm-unsafe-eval'`）的环境中，所有段落都由TypeScript断行器处理。
+
+两者选出相同的断点，所以由哪一个处理都不会改变排版。`useWasmLineBreaker(false)`保留TypeScript断行器，用于比较两者。
+
+```ts
+import { initLineBreaker, buildDocument } from 'postext';
+
+await initLineBreaker(); // 可选：第一次排版已会使用它
+const doc = buildDocument({ markdown }, config);
+```
+
+
 ### 同一页面中共享的全局状态
 
 Postext的部分状态存放在模块级变量中。同一个JavaScript realm中导入`postext`的所有代码共享这些状态：一个页面和它的脚本共享一份，而每个iframe、每个工作线程各有自己的一份。一个页面只有一个文档时不会察觉到这一点；一个页面中有多个文档（两个实时预览、一组示例）时就会：
@@ -444,6 +462,7 @@ Postext的部分状态存放在模块级变量中。同一个JavaScript realm中
 - **已解析的配置**。每个配置对象只解析一次，结果按该对象缓存。每次构建都先把对象与解析时的文本作比较（一次`JSON.stringify`，55 KB的整书配置约0.1 ms，240 KB的约1.5 ms），所以原地修改过的配置，无论改在哪一层（`config.bodyText.fontSize = …`、调色板中的一个颜色），都会重新解析。`invalidateConfig(config)`可以手动丢弃解析结果。`stableStringify`和`hashString`给出与键的顺序无关的内容键，供按配置缓存排版结果的宿主使用。
 - **断词语言**。每次构建都会把进程级的断词语言设为该文档的`bodyText.hyphenation.locale`。导出的`hyphenateText(text)`和`layoutDesignSlot`使用最近一次构建的语言，除非你显式传入：调用`hyphenateText(text, 'es')`。
 - **数学引擎**。整个realm只有一个MathJax引擎和一份已渲染公式的缓存；`initMathEngine()`为所有文档启动它。
+- **断行器**。整个realm只有一个WebAssembly断行器，只编译一次；`useWasmLineBreaker(false)`为所有文档关闭它。
 
 最简单的隔离方式是每个文档一个realm：每个实时示例一个iframe（CodePen嵌入就是一个iframe），或者每个文档一个[布局工作线程](#在web-worker中运行排版)，用于隔离测量和断词（图片仍在页面上注册）。
 

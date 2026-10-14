@@ -8068,7 +8068,8 @@ function placeDocumentPass(
           const fullColumn = Math.max(1, Math.floor((contentArea.height + 0.01) / style.lineHeightPx));
           const ends = guardedColumnEnds(hyphenGuard, choice.splitAt, remainingLines.length, fullColumn, doc.pages[cursor.pageIndex]!, cursor.columnIndex);
           /** How a setting ends its guarded lines: whether this column's
-           *  last line is hyphenated, and how many guarded lines are. */
+           *  last line, when it is guarded, is hyphenated, and how many
+           *  guarded lines are. */
           const columnEndHyphens = (lines: readonly VDTLine[]) => ({
             first: ends[0] === choice.splitAt && lines[choice.splitAt - 1]?.hyphenated === true,
             count: ends.filter((n) => lines[n - 1]?.hyphenated).length,
