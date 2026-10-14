@@ -12,7 +12,7 @@ import { createOverlaySvg } from './CanvasPreview/dom';
 import { findResourceLocation } from './CanvasPreview/geometry';
 import { attachPageInteraction, type PageInteraction } from './CanvasPreview/interaction';
 import { drawMarksCanvas, type ComicMark, type ComicSurface } from './comics/comicEditing';
-import { drawOverlay } from './CanvasPreview/overlay';
+import { drawOverlay, multiplyAffine, type Affine } from './CanvasPreview/overlay';
 import { usePageNavigator } from './usePageNavigator';
 
 /** A filled rectangle of a page's overlay, in the page's own pixels, with
@@ -35,20 +35,27 @@ const FOLLOW_DELAY_MS = 220;
 
 const NO_SELECTION: EditorSelection = { from: -1, to: -1, head: -1 };
 
+/** The `matrix()` transform an overlay element carries, if any. */
+function matrixOf(el: Element): Affine | null {
+  const m = /matrix\(([^)]+)\)/.exec(el.getAttribute('transform') ?? '');
+  return m ? (m[1]!.trim().split(/[\s,]+/).map(Number) as Affine) : null;
+}
+
 /** The rects an overlay SVG holds, as `drawOverlay` left them. */
 function rectsOf(svg: SVGSVGElement): OverlayRect[] {
   const out: OverlayRect[] = [];
   for (const role of ['looseLines', 'selection', 'cursor']) {
     const g = svg.querySelector<SVGGElement>(`g[data-role="${role}"]`);
     if (!g) continue;
-    const m = /matrix\(([^)]+)\)/.exec(g.getAttribute('transform') ?? '');
-    const matrix = m ? (m[1]!.trim().split(/[\s,]+/).map(Number) as OverlayRect['matrix']) : null;
+    const matrix = matrixOf(g);
     for (const r of g.querySelectorAll<SVGRectElement>('rect')) {
       if (r.style.display === 'none' || r.style.visibility === 'hidden') continue;
       const w = Number(r.getAttribute('width'));
       const h = Number(r.getAttribute('height'));
       if (!(w > 0) || !(h > 0)) continue;
-      out.push({ x: Number(r.getAttribute('x')), y: Number(r.getAttribute('y')), w, h, fill: r.getAttribute('fill') ?? '#000', matrix });
+      // A rect of a balloon's words carries its turn and lean (#796).
+      const own = matrixOf(r);
+      out.push({ x: Number(r.getAttribute('x')), y: Number(r.getAttribute('y')), w, h, fill: r.getAttribute('fill') ?? '#000', matrix: matrix && own ? multiplyAffine(matrix, own) : matrix ?? own });
     }
   }
   return out;

@@ -250,3 +250,60 @@ export function balloonTextNearest(balloon: VDTComicBalloon, x: number, y: numbe
   const block = balloon.text[best.line.block]!;
   return boundaryToSource(block, best.line, boundaryAt(best.line, best.s - best.line.s0));
 }
+
+/** A rectangle of a balloon's own frame (sheet px before the balloon is
+ *  turned and leaned: `fromBalloonFrame` puts it on the sheet). */
+export interface BalloonTextRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * The rectangles a source range `[from, to)` covers in a balloon's words
+ * (#796): on each line, the runs of its printed characters whose source
+ * offsets fall in the range, as wide as the line's band across. In the
+ * balloon's own frame; empty when the range misses its words or they do
+ * not map back to the script.
+ */
+export function balloonTextRangeRects(balloon: VDTComicBalloon, from: number, to: number, opts: BalloonTextOptions = {}): BalloonTextRect[] {
+  if (!(to > from) || balloon.sourceEnd <= from || balloon.sourceStart >= to) return [];
+  const measure = opts.measure ?? measureIn(opts.lang);
+  const out: BalloonTextRect[] = [];
+  for (const line of lineFrames(balloon, measure)) {
+    const block = balloon.text[line.block]!;
+    const map = block.sourceMap!;
+    const inRange = (c: PlacedChar): boolean => {
+      const src = map[c.plain];
+      return src !== undefined && src >= from && src < to;
+    };
+    // The selected characters in order along the line, merged where they
+    // touch (a bidi line may break the range into several pieces).
+    let open: { a: number; b: number } | null = null;
+    const pieces: { a: number; b: number }[] = [];
+    for (const c of line.chars) {
+      if (!inRange(c)) {
+        if (open) pieces.push(open);
+        open = null;
+        continue;
+      }
+      if (open) open.b = Math.max(open.b, c.b);
+      else open = { a: c.a, b: c.b };
+    }
+    if (open) pieces.push(open);
+    for (const { a, b } of pieces) {
+      const s0 = line.s0 + a;
+      const s1 = line.s0 + b;
+      if (block.vertical) {
+        // A column: `s` runs down from the box's top, `t` leftwards from
+        // its right edge.
+        const right = block.bbox.x + block.bbox.width;
+        out.push({ x: right - line.t1, y: block.bbox.y + s0, width: line.t1 - line.t0, height: s1 - s0 });
+      } else {
+        out.push({ x: block.bbox.x + s0, y: line.t0, width: s1 - s0, height: line.t1 - line.t0 });
+      }
+    }
+  }
+  return out;
+}
