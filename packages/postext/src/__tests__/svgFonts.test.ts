@@ -319,7 +319,7 @@ describe('renderToHtml inlineSvgFonts', () => {
 
   function srcOf(html: string): string {
     const m = /<img[^>]*src="([^"]*)"/.exec(html);
-    return (m?.[1] ?? '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    return (m?.[1] ?? '').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
   }
 
   it('re-encodes SVG data URIs with the registered faces', () => {

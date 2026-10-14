@@ -130,7 +130,7 @@ describe('a reference whose label is words breaks at its spaces (#702)', () => {
         expect(l.text.startsWith(')'), `${measure}: ${l.text}`).toBe(false);
       }
       const joined = citing(doc).lines.map((l) => l.text).join(' ');
-      expect(joined).toContain(`(${LABEL})`.replace(/ /g, ' '));
+      expect(joined).toContain(`(${LABEL})`);
     }
   });
 
