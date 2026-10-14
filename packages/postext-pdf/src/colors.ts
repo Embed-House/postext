@@ -57,10 +57,10 @@ export function parseCssColor(value: string): RgbaTuple | null {
     }
     return null;
   }
-  const fn = /^rgba?\(\s*([^)]*?)\s*\)$/i.exec(s);
+  const fn = /^rgba?\(([^)]*)\)$/i.exec(s);
   if (!fn) return null;
   // `r, g, b[, a]` or `r g b[ / a]`.
-  const body = fn[1]!;
+  const body = fn[1]!.trim();
   let parts: string[];
   let alpha: string | undefined;
   if (body.includes(',')) {

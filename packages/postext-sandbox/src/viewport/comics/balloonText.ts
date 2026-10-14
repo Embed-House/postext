@@ -69,7 +69,7 @@ interface LineFrame {
 
 /** The font size of a CSS font string (px). */
 function fontSizeOf(font: string, fallback: number): number {
-  const m = /(\d+(?:\.\d+)?)px/.exec(font);
+  const m = /(?:^|\D)(\d+(?:\.\d+)?)px/.exec(font);
   return m ? Number(m[1]) : fallback;
 }
 

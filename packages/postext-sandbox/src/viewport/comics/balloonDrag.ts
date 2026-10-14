@@ -361,7 +361,7 @@ export function balloonKeepOut(panel: Pick<VDTComicPanel, 'art'>, resource: Pick
  *  block's font; 0 when it has none. */
 export function balloonEm(b: Pick<VDTComicBalloon, 'text'>): number {
   const font = b.text[0]?.fontString ?? '';
-  const m = /(\d+(?:\.\d+)?)px/.exec(font);
+  const m = /(?:^|\D)(\d+(?:\.\d+)?)px/.exec(font);
   return m ? Number(m[1]) : 0;
 }
 
