@@ -1101,13 +1101,19 @@ const html = renderToHtml(doc);`;
 
 const BUNDLE_PARTS = ["config", "chapters", "fonts", "resources", "images"] as const;
 
-/** Message markup (`<code>`, `<em>`) → plain Markdown text. Any angle
- *  bracket a removal leaves behind goes too, so no tag can reassemble. */
+/** Message markup (`<code>`, `<em>`) → plain Markdown text. Everything
+ *  from a `<` to the next `>` goes in one scan, so no tag can reassemble
+ *  from what a removal leaves behind. */
 function stripTags(text: string): string {
-  return text
-    .replace(/<code>(.*?)<\/code>/g, "`$1`")
-    .replace(/<[^>]+>/g, "")
-    .replace(/[<>]/g, "");
+  const coded = text.replace(/<code>(.*?)<\/code>/g, "`$1`");
+  let out = "";
+  let inTag = false;
+  for (const c of coded) {
+    if (c === "<") inTag = true;
+    else if (c === ">") inTag = false;
+    else if (!inTag) out += c;
+  }
+  return out;
 }
 
 export function homeMarkdown(locale: string): string {
