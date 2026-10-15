@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "76529cc5e5278bc2d14e8ae336d3722767c017408cf4947330e7fa775b570a99",
+  "sourceHash": "206df1ee3c834cb64a1f8709805a23f69543b1a1c2d8cf72858fb5b0f2b51aa8",
   "engine": {
-    "postext": "1.33.4",
-    "postextPdf": "1.33.4",
+    "postext": "1.33.5",
+    "postextPdf": "1.33.5",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T08:05:41.002Z",
+  "capturedAt": "2026-10-15T11:42:29.347Z",
   "variants": {
     "en": {
       "hash8": "a501a61c",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 4424,
-        "fontsMs": 925,
-        "buildMs": 240,
-        "totalMs": 8753,
+        "importMs": 5493,
+        "fontsMs": 713,
+        "buildMs": 235,
+        "totalMs": 9356,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -286,23 +286,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "497257ac",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 4412,
-        "fontsMs": 955,
-        "buildMs": 227,
-        "totalMs": 7750,
+        "importMs": 5269,
+        "fontsMs": 747,
+        "buildMs": 208,
+        "totalMs": 8533,
         "builds": 1
       },
       "specimen": {
@@ -323,7 +317,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -571,23 +565,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
       "hash8": "07b873a7",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 2463,
-        "fontsMs": 1781,
-        "buildMs": 252,
-        "totalMs": 7905,
+        "importMs": 4796,
+        "fontsMs": 767,
+        "buildMs": 220,
+        "totalMs": 7431,
         "builds": 1
       },
       "specimen": {
@@ -608,7 +596,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -856,23 +844,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
       "hash8": "22892db5",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 3400,
-        "fontsMs": 3867,
-        "buildMs": 198,
-        "totalMs": 11583,
+        "importMs": 3548,
+        "fontsMs": 2894,
+        "buildMs": 209,
+        "totalMs": 10852,
         "builds": 1
       },
       "specimen": {
@@ -893,7 +875,7 @@
           "ZCOOL QingKe HuangYou"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -1142,23 +1124,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
       "hash8": "adaefd46",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 3395,
-        "fontsMs": 1442,
-        "buildMs": 238,
-        "totalMs": 7786,
+        "importMs": 3559,
+        "fontsMs": 2321,
+        "buildMs": 206,
+        "totalMs": 7998,
         "builds": 1
       },
       "specimen": {
@@ -1179,7 +1155,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -1431,23 +1407,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
       "hash8": "3cc0079d",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 2647,
-        "fontsMs": 5998,
-        "buildMs": 192,
-        "totalMs": 14172,
+        "importMs": 1515,
+        "fontsMs": 3760,
+        "buildMs": 284,
+        "totalMs": 10470,
         "builds": 1
       },
       "specimen": {
@@ -1468,7 +1438,7 @@
           "Zen Antique"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -1719,23 +1689,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
       "hash8": "8112764d",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 4504,
-        "fontsMs": 2853,
-        "buildMs": 196,
-        "totalMs": 10035,
+        "importMs": 2452,
+        "fontsMs": 1784,
+        "buildMs": 209,
+        "totalMs": 8267,
         "builds": 1
       },
       "specimen": {
@@ -1756,7 +1720,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -2004,23 +1968,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
       "hash8": "3559bd99",
       "vdtHash": "2e51b8052fe5711c66cb316c21e348177e49fdd1",
       "timings": {
-        "importMs": 4576,
-        "fontsMs": 1308,
-        "buildMs": 185,
-        "totalMs": 8292,
+        "importMs": 3504,
+        "fontsMs": 2562,
+        "buildMs": 252,
+        "totalMs": 8352,
         "builds": 1
       },
       "specimen": {
@@ -2041,7 +1999,7 @@
           "Comic Neue"
         ],
         "pages": 3,
-        "ownLines": 183
+        "ownLines": 184
       },
       "pages": [
         {
@@ -2289,13 +2247,286 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
+        "findings": []
+      }
+    },
+    "de": {
+      "hash8": "1ed8604e",
+      "vdtHash": "f09781cbf15f0a0b04bab39cd8e3c66eefa5e0bf",
+      "timings": {
+        "importMs": 2534,
+        "fontsMs": 1560,
+        "buildMs": 270,
+        "totalMs": 7047,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          168,
+          259
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Comic Neue",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Bangers",
+          "Comic Neue"
+        ],
+        "pages": 3,
+        "ownLines": 184
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1542,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 25716,
+          "alt": "Kapitelauftakt, Seite 1: Der Leuchtturm von Porthcove."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 241206,
+          "alt": "Seite 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 206240,
+          "alt": "Seite 3."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "comic-epub-guided-view.pdf",
+        "bytes": 814111,
+        "pages": 3
+      },
+      "sandbox": {
+        "file": "comic-epub-guided-view.postext",
+        "bytes": 807094,
+        "chapters": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "pages": 3,
+            "hash": "0ed8d21a43b58a88",
+            "lines": "70fa1c366a679938"
           }
         ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "readEpub",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToEpub",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.cast",
+          "comics.cast[].id",
+          "comics.cast[].name",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 98,
+        "designElements": 1,
+        "directives": [
+          ":::paragraphs",
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 5,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Bangers",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-speakers",
+          "epub-export",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
       }
     }
   }

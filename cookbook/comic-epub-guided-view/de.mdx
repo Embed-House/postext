@@ -1,0 +1,61 @@
+---
+title: "Ein Comic als EPUB, Panel für Panel gelesen"
+summary: "Ein kurzer Comic als PDF, als EPUB mit festem Layout und regionsbasierter Navigation Panel für Panel, als EPUB für Kindle Panel View und als umfließendes EPUB."
+plain: "Ein zweiseitiger Comic als Druck-PDF und als E-Books: eines behält die Seiten und lässt die Leser von Panel zu Panel zoomen, eines ist für Kindle, und in einem steht der Dialog als einfacher Text."
+description: "Einen Postext-Comic als PDF und EPUB 3 exportieren: festes Layout mit regionsbasierter Navigation (Guided View), Kindle Panel View und Dialog als Text."
+question: "Wie exportiere ich einen Comic als EPUB, dem die Leser Panel für Panel folgen können?"
+aliases: ["Guided View", "Panel für Panel", "regionsbasierte Navigation", "regions.xhtml", "Kindle Panel View", "Comic-EPUB", "Comic mit festem Layout", "guided view", "lectura viñeta a viñeta", "EPUB de cómic", "コマ送り"]
+pageNotes: { "1": "Die Titelseite: „Der Leuchtturm von Porthcove“ in roten Display-Versalien, „Erstes Kapitel: Das Kabel“, das Impressum.", "2": "Seite 2: Maya kommt mit einem langen Textkasten („Die letzte Augustwoche.“) am Leuchtturm an, der Wärter an seinem Funkgerät („Na komm, du alte Kiste. Sprich mit mir.“) und Maya, die auf den Boden zeigt.", "3": "Seite 3: der Kater schlafend auf dem Funkkabel mit SCHNURRR und Mayas geflüstertem „Gefunden.“, dann der nachts erleuchtete Leuchtturm mit einem Textkasten und zwei Sprechblasen." }
+---
+
+## Was Sie setzen
+
+Das erste Kapitel von *Der Leuchtturm von Porthcove*: eine Titelseite und zwei Comicseiten, einmal gesetzt und auf vier Arten exportiert. Das PDF ist für den Druck. Das EPUB mit festem Layout behält die gedruckten Seiten und trägt eine regionsbasierte Navigation, sodass ein Lesesystem das Buch Panel für Panel zeigen kann und vom Ankunftspanel zum Funkgerät und dann zu Maya zoomt. Ein zweites EPUB mit festem Layout ergänzt Kindle Panel View; das umfließende setzt jedes Panel als zugeschnittenes Bild, gefolgt von seinen Zeilen. Die Seite listet jede Datei so auf, wie ein Lesegerät sie öffnet, mit einem Download-Link, in neun Sprachen.
+
+## Zubereitung
+
+### 1 · Dasselbe Dokument als EPUB exportieren
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `renderToEpub` nimmt die Dokumente, die `renderToPdf` druckt, die Seiten des EPUB sind also die des PDF ([Comic-Ausgabe](/de/docs/comics#comic-ausgabe)). Mit `layout: 'fixed'` und Comicseiten im Buch schreibt es außerdem `regions.xhtml`: eine Region `panel` je Panel in Lesereihenfolge, jede ein Rechteck in Prozent ihrer Seite, mit ihren Sprechblasen, Textkästen und Soundwords als Regionen darin. Die Blätterrichtung folgt der Leserichtung der Comics, sodass die japanische und die arabische Ausgabe von rechts nach links blättern. `kindlePanelView: true` ergänzt je Panel ein Tippziel und eine vergrößerte Kopie, mit den Metadaten, die Kindle erwartet. Die umfließende Fassung hat keine Seiten zu bewahren: Jedes Panel ist sein Bild, zugeschnitten wie auf der Seite, dann folgen seine Zeilen, „**Maya**: Biscuit! Wo ist Opa?“, mit den Namen aus `comics.cast`.
+
+<PageShot page={2} crop="0,0,1,0.55" caption="Panel 1 von Seite 2: in der Guided View die erste Region, mit dem Textkasten und Mayas Sprechblase darin verschachtelt." />
+
+### 2 · Die Schriften einbetten, die die Seiten setzen
+
+<Excerpt region="embed" />
+
+Ein EPUB mit festem Layout zeichnet seinen Text in den Schriften, die es mitbringt, und eine fehlende Schrift wird in der des Lesegeräts gesetzt. Das Lettering verlangt normal, fett und kursiv; die Comicschriften liefern weniger Schnitte, deshalb bekommt jede Anfrage die Datei, die `loadComicFonts` für sie gewählt hat, und eine Datei, die beide Strichstärken bedient, kommt einmal mit dem Bereich `'400 700'` hinein. Japanische und chinesische Schriften nehmen nur die Teilstücke, die die Zeichen der Ausgabe enthalten, was das japanische Buch bei 1,4 MB hält.
+
+### 3 · Jede Datei zurücklesen
+
+<Excerpt region="shelf" />
+
+`readEpub` öffnet die Bytes wie ein Lesesystem: Layout, Blätterrichtung, Spine. Die Liste unter jeder Karte ist die Guided View selbst, gelesen aus `regions.xhtml`: fünf Panels und ihre Textregionen, in der Reihenfolge, in der Leser sie durchgehen. Die drei Dateien bestehen EPUBCheck 5.4 ohne Fehler oder Warnungen, auf Englisch, Japanisch und Arabisch.
+
+### 4 · Ein Layout, neun Ausgaben
+
+<Excerpt region="editions" />
+
+Jede Datei `content.<lang>.md` enthält die Wörter einer Ausgabe unter denselben Sprecher-IDs. Die Panelregionen sind in jeder Sprache gleich; die Regionen der Sprechblasen wandern mit den Sprechblasen, die um den Text jeder Sprache neu gelettert werden.
+
+## Varianten
+
+### Die Kindle-Ausgabe weglassen
+
+Regionsbasierte Navigation steht in jedem EPUB mit festem Layout; Kindle Panel View ergänzt sie nur.
+
+```diff
+-  kindle: await renderToEpub(doc, { ...book, layout: 'fixed', kindlePanelView: true }),
+```
+
+### Dem umfließenden Buch einen Umschlag geben
+
+```diff
+-  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable' }),
++  reflowable: await renderToEpub(doc, { ...book, layout: 'reflowable',
++    cover: { bytes: imageBytes('lh-beam.jpg'), mediaType: 'image/jpeg' } }),
+```
+
+## Häufige Fehler
+
+- Eine Schrift, die einmal je bedienter Strichstärke eingebettet wird, würde viermal kopiert; die chinesische Ausgabe wog vor den Strichstärkenbereichen 5,3 MB.

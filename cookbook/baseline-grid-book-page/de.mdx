@@ -1,0 +1,75 @@
+---
+title: "Eine Buchseite auf dem Grundlinienraster"
+summary: "Eine gespiegelte zweispaltige Seite, deren Satzspiegel genau 44 Zeilen hoch ist, sodass der Grundtext über Spaltenabstand und Bund auf einem Raster steht."
+plain: "Drei Seiten eines Essays darüber, wie alte Bücher gestaltet wurden. Sie zeigen, wie jede Textzeile über beide Spalten und beide gegenüberliegenden Seiten auf derselben Höhe steht."
+description: "Ein Essay über den Kanon der Seitenproportionen in Postext, mit gespiegelten Rändern 2:3:4:6 und zwei Spalten zu 44 Zeilen, die aufs Raster zurückkehren."
+question: "Wie halte ich auf einer zweispaltigen Buchseite jede Zeile über Spalten und Doppelseite auf einem Raster?"
+aliases: ["vertikaler Rhythmus", "Registerhaltigkeit", "Zeilen stehen über die Spalten gleich", "Höhe des Satzspiegels", "Satzspiegel", "Van-de-Graaf-Kanon", "Ränder 2:3:4:6", "Listenabstand außerhalb des Rasters", "bündige Spaltenfüße", "baseline grid"]
+pageNotes: { "1": "Der Auftakt: Der Titel „Geheimer Kanon“ in roter Kursive füllt die erste Spalte, die Zeichnung des Kanons steht über der zweiten, mit der Bildunterschrift „Abbildung 1.1. Der Kanon auf einer aufgeschlagenen Doppelseite aus Seiten im Verhältnis 2:3“; blassrote Rasterlinien laufen unter jeder Textzeile, und die Überschriften „Den Kanon zeichnen“ und „Villards Figur“ eröffnen die Abschnitte.", "2": "Eine linke Seite mit dem Außensteg links, unter dem Kolumnentitel „Die linierte Seite“. Die „Werkstattnotiz“ in kleiner Schrift fällt zwischen die Rasterlinien; die Überschrift „Linien für die Schrift“ darunter steht eine halbe Zeile neben dem Raster, und der Text unter ihr steht wieder auf den Linien. In der zweiten Spalte folgen „Was eine Gebrauchsseite bewahrt“ und seine Liste mit drei Punkten dem Raster der Nachbarabsätze.", "3": "Eine rechte Seite mit dem Bundsteg links, unter dem Kolumnentitel „Geheimer Kanon“: Abbildung 1.2, die beiden verglichenen Seiten, steht über die ganze Breite des Satzspiegels am Kopf der Seite, und der Essay endet darunter in zwei gleich langen Spalten; das Impressum „Gesetzt aus der Vollkorn, 9,8 auf 13,4 Punkt“ schließt die zweite." }
+---
+
+## Was Sie setzen
+
+Die Seiten 9 bis 11 von *Die linierte Seite*, einem Sammelband über das Büchermachen, enthalten „Geheimer Kanon“, einen Essay über die Proportionen, die mittelalterliche Schreiber ihren Seiten gaben. Seine Ränder folgen dem Kanon, den er beschreibt, 2:3:4:6 und gespiegelt, auf einem Endformat von 210 × 280 mm um zwei Spalten in Vollkorn. Ein Grundlinienraster ist in Blassrot über die Seiten gezeichnet, und der Grundtext beider Spalten und beider gegenüberliegender Seiten steht darauf. Der Titel in Playfair Display füllt die erste Spalte des Auftakts, die Zeichnung des Kanons steht über der zweiten. Abschnittsüberschriften stehen eine halbe Zeile neben dem Raster, und der Text darunter kehrt darauf zurück. Eine Werkstattnotiz in kleinerer Schrift läuft auf einem eigenen Zeilenabstand von 10 pt. Auf Seite 11 endet der Essay unter einer seitenbreiten Abbildung in zwei gleich lang geschnittenen Spalten, und das Impressum schließt die zweite.
+
+## Zubereitung
+
+### 1 · Überschriften dürfen das Raster verlassen, Listen nie
+
+<Excerpt region="flow" />
+
+Der Abstand über einer Überschrift bleibt genau wie eingestellt, sodass 1,5 Zeilen die Überschrift zwischen zwei Rasterlinien setzen, und der Text darunter rastet auf der nächsten Linie ein ([Grundlinienraster](/de/docs/configuration-page-layout#grundlinienraster)). Eine Liste rastet vor ihrem ersten Punkt nicht ein; die kurze Antwort setzt die Listenabstände daher auf null (jede ganze Zahl von Zeilen ginge ebenso). Mit den voreingestellten 1,5 em stünden die drei Punkte auf Seite 10 um 1,3 pt unter den Linien der Nachbarspalte. Die zwei Titelzeilen zu 46 pt nehmen je vier Zeilen ein und sein unterer Abstand eine weitere, sodass der Essay auf Zeile 10 beginnt.
+
+<PageShot page={2} crop="0.14,0.33,0.795,0.3207" caption="Seite 10: Die Liste in der zweiten Spalte hält das Raster der Absätze daneben; die Werkstattnotiz fällt zwischen die Rasterlinien, die Überschrift darunter steht eine halbe Zeile daneben, ihr Text wieder auf dem Raster." />
+
+### 2 · Das Raster absichtlich verlassen und zurückkehren
+
+<Excerpt region="note" />
+
+Die Notiz ist ein Container `:::paragraphs` in 7,8 auf 10 pt, außerhalb des Rasters. Nach ihrem letzten Absatz wird die Position auf die nächste Rasterlinie aufgerundet, sodass die folgende Überschrift dort steht, wo sie nach Grundtext stünde ([der Container `:::paragraphs`](/de/docs/configuration-styles#der-container-paragraphs)). Das Impressum nutzt denselben Container in 7,5 auf 10 pt: Seine vier Zeilen nehmen 40 pt ein, 0,2 pt weniger als drei Zeilen, sodass die letzte Spalte des Essays bündig mit der danebenstehenden endet.
+
+### 3 · Abbildungen dort platzieren, wo das Raster sie aufnehmen kann
+
+<Excerpt region="figures" />
+
+Ein Gleitobjekt landet nie über dem Absatz, der es zitiert ([Platzierung](/de/docs/document-format#platzierung)). Der Kanon, in der ersten Spalte zitiert, kann trotzdem den Kopf der zweiten Spalte auf Seite 9 einnehmen; der seitenbreite Vergleich, auf Seite 10 zitiert, wartet auf Seite 11. Jedes Band wird auf ganze Zeilen aufgerundet, sodass der Text unter einer Zeichnung auf einer Rasterlinie beginnt, bündig mit der Nachbarspalte und mit der gegenüberliegenden Seite. Bemessen Sie eine Zeichnung nach dieser Rundung: Mit 61,8 mm nimmt das Band des Kanons samt Bildunterschrift 17 Zeilen ein; mit 62,5 mm wären es 18, und unter der Bildunterschrift bliebe fast eine Zeile Weißraum.
+
+<PageShot page={3} crop="0.05,0.07,0.83,0.6" caption="Seite 11: Der Text unter der seitenbreiten Abbildung beginnt auf einer Rasterlinie, und der Essay endet in zwei gleich langen Spalten, das Impressum schließt die zweite." />
+
+### 4 · Den Spaltenausgleich die Spalten bündig machen lassen
+
+<Excerpt region="balance" />
+
+Jede volle Spalte auf den Seiten 9 und 10 endet auf Zeile 44, weil der Satzspiegel genau 44 Zeilen hoch ist und der Text darauf eingepasst wurde. „Mit Folgetext halten“ und die Regeln für Witwen, Waisen und zu kurze Ausgangszeilen sind standardmäßig aktiv. Wenn eine davon eine Spalte um eine Zeile zu kurz enden lässt, setzt der Spaltenausgleich den fehlenden Raum über eine frühere Überschrift ([Spaltenausgleich](/de/docs/configuration-text#spaltenausgleich)), wo er als Lücke sichtbar wird; passen Sie den Text also ein, bis der Ausgleich nichts mehr zu füllen hat. Auf der letzten Seite verteilt er die übrigen Zeilen so, dass beide Spalten auf derselben Zeile enden.
+
+### 5 · Die Ränder spiegeln und ab Seite 9 nummerieren
+
+<Excerpt region="heads" />
+
+Die kurze Antwort berechnet den Fußsteg: Das Endformat von 280 mm abzüglich des Kopfstegs von 24 mm und eines Satzspiegels von genau `LINES` Zeilen (44 × 13,4 pt = 208 mm) lässt 48 mm, sechs Einheiten, wie es die Folge 2:3:4:6 verlangt. Mit `mirror: true` ist der als `left` gesetzte Rand von 16 mm der Bundsteg, links auf einer rechten Seite und rechts auf einer linken ([gespiegelte Ränder](/de/docs/configuration-page-layout#gespiegelte-ränder)); Kolumnentitel, die `OUTER` Millimeter von der Seitenkante verankert sind, enden also dort, wo der Satzspiegel endet, auf der Seite des Außenstegs. `pages: 'body'` hält sie vom Auftakt fern. `startAt: 9` druckt die Paginas 9 bis 11, und `pageIndexOffset: 8` zählt die acht Seiten davor, sodass die Spiegelung, die Parität der Kolumnentitel und `breakBefore: 'odd'` dem gebundenen Buch folgen. Mit einem Versatz von 7 zählte die erste Seite als linke Seite, und der Umbruch auf eine ungerade Seite setzte eine Vakatseite vor den Essay.
+
+## Varianten
+
+### Das Raster für die Druckerei ausblenden
+
+`enabled` steuert nur die über die fertigen Seiten gezeichneten Linien; das Layout hält das Raster von 13,4 pt in jedem Fall ein, und keine Zeile verschiebt sich.
+
+```diff
+-  baselineGrid: { enabled: true, color: col('grid') },
++  baselineGrid: { enabled: false },
+```
+
+### Sehen, was der Spaltenausgleich leistet
+
+Ohne Spaltenausgleich setzt Seite 11 ihre letzten acht Zeilen und das Impressum in die erste Spalte und lässt die zweite leer.
+
+```diff
+-const balancing = { enabled: true };
++const balancing = { enabled: false };
+```
+
+## Häufige Fehler
+
+- Die Regel, dass ein Gleitobjekt `top` nie auf der zitierenden Seite landet, gilt für seitenbreite Gleitobjekte. Ein Spalten-Gleitobjekt `top` kann auf seiner zitierenden Seite landen, am Kopf einer späteren Spalte, wie Abbildung 1.1 auf Seite 9.
+- Seitenformate, Ränder und Spaltenabstand verlangen absolute Einheiten (mm, pt, cm, in). Ein `em` hat dort keine Schriftgröße, an der es sich messen könnte, und der Build bricht mit „dimensionToPx: baseFontSizePx is required for unit "em"“ ab.
+- Der Wortzwischenraum von Vollkorn ist schmal, 0,2 em; in einer Spalte von etwa 50 Zeichen fallen daher manche Blocksatzzeilen zu locker oder zu eng aus. Das Beispiel wurde Zeile für Zeile anhand des Berichts über zu lockere Zeilen aus der Aufnahme eingepasst; prüfen Sie es nach jeder Änderung an Text oder Satzbreite erneut.

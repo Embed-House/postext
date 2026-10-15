@@ -1,0 +1,62 @@
+---
+title: "Eine Seite Pepper&Carrot, aus dem Transkript neu gelettert"
+summary: "Zwei Seiten Pepper&Carrot (CC BY 4.0), neu gesetzt aus David Revoys textfreien Bildern und den offiziellen Übersetzungen, jede Sprechblase in neun Sprachen."
+plain: "Zwei Seiten eines frei lizenzierten Webcomics, neu gebaut aus den Bildern des Künstlers ohne Wörter und aus den Übersetzungen, die Leute davon gemacht haben, sodass die Sprechblasen in jeder Sprache neu gezeichnet werden."
+description: "Pepper&Carrot Episode 8 (CC BY 4.0), von Postext neu gelettert: Panels aus den textfreien Bildern, Sprecher aus den Originaldornen, acht Übersetzungen."
+question: "Kann ich einen frei lizenzierten Comic aus seinem Transkript neu lettern, statt die fertigen Seiten zu ändern?"
+aliases: ["Pepper&Carrot", "David Revoy", "Neu-Lettering", "Scanlation", "Comic-Übersetzung", "Transkript", "offener Comic", "CC-BY-Comic", "re-lettering", "rotular de nuevo", "写植し直し", "重新嵌字"]
+pageNotes: { "1": "Die Titelseite: „Episode 8: Peppers Geburtstagsfeier“ in Rot, eine kurze Notiz dazu, was die Seiten sind, und das Impressum mit Zeichnung, Handlung, Übersetzung und Korrektur, mit der Lizenz CC BY 4.0.", "2": "Seite 5: Zwischen Blitzen zieht die wütende Pepper ein Zauberbuch aus dem Regal und schreit in einer gezackten Sprechblase „Wie konnten sie mir das antun?!! Mir!!!“; auf dem Einband in Gold „Beschwörungen für Dämonen von CHAOSAH Ausg. 1“; von oben zeichnet Pepper im Regen drei rote Zauberkreise („Da ich mich nicht auf sie verlassen kann...“); „DZZZOOO“ in Rot über eine rot beleuchtete Nahaufnahme.", "3": "Seite 6: Drei Dämonen mit roten Augen steigen im Sturm auf und sprechen in schwarzen Sprechblasen mit weißer Fraktur („Die Monšter von Chaosāh, zu Ihren Dienšten!“, „Wen šollen wir àngreifen?“); Pepper lächelt verschmitzt; die Dämonen, Pepper und Carrot trinken bei Kerzenlicht Tee, mit dem Textkasten „Episode 8: Peppers Geburtstagsfeier ENDE“." }
+---
+
+## Was Sie setzen
+
+Die Seiten 5 und 6 von Episode 8 von *Pepper&Carrot*, „Peppers Geburtstagsfeier“, von David Revoy, dem frei lizenzierten Webcomic (CC BY 4.0) über eine junge Hexe und ihre Katze. Revoy veröffentlicht seine Seiten ohne ihre Wörter, und die Community übersetzt das Transkript in Dutzende Sprachen. Hier setzt Postext diese Teile wieder zusammen: Die Panels sind aus seinen textfreien Seiten geschnitten, das Seitenraster ist seines, und jede Sprechblase, jeder Schrei, jedes Soundword und der Titel auf dem Zauberbuch werden von der Engine gelettert, aus dem französischen Original und den offiziellen Übersetzungen ins Englische, Spanische, Katalanische, Chinesische, Japanische, Arabische, Portugiesische und Deutsche. Eine Titelseite trägt die Nachweise, die die Lizenz verlangt.
+
+## Zubereitung
+
+### 1 · Das Transkript in ein Skript verwandeln
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Umwandlungsskript liest die Quelldateien der Episode: Es schneidet jede Seite an ihren weißen Zwischenräumen in Panels und schreibt die gemessene Aufteilung (`29.9 / 49.3 / *` für Seite 5), nimmt die Wörter jeder Sprechblase aus dem SVG der Übersetzung und benennt ihren Sprecher aus dem Transkript ([Einen Comic übersetzen](/de/docs/comics#einen-comic-übersetzen)). Das Ergebnis ist eine Zeile je Sprechblase, `pepper{shout break}: …`, mit der Form, die die Originalblase hatte: Ein gezackter Umriss wurde zu `shout`, eine Sprechblase, die den Rand überschritt, zu `break`. Der Akzent der Dämonen mit seinem *š* und *ā* stammt von den Übersetzern und bleibt.
+
+<PageShot page={2} crop="0,0,1,0.34" caption="Seite 5, Panel 1: Peppers Schrei, aus der offiziellen deutschen Übersetzung gelettert, und der Titel des Buches in Gold auf seinem Einband." />
+
+### 2 · Die Sprecher dort verankern, wohin Revoys Dornen zeigten
+
+<Excerpt region="art" />
+
+Revoys Sprechblasen liegen in seinen Quelldateien als Vektorformen vor, Dornen eingeschlossen. Die Umwandlung folgt jedem Dorn bis zur Spitze und speichert sie als Anker des Sprechers in Bruchteilen des Panels, sodass die neuen Sprechblasen dorthin zeigen, wohin seine zeigten: auf Peppers offenen Mund, auf den Dämon in der Mitte ([Sprecher und Anker](/de/docs/comics#sprecher-und-anker)). Die Sicherheitsbereiche halten das Motiv jedes Panels, wenn die Zellen ein paar Millimeter von seinen abweichen.
+
+### 3 · Jeder Stimme ihre eigenen Buchstaben geben
+
+<Excerpt region="editions" />
+
+Die Besetzung in der kurzen Antwort gibt den Dämonen schwarze Sprechblasen mit weißen Buchstaben, wie Revoy sie zeichnet, und eine eigene Stimme: Grenze Gotisch, eine Fraktur, in den lateinschriftlichen Ausgaben. Das Format `plate` setzt Text auf einen Gegenstand: den Titel des Zauberbuchs in vergoldeter Zen Antique mit einem dünnen dunklen Halo, mit `rotate` gedreht und mit `skew` geneigt, damit er auf dem Einband liegt, und mit `\` so in Zeilen gebrochen, wie der Einband sie bricht. Jede Ausgabe nimmt Schriften für ihr Schriftsystem; die japanischen Sprechblasen sind vertikal, und die japanische und die arabische Seite lesen von rechts nach links ([Lettering](/de/docs/comics#lettering)).
+
+### 4 · Jeden Übersetzer nennen, mit jedem Buchstaben
+
+<Excerpt region="vietnamese" />
+
+Die Lizenz verlangt Autor, Quelle, Lizenz und einen Hinweis auf die Änderungen; die Titelseite druckt sie in den Wörtern jeder Ausgabe, aus den Nachweisen der Episode selbst. Ein Mitwirkender an der spanischen und der japanischen Übersetzung ist Hồ Nhựt Châu, und vietnamesische Buchstaben liegen in einer eigenen Fontsource-Datei: Das Rezept lädt sie für die Schrift der Nachweise und übergibt sie an das PDF.
+
+## Varianten
+
+### Alle sechs Seiten übertragen
+
+Die Verarbeitungskette der Episode schreibt die sechs Seiten; die 21 Panels wiegen 1,8 MB. Ergänzen Sie die anderen Blöcke `:::page` und ihre Panels.
+
+```diff
+ const resources = await Promise.all([
++  panel('e08p01-1', asset('e08p01-1.jpg')), // … and the other fourteen panels of pages 1 to 4
+   panel('e08p05-1', asset('e08p05-1.jpg')), panel('e08p05-2', asset('e08p05-2.jpg')),
+```
+
+### Die Panels abrunden, wie Revoy es auf Seite 2 tut
+
+```diff
+   panel: { borderWidth: pt(0), background: col('paper') },
++  panelStyles: [{ id: 'rounded', borderRadius: mm(5.8) }], // ::panel{style=rounded}
+```
+
+## Häufige Fehler
+
+- Behalten Sie die Nachweise im Dokument: Die Bilder reisen mit dem PDF, und CC BY 4.0 verlangt, dass die Namensnennung mit ihnen reist.

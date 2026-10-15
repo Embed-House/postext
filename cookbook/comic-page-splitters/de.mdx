@@ -1,0 +1,63 @@
+---
+title: "Ein Satz Panels, drei Seitenaufteilungen"
+summary: "Fünf Comic-Panels in drei Aufteilungsbäumen: split in :::page teilt die Seite, der Sicherheitsbereich jedes Bildes hält sein Motiv in jeder Zelle."
+plain: "Eine Comicseite, einmal gezeichnet und auf drei Arten angeordnet. Dieselben fünf Bilder und derselbe Dialog füllen drei verschiedene Panelraster, und jedes Bild wird für sein neues Panel neu beschnitten."
+description: "Ein Comic-Layoutandruck in Postext: dieselben fünf Panels unter drei Aufteilungsbäumen, nach Sicherheitsbereichen neu beschnitten, in neun Sprachen gelettert."
+question: "Wie teile ich eine Comicseite in Panels und halte ein Gesicht im Bild, wenn das Panel seine Form ändert?"
+aliases: ["Panelraster", "Comicseite aufteilen", "Seitenlayout Comic", "Comic-Raster", "Aufteilungsbaum", "Trennlinie", "splitter", "Panelreihen", "eingelassenes Panel", "Sicherheitsbereich", "Beschnitt", "Bildausschnitt", "viñetas", "コマ割り", "分格", "panel grid"]
+pageNotes: { "1": "Das Deckblatt des Andrucks: der Titel „Eine Seite, drei Varianten“ in roten Display-Versalien, dann die drei Pläne, jeder mit seinem Attribut split in Rot.", "2": "Plan A: eine breite Reihe, in der Maya zum Leuchtturm hinaufgeht („Opa! Ich bin da!“), drei Panels nebeneinander (der Wärter an seinem Funkgerät, „Gerade rechtzeitig. Das Funkgerät ist taub,“; Maya, die nach unten zeigt, „Opa… ich glaube, ich weiß, woran es liegt.“; die schlafende Katze mit SCHNURRR in Rot) und eine breite Nachtszene des erleuchteten Leuchtturms.", "3": "Plan B: zwei Spalten; links Mayas Ankunft und der Wärter an seinem Funkgerät, hoch; rechts die zeigende Maya, die Katze und der Leuchtturm bei Nacht mit „Funk geht, Lampe brennt.“ und „Und Biscuit hat ein neues Bett gefunden.“.", "4": "Plan C: oben eine Reihe aus drei schmalen Panels, die beiden Sprechblasen des Wärters nebeneinander über seiner Mütze und die Katze als eingelassenes Panel über dem von Maya, darunter ein hohes Panel des Leuchtturms bei Nacht mit zwei Sprechblasen nahe der Galerie." }
+---
+
+## Was Sie setzen
+
+Ein Layoutandruck für eine Seite eines Comics, *Der Leuchtturm von Porthcove*: ein Deckblatt und dieselbe Seite in drei Plänen, unter denen die Autorin wählen kann. Die fünf Bilder (Maya steigt zum Leuchtturm hinauf, ihr Großvater an einem toten Funkgerät, Maya zeigt auf den Boden, die Katze schläft auf dem Kabel, die Lampe brennt bei Nacht) und die sechs Zeilen Lettering ändern sich nie; nur das `split` jedes `:::page` ändert sich. Jedes Bild wird für seine Zelle neu beschnitten und jede Sprechblase neu um ihren Sprecher gesetzt. Das Endformat ist das eines amerikanischen Comicheftes, 168 × 259 mm, und der Andruck erscheint in neun Ausgaben, jede in ihrer eigenen Sprache gelettert.
+
+## Zubereitung
+
+### 1 · Die Seite mit einem Aufteilungsbaum teilen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein `:::page` füllt den Satzspiegel, hier 144 × 227 mm, und sein Attribut `split` teilt ihn. `/` trennt Reihen, `|` trennt Spalten, jede Größe ist ein Prozentsatz der Zelle, die sie teilt, `*` teilt den Rest, und eine Klammer teilt diese Zelle erneut auf der anderen Achse ([die Seite aufteilen](/de/docs/comics#die-seite-aufteilen)). Plan C, `30 [30 | 20 | *] / *`, bildet eine Reihe von 30 % Höhe, teilt sie in Zellen von 30 % und 20 % Breite plus den Rest und lässt darunter eine hohe Zelle. Die Zwischenräume liegen mittig auf jeder Linie: 4 mm zwischen Reihen, 3 mm zwischen Panels einer Reihe. Die Zeilen `::panel` füllen die Zellen in Leserichtung, Reihen von oben und Spalten von der Anfangsseite her.
+
+<PageShot page={4} crop="0,0,1,0.34" caption="Plan C: die Reihe 30 | 20 | Rest, mit der Katze als eingelassenem Panel über dem dritten Panel." />
+
+### 2 · Jedem Bild einen Sicherheitsbereich geben
+
+<Excerpt region="art" />
+
+Jedes Bild wird einmal gezeichnet und so beschnitten, dass es die Zelle füllt, in der es landet. Der Sicherheitsbereich ist der Teil, den jeder Beschnitt vollständig behält ([Panels und Zeichnungen](/de/docs/comics#panels-und-bilder)). Der Sicherheitsbereich des Funkgerätbildes ist allein der Wärter, 24 % seiner Breite, deshalb zeigt die 26 mm breite Zelle von Plan C ihn von der Mütze bis zu den Stiefeln und lässt das Funkgerät weg; die breiten Zellen der Pläne A und B zeigen beides. Eine Zelle, deren Form einen Sicherheitsbereich nicht fassen kann, setzt das Bild mit Balken ein (Letterbox), und der Build warnt (`comicPanelLetterbox`). Die Anker markieren Mund und Gesicht jedes Sprechers in denselben Bruchteilen, sodass die Dorne der Sprechblasen die Sprecher in jedem Ausschnitt finden.
+
+### 3 · Ein Panel über ein anderes legen
+
+Die Aufteilung von Plan C ergibt vier Zellen für fünf Panels. Die Katze kommt mit `inset="50 50 46 46"` hinein: ein Panel von 46 % Breite und 46 % Höhe, bei 50 %, 50 % des Panels davor platziert, dem von Maya. Ein eingelassenes Panel nimmt keine Zelle ein, die Panels danach behalten also ihre Plätze, und es wird direkt nach dem Panel gelesen, das es überdeckt.
+
+### 4 · Neun Ausgaben aus einem Layout lettern
+
+<Excerpt region="editions" />
+
+Aufteilung, Bilder, Ausschnitte und Anker sind in jeder Sprache gleich; `content.<lang>.md` enthält nur die Wörter, unter denselben Sprecher-Ids (`maya`, `tomas`). Die japanische Ausgabe setzt ihre Sprechblasen senkrecht, acht Zeichen pro Spalte, und lässt das abschließende 。 weg; sie liest sich von rechts nach links, wie die arabische, deshalb werden die Panels jeder Reihe gespiegelt, die Bilder aber nicht. Die Lettering-Größe bleibt in jeder Ausgabe 8 pt: Eine längere Zeile ergibt eine größere Sprechblase, nie eine kleinere Schrift ([Lettering](/de/docs/comics#lettering)).
+
+## Varianten
+
+### Die mittlere Reihe schräg stellen
+
+Eine Größe in der Form `30~40` führt den hinteren Zwischenraum dieser Zelle von 30 % am einen Ende zu 40 % am anderen. Schräge Zellen verlieren ihre abgerundeten Ecken.
+
+```diff
+-:::page{split="30 / 35 [* | * | *] / *"}
++:::page{split="30 / 35 [30~40 | * | *] / *"}
+```
+
+### Die Zeichnungen in den Ausgaben von rechts nach links spiegeln
+
+Bilder behalten standardmäßig ihre Seitenrichtung. Ein Comic, der ohne Schrift im Bild und ohne Uhren gezeichnet ist, kann der Leserichtung folgen.
+
+```diff
+ const comics = {
++  mirrorArt: true, // pictures flip in a right-to-left edition
+   gutter: { horizontal: mm(4), vertical: mm(3) },
+```
+
+## Häufige Fehler
+
+- Eine Zelle von einem Fünftel der Seitenbreite fasst bei 8 pt etwa vier Wörter pro Zeile, und in Plan C liegt das Gesicht des Wärters mitten in seiner: Seine beiden Sprechblasen über den Sturm sind höher als der Raum darüber oder darunter. Dort trägt die erste der beiden Zeilen `break` (`tomas{break}:`), sodass das Paar über den Zwischenraum in Mayas Panel reichen darf; die Engine hält die zweite Sprechblase hinter der ersten und lässt sie nie in den Seitenrand laufen. Ohne `break` warnt der Build `comicBalloonOverflow`.
+- Ein engerer Sicherheitsbereich gibt mehr Zellen einen sauberen Ausschnitt, doch was außerhalb liegt, kann abgeschnitten werden: die Stiefel in der ersten Reihe von Plan A, das Funkgerät in Plan C.

@@ -11,7 +11,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: sample language: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
+const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
 const RECIPE = 'newspaper-daily-strip';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -38,6 +38,7 @@ const [TEXT, LABEL, LETTERING, SFX] = t({
   ca: ['Newsreader', 'Archivo Narrow', 'Comic Neue', 'Bangers'],
   pt: ['Newsreader', 'Archivo Narrow', 'Comic Neue', 'Bangers'],
   fr: ['Newsreader', 'Archivo Narrow', 'Comic Neue', 'Bangers'],
+  de: ['Newsreader', 'Archivo Narrow', 'Comic Neue', 'Bangers'],
   zh: ['Noto Serif SC', 'Noto Sans SC', 'ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou'],
   ja: ['Noto Serif JP', 'Noto Sans JP', 'Zen Antique', 'Dela Gothic One'],
   ar: ['Noto Naskh Arabic', 'Noto Kufi Arabic', 'Playpen Sans Arabic', 'Lalezar'],
@@ -84,7 +85,7 @@ const layout = { layoutType: 'multiple', columnCount: 4, gutterWidth: mm(GUTTER)
 // written after an opener can still take that page's foot (gotcha: top-float-next-page).
 const WIDTH = 230 - 2 * MARGIN.side; // mm: the text width
 const SECTION = t({ en: 'Funnies', es: 'Tebeos', ca: 'Còmics', zh: '漫画版', ar: 'صفحة الكوميكس',
-  ja: '漫画面', pt: 'Quadrinhos', fr: 'Bandes dessinées' });
+  ja: '漫画面', pt: 'Quadrinhos', fr: 'Bandes dessinées', de: 'Comics' });
 const across = (y) => ({ ...at('page', 'top-left', MARGIN.side, y), size: { width: mm(WIDTH) } });
 const header = { elements: [
   { kind: 'text', id: 'folio', content: '{pageNumber}  ·  {title}  ·  {publishDate}',
@@ -98,7 +99,7 @@ const header = { elements: [
 
 const config = () => ({
   locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar',
-    pt: 'pt-BR', fr: 'fr' }),
+    pt: 'pt-BR', fr: 'fr', de: 'de' }),
   colorPalette, comics,
   layout: { layoutType: 'single' }, // the cover; the inside page is a section in four columns
   // The pull-out is a tabloid sheet folded once more: 230 × 310 mm.
@@ -183,7 +184,8 @@ const ALT = {
     ar: 'البطريق بيب يدخل مخبز الفظّ أوتو الصغير وهو يلوّح.',
     ja: 'ペンギンのピップが手を振りながら、セイウチのオットーの小さなパン屋に入ってくる。',
     pt: 'O pinguim Pip entra acenando na padariazinha da morsa Otto.',
-    fr: 'Pip le manchot entre en saluant de la main dans la petite boulangerie d’Otto le morse.' }),
+    fr: 'Pip le manchot entre en saluant de la main dans la petite boulangerie d’Otto le morse.',
+    de: 'Der Pinguin Pip watschelt winkend in die kleine Bäckerei des Walrosses Otto.' }),
   po2: t({ en: 'Otto proudly holds up a croissant as big as Pip.',
     es: 'Otto enseña orgulloso un cruasán tan grande como Pip.',
     ca: 'L’Otto ensenya orgullós un croissant tan gran com en Pip.',
@@ -191,7 +193,8 @@ const ALT = {
     ar: 'أوتو يرفع بفخر كرواسونًا بحجم بيب.',
     ja: 'オットーが、ピップと同じくらい大きなクロワッサンを得意げに持ち上げる。',
     pt: 'Otto ergue, todo orgulhoso, um croissant do tamanho do Pip.',
-    fr: 'Otto brandit fièrement un croissant aussi grand que Pip.' }),
+    fr: 'Otto brandit fièrement un croissant aussi grand que Pip.',
+    de: 'Otto hält stolz ein Croissant hoch, so groß wie Pip.' }),
   po3: t({ en: 'Pip stands on the counter next to the giant croissant, scratching his head.',
     es: 'Pip, de pie en el mostrador junto al cruasán gigante, se rasca la cabeza.',
     ca: 'En Pip, dret al taulell al costat del croissant gegant, es grata el cap.',
@@ -199,7 +202,8 @@ const ALT = {
     ar: 'بيب واقف على المنضدة بجانب الكرواسون العملاق يحكّ رأسه.',
     ja: 'ピップがカウンターの巨大なクロワッサンの横に立ち、頭をかいている。',
     pt: 'Pip, de pé no balcão ao lado do croissant gigante, coça a cabeça.',
-    fr: 'Pip, debout sur le comptoir à côté du croissant géant, se gratte la tête.' }),
+    fr: 'Pip, debout sur le comptoir à côté du croissant géant, se gratte la tête.',
+    de: 'Pip steht auf der Ladentheke neben dem Riesencroissant und kratzt sich am Kopf.' }),
   po4: t({ en: 'Otto munches the big half of the croissant; Pip holds a tiny end piece.',
     es: 'Otto se come la mitad grande del cruasán; Pip sostiene una punta diminuta.',
     ca: 'L’Otto es menja la meitat gran del croissant; en Pip aguanta una punta minúscula.',
@@ -207,7 +211,8 @@ const ALT = {
     ar: 'أوتو يلتهم النصف الكبير من الكرواسون، وبيب يمسك طرفًا صغيرًا.',
     ja: 'オットーがクロワッサンの大きいほうをほおばり、ピップは小さな端っこを持っている。',
     pt: 'Otto devora a metade grande do croissant; Pip segura uma pontinha.',
-    fr: 'Otto dévore la grosse moitié du croissant ; Pip tient un minuscule bout.' }),
+    fr: 'Otto dévore la grosse moitié du croissant ; Pip tient un minuscule bout.',
+    de: 'Otto mampft die große Hälfte des Croissants; Pip hält ein winziges Endstück.' }),
   po5: t({ en: 'Pip and Otto fish through a hole in an ice floe beside a tiny bakery hut.',
     es: 'Pip y Otto pescan por un agujero en un témpano, junto a una caseta de panadería.',
     ca: 'En Pip i l’Otto pesquen per un forat en un glaç, al costat d’una caseta de fleca.',
@@ -216,7 +221,9 @@ const ALT = {
     ja: '流氷の穴でピップとオットーが釣りをしている。そばに小さなパン屋の小屋。',
     pt: 'Pip e Otto pescam num buraco do bloco de gelo, ao lado de uma padariazinha.',
     fr: 'Pip et Otto pêchent par un trou dans la banquise, à côté d’une petite cabane de '
-      + 'boulangerie.' }),
+      + 'boulangerie.',
+    de: 'Pip und Otto angeln durch ein Loch in einer Eisscholle, neben einer winzigen '
+      + 'Bäckerhütte.' }),
   po6: t({ en: 'Pip proudly holds up a tiny, unimpressed fish.',
     es: 'Pip levanta orgulloso un pez diminuto y nada impresionado.',
     ca: 'En Pip aixeca orgullós un peix minúscul i gens impressionat.',
@@ -224,7 +231,8 @@ const ALT = {
     ar: 'بيب يرفع بفخر سمكة صغيرة لا يبدو عليها أي إعجاب.',
     ja: 'ピップが、少しもうれしそうでない小さな魚を得意げに持ち上げる。',
     pt: 'Pip ergue, todo orgulhoso, um peixinho nada impressionado.',
-    fr: 'Pip brandit fièrement un poisson minuscule, pas impressionné du tout.' }),
+    fr: 'Pip brandit fièrement un poisson minuscule, pas impressionné du tout.',
+    de: 'Pip hält stolz einen winzigen Fisch hoch, der wenig beeindruckt aussieht.' }),
   po7: t({ en: 'Otto reels in a soggy boot; Pip has fallen on his back laughing.',
     es: 'Otto saca del agua una bota empapada; Pip se ha caído de espaldas de la risa.',
     ca: 'L’Otto treu de l’aigua una bota xopa; en Pip ha caigut d’esquena de riure.',
@@ -232,7 +240,8 @@ const ALT = {
     ar: 'أوتو يسحب حذاءً مبتلًا، وبيب سقط على ظهره من الضحك.',
     ja: 'オットーがずぶぬれの長靴を釣り上げ、ピップは笑いころげてあおむけに倒れている。',
     pt: 'Otto puxa uma bota encharcada; Pip caiu de costas de tanto rir.',
-    fr: 'Otto remonte une botte détrempée ; Pip est tombé à la renverse de rire.' }),
+    fr: 'Otto remonte une botte détrempée ; Pip est tombé à la renverse de rire.',
+    de: 'Otto holt einen triefenden Stiefel ein; Pip ist vor Lachen auf den Rücken gefallen.' }),
 };
 // #endregion
 
@@ -275,7 +284,8 @@ const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, c
 showBook(doc, { title: t({ en: 'A daily strip and a Sunday half page in the newspaper',
   es: 'Una tira diaria y media página dominical en el periódico',
   pt: 'Uma tirinha diária e meia página de domingo no jornal',
-  fr: 'Un strip quotidien et une demi-page du dimanche dans le journal' }) });
+  fr: 'Un strip quotidien et une demi-page du dimanche dans le journal',
+  de: 'Ein Tagesstrip und eine halbe Sonntagsseite in der Zeitung' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

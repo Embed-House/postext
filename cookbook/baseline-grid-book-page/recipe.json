@@ -30,7 +30,7 @@
   "workarounds": [],
   "engine": { "postext": "1.25.0" },
   "kit": ["core", "fonts", "viewer", "images"],
-  "sample": { "locales": ["en", "es", "pt", "fr"] },
+  "sample": { "locales": ["en", "es", "pt", "fr", "de"] },
   "capture": {
     "hero": 1,
     "card": "crop",
@@ -52,7 +52,8 @@
           "en": "The essay “The Secret Canon” and its Spanish version “El canon secreto”, written for this recipe",
           "es": "El ensayo «El canon secreto» y su versión inglesa, «The Secret Canon», escritos para esta receta",
           "pt": "O ensaio “The Secret Canon” e suas versões em espanhol e português, “El canon secreto” e “O cânone secreto”, escritos para esta receta",
-          "fr": "L’essai « The Secret Canon » et ses versions espagnole, portugaise et française, « El canon secreto », « O cânone secreto » et « Le canon secret », écrits pour cette recette"
+          "fr": "L’essai « The Secret Canon » et ses versions espagnole, portugaise et française, « El canon secreto », « O cânone secreto » et « Le canon secret », écrits pour cette recette",
+          "de": "Der Essay „The Secret Canon“ und seine spanische, portugiesische, französische und deutsche Fassung, „El canon secreto“, „O cânone secreto“, „Le canon secret“ und „Geheimer Kanon“, für dieses Rezept geschrieben"
         },
         "who": "Postext Cookbook",
         "license": "CC-BY-4.0"
@@ -64,7 +65,8 @@
           "en": "The two drawings, made in code in the page's palette",
           "es": "Los dos dibujos, hechos en código con la paleta de la página",
           "pt": "Os dois desenhos, feitos em código com a paleta da página",
-          "fr": "Les deux dessins, réalisés en code avec la palette de la page"
+          "fr": "Les deux dessins, réalisés en code avec la palette de la page",
+          "de": "Die beiden Zeichnungen, in Code mit der Farbpalette der Seite erstellt"
         },
         "who": "Postext Cookbook",
         "license": "CC-BY-4.0"

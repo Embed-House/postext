@@ -11,7 +11,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
+const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
 const RECIPE = 'balloon-kinds';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ const [LETTERING, SFX] = t({
   en: ['Comic Neue', 'Bangers'], es: ['Comic Neue', 'Bangers'], ca: ['Comic Neue', 'Bangers'],
   ja: ['Zen Antique', 'Dela Gothic One'], zh: ['ZCOOL KuaiLe', 'ZCOOL QingKe HuangYou'],
   ar: ['Playpen Sans Arabic', 'Lalezar'], pt: ['Comic Neue', 'Bangers'],
-  fr: ['Comic Neue', 'Bangers'],
+  fr: ['Comic Neue', 'Bangers'], de: ['Comic Neue', 'Bangers'],
 });
 // #endregion
 
@@ -64,7 +64,8 @@ const comics = {
   balloonStyles,
   // A speaker's own style: every `skipper:` line comes through the radio unless it says not.
   cast: [{ id: 'skipper', balloonStyle: 'radio', name: t({ en: 'The skipper', es: 'El patrón',
-    ca: 'El patró', zh: '船长', ar: 'الربّان', ja: '船長', pt: 'O capitão', fr: 'Le patron' }) }],
+    ca: 'El patró', zh: '船长', ar: 'الربّان', ja: '船長', pt: 'O capitão', fr: 'Le patron',
+    de: 'Der Kapitän' }) }],
   runningHeads: true, // a comic page has no running head unless asked: here, its folio
 };
 // #endregion
@@ -76,7 +77,7 @@ const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}'
 
 const config = () => ({
   locale: t({ en: 'en-us', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar',
-    pt: 'pt-BR', fr: 'fr' }),
+    pt: 'pt-BR', fr: 'fr', de: 'de' }),
   colorPalette, comics,
   // The trim of an American comic book, 6⅝ × 10³⁄₁₆ in; the type area is the panel frame.
   page: { sizePreset: 'custom', width: mm(168), height: mm(259), dpi: 150,
@@ -134,7 +135,9 @@ const ART = {
       pt: 'Noite de tempestade na sala da lanterna: o faroleiro fala ao microfone do rádio e '
         + 'Maya, enrolada num cobertor, escuta.',
       fr: 'Nuit de tempête dans la chambre de la lanterne : le gardien parle dans le micro de '
-        + 'la radio pendant que Maya, emmitouflée dans une couverture, écoute.' }) },
+        + 'la radio pendant que Maya, emmitouflée dans une couverture, écoute.',
+      de: 'Sturmnacht im Laternenraum: Der Wärter spricht ins Mikrofon des Funkgeräts, während '
+        + 'Maya, in eine Decke gewickelt, zuhört.' }) },
   'bk-whisper': { width: 1152, height: 1152,
     safeArea: { x: 0.36, y: 0.26, width: 0.44, height: 0.48 },
     anchors: [{ id: 'maya', x: 0.53, y: 0.47, head: { x: 0.52, y: 0.33 },
@@ -150,7 +153,9 @@ const ART = {
       ja: '机の下で、マヤが手で口をかくして、おびえたオレンジ色の猫にささやく。',
       pt: 'Debaixo da mesa, Maya cobre a boca com a mão e sussurra para o gato laranja '
         + 'assustado.',
-      fr: 'Sous le bureau, Maya chuchote derrière sa main au chat roux effrayé.' }) },
+      fr: 'Sous le bureau, Maya chuchote derrière sa main au chat roux effrayé.',
+      de: 'Unter dem Schreibtisch flüstert Maya hinter vorgehaltener Hand der verängstigten '
+        + 'roten Katze zu.' }) },
   'bk-shout': { width: 880, height: 1100, safeArea: { x: 0.22, y: 0.26, width: 0.46, height: 0.42 },
     anchors: [{ id: 'tomas', x: 0.48, y: 0.47, head: { x: 0.42, y: 0.33 },
       face: { x: 0.25, y: 0.28, width: 0.37, height: 0.32 } }],
@@ -167,7 +172,9 @@ const ART = {
       pt: 'Close do faroleiro gritando ao microfone, iluminado de baixo pelos mostradores do '
         + 'rádio.',
       fr: 'Gros plan sur le gardien qui crie dans le micro, éclairé par en dessous par les '
-        + 'cadrans de la radio.' }) },
+        + 'cadrans de la radio.',
+      de: 'Nahaufnahme des Wärters, der ins Mikrofon schreit, von unten von den Skalen des '
+        + 'Funkgeräts beleuchtet.' }) },
   'bk-sea': { width: 1200, height: 800, safeArea: { x: 0.1, y: 0.19, width: 0.37, height: 0.57 },
     anchors: [{ id: 'skipper', x: 0.28, y: 0.63 }, { id: 'sfx', x: 0.16, y: 0.36 }],
     avoid: [{ x: 0.13, y: 0.52, width: 0.24, height: 0.23 },
@@ -184,7 +191,9 @@ const ART = {
       pt: 'Um pequeno barco pesqueiro azul jogado pelas ondas da tempestade à noite; um raio à '
         + 'esquerda, o facho do farol à direita.',
       fr: 'Un petit chalutier bleu tangue la nuit sur les vagues de la tempête ; un éclair à '
-        + 'gauche, le faisceau du phare à droite.' }) },
+        + 'gauche, le faisceau du phare à droite.',
+      de: 'Ein kleiner blauer Kutter schlingert nachts in den Wellen des Sturms; links ein '
+        + 'Blitz, rechts der Strahl des Leuchtturms.' }) },
   'bk-window': { width: 1000, height: 1000,
     safeArea: { x: 0.36, y: 0.27, width: 0.28, height: 0.33 },
     anchors: [{ id: 'maya', x: 0.49, y: 0.41, head: { x: 0.42, y: 0.3 },
@@ -198,7 +207,9 @@ const ART = {
       ar: 'تلصق مايا يديها وأنفها بالزجاج المبلل وتحدّق في العاصفة.',
       ja: 'マヤが雨の窓に両手と鼻を押しつけ、嵐を見つめる。',
       pt: 'Maya cola as mãos e o nariz no vidro molhado e olha a tempestade.',
-      fr: 'Maya colle les mains et le nez contre la vitre mouillée et regarde la tempête.' }) },
+      fr: 'Maya colle les mains et le nez contre la vitre mouillée et regarde la tempête.',
+      de: 'Maya drückt Hände und Nase gegen das regennasse Fenster und starrt hinaus in den '
+        + 'Sturm.' }) },
   'bk-morning': { width: 1000, height: 667,
     safeArea: { x: 0.33, y: 0.06, width: 0.42, height: 0.59 },
     anchors: [{ id: 'tomas', x: 0.565, y: 0.25, head: { x: 0.56, y: 0.15 },
@@ -221,7 +232,9 @@ const ART = {
       pt: 'Na manhã seguinte, nas pedras ao sol, Maya, o faroleiro e o gato acenam; atrás deles '
         + 'está o farol.',
       fr: 'Le lendemain matin, sur les rochers au soleil, Maya, le gardien et le chat font signe '
-        + 'de la main ; le phare se dresse derrière eux.' }) },
+        + 'de la main ; le phare se dresse derrière eux.',
+      de: 'Am nächsten Morgen winken Maya, der Wärter und die Katze auf den sonnigen Felsen; '
+        + 'hinter ihnen steht der Leuchtturm.' }) },
 };
 // #endregion
 
@@ -258,7 +271,8 @@ const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, c
 showBook(doc, { title: t({ en: 'Every kind of balloon on a lighthouse page',
   es: 'Todos los bocadillos en una página del faro',
   pt: 'Todos os tipos de balão numa página do farol',
-  fr: 'Toutes les sortes de bulles sur une page du phare' }) });
+  fr: 'Toutes les sortes de bulles sur une page du phare',
+  de: 'Alle Arten von Sprechblasen auf einer Leuchtturmseite' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

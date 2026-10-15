@@ -1,0 +1,60 @@
+---
+title: "Eine Albumseite in Ligne claire, mit Erzähltextkästen"
+summary: "Frankobelgische Albumseite, vier Reihen: eckige Rahmen, gelbe Erzähltextkästen in den Ecken, Sprechblasen in gemischter Schreibung, aus der Comic-Konfiguration."
+plain: "Eine Seite eines europäischen Comicalbums, mit den Worten des Erzählers in gelben Kästen und dem Dialog in Sprechblasen, als einfacher Text geschrieben und von Postext in neun Sprachen gezeichnet."
+description: "Eine spanische Tebeo-Seite in Postext: vier Panelreihen, gelbe Erzähltextkästen, Explosions- und Denkblase und ein Geräusch, in neun Sprachen gelettert."
+question: "Wie setze ich eine europäische Albumseite mit Erzähltextkästen?"
+aliases: ["Tebeo", "Bande dessinée", "BD", "Ligne claire", "klare Linie", "Albumseite", "Comicalbum", "Erzähltextkasten", "Blocktext", "Cartouche", "Cartela", "frankobelgisch", "balloonStyles", "panelStyles"]
+---
+
+## Was Sie setzen
+
+Die erste Geschichte eines spanischen Comicalbums, *Carmens Orangen*: eine Titelseite links und gegenüber eine Seite mit sieben Panels in vier Reihen, so wie frankobelgische Alben gezeichnet werden. Lola, neun Jahre alt, und ihr Großvater Paco gehen am Sonntag auf den Markt; sie zieht die unterste Orange aus Carmens Pyramide. Die Bilder sind flächig kolorierte Ligne claire; die Rahmen sind dünn und eckig, die Erzählung sitzt in gelben Kästen, die in die Ecken der Panels gestoßen sind, und der Dialog ist in Groß- und Kleinbuchstaben gelettert, wie europäische Letterer schreiben. Der Text steht in Markdown, eine Datei pro Sprache: das spanische Original, dann Englisch, Katalanisch, Chinesisch, Arabisch, Japanisch, Portugiesisch, Französisch und Deutsch, jede von der Engine auf derselben Aufteilung und denselben Bildern gelettert.
+
+## Zubereitung
+
+### 1 · Das Aussehen des Albums ist eine Comic-Konfiguration
+
+Der Code steht in [der kurzen Antwort](#die-kurze-antwort) oben. `comics.panel` bestimmt jeden Rahmen (eine schwarze Linie von 0,75 pt, eckige Ecken), und `panelStyles` fügt einen benannten ohne Rand hinzu, den das letzte Panel mit `style=open` übernimmt: ein Epilog auf einer Parkbank, außerhalb des Markts. Die eingebauten Sprechblasenformate werden über ihre ID umgestaltet: `caption` wird ein blassgelber Kasten mit dünnem Umriss, `shout` eine sechzehnzackige Explosionsblase, `sfx` das Orange der Orangen mit schwarzem Umriss. Das Lettering behält `textTransform: 'none'`; eine amerikanische Seite setzte es auf `'uppercase'`.
+
+Die Seite selbst ist eine einzige Direktive im Inhalt, ein Aufteilungsbaum und sieben Panels, jedes mit seinem Skript:
+
+```md
+:::page{split="25 [60 | *] / 25 [55 | *] / 24 / * [50 | *]"}
+::panel{art=t1}
+caption: Los domingos, el abuelo Paco y yo íbamos al mercado.
+caption{at=bottom-end}: Siempre a la misma hora. Siempre por la misma puerta.
+::panel{art=t4}
+lola{thought}: La de abajo es la más gorda.
+paco{shout}: ¡Lola, esa no!
+```
+
+`caption` ist ein Erzähltextkasten (der erste geht in die Ecke oben am Zeilenanfang), `{at=bottom-end}` schickt den zweiten in die gegenüberliegende Ecke, und eine Sprecher-ID wie `lola` oder `paco` zeichnet eine Sprechblase, deren Dorn auf den Mund zeigt, den das Bild angibt.
+
+### 2 · Die Bilder tragen ihre Sprecher
+
+<Excerpt region="art" />
+
+Jedes Bild gibt an, was jeder Beschnitt behalten muss (`safeArea`), wo Mund, Kopf und Gesicht jedes Sprechers sind (`anchors`) und was keine Sprechblase verdecken darf (`avoid`), alles in Bruchteilen des Bildes. Das Panel mit dem Zusammensturz reicht über die dritte Reihe, 200 mal 63 mm, also ist sein Sicherheitsbereich das Band aus Gesichtern und fliegenden Orangen; die quadratischen Panels verlieren ihren Boden. Nichts davon hängt von der Sprache ab, also teilen die neun Ausgaben es.
+
+### 3 · Eine Titelseite gegenüber der Geschichte
+
+<Excerpt region="title-page" />
+
+Die Titelseite ist ein Überschriftenformat: die Reihenzeile in der Lettering-Schrift, der Titel in der Schrift der Geräusche (Bangers, in den anderen Schriftsystemen Dela Gothic One, ZCOOL KuaiLe und Lalezar) und eine Vignette von Carmens Stand in ihrem eigenen Seitenverhältnis 3 : 2. Der Build übergibt `continuation: { pageIndexOffset: 1 }`, sodass die Titelseite eine linke Seite ist und die Geschichte auf der gegenüberliegenden rechten Seite beginnt, Seite 3.
+
+## Varianten
+
+### In Versalien lettern, wie ein amerikanischer Comic
+
+Setzen Sie das Lettering in Großbuchstaben; Erzählung und Dialog folgen, und die Schriftsysteme ohne Groß- und Kleinschreibung (Chinesisch, Japanisch, Arabisch) bleiben, wie sie sind.
+
+```diff
+-    color: col('ink'), textTransform: 'none' }, // European letterers write in mixed case
++    color: col('ink'), textTransform: 'uppercase' },
+```
+
+## Häufige Fehler
+
+- Die Lettering-Größe gilt für das ganze Buch: Eine längere Übersetzung vergrößert ihre Sprechblasen und verschiebt sie, verkleinert aber nie die Schrift. Prüfen Sie die katalanische und die arabische Seite nach einer Änderung der Aufteilung. Japanische Spalten sind für diese niedrigen Panels hoch: Drei Zeilen von `content.ja.md` tragen eine Fixierung `at=`, die sie von Paco und von den Orangen fernhält, um die es im letzten Panel geht.
+- Der Alternativtext jedes Panels steht im Bildmanifest in neun Sprachen, ausgewählt mit `t({ … })`; eine in der Liste fehlende Sprache liest die erste. `::panel{alt="…"}` in einer Inhaltsdatei ersetzt ihn für ein Panel.

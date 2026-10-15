@@ -1,0 +1,61 @@
+---
+title: "Splash-Seite, Einschub und durchbrochener Rahmen"
+summary: "Sturm auf zwei Comicseiten: ein randabfallender Splash unter einem Einschub, eine Reihe über drei Kanten, eine Möwe über dem Rahmen, ein reines Textpanel."
+plain: "Zwei Seiten eines Comics über einen Sturm: ein riesiges Bild, das die ganze erste Seite füllt, mit einem kleinen eingesetzten Bild eines Mädchens, dann eine Seite, auf der eine Möwe aus ihrem Rahmen fliegt."
+description: "Comicseiten in Postext mit randabfallendem Splash, eingesetztem Panel, Anschnitt an gewählten Kanten, Grafik über dem Panelrahmen und einem reinen Textpanel."
+question: "Wie lasse ich ein Comicpanel randabfallend laufen oder die Grafik aus dem Panelrahmen ausbrechen?"
+aliases: ["Splash-Seite", "Splash Page", "randabfallendes Panel", "Anschnitt", "eingesetztes Panel", "Einschub", "durchbrochener Rahmen", "Pop-out", "Panel sprengen", "página splash", "viñeta insertada", "裁ち切り", "出血"]
+pageNotes: { "1": "Die Splash-Seite: der Leuchtturm in einem nächtlichen Sturm, über alle vier Kanten randabfallend, „KRA-WUMM“ in weißen Buchstaben neben dem Blitz, oben links der Textkasten „In der Nacht des großen Sturms ging das Feuer von Porthcove nie aus.“ und unten rechts ein kleiner gerahmter Einschub mit Mayas Gesicht hinter einem verregneten Fenster und dem Kasten „Opa ist immer noch draußen auf der Galerie.“", "2": "Seite 2: eine Welle, die sich mit einem „SCHWAPPP“ an den Felsen bricht, randabfallend oben und an beiden Seiten; darunter der Leuchtturmwärter, der eine Laterne hochhält („Ruhig, alte Dame. Du hast Schlimmeres erlebt.“), während eine Möwe über den linken Rahmen des Panels hinausfliegt, und ein schmales nachtblaues Panel mit den Textkästen „Im Morgengrauen hatte sich der Wind gelegt.“ und „Die Möwen kamen als Erste zurück.“" }
+---
+
+## Was Sie setzen
+
+Zwei Seiten aus dem Sturm in *Der Leuchtturm von Porthcove*. Die erste ist ein Splash: Ein einziges Bild des Leuchtturms im Sturm läuft über jede Kante der Seite, mit einem kleinen gerahmten Panel von Maya an ihrem Fenster, das über seine untere Ecke gelegt ist. Die zweite beginnt mit einer Welle, die über drei Kanten randabfallend läuft; darunter fliegt eine Möwe aus dem Panel des Wärters über dessen Rahmen hinaus, und ein schmales Panel ohne Bild enthält zwei Textkästen auf nachtblauem Grund. Das Endformat ist das eines amerikanischen Comicheftes, 168 × 259 mm mit 3 mm Anschnitt, und die Seiten gibt es in neun Sprachen.
+
+## Zubereitung
+
+### 1 · Den Splash über jede Kante laufen lassen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `split="*"` macht aus dem ganzen Rahmen eine Zelle, und `bleed` an der Seite führt jedes Panel, das den Rahmen berührt, bis an die Anschnittbox, 3 mm über die Beschnittkante hinaus, ohne Rahmen an diesen Seiten ([die Seite teilen](/de/docs/comics#die-seite-aufteilen)). Auf Seite 2 lässt `bleed="top start end"` an der Welle nur diese drei Seiten randabfallend laufen; ihr Fuß behält den Zwischenraum zu den Panels darunter. `start` und `end` folgen der Leserichtung, sodass die japanische und die arabische Ausgabe, von rechts nach links gelesen, dieselben Seiten anschneiden.
+
+### 2 · Einen Einschub über den Splash legen
+
+`inset="56 64 38 30"` platziert Mayas Panel bei 56 %, 64 % des vorhergehenden Panels, 38 % breit und 30 % hoch. Ein Einschub belegt keine Zelle: Er wird über den Splash gelegt, behält seinen eigenen Rahmen und wird direkt danach gelesen. Sein Bild wird von seinem Sicherheitsbereich auf seinen eigenen Kasten zugeschnitten, hier Mayas Gesicht.
+
+<PageShot page={1} crop="0.35,0.55,0.65,0.45" caption="Der Einschub: Mayas Gesicht in seinem eigenen Rahmen über der unteren Ecke des Splashs, mit ihrer inneren Stimme." />
+
+### 3 · Eine Möwe den Rahmen durchbrechen lassen
+
+<Excerpt region="art" />
+
+`pop=sp-tomas-pop` nennt ein zweites Bild für das Panel des Wärters: ein transparentes PNG in der Größe seines Bildes, auf dem nur die Möwe zu sehen ist. Postext schneidet es genau wie die Grafik des Panels zu und platziert es ebenso, zeichnet es dann aber nach dem Rahmen und außerhalb des Beschnitts des Panels, sodass der Teil der Möwe, der jenseits der Zelle liegt, über Rahmen und Rand fliegt ([Panels und Grafik](/de/docs/comics#panels-und-bilder)). `focus="45% 50%"` schiebt den Ausschnitt innerhalb dessen, was der Sicherheitsbereich erlaubt, nach links, sodass die Möwe auf der linken Kante sitzt statt draußen im Rand.
+
+### 4 · Ein Panel ohne Bild lassen
+
+<Excerpt region="palette" />
+
+Ein `::panel` ohne `art` ist eine leere Zelle mit dem Rahmen des Panelformats; `bg=night` füllt sie mit einer Palettenfarbe. Ihre Textkästen, `at=top` und `at=bottom`, liegen an ihrer Ober- und Unterkante an, ein ruhiger Moment nach dem Sturm.
+
+## Varianten
+
+### Auch die ganze untere Reihe randabfallend setzen
+
+```diff
+-::panel{art=sp-tomas pop=sp-tomas-pop focus="45% 50%"}
++::panel{art=sp-tomas pop=sp-tomas-pop focus="45% 50%" bleed="bottom start"}
+```
+
+### Dem Einschub einen weißen Rahmen geben
+
+Ein benanntes Panelformat ändert ein einzelnes Panel; `style=` am Panel wählt es aus.
+
+```diff
+   panel: { borderWidth: pt(1.2), borderColor: col('ink'), background: col('paper') },
++  panelStyles: [{ id: 'framed', borderWidth: pt(3), borderColor: col('paper') }],
+```
+
+## Häufige Fehler
+
+- Die Pop-Ebene muss genau die Pixelgröße des Panelbildes haben: Postext schneidet sie mit demselben Fenster zu, ein kleinerer Ausschnitt landete also an der falschen Stelle.
+- Anschnitt braucht `page.bleed`; ohne diese Angabe endet ein randabfallendes Panel an der Beschnittkante.
+- Ein Soundeffekt neben einer randabfallenden Kante kann in den Anschnitt laufen, über die Beschnittkante hinaus, wo die Schneidemaschine ihn abschneidet. Das japanische ザッバーン ist eine Spalte von fünf Zeichen Höhe und daher tiefer angeheftet als die lateinischen Effekte, bei `60% 44%`.

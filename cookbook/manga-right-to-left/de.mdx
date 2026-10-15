@@ -1,0 +1,49 @@
+---
+title: "Ein Manga von rechts nach links, vertikal gelettert"
+summary: "Zwei Mangaseiten, gezeichnet für das Lesen von rechts nach links: artDirection rtl hält die Panelfolge in jeder Ausgabe, japanische Blasen stehen in Spalten."
+plain: "Zwei Seiten eines japanischen Comics. Die japanischen Seiten sind von oben nach unten in schmalen Spalten gelettert; die anderen Ausgaben behalten die japanische Panelfolge, oben rechts beginnend."
+description: "Ein zweiseitiger Kendo-Manga in Postext: das japanische Original in vertikalen Spalten gelettert und acht weitere Ausgaben, die von rechts nach links lesen."
+question: "Wie setze ich einen Manga, der von rechts nach links läuft, mit vertikalem Japanisch in den Sprechblasen?"
+aliases: ["Manga", "漫画", "右綴じ", "von rechts nach links", "ungespiegelter Manga", "Tategaki", "縦書き", "vertikale Sprechblasen", "Spiegeln", "artDirection", "readingDirection", "Zen Antique", "Furigana", "Tate-chū-yoko", "right to left"]
+pageNotes: { "1": "Das japanische Original, Seite 1: ein Dōjō in der Abenddämmerung über die obere Reihe mit einem Textkasten in der Ecke oben rechts, dann rechts Hana, die ihr Schwert schwingt, und links Sora an der Tür, alle Sprechblasen in vertikalen Spalten.", "3": "Die deutsche Ausgabe, Seite 1: dieselben Panels an denselben Stellen, die Sprechblasen um horizontale deutsche Zeilen neu gebaut: der Textkasten „Der Tag vor dem 42. Präfektur-Turnier.“, Hanas „Noch fünfzig…!“, Soras „Wow, Ichinose trainiert immer noch…“ an der Tür und im letzten Panel „T-tut mir leid! Ein Amulett vom Schrein meiner Oma.“" }
+---
+
+## Was Sie setzen
+
+Die beiden ersten Seiten eines Kendo-Mangas, 前の晩 (*Der Abend davor*), für das Rezept geschrieben und in Schwarz-Weiß gezeichnet: Hana übt am Abend vor dem Präfekturturnier allein, Sora bringt ihr ein Schreinamulett, ihr Trainer schickt sie nach Hause. Zuerst kommt das japanische Original, gelettert wie in einer Wochenzeitschrift: Antique-Lettering (Kana in einem Mincho-Schnitt, Kanji in einem Gothic-Schnitt), Sprechblasen eher hoch als breit, kein Punkt am Ende einer Blase. Gegenüber dieselben beiden Seiten in der Sprache dieser Seite (Englisch auf der japanischen Seite), weiterhin ab dem Panel oben rechts gelesen, wie es lizenzierte Mangas seit Anfang der 2000er-Jahre tun. Das Endformat ist B6, 128 × 182 mm, das Tankōbon-Format.
+
+## Zubereitung
+
+### 1 · In der Richtung lesen, in der gezeichnet wurde
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Ein Mangazeichner komponiert jede Seite von oben rechts: Das erste Panel, der erste Sprecher und der Weg des Auges über eine Reihe beginnen dort. `artDirection: 'rtl'` teilt das der Engine mit, und mit der Leserichtung auf `'auto'` folgt jede Ausgabe der Zeichnung; eine arabische Ausgabe läse ohnehin von rechts nach links. Die Zeichnung wird nie gespiegelt. Westliche Verlage spiegelten Mangas bis etwa 2002, und die Leser sahen jeden Schwertkämpfer zum Linkshänder werden und jeden Kimono falsch herum geschlagen; die Seiten so zu lassen, wie sie gezeichnet sind, kostet die Leser eine Gewohnheit, das Spiegeln kostet die Zeichnung. Jede `:::page` trägt ihre Aufteilung, `30 / 34 [46 | *] / * [44 | *]`, und die erste Zelle jeder Reihe wird rechts angelegt (<Feature id="comic-reading-direction">Leserichtung</Feature>).
+
+### 2 · Jeden Sprecher einmal auf dem Bild markieren
+
+<Excerpt region="art" />
+
+Die Wörter ändern sich mit der Sprache, die Zeichnung nicht. Jedes Panelbild trägt einen Sicherheitsbereich, den jeder Zuschnitt behält, und für jede Figur einen Mund (wohin ein Sprechblasendorn zeigt), einen Kopf (für Gedankenblasen) und ein Gesicht, das keine Sprechblase verdecken darf, alles in Bruchteilen des Bildes. Eine Skriptzeile nennt ihren Sprecher, `sora: …`, und die Engine platziert die Sprechblase in jeder Sprache nahe dieser Figur. Ein Sprecher, der nicht im Bild ist, wie Sora, wenn der Trainer in der Tür erscheint, bekommt einen Dorn zum Rand des Panels: `sora{tail=bottom}`.
+
+### 3 · Jeder Sprache ihre Sprechblasen geben
+
+<Excerpt region="balloons" />
+
+Die Formate sagen, welche Art Stimme eine Sprechblase trägt: schlichtes ovales Sprechen, ein gestricheltes Flüstern, eine Wolke für einen Gedanken, ein grauer Kasten für Hanas innere Stimme. Wie die Wörter darin stehen, ist Sache der Ausgabe. Im Japanischen setzt die Engine Spalten von höchstens acht Zeichen, lässt das 。 am Ende einer Sprechblase weg und behält das 、, stellt die beiden Ziffern von 第42回 aufrecht in ein Geviert (`:tcy[42]`) und setzt `!?` nebeneinander in eine einzige Zelle. Das Skript gibt jedem Namen beim ersten Auftreten seine Lesung, `{一ノ瀬|いちのせ}`, so wie Mangas Furigana über Namen drucken. Im Deutschen werden dieselben Sprechblasen zu Ovalen um horizontale Zeilen, und ihre Reihenfolge läuft weiterhin von rechts.
+
+### 4 · Die Schriften jeder Ausgabe mit ihren Wörtern laden
+
+<Excerpt region="fonts" />
+
+Zen Antique und Dela Gothic One kommen in je etwa hundert Dateien, eine je Zeichenbereich: Jede Schrift wird mit den Wörtern geladen, die sie setzt, die Sprechblasen für die eine und die Soundwords für die andere, sodass die Seite nur die Dateien holt, die sie braucht. `loadComicFonts` erklärt das Fett eines Schreis und die Kursive einer inneren Stimme aus den Dateien, die diese Schriften tatsächlich liefern, sodass Bildschirm und PDF dieselben Buchstaben zeichnen.
+
+### 5 · Das Original neben jede Ausgabe stellen
+
+<Excerpt region="editions" />
+
+Jede Sprache dieser Website hat ihre eigene Ausgabe der beiden Seiten, geschrieben in ihrer eigenen `content.<lang>.md`, und jede Ausgabe steht dem japanischen Original gegenüber: `/* @content@ja */` fügt `content.ja.md` in jede Ausgabe ein, und die japanische Seite stellt dem Original das englische Lettering gegenüber. Auch die chinesische Ausgabe ist in Spalten gesetzt, weil ein Buch, das sich von rechts öffnet, keine vertikalen und horizontalen Sprechblasen mischt; die arabische liest von sich aus von rechts nach links.
+
+## Häufige Fehler
+
+- Setzen Sie den ersten Sprecher eines Panels nach rechts. Sprechblasen folgen der Lesereihenfolge, deshalb gibt das Skript in dem Panel, in dem Sora das Amulett überreicht, die erste Zeile Hana, die rechts steht. Mit Sora zuerst bleiben seine Sprechblasen auf seiner Seite des Panels, aber die japanischen Spalten lassen unter ihnen keinen Platz für Hanas Antwort: Sie steht rechts daneben und wird zuerst gelesen.
+- Eine Sprechblase, die in ihrem Panel keinen Platz findet, darf den Rand überschreiten, und die Engine meldet es (`comicBalloonOverflow`). Geben Sie einem vollen Panel eine größere Zelle in der Aufteilung, bevor Sie den Dialog kürzen.
+- Eine Figur, die klein in einem hohen Panel steht, lässt neben sich keinen Platz für zwei übereinanderstehende Sprechblasen: Im Türpanel saß die zweite Zeile des Trainers in den zeilenweise gesetzten Ausgaben von der Brust bis zu den Knien über ihm. Ihre Skripte heften seine erste Zeile neben seinen Kopf (`mori{at="85% 19%"}`), und die damit verbundene Zeile folgt ihr. Die chinesische Seite bricht eine Sprechblase von Hand um, mit einem Backslash am Ende jeder Zeile, wo die Spalten 其实 entzweischneiden.

@@ -1,15 +1,15 @@
 ---
 title: "Une planche d’album en ligne claire, avec récitatifs"
 summary: "Une planche d’album franco-belge en quatre bandes : cadres carrés, récitatifs jaunes dans les coins, bulles en bas de casse, via la configuration comics."
-plain: "Une planche d’album de BD européen, avec les mots du narrateur dans des cases jaunes et les dialogues dans des bulles, écrite en texte brut et dessinée par Postext en huit langues."
-description: "Planche de tebeo espagnol avec Postext : quatre bandes de cases, récitatifs jaunes, une bulle d’éclat, une bulle de pensée et une onomatopée, en huit langues."
+plain: "Une planche d’album de BD européen, avec les mots du narrateur dans des cases jaunes et les dialogues dans des bulles, écrite en texte brut et dessinée par Postext en neuf langues."
+description: "Planche de tebeo espagnol avec Postext : quatre bandes de cases, récitatifs jaunes, une bulle d’éclat, une bulle de pensée et une onomatopée, en neuf langues."
 question: "Comment composer une planche d’album européen avec des récitatifs ?"
 aliases: ["tebeo", "bande dessinée", "BD", "ligne claire", "planche d’album", "album franco-belge", "récitatif", "cartouche", "cartela", "clear line", "album page", "balloonStyles", "panelStyles"]
 ---
 
 ## Ce que vous allez composer
 
-La première histoire d’un album de BD espagnol, *Les oranges de Carmen* : une page de titre au verso et, en face, une planche de sept cases en quatre bandes, comme on dessine les albums franco-belges. Lola, neuf ans, et son grand-père Paco vont au marché le dimanche ; elle tire l’orange du bas de la pyramide de Carmen. Les images sont en ligne claire aux aplats de couleur ; les cadres sont fins et carrés, les récitatifs se logent dans des cartouches jaunes collés aux coins des cases, et les dialogues sont lettrés en haut et bas de casse, comme l’écrivent les lettreurs européens. Le texte vit dans du Markdown, un fichier par langue : l’original espagnol, puis l’anglais, le catalan, le chinois, l’arabe, le japonais, le portugais et le français, chacun lettré par le moteur sur le même découpage et les mêmes images.
+La première histoire d’un album de BD espagnol, *Les oranges de Carmen* : une page de titre au verso et, en face, une planche de sept cases en quatre bandes, comme on dessine les albums franco-belges. Lola, neuf ans, et son grand-père Paco vont au marché le dimanche ; elle tire l’orange du bas de la pyramide de Carmen. Les images sont en ligne claire aux aplats de couleur ; les cadres sont fins et carrés, les récitatifs se logent dans des cartouches jaunes collés aux coins des cases, et les dialogues sont lettrés en haut et bas de casse, comme l’écrivent les lettreurs européens. Le texte vit dans du Markdown, un fichier par langue : l’original espagnol, puis l’anglais, le catalan, le chinois, l’arabe, le japonais, le portugais, le français et l’allemand, chacun lettré par le moteur sur le même découpage et les mêmes images.
 
 ## Préparation
 
@@ -35,7 +35,7 @@ paco{shout}: ¡Lola, esa no!
 
 <Excerpt region="art" />
 
-Chaque image déclare ce que tout recadrage doit garder (`safeArea`), où se trouvent la bouche, la tête et le visage de chaque personnage (`anchors`) et ce qu’aucune bulle ne doit couvrir (`avoid`), le tout en fractions de l’image. La case de la chute occupe la troisième bande, 200 mm sur 63 mm : sa zone de sécurité est donc la bande des visages et des oranges qui volent ; les cases carrées perdent le sol. Rien ici ne dépend de la langue : les huit éditions le partagent.
+Chaque image déclare ce que tout recadrage doit garder (`safeArea`), où se trouvent la bouche, la tête et le visage de chaque personnage (`anchors`) et ce qu’aucune bulle ne doit couvrir (`avoid`), le tout en fractions de l’image. La case de la chute occupe la troisième bande, 200 mm sur 63 mm : sa zone de sécurité est donc la bande des visages et des oranges qui volent ; les cases carrées perdent le sol. Rien ici ne dépend de la langue : les neuf éditions le partagent.
 
 ### 3 · Une page de titre face à l’histoire
 
@@ -57,4 +57,4 @@ Composez le lettrage en capitales ; les récitatifs et les dialogues suivent, 
 ## Erreurs fréquentes
 
 - Le corps du lettrage est le même pour tout le livre : une traduction plus longue agrandit ses bulles et les déplace, elle ne réduit jamais le texte. Vérifiez les planches catalane et arabe après un changement de découpage. Les colonnes japonaises sont hautes pour ces cases basses : trois lignes de `content.ja.md` portent une position `at=` qui les écarte de Paco et des oranges dont parle la dernière case.
-- Le texte alternatif de chaque case se trouve dans le manifeste des images, en huit langues, choisi avec `t({ … })` ; une langue absente de la liste lit la première. `::panel{alt="…"}` dans un fichier de contenu le remplace pour une case.
+- Le texte alternatif de chaque case se trouve dans le manifeste des images, en neuf langues, choisi avec `t({ … })` ; une langue absente de la liste lit la première. `::panel{alt="…"}` dans un fichier de contenu le remplace pour une case.

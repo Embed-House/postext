@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "trade-paperback-novel",
-  "sourceHash": "27e45f4996f9014c3b6bb73d3fd85a6c9b4a5670f3251dd40ba96c071ba857c1",
+  "sourceHash": "6fff372e02aecc42dbb80449ea8549dc8112b53e7481204a5dd58c78ae3f1c5d",
   "engine": {
-    "postext": "1.33.4",
+    "postext": "1.33.5",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T08:00:44.854Z",
+  "capturedAt": "2026-10-15T12:02:37.213Z",
   "variants": {
     "en": {
       "hash8": "9a445b3f",
       "vdtHash": "6ac882ad02d8996e2dfea1e69a33f017b078f1bf",
       "timings": {
-        "importMs": 7545,
-        "fontsMs": 231,
-        "buildMs": 75,
-        "totalMs": 11336,
+        "importMs": 4258,
+        "fontsMs": 65,
+        "buildMs": 78,
+        "totalMs": 6279,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Crimson Pro"
         ],
         "pages": 8,
-        "ownLines": 186
+        "ownLines": 190
       },
       "pages": [
         {
@@ -363,11 +363,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
@@ -376,10 +371,10 @@
       "hash8": "dc5814dd",
       "vdtHash": "8818e2cc9920dbada3e4c9a2f47c23d59944f27e",
       "timings": {
-        "importMs": 7605,
-        "fontsMs": 241,
-        "buildMs": 57,
-        "totalMs": 11066,
+        "importMs": 4042,
+        "fontsMs": 276,
+        "buildMs": 86,
+        "totalMs": 6072,
         "builds": 1
       },
       "specimen": {
@@ -401,7 +396,7 @@
           "Crimson Pro"
         ],
         "pages": 8,
-        "ownLines": 186
+        "ownLines": 190
       },
       "pages": [
         {
@@ -716,23 +711,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
-      "hash8": "480a0753",
+      "hash8": "b14a10d8",
       "vdtHash": "ce4e91f317d78928e99c9169c489ec55db77247e",
       "timings": {
-        "importMs": 7788,
-        "fontsMs": 94,
-        "buildMs": 87,
-        "totalMs": 11308,
+        "importMs": 4030,
+        "fontsMs": 285,
+        "buildMs": 98,
+        "totalMs": 6526,
         "builds": 1
       },
       "specimen": {
@@ -754,7 +743,7 @@
           "Crimson Pro"
         ],
         "pages": 9,
-        "ownLines": 186
+        "ownLines": 190
       },
       "pages": [
         {
@@ -893,7 +882,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 375699,
+        "bytes": 375689,
         "folio": "846eba29",
         "chapters": [
           {
@@ -1105,11 +1094,385 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ “Elle remonta le grand escalier, en frôlant un ca…”"
+          }
+        ]
+      }
+    },
+    "de": {
+      "hash8": "e6fe2d0c",
+      "vdtHash": "3089489a21b47dee9c1c935e3b32e52a02045c50",
+      "timings": {
+        "importMs": 1290,
+        "fontsMs": 43,
+        "buildMs": 162,
+        "totalMs": 2957,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          140,
+          216
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Crimson Pro",
+          "sizePt": 10.5,
+          "leadingPt": 14
+        },
+        "families": [
+          "Cormorant Garamond",
+          "Cormorant SC",
+          "Crimson Pro"
+        ],
+        "pages": 9,
+        "ownLines": 190
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1543,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 215244,
+          "alt": "Kapitelauftakt, Seite 1: Beate und Mareile."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 20866,
+          "alt": "Seite 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "opener",
+          "w": 1000,
+          "h": 1543,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 108490,
+          "alt": "Kapitelauftakt, Seite 3: I."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 155412,
+          "alt": "Seite 4."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 145128,
+          "alt": "Seite 5."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 85500,
+          "alt": "Seite 6."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "opener",
+          "w": 1000,
+          "h": 1543,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 126382,
+          "alt": "Kapitelauftakt, Seite 7: II."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 183420,
+          "alt": "Seite 8."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "body",
+          "w": 1000,
+          "h": 1543,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 93200,
+          "alt": "Seite 9."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "trade-paperback-novel.postext",
+        "bytes": 376018,
+        "folio": "846eba29",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "4503f0d6d616a5f2",
+            "lines": "b6c922024e97f88e"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "registerResourceImage",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.maxWordSpacing",
+          "bodyText.minWordSpacing",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].italic",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headingStyles[].margins",
+          "headingStyles[].margins.top",
+          "headings",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].italic",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].fontWeight",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].spaceBetween",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.align",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].defaultPlacement.width",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 212,
+        "designElements": 12,
+        "directives": [
+          ":::paragraphs",
+          ":::space",
+          "::resource"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 2,
+          "bitmap": 1,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Cormorant Garamond",
+            "weight": 500,
+            "style": "italic"
           },
           {
-            "check": "chrome",
+            "family": "Cormorant SC",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "heading-attributes",
+          "heading-styles",
+          "inline-embeds",
+          "opener-design",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "resource-types",
+          "resources",
+          "section-geometry",
+          "section-running-heads",
+          "vertical-space"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 2,
+        "looseLines": {
+          "count": 2,
+          "share": 0.0145,
+          "worst": 2.1
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C20",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "the edition's images weigh 1.29 MB (warning at 0.9 MB for 9 pages)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “Die Baronin von Losnitz, früh verwitwet, lebte m…”, p. 9 −5‰ “Beate nahm Günthers Werbung in ihrer wohlerzogen…”"
           }
         ]
       }

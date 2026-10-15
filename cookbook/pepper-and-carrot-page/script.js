@@ -12,7 +12,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: sample language: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr'
+const LANG = 'en'; // @lang: 'en' | 'es' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
 const RECIPE = 'pepper-and-carrot-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -44,6 +44,7 @@ const [LETTERING, SFX, DEMON, TEXT, PLATE] = t({
   ar: ['Playpen Sans Arabic', 'Lalezar', 'Lalezar', 'Noto Naskh Arabic', 'Lalezar'],
   pt: ['Comic Neue', 'Bangers', 'Grenze Gotisch', 'Source Serif 4', 'Zen Antique'],
   fr: ['Comic Neue', 'Bangers', 'Grenze Gotisch', 'Source Serif 4', 'Zen Antique'],
+  de: ['Comic Neue', 'Bangers', 'Grenze Gotisch', 'Source Serif 4', 'Zen Antique'],
 });
 // #endregion
 
@@ -75,7 +76,7 @@ const comics = {
   cast: [{ id: 'pepper', name: 'Pepper' }, { id: 'carrot', name: 'Carrot' },
     { id: 'monster', name: t({ en: 'Monsters of Chaosah', es: 'Demonios de Caosah',
       ca: 'Monstres del Chaosah', zh: '浑沌魔兽', ar: 'وحوش الفوضى', ja: 'ケイオサーの怪物',
-      pt: 'Monstros do Caosah', fr: 'Démons de Chaosah' }),
+      pt: 'Monstros do Caosah', fr: 'Démons de Chaosah', de: 'Monster von Chaosah' }),
     fill: col('demon'), color: col('paper'), fontFamily: DEMON }],
   runningHeads: true, // the folio on comic pages
 };
@@ -87,7 +88,7 @@ const footer = { elements: [{ kind: 'text', id: 'folio', content: '{pageNumber}'
 
 const config = () => ({
   locale: t({ en: 'en-gb', es: 'es', ca: 'ca', ja: 'ja', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
-    fr: 'fr' }),
+    fr: 'fr', de: 'de' }),
   colorPalette, comics,
   // Revoy's pages are A4 with 8.5 mm of white around the art.
   page: { sizePreset: 'custom', width: mm(210), height: mm(297), dpi: 150,
@@ -143,7 +144,9 @@ const ALT = {
     pt: 'Relâmpagos. Pepper, furiosa, tira da estante um livro com a cara de um demônio na capa. '
       + 'Carrot está apavorado.',
     fr: 'Des éclairs. Pepper, furieuse, tire de l’étagère un livre dont la couverture porte un '
-      + 'visage de démon. Carrot est terrifié.' }),
+      + 'visage de démon. Carrot est terrifié.',
+    de: 'Blitze. Die wütende Pepper zieht ein Buch mit einem Dämonengesicht auf dem Umschlag aus '
+      + 'dem Regal. Carrot ist zu Tode erschrocken.' }),
   'e08p05-2': t({ en: 'From above, in the rain, Pepper draws three glowing red magic circles on '
       + 'the ground with her wand. Carrot watches.',
     es: 'Desde arriba, bajo la lluvia, Pimienta traza con su varita tres círculos mágicos rojos en '
@@ -157,7 +160,9 @@ const ALT = {
     pt: 'Vista de cima, na chuva, Pepper traça com a varinha três círculos mágicos vermelhos e '
       + 'brilhantes no chão. Carrot observa.',
     fr: 'Vue d’en haut, sous la pluie, Pepper trace à la baguette trois cercles magiques rouges et '
-      + 'lumineux sur le sol. Carrot regarde.' }),
+      + 'lumineux sur le sol. Carrot regarde.',
+    de: 'Von oben, im Regen: Pepper zeichnet mit ihrem Zauberstab drei rot leuchtende '
+      + 'Zauberkreise auf den Boden. Carrot sieht zu.' }),
   'e08p05-3': t({ en: 'Red light floods the scene. Pepper, grim, holds the open book.',
     es: 'Una luz roja lo inunda todo. Pimienta, seria, sostiene el libro abierto.',
     ca: 'Una llum vermella ho inunda tot. La Pepper, seriosa, aguanta el llibre obert.',
@@ -165,7 +170,8 @@ const ALT = {
     ar: 'ضوء أحمر يغمر المشهد، وفُلفُل متجهّمة تمسك الكتاب مفتوحًا.',
     ja: '赤い光があたりを満たす。ペッパーが険しい顔で、開いた本を持っている。',
     pt: 'Uma luz vermelha inunda a cena. Pepper, séria, segura o livro aberto.',
-    fr: 'Une lumière rouge envahit la scène. Pepper, l’air sombre, tient le livre ouvert.' }),
+    fr: 'Une lumière rouge envahit la scène. Pepper, l’air sombre, tient le livre ouvert.',
+    de: 'Rotes Licht überflutet die Szene. Pepper hält mit finsterer Miene das offene Buch.' }),
   'e08p06-1': t({ en: 'Pepper and Carrot stand before three huge red-eyed demons that rise in the '
       + 'storm, lightning around them.',
     es: 'Pimienta y Zanahoria ante tres enormes demonios de ojos rojos que se alzan en la '
@@ -178,11 +184,14 @@ const ALT = {
     pt: 'Pepper e Carrot diante de três demônios enormes de olhos vermelhos que surgem na '
       + 'tempestade, entre relâmpagos.',
     fr: 'Pepper et Carrot face à trois démons gigantesques aux yeux rouges qui se dressent dans '
-      + 'l’orage, entre les éclairs.' }),
+      + 'l’orage, entre les éclairs.',
+    de: 'Pepper und Carrot stehen vor drei riesigen Dämonen mit roten Augen, die sich im Sturm '
+      + 'erheben, umgeben von Blitzen.' }),
   'e08p06-2': t({ en: 'Pepper smiles a sly smile.', es: 'Pimienta sonríe con malicia.',
     ca: 'La Pepper somriu amb malícia.', zh: '小辣椒狡黠地一笑。', ar: 'فُلفُل تبتسم ابتسامة ماكرة.',
     ja: 'ペッパーがにやりと笑う。', pt: 'Pepper dá um sorriso malicioso.',
-    fr: 'Pepper esquisse un sourire malicieux.' }),
+    fr: 'Pepper esquisse un sourire malicieux.',
+    de: 'Pepper lächelt verschmitzt.' }),
   'e08p06-3': t({ en: 'The party: Pepper, Carrot and the three demons drink tea around the table '
       + 'by candlelight, all smiling.',
     es: 'La fiesta: Pimienta, Zanahoria y los tres demonios toman té alrededor de la mesa a la luz '
@@ -196,7 +205,9 @@ const ALT = {
     pt: 'A festa: Pepper, Carrot e os três demônios tomam chá em volta da mesa à luz de velas, '
       + 'todos sorrindo.',
     fr: 'La fête : Pepper, Carrot et les trois démons boivent le thé autour de la table à la '
-      + 'lueur des bougies, tous souriants.' }),
+      + 'lueur des bougies, tous souriants.',
+    de: 'Die Feier: Pepper, Carrot und die drei Dämonen trinken bei Kerzenlicht Tee am Tisch, '
+      + 'alle lächeln.' }),
 };
 // #endregion
 
@@ -263,7 +274,8 @@ const doc = await withLoadedFonts(() => buildDocument({ markdown, resources }, c
 showBook(doc, { title: t({ en: 'A Pepper&Carrot page re-lettered from its transcript',
   es: 'Una página de Pepper&Carrot rotulada de nuevo a partir de su transcripción',
   pt: 'Uma página de Pepper&Carrot reletreirada pela transcrição',
-  fr: 'Une page de Pepper&Carrot relettrée d’après sa transcription' }) });
+  fr: 'Une page de Pepper&Carrot relettrée d’après sa transcription',
+  de: 'Eine Pepper&Carrot-Seite, nach ihrem Transkript neu gelettert' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: pdfFonts, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

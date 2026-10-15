@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Write the `pepper-carrot` showcase bundle (apps/web/public/presets/
 pepper-carrot): episode 8 of David Revoy's webcomic Pepper&Carrot,
-"Pepper's Birthday Party" (CC BY 4.0), in eight editions — en, es, ca, fr,
-pt-BR (the `pt` translation), ja, zh-Hans (the `cn` translation) and ar —
-over the text-free art, with the balloons and the lettering laid out by the
-engine.
+"Pepper's Birthday Party" (CC BY 4.0), in nine editions — en, es, ca, fr,
+pt-BR (the `pt` translation), de, ja, zh-Hans (the `cn` translation) and
+ar — over the text-free art, with the balloons and the lettering laid out
+by the engine.
 
 Each edition is three chapters: a title page (the episode's cover art, the
 title, "Art & Scenario: David Revoy" and the translators from the
@@ -60,7 +60,7 @@ CONFIG_VERSION = 8
 
 # Edition locale -> Pepper&Carrot language code. The bundle opens in the
 # reader's language; English is its own locale (`locale`).
-EDITIONS = {"en": "en", "es": "es", "ca": "ca", "fr": "fr", "pt-BR": "pt", "ja": "ja", "zh-Hans": "cn", "ar": "ar"}
+EDITIONS = {"en": "en", "es": "es", "ca": "ca", "fr": "fr", "pt-BR": "pt", "de": "de", "ja": "ja", "zh-Hans": "cn", "ar": "ar"}
 DEFAULT = "en"
 
 EPISODE_SOURCE = "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/"
@@ -237,6 +237,21 @@ WORDS: dict[str, dict] = {
         ),
         "fonts": "Letreiramento em {f}, sob a licença SIL Open Font License.",
         "source": "Arquivos-fonte do episódio: <" + EPISODE_SOURCE + ">",
+    },
+    "de": {
+        "titlePage": "Titelseite", "credits": "Impressum",
+        "art": "Grafik und Handlung: David Revoy", "translation": "Übersetzung: {x}",
+        "contribution": "Mitarbeit: {x}", "proofreading": "Korrektur: {x}", "original": "Originalfassung",
+        "and": " und ", "sep": ", ",
+        "episode": "*{t}* ist die 8. Episode des Webcomics Pepper&Carrot, erschienen im Juni 2015.",
+        "attribution": (
+            "Nach dem Webcomic Pepper&Carrot von David Revoy. <https://www.peppercarrot.com> "
+            "Lizenziert unter Creative Commons Namensnennung 4.0 (CC BY 4.0). <" + LICENCE_URL + "deed.de> "
+            "Nach der Welt von Hereva, erschaffen von David Revoy mit Beiträgen von Craig Maloney. "
+            "Korrekturen von Willem Sonke, Moini, Hali, CGand und Alex Gryson."
+        ),
+        "fonts": "Lettering in {f}, lizenziert unter der SIL Open Font License.",
+        "source": "Quelldateien der Episode: <" + EPISODE_SOURCE + ">",
     },
     "ja": {
         "titlePage": "扉", "credits": "クレジット",
@@ -517,7 +532,8 @@ def title_design(loc: str) -> dict:
 # neither captioned nor numbered.
 ART_TYPE_NAMES = {
     "en": ("Artwork", "Artwork"), "es": ("Ilustración", "Ilustraciones"), "ca": ("Il·lustració", "Il·lustracions"),
-    "fr": ("Illustration", "Illustrations"), "pt-BR": ("Ilustração", "Ilustrações"), "ja": ("原画", "原画"), "zh-Hans": ("原画", "原画"), "ar": ("رسم", "رسوم"),
+    "fr": ("Illustration", "Illustrations"), "pt-BR": ("Ilustração", "Ilustrações"), "de": ("Illustration", "Illustrationen"),
+    "ja": ("原画", "原画"), "zh-Hans": ("原画", "原画"), "ar": ("رسم", "رسوم"),
 }
 
 
@@ -597,7 +613,7 @@ def config(loc: str) -> dict:
         "avoidWidows": True,
         "avoidOrphans": True,
     }
-    if loc in ("en", "es", "ca", "fr", "pt-BR"):
+    if loc in ("en", "es", "ca", "fr", "pt-BR", "de"):
         body["hyphenation"] = {"enabled": False}
     return {
         "locale": loc,
@@ -712,10 +728,10 @@ META = {
     "id": PRESET_ID,
     "name": "Pepper&Carrot · Pepper's Birthday Party",
     "description": (
-        "El episodio 8 del cómic de David Revoy en ocho idiomas: las viñetas originales sin texto, con los "
+        "El episodio 8 del cómic de David Revoy en nueve idiomas: las viñetas originales sin texto, con los "
         "bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición "
         "japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la "
-        "derecha · Episode 8 of David Revoy's webcomic in eight languages: the original text-free panels, "
+        "derecha · Episode 8 of David Revoy's webcomic in nine languages: the original text-free panels, "
         "with balloons and lettering the engine sets from the official translations; the Japanese edition "
         "is lettered vertically and, like the Arabic one, reads right to left and opens from the right"
     ),
@@ -754,7 +770,7 @@ def write_credits_md(out: str, credits: dict) -> None:
     faces = "\n".join(f"- {n}: `fonts/{lic}`" for n, lic in fontkit.LICENCES.items())
     text = (
         "# Credits — Pepper&Carrot · Pepper's Birthday Party\n\n"
-        "Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in eight\n"
+        "Showcase preset for the Postext sandbox: episode 8 of the webcomic Pepper&Carrot (June 2015), in nine\n"
         "languages, re-lettered and re-laid out by Postext.\n\n"
         "## The comic\n\n"
         "Based on the webcomic Pepper&Carrot by David Revoy. https://www.peppercarrot.com\n"
@@ -771,8 +787,8 @@ def write_credits_md(out: str, credits: dict) -> None:
         "## Fonts\n\n"
         "All under the SIL Open Font License 1.1, from google/fonts; the Chinese, Japanese and Arabic faces are\n"
         "subset. Comic Neue, Zen Antique, ZCOOL KuaiLe and Playpen Sans Arabic carry letters composed from\n"
-        "their own glyphs (ồ ự for a translator's name, ŗ for the monsters' voice), which they lack; none\n"
-        "of these faces has a Reserved Font Name.\n\n" + faces + "\n\n"
+        "their own glyphs (ồ ự for a translator's name, ŗ for the monsters' voice, Ā for the German spell\n"
+        "book's title), which they lack; none of these faces has a Reserved Font Name.\n\n" + faces + "\n\n"
         "## Build\n\n"
         "`scripts/presets/showcase/pepper-carrot/` in the Postext repository: `fetch.py`, `fonts.py`, `panels.py`,\n"
         "`anchors.py`, `manifest.py` and `text.py` prepare the pictures and the text, `build.py` writes this\n"
