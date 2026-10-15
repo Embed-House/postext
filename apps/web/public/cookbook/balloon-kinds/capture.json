@@ -3,21 +3,21 @@
   "slug": "balloon-kinds",
   "sourceHash": "4e27afef8cbf5e0507355a3f267bd1a6250184667cb6095266bfecc76bac6df8",
   "engine": {
-    "postext": "1.33.5",
-    "postextPdf": "1.33.5",
+    "postext": "1.33.7",
+    "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T11:42:28.981Z",
+  "capturedAt": "2026-10-15T13:24:20.696Z",
   "variants": {
     "en": {
-      "hash8": "b9de5ab6",
+      "hash8": "e2b8c6f3",
       "vdtHash": "741e9ba1b4cbefe7456e18ce8a09307b09fc17cb",
       "timings": {
-        "importMs": 3444,
-        "fontsMs": 859,
-        "buildMs": 744,
-        "totalMs": 7101,
+        "importMs": 1306,
+        "fontsMs": 848,
+        "buildMs": 1024,
+        "totalMs": 4941,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 994225,
+        "bytes": 994227,
         "pages": 2
       },
       "sandbox": {
@@ -309,13 +309,13 @@
       }
     },
     "es": {
-      "hash8": "20995760",
+      "hash8": "67bf6670",
       "vdtHash": "7e8ad8cefc2dbcf233e8d2ef02662fe7c05cc0ac",
       "timings": {
-        "importMs": 3425,
-        "fontsMs": 660,
-        "buildMs": 705,
-        "totalMs": 6822,
+        "importMs": 2432,
+        "fontsMs": 1471,
+        "buildMs": 928,
+        "totalMs": 6620,
         "builds": 1
       },
       "specimen": {
@@ -347,7 +347,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 88860,
+          "bytes": 88882,
           "alt": "Página de apertura 1: Hoja de estilo de rotulación."
         },
         {
@@ -386,7 +386,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 996727,
+        "bytes": 996726,
         "pages": 2
       },
       "sandbox": {
@@ -596,13 +596,13 @@
       }
     },
     "ca": {
-      "hash8": "b4851960",
+      "hash8": "9ce6c50f",
       "vdtHash": "09fd22eaefd8eb692bf193bebcd0d01a123efebb",
       "timings": {
-        "importMs": 3466,
-        "fontsMs": 801,
-        "buildMs": 708,
-        "totalMs": 7067,
+        "importMs": 1835,
+        "fontsMs": 936,
+        "buildMs": 800,
+        "totalMs": 5229,
         "builds": 1
       },
       "specimen": {
@@ -634,7 +634,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 83806,
+          "bytes": 83818,
           "alt": "Pàgina d'obertura 1: Full d’estil de retolació."
         },
         {
@@ -673,7 +673,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 995524,
+        "bytes": 995521,
         "pages": 2
       },
       "sandbox": {
@@ -883,13 +883,13 @@
       }
     },
     "zh": {
-      "hash8": "ab0b0fb0",
+      "hash8": "9a4f9b7d",
       "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 2509,
-        "fontsMs": 3948,
-        "buildMs": 585,
-        "totalMs": 8048,
+        "importMs": 1442,
+        "fontsMs": 5471,
+        "buildMs": 675,
+        "totalMs": 9876,
         "builds": 1
       },
       "specimen": {
@@ -1171,13 +1171,13 @@
       }
     },
     "ar": {
-      "hash8": "eb542a00",
+      "hash8": "35ff6353",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 2105,
-        "fontsMs": 2462,
-        "buildMs": 772,
-        "totalMs": 7846,
+        "importMs": 1935,
+        "fontsMs": 1110,
+        "buildMs": 687,
+        "totalMs": 5867,
         "builds": 1
       },
       "specimen": {
@@ -1462,13 +1462,13 @@
       }
     },
     "ja": {
-      "hash8": "03bbe256",
+      "hash8": "17707b7b",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 3095,
-        "fontsMs": 3074,
-        "buildMs": 471,
-        "totalMs": 7801,
+        "importMs": 1646,
+        "fontsMs": 1786,
+        "buildMs": 521,
+        "totalMs": 5314,
         "builds": 1
       },
       "specimen": {
@@ -1540,7 +1540,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1059393,
+        "bytes": 1059391,
         "pages": 2
       },
       "sandbox": {
@@ -1752,13 +1752,13 @@
       }
     },
     "pt": {
-      "hash8": "5686d828",
+      "hash8": "de6876cc",
       "vdtHash": "ff3577f055a081d8454805278da37a8ca13309b1",
       "timings": {
-        "importMs": 2429,
-        "fontsMs": 1391,
-        "buildMs": 860,
-        "totalMs": 6352,
+        "importMs": 1663,
+        "fontsMs": 364,
+        "buildMs": 719,
+        "totalMs": 3790,
         "builds": 1
       },
       "specimen": {
@@ -2039,13 +2039,13 @@
       }
     },
     "fr": {
-      "hash8": "f79d2fa7",
+      "hash8": "985081fa",
       "vdtHash": "30e4c8274b6afd5580d3ec1e7f53e5178acb6691",
       "timings": {
-        "importMs": 2560,
-        "fontsMs": 1376,
-        "buildMs": 828,
-        "totalMs": 6348,
+        "importMs": 957,
+        "fontsMs": 1259,
+        "buildMs": 677,
+        "totalMs": 3900,
         "builds": 1
       },
       "specimen": {
@@ -2326,13 +2326,13 @@
       }
     },
     "de": {
-      "hash8": "35852d38",
+      "hash8": "cf880857",
       "vdtHash": "2be0737335ab3fc13d039c6e33613bbaf5b5d53a",
       "timings": {
-        "importMs": 1246,
-        "fontsMs": 930,
-        "buildMs": 626,
-        "totalMs": 4027,
+        "importMs": 1098,
+        "fontsMs": 404,
+        "buildMs": 607,
+        "totalMs": 2933,
         "builds": 1
       },
       "specimen": {
@@ -2403,7 +2403,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 996531,
+        "bytes": 996533,
         "pages": 2
       },
       "sandbox": {

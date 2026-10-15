@@ -3,20 +3,20 @@
   "slug": "textbook-margin-column",
   "sourceHash": "db2019aaca18f7ac1335c6b789b6c3d1d99a3bcf74b3d90ae315fa7debaf9585",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.33.7",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.334Z",
+  "chrome": "155.0.8059.79",
+  "capturedAt": "2026-10-15T13:24:20.738Z",
   "variants": {
     "en": {
-      "hash8": "45590cc8",
+      "hash8": "18d9a4f6",
       "vdtHash": "144f19caf9c2021887d2422770e4b2cc02ae94a8",
       "timings": {
-        "importMs": 783,
-        "fontsMs": 5,
-        "buildMs": 82,
-        "totalMs": 2042,
+        "importMs": 807,
+        "fontsMs": 7,
+        "buildMs": 94,
+        "totalMs": 3145,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1310,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 125590,
+          "bytes": 125576,
           "alt": "Opening page 87: Light and Lenses. Figure 4.1. A burning glass. A converging lens bends parallel rays of sunlight so that they all meet at one point, the focus, where a card begins to scorch."
         },
         {
@@ -386,9 +386,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -399,13 +399,13 @@
       }
     },
     "es": {
-      "hash8": "e25912f6",
+      "hash8": "b3bc387b",
       "vdtHash": "78fa29b18b0579cd99543da686a93a8f528b3414",
       "timings": {
-        "importMs": 547,
-        "fontsMs": 6,
-        "buildMs": 78,
-        "totalMs": 1588,
+        "importMs": 1479,
+        "fontsMs": 4,
+        "buildMs": 70,
+        "totalMs": 2540,
         "builds": 1
       },
       "specimen": {
@@ -438,7 +438,7 @@
           "h": 1310,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 123522,
+          "bytes": 123528,
           "alt": "Página de apertura 87: Luz y lentes. Figura 4.1. Una lupa al sol. Una lente convergente desvía los rayos paralelos de luz para que coincidan en un punto, el foco, donde una cartulina empieza a quemarse."
         },
         {
@@ -775,9 +775,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

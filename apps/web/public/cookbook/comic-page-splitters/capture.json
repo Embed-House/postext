@@ -3,21 +3,21 @@
   "slug": "comic-page-splitters",
   "sourceHash": "5a3e6e58da9bbd55b15caf0b4845974daae5bc49af0b649fb3abbfc7942d4852",
   "engine": {
-    "postext": "1.33.5",
-    "postextPdf": "1.33.5",
+    "postext": "1.33.7",
+    "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T11:42:29.100Z",
+  "capturedAt": "2026-10-15T13:25:27.546Z",
   "variants": {
     "en": {
-      "hash8": "4d8427ac",
+      "hash8": "31b3abd6",
       "vdtHash": "f727ec43ba9b71a50f56e00a9d9b89f53d4870b9",
       "timings": {
-        "importMs": 2797,
-        "fontsMs": 1967,
-        "buildMs": 658,
-        "totalMs": 6904,
+        "importMs": 2464,
+        "fontsMs": 560,
+        "buildMs": 470,
+        "totalMs": 4772,
         "builds": 1
       },
       "specimen": {
@@ -306,13 +306,13 @@
       }
     },
     "es": {
-      "hash8": "3fa79f3c",
+      "hash8": "02ea406d",
       "vdtHash": "c75d0046fad73ee2c97d9da83f36f3c826b29f60",
       "timings": {
-        "importMs": 2250,
-        "fontsMs": 2330,
-        "buildMs": 737,
-        "totalMs": 6609,
+        "importMs": 2462,
+        "fontsMs": 568,
+        "buildMs": 522,
+        "totalMs": 4939,
         "builds": 1
       },
       "specimen": {
@@ -344,7 +344,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 54528,
+          "bytes": 54570,
           "alt": "Página de apertura 1: Una página, tres planes."
         },
         {
@@ -409,7 +409,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 850609,
+        "bytes": 850611,
         "pages": 4
       },
       "sandbox": {
@@ -601,13 +601,13 @@
       }
     },
     "ca": {
-      "hash8": "017a2f4e",
+      "hash8": "927e6418",
       "vdtHash": "cc02701ee828ad1613e20a5959288ae02326c3f9",
       "timings": {
-        "importMs": 1787,
-        "fontsMs": 1079,
-        "buildMs": 556,
-        "totalMs": 6198,
+        "importMs": 783,
+        "fontsMs": 526,
+        "buildMs": 479,
+        "totalMs": 2520,
         "builds": 1
       },
       "specimen": {
@@ -639,7 +639,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 54074,
+          "bytes": 54140,
           "alt": "Pàgina d'obertura 1: Una pàgina, tres plans."
         },
         {
@@ -896,13 +896,13 @@
       }
     },
     "zh": {
-      "hash8": "11cda6c8",
+      "hash8": "5ad37a98",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 2759,
-        "fontsMs": 4841,
-        "buildMs": 451,
-        "totalMs": 9627,
+        "importMs": 458,
+        "fontsMs": 550,
+        "buildMs": 390,
+        "totalMs": 2539,
         "builds": 1
       },
       "specimen": {
@@ -1192,13 +1192,13 @@
       }
     },
     "ar": {
-      "hash8": "35af8544",
+      "hash8": "ec94f1a2",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 3665,
-        "fontsMs": 1646,
-        "buildMs": 520,
-        "totalMs": 7960,
+        "importMs": 471,
+        "fontsMs": 497,
+        "buildMs": 510,
+        "totalMs": 2168,
         "builds": 1
       },
       "specimen": {
@@ -1296,7 +1296,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 865903,
+        "bytes": 865904,
         "pages": 4
       },
       "sandbox": {
@@ -1491,13 +1491,13 @@
       }
     },
     "ja": {
-      "hash8": "29320ec4",
+      "hash8": "abd228d0",
       "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 3854,
-        "fontsMs": 2912,
-        "buildMs": 645,
-        "totalMs": 9202,
+        "importMs": 830,
+        "fontsMs": 580,
+        "buildMs": 477,
+        "totalMs": 2552,
         "builds": 1
       },
       "specimen": {
@@ -1529,7 +1529,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 53110,
+          "bytes": 53118,
           "alt": "章扉、1ページ：一ページ、三つのコマ割り。"
         },
         {
@@ -1789,13 +1789,13 @@
       }
     },
     "pt": {
-      "hash8": "adb4bf57",
+      "hash8": "6dfd5315",
       "vdtHash": "7a7072cfd5e293567615cce8aac85d5b262ce8b5",
       "timings": {
-        "importMs": 3002,
-        "fontsMs": 2235,
-        "buildMs": 650,
-        "totalMs": 7881,
+        "importMs": 927,
+        "fontsMs": 144,
+        "buildMs": 517,
+        "totalMs": 2711,
         "builds": 1
       },
       "specimen": {
@@ -1827,7 +1827,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 55686,
+          "bytes": 55842,
           "alt": "Página de abertura 1: Uma página, três planos."
         },
         {
@@ -2084,13 +2084,13 @@
       }
     },
     "fr": {
-      "hash8": "45259c94",
+      "hash8": "333f1ede",
       "vdtHash": "dc926fc1e22335866e3cad3e26d3b21f8ffeb574",
       "timings": {
-        "importMs": 3544,
-        "fontsMs": 1537,
-        "buildMs": 622,
-        "totalMs": 7045,
+        "importMs": 849,
+        "fontsMs": 431,
+        "buildMs": 527,
+        "totalMs": 3146,
         "builds": 1
       },
       "specimen": {
@@ -2187,7 +2187,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 850042,
+        "bytes": 850041,
         "pages": 4
       },
       "sandbox": {
@@ -2379,13 +2379,13 @@
       }
     },
     "de": {
-      "hash8": "0c3d9657",
+      "hash8": "986d4289",
       "vdtHash": "e12b38c40b7b5eb081b5ff448fe2958ce0bda5ad",
       "timings": {
-        "importMs": 1440,
-        "fontsMs": 876,
-        "buildMs": 638,
-        "totalMs": 4918,
+        "importMs": 813,
+        "fontsMs": 580,
+        "buildMs": 573,
+        "totalMs": 2689,
         "builds": 1
       },
       "specimen": {
@@ -2482,7 +2482,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 850744,
+        "bytes": 850747,
         "pages": 4
       },
       "sandbox": {
