@@ -108,15 +108,28 @@ function column(rand: () => number, x: number, top: number, bottom: number, widt
   return lines;
 }
 
+/** One decimal, no trailing zeros: the art is drawn at 1080 units wide. */
+const r1 = (v: number) => String(Math.round(v * 10) / 10);
+
+/** Each line is one path of word boxes, not a rect per word: the landing
+ *  sets this art twice and a rect each kept the page near 900 KB (#825). */
 function Lines({ lines, fill, delay, step }: { lines: Box[][]; fill: string; delay: number; step: number }) {
   return (
     <>
       {lines.map((line, i) => (
-        <g key={i} className="ha-line" style={{ animationDelay: `${delay + i * step}s` }}>
-          {line.map((b, j) => (
-            <rect key={j} x={b.x} y={b.y} width={b.w} height={b.h} rx={1.2} fill={fill} />
-          ))}
-        </g>
+        <path
+          key={i}
+          className="ha-line"
+          style={{ animationDelay: `${r1(delay + i * step)}s` }}
+          d={line
+            .map((b, j) => {
+              const box = `h${r1(b.w)}v${r1(b.h)}h-${r1(b.w)}z`;
+              // After `z` the pen is back at the previous box's corner.
+              return j ? `m${r1(Math.round(b.x * 10) / 10 - Math.round(line[j - 1].x * 10) / 10)} 0${box}` : `M${r1(b.x)} ${r1(b.y)}${box}`;
+            })
+            .join("")}
+          fill={fill}
+        />
       ))}
     </>
   );
