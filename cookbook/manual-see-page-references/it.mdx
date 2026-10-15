@@ -1,0 +1,66 @@
+---
+title: "Un manuale i cui rimandi puntano alle pagine"
+summary: "Un manuale d’uso per bicicletta i cui rimandi dicono «see section 3.2 on page 3», in avanti e indietro, con ogni numero e pagina presi dall’impaginazione."
+plain: "Un breve manuale d’uso per una bicicletta da turismo. Quando il testo ti manda a un’altra sezione, ne indica il numero e la pagina in cui si trova, ed entrambi sono link."
+description: "Un manuale di prodotto in Postext: sezioni numerate, ancore su paragrafi e passaggi, e rimandi per numero, titolo e pagina che si aggiornano e fanno da link."
+question: "Come rimando a una sezione e alla pagina in cui si trova, e tengo entrambi giusti mentre il libro cambia?"
+aliases: ["rimando", "vedi pagina", "rimando alla pagina", "pageref", "ancora", "etichetta", "vedi sezione", "manuale", "manuale d’uso", "link interni", "pandoc-crossref", "cross-reference"]
+pageNotes: { "1": "Pagina 1: una fascia blu navy sulla metà superiore con «OWNER’S MANUAL», il nome del modello «Ardena T3» in grandi lettere bianche condensate, un sottotitolo e la riga dell’edizione, poi una striscia arancione; sotto, un’introduzione e un sommario i cui numeri di sezione, titoli e numeri di pagina sono tutti rimandi in arancione.", "2": "Pagina 2: la sezione 1 con rimandi come «section 3.2 on page 3» e la frase «close the lever so that it points backwards», che porta a un passaggio della sezione 2.2; passaggi numerati per l’altezza della sella; la sezione 2.1 sulla pressione degli pneumatici.", "3": "Pagina 3: smontaggio e montaggio della ruota anteriore, la sezione 3 sui freni con un riquadro «Wet weather» con una striscia laterale arancione, e l’inizio della 3.2.", "4": "Pagina 4: la regolazione del cavo, la sezione 4 sulla catena con un rimando indietro a «Wet weather» a pagina 3, e il programma di manutenzione, un elenco di intervalli che puntano ciascuno a una sezione e a una pagina." }
+---
+
+## Che cosa comporrai
+
+Il manuale d’uso di una bicicletta da turismo inventata, la Ardena T3: quattro pagine A5 composte in Archivo, con il nome del modello in una fascia blu navy sulla prima pagina. Un manuale si legge in ordine sparso, quindi ogni istruzione che dipende da un’altra dice dove si trova: *see section 3.2 on page 3*. Chi scrive assegna un identificatore a un titolo, a un paragrafo o a una frase di un passaggio e scrive `:ref` dovunque il testo vi rimandi; Postext stampa il numero, il titolo o la pagina e ne fa un link. Il sommario in copertina si scrive allo stesso modo, così spostare una sezione, o tradurre il manuale e lasciarlo riscorrere, non lascia mai un numero sbagliato.
+
+## Preparazione
+
+### 1 · Dai un nome a ciò a cui il testo rimanda
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. I titoli prendono un identificatore Pandoc, `### Checking pad wear {#sec-pad-wear}`; l’avviso sulla pressione degli pneumatici comincia con `:anchor{#warn-pressure}`, un segno invisibile; l’ultimo passaggio del montaggio di una ruota è `[close the lever so that it points backwards]{#step-close-lever}`, che conserva le sue parole e dà loro un nome; e il riquadro si apre con `:::callout{#box-wet type="note" title="Wet weather"}`. Un rimando al passaggio stampa le parole del passaggio, un rimando al riquadro il suo titolo.
+
+### 2 · Un solo bersaglio, quattro modi di nominarlo
+
+`:ref{id="sec-pad-wear"}` stampa *section 3.2* con la parola di `crossRefs.section`; `style=page` stampa *page 3* con la parola di `crossRefs.page`; `style=title` stampa *Checking pad wear*; `style=pageNumber` stampa il semplice *3*. Il sommario della copertina combina il numero semplice, il titolo e la pagina semplice, così si legge come un indice. In spagnolo gli stessi rimandi stampano *apartado 3.2* e *página 3*, perché i modelli seguono la lingua dell’edizione.
+
+### 3 · Le pagine si assestano da sole
+
+Un numero di pagina si conosce solo dopo che il manuale è stato impaginato. Il motore lo impagina, legge la pagina in cui è finito ogni bersaglio e lo impagina di nuovo finché nessun rimando cambia, lo stesso ciclo che riempie un indice. Un testo che si allunga nella traduzione, o una sezione spostata all’inizio, cambia le pagine e i rimandi le seguono, in avanti e indietro.
+
+### 4 · I numeri vengono dal contatore di livello 2
+
+<Excerpt region="numbers" />
+
+Il manuale ha un solo titolo di livello 1, il nome del modello in copertina, quindi le sue sezioni si numerano dal livello 2: `{2}` dà da 1 a 5 e `{2}.{3}` dà 1.1, 1.2.
+
+### 5 · La copertina è l’apertura di quel titolo
+
+<Excerpt region="cover" />
+
+La fascia è alta 104 mm, metà della pagina, e una striscia arancione la chiude. Occhiello, sottotitolo e riga dell’edizione sono attributi del titolo, quindi l’edizione spagnola li cambia nel proprio testo.
+
+<Excerpt region="palette" />
+
+## Varianti
+
+### Scrivi «p.» nei rimandi
+
+Un libro di consultazione con molti rimandi alle pagine risparmia spazio con l’abbreviazione.
+
+```diff
+-  page: t({ en: 'page {n}', es: 'página {n}' }), // spelt out: a manual is read by anyone
++  page: t({ en: 'p. {n}', es: 'pág. {n}' }),
+```
+
+### Lascia i rimandi in nero
+
+Quando la maggior parte della pagina è fatta di rimandi, tienili nel colore del testo e in grassetto; restano comunque link nel PDF e a schermo.
+
+```diff
+-const references = { referenceColor: col('orange'), referenceBold: true };
++const references = { referenceColor: col('ink'), referenceBold: true };
+```
+
+## Errori frequenti
+
+- Un rimando a un `:anchor` senza stile stampa la pagina, perché un’ancora invisibile non ha parole proprie. Usa `[words]{#id}` quando il rimando deve citare il testo.
+- Un identificatore deve essere unico nel libro. I rimandi raggiungono il primo `{#sec-brakes}`, e il pannello Verifiche della Sandbox elenca il secondo come `duplicateAnchor`.

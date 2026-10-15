@@ -1,0 +1,53 @@
+---
+title: "Editor dal vivo con l’impaginazione in un Web Worker"
+summary: "Il Markdown accanto a una pagina tascabile: un Web Worker compone il capitolo con i propri font, e ogni tasto premuto annulla la composizione in corso."
+plain: "Un editor dal vivo per una piccola edizione tascabile di The Time Machine. Ogni volta che scrivi, la pagina viene impaginata di nuovo in background, così lo schermo continua a rispondere."
+description: "Impagina in un Web Worker avviato con una sola chiamata, mandagli i file dei font, annulla la composizione a ogni tasto e dipingi nel thread principale."
+question: "Come tengo reattivo un editor mentre un testo lungo si impagina, con font e annullamento in un Web Worker?"
+aliases: ["Web Worker", "createLayoutWorker", "registerFonts", "AbortController", "annullare una composizione", "anteprima dal vivo", "fuori dal thread principale", "editor Markdown", "headless", "Node"]
+pageNotes: { "1": "La pagina del titolo: sui primi 84 mm, un campo rosso sangue di bue incorniciato da un doppio filetto dorato contiene un quadrante d’ottone con quattro piccoli quadranti sulla faccia; sotto, su carta crema, The Time Machine in Cinzel su due righe, An Invention in corsivo rosso sangue di bue, un corto filetto d’ottone e H. G. Wells in maiuscoletto.", "2": "Il testo del capitolo I comincia sulla nona riga, sotto un numero romano rosso sangue di bue, un corto filetto d’ottone e INTRODUCTION in maiuscole spaziate; i primi due paragrafi riempiono il resto della pagina e il folio sta al piede.", "3": "Un recto di battute brevi, con Introduction in maiuscoletto rosso sangue di bue sopra il testo e il folio sul margine esterno.", "4": "Un verso con la testatina The Time Machine, con il folio sul margine esterno; una frase del Viaggiatore del Tempo è composta in corsivo.", "5": "Un recto sulla geometria delle quattro dimensioni, con la testatina Introduction." }
+---
+
+## Che cosa comporrai
+
+Componi il capitolo I di *The Time Machine* di H. G. Wells come un’edizione tascabile di 110 × 147 mm, con il Markdown accanto. La pagina del titolo ha la fotografia di un quadrante d’ottone con quattro piccoli quadranti, generata con modelli di diffusione, su un campo rosso sangue di bue disegnato nel codice, sopra il titolo in Cinzel. Il testo del capitolo comincia sulla nona riga, sotto un numero romano e un filetto d’ottone, e scorre in Baskervville a 9,5 su 13 pt sotto testatine in maiuscoletto. Ogni tasto premuto compone di nuovo l’intero capitolo in un Web Worker, e il canvas a destra va alla pagina che contiene il cursore. Sotto l’editor, una lancetta che il thread principale fa girare a ogni frame si ferma mentre quel thread è occupato, e la riga di stato dà il tempo della composizione, il frame più lungo e quante composizioni ha annullato un tasto più recente. Un menu in alto a destra sposta la composizione nel thread principale per confronto.
+
+## Preparazione
+
+### 1 · Avvia il worker con una sola chiamata
+
+Il codice di questo passo è nella [risposta breve](#la-risposta-breve) qui sopra. `createLayoutWorker()` non prende opzioni. Quando il modulo viene da esm.sh, il file del worker sta sull’origine di esm.sh, dove il costruttore `Worker` lo rifiuta, quindi il motore avvia il suo punto d’ingresso del worker tramite un blob della stessa origine, alla versione importata dalla pagina. In un’app con bundler la stessa chiamata avvia il file del worker che sta accanto al modulo. Il `build()` dell’handle prende lo stesso contenuto e la stessa configurazione di `buildDocument()` e si risolve nello stesso tipo di documento ([Eseguire l’impaginazione in un Web Worker](/it/docs/configuration-programmatic-usage#eseguire-limpaginazione-in-un-web-worker)).
+
+<Note>Il pacchetto postext misura il testo con un canvas, quindi impagina in un browser o in un worker. Per un lavoro batch, la riga di comando di postext (postext-cli) impagina un libro e ne scrive il PDF senza browser; l’altra strada è una pagina aperta in Chrome headless con Puppeteer. Per un progetto `.postext` su disco, il `render.mjs` della skill postext-port esegue il motore in Node e misura con fontkit, dai font del progetto stesso, al posto di un canvas ([Script](/it/docs/skill#script)).</Note>
+
+### 2 · Carica ogni carattere due volte
+
+<Excerpt region="fonts" />
+
+Il worker ha un proprio `FontFaceSet` e non vede i caratteri caricati dalla pagina, quindi la risposta breve scarica gli stessi file di Fontsource e passa i loro byte a `registerFonts()`, con ogni peso come stringa (`'400'`). Togli quella chiamata e il worker misura con un font di ripiego: compone questo capitolo in 175 righe invece di 190, la prima riga finisce con «him)» invece che con «of», e la console della pagina nomina una volta ogni famiglia mancante. Un file di font che non si scarica è più difficile da notare. Se il worker riceve una pagina 404 al posto del Baskervville tondo, `registerFonts()` si risolve comunque e il capitolo esce in 186 righe, con un avviso solo nella console del worker. La risposta breve controlla perciò lo stato di ogni risposta prima di mandare qualsiasi byte, e lancia un errore con il carattere e lo stato HTTP. La pagina carica gli stessi caratteri anche con `loadFonts()`, perché il canvas dipinge con i font della pagina.
+
+### 3 · Componi a ogni tasto, dipingi nel thread principale
+
+<Excerpt region="editor" />
+
+`typeset()` interrompe la composizione in corso prima di chiedere la successiva. La promise della composizione interrotta viene subito rifiutata con un `AbortError`, che `typeset()` trasforma in `null`. Nel worker, una composizione ancora in coda viene scartata subito, e una in esecuzione si ferma alla fine del suo passaggio di collocazione corrente, perché la composizione controlla un annullamento solo tra un passaggio e l’altro. `refresh()` numera le sue composizioni e dipinge solo la più recente, così una composizione del worker che arriva in ritardo non può dipingere sopra una del thread principale. Il documento torna al thread principale, dove `renderPageToCanvas()` lo dipinge con le immagini registrate lì. Al worker serve solo la misura di ogni immagine, che la voce della risorsa porta con sé (1100 × 840). Ogni blocco conserva la propria posizione nel Markdown (`sourceStart`), e `follow()` mostra l’ultima pagina con un blocco che comincia al cursore o prima.
+
+<Note>Tempi misurati sulla macchina che ha fatto la cattura, in dodici caricamenti della pagina oltre a quello della scheda. La riga di stato misura ogni composizione dalla richiesta al primo frame dopo l’arrivo delle pagine. La prima composizione del worker richiede da 66 a 141 ms e le successive da 10 a 36 ms, perché il worker tiene un’unica cache delle misure per tutta la sua vita; intanto il frame più lungo resta tra 8 e 18 ms. Nel thread principale la prima composizione ferma la lancetta per 54–74 ms. Le composizioni successive lì, con una cache propria, richiedono da 5 a 17 ms e allungano il frame più lungo al massimo a 25 ms, circa un frame e mezzo a 60 Hz. Una composizione più lunga di un frame (16,7 ms a 60 Hz), come la prima di questo capitolo o quella di un libro con molti capitoli, blocca l’editor nel thread principale e non nel worker.</Note>
+
+### 4 · Una pagina del titolo che è uno stile di titolo
+
+<Excerpt region="title" />
+
+La riga `# The Time Machine {style="title"}` compone la pagina 1 nello stile di titolo `title`, i cui `header` e `footer` vuoti lasciano la pagina senza testatine né folio. `numbered: false` tiene il titolo fuori dal conteggio dei capitoli, così Introduction resta il capitolo I. La tavola è ancorata all’angolo in alto a sinistra dell’abbondanza, e il nome dell’autore è composto sotto il piede della colonna. Una grafica tenuta nella sua colonna viene tagliata al piede della colonna, quindi lo stile imposta `span: 'page'`; senza, il nome dell’autore non viene dipinto.
+
+### 5 · Testatine secondo il ruolo della pagina
+
+<Excerpt region="heads" />
+
+`pages: 'body'` tiene le testatine lontane dalla pagina del titolo e dall’apertura, e `parity` compone il titolo del libro sui versi e quello del capitolo sui recti, con i folio sul margine esterno. L’apertura riceve invece un folio al piede, da un elemento del piè di pagina con `pages: 'opener'`. Folio e testatine sono tutti a 8 pt e pendono 8,2 mm sotto il bordo superiore, così le cifre del folio poggiano sulla linea di base delle testatine.
+
+### 6 · L’apertura del capitolo
+
+<Excerpt region="opener" />
+
+Il `{number}` della grafica stampa il numero del capitolo nella forma che gli dà `numberingTemplate: '{1:I}'`, un I romano. `minHeight` riserva almeno otto righe, così il testo comincia sulla nona mentre il titolo occupa una o due righe, e più in basso quando un titolo più lungo richiede più spazio. `breakBefore` con `parity: 'any'` lascia aprire il capitolo a pagina 2, di fronte alla sua seconda pagina; il valore predefinito lo manderebbe a pagina 3, un recto.

@@ -1,0 +1,91 @@
+---
+title: "Da una stringa Markdown a una pagina progettata"
+summary: "Una stringa Markdown con frontmatter si compone in pagine di rivista a due colonne disegnate su canvas, con sei colori nominati al posto del blu predefinito."
+plain: "Le prime due pagine di un reportage di viaggio in una piccola rivista, con una fascia colorata e un’immagine. Mostra come un testo semplice con pochi titoli diventa una pagina progettata nei tuoi colori."
+description: "Il pen carica i font prima di comporre, crea una configurazione nuova a ogni composizione, compone l’apertura dal frontmatter e disegna le pagine su canvas."
+question: "Come compongo un Markdown su pagine progettate, senza il blu predefinito in titoli, grassetti ed elenchi?"
+aliases: ["primo documento", "primi passi", "per cominciare", "hello world", "avvio rapido", "da markdown a canvas", "stile predefinito", "reportage di viaggio"]
+pageNotes: { "1": "Una fotografia occupa la testa della pagina: saline al crepuscolo e una fila di impronte che sale su una duna fino a un ometto di pietre sulla cresta; sul cielo scuro, l’occhiello QUADERNO DI CAMPO, il titolo «La via del sale», il sommario «Quattro giorni a piedi sul sentiero dei portatori, dalle saline di Arvela al mercato di Castrel.» e la firma DI LENA VARGA · MAGGIO 2026. Sotto, due colonne giustificate che si aprono in grassetto con «I portatori partivano dalla diga di Arvela.» e, al piede, il folio 1.", "2": "Il verso che segue: il folio 2 e LA VIA DEL SALE come testatina, due colonne giustificate con i titoletti «Il carico del ritorno» e «Tra i pini» in indaco, un elenco a trattini con le parole iniziali in grassetto (Grano, Resina di pino, Lana e pelli, Chiodi e ami), un segno di fine quadrato dopo «un portatore era pagato in grano» e il colophon sotto un filetto: «Opera di fantasia: Arvela, Sorra, Orsa e Castrel sono luoghi immaginari.»" }
+---
+
+## Che cosa comporrai
+
+Le pagine d’apertura di un reportage di viaggio in *Quaderno di campo*, una piccola rivista. La pagina 1 è un’apertura su recto: una fotografia di saline e di una duna al crepuscolo sul 58% superiore della pagina, il titolo in Young Serif da 54 pt e, sotto, due colonne giustificate che avviano il testo con un attacco in grassetto. La pagina 2, al verso, prosegue sotto una testatina in maiuscole spaziate e finisce con un segno di fine e un colophon. Il design è dato da una sola funzione che costruisce la configurazione e da una palette di sei colori. Il titolo viene dal titolo di primo livello, e sommario, autore e data dal frontmatter della stringa Markdown, quindi lo stesso pen compone qualunque articolo il cui titolo stia in due righe; solo la fotografia appartiene a questo.
+
+## Preparazione
+
+### 1 · Ogni carattere, prima della prima composizione
+
+<Excerpt region="fonts" />
+
+Postext misura il testo con i caratteri che il browser ha quando gira l’impaginazione, quindi una composizione eseguita prima dell’arrivo dei font manterrebbe gli a capo di un carattere sostitutivo. `buildDocumentWithFonts` carica ogni carattere che la configurazione nomina, e quelli in `FONTS`, prima della prima composizione; `kitFonts(FONTS)` gli fornisce i file di Fontsource, gli stessi che un PDF incorporerebbe. Poi esamina i caratteri che le pagine usano, carica quelli ancora mancanti e compone di nuovo. Un carattere che Fontsource non distribuisce resta sostituito ed è elencato in `doc.contentWarnings` come `fontFallback`. Il grassetto e il corsivo di un carattere del testo si caricano solo se la famiglia li ha.
+
+### 2 · Dai un nome ai colori, poi riferisciti ai nomi
+
+<Excerpt region="palette" />
+
+Ogni colore della configurazione è `col('id')`, un id della palette con il suo esadecimale accanto. `bodyText.boldColor`, `italicColor`, `referenceColor` e `unorderedLists.color` nominano `ink`, e `headings.color` nomina l’accento. I valori predefiniti del motore per titoli, grassetto, corsivo e punti elenco sono collegati a `main-color`, e questa palette punta quella voce all’accento, quindi qualunque di essi tu ometta esce indaco invece che blu. Gli oggetti di design sono funzioni che `config()` chiama a ogni composizione, e `col()` copia ogni volta l’esadecimale corrente da `palette`, così una sola modifica a `palette` arriva al testo, ai folio e all’apertura. Il segno di fine è un campione di colore in linea che nomina `band`, quindi anche lui segue un cambio di tinta. Anche la testatina predefinita è collegata a `main-color`, quindi si stamperebbe nell’accento finché non la sostituisci (passo 5).
+
+### 3 · Una fotografia tagliata sulla sua cornice
+
+<Excerpt region="art" />
+
+Le saline, la duna e l’ometto di pietre sono una fotografia generata con modelli di diffusione, ripresa al crepuscolo perché il titolo chiaro si legga contro un cielo scuro. Il JPEG è tagliato sulla cornice della fascia, `PAGE.width` × `BAND` millimetri, e la risorsa dichiara i suoi pixel, 1440 × 1120, così a tutta larghezza l’immagine riempie esattamente la fascia. Una fascia più alta richiede un’immagine tagliata sulla nuova cornice. L’apertura la mostra tramite un elemento immagine che nomina la risorsa per id.
+
+### 4 · Il frontmatter scrive l’apertura
+
+<Excerpt region="opener" />
+
+Il titolo di primo livello si estende su entrambe le colonne, e la sua apertura è uno spazio di elementi: la fotografia fino all’abbondanza e quattro testi concatenati uno sotto l’altro. Un titolo più lungo spinge in basso il sommario e la firma invece di sovrapporli, ma oltre le due righe la firma finisce sulle saline chiare. `{titleText}` è il testo del titolo; `{subtitle}`, `{author}` e `{publishDate}` sono campi del frontmatter. Il `\\` nel titolo lo spezza dove lo metti ([line breaks in titles](/it/docs/document-format#a-capo-nei-titoli)). `minHeight` conta dal margine superiore, quindi l’altezza riservata finisce 5 mm sotto la fascia.
+
+### 5 · Testatine al posto del blu predefinito
+
+<Excerpt region="running-heads" />
+
+Se ometti `header` torna quella predefinita del motore: Open Sans sopra un filetto a tutta larghezza, su ogni pagina. Qui ogni folio è ancorato alla pagina fisica e filtrato per parità, quindi sta sempre sul bordo esterno. La sua etichetta è ancorata al folio, a `GAP` millimetri con `right-of` o `left-of`, e un folio di tre o quattro cifre spinge l’etichetta invece di finirle addosso. `pages: 'body'` tiene tutti e quattro gli elementi lontani dall’apertura. Il piè di pagina contiene un solo folio in basso per l’apertura, e poiché `footer` è impostato, le pagine di testo perdono il folio centrato predefinito.
+
+### 6 · Componi con una configurazione nuova, poi disegna
+
+<Excerpt region="build" />
+
+`config()` è una funzione perché ogni composizione legga la palette com’è in quel momento: richiama le funzioni di design del passo 2. Funzionerebbe anche un solo oggetto di configurazione modificato sul posto: da postext 1.25 il motore vede la modifica alla composizione successiva. `buildDocumentWithFonts` prende il contenuto, quella configurazione e le opzioni di font del kit, e restituisce il documento. `showPages` dispone le pagine come stanno in un libro rilegato, la pagina 1 da sola a destra, e disegna ognuna con `renderPageToCanvas`.
+
+## Varianti
+
+### Guarda che cosa sostituisce la configurazione
+
+Componi con una configurazione vuota e lo stesso Markdown esce su una pagina di 17 × 24 cm in EB Garamond da 8 pt, con titoli in Open Sans blu e una testatina blu sopra un filetto; il motore carica anche quelle due famiglie, perché la configurazione predefinita le nomina.
+
+```diff
+-const doc = await buildDocumentWithFonts({ markdown, resources }, config(), kitFonts(FONTS));
++const doc = await buildDocumentWithFonts({ markdown, resources }, {}, kitFonts(FONTS));
+```
+
+### Cambia la tinta dell’intera pagina
+
+Cambia l’accento e l’esecuzione successiva disegna folio, titoletti e segno di fine nel nuovo colore, perché `col()` copia il nuovo esadecimale accanto all’id ogni volta che gira `config()`. La fotografia mantiene i suoi colori.
+
+```diff
+-  band: '#2b3a67', // the one accent (an indigo): the folios, the subheads, the end mark
++  band: '#3f5b3a', // the one accent (a pine green): the folios, the subheads, the end mark
+```
+
+### Disegna una pagina sul tuo canvas
+
+`renderPageToCanvas` dimensiona il canvas sulla pagina in pixel ai dpi del documento (300 per impostazione predefinita) per `scale`, quindi `scale: 0.5` disegna a circa 150 dpi, e il CSS decide quanto appare grande a schermo.
+
+```diff
+-showPages(doc, {
+-  title: t({ en: 'From a Markdown string to a designed page',
+-    es: 'De una cadena Markdown a una página diseñada',
+-    pt: 'De uma string Markdown a uma página diagramada',
+-    fr: 'D’une chaîne Markdown à une page mise en forme',
+-    it: 'Da una stringa Markdown a una pagina progettata' }),
+-});
++const canvas = document.body.appendChild(document.createElement('canvas'));
++renderPageToCanvas(doc.pages[0], doc, canvas, { scale: 0.5 });
+```
+
+## Errori frequenti
+
+- Young Serif ha un solo peso. I titoli sono in grassetto per impostazione predefinita, quindi qui serve `headings.fontWeight: 400`: senza, i titoletti chiedono uno Young Serif in grassetto che Fontsource non ha, il browser ispessisce il regular e `doc.contentWarnings` elenca il carattere come `fontFallback`.

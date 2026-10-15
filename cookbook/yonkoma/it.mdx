@@ -1,0 +1,48 @@
+---
+title: "Due strisce yonkoma su una pagina"
+summary: "Una pagina di strisce comiche in quattro vignette: due colonne di quattro vignette, la striscia di destra letta per prima, ognuna titolata in un riquadro nero."
+plain: "Una pagina di brevi strisce a fumetti giapponesi, di quattro vignette ciascuna, affiancate come le stampa una rivista di manga: leggi la striscia di destra dall’alto in basso, poi quella di sinistra."
+description: "Due yonkoma (4-koma) su una pagina A5 in Postext: una suddivisione per le due colonne, ordine da destra a sinistra, un titolo per striscia e dieci lettering."
+question: "Come compongo due strisce yonkoma di quattro vignette affiancate, con quella di destra letta per prima?"
+aliases: ["yonkoma", "4-koma", "四コマ", "4コマ漫画", "fumetto in quattro vignette", "striscia comica", "striscia manga", "neko café", "caffè dei gatti", "chibi", "da destra a sinistra", "titolo della striscia", "maxColumnChars"]
+pageNotes: { "1": "L’originale giapponese: due colonne di quattro vignette; la colonna di destra, intitolata 朝ごはん in un riquadro nero, mostra la titolare di un caffè che dà da mangiare a tre gatti, quella di sinistra, intitolata いやし, un impiegato venuto a farsi consolare dai gatti.", "2": "L’edizione italiana: le stesse otto vignette, intitolate «Colazione» e «Terapia», con i balloon composti in righe orizzontali: «Buongiorno a tutti!», «Una ciotola a testa, va bene?», «Vengo a farmi curare dai gatti…» e, nell’ultima vignetta, «Non riesco a lavorare. Che gioia!!»." }
+---
+
+## Che cosa comporrai
+
+Una pagina da un’antologia di yonkoma, ねこ喫茶まどろみ (*Caffè Pisolino*), scritta per la ricetta e disegnata in un morbido stile chibi: Mugi gestisce un caffè dei gatti con un gatto bianco, uno nero e uno tricolore. Gli yonkoma, strisce in quattro vignette, sono la striscia comica dei giornali messa in piedi: quattro vignette uguali impilate dall’alto in basso, impostazione, sviluppo, svolta, battuta finale. Una pagina di rivista ne porta due affiancate, e poiché la pagina si apre da destra, la striscia di destra viene per prima. La pagina è A5, 148 × 210 mm, con l’originale giapponese su un lato della doppia pagina e l’edizione nella lingua di questa pagina sull’altro (l’inglese nella pagina giapponese).
+
+## Preparazione
+
+### 1 · Dividi la pagina in due colonne di quattro
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. L’intera pagina è un solo `:::page` con `split="* [* / * / * / *] | * [* / * / * / *]"`: due colonne uguali, ognuna tagliata in quattro file uguali. Le otto righe `::panel` riempiono le celle nell’ordine di lettura, quindi le prime quattro appartengono alla prima striscia, e con la lettura da destra a sinistra la prima colonna si impagina a destra (<Feature id="comic-panel-split">suddivisione della tavola</Feature>). L’intervallo tra le strisce è di 9 mm e quello tra le vignette di 3 mm, così l’occhio scende lungo una striscia prima di passare alla successiva.
+
+### 2 · Dai un titolo a ogni striscia nella sua prima vignetta
+
+<Excerpt region="balloons" />
+
+Uno yonkoma ha un titolo, e un’antologia lo stampa in un riquadro in testa alla striscia. Qui il titolo è una riga del copione, `caption{title}: 朝ごはん`, e `title` è uno stile di balloon a sé: bianco su nero, a filo del bordo della vignetta nell’angolo superiore iniziale, che in questo libro è quello in alto a destra. Si scrive in ogni edizione come qualunque altra riga, quindi la pagina italiana dice *Colazione* e *Terapia* negli stessi riquadri.
+
+### 3 · Marca anche i gatti come personaggi che parlano
+
+<Excerpt region="art" />
+
+I gatti parlano, `kuro: にゃ`, quindi ogni immagine marca le loro bocche e i loro musi come marca quelli di Mugi. Due piccole funzioni d’aiuto tengono corto l’elenco: `cat()` per un gatto rivolto verso chi legge e `nose()` per uno con il muso affondato in una ciotola o in un cuscino. Nella terza vignetta Mugi è fuori dall’immagine, e la sua battuta `mugi{tail=top}` riceve una coda verso il bordo superiore.
+
+### 4 · Carica i caratteri di ogni edizione con le sue parole
+
+<Excerpt region="fonts" />
+
+Ogni carattere riceve le parole che compone: Zen Antique i balloon, Dela Gothic One gli effetti sonori (ガツガツ, じーっ, すやぁ, ずしっ). Una vignetta di yonkoma è più larga che alta, quindi le colonne giapponesi si fermano a sei caratteri (`maxColumnChars: 6`) e il lettering è mezzo punto più piccolo che in una tavola di una storia.
+
+### 5 · Metti l’originale accanto a ogni edizione
+
+<Excerpt region="editions" />
+
+Ogni lingua del sito scrive il lettering delle strisce nel proprio file, di fronte all’originale giapponese sulla doppia pagina; la pagina giapponese sta di fronte all’edizione inglese. L’ordine resta con la striscia di destra per prima in ogni lingua.
+
+## Errori frequenti
+
+- In una vignetta piccola un balloon verticale esaurisce l’altezza prima della larghezza: il motore lo compone in più colonne, più corte, andando a capo tra le parole. L’ultimo grido dell’impiegato è comunque troppo alto per la vignetta in basso in giapponese, quindi è marcato `break` (`kyaku{shout break}`): esplode verso l’alto attraverso la cornice nella vignetta sopra invece di coprire i gatti, e resta fuori dal margine della pagina.
+- Un grande effetto sonoro si tiene lontano dai volti come un balloon, e il suo punto di ancoraggio sta dentro la zona sicura della vignetta, così ogni ritaglio lo mantiene: «TONF!» sta a `70% 80%`, sulle zampe dei gatti. Il giapponese ずしっ è composto in verticale ed è più alto; in quel punto copriva il muso della gatta tricolore e la composizione avvisava `comicBalloonOverflow`, quindi lì sta a `86% 84%`, accanto a lei.

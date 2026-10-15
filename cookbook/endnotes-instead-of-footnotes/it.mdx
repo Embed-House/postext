@@ -1,0 +1,75 @@
+---
+title: "Note di chiusura su una pagina propria, in due colonne"
+summary: "Un breve preprocessore numera le note [^1] e le raccoglie sotto un titolo Notes, il cui stile le compone su una pagina propria in due colonne."
+plain: "Una piccola edizione di una celebre lezione di scienze su una candela. Mostra come raccogliere le note alla fine, su una pagina propria in due colonne, invece che in fondo a ogni pagina."
+description: "La prima lezione di Faraday sulla candela con sei note di chiusura. Ogni segno [^1] si stampa come cifra in esponente, e le note seguono a parte in due colonne."
+question: "Come compongo le note [^1] come note di chiusura, su una pagina propria sotto un titolo?"
+aliases: ["note a piè di pagina", "note di chiusura", "sezione delle note", "richiami di nota", "numeri in esponente", "[^1]", "note GFM", "rientro sporgente", "edizione critica", "note del curatore", "edizione per il lettore", "endnotes"]
+pageNotes: { "1": "L’apertura della lezione I: un campo di fuliggine sulla metà superiore della pagina, con la fotografia di una candela accesa posata sul suo bordo inferiore, l’occhiello «LECTURE I» in arancione e il titolo «A Candle» in crema. Sotto comincia il testo, con il primo richiamo di nota, un piccolo 1 in esponente arancione scuro.", "4": "Un pannello scuro in testa alla pagina: due fiamme di candela, una sotto una campana di vetro e una in sezione con frecce d’aria ascendente, con la didascalia «Figure 1». Sotto, la lezione arriva alla fine, con il 6 in esponente nel primo paragrafo.", "5": "Le note: una fascia di fuliggine con la fotografia di una candela spenta che lascia una scia di fumo, poi sei note in due colonne di corpo minore, ciascun numero in grassetto arancione scuro sporgente nel rientro, e un colophon; entrambe le colonne finiscono sulla stessa riga." }
+---
+
+## Che cosa comporrai
+
+La lezione I di *The Chemical History of a Candle* di Michael Faraday, composta come piccola edizione per il lettore su una pagina di 156 × 234 mm. La lezione si apre su un campo di fuliggine con una candela accesa posata sul suo bordo inferiore, una fotografia generata con modelli di diffusione il cui nero coincide con la fuliggine, e il testo corre in una sola colonna giustificata di Libre Bodoni. Dove un libro metterebbe le note a piè di pagina, piccoli numeri in esponente arancione scuro rimandano il lettore alla fine della lezione. Le note seguono su una pagina propria, sotto una fascia di fuliggine con la candela spenta, in due colonne in bandiera di corpo 8,2 con ogni numero in grassetto sporgente nel rientro. Tre delle sei sono di William Crookes, dalla ristampa del 1908 della sua edizione del 1861; le altre tre sono nuove e firmate *Ed.* Entrambe le colonne finiscono sulla stessa riga, e il colophon chiude la seconda.
+
+## Preparazione
+
+### 1 · Trasforma le note a piè di pagina in note di chiusura prima della costruzione
+
+Il preprocessore è la [risposta breve](#la-risposta-breve) qui sopra. Postext compone da sé le note `[^1]` ([note a piè di pagina](/it/docs/document-format#note-a-piè-di-pagina)), al piede della colonna che le cita oppure, con `placement: 'chapterEnd'`, dopo l’ultimo blocco del capitolo. In entrambi i casi restano nella colonna del capitolo, nel carattere del testo, sotto un breve filetto. Questa edizione dà alle note un titolo, una fascia e una pagina in due colonne, e uno stile di titolo lo fa solo per un titolo scritto nel Markdown. Perciò il pen riscrive il Markdown prima di chiamare `buildDocument`, e il motore non vede mai un `[^1]`. Numera i richiami nell’ordine in cui il testo li cita per la prima volta e compone tutte le definizioni, in quell’ordine, dove sta la prima di esse, sotto `## Notes`. Ogni nota comincia con `**1**`, perché `1. ` aprirebbe un elenco numerato. Un word joiner (U+2060) apre ogni richiamo; senza di esso, i `**` del richiamo dopo `*Royal George*` incontrerebbero l’asterisco di chiusura del corsivo formando `***`, e gli asterischi si stamperebbero.
+
+### 2 · Riserva il grassetto ai richiami
+
+<Excerpt region="markers" />
+
+Il preprocessore scrive ogni richiamo come `**^n^**`. Gli accenti circonflessi compongono il numero al 58 % del corpo del testo, alzato di un terzo ([formattazione in linea](/it/docs/document-format#formattazione-in-linea)), e il grassetto gli dà `bodyText.boldColor`, che è libero perché Faraday non usa mai il grassetto. Una cifra di 5,8 pt richiede un contrasto di 4,5:1 rispetto alla carta, e la fiamma arriva solo a 2,6:1, perciò i richiami prendono la brace più scura. Il rimando `[Fig. 1]` a <PageRef page={3}>pagina 17</PageRef> si stampa nello stesso colore, in tondo, perché `referenceColor` prende per impostazione predefinita il colore del grassetto e `referenceBold: false` toglie il grassetto.
+
+### 3 · Componi le note in corpo minore, con il numero sporgente
+
+<Excerpt region="notes" />
+
+Le note sono in corpo 8,2 su 10,7 pt, circa quattro quinti del corpo del testo. Il pen misura il `hangingIndent` dello stile in Libre Bodoni una volta caricati i font: un 5 in grassetto e uno spazio en fanno 1,12 em, così la prima parola di ogni nota si allinea con le sue righe successive ([stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo)). Con il numero sporgente, le note non hanno bisogno di spazio tra loro. Sono composte in bandiera perché la giustificazione allargherebbe quello spazio en, e una colonna giustificata di 55 mm in corpo 8,2 risulta troppo spaziata. Le tilde compongono i pedici come gli accenti circonflessi compongono gli esponenti, come in `C~25~H~52~` nella nota 4 e `H~2~O` nella nota 5.
+
+### 4 · Dai alle note una pagina in due colonne
+
+<Excerpt region="section" />
+
+Il titolo `## Notes {style="notes" …}` apre una sezione le cui pagine prendono l’impaginazione e il progetto grafico dello stile. `parity: 'any'` la fa cominciare alla pagina successiva, pari o dispari, e `span: 'page'` stende la fascia su entrambe le colonne, così raggiunge il rifilo e la seconda colonna comincia sotto di essa ([stili di titolo](/it/docs/configuration-styles#stili-dei-titoli)). La fascia stabilisce lo spazio riservato, ma la prima linea di griglia libera da essa sta solo 3 mm sotto la fuliggine, perciò `BAND_GAP` aggiunge 5 mm a `minHeight` e le note cominciano una riga più in basso. Il filetto sottile tra le colonne è il `columnRule` del `layout` proprio dello stile, quindi lo disegnano solo le pagine delle note. Il bilanciamento delle colonne è attivo per impostazione predefinita e taglia la pagina di chiusura in modo che entrambe le colonne finiscano sulla stessa riga ([bilanciamento delle colonne](/it/docs/configuration-text#bilanciamento-delle-colonne)).
+
+### 5 · Apri la lezione su un campo di fuliggine
+
+<Excerpt region="opener" />
+
+Il campo è un riquadro ancorato alla pagina, e la candela, un elemento immagine che contiene un JPEG, poggia sul suo bordo inferiore. La lezione ha una sola colonna, e un titolo grafico tenuto nella sua colonna dipinge comunque dove sono ancorati i suoi elementi, così il campo va dal rifilo attraverso i margini superiore e laterali. Occhiello, sottotitolo e firma vengono dalla riga del titolo, `# A Candle {kicker="Lecture I" subtitle="…" byline="…"}`, quindi la lezione II non richiederebbe codice nuovo. Il campo scende sotto il titolo, perciò stabilisce lo spazio riservato. Vi si aggiunge il margine inferiore predefinito del titolo, 0,5 em, e il testo comincia una linea di griglia sotto la prima riga libera dalla fuliggine. Il sottotitolo è largo 86 mm in modo che vada a capo dopo un trattino, mai prima.
+
+### 6 · Usa la fiamma sulla fuliggine e la brace sulla carta
+
+<Excerpt region="palette" />
+
+L’arancione della fiamma ha un contrasto di 6:1 sulla fuliggine ma solo 2,6:1 sulla carta. Colora gli occhielli sulle fasce scure e la figura 1; tutto ciò che di piccolo si stampa in arancione sulla carta (richiami, numeri delle note, l’etichetta della figura) prende la brace più scura, a 5,1:1. `main-color` punta alla brace, così un valore predefinito che la configurazione non ridichiara segue il progetto grafico invece di stamparsi in blu.
+
+<Note>Un breve inciso può restare nel testo tra parentesi. Le glosse che il lettore deve avere accanto alla riga possono andare in una colonna laterale, come in <RecipeLink slug="textbook-margin-column">Manuale con una colonna a margine</RecipeLink>.</Note>
+
+## Varianti
+
+### Lascia che sia Postext a comporre le note
+
+Togli `endnotes()` e il titolo `## Notes`, metti una riga vuota tra le definizioni (il motore legge una definizione fino alla riga vuota successiva) e aggiungi `footnotes: { placement: 'chapterEnd' }` alla configurazione. Il motore numera i richiami e compone le note alla fine della lezione, dopo il colophon, nella sua unica colonna; <RecipeLink slug="novel-footnotes-column-foot">Note al piede della colonna che le cita</RecipeLink> dà uno stile alle note composte dal motore.
+
+### Stampa i richiami in nero
+
+Se il testo usa il grassetto per la propria enfasi, stampa i richiami nel colore dell’inchiostro, perché `boldColor` colora allo stesso modo i richiami e ogni parola in grassetto.
+
+```diff
+-const markers = { boldColor: col('ember'), // **^n^**: a superscript at 58 % of the text size
++const markers = { boldColor: col('ink'), // **^n^**: a superscript at 58 % of the text size
+```
+
+### Lascia le colonne delle note non pareggiate
+
+Disattiva il bilanciamento della pagina di chiusura, e la prima colonna si riempie fino al piede prima che cominci la seconda.
+
+```diff
+-  headings: { fontFamily: DISPLAY, color: col('ink'), levels: [
++  headings: { fontFamily: DISPLAY, color: col('ink'), balancing: { trailing: false }, levels: [
+```

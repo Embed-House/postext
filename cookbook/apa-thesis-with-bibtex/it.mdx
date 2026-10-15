@@ -1,0 +1,61 @@
+---
+title: "Un capitolo di tesi con citazioni APA 7"
+summary: "Un capitolo di dottorato le cui citazioni [@key, p. 33] diventano APA 7 con citeproc-js, con la bibliografia costruita da un blocco BibTeX."
+plain: "Un capitolo di una tesi di dottorato. L’autore scrive un codice breve per ogni fonte; Postext stampa le citazioni e la bibliografia finale nello stile APA."
+description: "Un capitolo di tesi in Postext: citazioni Pandoc in APA 7 con citeproc-js, bibliografia da BibTeX con rientro sporgente e rimandi cliccabili alle sezioni."
+question: "Come cito le fonti in APA 7 e ottengo la bibliografia costruita dal mio file BibTeX?"
+aliases: ["APA", "APA 7", "tesi", "tesi di dottorato", "tesi di laurea", "BibTeX", "Zotero", "bibliografia", "riferimenti bibliografici", "autore-data", "citeproc"]
+pageNotes: { "1": "Pagina 1: una fascia azzurro pallido in testa con l’etichetta «CHAPTER», il titolo «Reading on Paper and on Screens: The State of the Evidence» e un grande numero 2 chiaro a destra; sotto, i paragrafi d’apertura con citazioni autore-data come «(Tinker, 1963)» e link in grassetto blu a «Section 2.1», «2.2» e «2.3».", "2": "Pagina 2: le sezioni 2.2 e 2.3 con citazioni narrative come «Delgado et al. (2018)», una citazione con pagina «(Ibáñez Roca, 2023, pp. 12–15)» e l’inizio dell’elenco non numerato «References».", "3": "Pagina 3: il resto dell’elenco «References» in APA 7, ogni voce con rientro sporgente e il suo DOI stampato per intero." }
+---
+
+## Che cosa comporrai
+
+Il secondo capitolo di una tesi di dottorato in scienze dell’educazione, la rassegna della letteratura: che cosa dicono vent’anni di studi sulla lettura su carta e su schermo. Il capitolo è composto su una pagina A4 rilegata a sinistra, in Literata con interlinea di 16 pt, sotto una fascia chiara nel blu dell’università. L’autore tiene le fonti in Zotero e incolla l’esportazione in BibTeX; nel testo ogni fonte è una chiave. Postext formatta ogni citazione in APA 7, con l’autore, l’anno e la pagina quando è indicata, scrive “Delgado et al. (2018)” quando il nome fa parte della frase e costruisce la bibliografia nell’ordine e nella forma che lo stile richiede. Quando il relatore chiede Chicago, lo stile è l’unica riga che cambia.
+
+## Preparazione
+
+### 1 · Un motore, uno stile
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Postext legge le citazioni e lascia la loro forma a un motore di citazione, registrato una volta prima della prima composizione; `postext-citeproc` incapsula citeproc-js, il motore che usano Zotero e Mendeley, con sedici stili CSL e i loro file di localizzazione. `[@mangen2013]` dà “(Mangen et al., 2013)”, `@delgado2018` senza parentesi quadre mette gli autori nella frase e `[@ibanez2023, pp. 12–15]` porta l’intervallo di pagine dentro le parentesi. Con il documento in spagnolo, le stesse chiavi prendono congiunzioni e abbreviazioni dal file di localizzazione spagnolo, perché il motore segue la lingua del documento.
+
+### 2 · La bibliografia viene da un blocco BibTeX
+
+L’ultimo blocco del capitolo è `:::references{format=bibtex}` con dentro l’esportazione di Zotero incollata, con gli accenti scritti come `{\'a}`. `:::bibliography`, più sopra, colloca l’elenco sotto il titolo References; senza, Postext aggiunge l’elenco alla fine. Compaiono solo le opere citate, ordinate come le ordina APA, e ogni citazione nel testo rimanda alla sua voce.
+
+### 3 · Un titolo senza numero, rimandi in parole
+
+<Excerpt region="refs" />
+
+Il titolo della bibliografia prende lo stile `references`, che lo tiene nell’indice ma fuori dalla numerazione, così l’elenco non diventa la sezione 2.4. `:ref{id="sec-speed"}` stampa “Section 2.2” dall’etichetta di `crossRefs` e rimanda al titolo; i numeri vengono da `startAt=2` sul titolo del capitolo, lo stesso contatore che usano i titoli.
+
+### 4 · L’apertura sta in una fascia
+
+<Excerpt region="opener" />
+
+La fascia è un riquadro ancorato al formato rifilato e il testo comincia 10 mm sotto. Il numero è composto in Literata Light a 96 pt sulla destra, dove si legge come una forma e lascia al titolo tutta la giustezza.
+
+<Excerpt region="palette" />
+
+## Varianti
+
+### Cambia lo stile
+
+Lo stesso capitolo in Chicago autore-data toglie la virgola dopo il nome ed elenca l’anno dopo gli autori.
+
+```diff
+-  style: 'apa', // 'chicago-author-date', 'ieee', 'vancouver'… change nothing else
++  style: 'chicago-author-date',
+```
+
+### Una bibliografia più piccola del testo
+
+Molte università ammettono la bibliografia un corpo più piccola e con interlinea singola.
+
+```diff
+-    fontSize: em(1), hangingIndent: mm(12.7), entrySpacing: pt(4),
++    fontSize: em(0.9), lineHeight: pt(13), hangingIndent: mm(12.7), entrySpacing: pt(3),
+```
+
+## Errori frequenti
+
+- APA scrive i titoli di articoli e libri in sentence case, cioè con la sola iniziale maiuscola, e citeproc-js stampa i titoli come li forniscono i dati. Zotero conserva la maggior parte dei titoli in title case, quindi correggili in Zotero o nel BibTeX prima che arrivino sulla pagina.

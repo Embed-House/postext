@@ -10,7 +10,7 @@ pageNotes: { "1": "La feuille de style : le titre « Feuille de style du lettr
 
 ## Ce que vous allez composer
 
-La page 7 du *Phare de Porthcove*, une bande dessinée sur une nuit de tempête dans un phare, précédée de la feuille de style du lettreur. Un chalutier perd son moteur, le gardien le guide par radio, Maya attend avec le chat, et au matin le patron de pêche les remercie. La page emploie toutes les sortes de bulles que dessine Postext : parole, paroles jointes, pensée, murmure, cri, radio, récitatifs de narration, voix intérieure, note de l’éditeur, onomatopée, voix hors champ et bulle épinglée. Le format est celui d’un comic book américain, 168 × 259 mm, et la page existe en neuf langues.
+La page 7 du *Phare de Porthcove*, une bande dessinée sur une nuit de tempête dans un phare, précédée de la feuille de style du lettreur. Un chalutier perd son moteur, le gardien le guide par radio, Maya attend avec le chat, et au matin le patron de pêche les remercie. La page emploie toutes les sortes de bulles que dessine Postext : parole, paroles jointes, pensée, murmure, cri, radio, récitatifs de narration, voix intérieure, note de l’éditeur, onomatopée, voix hors champ et bulle épinglée. Le format est celui d’un comic book américain, 168 × 259 mm, et la page existe en dix langues.
 
 ## Préparation
 
@@ -24,7 +24,7 @@ Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Une ligne 
 
 <Excerpt region="art" />
 
-Chaque image porte des ancres exprimées en fractions de l’image : la bouche que vise un appendice de parole, la tête que vise une pensée, le visage qu’aucune bulle ne doit couvrir ([locuteurs et ancres](/fr/docs/comics#locuteurs-et-ancres)). Le patron de pêche n’est jamais dessiné : son ancre dans l’image de la tempête est le poste de radio, dans l’image de la mer son bateau. Quand le locuteur n’est pas dans la case, `tail=right` (ou `left`, `top`, `bottom`) fait courir l’appendice jusqu’à ce bord, et `at="44% 22%"` épingle le centre d’une bulle à un point de l’image : elle y reste, quel que soit le recadrage. Deux lignes de suite d’un même locuteur se joignent en un seul contour avec un seul appendice. `left` et `right` sont des côtés de l’image : les neuf éditions écrivent donc la même ligne pour le gardien dans la case de la mer, dont le phare se dresse à droite de l’image, `tail=right`, que la page se lise de gauche à droite ou de droite à gauche. `start` et `end` suivent au contraire le sens de lecture de la page.
+Chaque image porte des ancres exprimées en fractions de l’image : la bouche que vise un appendice de parole, la tête que vise une pensée, le visage qu’aucune bulle ne doit couvrir ([locuteurs et ancres](/fr/docs/comics#locuteurs-et-ancres)). Le patron de pêche n’est jamais dessiné : son ancre dans l’image de la tempête est le poste de radio, dans l’image de la mer son bateau. Quand le locuteur n’est pas dans la case, `tail=right` (ou `left`, `top`, `bottom`) fait courir l’appendice jusqu’à ce bord, et `at="44% 22%"` épingle le centre d’une bulle à un point de l’image : elle y reste, quel que soit le recadrage. Deux lignes de suite d’un même locuteur se joignent en un seul contour avec un seul appendice. `left` et `right` sont des côtés de l’image : les dix éditions écrivent donc la même ligne pour le gardien dans la case de la mer, dont le phare se dresse à droite de l’image, `tail=right`, que la page se lise de gauche à droite ou de droite à gauche. `start` et `end` suivent au contraire le sens de lecture de la page.
 
 ### 3 · Donnez à un personnage une voix bien à lui
 
@@ -34,7 +34,7 @@ La distribution de la réponse courte donne à chaque ligne `skipper:` le style 
 
 <Excerpt region="editions" />
 
-La même page existe en neuf langues : `content.<lang>.md` ne contient que les mots. Les bulles japonaises sont composées verticalement en Zen Antique et leurs onomatopées en Dela Gothic One, les bulles arabes en Playpen Sans Arabic avec Lalezar pour le tonnerre. L’italique et le gras s’appliquent là où le caractère les possède : la voix intérieure est en italique en français, en romain en japonais ([lettrage](/fr/docs/comics#lettrage)).
+La même page existe en dix langues : `content.<lang>.md` ne contient que les mots. Les bulles japonaises sont composées verticalement en Zen Antique et leurs onomatopées en Dela Gothic One, les bulles arabes en Playpen Sans Arabic avec Lalezar pour le tonnerre. L’italique et le gras s’appliquent là où le caractère les possède : la voix intérieure est en italique en français, en romain en japonais ([lettrage](/fr/docs/comics#lettrage)).
 
 ## Variantes
 

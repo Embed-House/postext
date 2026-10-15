@@ -1,0 +1,70 @@
+---
+title: "Libro di giochi: cruciverba, crucipuzzle e labirinto"
+summary: "Un cruciverba e un crucipuzzle costruiti come tabelle da righe di lettere: caselle nere e parole trovate sono riempimenti di cella, i numeri sono in apice."
+plain: "Un quaderno di giochi per le vacanze per bambini dai nove agli undici anni, con un cruciverba, un crucipuzzle e un labirinto. Mostra come costruire le griglie dei giochi da semplici righe di lettere."
+description: "Quaderno di giochi per bambini in Postext: cruciverba e crucipuzzle costruiti come tabelle, un labirinto da un seme e soluzioni stampate dagli stessi dati."
+question: "Come do a ogni tabella un aspetto suo: filetti della griglia, riempimenti, tessere, cornice arrotondata?"
+aliases: ["cruciverba", "parole crociate", "crucipuzzle", "cerca parole", "labirinto", "libro di attività", "libro di giochi", "compiti delle vacanze", "libro per bambini", "soluzioni", "griglia da testo"]
+pageNotes: { "1": "La copertina: un cielo giallo chiaro con un grande sole arancione che tramonta in un mare blu striato di onde bianche, una barca a vela all’orizzonte, due gabbiani e una tartaruga che nuota. «Summer Workbook» in grandi lettere blu notte, «Puzzles from the sea», un’etichetta corallo «Ages 9 to 11» e uno spazio bianco per scrivere un nome.", "2": "«Puzzle 1» sotto una fascia blu mare con il piede ondulato: un cruciverba nove per nove con caselle blu notte e piccoli numeri in grassetto negli angoli delle caselle dove cominciano le parole, poi le definizioni in un riquadro giallo chiaro, «Across» a sinistra e «Down» a destra.", "3": "«Puzzle 2» sotto una fascia verde menta: due file centrate di cinque chip di parole, la prima, «UMBRELLA», riempita di corallo, sopra una griglia dodici per dodici di maiuscole su tessere giallo chiaro con fughe bianche e angoli arrotondati; le lettere di «UMBRELLA» sono su tessere corallo.", "4": "«Puzzle 3» sotto una fascia corallo: un labirinto su sabbia chiara da un nido in alto a sinistra, dove una tartaruga è appena nata accanto a due gusci vuoti, fino a un’apertura sul mare blu in basso a destra.", "5": "Le soluzioni affiancate sotto una fascia gialla: il cruciverba risolto, il crucipuzzle con ogni parola su verde menta, e il labirinto sulla sabbia con l’uscita tracciata in corallo dal nido vuoto fino al mare, dove nuota la piccola tartaruga. Sotto, un riquadro «Did you know?» mette lo spaccato di uova di tartaruga sepolte nella sabbia accanto a un paragrafo su come nidificano le tartarughe Caretta caretta. Il colophon corre lungo il piede accanto al folio." }
+---
+
+## Che cosa comporrai
+
+Un quaderno di giochi per le vacanze per bambini dai nove agli undici anni: una copertina, tre giochi sul mare e una pagina di soluzioni. Le pagine da 2 a 5 si aprono sotto una campitura di colore con il piede ondulato (blu mare, verde menta, corallo, poi giallo per le soluzioni) e un titolo da 46 pt in Lilita One. Il codice costruisce il cruciverba e il crucipuzzle come tabelle a partire da righe di lettere e dà a ciascuno il suo stile di tabella: caselle con filetti per il cruciverba, tessere chiare con fughe bianche e angoli arrotondati per il crucipuzzle. Le caselle nere del cruciverba e la parola già trovata nel crucipuzzle sono riempimenti di cella, e i numeri delle definizioni sono apici negli angoli. Il labirinto è un SVG disegnato a partire da un seme. L’ultima pagina stampa le tre soluzioni affiancate dagli stessi dati, sopra un riquadro su come nidificano le tartarughe Caretta caretta.
+
+## Preparazione
+
+### 1 · Uno stile di tabella, tre aspetti
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `tableStyle` imposta Chivo Mono per ogni griglia. Ogni stile con nome in `tableStyles` imposta il proprio corpo, la spaziatura interna e i filetti, e una tabella ne sceglie uno con `table.styleId`. La larghezza di una colonna è la sua quota della larghezza della tabella, ma una riga è alta quanto le sue righe di testo più la spaziatura interna, quindi è la spaziatura a stabilire l’altezza di ogni casella. Il crucipuzzle mantiene la casella di 9,41 mm del cruciverba attorno a una riga di maiuscole da 15 pt, e `pad()` calcola i 2,9 pt che quella riga lascia sopra e sotto. I suoi filetti, larghi 2,4 pt e del colore della carta, tagliano il riempimento chiaro in tessere, e `borderRadius` arrotonda a 4 mm gli angoli della cornice e vi ritaglia i riempimenti. Nella pagina delle soluzioni `key()` fa stare nove o dodici caselle in 54 mm: caselle da 6 mm con lettere da 8 pt per il cruciverba, caselle da 4,5 mm con lettere da 6 pt per il crucipuzzle. La soluzione del labirinto è disegnata in un quadrato di 54 mm, così le tre soluzioni hanno la stessa altezza e le loro didascalie condividono una linea di base a 106,4 mm dal bordo superiore.
+
+### 2 · Nove caselle, quindici righe
+
+<Excerpt region="crossword" />
+
+Una casella bianca contiene due righe di Chivo Mono da 8,9 pt (il numero della definizione e una riga vuota) dentro 1 pt di spaziatura interna, 26,7 pt in tutto: 9,41 mm, un nono della larghezza della tabella. Nove caselle sono alte 84,7 mm, l’altezza di quindici righe da 16 pt del testo, e il riquadro delle definizioni comincia sulla griglia della linea di base una riga più sotto. Una casella riceve un numero, in ordine di lettura, quando vi comincia una parola orizzontale o verticale. Il numero è un apice in grassetto da 5,2 pt (il 58 % di 8,9 pt) alzato di 3 pt (un terzo di 8,9 pt), il che lo mette nell’angolo superiore della casella. La riga vuota è un word joiner (U+2060). Una riga lasciata vuota non aggiunge altezza alla cella, e la griglia risulterebbe alta 45,5 mm. Una casella nera è una cella vuota con un suo `background`, collegato a `ink`.
+
+### 3 · Il codice trova le parole nella griglia
+
+<Excerpt region="search" />
+
+La griglia è fatta di dodici righe di maiuscole in un file di contenuto a sé, dopo l’elenco delle parole da trovare. `locate()` cerca ogni parola in otto direzioni e lancia un errore se non c’è esattamente una corrispondenza, così un refuso nella griglia o nell’elenco ferma la build prima che stampi una parola che nessuno può trovare. `setCellBackground` restituisce un nuovo modello di tabella con una casella riempita in più. Il riempimento è collegato a una voce della tavolozza e copre la tessera dello stile: corallo per UMBRELLA a pagina 3, verde menta per tutte e dieci le parole a pagina 5. La prima variante colora a righe alterne la tabella dallo stile (`bodyAlternateBackground`), e il riempimento proprio di una cella copre la riga colorata. Il banco delle parole sopra la griglia è fatto di due file centrate di chip: quello di UMBRELLA è riempito di corallo come le sue caselle, e gli altri nove sono bianchi con un bordo blu notte.
+
+### 4 · Un’apertura, quattro colori
+
+<Excerpt region="openers" />
+
+Le pagine da 2 a 5 condividono un solo design. Una campitura di colore scende per 40 mm dal bordo superiore e finisce con un piede ondulato disegnato nel colore della carta; l’occhiello, il titolo e il tema nella sua pillola bianca vengono dalla riga del titolo e dai suoi attributi. La campitura e il disco del folio sono collegati alla voce `band` della tavolozza, e lo stile di titolo di ogni pagina dà a `band` un suo valore, così `# Word Search {style="sopa"}` li rende entrambi verde menta a pagina 3. Il livello 1 imposta `span: 'page'` anche se il libro ha una sola colonna: un design tenuto nella sua colonna viene tagliato al piede della colonna, il che farebbe finire l’immagine della copertina 16 mm prima del bordo inferiore. Il riquadro della campitura conta nell’altezza che l’apertura riserva, così il testo comincia sulla riga successiva della griglia, a 44,2 mm dal bordo superiore e 4 mm sotto le onde.
+
+### 5 · Le soluzioni vengono dagli stessi dati
+
+<Excerpt region="answers" />
+
+La pagina delle soluzioni chiama `crossword()` con `solved` e `wordSearch()` con tutte e dieci le parole, sugli stessi file di contenuto dei giochi, così una modifica a una griglia cambia anche la sua soluzione. I giochi e i disegni usano il tipo Plain, il cui `captionPrefix` vuoto non stampa alcuna didascalia per una risorsa senza testo di didascalia. Le soluzioni usano il tipo Solution, numerato da 1 a 3 in ordine di lettura per corrispondere agli occhielli da Puzzle 1 a Puzzle 3. Stanno in un gruppo `:::columns{count=3 breaks="2,3" gap=6mm}` nel testo, senza riquadro attorno (postext 1.25): `breaks` apre una nuova colonna alla seconda e alla terza soluzione, e `gap` distanzia le colonne di 6 mm; ogni soluzione è larga 54 mm in una colonna di 55,3 mm. Il riquadro «Did you know?» contiene un gruppo proprio, con `breaks="2"`, per mettere il disegno del nido accanto al suo paragrafo.
+
+## Varianti
+
+### Colora a righe alterne il crucipuzzle
+
+Un giallo più intenso a righe alterne aiuta un giovane lettore a seguire una riga di lettere. Il riempimento proprio di una cella copre la riga colorata, quindi UMBRELLA resta corallo; la griglia delle soluzioni ha un suo stile e non prende le righe alterne.
+
+```diff
+     bodyBackgroundEnabled: true, bodyBackground: col('tint'), // tiles with white joints
++    bodyAlternateBackgroundEnabled: true, // a shade deeper than the tiles on every other row
++    bodyAlternateBackground: { hex: '#ffdd80', model: 'hex' },
+     borderColor: col('paper'), borderWidth: pt(2.4), borderRadius: mm(4) },
+```
+
+### Disegna un labirinto più difficile
+
+Ventuno per undici caselle stanno nella stessa larghezza a 8,4 mm ciascuna, e la soluzione a pagina 5 viene disegnata dal nuovo labirinto.
+
+```diff
+-const theMaze = maze(17, 9, 2027);
++const theMaze = maze(21, 11, 2027);
+```
+
+## Errori frequenti
+
+- I numeri delle definizioni nel riquadro sono scritti nel file di contenuto, mentre quelli nella griglia sono calcolati. Dopo aver modificato una griglia, verifica le definizioni rispetto a essa, perché il codice non le confronta.
+- La tavolozza di uno stile di titolo ricolora gli elementi di design, il testo e i filetti e i riempimenti delle tabelle, ma non l’interno di un SVG, quindi le onde al piede di ogni campitura sono disegnate nel colore della carta e un solo disegno serve tutte e quattro le campiture.

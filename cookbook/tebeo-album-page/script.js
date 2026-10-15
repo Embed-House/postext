@@ -10,7 +10,7 @@ import {
 } from 'https://esm.sh/postext';
 import { renderToPdf, decompressWoff2 } from 'https://esm.sh/postext-pdf';
 
-const LANG = 'en'; // @lang: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de'
+const LANG = 'en'; // @lang: 'es' | 'en' | 'ca' | 'zh' | 'ar' | 'ja' | 'pt' | 'fr' | 'de' | 'it'
 const RECIPE = 'tebeo-album-page';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -31,10 +31,10 @@ const colorPalette = [
 // #endregion
 
 const LOCALE = t({ es: 'es', en: 'en-gb', ca: 'ca', zh: 'zh-Hans', ar: 'ar', ja: 'ja',
-  pt: 'pt-BR', fr: 'fr', de: 'de' });
+  pt: 'pt-BR', fr: 'fr', de: 'de', it: 'it' });
 // A hand that letters in upper and lower case for the Latin editions; the engine's comic
 // faces for Chinese, Japanese and Arabic, which a Latin hand cannot set.
-const LATIN = ['es', 'en', 'ca', 'pt', 'fr', 'de'].includes(LANG);
+const LATIN = ['es', 'en', 'ca', 'pt', 'fr', 'de', 'it'].includes(LANG);
 const LETTER = LATIN ? 'Patrick Hand' : defaultComicFont(LOCALE);
 const DISPLAY = defaultComicSfxFont(LOCALE); // Bangers, Dela Gothic One, ZCOOL KuaiLe, Lalezar
 
@@ -59,7 +59,7 @@ const comics = {
     { id: 'lola', name: 'Lola' },
     { id: 'paco', name: t({ es: 'el abuelo Paco', en: 'Grandpa Paco', ca: "l'avi Paco",
       zh: '帕科爷爷', ar: 'الجد باكو', ja: 'パコおじいちゃん', pt: 'o vovô Paco',
-      fr: 'Papi Paco', de: 'Opa Paco' }) },
+      fr: 'Papi Paco', de: 'Opa Paco', it: 'nonno Paco' }) },
     { id: 'carmen', name: 'Carmen' },
   ],
   runningHeads: true, // the folio prints on the comic page too
@@ -145,7 +145,9 @@ const ART = {
       fr: 'Un dimanche ensoleillé à Madrid : une halle de fer et de verre sur une place, avec des '
         + 'passants qui font leurs courses et des pigeons.',
       de: 'Ein sonniger Sonntag in Madrid: eine Markthalle aus Eisen und Glas an einem Platz, mit '
-        + 'Leuten beim Einkaufen und Tauben.' }),
+        + 'Leuten beim Einkaufen und Tauben.',
+      it: 'Una domenica di sole a Madrid: un mercato coperto di ferro e vetro in una piazza, '
+        + 'con gente che fa la spesa e piccioni.' }),
   },
   t2: { width: 1000, height: 1000, safeArea: box([.2, .13, .71, .46]),
     alt: t({ en: 'Inside the market, Lola pulls her grandfather Paco by the hand, pointing ahead '
@@ -162,7 +164,9 @@ const ART = {
       fr: 'Dans le marché, Lola tire son grand-père Paco par la main et montre du doigt les étals, '
         + 'devant eux.',
       de: 'In der Markthalle zieht Lola ihren Großvater Paco an der Hand und zeigt nach vorn, '
-        + 'zwischen die Stände.' }),
+        + 'zwischen die Stände.',
+      it: 'Dentro il mercato, Lola tira per mano il nonno Paco e indica davanti a sé, tra le '
+        + 'bancarelle.' }),
     anchors: [
       who('paco', .315, .28, [.32, .2], [.22, .13, .17, .19]),
       who('lola', .7, .415, [.66, .33], [.6, .3, .17, .17]),
@@ -184,7 +188,9 @@ const ART = {
       fr: 'Lola lève les yeux vers une immense pyramide d’oranges pendant que Carmen, la '
         + 'marchande de fruits, fait briller une orange.',
       de: 'Lola blickt zu einer riesigen Orangenpyramide hinauf, während Carmen, die '
-        + 'Obsthändlerin, eine Orange blank reibt.' }),
+        + 'Obsthändlerin, eine Orange blank reibt.',
+      it: 'Lola alza lo sguardo verso un’altissima piramide di arance, mentre Carmen, la '
+        + 'fruttivendola, lucida un’arancia.' }),
     anchors: [
       who('lola', .235, .43, [.19, .36], [.14, .3, .13, .18]),
       who('carmen', .795, .27, [.8, .19], [.74, .12, .13, .19]),
@@ -206,7 +212,9 @@ const ART = {
       fr: 'Lola tend la main vers une orange tout en bas de la pile ; Paco, alarmé, lève la main '
         + 'pour l’arrêter.',
       de: 'Lola greift nach einer Orange ganz unten im Stapel; Paco hebt erschrocken die Hand, '
-        + 'um sie aufzuhalten.' }),
+        + 'um sie aufzuhalten.',
+      it: 'Lola allunga la mano verso un’arancia in fondo alla pila; Paco, allarmato, alza la '
+        + 'mano per fermarla.' }),
     anchors: [
       who('paco', .31, .3, [.28, .17], [.17, .1, .2, .26]),
       who('lola', .635, .485, [.61, .38], [.48, .28, .27, .27]),
@@ -230,7 +238,9 @@ const ART = {
       fr: 'La pyramide d’oranges s’effondre : les oranges roulent partout, le béret de Paco '
         + 's’envole, Carmen lève les bras et les pigeons s’égaillent.',
       de: 'Die Orangenpyramide stürzt ein: Überall rollen Orangen, Pacos Baskenmütze fliegt '
-        + 'davon, Carmen reißt die Arme hoch, und die Tauben flattern auf.' }),
+        + 'davon, Carmen reißt die Arme hoch, und die Tauben flattern auf.',
+      it: 'La piramide di arance crolla: le arance rotolano dappertutto, il basco di Paco vola '
+        + 'via, Carmen alza le braccia e i piccioni si sparpagliano.' }),
     anchors: [
       who('lola', .15, .44, [.14, .37], [.08, .32, .12, .15]),
       who('paco', .34, .31, [.33, .27], [.27, .22, .12, .14]),
@@ -255,7 +265,9 @@ const ART = {
       fr: 'Lola, Paco et Carmen, à genoux, ramassent en riant les oranges dans le béret et le '
         + 'tablier ; un pigeon en picore une.',
       de: 'Lola, Paco und Carmen knien und sammeln lachend die Orangen in die Mütze und die '
-        + 'Schürze; eine Taube pickt an einer.' }),
+        + 'Schürze; eine Taube pickt an einer.',
+      it: 'Lola, Paco e Carmen, in ginocchio, raccolgono ridendo le arance nel basco e nel '
+        + 'grembiule; un piccione ne becca una.' }),
     anchors: [
       who('lola', .245, .42, [.24, .33], [.17, .27, .14, .2]),
       who('paco', .49, .3, [.48, .22], [.42, .14, .14, .2]),
@@ -278,7 +290,9 @@ const ART = {
       fr: 'Sur un banc du parc, Lola et Paco épluchent des oranges en riant ; un pigeon s’est posé '
         + 'sur le béret de Paco.',
       de: 'Auf einer Parkbank schälen Lola und Paco Orangen und lachen; auf Pacos Mütze sitzt '
-        + 'eine Taube.' }),
+        + 'eine Taube.',
+      it: 'Su una panchina del parco, Lola e Paco sbucciano arance ridendo; un piccione si è '
+        + 'posato sul basco di Paco.' }),
     anchors: [
       who('lola', .32, .45, [.31, .35], [.24, .3, .15, .22]),
       who('paco', .6, .38, [.65, .25], [.54, .2, .19, .24]),
@@ -309,7 +323,7 @@ const doc = await withLoadedFonts(
 showBook(doc, { title: t({ es: 'Una página de álbum', en: 'An album page', ca: "Una pàgina d'àlbum",
   zh: '一页欧式漫画', ar: 'صفحة من ألبوم مصوّر', ja: 'BDのアルバムの一ページ',
   pt: 'Uma página de álbum', fr: 'Une page d’album',
-  de: 'Eine Albumseite' }) });
+  de: 'Eine Albumseite', it: 'Una pagina d’album' }) });
 offerPdf(() => renderToPdf(doc, { fontProvider: comicPdfProvider, resourceBytes: imageBytes }),
   `${RECIPE}.pdf`);
 

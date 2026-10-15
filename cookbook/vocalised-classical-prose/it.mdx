@@ -1,0 +1,53 @@
+---
+title: "Prosa classica con tutte le vocali e parentesi coraniche"
+summary: "Una maqāma con una vocale su ogni lettera, composta con un’interlinea doppia del corpo perché i segni di una riga non tocchino mai quelli della successiva."
+plain: "Un antico racconto arabo stampato con tutti i piccoli segni vocalici sopra e sotto le lettere. Le righe sono abbastanza distanziate perché i segni di una riga non urtino la riga sotto."
+description: "Una maqāma araba vocalizzata in Postext: Amiri a 14 pt su 28 pt, giustificazione con kashida, citazioni del Corano tra ﴿ ﴾ e l’avviso sull’interlinea spiegato."
+question: "Quanta interlinea richiede l’arabo completamente vocalizzato?"
+aliases: ["arabo vocalizzato", "tashkīl", "harakat", "segni vocalici", "shadda", "kasra", "interlinea araba", "interlinea", "maqāma", "maqamat", "al-Hamadhānī", "parentesi coraniche", "parentesi ornate", "مقامات", "تشكيل", "حركات", "vocalised Arabic"]
+pageNotes: { "2": "La prima pagina della maqāma: il titolo المقامة المارستانية in Ruqʿa rossa, il nome dell’autore in Naskh grassetto, una piccola riga latina grigia, poi arabo giustificato con un segno vocalico su ogni lettera, e una citazione del Corano tra parentesi ornate ﴿ ﴾ vicino al piede." }
+---
+
+## Che cosa comporrai
+
+Quattro pagine di un libro arabo classico in cui ogni lettera porta la sua vocale: la *Maqāma del manicomio* di al-Hamadhānī, in cui un folle del manicomio di Bassora mette in rotta un teologo e poi si presenta in versi. Il testo completamente vocalizzato impila fatḥa e shadda sopra le lettere e kasra sotto, e i segni vivono nello spazio tra le righe. Per questo la pagina è composta in Amiri a 14 pt su 28 pt, il doppio del corpo, e nient’altro: l’interlinea è il progetto grafico. Il testo è giustificato con le kashida, si apre con un rientro di 1,5 em a destra e compone le sue tre citazioni del Corano tra le parentesi ornate ﴿ ﴾ del muṣḥaf a stampa. Solo la riga latina del titolo e la nota sul testo cambiano con l’edizione.
+
+## Preparazione
+
+### 1 · Un’interlinea doppia del corpo
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. L’interlinea non cresce mai per fare spazio ai segni: una kasra sotto una riga e una shadda in cima alla successiva condividono lo stesso spazio, quindi lo spazio si sceglie per la riga più vocalizzata del libro ([Segni vocalici](/it/docs/arabic-layout#segni-vocalici)). Su questo testo, un’interlinea di 1,6 × il corpo lascia sei paragrafi i cui segni si scontrano e 1,9 × ne lascia ancora uno; a 2 × nessuno. Te lo dice la composizione: quando due righe si scontrano segnala `arabicMarksExceedLeading` per il paragrafo, con l’interlinea che servirebbe ([Testo arabo](/it/docs/configuration-text#testo-arabo)).
+
+<PageShot page={2} crop="0,0.3,1,0.45" caption="Pagina 2: una vocale su ogni lettera, e 28 pt tra le linee di base, così le kasra di una riga passano sopra le shadda della successiva." />
+
+### 2 · Una pagina piccola con una giustezza ampia
+
+<Excerpt region="page" />
+
+Una pagina di 14 × 21 cm con margini laterali di 16 e 18 mm lascia una giustezza di 106 mm, circa dodici parole vocalizzate, e diciassette righe sul passo di 28 pt. I segni fanno apparire grigie le righe, quindi la pagina resta sobria: niente testatine, una carta crema, un solo titolo rosso. `mirror: true` mette il margine più largo dal lato del dorso, che in un libro rilegato a destra è il bordo destro di una pagina dispari ([Ordine delle pagine e rilegatura a destra](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)).
+
+### 3 · Titoli che rispettano la griglia
+
+<Excerpt region="titles" />
+
+I titoli non hanno grafica: il titolo in Ruqʿa sta in un riquadro di riga profondo tre righe della griglia, e l’autore e la riga latina occupano ciascuno una riga di 28 pt, così la prima riga di testo cade sulla griglia. La riga latina è `{dir=ltr}`, un titolo da sinistra a destra in un libro da destra a sinistra ([Direzione del documento, dei blocchi e in linea](/it/docs/arabic-layout#direzione-del-documento-del-blocco-e-in-linea)).
+
+## Varianti
+
+### Togli le vocali per un’edizione di lettura
+
+`tashkil: 'strip'` rimuove dall’impaginazione le vocali brevi e la shadda, così lo stesso testo si può comporre a 1,6 × il corpo; `'strip-vowels'` mantiene la shadda.
+
+```diff
+-  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh',
++  textAlign: 'justify', kashida: 'auto', kashidaPatterns: 'naskh', tashkil: 'strip',
+```
+
+### Guarda l’avviso
+
+Porta l’interlinea a 1,6 × il corpo e la composizione segnala sei paragrafi con `arabicMarksExceedLeading`, ciascuno con l’interlinea che gli serve, fino a 1,89 em su questo testo.
+
+```diff
+-const LEAD = 2 * SIZE; // pt: 28
++const LEAD = 1.6 * SIZE; // pt: 22.4
+```

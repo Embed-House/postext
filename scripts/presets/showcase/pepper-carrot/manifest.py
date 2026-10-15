@@ -55,7 +55,7 @@ ANCHOR_PAD = 0.04  # a safe area always holds its anchors with this margin
 # English alt texts (alts.py holds every language).
 ALT: dict[str, str] = {pid: texts["en"] for pid, texts in ALTS.items() if pid != ALT_COVER_ID}
 
-LANG_NAMES = {"en": "English", "ja": "Japanese", "es": "Spanish", "fr": "French", "cn": "Simplified Chinese", "ca": "Catalan", "ar": "Arabic", "pt": "Brazilian Portuguese", "de": "German"}
+LANG_NAMES = {"en": "English", "ja": "Japanese", "es": "Spanish", "fr": "French", "cn": "Simplified Chinese", "ca": "Catalan", "ar": "Arabic", "pt": "Brazilian Portuguese", "de": "German", "it": "Italian"}
 
 # "A derivative of …" in each edition's language.
 DERIVATIVE = {
@@ -68,6 +68,7 @@ DERIVATIVE = {
     "ar": "عمل مشتق من «{title}» لديفيد ريفوي، مرخّص بموجب CC BY 4.0: أعاد Postext رسم فقاعات الحوار وكتابة النصوص وتنضيد الصفحات انطلاقًا من الترجمة العربية الرسمية.",
     "pt": "Obra derivada de “{title}”, de David Revoy, licenciada sob CC BY 4.0: o Postext refez os balões e o letreiramento e recompôs as páginas a partir da tradução oficial para o português do Brasil.",
     "de": "Eine Bearbeitung von „{title}“ von David Revoy, lizenziert unter CC BY 4.0: Postext hat die Sprechblasen und das Lettering nach der offiziellen deutschen Übersetzung neu aufgebaut und die Seiten neu gesetzt.",
+    "it": "Opera derivata da «{title}» di David Revoy, con licenza CC BY 4.0: Postext ha rifatto i balloon e il lettering e ha ricomposto le pagine a partire dalla traduzione ufficiale italiana.",
 }
 
 

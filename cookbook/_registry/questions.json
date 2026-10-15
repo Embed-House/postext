@@ -11,7 +11,8 @@
       "ja": "Markdownの文字列をページに組み、そのうち1ページをCanvasに描画するには？",
       "pt": "Como faço para transformar uma string Markdown em páginas compostas e desenhar uma delas em um canvas?",
       "fr": "Comment transformer une chaîne Markdown en pages composées et en dessiner une sur un canvas ?",
-      "de": "Wie mache ich aus einem Markdown-String gesetzte Seiten und zeichne eine davon auf ein Canvas?"
+      "de": "Wie mache ich aus einem Markdown-String gesetzte Seiten und zeichne eine davon auf ein Canvas?",
+      "it": "Come trasformo una stringa Markdown in pagine composte e ne disegno una su un canvas?"
     },
     "index": {
       "en": "Canvas, drawing typeset pages on a",
@@ -22,7 +23,8 @@
       "ja": "Canvas、組版したページの描画",
       "pt": "Canvas, desenhar páginas compostas em um",
       "fr": "Canvas, dessin de pages composées sur un",
-      "de": "Canvas, gesetzte Seiten zeichnen"
+      "de": "Canvas, gesetzte Seiten zeichnen",
+      "it": "Canvas, disegnare pagine composte su un"
     },
     "theme": "output"
   },
@@ -37,7 +39,8 @@
       "ja": "フォントを埋め込んだ本物のPDFをブラウザーで書き出すには？",
       "pt": "Como faço para exportar um PDF de verdade no navegador, com as fontes incorporadas?",
       "fr": "Comment exporter un vrai PDF dans le navigateur avec les polices incorporées ?",
-      "de": "Wie exportiere ich im Browser ein echtes PDF mit eingebetteten Schriften?"
+      "de": "Wie exportiere ich im Browser ein echtes PDF mit eingebetteten Schriften?",
+      "it": "Come esporto nel browser un vero PDF con i font incorporati?"
     },
     "index": {
       "en": "PDF, exporting with embedded fonts",
@@ -48,7 +51,8 @@
       "ja": "PDF、フォントを埋め込んだ書き出し",
       "pt": "PDF, exportar com fontes incorporadas",
       "fr": "PDF, export avec polices incorporées",
-      "de": "PDF, Export mit eingebetteten Schriften"
+      "de": "PDF, Export mit eingebetteten Schriften",
+      "it": "PDF, esportare con i font incorporati"
     },
     "theme": "output"
   },
@@ -63,7 +67,8 @@
       "ja": "行の分割が変わったりPDFで単語が重なったりするのはなぜですか？フォントを正しく読み込むには？",
       "pt": "Por que as minhas quebras de linha mudam ou as palavras se sobrepõem no PDF, e como carrego as fontes corretamente?",
       "fr": "Pourquoi mes coupures de ligne changent-elles, ou des mots se chevauchent-ils dans le PDF, et comment charger correctement les polices ?",
-      "de": "Warum ändern sich meine Zeilenumbrüche oder überlappen Wörter im PDF, und wie lade ich Schriften richtig?"
+      "de": "Warum ändern sich meine Zeilenumbrüche oder überlappen Wörter im PDF, und wie lade ich Schriften richtig?",
+      "it": "Perché cambiano i miei a capo, o le parole si sovrappongono nel PDF, e come carico correttamente i font?"
     },
     "index": {
       "en": "Fonts, loading before layout",
@@ -74,7 +79,8 @@
       "ja": "フォント、レイアウト前の読み込み",
       "pt": "Fontes, carregar antes da composição",
       "fr": "Polices, chargement avant la mise en page",
-      "de": "Schriften, vor dem Layout laden"
+      "de": "Schriften, vor dem Layout laden",
+      "it": "Font, caricare prima dell’impaginazione"
     },
     "theme": "output"
   },
@@ -89,7 +95,8 @@
       "ja": "同じ文書を、画面幅に応じてスクロールで読めるHTML表示にするには？",
       "pt": "Como faço para mostrar o mesmo documento em HTML, em uma visualização de leitura com rolagem que se adapta à tela?",
       "fr": "Comment afficher une vue de lecture HTML adaptative, à défilement, du même document ?",
-      "de": "Wie zeige ich dasselbe Dokument in einer responsiven, scrollbaren HTML-Leseansicht?"
+      "de": "Wie zeige ich dasselbe Dokument in einer responsiven, scrollbaren HTML-Leseansicht?",
+      "it": "Come mostro una vista di lettura HTML responsive e scorrevole dello stesso documento?"
     },
     "index": {
       "en": "HTML reading view",
@@ -100,7 +107,8 @@
       "ja": "HTMLの閲覧表示",
       "pt": "HTML, visualização de leitura em",
       "fr": "Vue de lecture HTML",
-      "de": "HTML-Leseansicht"
+      "de": "HTML-Leseansicht",
+      "it": "Vista di lettura HTML"
     },
     "theme": "output"
   },
@@ -115,7 +123,8 @@
       "ja": "長い本のレイアウト中もページの反応を保つには（Web Worker、キャンセル）？",
       "pt": "Como evito que a página trave enquanto um livro longo é composto (Web Worker, cancelamento)?",
       "fr": "Comment garder la page réactive pendant la mise en page d’un long livre (Web Worker, annulation) ?",
-      "de": "Wie bleibt die Seite bedienbar, während ein langes Buch gesetzt wird (Web Worker, Abbruch)?"
+      "de": "Wie bleibt die Seite bedienbar, während ein langes Buch gesetzt wird (Web Worker, Abbruch)?",
+      "it": "Come mantengo reattiva la pagina mentre si impagina un libro lungo (Web Worker, annullamento)?"
     },
     "index": {
       "en": "Web Worker, laying out off the main thread",
@@ -126,7 +135,8 @@
       "ja": "Web Worker、メインスレッド外でのレイアウト",
       "pt": "Web Worker, compor fora da thread principal",
       "fr": "Web Worker, mise en page hors du fil principal",
-      "de": "Web Worker, Layout außerhalb des Hauptthreads"
+      "de": "Web Worker, Layout außerhalb des Hauptthreads",
+      "it": "Web Worker, impaginare fuori dal thread principale"
     },
     "theme": "output"
   },
@@ -141,7 +151,8 @@
       "ja": "複数の章からなる本で、ページ番号・図番号・章番号を章をまたいで続けるには？",
       "pt": "Como faço para compor um livro de vários capítulos de modo que a numeração de páginas, figuras e capítulos continue de um para o outro?",
       "fr": "Comment mettre en page un livre de plusieurs chapitres pour que les numéros de page, de figure et de chapitre se suivent d’un chapitre à l’autre ?",
-      "de": "Wie setze ich ein Buch mit mehreren Kapiteln so, dass Seiten-, Abbildungs- und Kapitelnummern über die Kapitel hinweg weiterlaufen?"
+      "de": "Wie setze ich ein Buch mit mehreren Kapiteln so, dass Seiten-, Abbildungs- und Kapitelnummern über die Kapitel hinweg weiterlaufen?",
+      "it": "Come impagino un libro di più capitoli in modo che i numeri di pagina, di figura e di capitolo proseguano da un capitolo all’altro?"
     },
     "index": {
       "en": "Chapters, continuous numbering across",
@@ -152,7 +163,8 @@
       "ja": "章、章をまたぐ通し番号",
       "pt": "Capítulos, numeração contínua entre",
       "fr": "Chapitres, numérotation continue entre",
-      "de": "Kapitel, durchgehende Nummerierung"
+      "de": "Kapitel, durchgehende Nummerierung",
+      "it": "Capitoli, numerazione continua tra"
     },
     "theme": "structure"
   },
@@ -167,7 +179,8 @@
       "ja": ".postextファイルを開き、同梱のフォント・画像・設定で描画するには？",
       "pt": "Como abro um arquivo .postext e o renderizo com as próprias fontes, imagens e configuração?",
       "fr": "Comment ouvrir un fichier .postext et le rendre avec ses propres polices, images et configuration ?",
-      "de": "Wie öffne ich eine .postext-Datei und rendere sie mit ihren eigenen Schriften, Bildern und ihrer Konfiguration?"
+      "de": "Wie öffne ich eine .postext-Datei und rendere sie mit ihren eigenen Schriften, Bildern und ihrer Konfiguration?",
+      "it": "Come apro un file .postext e lo visualizzo con i suoi font, le sue immagini e la sua configurazione?"
     },
     "index": {
       "en": "Bundles, opening .postext files",
@@ -178,7 +191,8 @@
       "ja": "バンドル、.postextファイルを開く",
       "pt": "Pacotes, abrir arquivos .postext",
       "fr": "Paquets, ouverture de fichiers .postext",
-      "de": "Pakete, .postext-Dateien öffnen"
+      "de": "Pakete, .postext-Dateien öffnen",
+      "it": "Pacchetti, aprire file .postext"
     },
     "theme": "output"
   },
@@ -193,7 +207,8 @@
       "ja": "コードから.postextバンドルを作り、文書をSandboxやほかのプログラムに渡すには？",
       "pt": "Como crio um pacote .postext a partir do código, para passar um documento ao Sandbox ou a outro programa?",
       "fr": "Comment créer un paquet .postext depuis le code, pour remettre un document au Sandbox ou à un autre programme ?",
-      "de": "Wie erzeuge ich ein .postext-Paket im Code, um ein Dokument an die Sandbox oder ein anderes Programm zu übergeben?"
+      "de": "Wie erzeuge ich ein .postext-Paket im Code, um ein Dokument an die Sandbox oder ein anderes Programm zu übergeben?",
+      "it": "Come creo un pacchetto .postext dal codice, per passare un documento alla Sandbox o a un altro programma?"
     },
     "index": {
       "en": "Bundles, creating from code",
@@ -204,7 +219,8 @@
       "ja": "バンドル、コードからの作成",
       "pt": "Pacotes, criar a partir do código",
       "fr": "Paquets, création depuis le code",
-      "de": "Pakete, im Code erzeugen"
+      "de": "Pakete, im Code erzeugen",
+      "it": "Pacchetti, creare dal codice"
     },
     "theme": "output"
   },
@@ -219,7 +235,8 @@
       "ja": "自社ブランドのフォントやライセンスを受けたフォントでレイアウトし、PDFに埋め込むには？",
       "pt": "Como uso as fontes da minha marca ou fontes licenciadas na composição e as incorporo ao PDF?",
       "fr": "Comment utiliser mes propres polices (de marque ou sous licence) dans la mise en page et les incorporer au PDF ?",
-      "de": "Wie verwende ich meine eigenen Hausschriften oder lizenzierten Schriften im Layout und bette sie ins PDF ein?"
+      "de": "Wie verwende ich meine eigenen Hausschriften oder lizenzierten Schriften im Layout und bette sie ins PDF ein?",
+      "it": "Come uso i font del mio marchio o con licenza nell’impaginazione e li incorporo nel PDF?"
     },
     "index": {
       "en": "Fonts, brand and licensed",
@@ -230,7 +247,8 @@
       "ja": "フォント、ブランド用とライセンス品",
       "pt": "Fontes, da marca e licenciadas",
       "fr": "Polices, de marque et sous licence",
-      "de": "Schriften, Hausschriften und lizenzierte"
+      "de": "Schriften, Hausschriften und lizenzierte",
+      "it": "Font, di marchio e con licenza"
     },
     "theme": "output"
   },
@@ -245,7 +263,8 @@
       "ja": "画像や表を、Markdownの![]()ではなくコードから（リソースとして）追加するには？",
       "pt": "Como adiciono imagens e tabelas a partir do código (recursos) em vez de usar ![]() do Markdown?",
       "fr": "Comment ajouter des images et des tableaux depuis le code (ressources) plutôt qu’avec ![]() en Markdown ?",
-      "de": "Wie füge ich Bilder und Tabellen im Code (Ressourcen) statt mit Markdown ![]() hinzu?"
+      "de": "Wie füge ich Bilder und Tabellen im Code (Ressourcen) statt mit Markdown ![]() hinzu?",
+      "it": "Come aggiungo immagini e tabelle dal codice (risorse) invece che con ![]() in Markdown?"
     },
     "index": {
       "en": "Resources, images and tables from code",
@@ -256,7 +275,8 @@
       "ja": "リソース、コードから追加する画像と表",
       "pt": "Recursos, imagens e tabelas a partir do código",
       "fr": "Ressources, images et tableaux depuis le code",
-      "de": "Ressourcen, Bilder und Tabellen im Code"
+      "de": "Ressourcen, Bilder und Tabellen im Code",
+      "it": "Risorse, immagini e tabelle dal codice"
     },
     "theme": "figures"
   },
@@ -271,7 +291,8 @@
       "ja": "エディターを作るために、描画したページ上のクリック位置をMarkdownのソースに対応づけるには？",
       "pt": "Como relaciono um clique na página renderizada com o Markdown de origem, para construir um editor?",
       "fr": "Comment relier un clic sur la page rendue à la source Markdown, pour construire un éditeur ?",
-      "de": "Wie ordne ich einen Klick auf die gerenderte Seite der Markdown-Quelle zu, um einen Editor zu bauen?"
+      "de": "Wie ordne ich einen Klick auf die gerenderte Seite der Markdown-Quelle zu, um einen Editor zu bauen?",
+      "it": "Come riporto un clic sulla pagina visualizzata alla sorgente Markdown, per costruire un editor?"
     },
     "index": {
       "en": "Source mapping, from page to Markdown",
@@ -282,7 +303,8 @@
       "ja": "ソースマッピング、ページからMarkdownへ",
       "pt": "Correspondência com a origem, da página ao Markdown",
       "fr": "Correspondance avec la source, de la page au Markdown",
-      "de": "Quellenzuordnung, von der Seite zum Markdown"
+      "de": "Quellenzuordnung, von der Seite zum Markdown",
+      "it": "Mappatura della sorgente, dalla pagina al Markdown"
     },
     "theme": "output"
   },
@@ -297,7 +319,8 @@
       "ja": "サーバーやCLI（Node）でページやPDFを生成できますか？",
       "pt": "Posso gerar páginas ou PDFs em um servidor ou pela linha de comando (Node)?",
       "fr": "Puis-je générer des pages ou des PDF sur un serveur ou en ligne de commande (Node) ?",
-      "de": "Kann ich Seiten oder PDFs auf einem Server oder in einer CLI (Node) erzeugen?"
+      "de": "Kann ich Seiten oder PDFs auf einem Server oder in einer CLI (Node) erzeugen?",
+      "it": "Posso generare pagine o PDF su un server o in una CLI (Node)?"
     },
     "index": {
       "en": "Server-side layout, workarounds for",
@@ -308,7 +331,8 @@
       "ja": "サーバー側のレイアウト、代替手段",
       "pt": "Composição no servidor, alternativas para a",
       "fr": "Mise en page côté serveur, solutions de contournement",
-      "de": "Serverseitiges Layout, Behelfslösungen"
+      "de": "Serverseitiges Layout, Behelfslösungen",
+      "it": "Impaginazione lato server, soluzioni alternative per"
     },
     "theme": "output",
     "gap": "server-side"
@@ -324,7 +348,8 @@
       "ja": "裁ち落とし、トンボ、しおり、ページラベル、色空間を備えた入稿用PDFを作るには？",
       "pt": "Como faço um PDF pronto para impressão, com sangria, marcas de corte, marcadores, rótulos de página e espaço de cor?",
       "fr": "Comment produire un PDF prêt pour l’impression avec fond perdu, traits de coupe, signets, étiquettes de page et espace colorimétrique ?",
-      "de": "Wie erstelle ich ein druckfertiges PDF mit Anschnitt, Schnittmarken, Lesezeichen, Seitenbeschriftungen und einem Farbraum?"
+      "de": "Wie erstelle ich ein druckfertiges PDF mit Anschnitt, Schnittmarken, Lesezeichen, Seitenbeschriftungen und einem Farbraum?",
+      "it": "Come preparo un PDF pronto per la stampa con abbondanza, crocini di taglio, segnalibri, etichette di pagina e uno spazio colore?"
     },
     "index": {
       "en": "PDF, print-ready",
@@ -335,7 +360,8 @@
       "ja": "PDF、入稿用",
       "pt": "PDF pronto para impressão",
       "fr": "PDF, prêt pour l’impression",
-      "de": "PDF, druckfertig"
+      "de": "PDF, druckfertig",
+      "it": "PDF, pronto per la stampa"
     },
     "theme": "output"
   },
@@ -350,7 +376,8 @@
       "ja": "代替テキストと文書の言語を備えたアクセシブルなPDF（タグ付き、PDF/UA）を作るには？",
       "pt": "Como gero um PDF acessível (com tags, PDF/UA) com texto alternativo e idioma do documento?",
       "fr": "Comment produire un PDF accessible (balisé, PDF/UA) avec texte alternatif et langue du document ?",
-      "de": "Wie erzeuge ich ein barrierefreies (getaggtes, PDF/UA-)PDF mit Alternativtext und Dokumentsprache?"
+      "de": "Wie erzeuge ich ein barrierefreies (getaggtes, PDF/UA-)PDF mit Alternativtext und Dokumentsprache?",
+      "it": "Come produco un PDF accessibile (con tag, PDF/UA) con testo alternativo e lingua del documento?"
     },
     "index": {
       "en": "PDF, accessible and tagged",
@@ -361,7 +388,8 @@
       "ja": "PDF、アクセシブルなタグ付き",
       "pt": "PDF acessível e com tags",
       "fr": "PDF, accessible et balisé",
-      "de": "PDF, barrierefrei und getaggt"
+      "de": "PDF, barrierefrei und getaggt",
+      "it": "PDF, accessibile e con tag"
     },
     "theme": "output"
   },
@@ -376,7 +404,8 @@
       "ja": "1つの設定から、画面版に印刷版より簡素なデザインを与えるには？",
       "pt": "Como dou à edição de tela um design mais simples que o da edição impressa, com uma só configuração?",
       "fr": "Comment donner à l’édition pour écran une maquette plus simple que celle de l’édition imprimée, avec une seule configuration ?",
-      "de": "Wie gebe ich der Bildschirmausgabe aus einer Konfiguration eine schlichtere Gestaltung als der Druckausgabe?"
+      "de": "Wie gebe ich der Bildschirmausgabe aus einer Konfiguration eine schlichtere Gestaltung als der Druckausgabe?",
+      "it": "Come do all’edizione a schermo un progetto grafico più semplice di quella a stampa, da un’unica configurazione?"
     },
     "index": {
       "en": "Screen edition, simpler design for the",
@@ -387,7 +416,8 @@
       "ja": "画面版、簡素なデザイン",
       "pt": "Edição de tela, design mais simples para a",
       "fr": "Édition pour écran, maquette simplifiée",
-      "de": "Bildschirmausgabe, schlichtere Gestaltung"
+      "de": "Bildschirmausgabe, schlichtere Gestaltung",
+      "it": "Edizione a schermo, progetto grafico più semplice per l’"
     },
     "theme": "output"
   },
@@ -402,7 +432,8 @@
       "ja": "本のページを設定するには（仕上がりサイズ、左右対称ののどと小口の余白、2段組みと段間）？",
       "pt": "Como configuro uma página de livro: formato refilado, margens interna e externa espelhadas, duas colunas e medianiz?",
       "fr": "Comment régler une page de livre : format, marges intérieure et extérieure en miroir, deux colonnes et une gouttière ?",
-      "de": "Wie richte ich eine Buchseite ein: Endformat, gespiegelte Bund- und Außenstege, zwei Spalten und Spaltenabstand?"
+      "de": "Wie richte ich eine Buchseite ein: Endformat, gespiegelte Bund- und Außenstege, zwei Spalten und Spaltenabstand?",
+      "it": "Come imposto una pagina di libro: formato, margini interni ed esterni speculari, due colonne e un intercolonna?"
     },
     "index": {
       "en": "Page setup, trim, margins and columns",
@@ -413,7 +444,8 @@
       "ja": "ページ設定、仕上がり・余白・段組み",
       "pt": "Página, formato, margens e colunas",
       "fr": "Mise en page, format, marges et colonnes",
-      "de": "Seiteneinrichtung, Format, Ränder und Spalten"
+      "de": "Seiteneinrichtung, Format, Ränder und Spalten",
+      "it": "Impostazione della pagina, formato, margini e colonne"
     },
     "theme": "page"
   },
@@ -428,7 +460,8 @@
       "ja": "テキストをベースライングリッドに固定し、段や見開きをまたいで行をそろえるには？",
       "pt": "Como prendo o texto a uma grade de linhas de base para que as linhas se alinhem entre as colunas e entre páginas opostas?",
       "fr": "Comment caler le texte sur une grille de ligne de base pour que les lignes s’alignent entre colonnes et pages en regard ?",
-      "de": "Wie binde ich Text an ein Grundlinienraster, damit die Zeilen über Spalten und gegenüberliegende Seiten hinweg fluchten?"
+      "de": "Wie binde ich Text an ein Grundlinienraster, damit die Zeilen über Spalten und gegenüberliegende Seiten hinweg fluchten?",
+      "it": "Come aggancio il testo a una griglia della linea di base, così che le righe si allineino tra le colonne e tra le pagine affiancate?"
     },
     "index": {
       "en": "Baseline grid, aligning lines to a",
@@ -439,7 +472,8 @@
       "ja": "ベースライングリッド、行をそろえる",
       "pt": "Grade de linhas de base, alinhar as linhas a uma",
       "fr": "Grille de ligne de base, alignement des lignes sur une",
-      "de": "Grundlinienraster, Zeilen ausrichten"
+      "de": "Grundlinienraster, Zeilen ausrichten",
+      "it": "Griglia della linea di base, allineare le righe a una"
     },
     "theme": "page"
   },
@@ -454,7 +488,8 @@
       "ja": "幅の広い本文の段と幅の狭いサイド段からなる1段半のレイアウトにするには？",
       "pt": "Como monto uma diagramação em coluna e meia, com uma coluna de texto larga e uma coluna lateral estreita?",
       "fr": "Comment faire une mise en page en colonne et demie, avec une colonne de texte large et une colonne latérale étroite ?",
-      "de": "Wie setze ich ein Layout mit anderthalb Spalten, mit breiter Textspalte und schmaler Seitenspalte?"
+      "de": "Wie setze ich ein Layout mit anderthalb Spalten, mit breiter Textspalte und schmaler Seitenspalte?",
+      "it": "Come creo un layout a colonna e mezza, con una colonna di testo larga e una colonna laterale stretta?"
     },
     "index": {
       "en": "Column and a half, layout in",
@@ -465,7 +500,8 @@
       "ja": "1段半、レイアウト",
       "pt": "Coluna e meia, diagramação em",
       "fr": "Colonne et demie, mise en page en",
-      "de": "Anderthalb Spalten, Layout"
+      "de": "Anderthalb Spalten, Layout",
+      "it": "Colonna e mezza, impaginazione a"
     },
     "theme": "page"
   },
@@ -480,7 +516,8 @@
       "ja": "段の下端をそろえ、最終ページの段の長さを均等にするには（垂直方向の両端そろえ）？",
       "pt": "Como deixo as colunas alinhadas no pé e a última página equilibrada (justificação vertical)?",
       "fr": "Comment obtenir des colonnes alignées en pied et une dernière page équilibrée (justification verticale) ?",
-      "de": "Wie erreiche ich bündige Spaltenenden und eine ausgeglichene letzte Seite (vertikaler Ausgleich)?"
+      "de": "Wie erreiche ich bündige Spaltenenden und eine ausgeglichene letzte Seite (vertikaler Ausgleich)?",
+      "it": "Come ottengo colonne pareggiate al piede e un’ultima pagina bilanciata (giustificazione verticale)?"
     },
     "index": {
       "en": "Columns, balancing flush to the foot",
@@ -491,7 +528,8 @@
       "ja": "段組み、地でそろえる",
       "pt": "Colunas, equilibrar no pé da página",
       "fr": "Colonnes, équilibrage jusqu’au pied",
-      "de": "Spalten, bündig zum Fuß ausgleichen"
+      "de": "Spalten, bündig zum Fuß ausgleichen",
+      "it": "Colonne, bilanciare a filo del piede"
     },
     "theme": "page"
   },
@@ -506,7 +544,8 @@
       "ja": "スペイン語・フランス語・ドイツ語のテキストで、きれいな両端そろえとハイフネーションを得るには？",
       "pt": "Como consigo boa justificação e hifenização em textos em espanhol, francês ou alemão?",
       "fr": "Comment obtenir une bonne justification et une bonne césure pour un texte en espagnol, en français ou en allemand ?",
-      "de": "Wie erreiche ich guten Blocksatz und gute Silbentrennung für spanischen, französischen oder deutschen Text?"
+      "de": "Wie erreiche ich guten Blocksatz und gute Silbentrennung für spanischen, französischen oder deutschen Text?",
+      "it": "Come ottengo una buona giustificazione e sillabazione per testi in spagnolo, francese o tedesco?"
     },
     "index": {
       "en": "Hyphenation, per language",
@@ -517,7 +556,8 @@
       "ja": "ハイフネーション、言語ごと",
       "pt": "Hifenização por idioma",
       "fr": "Césure, selon la langue",
-      "de": "Silbentrennung, je Sprache"
+      "de": "Silbentrennung, je Sprache",
+      "it": "Sillabazione, per lingua"
     },
     "theme": "type"
   },
@@ -532,7 +572,8 @@
       "ja": "ウィドウ、オーファン、最終行の一語（ラント）を避け、見出しを本文と離さないようにするには？",
       "pt": "Como evito viúvas, órfãs e últimas linhas de uma só palavra, e mantenho cada título junto do seu texto?",
       "fr": "Comment éviter veuves, orphelines et dernières lignes d’un seul mot, et garder un titre avec son texte ?",
-      "de": "Wie vermeide ich Witwen, Waisen und Ausgangszeilen mit nur einem Wort, und wie halte ich eine Überschrift bei ihrem Text?"
+      "de": "Wie vermeide ich Witwen, Waisen und Ausgangszeilen mit nur einem Wort, und wie halte ich eine Überschrift bei ihrem Text?",
+      "it": "Come evito vedove, orfane e ultime righe di una sola parola (righe finali troppo corte), e tengo un titolo unito al suo testo?"
     },
     "index": {
       "en": "Widows, orphans and runts, avoiding",
@@ -543,7 +584,8 @@
       "ja": "ウィドウ・オーファン・ラント、回避",
       "pt": "Viúvas, órfãs e linhas curtas, evitar",
       "fr": "Veuves, orphelines et fins de paragraphe trop courtes, éviter les",
-      "de": "Witwen, Waisen und kurze Ausgangszeilen vermeiden"
+      "de": "Witwen, Waisen und kurze Ausgangszeilen vermeiden",
+      "it": "Vedove, orfane e righe finali corte, evitare"
     },
     "theme": "type"
   },
@@ -558,7 +600,8 @@
       "ja": "ある行だけが不ぞろいに組まれたり、伸びすぎたりするのはなぜですか（URL、長い複合語、セル内の長い単語）？",
       "pt": "Por que uma linha sai alinhada à esquerda ou esticada demais (URLs, palavras compostas longas, palavras longas em células)?",
       "fr": "Pourquoi une ligne est-elle composée en drapeau ou trop étirée (URL, longs mots composés, mots longs dans les cellules) ?",
-      "de": "Warum wird eine Zeile flatternd oder zu stark gesperrt gesetzt (URLs, lange Komposita, lange Wörter in Zellen)?"
+      "de": "Warum wird eine Zeile flatternd oder zu stark gesperrt gesetzt (URLs, lange Komposita, lange Wörter in Zellen)?",
+      "it": "Perché una riga esce in bandiera o troppo spaziata (URL, composti lunghi, parole lunghe nelle celle)?"
     },
     "index": {
       "en": "Loose lines, causes of",
@@ -569,7 +612,8 @@
       "ja": "ゆるい行、原因",
       "pt": "Linhas frouxas, causas das",
       "fr": "Lignes lâches, causes des",
-      "de": "Lockere Zeilen, Ursachen"
+      "de": "Lockere Zeilen, Ursachen",
+      "it": "Righe lasche, cause delle"
     },
     "theme": "type"
   },
@@ -584,7 +628,8 @@
       "ja": "空行を入れても効かないとき、2つのブロックの間に縦のスペースを追加するには？",
       "pt": "Como acrescento espaço vertical entre dois blocos, se as linhas em branco não fazem nada?",
       "fr": "Comment ajouter de l’espace vertical entre deux blocs, quand les lignes vides n’y font rien ?",
-      "de": "Wie füge ich zusätzlichen vertikalen Abstand zwischen zwei Blöcken ein, wenn Leerzeilen nichts bewirken?"
+      "de": "Wie füge ich zusätzlichen vertikalen Abstand zwischen zwei Blöcken ein, wenn Leerzeilen nichts bewirken?",
+      "it": "Come aggiungo spazio verticale tra due blocchi, se le righe vuote non hanno effetto?"
     },
     "index": {
       "en": "Vertical space, adding between blocks",
@@ -595,7 +640,8 @@
       "ja": "縦のスペース、ブロック間への追加",
       "pt": "Espaço vertical entre blocos, acrescentar",
       "fr": "Espace vertical, ajout entre blocs",
-      "de": "Vertikaler Abstand zwischen Blöcken"
+      "de": "Vertikaler Abstand zwischen Blöcken",
+      "it": "Spazio verticale, aggiungere tra i blocchi"
     },
     "theme": "type"
   },
@@ -610,7 +656,8 @@
       "ja": "改ページや改段を強制し、すべての章を右ページから始めるには？",
       "pt": "Como forço uma quebra de página ou de coluna e faço cada capítulo começar em página ímpar?",
       "fr": "Comment forcer un saut de page ou de colonne, et faire commencer chaque chapitre sur une page de droite ?",
-      "de": "Wie erzwinge ich einen Seiten- oder Spaltenumbruch und lasse jedes Kapitel auf einer rechten Seite beginnen?"
+      "de": "Wie erzwinge ich einen Seiten- oder Spaltenumbruch und lasse jedes Kapitel auf einer rechten Seite beginnen?",
+      "it": "Come forzo un’interruzione di pagina o di colonna, e faccio cominciare ogni capitolo su una pagina destra?"
     },
     "index": {
       "en": "Page breaks, and chapters on a recto",
@@ -621,7 +668,8 @@
       "ja": "改ページ、章を奇数ページから始める",
       "pt": "Quebras de página e capítulos em página ímpar",
       "fr": "Sauts de page, et chapitres sur un recto",
-      "de": "Seitenumbrüche und Kapitel auf rechten Seiten"
+      "de": "Seitenumbrüche und Kapitel auf rechten Seiten",
+      "it": "Interruzioni di pagina, e capitoli su un recto"
     },
     "theme": "structure"
   },
@@ -636,7 +684,8 @@
       "ja": "見出し、太字、箇条書きの記号が青く出ないようにするには？",
       "pt": "Como evito que títulos, negritos e marcadores de lista saiam em azul?",
       "fr": "Comment empêcher les titres, les mots en gras et les puces de sortir en bleu ?",
-      "de": "Wie verhindere ich, dass Überschriften, fette Wörter und Aufzählungszeichen blau erscheinen?"
+      "de": "Wie verhindere ich, dass Überschriften, fette Wörter und Aufzählungszeichen blau erscheinen?",
+      "it": "Come evito che titoli, parole in grassetto e punti elenco escano in blu?"
     },
     "index": {
       "en": "Blue defaults, removing the",
@@ -647,7 +696,8 @@
       "ja": "既定の青色、取り除く",
       "pt": "Azul padrão, remover o",
       "fr": "Bleu par défaut, suppression du",
-      "de": "Blaue Standardfarben entfernen"
+      "de": "Blaue Standardfarben entfernen",
+      "it": "Blu predefinito, togliere il"
     },
     "theme": "type"
   },
@@ -662,7 +712,8 @@
       "ja": "裁ち落としまで届く色帯、大きな章番号、タイトルを備えた章扉を作るには？",
       "pt": "Como faço uma abertura de capítulo com uma faixa de cor sangrada, um número de capítulo grande e o título?",
       "fr": "Comment faire une ouverture de chapitre avec une bande de couleur à fond perdu, un grand numéro de chapitre et le titre ?",
-      "de": "Wie gestalte ich einen Kapitelauftakt mit randabfallendem Farbband, großer Kapitelnummer und Titel?"
+      "de": "Wie gestalte ich einen Kapitelauftakt mit randabfallendem Farbband, großer Kapitelnummer und Titel?",
+      "it": "Come creo un’apertura di capitolo con una fascia di colore al vivo, un grande numero di capitolo e il titolo?"
     },
     "index": {
       "en": "Chapter openers, with a bleed band",
@@ -673,7 +724,8 @@
       "ja": "章扉、裁ち落としの色帯",
       "pt": "Aberturas de capítulo com faixa sangrada",
       "fr": "Ouvertures de chapitre, avec bande à fond perdu",
-      "de": "Kapitelauftakte mit randabfallendem Band"
+      "de": "Kapitelauftakte mit randabfallendem Band",
+      "it": "Aperture di capitolo, con una fascia al vivo"
     },
     "theme": "headings"
   },
@@ -688,7 +740,8 @@
       "ja": "章タイトルをページ幅いっぱいに置き、その下で本文を2段組みにするには？",
       "pt": "Como coloco o título do capítulo na largura da página enquanto o texto segue em duas colunas abaixo?",
       "fr": "Comment composer un titre de chapitre sur toute la largeur de la page, avec le texte en deux colonnes en dessous ?",
-      "de": "Wie setze ich einen Kapiteltitel über die ganze Seitenbreite, während der Text darunter zweispaltig läuft?"
+      "de": "Wie setze ich einen Kapiteltitel über die ganze Seitenbreite, während der Text darunter zweispaltig läuft?",
+      "it": "Come compongo il titolo di un capitolo a tutta larghezza mentre il testo scorre sotto su due colonne?"
     },
     "index": {
       "en": "Chapter titles across the columns",
@@ -699,7 +752,8 @@
       "ja": "章タイトル、段をまたぐ配置",
       "pt": "Títulos de capítulo sobre as colunas",
       "fr": "Titres de chapitre sur toute la largeur des colonnes",
-      "de": "Kapiteltitel über die Spalten"
+      "de": "Kapiteltitel über die Spalten",
+      "it": "Titoli di capitolo a cavallo delle colonne"
     },
     "theme": "headings"
   },
@@ -714,7 +768,8 @@
       "ja": "章扉に著者名の行、リード文、ドロップキャップ付きの導入文を加えるには？",
       "pt": "Como acrescento a uma abertura uma linha de autor, uma linha fina ou um primeiro parágrafo com capitular?",
       "fr": "Comment ajouter à une ouverture une ligne d’auteur, un chapeau ou une attaque avec lettrine ?",
-      "de": "Wie füge ich einem Auftakt eine Autorenzeile, einen Vorspann oder einen Einstieg mit Initiale hinzu?"
+      "de": "Wie füge ich einem Auftakt eine Autorenzeile, einen Vorspann oder einen Einstieg mit Initiale hinzu?",
+      "it": "Come aggiungo a un’apertura una riga d’autore, un sommario o un attacco con capolettera?"
     },
     "index": {
       "en": "Openers, author line, standfirst and drop cap",
@@ -725,7 +780,8 @@
       "ja": "章扉、著者名・リード文・ドロップキャップ",
       "pt": "Aberturas, autor, linha fina e capitular",
       "fr": "Ouvertures, ligne d’auteur, chapeau et lettrine",
-      "de": "Auftakte, Autorenzeile, Vorspann und Initiale"
+      "de": "Auftakte, Autorenzeile, Vorspann und Initiale",
+      "it": "Aperture, riga d’autore, sommario e capolettera"
     },
     "theme": "headings"
   },
@@ -740,7 +796,8 @@
       "ja": "章ごとに異なる写真、色、章扉のバリエーションを与えるには？",
       "pt": "Como dou a cada capítulo sua própria foto, cor ou variante de abertura?",
       "fr": "Comment donner à chaque chapitre sa propre photo, sa propre couleur ou sa propre variante d’ouverture ?",
-      "de": "Wie gebe ich jedem Kapitel ein eigenes Foto, eine eigene Farbe oder eine eigene Auftaktvariante?"
+      "de": "Wie gebe ich jedem Kapitel ein eigenes Foto, eine eigene Farbe oder eine eigene Auftaktvariante?",
+      "it": "Come do a ogni capitolo una foto, un colore o una variante di apertura propri?"
     },
     "index": {
       "en": "Openers, a different one per chapter",
@@ -751,7 +808,8 @@
       "ja": "章扉、章ごとに変える",
       "pt": "Aberturas, uma diferente por capítulo",
       "fr": "Ouvertures, une différente par chapitre",
-      "de": "Auftakte, je Kapitel ein anderer"
+      "de": "Auftakte, je Kapitel ein anderer",
+      "it": "Aperture, una diversa per ogni capitolo"
     },
     "theme": "headings"
   },
@@ -766,7 +824,8 @@
       "ja": "柱を設定するには（左ページに書名、右ページに章タイトル、ノンブルは小口側）？",
       "pt": "Como configuro os cabeços: título do livro na página esquerda, título do capítulo na direita e fólio do lado de fora?",
       "fr": "Comment régler les titres courants : titre du livre sur la page de gauche, titre du chapitre sur celle de droite, numéro de page à l’extérieur ?",
-      "de": "Wie setze ich Kolumnentitel: Buchtitel auf der linken Seite, Kapiteltitel auf der rechten, Seitenzahl außen?"
+      "de": "Wie setze ich Kolumnentitel: Buchtitel auf der linken Seite, Kapiteltitel auf der rechten, Seitenzahl außen?",
+      "it": "Come imposto le testatine: titolo del libro sulla pagina sinistra, titolo del capitolo sulla destra, numero di pagina all’esterno?"
     },
     "index": {
       "en": "Running heads, verso and recto",
@@ -777,7 +836,8 @@
       "ja": "柱、偶数ページと奇数ページ",
       "pt": "Cabeços de página par e ímpar",
       "fr": "Titres courants, verso et recto",
-      "de": "Kolumnentitel, links und rechts"
+      "de": "Kolumnentitel, links und rechts",
+      "it": "Testatine, verso e recto"
     },
     "theme": "running-heads"
   },
@@ -792,7 +852,8 @@
       "ja": "章扉や白ページで柱を隠したり、空白の偶数ページを部の色で塗ったりするには？",
       "pt": "Como oculto os cabeços nas aberturas e nas páginas em branco, ou pinto uma página par em branco com a cor da parte?",
       "fr": "Comment masquer les titres courants sur les ouvertures et les pages blanches, ou peindre un verso blanc dans la couleur de la partie ?",
-      "de": "Wie blende ich Kolumnentitel auf Auftakten und Vakatseiten aus oder färbe eine leere linke Seite in der Teilfarbe?"
+      "de": "Wie blende ich Kolumnentitel auf Auftakten und Vakatseiten aus oder färbe eine leere linke Seite in der Teilfarbe?",
+      "it": "Come nascondo le testatine nelle aperture e nelle pagine bianche, o coloro un verso bianco con il colore della parte?"
     },
     "index": {
       "en": "Running heads, hiding on openers and blanks",
@@ -803,7 +864,8 @@
       "ja": "柱、章扉と白ページで隠す",
       "pt": "Cabeços, ocultar em aberturas e páginas em branco",
       "fr": "Titres courants, masquage sur les ouvertures et les pages blanches",
-      "de": "Kolumnentitel, auf Auftakten und Vakatseiten ausblenden"
+      "de": "Kolumnentitel, auf Auftakten und Vakatseiten ausblenden",
+      "it": "Testatine, nascondere in aperture e pagine bianche"
     },
     "theme": "running-heads"
   },
@@ -818,7 +880,8 @@
       "ja": "見出しに番号（1、1.1、1.1.1）を振り、レベルごとに異なるスタイルにするには？",
       "pt": "Como numero os títulos (1, 1.1, 1.1.1) e dou a cada nível um estilo diferente?",
       "fr": "Comment numéroter les titres (1, 1.1, 1.1.1) et styler chaque niveau différemment ?",
-      "de": "Wie nummeriere ich Überschriften (1, 1.1, 1.1.1) und gestalte jede Ebene anders?"
+      "de": "Wie nummeriere ich Überschriften (1, 1.1, 1.1.1) und gestalte jede Ebene anders?",
+      "it": "Come numero i titoli (1, 1.1, 1.1.1) e do a ogni livello uno stile diverso?"
     },
     "index": {
       "en": "Headings, numbering and styling levels",
@@ -829,7 +892,8 @@
       "ja": "見出し、番号付けとレベルごとのスタイル",
       "pt": "Títulos, numeração e estilo dos níveis",
       "fr": "Titres, numérotation et style des niveaux",
-      "de": "Überschriften, Ebenen nummerieren und gestalten"
+      "de": "Überschriften, Ebenen nummerieren und gestalten",
+      "it": "Titoli, numerazione e stile dei livelli"
     },
     "theme": "headings"
   },
@@ -844,7 +908,8 @@
       "ja": "タイトルの横に、番号が増えると幅が広がる番号バッジ（9 → 10）を作るには？",
       "pt": "Como faço um selo com o número ao lado do título que se alarga quando o número cresce (9 → 10)?",
       "fr": "Comment construire à côté du titre un badge numéroté qui s’élargit quand le numéro grandit (9 → 10) ?",
-      "de": "Wie baue ich ein Nummernabzeichen neben dem Titel, das breiter wird, wenn die Nummer wächst (9 → 10)?"
+      "de": "Wie baue ich ein Nummernabzeichen neben dem Titel, das breiter wird, wenn die Nummer wächst (9 → 10)?",
+      "it": "Come costruisco un badge numerico accanto al titolo che si allarga quando il numero cresce (9 → 10)?"
     },
     "index": {
       "en": "Number badges beside titles",
@@ -855,7 +920,8 @@
       "ja": "番号バッジ、タイトルの横",
       "pt": "Selos com número ao lado do título",
       "fr": "Badges numérotés à côté des titres",
-      "de": "Nummernabzeichen neben Titeln"
+      "de": "Nummernabzeichen neben Titeln",
+      "it": "Badge numerici accanto ai titoli"
     },
     "theme": "headings"
   },
@@ -870,7 +936,8 @@
       "ja": "見出しのレベルが6つを超えるときはどうすればいいですか？",
       "pt": "O que faço se preciso de mais de seis níveis de título?",
       "fr": "Comment gérer plus de six niveaux de titre ?",
-      "de": "Wie gehe ich mit mehr als sechs Überschriftenebenen um?"
+      "de": "Wie gehe ich mit mehr als sechs Überschriftenebenen um?",
+      "it": "Come gestisco più di sei livelli di titolo?"
     },
     "index": {
       "en": "Headings, more than six levels",
@@ -881,7 +948,8 @@
       "ja": "見出し、6レベルを超える",
       "pt": "Títulos, mais de seis níveis",
       "fr": "Titres, plus de six niveaux",
-      "de": "Überschriften, mehr als sechs Ebenen"
+      "de": "Überschriften, mehr als sechs Ebenen",
+      "it": "Titoli, più di sei livelli"
     },
     "theme": "headings",
     "gap": "heading-level-7"
@@ -897,7 +965,8 @@
       "ja": "表紙、小扉、扉、奥付を作るには？",
       "pt": "Como faço uma capa, uma falsa folha de rosto, uma folha de rosto e um colofão?",
       "fr": "Comment faire une couverture, un faux-titre, une page de titre et un colophon ?",
-      "de": "Wie erstelle ich einen Umschlag, einen Schmutztitel, eine Titelseite und ein Impressum?"
+      "de": "Wie erstelle ich einen Umschlag, einen Schmutztitel, eine Titelseite und ein Impressum?",
+      "it": "Come creo una copertina, un occhietto, un frontespizio e un colophon?"
     },
     "index": {
       "en": "Cover, title page and colophon",
@@ -908,7 +977,8 @@
       "ja": "表紙・扉・奥付",
       "pt": "Capa, folha de rosto e colofão",
       "fr": "Couverture, page de titre et colophon",
-      "de": "Umschlag, Titelseite und Impressum"
+      "de": "Umschlag, Titelseite und Impressum",
+      "it": "Copertina, frontespizio e colophon"
     },
     "theme": "structure"
   },
@@ -923,7 +993,8 @@
       "ja": "前付けにローマ数字のノンブルを振り、第1章から1に戻すには？",
       "pt": "Como numero os elementos pré-textuais em algarismos romanos e recomeço em 1 no capítulo 1?",
       "fr": "Comment numéroter les pages liminaires en chiffres romains et repartir de 1 au chapitre 1 ?",
-      "de": "Wie nummeriere ich die Titelei mit römischen Ziffern und beginne mit Kapitel 1 wieder bei 1?"
+      "de": "Wie nummeriere ich die Titelei mit römischen Ziffern und beginne mit Kapitel 1 wieder bei 1?",
+      "it": "Come numero le pagine preliminari in numeri romani e riparto da 1 con il capitolo 1?"
     },
     "index": {
       "en": "Front matter, roman page numbers",
@@ -934,7 +1005,8 @@
       "ja": "前付け、ローマ数字のノンブル",
       "pt": "Elementos pré-textuais, fólios em algarismos romanos",
       "fr": "Pages liminaires, numéros de page romains",
-      "de": "Titelei, römische Seitenzahlen"
+      "de": "Titelei, römische Seitenzahlen",
+      "it": "Pagine preliminari, numeri di pagina romani"
     },
     "theme": "structure"
   },
@@ -949,7 +1021,8 @@
       "ja": "自動で更新される目次（リーダー、ノンブル、著者名、部の行）を追加するには？",
       "pt": "Como acrescento um sumário que se atualiza sozinho (pontilhados, números de página, autores, linhas de parte)?",
       "fr": "Comment ajouter une table des matières qui se met à jour seule (points de conduite, numéros de page, auteurs, lignes de partie) ?",
-      "de": "Wie füge ich ein Inhaltsverzeichnis hinzu, das sich selbst aktualisiert (Führungspunkte, Seitenzahlen, Autoren, Teilzeilen)?"
+      "de": "Wie füge ich ein Inhaltsverzeichnis hinzu, das sich selbst aktualisiert (Führungspunkte, Seitenzahlen, Autoren, Teilzeilen)?",
+      "it": "Come aggiungo un indice che si aggiorna da solo (puntini di guida, numeri di pagina, autori, righe di parte)?"
     },
     "index": {
       "en": "Table of contents, automatic",
@@ -960,7 +1033,8 @@
       "ja": "目次、自動",
       "pt": "Sumário automático",
       "fr": "Table des matières, automatique",
-      "de": "Inhaltsverzeichnis, automatisch"
+      "de": "Inhaltsverzeichnis, automatisch",
+      "it": "Indice, automatico"
     },
     "theme": "structure"
   },
@@ -975,7 +1049,8 @@
       "ja": "本を部や節に分け、それぞれに専用の色と中扉を付けるには？",
       "pt": "Como divido um livro em partes ou seções, cada uma com sua cor e sua página divisória?",
       "fr": "Comment diviser un livre en parties ou en sections, chacune avec sa couleur et sa page de partie ?",
-      "de": "Wie gliedere ich ein Buch in Teile oder Abschnitte, jeweils mit eigener Farbe und Teiltitelseite?"
+      "de": "Wie gliedere ich ein Buch in Teile oder Abschnitte, jeweils mit eigener Farbe und Teiltitelseite?",
+      "it": "Come divido un libro in parti o sezioni, ognuna con il suo colore e la sua pagina di parte?"
     },
     "index": {
       "en": "Parts, colours and divider pages",
@@ -986,7 +1061,8 @@
       "ja": "部、色と中扉",
       "pt": "Partes, cores e páginas divisórias",
       "fr": "Parties, couleurs et pages de partie",
-      "de": "Teile, Farben und Teiltitelseiten"
+      "de": "Teile, Farben und Teiltitelseiten",
+      "it": "Parti, colori e pagine di parte"
     },
     "theme": "structure"
   },
@@ -1001,7 +1077,8 @@
       "ja": "意図的に白ページを入れたり、節を新しい見開きから始めたりするには？",
       "pt": "Como insiro páginas em branco de propósito, ou começo uma seção em uma nova página dupla?",
       "fr": "Comment insérer des pages blanches voulues, ou commencer une section sur une nouvelle double page ?",
-      "de": "Wie füge ich gezielt Vakatseiten ein oder beginne einen Abschnitt auf einer neuen Doppelseite?"
+      "de": "Wie füge ich gezielt Vakatseiten ein oder beginne einen Abschnitt auf einer neuen Doppelseite?",
+      "it": "Come inserisco pagine bianche volute, o faccio cominciare una sezione su una nuova doppia pagina?"
     },
     "index": {
       "en": "Blank pages, deliberate",
@@ -1012,7 +1089,8 @@
       "ja": "白ページ、意図的な",
       "pt": "Páginas em branco intencionais",
       "fr": "Pages blanches, voulues",
-      "de": "Vakatseiten, gezielt einfügen"
+      "de": "Vakatseiten, gezielt einfügen",
+      "it": "Pagine bianche, volute"
     },
     "theme": "structure"
   },
@@ -1027,7 +1105,8 @@
       "ja": "参考文献や用語集を組むには（ぶら下げインデント、小さめの文字）？",
       "pt": "Como componho uma bibliografia ou um glossário (recuo deslocado, corpo menor)?",
       "fr": "Comment composer une bibliographie ou un glossaire (retrait suspendu, corps plus petit) ?",
-      "de": "Wie setze ich ein Literaturverzeichnis oder Glossar (hängender Einzug, kleinere Schrift)?"
+      "de": "Wie setze ich ein Literaturverzeichnis oder Glossar (hängender Einzug, kleinere Schrift)?",
+      "it": "Come compongo una bibliografia o un glossario (rientro sporgente, corpo minore)?"
     },
     "index": {
       "en": "Bibliography and glossary",
@@ -1038,7 +1117,8 @@
       "ja": "参考文献と用語集",
       "pt": "Bibliografia e glossário",
       "fr": "Bibliographie et glossaire",
-      "de": "Literaturverzeichnis und Glossar"
+      "de": "Literaturverzeichnis und Glossar",
+      "it": "Bibliografia e glossario"
     },
     "theme": "type"
   },
@@ -1053,7 +1133,8 @@
       "ja": "図録を作るには（左ページに解説、向かいの右ページに図版）？",
       "pt": "Como faço um catálogo de arte: a ficha na página esquerda e a prancha em frente, na direita?",
       "fr": "Comment faire un catalogue d’art : notice sur la page de gauche, planche sur la page de droite en regard ?",
-      "de": "Wie gestalte ich einen Kunstkatalog: Eintrag auf der linken Seite, Tafel auf der gegenüberliegenden rechten?"
+      "de": "Wie gestalte ich einen Kunstkatalog: Eintrag auf der linken Seite, Tafel auf der gegenüberliegenden rechten?",
+      "it": "Come creo un catalogo d’arte: scheda sulla pagina sinistra, tavola sulla pagina destra di fronte?"
     },
     "index": {
       "en": "Art catalogue, entry facing its plate",
@@ -1064,7 +1145,8 @@
       "ja": "図録、解説と向かい合う図版",
       "pt": "Catálogo de arte, ficha diante da prancha",
       "fr": "Catalogue d’art, notice en regard de sa planche",
-      "de": "Kunstkatalog, Eintrag gegenüber der Tafel"
+      "de": "Kunstkatalog, Eintrag gegenüber der Tafel",
+      "it": "Catalogo d’arte, scheda di fronte alla tavola"
     },
     "theme": "publications"
   },
@@ -1079,7 +1161,8 @@
       "ja": "雑誌をセクションに分けて組み、各記事を見開きで始めて向かいのページにリード写真を置くには？",
       "pt": "Como diagramo uma revista por seções, com cada matéria abrindo em página dupla diante da sua foto principal?",
       "fr": "Comment mettre en page un magazine en rubriques, chaque article s’ouvrant sur une double page avec sa photo principale sur la page en regard ?",
-      "de": "Wie setze ich ein Magazin in Rubriken, bei dem jeder Artikel auf einer Doppelseite beginnt, mit Aufmacherfoto auf der Gegenseite?"
+      "de": "Wie setze ich ein Magazin in Rubriken, bei dem jeder Artikel auf einer Doppelseite beginnt, mit Aufmacherfoto auf der Gegenseite?",
+      "it": "Come impagino una rivista per sezioni, con ogni articolo che si apre su una doppia pagina e la foto d’apertura sulla pagina di fronte?"
     },
     "index": {
       "en": "Magazine, sections and article openers",
@@ -1090,7 +1173,8 @@
       "ja": "雑誌、セクションと記事の扉",
       "pt": "Revista, seções e aberturas de matéria",
       "fr": "Magazine, rubriques et ouvertures d’article",
-      "de": "Magazin, Rubriken und Artikelauftakte"
+      "de": "Magazin, Rubriken und Artikelauftakte",
+      "it": "Rivista, sezioni e aperture degli articoli"
     },
     "theme": "publications"
   },
@@ -1105,7 +1189,8 @@
       "ja": "詩を組むには（1行に1詩行、連の間のアキ、折り返した行のぶら下げインデント、ハイフネーションなし）？",
       "pt": "Como componho poesia: um verso por linha, espaço entre estrofes, recuo deslocado nos versos que quebram e sem hifenização?",
       "fr": "Comment composer de la poésie : un vers par ligne, blancs entre les strophes, retraits suspendus pour les vers renvoyés, sans césure ?",
-      "de": "Wie setze ich Lyrik: eine Zeile pro Vers, Abstand zwischen Strophen, hängende Einzüge für umbrochene Zeilen, keine Silbentrennung?"
+      "de": "Wie setze ich Lyrik: eine Zeile pro Vers, Abstand zwischen Strophen, hängende Einzüge für umbrochene Zeilen, keine Silbentrennung?",
+      "it": "Come compongo poesia: una riga per verso, spazi tra le strofe, rientri sporgenti per i versi che vanno a capo, niente sillabazione?"
     },
     "index": {
       "en": "Poetry, setting verse",
@@ -1116,7 +1201,8 @@
       "ja": "詩、韻文の組版",
       "pt": "Poesia, composição de versos",
       "fr": "Poésie, composition des vers",
-      "de": "Lyrik, Verse setzen"
+      "de": "Lyrik, Verse setzen",
+      "it": "Poesia, comporre versi"
     },
     "theme": "type"
   },
@@ -1131,7 +1217,8 @@
       "ja": "エピグラフ、献辞、署名、大きな引用符の付いたプルクオートを組むには？",
       "pt": "Como componho uma epígrafe, uma dedicatória, uma assinatura ou um olho com aspas grandes?",
       "fr": "Comment composer une épigraphe, une dédicace, une signature ou une citation en exergue avec un grand guillemet ?",
-      "de": "Wie setze ich ein Motto, eine Widmung, eine Unterschrift oder ein herausgestelltes Zitat mit großem Anführungszeichen?"
+      "de": "Wie setze ich ein Motto, eine Widmung, eine Unterschrift oder ein herausgestelltes Zitat mit großem Anführungszeichen?",
+      "it": "Come compongo un’epigrafe, una dedica, una firma o una citazione in evidenza con una grande virgoletta?"
     },
     "index": {
       "en": "Epigraphs, dedications and pull quotes",
@@ -1142,7 +1229,8 @@
       "ja": "エピグラフ・献辞・プルクオート",
       "pt": "Epígrafes, dedicatórias e olhos",
       "fr": "Épigraphes, dédicaces et citations en exergue",
-      "de": "Mottos, Widmungen und herausgestellte Zitate"
+      "de": "Mottos, Widmungen und herausgestellte Zitate",
+      "it": "Epigrafi, dediche e citazioni in evidenza"
     },
     "theme": "type"
   },
@@ -1157,7 +1245,8 @@
       "ja": "脚注を付けるには？",
       "pt": "Como faço notas de rodapé?",
       "fr": "Comment faire des notes de bas de page ?",
-      "de": "Wie mache ich Fußnoten?"
+      "de": "Wie mache ich Fußnoten?",
+      "it": "Come faccio le note a piè di pagina?"
     },
     "index": {
       "en": "Footnotes",
@@ -1168,7 +1257,8 @@
       "ja": "脚注",
       "pt": "Notas de rodapé",
       "fr": "Notes de bas de page",
-      "de": "Fußnoten"
+      "de": "Fußnoten",
+      "it": "Note a piè di pagina"
     },
     "theme": "boxes"
   },
@@ -1183,7 +1273,8 @@
       "ja": "説明する段落の横に、傍注や注釈を置くには？",
       "pt": "Como coloco notas de margem ou glosas ao lado do parágrafo que elas explicam?",
       "fr": "Comment composer des notes marginales ou des gloses à côté du paragraphe qu’elles commentent ?",
-      "de": "Wie setze ich Marginalien oder Glossen neben den Absatz, den sie erläutern?"
+      "de": "Wie setze ich Marginalien oder Glossen neben den Absatz, den sie erläutern?",
+      "it": "Come compongo note a margine o glosse accanto al paragrafo che spiegano?"
     },
     "index": {
       "en": "Margin notes and glosses",
@@ -1194,7 +1285,8 @@
       "ja": "傍注と注釈",
       "pt": "Notas de margem e glosas",
       "fr": "Notes marginales et gloses",
-      "de": "Marginalien und Glossen"
+      "de": "Marginalien und Glossen",
+      "it": "Note a margine e glosse"
     },
     "theme": "boxes"
   },
@@ -1209,7 +1301,8 @@
       "ja": "コードリストを表示するには？",
       "pt": "Como mostro listagens de código?",
       "fr": "Comment afficher des listings de code ?",
-      "de": "Wie zeige ich Code-Listings?"
+      "de": "Wie zeige ich Code-Listings?",
+      "it": "Come mostro listati di codice?"
     },
     "index": {
       "en": "Code listings",
@@ -1220,7 +1313,8 @@
       "ja": "コードリスト",
       "pt": "Listagens de código",
       "fr": "Listings de code",
-      "de": "Code-Listings"
+      "de": "Code-Listings",
+      "it": "Listati di codice"
     },
     "theme": "boxes"
   },
@@ -1235,7 +1329,8 @@
       "ja": "数式（インライン、ディスプレイ、方程式）を組み、PDFでもベクターのまま保つには？",
       "pt": "Como componho matemática (em linha, em destaque, equações) e a mantenho vetorial no PDF?",
       "fr": "Comment composer des mathématiques (en ligne, hors texte, équations) et les garder vectorielles dans le PDF ?",
-      "de": "Wie setze ich Formeln (im Text, abgesetzt, Gleichungen) und behalte sie im PDF als Vektoren?"
+      "de": "Wie setze ich Formeln (im Text, abgesetzt, Gleichungen) und behalte sie im PDF als Vektoren?",
+      "it": "Come compongo formule matematiche (in linea, in display, equazioni) mantenendole vettoriali nel PDF?"
     },
     "index": {
       "en": "Mathematics, typesetting",
@@ -1246,7 +1341,8 @@
       "ja": "数式、組版",
       "pt": "Matemática, composição",
       "fr": "Mathématiques, composition des",
-      "de": "Mathematik, Formelsatz"
+      "de": "Mathematik, Formelsatz",
+      "it": "Matematica, comporre"
     },
     "theme": "type"
   },
@@ -1261,7 +1357,8 @@
       "ja": "数式を使わずに、上付き文字、下付き文字、化学式を書くには？",
       "pt": "Como escrevo sobrescritos, subscritos e fórmulas químicas sem recorrer à notação matemática completa?",
       "fr": "Comment écrire des exposants, des indices et des formules chimiques sans passer par les mathématiques ?",
-      "de": "Wie schreibe ich Hoch- und Tiefstellungen und chemische Formeln ohne vollen Formelsatz?"
+      "de": "Wie schreibe ich Hoch- und Tiefstellungen und chemische Formeln ohne vollen Formelsatz?",
+      "it": "Come scrivo apici, pedici e formule chimiche senza la matematica completa?"
     },
     "index": {
       "en": "Superscripts and subscripts",
@@ -1272,7 +1369,8 @@
       "ja": "上付き文字と下付き文字",
       "pt": "Sobrescritos e subscritos",
       "fr": "Exposants et indices",
-      "de": "Hoch- und Tiefstellungen"
+      "de": "Hoch- und Tiefstellungen",
+      "it": "Apici e pedici"
     },
     "theme": "type"
   },
@@ -1287,7 +1385,8 @@
       "ja": "本文や囲みの中で、キーワード（太字やイタリック）に色を付けるには？",
       "pt": "Como dou cor aos termos-chave (em negrito ou itálico) no texto ou dentro dos boxes?",
       "fr": "Comment colorer les termes clés (en gras ou en italique) dans le texte ou dans les encadrés ?",
-      "de": "Wie färbe ich Schlüsselbegriffe (fett oder kursiv) im Text oder in Kästen ein?"
+      "de": "Wie färbe ich Schlüsselbegriffe (fett oder kursiv) im Text oder in Kästen ein?",
+      "it": "Come coloro i termini chiave (in grassetto o in corsivo) nel testo o dentro i riquadri?"
     },
     "index": {
       "en": "Key terms, colouring",
@@ -1298,7 +1397,8 @@
       "ja": "キーワード、色付け",
       "pt": "Termos-chave, colorir",
       "fr": "Termes clés, mise en couleur",
-      "de": "Schlüsselbegriffe, einfärben"
+      "de": "Schlüsselbegriffe, einfärben",
+      "it": "Termini chiave, colorare"
     },
     "theme": "type"
   },
@@ -1313,7 +1413,8 @@
       "ja": "キーボードのキー、タグ、練習問題の語群などのインラインのチップを作るには？",
       "pt": "Como faço chips em linha: teclas, etiquetas, bancos de palavras para exercícios?",
       "fr": "Comment faire des pastilles en ligne : touches de clavier, étiquettes, banques de mots pour des exercices ?",
-      "de": "Wie erstelle ich Inline-Chips: Tastaturtasten, Schlagwörter, Wortspeicher für Übungen?"
+      "de": "Wie erstelle ich Inline-Chips: Tastaturtasten, Schlagwörter, Wortspeicher für Übungen?",
+      "it": "Come creo chip in linea: tasti della tastiera, etichette, banche di parole per esercizi?"
     },
     "index": {
       "en": "Chips, inline",
@@ -1324,7 +1425,8 @@
       "ja": "チップ、インライン",
       "pt": "Chips em linha",
       "fr": "Pastilles, en ligne",
-      "de": "Chips, im Text"
+      "de": "Chips, im Text",
+      "it": "Chip, in linea"
     },
     "theme": "type"
   },
@@ -1339,7 +1441,8 @@
       "ja": "本文、キャプション、表の注に色見本（凡例の色）を加えるには？",
       "pt": "Como acrescento amostras de cor, como chave de cores, ao texto, às legendas ou às notas de tabela?",
       "fr": "Comment ajouter des pastilles de couleur de légende au texte, aux légendes ou aux notes de tableau ?",
-      "de": "Wie füge ich Farbfelder als Farblegende in Text, Bildunterschriften oder Tabellenanmerkungen ein?"
+      "de": "Wie füge ich Farbfelder als Farblegende in Text, Bildunterschriften oder Tabellenanmerkungen ein?",
+      "it": "Come aggiungo campioni di colore come legenda nel testo, nelle didascalie o nelle note di tabella?"
     },
     "index": {
       "en": "Swatches, colour keys",
@@ -1350,7 +1453,8 @@
       "ja": "色見本、凡例の色",
       "pt": "Amostras de cor, chaves de cores",
       "fr": "Pastilles de couleur, légendes de couleur",
-      "de": "Farbfelder, Farblegenden"
+      "de": "Farbfelder, Farblegenden",
+      "it": "Campioni di colore, legende"
     },
     "theme": "type"
   },
@@ -1365,7 +1469,8 @@
       "ja": "リストをカスタマイズするには（レベルごとの記号、(a)/(i)の番号、タスクのチェックボックス、グリッドに乗る間隔）？",
       "pt": "Como personalizo listas: marcadores por nível, numeração (a)/(i), caixas de seleção de tarefas e um espaçamento que fique na grade?",
       "fr": "Comment personnaliser les listes : puces par niveau, numérotation (a)/(i), cases à cocher, espacement qui reste sur la grille ?",
-      "de": "Wie passe ich Listen an: Aufzählungszeichen je Ebene, Nummerierung (a)/(i), Aufgaben-Kontrollkästchen, Abstände, die im Raster bleiben?"
+      "de": "Wie passe ich Listen an: Aufzählungszeichen je Ebene, Nummerierung (a)/(i), Aufgaben-Kontrollkästchen, Abstände, die im Raster bleiben?",
+      "it": "Come personalizzo gli elenchi: punti elenco per livello, numerazione (a)/(i), caselle di controllo, spaziature che restano sulla griglia?"
     },
     "index": {
       "en": "Lists, customising",
@@ -1376,7 +1481,8 @@
       "ja": "リスト、カスタマイズ",
       "pt": "Listas, personalizar",
       "fr": "Listes, personnalisation",
-      "de": "Listen, anpassen"
+      "de": "Listen, anpassen",
+      "it": "Elenchi, personalizzare"
     },
     "theme": "type"
   },
@@ -1391,7 +1497,8 @@
       "ja": "会話のダッシュ、段落頭の年号、価格、記号そのものを、Markdownに誤読させずに書くには？",
       "pt": "Como escrevo travessões de diálogo, anos no início do parágrafo, preços e símbolos literais sem que o Markdown os interprete errado?",
       "fr": "Comment écrire des tirets de dialogue, des années en début de paragraphe, des prix et des symboles littéraux sans que le Markdown les interprète mal ?",
-      "de": "Wie schreibe ich Dialogstriche, Jahreszahlen am Absatzanfang, Preise und wörtliche Symbole, ohne dass Markdown sie falsch liest?"
+      "de": "Wie schreibe ich Dialogstriche, Jahreszahlen am Absatzanfang, Preise und wörtliche Symbole, ohne dass Markdown sie falsch liest?",
+      "it": "Come scrivo trattini di dialogo, anni a inizio paragrafo, prezzi e simboli letterali senza che il Markdown li interpreti male?"
     },
     "index": {
       "en": "Escapes, literal characters",
@@ -1402,7 +1509,8 @@
       "ja": "エスケープ、文字そのもの",
       "pt": "Escapes, caracteres literais",
       "fr": "Échappements, caractères littéraux",
-      "de": "Maskierung, wörtliche Zeichen"
+      "de": "Maskierung, wörtliche Zeichen",
+      "it": "Escape, caratteri letterali"
     },
     "theme": "type"
   },
@@ -1417,7 +1525,8 @@
       "ja": "アイコン、色付きの帯、角丸を備えた注記・ヒント・警告の囲みを作るには？",
       "pt": "Como faço boxes de nota, dica ou aviso com ícone, faixa de cor e cantos arredondados?",
       "fr": "Comment faire des encadrés de note, d’astuce ou d’avertissement avec une icône, une bande de couleur et des coins arrondis ?",
-      "de": "Wie erstelle ich Hinweis-, Tipp- oder Warnkästen mit Symbol, farbigem Streifen und abgerundeten Ecken?"
+      "de": "Wie erstelle ich Hinweis-, Tipp- oder Warnkästen mit Symbol, farbigem Streifen und abgerundeten Ecken?",
+      "it": "Come creo riquadri di nota, suggerimento o avvertenza con un’icona, una striscia colorata e angoli arrotondati?"
     },
     "index": {
       "en": "Callouts, note, tip and warning boxes",
@@ -1428,7 +1537,8 @@
       "ja": "囲み、注記・ヒント・警告",
       "pt": "Boxes de nota, dica e aviso",
       "fr": "Encadrés, note, astuce et avertissement",
-      "de": "Kästen, Hinweis, Tipp und Warnung"
+      "de": "Kästen, Hinweis, Tipp und Warnung",
+      "it": "Riquadri, di nota, suggerimento e avvertenza"
     },
     "theme": "boxes"
   },
@@ -1443,7 +1553,8 @@
       "ja": "長い囲みを段やページをまたいで分割させたり、短い囲みを分割させないようにしたりするには？",
       "pt": "Como deixo um boxe longo se dividir entre colunas e páginas, ou mantenho um boxe curto inteiro?",
       "fr": "Comment laisser un long encadré se couper entre colonnes et pages, ou garder ensemble un encadré court ?",
-      "de": "Wie lasse ich einen langen Kasten über Spalten und Seiten teilen oder halte einen kurzen zusammen?"
+      "de": "Wie lasse ich einen langen Kasten über Spalten und Seiten teilen oder halte einen kurzen zusammen?",
+      "it": "Come lascio che un riquadro lungo si divida tra colonne e pagine, o tengo unito uno corto?"
     },
     "index": {
       "en": "Callouts, splitting or keeping together",
@@ -1454,7 +1565,8 @@
       "ja": "囲み、分割するかまとめるか",
       "pt": "Boxes, dividir ou manter inteiros",
       "fr": "Encadrés, coupure ou maintien ensemble",
-      "de": "Kästen, teilen oder zusammenhalten"
+      "de": "Kästen, teilen oder zusammenhalten",
+      "it": "Riquadri, dividere o tenere uniti"
     },
     "theme": "boxes"
   },
@@ -1469,7 +1581,8 @@
       "ja": "本文を流したまま、囲みをページの上端や下端にフロートとして配置するには？",
       "pt": "Como levo um boxe para o alto ou o pé da página enquanto o texto continua correndo?",
       "fr": "Comment faire flotter un encadré en haut ou en bas de la page pendant que le texte continue de s’écouler ?",
-      "de": "Wie lasse ich einen Kasten an den Kopf oder Fuß der Seite gleiten, während der Text weiterfließt?"
+      "de": "Wie lasse ich einen Kasten an den Kopf oder Fuß der Seite gleiten, während der Text weiterfließt?",
+      "it": "Come faccio flottare un riquadro in testa o al piede della pagina mentre il testo continua a scorrere?"
     },
     "index": {
       "en": "Callouts, floating",
@@ -1480,7 +1593,8 @@
       "ja": "囲み、フロート",
       "pt": "Boxes flutuantes",
       "fr": "Encadrés, flottants",
-      "de": "Kästen, gleitend"
+      "de": "Kästen, gleitend",
+      "it": "Riquadri, flottanti"
     },
     "theme": "boxes"
   },
@@ -1495,7 +1609,8 @@
       "ja": "バッジやステッカーをページ上の決まった位置に固定するには？",
       "pt": "Como fixo um selo ou um adesivo em uma posição exata da página?",
       "fr": "Comment fixer un badge ou une vignette à une position fixe sur la page ?",
-      "de": "Wie hefte ich ein Abzeichen oder einen Aufkleber an eine feste Position auf der Seite?"
+      "de": "Wie hefte ich ein Abzeichen oder einen Aufkleber an eine feste Position auf der Seite?",
+      "it": "Come fisso un badge o un adesivo in una posizione fissa della pagina?"
     },
     "index": {
       "en": "Badges, pinned to the page",
@@ -1506,7 +1621,8 @@
       "ja": "バッジ、ページに固定",
       "pt": "Selos fixos na página",
       "fr": "Badges, fixés à la page",
-      "de": "Abzeichen, an der Seite fixiert"
+      "de": "Abzeichen, an der Seite fixiert",
+      "it": "Badge, fissati alla pagina"
     },
     "theme": "boxes"
   },
@@ -1521,7 +1637,8 @@
       "ja": "ページの途中に、2段をまたぐ囲み（3つ並びの「数字で見る」欄など）を置くには？",
       "pt": "Como coloco um boxe atravessando as duas colunas no meio da página, como um painel “em números” com três blocos?",
       "fr": "Comment composer un encadré sur les deux colonnes au milieu de la page, comme un panneau « en chiffres » à trois volets ?",
-      "de": "Wie setze ich mitten auf der Seite einen Kasten über beide Spalten, etwa eine dreiteilige „In Zahlen“-Leiste?"
+      "de": "Wie setze ich mitten auf der Seite einen Kasten über beide Spalten, etwa eine dreiteilige „In Zahlen“-Leiste?",
+      "it": "Come compongo un riquadro su entrambe le colonne a metà pagina, come un pannello «in cifre» a tre elementi?"
     },
     "index": {
       "en": "Callouts across both columns",
@@ -1532,7 +1649,8 @@
       "ja": "囲み、2段をまたぐ",
       "pt": "Boxes sobre as duas colunas",
       "fr": "Encadrés sur les deux colonnes",
-      "de": "Kästen über beide Spalten"
+      "de": "Kästen über beide Spalten",
+      "it": "Riquadri su entrambe le colonne"
     },
     "theme": "boxes"
   },
@@ -1547,7 +1665,8 @@
       "ja": "囲みの中を2段にするには（本文の段と図の段を並べる）？",
       "pt": "Como coloco duas colunas dentro de um boxe (uma coluna de texto ao lado de uma coluna com figura)?",
       "fr": "Comment mettre deux colonnes dans un encadré (une colonne de texte à côté d’une colonne de figure) ?",
-      "de": "Wie setze ich zwei Spalten in einen Kasten (eine Textspalte neben einer Abbildungsspalte)?"
+      "de": "Wie setze ich zwei Spalten in einen Kasten (eine Textspalte neben einer Abbildungsspalte)?",
+      "it": "Come metto due colonne dentro un riquadro (una colonna di testo accanto a una colonna con una figura)?"
     },
     "index": {
       "en": "Callouts, columns inside",
@@ -1558,7 +1677,8 @@
       "ja": "囲み、内部の段組み",
       "pt": "Boxes, colunas dentro dos",
       "fr": "Encadrés, colonnes à l’intérieur",
-      "de": "Kästen, Spalten darin"
+      "de": "Kästen, Spalten darin",
+      "it": "Riquadri, colonne all’interno"
     },
     "theme": "boxes"
   },
@@ -1573,7 +1693,8 @@
       "ja": "解答欄を含むワークシートのカードのように、囲みを正確な間隔で入れ子にするには？",
       "pt": "Como aninho boxes, como uma ficha de exercícios com caixas de resposta, com espaçamento exato?",
       "fr": "Comment imbriquer des encadrés, comme une fiche d’exercices contenant des cases de réponse, avec un espacement exact ?",
-      "de": "Wie verschachtele ich Kästen, etwa eine Arbeitsblattkarte mit Antwortkästen, mit genauen Abständen?"
+      "de": "Wie verschachtele ich Kästen, etwa eine Arbeitsblattkarte mit Antwortkästen, mit genauen Abständen?",
+      "it": "Come annido i riquadri, per esempio una scheda di esercizi che contiene riquadri per le risposte, con spaziature esatte?"
     },
     "index": {
       "en": "Callouts, nested",
@@ -1584,7 +1705,8 @@
       "ja": "囲み、入れ子",
       "pt": "Boxes aninhados",
       "fr": "Encadrés, imbriqués",
-      "de": "Kästen, verschachtelt"
+      "de": "Kästen, verschachtelt",
+      "it": "Riquadri, annidati"
     },
     "theme": "boxes"
   },
@@ -1599,7 +1721,8 @@
       "ja": "番号付きのタブ（「BOX 1-1」）、角のアイコン、罫線付きの余白のアイコンを加えるには？",
       "pt": "Como acrescento uma aba numerada (“BOXE 1-1”), um ícone de canto ou um ícone na margem com um fio?",
       "fr": "Comment ajouter un onglet numéroté (« BOX 1-1 »), une icône de coin ou une icône de marge avec un filet ?",
-      "de": "Wie füge ich einen nummerierten Reiter („BOX 1-1“), ein Ecksymbol oder ein Randsymbol mit Linie hinzu?"
+      "de": "Wie füge ich einen nummerierten Reiter („BOX 1-1“), ein Ecksymbol oder ein Randsymbol mit Linie hinzu?",
+      "it": "Come aggiungo una linguetta numerata («BOX 1-1»), un’icona d’angolo o un’icona a margine con un filetto?"
     },
     "index": {
       "en": "Callouts, tabs, corner icons and markers",
@@ -1610,7 +1733,8 @@
       "ja": "囲み、タブ・角のアイコン・マーカー",
       "pt": "Boxes, abas, ícones de canto e marcas",
       "fr": "Encadrés, onglets, icônes de coin et marqueurs",
-      "de": "Kästen, Reiter, Ecksymbole und Markierungen"
+      "de": "Kästen, Reiter, Ecksymbole und Markierungen",
+      "it": "Riquadri, linguette, icone d’angolo e marcatori"
     },
     "theme": "boxes"
   },
@@ -1625,7 +1749,8 @@
       "ja": "番号付きキャプションのある図を加え、本文で参照するには（「図3.2を参照」）？",
       "pt": "Como acrescento uma figura com legenda numerada e a cito no texto (“ver fig. 3.2”)?",
       "fr": "Comment ajouter une figure avec une légende numérotée et la citer dans le texte (« voir fig. 3.2 ») ?",
-      "de": "Wie füge ich eine Abbildung mit nummerierter Bildunterschrift ein und verweise im Text darauf („siehe Abb. 3.2“)?"
+      "de": "Wie füge ich eine Abbildung mit nummerierter Bildunterschrift ein und verweise im Text darauf („siehe Abb. 3.2“)?",
+      "it": "Come aggiungo una figura con didascalia numerata e la cito nel testo («vedi Fig. 3.2»)?"
     },
     "index": {
       "en": "Figures, numbered and cited",
@@ -1636,7 +1761,8 @@
       "ja": "図、番号付けと参照",
       "pt": "Figuras numeradas e citadas",
       "fr": "Figures, numérotées et citées",
-      "de": "Abbildungen, nummeriert und zitiert"
+      "de": "Abbildungen, nummeriert und zitiert",
+      "it": "Figure, numerate e citate"
     },
     "theme": "figures"
   },
@@ -1651,7 +1777,8 @@
       "ja": "図の位置を制御するには（ページの上端、2段をまたぐ、まさにこの位置、余白）？",
       "pt": "Como decido onde vai uma figura: no alto da página, sobre as duas colunas, exatamente aqui ou na margem?",
       "fr": "Comment choisir où va une figure : en haut de page, sur les deux colonnes, exactement ici ou dans la marge ?",
-      "de": "Wie bestimme ich, wo eine Abbildung steht: oben auf der Seite, über beide Spalten, genau hier oder am Rand?"
+      "de": "Wie bestimme ich, wo eine Abbildung steht: oben auf der Seite, über beide Spalten, genau hier oder am Rand?",
+      "it": "Come decido dove va una figura: in testa alla pagina, su entrambe le colonne, esattamente qui o nel margine?"
     },
     "index": {
       "en": "Figures, controlling placement",
@@ -1662,7 +1789,8 @@
       "ja": "図、配置の制御",
       "pt": "Figuras, controlar a posição",
       "fr": "Figures, contrôle du placement",
-      "de": "Abbildungen, Platzierung steuern"
+      "de": "Abbildungen, Platzierung steuern",
+      "it": "Figure, controllare la posizione"
     },
     "theme": "figures"
   },
@@ -1677,7 +1805,8 @@
       "ja": "見出し行、結合セル、列幅、セルごとのそろえを備えた表を作るには？",
       "pt": "Como faço uma tabela com linhas de cabeçalho, células mescladas, larguras de coluna e alinhamento por célula?",
       "fr": "Comment faire un tableau avec rangées d’en-tête, cellules fusionnées, largeurs de colonne et alignement par cellule ?",
-      "de": "Wie erstelle ich eine Tabelle mit Kopfzeilen, verbundenen Zellen, Spaltenbreiten und Ausrichtung je Zelle?"
+      "de": "Wie erstelle ich eine Tabelle mit Kopfzeilen, verbundenen Zellen, Spaltenbreiten und Ausrichtung je Zelle?",
+      "it": "Come creo una tabella con righe di intestazione, celle unite, larghezze delle colonne e allineamento per cella?"
     },
     "index": {
       "en": "Tables, merged cells and header rows",
@@ -1688,7 +1817,8 @@
       "ja": "表、結合セルと見出し行",
       "pt": "Tabelas, células mescladas e linhas de cabeçalho",
       "fr": "Tableaux, cellules fusionnées et rangées d’en-tête",
-      "de": "Tabellen, verbundene Zellen und Kopfzeilen"
+      "de": "Tabellen, verbundene Zellen und Kopfzeilen",
+      "it": "Tabelle, celle unite e righe di intestazione"
     },
     "theme": "tables"
   },
@@ -1703,7 +1833,8 @@
       "ja": "長い表を、見出し行を繰り返し「続く」の表示を付けて、ページをまたいで分割するには？",
       "pt": "Como divido uma tabela longa entre páginas com o cabeçalho repetido e um aviso de “continua”?",
       "fr": "Comment couper un long tableau sur plusieurs pages avec un en-tête répété et une mention « suite » ?",
-      "de": "Wie teile ich eine lange Tabelle über mehrere Seiten, mit wiederholtem Kopf und einem Fortsetzungsvermerk?"
+      "de": "Wie teile ich eine lange Tabelle über mehrere Seiten, mit wiederholtem Kopf und einem Fortsetzungsvermerk?",
+      "it": "Come divido una tabella lunga su più pagine con l’intestazione ripetuta e un’indicazione «continua»?"
     },
     "index": {
       "en": "Tables, splitting across pages",
@@ -1714,7 +1845,8 @@
       "ja": "表、ページをまたぐ分割",
       "pt": "Tabelas, dividir entre páginas",
       "fr": "Tableaux, coupure sur plusieurs pages",
-      "de": "Tabellen, über Seiten teilen"
+      "de": "Tabellen, über Seiten teilen",
+      "it": "Tabelle, dividere su più pagine"
     },
     "theme": "tables"
   },
@@ -1729,7 +1861,8 @@
       "ja": "幅の広い表を、専用のページに横向きで組むには？",
       "pt": "Como componho uma tabela larga em paisagem, em uma página só para ela?",
       "fr": "Comment composer un tableau large à l’italienne sur sa propre page ?",
-      "de": "Wie setze ich eine breite Tabelle im Querformat auf eine eigene Seite?"
+      "de": "Wie setze ich eine breite Tabelle im Querformat auf eine eigene Seite?",
+      "it": "Come compongo una tabella larga in orizzontale su una pagina tutta sua?"
     },
     "index": {
       "en": "Tables, landscape",
@@ -1740,7 +1873,8 @@
       "ja": "表、横向き",
       "pt": "Tabelas em paisagem",
       "fr": "Tableaux, à l’italienne",
-      "de": "Tabellen, Querformat"
+      "de": "Tabellen, Querformat",
+      "it": "Tabelle, in orizzontale"
     },
     "theme": "tables"
   },
@@ -1755,7 +1889,8 @@
       "ja": "1つの文書の中で、複数の表を異なるスタイル（塗り、縞模様のセル、角丸の枠）にするには？",
       "pt": "Como dou estilos diferentes a várias tabelas (preenchimentos, células zebradas, molduras arredondadas) em um mesmo documento?",
       "fr": "Comment styler plusieurs tableaux différemment (fonds, cellules zébrées, cadres arrondis) dans un même document ?",
-      "de": "Wie gestalte ich mehrere Tabellen in einem Dokument unterschiedlich (Füllungen, Zebrastreifen, abgerundete Rahmen)?"
+      "de": "Wie gestalte ich mehrere Tabellen in einem Dokument unterschiedlich (Füllungen, Zebrastreifen, abgerundete Rahmen)?",
+      "it": "Come do stili diversi a più tabelle (riempimenti, celle a righe alterne, cornici arrotondate) nello stesso documento?"
     },
     "index": {
       "en": "Tables, several styles in one document",
@@ -1766,7 +1901,8 @@
       "ja": "表、1つの文書で複数のスタイル",
       "pt": "Tabelas, vários estilos em um documento",
       "fr": "Tableaux, plusieurs styles dans un document",
-      "de": "Tabellen, mehrere Stile in einem Dokument"
+      "de": "Tabellen, mehrere Stile in einem Dokument",
+      "it": "Tabelle, più stili in un documento"
     },
     "theme": "tables"
   },
@@ -1781,7 +1917,8 @@
       "ja": "表のセルに画像やアイコンを入れるには？",
       "pt": "Como coloco imagens ou ícones dentro das células de uma tabela?",
       "fr": "Comment mettre des images ou des icônes dans les cellules d’un tableau ?",
-      "de": "Wie setze ich Bilder oder Symbole in Tabellenzellen?"
+      "de": "Wie setze ich Bilder oder Symbole in Tabellenzellen?",
+      "it": "Come metto immagini o icone dentro le celle di una tabella?"
     },
     "index": {
       "en": "Tables, pictures in cells",
@@ -1792,7 +1929,8 @@
       "ja": "表、セル内の画像",
       "pt": "Tabelas, imagens nas células",
       "fr": "Tableaux, images dans les cellules",
-      "de": "Tabellen, Bilder in Zellen"
+      "de": "Tabellen, Bilder in Zellen",
+      "it": "Tabelle, immagini nelle celle"
     },
     "theme": "tables"
   },
@@ -1807,7 +1945,8 @@
       "ja": "PDFで図表を鮮明に保ち、テキストを選択できるようにするには（SVG、印刷用マスター）？",
       "pt": "Como mantenho os diagramas nítidos e com texto selecionável no PDF (SVG, originais para impressão)?",
       "fr": "Comment garder des schémas nets, avec du texte sélectionnable, dans le PDF (SVG, originaux pour l’impression) ?",
-      "de": "Wie bleiben Diagramme im PDF scharf und mit auswählbarem Text (SVG, Druckvorlagen)?"
+      "de": "Wie bleiben Diagramme im PDF scharf und mit auswählbarem Text (SVG, Druckvorlagen)?",
+      "it": "Come mantengo nitidi i diagrammi, con testo selezionabile, nel PDF (SVG, master di stampa)?"
     },
     "index": {
       "en": "Diagrams, sharp and vector in the PDF",
@@ -1818,7 +1957,8 @@
       "ja": "図表、PDFで鮮明なベクター",
       "pt": "Diagramas nítidos e vetoriais no PDF",
       "fr": "Schémas, nets et vectoriels dans le PDF",
-      "de": "Diagramme, scharf und als Vektoren im PDF"
+      "de": "Diagramme, scharf und als Vektoren im PDF",
+      "it": "Diagrammi, nitidi e vettoriali nel PDF"
     },
     "theme": "figures"
   },
@@ -1833,7 +1973,8 @@
       "ja": "すべての図表を1色の特色インキに色替えするには？",
       "pt": "Como passo todos os diagramas para uma única cor especial?",
       "fr": "Comment recolorer tous les schémas dans une seule encre d’accompagnement ?",
-      "de": "Wie färbe ich jedes Diagramm in eine einzige Schmuckfarbe um?"
+      "de": "Wie färbe ich jedes Diagramm in eine einzige Schmuckfarbe um?",
+      "it": "Come ricoloro tutti i diagrammi con un unico inchiostro spot?"
     },
     "index": {
       "en": "Single ink, recolouring diagrams",
@@ -1844,7 +1985,8 @@
       "ja": "1色刷り、図表の色替え",
       "pt": "Cor única, recolorir diagramas",
       "fr": "Encre unique, recoloration des schémas",
-      "de": "Einfarbig, Diagramme umfärben"
+      "de": "Einfarbig, Diagramme umfärben",
+      "it": "Inchiostro unico, ricolorare i diagrammi"
     },
     "theme": "figures"
   },
@@ -1859,7 +2001,8 @@
       "ja": "キャプションを図の横に、または表の上のキャプションバーに置くには？",
       "pt": "Como coloco a legenda ao lado de uma figura, ou acima de uma tabela em uma barra de legenda?",
       "fr": "Comment composer une légende à côté d’une figure, ou au-dessus d’un tableau sur une barre de légende ?",
-      "de": "Wie setze ich eine Bildunterschrift neben eine Abbildung oder eine Tabellenüberschrift auf einem Balken über die Tabelle?"
+      "de": "Wie setze ich eine Bildunterschrift neben eine Abbildung oder eine Tabellenüberschrift auf einem Balken über die Tabelle?",
+      "it": "Come compongo una didascalia accanto a una figura, o sopra una tabella su una barra della didascalia?"
     },
     "index": {
       "en": "Captions, beside or above",
@@ -1870,7 +2013,8 @@
       "ja": "キャプション、横または上",
       "pt": "Legendas, ao lado ou acima",
       "fr": "Légendes, à côté ou au-dessus",
-      "de": "Bildunterschriften, daneben oder darüber"
+      "de": "Bildunterschriften, daneben oder darüber",
+      "it": "Didascalie, accanto o sopra"
     },
     "theme": "figures"
   },
@@ -1885,7 +2029,8 @@
       "ja": "番号のないアートワーク（オーナメント、カット、ロゴ）を組むには？",
       "pt": "Como componho ilustrações sem numeração: ornamentos, vinhetas, logotipos?",
       "fr": "Comment composer des illustrations non numérotées : ornements, vignettes, logos ?",
-      "de": "Wie setze ich nicht nummerierte Grafiken: Ornamente, Vignetten, Logos?"
+      "de": "Wie setze ich nicht nummerierte Grafiken: Ornamente, Vignetten, Logos?",
+      "it": "Come compongo illustrazioni non numerate: fregi, vignette, loghi?"
     },
     "index": {
       "en": "Ornaments and unnumbered artwork",
@@ -1896,7 +2041,8 @@
       "ja": "オーナメントと番号のないアートワーク",
       "pt": "Ornamentos e ilustrações sem numeração",
       "fr": "Ornements et illustrations non numérotées",
-      "de": "Ornamente und nicht nummerierte Grafiken"
+      "de": "Ornamente und nicht nummerierte Grafiken",
+      "it": "Fregi e illustrazioni non numerate"
     },
     "theme": "figures"
   },
@@ -1911,7 +2057,8 @@
       "ja": "「図」や「表」のラベルを文書の言語で表示するには？",
       "pt": "Como faço os rótulos “Figura” e “Tabela” saírem no idioma do meu documento?",
       "fr": "Comment obtenir les étiquettes « Figure » et « Tableau » dans la langue de mon document ?",
-      "de": "Wie erhalte ich die Beschriftungen „Abbildung“ und „Tabelle“ in der Sprache meines Dokuments?"
+      "de": "Wie erhalte ich die Beschriftungen „Abbildung“ und „Tabelle“ in der Sprache meines Dokuments?",
+      "it": "Come ottengo le etichette «Figura» e «Tabella» nella lingua del mio documento?"
     },
     "index": {
       "en": "Figure and Table labels, translating",
@@ -1922,7 +2069,8 @@
       "ja": "図と表のラベル、翻訳",
       "pt": "Rótulos Figura e Tabela, traduzir",
       "fr": "Étiquettes Figure et Tableau, traduction",
-      "de": "Beschriftungen Abbildung und Tabelle, übersetzen"
+      "de": "Beschriftungen Abbildung und Tabelle, übersetzen",
+      "it": "Etichette Figura e Tabella, tradurre"
     },
     "theme": "figures"
   },
@@ -1937,7 +2085,8 @@
       "ja": "1つのプロジェクトから、同じ本を2つの言語で出版するには？",
       "pt": "Como publico o mesmo livro em dois idiomas a partir de um só projeto?",
       "fr": "Comment publier le même livre en deux langues à partir d’un seul projet ?",
-      "de": "Wie veröffentliche ich dasselbe Buch aus einem Projekt in zwei Sprachen?"
+      "de": "Wie veröffentliche ich dasselbe Buch aus einem Projekt in zwei Sprachen?",
+      "it": "Come pubblico lo stesso libro in due lingue da un unico progetto?"
     },
     "index": {
       "en": "Bilingual editions",
@@ -1948,7 +2097,8 @@
       "ja": "2言語版",
       "pt": "Edições bilíngues",
       "fr": "Éditions bilingues",
-      "de": "Zweisprachige Ausgaben"
+      "de": "Zweisprachige Ausgaben",
+      "it": "Edizioni bilingui"
     },
     "theme": "output"
   },
@@ -1963,7 +2113,8 @@
       "ja": "既存のPDF、Word、InDesignの出版物をPostextに移植するには？",
       "pt": "Como passo para o Postext uma publicação que já existe em PDF, Word ou InDesign?",
       "fr": "Comment porter une publication existante (PDF, Word ou InDesign) vers Postext ?",
-      "de": "Wie übertrage ich eine bestehende PDF-, Word- oder InDesign-Publikation nach Postext?"
+      "de": "Wie übertrage ich eine bestehende PDF-, Word- oder InDesign-Publikation nach Postext?",
+      "it": "Come porto in Postext una pubblicazione esistente in PDF, Word o InDesign?"
     },
     "index": {
       "en": "Porting existing publications",
@@ -1974,7 +2125,8 @@
       "ja": "既存の出版物の移植",
       "pt": "Publicações existentes, migrar para o Postext",
       "fr": "Portage de publications existantes",
-      "de": "Bestehende Publikationen übertragen"
+      "de": "Bestehende Publikationen übertragen",
+      "it": "Portare pubblicazioni esistenti"
     },
     "theme": "output"
   },
@@ -1989,7 +2141,8 @@
       "ja": "文書のどこに問題があるか（警告、はみ出し、収束しないレイアウト）を調べるには？",
       "pt": "Como descubro o que está errado no meu documento (avisos, transbordamento, layout que não converge)?",
       "fr": "Comment savoir ce qui ne va pas dans mon document (avertissements, débordements, mise en page qui ne converge pas) ?",
-      "de": "Wie finde ich heraus, was mit meinem Dokument nicht stimmt (Warnungen, Überlauf, nicht konvergierendes Layout)?"
+      "de": "Wie finde ich heraus, was mit meinem Dokument nicht stimmt (Warnungen, Überlauf, nicht konvergierendes Layout)?",
+      "it": "Come scopro che cosa non va nel mio documento (avvisi, sforamenti, impaginazione che non converge)?"
     },
     "index": {
       "en": "Warnings and diagnostics",
@@ -2000,7 +2153,8 @@
       "ja": "警告と診断",
       "pt": "Avisos e diagnóstico",
       "fr": "Avertissements et diagnostics",
-      "de": "Warnungen und Diagnose"
+      "de": "Warnungen und Diagnose",
+      "it": "Avvisi e diagnostica"
     },
     "theme": "output"
   },
@@ -2015,7 +2169,8 @@
       "ja": "Postextは3段以上の段組みや、画像の周りへの回り込みに対応していますか？",
       "pt": "O Postext consegue compor três ou mais colunas de texto, ou fazer o texto contornar uma imagem?",
       "fr": "Postext peut-il composer trois colonnes de texte ou plus, ou habiller une image avec du texte ?",
-      "de": "Kann Postext drei oder mehr Textspalten setzen oder Text um ein Bild fließen lassen?"
+      "de": "Kann Postext drei oder mehr Textspalten setzen oder Text um ein Bild fließen lassen?",
+      "it": "Postext può comporre tre o più colonne di testo, o far scorrere il testo intorno a un’immagine?"
     },
     "index": {
       "en": "Three columns and text wrap",
@@ -2026,7 +2181,8 @@
       "ja": "3段組みと回り込み",
       "pt": "Três colunas e contorno de texto",
       "fr": "Trois colonnes et habillage",
-      "de": "Drei Spalten und Textumfluss"
+      "de": "Drei Spalten und Textumfluss",
+      "it": "Tre colonne e testo intorno alle immagini"
     },
     "theme": "page"
   },
@@ -2041,7 +2197,8 @@
       "ja": "すべてのページに透かし、背景の色、装飾画像を加えるには？",
       "pt": "Como acrescento uma marca-d'água, um fundo de cor ou uma imagem decorativa em todas as páginas?",
       "fr": "Comment ajouter un filigrane, une teinte de fond ou une image décorative sur chaque page ?",
-      "de": "Wie füge ich auf jeder Seite ein Wasserzeichen, eine Hintergrundtönung oder ein Schmuckbild ein?"
+      "de": "Wie füge ich auf jeder Seite ein Wasserzeichen, eine Hintergrundtönung oder ein Schmuckbild ein?",
+      "it": "Come aggiungo una filigrana, una tinta di fondo o un’immagine decorativa su ogni pagina?"
     },
     "index": {
       "en": "Watermarks and page backgrounds",
@@ -2052,7 +2209,8 @@
       "ja": "透かしとページの背景",
       "pt": "Marcas-d'água e fundos de página",
       "fr": "Filigranes et fonds de page",
-      "de": "Wasserzeichen und Seitenhintergründe"
+      "de": "Wasserzeichen und Seitenhintergründe",
+      "it": "Filigrane e sfondi di pagina"
     },
     "theme": "running-heads"
   },
@@ -2067,7 +2225,8 @@
       "ja": "記入線、解答欄、語群、チェックリストのあるワークシートのページを作るには？",
       "pt": "Como monto uma ficha de exercícios: linhas para preencher, caixas de resposta, bancos de palavras, listas de verificação?",
       "fr": "Comment construire une fiche d’exercices : lignes à remplir, cases de réponse, banques de mots, listes de contrôle ?",
-      "de": "Wie baue ich eine Arbeitsblattseite: Schreiblinien, Antwortkästen, Wortspeicher, Checklisten?"
+      "de": "Wie baue ich eine Arbeitsblattseite: Schreiblinien, Antwortkästen, Wortspeicher, Checklisten?",
+      "it": "Come costruisco una pagina di esercizi: righe da compilare, riquadri per le risposte, banche di parole, liste di controllo?"
     },
     "index": {
       "en": "Worksheets",
@@ -2078,7 +2237,8 @@
       "ja": "ワークシート",
       "pt": "Fichas de exercícios",
       "fr": "Fiches d’exercices",
-      "de": "Arbeitsblätter"
+      "de": "Arbeitsblätter",
+      "it": "Schede di esercizi"
     },
     "theme": "boxes"
   },
@@ -2093,7 +2253,8 @@
       "ja": "デザイン要素を座標ではなく、ページ、裁ち落とし、またはほかの要素を基準に配置するには？",
       "pt": "Como posiciono elementos de design em relação à página, à sangria ou uns aos outros, em vez de usar coordenadas?",
       "fr": "Comment placer des éléments de maquette par rapport à la page, au fond perdu ou les uns aux autres plutôt que par coordonnées ?",
-      "de": "Wie platziere ich Gestaltungselemente relativ zur Seite, zum Anschnitt oder zueinander statt über Koordinaten?"
+      "de": "Wie platziere ich Gestaltungselemente relativ zur Seite, zum Anschnitt oder zueinander statt über Koordinaten?",
+      "it": "Come colloco gli elementi grafici rispetto alla pagina, all’abbondanza o tra loro invece che per coordinate?"
     },
     "index": {
       "en": "Anchoring design elements to each other",
@@ -2104,7 +2265,8 @@
       "ja": "デザイン要素どうしのアンカー",
       "pt": "Ancoragem de elementos de design entre si",
       "fr": "Ancrage des éléments de maquette les uns aux autres",
-      "de": "Gestaltungselemente aneinander verankern"
+      "de": "Gestaltungselemente aneinander verankern",
+      "it": "Ancorare gli elementi grafici tra loro"
     },
     "theme": "headings"
   },
@@ -2119,7 +2281,8 @@
       "ja": "詩の5行ごとに余白へ行番号を付け、注をその行番号に対応させるには？",
       "pt": "Como numero na margem cada quinto verso de um poema e remeto minhas notas a esses números de verso?",
       "fr": "Comment numéroter un vers sur cinq d’un poème dans la marge et rattacher mes notes à ces numéros de vers ?",
-      "de": "Wie nummeriere ich jede fünfte Zeile eines Gedichts am Rand und beziehe meine Anmerkungen auf diese Zeilennummern?"
+      "de": "Wie nummeriere ich jede fünfte Zeile eines Gedichts am Rand und beziehe meine Anmerkungen auf diese Zeilennummern?",
+      "it": "Come numero un verso ogni cinque nel margine di una poesia e collego le note a quei numeri di verso?"
     },
     "index": {
       "en": "Line numbers in verse, and notes keyed to them",
@@ -2130,7 +2293,8 @@
       "ja": "韻文の行番号、それに対応する注",
       "pt": "Numeração de versos e notas remetidas a ela",
       "fr": "Numéros de vers, et notes rattachées",
-      "de": "Zeilennummern in Versen und Anmerkungen dazu"
+      "de": "Zeilennummern in Versen und Anmerkungen dazu",
+      "it": "Numeri di verso nella poesia, e note collegate"
     },
     "theme": "type"
   },
@@ -2145,7 +2309,8 @@
       "ja": "小口にツメ（文字や章ごとにページの下へずれていくタブ）を付けるには？",
       "pt": "Como acrescento um índice de dedo: uma aba no corte da frente que desce pela página de uma letra ou de um capítulo para o seguinte?",
       "fr": "Comment ajouter un index à onglets : un onglet sur la tranche qui descend le long de la page d’une lettre ou d’un chapitre au suivant ?",
-      "de": "Wie füge ich ein Daumenregister hinzu: einen Reiter am Vorderschnitt, der von Buchstabe zu Buchstabe oder Kapitel zu Kapitel die Seite hinunterwandert?"
+      "de": "Wie füge ich ein Daumenregister hinzu: einen Reiter am Vorderschnitt, der von Buchstabe zu Buchstabe oder Kapitel zu Kapitel die Seite hinunterwandert?",
+      "it": "Come aggiungo un indice a unghiatura: una linguetta sul taglio esterno che scende lungo la pagina da una lettera o da un capitolo al successivo?"
     },
     "index": {
       "en": "Thumb index, tabs on the fore-edge",
@@ -2156,7 +2321,8 @@
       "ja": "ツメ、小口のタブ",
       "pt": "Índice de dedo, abas no corte da frente",
       "fr": "Index à onglets, onglets sur la tranche",
-      "de": "Daumenregister, Reiter am Vorderschnitt"
+      "de": "Daumenregister, Reiter am Vorderschnitt",
+      "it": "Indice a unghiatura, linguette sul taglio esterno"
     },
     "theme": "running-heads"
   },
@@ -2171,7 +2337,8 @@
       "ja": "脚本や戯曲を組むには（柱書き、役名、左右からインデントしたせりふ）？",
       "pt": "Como componho um roteiro de cinema ou uma peça de teatro: cabeçalhos de cena, nomes de personagens e diálogo recuado dos dois lados?",
       "fr": "Comment composer un scénario ou une pièce de théâtre : en-têtes de scène, noms des personnages et dialogues en retrait des deux côtés ?",
-      "de": "Wie setze ich ein Drehbuch oder ein Theaterstück: Szenenüberschriften, Figurennamen und beidseitig eingerückte Dialoge?"
+      "de": "Wie setze ich ein Drehbuch oder ein Theaterstück: Szenenüberschriften, Figurennamen und beidseitig eingerückte Dialoge?",
+      "it": "Come compongo una sceneggiatura o un testo teatrale: intestazioni di scena, nomi dei personaggi e dialoghi rientrati da entrambi i lati?"
     },
     "index": {
       "en": "Screenplays and plays, script format",
@@ -2182,7 +2349,8 @@
       "ja": "脚本と戯曲、台本の書式",
       "pt": "Roteiros e peças de teatro, formato",
       "fr": "Scénarios et pièces de théâtre, format de script",
-      "de": "Drehbücher und Theaterstücke, Skriptformat"
+      "de": "Drehbücher und Theaterstücke, Skriptformat",
+      "it": "Sceneggiature e testi teatrali, formato del copione"
     },
     "theme": "type"
   },
@@ -2197,7 +2365,8 @@
       "ja": "本文が動くと自動でノンブルが変わる索引を作るには？",
       "pt": "Como faço um índice remissivo cujos números de página mudem sozinhos quando o texto se move?",
       "fr": "Comment construire un index en fin de livre dont les numéros de page changent d’eux-mêmes quand le texte bouge ?",
-      "de": "Wie erstelle ich ein Register, dessen Seitenzahlen sich von selbst ändern, wenn sich der Text verschiebt?"
+      "de": "Wie erstelle ich ein Register, dessen Seitenzahlen sich von selbst ändern, wenn sich der Text verschiebt?",
+      "it": "Come costruisco un indice analitico i cui numeri di pagina cambiano da soli quando il testo si sposta?"
     },
     "index": {
       "en": "Index, back-of-book, page numbers that follow the text",
@@ -2208,7 +2377,8 @@
       "ja": "索引、本文に追従するノンブル",
       "pt": "Índice remissivo, números de página que acompanham o texto",
       "fr": "Index de fin de livre, numéros de page qui suivent le texte",
-      "de": "Register, Seitenzahlen, die dem Text folgen"
+      "de": "Register, Seitenzahlen, die dem Text folgen",
+      "it": "Indice analitico, numeri di pagina che seguono il testo"
     },
     "theme": "structure"
   },
@@ -2223,7 +2393,8 @@
       "ja": "同じマークを付けたテキストから、人名索引と事項索引の2つを印刷するには？",
       "pt": "Como imprimo dois índices, um onomástico e outro de assuntos, a partir do mesmo texto marcado?",
       "fr": "Comment imprimer deux index, un des noms et un des matières, à partir du même texte balisé ?",
-      "de": "Wie drucke ich aus demselben ausgezeichneten Text zwei Register, eines für Namen und eines für Sachbegriffe?"
+      "de": "Wie drucke ich aus demselben ausgezeichneten Text zwei Register, eines für Namen und eines für Sachbegriffe?",
+      "it": "Come stampo due indici, uno dei nomi e uno degli argomenti, dallo stesso testo marcato?"
     },
     "index": {
       "en": "Indexes of names and of subjects",
@@ -2234,7 +2405,8 @@
       "ja": "人名索引と事項索引",
       "pt": "Índices onomástico e de assuntos",
       "fr": "Index des noms et des matières",
-      "de": "Namen- und Sachregister"
+      "de": "Namen- und Sachregister",
+      "it": "Indici dei nomi e degli argomenti"
     },
     "theme": "structure"
   },
@@ -2249,7 +2421,8 @@
       "ja": "中国語の本を縦組み・右綴じで組むには？",
       "pt": "Como componho um livro chinês na vertical, encadernado à direita?",
       "fr": "Comment composer un livre chinois à la verticale, relié à droite ?",
-      "de": "Wie setze ich ein chinesisches Buch vertikal und rechts gebunden?"
+      "de": "Wie setze ich ein chinesisches Buch vertikal und rechts gebunden?",
+      "it": "Come compongo un libro cinese in verticale, rilegato a destra?"
     },
     "index": {
       "en": "Chinese, vertical and right-bound",
@@ -2260,7 +2433,8 @@
       "ja": "中国語、縦組みと右綴じ",
       "pt": "Chinês na vertical, encadernado à direita",
       "fr": "Chinois, vertical et relié à droite",
-      "de": "Chinesisch, vertikal und rechts gebunden"
+      "de": "Chinesisch, vertikal und rechts gebunden",
+      "it": "Cinese, verticale e rilegato a destra"
     },
     "theme": "page"
   },
@@ -2275,7 +2449,8 @@
       "ja": "。や，が行頭に来ないようにするには？",
       "pt": "Como evito que 。 e ， comecem uma linha?",
       "fr": "Comment empêcher 。 et ， de se placer en début de ligne ?",
-      "de": "Wie halte ich 。 und ， vom Zeilenanfang fern?"
+      "de": "Wie halte ich 。 und ， vom Zeilenanfang fern?",
+      "it": "Come evito che 。 e ， finiscano a inizio riga?"
     },
     "index": {
       "en": "Chinese punctuation at line starts",
@@ -2286,7 +2461,8 @@
       "ja": "中国語の約物、行頭",
       "pt": "Pontuação chinesa no início da linha",
       "fr": "Ponctuation chinoise en début de ligne",
-      "de": "Chinesische Interpunktion am Zeilenanfang"
+      "de": "Chinesische Interpunktion am Zeilenanfang",
+      "it": "Punteggiatura cinese a inizio riga"
     },
     "theme": "type"
   },
@@ -2301,7 +2477,8 @@
       "ja": "漢字の上にピンインを付けるには？",
       "pt": "Como coloco pinyin sobre os caracteres chineses?",
       "fr": "Comment ajouter du pinyin au-dessus des caractères chinois ?",
-      "de": "Wie füge ich Pinyin über chinesischen Zeichen hinzu?"
+      "de": "Wie füge ich Pinyin über chinesischen Zeichen hinzu?",
+      "it": "Come aggiungo il pinyin sopra i caratteri cinesi?"
     },
     "index": {
       "en": "Pinyin over Chinese characters",
@@ -2312,7 +2489,8 @@
       "ja": "ピンイン、漢字の上",
       "pt": "Pinyin sobre caracteres chineses",
       "fr": "Pinyin au-dessus des caractères chinois",
-      "de": "Pinyin über chinesischen Zeichen"
+      "de": "Pinyin über chinesischen Zeichen",
+      "it": "Pinyin sopra i caratteri cinesi"
     },
     "theme": "type"
   },
@@ -2327,7 +2505,8 @@
       "ja": "版面を字数で設定し、1行の字数と1ページの行数を決めるには？",
       "pt": "Como defino a mancha em caracteres, tantos por linha e tantas linhas por página?",
       "fr": "Comment définir le bloc de texte en caractères, tant de caractères par ligne et tant de lignes par page ?",
-      "de": "Wie lege ich den Satzspiegel in Zeichen fest, mit so vielen Zeichen pro Zeile und so vielen Zeilen pro Seite?"
+      "de": "Wie lege ich den Satzspiegel in Zeichen fest, mit so vielen Zeichen pro Zeile und so vielen Zeilen pro Seite?",
+      "it": "Come imposto la gabbia in caratteri, con tanti caratteri per riga e tante righe per pagina?"
     },
     "index": {
       "en": "Character grid (版心)",
@@ -2338,7 +2517,8 @@
       "ja": "文字グリッド（版心）",
       "pt": "Grade de caracteres (版心)",
       "fr": "Grille de caractères (版心)",
-      "de": "Zeichenraster (版心)"
+      "de": "Zeichenraster (版心)",
+      "it": "Griglia di caratteri (版心)"
     },
     "theme": "page"
   },
@@ -2353,7 +2533,8 @@
       "ja": "中国語の約物を、中国大陸の本のような開明式や半角で組むには？",
       "pt": "Como componho a pontuação chinesa no estilo Kaiming, como nos livros da China continental, ou em meia largura?",
       "fr": "Comment composer la ponctuation chinoise en Kaiming, comme les livres de Chine continentale, ou en demi-chasse ?",
-      "de": "Wie setze ich chinesische Interpunktion im Kaiming-Stil wie in Büchern vom Festland oder in halber Breite?"
+      "de": "Wie setze ich chinesische Interpunktion im Kaiming-Stil wie in Büchern vom Festland oder in halber Breite?",
+      "it": "Come compongo la punteggiatura cinese Kaiming, come i libri della Cina continentale, o a mezza larghezza?"
     },
     "index": {
       "en": "Chinese punctuation: Kaiming, full and half width",
@@ -2364,7 +2545,8 @@
       "ja": "中国語の約物、開明式・全角・半角",
       "pt": "Pontuação chinesa: Kaiming, largura inteira e meia largura",
       "fr": "Ponctuation chinoise : Kaiming, pleine chasse et demi-chasse",
-      "de": "Chinesische Interpunktion: Kaiming, volle und halbe Breite"
+      "de": "Chinesische Interpunktion: Kaiming, volle und halbe Breite",
+      "it": "Punteggiatura cinese: Kaiming, piena e mezza larghezza"
     },
     "theme": "type"
   },
@@ -2379,7 +2561,8 @@
       "ja": "章番号を第一回、第二回のように漢数字で振るには？",
       "pt": "Como numero os capítulos 第一回, 第二回 com numerais chineses?",
       "fr": "Comment numéroter les chapitres 第一回, 第二回 en chiffres chinois ?",
-      "de": "Wie nummeriere ich Kapitel 第一回, 第二回 mit chinesischen Zahlzeichen?"
+      "de": "Wie nummeriere ich Kapitel 第一回, 第二回 mit chinesischen Zahlzeichen?",
+      "it": "Come numero i capitoli 第一回, 第二回 in numeri cinesi?"
     },
     "index": {
       "en": "Chinese numerals in headings and folios",
@@ -2390,7 +2573,8 @@
       "ja": "漢数字、見出しとノンブル",
       "pt": "Numerais chineses em títulos e fólios",
       "fr": "Chiffres chinois dans les titres et les folios",
-      "de": "Chinesische Zahlzeichen in Überschriften und Paginas"
+      "de": "Chinesische Zahlzeichen in Überschriften und Paginas",
+      "it": "Numeri cinesi nei titoli e nei folio"
     },
     "theme": "headings"
   },
@@ -2405,7 +2589,8 @@
       "ja": "中国語と欧文の間のスペースを、入力せずに入れるには？",
       "pt": "Como ponho um espaço entre palavras chinesas e latinas sem digitá-lo?",
       "fr": "Comment mettre une espace entre les mots chinois et latins sans la taper ?",
-      "de": "Wie erhalte ich einen Abstand zwischen chinesischen und lateinischen Wörtern, ohne ihn zu tippen?"
+      "de": "Wie erhalte ich einen Abstand zwischen chinesischen und lateinischen Wörtern, ohne ihn zu tippen?",
+      "it": "Come metto uno spazio tra parole cinesi e latine senza digitarlo?"
     },
     "index": {
       "en": "Chinese and Latin, space between",
@@ -2416,7 +2601,8 @@
       "ja": "中国語と欧文、間のスペース",
       "pt": "Chinês e alfabeto latino, espaço entre",
       "fr": "Chinois et latin, espace entre",
-      "de": "Chinesisch und Latein, Abstand dazwischen"
+      "de": "Chinesisch und Latein, Abstand dazwischen",
+      "it": "Cinese e latino, spazio tra"
     },
     "theme": "type"
   },
@@ -2431,7 +2617,8 @@
       "ja": "中国語の文字を、空の四角にせずにPDFへ入れるには？",
       "pt": "Como levo os caracteres chineses para o PDF sem caixas vazias?",
       "fr": "Comment faire entrer les caractères chinois dans le PDF sans cases vides ?",
-      "de": "Wie bringe ich chinesische Zeichen ohne leere Kästchen ins PDF?"
+      "de": "Wie bringe ich chinesische Zeichen ohne leere Kästchen ins PDF?",
+      "it": "Come porto i caratteri cinesi nel PDF senza riquadri vuoti?"
     },
     "index": {
       "en": "Chinese fonts in the PDF",
@@ -2442,7 +2629,8 @@
       "ja": "中国語のフォント、PDF",
       "pt": "Fontes chinesas no PDF",
       "fr": "Polices chinoises dans le PDF",
-      "de": "Chinesische Schriften im PDF"
+      "de": "Chinesische Schriften im PDF",
+      "it": "Font cinesi nel PDF"
     },
     "theme": "output"
   },
@@ -2457,7 +2645,8 @@
       "ja": "縦組みの中で、日付や数字を正立させるには？",
       "pt": "Como deixo datas e números em pé dentro de um texto vertical?",
       "fr": "Comment composer les dates et les nombres debout dans un texte vertical ?",
-      "de": "Wie setze ich Daten und Zahlen in vertikalem Text aufrecht?"
+      "de": "Wie setze ich Daten und Zahlen in vertikalem Text aufrecht?",
+      "it": "Come compongo date e numeri diritti dentro un testo verticale?"
     },
     "index": {
       "en": "Vertical text, upright numbers in",
@@ -2468,7 +2657,8 @@
       "ja": "縦組み、正立させる数字",
       "pt": "Texto vertical, números em pé no",
       "fr": "Texte vertical, nombres debout dans un",
-      "de": "Vertikaler Text, aufrechte Zahlen"
+      "de": "Vertikaler Text, aufrechte Zahlen",
+      "it": "Testo verticale, numeri diritti nel"
     },
     "theme": "type"
   },
@@ -2483,7 +2673,8 @@
       "ja": "中国語の強調がイタリックで印字されるのはなぜですか？代わりに何を使えばいいですか？",
       "pt": "Por que a ênfase do meu texto chinês sai inclinada, e o que devo usar no lugar?",
       "fr": "Pourquoi l’emphase de mon texte chinois s’imprime-t-elle dans un caractère incliné, et que faut-il utiliser à la place ?",
-      "de": "Warum druckt meine chinesische Hervorhebung in einer geneigten Schrift, und was verwende ich stattdessen?"
+      "de": "Warum druckt meine chinesische Hervorhebung in einer geneigten Schrift, und was verwende ich stattdessen?",
+      "it": "Perché la mia enfasi cinese si stampa con un carattere inclinato, e che cosa devo usare invece?"
     },
     "index": {
       "en": "Chinese emphasis without italics",
@@ -2494,7 +2685,8 @@
       "ja": "中国語の強調、イタリックを使わない",
       "pt": "Ênfase chinesa sem itálico",
       "fr": "Emphase chinoise sans italique",
-      "de": "Chinesische Hervorhebung ohne Kursive"
+      "de": "Chinesische Hervorhebung ohne Kursive",
+      "it": "Enfasi cinese senza corsivo"
     },
     "theme": "type"
   },
@@ -2509,7 +2701,8 @@
       "ja": "中国語の人名索引をピンイン順や画数順でまとめるには？",
       "pt": "Como agrupo um índice de nomes chineses por pinyin ou por número de traços?",
       "fr": "Comment regrouper un index de noms chinois par pinyin ou par nombre de traits ?",
-      "de": "Wie gruppiere ich ein Register chinesischer Namen nach Pinyin oder nach Strichzahl?"
+      "de": "Wie gruppiere ich ein Register chinesischer Namen nach Pinyin oder nach Strichzahl?",
+      "it": "Come raggruppo un indice di nomi cinesi per pinyin o per numero di tratti?"
     },
     "index": {
       "en": "Chinese index, grouped by pinyin or strokes",
@@ -2520,7 +2713,8 @@
       "ja": "中国語の索引、ピンイン順・画数順",
       "pt": "Índice chinês agrupado por pinyin ou por traços",
       "fr": "Index chinois, regroupé par pinyin ou par traits",
-      "de": "Chinesisches Register, nach Pinyin oder Strichen gruppiert"
+      "de": "Chinesisches Register, nach Pinyin oder Strichen gruppiert",
+      "it": "Indice cinese, raggruppato per pinyin o per tratti"
     },
     "theme": "structure"
   },
@@ -2535,7 +2729,8 @@
       "ja": "注釈本を組むには（行内の小さな2行の注と、天の余白の評語）？",
       "pt": "Como componho uma edição comentada, com pequenas notas em duas linhas dentro da linha e comentários na margem superior?",
       "fr": "Comment composer une édition commentée : petites notes sur deux lignes à l’intérieur de la ligne et commentaires dans la marge de tête ?",
-      "de": "Wie setze ich eine Kommentarausgabe: kleine zweizeilige Anmerkungen in der Zeile und Kommentare im Kopfsteg?"
+      "de": "Wie setze ich eine Kommentarausgabe: kleine zweizeilige Anmerkungen in der Zeile und Kommentare im Kopfsteg?",
+      "it": "Come compongo un’edizione commentata: piccole note su due righe dentro la riga e commenti nel margine di testa?"
     },
     "index": {
       "en": "Commentary editions, notes in the line and in the head margin",
@@ -2546,7 +2741,8 @@
       "ja": "注釈本、行内の注と天の余白の注",
       "pt": "Edições comentadas, notas na linha e na margem superior",
       "fr": "Éditions commentées, notes dans la ligne et dans la marge de tête",
-      "de": "Kommentarausgaben, Anmerkungen in der Zeile und im Kopfsteg"
+      "de": "Kommentarausgaben, Anmerkungen in der Zeile und im Kopfsteg",
+      "it": "Edizioni commentate, note nella riga e nel margine di testa"
     },
     "theme": "boxes"
   },
@@ -2561,7 +2757,8 @@
       "ja": "中国語の固有名詞と書名に、直線と波線の傍線を付けるには？",
       "pt": "Como marco nomes próprios e títulos de livros em texto chinês com uma linha reta e uma ondulada?",
       "fr": "Comment marquer les noms propres et les titres d’ouvrage dans un texte chinois avec un trait droit et un trait ondulé ?",
-      "de": "Wie kennzeichne ich Eigennamen und Buchtitel in chinesischem Text mit einer geraden und einer Wellenlinie?"
+      "de": "Wie kennzeichne ich Eigennamen und Buchtitel in chinesischem Text mit einer geraden und einer Wellenlinie?",
+      "it": "Come segno nomi propri e titoli di libri nel testo cinese con una linea diritta e una ondulata?"
     },
     "index": {
       "en": "Chinese name and title lines",
@@ -2572,7 +2769,8 @@
       "ja": "中国語の専名線と書名線",
       "pt": "Linhas de nome e de título em chinês",
       "fr": "Traits de nom et de titre chinois",
-      "de": "Chinesische Namens- und Titellinien"
+      "de": "Chinesische Namens- und Titellinien",
+      "it": "Linee per nomi e titoli in cinese"
     },
     "theme": "type"
   },
@@ -2587,7 +2785,8 @@
       "ja": "縦組みの中国語のすべての文字の横に注音を付けるには？",
       "pt": "Como coloco zhuyin ao lado de cada caractere de um texto chinês vertical?",
       "fr": "Comment composer le zhuyin à côté de chaque caractère d’un texte chinois vertical ?",
-      "de": "Wie setze ich Zhuyin neben jedes Zeichen eines vertikalen chinesischen Textes?"
+      "de": "Wie setze ich Zhuyin neben jedes Zeichen eines vertikalen chinesischen Textes?",
+      "it": "Come compongo lo zhuyin accanto a ogni carattere di un testo cinese verticale?"
     },
     "index": {
       "en": "Zhuyin beside the characters, in vertical text",
@@ -2598,7 +2797,8 @@
       "ja": "注音、縦組みの文字の横",
       "pt": "Zhuyin ao lado dos caracteres, em texto vertical",
       "fr": "Zhuyin à côté des caractères, en texte vertical",
-      "de": "Zhuyin neben den Zeichen, im vertikalen Text"
+      "de": "Zhuyin neben den Zeichen, im vertikalen Text",
+      "it": "Zhuyin accanto ai caratteri, nel testo verticale"
     },
     "theme": "type"
   },
@@ -2613,7 +2813,8 @@
       "ja": "辞書の柱に、各ページの最初と最後の見出し語を印字するには？",
       "pt": "Como imprimo no cabeço de um dicionário o primeiro e o último verbete de cada página?",
       "fr": "Comment imprimer le premier et le dernier mot-vedette de chaque page dans le titre courant d’un dictionnaire ?",
-      "de": "Wie drucke ich das erste und das letzte Stichwort jeder Seite im Kolumnentitel eines Wörterbuchs?"
+      "de": "Wie drucke ich das erste und das letzte Stichwort jeder Seite im Kolumnentitel eines Wörterbuchs?",
+      "it": "Come stampo la prima e l’ultima voce di ogni pagina nella testatina di un dizionario?"
     },
     "index": {
       "en": "Guide words, first and last headword",
@@ -2624,7 +2825,8 @@
       "ja": "柱の見出し語、最初と最後",
       "pt": "Palavras-guia, primeiro e último verbete",
       "fr": "Mots-repères, premier et dernier mot-vedette",
-      "de": "Lebende Kolumnentitel, erstes und letztes Stichwort"
+      "de": "Lebende Kolumnentitel, erstes und letztes Stichwort",
+      "it": "Richiami di testatina, prima e ultima voce"
     },
     "theme": "running-heads"
   },
@@ -2639,7 +2841,8 @@
       "ja": "中国語の新聞のページを、罫線で区切った段で縦組みにするには？",
       "pt": "Como componho uma página de jornal chinês na vertical, em faixas separadas por fios?",
       "fr": "Comment composer une page de journal chinois à la verticale, en registres séparés par des filets ?",
-      "de": "Wie setze ich eine chinesische Zeitungsseite vertikal, in Etagen mit Linien dazwischen?"
+      "de": "Wie setze ich eine chinesische Zeitungsseite vertikal, in Etagen mit Linien dazwischen?",
+      "it": "Come compongo in verticale una pagina di giornale cinese, in registri separati da filetti?"
     },
     "index": {
       "en": "Newspapers, vertical, in tiers (欄)",
@@ -2650,7 +2853,8 @@
       "ja": "新聞、縦組みの段（欄）",
       "pt": "Jornais verticais, em faixas (欄)",
       "fr": "Journaux, verticaux, en registres (欄)",
-      "de": "Zeitungen, vertikal, in Etagen (欄)"
+      "de": "Zeitungen, vertikal, in Etagen (欄)",
+      "it": "Giornali, verticali, a registri (欄)"
     },
     "theme": "page"
   },
@@ -2665,7 +2869,8 @@
       "ja": "詩とその翻訳を見開きに向かい合わせで組み、原文を常に奇数ページに置くには？",
       "pt": "Como componho um poema e sua tradução em páginas opostas, com o original sempre na página ímpar?",
       "fr": "Comment composer un poème et sa traduction en regard, avec l’original toujours sur le recto ?",
-      "de": "Wie setze ich ein Gedicht und seine Übersetzung auf gegenüberliegende Seiten, mit dem Original immer auf der rechten Seite?"
+      "de": "Wie setze ich ein Gedicht und seine Übersetzung auf gegenüberliegende Seiten, mit dem Original immer auf der rechten Seite?",
+      "it": "Come compongo una poesia e la sua traduzione su pagine affiancate, con l’originale sempre sul recto?"
     },
     "index": {
       "en": "Facing translations, the original on the recto",
@@ -2676,7 +2881,8 @@
       "ja": "対訳、原文を奇数ページに",
       "pt": "Traduções em páginas opostas, o original na página ímpar",
       "fr": "Traductions en regard, l’original sur le recto",
-      "de": "Gegenüberstehende Übersetzungen, Original rechts"
+      "de": "Gegenüberstehende Übersetzungen, Original rechts",
+      "it": "Traduzioni a fronte, l’originale sul recto"
     },
     "theme": "page"
   },
@@ -2691,7 +2897,8 @@
       "ja": "二重の枠、行間の罫線、版心を備えた木版本の丁をレイアウトするには？",
       "pt": "Como diagramo uma folha xilográfica, com moldura dupla, um fio entre as colunas e a faixa central?",
       "fr": "Comment mettre en page un feuillet xylographique, avec un double cadre, un filet entre les colonnes et la bande centrale ?",
-      "de": "Wie gestalte ich ein Holzdruckblatt mit Doppelrahmen, einer Linie zwischen den Spalten und dem Mittelstreifen?"
+      "de": "Wie gestalte ich ein Holzdruckblatt mit Doppelrahmen, einer Linie zwischen den Spalten und dem Mittelstreifen?",
+      "it": "Come impagino un foglio xilografico, con doppia cornice, un filetto tra le colonne e la striscia centrale?"
     },
     "index": {
       "en": "Woodblock leaves: frame, column rules, centre strip (版心)",
@@ -2702,7 +2909,8 @@
       "ja": "木版本の丁、枠・罫線・版心",
       "pt": "Folhas xilográficas: moldura, fios entre colunas, faixa central (版心)",
       "fr": "Feuillets xylographiques : cadre, filets de colonne, bande centrale (版心)",
-      "de": "Holzdruckblätter: Rahmen, Spaltenlinien, Mittelstreifen (版心)"
+      "de": "Holzdruckblätter: Rahmen, Spaltenlinien, Mittelstreifen (版心)",
+      "it": "Fogli xilografici: cornice, filetti tra le colonne, striscia centrale (版心)"
     },
     "theme": "page"
   },
@@ -2717,7 +2925,8 @@
       "ja": "中国の公文書を、赤い発文機関名（紅頭）、グリッド、ノンブルとともにGB/T 9704に従ってレイアウトするには？",
       "pt": "Como diagramo um documento oficial chinês segundo a GB/T 9704, com o timbre vermelho, a grade e os fólios?",
       "fr": "Comment mettre en page un document officiel chinois selon GB/T 9704, avec son en-tête rouge, sa grille et ses folios ?",
-      "de": "Wie gestalte ich ein chinesisches Amtsschreiben nach GB/T 9704, mit rotem Briefkopf, Raster und Paginas?"
+      "de": "Wie gestalte ich ein chinesisches Amtsschreiben nach GB/T 9704, mit rotem Briefkopf, Raster und Paginas?",
+      "it": "Come impagino un documento ufficiale cinese secondo GB/T 9704, con la sua intestazione rossa, la griglia e i folio?"
     },
     "index": {
       "en": "Official documents, Chinese (GB/T 9704)",
@@ -2728,7 +2937,8 @@
       "ja": "公文書、中国（GB/T 9704）",
       "pt": "Documentos oficiais chineses (GB/T 9704)",
       "fr": "Documents officiels chinois (GB/T 9704)",
-      "de": "Amtsschreiben, chinesisch (GB/T 9704)"
+      "de": "Amtsschreiben, chinesisch (GB/T 9704)",
+      "it": "Documenti ufficiali, cinesi (GB/T 9704)"
     },
     "theme": "page"
   },
@@ -2743,7 +2953,8 @@
       "ja": "APA、IEEEなどの引用スタイルで、文献を引用し参考文献を作るには？",
       "pt": "Como cito obras e monto a bibliografia em APA, IEEE ou outro estilo de citação?",
       "fr": "Comment citer des ouvrages et construire la bibliographie en APA, en IEEE ou dans un autre style de citation ?",
-      "de": "Wie zitiere ich Werke und erstelle das Literaturverzeichnis nach APA, IEEE oder einem anderen Zitierstil?"
+      "de": "Wie zitiere ich Werke und erstelle das Literaturverzeichnis nach APA, IEEE oder einem anderen Zitierstil?",
+      "it": "Come cito le opere e costruisco la bibliografia in APA, IEEE o un altro stile citazionale?"
     },
     "index": {
       "en": "Citations and bibliographies",
@@ -2754,7 +2965,8 @@
       "ja": "引用と参考文献",
       "pt": "Citações e bibliografias",
       "fr": "Citations et bibliographies",
-      "de": "Zitate und Literaturverzeichnisse"
+      "de": "Zitate und Literaturverzeichnisse",
+      "it": "Citazioni e bibliografie"
     },
     "theme": "structure"
   },
@@ -2769,7 +2981,8 @@
       "ja": "本文に手を加えずに、本の引用スタイルを切り替えるには？",
       "pt": "Como passo um livro de um estilo de citação para outro sem mexer no texto?",
       "fr": "Comment faire passer un livre d’un style de citation à un autre sans toucher au texte ?",
-      "de": "Wie stelle ich ein Buch von einem Zitierstil auf einen anderen um, ohne den Text anzufassen?"
+      "de": "Wie stelle ich ein Buch von einem Zitierstil auf einen anderen um, ohne den Text anzufassen?",
+      "it": "Come passo un libro da uno stile citazionale a un altro senza toccare il testo?"
     },
     "index": {
       "en": "Citation styles, switching",
@@ -2780,7 +2993,8 @@
       "ja": "引用スタイル、切り替え",
       "pt": "Estilos de citação, trocar de",
       "fr": "Styles de citation, changement de",
-      "de": "Zitierstile, wechseln"
+      "de": "Zitierstile, wechseln",
+      "it": "Stili citazionali, cambiare"
     },
     "theme": "structure"
   },
@@ -2795,7 +3009,8 @@
       "ja": "シカゴ・スタイルで引用を脚注にし、2回目以降は短縮形にするには？",
       "pt": "Como coloco as citações em notas de rodapé, no estilo Chicago, com forma abreviada nas citações seguintes?",
       "fr": "Comment composer les citations en notes de bas de page, style Chicago, avec des formes abrégées pour les citations suivantes ?",
-      "de": "Wie setze ich Zitate als Fußnoten im Chicago-Stil, mit Kurzformen für spätere Zitate?"
+      "de": "Wie setze ich Zitate als Fußnoten im Chicago-Stil, mit Kurzformen für spätere Zitate?",
+      "it": "Come compongo le citazioni come note a piè di pagina, in stile Chicago, con forme brevi per le citazioni successive?"
     },
     "index": {
       "en": "Citations in footnotes",
@@ -2806,7 +3021,8 @@
       "ja": "引用、脚注で",
       "pt": "Citações em notas de rodapé",
       "fr": "Citations en notes de bas de page",
-      "de": "Zitate in Fußnoten"
+      "de": "Zitate in Fußnoten",
+      "it": "Citazioni in nota"
     },
     "theme": "structure"
   },
@@ -2821,7 +3037,8 @@
       "ja": "中国の規格GB/T 7714に従って、縦組みでも引用するには？",
       "pt": "Como cito segundo a norma chinesa GB/T 7714, também em texto vertical?",
       "fr": "Comment citer selon la norme chinoise GB/T 7714, y compris en texte vertical ?",
-      "de": "Wie zitiere ich nach dem chinesischen Standard GB/T 7714, auch in vertikalem Text?"
+      "de": "Wie zitiere ich nach dem chinesischen Standard GB/T 7714, auch in vertikalem Text?",
+      "it": "Come cito secondo lo standard cinese GB/T 7714, anche nel testo verticale?"
     },
     "index": {
       "en": "GB/T 7714 citations",
@@ -2832,7 +3049,8 @@
       "ja": "GB/T 7714の引用",
       "pt": "Citações GB/T 7714",
       "fr": "Citations GB/T 7714",
-      "de": "Zitate nach GB/T 7714"
+      "de": "Zitate nach GB/T 7714",
+      "it": "Citazioni GB/T 7714"
     },
     "theme": "structure"
   },
@@ -2847,7 +3065,8 @@
       "ja": "節とそのページを参照し、本が変わっても両方を正しく保つには？",
       "pt": "Como remeto a uma seção e à página em que ela está, e mantenho as duas corretas quando o livro muda?",
       "fr": "Comment renvoyer à une section et à la page où elle se trouve, et garder les deux justes quand le livre change ?",
-      "de": "Wie verweise ich auf einen Abschnitt und die Seite, auf der er steht, und halte beides richtig, wenn sich das Buch ändert?"
+      "de": "Wie verweise ich auf einen Abschnitt und die Seite, auf der er steht, und halte beides richtig, wenn sich das Buch ändert?",
+      "it": "Come rimando a una sezione e alla pagina in cui si trova, mantenendo corretti entrambi quando il libro cambia?"
     },
     "index": {
       "en": "Cross-references to sections and pages",
@@ -2858,7 +3077,8 @@
       "ja": "相互参照、節とページ",
       "pt": "Referências cruzadas a seções e páginas",
       "fr": "Renvois aux sections et aux pages",
-      "de": "Querverweise auf Abschnitte und Seiten"
+      "de": "Querverweise auf Abschnitte und Seiten",
+      "it": "Rimandi a sezioni e pagine"
     },
     "theme": "structure"
   },
@@ -2873,7 +3093,8 @@
       "ja": "pandoc-crossrefのように別の章の図・表・節を参照し、番号を正しく保つには？",
       "pt": "Como remeto a uma figura, uma tabela ou uma seção de outro capítulo, no estilo do pandoc-crossref, com os números sempre corretos?",
       "fr": "Comment renvoyer à une figure, un tableau ou une section d’un autre chapitre, à la manière de pandoc-crossref, en gardant les numéros justes ?",
-      "de": "Wie verweise ich im Stil von pandoc-crossref auf eine Abbildung, eine Tabelle oder einen Abschnitt in einem anderen Kapitel und halte die Nummern richtig?"
+      "de": "Wie verweise ich im Stil von pandoc-crossref auf eine Abbildung, eine Tabelle oder einen Abschnitt in einem anderen Kapitel und halte die Nummern richtig?",
+      "it": "Come rimando a una figura, una tabella o una sezione in un altro capitolo, nello stile di pandoc-crossref, mantenendo corretti i numeri?"
     },
     "index": {
       "en": "Cross-references between chapters",
@@ -2884,7 +3105,8 @@
       "ja": "相互参照、章をまたぐ",
       "pt": "Referências cruzadas entre capítulos",
       "fr": "Renvois entre chapitres",
-      "de": "Querverweise zwischen Kapiteln"
+      "de": "Querverweise zwischen Kapiteln",
+      "it": "Rimandi tra capitoli"
     },
     "theme": "structure"
   },
@@ -2899,7 +3121,8 @@
       "ja": "医学雑誌のように、引用番号を上付きにし、DOIを有効なリンクにするには？",
       "pt": "Como coloco os números de citação em sobrescrito e transformo os DOIs em links, como fazem as revistas médicas?",
       "fr": "Comment composer les numéros de citation en exposant et rendre les DOI cliquables, comme dans les revues médicales ?",
-      "de": "Wie setze ich Zitatnummern hochgestellt und mache DOIs zu aktiven Links, wie medizinische Fachzeitschriften es tun?"
+      "de": "Wie setze ich Zitatnummern hochgestellt und mache DOIs zu aktiven Links, wie medizinische Fachzeitschriften es tun?",
+      "it": "Come compongo i numeri delle citazioni come apici e rendo i DOI link attivi, come fanno le riviste mediche?"
     },
     "index": {
       "en": "Superscript citation numbers and DOI links",
@@ -2910,7 +3133,8 @@
       "ja": "上付きの引用番号とDOIリンク",
       "pt": "Números de citação sobrescritos e links de DOI",
       "fr": "Numéros de citation en exposant et liens DOI",
-      "de": "Hochgestellte Zitatnummern und DOI-Links"
+      "de": "Hochgestellte Zitatnummern und DOI-Links",
+      "it": "Numeri di citazione in apice e link DOI"
     },
     "theme": "structure"
   },
@@ -2925,7 +3149,8 @@
       "ja": "ZoteroからBibTeXで書き出した文献を使い、本文で引用しない文献も一覧に載せるには？",
       "pt": "Como uso uma exportação BibTeX do Zotero e listo obras que o texto nunca cita?",
       "fr": "Comment utiliser un export BibTeX de Zotero et lister des ouvrages que le texte ne cite jamais ?",
-      "de": "Wie verwende ich einen BibTeX-Export aus Zotero und führe Werke auf, die der Text nie zitiert?"
+      "de": "Wie verwende ich einen BibTeX-Export aus Zotero und führe Werke auf, die der Text nie zitiert?",
+      "it": "Come uso un’esportazione BibTeX da Zotero ed elenco opere che il testo non cita mai?"
     },
     "index": {
       "en": "BibTeX from Zotero, uncited works (nocite)",
@@ -2936,7 +3161,8 @@
       "ja": "ZoteroのBibTeX、引用しない文献（nocite）",
       "pt": "BibTeX do Zotero, obras não citadas (nocite)",
       "fr": "BibTeX depuis Zotero, ouvrages non cités (nocite)",
-      "de": "BibTeX aus Zotero, nicht zitierte Werke (nocite)"
+      "de": "BibTeX aus Zotero, nicht zitierte Werke (nocite)",
+      "it": "BibTeX da Zotero, opere non citate (nocite)"
     },
     "theme": "structure"
   },
@@ -2951,7 +3177,8 @@
       "ja": "編著の各章に、専用の著者と参考文献を与えるには？",
       "pt": "Como dou a cada capítulo de uma obra coletiva seu próprio autor e sua própria bibliografia?",
       "fr": "Comment donner à chaque chapitre d’un ouvrage collectif son propre auteur et sa propre bibliographie ?",
-      "de": "Wie gebe ich jedem Kapitel eines Sammelbands einen eigenen Autor und ein eigenes Literaturverzeichnis?"
+      "de": "Wie gebe ich jedem Kapitel eines Sammelbands einen eigenen Autor und ein eigenes Literaturverzeichnis?",
+      "it": "Come do a ogni capitolo di un volume collettaneo il suo autore e la sua bibliografia?"
     },
     "index": {
       "en": "Bibliography per chapter",
@@ -2962,7 +3189,8 @@
       "ja": "参考文献、章ごと",
       "pt": "Bibliografia por capítulo",
       "fr": "Bibliographie par chapitre",
-      "de": "Literaturverzeichnis je Kapitel"
+      "de": "Literaturverzeichnis je Kapitel",
+      "it": "Bibliografia per capitolo"
     },
     "theme": "structure"
   },
@@ -2977,7 +3205,8 @@
       "ja": "英国の法律文書のOSCOLA形式で、判例や法令を脚注に引用するには？",
       "pt": "Como cito decisões judiciais e leis em notas de rodapé, no estilo OSCOLA da redação jurídica britânica?",
       "fr": "Comment citer la jurisprudence et la législation en notes de bas de page, selon le style OSCOLA des écrits juridiques britanniques ?",
-      "de": "Wie zitiere ich Urteile und Gesetze in Fußnoten im OSCOLA-Stil des britischen Rechtsschrifttums?"
+      "de": "Wie zitiere ich Urteile und Gesetze in Fußnoten im OSCOLA-Stil des britischen Rechtsschrifttums?",
+      "it": "Come cito sentenze e leggi nelle note a piè di pagina, nello stile OSCOLA della scrittura giuridica britannica?"
     },
     "index": {
       "en": "Legal citations (OSCOLA)",
@@ -2988,7 +3217,8 @@
       "ja": "法律の引用（OSCOLA）",
       "pt": "Citações jurídicas (OSCOLA)",
       "fr": "Citations juridiques (OSCOLA)",
-      "de": "Juristische Zitate (OSCOLA)"
+      "de": "Juristische Zitate (OSCOLA)",
+      "it": "Citazioni giuridiche (OSCOLA)"
     },
     "theme": "structure"
   },
@@ -3003,7 +3233,8 @@
       "ja": "文書を、読者が手でページをめくる3Dの本として表示するには？",
       "pt": "Como mostro meu documento como um livro em 3D cujas páginas o leitor vira com a mão?",
       "fr": "Comment afficher mon document comme un livre en 3D dont le lecteur tourne les pages à la main ?",
-      "de": "Wie zeige ich mein Dokument als 3D-Buch, dessen Seiten der Leser von Hand umblättert?"
+      "de": "Wie zeige ich mein Dokument als 3D-Buch, dessen Seiten der Leser von Hand umblättert?",
+      "it": "Come mostro il mio documento come un libro 3D le cui pagine il lettore gira a mano?"
     },
     "index": {
       "en": "3D book viewer (Folio)",
@@ -3014,7 +3245,8 @@
       "ja": "3Dの本のビューアー（Folio）",
       "pt": "Visualizador de livro em 3D (Folio)",
       "fr": "Visionneuse de livre en 3D (Folio)",
-      "de": "3D-Buchbetrachter (Folio)"
+      "de": "3D-Buchbetrachter (Folio)",
+      "it": "Visualizzatore di libri 3D (Folio)"
     },
     "theme": "output"
   },
@@ -3029,7 +3261,8 @@
       "ja": "表紙、差し込み、口絵などを、本のほかの部分と違う紙で印刷するには？",
       "pt": "Como imprimo uma capa, um encarte ou um caderno de pranchas em um papel diferente do resto do livro?",
       "fr": "Comment imprimer une couverture, un encart ou un cahier de planches sur un autre papier que le reste du livre ?",
-      "de": "Wie drucke ich einen Umschlag, eine Beilage oder einen Tafelteil auf einem anderen Papier als den Rest des Buchs?"
+      "de": "Wie drucke ich einen Umschlag, eine Beilage oder einen Tafelteil auf einem anderen Papier als den Rest des Buchs?",
+      "it": "Come stampo una copertina, un inserto o una sezione di tavole su una carta diversa dal resto del libro?"
     },
     "index": {
       "en": "Paper, changing it for some pages",
@@ -3040,7 +3273,8 @@
       "ja": "用紙、一部のページで変える",
       "pt": "Papel, trocar em algumas páginas",
       "fr": "Papier, changement pour certaines pages",
-      "de": "Papier, für einige Seiten wechseln"
+      "de": "Papier, für einige Seiten wechseln",
+      "it": "Carta, cambiarla per alcune pagine"
     },
     "theme": "page"
   },
@@ -3055,7 +3289,8 @@
       "ja": "入稿の前に、本の綴じ、表紙、用紙、照明をプレビューするには？",
       "pt": "Como visualizo a encadernação, a capa, o papel e a iluminação de um livro antes de mandá-lo para a gráfica?",
       "fr": "Comment prévisualiser la reliure, la couverture, le papier et l’éclairage d’un livre avant de l’envoyer à l’impression ?",
-      "de": "Wie sehe ich Bindung, Umschlag, Papier und Beleuchtung eines Buchs vor dem Druck in der Vorschau?"
+      "de": "Wie sehe ich Bindung, Umschlag, Papier und Beleuchtung eines Buchs vor dem Druck in der Vorschau?",
+      "it": "Come vedo in anteprima la rilegatura, la copertina, la carta e l’illuminazione di un libro prima di mandarlo in stampa?"
     },
     "index": {
       "en": "Binding and paper, previewing",
@@ -3066,7 +3301,8 @@
       "ja": "綴じと用紙、プレビュー",
       "pt": "Encadernação e papel, visualização",
       "fr": "Reliure et papier, aperçu",
-      "de": "Bindung und Papier, Vorschau"
+      "de": "Bindung und Papier, Vorschau",
+      "it": "Rilegatura e carta, anteprima"
     },
     "theme": "output"
   },
@@ -3081,7 +3317,8 @@
       "ja": "アラビア語の本を右から左に組み、右綴じにするには？",
       "pt": "Como componho um livro árabe da direita para a esquerda e o encaderno à direita?",
       "fr": "Comment composer un livre arabe de droite à gauche et le relier à droite ?",
-      "de": "Wie setze ich ein arabisches Buch von rechts nach links und binde es rechts?"
+      "de": "Wie setze ich ein arabisches Buch von rechts nach links und binde es rechts?",
+      "it": "Come compongo un libro arabo da destra a sinistra e lo rilego a destra?"
     },
     "index": {
       "en": "Arabic books, right to left and bound on the right",
@@ -3092,7 +3329,8 @@
       "ja": "アラビア語の本、右から左と右綴じ",
       "pt": "Livros árabes, da direita para a esquerda e encadernados à direita",
       "fr": "Livres arabes, de droite à gauche et reliés à droite",
-      "de": "Arabische Bücher, von rechts nach links und rechts gebunden"
+      "de": "Arabische Bücher, von rechts nach links und rechts gebunden",
+      "it": "Libri arabi, da destra a sinistra e rilegati a destra"
     },
     "theme": "type"
   },
@@ -3107,7 +3345,8 @@
       "ja": "1つのページに、アラビア語と英語の段落、数字、表を混在させるには？",
       "pt": "Como misturo parágrafos, números e tabelas em árabe e em inglês na mesma página?",
       "fr": "Comment mêler paragraphes, nombres et tableaux en arabe et en anglais sur une même page ?",
-      "de": "Wie mische ich arabische und englische Absätze, Zahlen und Tabellen auf einer Seite?"
+      "de": "Wie mische ich arabische und englische Absätze, Zahlen und Tabellen auf einer Seite?",
+      "it": "Come mescolo paragrafi, numeri e tabelle in arabo e in inglese nella stessa pagina?"
     },
     "index": {
       "en": "Arabic and English on one page",
@@ -3118,7 +3357,8 @@
       "ja": "アラビア語と英語、同じページ",
       "pt": "Árabe e inglês na mesma página",
       "fr": "Arabe et anglais sur une même page",
-      "de": "Arabisch und Englisch auf einer Seite"
+      "de": "Arabisch und Englisch auf einer Seite",
+      "it": "Arabo e inglese nella stessa pagina"
     },
     "theme": "type"
   },
@@ -3133,7 +3373,8 @@
       "ja": "アラビア語の索引を、冠詞الを除いて並べるには？",
       "pt": "Como ordeno um índice árabe ignorando o artigo ال?",
       "fr": "Comment trier un index arabe sans l’article ال ?",
-      "de": "Wie sortiere ich ein arabisches Register ohne den Artikel ال?"
+      "de": "Wie sortiere ich ein arabisches Register ohne den Artikel ال?",
+      "it": "Come ordino un indice arabo senza l’articolo ال?"
     },
     "index": {
       "en": "Arabic index, sorted without ال",
@@ -3144,7 +3385,8 @@
       "ja": "アラビア語の索引、الを除いた並べ替え",
       "pt": "Índice árabe, ordenado sem ال",
       "fr": "Index arabe, trié sans ال",
-      "de": "Arabisches Register, ohne ال sortiert"
+      "de": "Arabisches Register, ohne ال sortiert",
+      "it": "Indice arabo, ordinato senza ال"
     },
     "theme": "structure"
   },
@@ -3159,7 +3401,8 @@
       "ja": "アラビア語の記事で、脚注と参考文献を使って出典を引用するには？",
       "pt": "Como cito as fontes em um artigo em árabe, com notas de rodapé e bibliografia?",
       "fr": "Comment citer des sources dans un article en arabe, avec notes de bas de page et bibliographie ?",
-      "de": "Wie zitiere ich Quellen in einem arabischen Artikel, mit Fußnoten und Literaturverzeichnis?"
+      "de": "Wie zitiere ich Quellen in einem arabischen Artikel, mit Fußnoten und Literaturverzeichnis?",
+      "it": "Come cito le fonti in un articolo in arabo, con note a piè di pagina e una bibliografia?"
     },
     "index": {
       "en": "Citations in Arabic",
@@ -3170,7 +3413,8 @@
       "ja": "アラビア語の引用",
       "pt": "Citações em árabe",
       "fr": "Citations en arabe",
-      "de": "Zitate auf Arabisch"
+      "de": "Zitate auf Arabisch",
+      "it": "Citazioni in arabo"
     },
     "theme": "structure"
   },
@@ -3185,7 +3429,8 @@
       "ja": "アラビア語のページではどの段が先ですか？2段組みの新聞を組むには？",
       "pt": "Qual coluna vem primeiro em uma página árabe, e como componho um jornal em duas colunas?",
       "fr": "Quelle colonne vient en premier sur une page arabe, et comment composer un journal à deux colonnes ?",
-      "de": "Welche Spalte kommt auf einer arabischen Seite zuerst, und wie setze ich eine zweispaltige Zeitung?"
+      "de": "Welche Spalte kommt auf einer arabischen Seite zuerst, und wie setze ich eine zweispaltige Zeitung?",
+      "it": "Quale colonna viene prima in una pagina araba, e come compongo un giornale a due colonne?"
     },
     "index": {
       "en": "Columns in Arabic, their order",
@@ -3196,7 +3441,8 @@
       "ja": "アラビア語の段組み、段の順序",
       "pt": "Colunas em árabe, ordem das",
       "fr": "Colonnes en arabe, ordre des",
-      "de": "Spalten im Arabischen, ihre Reihenfolge"
+      "de": "Spalten im Arabischen, ihre Reihenfolge",
+      "it": "Colonne in arabo, il loro ordine"
     },
     "theme": "page"
   },
@@ -3211,7 +3457,8 @@
       "ja": "マグリブ向けの版で、アラビア語の本にヨーロッパ式の数字（1、2、3）を印字するには？",
       "pt": "Como imprimo algarismos europeus (1, 2, 3) em um livro árabe para uma edição magrebina?",
       "fr": "Comment imprimer des chiffres européens (1, 2, 3) dans un livre arabe pour une édition maghrébine ?",
-      "de": "Wie drucke ich europäische Ziffern (1, 2, 3) in einem arabischen Buch für eine Maghreb-Ausgabe?"
+      "de": "Wie drucke ich europäische Ziffern (1, 2, 3) in einem arabischen Buch für eine Maghreb-Ausgabe?",
+      "it": "Come stampo cifre europee (1, 2, 3) in un libro arabo per un’edizione del Maghreb?"
     },
     "index": {
       "en": "Digits, European, in an Arabic book (Maghreb)",
@@ -3222,7 +3469,8 @@
       "ja": "数字、アラビア語の本でのヨーロッパ式（マグリブ）",
       "pt": "Algarismos europeus em livro árabe (Magrebe)",
       "fr": "Chiffres européens dans un livre arabe (Maghreb)",
-      "de": "Ziffern, europäische, in einem arabischen Buch (Maghreb)"
+      "de": "Ziffern, europäische, in einem arabischen Buch (Maghreb)",
+      "it": "Cifre europee in un libro arabo (Maghreb)"
     },
     "theme": "type"
   },
@@ -3237,7 +3485,8 @@
       "ja": "古典アラビア語の韻文を、各行を2つの半句に分けて組むには？",
       "pt": "Como componho verso árabe clássico com cada verso dividido em dois hemistíquios?",
       "fr": "Comment composer des vers arabes classiques, chaque vers en deux hémistiches ?",
-      "de": "Wie setze ich klassische arabische Verse mit jeder Zeile in zwei Halbversen?"
+      "de": "Wie setze ich klassische arabische Verse mit jeder Zeile in zwei Halbversen?",
+      "it": "Come compongo versi arabi classici con ogni verso in due emistichi?"
     },
     "index": {
       "en": "Arabic verse in two hemistichs (bayt)",
@@ -3248,7 +3497,8 @@
       "ja": "アラビア語の韻文、2つの半句（バイト）",
       "pt": "Verso árabe em dois hemistíquios (bayt)",
       "fr": "Vers arabes en deux hémistiches (bayt)",
-      "de": "Arabische Verse in zwei Halbversen (Bait)"
+      "de": "Arabische Verse in zwei Halbversen (Bait)",
+      "it": "Versi arabi in due emistichi (bayt)"
     },
     "theme": "type"
   },
@@ -3263,7 +3513,8 @@
       "ja": "完全に母音符号を付けたアラビア語には、どれくらいの行送りが必要ですか？",
       "pt": "De quanta entrelinha o árabe totalmente vocalizado precisa?",
       "fr": "Quel interlignage faut-il pour un texte arabe entièrement vocalisé ?",
-      "de": "Wie viel Zeilenabstand braucht vollständig vokalisiertes Arabisch?"
+      "de": "Wie viel Zeilenabstand braucht vollständig vokalisiertes Arabisch?",
+      "it": "Quanta interlinea richiede l’arabo completamente vocalizzato?"
     },
     "index": {
       "en": "Leading for vocalised Arabic (harakat)",
@@ -3274,7 +3525,8 @@
       "ja": "行送り、母音符号付きのアラビア語（ハラカート）",
       "pt": "Entrelinha para árabe vocalizado (harakat)",
       "fr": "Interlignage de l’arabe vocalisé (harakat)",
-      "de": "Zeilenabstand für vokalisiertes Arabisch (Harakat)"
+      "de": "Zeilenabstand für vokalisiertes Arabisch (Harakat)",
+      "it": "Interlinea per l’arabo vocalizzato (harakat)"
     },
     "theme": "type"
   },
@@ -3289,7 +3541,8 @@
       "ja": "الليلة الأولىのように、章番号をアラビア語の序数詞で振るには？",
       "pt": "Como numero os capítulos com ordinais árabes por extenso, como الليلة الأولى?",
       "fr": "Comment numéroter les chapitres en ordinaux arabes écrits en toutes lettres, comme الليلة الأولى ?",
-      "de": "Wie nummeriere ich Kapitel mit arabischen Ordinalwörtern, etwa الليلة الأولى?"
+      "de": "Wie nummeriere ich Kapitel mit arabischen Ordinalwörtern, etwa الليلة الأولى?",
+      "it": "Come numero i capitoli con ordinali arabi in lettere, come الليلة الأولى?"
     },
     "index": {
       "en": "Arabic ordinal words in headings",
@@ -3300,7 +3553,8 @@
       "ja": "アラビア語の序数詞、見出し",
       "pt": "Ordinais árabes por extenso nos títulos",
       "fr": "Ordinaux arabes en toutes lettres dans les titres",
-      "de": "Arabische Ordinalwörter in Überschriften"
+      "de": "Arabische Ordinalwörter in Überschriften",
+      "it": "Ordinali arabi in lettere nei titoli"
     },
     "theme": "headings"
   },
@@ -3315,7 +3569,8 @@
       "ja": "アラビア語の本の前付けに、アブジャド文字（أ، ب، ج）でノンブルを振るには？",
       "pt": "Como numero os elementos pré-textuais de um livro árabe com letras abjad (أ، ب، ج)?",
       "fr": "Comment numéroter les pages liminaires d’un livre arabe en lettres abjad (أ، ب، ج) ?",
-      "de": "Wie nummeriere ich die Titelei eines arabischen Buchs mit Abdschad-Buchstaben (أ، ب، ج)?"
+      "de": "Wie nummeriere ich die Titelei eines arabischen Buchs mit Abdschad-Buchstaben (أ، ب، ج)?",
+      "it": "Come numero le pagine preliminari di un libro arabo con le lettere abjad (أ، ب، ج)?"
     },
     "index": {
       "en": "Abjad letters for the front matter",
@@ -3326,7 +3581,8 @@
       "ja": "アブジャド文字、前付け",
       "pt": "Letras abjad nos elementos pré-textuais",
       "fr": "Lettres abjad pour les pages liminaires",
-      "de": "Abdschad-Buchstaben für die Titelei"
+      "de": "Abdschad-Buchstaben für die Titelei",
+      "it": "Lettere abjad per le pagine preliminari"
     },
     "theme": "structure"
   },
@@ -3341,7 +3597,8 @@
       "ja": "アラビア語の脚注に、ページごとにかっこ付きの番号（(١)）を振るには？",
       "pt": "Como numero as notas de rodapé árabes por página, entre parênteses: (١)?",
       "fr": "Comment numéroter les notes de bas de page arabes par page, entre parenthèses : (١) ?",
-      "de": "Wie nummeriere ich arabische Fußnoten pro Seite, in Klammern: (١)?"
+      "de": "Wie nummeriere ich arabische Fußnoten pro Seite, in Klammern: (١)?",
+      "it": "Come numero le note a piè di pagina arabe per pagina, tra parentesi: (١)?"
     },
     "index": {
       "en": "Footnotes in Arabic, numbered per page (١)",
@@ -3352,7 +3609,8 @@
       "ja": "アラビア語の脚注、ページごとの番号（١）",
       "pt": "Notas de rodapé em árabe, numeradas por página (١)",
       "fr": "Notes de bas de page en arabe, numérotées par page (١)",
-      "de": "Fußnoten auf Arabisch, pro Seite nummeriert (١)"
+      "de": "Fußnoten auf Arabisch, pro Seite nummeriert (١)",
+      "it": "Note a piè di pagina in arabo, numerate per pagina (١)"
     },
     "theme": "boxes"
   },
@@ -3367,7 +3625,8 @@
       "ja": "本文の周りを注釈が枠のように囲むブーラーク版のページをレイアウトするには？",
       "pt": "Como diagramo uma página de Bulaq, com o comentário emoldurando o texto?",
       "fr": "Comment mettre en page une page de Boulaq, avec le commentaire encadrant le texte ?",
-      "de": "Wie gestalte ich eine Bulaq-Seite, bei der der Kommentar den Text umrahmt?"
+      "de": "Wie gestalte ich eine Bulaq-Seite, bei der der Kommentar den Text umrahmt?",
+      "it": "Come impagino una pagina di Bulaq, con il commento che incornicia il testo?"
     },
     "index": {
       "en": "Bulaq pages, the text framed by its commentary",
@@ -3378,7 +3637,8 @@
       "ja": "ブーラーク版のページ、注釈に囲まれた本文",
       "pt": "Páginas de Bulaq, o texto emoldurado pelo comentário",
       "fr": "Pages de Boulaq, texte encadré par son commentaire",
-      "de": "Bulaq-Seiten, der Text von seinem Kommentar umrahmt"
+      "de": "Bulaq-Seiten, der Text von seinem Kommentar umrahmt",
+      "it": "Pagine di Bulaq, il testo incorniciato dal commento"
     },
     "theme": "page",
     "gap": "surrounding-commentary"
@@ -3394,7 +3654,8 @@
       "ja": "本を、固定ページまたはリフロー型のテキストのEPUBとして書き出すには？",
       "pt": "Como exporto meu livro em EPUB, com páginas fixas ou com texto refluível?",
       "fr": "Comment exporter mon livre en EPUB, avec des pages fixes ou un texte recomposable ?",
-      "de": "Wie exportiere ich mein Buch als EPUB, mit festen Seiten oder mit umfließendem Text?"
+      "de": "Wie exportiere ich mein Buch als EPUB, mit festen Seiten oder mit umfließendem Text?",
+      "it": "Come esporto il mio libro come EPUB, con pagine fisse o con testo fluido?"
     },
     "index": {
       "en": "EPUB, fixed layout and reflowable",
@@ -3405,7 +3666,8 @@
       "ja": "EPUB、固定レイアウトとリフロー型",
       "pt": "EPUB, layout fixo e refluível",
       "fr": "EPUB, mise en page fixe et recomposable",
-      "de": "EPUB, festes Layout und umfließend"
+      "de": "EPUB, festes Layout und umfließend",
+      "it": "EPUB, layout fisso e fluido"
     },
     "theme": "output"
   },
@@ -3420,7 +3682,8 @@
       "ja": "写真を短い段いっぱいにトリミングしつつ、被写体が常に見えるようにするには？",
       "pt": "Como deixo uma foto ser cortada para preencher uma coluna curta sem que o assunto principal saia do enquadramento?",
       "fr": "Comment laisser une photo être recadrée pour remplir une colonne courte tout en gardant toujours son sujet visible ?",
-      "de": "Wie lasse ich ein Foto beschneiden, damit es eine kurze Spalte füllt, während sein Motiv immer sichtbar bleibt?"
+      "de": "Wie lasse ich ein Foto beschneiden, damit es eine kurze Spalte füllt, während sein Motiv immer sichtbar bleibt?",
+      "it": "Come lascio che una foto venga ritagliata per riempire una colonna corta mantenendo sempre in vista il soggetto?"
     },
     "index": {
       "en": "Photos, cropped to fill a column",
@@ -3431,7 +3694,8 @@
       "ja": "写真、段に合わせたトリミング",
       "pt": "Fotos cortadas para preencher a coluna",
       "fr": "Photos, recadrées pour remplir une colonne",
-      "de": "Fotos, beschnitten, um eine Spalte zu füllen"
+      "de": "Fotos, beschnitten, um eine Spalte zu füllen",
+      "it": "Foto, ritagliate per riempire una colonna"
     },
     "theme": "figures"
   },
@@ -3446,7 +3710,8 @@
       "ja": "印刷した本に動画を入れ、読者がページから開けるようにするには？",
       "pt": "Como coloco um vídeo em um livro impresso para que o leitor possa abri-lo a partir da página?",
       "fr": "Comment mettre une vidéo dans un livre imprimé pour qu’un lecteur puisse l’ouvrir depuis la page ?",
-      "de": "Wie bringe ich ein Video in ein gedrucktes Buch, sodass ein Leser es von der Seite aus öffnen kann?"
+      "de": "Wie bringe ich ein Video in ein gedrucktes Buch, sodass ein Leser es von der Seite aus öffnen kann?",
+      "it": "Come metto un video in un libro stampato in modo che il lettore possa aprirlo dalla pagina?"
     },
     "index": {
       "en": "Videos, printed with a QR code",
@@ -3457,7 +3722,8 @@
       "ja": "動画、QRコード付きで印刷",
       "pt": "Vídeos impressos com QR code",
       "fr": "Vidéos, imprimées avec un QR code",
-      "de": "Videos, mit QR-Code gedruckt"
+      "de": "Videos, mit QR-Code gedruckt",
+      "it": "Video, stampati con un codice QR"
     },
     "theme": "figures"
   },
@@ -3472,7 +3738,8 @@
       "ja": "HTML版とEPUBでは本の動画をどう再生しますか？ダウンロードボタンを隠すには？",
       "pt": "Como a edição HTML e o EPUB reproduzem os vídeos do livro, e como oculto o botão de download?",
       "fr": "Comment l’édition HTML et l’EPUB lisent-elles les vidéos du livre, et comment masquer le bouton de téléchargement ?",
-      "de": "Wie spielen die HTML-Ausgabe und das EPUB die Videos des Buchs ab, und wie blende ich die Download-Schaltfläche aus?"
+      "de": "Wie spielen die HTML-Ausgabe und das EPUB die Videos des Buchs ab, und wie blende ich die Download-Schaltfläche aus?",
+      "it": "Come riproducono i video del libro l’edizione HTML e l’EPUB, e come nascondo il pulsante di download?"
     },
     "index": {
       "en": "Videos, played on screen",
@@ -3483,7 +3750,8 @@
       "ja": "動画、画面での再生",
       "pt": "Vídeos reproduzidos na tela",
       "fr": "Vidéos, lues à l’écran",
-      "de": "Videos, am Bildschirm abgespielt"
+      "de": "Videos, am Bildschirm abgespielt",
+      "it": "Video, riprodotti a schermo"
     },
     "theme": "output"
   },
@@ -3498,7 +3766,8 @@
       "ja": "漢字に、1字ごとまたは語全体に1つの読みでふりがなを付けるには？",
       "pt": "Como coloco furigana sobre os kanji, uma leitura por caractere ou uma para a palavra inteira?",
       "fr": "Comment ajouter des furigana au-dessus des kanji, une lecture par caractère ou une pour le mot entier ?",
-      "de": "Wie füge ich Furigana über Kanji hinzu, eine Lesung pro Zeichen oder eine für das ganze Wort?"
+      "de": "Wie füge ich Furigana über Kanji hinzu, eine Lesung pro Zeichen oder eine für das ganze Wort?",
+      "it": "Come aggiungo i furigana sopra i kanji, una lettura per carattere o una per l’intera parola?"
     },
     "index": {
       "en": "Furigana over kanji",
@@ -3509,7 +3778,8 @@
       "ja": "ふりがな、漢字の上",
       "pt": "Furigana sobre kanji",
       "fr": "Furigana au-dessus des kanji",
-      "de": "Furigana über Kanji"
+      "de": "Furigana über Kanji",
+      "it": "Furigana sopra i kanji"
     },
     "theme": "type"
   },
@@ -3524,7 +3794,8 @@
       "ja": "小書きのかな、ー、閉じかっこが行頭に来てはいけないのはなぜですか？規則の厳しさを選ぶには？",
       "pt": "Por que kana pequenos, ー e sinais de fechamento não podem começar uma linha em japonês, e como escolho o rigor da regra?",
       "fr": "Pourquoi les petits kana, ー et les crochets fermants ne peuvent-ils pas commencer une ligne en japonais, et comment choisir la sévérité de la règle ?",
-      "de": "Warum dürfen kleine Kana, ー und schließende Klammern keine japanische Zeile beginnen, und wie wähle ich, wie streng die Regel ist?"
+      "de": "Warum dürfen kleine Kana, ー und schließende Klammern keine japanische Zeile beginnen, und wie wähle ich, wie streng die Regel ist?",
+      "it": "Perché i kana piccoli, ー e le parentesi di chiusura non possono aprire una riga in giapponese, e come scelgo quanto è severa la regola?"
     },
     "index": {
       "en": "Kinsoku, small kana at the line start",
@@ -3535,7 +3806,8 @@
       "ja": "禁則処理、行頭の小書きのかな",
       "pt": "Kinsoku, kana pequeno no início da linha",
       "fr": "Kinsoku, petits kana en début de ligne",
-      "de": "Kinsoku, kleine Kana am Zeilenanfang"
+      "de": "Kinsoku, kleine Kana am Zeilenanfang",
+      "it": "Kinsoku, kana piccoli a inizio riga"
     },
     "theme": "type"
   },
@@ -3550,7 +3822,8 @@
       "ja": "和文の約物のアキを調整するには（、。「」が続くときの詰め、？！の後と段落頭の始めかっこのアキ）？",
       "pt": "Como espaço a pontuação japonesa: 、。「」 apertados onde se encontram, um espaço depois de ？！ e o colchete que abre um parágrafo?",
       "fr": "Comment espacer la ponctuation japonaise : 、。「」 resserrés là où ils se rencontrent, une espace après ？！ et le crochet qui ouvre un paragraphe ?",
-      "de": "Wie gestalte ich die Abstände japanischer Interpunktion: 、。「」 gestaucht, wo sie aufeinandertreffen, ein Abstand nach ？！ und die Klammer, die einen Absatz eröffnet?"
+      "de": "Wie gestalte ich die Abstände japanischer Interpunktion: 、。「」 gestaucht, wo sie aufeinandertreffen, ein Abstand nach ？！ und die Klammer, die einen Absatz eröffnet?",
+      "it": "Come spazio la punteggiatura giapponese: 、。「」 compressi dove si incontrano, uno spazio dopo ？！ e la parentesi che apre un paragrafo?"
     },
     "index": {
       "en": "Japanese punctuation, spacing (yakumono)",
@@ -3561,7 +3834,8 @@
       "ja": "和文の約物、アキの調整",
       "pt": "Pontuação japonesa, espaçamento (yakumono)",
       "fr": "Ponctuation japonaise, espacement (yakumono)",
-      "de": "Japanische Interpunktion, Abstände (Yakumono)"
+      "de": "Japanische Interpunktion, Abstände (Yakumono)",
+      "it": "Punteggiatura giapponese, spaziatura (yakumono)"
     },
     "theme": "type"
   },
@@ -3576,7 +3850,8 @@
       "ja": "日本語のテキストを、イタリックではなくゴマ圏点や傍線で強調するには？",
       "pt": "Como marco texto japonês com pontos de ênfase de gergelim ou uma linha lateral em vez de itálico?",
       "fr": "Comment marquer un texte japonais avec des points d’emphase sésame ou un trait latéral au lieu de l’italique ?",
-      "de": "Wie kennzeichne ich japanischen Text mit Sesam-Betonungspunkten oder einer Seitenlinie statt mit Kursive?"
+      "de": "Wie kennzeichne ich japanischen Text mit Sesam-Betonungspunkten oder einer Seitenlinie statt mit Kursive?",
+      "it": "Come segno il testo giapponese con punti d’enfasi a sesamo o una linea laterale invece del corsivo?"
     },
     "index": {
       "en": "Emphasis marks and side lines in Japanese",
@@ -3587,7 +3862,8 @@
       "ja": "日本語の圏点と傍線",
       "pt": "Marcas de ênfase e linhas laterais em japonês",
       "fr": "Signes d’emphase et traits latéraux en japonais",
-      "de": "Betonungszeichen und Seitenlinien im Japanischen"
+      "de": "Betonungszeichen und Seitenlinien im Japanischen",
+      "it": "Segni d’enfasi e linee laterali in giapponese"
     },
     "theme": "type"
   },
@@ -3602,7 +3878,8 @@
       "ja": "章番号を第一章のように漢数字で振ったり、リストの項目をあいう、イロハで振ったりするには？",
       "pt": "Como numero capítulos 第一章 com numerais kanji, ou itens de lista あ い う e イ ロ ハ?",
       "fr": "Comment numéroter les chapitres 第一章 en chiffres kanji, ou les éléments de liste あ い う et イ ロ ハ ?",
-      "de": "Wie nummeriere ich Kapitel 第一章 mit Kanji-Zahlzeichen oder Listeneinträge mit あ い う und イ ロ ハ?"
+      "de": "Wie nummeriere ich Kapitel 第一章 mit Kanji-Zahlzeichen oder Listeneinträge mit あ い う und イ ロ ハ?",
+      "it": "Come numero i capitoli 第一章 in numeri kanji, o le voci di elenco あ い う e イ ロ ハ?"
     },
     "index": {
       "en": "Kanji numerals and kana counters",
@@ -3613,7 +3890,8 @@
       "ja": "漢数字とかなの番号",
       "pt": "Numerais kanji e contadores em kana",
       "fr": "Chiffres kanji et compteurs en kana",
-      "de": "Kanji-Zahlzeichen und Kana-Zähler"
+      "de": "Kanji-Zahlzeichen und Kana-Zähler",
+      "it": "Numeri kanji e contatori in kana"
     },
     "theme": "headings"
   },
@@ -3628,7 +3906,8 @@
       "ja": "日本語の見出しを本文3行分（3行取り）にして、本文をグリッドに乗せたままにするには？",
       "pt": "Como faço um título japonês ocupar três linhas do texto (3行取り) para que o texto continue na grade?",
       "fr": "Comment faire occuper à un titre japonais trois lignes de texte (3行取り) pour que le texte reste sur la grille ?",
-      "de": "Wie lasse ich eine japanische Überschrift drei Textzeilen einnehmen (3行取り), damit der Text im Raster bleibt?"
+      "de": "Wie lasse ich eine japanische Überschrift drei Textzeilen einnehmen (3行取り), damit der Text im Raster bleibt?",
+      "it": "Come faccio occupare a un titolo giapponese tre righe di testo (3行取り), così che il testo resti sulla griglia?"
     },
     "index": {
       "en": "Headings over several body lines (gyōdori)",
@@ -3639,7 +3918,8 @@
       "ja": "見出し、本文複数行分の行取り",
       "pt": "Títulos sobre várias linhas do texto (gyōdori)",
       "fr": "Titres sur plusieurs lignes de texte (gyōdori)",
-      "de": "Überschriften über mehrere Textzeilen (Gyōdori)"
+      "de": "Überschriften über mehrere Textzeilen (Gyōdori)",
+      "it": "Titoli su più righe di testo (gyōdori)"
     },
     "theme": "headings"
   },
@@ -3654,7 +3934,8 @@
       "ja": "日本語の索引を、読みに基づいて五十音順に並べるには？",
       "pt": "Como ordeno um índice japonês na ordem gojūon pelas leituras?",
       "fr": "Comment trier un index japonais dans l’ordre gojūon selon ses lectures ?",
-      "de": "Wie sortiere ich ein japanisches Register in Gojūon-Reihenfolge nach seinen Lesungen?"
+      "de": "Wie sortiere ich ein japanisches Register in Gojūon-Reihenfolge nach seinen Lesungen?",
+      "it": "Come ordino un indice giapponese nell’ordine gojūon in base alle letture?"
     },
     "index": {
       "en": "Japanese index, in gojūon order",
@@ -3665,7 +3946,8 @@
       "ja": "日本語の索引、五十音順",
       "pt": "Índice japonês, na ordem gojūon",
       "fr": "Index japonais, dans l’ordre gojūon",
-      "de": "Japanisches Register, in Gojūon-Reihenfolge"
+      "de": "Japanisches Register, in Gojūon-Reihenfolge",
+      "it": "Indice giapponese, in ordine gojūon"
     },
     "theme": "structure"
   },
@@ -3680,7 +3962,8 @@
       "ja": "日本語の本で、（1）の注を章末、ページの下、または見開きにわたって本文の横に置くには？",
       "pt": "Como componho as notas de um livro japonês: （1） no fim do capítulo, no pé da página ou ao lado do texto ao longo da página dupla?",
       "fr": "Comment composer les notes d’un livre japonais : （1） en fin de chapitre, en pied de page ou à côté du texte sur la double page ?",
-      "de": "Wie setze ich die Anmerkungen eines japanischen Buchs: （1） am Kapitelende, am Seitenfuß oder neben dem Text über die Doppelseite?"
+      "de": "Wie setze ich die Anmerkungen eines japanischen Buchs: （1） am Kapitelende, am Seitenfuß oder neben dem Text über die Doppelseite?",
+      "it": "Come compongo le note di un libro giapponese: （1） a fine capitolo, al piede della pagina o accanto al testo lungo la doppia pagina?"
     },
     "index": {
       "en": "Notes in Japanese books",
@@ -3691,7 +3974,8 @@
       "ja": "日本語の本の注",
       "pt": "Notas em livros japoneses",
       "fr": "Notes dans les livres japonais",
-      "de": "Anmerkungen in japanischen Büchern"
+      "de": "Anmerkungen in japanischen Büchern",
+      "it": "Note nei libri giapponesi"
     },
     "theme": "boxes"
   },
@@ -3706,7 +3990,8 @@
       "ja": "漢文を返り点と送り仮名付きで印字するには？",
       "pt": "Como imprimo kanbun com suas marcas de retorno e okurigana?",
       "fr": "Comment imprimer du kanbun avec ses signes de retour et ses okurigana ?",
-      "de": "Wie drucke ich Kanbun mit seinen Umstellungszeichen und Okurigana?"
+      "de": "Wie drucke ich Kanbun mit seinen Umstellungszeichen und Okurigana?",
+      "it": "Come stampo il kanbun con i suoi segni di ritorno e gli okurigana?"
     },
     "index": {
       "en": "Kanbun, return marks and okurigana",
@@ -3717,7 +4002,8 @@
       "ja": "漢文、返り点と送り仮名",
       "pt": "Kanbun, marcas de retorno e okurigana",
       "fr": "Kanbun, signes de retour et okurigana",
-      "de": "Kanbun, Umstellungszeichen und Okurigana"
+      "de": "Kanbun, Umstellungszeichen und Okurigana",
+      "it": "Kanbun, segni di ritorno e okurigana"
     },
     "theme": "type"
   },
@@ -3732,7 +4018,8 @@
       "ja": "青空文庫のテキストをPostextの本にするには？",
       "pt": "Como transformo um texto do Aozora Bunko em um livro do Postext?",
       "fr": "Comment transformer un texte d’Aozora Bunko en livre Postext ?",
-      "de": "Wie mache ich aus einem Text von Aozora Bunko ein Postext-Buch?"
+      "de": "Wie mache ich aus einem Text von Aozora Bunko ein Postext-Buch?",
+      "it": "Come trasformo un testo di Aozora Bunko in un libro Postext?"
     },
     "index": {
       "en": "Aozora Bunko texts, importing",
@@ -3743,7 +4030,8 @@
       "ja": "青空文庫のテキスト、取り込み",
       "pt": "Textos do Aozora Bunko, importar",
       "fr": "Textes d’Aozora Bunko, import",
-      "de": "Aozora-Bunko-Texte, importieren"
+      "de": "Aozora-Bunko-Texte, importieren",
+      "it": "Testi di Aozora Bunko, importare"
     },
     "theme": "publications"
   },
@@ -3758,7 +4046,8 @@
       "ja": "画面とPDFで、漢字を日本の字形で表示して日本語を組めるフォントは？",
       "pt": "Quais fontes compõem japonês, com os kanji nas formas japonesas, na tela e no PDF?",
       "fr": "Quelles polices composent le japonais, avec les kanji sous leurs formes japonaises, à l’écran et dans le PDF ?",
-      "de": "Welche Schriften setzen Japanisch, mit Kanji in ihren japanischen Formen, am Bildschirm und im PDF?"
+      "de": "Welche Schriften setzen Japanisch, mit Kanji in ihren japanischen Formen, am Bildschirm und im PDF?",
+      "it": "Quali font compongono il giapponese, con i kanji nelle loro forme giapponesi, a schermo e nel PDF?"
     },
     "index": {
       "en": "Japanese fonts, on screen and in the PDF",
@@ -3769,7 +4058,8 @@
       "ja": "日本語のフォント、画面とPDF",
       "pt": "Fontes japonesas, na tela e no PDF",
       "fr": "Polices japonaises, à l’écran et dans le PDF",
-      "de": "Japanische Schriften, am Bildschirm und im PDF"
+      "de": "Japanische Schriften, am Bildschirm und im PDF",
+      "it": "Font giapponesi, a schermo e nel PDF"
     },
     "theme": "type"
   },
@@ -3784,7 +4074,8 @@
       "ja": "日本語のテキストが中国語の規則で組まれる（ラベルが图、小書きのかなが行頭に来る、漢字が中国の字形）のはなぜですか？",
       "pt": "Por que meu texto japonês sai com regras chinesas: rótulos 图, kana pequenos no início da linha, kanji em formas chinesas?",
       "fr": "Pourquoi mon texte japonais sort-il avec les règles chinoises : étiquettes 图, petits kana en début de ligne, kanji sous leurs formes chinoises ?",
-      "de": "Warum erscheint mein japanischer Text nach chinesischen Regeln: Beschriftungen mit 图, kleine Kana am Zeilenanfang, Kanji in chinesischen Formen?"
+      "de": "Warum erscheint mein japanischer Text nach chinesischen Regeln: Beschriftungen mit 图, kleine Kana am Zeilenanfang, Kanji in chinesischen Formen?",
+      "it": "Perché il mio testo giapponese esce con le regole cinesi: etichette 图, kana piccoli a inizio riga, kanji in forme cinesi?"
     },
     "index": {
       "en": "Japanese text set with Chinese rules",
@@ -3795,7 +4086,8 @@
       "ja": "中国語の規則で組まれる日本語",
       "pt": "Texto japonês composto com regras chinesas",
       "fr": "Texte japonais composé selon les règles chinoises",
-      "de": "Japanischer Text nach chinesischen Regeln gesetzt"
+      "de": "Japanischer Text nach chinesischen Regeln gesetzt",
+      "it": "Testo giapponese composto con le regole cinesi"
     },
     "theme": "type"
   },
@@ -3810,7 +4102,8 @@
       "ja": "日本語の小説を、文庫本のように縦組み・右綴じで組むには？",
       "pt": "Como componho um romance japonês na vertical, encadernado à direita, como um livro de bolso bunko?",
       "fr": "Comment composer un roman japonais à la verticale, relié à droite, comme un livre de poche bunko ?",
-      "de": "Wie setze ich einen japanischen Roman vertikal und rechts gebunden, wie ein Bunko-Taschenbuch?"
+      "de": "Wie setze ich einen japanischen Roman vertikal und rechts gebunden, wie ein Bunko-Taschenbuch?",
+      "it": "Come compongo un romanzo giapponese in verticale, rilegato a destra, come un tascabile bunko?"
     },
     "index": {
       "en": "Japanese novels, vertical and right-bound (bunko)",
@@ -3821,7 +4114,8 @@
       "ja": "日本語の小説、縦組みと右綴じ（文庫）",
       "pt": "Romances japoneses, na vertical e encadernados à direita (bunko)",
       "fr": "Romans japonais, verticaux et reliés à droite (bunko)",
-      "de": "Japanische Romane, vertikal und rechts gebunden (Bunko)"
+      "de": "Japanische Romane, vertikal und rechts gebunden (Bunko)",
+      "it": "Romanzi giapponesi, verticali e rilegati a destra (bunko)"
     },
     "theme": "page"
   },
@@ -3836,7 +4130,8 @@
       "ja": "日本語の絵本を文節で分かち書きし、スペースの位置でだけ改行するには？",
       "pt": "Como espaço por frases um livro ilustrado japonês (wakachigaki), com linhas que só quebram nos espaços?",
       "fr": "Comment espacer un livre d’images japonais par groupes de mots (wakachigaki), avec des lignes qui ne se coupent qu’aux espaces ?",
-      "de": "Wie setze ich ein japanisches Bilderbuch mit Abständen zwischen Wortgruppen (Wakachigaki), mit Zeilen, die nur an den Abständen umbrechen?"
+      "de": "Wie setze ich ein japanisches Bilderbuch mit Abständen zwischen Wortgruppen (Wakachigaki), mit Zeilen, die nur an den Abständen umbrechen?",
+      "it": "Come spazio un libro illustrato giapponese per frasi (wakachigaki), con righe che vanno a capo solo negli spazi?"
     },
     "index": {
       "en": "Wakachigaki, Japanese spaced by phrase",
@@ -3847,7 +4142,8 @@
       "ja": "分かち書き、文節で区切った日本語",
       "pt": "Wakachigaki, japonês espaçado por frases",
       "fr": "Wakachigaki, japonais espacé par groupes de mots",
-      "de": "Wakachigaki, Japanisch nach Wortgruppen getrennt"
+      "de": "Wakachigaki, Japanisch nach Wortgruppen getrennt",
+      "it": "Wakachigaki, giapponese spaziato per frasi"
     },
     "theme": "type"
   },
@@ -3862,7 +4158,8 @@
       "ja": "明治期の漢字カタカナ交じり文を旧字体のまま組み、条文に第一條と番号を振るには？",
       "pt": "Como componho um texto Meiji em kanji e katakana, com suas formas antigas, e numero seus artigos 第一條?",
       "fr": "Comment composer un texte de l’ère Meiji en kanji et katakana, avec ses formes anciennes, et numéroter ses articles 第一條 ?",
-      "de": "Wie setze ich einen Meiji-Text in Kanji und Katakana, mit seinen alten Formen, und nummeriere seine Artikel 第一條?"
+      "de": "Wie setze ich einen Meiji-Text in Kanji und Katakana, mit seinen alten Formen, und nummeriere seine Artikel 第一條?",
+      "it": "Come compongo un testo Meiji in kanji e katakana, con le sue forme antiche, e numero i suoi articoli 第一條?"
     },
     "index": {
       "en": "Katakana-majiri texts, Meiji documents",
@@ -3873,7 +4170,8 @@
       "ja": "カタカナ交じり文、明治の文書",
       "pt": "Textos katakana-majiri, documentos Meiji",
       "fr": "Textes katakana-majiri, documents de l’ère Meiji",
-      "de": "Katakana-majiri-Texte, Meiji-Dokumente"
+      "de": "Katakana-majiri-Texte, Meiji-Dokumente",
+      "it": "Testi katakana-majiri, documenti Meiji"
     },
     "theme": "type"
   },
@@ -3888,7 +4186,8 @@
       "ja": "ローマ字で書いた日本語を組むには（言語タグ、ハイフネーション、PDFでの長音記号）？",
       "pt": "Como componho japonês em rōmaji: qual tag de idioma, que hifenização e mácrons no PDF?",
       "fr": "Comment composer du japonais écrit en rōmaji : quelle balise de langue, quelle césure, et les macrons dans le PDF ?",
-      "de": "Wie setze ich Japanisch in Rōmaji: welche Sprachauszeichnung, welche Silbentrennung und Makronvokale im PDF?"
+      "de": "Wie setze ich Japanisch in Rōmaji: welche Sprachauszeichnung, welche Silbentrennung und Makronvokale im PDF?",
+      "it": "Come compongo il giapponese scritto in rōmaji: quale tag di lingua, quale sillabazione e i macron nel PDF?"
     },
     "index": {
       "en": "Rōmaji, Japanese in Latin letters",
@@ -3899,7 +4198,8 @@
       "ja": "ローマ字、ラテン文字で書いた日本語",
       "pt": "Rōmaji, japonês em letras latinas",
       "fr": "Rōmaji, japonais en lettres latines",
-      "de": "Rōmaji, Japanisch in lateinischer Schrift"
+      "de": "Rōmaji, Japanisch in lateinischer Schrift",
+      "it": "Rōmaji, giapponese in lettere latine"
     },
     "theme": "type"
   },
@@ -3914,7 +4214,8 @@
       "ja": "新聞のページを組むには（ブランケット判に5段、2段にまたがる写真、3段にまたがる記事の囲み）？",
       "pt": "Como componho uma página de jornal: cinco colunas em formato standard, uma foto sobre duas delas e um boxe de matéria sobre três?",
       "fr": "Comment composer une page de journal : cinq colonnes sur un grand format, une photo sur deux d’entre elles et un encadré d’article sur trois ?",
-      "de": "Wie setze ich eine Zeitungsseite: fünf Spalten im Großformat, ein Bild über zwei davon und einen Artikelkasten über drei?"
+      "de": "Wie setze ich eine Zeitungsseite: fünf Spalten im Großformat, ein Bild über zwei davon und einen Artikelkasten über drei?",
+      "it": "Come compongo una pagina di giornale: cinque colonne in formato lenzuolo, un’immagine su due di esse e un riquadro di articolo su tre?"
     },
     "index": {
       "en": "Newspaper columns, pictures and boxes across",
@@ -3925,7 +4226,8 @@
       "ja": "新聞の段組み、段抜きの写真と囲み",
       "pt": "Colunas de jornal, fotos e boxes sobre várias",
       "fr": "Colonnes de journal, photos et encadrés sur plusieurs colonnes",
-      "de": "Zeitungsspalten, Bilder und Kästen über mehrere"
+      "de": "Zeitungsspalten, Bilder und Kästen über mehrere",
+      "it": "Colonne di giornale, immagini e riquadri a cavallo"
     },
     "theme": "page"
   },
@@ -3940,7 +4242,8 @@
       "ja": "1ページにある無音のループ動画をいくつも同時に再生し、そのページを開くたびに始まるようにするには？",
       "pt": "Como faço vários vídeos curtos sem som tocarem em loop ao mesmo tempo em uma página e recomeçarem cada vez que o leitor chega a ela?",
       "fr": "Comment faire jouer en même temps plusieurs boucles vidéo muettes sur une page, et les faire repartir chaque fois qu’on revient à cette page ?",
-      "de": "Wie spiele ich mehrere stumme Videoschleifen gleichzeitig auf einer Seite ab und starte sie jedes Mal neu, wenn die Seite aufgeschlagen wird?"
+      "de": "Wie spiele ich mehrere stumme Videoschleifen gleichzeitig auf einer Seite ab und starte sie jedes Mal neu, wenn die Seite aufgeschlagen wird?",
+      "it": "Come faccio riprodurre insieme su una pagina più video muti in loop, che ripartono ogni volta che si torna a quella pagina?"
     },
     "index": {
       "en": "Video loops, several at once",
@@ -3951,7 +4254,8 @@
       "ja": "ループ動画、複数同時",
       "pt": "Vídeos em loop, vários ao mesmo tempo",
       "fr": "Boucles vidéo, plusieurs à la fois",
-      "de": "Videoschleifen, mehrere gleichzeitig"
+      "de": "Videoschleifen, mehrere gleichzeitig",
+      "it": "Video in loop, più di uno insieme"
     },
     "theme": "figures"
   },
@@ -3966,7 +4270,8 @@
       "ja": "3Dビューアーで新聞を折った紙として見せ、経済面をサーモンピンクの紙にするには？",
       "pt": "Como mostro um jornal no visualizador 3D como folhas dobradas, com as páginas de economia em papel salmão?",
       "fr": "Comment afficher un journal dans la visionneuse 3D sous forme de feuilles pliées, avec les pages économie sur papier saumon ?",
-      "de": "Wie zeige ich eine Zeitung im 3D-Betrachter als gefaltete Bögen, mit dem Wirtschaftsteil auf lachsfarbenem Papier?"
+      "de": "Wie zeige ich eine Zeitung im 3D-Betrachter als gefaltete Bögen, mit dem Wirtschaftsteil auf lachsfarbenem Papier?",
+      "it": "Come mostro un giornale nel visualizzatore 3D come fogli piegati, con le pagine economiche su carta salmone?"
     },
     "index": {
       "en": "Newspaper, folded, in the 3D viewer",
@@ -3977,7 +4282,8 @@
       "ja": "新聞、折った形で3Dビューアーに",
       "pt": "Jornal dobrado no visualizador 3D",
       "fr": "Journal plié, dans la visionneuse 3D",
-      "de": "Zeitung, gefaltet, im 3D-Betrachter"
+      "de": "Zeitung, gefaltet, im 3D-Betrachter",
+      "it": "Giornale, piegato, nel visualizzatore 3D"
     },
     "theme": "output"
   },
@@ -3992,7 +4298,8 @@
       "ja": "arXivやPubMed Centralのオープンアクセス論文を、引用・図・ライセンス表記を保ったままPostextで組み直すには？",
       "pt": "Como recomponho com o Postext um artigo de acesso aberto do arXiv ou do PubMed Central, mantendo citações, figuras e linha de licença?",
       "fr": "Comment recomposer avec Postext un article en libre accès d’arXiv ou de PubMed Central, en gardant ses citations, ses figures et sa mention de licence ?",
-      "de": "Wie setze ich einen Open-Access-Artikel aus arXiv oder PubMed Central mit Postext neu, mit seinen Zitaten, Abbildungen und seiner Lizenzzeile?"
+      "de": "Wie setze ich einen Open-Access-Artikel aus arXiv oder PubMed Central mit Postext neu, mit seinen Zitaten, Abbildungen und seiner Lizenzzeile?",
+      "it": "Come ricompongo con Postext un articolo open access da arXiv o PubMed Central, mantenendo citazioni, figure e riga della licenza?"
     },
     "index": {
       "en": "Papers, open-access, re-setting",
@@ -4003,7 +4310,8 @@
       "ja": "オープンアクセス論文、組み直し",
       "pt": "Artigos de acesso aberto, recomposição",
       "fr": "Articles en libre accès, recomposition",
-      "de": "Fachartikel, Open Access, neu setzen"
+      "de": "Fachartikel, Open Access, neu setzen",
+      "it": "Articoli scientifici, open access, ricomporre"
     },
     "theme": "structure"
   },
@@ -4018,7 +4326,8 @@
       "ja": "AI論文のプロンプトとモデル出力の例を、囲みで左右に並べて組むには？",
       "pt": "Como componho lado a lado, em boxes, os exemplos de prompt e de resposta do modelo de um artigo de IA?",
       "fr": "Comment composer côte à côte, dans des encadrés, les exemples de prompt et de sortie du modèle d’un article sur l’IA ?",
-      "de": "Wie setze ich die Prompt- und Modellausgabe-Beispiele eines KI-Artikels in Kästen nebeneinander?"
+      "de": "Wie setze ich die Prompt- und Modellausgabe-Beispiele eines KI-Artikels in Kästen nebeneinander?",
+      "it": "Come compongo in riquadri affiancati gli esempi di prompt e di output del modello di un articolo sull’IA?"
     },
     "index": {
       "en": "Prompts and model outputs in boxes",
@@ -4029,7 +4338,8 @@
       "ja": "プロンプトとモデル出力、囲みで",
       "pt": "Prompts e respostas do modelo em boxes",
       "fr": "Prompts et sorties de modèle dans des encadrés",
-      "de": "Prompts und Modellausgaben in Kästen"
+      "de": "Prompts und Modellausgaben in Kästen",
+      "it": "Prompt e output del modello in riquadri"
     },
     "theme": "boxes"
   },
@@ -4044,7 +4354,8 @@
       "ja": "数学的な論文で数式に番号を付け、定理と証明を組み、それらを参照するには？",
       "pt": "Como numero equações, enuncio teoremas e componho demonstrações em um artigo de matemática, e como remeto a eles?",
       "fr": "Comment numéroter les équations, énoncer les théorèmes et composer les démonstrations d’un article de mathématiques, et y renvoyer ?",
-      "de": "Wie nummeriere ich Gleichungen, formuliere Sätze und setze Beweise in einem mathematischen Artikel, und wie verweise ich darauf?"
+      "de": "Wie nummeriere ich Gleichungen, formuliere Sätze und setze Beweise in einem mathematischen Artikel, und wie verweise ich darauf?",
+      "it": "Come numero le equazioni, enuncio i teoremi e compongo le dimostrazioni in un articolo di matematica, e come rimando a essi?"
     },
     "index": {
       "en": "Theorems, proofs and equation numbers",
@@ -4055,7 +4366,8 @@
       "ja": "定理・証明・数式番号",
       "pt": "Teoremas, demonstrações e números de equação",
       "fr": "Théorèmes, démonstrations et numéros d’équation",
-      "de": "Sätze, Beweise und Gleichungsnummern"
+      "de": "Sätze, Beweise und Gleichungsnummern",
+      "it": "Teoremi, dimostrazioni e numeri delle equazioni"
     },
     "theme": "type"
   },
@@ -4070,7 +4382,8 @@
       "ja": "論文のMethodsを本文の後に小さい文字で組み、その引用番号を本文から続けるには？",
       "pt": "Como componho a seção de Métodos de um artigo em corpo menor depois do texto principal, com as citações continuando a numeração?",
       "fr": "Comment composer la section Méthodes d’un article de revue en plus petit corps après le texte principal, avec des citations qui poursuivent la numérotation ?",
-      "de": "Wie setze ich den Methodenteil eines Zeitschriftenartikels in kleinerer Schrift nach dem Haupttext, mit fortlaufender Nummerierung der Zitate?"
+      "de": "Wie setze ich den Methodenteil eines Zeitschriftenartikels in kleinerer Schrift nach dem Haupttext, mit fortlaufender Nummerierung der Zitate?",
+      "it": "Come compongo la sezione Metodi di un articolo di rivista in corpo minore dopo il testo principale, con le citazioni che proseguono la numerazione?"
     },
     "index": {
       "en": "Methods section in smaller type",
@@ -4081,7 +4394,8 @@
       "ja": "Methods、小さい文字で",
       "pt": "Seção de Métodos em corpo menor",
       "fr": "Section Méthodes en plus petit corps",
-      "de": "Methodenteil in kleinerer Schrift"
+      "de": "Methodenteil in kleinerer Schrift",
+      "it": "Sezione Metodi in corpo minore"
     },
     "theme": "structure"
   },
@@ -4096,7 +4410,8 @@
       "ja": "物理学のレターを組むには（共同研究チームの著者表記、2段にまたがる要旨、上部に段抜きのデータ図）？",
       "pt": "Como componho um artigo curto de física (letter): a assinatura de uma colaboração, o resumo sobre as duas colunas e uma figura de dados no alto, em toda a largura?",
       "fr": "Comment composer une lettre de physique : signature d’une collaboration, résumé sur les deux colonnes et figure de données en haut sur toute la largeur ?",
-      "de": "Wie setze ich einen Physik-Letter: eine Kollaborations-Autorenzeile, das Abstract über beide Spalten und eine Datenabbildung oben über die ganze Breite?"
+      "de": "Wie setze ich einen Physik-Letter: eine Kollaborations-Autorenzeile, das Abstract über beide Spalten und eine Datenabbildung oben über die ganze Breite?",
+      "it": "Come compongo una lettera di fisica: la firma di una collaborazione, l’abstract su entrambe le colonne e una figura di dati in testa a tutta larghezza?"
     },
     "index": {
       "en": "Physics letters, byline and figure across",
@@ -4107,7 +4422,8 @@
       "ja": "物理学のレター、著者表記と段抜きの図",
       "pt": "Artigos curtos de física (letters), assinatura e figura em toda a largura",
       "fr": "Lettres de physique, signature et figure sur toute la largeur",
-      "de": "Physik-Letters, Autorenzeile und Abbildung über die Breite"
+      "de": "Physik-Letters, Autorenzeile und Abbildung über die Breite",
+      "it": "Lettere di fisica, firma e figura a tutta larghezza"
     },
     "theme": "figures"
   },
@@ -4122,7 +4438,8 @@
       "ja": "1つのスクリプトから、同じ論文を2つの言語で、それぞれの言語の組版規則に従って出すには？",
       "pt": "Como publico um mesmo artigo em dois idiomas a partir de um só script, com a tipografia de cada idioma?",
       "fr": "Comment publier un même article en deux langues à partir d’un seul script, avec la typographie de chaque langue ?",
-      "de": "Wie veröffentliche ich einen Artikel aus einem Skript in zwei Sprachen, jeweils mit der Typografie der Sprache?"
+      "de": "Wie veröffentliche ich einen Artikel aus einem Skript in zwei Sprachen, jeweils mit der Typografie der Sprache?",
+      "it": "Come pubblico un articolo in due lingue da un unico script, con la tipografia di ciascuna lingua?"
     },
     "index": {
       "en": "Papers in two languages",
@@ -4133,7 +4450,8 @@
       "ja": "論文、2言語で",
       "pt": "Artigos em dois idiomas",
       "fr": "Articles en deux langues",
-      "de": "Fachartikel in zwei Sprachen"
+      "de": "Fachartikel in zwei Sprachen",
+      "it": "Articoli scientifici in due lingue"
     },
     "theme": "output"
   },
@@ -4148,7 +4466,8 @@
       "ja": "臨床試験の報告で、CONSORTフロー図を描き、構造化抄録を組むには？",
       "pt": "Como faço para desenhar um fluxograma CONSORT e compor um resumo estruturado para o relatório de um ensaio clínico?",
       "fr": "Comment dessiner un diagramme de flux CONSORT et composer un résumé structuré pour le compte rendu d’un essai clinique ?",
-      "de": "Wie zeichne ich ein CONSORT-Flussdiagramm und setze ein strukturiertes Abstract für den Bericht einer klinischen Studie?"
+      "de": "Wie zeichne ich ein CONSORT-Flussdiagramm und setze ein strukturiertes Abstract für den Bericht einer klinischen Studie?",
+      "it": "Come disegno un diagramma di flusso CONSORT e compongo un abstract strutturato per il resoconto di uno studio clinico?"
     },
     "index": {
       "en": "CONSORT diagrams and structured abstracts",
@@ -4159,7 +4478,8 @@
       "ja": "CONSORTフロー図と構造化抄録",
       "pt": "Fluxogramas CONSORT e resumos estruturados",
       "fr": "Diagrammes CONSORT et résumés structurés",
-      "de": "CONSORT-Diagramme und strukturierte Abstracts"
+      "de": "CONSORT-Diagramme und strukturierte Abstracts",
+      "it": "Diagrammi CONSORT e abstract strutturati"
     },
     "theme": "figures"
   },
@@ -4174,7 +4494,8 @@
       "ja": "週報の報告を組むには（題字、症例、編集部注、番号付きの参考文献）？",
       "pt": "Como faço para compor o relatório de um boletim semanal, com cabeçalho, relatos de caso, nota editorial e referências numeradas?",
       "fr": "Comment composer un bulletin hebdomadaire : bandeau-titre, histoires de cas, note de la rédaction et références numérotées ?",
-      "de": "Wie setze ich einen wöchentlichen Bulletin-Bericht: Zeitungskopf, Fallberichte, Anmerkung der Redaktion und nummerierte Literaturangaben?"
+      "de": "Wie setze ich einen wöchentlichen Bulletin-Bericht: Zeitungskopf, Fallberichte, Anmerkung der Redaktion und nummerierte Literaturangaben?",
+      "it": "Come compongo un bollettino settimanale: una testata, casi clinici, una nota editoriale e riferimenti numerati?"
     },
     "index": {
       "en": "Bulletins, weekly reports in",
@@ -4185,7 +4506,8 @@
       "ja": "週報、その報告",
       "pt": "Boletins, relatórios semanais em",
       "fr": "Bulletins, rapports hebdomadaires",
-      "de": "Bulletins, Wochenberichte"
+      "de": "Bulletins, Wochenberichte",
+      "it": "Bollettini, rapporti settimanali in"
     },
     "theme": "publications"
   },
@@ -4200,7 +4522,8 @@
       "ja": "ページをコマに割るには？",
       "pt": "Como faço para dividir uma página em quadros de quadrinhos?",
       "fr": "Comment diviser une page en cases de bande dessinée ?",
-      "de": "Wie teile ich eine Seite in Comic-Panels auf?"
+      "de": "Wie teile ich eine Seite in Comic-Panels auf?",
+      "it": "Come divido una pagina in vignette di fumetto?"
     },
     "index": {
       "en": "Panels, dividing a page into",
@@ -4211,7 +4534,8 @@
       "ja": "コマ割り、ページの",
       "pt": "Quadros, divisão de uma página em",
       "fr": "Cases, division d’une page en",
-      "de": "Panels, eine Seite aufteilen"
+      "de": "Panels, eine Seite aufteilen",
+      "it": "Vignette, dividere una pagina in"
     },
     "theme": "comics"
   },
@@ -4226,7 +4550,8 @@
       "ja": "吹き出しをMarkdownで書くには？",
       "pt": "Como faço para escrever os balões de fala em Markdown?",
       "fr": "Comment écrire des bulles de dialogue en Markdown ?",
-      "de": "Wie schreibe ich Sprechblasen in Markdown?"
+      "de": "Wie schreibe ich Sprechblasen in Markdown?",
+      "it": "Come scrivo le nuvolette in Markdown?"
     },
     "index": {
       "en": "Speech balloons, written in Markdown",
@@ -4237,7 +4562,8 @@
       "ja": "吹き出し、Markdownでの書き方",
       "pt": "Balões de fala, escritos em Markdown",
       "fr": "Bulles de dialogue, écrites en Markdown",
-      "de": "Sprechblasen, in Markdown geschrieben"
+      "de": "Sprechblasen, in Markdown geschrieben",
+      "it": "Nuvolette, scritte in Markdown"
     },
     "theme": "comics"
   },
@@ -4252,7 +4578,8 @@
       "ja": "漫画を別の言語で写植し直すには？",
       "pt": "Como faço para letrear uma história em quadrinhos em outro idioma?",
       "fr": "Comment relettrer une bande dessinée dans une autre langue ?",
-      "de": "Wie lettere ich einen Comic in einer anderen Sprache neu?"
+      "de": "Wie lettere ich einen Comic in einer anderen Sprache neu?",
+      "it": "Come riscrivo il lettering di un fumetto in un’altra lingua?"
     },
     "index": {
       "en": "Comics, re-lettered in another language",
@@ -4263,7 +4590,8 @@
       "ja": "漫画、別の言語での写植",
       "pt": "Quadrinhos, letreiramento em outro idioma",
       "fr": "Bande dessinée, relettrée dans une autre langue",
-      "de": "Comics, in einer anderen Sprache neu gelettert"
+      "de": "Comics, in einer anderen Sprache neu gelettert",
+      "it": "Fumetti, lettering rifatto in un’altra lingua"
     },
     "theme": "comics"
   },
@@ -4278,7 +4606,8 @@
       "ja": "右から左へ読む漫画を組むには？",
       "pt": "Como faço para diagramar um mangá que se lê da direita para a esquerda?",
       "fr": "Comment mettre en page un manga pour une lecture de droite à gauche ?",
-      "de": "Wie setze ich Manga so, dass sie von rechts nach links gelesen werden?"
+      "de": "Wie setze ich Manga so, dass sie von rechts nach links gelesen werden?",
+      "it": "Come impagino un manga da leggere da destra a sinistra?"
     },
     "index": {
       "en": "Manga, read right to left",
@@ -4289,7 +4618,8 @@
       "ja": "漫画、右から左へ読む順序",
       "pt": "Mangá, leitura da direita para a esquerda",
       "fr": "Manga, lu de droite à gauche",
-      "de": "Manga, von rechts nach links gelesen"
+      "de": "Manga, von rechts nach links gelesen",
+      "it": "Manga, letti da destra a sinistra"
     },
     "theme": "comics"
   },
@@ -4304,7 +4634,8 @@
       "ja": "新聞の紙面に帯漫画を載せるには？",
       "pt": "Como faço para colocar uma tirinha numa página de jornal?",
       "fr": "Comment placer un strip de bande dessinée sur une page de journal ?",
-      "de": "Wie setze ich einen Comicstrip auf eine Zeitungsseite?"
+      "de": "Wie setze ich einen Comicstrip auf eine Zeitungsseite?",
+      "it": "Come metto una striscia a fumetti su una pagina di giornale?"
     },
     "index": {
       "en": "Comic strips, on a newspaper page",
@@ -4315,7 +4646,8 @@
       "ja": "帯漫画、新聞の紙面の",
       "pt": "Tirinhas, numa página de jornal",
       "fr": "Strips de bande dessinée, sur une page de journal",
-      "de": "Comicstrips, auf einer Zeitungsseite"
+      "de": "Comicstrips, auf einer Zeitungsseite",
+      "it": "Strisce a fumetti, su una pagina di giornale"
     },
     "theme": "comics"
   },
@@ -4330,7 +4662,8 @@
       "ja": "吹き出しのしっぽを話している人物に向けるには？",
       "pt": "Como faço para apontar o rabicho do balão para o personagem que fala?",
       "fr": "Comment diriger l’appendice d’une bulle vers le personnage qui parle ?",
-      "de": "Wie richte ich den Dorn einer Sprechblase auf die sprechende Figur?"
+      "de": "Wie richte ich den Dorn einer Sprechblase auf die sprechende Figur?",
+      "it": "Come punto la coda di una nuvoletta verso il personaggio che parla?"
     },
     "index": {
       "en": "Balloon tails, pointed at the speaker",
@@ -4341,7 +4674,8 @@
       "ja": "吹き出しのしっぽ、話者への向け方",
       "pt": "Rabichos de balão, apontados para quem fala",
       "fr": "Appendices de bulle, dirigés vers le locuteur",
-      "de": "Sprechblasendorne, auf die Sprechenden gerichtet"
+      "de": "Sprechblasendorne, auf die Sprechenden gerichtet",
+      "it": "Code delle nuvolette, puntate verso chi parla"
     },
     "theme": "comics"
   },
@@ -4356,7 +4690,8 @@
       "ja": "思考、ささやき、叫び、無線の吹き出しを描き分けるには？",
       "pt": "Como faço para mostrar balões de pensamento, de sussurro, de grito e de rádio?",
       "fr": "Comment représenter des bulles de pensée, de chuchotement, de cri et de radio ?",
-      "de": "Wie zeige ich Gedanken-, Flüster-, Schrei- und Funkblasen?"
+      "de": "Wie zeige ich Gedanken-, Flüster-, Schrei- und Funkblasen?",
+      "it": "Come mostro nuvolette di pensiero, sussurro, grido e radio?"
     },
     "index": {
       "en": "Balloons, thought, whisper, shout and radio",
@@ -4367,7 +4702,8 @@
       "ja": "吹き出し、思考・ささやき・叫び・無線の",
       "pt": "Balões de pensamento, sussurro, grito e rádio",
       "fr": "Bulles de pensée, de chuchotement, de cri et de radio",
-      "de": "Sprechblasen, Gedanken, Flüstern, Schreien und Funk"
+      "de": "Sprechblasen, Gedanken, Flüstern, Schreien und Funk",
+      "it": "Nuvolette, di pensiero, sussurro, grido e radio"
     },
     "theme": "comics"
   },
@@ -4382,7 +4718,8 @@
       "ja": "絵の上に擬音の描き文字を入れるには？",
       "pt": "Como faço para letrear onomatopeias sobre a arte?",
       "fr": "Comment lettrer des onomatopées par-dessus le dessin ?",
-      "de": "Wie lettere ich Soundeffekte über die Zeichnung?"
+      "de": "Wie lettere ich Soundeffekte über die Zeichnung?",
+      "it": "Come scrivo le onomatopee sopra il disegno?"
     },
     "index": {
       "en": "Sound effects, lettered over the art",
@@ -4393,7 +4730,8 @@
       "ja": "擬音、絵の上の描き文字",
       "pt": "Onomatopeias, letreiradas sobre a arte",
       "fr": "Onomatopées, lettrées par-dessus le dessin",
-      "de": "Soundeffekte, über die Zeichnung gelettert"
+      "de": "Soundeffekte, über die Zeichnung gelettert",
+      "it": "Onomatopee, scritte sopra il disegno"
     },
     "theme": "comics"
   },
@@ -4408,7 +4746,8 @@
       "ja": "コマが絵をトリミングしても顔が切れないようにするには？",
       "pt": "Como faço para manter um rosto à vista quando o quadro recorta a imagem?",
       "fr": "Comment garder un visage visible quand une case recadre l’image ?",
-      "de": "Wie bleibt ein Gesicht sichtbar, wenn ein Panel das Bild beschneidet?"
+      "de": "Wie bleibt ein Gesicht sichtbar, wenn ein Panel das Bild beschneidet?",
+      "it": "Come mantengo in vista un volto quando una vignetta ritaglia l’immagine?"
     },
     "index": {
       "en": "Panels, cropping the picture around a face",
@@ -4419,7 +4758,8 @@
       "ja": "コマ、顔を残すトリミング",
       "pt": "Quadros, recorte da imagem em torno de um rosto",
       "fr": "Cases, recadrage de l’image autour d’un visage",
-      "de": "Panels, Bild um ein Gesicht beschneiden"
+      "de": "Panels, Bild um ein Gesicht beschneiden",
+      "it": "Vignette, ritagliare l’immagine intorno a un volto"
     },
     "theme": "comics"
   },
@@ -4434,7 +4774,8 @@
       "ja": "コマを裁ち切りにしたり、人物を枠線からはみ出させたりするには？",
       "pt": "Como faço para levar um quadro até a borda da página ou deixar uma figura romper o contorno dele?",
       "fr": "Comment faire sortir une case au bord de la page ou laisser un personnage déborder de son cadre ?",
-      "de": "Wie lasse ich ein Panel über den Seitenrand hinauslaufen oder eine Figur seinen Rahmen durchbrechen?"
+      "de": "Wie lasse ich ein Panel über den Seitenrand hinauslaufen oder eine Figur seinen Rahmen durchbrechen?",
+      "it": "Come faccio uscire una vignetta dal bordo della pagina o lascio che una figura ne rompa il contorno?"
     },
     "index": {
       "en": "Panels, bleeding and broken borders",
@@ -4445,7 +4786,8 @@
       "ja": "コマ、裁ち切りと枠線越え",
       "pt": "Quadros, sangria e contornos rompidos",
       "fr": "Cases, à fond perdu et cadres franchis",
-      "de": "Panels, randabfallend und durchbrochene Rahmen"
+      "de": "Panels, randabfallend und durchbrochene Rahmen",
+      "it": "Vignette, al vivo e con contorni spezzati"
     },
     "theme": "comics"
   },
@@ -4460,7 +4802,8 @@
       "ja": "漫画のページを見開きいっぱいに広げるには？",
       "pt": "Como faço para estender uma página de quadrinhos por uma página dupla?",
       "fr": "Comment étendre une planche de bande dessinée sur une double page ?",
-      "de": "Wie lege ich eine Comicseite über eine Doppelseite?"
+      "de": "Wie lege ich eine Comicseite über eine Doppelseite?",
+      "it": "Come stendo una pagina di fumetto su una doppia pagina?"
     },
     "index": {
       "en": "Spreads, comic pages across",
@@ -4471,7 +4814,8 @@
       "ja": "見開き、漫画の",
       "pt": "Páginas duplas, páginas de quadrinhos em",
       "fr": "Doubles pages, planches de bande dessinée sur",
-      "de": "Doppelseiten, Comicseiten darüber"
+      "de": "Doppelseiten, Comicseiten darüber",
+      "it": "Doppie pagine, pagine di fumetto a cavallo"
     },
     "theme": "comics"
   },
@@ -4486,7 +4830,8 @@
       "ja": "4コマ漫画を組むには？",
       "pt": "Como faço para compor uma tira yonkoma de quatro quadros?",
       "fr": "Comment composer un yonkoma, un strip en quatre cases ?",
-      "de": "Wie setze ich einen Yonkoma-Strip mit vier Panels?"
+      "de": "Wie setze ich einen Yonkoma-Strip mit vier Panels?",
+      "it": "Come compongo una striscia yonkoma a quattro vignette?"
     },
     "index": {
       "en": "Yonkoma, four-panel strips",
@@ -4497,7 +4842,8 @@
       "ja": "4コマ漫画",
       "pt": "Yonkoma, tiras de quatro quadros",
       "fr": "Yonkoma, strips en quatre cases",
-      "de": "Yonkoma, Strips mit vier Panels"
+      "de": "Yonkoma, Strips mit vier Panels",
+      "it": "Yonkoma, strisce a quattro vignette"
     },
     "theme": "comics"
   },
@@ -4512,7 +4858,8 @@
       "ja": "コマごとに読める漫画のEPUBを作るには？",
       "pt": "Como faço para criar um EPUB de quadrinhos que se lê quadro a quadro?",
       "fr": "Comment rendre un EPUB de bande dessinée lisible case par case ?",
-      "de": "Wie mache ich ein Comic-EPUB Panel für Panel lesbar?"
+      "de": "Wie mache ich ein Comic-EPUB Panel für Panel lesbar?",
+      "it": "Come rendo un EPUB a fumetti leggibile vignetta per vignetta?"
     },
     "index": {
       "en": "EPUB, comics read panel by panel",
@@ -4523,7 +4870,8 @@
       "ja": "EPUB、コマ送りで読む漫画",
       "pt": "EPUB, quadrinhos lidos quadro a quadro",
       "fr": "EPUB, bande dessinée lue case par case",
-      "de": "EPUB, Comics Panel für Panel gelesen"
+      "de": "EPUB, Comics Panel für Panel gelesen",
+      "it": "EPUB, fumetti letti vignetta per vignetta"
     },
     "theme": "comics"
   },
@@ -4538,7 +4886,8 @@
       "ja": "コマの間白を斜めにするには？",
       "pt": "Como faço para inclinar as sarjetas entre os quadros?",
       "fr": "Comment incliner les gouttières entre les cases ?",
-      "de": "Wie neige ich die Zwischenräume zwischen Panels?"
+      "de": "Wie neige ich die Zwischenräume zwischen Panels?",
+      "it": "Come inclino gli spazi tra le vignette?"
     },
     "index": {
       "en": "Gutters, slanted",
@@ -4549,7 +4898,8 @@
       "ja": "間白、斜めの",
       "pt": "Sarjetas, inclinadas",
       "fr": "Gouttières, inclinées",
-      "de": "Zwischenräume, geneigt"
+      "de": "Zwischenräume, geneigt",
+      "it": "Spazi tra le vignette, inclinati"
     },
     "theme": "comics"
   },
@@ -4564,7 +4914,8 @@
       "ja": "吹き出しに日本語を縦書きで写植するには？",
       "pt": "Como faço para letrear japonês na vertical dentro dos balões?",
       "fr": "Comment lettrer du japonais à la verticale dans les bulles ?",
-      "de": "Wie lettere ich Japanisch vertikal in Sprechblasen?"
+      "de": "Wie lettere ich Japanisch vertikal in Sprechblasen?",
+      "it": "Come scrivo il giapponese in verticale dentro le nuvolette?"
     },
     "index": {
       "en": "Balloons, vertical Japanese lettering in",
@@ -4575,7 +4926,8 @@
       "ja": "吹き出し、縦書きの写植",
       "pt": "Balões, letreiramento vertical em japonês",
       "fr": "Bulles, lettrage japonais vertical dans les",
-      "de": "Sprechblasen, vertikales japanisches Lettering"
+      "de": "Sprechblasen, vertikales japanisches Lettering",
+      "it": "Nuvolette, lettering giapponese verticale nelle"
     },
     "theme": "comics"
   },
@@ -4590,7 +4942,8 @@
       "ja": "オープンライセンスの漫画を書き起こしから写植し直すには？",
       "pt": "Como faço para letrear de novo uma história em quadrinhos de licença livre a partir da transcrição dela?",
       "fr": "Comment relettrer une bande dessinée sous licence libre à partir de sa transcription ?",
-      "de": "Wie lettere ich einen frei lizenzierten Comic anhand seines Transkripts neu?"
+      "de": "Wie lettere ich einen frei lizenzierten Comic anhand seines Transkripts neu?",
+      "it": "Come rifaccio il lettering di un fumetto con licenza aperta partendo dalla sua trascrizione?"
     },
     "index": {
       "en": "Comics, open-licensed, re-lettered from a transcript",
@@ -4601,7 +4954,8 @@
       "ja": "オープンライセンスの漫画、書き起こしからの写植",
       "pt": "Quadrinhos de licença livre, letreirados a partir da transcrição",
       "fr": "Bande dessinée sous licence libre, relettrée à partir d’une transcription",
-      "de": "Comics, frei lizenziert, anhand eines Transkripts neu gelettert"
+      "de": "Comics, frei lizenziert, anhand eines Transkripts neu gelettert",
+      "it": "Fumetti, con licenza aperta, lettering rifatto da una trascrizione"
     },
     "theme": "comics"
   },
@@ -4616,7 +4970,8 @@
       "ja": "ナレーションの枠が入ったヨーロッパのアルバム漫画のページを組むには？",
       "pt": "Como faço para compor uma página de álbum europeu com recordatórios de narração?",
       "fr": "Comment composer une page d’album franco-belge avec des récitatifs ?",
-      "de": "Wie setze ich eine europäische Albumseite mit Erzähltextkästen?"
+      "de": "Wie setze ich eine europäische Albumseite mit Erzähltextkästen?",
+      "it": "Come compongo una pagina di album europeo con didascalie di narrazione?"
     },
     "index": {
       "en": "Album pages, with narration captions",
@@ -4627,7 +4982,8 @@
       "ja": "アルバム漫画、ナレーション枠のある",
       "pt": "Páginas de álbum, com recordatórios de narração",
       "fr": "Pages d’album, avec récitatifs",
-      "de": "Albumseiten, mit Erzähltextkästen"
+      "de": "Albumseiten, mit Erzähltextkästen",
+      "it": "Pagine di album, con didascalie di narrazione"
     },
     "theme": "comics"
   }

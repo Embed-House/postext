@@ -1,0 +1,85 @@
+---
+title: "Una famiglia di riquadri da manuale, distinti per colore"
+summary: "Sei tipi di riquadro da manuale in tre colori, distinti da una banda con icona, un badge, una linguetta numerata, dei pittogrammi o un segno fuori cornice."
+plain: "Un capitolo di un manuale di biologia con sei tipi di riquadri, come avvertenze e note di laboratorio. Ogni tipo ha un colore e un simbolo propri, così gli studenti li distinguono a colpo d’occhio."
+description: "Il capitolo 2 di un manuale di biologia in Postext: obiettivi su banda magenta, consiglio su filetto verde, un BOX 2.1 con linguetta e un’avvertenza ambra."
+question: "Come creo riquadri di obiettivi, consigli e avvertenze con icona, banda, angoli tondi o linguetta numerata?"
+aliases: ["riquadri da manuale", "obiettivi di apprendimento", "consiglio di studio", "riquadro di avvertenza", "BOX 2.1", "BOX 2-1", "riquadro numerato", "etichetta del riquadro", "badge d’angolo", "fila di icone", "pittogrammi di sicurezza", "autoverifica", "termini chiave", "box di approfondimento", "admonition", "sidebar"]
+pageNotes: { "1": "L’apertura del capitolo 2, Cells and Membranes: una cellula magenta con un bordo a doppio strato perlinato, tagliata dall’angolo in alto a destra della pagina, con un 2 bianco nel nucleo. Sotto il primo paragrafo, un riquadro di obiettivi di apprendimento su una banda magenta che contiene l’icona di un bersaglio; nella colonna destra, un consiglio di studio accanto a un sottile filetto verde sormontato da un badge a lampadina.", "2": "Un disegno a tutta larghezza del mosaico fluido, poi BOX 2.1 su entrambe le colonne: una linguetta nera e una beuta sull’angolo in alto a sinistra, un filetto che corre da lì fino all’angolo opposto, una figura di due cellule che si fondono a sinistra e il testo a destra. Sotto, nella colonna sinistra, un riquadro di avvertenza con una cornice ambra arrotondata e un badge di allerta appeso all’angolo esterno.", "3": "Tre pannelli di globuli rossi in soluzioni saline in testa alla pagina, un’attività di laboratorio con un riquadro di sicurezza di tre pittogrammi e passi numerati in verde, e un riquadro rosa di autoverifica flottato al piede della pagina, segnato da una tessera magenta con la spunta e da un filetto sottile accanto alla cornice." }
+---
+
+## Che cosa comporrai
+
+Il capitolo 2 di *Living Matter*, un manuale di biologia per la scuola secondaria superiore su una pagina di 210 × 280 mm, si apre sotto il disegno di una cellula tagliata dall’angolo superiore della pagina, con il numero del capitolo nel nucleo. Seguono sei tipi di riquadro in tre colori, ciascuno con un segno proprio, così uno studente distingue un obiettivo da un’avvertenza prima di leggerlo. Il magenta segna gli obiettivi di apprendimento, composti su una banda che contiene un bersaglio, e l’autoverifica, che ha una tessera con la spunta fuori dalla cornice. Il verde segna il consiglio di studio, composto accanto a un filetto sottile sormontato da un badge a lampadina, e il riquadro di laboratorio con i suoi tre pittogrammi di sicurezza. L’avvertenza è ambra, con un badge di allerta sull’angolo esterno. BOX 2.1 è lavanda sotto una linguetta nera e una beuta. I termini in grassetto prendono il colore del loro riquadro, magenta in BOX 2.1.
+
+## Preparazione
+
+### 1 · Dai un colore a ogni tipo di riquadro
+
+<Excerpt region="palette" />
+
+Sei tipi di riquadro condividono tre tinte: magenta per gli obiettivi e l’autoverifica, verde per il consiglio di studio e il laboratorio, ambra per l’avvertenza. BOX 2.1 ha un fondo lavanda e usa il magenta per i termini chiave. Ogni tinta ha una variante pallida per i fondi, e ogni impostazione di colore rimanda a una voce della palette, quindi cambiare una tinta significa modificare un solo valore. Un testo così piccolo richiede un contrasto di 4,5:1. Il magenta sulla lavanda arriva a 4,9:1, ma l’ambra sul fondo dell’avvertenza solo a 2,2:1, quindi l’avvertenza riserva l’ambra a cornice e badge e compone titolo e termini chiave in `warnInk`, un ambra più scuro a 5,2:1.
+
+### 2 · Condividi tutto il resto
+
+<Excerpt region="base" />
+
+`box()` contiene le impostazioni che ogni riquadro condivide: margini, padding, caratteri del titolo e del testo, spaziatura degli elenchi. Il suo argomento `hue` colora il titolo, i punti elenco e i numeri, e i tratti in grassetto. `body.boldColor` rende **fluid mosaic model** magenta negli obiettivi e **cell wall** bruno ambra nell’avvertenza; il grassetto nel testo corrente resta in inchiostro ([tipografia dentro un riquadro](/it/docs/configuration-styles#tipografia-dentro-un-riquadro)). Dichiarare `calloutStyles` sostituisce l’unico stile che il motore include, un riquadro grigio chiamato `note`. Un recinto il cui `type` manca o è scritto male prende il primo stile, quindi l’elenco si apre con gli obiettivi, che ogni capitolo ha.
+
+### 3 · Banda, linguetta e badge
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. La banda degli obiettivi è larga 7,5 mm e il suo bersaglio 5 mm, così l’icona sta dentro il colore con spazio da entrambi i lati. L’`offset` della linguetta è uguale alla sua `height`, il che fa poggiare la linguetta sul bordo superiore del riquadro, lontano dal titolo. `'top-left'` è l’angolo esterno di questo verso; la beuta segue la linguetta, e il filetto corre lungo il bordo superiore dalla beuta all’angolo opposto. `position: 'corner'` fa sporgere il badge dell’avvertenza di metà della sua larghezza oltre il bordo, e `cornerSide: 'outer'` lo manda dal lato del margine esterno, a sinistra su questo verso. Da quel lato il motore rientra il titolo per lasciar libero il badge, a meno che il padding non copra già metà del badge più lo spazio del titolo, quindi l’avvertenza ha un padding di `BADGE / 2 + GAP` su entrambi i lati e il suo titolo si allinea al testo. Solo questo riquadro ha un `borderRadius`: è l’unico con una cornice, e un raggio di 1,4 mm ne ammorbidisce gli angoli. Un raggio su un riquadro con banda arrotonderebbe insieme anche gli angoli esterni della banda ([stili dei riquadri](/it/docs/configuration-styles#stili-dei-riquadri)).
+
+### 4 · Altri tre segni
+
+<Excerpt region="more" />
+
+La banda del consiglio di studio è larga 2,5 pt contro un badge a lampadina di 6,4 mm, così si stampa come un filetto sottile con il badge sopra la sua estremità superiore; un padding sinistro di metà badge più 2 mm tiene il testo lontano dalla lampadina. `icon.width` adatta un’immagine a un riquadro largo invece che quadrato, così i tre pittogrammi di sicurezza, disegnati come un’unica immagine di 24,5 mm, formano la colonna dell’icona del riquadro di laboratorio, centrata sul suo testo. Il segno dell’autoverifica sta fuori dalla cornice, nell’ordine segno, filetto, spazio, riquadro. La sua tessera quadrata su un filetto di 0,75 pt la distingue dal consiglio di studio, il cui badge è rotondo. Il recinto aggiunge `span="page" placement="bottom"` per far flottare l’autoverifica al piede di <PageRef page={3}>pagina 29</PageRef>.
+
+### 5 · Le icone sono risorse
+
+<Excerpt region="icons" />
+
+Ogni icona, la beuta accanto alla linguetta e la cellula dell’apertura sono risorse SVG dichiarate con il contenuto e registrate per id di file. Uno stile le nomina per id di risorsa, e poiché il testo non le cita mai, nessuna diventa una figura numerata. Glifi come ✓ o ☞ sarebbero più brevi da scrivere, ma i file latin di Fontsource che le pagine caricano non li hanno: il canvas li prenderebbe in prestito da un font di sistema, e un PDF li perderebbe. Nemmeno i disegni portano parole: sono le didascalie a nominare i colori, quindi un disegno serve entrambe le edizioni.
+
+### 6 · Apri il capitolo con una cellula
+
+<Excerpt region="opener" />
+
+La cellula è un elemento immagine ancorato all’angolo in alto a destra della pagina e spinto oltre, così si vede soprattutto il suo quarto in basso a sinistra, e il numerale sta nel nucleo. Entrambi restano dentro i 66 mm che `minHeight` riserva all’apertura. L’occhiello e il sommario vengono dalla riga del titolo, `# Cells and \\ Membranes {unit="The cell" lead="…"}`, e il `\\` manda a capo il titolo solo nell’apertura.
+
+## Varianti
+
+### Componi un riquadro su entrambe le colonne
+
+`span="page"` su un recinto compone qualsiasi tipo di riquadro su entrambe le colonne; BOX 2.1 annida anche un gruppo `:::columns` per mettere la figura accanto al testo.
+
+```diff
+-:::callout{type="warning" title="Membrane or wall?"}
++:::callout{type="warning" title="Membrane or wall?" span="page"}
+```
+
+### Appendi il badge dal lato del dorso
+
+`'inner'` sposta il badge dal lato del dorso, a sinistra su un recto e a destra su un verso; lascia spazio da quel lato per la metà che sporge dal riquadro.
+
+```diff
+-    icon: icon('caution', BADGE, { position: 'corner', cornerSide: 'outer' }) }),
++    icon: icon('caution', BADGE, { position: 'corner', cornerSide: 'inner' }) }),
+```
+
+### Metti la linguetta sull’angolo destro
+
+`'top-right'`, il valore predefinito, rispecchia tutta l’etichetta: la linguetta passa all’angolo destro, la beuta alla sua sinistra, e il filetto entra da sinistra.
+
+```diff
+-      position: 'top-left', // this verso's outer corner, above the badge ('top-right' by default)
++      position: 'top-right',
+```
+
+## Errori frequenti
+
+- La linguetta si stampa solo quando il recinto ha `label="BOX 2.1"` e lo stile ha un oggetto `label`. Uno stile che non ce l’ha ignora l’attributo.
+- Postext non numera i riquadri. L’etichetta è il testo letterale del recinto, quindi scrivi a mano ogni numero, BOX 2.1, BOX 2.2.
+- Un badge d’angolo sporge di metà della sua larghezza oltre il lato del riquadro, nel margine dal lato esterno della pagina. Nell’altra colonna della stessa pagina sporge nell’intercolonna, quindi tieni i riquadri con badge nella colonna esterna o lascia loro spazio.
+- Il `lists.color` di un riquadro colora allo stesso modo i punti elenco e i numeri dei suoi elenchi numerati, quindi i passi e le domande numerate qui si stampano nella tinta del loro riquadro. Per colorare solo i punti elenco di un riquadro, togli `lists.color` dal suo stile e imposta `unorderedLists.color` per il documento; i numeri mantengono allora `orderedLists.color`.

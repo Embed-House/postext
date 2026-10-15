@@ -1,0 +1,65 @@
+---
+title: "Almanacco dell’orto: calendario e tabella orizzontale"
+summary: "Una tabella delle semine di 38 colture girata in orizzontale su due pagine, un calendario calcolato dalle date e una matrice delle consociazioni a colori."
+plain: "Le pagine di marzo di un almanacco per l’orto, con un calendario del mese e tabelle colorate. Mostra come costruire tabelle dai dati e girare di lato una tabella troppo larga per la pagina."
+description: "Marzo in un almanacco dell’orto: un calendario costruito dalle date, una matrice delle consociazioni a colori e un calendario delle semine in orizzontale."
+question: "Come compongo una tabella larga in orizzontale su pagine proprie, con l’intestazione ripetuta dove continua?"
+aliases: ["calendario", "almanacco", "calendario dell’orto", "calendario delle semine", "tabella orizzontale", "tabella ruotata", "diagramma di Gantt", "mappa di calore", "fasi lunari", "italiano", "garden almanac"]
+pageNotes: { "1": "L’apertura di marzo: piantine nella terra scura sotto un cielo pallido, «Marzo» in un corpo grande e un proverbio contadino, due colonne di testo, poi il mese come griglia. Le domeniche sono rosse su una colonna crema, la domenica e il lunedì di Pasqua stanno sul rosa, e i quattro quarti di luna sono disegnati accanto all’8, al 15, al 22 e al 30.", "2": "Un riquadro azzurro pallido con i lavori del mese su due colonne, una breve sezione sulle consociazioni con campioni di colore nel testo e una matrice dieci per dieci di tessere verdi segnate +, tessere rosa segnate − e tessere crema vuote, con il disegno di ogni coltura sulla diagonale.", "3": "Il calendario delle semine, girato di un quarto verso sinistra: ruota il libro in senso orario per leggerlo. Così com’è la pagina, le colture sono colonne raggruppate per famiglia, con i nomi lungo il piede; le quindicine dell’anno salgono lungo la pagina da gennaio, subito sopra i nomi, a dicembre in testa, e le intestazioni delle stagioni e dei mesi formano una striscia lungo il bordo sinistro. Le date di semina e di trapianto formano barre di tessere ocra, verdi e marroni, e l’intestazione di marzo è rossa.", "4": "La tabella continua dalla famiglia delle Liliacee con l’intestazione ripetuta e «(segue)» dopo la didascalia, e si chiude con una nota sul seminare prima al Sud e più tardi in montagna." }
+---
+
+## Che cosa comporrai
+
+Le pagine di marzo di un almanacco dell’orto scritto in italiano. La pagina 27 si apre su un acquerello di piantine nella terra scura sotto un cielo pallido, con il nome del mese a 84 pt e un proverbio contadino. Sotto due colonne di testo viene il calendario del mese, che il pen calcola dalle date: domeniche in rosso su una colonna crema, domenica e lunedì di Pasqua sul rosa, e i quattro quarti di luna disegnati accanto ai loro giorni. La pagina 28 elenca i lavori del mese in un riquadro a due colonne e colora di verde, rosa o crema una matrice dieci per dieci delle consociazioni, con il disegno di ogni coltura sulla diagonale. Le date di semina dell’anno, 38 colture per quindicina, sono più larghe della pagina, quindi la tabella gira di un quarto sulle pagine 29 e 30 e ripete l’intestazione sulla seconda.
+
+## Preparazione
+
+### 1 · Gira la tabella e lasciala proseguire
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `rotate: 'ccw'` fa della tabella un elemento flottante a tutta pagina su pagine proprie ([Posizionamento](/it/docs/document-format#collocazione)), con l’intestazione verso il bordo sinistro della pagina, e si appoggia al dorso sia sul recto sia sul verso. Si impagina lungo l’altezza dell’area del testo, 227 dei suoi 237 mm: le 47 righe intere della griglia di 14 pt che ci stanno, meno una riga per lo spazio dell’elemento flottante. Le sue righe si impilano lungo i 176 mm di larghezza, e quando li superano la tabella viene tagliata tra due righe e prosegue nella pagina seguente sotto le sue due righe di intestazione e la didascalia, che finisce con `(segue)` ([Tabelle più alte della pagina](/it/docs/configuration-resources#tabelle-più-alte-della-pagina)). Solo un elemento flottante può girare: con `position: 'here'` la rotazione viene ignorata, e la tabella verrebbe tagliata in verticale, tra le righe, dove finisce la sua colonna. L’intestazione è unita in tre modi: `Coltura` su entrambe le righe di intestazione, ogni stagione sopra i suoi mesi, e ogni mese sopra le sue due quindicine.
+
+### 2 · Un calendario calcolato dalle date
+
+<Excerpt region="calendar" />
+
+I numeri di giorno di `Date.UTC` danno a ogni data il suo giorno della settimana, e la griglia comincia lunedì 1 marzo e arriva a cinque settimane. La Pasqua viene dal computo e i quarti di luna dal mese sinodico medio. Calcolato così, un quarto può cadere un giorno prima o dopo, come avverte la didascalia. Il ciclo che disegna ogni luna ne scrive anche la data nella didascalia. L’immagine di una cella sta sempre sopra il suo testo, ed è per questo che ogni giorno occupa due colonne, quella della luna e quella della data: una luna nella cella della data spingerebbe la data più in basso solo in quattro giorni. Domeniche e feste sono rosse grazie a uno stile di chip che cambia solo il colore, e le note sono chip a metà corpo. Un giorno senza nota riceve come seconda riga un word joiner (U+2060), che mantiene le cinque settimane alla stessa altezza.
+
+### 3 · Colora la matrice da simboli incollati
+
+<Excerpt region="matrix" />
+
+Le coppie sono scritte in TSV, un simbolo per cella. `parseTSV(tsv, { headerRows: 1 })` fa della riga dei nomi delle colture l’intestazione. I pesi di `columnWidths` sono millimetri della giustezza di 176 mm: 26 per i nomi, 15 per ogni coltura. Ogni simbolo nomina una voce della palette, che `setCellBackground` applica come fondo della cella; il `+` e il `−` vengono anche stampati, in un chip a 1,4 em, così la matrice si legge ancora in una copia in scala di grigi. La diagonale accoppia una coltura con sé stessa, e lì `setCellImage` mette il disegno della coltura, al 62 % della larghezza interna della cella.
+
+### 4 · Una legenda dei colori con i campioni
+
+<Excerpt region="resources" />
+
+`:swatch{color="leaf"}` compone un quadrato di tre quarti del corpo, riempito con una voce della palette e contornato nel colore del testo; queste pagine lo usano nel testo corrente, in due didascalie e in una nota. La legenda della tabella delle semine va nella didascalia, perché ogni parte di una tabella spezzata ripete la didascalia e la nota si compone solo sotto l’ultima parte. Il calendario è un tipo di risorsa a sé con un prefisso di didascalia vuoto, e la sua didascalia si apre sulla legenda invece che su un’etichetta `Tabella`. `position: 'bottom'` con `span: 'page'` compone il calendario e la matrice su entrambe le colonne al piede delle loro pagine. La pagina 28 è l’ultima pagina di testo. Sulla pagina di chiusura di un capitolo un elemento flottante a tutta pagina sale fino a una riga sotto il testo, ed è per questo che la matrice finisce 10 mm sopra il margine inferiore; `layout.hugClosingFloats: false` la lascerebbe al piede.
+
+### 5 · Uno stile della casa e una variante per tabella
+
+<Excerpt region="styles" />
+
+`tableStyle` fissa lo stile della casa: un’intestazione color inchiostro con etichette color carta in Commissioner, filetti sottili tra le righe e la riga che chiude ogni parte di una tabella spezzata. Un documento italiano chiude una parte con `Continua` e aggiunge `(segue)` alla didascalia della parte seguente; l’almanacco scrive la prima per esteso, `Continua alla pagina seguente`. Ogni stile con nome dichiara solo ciò che la sua tabella cambia. Il calendario compone i giorni in Gilda Display a 15 pt; la matrice toglie il fondo dell’intestazione; la matrice e la tabella delle semine disegnano filetti di griglia nel colore della carta, spessi 2 pt e 1 pt, che tagliano i loro fondi in tessere.
+
+### 6 · Il mese si apre su un dipinto
+
+<Excerpt region="opener" />
+
+Il titolo di primo livello si disegna da uno slot di elementi. L’acquerello è un elemento immagine in testa alla pagina, e l’occhiello, il proverbio e la sua fonte vengono dagli attributi del titolo. L’apertura riserva lo spazio fino al piede del dipinto, e `minHeight` è un minimo fissato un po’ più in basso: 92 mm di dipinto più 5 mm d’aria, meno il margine superiore di 22 mm, fa 75 mm, che si arrotonda a 16 righe di 14 pt (79 mm). La prima riga di testo sta a 101 mm dalla sommità della pagina, 9 mm sotto la terra. Il titolo si sposta di 1,5 mm a sinistra, lo spazio laterale della M di Gilda Display a 84 pt, e la grazia della M si allinea all’occhiello; il proverbio torna indietro della stessa misura.
+
+## Varianti
+
+### Gira la tabella in senso orario
+
+L’intestazione guarda allora il bordo destro della pagina, e il lettore gira il libro dall’altra parte.
+
+```diff
+-const chartPlacement = { rotate: 'ccw' }; // a float: 'here' ignores the turn
++const chartPlacement = { rotate: 'cw' }; // a float: 'here' ignores the turn
+```
+
+## Errori frequenti
+
+- Un’immagine in una cella di tabella si disegna sempre sopra il testo della cella e si allinea come lui. Per mettere un’icona accanto a un numero, dai all’icona una colonna propria, come fa il calendario con la luna.
+- La nota sotto una tabella spezzata compare solo sull’ultima parte, quindi una legenda che serve a ogni parte va nella didascalia.

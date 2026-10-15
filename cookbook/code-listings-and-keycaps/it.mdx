@@ -1,0 +1,84 @@
+---
+title: "Listati di codice e tasti"
+summary: "Una guida alla shell il cui codice delimitato si compone in riquadri scuri colorati per token, con i tasti disegnati come chip a forma di tasto."
+plain: "Tre pagine di una guida per principianti alla riga di comando. Mostra come comporre gli esempi di codice in riquadri scuri colorati e disegnare tasti come Ctrl come piccoli pulsanti nel testo."
+description: "Listati di codice e tasti in Postext: codice delimitato in riquadri scuri che entrano nel margine, colorati per token, e tasti come Ctrl disegnati come chip."
+question: "Come mostro listati di codice e scorciatoie da tastiera?"
+aliases: ["blocco di codice", "codice delimitato", "codice sorgente", "sessione di shell", "output del terminale", "monospaziato", "evidenziazione della sintassi", "colorazione della sintassi", "codeStyle", "scorciatoia da tastiera", "kbd", "tasto", "keycap", "promemoria", "codice in linea"]
+pageNotes: { "1": "L’apertura del capitolo 4: un piccolo occhiello ambra «CHAPTER 4», il titolo «Small tools, joined» in un bastone nero, un sommario in corsivo e due paragrafi giustificati con nomi di comandi in un carattere monospaziato e un tasto Enter, accanto a una nota a margine intitolata «The prompt» sotto un filetto ambra. Sotto, un riquadro quasi nero con una linguetta «Terminal» va dalla colonna di testo fino al margine esterno: le righe digitate, prompt del dollaro compreso, in grassetto ambra, le risposte della shell in grigio chiaro. Il paragrafo sotto il riquadro comincia senza rientro.", "2": "La sezione «When a command will not stop»: una nota «On a Mac» nel margine esterno accanto al titolo, tasti come Ctrl, C, Tab e la freccia in su sono piccoli tasti bordati dentro le righe giustificate, e quattro passi sono numerati in ambra con un separatore › grigio. Al piede, un riquadro quasi nero «Cheat sheet · bash and zsh» su testo e margine accoppia tasti Ctrl-più-lettera con le loro azioni in due colonne.", "3": "La sezione «A script to keep»: un riquadro quasi nero sotto una linguetta «backup.sh» scritta in verde, con le parole chiave in grassetto ambra, le stringhe in corsivo verde e i commenti in grigio, il corpo del ciclo rientrato; poi due paragrafi sullo script accanto a una nota «Archive mode», il paragrafo di chiusura e il colophon nel margine." }
+---
+
+## Che cosa comporrai
+
+Tre pagine dal capitolo 4 di *The Shell, Gently*, una guida tascabile immaginaria alla riga di comando, su una pagina di 178 × 229 mm. Il testo è in Charis SIL giustificato in una colonna di 100 mm, con una colonna a margine sul lato esterno per le note. Ogni listato è un riquadro quasi nero in JetBrains Mono che entra in quella colonna, sotto una linguetta con il nome del file o della sessione. Le parole chiave e i comandi digitati si stampano in ambra, le stringhe in verde e i commenti in grigio. Tasti come Ctrl e Tab sono piccoli tasti bordati dentro le righe giustificate, e un promemoria su due colonne con le scorciatoie Ctrl riempie il piede di pagina 50. Il Markdown mantiene normali blocchi di codice delimitati, e il motore li compone così come sono.
+
+## Preparazione
+
+### 1 · Dai un riquadro ai blocchi delimitati
+
+Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. Ogni delimitatore ```` ``` ```` nel Markdown è un [blocco di codice](/it/docs/document-format#blocchi-di-codice): Postext compone le sue righe come sono state scritte, una riga di codice per riga di testo, mantenendo i rientri, le righe vuote dello script e l’output su due colonne di `du`. `codeStyle` disegna tutti i listati in una volta ([code listings](/it/docs/configuration-styles#listati-di-codice)): il carattere e la sua interlinea, il fondo quasi nero, la spaziatura interna e lo spazio sopra e sotto. Ciò che segue la lingua nella riga del delimitatore (`Terminal`, `backup.sh`) è il titolo del listato, e poiché `codeStyle.label` è impostato si stampa su una [linguetta](/it/docs/configuration-styles#stili-dei-riquadri) sul bordo superiore del riquadro invece che in una riga di titolo. `codeStyle.inline` compone il codice in linea del testo corrente, `ls` o `grep -c`, nello stesso carattere a 0,88 em ([inline code](/it/docs/configuration-styles#codice-in-linea)). Il paragrafo dopo un listato va in `:::paragraphs{style="resume"}`, così comincia senza rientro, come farebbe dopo un titolo.
+
+### 2 · Tieni stretto il testo e lascia che il codice attraversi il margine
+
+<Excerpt region="page" />
+
+A 10 pt, Charis SIL compone circa 62 caratteri nella colonna di 100 mm. La colonna laterale di questo [layout a colonna e mezza](/it/docs/configuration-page-layout#tipi-di-impaginazione) accoglie solo elementi flottanti e note, quindi il testo non vi entra mai. `span: 'page'` in `codeStyle` estende ogni listato su entrambe le colonne, 143 mm. Dentro la sua spaziatura interna un riquadro contiene 73 caratteri di JetBrains Mono a 8,6 pt; la riga più lunga di queste pagine, il commento che apre `backup.sh`, ne ha 71.
+
+### 3 · Colora il codice per token
+
+<Excerpt region="paint" />
+
+La lingua nel delimitatore (`console`, `bash`) sceglie il tokenizzatore incorporato, e `codeStyle.tokens` dà a ogni tipo di token il suo colore, peso e inclinazione ([syntax colouring](/it/docs/configuration-styles#colorazione-della-sintassi)). In `backup.sh`, parole chiave come `for` e `done` e comandi interni come `set` ed `echo` si stampano in grassetto ambra, le stringhe in corsivo verde e i commenti in grigio; programmi come `mkdir` e `rsync` restano semplici. Lo stile predefinito compone i commenti in corsivo, quindi `italic: false` li tiene in tondo. In un blocco `console` una riga che si apre con un prompt è un token `prompt` e ogni altra riga è `output`, così i comandi che digiti si stampano in grassetto ambra e la risposta della shell resta nel grigio chiaro del listato. I tipi che la ricetta non vuole colorati, tra cui numeri, variabili e opzioni, prendono anch’essi quel grigio.
+
+### 4 · Componi i tasti come chip
+
+<Excerpt region="keycaps" />
+
+I tasti sono chip `key` con un fondo chiaro e un contorno di 0,6 pt. La loro dimensione è data in punti, quindi un tasto misura 7,8 pt nel testo da 10 pt, nella nota a margine da 8,6 pt e nel promemoria da 8,4 pt; `em(0.78)` ridurrebbe i tasti del promemoria a 6,6 pt. Un chip non si spezza mai tra due righe e non si allarga mai ([inline chips](/it/docs/document-format#chip-in-linea)), quindi una riga con dei tasti mette tutto il suo gioco negli spazi tra le parole. `spacing` fa provare all’algoritmo di divisione in righe altri punti di rottura prima che uno spazio superi il 140 % della sua larghezza normale. Con il valore predefinito, 200 %, sei righe di queste pagine si allargano oltre; con l’impostazione, la più larga arriva al 132 %.
+
+### 5 · Numera i passi sulla griglia
+
+<Excerpt region="steps" />
+
+I numeri sono Sora 800 nel colore d’accento, e il separatore è un `›` monospaziato in grigio. Il separatore ha il suo carattere e il suo colore, quindi si disegna come sequenza a parte ([ordered lists](/it/docs/configuration-text#elenchi-numerati)). I margini dell’elenco sono zero, così i passi proseguono sulla griglia da 14,5 pt del testo attorno. Il valore predefinito di 1,5 em aprirebbe 5,3 mm sopra i passi e spingerebbe il promemoria a pagina 51.
+
+### 6 · Fai flottare il promemoria al piede della pagina
+
+<Excerpt region="sheet" />
+
+Il promemoria è uno stile di riquadro con il fondo dei listati, Sora per le azioni, e `placement: 'bottom'`, che lo fa flottare al piede di pagina 50 ([floated boxes](/it/docs/configuration-styles#il-contenitore-callout)). Lasciato nel flusso, un riquadro a tutta larghezza ha bisogno di spazio per sé e per due righe di testo sotto. Qui il riquadro passerebbe a pagina 51, lasciando 58 mm vuoti sotto i passi, e il capitolo arriverebbe a quattro pagine. Nel Markdown, `:::columns{count=2 breaks="8"}` apre la colonna destra all’ottavo blocco, il suo titolo. Il bilanciamento da solo taglia per altezza, e quando un’azione va su una seconda riga lascia *Commands and history* al piede della colonna sinistra. Ogni voce si apre con gli stessi due chip, `Ctrl` e una lettera, entrambi nel carattere monospaziato, così ogni azione comincia alla stessa distanza dal bordo sinistro della sua colonna.
+
+## Varianti
+
+### Appendi la linguetta a destra
+
+La linguetta passa all’angolo superiore destro del riquadro, che su un recto sta sopra la colonna a margine.
+
+```diff
+-    position: 'top-left' },
++    position: 'top-right' },
+```
+
+### Numera le righe
+
+Ogni listato riceve numeri di riga in grigio in una fascia dentro il suo riquadro. La fascia occupa circa quattro dei 73 caratteri, quindi il commento che apre `backup.sh` non entra più: va a capo dopo `backup`, e `disk.` prosegue sotto dietro un `»`. La verifica del Ricettario lo segnala come avviso `codeOverflow`; accorcia il commento per tenere lo script nelle sue 13 righe. Un singolo listato prende i numeri con `{lineNumbers}` nella riga del suo delimitatore.
+
+```diff
++  lineNumbers: true, lineNumberColor: col('slate'),
+   tokens: tokens(), // the colours, below
+```
+
+### Dai ai commenti il colore delle stringhe
+
+I commenti prendono il verde delle stringhe, in corsivo.
+
+```diff
+-    comment: { color: col('slate'), italic: false }, // upright: the default comment is italic
++    comment: { color: col('phosphor'), italic: true }, // the strings' green italic
+```
+
+## Errori frequenti
+
+- Tieni ogni riga di codice entro i 73 caratteri. Una più lunga va a capo all’ultimo spazio o segno di punteggiatura che ci sta e prosegue sotto dietro un `»`, e il motore segnala un avviso `codeOverflow`; `overflow: 'shrink'` compone invece tutto il listato più piccolo, e `'clip'` taglia la riga al bordo del riquadro.
+- Una tabulazione in un listato avanza al multiplo di quattro colonne successivo (`codeStyle.tabSize`). Uno script rientrato con tabulazioni che il tuo editor mostra larghe otto colonne qui risulta più stretto.
+- Con `codeStyle.inline` impostato, il codice in linea non si spezza mai tra due righe, come un chip. Un percorso lungo nel testo corrente, come `~/Pictures/2025/IMG_0977.MOV`, passa intero alla riga successiva e può lasciarne dietro una troppo spaziata.

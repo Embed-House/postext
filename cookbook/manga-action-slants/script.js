@@ -37,6 +37,7 @@ const EDITIONS = {
   pt: { locale: 'pt-BR', faces: ['Comic Neue', 'Bangers'] },
   fr: { locale: 'fr', faces: ['Comic Neue', 'Bangers'] },
   de: { locale: 'de', faces: ['Comic Neue', 'Bangers'] },
+  it: { locale: 'it', faces: ['Comic Neue', 'Bangers'] },
   zh: { locale: 'zh-Hans', faces: ['Noto Sans SC', 'ZCOOL KuaiLe'] },
   ar: { locale: 'ar', faces: ['Playpen Sans Arabic', 'Lalezar'] },
 };
@@ -79,7 +80,7 @@ const config = () => ({
   // Each edition's language, written out (gotcha: ja-locale-tag); the original is built
   // with 'ja' in every edition (edition('ja') below).
   locale: t({ ja: 'ja', en: 'en-us', es: 'es', ca: 'ca', zh: 'zh-Hans', ar: 'ar', pt: 'pt-BR',
-    fr: 'fr', de: 'de' }),
+    fr: 'fr', de: 'de', it: 'it' }),
   colorPalette,
   page: {
     sizePreset: 'custom', width: mm(128), height: mm(182), dpi: 150, // B6, a tankōbon
@@ -122,6 +123,8 @@ const ART = { // fractions of the picture: the same in every language
         + 'arbitres.',
       de: 'Das Kendo-Finale in einer vollen Halle: Zwei Kämpfer kreuzen zwischen drei '
         + 'Kampfrichtern die Schwerter.',
+      it: 'La finale in una palestra gremita: due atleti incrociano le spade tra tre '
+        + 'arbitri.',
       pt: 'A final num ginásio lotado: dois lutadores cruzam as espadas entre três árbitros.',
       zh: '座无虚席的体育馆里的决赛：两名选手在三名裁判之间交剑。',
       ar: 'النهائي في صالة ممتلئة: متباريان يتقاطع سيفاهما بين ثلاثة حكّام.',
@@ -139,6 +142,7 @@ const ART = { // fractions of the picture: the same in every language
       ca: 'Els ulls de la Hana darrere les barres de la reixa del casc.',
       fr: 'Les yeux de Hana derrière les barreaux de la grille de son casque.',
       de: 'Hanas Augen hinter den Gitterstäben ihres Helms.',
+      it: 'Gli occhi di Hana dietro le sbarre della grata dell’elmo.',
       pt: 'Os olhos de Hana atrás das barras da grade do capacete.',
       zh: '面罩铁栏后花的眼睛。',
       ar: 'عينا هانا خلف قضبان شبكة الخوذة.',
@@ -152,6 +156,7 @@ const ART = { // fractions of the picture: the same in every language
       ca: 'El rival es llança cap al lector entre línies cinètiques.',
       fr: 'L’adversaire se jette vers le lecteur, entouré de lignes de vitesse.',
       de: 'Der Gegner stürzt auf den Betrachter zu, ringsum Bewegungslinien.',
+      it: 'L’avversario si lancia verso chi guarda, tra linee cinetiche.',
       pt: 'O adversário avança contra o leitor entre linhas de velocidade.',
       zh: '对手在速度线中朝读者猛刺过来。',
       ar: 'الخصم يندفع نحو القارئ وسط خطوط السرعة.',
@@ -166,6 +171,7 @@ const ART = { // fractions of the picture: the same in every language
       ca: 'La Hana salta i colpeja la part alta del casc del rival; l’espasa es doblega.',
       fr: 'Hana bondit et frappe le sommet du casque adverse ; le sabre plie.',
       de: 'Hana springt und trifft den Gegner oben auf den Helm; das Schwert biegt sich.',
+      it: 'Hana salta e colpisce la sommità dell’elmo avversario; la spada si piega.',
       pt: 'Hana salta e acerta o alto do capacete do adversário; a espada se curva.',
       zh: '花跃起击中对手面罩顶部，竹剑弯了起来。',
       ar: 'هانا تقفز وتضرب أعلى خوذة الخصم؛ ينثني السيف.',
@@ -180,6 +186,7 @@ const ART = { // fractions of the picture: the same in every language
       ca: 'En Sora salta a la graderia amb els punys enlaire, cridant.',
       fr: 'Sora bondit dans les gradins, poings levés, en criant.',
       de: 'Sora springt auf der Tribüne auf, die Fäuste erhoben, und schreit.',
+      it: 'Sora salta sugli spalti con i pugni alzati, gridando.',
       pt: 'Sora pula na arquibancada de punhos erguidos, gritando.',
       zh: '空在看台上跳起来，举着拳头大喊。',
       ar: 'سورا يقفز في المدرّجات رافعًا قبضتيه وهو يصيح.',
@@ -197,6 +204,8 @@ const ART = { // fractions of the picture: the same in every language
         + 'drapeaux.',
       de: 'Mori, Arme verschränkt, Augen geschlossen; hinter ihm heben die Kampfrichter '
         + 'die Fahnen.',
+      it: 'Mori, braccia conserte e occhi chiusi; dietro di lui gli arbitri alzano le '
+        + 'bandiere.',
       pt: 'Mori, de braços cruzados e olhos fechados; atrás, os árbitros erguem as bandeiras.',
       zh: '森老师抱着双臂、闭着眼；身后的裁判举起了旗子。',
       ar: 'موري عاقد الذراعين مغمض العينين، وخلفه يرفع الحكّام راياتهم.',
@@ -259,6 +268,7 @@ const TITLE = t({
   ca: 'Una pàgina d’acció amb carrers inclinats', zh: '斜向格间的动作页', ar: 'صفحة حركة بفواصل مائلة',
   fr: 'Une page d’action aux gouttières inclinées',
   de: 'Eine Actionseite mit schrägen Zwischenräumen',
+  it: 'Una tavola d’azione con intervalli inclinati',
   pt: 'Uma página de ação com sarjetas inclinadas',
   ja: '斜めのコマ割りで組むアクションのページ' });
 showBook(docs, { title: TITLE });

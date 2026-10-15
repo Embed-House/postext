@@ -1,0 +1,65 @@
+---
+title: "Scheda di esercizi con spazi di risposta e banca di parole"
+summary: "Una scheda di scienze di quattro pagine: riquadri bianchi per le risposte in schede verdi, 2 mm sotto ogni domanda e fuori griglia, con banche di parole e chip."
+plain: "Una scheda di scienze per bambini di otto anni sulle parti di una pianta. Ogni domanda ha sotto un riquadro per la risposta, e alcune frasi hanno spazi vuoti da riempire con un elenco di parole."
+description: "Scheda di scienze per la primaria in Postext: riquadri di risposta annidati in schede di attività, spaziati in mm fuori griglia, con chip per parole e lacune."
+question: "Come annido riquadri di risposta in schede di attività con spazi esatti, e aggiungo banche di parole e lacune?"
+aliases: ["scheda di esercizi", "scheda didattica", "riquadro di risposta", "spazio per scrivere", "riquadro annidato", "riquadro dentro un riquadro", "banca di parole", "completa gli spazi", "esercizio a completamento", "esercizio di abbinamento", "lista di controllo", "frasi «so fare»", "autovalutazione"]
+pageNotes: { "1": "Una fascia verde foglia con una pillola gialla «UNIT 3», il titolo «Plants and their parts», la riga della collana e campi bianchi per il nome dell’alunno e la data. A destra una pianta di pisello con fiori bianchi cresce in un disco bianco la cui terra pende sotto la fascia; sei punti gialli numerano fiore, baccello, piselli, foglia, fusto e radici. Sotto un’introduzione di tre righe, l’attività 1 in un disco verde apre una scheda verde chiaro con due domande, ciascuna sopra un riquadro bianco per la risposta che si apre con un piccolo «Write here» grigio.", "2": "Attività 2: una banca di parole bianca con chip gialli e sei spazi numerati su tre colonne. Attività 3: una seconda banca di parole e sei frasi, ciascuna con uno spazio a contorno, e una nota «Did you know?» sui viticci.", "3": "Attività 4: dentro la sua scheda, una tabella bianca arrotondata di sei righe, ciascuna con un alimento disegnato e il suo nome a sinistra, un chip giallo con il nome di una parte della pianta a destra e un ampio spazio tra i due con un punto verde a ciascuna estremità. Attività 5: un alto riquadro di risposta per disegnare una pianta e scriverne le parti.", "4": "Attività 6, un pisello da far germogliare a casa, con un riquadro «I think» e un riquadro «I saw»; «How did I do?», con una stella in testa, elenca tre frasi «I can», ciascuna dopo un cerchio vuoto da colorare; sotto la scheda, due righe di colophon." }
+---
+
+## Che cosa comporrai
+
+La scheda 3A di *Seedlings Science*, una collana inventata per bambini di otto anni, su quattro pagine di 200 × 260 mm stampate su un solo lato. Una fascia verde foglia porta una pillola gialla con l’unità, il titolo e campi bianchi per nome e data; accanto, una pianta di pisello ad acquerello in un disco bianco ha le sue sei parti numerate in giallo. L’acquerello è stato generato con modelli di diffusione e arriva già composto nel suo disco, come due JPEG che si incontrano al bordo della fascia: quello superiore ha il verde della fascia negli angoli, quello al piede il bianco; i numeri e le linee di richiamo restano nel codice, sopra l’immagine. Ogni attività è un titolo numerato sopra una scheda verde chiaro. Le schede contengono riquadri bianchi per le risposte con una piccola consegna grigia e spazio per più righe, banche di parole fatte di chip gialli, spazi vuoti a contorno dentro le frasi, una tabella di alimenti da abbinare alle parti della pianta e una lista di cerchi da colorare. Ogni riquadro di risposta sta 2 mm sotto la sua domanda e 5 mm sopra ciò che segue, e ogni scheda finisce 9 mm sopra quello che viene dopo nella sua pagina. Il testo è composto in Andika, che SIL ha disegnato per i bambini che imparano a leggere.
+
+## Preparazione
+
+### 1 · Togli dalla griglia anche i titoli
+
+<Excerpt region="grid" />
+
+Nella risposta breve, i margini di ogni riquadro si fondono con quelli dei vicini e vince il maggiore. I 5 mm di una banca di parole prevalgono sui 2 mm sopra l’elenco sottostante, e i 5 mm dell’ultimo riquadro di risposta cadono dentro i 5 mm di spaziatura inferiore della scheda invece di sommarsi. Lasciato sulla griglia, un titolo di livello 2 riserva tra 10,8 e 14,1 mm invece degli 8,6 mm del suo disco, perché ciò che lo segue torna alla successiva riga da 17 pt; `headings.snapToGrid: false` lo tiene a 8,6 mm. Impostare `snapToGrid` sugli stili annidati non cambia nulla, perché solo la scheda esterna può lasciare la griglia ([riquadri annidati](/it/docs/configuration-styles#il-contenitore-callout)). Il bilanciamento delle colonne è disattivato perché aggiunge spazio sopra i titoli per riempire una pagina; a pagina 2 metterebbe 33 mm sopra l’attività 3 invece di 9.
+
+### 2 · Fai di ogni spazio vuoto un chip
+
+<Excerpt region="chips" />
+
+Un chip è un riquadro indivisibile nella riga, e la sua spaziatura interna si dipinge oltre la riga senza renderla più alta. Una banca di parole è una fila di chip in un riquadro annidato `bank`. Anche gli spazi vuoti, i punti da unire e i cerchi da colorare sono chip, ciascuno scritto `:chip[ ]`: un chip di uno spazio è un riquadro vuoto fatto di spaziatura e contorno ([chip in linea](/it/docs/document-format#chip-in-linea)). `paddingX` imposta la larghezza: uno spazio vuoto è largo 34 mm in una frase e 38 mm da solo in una colonna, e un cerchio riceve metà della sua altezza di 1,25 em su ciascun lato. Nella lista di controllo il cerchio sta dove sarebbe il punto elenco (`bulletChar: ''`). A 19,6 pt, uno spazio vuoto è più alto della riga da 17 pt, ed è per questo che ognuno ha una voce d’elenco tutta sua, a 24 pt dalla successiva.
+
+### 3 · Numera le attività con il design di un titolo
+
+<Excerpt region="activity" />
+
+Un titolo di livello 2 con un `advancedDesign` conserva il suo posto nella colonna, e al posto del suo testo viene disegnato il design: un disco che contiene `{number}`, che stampa il `numberingTemplate` del livello, e `{titleText}` alla sua destra ([span e design avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). Il disco e il titolo sono entrambi alti 8,6 mm, e fuori griglia il titolo riserva esattamente quella misura, quindi il design non ha bisogno di `minHeight`. Poiché i numeri vengono dal contatore di livello 2, un’attività inserita nel Markdown rinumera quelle che seguono. Il titolo dell’autovalutazione usa uno stile con `numbered: false`, che lo esclude dal conteggio, e una stella SVG sta dove sarebbe il disco.
+
+### 4 · Metti le immagini nelle celle della tabella
+
+<Excerpt region="tables" />
+
+`TableCell.image` disegna una risorsa dentro la sua cella, qui al 76 % della larghezza della cella, e la riga cresce per contenerla. `verticalAlign: 'middle'` centra sull’immagine il nome dell’alimento, i punti e il chip. La colonna più larga, il 31 % della tabella, resta vuota per la linea dell’alunno. Lo stile con nome arrotonda la cornice della tabella e vi ritaglia il riempimento bianco del corpo. Non disegna filetti, quindi il pannello è solo il riempimento bianco ([stili di tabella con nome](/it/docs/configuration-resources#stili-di-tabella-con-nome)). Il suo tipo di risorsa ha un `captionPrefix` vuoto e la tabella non ha testo di didascalia, quindi sotto non si stampa alcuna didascalia. `placement: { position: 'here' }` mette la tabella dove si trova la sua riga `::resource`, dentro la scheda. Un riquadro tiene una riga del suo testo sopra una tabella di questo tipo, qui 6 mm; `layout.inlineResourceGapInBoxes: false` lo disattiva, e un `:::space{lines=0.33}` prima della riga `::resource` imposta i 2 mm che i riquadri di risposta tengono sotto le loro domande.
+
+## Varianti
+
+### Rimetti le schede sulla griglia
+
+Con il valore predefinito `snapToGrid: true`, ciò che segue una scheda scende alla successiva riga della griglia da 17 pt, e i 9 mm sotto ogni scheda diventano 14,5 mm sotto l’attività 2, 13,2 mm sotto l’attività 4 e 11,2 mm sotto l’attività 6.
+
+```diff
+-  snapToGrid: false,
++  snapToGrid: true,
+```
+
+### Dai più spazio a una risposta
+
+`:::space` conta nelle righe da 17 pt del riquadro di risposta stesso, e ogni riga aggiunta dà all’alunno 6 mm in più per scrivere.
+
+```diff
+ Write here
+-:::space{lines=4}
++:::space{lines=6}
+```
+
+## Errori frequenti
+
+- Un riquadro non può tracciare le proprie righe di scrittura, perché gli stili dei riquadri non hanno uno sfondo rigato. I riquadri di risposta restano vuoti e prendono l’altezza da `:::space`, e le brevi righe da completare sono chip a contorno.
+- Uno stile di titolo con `numbered: false` disegna comunque il design del suo livello, con `{number}` lasciato vuoto. Senza un design proprio, l’autovalutazione si aprirebbe con un disco verde vuoto, quindi `review` copia il design delle attività e mette la stella dove c’era il disco.

@@ -1,0 +1,80 @@
+---
+title: "Cinque aperture di capitolo in un libro"
+summary: "Un’apertura sul livello 1 e quattro stili di titolo nominati nel Markdown; ogni stile cambia il colore d’accento, e alcuni anche margini, colonne o folio."
+plain: "Un breve libro su come possono cominciare i capitoli, in cui ogni capitolo si apre in uno stile diverso. Mostra come dare a un capitolo colori, margini e impaginazione propri con una sola impostazione."
+description: "Cinque aperture in un libro Postext: il capolettera di un romanzo, un titolo incorniciato, uno a manifesto, un numero in badge e una coda bassa su pagina vuota."
+question: "Come do a ogni capitolo la sua apertura, il suo colore o la sua foto, scegliendoli dal Markdown?"
+aliases: ["stili di titolo", "varianti di apertura di capitolo", "foto per capitolo", "capolettera", "iniziale in riquadro", "iniziale rialzata", "numero in badge", "titolo impilato", "cartiglio", "palette per sezione", "apertura di capitolo", "chapter opener"]
+pageNotes: { "1": "Il capitolo uno, «The Voice»: un piccolo occhiello rosso spaziato, un titolo in corsivo chiaro, un breve filetto rosso e un paragrafo d’apertura la cui iniziale M rossa di cinque righe si allinea alle maiuscole della prima riga.", "2": "Il capitolo prosegue in Lora giustificato sotto la testatina del libro, con folio e titolo a sinistra.", "3": "L’ultima pagina del capitolo: sette righe in testa alla pagina, sotto una testatina con il titolo del capitolo e il folio a destra.", "4": "Il capitolo secondo, «The Frame»: il titolo composto in un cartiglio color crema fatto di un filetto blu spesso e di uno sottile, sopra un fregio tipografico blu, e un paragrafo d’apertura con un’iniziale blu di tre righe.", "5": "Il capitolo tre: «Say it out loud.» impilato su tre righe in Fraunces Black bianco su un campo magenta che esce al vivo dalla testa, e sotto un paragrafo la cui iniziale M è bianca su un riquadro magenta.", "6": "Il capitolo 4, «Number Everything»: testatine in monospaziato, un filetto spesso, un numero in badge arancione accanto a un titolo in bastone nero, e due colonne a bandiera con sezioni numerate.", "7": "La coda, «Leave Room»: un occhiello grigio e un piccolo titolo a metà di una pagina vuota, un’iniziale rialzata S che sale sopra la prima riga, e il colophon." }
+---
+
+## Che cosa comporrai
+
+*Five Ways to Begin* è un libro di sette pagine sulle aperture di capitolo, 180 × 240 mm, e ogni capitolo è composto nell’apertura che descrive. Il capitolo uno è quella di un romanzo: un occhiello spaziato, un titolo in corsivo chiaro e un’iniziale rossa di cinque righe, con le testatine nelle pagine che seguono. Il capitolo due mette il titolo e un fregio tipografico dentro un cartiglio color crema disegnato con due filetti blu. Il capitolo tre impila il titolo in Fraunces Black bianco su un campo magenta che esce al vivo dalla pagina, sopra un’iniziale monospaziata in negativo su un riquadro. Il capitolo quattro, il manuale, ha testatine monospaziate, un numero in badge arancione accanto al titolo e due colonne di Geist. La coda compone il titolo a metà di una pagina vuota, sopra un’iniziale rialzata. Il capitolo uno usa l’apertura propria del livello 1; gli altri quattro nominano uno stile di titolo nella riga del loro titolo.
+
+## Preparazione
+
+### 1 · Imposta sul livello l’apertura propria del libro
+
+<Excerpt region="literary" />
+
+Il capitolo uno non ha stile, quindi prende il design proprio del livello 1, da cui parte ogni stile ([la risposta breve](#la-risposta-breve) mostra il livello e gli stili). Il primo paragrafo del capitolo sta nel Markdown, in un gruppo `:::paragraphs{style="lead"}` un corpo più grande del testo (12/17 pt contro 10,8/14,5), e il `dropCap` del livello lo apre ([drop caps](/it/docs/configuration-text#capilettera)): la M poggia sulla quinta linea di base e, senza `fontSize`, la sua sommità è alla stessa altezza delle maiuscole della prima riga, con entrambe le altezze delle maiuscole misurate da Fraunces e Lora. L’apertura finisce con un riquadro vuoto, `room()`, 17 mm sotto il titolo, dove comincia il paragrafo d’apertura; un `:::space` sotto di esso lascia una riga e fa partire il testo senza rientro.
+
+### 2 · Incornicia il titolo in due riquadri
+
+<Excerpt region="framed" />
+
+L’ordine dell’array è l’ordine di disegno, quindi prima vengono i riquadri e sopra il testo; il fregio è un elemento immagine, che disegna una risorsa SVG registrata mai numerata né citata. Un elemento immagine è anche il modo in cui ogni capitolo riceve una foto sua: da postext 1.8 il suo `resourceId` accetta segnaposto, quindi con `resourceId: '{attr.photo}'` un solo stile disegna la foto che ogni titolo nomina, `# The Frame {style="framed" photo="lake"}`, come fanno i piatti della <RecipeLink slug="recipe-card">scheda ricetta</RecipeLink> ([image elements](/it/docs/configuration-page-layout#elementi-immagine)). Lo stile `framed` nella risposta breve imposta `palette` per rendere blu `accent` nelle pagine di questo capitolo, così i filetti, l’occhiello e il folio in basso si stampano in blu, e i suoi `margins` centrano la gabbia del testo sotto la cornice. Il `dropCap` dello stile nomina `col('accent')`, che la palette rende anch’esso blu, così la L di tre righe si accorda con la cornice.
+
+### 3 · Impila il titolo, chiudi l’iniziale in un riquadro
+
+<Excerpt region="stacked" />
+
+La pila è scritta nel Markdown: `# Say it \\ out \\ loud.` spezza `{titleText}` a ogni `\\`, mentre le testatine e la struttura del PDF leggono il titolo su una riga ([line breaks in titles](/it/docs/document-format#a-capo-nei-titoli)). Il campo pende dalla testa dell’abbondanza, a tutta larghezza e profondo 130 mm, e il paragrafo d’apertura comincia sulla prima riga della griglia 8 mm sotto (`TEXT_TOP`). L’iniziale in riquadro è fatta di due pezzi. Il `dropCap` dello stile compone la M su tre righe del paragrafo, in bianco, e l’apertura disegna sotto di essa un riquadro magenta, collocato a partire da `TEXT_TOP`, dall’interlinea del paragrafo e dalle metriche di Geist Mono, così il colore sopra e sotto la M è largo quanto i suoi spazi laterali. Il riquadro non occupa spazio nell’apertura (`reserve: false`); un riquadro `room` vuoto chiude l’apertura dove comincia il paragrafo.
+
+### 4 · Dai al manuale un badge, due colonne e testatine proprie
+
+<Excerpt region="spec" />
+
+Il badge è un elemento di testo con un fondo e una spaziatura interna ma senza larghezza, quindi la sua larghezza segue `{chapterNumber}`, e il titolo è collocato `right-of` rispetto a esso: al capitolo 10 il badge cresce di una cifra, 5,5 mm, e il titolo si sposta con lui. La spaziatura inferiore è 1 mm più piccola di quella superiore perché il riquadro della riga contiene altrettanto spazio in più sotto le cifre, così il 4 resta centrato. Nello stile `spec`, `layout` compone la sezione su due colonne e lo `span: 'page'` del livello stende l’apertura su entrambe. I suoi `margins` allargano la gabbia del testo a 144 mm, `bodyStyle` compone Geist a bandiera sulla griglia da 14,5 pt del libro, `header` sostituisce le testatine del libro e un `footer` vuoto toglie il folio.
+
+### 5 · Lascia spazio alla coda
+
+<Excerpt region="quiet" />
+
+L’occhiello pende 92 mm sotto la testa della gabbia del testo, e l’iniziale rialzata è il capolettera di una riga dello stile `quiet`: il suo piede poggia sulla prima linea di base e, a 46 pt, sale nel bianco sopra invece di affondare nel paragrafo. Il paragrafo lascia libera quella salita sopra di sé in righe intere, quindi il `room` dell’apertura sotto il titolo è di soli 3 mm. Nello stile `quiet`, `margins` restringono la giustezza a 106 mm, `bodyStyle` compone il testo a bandiera a 12,5/17,5 pt, `footer` sostituisce il folio in basso con uno piccolo nell’angolo esterno e `palette` rende grigio l’occhiello. Niente in questa pagina stampa un numero di capitolo, quindi `numbered: false` si vedrebbe solo in un capitolo aggiunto dopo la coda, che sarebbe comunque il quinto.
+
+## Varianti
+
+### Manda ogni capitolo su un recto
+
+Con `'odd'` ogni capitolo si apre su una pagina destra e i capitoli dal due al cinque ricevono ognuno un verso bianco prima, così il libro passa da 7 a 11 pagine.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' },
++  breakBefore: { enabled: true, parity: 'odd' },
+```
+
+### Un’iniziale di tre righe
+
+Senza `fontSize` il corpo segue il numero di righe, quindi un’iniziale di tre righe si allinea ancora alle maiuscole della prima riga.
+
+```diff
+-  dropCap: { lines: 5, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
++  dropCap: { lines: 3, fontFamily: 'Fraunces', fontWeight: 400, color: col('accent'),
+```
+
+### Maiuscoletto dopo l’iniziale
+
+`leadIn` compone in maiuscoletto le prime parole dopo la lettera, come fanno molti romanzi; `words: 'line'` prende l’intera prima riga.
+
+```diff
+-    gap: mm(2.5) } });
++    gap: mm(2.5), leadIn: { words: 'line' } } });
+```
+
+## Errori frequenti
+
+- I paragrafi d’apertura sono composti a bandiera, come nell’apertura di una rivista; un paragrafo giustificato accanto a un’iniziale di cinque righe può allargare molto gli spazi in una riga di poche parole.
+- Il riquadro magenta è adattato a mano al Lora 12/17, alla M di Geist Mono e alla linea di base della riga, a 0,8 dell’altezza del suo riquadro di riga (`BASE`). Se cambi il carattere, il corpo o l’interlinea del paragrafo, la lettera, il numero di righe o la profondità del campo, ricontrolla il riquadro rispetto alle maiuscole della prima riga.
+- I titoli non ruotano e non scorrono in verticale: il testo di design è sempre orizzontale. Impila invece le parole con `\\`, come fa il capitolo tre.

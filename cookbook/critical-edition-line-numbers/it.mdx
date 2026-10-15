@@ -1,0 +1,77 @@
+---
+title: "Edizione critica: numeri di verso e note per verso"
+summary: "Il Lycidas di Milton nel testo del 1645: lineNumbers stampa un numero ogni cinque versi nella colonna laterale, e ogni nota si apre su quel numero, come chip."
+plain: "Un’edizione critica di una poesia di Milton. Un verso ogni cinque è numerato a margine, e le note dopo la poesia rinviano ai versi che spiegano tramite il loro numero."
+description: "Il Lycidas di Milton in Postext come edizione critica: un verso ogni cinque numerato in una colonna di 6 mm sul margine esterno e le note legate ai numeri."
+question: "Come numero a margine un verso ogni cinque di una poesia e lego le note a quei numeri di verso?"
+aliases: ["numeri di verso", "numerazione dei versi", "versi numerati", "edizione critica", "apparato", "commento", "note legate ai versi", "note per verso", "numeri a margine", "grafia antica", "Milton", "Lycidas", "elegia pastorale", "alloro", "line numbers"]
+pageNotes: { "1": "La pagina d’apertura: un rametto di alloro con bacche acerbe entra dall’angolo in alto a destra; sotto, «JOHN MILTON» in piccole maiuscole verdi, «LYCIDAS» in alte maiuscole sottili e la nota introduttiva del 1645 in corsivo, poi i versi da 1 a 14 con i numeri 5 e 10 in verde a destra.", "2": "Una pagina verso: i versi da 15 a 46, le strofe separate da una riga bianca e i versi brevi rientrati, con i numeri da 15 a 45 in verde a sinistra dei versi.", "8": "La prima pagina delle note: «NOTES» in alte maiuscole, un paragrafo sul testo, poi note che si aprono ciascuna su un numero di verso verde seguito dalle parole che spiegano in corsivo e da una parentesi quadra di chiusura." }
+---
+
+## Che cosa comporrai
+
+*Lycidas*, l’elegia di Milton per Edward King, composta come piccola edizione critica di 138 × 216 mm nel testo e nella grafia dei *Poems* del 1645. La prima pagina si apre sotto un rametto di alloro, con il titolo in alte maiuscole Imbue sopra la nota introduttiva che Milton aggiunse nel 1645. Seguono i 193 versi, uno per riga di composizione, con una riga bianca tra le strofe e i versi brevi rientrati. Un verso ogni cinque ha il suo numero in verde alloro, in una colonna di 6 mm sul margine esterno: a destra dei versi su un recto, a sinistra su una pagina verso. I versi non portano richiami di nota. Le note riempiono le due pagine dopo la poesia, e ognuna si apre sul numero del suo verso, nello stesso Libre Franklin verde dei numeri a margine.
+
+## Preparazione
+
+### 1 · Conta i versi
+
+Il codice di questo passo è [la risposta breve](#la-risposta-breve) qui sopra. `lineNumbers` conta i versi della poesia e stampa il numero di uno ogni cinque accanto al suo verso, sulla sua linea di base, in Libre Franklin da 7,5 pt verde alloro ([numeri di riga](/it/docs/configuration-notes-references#numeri-di-riga)). `count: 'verse'` conta solo i versi delle poesie `:::verse`, quindi la nota sul testo e le note dopo la poesia non ricevono numeri, e un verso troppo lungo per la giustezza conterebbe comunque una volta sola: la sua prosecuzione non riceve numero. `restart: 'document'` mantiene un unico conteggio per tutta la poesia. I numeri vengono dipinti accanto a righe che l’impaginazione ha già composto, quindi non spostano mai una riga.
+
+### 2 · Un canale largo sei millimetri
+
+<Excerpt region="page" />
+
+Con `sideColumnRole: 'floats'`, la colonna stretta di un layout `oneAndHalf` non riceve mai testo ([tipi di layout](/it/docs/configuration-page-layout#tipi-di-impaginazione)), e `position: 'side'` vi compone i numeri, allineati al suo bordo vicino ai versi; l’intercolonna di 4 mm è lo spazio tra un verso e il suo numero. `sideColumnPercent` è una quota della gabbia del testo, quindi il pen la ricava dai millimetri: 6 su 90 mm, abbastanza per il numero più largo. Le cifre di Libre Franklin sono proporzionali, e a 7,5 pt lo zero è la più larga (1,8 mm, contro 1,2 mm dell’uno), quindi 100, a 4,9 mm, è il numero più largo della poesia; 180 e 190 misurano 4,8 mm. `'outer'` segue i margini speculari, quindi i numeri stanno a destra dei versi su un recto, allineati a sinistra, e a sinistra su una pagina verso, allineati a destra: su entrambi cominciano o finiscono alla stessa distanza dai versi. La colonna dei versi è di 80 mm, 1,9 mm più del verso 31, il più lungo, quindi nessun verso va a capo.
+
+### 3 · La poesia è un unico blocco `:::verse`
+
+<Excerpt region="verse" />
+
+Un blocco `:::verse` conserva la poesia così com’è scritta: ogni riga di Markdown un verso, una riga bianca tra le strofe e gli spazi prima di una riga come suo rientro ([`:::verse`](/it/docs/document-format#verse)). La recinzione nomina lo stile dei versi e `align=start`, che allinea la poesia al margine invece di centrarla sul suo verso più lungo. Ogni paragrafo di versi è una strofa, e tra due strofe c’è una riga bianca della griglia (`stanzaSpace`, una riga). I quattordici versi brevi di Milton, tra cui il verso 4, cominciano con due spazi, e `indentStep: em(1)` li trasforma in 2 em. Lo spazio tra le strofe viene eliminato in testa a una pagina, quindi la pagina 2 comincia con il verso 15 in cima alla gabbia del testo, e lo stacco di strofa tra i versi 14 e 15 non si vede (vedi Errori frequenti).
+
+### 4 · L’alloro, il titolo e la nota introduttiva
+
+<Excerpt region="opener" />
+
+Il titolo di primo livello stampa un progetto grafico invece del proprio testo ([span e progetto grafico avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). `{author}` viene dal frontmatter, e la nota introduttiva da un attributo sulla riga del titolo, `# Lycidas {headnote="In this Monody …"}` ([attributi dei titoli](/it/docs/document-format#attributi-dei-titoli)). L’alloro finisce sopra l’occhiello, quindi la profondità dell’apertura viene dai testi sotto di esso: l’occhiello, 50 mm sotto la sommità della gabbia del testo, il titolo e le quattro righe della nota introduttiva scendono per 20 delle 34 righe della pagina, e la prima strofa, 14 versi, occupa il resto. `minHeight` è un minimo alla stessa profondità: riduci la nota introduttiva a tre righe e i versi cominciano comunque alla riga 21, dove senza il minimo salirebbero alla riga 20. `marginBottom: pt(0)` tiene il margine predefinito del titolo fuori dallo spazio; con esso, i versi comincerebbero alla riga 22 e manderebbero il verso 14 a pagina 2. Il progetto grafico resta nella colonna, e l’alloro, ancorato all’angolo superiore destro della pagina, viene comunque dipinto dal rifilo: solo il piede di una colonna taglia un progetto grafico tenuto al suo interno.
+
+### 5 · Note legate ai numeri di verso
+
+<Excerpt region="notes" />
+
+Le note sono legate ai numeri di verso, quindi i versi non portano richiami di nota, e seguono la poesia come commento, senza togliere righe alle sue pagine. Ogni nota si apre sul suo numero di verso, scritto `:chip[8]{style="line"}`, poi le parole che spiega in corsivo e una parentesi quadra di chiusura. Il chip non ha riempimento, contorno né padding laterale, quindi cambiano solo il carattere e il colore: Libre Franklin da 7,7 pt verde alloro ([stili dei chip](/it/docs/configuration-styles#stili-dei-chip)). Linden Hill non ha grassetto, quindi i numeri sono marcati da un cambio di carattere. Lo stile delle note rientra di 1,6 em ogni riga dopo la prima, il che lascia liberi i numeri a sinistra, e le note sono composte in bandiera, come i versi. `# Notes {style="notes"}` passa a pagina 8 e compone il suo titolo nelle maiuscole dell’apertura, a 30 pt.
+
+<PageShot page={8} crop="0.24,0.318,0.66,0.249" caption="Pagina 8: ogni nota si apre sul numero verde del suo verso; i versi delle pagine da 1 a 7 non portano richiami." />
+
+### 6 · Testatine per parità
+
+<Excerpt region="heads" />
+
+Ogni elemento è ancorato alla pagina e filtrato da `parity` e `pages: 'body'` ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). La pagina verso porta l’autore e il recto `{chapterTitle}`, che dice «LYCIDAS» sopra la poesia e «NOTES» sopra le note, perché le note si aprono con un titolo proprio. Il folio sta sul bordo esterno della gabbia del testo; le due pagine d’apertura, 1 e 8, lo portano invece al piede.
+
+## Varianti
+
+### Numera un verso ogni dieci
+
+Le poesie lunghe sono spesso numerate di dieci in dieci; la colonna di 6 mm non richiede modifiche.
+
+```diff
+-  interval: 5,
++  interval: 10,
+```
+
+### Tieni ogni numero a destra dei versi
+
+Con la colonna laterale fissata a destra, i numeri stanno a destra dei versi su ogni pagina, il che sulle pagine verso li mette vicino al dorso.
+
+```diff
+-  sideColumnSide: 'outer', // right of the verse on a recto, left of it on a verso
++  sideColumnSide: 'right', // right of the verse on every page
+```
+
+## Errori frequenti
+
+- Lo spazio tra le strofe viene eliminato in testa a una pagina, quindi lo stacco tra i versi 14 e 15, che cade nel passaggio da pagina 1 a pagina 2, non si vede. Se la tua edizione deve mostrare ogni stacco, dai invece un rientro al primo verso di ogni strofa, come fa l’edizione del 1645: due spazi iniziali su quella riga.
+- I numeri condividono la colonna laterale con qualsiasi riquadro o didascalia laterale aggiungi. Un numero che cade su uno di essi viene comunque stampato, e la Sandbox lo segnala (`lineNumberOverlap`); sposta il riquadro, o componi i numeri nel margine esterno con `position: 'outer'`.
+- Le note continuano a scrivere a mano i loro numeri di verso (`:chip[8]{style="line"}`): una nota non può ancora puntare a un verso e stamparne il numero. Se cambi il testo, confronta i numeri nelle note con quelli a margine.

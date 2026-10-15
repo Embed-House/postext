@@ -1,0 +1,72 @@
+---
+title: "Fanzine riso a due inchiostri: illustrazioni in un solo spot"
+summary: "Una fanzine di quattro pagine per una risograph a due tamburi: i disegni a colori si stampano come tinte del rosa, ricolorati dal motore sul canvas e nel PDF."
+plain: "Una piccola rivista piegata sugli autobus notturni, fatta per una macchina da stampa che usa solo due inchiostri. I disegni a colori diventano sfumature di un solo inchiostro rosa."
+description: "Fanzine riso con disegni SVG a colori stampati come tinte di un solo colore spot, a schermo e nel PDF, con diagramStyle.singleInk e un flag di registrazione."
+question: "Come stampo ogni disegno SVG in tinte di un solo inchiostro spot, e ogni altro colore in un secondo?"
+aliases: ["risografia", "risograph", "riso", "stampa a due colori", "colore spot", "tinta piatta", "bicromia", "duotone", "inchiostro singolo", "fanzine", "zine", "fuori registro", "registro sfalsato", "prova in grigio", "manuale a due colori", "retino"]
+pageNotes: { "1": "La copertina: il numero della fanzine e la riga «Six routes after midnight, three ridden end to end», poi una luna piena retinata rosa dietro due cavi aerei blu, un palo di fermata blu la cui tabella elenca «NIGHT», «N12», «N27» e «N41», e «NIGHT BUSES» in alte maiuscole condensate, blu sopra una copia rosa leggermente fuori registro.", "2": "Pagina 2: l’occhiello «Brackwater, 00:10 to 06:00» sopra «AFTER THE LAST TRAIN», il paragrafo d’apertura, la nota sulla N12 dopo il suo chip di linea rosa, le parole di un autista in maiuscole condensate sotto una striscia rosa, e l’inizio della nota sulla N27.", "3": "Pagina 3: la rete notturna in tinte di rosa sopra una barra di didascalia rosa chiaro, la fine della nota sulla N27, la nota sulla N41 e un piccolo riquadro con la stessa mappa in sei colori accanto alla nota «As drawn».", "4": "La quarta di copertina: un indicatore di destinazione rosa che dice «NOT IN SERVICE», l’annuncio del numero 5 con tre posti dove trovarlo, il colophon in un carattere monospaziato e una luna retinata rosa nell’angolo in basso." }
+---
+
+## Che cosa comporrai
+
+*Night Buses* è una fanzine gratuita sugli autobus notturni di una città: quattro pagine di 120 × 160 mm su un foglio piegato una volta, per una risograph con due tamburi, blu e rosa fluorescente. Ogni colore della configurazione è uno dei due inchiostri, un retino al 25% del rosa o la carta crema. I disegni sono fatti a colori pieni (una mappa delle linee in sei colori, una luna in grigi, un indicatore di destinazione ambra su nero) e si stampano dal tamburo rosa come tinte di rosa, con i colori più scuri come tinte più dense. <PageRef page={3}>La mappa</PageRef> si stampa in rosa, e un piccolo riquadro più in basso nella stessa pagina conserva i sei colori del disegno. Il titolo di copertina è composto due volte, con la copia rosa 0,8 mm a destra di quella blu e 0,5 mm più in alto. Il pen costruisce anche un PDF a colori e una prova in grigio.
+
+## Preparazione
+
+### 1 · Due tamburi, e ogni colore è uno dei due
+
+<Excerpt region="inks" />
+
+Una risograph stampa ogni inchiostro dal suo tamburo, quindi un terzo colore in qualsiasi punto della configurazione richiederebbe un terzo tamburo. `screen()` mescola una quota di un inchiostro con il colore della carta, come fa un retino che stampa una parte dei punti e lascia carta tra l’uno e l’altro. Un retino al 25% del rosa è `#f2c7d3`, il fondo dei chip e della didascalia. `main-color` punta al rosa, quindi ogni valore predefinito che la configurazione non tocca si stampa da quel tamburo e non nel blu del motore, `#295AA3`.
+
+### 2 · Ricolora ogni disegno una volta per output
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Con `diagramStyle.singleInk`, `renderToPdf` trasforma ogni colore di un SVG in una tinta di `inkColor` la cui intensità è 1 meno la luminanza relativa del colore ([stile dei diagrammi](/it/docs/configuration-resources#stile-dei-diagrammi)), quindi la N12 blu notte si stampa all’84% e la N50 gialla al 24%. Il canvas tinge un’immagine allo stesso modo quando è registrata con `singleInk: true`, quindi il `loadSvg(fileId, svg, { singleInk: true })` del kit registra ogni disegno così com’è con quel flag e conserva lo stesso markup, che `imageBytes` passa a `resourceBytes`. Campionata sul canvas e nel PDF rasterizzato a 300 dpi, la linea N12 è (242, 109, 171), la tinta che la formula dà per un’intensità di 0,836. Ogni output ricolora il disegno una volta sola: passata due volte per la formula, la linea si schiarirebbe al 44%.
+
+### 3 · Stampa il titolo due volte, fuori registro
+
+<Excerpt region="cover" />
+
+Una risograph stampa un tamburo dopo l’altro, e il foglio non cade mai due volte esattamente nello stesso punto. `twice()` restituisce due copie di un elemento di testo, prima quella rosa, 0,8 mm a destra e 0,5 mm più in alto. L’ordine dell’array è l’ordine di pittura, quindi la copia blu copre quella rosa tranne una sottile striscia lungo i bordi superiore e destro di ogni lettera. Canvas e PDF dipingono colore opaco, quindi la sovrapposizione resta blu dove una riso stamperebbe viola. Il progetto grafico occupa tutta la pagina perché il palo va oltre il piede della gabbia del testo, dove un progetto grafico tenuto nella sua colonna verrebbe tagliato.
+
+### 4 · Tieni il testo piccolo nell’inchiostro scuro
+
+<Excerpt region="inside" />
+
+Sulla carta crema il blu misura 6,4:1 e il rosa fluorescente 2,9:1, troppo debole per un testo a 8 o 9 pt. Ogni parola composta dal motore si stampa quindi dal tamburo blu. I chip sono in Space Mono blu sul retino al 25% (4,85:1) dentro un contorno rosa, e la didascalia è in Epilogue blu sullo stesso retino. Il rosa stampa la striscia sopra la citazione, i contorni dei chip, i punti elenco, i quadrati dei folio e le copie sfalsate dei titoli. Le scritte dentro i disegni fanno parte dell’illustrazione e si stampano in rosa con essa. Il nome di chi parla è il titolo del riquadro, composto in maiuscole Space Mono neretto da 7,5 pt sopra la citazione.
+
+### 5 · Metti il riquadro accanto alla sua nota
+
+<Excerpt region="drawn" />
+
+In una colonna sola un elemento flottante prende tutta la larghezza della sua fascia, quindi una piccola immagine fatta flottare lì lascerebbe vuoto il resto della fascia. Il riquadro è invece un progetto grafico di titolo: `### As drawn {style="drawn" note="…"}` stampa l’immagine e, alla sua destra, il titolo come etichetta con la nota sotto. L’immagine conta per l’altezza che il progetto grafico riserva, quindi il blocco successivo comincia sotto di essa anche quando la nota è più corta. `registerSnapshot()` disegna la stessa mappa `network()` in un PNG, e poiché l’inchiostro singolo ricolora solo gli SVG, il riquadro conserva i suoi sei colori a schermo e nel PDF.
+
+## Varianti
+
+### Monta un tamburo arancione
+
+La luna, la mappa, l’indicatore di destinazione, i chip, la striscia e le copie sfalsate di entrambi i titoli diventano arancioni e il testo resta blu; la didascalia, la nota e il colophon continuano a nominare il tamburo rosa finché non li modifichi.
+
+```diff
+-const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
++const DRUMS = { ink: '#1d4fb8', spot: '#ff6c2f' };
+```
+
+### Stampa un manuale a due colori
+
+Con testo nero e uno spot blu su carta bianca, gli stessi disegni si stampano come tinte del blu, come i diagrammi di un libro scolastico a due colori; la didascalia, la nota e il colophon continuano a nominare il tamburo rosa finché non li modifichi.
+
+```diff
+-const DRUMS = { ink: '#1d4fb8', spot: '#f0509a' };
+-const PAPER = '#f3efe6'; // cream stock: where no ink falls
++const DRUMS = { ink: '#1f1f1f', spot: '#0078bf' };
++const PAPER = '#ffffff'; // white stock: where no ink falls
+```
+
+## Errori frequenti
+
+- Nel PDF la ricolorazione riscrive il markup: colori esadecimali, `rgb()`, `rgba()`, `hsl()` e `hsla()`, e le parole chiave `white` e `black`. Una forma che nomina `red` o lascia il riempimento sul nero predefinito conserva lì quel colore, che richiederebbe un terzo tamburo. Dai a ogni riempimento e a ogni tratto un valore esadecimale.
+- `colorSpace: 'grayscale'` rende grigio ciò che dipinge postext e incorpora le bitmap così come sono, quindi il riquadro PNG resta a colori nella prova in grigio. Solo il secondo pulsante del pen costruisce la prova; le pagine qui sopra sono il canvas, e il PDF offerto in questa pagina è quello a colori.
+- Il bilanciamento delle colonne può lasciare una riga di spazio sotto un elemento flottante in testa, prima del resto di un paragrafo che continua dalla pagina precedente; `headings.balancing.stretchAfterFloats: false` tiene il testo subito sotto l’elemento flottante. Il testo qui non lo provoca. Dopo aver modificato il testo, controlla la prima riga sotto la mappa, perché una riga in più può spingere il riquadro su una quinta pagina.
+- Nel pen entrambi i pulsanti dicono «Build the PDF». Il primo costruisce il PDF a colori e il secondo la prova in grigio; una volta costruito un file, il suo pulsante lascia il posto a un link «Open the PDF ↗» e a un link di download con il nome del file.

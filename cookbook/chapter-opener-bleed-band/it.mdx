@@ -1,0 +1,98 @@
+---
+title: "Apertura di capitolo su una fascia al vivo"
+summary: "Un’apertura advancedDesign sul titolo di livello 1: una fascia al vivo, il numero del capitolo sul suo piede, occhiello e sommario dagli attributi del titolo."
+plain: "Pagine d’apertura di capitolo per un manuale di geologia. Una fascia colorata con un grande numero di capitolo esce dal bordo superiore della pagina, e il design si imposta una volta per tutti i capitoli."
+description: "Apertura di capitolo da manuale in Postext: fascia al vivo, numero da 168 pt, occhiello e sommario dalla riga del titolo, uno stile che ricolora il capitolo 4."
+question: "Come faccio un’apertura di capitolo con una fascia al vivo, un grande numero e un titolo su due righe?"
+aliases: ["apertura di capitolo", "fascia colorata", "grande numero di capitolo", "numero del capitolo", "sommario", "occhiello", "manuale scolastico", "libro di testo", "colori dei capitoli", "unghiatura", "segnacapitolo"]
+pageNotes: { "1": "Una fascia color terracotta riempie la testa della pagina con l’occhiello «Chapter 3 · Plate tectonics», il titolo «The Restless Crust» su due righe, un sommario in corsivo e un 3 bianco poggiato sul piede scuro della fascia; una sezione di una placca in subduzione sta al piede della pagina.", "3": "Il capitolo 4, «Fire from Below», si apre con lo stesso design in verde acqua.", "4": "Il capitolo 4 si chiude con le domande di ripasso, il colophon e una sezione verde acqua di un vulcano a scudo e di uno strato-vulcano a tutta larghezza, subito sotto le due colonne di testo." }
+---
+
+## Che cosa comporrai
+
+Le aperture di capitolo di *Earth in Motion*, un manuale introduttivo di geologia su una pagina di 210 × 280 mm. Il capitolo 3 si apre sotto una fascia terracotta che esce al vivo dalla testa della pagina. La fascia porta un occhiello spaziato, il titolo spezzato dove ha scelto l’autore, un sommario in corsivo e un numero di capitolo da 168 pt che poggia sul piede scuro della fascia, dal lato del margine esterno. Due colonne giustificate cominciano sotto la fascia, e la sezione di una placca che sprofonda occupa il piede della pagina. Il capitolo 4 ripete il design in verde acqua, fino all’unghiatura, ai numeri delle sezioni, ai rimandi e all’etichetta della sua figura. Il design si imposta una volta, sul titolo di livello 1. La riga del titolo di ogni capitolo fornisce come attributi l’argomento dell’occhiello e il sommario, e nomina uno stile quando il capitolo prende un altro colore.
+
+## Preparazione
+
+### 1 · Appendi la fascia e il numero alla pagina
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. La fascia e il suo piede pendono dall’angolo superiore sinistro dell’abbondanza. Come ogni riquadro o filetto senza larghezza, si estendono fino al bordo opposto di quella cornice, quindi arrivano al formato rifilato, e all’abbondanza una volta impostato `BLEED`. Il numero pende dall’angolo superiore destro della pagina: `y: BAND - 0.8 * NUMERAL * PT` mette la sua linea di base sul piede, e `BEARING` sposta il suo riquadro di 2 mm verso il margine per compensare lo spazio laterale della cifra, così l’inchiostro si allinea più o meno con il bordo del testo. L’occhiello pende dal contenitore. Il titolo pende sotto l’occhiello e il sommario sotto il titolo, tramite ancoraggi `below`, e il design di un titolo va a capo per impostazione predefinita, quindi un titolo più lungo spinge in basso il sommario. Il sommario è un elemento di testo riempito dall’attributo `lead` del titolo; una riga d’autore sarebbe un elemento in più, `{attr.author}`, concatenato allo stesso modo. `minHeight: BAND - TOP + AIR` stabilisce dove comincia il testo. Il riquadro del numero arriva a 0,2 volte il suo corpo (11,9 mm) sotto il piede, e un’apertura riserva spazio fino al suo elemento più basso, quindi `AIR` deve essere almeno 11,9 mm; con meno, sarebbe il riquadro del numero a stabilire dove comincia il testo.
+
+### 2 · Dai la pagina al titolo del capitolo
+
+<Excerpt region="levels" />
+
+`span: 'page'` apre ogni capitolo su una pagina nuova e compone il titolo di livello 1 su entrambe le colonne; `advancedDesign` disegna l’apertura al posto del testo del titolo, e il testo comincia sotto l’altezza riservata. `breakBefore` con `parity: 'odd'` mette ogni apertura su un recto, dove l’ancoraggio a destra del numero è il margine esterno. Al livello 2, `numberingTemplate: '{1}.{2}'` numera le sezioni 3.1, 3.2… nel colore della fascia; un livello 3 con `'{1}.{2}.{3}'` proseguirebbe con 3.1.1.
+
+### 3 · Dai un nome al colore del capitolo una volta sola
+
+<Excerpt region="palette" />
+
+Ogni colore della configurazione è collegato a una di queste voci. I valori predefiniti del motore sono collegati a `main-color`, quindi puntare quella voce al colore della fascia ricolora anche ogni valore predefinito che la configurazione lascia vuoto. La riga del titolo del capitolo 4, `# Fire from \\ Below {style="teal" topic="Volcanoes" lead="…"}`, sceglie lo stile, che sostituisce `band` fino al titolo di livello 1 successivo. Gli elementi di design seguono la sostituzione tramite il collegamento alla palette, e i colori del testo uguali alla `band` di base vengono ridipinti, così l’unghiatura, i numeri di sezione e degli elenchi, i rimandi, l’etichetta della didascalia e il folio in basso diventano verde acqua alle <PageRef page={3}>pagine 43 e 44</PageRef>. La stessa riga riempie `{attr.topic}` e `{attr.lead}`, e il suo `\\` spezza `{titleText}` dove vuole l’autore ([heading attributes](/it/docs/document-format#attributi-dei-titoli), [line breaks in titles](/it/docs/document-format#a-capo-nei-titoli)).
+
+### 4 · Lascia che la prima citazione collochi ogni figura
+
+<Excerpt region="figure" />
+
+Un `:ref` numera la sua figura e la colloca nel primo spazio libero dopo il paragrafo che la cita. La figura 3.1 è `auto`. È citata nell’apertura quando entrambe le colonne hanno ancora spazio, quindi prende il piede di quella pagina; come elemento flottante `top` avrebbe aperto la pagina 42, perché un elemento flottante non va mai sopra il proprio rimando. La figura 4.1 è citata in basso nella seconda colonna di pagina 43, dove una fascia a tutta larghezza non entra più, quindi `bottom` la manda a pagina 44. È l’ultima pagina del capitolo, e in un’ultima pagina il motore solleva gli elementi flottanti al piede fin subito sotto le ultime righe di testo, senza spazio sopra.
+
+### 5 · Testatine, un’unghiatura e un folio in basso
+
+<Excerpt region="heads" />
+
+Ogni elemento d’intestazione pende da un angolo superiore della pagina ed è filtrato da `parity`, quindi il folio e l’unghiatura stanno sempre sul margine esterno. Il riquadro dell’unghiatura pende invece dall’angolo dell’abbondanza e si allarga con `BLEED`, così resta al vivo anche dopo la rifilatura. `pages: 'body'` tiene tutti questi elementi lontani dalle aperture, che ricevono un folio in basso dal piè di pagina. Il verso nomina il capitolo con `{chapterTitle}`, su una riga, perché il `\\` spezza il titolo solo nell’apertura. I manuali di solito nominano la sezione sul recto. Postext non ha un segnaposto per la sezione, quindi la testatina del recto stampa il `{title}` del libro; queste quattro pagine non la mostrano mai, perché entrambi i loro recto sono aperture.
+
+### 6 · Comincia il libro dal capitolo 3
+
+<Excerpt region="build" />
+
+Queste pagine sono i capitoli 3 e 4 di un libro più lungo, quindi `buildDocument` riceve una `continuation` con i contatori come li hanno lasciati i capitoli 1 e 2. Con `h1: 2` nei suoi `headings`, il `#` successivo è il capitolo 3: `{chapterNumber}` stampa 3, le sezioni si numerano da 3.1 e la prima figura diventa 3.1. `pageNumbering.startAt: 41` fa partire i folio da 41. La prima pagina resta un recto qualunque sia il suo folio, perché la parità si conta sulla pagina fisica e `pageIndexOffset` resta a 0; il primo folio, 41, è dispari di conseguenza.
+
+## Varianti
+
+### Rendi la fascia più alta
+
+`BAND` stabilisce l’altezza della fascia, la posizione del numero e l’altezza riservata sopra il testo. Una fascia più alta spinge testo alla pagina successiva, quindi riadatta ogni capitolo (vedi l’ultimo errore frequente) o lascia che i capitoli proseguano senza salto.
+
+```diff
+-const BAND = 100; // mm from the trim to the foot of the band
++const BAND = 128; // mm from the trim to the foot of the band
+```
+
+### Stampalo con l’abbondanza
+
+Con un’abbondanza di 3 mm, la fascia, il suo piede e l’unghiatura vanno 3 mm oltre il formato rifilato, il numero resta sul piede e `page.cutLines` si attiva con lo stesso valore.
+
+```diff
+-const BLEED = 0; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
++const BLEED = 3; // mm: 0 on screen; about 3 for print, which also switches on page.cutLines
+```
+
+### Aggiungi un colore per un altro capitolo
+
+Ogni colore di capitolo è una voce di palette e uno stile in più; scrivi `{style="slate"}` sulla riga del titolo di quel capitolo.
+
+```diff
+   band2: '#2e6f73', // the second chapter colour, a teal; the sea in Figure 3.1
++  band3: '#3d4f6b', // a third chapter colour, a slate blue
+@@
+-const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } }];
++const headingStyles = [{ id: 'teal', palette: { band: palette.band2 } },
++  { id: 'slate', palette: { band: palette.band3 } }];
+```
+
+### Lascia proseguire i capitoli senza salto
+
+Con `'any'` un capitolo si apre sulla pagina successiva. Dopo un capitolo che finisce su un recto si apre sul verso, senza pagina bianca prima, e il suo numero sta dal lato del dorso, poiché pende dal bordo destro della pagina. Queste pagine restano uguali, perché il capitolo 3 finisce già su un verso.
+
+```diff
+-      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' },
++      { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
+```
+
+## Errori frequenti
+
+- La fascia ha un’altezza fissa, mentre l’occhiello, il titolo e il sommario pendono dal margine superiore e crescono verso il basso, quindi un sommario più lungo o un titolo su tre righe finisce sul piede. Tieni i sommari attorno alle cinque righe, come fanno entrambe le edizioni, o ricava `BAND` dall’apertura più lunga.
+- La formula per la `y` del numero presuppone `lineHeight: 1`. La linea di base di un testo di design sta a 0,8 dell’altezza del suo riquadro di riga, e `0.8 * NUMERAL` è quella distanza solo quando il riquadro è alto quanto il carattere. Se cambi l’interlinea o l’ancoraggio, la formula deve cambiare con loro. `BEARING` è regolato a occhio, perché ogni cifra ha il suo spazio laterale (qui il 3 e il 4 finiscono a 0,8 mm l’uno dall’altro).
+- La palette di uno stile ricolora elementi di design e testo. Un’immagine mantiene i colori con cui è stata disegnata: la figura 4.1 è verde acqua perché il codice la disegna da `band2`, e una figura terracotta collocata nel capitolo 4 resterebbe terracotta.
+- Con `parity: 'odd'`, un capitolo che supera di poche righe la sua ultima pagina lascia una pagina quasi vuota e un verso bianco prima dell’apertura successiva. Adatta il testo, come fanno entrambe le edizioni qui, e controlla l’ultima pagina di ogni capitolo ogni volta che cambiano il testo o `BAND`.

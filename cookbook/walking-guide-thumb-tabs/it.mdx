@@ -1,0 +1,71 @@
+---
+title: "Guida a piedi con unghiature"
+summary: "Una guida tascabile con uno stile di titolo per passeggiata, la cui palette ricolora unghiatura, numeri delle tappe, fondo del riquadro e il verso bianco."
+plain: "Una guida tascabile alle passeggiate intorno a Lisbona. Ogni passeggiata ha un suo colore, mostrato in un’unghiatura sul bordo della pagina, così la trovi con il pollice."
+description: "Lisbon on Foot, guida tascabile a piedi in Postext. Unghiatura e pagina bianca dipinta sono elementi d’intestazione; ogni passeggiata fissa quattro colori."
+question: "Come escludo le testatine da aperture e pagine bianche, e dipingo un verso bianco nel colore della sezione?"
+aliases: ["guida di viaggio", "passeggiata guidata", "unghiatura", "indice a unghiatura", "sezioni a colori", "colori delle sezioni", "pagina bianca dipinta", "segnaposto sulla mappa", "tappe numerate", "icona d’angolo"]
+pageNotes: { "1": "La copertina: un muro di azulejos bianchi e blu con una piastrella mancante sul margine esterno, il titolo su una targa incorniciata, e le tre passeggiate indicate per numero nei loro colori.", "2": "Pagina 2, l’introduzione, con le testatine e senza unghiatura, e una mappa dei percorsi i cui segnaposto numerati corrispondono alle tappe.", "3": "La passeggiata 1 si apre su un recto sotto una fascia color terracotta con un motivo di piastrelle verso il margine esterno; l’unghiatura terracotta con un 1 bianco pende dal piede della fascia.", "5": "Pagina 5 chiude la passeggiata 1 con la quinta tappa e una riga terracotta nel carattere delle etichette che rimanda alla «Walk 2».", "6": "Pagina 6, il verso bianco prima della passeggiata 2, dipinto da bordo a bordo nel giallo della passeggiata sotto un motivo chiaro di piastrelle, con il numero della passeggiata, 2, in nero." }
+---
+
+## Che cosa comporrai
+
+Le prime sette pagine di *Lisbon on Foot*, una guida tascabile di 120 × 200 mm. La copertina è un muro di azulejos bianchi e blu con il titolo su un pannello incorniciato come una targa stradale di Lisbona, e pagina 2 presenta le tre passeggiate con una mappa dei loro percorsi. Ogni passeggiata ha un colore, terracotta per l’Alfama e giallo per la Baixa, e un’unghiatura sul margine esterno mostra quel colore e il numero della passeggiata alla stessa altezza su ogni sua pagina. La fascia dell’apertura, le tappe numerate, la testatina del recto e il fondo del riquadro «Don’t miss» cambiano con essa. Il verso bianco che manda la passeggiata 2 su un recto è dipinto nel giallo della passeggiata 2 e ne stampa il numero. Il testo è in Albert Sans, a bandiera; i nomi sono in DM Serif Display e le etichette in Asap Condensed.
+
+## Preparazione
+
+### 1 · Nomina i colori che una passeggiata cambia
+
+<Excerpt region="palette" />
+
+La `palette` di uno stile di titolo sostituisce le voci per id sulle pagine della sua sezione ([stili di titolo](/it/docs/configuration-styles#stili-dei-titoli)), quindi ogni colore che deve seguire la passeggiata è collegato a una di quattro voci: `band` per i campi, l’unghiatura e i cerchi delle tappe, `bandInk` per il testo sulla carta, `onBand` per il testo su un campo e `wash` per il riquadro. Il bianco sul giallo della Baixa misura 2:1, quindi l’`onBand` di quella passeggiata è il nero, a 8:1. Gli elementi del progetto grafico seguono l’id, mentre il testo si ricolora per valore: un colore uguale all’esadecimale di base di una voce prende il valore della passeggiata, ed è per questo che i quattro valori di base sono tutti diversi. Il titolo del riquadro a pagina 4 e la riga che rimanda alla passeggiata 2 a pagina 5 sono testo in `bandInk`, ed entrambi si stampano in terracotta.
+
+### 2 · Tieni le testatine sulle pagine di testo
+
+<Excerpt region="running-heads" />
+
+Dopo l’impaginazione ogni pagina riceve un ruolo ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). La prima pagina di una passeggiata è un’`opener`, perché il suo titolo interrompe la pagina; la pagina di riempimento prima di un recto è `blank`; le altre sono `body`. Le testatine prendono `pages: 'body'`, quindi le aperture alle pagine 3 e 7 e la pagina bianca 6 non ne hanno, e il folio al piede prende `'opener'`. Il verso stampa il `{title}` del frontmatter, il recto `Walk {chapterNumber} · {chapterTitle}` in `bandInk`, terracotta a pagina 5. Le unghiature della risposta breve prendono `'all'`. Il campo della pagina bianca viene dopo di esse nell’array, e poiché l’ordine dell’array è l’ordine di pittura copre l’unghiatura a pagina 6. Pagina 2, l’introduzione, viene prima della passeggiata 1, quindi lì `{chapterNumber}` è vuoto, e il suo stile ha un `header` tutto suo con le quattro testatine e nessuna unghiatura. Senza, pagina 2 stamperebbe un’unghiatura blu vuota.
+
+### 3 · Apri ogni passeggiata sotto la sua fascia, e numera le tappe
+
+<Excerpt region="levels" />
+
+La fascia è ancorata all’abbondanza, che qui coincide con il rifilo, e scende per 30 mm nell’area del testo. Il progetto grafico finisce con la fascia e `minHeight` riserva otto righe di griglia, 37,3 mm; l’apertura prende la profondità maggiore, quindi alle pagine 3 e 7 il testo comincia 7,3 mm sotto la fascia. Ogni tappa è un titolo di livello 3 il cui progetto grafico compone `{number}` in un cerchio di 5,4 mm riempito di `band`. Il modello `{3}` ricomincia a ogni passeggiata, perché un titolo di livello 1 azzera i contatori più profondi, e i segnaposto sulla mappa portano gli stessi numeri. Una tappa ha una riga di griglia di margine sopra e nessuna sotto, e il suo cerchio sta 3,2 mm più in basso nelle due righe di griglia che il titolo occupa. Restano così circa 8,3 mm di bianco sopra il cerchio e 2,1 mm sotto; i paragrafi distano 6,4 mm.
+
+### 4 · Appendi una piastrella al riquadro, e tieni i chip in nero
+
+<Excerpt region="box-and-chips" />
+
+Il riquadro non ha filetto né bordo, solo il fondo della passeggiata e una piastrella disegnata nel codice sul suo angolo ([stili dei riquadri](/it/docs/configuration-styles#stili-dei-riquadri)). `cornerSide: 'outer'` appende la piastrella per metà fuori dal lato esterno del riquadro, a filo con la sua testa; a pagina 4, un verso, è il lato sinistro, dove comincia il titolo. Con 6,5 mm di padding su entrambi i lati il titolo evita la piastrella e resta allineato al testo del riquadro su entrambe le pagine. La palette della passeggiata ricolora il fondo e il titolo, mentre la piastrella resta blu, perché i suoi colori sono disegnati dentro l’SVG. Anche un chip collegato a `band` prenderebbe il colore della passeggiata; qui le informazioni pratiche ne restano fuori, quindi i chip sono neri sulla carta con un contorno grigio in `muted`, uguali in ogni passeggiata.
+
+### 5 · Fai la legenda della mappa con i campioni delle passeggiate
+
+<Excerpt region="map" />
+
+La mappa è una risorsa SVG composta dove sta `::resource{id="routes"}`, con un tipo di risorsa tutto suo perché la didascalia dica «Map 1». La nota fa la legenda dei percorsi con tre campioni di colore, `:swatch{color="alfama"}` e lo stesso per `baixa` e `belem`. Un campione di colore prende l’id di una voce di palette ([formattazione in linea](/it/docs/document-format#formattazione-in-linea)). La palette riceve una voce per passeggiata da `WALKS`, e il disegno prende i colori dei percorsi dallo stesso oggetto, così la legenda corrisponde ai percorsi e alle unghiature. I numeri nei segnaposto sono disegnati come tracciati, quindi la mappa non porta nessun font.
+
+## Varianti
+
+### Lascia il verso bianco senza colore
+
+Senza il campo, pagina 6 mantiene la sua unghiatura: `pages: 'all'` la stampa anche sulla pagina bianca, nel giallo della passeggiata 2 con un 2.
+
+```diff
+-const header = { elements: [...heads, ...tabs, ...blankPage] };
++const header = { elements: [...heads, ...tabs] };
+```
+
+### Aggiungi la terza passeggiata
+
+`WALKS` contiene già i colori di Belém e `walkStyles` il suo stile, quindi la passeggiata ha bisogno solo del suo titolo nel contenuto. La passeggiata si apre a pagina 9, dopo una pagina 8 bianca dipinta di verde petrolio con un 3 bianco.
+
+```diff
++# Belém {style="belem" route="From the monastery to the tower"}
++
++Tram 15 runs from Praça da Figueira to Belém along the river.
+```
+
+## Errori frequenti
+
+- Pagina 6 esiste perché la passeggiata 1 finisce a pagina 5, un recto. Una passeggiata che finisce su un verso non lascia pagine bianche, e il colore della passeggiata successiva si vede allora solo sulle sue pagine.
+- Prima della prima passeggiata numerata `{chapterNumber}` è vuoto, quindi un elemento che lo stampa, come l’unghiatura, ha bisogno lì di uno stile che lo escluda.

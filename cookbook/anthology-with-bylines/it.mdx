@@ -1,0 +1,82 @@
+---
+title: "Un’antologia con le firme degli autori"
+summary: "Tre saggi sul camminare i cui titoli portano autore, anno e rivista: l’apertura li stampa tutti e tre; le testatine del verso e l’indice stampano l’autore."
+plain: "Un piccolo libro di tre saggi sul camminare. L’autore e l’anno di ogni saggio si scrivono una volta sola e poi compaiono dovunque il libro ne abbia bisogno, come nella pagina dell’indice."
+description: "Un’antologia tascabile di Hazlitt, Thoreau e Stevenson in Postext: gli attributi dei titoli riempiono le firme, le testatine del verso e la pagina dell’indice."
+question: "Come costruisco un indice che si compila da solo, con puntini di guida, pagine e l’autore di ogni saggio?"
+aliases: ["antologia", "raccolta curata", "raccolta di saggi", "collaboratori", "firma dell’autore", "byline", "autore sotto il titolo nell’indice", "autore nella testatina", "indice con gli autori", "autore del capitolo", "sottotitolo nell’indice"]
+pageNotes: { "2": "L’indice: numeri romani color ruggine, titoli dei saggi in Gloock con puntini di guida spaziati fino alle pagine 3, 5 e 8, il nome di ogni autore in corsivo color erica sotto il titolo, e la nota sui testi fissata al piede della pagina.", "3": "Il saggio I si apre sotto il suo numero e il suo titolo, con la firma «WILLIAM HAZLITT» e la riga di data «The New Monthly Magazine, 1822» sopra un filetto sottile.", "6": "Un verso: il folio e «HENRY DAVID THOREAU» nella testatina.", "7": "Un recto: la testatina «WALKING» accanto al folio; il saggio finisce quattro righe prima del piede." }
+---
+
+## Che cosa comporrai
+
+Nove pagine di *Afoot*, un’antologia tascabile di tre saggi sul camminare, di Hazlitt (1822), Thoreau (1862) e Stevenson (1876). Un dipinto di una brughiera al tramonto riempie la copertina, un JPEG generato con modelli di diffusione. L’indice dà a ogni saggio un numero color ruggine, un titolo in Gloock, puntini di guida spaziati fino alla sua pagina e il nome dell’autore in corsivo color erica sotto il titolo. Ogni saggio si apre con il suo numero e il suo titolo, una firma in maiuscole spaziate e una riga di data con la rivista e l’anno della prima pubblicazione. I versi portano il nome dell’autore, i recto il titolo del saggio. Il titolo di ogni saggio porta autore, anno e fonte come attributi, e l’apertura, le testatine e l’indice li stampano da lì, quindi un quarto saggio non richiede alcuna modifica alla configurazione.
+
+## Preparazione
+
+### 1 · Numera i saggi e abbassa il loro testo
+
+<Excerpt region="opener" />
+
+Il `numberingTemplate: '{1:I}'` del livello numera i saggi I, II e III, e `{number}` stampa il numero sopra il titolo ([span e design avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). `minHeight` riserva 12 righe da 14 pt e il filetto finisce 7 mm sopra quella riserva, così sotto un titolo di una riga il testo comincia a 79 mm dal bordo superiore in ogni apertura. Una seconda riga di titolo da 26 pt aggiunge 9,9 mm e spinge il testo giù di una riga della griglia; con `SINK = 14`, i titoli di una e di due righe fanno partire il testo sulla stessa riga. `marginBottom: pt(0)` impedisce al margine predefinito del titolo di sommarsi alla riserva.
+
+### 2 · Lascia che l’indice si compili da solo
+
+<Excerpt region="contents" />
+
+`:::toc` nel Markdown stampa una voce per ogni titolo elencato: numero, titolo, puntini di guida, etichetta di pagina e, tramite `subtitle`, l’autore. `buildDocument` impagina di nuovo il libro finché le etichette di pagina non smettono di cambiare, così un saggio rinominato o allungato aggiorna l’indice ([indice](/it/docs/configuration-notes-references#indice-dei-contenuti)). Il numero di una voce prende il carattere e il corpo del titolo, a meno che `numberFontFamily` o `numberFontSize` non dicano altro, e poggia sulla linea di base della prima riga del titolo a qualunque corpo. Un libro diviso in parti riceve anche una riga per ogni `:::part`, disegnata da `toc.parts.design`, come in <RecipeLink slug="parts-in-colour">Parti a colori</RecipeLink>.
+
+### 3 · Autore sul verso, saggio sul recto
+
+<Excerpt region="running-heads" />
+
+Ogni testatina è ancorata alla pagina, a 11 mm dal bordo superiore, e `parity` sceglie il lato: il folio si allinea al bordo esterno del testo e il nome o il titolo sta 7 mm più all’interno. Il `pages: 'body'` in `head()` tiene le testatine lontane dalle aperture, dove la firma nomina già l’autore, e il `pages: 'opener'` del piè di pagina vi stampa invece un folio al piede ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). `{chapterTitle}` stampa il titolo del saggio senza il suo numero.
+
+### 4 · Tieni la copertina e l’indice fuori dal conteggio
+
+<Excerpt region="front" />
+
+Con `numbered: false` la copertina e l’indice non fanno avanzare il contatore, quindi Hazlitt è I, e `toc: false` li tiene fuori dall’elenco ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)). Entrambi gli stili ereditano il `breakBefore` del livello, con parità `'any'`, ed è per questo che l’indice segue la copertina a pagina 2 senza un `:::pagebreak`. Lo stile della copertina occupa tutta la pagina in un libro a una colonna perché un design tenuto nella sua colonna viene tagliato al piede della colonna, cosa che lascerebbe 22 mm di carta sotto il paesaggio.
+
+### 5 · Scrivi ogni colore con il suo collegamento alla palette
+
+<Excerpt region="palette" />
+
+`col()` scrive l’esadecimale di ogni colore accanto al suo `paletteId`, e il motore segue quel collegamento: le firme, le testatine e la copertina prendono ciò che `colorPalette` contiene sotto quell’id, quindi una seconda palette con gli stessi id ricolora l’intero libro. Puntare `main-color` sull’inchiostro copre tutti i valori predefiniti che la configurazione non ridichiara, che altrimenti uscirebbero nel blu del motore, `#295AA3`.
+
+## Varianti
+
+### Elenca dove è apparso per la prima volta ogni saggio
+
+`toc.subtitle` stampa qualsiasi attributo del titolo, quindi lo stesso Markdown può elencare sotto il titolo la prima rivista di ogni saggio.
+
+```diff
+-const authorLine = { enabled: true, attr: 'author', fontFamily: 'Spectral', fontSize: pt(10),
++const authorLine = { enabled: true, attr: 'source', fontFamily: 'Spectral', fontSize: pt(10),
+```
+
+### Metti il titolo del libro sul verso
+
+Molti libri mettono il proprio titolo sul verso e quello del capitolo sul recto; `{title}` lo legge dal frontmatter del Markdown e stampa «AFOOT».
+
+```diff
+-const versoAuthor = head('verso-author', '{attr.author}', 'even',
++const versoAuthor = head('verso-author', '{title}', 'even',
+```
+
+### Apri ogni saggio su un recto
+
+Con la parità `'odd'`, Stevenson passa a pagina 9 dietro una pagina 8 bianca. I due stili delle pagine preliminari hanno allora bisogno di un loro `'any'`, altrimenti l’indice eredita `'odd'` e si apre a pagina 3 dietro un verso bianco.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' } }; // 'any': each piece opens on the next page
++  breakBefore: { enabled: true, parity: 'odd' } };
+-const bare = { numbered: false, toc: false, header: { elements: [] }, footer: { elements: [] } };
++const bare = { numbered: false, toc: false, breakBefore: { enabled: true, parity: 'any' },
++  header: { elements: [] }, footer: { elements: [] } };
+```
+
+## Errori frequenti
+
+- Hazlitt cita versi in mezzo alle sue frasi. I versi vanno in un blocco `:::verse{style="verse" align=start}`, una riga di Markdown per verso, rientrata di 8 mm, e la frase che riprende dopo va in uno stile `runon` senza rientro. Una citazione in blocco del Markdown non andrebbe bene: le sue righe si uniscono come quelle di un paragrafo, quindi i versi scorrerebbero come prosa.
+- Un attributo che manca a un titolo non stampa nulla e non genera alcun avviso. Senza `author="…"`, la firma e la testatina del verso di un saggio escono vuote e la sua riga sotto il titolo sparisce dall’indice.

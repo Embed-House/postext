@@ -1,0 +1,66 @@
+---
+title: "Segni dei nomi e dei titoli, in verticale e in orizzontale"
+summary: "Gli Annali fondamentali di Xiang Yu con :name e :book, in verticale su pagina rilegata a destra e poi in orizzontale: i segni a sinistra dei nomi, poi sotto."
+plain: "Pagine di saggio di un classico della storiografia cinese. Mostra come segnare i nomi con una linea rossa diritta e i titoli dei libri con una ondulata, nel testo verticale e in quello orizzontale."
+description: "Linee dei nomi propri e linee ondulate dei titoli in un testo cinese classico, composto in verticale e in orizzontale da un solo sorgente Markdown con Postext."
+aliases: ["segno dei nomi propri", "linea dei nomi propri", "segno dei titoli", "sottolineatura ondulata", "專名號", "私名號", "書名號", "全式標點", "cinese classico", "Shiji", "Xiang Yu", "pagine di saggio", "樣張"]
+pageNotes: { "1": "Pagina 1, composta in verticale: una fascia indaco lungo il bordo destro con 史記選讀 in grandi caratteri bianchi, poi la nota introduttiva e cinque convenzioni numerate nel carattere Kai, con linee rosse diritte a sinistra dei nomi, linee rosse ondulate a sinistra dei titoli e tre punti rossi a destra di 萬人敵.", "2": "Pagina 2, composta in verticale: la fascia con 項羽本紀 e la firma, poi il brano in nove colonne lette da destra, con una linea rossa a sinistra di ogni nome.", "3": "Pagina 3, composta in orizzontale: la fascia sulla testa con 項羽本紀, poi lo stesso brano in righe di 28 caratteri, ogni nome sottolineato in rosso, e il colophon in piccoli caratteri grigi." }
+---
+
+## Che cosa comporrai
+
+Tre pagine di saggio per un’antologia delle *Memorie storiche*, nel formato 140 × 203 mm di un libro cinese 大32開. Il brano è l’inizio degli Annali fondamentali di Xiang Yu con la punteggiatura completa di un’edizione classica: una linea diritta accanto a ogni persona, luogo, stato e dinastia, una linea ondulata accanto a ogni titolo di libro e di capitolo, entrambe in vermiglio. La pagina 1 compone la nota introduttiva e le convenzioni del curatore nel carattere Kai. Le pagine 2 e 3 compongono due volte lo stesso Markdown, in verticale e in orizzontale, così la doppia pagina mostra dove vanno i segni: a sinistra dei nomi nelle righe verticali, sotto di essi in quelle orizzontali. Il libro è rilegato a destra, e una fascia indaco porta ogni titolo. <RecipeLink slug="critical-edition-line-numbers">Nº 044, Lycidas nel testo del 1645</RecipeLink>, distingue i nomi alla maniera europea, in corsivo.
+
+## Preparazione
+
+### 1 · Il markup segna, la direzione di scrittura colloca
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `:name[項梁]` e `:book[史記]` lasciano i loro caratteri nel testo, così la ricerca, il testo copiato e il PDF leggono 項梁 e 史記, e aggiungono i segni accanto ([Segni cinesi, ruby e warichu](/it/docs/document-format#segni-cinesi-ruby-e-warichu)). Il lato dipende solo dalla direzione di scrittura: `layout.writingMode: 'vertical-rl'` mette le linee a sinistra dei caratteri, e lo stile di titolo `across`, il cui layout è `'horizontal-tb'`, le mette sotto. `bookTitleMark: 'wavy'` è ciò che un documento `zh-Hant` riceve per impostazione predefinita; è scritto esplicitamente perché un passaggio a `zh-Hans` stamperebbe altrimenti i titoli tra 《》. Due segni dello stesso tipo che si toccano, come in 東漢班固 o 史記項羽本紀, cedono ciascuno un ottavo di em alle estremità che si incontrano, così le linee si leggono come due nomi.
+
+### 2 · Un’interlinea con spazio per i segni
+
+<Excerpt region="type" />
+
+I segni vivono nello spazio tra le righe e non cambiano mai il passo delle righe ([Segni, ruby e warichu](/it/docs/configuration-east-asian#segni-ruby-e-warichu)). A 10,5 pt su 18 pt lo spazio è di 0,71 em, che contiene le linee dei nomi di una colonna e i punti della successiva, come nella quinta convenzione di pagina 1. La griglia conta la pagina in caratteri: 42 lungo ogni riga e 17 righe, e sposta i margini perché la gabbia del testo sia esattamente quella: 25,7 mm di margine di testa, 21,7 mm di margine di piede ([Griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri)).
+
+### 3 · Un’apertura che ruota con la pagina
+
+<Excerpt region="opener" />
+
+Il design di un titolo si dispone nel flusso della sua pagina, quindi un solo insieme di elementi serve entrambe le direzioni ([Scrittura verticale](/it/docs/configuration-page-layout#scrittura-verticale)). Ancorata all’angolo superiore sinistro dell’abbondanza, la fascia si stende sulla testa della pagina orizzontale e lungo il bordo destro di quelle verticali, dove comincia la lettura. Anche l’occhiello, il titolo e la firma si impilano nel flusso: uno sotto l’altro nella pagina orizzontale, uno a sinistra dell’altro in quella verticale. La lunghezza della fascia si misura lungo il flusso: 181,3 mm la fermano al piede del testo verticale, lontano dal folio, e la fanno andare oltre il rifilo della pagina orizzontale.
+
+### 4 · Folio per un libro rilegato a destra
+
+<Excerpt region="folios" />
+
+Il testo verticale rilega il libro a destra ([Rilegatura](/it/docs/configuration-page-layout#rilegatura)): la pagina 1 sta a sinistra del dorso, e il bordo esterno di un recto è quello sinistro. Il folio dispari va in basso a sinistra e quello pari in basso a destra, al contrario di un libro occidentale, e `pageNumbering.format: 'trad-chinese-informal'` li stampa come 一, 二, 三. La riga di servizio tra i due viene da un attributo di ciascun titolo, `slug="…"`; insieme al colophon, è tutto ciò che cambia tra l’edizione inglese e quella spagnola.
+
+### 5 · Un secondo inchiostro
+
+<Excerpt region="palette" />
+
+Un’edizione classica stampa i segni nell’inchiostro del testo. Un’antologia per studenti può stamparli in un secondo colore, perché si distinguano dai tratti dei caratteri: `annotationColor` li collega al `mark` della tavolozza, il vermiglio di un commento in inchiostro rosso, e una sola modifica a quella voce ricolora ogni linea e ogni punto del libro.
+
+## Varianti
+
+### Stampa i titoli tra 《》
+
+I libri della Cina continentale, fuori dai classici, compongono i titoli tra parentesi: il Markdown resta com’è e le parentesi si stampano come punteggiatura del testo.
+
+```diff
+-  bookTitleMark: 'wavy', // zh-Hant's default; mainland editions of the classics use it too
++  bookTitleMark: 'brackets', // 《史記》《項羽本紀》
+```
+
+### Stampa i segni nell’inchiostro del testo
+
+Lascia `annotationColor` non impostato e ogni segno prende il colore del blocco che segna.
+
+```diff
+-  annotationColor: col('mark'), // unset, the marks print in the colour of the text
+```
+
+## Errori frequenti
+
+- Un titolo disegnato da un design stampa il suo testo attraverso il design, e il testo di design perde i segni: `# :book[項羽本紀]` non mostrerebbe alcuna linea ondulata nella fascia. Anche le testatine, le didascalie e le celle di tabella stampano il loro testo senza segni.
+- Postext non si ferma su `cjkMarksExceedLeading`: la build lo elenca in `doc.contentWarnings` e il pannello Verifiche della Sandbox lo mostra, ma le pagine si stampano comunque, con i segni che invadono la riga successiva. Quando cambi l’interlinea, leggi quell’elenco; a 15 pt contiene ogni paragrafo segnato di queste pagine.

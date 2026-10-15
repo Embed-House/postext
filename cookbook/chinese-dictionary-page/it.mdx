@@ -1,0 +1,73 @@
+---
+title: "Una pagina di dizionario cinese con i lemmi guida"
+summary: "Quattro pagine di un Dizionario Kangxi in ordine pinyin: {firstMark.h2} e {lastMark.h2} stampano il primo e l’ultimo lemma di ogni pagina nella testatina."
+plain: "Quattro pagine di un classico dizionario cinese. L’angolo in alto di ogni pagina mostra la sua prima e la sua ultima voce, così il lettore trova una parola sfogliando."
+description: "Un dizionario cinese a due colonne in Postext: lemmi con il pinyin sopra, accezioni di seguito numerate ① ② e lemmi guida nella testatina, con il codice."
+question: "Come stampo il primo e l’ultimo lemma di ogni pagina nella testatina di un dizionario cinese?"
+aliases: ["dizionario", "dizionario cinese", "字典", "康熙字典", "Dizionario Kangxi", "lemmi guida", "parole guida", "richiami", "书眉", "書眉", "lemmi", "ordine pinyin", "pinyin sopra i lemmi", "反切", "fanqie", "numeri cerchiati", "numeri delle accezioni", "unghiatura", "guide words"]
+pageNotes: { "1": "Pagina 634, un verso. La testatina dice 634 e 天—殄, sopra un filetto sottile. Due colonne di voci da 天 tiān a 殄 tiǎn: ogni lemma in Song Black rosso con il suo pinyin sopra, poi le letture dei dizionari di rime e le accezioni di seguito, numerate ① ② in rosso. Le voci si susseguono senza spazio tra loro, ed entrambe le colonne finiscono sull’ultima riga di griglia. Un’unghiatura rossa con una T sul bordo sinistro.", "2": "Pagina 635, un recto: 腆—髫 e il folio in alto a destra. La prima colonna si apre con la fine della voce 殄, poi le voci da 腆 tiǎn a 髫 tiáo; l’unghiatura T sul bordo destro.", "3": "Pagina 636: la pagina si apre con la fine della voce 髫, e la testatina dice 挑—鐵, il primo e l’ultimo lemma che vi cominciano; 挑 compare una seconda volta sotto la lettura tiǎo.", "4": "Pagina 637: 餮—庭, la fine di 鐵, le voci da 餮 tiè a 庭 tíng e sotto di esse un colophon: una frase di cinese in Kai, due righe, e sei righe di crediti in inglese." }
+---
+
+## Che cosa comporrai
+
+Quattro pagine dal mezzo di un’edizione di lettura del Dizionario Kangxi (康熙字典, 1716), riordinato in ordine pinyin da 天 tiān a 庭 tíng. Ogni lemma è in Song Black rosso con il suo pinyin sopra; le letture dei dizionari di rime (反切) e le accezioni seguono in un solo paragrafo, con le accezioni numerate ① ② nello stesso rosso. La pagina è un 大32开, 140 × 203 mm, due colonne di 17 caratteri di 小五 (9 pt) su una griglia di 31 righe, ogni colonna piena fino all’ultima riga. All’angolo esterno di ogni pagina la testatina nomina il primo e l’ultimo lemma che contiene, così un lettore che cerca 蜩 va alla pagina intitolata 腆—髫. <RecipeLink slug="dictionary-thumb-index">The Sailor’s Word-Book</RecipeLink> è il dizionario in alfabeto latino con cui confrontarlo.
+
+## Preparazione
+
+### 1 · Lemmi guida dai lemmi
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni lemma è un titolo di livello 2, e `{firstMark.h2}` e `{lastMark.h2}` stampano il testo del primo e dell’ultimo titolo di livello 2 che comincia sulla pagina ([Elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). Il segno sono i caratteri del titolo: `## {天|tiān}` segna 天, e la lettura resta sopra il lemma. Una voce che prosegue da una pagina alla successiva conta solo dove sta il suo lemma: <PageRef page={2}>pagina 635</PageRef> si apre con la fine di 殄 e ha per testatina 腆—髫. Il livello 1 è riservato alle lettere: nessuna si apre in queste quattro pagine, ma un titolo di lettera non conterebbe come lemma guida.
+
+### 2 · Il pinyin sopra i lemmi
+
+<Excerpt region="headwords" />
+
+`{天|tiān}` è la forma compatta di `:ruby[天]{rt="tiān"}`, una lettura sopra un carattere ([Segni cinesi, ruby e warichu](/it/docs/document-format#segni-cinesi-ruby-e-warichu)). Un titolo senza una grafica propria compone la sua lettura; una grafica del titolo stamperebbe 天 da solo. La lettura prende il carattere del titolo stesso, Black, a meno che `cjk.ruby.fontFamily` non ne nomini uno, quindi si nomina il Song regolare. Metà di 15 pt fa 7,5 pt, e la riga di 30 pt del titolo le lascia spazio sopra il lemma, così il titolo occupa due righe della griglia e il testo sotto resta sulle righe di 15 pt di entrambe le colonne. Una lettura pinyin viene alzata della profondità dei discendenti del suo carattere più 0,04 em, così la g di tīng finisce 0,6 pt sopra il quadratone di 汀.
+
+### 3 · Un paragrafo per voce
+
+<Excerpt region="senses" />
+
+Il Dizionario Kangxi compone una voce di seguito: le letture dei dizionari di rime, poi ogni accezione introdotta da 又. Qui il 又 è diventato numeri cerchiati, scritti come `**②**`, e `boldColor` li stampa nel cinabro dei lemmi; nel testo non c’è altro grassetto. Un’accezione che il Kangxi legge in un altro modo mantiene la propria lettura, come fa 跳 ② con 徒刀切. Il compositore tratta da ① a ⑳ come caratteri cinesi: una riga non finisce mai su un numero la cui accezione apre la riga seguente, e nessuno spazio Han–latino si inserisce tra il numero e il suo testo, quindi i numeri si scrivono così come sono. Il bilanciamento delle colonne è disattivato (`headings.balancing.enabled: false`), così nessuna colonna apre spazio sopra i suoi lemmi e ogni voce segue la precedente alla stessa distanza.
+
+### 4 · L’unghiatura della lettera T
+
+<Excerpt region="tab" />
+
+Le sillabe pinyin cominciano con 23 delle 26 lettere (nessuna con I, U o V), quindi l’altezza della gabbia è divisa in 23 gradini di 7,13 mm, e la T prende il 19º. L’unghiatura è larga 9 mm e comincia 3 mm oltre il rifilo, così la pagina la taglia di netto sul margine esterno e solo i suoi angoli interni mostrano l’arrotondamento; un file di stampa con `page.cutLines` porterebbe quei 3 mm nella sua abbondanza. La lettera è centrata sui 6 mm interni alla pagina. Tutte e quattro le pagine sono nella T, quindi l’unghiatura resta alla stessa altezza; <RecipeLink slug="dictionary-thumb-index">the Sailor’s Word-Book</RecipeLink> la fa scendere lungo il bordo da una lettera all’altra.
+
+### 5 · Ogni carattere carica i propri glifi
+
+<Excerpt region="voices" />
+
+Fontsource taglia ogni carattere cinese in circa cento file per intervallo di caratteri, e `loadCjkFonts` carica i file che contengono il testo che riceve. Il Song regolare riceve tutto l’esempio, compreso l’inglese del colophon. Il Black riceve i trenta lemmi, il peso grassetto i numeri delle accezioni, lo Hei i lemmi e le cifre delle testatine, e il Kai la frase di cinese del colophon. `cjkPdfProvider` incorpora gli stessi file nel PDF, ciascuno ridotto ai caratteri che usano le sue pagine.
+
+## Varianti
+
+### Primo lemma sul verso, ultimo sul recto
+
+Alcuni dizionari stampano un solo lemma guida per pagina, il primo in testa al verso e l’ultimo in testa al recto, così la doppia pagina si legge 天 … 髫.
+
+```diff
+-  head('verso-guide', '{firstMark.h2}—{lastMark.h2}', 'even', SIDE + 8, GUIDE),
+-  head('recto-guide', '{firstMark.h2}—{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
++  head('verso-guide', '{firstMark.h2}', 'even', SIDE + 8, GUIDE),
++  head('recto-guide', '{lastMark.h2}', 'odd', SIDE + 8, GUIDE),
+```
+
+### Pinyin con ɑ e ɡ
+
+I dizionari cinesi compongono il pinyin in un carattere con la a e la g a un solo occhiello. Nomina Andika per le letture e aggiungilo a `FONTS` (`'Andika': ['400']`, con il suo credito OFL).
+
+```diff
+-  ruby: { fontFamily: SONG, fontSize: em(0.5), color: col('cinnabar') },
++  ruby: { fontFamily: 'Andika', fontSize: em(0.5), color: col('cinnabar') },
+```
+
+### Lemmi al corpo del testo
+
+Un dizionario compatto compone il lemma in grassetto all’inizio del suo paragrafo. Metti le voci in `:::paragraphs{style="entry"}`, apri ognuna con `**{天|tiān}**` e stampa `{firstMark.entry}`: un paragrafo che si apre con un tratto in grassetto segna la pagina con esso.
+
+## Errori frequenti
+
+- Con il bilanciamento delle colonne attivo, una colonna che non riesce ad accogliere il lemma successivo con due righe del suo testo sotto (`bodyText.widowMinLines`) finisce prima, e le righe avanzate vanno sopra i lemmi, al massimo una per lemma: una voce sta una riga più staccata dalla precedente, la successiva no. Disattivato, una colonna del genere finisce corta.

@@ -1,0 +1,87 @@
+---
+title: "Romanzo in brossura: aperture abbassate e capitoli sul recto"
+summary: "Pinocchio in brossura da 140 × 216 mm: una copertina dipinta e un colophon senza testatine, poi capitoli abbassati sui recto sotto un numero in corsivo."
+plain: "I primi due capitoli di un romanzo italiano in un libro in brossura. Ogni capitolo comincia su una pagina di destra, più in basso, sotto un grande numero di capitolo."
+description: "Le avventure di Pinocchio di Collodi in Postext: copertina dipinta, colophon sul verso, capitoli abbassati sui recto, un verso bianco senza folio e finalini."
+question: "Come faccio cominciare ogni capitolo su una pagina di destra, abbassato di un terzo, come in una brossura?"
+aliases: ["brossura", "romanzo in brossura", "trade paperback", "romanzo", "apertura abbassata", "abbassamento del capitolo", "apertura di capitolo", "recto", "pagina di destra", "pagina dispari", "verso bianco", "pagina bianca", "parità", "attacco in maiuscoletto", "prima frase in maiuscoletto", "finalino", "fleurons", "fregio tipografico", "ornamento", "colophon", "pagina del copyright", "copertina", "testatine di sezione", "Carlo Collodi", "Pinocchio", "Le avventure di Pinocchio", "Telemaco Signorini", "Kate Chopin", "The Awakening"]
+pageNotes: { "1": "La copertina: un particolare di Settignano di Telemaco Signorini, una strada con la bottega «Vendita di pane paste e canova di vino», una donna seduta sulla soglia e un gatto sul selciato al sole; sotto, il titolo Pinocchio in un grande corsivo e «Carlo Collodi» in maiuscoletto.", "2": "Il colophon, composto in piccolo al piede della pagina, senza testatina né folio: «Le avventure di Pinocchio uscì in volume da Felice Paggi, a Firenze, nel 1883.»", "3": "Il capitolo I abbassato su un recto: una «I» in corsivo, un filetto sottile e corto color ruggine, la prima battuta, «— C’era una volta....», su una riga di maiuscoletto, e il dialogo da 81 mm in giù.", "5": "La fine del capitolo I: quattro righe, l’ultima «gli era diventata turchina dalla gran paura.», e il finalino a fiore di camomilla.", "6": "Un verso bianco senza testatina né folio, lasciato perché il capitolo II si apra su un recto.", "7": "Il capitolo II si apre come il capitolo I, con la prima frase, «In quel punto fu bussato alla porta.», su una sola riga; la pagina finisce una riga più in alto, su «tirar di scherma e fare i salti».", "9": "Una nona pagina, un recto con «Pinocchio» in corsivo nella testatina: la lite tra Geppetto e mastr’Antonio a battute di una riga, poi il capitolo II finisce su «se ne tornò zoppicando a casa.», seguito dal finalino." }
+---
+
+## Che cosa comporrai
+
+Nove pagine di un romanzo in brossura da 140 × 216 mm contengono i primi due capitoli di *Le avventure di Pinocchio* (1883) di Carlo Collodi. La copertina, caricata come JPEG, è un particolare di *Settignano* (1880 circa), un dipinto di Telemaco Signorini: una strada con la bottega del pane e del vino, una donna seduta sulla soglia e un gatto sul selciato al sole. Il colophon sta al piede del suo verso. Ogni capitolo si apre su un recto con il testo a 81 mm dalla testa, sotto un numero in corsivo da 48 pt, un filetto sottile color ruggine di 18 mm e la prima frase del capitolo in maiuscoletto, centrata: in tutti e due i capitoli sta su una riga. Il capitolo I finisce a pagina 5, dopo quattro righe, con un finalino a fiore di camomilla, quindi la pagina 6 resta bianca, senza testatina né folio, e il capitolo II si apre a pagina 7 e finisce a pagina 9. Le testatine portano l’autore sui versi e il titolo in corsivo sui recto.
+
+## Preparazione
+
+### 1 · L’apertura viene dal titolo e dal suo attributo
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Nella prima edizione ogni capitolo di Collodi si apre con un sommario, che questa edizione lascia fuori: ogni titolo contiene solo il suo numero (`# I`), che `{titleText}` stampa. `{attr.lead}` stampa l’attributo `lead` del titolo, che contiene la prima frase del capitolo; il paragrafo Markdown sotto il titolo comincia con la frase successiva ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). L’attacco è un testo centrato da titolazione. Quello del capitolo I, la battuta *— C’era una volta....*, sta su una riga, e così quello del capitolo II, *In quel punto fu bussato alla porta.*: nessuno dei due attributi ha un `\n`, che nell’edizione inglese spezza la prima frase secondo il senso, dopo *cage* e dopo *bright;*. Il riquadro dell’attacco comincia nove righe della griglia sotto la testa della gabbia, e un `minHeight` di 12 righe lascia due righe vuote sotto un attacco di una riga e una sotto un attacco di due righe: il testo di ogni capitolo comincia sulla stessa riga della griglia. Senza `minHeight` il testo comincia subito sotto l’attacco ([span e design avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). `marginBottom: pt(0)` sostituisce il margine predefinito di mezzo em del livello, che spingerebbe il testo una riga più in basso.
+
+`breakBefore` con parità `'odd'` manda ogni capitolo su un recto, con un verso bianco solo dopo un capitolo che finisce su un recto ([interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)). Per forzare un recto dove non c’è un titolo, scrivi `:::pagebreak{parity="odd"}` nel Markdown; in un’impaginazione di due o più colonne, `:::columnbreak` sposta invece il testo alla colonna successiva ([`:::pagebreak`](/it/docs/document-format#pagebreak)).
+
+### 2 · Una pagina in brossura di righe intere
+
+<Excerpt region="page" />
+
+Il margine inferiore è ciò che il formato di 216 mm lascia dopo il margine superiore e 35 righe da 14 pt, così ogni pagina piena finisce sulla stessa riga, come fanno le pagine 3, 4 e 8. La pagina 7 finisce una riga più in alto, per non lasciare da sola in testa alla pagina 8 l’ultima riga di un paragrafo. Con `mirror: true` il margine interno di 20 mm cade sul lato del dorso sia nei recto sia nei versi ([margini speculari](/it/docs/configuration-page-layout#margini-speculari)). La giustezza di 104,5 mm contiene circa 69 caratteri di Crimson Pro a 10,5 pt. Il testo mantiene gli spazi tra le parole tra 0,7 e 1,9 volte la larghezza normale; con il minimo predefinito di 0,6, una riga dell’edizione inglese si stringe a 0,62. Nell’edizione italiana nessuna riga supera 1,9 (1,87 al massimo).
+
+### 3 · Testatine che saltano aperture e pagine bianche
+
+<Excerpt region="heads" />
+
+`parity: 'even'` mette l’autore in maiuscoletto Cormorant SC sui versi, e `'odd'` il titolo in corsivo sui recto; i folii stanno sul bordo esterno della gabbia. `pages: 'body'` tiene tutti e quattro gli elementi lontani dalle aperture e dalla pagina 6, il verso bianco che aggiunge l’interruzione per parità. Con `pages: 'all'` quella pagina stamperebbe *6* e *Carlo Collodi*. Le aperture ricevono invece un folio al piede, un elemento del piè di pagina che `pages: 'opener'` limita a esse ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)).
+
+### 4 · La copertina è una sezione senza testatine
+
+<Excerpt region="cover" />
+
+La copertina è un titolo, `# Pinocchio {style="cover"}`. Il suo stile colloca il dipinto sui 134 mm superiori, il titolo del frontmatter a 50 pt e l’autore in maiuscoletto. Lo stile si applica anche alla sezione che il titolo apre, le pagine 1 e 2, fino al capitolo I. I suoi `header` e `footer` vuoti tengono il folio al piede lontano dalla copertina e le testatine lontane dal colophon. Il suo margine superiore mette il colophon sulle ultime sei righe della griglia della gabbia, così l’ultima riga del colophon è allineata con l’ultima riga di pagina 3 ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)). La colonna della sezione comincia a 165 mm dalla testa, e il design, ancorato alla pagina e all’abbondanza, dipinge comunque sopra di essa: solo il piede di una colonna taglia un design tenuto al suo interno.
+
+<PageShot page={2} crop="0,0.7,1,0.24" caption="Pagina 2: il colophon al piede del verso della copertina, senza testatina né folio." />
+
+Il dipinto cambia con l’edizione: `t()` sceglie il file della risorsa `cover`, e l’edizione italiana carica `cover-it-1190.jpg`, un ritaglio di *Settignano* alle stesse proporzioni di 140 × 134 mm e agli stessi pixel di `cover-1190.jpg`, che le altre edizioni caricano. Il frontmatter dà il titolo breve, *Pinocchio*, che sta su una riga a 50 pt; il titolo completo del libro è nel colophon.
+
+### 5 · Un finalino chiude ogni capitolo
+
+<Excerpt region="tailpiece" />
+
+Il tipo ornamento non ha prefisso di didascalia, quindi il fiore di camomilla si stampa senza etichetta, largo il 17% della giustezza, dove sta `::resource{id="tailpiece-1"}` ([tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa)). Un inserimento in linea mantiene una riga della griglia sopra di sé, e il `:::space` che lo precede ne aggiunge una seconda tra l’ultima riga del capitolo e il fiore ([`:::space`](/it/docs/document-format#space)). Entrambi i finalini disegnano lo stesso file, `fleuron.svg`, con due id, perché una risorsa si colloca una sola volta.
+
+## Varianti
+
+### Lascia che il capitolo II segua nella pagina successiva
+
+Con la parità `'any'`, il capitolo II si apre a pagina 6, un verso, e il libro finisce a pagina 8; il folio al piede è centrato sulla gabbia, non sulla pagina, quindi anche su quel verso sta sotto il centro del testo.
+
+```diff
+-const chapter = { level: 1, breakBefore: { enabled: true, parity: 'odd' },
++const chapter = { level: 1, breakBefore: { enabled: true, parity: 'any' },
+```
+
+### Segna un cambio di scena dentro un capitolo
+
+Messo tra due righe `:::space`, lo stesso fiore segna un cambio di scena, e il paragrafo che lo segue comincia senza rientro perché `indentAfterHeading` è disattivato. Nell’edizione inglese, collocato dopo *seemed long to him.*, il fiore cade al piede di pagina 4; il secondo spazio lì non ci sta più e viene scartato. Lo stacco aggiunge quattro righe, che spingono da solo il finalino del capitolo I a pagina 6, sotto una testatina, quindi riadatta il capitolo dopo averne aggiunto uno.
+
+```diff
+ const resources = [
++  svg('break-1', 'fleuron.svg', 40, 12, 'A scene break.'),
+```
+
+```md
+That was why the morning seemed long to him.
+
+:::space
+
+::resource{id="break-1"}
+
+:::space
+
+“You are burnt beyond recognition,” he added, …
+```
+
+## Errori frequenti
+
+- Con `'always-odd'` una pagina bianca di separazione segue ogni sezione prima di qualunque riempimento per parità: nell’edizione inglese il capitolo I passerebbe a pagina 5, dopo due pagine bianche, e il libro arriverebbe a dieci pagine.
+- Le pagine dell’edizione inglese sono adattate al testo. Con un margine esterno di 16 mm invece di 15,5, la pagina 7 divide *after-din-ner* a un secondo trattino e finisce una riga prima, la pagina 8 chiude un paragrafo sul frammento *spondent.*, e il secondo finalino cade su una nona pagina. Controlla il piede di ogni pagina dopo aver cambiato la giustezza, il corpo o l’abbassamento.
+- Nell’edizione inglese *Mr.* e *Mrs.* sono legati al nome con uno spazio indivisibile (U+00A0). Il paragrafo che finisce con *seemed long to him.* mantiene uno spazio normale, perché legare lì il nome allarga la sua prima riga a 2,2 volte lo spazio normale tra le parole.

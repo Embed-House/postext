@@ -1,0 +1,79 @@
+---
+title: "Un racconto catalano, sillabato secondo le regole dell’IEC"
+summary: "El transplantat di Narcís Oller, integrale, in un tascabile di 32 pagine: sillabe catalane dell’IEC, l·l divisa come il- | lusió e un’incisione per capitolo."
+plain: "Un intero romanzo breve in catalano, composto come un piccolo tascabile. Le parole vanno a capo come chiedono le guide di stile catalane, compresa la doppia l con il punto."
+description: "El transplantat di Oller (testo del 1928) in tascabile di 12 × 18,5 cm: locale 'ca', sillabazione IEC, l·l divisa come il- | lusió, aperture con un’incisione."
+question: "Come sillabo correttamente il catalano, con l·l, apostrofi e pronomi uniti da un trattino?"
+aliases: ["catalano", "català", "sillabazione catalana", "ela geminada", "l·l", "punt volat", "punto in alto", "IEC", "Institut d’Estudis Catalans", "pronomi enclitici", "Narcís Oller", "tascabile", "romanzo breve integrale", "antiporta", "incisione"]
+pageNotes: { "2": "L’antiporta: un’incisione di un fornaio robusto con il grembiule bianco sulla porta della sua bottega di paese, con il fuoco del forno alle spalle; sotto, «EL FORNER DE LES MONGES» in maiuscoletto.", "3": "Il frontespizio: «NARCÍS OLLER» in maiuscoletto, «El transplantat» in grande corsivo rosso, sotto la riga De «Croquis del natural» e un breve filetto rosso.", "27": "Una pagina di testo del capitolo IV. A metà altezza una riga finisce con «titil-» e la successiva si apre con «laven»: il punto in alto di «titil·laven» lascia il posto al trattino." }
+---
+
+## Che cosa comporrai
+
+*El transplantat* di Narcís Oller per intero, nel testo delle sue *Obres completes* (Barcellona, 1928), come un tascabile di 12 × 18,5 cm di 32 pagine. Un occhiello, un’antiporta con il fornaio al suo forno, un frontespizio in corsivo rosso di Cormorant Garamond e una nota sull’edizione precedono i quattro capitoli. Ogni capitolo si apre sotto un’incisione alta dodici righe, con il suo numero romano in rosso. Il testo, Gentium Book Plus a 9,85 pt, va a capo sulle sillabe catalane come chiede l’Institut d’Estudis Catalans: almeno due lettere per lato, nessuna divisione tra vocali in iato, nessuna subito dopo un apostrofo, e *titil·laven* si divide come *titil-* | *laven*, con il trattino al posto del punto in alto. Il dialogo è composto con lineette e le citazioni in «cometes baixes».
+
+## Preparazione
+
+### 1 · Il catalano con il suo codice
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `locale: 'ca'` seleziona i pattern catalani, che da postext 1.14 seguono il *Llibre d’estil* dell’IEC ([lingue supportate](/it/docs/justification#lingue-supportate)). I pattern sono quelli usati da TeX, con almeno due lettere per lato di una divisione invece delle tre del pacchetto npm, così *ter-ra*, *cai-xa* e *plu-ja* possono dividersi. Le vocali in iato restano unite (*cièn-cia*, *ca-mions*), ma una *i* tra vocali apre la sua sillaba (*fe-ia*). La *ela geminada* si divide tra le sue due *l*: la riga finisce con *titil-* e la successiva si apre con *laven*, senza punto in alto da nessuna delle due parti, e Knuth–Plass misura la riga senza il punto.
+
+<PageShot page={27} crop="0.06,0.495,0.88,0.085" caption="Pagina 27: «titil·laven» a fine riga, composto «titil-» | «laven». È l’unica l·l che cade a fine riga in queste 32 pagine." />
+
+`compounds: false` tiene interi un verbo e il suo pronome, salvo che sul loro trattino (*arrossegar-* | *se*), come preferisce l’IEC ([sillabazione](/it/docs/configuration-text#sillabazione)). Costa una riga troppo spaziata: a pagina 7 la riga prima di *d’inaugurar-se* allarga gli spazi a 1,88×, anche con `maxJustifyTracking: 10` che assorbe l’eccesso sulle altre righe.
+
+### 2 · Una pagina tascabile di righe intere
+
+<Excerpt region="page" />
+
+Il margine inferiore si ricava dal formato, dal margine superiore e da `LINES`, così la gabbia del testo contiene 29 righe da 14 pt e ogni pagina piena finisce sulla stessa linea di base. La giustezza di 89 mm contiene circa 63 caratteri di Gentium Book Plus. `mirror: true` mantiene il margine di 16 mm verso il dorso su entrambe le pagine di una doppia pagina ([margini speculari](/it/docs/configuration-page-layout#margini-speculari)).
+
+### 3 · Un’apertura per quattro capitoli
+
+<Excerpt region="opener" />
+
+`resourceId: '{attr.art}'` disegna l’immagine che il titolo nomina, così `# II {style="capitol" art="cap2"}` apre il capitolo II sotto la sua incisione con lo stesso stile degli altri ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). `minHeight` occupa sedici righe, dodici per l’immagine e quattro per il numerale e il suo filetto, così il testo comincia sulla diciassettesima riga della pagina, uguale in ogni capitolo.
+
+### 4 · Quattro pagine prima del capitolo I
+
+<Excerpt region="front" />
+
+Ogni elemento delle pagine preliminari è un titolo di primo livello con uno stile proprio: `# El transplantat {style="portada"}` stampa l’autore e il sottotitolo dal frontmatter e il titolo come titolo del libro. Ogni stile ribadisce la sua interruzione di pagina, perché uno stile eredita quella del suo livello, e svuota intestazione e piè di pagina, così queste pagine non portano testatine né folio. L’antiporta cade a pagina 2, un verso, quindi sta di fronte al frontespizio nella doppia pagina.
+
+### 5 · L’autore sul verso, il titolo sul recto
+
+<Excerpt region="heads" />
+
+`parity` mette l’autore sui versi e il titolo sui recti; `pages: 'body'` li tiene lontani dalle aperture, dove al loro posto c’è un folio al piede con `pages: 'opener'`. `SHIFT` sposta ogni testatina al centro della gabbia del testo, mezzo millimetro fuori dal centro della pagina perché i due margini sono diversi.
+
+### 6 · Cinque incisioni, nessuna etichetta
+
+<Excerpt region="pictures" />
+
+Le immagini appartengono a un tipo di risorsa con `captionPrefix` vuoto, così nulla le numera né le etichetta. Ognuna è dichiarata alla sua dimensione in pixel e caricata sotto il suo id di file prima della composizione. Prima di salvarle, il loro bianco è stato portato al crema della pagina e il loro nero al suo inchiostro, così si stampano come parte della pagina e non come fotografie incollate sopra.
+
+## Varianti
+
+### Lascia dividere anche i pronomi
+
+Con il `compounds: true` predefinito, *d’inaugurar-se* si divide dentro il verbo, come *d’i-* | *naugurar-se*, e pagina 7 perde la sua riga troppo spaziata: nessuna riga del libro si allarga oltre 1,6×. La divisione `titil-` | `laven` resta a pagina 27. Il prezzo è una *i* isolata dopo l’apostrofo a fine riga.
+
+```diff
+-  hyphenation: { compounds: false },
++  hyphenation: { compounds: true },
+```
+
+### Apri ogni capitolo su un recto
+
+`parity: 'odd'` aggiunge una pagina bianca prima di un capitolo che comincerebbe su un verso, come in un’edizione più ariosa. Il capitolo IV, che si apre a pagina 26, passa a pagina 27 dopo una pagina bianca.
+
+```diff
+-  breakBefore: { enabled: true, parity: 'any' }, // a chapter opens on the next page, either side
++  breakBefore: { enabled: true, parity: 'odd' },
+```
+
+## Errori frequenti
+
+- Guarda *l·l* in un carattere da testo prima di sceglierlo. Da postext 1.30 il `locale` del documento è anche la lingua in cui viene sagomato il suo testo (fino alla 1.29 era la lingua della pagina che mostrava il libro), e ogni carattere risponde al catalano a modo suo. Gentium Book Plus ha un solo punto in alto per tutte le lingue, 0,17 em tra le due *l*. Crimson Pro, che ha composto questo libro fino alla 1.29, allarga il punto a 0,59 em in catalano e lascia un buco in *intel·ligent*. Alegreya e Literata disegnano un punto più stretto solo dove le due *l* arrivano loro in un unico pezzo, così *il·lustrats* esce in un modo in un paragrafo con corsivi e in un altro in un paragrafo senza.
+- Copia il testo da Viquitexts con i suoi corsivi: Oller segna *tentu*, *Ensanxe* e *palacio* come colloquiali o spagnoli, e un’esportazione in testo semplice li perde. Controlla le parole dubbie sulla scansione del volume del 1928: sei volte la trascrizione ha *tom-* dove il verbo è *tornar* (*tomà*, *tomaré*, *tomar*), e una volta *jom* per *jorn*.
+- Con 6.800 parole, i cinque file di contenuto e il kit portano lo script composto a circa 69 KB. Un libro intero è l’esempio più grande che un pen può contenere; un’opera più lunga va in un pacchetto `.postext`.

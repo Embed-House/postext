@@ -1,0 +1,64 @@
+---
+title: "Servizio di rivista su una griglia a tre colonne"
+summary: "layoutType 'multiple' divide la pagina in tre colonne; placement.columns mette foto e un estratto flottante su due di esse, o su tutte e tre."
+plain: "Un servizio di viaggio di sei pagine di un mensile, composto in tre colonne strette. Mostra come collocare foto e una grande citazione su due colonne o su tutta la pagina, e un riquadro di consigli pratici in una."
+description: "Un servizio di viaggio in Postext su tre colonne: doppia pagina fotografica d’apertura, foto su una, due o tre colonne, un estratto flottante e un box laterale."
+question: "Postext può comporre una pagina di rivista in tre colonne, con foto su due di esse?"
+aliases: ["rivista a tre colonne", "tre colonne", "griglia di rivista", "foto su due colonne", "foto a due colonne", "estratto su più colonne", "citazione in evidenza", "box laterale", "servizio di viaggio", "doppia pagina d’apertura", "doppia pagina fotografica", "capolettera", "sommario", "firma", "segno di fine", "mappa di localizzazione", "pull quote"]
+pageNotes: { "1": "Il verso della doppia pagina d’apertura: saline all’alba riempiono la pagina, con l’occhiello «Islands · The Atlantic» e il titolo «The Salt Rakers of Marisal» in bianco sull’acqua scura al piede.", "2": "Il recto: la stessa fotografia prosegue in alto, un salinaro con il suo rastrello di legno davanti a una fila di cumuli di sale bianco; sotto, un paragrafo d’attacco con un capolettera blu di quattro righe nella prima colonna, il sommario in corsivo e la firma sulle altre due, poi tre colonne di testo.", "3": "Tre colonne giustificate con titoletti blu; una fotografia di un rastrello che spinge una cresta di sale bagnato sta in testa alla seconda e alla terza colonna.", "4": "Una fotografia delle saline rosa viste dall’alto attraversa la pagina; sotto, un estratto con filetti blu copre la seconda e la terza colonna.", "5": "Una fotografia di un setaccio che raccoglie cristalli di sale sta in testa alla seconda e alla terza colonna; il ritratto di un anziano salinaro con un cesto sta al piede della prima.", "6": "La pagina di chiusura: un box colorato, «Visiting Marisal», con una piccola mappa dell’isola, riempie la testa della prima colonna; un’alta fotografia del porto al crepuscolo copre le altre due; l’articolo finisce alla stessa altezza in tutte e tre le colonne con un quadratino blu." }
+---
+
+## Che cosa comporrai
+
+Sei pagine del numero di novembre di *Meridian*, un mensile di viaggi, su una pagina di 225 × 297 mm. Il servizio si apre su una doppia pagina: una sola fotografia di saline all’alba attraversa le due pagine, con il titolo in negativo sull’acqua a sinistra e, a destra sotto l’immagine, il paragrafo d’attacco con il suo capolettera, il sommario e la firma. L’articolo prosegue poi in tre colonne giustificate di 61,7 mm ciascuna. Le fotografie occupano due colonne, l’intera larghezza o una colonna; un estratto sta su due colonne tra i paragrafi; un box colorato con una mappa dell’isola apre la pagina di chiusura. Un quadratino blu chiude il testo.
+
+## Preparazione
+
+### 1 · Dividi la pagina in tre colonne, e lascia che gli elementi flottanti ne occupino una, due o tre
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `layoutType: 'multiple'` con `columnCount: 3` divide la gabbia del testo di 195 mm in tre colonne uguali, quindi con un’intercolonna di 5 mm ciascuna è larga 61,7 mm, circa 40 caratteri di Source Serif a 9,6 pt. Il `placement.columns` di un’immagine occupa altrettante colonne adiacenti e le intercolonne tra di esse: la fotografia del rastrello è larga 128,3 mm, e le saline, con `span: 'page'`, gli interi 195 mm. Lo stile dell’estratto fa lo stesso per un riquadro, con `columns: 2` su uno stile `placement: 'top'`, così flotta in testa a due colonne libere e il testo vi scorre attorno. Una griglia a tre colonne si adatta a un servizio di rivista con molte immagini, perché ogni immagine può occupare una, due o tre colonne. Un testo lungo con poche immagini si legge meglio in due colonne più larghe.
+
+### 2 · Apri su una doppia pagina, una fotografia su due pagine
+
+<Excerpt region="spread" />
+
+Ogni metà della fotografia appartiene a uno stile di titolo con `span: 'page'`, e un titolo a tutta larghezza apre sempre una nuova pagina, quindi la pagina del titolo e quella del sommario si susseguono. La metà sinistra riempie il verso e non riserva nulla (`reserve: false`), così il titolo può stare sull’acqua al piede. La metà destra è tagliata a 165 mm, e il paragrafo d’attacco, il sommario e la firma pendono dal contenitore sotto di essa. Il paragrafo d’attacco è un testo di disegno con un `dropCap` di quattro righe, largo una colonna; il suo padding inferiore vuoto conta nell’altezza dell’apertura, così le colonne cominciano 6 mm sotto di esso. `continuation.pageIndexOffset: 83` fa della pagina 84 un verso, così le due metà si fronteggiano.
+
+### 3 · Dichiara le fotografie, e cita ciascuna dove deve finire
+
+<Excerpt region="resources" />
+
+Un elemento flottante va alla prima testa (o al primo piede) libera delle sue colonne dopo la riga che lo cita, quindi sono le righe `::resource` a decidere le pagine. La fotografia del setaccio è citata in cima alla prima colonna della quinta pagina, dove la seconda e la terza colonna sono ancora vuote, quindi le intesta nella stessa pagina. La fotografia del porto è citata in fondo a quella pagina e intesta due colonne della successiva. Le fotografie di uno stesso tipo non si sorpassano mai, quindi le loro citazioni seguono l’ordine dell’articolo. Le bitmap sono misurate ai 150 dpi della pagina: 1500 px fanno 254 mm e si riducono ai 128,3 mm di due colonne.
+
+### 4 · Testatine e folio fuori dalla doppia pagina d’apertura
+
+<Excerpt region="heads" />
+
+Gli elementi d’intestazione si dipingono sopra la pagina e non riservano spazio, quindi il folio e l’etichetta sono ancorati alla pagina nel margine superiore. `pages: 'body'` li tiene lontani da entrambe le pagine della doppia pagina, che sono pagine d’apertura perché ciascuna comincia con un titolo a tutta larghezza. Il recto della doppia pagina ha invece il suo folio al piede, grazie a `pages: 'opener'` e `parity: 'odd'`; il verso, tutto fotografia, non ne porta.
+
+### 5 · Disegna nel codice la mappa del box
+
+<Excerpt region="art" />
+
+La mappa è una risorsa SVG con `placement: 'here'`, citata dentro il blocco del box, così sta sotto il titolo del riquadro alla sua giustezza. Non ha scritte: il testo dentro un SVG non può usare i web font della pagina, quindi è la didascalia a nominare le forme. La punta di freccia sulla rotta del traghetto è un tracciato, perché un `<marker>` non sopravviverebbe a un’esportazione in PDF.
+
+## Varianti
+
+### Metti l’estratto su tutte e tre le colonne
+
+Un riquadro flottante preferisce l’attributo `columns` del blocco a quello del suo stile, così un estratto può occupare l’intera larghezza.
+
+```diff
+- :::callout{type="pull"}
++ :::callout{type="pull" columns="3"}
+```
+
+### Componi l’articolo in due colonne
+
+Per un servizio con meno immagini e paragrafi più lunghi, vedi <RecipeLink slug="magazine-feature-opener">Servizio di rivista: dalla foto d’apertura al segno di fine</RecipeLink>, su un layout `double`.
+
+## Errori frequenti
+
+- Una fotografia su due colonne intesta due colonne ancora vuote. Citata nella seconda colonna, non trova una coppia simile nella sua pagina, perché resta solo la terza colonna, e aspetta la pagina successiva.
+- L’articolo è adattato per finire alla stessa altezza nella sesta pagina sotto la fotografia del porto. Dopo una modifica, controlla che l’ultima pagina sia ancora piena: qualche riga in meno e la fotografia passa a una pagina tutta sua.
+- Con righe di 40 caratteri, un paragrafo giustificato ha pochi punti di divisione. `maxJustifyTracking: 15` permette a una riga che non si riesce a comporre entro il doppio dello spazio normale di prendere invece fino a 0,015 em di spaziatura tra lettere. Correggi un’ultima riga di una sola parola ritoccando il testo, come è stato fatto per queste pagine.

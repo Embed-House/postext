@@ -23,7 +23,7 @@
   "related": ["magazine-feature-opener", "running-heads-by-parity", "chapter-opener-bleed-band"],
   "engine": { "postext": "1.25.0" },
   "kit": ["core", "fonts", "viewer", "images"],
-  "sample": { "locales": ["en", "es", "pt", "fr", "de"] },
+  "sample": { "locales": ["en", "es", "pt", "fr", "de", "it"] },
   "capture": { "hero": 1, "card": "page", "expect": { "pages": [2, 2] } },
   "folio": {
     "paper": {"type": "coatedSilk", "grammage": 90},
@@ -41,7 +41,8 @@
           "es": "Las salinas y la duna al anochecer de la apertura, una fotografía",
           "pt": "As salinas e a duna ao anoitecer da abertura, uma fotografia",
           "fr": "Les salines et la dune au crépuscule de l’ouverture, une photographie",
-          "de": "Die Salzgärten und die Düne in der Abenddämmerung auf der Auftaktseite, ein Foto"
+          "de": "Die Salzgärten und die Düne in der Abenddämmerung auf der Auftaktseite, ein Foto",
+          "it": "Le saline e la duna al tramonto dell’apertura, una fotografia"
         },
         "who": "Generated With Diffusion Models",
         "license": "original",

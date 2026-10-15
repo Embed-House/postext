@@ -1,0 +1,89 @@
+---
+title: "Le letture di un seminario da un export BibTeX di Zotero"
+summary: "Le letture di un seminario con i riferimenti in un export BibTeX di Zotero incollato com’è, citato in Chicago autore-data, e nocite per le opere mai citate."
+plain: "Le letture di un seminario universitario. Il docente incolla il file che esporta Zotero; Postext stampa le citazioni e un elenco che contiene anche libri che il testo non nomina."
+description: "Le letture di un corso in Postext: export BibTeX di Zotero incollato senza modifiche, citazioni Chicago autore-data e nocite per le opere di sfondo mai citate."
+question: "Come uso un export BibTeX di Zotero ed elenco opere che il testo non cita mai?"
+aliases: ["Zotero", "BibTeX", "nocite", "opere non citate", "letture del corso", "bibliografia d’esame", "programma del corso", "letture di approfondimento", "Chicago autore-data", "bibliografia"]
+pageNotes: { "1": "Pagina 1: una fascia verde scuro sulla metà superiore con l’occhiello «HPS 214 · Seminar reading list · Autumn term 2026», il titolo «Science as a Social Practice» in un grande serif chiaro e un sommario in corsivo; sotto, due colonne con l’introduzione e le settimane da 1 a 3, con citazioni come «Kuhn (1970)» e «(Shapin 1984)».", "2": "Pagina 2: le settimane da 4 a 6 e la sezione «Further reading», poi la bibliografia in Chicago autore-data su entrambe le colonne: tredici opere, cinque delle quali mai citate nel testo, tra cui Fleck, Merton e López Piñero." }
+---
+
+## Che cosa comporrai
+
+L’elenco delle letture di un seminario di sei settimane di storia e sociologia della scienza, composto su una pagina di 210 × 280 mm in due colonne. Un campo verde scuro occupa la metà superiore della prima pagina, con il titolo del corso in Spectral Light a 50 pt; il testo sotto è la guida del docente a ogni settimana. I riferimenti sono la collezione Zotero del seminario, esportata in BibTeX e incollata nel documento senza toccare una riga: le chiavi di citazione di Zotero, le sue graffe attorno alle maiuscole, i suoi accenti `{\"o}`, `month = dec`, i campi `file`, `keywords` e `urldate`. Il testo cita otto delle opere. Le altre cinque, letture di sfondo che il seminario non discute, entrano nell’elenco tramite `nocite`.
+
+## Preparazione
+
+### 1 · Nomina lo stile una volta
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il motore delle citazioni si registra prima della prima composizione e lo stile è una sola impostazione: Chicago autore-data scrive «(Shapin 1984)» per `[@shapin_pump_1984]` e «Shapin and Schaffer (1985)» per `@shapin_leviathan_1985` dentro una frase. Le chiavi sono quelle che Zotero ha costruito dal primo autore, dalla prima parola significativa del titolo e dall’anno, così `gieryn_boundary-work_1983` mantiene il suo trattino; Postext legge un trattino o un trattino basso dentro una chiave come parte di essa.
+
+### 2 · Incolla l’export come lo scrive Zotero
+
+L’ultimo blocco del documento contiene l’export, una voce per opera, rientrata con tabulazioni come la scrive Zotero:
+
+```bibtex
+@article{gieryn_boundary-work_1983,
+	title = {Boundary-{Work} and the {Demarcation} of {Science} from {Non}-{Science}: …},
+	url = {https://www.jstor.org/stable/2095325},
+	doi = {10.2307/2095325},
+	urldate = {2026-08-21},
+	journal = {American Sociological Review},
+	author = {Gieryn, Thomas F.},
+	month = dec,
+	year = {1983},
+	keywords = {demarcation, week 4},
+	pages = {781--795},
+	file = {JSTOR Full Text PDF:/Users/hps214/Zotero/storage/2HJ8M6PA/Gieryn - 1983 - ….pdf:application/pdf},
+}
+```
+
+Il lettore toglie le graffe che proteggono le maiuscole, compone `{\"o}` e `{\'e}` in ö ed é, trasforma `--` in un trattino medio e legge `month = dec` come il nome di un mese senza virgolette. `urldate` diventa la data di consultazione e `language` la lingua della voce; `file`, `keywords`, `abstract` e `shorttitle` vengono saltati, così nulla del tuo disco arriva sulla pagina.
+
+### 3 · Porta dentro le opere che il testo non cita
+
+Il frontmatter le elenca per chiave:
+
+```yaml
+---
+title: "Science as a Social Practice"
+nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, @rheinberger_toward_1997, @lopez_pinero_ciencia_1979"
+---
+```
+
+L’elenco contiene ogni opera citata più queste cinque, ordinate insieme per autore come chiede Chicago; nulla segna una voce come non citata. `nocite: "@*"` elenca l’intero export, e `bibliography.includeUncited: true` fa lo stesso dalla configurazione, per un progetto grafico che stampa sempre l’intera biblioteca.
+
+### 4 · Un campo verde per la scheda
+
+<Excerpt region="opener" />
+
+La fascia è un riquadro ancorato al rifilo, alto 132 mm, e le due colonne cominciano 9 mm sotto. Il titolo, il filetto e il sommario sono concatenati con ancoraggi `below`, così un titolo del corso più lungo spinge in basso il sommario invece di sovrapporglisi.
+
+<Excerpt region="palette" />
+
+## Varianti
+
+### Elenca tutta la collezione Zotero
+
+Quando l’export è l’elenco, salta le chiavi: si stampa ogni voce del blocco, citata o no.
+
+```diff
+-nocite: "@fleck_genesis_1979, @merton_sociology_1973, @latour_science_1987, …"
++nocite: "@*"
+```
+
+### Cambia stile
+
+Le stesse chiavi danno un elenco Harvard (Cite Them Right) senza nessun’altra modifica.
+
+```diff
+-  style: 'chicago-author-date', // '(Gieryn 1983)', 'Shapin and Schaffer (1985)'
++  style: 'harvard-cite-them-right',
+```
+
+## Errori frequenti
+
+- Una chiave in `nocite` che non corrisponde a nessuna voce viene scartata senza avviso. Copia le chiavi dall’export invece di digitarle, e conta le voci sulla pagina.
+- Zotero costruisce le chiavi dai dati: correggi il nome di un autore o un titolo in Zotero e l’export successivo può cambiare la chiave, il che rompe ogni sua citazione. Fissa le chiavi prima di scrivere il testo: Zotero legge una riga `Citation Key: …` nel campo Extra di una voce.
+- Zotero esporta in UTF-8 per impostazione predefinita, con gli accenti così come sono. Il blocco qui è stato esportato con l’opzione di codifica occidentale, che scrive `{\"o}`; Postext legge entrambi.
+- La 18ª edizione di Chicago omette il luogo di pubblicazione, quindi il campo `address` non si stampa, e un articolo con un DOI stampa il DOI e non l’`url` di JSTOR.

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-page-splitters",
-  "sourceHash": "5a3e6e58da9bbd55b15caf0b4845974daae5bc49af0b649fb3abbfc7942d4852",
+  "sourceHash": "da3e5f99617a7a95cef79314e9f9d3b4cc163c41eb9cab4af81011a804ea2cdf",
   "engine": {
     "postext": "1.33.7",
     "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:25:27.546Z",
+  "capturedAt": "2026-10-15T13:40:11.369Z",
   "variants": {
     "en": {
       "hash8": "31b3abd6",
       "vdtHash": "f727ec43ba9b71a50f56e00a9d9b89f53d4870b9",
       "timings": {
-        "importMs": 2464,
-        "fontsMs": 560,
-        "buildMs": 470,
-        "totalMs": 4772,
+        "importMs": 559,
+        "fontsMs": 144,
+        "buildMs": 443,
+        "totalMs": 1804,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -309,10 +309,10 @@
       "hash8": "02ea406d",
       "vdtHash": "c75d0046fad73ee2c97d9da83f36f3c826b29f60",
       "timings": {
-        "importMs": 2462,
-        "fontsMs": 568,
-        "buildMs": 522,
-        "totalMs": 4939,
+        "importMs": 561,
+        "fontsMs": 174,
+        "buildMs": 496,
+        "totalMs": 1923,
         "builds": 1
       },
       "specimen": {
@@ -333,7 +333,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -604,10 +604,10 @@
       "hash8": "927e6418",
       "vdtHash": "cc02701ee828ad1613e20a5959288ae02326c3f9",
       "timings": {
-        "importMs": 783,
-        "fontsMs": 526,
-        "buildMs": 479,
-        "totalMs": 2520,
+        "importMs": 557,
+        "fontsMs": 159,
+        "buildMs": 460,
+        "totalMs": 1881,
         "builds": 1
       },
       "specimen": {
@@ -628,7 +628,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -899,10 +899,10 @@
       "hash8": "5ad37a98",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 458,
-        "fontsMs": 550,
-        "buildMs": 390,
-        "totalMs": 2539,
+        "importMs": 535,
+        "fontsMs": 457,
+        "buildMs": 472,
+        "totalMs": 2246,
         "builds": 1
       },
       "specimen": {
@@ -923,7 +923,7 @@
           "ZCOOL QingKe HuangYou"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1195,10 +1195,10 @@
       "hash8": "ec94f1a2",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 471,
-        "fontsMs": 497,
-        "buildMs": 510,
-        "totalMs": 2168,
+        "importMs": 524,
+        "fontsMs": 228,
+        "buildMs": 507,
+        "totalMs": 1942,
         "builds": 1
       },
       "specimen": {
@@ -1219,7 +1219,7 @@
           "Playpen Sans Arabic"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1494,10 +1494,10 @@
       "hash8": "abd228d0",
       "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 830,
-        "fontsMs": 580,
-        "buildMs": 477,
-        "totalMs": 2552,
+        "importMs": 544,
+        "fontsMs": 551,
+        "buildMs": 489,
+        "totalMs": 2238,
         "builds": 1
       },
       "specimen": {
@@ -1518,7 +1518,7 @@
           "Zen Antique"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -1792,10 +1792,10 @@
       "hash8": "6dfd5315",
       "vdtHash": "7a7072cfd5e293567615cce8aac85d5b262ce8b5",
       "timings": {
-        "importMs": 927,
-        "fontsMs": 144,
-        "buildMs": 517,
-        "totalMs": 2711,
+        "importMs": 307,
+        "fontsMs": 451,
+        "buildMs": 457,
+        "totalMs": 1827,
         "builds": 1
       },
       "specimen": {
@@ -1816,7 +1816,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -2087,10 +2087,10 @@
       "hash8": "333f1ede",
       "vdtHash": "dc926fc1e22335866e3cad3e26d3b21f8ffeb574",
       "timings": {
-        "importMs": 849,
-        "fontsMs": 431,
-        "buildMs": 527,
-        "totalMs": 3146,
+        "importMs": 305,
+        "fontsMs": 154,
+        "buildMs": 443,
+        "totalMs": 1538,
         "builds": 1
       },
       "specimen": {
@@ -2111,7 +2111,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -2382,10 +2382,10 @@
       "hash8": "986d4289",
       "vdtHash": "e12b38c40b7b5eb081b5ff448fe2958ce0bda5ad",
       "timings": {
-        "importMs": 813,
-        "fontsMs": 580,
-        "buildMs": 573,
-        "totalMs": 2689,
+        "importMs": 366,
+        "fontsMs": 93,
+        "buildMs": 405,
+        "totalMs": 1547,
         "builds": 1
       },
       "specimen": {
@@ -2406,7 +2406,7 @@
           "Comic Neue"
         ],
         "pages": 4,
-        "ownLines": 131
+        "ownLines": 132
       },
       "pages": [
         {
@@ -2493,6 +2493,301 @@
             "pages": 4,
             "hash": "192ec2378b89cf0f",
             "lines": "f2f00db2d74c9fcc"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontFamily",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].stroke",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.inset",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "comics.runningHeads",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 98,
+        "designElements": 1,
+        "directives": [
+          ":::paragraphs",
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 5,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Bangers",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Comic Neue",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "balloon-styles",
+          "block-direction",
+          "comic-broken-borders",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "page-background",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages)"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "c37b1fc1",
+      "vdtHash": "13d08ad18320f7df5dc74cad8fe93f3df8c665f7",
+      "timings": {
+        "importMs": 293,
+        "fontsMs": 93,
+        "buildMs": 392,
+        "totalMs": 1391,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          168,
+          259
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Comic Neue",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Bangers",
+          "Comic Neue"
+        ],
+        "pages": 4,
+        "ownLines": 132
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1542,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 56664,
+          "alt": "Pagina d’apertura 1: Una pagina, tre schemi."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 211788,
+          "alt": "Pagina 2."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 247428,
+          "alt": "Pagina 3."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "comic",
+          "w": 1000,
+          "h": 1542,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 212920,
+          "alt": "Pagina 4."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "comic-page-splitters.pdf",
+        "bytes": 850248,
+        "pages": 4
+      },
+      "sandbox": {
+        "file": "comic-page-splitters.postext",
+        "bytes": 809045,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "aa04af04f74391c0",
+            "lines": "bca2a65dfd73f06f"
           }
         ]
       },

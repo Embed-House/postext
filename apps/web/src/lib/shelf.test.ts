@@ -35,9 +35,9 @@ describe("the showcase shelf", () => {
     expect(presets.slice(0, -4).every((p) => p.binding !== "right" && p.shelfOrder === undefined)).toBe(true);
   });
 
-  it("carries Pepper&Carrot in every site language, French and German as well", () => {
+  it("carries Pepper&Carrot in every site language, French and German and Italian as well", () => {
     const entry = (presetIndex as { presets: { id: string; locales: string[]; tags: string[]; license: string }[] }).presets.find((p) => p.id === "pepper-carrot")!;
-    expect(entry.locales).toEqual(["en", "es", "ca", "fr", "pt-BR", "de", "ja", "zh-Hans", "ar"]);
+    expect(entry.locales).toEqual(["en", "es", "ca", "fr", "it", "pt-BR", "de", "ja", "zh-Hans", "ar"]);
     expect(entry.tags).toContain("comic");
     expect(entry.license).toContain("CC BY 4.0");
   });

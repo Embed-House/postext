@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "yonkoma",
-  "sourceHash": "74393e46c6cbeb2ddd9444ae0a062192f0394bbdc86a420103ec193c6f50d32a",
+  "sourceHash": "6ea4873d9eaba4f680559dec907515ca9dbc90ee2adfb0c3aa2d6c61d9f3f795",
   "engine": {
-    "postext": "1.33.5",
-    "postextPdf": "1.33.5",
+    "postext": "1.33.7",
+    "postextPdf": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T11:39:42.817Z",
+  "capturedAt": "2026-10-15T13:41:38.013Z",
   "variants": {
     "en": {
       "hash8": "ad981289",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 5825,
-        "fontsMs": 4597,
-        "buildMs": 405,
-        "totalMs": 14462,
+        "importMs": 495,
+        "fontsMs": 481,
+        "buildMs": 287,
+        "totalMs": 2117,
         "builds": 2
       },
       "specimen": {
@@ -36,7 +36,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -249,10 +249,10 @@
       "hash8": "21ef7740",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 5361,
-        "fontsMs": 4400,
-        "buildMs": 431,
-        "totalMs": 13508,
+        "importMs": 501,
+        "fontsMs": 490,
+        "buildMs": 290,
+        "totalMs": 2138,
         "builds": 2
       },
       "specimen": {
@@ -271,7 +271,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -484,10 +484,10 @@
       "hash8": "ad6dc655",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 6936,
-        "fontsMs": 7822,
-        "buildMs": 366,
-        "totalMs": 18868,
+        "importMs": 489,
+        "fontsMs": 718,
+        "buildMs": 282,
+        "totalMs": 2358,
         "builds": 2
       },
       "specimen": {
@@ -506,7 +506,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -719,10 +719,10 @@
       "hash8": "2cf527c5",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 7912,
-        "fontsMs": 7380,
-        "buildMs": 327,
-        "totalMs": 20468,
+        "importMs": 476,
+        "fontsMs": 718,
+        "buildMs": 285,
+        "totalMs": 2524,
         "builds": 2
       },
       "specimen": {
@@ -741,7 +741,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -954,10 +954,10 @@
       "hash8": "dfaf383d",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 7518,
-        "fontsMs": 6322,
-        "buildMs": 407,
-        "totalMs": 17189,
+        "importMs": 363,
+        "fontsMs": 461,
+        "buildMs": 298,
+        "totalMs": 2327,
         "builds": 2
       },
       "specimen": {
@@ -976,7 +976,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -1189,10 +1189,10 @@
       "hash8": "17ab0d5e",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 5827,
-        "fontsMs": 4158,
-        "buildMs": 433,
-        "totalMs": 13505,
+        "importMs": 494,
+        "fontsMs": 489,
+        "buildMs": 287,
+        "totalMs": 2132,
         "builds": 2
       },
       "specimen": {
@@ -1211,7 +1211,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -1429,10 +1429,10 @@
       "hash8": "e40fd051",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 3645,
-        "fontsMs": 3892,
-        "buildMs": 328,
-        "totalMs": 10341,
+        "importMs": 332,
+        "fontsMs": 836,
+        "buildMs": 319,
+        "totalMs": 2289,
         "builds": 2
       },
       "specimen": {
@@ -1451,7 +1451,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -1664,10 +1664,10 @@
       "hash8": "a14de6ec",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 1659,
-        "fontsMs": 3461,
-        "buildMs": 305,
-        "totalMs": 9114,
+        "importMs": 342,
+        "fontsMs": 635,
+        "buildMs": 308,
+        "totalMs": 2086,
         "builds": 2
       },
       "specimen": {
@@ -1686,7 +1686,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -1899,10 +1899,10 @@
       "hash8": "ec5f9ab4",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 2003,
-        "fontsMs": 1343,
-        "buildMs": 326,
-        "totalMs": 5229,
+        "importMs": 325,
+        "fontsMs": 427,
+        "buildMs": 306,
+        "totalMs": 1926,
         "builds": 2
       },
       "specimen": {
@@ -1921,7 +1921,7 @@
         },
         "families": [],
         "pages": 2,
-        "ownLines": 139
+        "ownLines": 140
       },
       "pages": [
         {
@@ -1974,6 +1974,241 @@
       "sandbox": {
         "file": "yonkoma.postext",
         "bytes": 1263482,
+        "folio": "80b0969c",
+        "keep": "last",
+        "pages": 1,
+        "chapters": [
+          {
+            "pages": 1,
+            "hash": "b6678a975d971a11",
+            "lines": "b6678a975d971a11"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "comics",
+          "comics.artDirection",
+          "comics.balloonStyles",
+          "comics.balloonStyles[].align",
+          "comics.balloonStyles[].bold",
+          "comics.balloonStyles[].burstPoints",
+          "comics.balloonStyles[].butt",
+          "comics.balloonStyles[].color",
+          "comics.balloonStyles[].fill",
+          "comics.balloonStyles[].fontScale",
+          "comics.balloonStyles[].haloColor",
+          "comics.balloonStyles[].id",
+          "comics.balloonStyles[].position",
+          "comics.balloonStyles[].roundness",
+          "comics.balloonStyles[].shape",
+          "comics.balloonStyles[].stroke",
+          "comics.balloonStyles[].strokeWidth",
+          "comics.balloonStyles[].tail",
+          "comics.gutter",
+          "comics.gutter.horizontal",
+          "comics.gutter.vertical",
+          "comics.lettering",
+          "comics.lettering.color",
+          "comics.lettering.fontFamily",
+          "comics.lettering.fontSize",
+          "comics.lettering.maxColumnChars",
+          "comics.lettering.writingMode",
+          "comics.mirrorArt",
+          "comics.panel",
+          "comics.panel.background",
+          "comics.panel.borderColor",
+          "comics.panel.borderWidth",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].level",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.binding",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "comics",
+          "footer",
+          "header",
+          "headings",
+          "locale",
+          "page"
+        ],
+        "configLeaves": 79,
+        "designElements": 0,
+        "directives": [
+          ":::page"
+        ],
+        "inline": [],
+        "resources": {
+          "svg": 0,
+          "bitmap": 8,
+          "table": 0
+        },
+        "fonts": [],
+        "features": [
+          "balloon-styles",
+          "cjk-line-breaking",
+          "comic-lettering",
+          "comic-pages",
+          "comic-panel-art",
+          "comic-panel-split",
+          "comic-panel-styles",
+          "comic-reading-direction",
+          "page-background",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "right-binding",
+          "sound-effects"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "6a7efeb6",
+      "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
+      "timings": {
+        "importMs": 315,
+        "fontsMs": 252,
+        "buildMs": 266,
+        "totalMs": 1636,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          148,
+          210
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7.5,
+        "mirror": true,
+        "body": {
+          "family": "Zen Antique",
+          "sizePt": 9,
+          "leadingPt": 15
+        },
+        "families": [],
+        "pages": 2,
+        "ownLines": 140
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1419,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 160602,
+          "alt": "Pagina 1."
+        },
+        {
+          "n": 2,
+          "label": "1",
+          "role": "comic",
+          "w": 1000,
+          "h": 1419,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 163226,
+          "alt": "Pagina 1."
+        }
+      ],
+      "spreads": [
+        [
+          0,
+          1
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "yonkoma.pdf",
+        "bytes": 1322679,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "yonkoma.postext",
+        "bytes": 1263589,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,

@@ -1,0 +1,68 @@
+---
+title: "Spazi uniformi in colonne giustificate strette"
+summary: "Divisione Knuth–Plass con spazi tra parole tra 0,8 e 1,6 volte il normale, accanto a un controllo greedy con righe lasche, isolate e corte marcate dal VDT."
+plain: "Una piccola rivista di tipografia, composta in colonne strette con entrambi i bordi del testo allineati. Mostra come tenere uniformi gli spazi tra le parole, accanto a una versione con le righe irregolari marcate in giallo."
+description: "Una rivista di tipografia A5 composta due volte: Knuth–Plass entro spazi di 0,8–1,6 contro il first fit, con righe lasche, isolate e corte marcate dal VDT."
+question: "Come ottengo una giustificazione uniforme in colonne strette, con la sillabazione giusta per ogni lingua?"
+aliases: ["giustificazione", "spaziatura tra parole", "canali di bianco", "righe lasche", "Knuth-Plass", "divisione in righe greedy", "first fit", "vedove", "orfane", "righe finali corte", "sillabazione", "lingua della sillabazione", "colonne strette", "calibratura del testo", "justifiedSpaceRatio", "minWordSpacing", "maxWordSpacing", "justification"]
+pageNotes: { "1": "Una fascia grafite contiene l’occhiello Galley · No. 12 · Justification in giallo evidenziatore, il titolo The river problem in bianco e un sommario in corsivo, poi un diagramma: una fila di riquadri bianchi di parole uniti da corte molle gialle la cui ultima parola supera una linea tratteggiata della giustezza, e la stessa fila sillabata con le molle tese fino alla giustezza. Due colonne giustificate del saggio cominciano sotto la fascia.", "2": "Due colonne piene: le sezioni Greedy and total fit, Fences for the glue, Hyphens e Widows, orphans and runts, con le impostazioni in vigore (minWordSpacing 0.8, maxWordSpacing 1.6; widowPenalty, orphanPenalty, slackWeight) composte in monospaziato accanto a un filetto grafite.", "3": "La fine del saggio in due colonne pareggiate con le impostazioni delle righe corte e il colophon, sopra una prova al banco grafite al piede della pagina: un paragrafo composto in bandiera, giustificato senza trattini (spazi larghi, le prime due righe in bandiera) e giustificato con i trattini, e una nota in bianco." }
+---
+
+## Che cosa comporrai
+
+Il numero 12 di *Galley*, la rivista di un laboratorio di tipografia, composta in A5 su due colonne di circa quaranta caratteri, dove una riga giustificata ha solo cinque o sei spazi tra parole per assorbire l’avanzo. L’apertura disegna il modello Knuth–Plass su una fascia grafite: una riga di riquadri di parole le cui molle gialle di colla si tendono fino a riempire la giustezza. Il saggio spiega perché le colonne strette si allargano e stampa in monospaziato, tra i paragrafi, le impostazioni dietro ogni regola. Al piede di pagina 3 una prova al banco compone un paragrafo in bandiera, giustificato senza trattini e giustificato con i trattini. Il pen compone anche il numero con la divisione in righe first fit e con le protezioni contro vedove e orfane disattivate, e mostra le due pagine 2 affiancate sopra le pagine, come nella scheda di questa ricetta, con le righe lasche velate di giallo evidenziatore e le righe isolate e quelle finali troppo corte segnalate nel margine.
+
+## Preparazione
+
+### 1 · Stringi i limiti, tieni le protezioni
+
+Il codice di questo passo è nella [risposta breve](#la-risposta-breve) qui sopra. [Knuth–Plass](/it/docs/justification#knuth-plass-vedere-lintero-paragrafo), la sillabazione, le penalità per vedove, orfane e righe finali corte e i titoli tenuti con il paragrafo seguente sono attivi per impostazione predefinita, quindi l’edizione pubblicata restringe soltanto i [limiti della spaziatura tra parole](/it/docs/justification#limiti-della-spaziatura-tra-le-parole) a 0,8 e 1,6 volte uno spazio normale (i valori predefiniti sono 0,6 e 2). Una riga oltre il limite superiore costa più di qualsiasi trattino o riga corta, quindi l’algoritmo prova prima altre divisioni; togli i due limiti e questo saggio compone due righe oltre 1,6. La sillabazione segue `locale`: `'es'`, `'fr'` e `'de'` hanno i propri pattern TeX, un tag regionale come `'es-ES'` prende quelli della sua lingua, e una lingua senza pattern viene sillabata come inglese americano, con un avviso nella console.
+
+### 2 · Marca le righe lasche dall’albero dell’impaginazione
+
+<Excerpt region="marks" />
+
+`findLooseLines` restituisce le righe giustificate i cui spazi tra parole si allargano oltre una soglia, qui il limite superiore, ciascuna con la fascia che un’evidenziazione copre ([Righe lasche nel tuo canvas](/it/docs/configuration-fonts-colors-viewers#righe-lasche-nel-tuo-canvas)). `marks()` aggiunge ciò che quell’elenco tralascia, letto dal [VDT](/it/docs/justification#debug-delle-righe-lasche): una riga oltre 3× non ha rapporto, perché il motore [la compone in bandiera](/it/docs/justification#righe-che-il-motore-non-riesce-a-riempire) e la segnala invece con `line.ragged`, e un paragrafo diviso tra due colonne torna come un blocco per frammento, ed è così che si trovano le righe isolate. A quaranta caratteri i limiti da soli non tengono ogni riga sotto 1,6; mentre il saggio veniva calibrato, le marche mostravano quali frasi riformulare.
+
+### 3 · Metti il controllo accanto alla pagina pubblicata
+
+<Excerpt region="compare" />
+
+Le due edizioni condividono un’unica grafica, quindi ogni differenza tra le due pagine 2 viene dall’algoritmo di divisione in righe e dalle sue protezioni. In inglese il controllo greedy lascia 47 delle sue 110 righe giustificate oltre 1,6 e 30 oltre 2, tre delle quali oltre 3× e composte in bandiera dal motore, mentre l’edizione Knuth–Plass le tiene tutte e 105 tra 0,80 e 1,60. A pagina 2 il controllo porta anche l’ultima riga di un paragrafo da sola in testa a una colonna, cosa che `avoidOrphans: false` consente, e chiude un altro paragrafo con una riga finale troppo corta.
+
+### 4 · Dai a ogni impostazione un riquadro proprio
+
+<Excerpt region="bench" />
+
+Un riquadro compone tutte le colonne di un gruppo [`:::columns`](/it/docs/document-format#columns) in un solo stile di testo, quindi ogni striscia è un riquadro annidato con un proprio `body`, e `breaks="3"` impila la striscia in bandiera e quella senza trattini nella prima colonna. La striscia in bandiera non ha bisogno di `hyphenation: false`: il testo in bandiera tiene intere le parole a meno che non si attivi `bodyText.hyphenation.ragged`. La prova al banco flotta al piede di pagina 3 con `placement: 'bottom'`, e il suo padding inferiore ripete la cornice di 4 mm perché il `marginBottom` dell’ultima striscia si perde alla fine del riquadro.
+
+### 5 · Disegna il modello nell’apertura
+
+<Excerpt region="opener" />
+
+Il diagramma è un [elemento immagine](/it/docs/configuration-page-layout#elementi-immagine) della grafica dell’H1. Come figura sarebbe un elemento flottante `top` a tutta pagina, e un elemento flottante `top` citato a pagina 1 apre pagina 2. La fascia scende sotto il diagramma, e un’apertura riserva l’altezza fino al suo elemento più basso, quindi il testo comincia sotto la fascia senza un `minHeight`, una riga più in basso a causa del `marginBottom` predefinito dell’H1. Le etichette sono testo della grafica posato sulle coordinate stesse del disegno, composto e spaziato come le altre etichette dell’apertura.
+
+## Varianti
+
+### Sillaba un testo tedesco
+
+La lingua sceglie i pattern, quindi un testo tedesco prende `'de'`, o un tag regionale come `'de-AT'`.
+
+```diff
+-const locale = t({ en: 'en-us', es: 'es' }); // config().locale: each edition's patterns
++const locale = 'de'; // German patterns; 'de-AT' picks them too
+```
+
+### Marca solo le righe peggiori
+
+Alza la soglia da 1,6 a 2 e l’evidenziatore marca solo le righe i cui spazi sono più che raddoppiati.
+
+```diff
+-  const loose = findLooseLines(doc, { threshold: FENCES.maxWordSpacing, pageIndex: page.index });
++  const loose = findLooseLines(doc, { threshold: 2, pageIndex: page.index });
+```
+
+## Errori frequenti
+
+- Un riquadro rimasto alla fine di una colonna scende al piede della colonna quando le colonne sono bilanciate, lontano dal paragrafo a cui appartiene. Calibra il testo perché la colonna sia piena, come è servito per il riquadro delle impostazioni sotto «Fences for the glue», oppure imposta `headings.balancing.closingBox` su `'off'`, che non sposta mai il riquadro.
+- La striscia senza trattini non mostra gli spazi più larghi di cui avrebbe bisogno. Una riga giustificata i cui spazi dovrebbero allargarsi oltre tre volte uno spazio normale si compone in bandiera alla sua spaziatura naturale, in un riquadro come nel testo, quindi le prime due righe della striscia finiscono prima della giustezza. Le righe sotto quel limite restano giustificate, e sono loro gli spazi larghi che la striscia mostra.

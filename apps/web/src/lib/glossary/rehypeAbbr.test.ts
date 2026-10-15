@@ -17,7 +17,7 @@ describe("abbreviation dictionary", () => {
     const ids = ABBREVIATIONS.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const a of ABBREVIATIONS) {
-      for (const l of ["en", "es", "zh", "ca", "ar", "ja", "pt", "fr", "de"] as const) expect(a.expansion[l], `${a.id} ${l}`).toBeTruthy();
+      for (const l of ["en", "es", "zh", "ca", "ar", "ja", "pt", "fr", "de", "it"] as const) expect(a.expansion[l], `${a.id} ${l}`).toBeTruthy();
     }
   });
 

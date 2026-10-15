@@ -1,0 +1,57 @@
+---
+title: "Un albo illustrato in hiragana, spaziato per frasi"
+summary: "Un albo illustrato verticale in hiragana con uno spazio tra le frasi (wakachigaki): keep-all tiene intera ogni frase e le righe vanno a capo solo agli spazi."
+plain: "Un albo illustrato giapponese per bambini piccoli, tutto in hiragana, con uno spazio dopo ogni gruppo di parole e righe che non ne spezzano mai uno, sotto un’illustrazione in ogni pagina."
+description: "Un albo illustrato giapponese in Postext: hiragana verticali a 20 pt con spazi wakachigaki, frasi intere grazie a keep-all, una fascia d’immagine per pagina."
+question: "Come spazio per frasi un albo illustrato giapponese (wakachigaki) e vado a capo solo agli spazi?"
+aliases: ["wakachigaki", "分かち書き", "わかち書き", "albo illustrato", "libro illustrato", "絵本", "hiragana", "ひらがな", "libro per bambini in giapponese", "word-break", "cjk.wordBreak", "keep-all", "a capo solo agli spazi", "Klee One"]
+pageNotes: { "1": "La copertina: la scena del fiume su tutta la pagina, una barchetta di carta rossa sull’acqua blu, il titolo かみの ふね in rosso lungo il cielo a destra.", "2": "Pagina 2: una bambina a un tavolo piega la barchetta rossa, sotto sei brevi righe verticali di hiragana, ognuna spezzata a uno spazio tra le frasi.", "3": "Pagina 3: la barchetta posata sul fiume, la bambina che saluta dalla riva; il testo comincia con 「いって らっしゃい。」.", "8": "Pagina 8: notte, la luna e il suo riflesso sull’acqua; il testo racconta come la luna illumina la strada della barchetta.", "10": "L’ultima pagina: la bambina a una finestra guarda il mare, il testo, おしまい in rosso al piede della sua riga, e il colophon di traverso." }
+---
+
+## Che cosa comporrai
+
+Un albo illustrato di dieci pagine, かみの ふね (*La barchetta di carta*), scritto per la ricetta e illustrato con dieci dipinti: una bambina piega una barchetta di carta rossa dopo la pioggia, e la barchetta scende lungo il fiume oltre una rana, un airone e la luna fino al mare. È composto come si compongono i libri giapponesi per i lettori più piccoli: solo hiragana, 20 pt in Klee One, una scrittura modellata sul carattere dei libri di scuola, e uno spazio tra le frasi, 分かち書き (wakachigaki), così un bambino legge una frase alla volta. Le pagine sono orizzontali, 260 × 200 mm, verticali e rilegate a destra: l’immagine nella parte alta della pagina, brevi righe di otto caratteri sotto, e la barchetta che viaggia verso sinistra man mano che si girano le pagine.
+
+## Preparazione
+
+### 1 · Tieni intera ogni frase
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Il testo giapponese può andare a capo tra due kana qualsiasi, quindi uno spazio tra le frasi aggiunge solo spazio; da solo non impedisce a una riga di finire dentro あか|い. `cjk.wordBreak: 'keep-all'` mantiene solo le interruzioni a uno spazio e accanto alla punteggiatura, dopo 、。」 o prima di 「, come fa `word-break: keep-all` in CSS, e le regole kinsoku restano valide ([East Asian typography](/it/docs/configuration-east-asian#tipografia-dellasia-orientale)). Lo spazio è un normale U+0020, 0,35 em in Klee One, e una riga lo elimina alla sua fine. Anche un U+3000 è un’interruzione di frase, ma è un carattere fisso largo un em, che resta alla fine della riga.
+
+<PageShot page={3} crop="0.45,0.52,0.55,0.48" caption="Pagina 3: otto righe, ognuna che finisce a uno spazio o dopo 」 e 、: 「いって / らっしゃい。」 / みいちゃんが / そっと てを…" />
+
+Il testo è composto a bandiera. Giustificata, una riga corta allargherebbe i suoi spazi e gli intervalli tra i kana per raggiungere il piede della fascia; un albo illustrato chiude ogni riga dove finisce la sua ultima frase.
+
+### 2 · Metti le immagini in una fascia sopra il testo
+
+<Excerpt region="layout" />
+
+Nel testo verticale `'left'` è la testa della pagina, quindi un layout a colonna e mezza con la colonna laterale a sinistra diventa due fasce: le immagini flottano nella fascia superiore (profonda 14 caratteri) e il testo scorre in quella inferiore (8 caratteri). Ogni pagina cita la sua immagine con `::resource{id="…"}` e finisce con `:::pagebreak`. Il tipo immagine non ha prefisso di didascalia, e le immagini sono 2,186 volte più larghe che alte, la forma della fascia, così ognuna la riempie ([vertical writing](/it/docs/configuration-page-layout#scrittura-verticale)).
+
+### 3 · Fai della copertina un’immagine a tutta pagina
+
+<Excerpt region="cover" />
+
+La copertina è un design di titolo a tutta pagina: l’immagine è ancorata all’abbondanza con le dimensioni della pagina (nel flusso verticale la sua `width` scorre lungo il foglio), e il titolo è composto lungo il cielo a destra in Zen Maru Gothic, 60 pt.
+
+### 4 · Carica i dipinti come bitmap
+
+<Excerpt region="pictures" />
+
+Le dieci immagini sono dipinti, file JPEG in `assets/` della ricetta. Le nove scene sono tagliate sulla forma della fascia, 612 : 280, e la copertina su quella della pagina, 260 : 200, così ognuna riempie la sua cornice e nulla viene ritagliato. Ognuna è una risorsa `bitmap` dichiarata alla sua dimensione in pixel, con il testo alternativo nella lingua del libro, e il suo file si carica sotto il `fileId` della risorsa prima della composizione. Le scene larghe 1.400 px si stampano a circa 165 dpi sulla fascia ([resource types](/it/docs/configuration-resources#tipi-di-risorsa)).
+
+## Varianti
+
+### Giustifica le righe
+
+Giustificata, ogni riga raggiunge il piede della fascia: prima si allargano gli spazi tra le frasi, fino a mezzo em, poi gli intervalli tra i kana (JLReq §3.8). Una riga corta di kana da 20 pt mostra allora intervalli larghi, ed è per questo che la ricetta lascia le righe a bandiera.
+
+```diff
+-  textAlign: 'left', firstLineIndent: em(0),
++  textAlign: 'justify', firstLineIndent: em(0),
+```
+
+## Errori frequenti
+
+- `keep-all` mantiene le interruzioni che il testo ha già: Postext non trova le frasi, quindi è l’autore a digitare gli spazi. Una frase più lunga della riga si spezza comunque al suo interno, nell’ultimo punto che le regole kinsoku consentono.
+- Il cinese non spazia mai le parole, e il sillabario cinese <RecipeLink slug="zhuyin-vertical-reader">A vertical reader with zhuyin to the right</RecipeLink> aiuta invece i suoi giovani lettori con le letture; un albo illustrato giapponese non usa kanji, quindi non ha bisogno di furigana, e sono gli spazi tra le frasi a guidare la lettura.

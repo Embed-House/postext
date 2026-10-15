@@ -1,0 +1,74 @@
+---
+title: "Formato di sceneggiatura"
+summary: "Un copione di lavorazione in Courier Prime 12 su US Letter: ogni battuta è un riquadro senza cornice largo quanto il dialogo, ogni scena numerata nei margini."
+plain: "Il copione di un cortometraggio impaginato come se lo aspettano gli studi cinematografici. Usa un carattere da macchina da scrivere, con battute e numeri di scena a distanze fisse dal bordo."
+description: "Una sceneggiatura in Courier 12 su US Letter, in Postext: scene numerate nei due margini e ogni battuta in un riquadro senza cornice di righe intere da 12 pt."
+question: "Come compongo una sceneggiatura con scene numerate e ogni battuta in un blocco di 3,5 pollici sotto il nome?"
+aliases: ["sceneggiatura", "copione", "copione di lavorazione", "sceneggiatura cinematografica", "sceneggiatura televisiva", "slugline", "intestazione di scena", "numeri di scena", "nome del personaggio", "blocco del dialogo", "indicazione tra parentesi", "transizione", "CUT TO", "Courier 12", "fermacampioni", "foratura a tre fori", "screenplay"]
+pageNotes: { "1": "Una copertina in cartoncino giallo oro con due fermacampioni d’ottone nel foro superiore e in quello inferiore di una foratura a tre fori, e il foro centrale vuoto. Un’etichetta bianca dice «LOST PROPERTY» in maiuscole da macchina da scrivere, poi «written by Maren Arrieta»; sotto, un timbro rosso scuro a doppio filetto dice «SHOOTING DRAFT, OCT 14 2026», e «Half-Light Pictures» sta in maiuscole spaziate al piede.", "2": "L’interno della copertina, nello stesso giallo oro, con i tre fori sul bordo destro e le punte d’ottone dei due fermacampioni che li attraversano. Un avviso dattiloscritto dice che il copione appartiene a Half-Light Pictures e chiede a chi lo trova di restituirlo; sotto, un timbro rosso dice «COPY 07», e il colophon sta al piede.", "3": "La pagina 1 del copione, senza numero, con tre fori lungo il bordo sinistro: il titolo in maiuscolo sopra «FADE IN:», poi le scene 1 e 2 con i loro numeri nei due margini accanto a intestazioni in maiuscolo grassetto. L’azione corre su tutta la giustezza; otto battute di Toby e Dora stanno in un blocco più stretto, ciascuna sotto il nome del personaggio, due con un’indicazione tra parentesi.", "4": "La pagina 2, numerata «2.» in alto a destra: Toby compila il modulo di reclamo mentre Dora lo legge al contrario, una battuta segnata «DORA (CONT’D)», Toby che nomina ciò che c’è nella tasca del coperchio con un «(then)» tra due righe, la scena 3 nel magazzino e la scena 4 fino a «Play me something.» di Dora e «Here?» di Toby.", "5": "La pagina 3: la storia di Dora su un uomo che reclamò un’arpa, poi Toby suona per lei con una battuta alle spalle, l’ufficio si fa silenzioso e lei timbra il modulo «RETURNED»; «CUT TO:» allineato a destra, la scena 5 alla cassetta delle lettere fuori dalla stazione, e «FADE OUT.» sotto l’ultima riga d’azione." }
+---
+
+## Che cosa comporrai
+
+Il copione di lavorazione di *Lost Property*, un cortometraggio inventato di tre pagine, rilegato come i copioni degli studi: una copertina in cartoncino giallo oro con due fermacampioni d’ottone e un’etichetta dattiloscritta, l’interno timbrato «COPY 07», poi il copione, composto 12 su 12 in Courier Prime su fogli US Letter forati. Le giustezze sono quelle dei programmi di sceneggiatura: l’azione da 1,5 a 7,5 pollici, una battuta da 2,5 a 6 sotto il nome del personaggio a 3,7, un’indicazione tra parentesi da 3,1, e «CUT TO:» e «FADE OUT.» che finiscono al margine destro. Ogni intestazione di scena porta il suo numero nei due margini. La pagina 1 del copione non è numerata; le altre stampano il loro numero in alto a destra, con un punto. Ogni battuta è un riquadro senza cornice, con il nome del personaggio composto sull’interlinea di 12 pt del corpo del testo, così azione e dialogo mantengono sei righe per pollice.
+
+## Preparazione
+
+### 1 · Spazia un riquadro senza cornice fino al blocco del dialogo
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. La spaziatura interna di un riquadro si misura dalla gabbia, quindi 1 pollice a sinistra e 1,5 pollici a destra lasciano il blocco di 3,5 pollici che comincia a 2,5 pollici dal bordo del foglio ([stili dei riquadri](/it/docs/configuration-styles#stili-dei-riquadri)). Il nome del personaggio è il titolo del riquadro, scritto nel blocco come `title="Dora (cont’d)"`. `textTransform` lo stampa in maiuscolo, e `indent` lo sposta 1,2 pollici oltre la spaziatura interna, a 3,7 pollici. `gap` è 0 perché il valore predefinito lascia mezzo em, 6 pt, tra il nome e la battuta. Per impostazione predefinita il titolo di un riquadro sta su una riga di 1,2 volte il suo corpo, qui 14,4 pt. `titleStyle.lineHeight` lo compone invece sui 12 pt del corpo del testo, così il nome poggia su una linea di griglia e la battuta è un numero intero di righe da 12 pt; con il valore predefinito, ogni battuta spingerebbe il testo che la segue 2,4 pt più fuori griglia. Con `snapToGrid` disattivato, il margine inferiore di una battuta e il margine superiore della successiva si fondono in un’unica riga vuota. Un riquadro resta unito per impostazione predefinita, quindi una battuta che non ci sta più passa alla pagina successiva con il suo nome.
+
+### 2 · Imposta la pagina in pollici
+
+<Excerpt region="page" />
+
+US Letter con il margine sinistro di 1,5 pollici attraverso cui passano i fermacampioni, e un pollice sugli altri tre lati. Courier Prime è un carattere monospaziato: in corpo 12 ogni lettera è larga un decimo di pollice, quindi una riga d’azione contiene 60 caratteri e una battuta 35, e con un’interlinea di 12 pt la pagina contiene 54 righe. Il testo è allineato a sinistra, in bandiera a destra, e `paragraphSpacing` mette una riga vuota tra i paragrafi. Il testo in bandiera si sillaba solo quando lo chiede `bodyText.hyphenation.ragged`, quindi nessuna parola del copione viene spezzata, come vuole il formato.
+
+### 3 · Fai delle indicazioni tra parentesi e delle transizioni stili di paragrafo
+
+<Excerpt region="styles" />
+
+Un contenitore `:::paragraphs{style="paren"}` dentro una battuta rientra la sua prima riga di 0,6 pollici oltre il bordo del dialogo, a 3,1 pollici ([stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo)). Tieni le indicazioni tra parentesi su una riga: lo stile rientra solo la prima riga. `body.paragraphSpacing: false` dello stile del dialogo tiene fuori dal riquadro la riga vuota dei paragrafi d’azione, così `(then)` sta subito sotto la riga che lo precede. `CUT TO:` e `FADE OUT.` vanno in contenitori `transition` il cui `textAlign: 'right'` li allinea con la fine delle righe d’azione. Un contenitore riporta il flusso sulla griglia della linea di base dopo il suo ultimo paragrafo; questo copione non lascia mai la griglia, quindi l’intestazione dopo `CUT TO:` conserva le sue due righe vuote.
+
+### 4 · Appendi i numeri di scena nei due margini
+
+<Excerpt region="slugline" />
+
+`numberingTemplate: '{2}'` conta i titoli di livello 2, e `{number}` stampa il conteggio nel progetto grafico ([impostazioni per livello](/it/docs/configuration-text#sovrascritture-per-livello)). Un titolo con un progetto grafico avanzato mantiene il suo posto nella colonna e disegna i suoi elementi invece del suo testo ([estensione e progetto grafico avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)), così i due numeri possono stare nei margini accanto al titolo in grassetto. Ciascuno è ancorato al riquadro del titolo stesso e spinto fuori da esso, 0,6 pollici a sinistra e un quarto di pollice oltre la fine del testo a destra, in un riquadro largo mezzo pollice con il testo allineato a sinistra, così in un copione che supera la scena 9 i numeri di una e di due cifre cominciano nello stesso punto. Il testo del titolo non viene dipinto ma viene comunque misurato, perciò il livello è impostato a 12 pt: con i 15 pt predefiniti, il titolo della scena 1 andrebbe a capo e riserverebbe una seconda riga. Il bilanciamento delle colonne è disattivato: aggiungerebbe righe vuote sopra le intestazioni di scena per riempire una pagina corta, e una pagina di copione finisce dove finisce la sua ultima battuta o il suo ultimo paragrafo.
+
+### 5 · Fora e numera solo le pagine del copione
+
+<Excerpt region="furniture" />
+
+Lo stile del titolo del copione porta un proprio `header`, che sostituisce quello del documento nelle pagine della sua sezione, dal titolo alla fine ([stili di titolo](/it/docs/configuration-styles#stili-dei-titoli)). L’intestazione del documento è vuota, quindi i fori e il numero di pagina si stampano solo sul copione. Il numero di pagina è ancorato a mezzo pollice dalla testa del foglio, e `pages: 'body'` lo tiene fuori dalle pagine d’apertura ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). Il titolo è un titolo di livello 1 che interrompe la pagina, quindi la pagina 1 è una pagina d’apertura e non stampa numero, come chiede il formato. Anche le copertine sono titoli di livello 1; `:::numbering{startAt=1}` tra l’interno della copertina e il titolo dà alla pagina del titolo il numero 1, e la pagina successiva stampa 2. Lo stile del titolo imposta una riga di 12 pt; con i 18 pt propri del livello 1, il titolo starebbe su una riga di 21,6 pt e spingerebbe «FADE IN:» 9,6 pt più in basso.
+
+## Varianti
+
+### Riporta le battute sulla griglia
+
+Ogni battuta allora conserva il suo margine inferiore e la successiva aggiunge il suo margine superiore, il che lascia due righe vuote tra le battute (tre prima di un’intestazione di scena) e porta il copione a una quarta pagina.
+
+```diff
+-  snapToGrid: false,
+ };
+```
+
+### Scrivi le intestazioni di scena in tondo normale
+
+I copioni dattiloscritti avevano le intestazioni di scena in semplici maiuscole; il grassetto è arrivato con i programmi di sceneggiatura.
+
+```diff
+-  fontSize: pt(12), fontWeight: 700, lineHeight: 1, color: col('ink'), align: 'left',
++  fontSize: pt(12), fontWeight: 400, lineHeight: 1, color: col('ink'), align: 'left',
+```
+
+```diff
+-      fontWeight: 700, lineHeight: 1, color: col('ink'), align: 'left', overflow: 'wrap',
++      fontWeight: 400, lineHeight: 1, color: col('ink'), align: 'left', overflow: 'wrap',
+```
+
+## Errori frequenti
+
+- Postext non stampa `(MORE)` sotto una battuta che si spezza tra due pagine né ripete il nome sopra il resto. Lascia `keepTogether` al suo valore predefinito, così una battuta passa intera alla pagina successiva.
+- I programmi di sceneggiatura aggiungono `(CONT'D)` al nome in automatico. Qui fa parte del `title` del blocco, quindi scrivilo tu dove la battuta di un personaggio riprende dopo una riga d’azione.
+- `titleStyle.lineHeight` tiene una battuta sulla griglia solo finché è uguale all’interlinea del corpo del testo. Un nome composto più grande o più piccolo del testo prende comunque quei 12 pt, altrimenti ogni battuta sposta fuori griglia le righe che la seguono.

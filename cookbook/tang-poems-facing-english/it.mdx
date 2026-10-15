@@ -1,0 +1,77 @@
+---
+title: "Poesie Tang con i versi inglesi a fronte"
+summary: "Ogni poesia Tang apre un recto colorato e l’inglese di Giles il verso di fronte: uno stile di titolo va alle pagine pari, l’altro alle dispari."
+plain: "Un piccolo libro di poesie cinesi della dinastia Tang, con una vecchia traduzione inglese sulla pagina a fronte. Ogni riga di versi cinesi sta alla stessa altezza dei versi inglesi che la traducono."
+description: "Un libro bilingue di poesia Tang in Postext: stili di titolo che vanno al verso e al recto, il cinese centrato sulla griglia dei caratteri, le glosse come note."
+question: "Come compongo una poesia e la sua traduzione su pagine a fronte, con l’originale sempre sul recto?"
+aliases: ["traduzione a fronte", "testo a fronte", "testo parallelo", "poesia bilingue", "originale a destra", "poesie Tang", "唐詩", "poesia cinese in inglese", "Li Bai", "Du Fu", "Wang Wei", "Herbert Giles", "glosse", "注釋", "verso e recto"]
+pageNotes: { "1": "Il frontespizio: i caratteri 唐詩 in nero sopra una luna oro pallido, «TANG POEMS» in maiuscole rosse sotto, i nomi dei tre poeti, una riga che accredita i versi inglesi di Giles, e un piccolo sigillo rosso con la scritta 明月 vicino al piede.", "3": "Il recto di fronte a «Night Thoughts», su un fondo oro pallido: il titolo 靜夜思 in grassetto, 〔唐〕李白 in rosso sotto, la poesia in due righe di caratteri in stile pennello, ogni riga chiusa da un piccolo numero di nota, e due note al piede della pagina sotto un breve filetto rosso." }
+---
+
+## Che cosa comporrai
+
+Un piccolo libro bilingue di poesie Tang, composto come le edizioni con testo a fronte compongono un classico: il cinese sulla pagina di destra, su una carta colorata come carta antica, e l’inglese in rima di Herbert A. Giles, del 1901, sulla pagina di sinistra di fronte. Quattro poesie di Li Bai, Du Fu e Wang Wei occupano ciascuna una doppia pagina, con il titolo in ogni lingua e la firma del poeta. Il cinese è composto in LXGW WenKai, un carattere Kai disegnato sul modello del pennello, due versi per riga, così ogni riga sta alla stessa altezza dei due versi inglesi che la traducono. Le glosse nella lingua del lettore stanno al piede della pagina cinese. <RecipeLink slug="bilingual-facing-verse">Traduzione a fronte, strofa per strofa</RecipeLink> compone una poesia spagnola accanto al suo inglese su una sola pagina; qui ogni lingua ha una pagina sua.
+
+## Preparazione
+
+### 1 · Uno stile di titolo per ogni lato della doppia pagina
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è fatta di due titoli di livello 1: `# Night Thoughts {style="en" …}` con i versi di Giles, poi `# 靜夜思 {style="zh" …}` con la poesia. Lo stile `en` passa alla pagina pari successiva, un verso; lo stile `zh` alla pagina dispari successiva, il recto di fronte. Finché ogni poesia sta nella sua pagina non entra nessuna pagina bianca; una versione inglese che sforasse spingerebbe l’originale al recto seguente, dietro un verso bianco ([Interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)). Entrambi i progetti grafici riservano sei righe della griglia, così l’inglese e il cinese cominciano sulla stessa riga. Lo stile cinese ha `span: 'page'` perché il suo primo elemento, un riquadro grande quanto la pagina, è la carta colorata, e un progetto grafico tenuto nella colonna si ferma al piede della colonna ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)).
+
+<PageShot page={2} crop="0,0.05,1,0.28" caption="Pagina 2: l’inglese apre il verso sei righe più in basso, sulla riga di griglia dove il cinese apre pagina 3." />
+
+### 2 · Una riga di cinese per due versi inglesi
+
+<Excerpt region="verse" />
+
+Le righe cinesi hanno interlinea doppia rispetto ai versi inglesi, 32 pt contro 16, così una riga di due versi di cinque caratteri sta di fronte al distico che Giles ne ricava. Nella poesia della luna alle <PageRef page={4}>pagine 4 e 5</PageRef> una riga vuota tra le strofe inglesi e un `:::space{lines=1}` tra quelle cinesi lasciano ciascuno una riga, e le sue tre strofe restano allineate sulla doppia pagina. La riga cinese comincia a 51 pt dal margine, il che centra i suoi dodici em nei 28 della griglia, e ogni rimando di nota sta dopo il 。 della sua riga, fuori dai dodici: dentro la riga spingerebbe ogni carattere successivo sei decimi di em a destra, fuori allineamento con la riga sotto. Ogni poesia inglese è un blocco `:::verse`, centrato sul suo verso più lungo, così non c’è nessun rientro da misurare. Giles rientra un verso sì e uno no; il Markdown mantiene i suoi due spazi, che `bodyText.verse.indentStep` rende profondi due em.
+
+### 3 · Glosse al piede della pagina cinese
+
+<Excerpt region="notes" />
+
+Le glosse sono note a piè di pagina, una per riga: `疑是地上霜。[^bed]` chiude la prima riga della poesia e `[^bed]: …` la segue, nominando in grassetto ogni parola che glossa, perché il numero non sta più accanto a esse. Sono numerate come un libro cinese numera le sue note (页下注): numeri cerchiati composti sulla linea di base, contati di nuovo da ① a ogni pagina (`numberFormat: 'circled-decimal'`, `numbering: 'page'`). Nei versi il rimando è composto a sei decimi del corpo della poesia, `markerSize: em(0.6)`, vicino al corpo delle note; al piede della pagina ogni nota si apre con il suo ① nel corpo del testo della nota ([Note a piè di pagina](/it/docs/configuration-notes-references#note-a-piè-di-pagina)). Le note si compongono nel carattere del testo, e il carattere del testo di questo libro è Noto Serif TC perché una glossa mescola caratteri e pinyin; le lettere latine di Noto Serif TC vengono da Source Serif, ed è per questo che le pagine inglesi sono composte in Source Serif 4. Le note sono scritte nella lingua dell’edizione: insieme alla testatina del verso e alla nota sul testo, sono ciò che cambia l’edizione spagnola.
+
+### 4 · Testatine nella lingua di ogni pagina
+
+<Excerpt region="heads" />
+
+Ogni pagina di questo libro si apre con un titolo, quindi ogni pagina è un’apertura, e le testatine usano `pages: 'opener'`. Una pagina bianca aggiunta da un’interruzione resterebbe spoglia, e il frontespizio le toglie con un’intestazione vuota tutta sua. Il verso prende il titolo del libro dal `subtitle` del frontmatter, che ogni edizione scrive nella sua lingua; il recto prende il nome del poeta dall’attributo `name` del titolo cinese ([Intestazioni e piè di pagina](/it/docs/configuration-page-layout#intestazioni-e-piè-di-pagina)).
+
+### 5 · Un frontespizio su una luna
+
+<Excerpt region="title" />
+
+Anche il frontespizio è uno stile di titolo, con `runningChapter: false` perché non nomini nessun capitolo. La luna è un riquadro del progetto grafico con il raggio d’angolo pari a metà del lato, e 唐詩 vi è centrato con un calcolo: il centro della luna meno metà dell’altezza del titolo. Il sigillo compone 明月 con `writingMode: 'vertical-rl'`, un carattere sopra l’altro, come si incidono i sigilli.
+
+### 6 · Ogni carattere cinese carica ciò che compone
+
+<Excerpt region="voices" />
+
+Fontsource divide ogni carattere cinese in circa cento file per intervallo di caratteri, e `loadCjkFonts` scarica solo i file di cui il suo testo ha bisogno ([Font cinesi, giapponesi e coreani](/it/docs/configuration-programmatic-usage#font-cinesi-giapponesi-e-coreani)). Il Kai riceve le poesie e il sigillo, lo Hei le righe dei poeti e i nomi, il Song grassetto i quattro titoli e i lemmi delle note, e il suo peso black i due caratteri del frontespizio.
+
+## Varianti
+
+### Metti l’originale sul verso
+
+Le edizioni Loeb e molti libri di lettura cinese–inglese mettono l’originale a sinistra: scambia le parità dei due stili di titolo e delle due testatine che nominano il libro e il poeta, e scrivi nel Markdown ogni titolo e poesia cinese prima del suo inglese.
+
+```diff
+-const english = { id: 'en', breakBefore: { enabled: true, parity: 'even' }, // a verso
++const english = { id: 'en', breakBefore: { enabled: true, parity: 'odd' }, // a recto
+-const chinese = { id: 'zh', span: 'page', breakBefore: { enabled: true, parity: 'odd' },
++const chinese = { id: 'zh', span: 'page', breakBefore: { enabled: true, parity: 'even' },
+-  head('verso-book', '{subtitle}', 'even', 'top-left', EDGE + 8,
++  head('verso-book', '{subtitle}', 'odd', 'top-right', -(EDGE + 8),
+-  head('recto-poet', '{attr.name}', 'odd', 'top-right', -(EDGE + 8),
++  head('recto-poet', '{attr.name}', 'even', 'top-left', EDGE + 8,
+```
+
+### Metti le glosse subito sotto la poesia
+
+Le antologie cinesi annotate (注釋本) stampano le note dopo ogni poesia. Qui lo fanno le note di fine capitolo, perché ogni poesia è un capitolo a sé.
+
+```diff
+-const footnotes = { placement: 'column', numbering: 'page', // the page foot; ① again on each page
++const footnotes = { placement: 'chapterEnd', chapterEndAlign: 'text',
+```

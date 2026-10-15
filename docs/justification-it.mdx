@@ -1,0 +1,578 @@
+{/* docs/justification-it.mdx */}
+
+export const metadata = {
+  title: 'Sillabazione e giustificazione',
+  sidebarTitle: 'Sillabazione e giustificazione',
+  description: 'Come Postext divide le righe, giustifica il testo e controlla la spaziatura tra le parole con l’algoritmo di Knuth-Plass',
+  lang: 'it',
+  lastUpdated: '2026-09-29',
+  readingTime: '14 min',
+  order: 13,
+  plainSummary: "Questa pagina spiega come Postext distribuisce le parole lungo ogni riga. Quando entrambi i margini di un paragrafo sono dritti, gli spazi tra le parole possono allargarsi troppo e fare brutta figura. Postext guarda l’intero paragrafo prima di decidere dove finisce ogni riga, così gli spazi restano uniformi. Può anche dividere le parole lunghe con un trattino nel punto giusto. Puoi stabilire quanto possono allargarsi gli spazi e segnalare le righe che restano troppo spaziate. La pagina mostra anche come Postext fa finire le colonne alla stessa altezza.",
+};
+
+# Sillabazione e giustificazione
+
+**La differenza tra una composizione dilettantesca e una professionale sta negli spazi tra le parole.**
+
+Apri un qualsiasi romanzo tascabile. Il testo è giustificato: entrambi i margini di ogni paragrafo sono perfettamente allineati. Ma guarda meglio. Gli spazi tra le parole sono quasi uniformi, riga dopo riga. Nessun canale di bianco che scende lungo la pagina. Nessuna riga con due parole isolate e un oceano di vuoto in mezzo. Ottenerlo è molto più difficile di quanto sembri, ed è il problema che ha assorbito più lavoro di ingegneria tipografica di qualsiasi altro.
+
+Postext lo risolve con lo stesso algoritmo che TeX usa dal 1981: la **divisione ottimale in righe di Knuth-Plass**. Insieme a pattern di sillabazione di qualità TeX, limiti configurabili per la spaziatura tra le parole e un sistema di debug visivo per individuare le righe problematiche, il motore produce testo giustificato all’altezza della stampa editoriale.
+
+
+## Il problema
+
+Quando il testo è composto con `textAlign: 'justify'`, ogni riga tranne l’ultima va allargata o compressa fino a riempire esattamente la larghezza della colonna. Il motore distribuisce la differenza tra la larghezza naturale del contenuto e la larghezza della colonna sugli spazi tra le parole di quella riga. (L’ultima riga resta in bandiera alla sua larghezza naturale, con un’eccezione trattata in [L’ultima riga](#lultima-riga).)
+
+Se una riga contiene molte parole, ogni spazio assorbe una correzione minima, invisibile al lettore. Ma se le parole sono poche (perché una parola lunga ha imposto un a capo anticipato), ogni spazio deve allargarsi in modo vistoso. Il risultato è una **riga troppo spaziata** (riga lasca): una riga in cui la spaziatura tra le parole è così ampia da spezzare il ritmo di lettura e aprire brutti vuoti.
+
+Esiste anche il problema opposto. Se il motore stipa troppe parole in una riga, gli spazi si restringono sotto la loro larghezza naturale e producono una **riga troppo stretta**, in cui le parole sembrano schiacciate.
+
+Un algoritmo ingenuo di divisione in righe, come quello del CSS, decide una riga alla volta. Riempie la riga corrente con quante più parole possibile, va a capo e prosegue. Questo approccio **greedy first-fit** («goloso», prima soluzione che entra) ha un punto debole di fondo: non vede il futuro. Una scelta che sembra ottimale per la riga 5 può costringere la riga 6 a una divisione pessima. Quando l’algoritmo arriva alla riga 6 è troppo tardi: la riga 5 è già decisa.
+
+
+## Knuth-Plass: vedere l’intero paragrafo
+
+L’algoritmo di Knuth-Plass, pubblicato da Donald Knuth e Michael Plass nel 1981, segue una strada radicalmente diversa. Invece di dividere una riga alla volta, considera **ogni modo possibile di dividere l’intero paragrafo** e sceglie la combinazione che minimizza la «bruttezza» (badness) totale su tutte le righe. È l’algoritmo che muove TeX, ed è il motivo per cui i documenti composti con TeX sono da oltre quarant’anni il riferimento per il testo giustificato.
+
+### Il modello box-glue-penalty
+
+Knuth-Plass non ragiona in termini di parole e spazi. Modella il testo come una sequenza di tre primitive:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '100px' }}>Primitiva</th>
+      <th style={{ width: '200px' }}>Rappresenta</th>
+      <th>Comportamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Box</strong></td>
+      <td>Una parola o un frammento di testo</td>
+      <td>Ha una larghezza fissa. Non si può allargare né comprimere. Non si può dividere.</td>
+    </tr>
+    <tr>
+      <td><strong>Glue</strong></td>
+      <td>Spazio tra le parole</td>
+      <td>Ha una larghezza <em>naturale</em>, una capacità di <em>allungamento</em> (stretch) e una di <em>restringimento</em> (shrink). Il motore può regolare il glue entro questi limiti per riempire la riga.</td>
+    </tr>
+    <tr>
+      <td><strong>Penalty</strong></td>
+      <td>Un possibile punto di divisione</td>
+      <td>Ha un costo. Penalità bassa = divisione economica. Penalità alta = divisione costosa. Una penalità <em>marcata</em> (flagged) indica un punto di sillabazione (se viene usata, aggiunge un trattino visibile).</td>
+    </tr>
+  </tbody>
+</table>
+
+Un paragrafo diventa una sequenza come questa:
+
+```
+[box "The"] [glue] [box "quick"] [glue] [box "brown"] [glue] [box "fox"]
+[penalty -∞]  ← forced break at paragraph end
+```
+
+Quando la sillabazione è attiva, le parole lunghe vengono divise in frammenti separati da penalità:
+
+```
+[box "ty"] [penalty 50, flagged] [box "pog"] [penalty 50, flagged] [box "raphy"]
+```
+
+Ogni penalità marcata costa 50: non è gratuita, ma costa meno di una riga troppo spaziata.
+
+<Illustration name="BoxGluePenalty" data='{"title": "Le primitive box-glue-penalty", "desc": "Legenda visiva delle tre primitive: il box per un frammento di parola, il glue per lo spazio tra le parole e la penalty per un possibile punto di divisione. Il paragrafo di esempio mostra come un punto di sillabazione diventa una penalità marcata.", "caption": "Ogni paragrafo diventa una sequenza di box, glue e penalty.", "box": "Box", "glue": "Glue", "penalty": "Penalty", "boxDesc": "parola fissa", "glueDesc": "spazio elastico", "penaltyDesc": "possibile divisione", "exampleLabel": "Esempio: «L’arte della tipografia è antica.»"}' />
+
+### Come trova l’ottimo
+
+L’algoritmo usa la programmazione dinamica. Mantiene un insieme di **nodi attivi**, cioè possibili punti di divisione da cui può cominciare una nuova riga, e valuta ogni divisione praticabile a partire da ciascun nodo attivo. Per ogni divisione candidata calcola:
+
+1. **Rapporto di adattamento (r)**: quanto deve allungarsi o restringersi il glue di questa riga. `r = 0` significa che la riga entra perfettamente. `r > 0` significa allungamento (riga lasca). `r < 0` significa restringimento (riga stretta).
+
+2. **Badness**: una misura di quanto è irregolare la spaziatura, calcolata come `100 × |r|³`. La crescita cubica fa sì che una riga leggermente lasca sia tollerabile, mentre una riga molto lasca viene penalizzata pesantemente. Una riga con `r = 2` ha badness 800; una riga con `r = 0.5` ha badness 12.
+
+3. **Classe di adattamento (fitness class)**: ogni riga è classificata come stretta (`r < -0.5`), normale (`-0.5 ≤ r < 0.5`), lasca (`0.5 ≤ r < 1.0`) o molto lasca (`r ≥ 1.0`). Una riga stretta accanto a una molto lasca crea un contrasto stridente, per questo le righe adiacenti le cui classi distano più di un gradino vengono penalizzate.
+
+4. **Demeriti (demerits)**: il costo totale di dividere in quel punto. Come in TeX, la badness e la penalità del punto di divisione si combinano in una formula al quadrato, `demerits = (1 + badness + penalty)²` quando la penalità non è negativa; una penalità negativa (una divisione *desiderabile*) sottrae invece il proprio quadrato: `(1 + badness)² − penalty²`. Si aggiungono poi due demeriti fissi:
+   - **Demerito per trattini consecutivi** (predefinito 3000): penalizza due righe sillabate di seguito, perché i trattini impilati distraggono l’occhio.
+   - **Demerito di classe di adattamento** (predefinito 100): si aggiunge quando la classe di questa riga dista più di un gradino da quella della riga precedente.
+
+   Anche la penalità per la riga finale troppo corta descritta più avanti entra in questa formula, iniettata come badness aggiuntiva; le penalità per orfane e vedove agiscono in una fase successiva, quando un paragrafo si divide tra più colonne.
+
+L’algoritmo sceglie la sequenza di divisioni con il totale di demeriti più basso sull’intero paragrafo: tutto il vantaggio rispetto all’approccio greedy sta qui.
+
+<Illustration name="BadnessCurve" data='{"title": "La badness in funzione del rapporto di adattamento", "desc": "La badness cresce come 100 volte il valore assoluto di r al cubo. Piccoli allungamenti o compressioni costano poco, ma quelli estremi diventano costosissimi, ed è per questo che l’algoritmo li evita.", "caption": "La badness cresce col cubo: una lieve irregolarità è tollerabile, una forte viene punita duramente.", "xAxis": "r", "yAxis": "badness", "zero": "0", "tight": "stretta (r < 0)", "loose": "lasca (r > 0)", "formula": "badness(r) = 100 · |r|³"}' />
+
+<Illustration name="FitnessClasses" data='{"title": "Classi di adattamento", "desc": "Ogni riga è classificata come stretta, normale, lasca o molto lasca in base al suo rapporto di adattamento. Le righe adiacenti le cui classi differiscono di più di un gradino vengono penalizzate.", "caption": "Le righe adiacenti distanti più di una classe ricevono il demerito di adattamento.", "classes": [{"name": "Stretta", "range": "r < -0.5", "example": "compressa"}, {"name": "Normale", "range": "-0.5 ≤ r < 0.5", "example": "giusta"}, {"name": "Lasca", "range": "0.5 ≤ r < 1.0", "example": "un po’ ariosa"}, {"name": "Molto lasca", "range": "r ≥ 1.0", "example": "molto ariosa"}], "adjacentNote": "Il demerito di adattamento si applica quando righe vicine distano più di una classe."}' />
+
+L’algoritmo risale i nodi attivi fino a trovare il percorso con il totale di demeriti più basso: l’insieme di punti di divisione globalmente ottimale per l’intero paragrafo.
+
+#### Penalità per orfane, vedove e righe finali troppo corte
+
+Postext estende il modello di costo standard con tre penalità editoriali che allontanano il motore dagli impaginati con fini di paragrafo e di colonna visivamente infelici:
+
+- La **penalità per le orfane** si applica quando una divisione candidata lascerebbe meno di `orphanMinLines` righe in cima alla colonna successiva. Il valore predefinito di `orphanPenalty` è `1000`.
+- La **penalità per le vedove** si applica quando la divisione lascerebbe meno di `widowMinLines` righe in fondo alla colonna corrente. Il valore predefinito di `widowPenalty` è `1000`.
+- La **penalità per la riga finale troppo corta** (runt) si applica quando l’ultima riga del paragrafo risulterebbe più corta di circa `runtMinCharacters × normalSpaceWidth` pixel: un conteggio di spazi tra parole, non di lettere; il valore predefinito 20 corrisponde a un’ultima riga di circa 8-12 lettere. Il valore predefinito di `runtPenalty` è `1000`, uguale per ogni riga corta; con `gradedRuntPenalty` viene scalato in base a quanto manca alla riga, `runtPenalty × (1 − width / threshold)`, così un finale di due parole costa meno di uno di una parola sola e vince quando una riga più in alto può cedere una parola. A differenza di orfane e vedove (che si sommano linearmente al demerito della divisione), la riga corta viene iniettata come *badness* equivalente dentro la formula al quadrato di Knuth–Plass, così compete sulla stessa scala della badness di riga (che satura a 10000) invece di esserne schiacciata.
+
+Quando la penalità perde comunque, perché ogni divisione alternativa è impraticabile, il motore ripiega su ciò che un compositore fa a mano: compone il paragrafo con una riga in meno (`tightenRunts`). Gli spazi tra le parole di ogni riga si stringono, mai oltre `minWordSpacing`, e quando questo da solo non basta a ospitare le parole rimaste isolate interviene un po’ di tracking negativo, il passo più piccolo che funziona e mai più di `maxRuntTracking` millesimi di em. La composizione più corta deve rispettare anche `maxWordSpacing`. Far entrare le parole in una riga in meno stringe la maggior parte delle righe, ma può spostare una divisione in modo che un’altra riga debba allargarsi molto. Una composizione che allargherebbe una riga oltre `maxWordSpacing` o, quando il paragrafo ha già una riga più lasca, oltre quella riga, non è una correzione, e la riga corta resta. Contano solo le righe che restano giustificate: una riga che il paragrafo compone in bandiera perché si allargherebbe oltre 3× lo spazio normale (vedi [Righe che il motore non riesce a riempire](#righe-che-il-motore-non-riesce-a-riempire)) non alza l’asticella, e la composizione più corta non può comporre in bandiera più righe di quante ne avesse il paragrafo. Né la correzione scambia una riga in bandiera con righe giustificate oltre quell’asticella: il paragrafo tiene la sua riga in bandiera e la sua riga corta. Il bilanciamento delle colonne segue la stessa regola nella direzione opposta: un paragrafo che allungherebbe di una riga per riempire una colonna corta viene lasciato com’è quando quella riga in più finirebbe con una riga corta; riempire una colonna non è un buon motivo per lasciare isolata una sillaba.
+
+Un blocco composto più corto in questo modo lo dichiara: `VDTBlock.runtFix` contiene `{ tracking }`, il tracking negativo usato in millesimi di em, 0 quando gli spazi tra le parole sono bastati da soli. Nessun renderer lo legge; è lì per chi adatta il testo, perché un paragrafo al limite appare stretto accanto ai vicini e con qualche parola in meno sarebbe stato composto senza tracking.
+
+La penalità per la riga corta si somma ai demeriti del nodo candidato dentro il motore di divisione in righe, così il risolutore è libero di scambiare una riga un po’ più lasca con un’ultima riga più lunga, ma solo entro `maxWordSpacing`: una riga allargata oltre quel limite porta una badness aggiuntiva maggiore di qualsiasi penalità per riga corta o per trattino, quindi il motore preferisce un’ultima riga corta, o un’ultima parola sillabata, a una spaziatura che supera il limite. Le penalità per orfane e vedove entrano in un’ottimizzazione separata che interviene quando un paragrafo attraversa il confine di una colonna: ogni divisione candidata riceve un punteggio (somma dei demeriti di spazio residuo, orfane e vedove) e vince la più economica, così il motore preferisce in modo naturale le divisioni che evitano entrambe quando possibile. Regola il compromesso modificando `orphanPenalty`, `widowPenalty` o `runtPenalty`; imposta una di queste a `0` per disattivare del tutto la regola corrispondente. Le voci di elenco aderiscono tramite `avoidOrphansInLists`, `avoidWidowsInLists` e `avoidRuntsInLists` (tutte `true` per impostazione predefinita). Queste regole tengono unite le righe di una voce; `shortListSplit` tiene unite le voci di un elenco breve (disattivato per impostazione predefinita, vedi [Testo corrente](/it/docs/configuration-text#testo-corrente)).
+
+### Perché conta
+
+<Illustration name="GreedyVsKnuthPlass" data='{"title": "Greedy first-fit contro Knuth-Plass ottimale", "desc": "Confronto affiancato: l’algoritmo greedy prende la prima riga che entra e rovina le righe successive, producendo paragrafi irregolari con spaziature disuguali. Knuth-Plass valuta l’intero paragrafo nel suo insieme e produce righe uniformi.", "caption": "Una decisione golosa e locale perde dove un piano ottimale e globale vince.", "greedyTitle": "Greedy first-fit", "greedyLead": "Decide riga per riga, senza guardare avanti", "greedyCons": ["Una divisione sbagliata rovina la riga dopo", "Spaziatura irregolare nel paragrafo", "Canali di bianco", "Nessun modello di costo per le righe adiacenti"], "greedyEquals": "= Ciò che fa il CSS", "kpTitle": "Knuth-Plass ottimale", "kpLead": "Valuta ogni insieme di divisioni possibile", "kpPros": ["Demeriti minimi a livello globale", "Spaziatura uniforme ovunque", "Penalità per trattini consecutivi", "Continuità tra classi di adattamento"], "kpEquals": "= Ciò che fa Postext"}' />
+
+La differenza pratica si vede. In un impaginato greedy troverai paragrafi in cui una riga è sensibilmente più lasca delle vicine e, guardando con attenzione, vedrai che è successo perché la riga *precedente* si è presa una parola di troppo. Knuth-Plass lo evita scambiando una riga corrente un po’ peggiore con una successiva molto migliore, perché ne vede le conseguenze.
+
+### L’implementazione di Postext
+
+Postext implementa l’algoritmo di Knuth-Plass completo nel modulo `knuthPlass/` del pacchetto core: un nucleo di programmazione dinamica (nodi attivi, demeriti, ricostruzione a ritroso) più due percorsi adattatori che convertono il testo nel modello box-glue-penalty:
+
+- **Percorso del testo semplice**: usa `@chenglou/pretext` per misurare il testo senza DOM. Pretext fornisce le larghezze dei segmenti e dei trattini discrezionali; Postext le converte in elementi KP.
+- **Percorso del testo arricchito**: gestisce i tratti in grassetto e in corsivo con misurazioni basate su Canvas. Ogni token con stile diventa uno o più box, con i punti di sillabazione inseriti come penalità.
+
+Entrambi i percorsi calcolano per ogni riga `justifiedSpaceRatio`: la larghezza con cui viene disegnato ogni spazio della riga, divisa per lo spazio del carattere regolare. Gli spazi di una riga vengono disegnati tutti uguali, qualunque sia il carattere da cui provengono. I limiti vincolano qualcosa di leggermente diverso, la variazione di ogni spazio rispetto alla propria larghezza, contata in spazi regolari, e uno spazio in corsivo o in grassetto è più stretto o più largo di quello regolare. Così una riga che ne contiene uno viene disegnata un po’ sotto `minWordSpacing` o sopra `maxWordSpacing` pur essendo stata divisa entro quei limiti, e porta anche `justifiedSpaceLimitRatio`, il numero vincolato dai limiti: 1 più lo spazio residuo della riga sui suoi spazi, ciascuno alla propria larghezza. `lineWordSpacing(line)` lo restituisce, oppure restituisce `justifiedSpaceRatio` su una riga i cui spazi sono tutti regolari, dove i due numeri coincidono. Questo valore alimenta il sistema di debug delle righe lasche descritto più avanti; l’impaginazione vera e propria (il ripiego in bandiera, la correzione della riga corta, la leva del paragrafo lasco) continua a leggere il rapporto disegnato. I rapporti si calcolano solo per le righe che non sono l’ultima; come viene composta l’ultima riga è spiegato in [L’ultima riga](#lultima-riga).
+
+Attorno al motore di divisione in righe, la misurazione del testo vive nel modulo `measure/` (i percorsi di misura semplice e arricchito, le metriche dei glifi su Canvas e la gestione delle stringhe di font) dietro una cache di misure esplicita. Quando i caratteri di una famiglia arrivano o se ne vanno, il motore scarta ciò che aveva misurato in quella famiglia, nelle sue cache di larghezze e nella cache di misure tenuta dall’host, così le misure restano esatte dopo che i web font finiscono di caricarsi senza che l’host debba svuotare nulla (vedi [Caricare i font prima dell’impaginazione](/it/docs/configuration-programmatic-usage#caricare-i-font-prima-dellimpaginazione)). Il parsing, la fase che trasforma il testo sorgente in blocchi e tratti in linea, vive nel modulo `parse/`. Vedi la pagina [Architettura](/it/docs/architecture) per la disposizione di questi moduli file per file.
+
+La divisione in righe interagisce anche con i tipi di contenuto più recenti. Le risorse flottanti occupano la fascia superiore o inferiore di una colonna o di una pagina, accorciando l’estensione delle colonne a cui reagiscono le penalità per orfane, vedove e spazio residuo. Le didascalie e le celle di tabella vengono misurate come sequenze di testo arricchito a capo automatico, con i font delle didascalie e delle tabelle. Le righe di matematica in display sono centrate e atomiche: mai giustificate né divise. Vedi [Formato del documento › Risorse](/it/docs/document-format#risorse) e [Configurazione › Stile delle tabelle](/it/docs/configuration-resources#stile-delle-tabelle) / [Stile delle didascalie](/it/docs/configuration-resources#stile-delle-didascalie) per i dettagli.
+
+**Comportamento di ripiego**: se Knuth-Plass non produce divisioni valide (può capitare con colonne estremamente strette o parole molto lunghe), il motore ripiega sul `layoutNextLine()` greedy di Pretext. Così l’impaginazione arriva sempre in fondo.
+
+
+## Sillabazione
+
+Sillabazione e giustificazione sono inseparabili. Senza sillabazione, l’unico modo che il motore ha per evitare una riga lasca è spostare una parola alla riga successiva, e spesso questo sposta soltanto il problema. La sillabazione offre al motore un insieme molto più ampio di punti di divisione da considerare e migliora in modo netto la qualità del testo giustificato.
+
+<Illustration name="HyphenationExample" data='{"title": "Testo giustificato con e senza sillabazione", "desc": "La colonna di sinistra non ha la sillabazione attiva: le larghezze delle righe variano molto perché il motore può spostare solo parole intere. La colonna di destra ha la sillabazione attiva: le larghezze delle righe sono quasi uniformi e una parola è divisa con un trattino.", "caption": "La sillabazione riduce nettamente le differenze di spaziatura nel testo giustificato.", "withoutTitle": "Senza sillabazione", "withTitle": "Con sillabazione", "withoutCaption": "Righe irregolari, vuoti lunghi, canali di bianco visibili.", "withCaption": "Righe uniformi, un trattino assorbe la differenza."}' />
+
+### Pattern di qualità TeX
+
+Per la sillabazione Postext usa **Hypher** (`hypher` v0.2.5), basato sui **pattern di sillabazione TeX/Liang**. Sono gli stessi pattern che TeX usa dal 1983: una rappresentazione compatta delle regole sui confini di sillaba, ricavata da grandi corpora di parole con l’algoritmo di generazione di pattern di Frank Liang.
+
+I pattern codificano un insieme di regole numerate che, sovrapposte a una parola, indicano dove la divisione è permessa (numeri dispari) e dove è vietata (numeri pari). I parametri `leftmin` e `rightmin` nel file di pattern di ogni lingua garantiscono un numero minimo di caratteri prima e dopo qualsiasi punto di divisione. Per l’inglese (`en-us`) valgono di solito 2 e 3: una parola deve avere almeno 2 caratteri prima del trattino e 3 dopo.
+
+### Lingue supportate
+
+<table>
+  <thead>
+    <tr>
+      <th>Codice di lingua</th>
+      <th>Lingua</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>'en-us'</code></td><td>Inglese (USA)</td></tr>
+    <tr><td><code>'es'</code></td><td>Spagnolo</td></tr>
+    <tr><td><code>'fr'</code></td><td>Francese</td></tr>
+    <tr><td><code>'de'</code></td><td>Tedesco</td></tr>
+    <tr><td><code>'it'</code></td><td>Italiano</td></tr>
+    <tr><td><code>'pt'</code></td><td>Portoghese</td></tr>
+    <tr><td><code>'ca'</code></td><td>Catalano</td></tr>
+    <tr><td><code>'nl'</code></td><td>Olandese</td></tr>
+  </tbody>
+</table>
+
+Ogni lingua carica il proprio insieme di pattern. Le istanze di Hypher vengono create in modo pigro e messe in cache: la prima chiamata per una lingua paga il costo di inizializzazione, le successive sono istantanee. Una lingua con indicazione di regione usa i pattern della sua lingua (`'es-ES'` sillaba con `'es'`, `'en-GB'` con `'en-us'`). Una lingua senza pattern qui ripiega su `en-us`, e il motore lo segnala una volta nella console (vedi [Sillabazione](/it/docs/configuration-text#sillabazione) nel riferimento della configurazione). Cinese, giapponese e coreano sono l’eccezione: si compongono senza sillabazione e senza l’avviso, e le loro righe si dividono tra un carattere e l’altro (vedi [Cinese, giapponese e coreano](#cinese-giapponese-e-coreano) più avanti).
+
+Il **catalano** segue le regole dell’Institut d’Estudis Catalans (*Llibre d’estil*, capitolo VI). Vale da postext 1.14:
+
+- Una divisione lascia almeno due lettere per lato (`ter-ra`, `cai-xa`, `plu-ja`).
+- La *ela geminada* si divide tra le sue due *l*, e il trattino prende il posto del punto mediano: *il·lusió* diventa `il-` | `lusió`. La riga viene misurata senza il punto, così la giustificazione e Knuth–Plass ne vedono la larghezza reale.
+- Due vocali in iato restano insieme (`cièn-cia`, `ca-mions`). Una *i* o una *u* tra vocali conta come consonante e apre la propria sillaba (`fe-ia`, `ve-ient`).
+- Nessuna divisione segue un apostrofo (`s'ha-via`, mai `s'-havia`).
+- Le parole prefissate più comuni si dividono al prefisso (`vos-altres`, `cel-obert`, `ben-estar`).
+- Per tenere intere le parole con pronomi enclitici tranne che al loro trattino (`portar-` | `lo`), come preferisce l’IEC, imposta [`hyphenation.compounds`](/it/docs/configuration-text#sillabazione) a `false`.
+
+### Perché Hypher (e non un algoritmo su misura)
+
+Il sistema di sillabazione originale di Postext usava una **euristica su misura basata sulle vocali**: individuava i confini di sillaba cercando gruppi di vocali, prefissi comuni (`over-`, `under-`, `inter-`) e suffissi comuni (`-tion`, `-ment`, `-sion`). Era semplice e veloce, ma limitato in partenza:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Aspetto</th>
+      <th>Euristica su misura</th>
+      <th>Hypher (pattern TeX)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Accuratezza</strong></td>
+      <td>Buona per le parole comuni, inaffidabile per quelle insolite. Il rilevamento delle vocali perde molti punti di divisione validi e ne crea di non validi.</td>
+      <td>Quasi perfetta. I pattern sono generati da grandi corpora e vengono affinati da oltre 40 anni.</td>
+    </tr>
+    <tr>
+      <td><strong>Copertura linguistica</strong></td>
+      <td>Bisognava definire a mano vocali, prefissi e suffissi per ogni lingua: un lavoro noioso e soggetto a errori.</td>
+      <td>Esistono file di pattern per più di 50 lingue, mantenuti dalla comunità TeX. Aggiungere una lingua significa aggiungere un import.</td>
+    </tr>
+    <tr>
+      <td><strong>Standard di settore</strong></td>
+      <td>Non è uno standard riconosciuto. Nessuno strumento né supporto della comunità.</td>
+      <td>Gli stessi pattern usati da TeX, LibreOffice, Firefox, Chrome e praticamente ogni sistema di composizione professionale.</td>
+    </tr>
+    <tr>
+      <td><strong>Manutenzione</strong></td>
+      <td>Ogni caso limite è un bug da correggere a mano.</td>
+      <td>File di pattern mantenuti dalla comunità. Le correzioni arrivano a monte.</td>
+    </tr>
+    <tr>
+      <td><strong>Dimensione del bundle</strong></td>
+      <td>~170 righe, nessuna dipendenza.</td>
+      <td>Il nucleo di Hypher pesa ~3 KB. Ogni file di pattern linguistico aggiunge 20–80 KB (compresso con gzip: 5–20 KB). Le otto lingue incluse aggiungono circa 300 KB (compresse con gzip: ~80 KB).</td>
+    </tr>
+    <tr>
+      <td><strong>Prestazioni</strong></td>
+      <td>Molto veloce (semplice scansione di stringhe).</td>
+      <td>Veloce (ricerca in un trie per carattere). Trascurabile in pratica: la sillabazione non è mai il collo di bottiglia.</td>
+    </tr>
+  </tbody>
+</table>
+
+Il compromesso è chiaro: un bundle più grande in cambio di una correttezza molto migliore e di zero oneri di manutenzione. Per un motore di impaginazione che punta a un output di qualità editoriale, vince la correttezza. Una sola sillabazione sbagliata in un libro stampato costa più di qualche kilobyte di pattern in più.
+
+### Come la sillabazione si integra con Knuth-Plass
+
+Prima che il testo entri nell’algoritmo di Knuth-Plass, il motore lo pre-elabora con Hypher e inserisce dei **trattini morbidi** (Unicode `\u00AD`) in ogni punto di divisione lecito. Questi caratteri invisibili vengono poi tradotti in **penalità** KP con costo 50 e `flagged: true`.
+
+L’algoritmo tratta le divisioni di sillabazione come un’opzione in più da valutare accanto ai confini naturali tra le parole (dove il glue permette una divisione). Se usare un trattino produce un totale di demeriti più basso che lasciare la riga lasca, l’algoritmo prende il trattino. Altrimenti lascia la parola intera.
+
+Il demerito per trattini consecutivi (predefinito 3000) fa sì che l’algoritmo eviti con decisione di mettere trattini su due righe adiacenti, una convenzione tipografica imposta da praticamente tutti i manuali di stile.
+
+Un trattino sull’ultima riga di una colonna o di una pagina manda il lettore alla colonna successiva a metà parola. `bodyText.hyphenateAcrossColumns: false` lo tiene lontano da quelle righe: quando la riga che chiude una colonna termina con un trattino, il paragrafo viene diviso di nuovo con un trattino in quel punto prezzato come una riga corta, così il motore chiude quella riga su una parola intera ogni volta che gli spazi tra le parole delle righe sopra riescono ad assorbire la differenza entro `maxWordSpacing` e `minWordSpacing`. Dove non ci riescono, il trattino resta. Copre la prima interruzione di colonna di un paragrafo, e le successive che cadono dove finisce una colonna piena. Un’interruzione successiva che cade altrove (una colonna accorciata per evitarle una vedova, una fascia di chiusura livellata) riceve una seconda ridivisione a partire da quella colonna: le righe già composte nelle colonne precedenti mantengono le loro divisioni, e solo il resto del paragrafo viene diviso di nuovo. Così un trattino resta solo dove nessuna composizione entro i limiti lo evita, in pratica alla prima interruzione di colonna di un paragrafo. `hyphenateAcrossColumns: 'withinPage'` mantiene la protezione per le righe che chiudono una pagina: il lettore che volta pagina, o passa a quella a fronte, trova una parola intera, mentre una parola divisa tra due colonne della stessa pagina viene lasciata stare. Su tre colonne restano protette solo due fini di colonna su tre, quindi meno paragrafi vengono divisi di nuovo e meno righe prendono spazi più larghi o più stretti per compensare. Il motore distingue i modi di arrivare a una riga solo fino all’ultima riga che protegge, così un nuovo tentativo costa più o meno quanto la prima misura: una misura in più per ogni paragrafo che divide di nuovo.
+
+Per impostazione predefinita, la sillabazione si applica solo quando `bodyText.hyphenation.enabled` è `true` **e** `bodyText.textAlign` è `'justify'`: un margine in bandiera è fatto per variare. Anche il testo in bandiera può essere sillabato, con `bodyText.hyphenation.ragged: true`. Una riga in bandiera non ha spaziatura tra le parole da uniformare, quindi decide una **zona di sillabazione**: una parola che non entra viene divisa solo quando mandarla intera alla riga successiva lascerebbe un vuoto più largo di `hyphenation.zone` (3 em per impostazione predefinita). Knuth-Plass compone anche il testo corrente in bandiera (`bodyText.optimalRagged`, attivo per impostazione predefinita): gli spazi tra le parole mantengono la loro larghezza, ogni riga paga quanto resta corta rispetto alla giustezza, e la zona decide quali sillabe può prendere; due fini di sillaba di seguito costano il demerito per trattini consecutivi. Componendo riga per riga (`optimalRagged: false`), non più di due righe di seguito terminano su una sillaba. Vedi [Testo in bandiera](/it/docs/configuration-text#testo-in-bandiera).
+
+Due occasioni di divisione esistono a prescindere da questa impostazione. Un **trattino vero tra due lettere** (`enseñanza-aprendizaje`, `físico-química`) è un punto in cui la riga può finire: la parola porta già il trattino, quindi non si aggiunge nulla. Knuth-Plass lo prende in ogni paragrafo con `bodyText.breakAfterHyphens` (attivo per impostazione predefinita), prezzato come una sillaba; in un paragrafo giustificato senza formattazione in linea, solo con due lettere per lato del trattino, così nessuna riga finisce sulla `e-` di `e-mail`. Con l’opzione disattivata, come fino a postext 1.4, un paragrafo giustificato senza formattazione in linea non va a capo subito dopo un trattino del genere, mentre lo stesso paragrafo con una sola parola in corsivo da qualche parte sì; i libri salvati prima di postext 1.5 vengono letti con l’opzione disattivata. La riga finisce sul trattino del testo stesso, che la riga registra come `hardHyphen` accanto a `hyphenated`, così chi legge ignorando un trattino aggiunto (le testatine, il cursore della Sandbox) conserva questo. Anche una **lineetta lunga o breve composta chiusa tra due parole** (`say—that’s`, `riddles.—I`, `Hamburg–Berlin`) è un punto in cui la riga può finire, con entrambi i motori, grazie a `bodyText.breakAfterDashes` (attivo per impostazione predefinita): la riga finisce sulla lineetta, non si aggiunge nulla e non si addebita nulla. Lo stesso vale per una lineetta che chiude una sequenza in uno stile prima di una parola in un altro (`see—*and*`). La riga è allora `hyphenated`, senza `hardHyphen`. Mai dopo una lineetta che apre un inciso o una battuta di dialogo (`—dijo`, `said "—Hola`; una virgoletta che chiude una parola può stare prima della lineetta, come in `"no"—and` o nel tedesco `„nein“—und`), prima della punteggiatura, prima di una virgoletta o di una parentesi (`thinking—" and`, `says—“no”`), dentro una sequenza di lineette o dentro un intervallo di numeri (`1914–1918`). Infine una **parola più larga dell’intera giustezza** (una cella di tabella stretta, un composto lungo in una colonna stretta) non viene mai lasciata sporgere: il motore la divide all’ultima sillaba che entra, con un trattino, o all’ultimo carattere che entra quando il dizionario non offre lì nessuna sillaba; un taglio accanto a un trattino già presente nella parola cade dopo quel trattino e non ne aggiunge, così la parola non ne mostra mai due. Il resto della parola mantiene i propri punti di divisione: un composto continua a dividersi ai suoi trattini e un indirizzo web alle sue giunture, mentre fino a postext 1.4 il resto veniva diviso alle sillabe del dizionario. Un paragrafo senza formattazione in linea viene tagliato all’ultimo carattere che entra, senza trattino, a meno che non sia sillabato. Per Knuth-Plass nessun insieme di divisioni attorno a una parola del genere è praticabile, quindi un paragrafo giustificato che ne contiene una viene composto riga per riga.
+
+
+### Parole composte
+
+Un composto unito da un trattino (`after-dinner`, `teórico-práctico`) può dividersi in due tipi di punti: dopo il proprio trattino e alle sillabe del dizionario di ciascuna parte (`af-ter-dinner`). TeX, e il Chicago Manual of Style, tengono intere le parti e dividono un composto solo al suo trattino. `bodyText.hyphenation.compounds: false` fa lo stesso: il dizionario lascia stare ogni parola con un trattino tra due lettere, che quindi si divide solo dopo quel trattino. Un trattino morbido digitato tra due lettere della parola divide comunque, e un composto più largo dell’intera riga viene comunque diviso dove serve. Il valore predefinito, `true`, continua a dividere le parti, il che offre a una colonna stretta giustificata più modi di riempire le sue righe.
+
+L’ortografia portoghese chiede che il trattino di un composto diviso a fine riga venga ripetuto all’inizio della riga successiva (`vencer-` · `-se`), e così fanno le regole della Real Academia Española dal 2010 (`léxico-` · `-semántico`), perché il lettore sappia che il trattino appartiene alla parola. `bodyText.repeatHyphen: true` lo fa. Il trattino ripetuto viene misurato con la sua riga, così il motore gli lascia spazio, e viene disegnato come il resto del testo; nel PDF porta un testo sostitutivo che lo esclude, così il testo copiato o estratto dal PDF legge la parola una volta sola (`vencer-se`). La riga lo registra come `repeatedHyphen`, e i suoi `plainStart` e `sourceStart` puntano oltre, così la mappatura sul sorgente, i link e le testatine leggono la parola come è scritta. Un indirizzo web non lo riceve mai. Si applica al testo corrente, ai titoli, agli elenchi, alle citazioni in blocco e ai riquadri; un paragrafo senza formattazione che contiene un composto viene allora diviso dal motore che compone il testo formattato.
+
+### Parole tenute intere
+
+Si può dire al dizionario di lasciare stare certe parole. `bodyText.hyphenation.exceptions` le elenca una per una: `'Alice'` non viene mai divisa, `'You-Tube'` solo al trattino della sua voce, come nel `\hyphenation{…}` di TeX. `bodyText.hyphenation.capitalized: false` tiene intera ogni parola che comincia con la maiuscola, e `citations.hyphenateNames: false` i cognomi degli autori citati dal documento. Il motore ha allora meno punti in cui chiudere una riga: dove prima un nome era diviso, la riga precedente prende invece più o meno spazio tra le parole, entro `minWordSpacing` e `maxWordSpacing`. Una parola più larga dell’intera giustezza viene comunque divisa. Vedi [Parole tenute intere](/it/docs/configuration-text#parole-tenute-intere) per come viene confrontata una voce.
+
+### Dove una riga non si divide mai
+
+Alcuni punti non sono mai occasioni di divisione, con nessuno dei due motori:
+
+- **Uno spazio indivisibile.** U+00A0, lo spazio indivisibile stretto U+202F e lo spazio cifra U+2007 incollano le parole ai due lati: un numero e la sua unità, un riferimento di pagina, un gruppo di migliaia. Lo stesso vale nelle didascalie, nelle celle di tabella, nei riquadri e nel testo di design (testatine, aperture). Ognuno mantiene la propria larghezza, così come viene misurato; la giustificazione allarga solo gli spazi tra le parole. Un carattere senza glifo per U+202F o U+2007 riceve la larghezza che danno i browser, mezzo spazio di parola e una cifra, in ogni output, PDF compreso; praticamente ogni carattere ha U+00A0. Un gruppo incollato in questo modo e più largo dell’intera riga è l’eccezione, con o senza formattazione in linea: si divide al suo ultimo spazio indivisibile, invece di essere tagliato dentro una parola. Il word joiner U+2060 incolla senza occupare spazio, anche nel testo cinese: due caratteri con uno in mezzo restano sulla stessa riga. (Un numero cerchiato come ① non ne ha bisogno: da postext 1.25 il testo cinese lo tiene col carattere che segue.) Lo stesso fa U+FEFF, lo spazio indivisibile a larghezza zero, anche se il carattere pensato per questo è il word joiner.
+- **Un’etichetta di rimando con un numero.** Un rimando in linea che stampa un numero o una pagina (`section 3.2`, `p. 112`, `Fig. 1.7`, `Theorem 2`) è una parola sola: nessun a capo tra la parola e il numero, qualunque spazio contenga il modello, e quello spazio non si allarga. Un rimando che stampa parole (il testo di un’ancora, un titolo, una sostituzione `text="…"`) è diverso da postext 1.28: si divide ai propri spazi, che si allargano con la riga (`crossRefs.breakLabels`); le sue parole però non vengono mai sillabate.
+- **Testo attaccato.** Una parola in grassetto o in corsivo e la punteggiatura che la segue (`**osmosis**.`), le parentesi attorno a un rimando in linea (`(:ref{id="fig-3"})`), una parola composta in due sequenze: il testo senza spazio in mezzo è un’unità sola, come se fosse una parola. Quando un’unità del genere non entra in ciò che resta di una riga, scende intera. Quando apre una riga e ancora non entra, la sua ultima parola viene sillabata a una sillaba, così la punteggiatura scende con la coda della parola; solo un’unità senza sillabe in cui dividersi lascia che la sua punteggiatura apra la riga successiva.
+- **A un trattino morbido che non ha una lettera da un lato.** Un trattino morbido (U+00AD) digitato nel testo è una divisione solo tra due lettere o cifre: digitato tra `to` e `gether`, permette a una riga di finire su `to-`. Digitato al bordo di una parola, dopo una parentesi o una virgoletta aperta, o prima della punteggiatura di chiusura, non divide nulla e non stampa nulla, così nessuna riga finisce con un trattino dopo una parola intera. E dato che il dizionario lascia stare una parola che porta già un trattino morbido, uno digitato prima della prima lettera tiene intera quell’occorrenza della parola, in ogni lingua: con uno prima della sua `A`, `Alice` non viene mai divisa. InDesign scrive così il suo trattino discrezionale, e il testo esportato da InDesign ne conserva il significato. Fino a postext 1.27 un trattino morbido del genere era una divisione come le altre (`said Alice-`), e con il catalano il resto della parola veniva comunque diviso.
+- **Dentro una parola di una scrittura a legature.** Una parola araba (o siriaca, N’Ko o mongola) non viene mai sillabata, nemmeno a un trattino morbido digitato al suo interno, e non viene mai tagliata tra le sue lettere: le sue lettere si uniscono, e un pezzo composto da solo prenderebbe altre forme di lettera e un’altra larghezza. L’arabo e le altre lingue da destra a sinistra hanno la sillabazione disattivata per impostazione predefinita; con la sillabazione attiva (per le parole latine di un libro arabo, o in un libro inglese che cita l’arabo), il dizionario salta queste parole. Una parola composta in due stili (`كتا**ب**`) resta una parola sola, misurata intera. Una più larga dell’intera riga sporge oltre la giustezza, e la generazione segnala un avviso di contenuto `unbreakableWordOverflow`.
+
+Fino a postext 1.4, un paragrafo con formattazione in linea o con un `:ref` poteva dividersi a uno spazio indivisibile, e una riga in bandiera poteva finire sulla `(` prima di un rimando o aprirsi con il punto dopo una parola in grassetto.
+
+## Limiti della spaziatura tra le parole
+
+Il modello a glue dà al motore limiti espliciti su quanto possono allargarsi o restringersi gli spazi tra le parole. Questi limiti si controllano con due proprietà di configurazione di `bodyText`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '180px' }}>Proprietà</th>
+      <th style={{ width: '120px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>maxWordSpacing</code></td>
+      <td><code>2</code></td>
+      <td>Limite superiore della spaziatura tra le parole, come moltiplicatore della larghezza normale dello spazio. Con il valore predefinito, gli spazi possono allargarsi fino al 200% della loro larghezza naturale.</td>
+    </tr>
+    <tr>
+      <td><code>minWordSpacing</code></td>
+      <td><code>0.6</code></td>
+      <td>Limite inferiore della spaziatura tra le parole, come moltiplicatore della larghezza normale dello spazio. Con il valore predefinito, gli spazi possono restringersi fino al 60% della loro larghezza naturale.</td>
+    </tr>
+  </tbody>
+</table>
+
+Questi moltiplicatori si traducono direttamente nei valori `stretch` e `shrink` del glue nel modello di Knuth-Plass:
+
+```
+stretchPerSpace = normalSpaceWidth × (maxWordSpacing - 1)
+shrinkPerSpace  = normalSpaceWidth × (1 - minWordSpacing)
+```
+
+Con i valori predefiniti (2 / 0,6), se la larghezza normale dello spazio è 4 px:
+- Ogni spazio può allargarsi di 4 px (da 4 px a 8 px)
+- Ogni spazio può restringersi di 1,6 px (da 4 px a 2,4 px)
+
+**Limiti più stretti** (ad esempio `maxWordSpacing: 1.2`) producono una spaziatura più uniforme ma lasciano all’algoritmo meno margine di manovra, il che può portare a più sillabazioni o, nei casi estremi, a sbordamenti. **Limiti più larghi** (ad esempio `maxWordSpacing: 2.5`) danno all’algoritmo più flessibilità ma permettono una spaziatura visibilmente irregolare su alcune righe.
+
+I valori predefiniti di 2 e 0,6 privilegiano la flessibilità dell’algoritmo: lasciano a Knuth-Plass abbastanza spazio per evitare sbordamenti, sillabazioni e righe finali troppo corte nelle colonne strette, restando ben dentro gli intervalli che la letteratura tipografica considera accettabili.
+
+### Righe che il motore non riesce a riempire
+
+Knuth-Plass non allarga una riga oltre `maxWordSpacing` quando ha scelta, e non lo fa nemmeno la correzione delle righe corte (vedi [Penalità per orfane, vedove e righe finali troppo corte](#penalità-per-orfane-vedove-e-righe-finali-troppo-corte)). Una riga oltre il limite costa più di qualsiasi altro difetto che il motore soppesa (un trattino, un’ultima riga corta, una riga un po’ più lasca delle vicine) dal momento in cui supera il limite, e il costo cresce poi col quadrato del suo rapporto di allungamento; così il motore sillaba una parola, distribuisce lo spazio residuo sulle righe vicine o compone due righe leggermente lasche piuttosto che una molto troppo lasca.
+
+A volte nessun insieme di divisioni resta entro i limiti. La riga che non riesce a prendere la parola successiva ha troppo pochi spazi per spartirsi lo spazio residuo: la prima riga sotto un rientro di paragrafo, seguita da una parola troppo lunga per salire e troppo corta per essere sillabata; una riga di lunghi termini indivisibili; un URL lungo che si divide solo alle proprie giunture; una voce di elenco la cui ultima parola non sale mentre ogni sillabazione lascerebbe una riga corta. Quanto spesso succeda dipende dalla giustezza, dal carattere e dalla lingua. In una colonna di 83 mm di testo inglese a 9,3 pt, dal 2 % all’8 % delle righe di un capitolo superavano `maxWordSpacing`, a seconda del carattere (il più largo più spesso); lo stesso capitolo in spagnolo, la cui sillabazione offre molte più divisioni, non ne aveva nessuna. Knuth-Plass accetta allora la riga meno cattiva, e i suoi spazi si allargano oltre il limite. Quando si allargherebbero oltre 3× la larghezza normale dello spazio, il motore compone invece la riga **in bandiera**: viene disegnata con la spaziatura naturale e il margine destro cede, come l’ultima riga di un paragrafo. La soglia è la stessa usata dall’avviso di riga lasca della Sandbox. La riga viene composta in bandiera e segnalata: un avviso di contenuto `raggedLine` porta il suo testo, la sua pagina e il rapporto che le sarebbe servito (nella Sandbox, **Riga giustificata composta in bandiera**, tra gli avvisi di composizione; un clic seleziona la riga), e `VDTLine.raggedSpaceRatio` conserva il rapporto sulla riga. Riformula il testo o dai alla riga un punto in cui dividersi. Le righe entro la soglia restano come sono state misurate. Lo stesso vale dentro i riquadri, le cui giustezze strette sono il posto dove succede più spesso; fino a postext 1.4 un riquadro teneva giustificata una riga del genere per quanto si allargassero i suoi spazi.
+
+Per avere meno righe di questo tipo, in quest’ordine: verifica che la sillabazione sia attiva e impostata sulla lingua del testo; allarga la giustezza o riduci il corpo del testo; lascia che le righe prendano un po’ di tracking (sezione successiva); oppure alza `maxWordSpacing`, il che fa rientrare nel limite le stesse righe senza comporle in modo diverso.
+
+### Il tracking come ultima risorsa
+
+`bodyText.maxJustifyTracking` permette a una riga del genere di prendere un po’ di tracking, cioè spaziatura tra le lettere, invece di altro spazio tra le parole, fino a quel numero di millesimi di em per carattere (10 = 0.01 em, l’unità di InDesign). Funziona nei due sensi: una riga i cui spazi si allargherebbero oltre `maxWordSpacing` distanzia le lettere finché gli spazi tornano al limite, e una riga che entrerebbe solo con gli spazi sotto `minWordSpacing` stringe le lettere invece di mandare giù una parola. Knuth-Plass ne tiene conto quando sceglie le divisioni: una riga con tracking costa un po’ più di una entro i limiti e molto meno di una che li supera, così il tracking viene usato solo dove la sola spaziatura tra le parole fallirebbe. Le righe entro i limiti, l’ultima riga di un paragrafo (a meno che non sbordi), una riga di una sola parola e una riga che contiene un chip non ne prendono mai. La riga lo registra come `VDTLine.letterSpacing`, in aggiunta al tracking proprio del blocco, e canvas, HTML e PDF lo disegnano. Le parole di una scrittura a legature (arabo…) non prendono mai tracking, né questo né altri (il `letterSpacing` di uno stile, il bilanciamento delle colonne, la correzione delle righe corte): distanziarne le lettere spezza le legature. Una riga non conta nessuna delle loro lettere, e i renderer le disegnano senza tracking; uno stile che imposta `letterSpacing` su un testo del genere riceve un avviso di contenuto `joiningScriptLetterSpacing`.
+
+```ts
+bodyText: {
+  maxWordSpacing: 2,
+  maxJustifyTracking: 10, // at most 0.01 em a letter, either way
+}
+```
+
+È disattivato per impostazione predefinita, così i documenti mantengono le loro righe a meno che non lo chiedano. Nel capitolo inglese citato sopra, 10‰ ha ridotto le righe oltre `maxWordSpacing` a una o nessuna per carattere, e 20‰ a nessuna in tre caratteri su quattro. Tienilo basso: oltre il 20‰ circa il tracking comincia a vedersi come una riga più chiara o più scura.
+
+### La kashida nel testo arabo
+
+Una riga araba giustificata non viene spaziata tra le lettere: le sue lettere si uniscono, e distanziarle spezza le legature. Si allarga invece in due punti, gli spazi tra le parole e le kashide, le giunture allungate che un calligrafo traccia tra due lettere legate (كتاب → كتـاب). Postext le inserisce come tatweel (U+0640, ـ), interi, che il font disegna come un unico tratto; Amiri trasforma una sequenza da uno a sette in una kashida curva.
+
+`bodyText.kashida` vale `'auto'` per impostazione predefinita in un documento la cui lingua si scrive con l’alfabeto arabo (`ar`, `fa`, `ur`…) e `'none'` in tutti gli altri; imposta `'auto'` per allungare le parole arabe citate in un libro in un’altra lingua. Ogni riga tranne l’ultima di un paragrafo apre prima gli spazi tra le parole fino a un quarto della loro larghezza, poi riceve kashide per il resto dello spazio residuo, un tatweel alla volta, prima nei punti migliori e un giro dopo l’altro, rimisurando ogni volta l’intera parola con i suoi tatweel; ciò che resta, meno di un tatweel, torna agli spazi. Knuth-Plass conta come stretch il possibile allungamento di ogni parola, così sceglie le divisioni sapendo che una riga di parole arabe può allargarsi lì.
+
+I punti in cui può andare una kashida vengono dalle regole di [raqim-kashida](https://github.com/aliftype/raqim-kashida) (MIT): solo tra due lettere che si uniscono, mai dopo una lettera che non si lega alla successiva (ا د ذ ر ز و ة), mai a fine parola, mai dentro il lām-alif, dopo i segni della lettera che la precede. `kashidaPatterns: 'naskh'` segue le regole classiche del Naskh (la matrice di Benatia con i divieti di Afifi: nulla dopo kāf o lām, nulla prima di ṣād, ʿayn o wāw, una hāʾ pronominale finale allungata subito prima); `'simple'` le priorità Microsoft per i caratteri moderni semplici; `'nastaliq'` le regole del Naskh adattate al Nastaʿlīq. Il valore predefinito `'auto'` legge il font del testo: nessuna kashida in un carattere Ruqʿa o Dīwānī come Aref Ruqaa, regole Nastaʿlīq in un carattere Nastaʿlīq, Naskh negli altri casi. Una parola prende al massimo `kashidaPerWord` allungamenti (1 per impostazione predefinita) lunghi al massimo `kashidaMaxLength` em (0.6, tre tatweel di Amiri). Una parola che contiene un tatweel digitato dall’autore viene allungata lì. Le parole latine, le cifre, i titoli, le righe in bandiera e l’ultima riga di un paragrafo non ne prendono mai.
+
+```ts
+bodyText: {
+  kashida: 'auto',          // the default in an Arabic book
+  kashidaPatterns: 'naskh', // 'auto' picks it from the font
+  kashidaMaxLength: 0.6,    // em
+}
+```
+
+I tatweel fanno parte del testo disegnato (ogni segmento li elenca in `VDTLineSegment.kashida`, e la riga li conta in `VDTLine.kashida`); il testo semplice, la mappa del sorgente, i link e il testo copiato dal PDF li escludono.
+
+### L’ultima riga
+
+Nel modello box-glue-penalty, ogni paragrafo termina con un glue di larghezza 0 e allungabile all’infinito, seguito da una divisione forzata. Quel glue finale assorbe a costo zero tutto lo spazio che resta nell’ultima riga, così le ultime righe risultano naturalmente in bandiera: vengono disegnate alla loro larghezza naturale, e `justifiedSpaceRatio` si calcola solo per le righe che non sono l’ultima.
+
+C’è un’eccezione. Knuth-Plass può accettare un’ultima riga il cui contenuto naturale è *più largo* della giustezza, supponendo che il glue tra le parole si restringa: è la semantica standard di TeX per la composizione del glue. Tutti e tre i backend riconoscono questo caso (la larghezza naturale del contenuto della riga supera la giustezza effettiva) e comprimono gli spazi tra le parole di quell’ultima riga perché entri esattamente nella giustezza invece di sbordare. Il controllo si applica in modo identico nei backend canvas, PDF e HTML.
+
+### Divisione in righe ottimale o greedy
+
+La proprietà `bodyText.optimalLineBreaking` (predefinito: `true`) stabilisce quale algoritmo di divisione in righe usa il motore:
+
+- **`true`**: l’algoritmo di programmazione dinamica di Knuth-Plass. Valuta tutti gli insiemi di divisioni possibili e sceglie quello globalmente ottimale. È l’impostazione consigliata per qualsiasi testo giustificato. Anche il testo corrente in bandiera lo usa con `bodyText.optimalRagged` (attivo per impostazione predefinita): gli spazi tra le parole mantengono la loro larghezza e il motore valuta invece quanto ogni riga resta corta rispetto alla giustezza, con una riga corta di 3 em che costa quanto una riga giustificata a `maxWordSpacing`; così il margine in bandiera risulta più regolare e valgono le regole sulle righe finali corte.
+- **`false`**: greedy first-fit, basato su `layoutNextLine()` di Pretext. Più veloce ma con risultati di qualità inferiore. Usalo solo quando le prestazioni contano più della qualità tipografica (ad esempio un’anteprima in tempo reale con un numero di caratteri molto alto).
+
+Quando Knuth-Plass è attivo e non produce divisioni valide (può capitare con colonne estremamente strette o parole più lunghe della larghezza della colonna), il motore ripiega automaticamente sulla divisione greedy per quel paragrafo.
+
+### Righe con tabulazioni
+
+Un paragrafo che contiene una tabulazione (vedi [Formato del documento › Tabulazioni e arresti di tabulazione](/it/docs/document-format#tabulazioni-e-tabulatori)) viene composto riga per riga, come fanno i word processor e InDesign con il testo tabulato, mai con Knuth–Plass, qualunque cosa dica `optimalLineBreaking`. Dove cade una tabulazione dipende da dove è arrivata la sua riga, mentre la ricerca ottimale somma le larghezze di ogni riga candidata come se non fosse così. Lo stesso vale per il testo cinese e giapponese: un paragrafo con una tabulazione viene diviso tra i caratteri secondo le regole di divisione del documento, senza compressione della punteggiatura né giustificazione tra i caratteri.
+
+In un paragrafo giustificato, una riga che contiene una tabulazione non viene allargata prima della sua ultima tabulazione, perché gli arresti fissano dove comincia ciascuna sua parte. Solo gli spazi tra le parole dopo l’ultima tabulazione assorbono lo spazio residuo, e solo quando la riga non è l’ultima del paragrafo; una riga senza spazi tra parole dopo l’ultima tabulazione viene composta così com’è. Le righe in bandiera non sono interessate. La riga registra che contiene una tabulazione (`VDTLine.tabbed`); ogni tabulazione è un segmento di spazio che porta il proprio arresto (`VDTLineSegment.tab`), e ogni riempitivo è un segmento a sé (`VDTLineSegment.leader`, `'text'` o `'rule'`).
+
+Il bilanciamento delle colonne non ridivide mai un paragrafo del genere in modo più lasco e non gli applica mai tracking: resta come è stato misurato, così i suoi arresti non si spostano.
+
+
+### Cinese, giapponese e coreano
+
+Un paragrafo che contiene più caratteri CJK che spazi tra parole viene composto dal compositore CJK, non da Knuth-Plass. Ogni intervallo tra due caratteri è un punto in cui la riga può dividersi (salvo dove lo vietano le regole di divisione di `cjk.lineBreak`), quindi non c’è nulla da soppesare per una ricerca ottimale; le righe si riempiono una dopo l’altra. Quando un carattere non entra, la riga prova prima ad accoglierlo rinunciando al bianco della punteggiatura e agli spazi (push-in: gli spazi tra parole fino a un quarto di em, poi i punti mediani, le parentesi, i segni di pausa, gli spazi tra Han e latino fino a un ottavo di em, e i segni di fine frase, come permette `cjk.punctuationWidth`); solo quando non basta, un carattere che non può aprire una riga si porta giù quello precedente. Vedi [Tipografia dell’Asia orientale](/it/docs/configuration-east-asian#tipografia-dellasia-orientale) per le regole. [Impaginazione cinese](/it/docs/chinese-layout) tratta il resto della composizione cinese: le larghezze della punteggiatura per regione, la griglia dei caratteri e il testo verticale. Un documento giapponese segue invece JLReq (vedi [Impaginazione giapponese](/it/docs/japanese-layout#la-giustificazione-e-lultima-riga)): i suoi livelli di kinsoku, una riga che restituisce spazio nell’ordine di JLReq §3.8.3 (prima il mezzo em dopo il segno che chiude la riga, tutto o niente, lo spazio dopo 。 mai all’interno della riga), e nessuno spazio aggiunto dopo una parentesi aperta, prima di una chiusa o accanto a 、。・：；？！ quando una riga viene allargata.
+
+Una riga giustificata di un paragrafo del genere, tranne l’ultima, viene allargata fino alla giustezza nell’ordine fissato da clreq (§6.2.2.4):
+
+1. Gli spazi tra le parole occidentali, in parti uguali, fino a mezzo em ciascuno.
+2. Gli spazi tra Han e latino (`cjk.latinSpacing`), in parti uguali, fino a mezzo em ciascuno.
+3. Ogni intervallo tra caratteri, in parti uguali, compresi gli spazi tra Han e latino: tra caratteri Han, tra Han e punteggiatura, tra Han e una parola latina. Mai dentro una parola latina, un numero o una lineetta doppia o un’ellissi, e mai accanto a un connettore (～, –, una — singola) o a una barra. Un segno sospeso oltre la fine della riga (`cjk.hangingPunctuation`) resta fuori dalla giustezza.
+
+L’ultima riga di un paragrafo viene composta senza spaziatura aggiunta. La spaziatura viene registrata per ogni segmento della riga (`VDTLineSegment.tracking`), così canvas, HTML e PDF disegnano le stesse posizioni, e la Sandbox colloca il cursore sul carattere cliccato.
+
+Una riga che richiederebbe più di mezzo em tra i suoi caratteri, o più di `bodyText.maxJustifyTracking` quando è impostato, viene composta con quel valore, più corta della giustezza, e segnalata con un avviso di contenuto `cjkLooseLine` (nella Sandbox, **Riga CJK lasciata corta**). La causa abituale è una parola latina lunga o un indirizzo web che non ha potuto salire. Una riga senza caratteri CJK, come la testa di un indirizzo web lungo, viene composta in bandiera senza l’avviso.
+
+Per l’evidenziazione delle righe lasche, una riga CJK conta come lasca in base alla spaziatura: il suo rapporto è 1 più la sua spaziatura in ottavi di em, così con la soglia predefinita di 3 viene segnalata una riga i cui caratteri sono distanziati di più di un quarto di em (`lineLooseness(line, fontSizePx)` dà il rapporto). Il bilanciamento delle colonne può allungare di una riga un paragrafo CJK: divide le righe un po’ prima della giustezza, un ottavo di em alla volta fino a due em, e poi le riallarga fino alla giustezza. Su una griglia di caratteri può allargarle al massimo di `headings.balancing.maxTracking` tra due caratteri, così i caratteri restano nelle loro celle (vedi [Giustificazione verticale: bilanciamento delle colonne](#giustificazione-verticale-bilanciamento-delle-colonne)).
+
+## Debug delle righe lasche
+
+Anche con Knuth-Plass e la sillabazione, alcune righe restano più lasche del dovuto, soprattutto nelle colonne strette con parole lunghe, o nelle lingue con poche possibilità di sillabazione. La funzione di debug di **evidenziazione delle righe lasche** ti aiuta a trovare subito queste righe problematiche.
+
+### Come funziona
+
+Ogni riga giustificata nell’albero virtuale del documento porta un `justifiedSpaceRatio`: la larghezza con cui vengono disegnati i suoi spazi rispetto allo spazio del carattere regolare. Un valore di 1.0 indica lo spazio regolare; 2.5 indica spazi larghi 2,5 volte tanto. Una riga con spazi di un altro carattere (una frase in corsivo, una parola in grassetto) porta un secondo numero, `justifiedSpaceLimitRatio`, la sua spaziatura tra le parole come la vincolano `minWordSpacing` e `maxWordSpacing`. `lineWordSpacing(line)` dà il numero da confrontare con i limiti: il secondo quando la riga ce l’ha, altrimenti il primo.
+
+Quando `debug.looseLineHighlight.enabled` è `true`, la Sandbox disegna una sovrapposizione semitrasparente sull’anteprima Canvas su ogni riga la cui spaziatura tra le parole (`lineWordSpacing`) supera la soglia configurata (`threshold`). Una riga composta esattamente a `maxWordSpacing` che contiene uno spazio in grassetto viene disegnata qualche centesimo di spazio oltre e non viene conteggiata: il motore ha rispettato il limite. La soglia predefinita è 3.0, cioè vengono evidenziate solo le righe con spazi tre volte più larghi del normale. È un’asticella volutamente alta; righe così lasche sono veri problemi tipografici. È anche la larghezza oltre la quale il motore compone in bandiera una riga giustificata invece di allargarla (vedi [Righe che il motore non riesce a riempire](#righe-che-il-motore-non-riesce-a-riempire)), così con il valore predefinito l’evidenziazione e l’avviso `looseLines` non trovano quasi nulla nel testo corrente: una riga del genere viene composta in bandiera e segnalata invece con un avviso `raggedLine`. Abbassa la soglia, a 1.5 o 2, per trovare le righe lasche ma ancora giustificate.
+
+La sovrapposizione non fa parte della pagina, quindi le pagine esportate non la mostrano mai. Per disegnarla su un tuo canvas, chiama `drawLooseLines(ctx, page, doc, { threshold })` subito dopo `renderPageToCanvas`; `findLooseLines(doc, { threshold })` restituisce le stesse righe come dati (vedi [Righe lasche nel tuo canvas](/it/docs/configuration-fonts-colors-viewers#righe-lasche-nel-tuo-canvas)).
+
+### Configurazione
+
+L’evidenziazione delle righe lasche fa parte della sezione `debug` di `PostextConfig`:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '200px' }}>Proprietà</th>
+      <th style={{ width: '200px' }}>Tipo</th>
+      <th style={{ width: '180px' }}>Predefinito</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>looseLineHighlight.enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Se evidenziare le righe lasche.</td>
+    </tr>
+    <tr>
+      <td><code>looseLineHighlight.color</code></td>
+      <td><code>ColorValue</code></td>
+      <td><code>#ff000040</code></td>
+      <td>Colore della sovrapposizione di evidenziazione. Il valore predefinito è un rosso semitrasparente.</td>
+    </tr>
+    <tr>
+      <td><code>looseLineHighlight.threshold</code></td>
+      <td><code>number</code></td>
+      <td><code>3</code></td>
+      <td>Moltiplicatore della larghezza normale dello spazio oltre il quale una riga è considerata lasca. Valori più bassi colgono più righe; valori più alti evidenziano solo i casi peggiori. A 3 o più, il testo corrente non mostra quasi nulla, perché le righe oltre 3× vengono composte in bandiera.</td>
+    </tr>
+  </tbody>
+</table>
+
+```ts
+debug: {
+  looseLineHighlight: {
+    enabled: true,
+    threshold: 2.5,
+    color: { hex: '#ff660040', model: 'hex' },
+  },
+}
+```
+
+### Interpretare i risultati
+
+Quando attivi l’evidenziazione delle righe lasche e vedi bande rosse su certe righe, significa che il motore non ha trovato un modo per comporle senza una spaziatura eccessiva tra le parole. Parti dall’alto: le cause sono ordinate dalla più probabile alla meno probabile.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '220px' }}>Causa</th>
+      <th>Soluzione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>La colonna è troppo stretta per il corpo del carattere</td>
+      <td>Allarga la colonna, riduci il corpo o passa a un impaginato a colonna singola.</td>
+    </tr>
+    <tr>
+      <td>Parole lunghe con pochi punti di sillabazione</td>
+      <td>Verifica che la sillabazione sia attiva e che la lingua impostata sia quella corretta. Alcuni termini tecnici o nomi propri non hanno punti di divisione validi.</td>
+    </tr>
+    <tr>
+      <td>La sillabazione è disattivata</td>
+      <td>Attiva <code>bodyText.hyphenation.enabled</code>. La giustificazione senza sillabazione è quasi sempre peggiore.</td>
+    </tr>
+    <tr>
+      <td>Alcune righe restano lasche qualunque sia il carattere</td>
+      <td>Lascia che quelle righe prendano un po’ di tracking: <code>bodyText.maxJustifyTracking: 10</code>. Vedi <a href="#il-tracking-come-ultima-risorsa">Il tracking come ultima risorsa</a>.</td>
+    </tr>
+    <tr>
+      <td>I limiti della spaziatura tra le parole sono troppo stretti</td>
+      <td>Aumenta leggermente <code>maxWordSpacing</code> (ad esempio da 2 a 2,4). Così l’algoritmo ha più margine.</td>
+    </tr>
+    <tr>
+      <td>La lingua ha parole composte lunghe (ad esempio il tedesco)</td>
+      <td>Assicurati che la lingua impostata sia quella corretta. I pattern di sillabazione tedeschi gestiscono bene le parole composte, ma solo se il motore sa che il testo è in tedesco.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Giustificazione verticale: bilanciamento delle colonne
+
+Knuth-Plass risolve il problema *orizzontale*, cioè dove va a capo ogni riga. Il bilanciamento delle colonne risolve il suo corrispettivo *verticale*: dove finisce ogni colonna. Gli editori si aspettano che ogni colonna della pagina cominci in alto e finisca a filo con il piede della pagina, riga per riga su tutta la doppia pagina. Proprio le regole che proteggono la qualità del testo remano contro: la protezione da orfane e vedove, i titoli `keepWithNext` e le figure indivisibili spingono il contenuto alla colonna successiva prima che quella corrente sia del tutto piena, lasciando in fondo una o più righe vuote della griglia della linea di base.
+
+Quando `headings.balancing` è attivo (lo è per impostazione predefinita, tranne nel testo verticale e su una griglia di caratteri), il motore chiude quei vuoti come farebbe un compositore in carne e ossa, applicando le sue leve in un rigoroso ordine di priorità editoriale: ogni leva agisce solo su ciò che la precedente non è riuscita ad assorbire.
+
+1. **Un riquadro che chiude la colonna.** Un riquadro che termina una colonna corta scende esattamente dello spazio libero sotto il suo piede, così che il suo bordo inferiore incontri l’ultima riga della griglia, allineato con la colonna accanto; lo spazio può essere una frazione di riga. Interviene per primo e prende tutto il vuoto, salvo diversa indicazione di `closingBox`: `'last'` lascia che le leve seguenti prendano prima le righe intere e dà al riquadro solo ciò che avanza, così un riquadro che commenta il paragrafo sopra di sé gli resta vicino; `'off'` non sposta mai il riquadro.
+2. **Immagini con una zona sicura.** Un’immagine la cui risorsa indica una zona sicura (`Resource.safeArea`, la parte che deve sempre essere visibile; vedi [Formato del documento › Zona sicura](/it/docs/document-format#zona-sicura)) cresce di righe intere della griglia quando è inserita in linea nella colonna corta, oppure flottante in testa o al piede di quella sola colonna: il motore ritaglia ciò che sta fuori dalla zona sicura per renderla più alta, a tutta la sua larghezza. Un’immagine più alta non lascia buchi in nessun punto della pagina, quindi viene prima di qualsiasi spazio aggiunto. Un elemento flottante in testa a una colonna su una pagina o una fascia di chiusura, le cui teste di colonna restano allineate, non cresce.
+3. **Spazio sopra i titoli.** Si aggiungono righe intere della griglia della linea di base al margine superiore dei titoli dentro la colonna corta. Quando servono più righe e la colonna contiene più titoli, le righe vengono distribuite a turno in ordine di importanza, così il titolo più importante riceve sempre la quota maggiore: 3 righe su un `h2` e un `h3` diventano +2 sopra l’`h2` e +1 sopra l’`h3`. I titoli in cima a una colonna non ricevono mai spazio in più (le colonne continuano a cominciare dall’alto della pagina) e un titolo in coda non viene mai spinto verso il fondo della colonna. Un titolo prende al massimo `maxLinesBeforeLoose` righe in questo modo (due per impostazione predefinita) prima che si provino le leve seguenti, e le righe ulteriori, fino a `maxLinesPerHeading`, solo quando queste non hanno più nulla da dare.
+4. **Spazio dopo la fine degli elenchi.** Si aggiunge una riga della griglia dove finisce un elenco o un’enumerazione: un po’ d’aria dopo un elenco si legge con naturalezza. Il limite è per fine di elenco (`maxLinesAfterList`, predefinito 1). Poi una riga della griglia sotto una formula in display o un riquadro dopo cui il testo riprende (`stretchAfterDisplays`), e una sotto una figura o una tabella in testa alla colonna (`stretchAfterFloats`, `maxLinesAfterFloat`). Il testo sotto la figura può essere il resto di un paragrafo cominciato nella pagina precedente; scende comunque, della riga che le regole di interruzione hanno lasciato libera al piede della colonna (una riga che la regola della vedova ha lasciato vuota, uno spazio tra paragrafi senza posto per il testo che segue). Sotto una figura che occupa più colonne la riga si aggiunge solo quando ogni colonna sotto la figura la prende, così le teste restano allineate, oppure quando la figura chiude a filo la sua colonna (`stretchAfterWideFloats`).
+5. **Paragrafi allentati.** Come ultima risorsa, i paragrafi della colonna vengono ridivisi in righe con una riga in più (il `\looseness=+1` di TeX), fino a `maxLooseParagraphs` paragrafi (due per impostazione predefinita), una riga in più ciascuno. Il divisore riesegue Knuth-Plass chiedendo esattamente una riga in più e accetta il risultato solo quando **ogni riga della soluzione allentata resta sotto `maxWordSpacing`**: il colore tipografico non supera mai il limite che hai già configurato. Il motore preferisce i paragrafi più lunghi della colonna, dove lo spazio in più si diluisce sul maggior numero di spazi tra le parole e diventa invisibile. Richiede `optimalLineBreaking` (attivo per impostazione predefinita); i paragrafi divisi tra colonne sono esclusi. Un paragrafo che la correzione della riga finale troppo corta ha accorciato di una riga conta la sua riga in più a partire da quella composizione: può riguadagnare la riga che la correzione gli ha tolto, ma solo con una composizione senza riga finale troppo corta e senza alcuna riga oltre `maxWordSpacing` (fino a postext 1.4 poteva tornare con una riga ben oltre il limite).
+
+   Quando la sola spaziatura tra le parole non basta a guadagnare la riga, il paragrafo può prendere anche un po’ di **tracking** positivo, il rimedio classico del compositore. Il motore prova prima il valore più piccolo (metà di `maxTracking`, poi `maxTracking`, in millesimi di em per carattere; 10 = 0,01 em per impostazione predefinita) e tiene il primo che guadagna la riga, sempre sotto lo stesso vincolo di spaziatura tra le parole. Il tracking viene misurato nelle righe del paragrafo e disegnato da ogni backend (`letterSpacing` del canvas, `letter-spacing` del CSS, spaziatura dei caratteri del PDF). Disattivalo con `trackParagraphs: false`.
+
+### Perché la correzione è locale
+
+Le interruzioni di colonna sono *legate agli elementi*: l’elemento che apre la colonna successiva si trova lì perché non entrava nel vuoto. Spingere in basso la coda di una colonna al massimo del suo stesso vuoto non sposta quindi mai contenuto nella colonna o nella pagina successiva: ogni colonna resta ferma al suo posto, senza riflussi a cascata. Il motore lo verifica comunque in modo empirico: riesegue il posizionamento con le correzioni proposte (fino a 8 passate), misura il vuoto residuo totale e tiene sempre la migliore impaginazione trovata. Un paragrafo allentato che non riesce a guadagnare la sua riga entro il limite di spaziatura, con qualunque tracking, finisce in una lista nera e si prova il candidato successivo.
+
+### Quando una colonna corta resta com’è
+
+A volte una colonna corta è l’output *corretto*, e il bilanciamento sa farsi da parte:
+
+- L’**ultima colonna di una pagina** si bilancia solo quando la pagina prosegue naturalmente nella successiva. Le pagine chiuse da `:::pagebreak`, dal `breakBefore` di un titolo o da un’apertura di capitolo mantengono la loro ultima colonna corta: è legittimo che un capitolo finisca a metà pagina.
+- L’**ultima pagina del documento** non si bilancia mai.
+- Una colonna **senza alcun punto di allungamento utilizzabile** (nessun titolo idoneo, nessuna fine di elenco, nessun paragrafo allentabile) mantiene il suo vuoto anziché degradare la tipografia.
+- Un **paragrafo che contiene una tabulazione** non viene mai allentato né spaziato con tracking (vedi [Righe con tabulazioni](#righe-con-tabulazioni)).
+
+```js
+const doc = buildDocument(content, {
+  headings: {
+    balancing: {
+      enabled: true,            // default
+      maxLinesPerHeading: 4,    // cap per heading
+      maxLinesBeforeLoose: 2,   // lines before the other levers
+      stretchAfterLists: true,  // lever 4
+      maxLinesAfterList: 1,     // cap per list end
+      stretchAfterDisplays: true, // under a formula or a box
+      looseParagraphs: true,    // lever 5 — bounded by bodyText.maxWordSpacing
+      maxLooseParagraphs: 2,    // loose paragraphs per short column
+      trackParagraphs: true,    // let a loose paragraph take a little tracking
+      maxTracking: 10,          // ‰ em per character (0.01 em)
+      closingBox: 'first',      // lever 1: 'first' | 'last' | 'off'
+    },
+  },
+});
+```
+
+Nella Sandbox queste opzioni si trovano nella sezione *Titoli* di **Grafica → Titoli e indice** («Bilancia le colonne», con «Allunga dopo gli elenchi», «Allunga sotto le figure», «Riquadro che chiude una colonna» e «Paragrafi allentati» annidati sotto). Attiva la griglia della linea di base (**Grafica → Avanzate → Aiuti a schermo**) e guarda la vista Canvas per vederne l’effetto: con il bilanciamento disattivato, le colonne corte finiscono sopra l’ultima riga della griglia; con il bilanciamento attivo, ogni colonna bilanciabile chiude sulla stessa riga. Consulta la pagina [Configurazione](/it/docs/configuration-text#bilanciamento-delle-colonne) per il riferimento completo delle opzioni.
+
+## Esempio completo
+
+Una configurazione completa che mostra tutte le impostazioni di sillabazione e giustificazione:
+
+```ts
+import { buildDocument } from 'postext';
+
+const vdt = buildDocument(content, {
+  bodyText: {
+    fontFamily: 'EB Garamond',
+    fontSize: { value: 9, unit: 'pt' },
+    textAlign: 'justify',
+
+    // Knuth-Plass optimal line breaking (default: true)
+    optimalLineBreaking: true,
+
+    // Hyphenation
+    hyphenation: {
+      enabled: true,
+      locale: 'es',
+    },
+
+    // Word spacing bounds (multipliers of normal space width)
+    maxWordSpacing: 2,     // spaces stretch up to 200%
+    minWordSpacing: 0.6,   // spaces shrink down to 60%
+  },
+
+  // Debug: highlight lines with excessive spacing
+  debug: {
+    looseLineHighlight: {
+      enabled: true,
+      threshold: 2.5,
+      color: { hex: '#ff000040', model: 'hex' },
+    },
+  },
+});
+```
+
+Per l’elenco completo delle opzioni di configurazione del testo corrente, consulta la pagina [Configurazione](/it/docs/configuration-text#testo-corrente). Per come la pipeline di impaginazione usa queste impostazioni durante la misurazione del testo, consulta la pagina [Architettura](/it/docs/architecture).

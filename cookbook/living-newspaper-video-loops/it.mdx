@@ -1,0 +1,60 @@
+---
+title: "Un giornale vivente con le immagini in movimento"
+summary: "Sei risorse video composte come foto di cronaca su un tabloid a quattro colonne; autoplay, loop ed exclusive: false fanno partire le clip insieme in Folio."
+plain: "Un giornale locale in stile anni Trenta in cui ogni fotografia è un breve film muto. Sulla carta sono immagini ferme; nel visualizzatore 3D si muovono tutte insieme, all’infinito, come un giornale in una fiaba."
+description: "Tabloid di quattro pagine su quattro colonne le cui sei immagini sono video in loop in bianco e nero, che girano insieme su carta da giornale piegata in Folio."
+question: "Come faccio a far girare insieme diversi video muti in loop su una pagina di giornale?"
+aliases: ["giornale vivente", "immagini in movimento", "video in loop", "autoplay", "loop", "più video insieme", "exclusive", "riproduzione simultanea", "tabloid", "giornale", "quattro colonne", "Folio", "carta da giornale", "piegato"]
+pageNotes: { "1": "La prima pagina di «The Wexcombe Lantern», 10 giugno 1933: una testata nera condensata, il titolo «Trams run to the sea at last», un’immagine del sindaco che parla da un podio su tre colonne, un’immagine di una donna che saluta da un biplano su due, e una striscia colorata «In brief» al piede.", "2": "«Town & Harbour»: un’immagine di una torre dell’orologio e una di un pescatore che ride reggendo un merluzzo enorme, ciascuna su due colonne, la fine dell’articolo sui tram, un riquadro delle tariffe, una tabella delle maree, notizie dal consiglio comunale, notizie marittime e cinque brevi su quattro colonne con filetti.", "3": "«Stage & Screen»: un’attrice in una scenografia da giardino su due colonne, una recensione, tabelle di cinema e radio, lettere al direttore e un riquadro con filetti di piccoli annunci.", "4": "«Sport»: un portiere accovacciato sulla linea di porta su tre colonne, la cronaca della coppa, tabelle di calendario, cricket e ciclismo e il colophon dell’editore." }
+---
+
+## Che cosa comporrai
+
+*The Wexcombe Lantern*, un settimanale balneare inventato del giugno 1933, su una pagina tabloid di 280 × 430 mm in quattro colonne con filetti: una testata condensata, un articolo d’apertura con l’immagine su tre colonne, un secondo su due, tabelle delle maree, piccoli annunci e una pagina sportiva. Ogni immagine è un film in bianco e nero di cinque secondi. In stampa, e nelle pagine piatte sotto il visualizzatore, ognuna è il suo primo fotogramma. Aperte in Folio come un giornale piegato su carta da giornale chiara, le immagini delle pagine aperte si muovono tutte insieme e continuano a muoversi: il sindaco parla, l’aviatrice saluta, il pescatore ride, il portiere si tuffa e si rialza. La pagina non disegna nulla; l’impaginazione è quella di un giornale qualunque, e le clip fanno il resto.
+
+## Preparazione
+
+### 1 · Fai di ogni immagine una clip che gira in loop con le altre
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Una risorsa video stampa la sua locandina come immagine, così le clip prendono il posto delle fotografie e hanno la didascalia come loro. Tre opzioni del player rendono viva la pagina: `autoplay` avvia una clip quando la sua pagina è visibile (sempre senza audio, come richiedono i browser), `loop` la riproduce di nuovo dall’inizio e `exclusive: false` la lascia girare insieme alle altre clip. Per impostazione predefinita un video è esclusivo: avviarlo mette in pausa tutto ciò che sta suonando, il che va bene per una lezione ma non per una pagina di fotografie in movimento. Il simbolo di riproduzione e il codice QR sono disattivati, così sulla carta le clip si leggono come foto di cronaca.
+
+### 2 · Dai a ogni loop il suo posto sulla griglia
+
+<Excerpt region="clips" />
+
+L’impaginazione è `layoutType: 'multiple'` con `columnCount: 4`. Il `columns` di un elemento flottante stabilisce quante colonne prende: il sindaco e il portiere tre, l’aviatrice, la torre dell’orologio, il pescatore e l’attrice due. Un elemento flottante su più colonne prende la testa di una serie di colonne vuote che cominciano alla stessa altezza, oppure il piede della colonna in cui è citato e di quelle vuote che la seguono, quindi è la posizione della riga `::resource` a decidere il posto. Il sindaco è citato dopo il primo paragrafo, il che lascia la colonna 1 al testo e mette l’immagine sopra le colonne da 2 a 4.
+
+### 3 · Componi la testata e le pagine di sezione
+
+<Excerpt region="nameplate" />
+
+Il titolo di livello 1 della prima pagina è il nome del giornale, disegnato da uno slot di design: due orecchiette sopra, il nome in maiuscole Oswald e una riga della data tra un filetto sottile e uno spesso. Le pagine interne si aprono con un’etichetta di sezione rossa su una barra di 3 pt (la regione `pages`) e una riga del folio in testa a ogni pagina tranne la prima.
+
+### 4 · Apri il giornale in Folio
+
+<Excerpt region="folio" />
+
+`config.folio` posa il giornale su legno di quercia alla luce del giorno: carta da giornale da 45 g/m², attraverso cui si intravede la pagina successiva, e `binding.type: 'folded'`, fogli piegati una volta e infilati uno dentro l’altro senza punti metallici né dorso, come si assembla un giornale. Folio disegna ogni clip della doppia pagina aperta in un’unica texture, fino a otto alla volta, avvia i loop in autoplay ogni volta che una voltata si ferma sulla loro pagina e li ferma quando la pagina viene girata. Un clic su un video esclusivo lo riproduce comunque da solo, con il suo audio, e i loop aspettano che si fermi.
+
+## Varianti
+
+### Lascia che sia il lettore ad avviare ogni clip
+
+Senza `autoplay` le immagini restano ferme finché il lettore non ne clicca una; una volta avviati, i loop girano comunque insieme.
+
+```diff
+-  player: { autoplay: true, loop: true, muted: true, exclusive: false, controls: false },
++  player: { loop: true, muted: true, exclusive: false, controls: false },
+```
+
+### Una clip esclusiva con il suo audio
+
+Un singolo video può mantenere il comportamento predefinito e suonare alle sue condizioni: imposta `player: { exclusive: true, muted: false }` nel `video` di quella risorsa, e avviarlo trattiene i loop finché non finisce.
+
+### Un formato lenzuolo su sei colonne
+
+<RecipeLink slug="newspaper-front-page">La prima pagina a due colonne</RecipeLink> compone un giornale più piccolo con fotografie ferme; la stessa griglia prende sei colonne su un formato lenzuolo con `sizePreset: 'broadsheet'`.
+
+## Errori frequenti
+
+Una sezione di giornale è un titolo di livello 1 che apre una pagina, e un elemento flottante non la oltrepassa mai. Un’immagine che non trova posto nell’ultima pagina della sua sezione viene composta su una pagina propria prima della sezione successiva, quindi adatta il testo alla pagina: qui l’articolo sui tram prosegue a pagina 2 invece di spingere l’aviatrice fuori dalla prima pagina.

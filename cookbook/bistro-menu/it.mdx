@@ -1,0 +1,83 @@
+---
+title: "Menu da bistrot: i prezzi su una tabulazione"
+summary: "Un menu da bistrot fronte e retro: prezzi allineati a destra su una tabulazione, vini in una tabella senza bordi e un filetto ottone ai lati di ogni portata."
+plain: "Un menu fronte e retro per un ristorante parigino inventato. Mostra come spingere ogni prezzo al margine destro con una tabulazione e come comporre la carta dei vini in una tabella senza linee visibili."
+description: "Il menu d’autunno di un bistrot parigino immaginario, in Postext: piatti con prezzo su tabulazione sul fronte, vini per regione in tabella senza filetti."
+question: "Come allineo a destra i prezzi di un menu, e la carta dei vini con una riga di intestazione e righe unite?"
+aliases: ["menu", "menu del ristorante", "carta", "carta dei vini", "listino prezzi", "tabulazioni", "tabulazione", "tabulazione a destra", "prezzi allineati a destra", "tabella senza bordi", "tabella senza filetti", "simboli alimentari", "titolo tra filetti"]
+pageNotes: { "1": "Il fronte del cartoncino color crema: una tenda a strisce rosso vino e paglia su un’asta d’ottone, «Les Tanneurs» in Limelight rosso vino, e sotto «Bistrot parisien depuis 1931» e «Carte d’automne 2026». Tre titoli di portata centrati, «Entrées», «Plats» e «Desserts», ciascuno tra due filetti ottone che arrivano ai margini e ciascuno sopra quattro piatti: il nome francese in grassetto con il contorno, una riga inglese in corsivo sotto e il prezzo in grassetto al margine destro. Quattro piatti portano un disco verde scuro «V» e cinque una pillola «SG» solo contornata. Al piede, due righe piccole centrate: la legenda dei simboli, poi l’origine della carne e una nota che il servizio è compreso.", "2": "Il retro: due bicchieri, quattro bottiglie e una caraffa su una mensola d’ottone sopra «La Cave». Una carta dei vini intestata «Appellation · cépage», «12 cl» e «75 cl», con le regioni «Bulles», «Blancs» e «Rouges» centrate per tutta la larghezza; il Saint-Émilion ha un trattino nella colonna del calice. Sotto, «Le Comptoir», tra due filetti ottone, elenca kir, pastis, birra alla spina e caffè, e un piccolo colophon centrato corre lungo il piede." }
+---
+
+## Che cosa comporrai
+
+La carta d’autunno di Les Tanneurs, un bistrot parigino immaginario: un solo foglio, 230 × 310 mm, stampato fronte e retro. Sul fronte una tenda a strisce pende sopra il nome, composto in Limelight. Ogni titolo di portata sta tra due filetti ottone che arrivano fino ai margini, con quattro piatti sotto. Un piatto è il suo nome francese in grassetto con il contorno, una riga inglese in corsivo sotto e il prezzo in grassetto, allineato a destra. Un disco verde scuro «V» segna i piatti vegetariani e una pillola contornata «SG» quelli senza glutine. Ogni piatto è un paragrafo, e una tabulazione manda il prezzo a un arresto sul margine destro. Sul retro la carta dei vini sta sotto una mensola di bottiglie, con i prezzi al calice e alla bottiglia in colonne intestate «12 cl» e «75 cl», in una tabella senza filetti e senza didascalia.
+
+## Preparazione
+
+### 1 · Un arresto di tabulazione dove va il prezzo
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni portata è un gruppo `:::paragraphs{style="dish"}`, un paragrafo per piatto ([Stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo)). Lo stile del piatto ha un solo arresto di tabulazione, in `'end'`, la fine della giustezza, con `align: 'end'`: il testo dopo una tabulazione finisce sull’arresto. Così `:tab **7**` dopo il contorno e i simboli manda il prezzo a destra, per quanto lungo sia il piatto ([Tabulazioni e arresti di tabulazione](/it/docs/document-format#tabulazioni-e-tabulatori)). `:tab` assorbe gli spazi che lo circondano, e la barra rovesciata a fine riga è un a capo forzato, così la riga inglese in corsivo comincia una seconda riga dello stesso paragrafo e il prezzo resta sulla prima. `spaceBetween` mette mezza riga tra due piatti, quindi ogni piatto occupa due righe e mezza dell’interlinea di 14,5 pt. `indent` e `endIndent` di un quarto di riga tengono i piatti allineati al testo delle celle della carta dei vini sul retro. Un paragrafo con tabulazioni si compone riga per riga; qui tutte le righe sono comunque a bandiera.
+
+### 2 · Un tipo di risorsa, al suo posto e mai numerato
+
+<Excerpt region="type" />
+
+I tipi predefiniti figura e tabella stampano una riga di didascalia e fanno flottare ogni risorsa nel primo spazio libero dopo il suo primo rimando. Il tipo `menu` non ha prefisso di didascalia e i suoi pezzi non hanno didascalia, quindi sotto i disegni e la carta dei vini non si stampa nulla. Dagli `captionPrefix: 'Menu'` e sotto ogni pezzo compare una riga numerata, a cominciare da «Menu 1.» sotto la tenda, e il cartoncino arriva a quattro pagine. `defaultPlacement` mette la carta dei vini e ogni disegno sulla sua riga `::resource` ([Inserimento di blocco](/it/docs/document-format#inserimento-di-blocco-facoltativo-collocazione-in-linea-esplicita)). Senza, la carta dei vini flotta al piede del retro, sotto «Le Comptoir» e il colophon. La tenda e le bottiglie sono risorse SVG dello stesso tipo, disegnate nel codice e registrate con il `loadSvg` del kit.
+
+### 3 · Unisci le righe delle regioni
+
+<Excerpt region="wines" />
+
+La carta dei vini resta una tabella: i suoi due prezzi stanno in colonne sotto le loro intestazioni, «12 cl» e «75 cl», che una riga di tabulazioni lascerebbe senza intestazione. `parseTSV(tsv, { headerRows: 1 })` legge la prima riga come riga di intestazione, così «Appellation · cépage», «12 cl» e «75 cl» si stampano sopra le loro colonne nel carattere dell’intestazione, Josefin Sans. Una riga con un solo campo nomina una regione. La sua cella diventa una cella di intestazione centrata, e `mergeCells` la allarga sulle tre colonne e segna le due celle che copre con `hiddenBy` ([Costruire i modelli di tabella](/it/docs/configuration-resources#costruire-i-modelli-di-tabella)). Centrato nella sola prima colonna, «BLANCS» starebbe 22,6 mm a sinistra dell’asse su cui sono centrati «La Cave» e «Le Comptoir». Una riga vuota nel TSV diventa una riga di celle vuote, alta una riga e mezza, ed è quella riga a fare lo spazio sopra «Blancs» e «Rouges».
+
+### 4 · Appendi un filetto a ogni lato del titolo della portata
+
+<Excerpt region="heads" />
+
+Un titolo di portata è un progetto grafico nella colonna. L’elemento `{titleText}` non ha larghezza, quindi il suo riquadro è largo quanto le sue maiuscole, e l’ancoraggio `'top'` lo centra sulla colonna. Ogni filetto si aggancia a un bordo del titolo con `'left-of'` o `'right-of'` e si estende fino al bordo della colonna ([Posizionamento degli elementi](/it/docs/configuration-page-layout#collocazione-degli-elementi)), così i filetti accanto a «PLATS» sono lunghi 66,7 mm e quelli accanto a «LE COMPTOIR» 56,2 mm, ciascuno a 4 mm dalle lettere. Il `lineHeight` del titolo è un multiplo, 0,96, che rende il suo riquadro alto 14,4 pt e lo tiene dentro una sola riga di griglia da 14,5 pt. Con 1 il riquadro misura 15 pt, ogni titolo occupa due righe e il cartoncino arriva a quattro pagine.
+
+### 5 · Simboli come chip, caratteri piccoli come stili di paragrafo
+
+<Excerpt region="badges" />
+
+Un chip disegna un riquadro attorno a un tratto di testo dentro la riga ([Stili dei chip](/it/docs/configuration-styles#stili-dei-chip)), così `:chip[V]{style="veg"}` digitato dopo il contorno mette il disco sulla riga francese del piatto, prima della tabulazione. Gli stili dei chip impostano `bold: true` perché un chip prende il peso del testo che lo circonda, 400 dopo un contorno, e `FONTS` carica Josefin Sans solo nel peso 700. Le note sotto i dessert e il colophon sul retro sono blocchi `:::paragraphs` a 9 e 7,5 pt, ed entrambi gli stili hanno un `marginTop` di una riga ([Stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo)). Senza quel margine le note cominciano sulla riga dopo la riga inglese del piatto di formaggi, come se appartenessero al piatto.
+
+### 6 · Centra il cartoncino su un solo asse
+
+<Excerpt region="centred" />
+
+`headings.textAlign` e `bodyText.textAlign` mettono tutto, tranne i piatti e la carta dei vini, sulla linea mediana del cartoncino. `lineHeight: pt(3 * LEAD)` dà al nome da 48 pt tre righe di griglia. Senza, il nome prende l’interlinea predefinita e quattro righe, la seconda riga di note passa su una pagina sua e il cartoncino arriva a quattro pagine. Il livello 1 disattiva l’interruzione prima dell’H1, `breakBefore: { enabled: false }`, perché il nome e «La Cave» vanno sulla pagina del disegno sopra di loro. Lascia il valore predefinito, `{ enabled: true, parity: 'always-odd' }`, e ogni disegno resta da solo su una pagina, sette pagine in tutto. La configurazione non imposta `locale`: su questo cartoncino nulla è giustificato, e il testo a bandiera si sillaba solo con `bodyText.hyphenation.ragged` attivo.
+
+## Varianti
+
+### Ferma i filetti a una lunghezza fissa
+
+Una larghezza fissa al posto di `'fill'` tiene ogni filetto lungo 20 mm e a 4 mm dal titolo, così la coppia sta più vicina al centro accanto a «PLATS» che accanto a «LE COMPTOIR».
+
+```diff
+-    size: { width: 'fill' }, // to the column's edge
++    size: { width: mm(20) }, // 20 mm, wherever the title ends
+```
+
+### Porta una fila di puntini fino al prezzo
+
+Un riempitivo occupa lo spazio prima dell’arresto. `'. '` ripete un punto e uno spazio, da mezzo em dopo l’ultimo simbolo o l’ultima parola del piatto fino a mezzo em prima del prezzo.
+
+```diff
+-  tabStops: [{ position: 'end', align: 'end' }],
++  tabStops: [{ position: 'end', align: 'end', leader: '. ' }],
+```
+
+### Filetta la carta dei vini come un registro
+
+`rules: 'horizontal'` traccia un filetto sottile ottone da 0,5 pt sopra e sotto ogni riga della carta dei vini. I filetti non occupano spazio, quindi entrambi i lati mantengono l’impaginazione, e le righe vuote sopra «Blancs» e «Rouges» ricevono una coppia di filetti tutta loro.
+
+```diff
+-const tableStyle = { rules: 'none', cellPadding: pt(LEAD / 4), // a row: 1½ lines of LEAD
++const tableStyle = { rules: 'horizontal', borderColor: col('brass'),
++  borderWidth: pt(0.5), cellPadding: pt(LEAD / 4),
+```
+
+## Errori frequenti
+
+Lascia spazio per il prezzo sulla prima riga del piatto. Quando il piatto e il contorno superano il punto che serve al prezzo, l’arresto porta l’ultima parola del piatto alla riga successiva insieme al prezzo, e la riga inglese viene dopo: il piatto occupa allora tre righe e la portata finisce una riga più in basso.

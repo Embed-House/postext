@@ -1,0 +1,74 @@
+---
+title: "Un saggio di metascienza in inglese e in spagnolo"
+summary: "Il saggio di Ioannidis del 2005 ricomposto da un solo script in due edizioni: formule nel testo e nelle celle, figura 1 tracciata dalla sua equazione."
+plain: "Un famoso saggio ad accesso aperto sul perché molti risultati della ricerca non reggono, in una ristampa di sette pagine. Un solo script dà un’edizione inglese e una spagnola, ognuna con sillabazione, virgola decimale ed etichette sue."
+description: "Un solo script Postext compone un articolo ad accesso aperto in inglese e in spagnolo: formule nelle celle, equazioni numerate, figura calcolata, Vancouver."
+question: "Come pubblico un articolo in due lingue da un solo script, con la tipografia di ciascuna lingua?"
+aliases: ["articolo bilingue", "traduzione", "due edizioni", "edizione spagnola", "Ioannidis", "PLoS Medicine", "metascienza", "valore predittivo positivo", "PPV", "tabella 2×2", "formula in una cella di tabella", "lettere greche nelle tabelle", "Vancouver", "elsevier-vancouver", "accesso aperto", "ricomporre un articolo"]
+pageNotes: { "1": "Pagina 1: una fascia blu notte attraversata da curve tenui del valore predittivo positivo disposte a ventaglio, l’occhiello «ESSAY · RESEARCH METHODS», il titolo «Why Most Published Research Findings Are False» in un sans bianco molto pesante, l’autore e le sue due affiliazioni; sotto la fascia la riga della fonte e della licenza, il «Summary» su una tinta grigio-azzurra a tutta pagina e l’inizio del saggio su due colonne con citazioni tra parentesi quadre.", "2": "Pagina 2: il modello del saggio su due colonne, con le equazioni (1)–(3) come frazioni centrate numerate a destra, e la tabella 1 a tutta larghezza al piede della pagina: un’intestazione blu notte su due righe, «Research finding» sopra entrambe e «True relationship» sopra «Yes», «No» e «Total», e una formula in ogni cella del corpo.", "3": "Pagina 3: la tabella 2, poi la figura 1 in tre pannelli per potenza 0.80, 0.50 e 0.20, ciascuno con quattro curve dal blu notte al vermiglione per u = 0.05–0.80 e una curva tratteggiata senza distorsione, poi la tabella 3 e l’inizio dei «Corollaries», ognuno aperto da una piccola etichetta vermiglione.", "5": "Pagina 5: i corollari 5 e 6, la sezione sui disegni di ricerca e la tabella 4 al piede della seconda colonna: nove esempi pratici con potenza, R, u e una colonna PPV calcolata dall’equazione (2).", "6": "Pagina 6: le ultime sezioni del saggio su due colonne.", "7": "Pagina 7: la fine del testo, le informazioni sull’articolo in un piccolo sans e 33 riferimenti in stile Vancouver, numerati tra parentesi quadre su due colonne." }
+---
+
+## Che cosa comporrai
+
+Una ristampa di sette pagine del saggio di John Ioannidis *Why Most Published Research Findings Are False* (PLoS Medicine, 2005), abbreviato e composto su una pagina di 210 × 280 mm a due colonne. Una fascia blu notte apre la prima pagina, con le curve della formula stessa del saggio tracciate tenui dietro il titolo. Le tre formule sono equazioni numerate in display; le tabelle 2×2 portano una formula in ogni cella, con α e β veri; la figura 1 è calcolata dall’equazione (2), e così l’ultima colonna della tabella 4. Lo stesso script costruisce una traduzione spagnola con la sillabazione spagnola, la virgola decimale nelle tabelle e nelle figure, le virgolette « » e le etichette in spagnolo. Seguono trentatré riferimenti in stile Vancouver, ricostruiti in BibTeX dall’elenco dell’articolo.
+
+## Preparazione
+
+### 1 · Un solo script, due edizioni
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il Ricettario compone il pen una volta per lingua e mette `content.en.md` o `content.es.md` al posto del segnaposto `@content`; ogni slot con nome (`content.corollaries.es.md`, `content.resources.es.md`) segue la stessa regola, e uno slot senza file spagnolo ricade sull’inglese, ed è così che le due edizioni condividono un solo file BibTeX. Tutto il resto che cambia con la lingua passa per `LANG`: `locale` sceglie i pattern di sillabazione (`'es'` è il codice che sillaba lo spagnolo), `defaultResourceTypes(LANG)` scrive *Tabla* e *Figura*, il locale CSL scrive le parole della bibliografia, e `toLocaleString` dà ai numeri calcolati dallo script la loro virgola decimale. La traduzione è scritta con la tipografia spagnola: virgolette « », *0,05* nel testo e `0{,}05` dentro una formula, così TeX non compone la virgola come punteggiatura con uno spazio dopo. Per pubblicare un tuo articolo in due lingue, tieni un file per lingua per il testo e le didascalie, e metti ogni altra differenza in un solo oggetto come `edition`.
+
+### 2 · Formule dentro le celle delle tabelle
+
+<Excerpt region="tables" />
+
+Una cella di tabella compone `$…$` come fa il testo (da postext 1.19), quindi una cella che nel TSV dice `$c(1-\beta)R/(R+1)$` è una formula: tracciati MathJax al corpo 8 pt delle celle, sulla linea di base della riga della cella, così *Yes*, *No* e le formule stanno su una stessa riga, e contorni vettoriali nel PDF. I file latin di Fontsource non hanno lettere greche, e le formule non ne hanno bisogno. Anche didascalie e note accettano la matematica: la didascalia della tabella 4 chiama la potenza 1 − β e la sua nota assume α = 0.05, come li stampa l’articolo del 2005. `setAlignment` allinea a destra i numeri della tabella 4, e `mergeCells` unisce *Research finding* sopra entrambe le righe d’intestazione e *True relationship* sopra tre colonne; scrive anche le celle segnaposto nascoste di cui una cella unita ha bisogno.
+
+### 3 · Didascalie e tabelle dallo slot, numeri dalla formula
+
+<Excerpt region="resources" />
+
+Le tabelle, le didascalie, le note e i testi alternativi vivono in `content.resources.<lang>.md`, un blocco ciascuno, così un traduttore modifica solo file di testo e ogni edizione porta solo la propria lingua. La colonna PPV della tabella 4 non è digitata: `ppv()` la calcola dalla potenza, da *R* e da *u* di ogni riga, e i nove valori coincidono con quelli stampati nel 2005 a due cifre significative. Le tabelle flottano con `position: 'auto'`, così la tabella 1 può prendere il piede della pagina che la cita invece di accumularsi con gli altri elementi flottanti in quella successiva.
+
+### 4 · La figura 1 tracciata dall’equazione (2)
+
+<Excerpt region="art" />
+
+Ogni pannello è un ciclo su *R* da 0 a 1 attraverso la stessa `ppv()` che riempie la tabella 4. Tracciare le curve dalla formula mostra una cosa che la figura del 2005 nasconde: le sue curve corrispondono a *u* = 0, 0.05, 0.20 e 0.80, mentre la sua legenda dice 0.05, 0.20, 0.50 e 0.80. Questa versione traccia i valori della legenda e aggiunge l’assenza di distorsione come curva tratteggiata, e la nota della didascalia lo dice. Le etichette sono testo che nomina il carattere delle etichette: `loadSvg` fa passare il disegno per `inlineSvgFonts`, che incorpora quel carattere per il canvas, e il PDF le compone nel carattere fornito dal provider.
+
+### 5 · Una prima pagina e un riquadro per un saggio
+
+<Excerpt region="title" />
+
+Il titolo è l’unico titolo di livello 1; il suo stile `essay` occupa la pagina e disegna la fascia, l’occhiello, l’autore, le affiliazioni e la riga della fonte dagli attributi del titolo, quindi l’edizione spagnola cambia solo le parole. Il riassunto è un riquadro a tutta larghezza su una tinta. Il riquadro 1, l’esempio svolto, flotta al piede di una pagina su entrambe le colonne e compone il suo testo su due colonne dentro il riquadro. I corollari mantengono la forma in linea dell’articolo: `:chip[Corollary 1]{style="corollary"}` dà a ciascuno una piccola etichetta vermiglione prima del suo enunciato in grassetto.
+
+<Excerpt region="boxes" />
+
+## Varianti
+
+### Alza i numeri delle citazioni
+
+Le riviste mediche compongono spesso i numeri Vancouver in apice.
+
+```diff
+-    marker: 'brackets', collapseRanges: true,
++    marker: 'superscript', collapseRanges: true,
+```
+
+### Stampa i DOI
+
+Il BibTeX di questa ricetta non conserva i DOI, per restare entro la dimensione del pen. Conservali nel tuo file e stampali come link.
+
+```diff
+-      labelWidth: mm(6.4), doi: 'hide' } },
++      labelWidth: mm(6.4), doi: 'link' } },
+```
+
+### Componi le tabelle su una colonna
+
+Una tabella 2×2 con formule più corte entra in una colonna: togli il suo `span: 'page'`, come la tabella 4 che non ce l’ha. Vedi <RecipeLink slug="journal-article-with-maths">Articolo a due colonne con equazioni numerate</RecipeLink> per una tabella su una colonna.
+
+## Errori frequenti
+
+- Dove l’elenco del 2005 si ferma a cinque autori e *et al.*, il BibTeX chiude l’elenco con `and others`, e `elsevier-vancouver` stampa al suo posto *et al.* (da postext 1.19; le versioni precedenti stampavano un coautore chiamato *others*).
+- Le pagine differiscono tra le edizioni: il testo spagnolo è più lungo, quindi la tabella 4 finisce una pagina più avanti. La cattura pubblica le pagine 1, 2, 3, 5, 6 e 7 di entrambe, per tenere le immagini delle pagine sotto il limite di dimensione e mostrare comunque la tabella 4 in ciascuna.

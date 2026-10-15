@@ -1,0 +1,65 @@
+---
+title: "Ritingi un intero documento da una sola palette"
+summary: "Ogni colore della configurazione è collegato a una voce di palette, così cambiare palette compone un programma di festival in rosso, petrolio, viola o sabbia."
+plain: "Un pieghevole quadrato per un festival musicale, mostrato in quattro combinazioni di colori. Mostra come cambiare in un colpo solo tutti i colori del documento scegliendo un nuovo gruppo di colori."
+description: "Un programma di festival di due pagine: titoli, grassetti, punti elenco, chip, campioni, fondi di tabella, testatina e folio prendono il colore da una palette."
+question: "Come sostituisco il blu predefinito di titoli, grassetti e punti elenco con i colori della mia palette?"
+aliases: ["palette di colori", "ritingere", "ricolorare", "varianti di colore", "colori del tema", "colori del marchio", "main-color", "paletteId", "blu predefinito", "anteprima dal vivo", "cache della configurazione", "colorPalette"]
+pageNotes: { "1": "Il fronte del programma: un campo rosso sulla metà superiore con l’occhiello «Almarén · 12–18 June 2027», il titolo «Riverside Music Week» in bianco e una forma d’onda di barre arrotondate chiare; sotto, due colonne a bandiera si aprono con un’introduzione ed elencano i giorni da «Saturday» a «Monday», ogni evento con un orario rosso in grassetto e un chip: «Free» contornato di rosso, oppure il prezzo in bianco su rosso.", "2": "Il retro: una barra rossa della didascalia sopra una griglia di sei luoghi per sette giorni, i nomi dei luoghi allineati a destra contro le tessere, quadrati rossi per i concerti a pagamento e rosa chiaro per gli eventi gratuiti, con una legenda a campioni di colore; poi da «Tuesday» a «Friday» in due colonne, un riquadro «Tickets» sotto una striscia rossa, il colophon e il folio 2 in una pillola rossa." }
+---
+
+## Che cosa comporrai
+
+Il programma di *Riverside Music Week*, un festival immaginario in una città sul fiume, stampato come pieghevole quadrato di 200 mm. La prima pagina ha un campo di colore sulla metà superiore, con il titolo in Syne 800 a 46 pt e una forma d’onda di barre arrotondate chiare; sotto, due colonne a bandiera elencano la settimana giorno per giorno, ogni evento con un orario in grassetto e un chip del prezzo. Il retro disegna la settimana come una griglia di tessere colorate sotto una barra della didascalia, poi elenca i giorni da «Tuesday» a «Friday» e chiude con un riquadro dei biglietti sotto una striscia e il colophon. Sopra le pagine il pen mostra quattro prove, in rosso, petrolio, viola e sabbia. I loro colori vengono da sette voci di palette nominate per ruolo, più `main-color` impostato sul colore della fascia. Fai clic su una prova e tutto il documento si ricompone in quella palette.
+
+## Preparazione
+
+### 1 · Nomina i colori per il lavoro che fanno
+
+<Excerpt region="palette" />
+
+`band` riempie i campi di colore, `onBand` colora il testo composto sopra di essi, `deep` è l’accento per il testo sulla carta bianca e `tint` il fondo chiaro. Ogni variante imposta questi quattro e condivide i tre neutri. Sul bianco la fascia petrolio misura 3,3:1 e quella sabbia 2,1:1, troppo poco per un testo bianco sulla fascia o per un testo del colore della fascia sulla carta. Queste due palette impostano `onBand` in nero, e tutte e quattro compongono grassetti e titoli in `deep`, una tonalità più scura che misura tra 5,99:1 (sabbia) e 8,40:1 (viola) sul bianco.
+
+### 2 · Collega tutto ciò che il motore stamperebbe in blu
+
+<Excerpt region="links" />
+
+Il blu del motore è una voce di palette, `main-color` (#295AA3), e [i suoi valori predefiniti](/it/docs/configuration-fonts-colors-viewers#la-tavolozza-predefinita) vi puntano titoli, grassetto, corsivo, rimandi, punti elenco e testatina. Qui ognuno di essi porta un id di palette: orari e termini chiave in grassetto `deep`, corsivi in nero, punti elenco in `band`, e a pagina 2 una testatina in `deep` e il folio in `onBand` su una pillola `band`. `retint()` punta anche `main-color` sulla fascia; poiché questa configurazione imposta ogni colore, su queste pagine non cambia nulla, ma uno stile aggiunto più tardi senza colore prende la fascia invece del blu. Il riquadro dei biglietti non imposta un colore proprio per il grassetto, quindi eredita `bodyText.boldColor` con il suo id di palette, e il suo grassetto cambia con la variante.
+
+### 3 · Disegna la grafica con i riquadri del progetto grafico
+
+<Excerpt region="opener" />
+
+L’apertura è uno [slot di progetto grafico](/it/docs/configuration-page-layout#elementi-riquadro) che contiene un riquadro al vivo sul bordo superiore, 29 barre arrotondate per la forma d’onda e tre elementi di testo: il testo stesso del titolo come titolo, e l’occhiello e il sommario dai suoi attributi. Le barre sono riquadri e non un SVG, quindi il loro fondo è un altro collegamento a `tint` che segue la palette; un SVG andrebbe ridisegnato e registrato di nuovo per ogni variante. Da solo, il riquadro della fascia farebbe partire il testo sulla riga di griglia 2,4 mm sotto la fascia; `minHeight`, 18 righe o 85,1 mm sotto il margine superiore, riserva di più e sposta la prima riga a 7 mm sotto di essa.
+
+### 4 · Lascia che la palette riempia la tabella
+
+<Excerpt region="grid" />
+
+La griglia è una risorsa tabella, fuori dalla configurazione. I suoi [fondi di cella](/it/docs/document-format#inserimento-di-blocco-facoltativo-collocazione-in-linea-esplicita) portano comunque id di palette, e il motore li risolve dalla palette del documento quando impagina la tabella; allo stesso modo si risolvono i `:swatch{color="band"}` e `:swatch{color="tint"}` della legenda nella nota della tabella. I chip negli elenchi usano gli stessi due id, così un quadrato pieno, il chip accanto a un orario e il campione della legenda concordano in ogni variante.
+
+### 5 · Cambia palette e ricomponi
+
+<Excerpt region="live" />
+
+Ogni pulsante chiama `retint()`, che assegna le voci della variante a `colorPalette` sull’unico oggetto di configurazione, e ricompone. Il motore risolve una configurazione una volta e [mette in cache il risultato associandolo a quell’oggetto](/it/docs/configuration-programmatic-usage#stato-globale-condiviso-in-una-pagina); da postext 1.25 ogni composizione controlla prima che l’oggetto si legga ancora come allora, quindi una modifica fatta sul posto viene risolta di nuovo. Ogni collegamento segue: il testo, gli elenchi, i chip e la barra della didascalia, e con loro la fascia, la forma d’onda, la testatina, la pillola del folio e «Table 1». Le quattro prove mantengono i loro colori quando la palette cambia ancora, perché ogni documento conserva i colori con cui è stato impaginato. Il pen le compone con `buildDocumentWithFonts`; quando si fa clic su un pulsante i caratteri sono già caricati, e basta `buildDocument`.
+
+## Varianti
+
+### Tieni il grassetto in nero
+
+Lascia l’accento a titoli, punti elenco e chip, e componi orari e termini chiave nel colore del testo.
+
+```diff
+-  boldColor: col('deep'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
++  boldColor: col('ink'), referenceColor: col('deep'), textAlign: 'left', firstLineIndent: pt(0) };
+```
+
+### Dai a ogni parte di un libro il suo colore
+
+Per colori che cambiano dentro un unico documento, parte per parte, vedi <RecipeLink slug="parts-in-colour">Parti a colori da un solo attributo</RecipeLink>.
+
+## Errori frequenti
+
+- Un’immagine mantiene i colori con cui è stata disegnata. Un SVG o una fotografia non seguono la palette, ed è per questo che la forma d’onda è fatta di riquadri del progetto grafico.
+- Un id che la palette non contiene ripiega sull’esadecimale scritto accanto. Sbaglia a scrivere un `paletteId` e quel colore resta nel rosso della casa in ogni variante.

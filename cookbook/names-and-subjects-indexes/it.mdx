@@ -1,0 +1,66 @@
+---
+title: "Un indice dei nomi e un indice degli argomenti"
+summary: "I segni con index=\"names\" formano l’indice delle persone, gli altri quello degli argomenti; :::index li stampa su due colonne, la costruzione fissa le pagine."
+plain: "Un capitolo di un libro di studio sulla storia dei caratteri da stampa. Mostra come costruire due elenchi in fondo al libro, uno di persone e uno di argomenti, con la pagina in cui compare ciascuno."
+description: "Un capitolo di monografia sui caratteri da stampa chiuso da un indice dei nomi e uno degli argomenti, costruiti dai segni :index di un solo documento Markdown."
+question: "Come stampo un indice dei nomi e un indice degli argomenti dallo stesso testo?"
+aliases: ["indice dei nomi", "indice delle persone", "indice degli argomenti", "indice onomastico", "índice onomástico", "índice de materias", "indice analitico", ":index", ":::index"]
+pageNotes: { "6": "L’indice dei nomi: cognomi invertiti sotto lettere di sezione in Bodoni, pagine principali in grassetto.", "7": "L’indice degli argomenti: sottovoci, rimandi «See» e «See also», la «42-line Bible» archiviata sotto la F." }
+---
+
+## Che cosa comporrai
+
+Il capitolo quarto di *Letters of Metal*, una monografia di studio sui caratteri da stampa composta in 155 × 235 mm: una colonna di Crimson Pro, Bodoni corsivo per i titoli, un accento rosso mattone. Il saggio va dalla textura di Gutenberg attraverso Jenson, Aldo e Griffo, Garamond e Plantin, Caslon e Baskerville, i punti di Fournier e i caratteri spagnoli che Pradell e Gil incisero e Ibarra stampò, fino ai moderni di Bodoni. Finisce come finiscono libri del genere, con due indici su pagine affiancate: tipografi, incisori di punzoni e mecenati sul verso, caratteri, strumenti e libri sul recto. Entrambi vengono dallo stesso testo marcato, e ogni numero di pagina che contengono è la pagina in cui è finito il segno.
+
+## Preparazione
+
+### 1 · Segna ogni persona per l’indice dei nomi e ogni argomento per quello principale
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra; il resto è nel Markdown. Un segno con `index="names"` va all’indice che stampa `:::index{index="names"}`, e ogni altro segno va all’indice principale che stampa un `:::index` senza attributi. Così `:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}` stampa il nome nel testo e archivia una pagina in grassetto sotto *Manutius* nell’indice dei nomi, mentre `:index[italic]{term="Italic" main}` due righe più avanti archivia la stessa pagina sotto *Italic* negli argomenti. Una persona che è anche argomento del capitolo può portare entrambi i segni.
+
+### 2 · Inverti i nomi e ordina per le lettere sotto cui il lettore cercherà
+
+I nomi si archiviano con il cognome per primo: `term="Garamond, Claude"`, `term="Dall’Aglio, Margherita"`. La virgola fa parte del termine, quindi l’ordinamento mette *Didot, Firmin* prima di *Didot, François-Ambroise*, come farebbe un indicizzatore. Quando la forma stampata finirebbe sotto la lettera sbagliata, `sort` dà la chiave: l’edizione inglese segna `term="42-line Bible" sort="Forty-two-line Bible"`, così la Bibbia sta sotto la F invece di aprire un gruppo 0–9. Le sottovoci (`term="Foundries!Plantin-Moretus"`), le pagine principali in grassetto (`main`), `range="start"` e `range="end"` attorno alla sezione su Bodoni e i rimandi (`see="Italic"`, `seealso="Matrices"`) fanno il resto; un bersaglio di `see` con più livelli si stampa con i due punti, come in *Humanist type. See Roman type: Venetian*.
+
+### 3 · Costruisci una volta; il documento sistema da sé i suoi numeri
+
+<Excerpt region="build" />
+
+L’indice stampa numeri di pagina che esistono solo dopo l’impaginazione, e stamparlo richiede pagine sue. `buildDocument()` se ne occupa: impagina il capitolo, legge la pagina di ogni segno, stampa entrambi gli indici e impagina di nuovo ogni volta che un numero è cambiato. Qui gli indici seguono il testo, quindi un secondo passaggio conferma il primo; un indice posto prima del testo sposterebbe tutte le pagine successive, e i passaggi continuerebbero finché non concordano. Aggiungi un paragrafo alla sezione su Bodoni e l’indice dei nomi dà da solo a Whittingham la sua nuova pagina.
+
+### 4 · Dai a ogni indice un’apertura su due colonne
+
+<Excerpt region="opener" />
+
+Lo stile del titolo nella risposta breve fa tre cose per `# Index of Names {style="index"}`: apre una pagina (`parity: 'any'`, così i due indici si seguono senza una pagina bianca), compone su due colonne a 7 mm di distanza la sezione che segue e, con `numbered: false`, lascia stare il conteggio dei capitoli. Lo stile riusa l’apertura di capitolo con un abbassamento di sei righe e un titolo a 20 pt, e le lettere di sezione ripetono il suo Bodoni nel colore d’accento, alte una riga dell’indice così che le colonne mantengano il loro passo.
+
+### 5 · Nomina l’indice sul recto
+
+<Excerpt region="running-heads" />
+
+La testatina del recto stampa `{chapterTitle}`, e il titolo di un indice è un titolo di livello 1 come qualsiasi capitolo, quindi le pagine che lo seguono dicono *Index of Subjects* in testa. `pages: 'body'` tiene le testatine lontane da entrambe le aperture degli indici, che portano invece un folio al piede.
+
+## Varianti
+
+### Stampa un unico indice combinato
+
+Togli `index="names"` dai segni delle persone e il secondo titolo: ogni segno finisce allora nell’indice principale, nomi e argomenti in un solo alfabeto.
+
+```diff
+-:index[Aldus Manutius]{term="Manutius, Aldus" index="names" main}
++:index[Aldus Manutius]{term="Manutius, Aldus" main}
+```
+
+### Togli le lettere di sezione
+
+Un indice dei nomi così breve si legge bene anche senza. `groups.enabled: false` rimuove le lettere e lascia una riga di spazio tra una lettera e l’altra; l’impostazione vale per entrambi gli indici.
+
+```diff
+-  groups: { fontFamily: 'Bodoni Moda', fontSize: pt(11), fontWeight: 600, color: col('brick') },
++  groups: { enabled: false },
+```
+
+## Errori frequenti
+
+- La configurazione `index` è condivisa: entrambi gli indici prendono lo stesso carattere, la stessa interlinea e le stesse lettere di sezione.
+- Un segno in una didascalia o in una cella di tabella si stampa così come è scritto. Segna la persona nel paragrafo che cita la figura.

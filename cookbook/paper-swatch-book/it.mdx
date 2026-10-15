@@ -1,0 +1,63 @@
+---
+title: "Un campionario, ogni foglio sulla sua carta"
+summary: "Ogni foglio del campionario di un grossista di carta sta in un blocco :::paper, e postext-folio lo disegna con tinta, grammatura, superficie e rigidità."
+plain: "Un piccolo campionario di una cartoleria. Ogni pagina dice su quale carta è stampata, e nel visualizzatore 3D ogni pagina ha davvero l’aspetto di quella carta e si gira come lei."
+description: "Un blocco :::paper per foglio dà a ogni pagina la sua carta; postext-folio gira in modo diverso patinata, vergata, velina e carta bibbia, in un pen minimo."
+question: "Come stampo una copertina, un inserto o una sezione di tavole su una carta diversa dal resto del libro?"
+aliases: ["tipo di carta", "campionario di carte", "campioni di carta", ":::paper", "sezione di tavole", "inserto", "carta bibbia", "trasparenza", "swatch book"]
+pageNotes: { "1": "La copertina anteriore: un campo rosso sangue di bue fino a ogni bordo, un piccolo occhiello spaziato, il titolo «The Stock Book» in un grande Caslon da titolazione e un sottotitolo in corsivo.", "3": "La scheda di «Book Wove, Natural»: un occhiello, il nome della carta sopra un filetto sottile, cinque righe di specifiche con le etichette in grassetto e due paragrafi sulla carta.", "11": "Il saggio della carta bibbia: sei voci di glossario con rientri sporgenti." }
+---
+
+## Che cosa comporrai
+
+*The Stock Book* di Harwell & Daughters, un commerciante di carta di Bristol inventato: dodici pagine in formato 120 × 176 mm, una copertina in cartoncino e quattro fogli che descrivono ciascuno la carta su cui sono stampati. Il recto di un foglio è la scheda della carta, con grammatura, spessore, finitura, tinta e opacità; il verso è una pagina di testo composta come si usa quella carta: un romanzo, una lettera, una didascalia da galleria, un glossario. In piano sullo schermo le dodici pagine si stampano uguali. In Folio ogni foglio ha la sua carta: la velina color crema, il foglio vergato a coste, la patinata lucida che gira piatta e rigida, e la carta bibbia da 40 g che si piega subito e lascia trasparire il retro.
+
+## Preparazione
+
+### 1 · Un blocco per foglio
+
+<Excerpt region="paper-runs" />
+
+Un blocco `:::paper` comincia su una nuova pagina e così fa il testo che lo segue, quindi qui ogni sequenza riempie un foglio: la scheda sul recto, un `:::pagebreak`, il saggio sul verso. Un foglio ha una sola carta per entrambe le facce, e prende quella del suo recto: una sequenza cominciata su un verso stamperebbe quella pagina sulla carta del foglio con cui la condivide (vedi Errori frequenti).
+
+### 2 · La carta del libro e le sue copertine
+
+<Excerpt region="folio" />
+
+`folio.paper` è la carta di ogni pagina fuori da un blocco; gli attributi di un blocco la sostituiscono campo per campo, e i valori predefiniti della carta riempiono il resto. `cover: 'pages'` fa della pagina 1 il piatto anteriore e della pagina 12 quello posteriore, così il libro resta chiuso finché non lo apri; questo richiede un numero pari di pagine, che l’interruzione `parity: 'even'` della copertina posteriore garantisce.
+
+### 3 · Copertine al vivo
+
+<Excerpt region="covers" />
+
+Ogni copertina è uno stile di titolo il cui progetto grafico contiene un campo di colore grande quanto il formato rifilato. Lo stile azzera i margini per la durata della sua sezione, la sola pagina di copertina, così il campo raggiunge ogni bordo e le pagine che seguono conservano i loro margini.
+
+### 4 · La scheda della carta
+
+<Excerpt region="stock-card" />
+
+Ogni foglio si apre con un titolo di primo livello disegnato da uno slot: l’occhiello dagli attributi del titolo, il nome della carta e un filetto sottile. Le righe delle specifiche sono uno stile di paragrafo nel carattere condensato delle etichette, con le etichette in grassetto nel colore d’accento.
+
+### 5 · Rileggi la carta dall’impaginazione
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni pagina impaginata dentro un blocco porta gli attributi del blocco in `page.paper`, così come sono scritti: `{ type: 'bible', grammage: 40 }`. `createFolioFromDocument` li passa al visualizzatore, che disegna ogni foglio con la sua carta; il pen li legge anche per la riga di stato e per il testo alternativo di ogni pagina.
+
+## Varianti
+
+### Aggiungi una sezione di tavole su patinata più pesante
+
+Un blocco dentro il testo di qualunque libro stampa quelle pagine sulla loro carta; le figure citate al suo interno vengono collocate prima che si chiuda.
+
+```diff
++:::paper{type=coatedGloss grammage=170 showThrough=false}
++
++# Plates {kicker="Between pages 64 and 65"}
++
++::resource{id="plate-1"}
++
++:::
+```
+
+### Un opuscolo spillato con copertina in cartoncino
+
+<RecipeLink slug="saddle-stitched-card-cover">La ricetta della fanzine</RecipeLink> avvolge pagine di carta da giornale in un foglio di copertina in cartoncino con due blocchi e una cucitura a punto metallico.

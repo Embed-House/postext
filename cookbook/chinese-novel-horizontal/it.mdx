@@ -1,0 +1,78 @@
+---
+title: "Una pagina di romanzo cinese su una griglia 28 × 28"
+summary: "«Il paese natale» di Lu Xun su una pagina 大32开: 28 caratteri per riga, 28 righe per pagina, a capo GB, punteggiatura Kaiming e spazi Han–latino."
+plain: "L’inizio di un racconto di Lu Xun composto come una pagina di tascabile cinese. Mostra come far stare esattamente 28 caratteri in ogni riga e 28 righe in ogni pagina, secondo le regole cinesi della punteggiatura."
+description: "Una pagina di romanzo cinese in Postext: cjk.grid compone 28 × 28 caratteri di 五号 su 大32开, con a capo GB, punteggiatura Kaiming e rientri di 2 em."
+question: "Come compongo una pagina cinese contata in caratteri, 28 per riga e 28 righe per pagina?"
+aliases: ["romanzo cinese", "cinese semplificato", "cinese orizzontale", "griglia di caratteri", "版心", "gabbia in caratteri", "punteggiatura Kaiming", "开明式", "a capo GB", "避头尾", "regole di inizio riga", "push-in", "spazio Han–latino", "rientro di due caratteri", "大32开", "Lu Xun"]
+pageNotes: { "1": "La tavola: una luna dorata in un cielo blu intenso sopra una striscia di mare, e sulla sabbia sotto, tra file di angurie a strisce, un ragazzo con un collare d’argento che vibra una forca d’acciaio nella sabbia davanti a sé mentre l’animale che mirava gli scappa tra le gambe. Tre righe del racconto in calligrafia bianca a pennello in alto.", "2": "L’apertura: il titolo 故乡 in caratteri Song neri, a mezzo carattere di distanza, un corto filetto blu e il nome dell’autore 鲁迅; sotto, venti righe di testo giustificato, ogni paragrafo rientrato di due caratteri, e il folio 71 al piede." }
+---
+
+## Che cosa comporrai
+
+L’inizio de «Il paese natale» di Lu Xun (故乡, 1921) come lo comporrebbe un tascabile della Cina continentale della sua prima raccolta: una pagina 大32开, 140 × 203 mm, la cui gabbia si conta in caratteri, 28 per riga e 28 righe per pagina, in Noto Serif SC a 五号 (10,5 pt). Ogni paragrafo si apre rientrato di due caratteri; virgole e virgolette occupano mezzo carattere, come nella maggior parte dei libri continentali; nessuna riga comincia con 。 o ， e nessuna finisce con “. Il racconto si apre su un recto sotto il titolo nel peso nero del carattere Song. Di fronte, una tavola dipinta mostra il campo di meloni al chiaro di luna che il narratore ricorda, con le parole che lo descrivono nella calligrafia a pennello di Ma Shan Zheng. <RecipeLink slug="spanish-pocket-novel">Lo spagnolo giustificato in un romanzo tascabile</RecipeLink> fa lo stesso lavoro per una scrittura latina.
+
+## Preparazione
+
+### 1 · Una pagina contata in caratteri
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `cjk.grid` porta la giustezza a 28 em di `bodyText.fontSize` (294 pt, 103,7 mm) e la gabbia a 28 righe di `lineHeight` (462 pt, 163 mm), poi sposta i margini perché ci stiano, così una riga piena di Han contiene esattamente 28 caratteri e ogni pagina piena finisce sulla stessa riga ([Griglia di caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri)). Le cinque impostazioni sotto la griglia sono quelle che `locale: 'zh-Hans'` dà da solo; sono scritte per esteso perché tu possa cambiarne una alla volta, anche se `compressAdjacent` non cambia nulla finché `punctuationWidth` non è `'fullwidth'`: con il Kaiming due segni che si incontrano non occupano mai più di 1,5 em. A <PageRef page={2}>pagina 71</PageRef> il 。 di chiusura di un paragrafo non ci sta, e le regole di inizio riga (ogni livello di `lineBreak` tranne `'none'`; `'gb'` aggiunge la barra) gli vietano di aprire una riga. La riga lo accoglie componendo il 。 dopo 事 largo mezzo carattere (push-in), così 事。宏 si stringe e il paragrafo non va su un’altra riga ([Larghezze della punteggiatura](/it/docs/configuration-east-asian#larghezza-della-punteggiatura)). Le righe che restano corte si allargano tra i caratteri, mai tra le parole, e su queste pagine di non più di 0,05 em ([Cinese, giapponese e coreano](/it/docs/justification#cinese-giapponese-e-coreano)).
+
+<PageShot page={2} crop="0.1,0.82,0.8,0.11" caption="Pagina 71: le ultime righe di un paragrafo. 事。宏 è composto stretto perché 看。 possa restare sulla riga invece di aprirne una nuova." />
+
+### 2 · Una pagina 大32开 con il margine di testa più ampio
+
+<Excerpt region="page" />
+
+Con la griglia attiva i margini sono dei minimi: la griglia colloca la gabbia nello spazio che lasciano e distribuisce l’avanzo. 22 e 18 mm lasciano esattamente 163 mm, così il margine di testa resta 4 mm più ampio di quello di piede, come lo tengono i libri cinesi; i 18 mm per lato lasciano 0,3 mm da distribuire. Chiedi più caratteri o righe di quante ne stanno e la griglia si riduce a ciò che ci sta, con un avviso `cjkGridClamped`; il corpo e l’interlinea restano come li hai scritti.
+
+### 3 · Un titolo abbassato di un numero intero di righe
+
+<Excerpt region="opener" />
+
+`minHeight` vale otto righe di 16,5 pt, così il testo sotto il titolo comincia sulla nona riga della griglia, sulle stesse linee di base di ogni altra pagina. I 23 pt di spaziatura tra lettere mettono mezzo carattere tra 故 e 乡, la spaziatura consueta per un titolo di due caratteri; Postext lascia fuori la spaziatura dopo l’ultimo carattere quando centra la riga, così il titolo resta sull’asse della pagina ([Stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)).
+
+### 4 · Il libro sul verso, il racconto sul recto
+
+<Excerpt region="heads" />
+
+I romanzi continentali portano il titolo del libro sui versi e quello del racconto sui recti, centrati, con il folio sul margine esterno e un filetto sottile sotto entrambi. `pages: 'body'` li tiene lontani dall’apertura e dalla tavola, e l’apertura riceve invece il suo folio al piede. Le testatine sono composte in Noto Sans SC, il carattere Hei, a 8 pt: piccole, ma con una voce diversa dal Song del testo.
+
+### 5 · Una tavola su tutto il foglio
+
+<Excerpt region="plate" />
+
+L’immagine appartiene a un titolo proprio, `# 月下的瓜地 {style="plate" …}`, il cui stile disegna la pagina e ne toglie testatina e folio. La tavola ha bisogno di `span: 'page'`, perché la grafica di un titolo che resta nella colonna viene tagliata al piede della colonna, 18 mm prima del rifilo. `runningChapter: false` con `toc: false` la tiene fuori dai segnalibri del PDF, che si aprono su 故乡. Le tre righe della citazione sono tre attributi e tre elementi di testo, perché il testo della grafica ha un proprio algoritmo di divisione in righe, che non applica le larghezze della punteggiatura cinese; divise a mano, le righe perdono anche le virgole, come fanno di solito le righe di titolo in cinese.
+
+### 6 · Lettere latine e cifre nel testo cinese
+
+<Excerpt region="styles" />
+
+La nota e il colophon di <PageRef page={7}>pagina 76</PageRef> sono i punti in cui cifre e nomi latini incontrano lo Han. `latinSpacing` mette un quarto di em ovunque si tocchino, come nel 1921年 della nota e nel 用Noto Serif SC五号 del colophon, scritti senza alcuno spazio ([Spazio tra Han e latino](/it/docs/configuration-east-asian#spazio-tra-han-e-latino)); su una riga giustificata è quello spazio a crescere per primo, fino a mezzo em. La nota è composta a 9,1875 pt, non ai 9 pt del 小五, così 32 dei suoi caratteri riempiono la giustezza: a 9 pt ogni riga avanzava di due terzi di em, e gli spazi Han–latino li assorbivano. Nel Markdown i nomi dei font sono uniti da spazi indivisibili (U+00A0), che lo spazio Han–latino lascia stare: con spazi normali le righe in bandiera del colophon spezzavano Noto Sans / SC.
+
+## Varianti
+
+### Componi ogni segno a larghezza piena (全角式)
+
+Virgole, segni di pausa e virgolette occupano un carattere intero, 。” ne occupa due, e ogni riga contiene meno caratteri di testo.
+
+```diff
+-  punctuationWidth: 'kaiming', // ，、：； quotes, brackets ½ em; 。？！ one em, ½ at a line end
+-  compressAdjacent: true, // idle under Kaiming (no pair tops 1.5 em); 'fullwidth' needs it
++  punctuationWidth: 'fullwidth',
++  compressAdjacent: false,
+```
+
+### Mostra la griglia mentre componi la pagina
+
+Il canvas disegna un quadratino grigio chiaro per ogni posizione di carattere di ogni riga (稿纸); il PDF lo omette a meno che `renderToPdf` non riceva `characterGrid: true`.
+
+```diff
+-  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES },
++  grid: { enabled: true, charsPerLine: CHARS, linesPerPage: LINES, show: true },
+```
+
+## Errori frequenti
+
+- La tavola è un titolo, e un titolo riceve un segnalibro nel PDF: senza `runningChapter: false` e `toc: false` nello stile della tavola, i segnalibri si aprirebbero su 月下的瓜地, un segnalibro di primo livello prima di 故乡. Basta una sola delle due impostazioni. Il PDF con tag conserva comunque il titolo della tavola come H1.
+- Il carattere proprio dei titoli deve essere uno che `FONTS` carica, anche quando una grafica disegna ogni titolo: con il peso predefinito 700 il kit ha trovato Noto Serif SC 700 nell’impaginazione e ne ha caricato il file latino con un avviso. `headings.fontWeight: 400` tiene i blocchi dei titoli nel carattere del testo.

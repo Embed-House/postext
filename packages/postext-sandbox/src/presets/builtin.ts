@@ -3,7 +3,7 @@ import { createPostextGuideConfig } from '../context/guideConfig';
 import { buildDefaultResources, defaultResourcesSignature } from '../defaultResources';
 import { coverThumbnailSvg } from '../defaultResources/cover';
 import { guideLang, type GuideLang } from '../defaultResources/lang';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown';
 import type { PresetProvider } from './types';
 import { isPristineBook, sampleBook } from '../book/chapterOps';
 import type { BookContent } from '../book/types';
@@ -12,12 +12,12 @@ import { generateId } from '../storage/ids';
 export const BUILTIN_PRESET_ID = 'postext-guide';
 
 /** The editions of the guide, as the tags its summary lists: the library
- *  row offers ES, CA, EN, ع, 简, 日, PT, FR and DE (see `localeShortTag`),
+ *  row offers ES, CA, EN, ع, 简, 日, PT, FR, DE and IT (see `localeShortTag`),
  *  and a permalink names one with `lang=`. The Latin-script editions first,
  *  then the three set in a script and a direction of their own; the
- *  Japanese, Brazilian Portuguese, French and German ones last, in the order
- *  they came (the buttons before them keep their places). */
-export const BUILTIN_PRESET_LOCALES = ['es', 'ca', 'en', 'ar', 'zh-Hans', 'ja', 'pt-BR', 'fr', 'de'] as const;
+ *  Japanese, Brazilian Portuguese, French, German and Italian ones last, in
+ *  the order they came (the buttons before them keep their places). */
+export const BUILTIN_PRESET_LOCALES = ['es', 'ca', 'en', 'ar', 'zh-Hans', 'ja', 'pt-BR', 'fr', 'de', 'it'] as const;
 
 /** The guide's text in each edition. */
 export const GUIDE_MARKDOWN: Record<GuideLang, string> = {
@@ -30,10 +30,11 @@ export const GUIDE_MARKDOWN: Record<GuideLang, string> = {
   'pt-BR': DEFAULT_MARKDOWN_PT_BR,
   fr: DEFAULT_MARKDOWN_FR,
   de: DEFAULT_MARKDOWN_DE,
+  it: DEFAULT_MARKDOWN_IT,
 };
 
 /** Every edition of the guide's text, for the pristine-book checks. */
-export const GUIDE_SAMPLE_DOCUMENTS: readonly string[] = [DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_ZH_HANS, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE];
+export const GUIDE_SAMPLE_DOCUMENTS: readonly string[] = [DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_ZH_HANS, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT];
 
 /** Whether `book` is the untouched Chinese guide. In an English or Spanish
  *  interface the Chinese edition is opened on purpose (the 简 button, a
@@ -119,10 +120,10 @@ export function createPostextGuidePreset(opts: BuiltinPresetOptions): PresetProv
     if (fingerprintValue === null) {
       const source = JSON.stringify([
         opts.markdownOverride ?? null, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_ZH_HANS, DEFAULT_MARKDOWN_CA,
-        DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE,
+        DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT,
         opts.configOverride ?? null, createPostextGuideConfig('en'), createPostextGuideConfig('es'), createPostextGuideConfig('zh-Hans'),
         createPostextGuideConfig('ca'), createPostextGuideConfig('ar'), createPostextGuideConfig('ja'),
-        createPostextGuideConfig('pt-BR'), createPostextGuideConfig('fr'), createPostextGuideConfig('de'),
+        createPostextGuideConfig('pt-BR'), createPostextGuideConfig('fr'), createPostextGuideConfig('de'), createPostextGuideConfig('it'),
         defaultResourcesSignature(),
       ]);
       fingerprintValue = `builtin-${hashString(source)}`;

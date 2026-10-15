@@ -62,7 +62,8 @@
       "ja",
       "pt",
       "fr",
-      "de"
+      "de",
+      "it"
     ]
   },
   "capture": {
@@ -170,6 +171,16 @@
           "de": "Die deutsche Übersetzung von Episode 8, „Peppers Geburtstagsfeier“: die Dialoge der Seiten 5 und 6 und das Impressum"
         },
         "who": "Helmar Suschka and Alexandra Jordan, with GunChleoc and Philipp (hapit) Hemmer",
+        "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
+        "license": "CC-BY-4.0"
+      },
+      {
+        "what": {
+          "en": "The Italian translation of episode 8, “Il compleanno di Pepper”: the dialogue of pages 5 and 6 and the credits",
+          "es": "La traducción al italiano del episodio 8, «Il compleanno di Pepper»: los diálogos de las páginas 5 y 6 y los créditos",
+          "it": "La traduzione italiana dell’episodio 8, «Il compleanno di Pepper»: i dialoghi delle pagine 5 e 6 e i crediti"
+        },
+        "who": "Carlo Gandolfi",
         "source": "https://www.peppercarrot.com/0_sources/ep08_Pepper-s-Birthday-Party/",
         "license": "CC-BY-4.0"
       }

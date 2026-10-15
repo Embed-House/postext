@@ -1,0 +1,71 @@
+---
+title: "Un articolo cinese citato secondo GB/T 7714"
+summary: "Un articolo di rivista cinese su due colonne: le citazioni [@key] si stampano in apice come [1] e [2–4], i riferimenti portano [M], [J], [D] e [EB/OL]."
+plain: "Un breve articolo di ricerca di una rivista cinese. L’autore scrive un codice per ogni fonte; Postext numera le fonti nell’ordine in cui sono citate e stampa la bibliografia come la vogliono le riviste cinesi."
+description: "Un articolo di rivista cinese in Postext citato secondo GB/T 7714—2015: citazioni numerate in apice, intervalli, codici di tipo, 等 ed et al. secondo la lingua."
+question: "Come cito secondo GB/T 7714 in un articolo cinese, con numeri in apice e codici di tipo?"
+aliases: ["GB/T 7714", "GB/T 7714—2015", "参考文献著录规则", "顺序编码制", "riferimenti cinesi", "bibliografia cinese", "文献类型标识", "[M] [J] [D]", "et al. 等", "articolo di rivista cinese", "学报", "citazioni in apice", "CSL-YAML", "citeproc"]
+pageNotes: { "1": "Pagina 1 di un articolo in una rivista fittizia, 示例出版研究. Una fascia indaco in alto porta il nome della rivista in bianco e, a destra, volume e numero. Sotto, un titolo centrato su due righe in Hei grassetto, i nomi dei due autori, le loro affiliazioni in piccolo e in grigio, e l’abstract su entrambe le colonne con le etichette indaco 摘　要：, 关键词：, 文献标志码： e 文章编号：. Più in basso, due colonne di testo cinese su una griglia di caratteri: il 引言 non numerato, con piccole citazioni in apice [1], [2–4], [5,6], [7], [4] e [8], poi 1 实验方法 con le sezioni da 1.1 a 1.3.", "2": "Pagina 2: la testatina 42 示例出版研究 2026年第3期 sopra un filetto sottile; le sezioni 2 结果 e 3 讨论 nella colonna sinistra; 4 结论 apre la colonna destra, poi il titolo 参考文献 e l’elenco numerato da [1] a [8] in corpo minore: tre voci inglesi in maiuscolo con et al. e i codici [M], [J/OL], voci cinesi con 等 e [J], [M], [D], [EB/OL], [C]. In fondo all’elenco una nota grigia in caratteri latini dice quali opere sono fittizie." }
+---
+
+## Che cosa comporrai
+
+Due pagine di un articolo di ricerca in una rivista inventata di studi editoriali, 示例出版研究 («Example Publishing Research»), composte come una rivista universitaria cinese compone i suoi articoli. La pagina è un 16开, 184 × 260 mm, con due colonne di 23 caratteri in 小五 su una griglia di 15 pt. Un blocco del titolo attraversa la pagina: il nome della rivista su una fascia indaco, il titolo in Hei grassetto, gli autori, le loro affiliazioni e un abstract con le parole chiave. Le citazioni seguono GB/T 7714—2015, la norma nazionale per i riferimenti bibliografici, nel suo sistema numerico (顺序编码制): ogni opera prende un numero nell’ordine in cui è citata per la prima volta, il numero si stampa in apice tra parentesi quadre, e tre o più numeri consecutivi diventano un intervallo. La bibliografia dà a ogni voce il suo codice di tipo di documento e scrive 等 dopo tre autori di un’opera cinese ed «et al.» dopo quelli di un’opera occidentale. <RecipeLink slug="apa-thesis-with-bibtex">Un capitolo di tesi citato in APA 7</RecipeLink> usa lo stesso markup delle citazioni in uno stile autore-data.
+
+## Preparazione
+
+### 1 · Lo stile, e la sua disposizione per le opere occidentali
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Il motore delle citazioni si registra una volta, prima della prima composizione, e `postext-citeproc` include i tre stili GB/T 7714: numerico, autore-data e note ([Citazioni](/it/docs/configuration-notes-references#citazioni)). Nel testo una citazione è una chiave tra parentesi quadre. `[@tinker1963]` stampa un [1] in apice, e `[@rayner2016; @dyson2001; @lin2023]` stampa [2–4]. Due numeri di fila restano un elenco, [5,6]. Un’opera citata di nuovo conserva il suo primo numero: [4] nel terzo paragrafo, e [1] e [2] più avanti nell’articolo.
+
+La norma chiede «et al.» dopo i primi tre autori di un’opera occidentale e 等 dopo quelli di un’opera cinese. Il file CSL incluso contiene per questo due disposizioni, una per le opere in inglese, e ogni voce prende la sua dal proprio campo `language`: Rayner e quattro coautori diventano «RAYNER K, SCHOTTER E R, MASSON M E J, et al.», e 林岚 e tre coautori diventano «林岚, 周明远, 陈思齐, 等». `locale: 'zh-CN'` scrive in cinese le altre parole dell’elenco.
+
+### 2 · I riferimenti in un blocco CSL-YAML
+
+Le opere sono elencate in un blocco `:::references{format=csl-yaml}` alla fine del Markdown, nel formato che Zotero esporta come CSL YAML ([Riferimenti](/it/docs/document-format#riferimenti)). Il tipo CSL decide il codice: `book` stampa [M], `article-journal` [J], `thesis` [D], `paper-conference` [C] dopo il suo `//` e gli atti, e `webpage` [EB/OL] con la data di consultazione tra parentesi quadre. Un articolo di rivista con un DOI diventa [J/OL] e conserva il DOI, come chiede la norma. I nomi cinesi vanno in `literal`, così lo stile non li divide in cognome e nome. `:::bibliography{title=""}` mette l’elenco sotto il titolo non numerato 参考文献, e `labelWidth` allinea le righe successive sotto il testo della voce, non oltre.
+
+<PageShot page={2} crop="0.5,0.08,0.45,0.5" caption="Pagina 2: voci occidentali in maiuscolo con et al., voci cinesi con 等, ciascuna con il suo codice di tipo." />
+
+### 3 · Il blocco del titolo su una fascia
+
+<Excerpt region="masthead" />
+
+Il blocco del titolo è il progetto grafico dell’H1, uno stile di titolo che occupa entrambe le colonne. La fascia è un riquadro ancorato al rifilo, e il nome della rivista ci sta sopra in bianco. Il titolo, gli autori e le affiliazioni vengono dal titolo e dai suoi attributi, ciascuno posto sotto il precedente (`#title`, `below`), così un titolo su tre righe spinge in basso il resto ([Progetto grafico a tutta larghezza e avanzato](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)).
+
+### 4 · L’abstract e le sue etichette
+
+<Excerpt region="abstract" />
+
+L’abstract è un riquadro a tutta larghezza, rientrato di due caratteri per lato. Le sue etichette sono chip: `:chip[摘　要：]{style="label"}` compone la parola in Hei grassetto, nell’indaco della rivista, senza riquadro ([Stili dei chip](/it/docs/configuration-styles#stili-dei-chip)). Le riviste cinesi compongono spesso l’abstract in 楷体; questa resta in Song, per il motivo spiegato negli errori frequenti.
+
+<Excerpt region="palette" />
+
+## Varianti
+
+### Parentesi d’angolo invece dell’apice
+
+Alcune riviste stampano i numeri delle citazioni sulla riga, in corpo del testo. `marker` cambia il modo in cui il numero è segnato e lascia stare lo stile: `'brackets'` dà [1] sulla riga, `'corner'` dà 〔1〕.
+
+```diff
+   locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
++  marker: 'brackets',
+```
+
+### Prima le opere cinesi
+
+Le bibliografie miste a volte si ordinano con le opere cinesi prima di quelle occidentali. In uno stile numerico i numeri allora non scorrono più in ordine lungo l’elenco, quindi questo si adatta meglio allo stile autore-data.
+
+```diff
+-  style: 'china-national-standard-gb-t-7714-2015-numeric',
++  style: 'china-national-standard-gb-t-7714-2015-author-date',
+   locale: 'zh-CN', // 等, 卷, 版 and the other terms of the list
+-  bibliography: { fontSize: em(7.5 / BODY), lineHeight: pt(12), entrySpacing: pt(1.5),
++  bibliography: { groupByLanguage: true, fontSize: em(7.5 / BODY), lineHeight: pt(12),
+```
+
+## Errori frequenti
+
+- Una citazione narrativa, `@zhou2019` senza parentesi, nomina gli autori e aggiunge il numero, ma una chiave prosegue attraverso i caratteri cinesi, quindi `@zhou2019认为` si legge come una chiave che non esiste. Scrivi il nome nel testo e la citazione dopo, `周明远[@zhou2019]认为`, come fanno comunque gli articoli cinesi.
+- Lo stile numerico incluso non stampa localizzatori: `[@zhou2019, 页 45]` dà [5] senza la pagina. GB/T 7714 mette la pagina dopo la parentesi nell’apice, [5]45; finché lo stile non lo fa, scrivi la pagina nella frase.
+- LXGW WenKai TC, l’unico Kai su Fontsource, è un carattere di Taiwan: disegna ，e 。 al centro della cella, e con `zh-Hans` il motore taglia la metà destra della cella, che intacca il glifo. L’abstract è composto in Noto Serif SC, e il Kai resta per i nomi degli autori, che non hanno punteggiatura.
+- Su una griglia di caratteri il bilanciamento delle colonne è disattivato per impostazione predefinita: ogni riga resta sulla griglia, e una colonna che non può accogliere il titolo successivo finisce corta. Lasciato disattivato, la seconda colonna di pagina 1 finirebbe tre righe più corta (il titolo 2 结果 ha bisogno delle sue due righe e di due righe di testo sotto, quindi apre pagina 2), e l’ultima pagina riempirebbe la prima colonna lasciando vuota metà della seconda. La ricetta imposta `headings.balancing.enabled: true`: una colonna corta prende righe di griglia intere sopra i suoi titoli, mai spostando i caratteri fuori dalle loro celle, e le due colonne dell’ultima pagina finiscono alla stessa altezza.

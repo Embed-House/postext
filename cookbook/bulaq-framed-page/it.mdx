@@ -1,0 +1,53 @@
+---
+title: "Una pagina di Bulaq: il testo incorniciato dal commento"
+summary: "Il commento grammaticale di Ibn ʿAqīl nella colonna principale, le glosse nella colonna esterna accanto ai passi che spiegano, dentro una doppia cornice."
+plain: "Una pagina fatta come i libri arabi stampati al Cairo nell’Ottocento: il testo principale al centro, brevi note su di esso in una colonna stretta sul bordo, e tutta la pagina chiusa da linee stampate."
+description: "Una pagina in stile Bulaq in Postext: colonna e mezza con riquadri laterali per la ḥāshiya, un filetto tra le colonne e una cornice disegnata per ogni lato."
+question: "Come impagino una pagina di Bulaq, con il commento che incornicia il testo?"
+aliases: ["Bulaq", "Būlāq", "ḥāshiya", "hashiya", "hamish", "commento a margine", "sharḥ", "pagina di commento", "Ibn ʿAqīl", "Alfiyya", "Ibn Mālik", "grammatica araba", "cornice filettata", "jadwal", "شرح ابن عقيل", "حاشية", "هامش"]
+pageNotes: { "2": "La prima pagina di testo dentro una doppia cornice filettata: un titolo di capitolo rosso in Ruqʿa, i versi d’apertura dell’Alfiyya in rosso, due per riga, e il commento di Ibn ʿAqīl in nero; in una colonna stretta sul bordo destro, oltre un filetto verticale, tre glosse le cui parole d’apertura sono in rosso." }
+---
+
+## Che cosa comporrai
+
+Sei pagine composte come la stamperia di Bulaq e i suoi successori al Cairo stampavano un commento nell’Ottocento. La spiegazione di Ibn ʿAqīl dei primi versi dell’Alfiyya, la grammatica in mille versi di Ibn Mālik, scorre nella colonna principale, con i versi in rosso; nel margine esterno sta una ḥāshiya, brevi glosse che si aprono ognuna con le parole del testo che spiegano, accanto al passo a cui appartengono. Un doppio filetto incornicia la gabbia del testo, con una fascia in testa per il capitolo e il folio, e un filetto singolo separa il testo dal suo margine. Una vera pagina di Bulaq avvolge la ḥāshiya attorno a tre lati del testo; Postext la compone su un solo lato, e questa ricetta lo dice.
+
+## Preparazione
+
+### 1 · La ḥāshiya in una colonna laterale tutta sua
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un layout a colonna e mezza la cui colonna laterale accoglie solo elementi flottanti tiene il commento fuori dal flusso del testo: ogni glossa è un `:::callout{type="hashiya" span="side"}` scritto prima del passo che spiega, e comincia all’altezza della prima riga di quel passo; `sideAtColumnEnd: 'after'` la tiene accanto al passo quando questo prosegue nella pagina successiva ([Layout](/it/docs/configuration-page-layout#impaginazione)). Il riquadro non ha sfondo, bordo né spaziatura interna, quindi si legge come testo composto nel margine, con il lemma in grassetto, che `boldColor` rende rosso. `sideColumnSide: 'outer'` mette la colonna sul margine esterno di entrambe le pagine: a destra della pagina pari, che sta a destra in un libro rilegato a destra.
+
+<PageShot page={2} crop="0,0.58,1,0.34" caption="Pagina 2: la glossa su «كديز» comincia all’altezza del paragrafo che usa la parola, sul bordo esterno, oltre il filetto di colonna." />
+
+### 2 · Una cornice disegnata per ogni lato della doppia pagina
+
+<Excerpt region="frame" />
+
+La cornice è fatta di tre elementi di design di pagina nell’intestazione: due riquadri con bordo e senza riempimento, a 1,3 mm l’uno dall’altro, e un filetto sotto la fascia che contiene la testatina. Gli elementi di pagina sono fisici, quindi la cornice si costruisce due volte, una per parità, dai margini di quel lato ([Page order and right binding](/it/docs/arabic-layout#ordine-delle-pagine-e-rilegatura-a-destra)). Il folio sta all’estremità esterna della fascia in ogni pagina, aperture comprese; il titolo del capitolo è centrato e omesso nell’apertura, dove il titolo stesso sta sotto di essa.
+
+### 3 · Un frontespizio dentro la stessa cornice
+
+<Excerpt region="title" />
+
+Il frontespizio riusa la cornice senza la fascia. Il design di un titolo si compone nel flusso e si rispecchia con la pagina, quindi lì la cornice si costruisce con i lati scambiati (`inFlow`): la sua sinistra è la destra del foglio. Le sue righe vengono da attributi del titolo, `on` e `margin`, così tutto il frontespizio è una riga di Markdown, e la riga in caratteri latini sotto cambia con l’edizione.
+
+## Varianti
+
+### Metti il commento sul lato interno
+
+Alcune stamperie componevano la ḥāshiya verso il dorso, così il testo mantiene il margine esterno più largo.
+
+```diff
+-const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'outer',
++const layout = { layoutType: 'oneAndHalf', sideColumnRole: 'floats', sideColumnSide: 'inner',
+```
+
+### Incornicia ogni glossa
+
+Un filetto sottile attorno a ogni glossa, come in alcune stampe cairote più tarde, è il bordo stesso del riquadro.
+
+```diff
+-  stripe: { enabled: false }, border: { enabled: false },
++  stripe: { enabled: false }, border: { enabled: true, width: pt(0.4), color: col('rule') },
+```

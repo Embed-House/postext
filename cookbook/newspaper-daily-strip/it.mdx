@@ -1,0 +1,60 @@
+---
+title: "Una striscia quotidiana e una mezza pagina domenicale"
+summary: "L’inserto fumetti di un giornale: una mezza pagina domenicale nel testo della copertina e una striscia di quattro vignette su quattro colonne, sotto l’articolo."
+plain: "Due pagine della sezione fumetti di un giornale: un grande fumetto a colori in copertina, poi un articolo sul fumettista su quattro colonne con sotto la striscia quotidiana di quattro vignette."
+description: "Strisce a fumetti in un giornale Postext: blocchi :::strip nel testo o flottanti su quattro colonne, una mezza pagina domenicale e una striscia in dieci lingue."
+question: "Come metto una striscia a fumetti su una pagina di giornale, attraverso le colonne del testo?"
+aliases: ["striscia a fumetti", "striscia quotidiana", "fumetti della domenica", "pagina dei fumetti", "fumetto di giornale", "striscia", "striscia di 4 vignette", "comic strip", "tira cómica", "tira de prensa", "新聞漫画", "报纸漫画"]
+pageNotes: { "1": "La copertina dell’inserto fumetti: la bandella rossa «Fumetti», la mezza pagina domenicale (Pip e Otto che pescano sulla banchisa, il pesciolino di Pip che sussurra «Rimettimi in acqua.», Otto che tira su uno stivale con uno «SPLASH») e tre righe di sommario: «In questo numero», «Lettere dalla banchisa» e «Domenica prossima».", "2": "La pagina interna: il titolo «Dieci inverni sulla banchisa» su quattro colonne con un’intervista, il riquadro «Pip e Otto in cifre», le lettere dei lettori e una pubblicità, e sotto, su tutta la larghezza della pagina, la striscia quotidiana del cornetto in quattro vignette («Buongiorno, Otto! Un cornetto, per favore.» … «Ecco. Più piccolo.»)." }
+---
+
+## Che cosa comporrai
+
+L’inserto fumetti di un giornale del fine settimana, *La Gazzetta di Corrington*, piegato a 230 × 310 mm. La copertina contiene la mezza pagina domenicale di *Pip e Otto*, un pinguino e un tricheco che gestiscono una panetteria su una banchisa, con il sommario sotto. All’interno, un’intervista al fumettista della striscia scorre su quattro colonne, con le lettere dei lettori e una pubblicità, e la striscia quotidiana della settimana, quattro vignette quadrate, corre lungo la pagina sotto di essa. Entrambi i fumetti sono blocchi `:::strip` nel testo del giornale, e l’inserto esce in dieci lingue.
+
+## Preparazione
+
+### 1 · Scrivi la striscia dove la vuole il giornale
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Un `:::strip` ha il corpo di una pagina di fumetto (il suo `split`, le sue righe `::panel` e il loro copione), ma è un blocco nel testo ([strisce](/it/docs/comics#strisce)). Sulla copertina a una colonna la striscia domenicale è composta dove è scritta, alta 210 mm, e il sommario la segue. La sua suddivisione, `55 / * [40 | *]`, dà alla scena larga della pesca una striscia tutta sua e alle due gag una riga sotto. Una striscia non si divide mai: una che non ci sta passa intera alla pagina successiva.
+
+<PageShot page={1} crop="0,0,1,0.8" caption="La copertina: la mezza pagina domenicale composta nel testo, con il sommario sotto." />
+
+### 2 · Fai flottare la striscia quotidiana attraverso le colonne
+
+La pagina interna si apre con un H1 il cui stile di titolo porta la sezione a quattro colonne. La striscia quotidiana è scritta dopo l’articolo con `span=page`: viene composta sulle quattro colonne dove finisce il testo, e le colonne dell’articolo finiscono alla pari sopra di essa. Senza `height` né `aspect`, una striscia prende la forma che rende quadrate le sue vignette, qui quattro a uno. Con `placement=bottom` flotterebbe al piede della pagina, il che va bene per un articolo abbastanza lungo da arrivarci; con `placement=top` aprirebbe la pagina successiva, perché un elemento flottante non sale mai sopra il punto in cui è scritto.
+
+### 3 · Adatta ogni immagine alla sua cella
+
+<Excerpt region="art" />
+
+Le immagini sono state disegnate quadrate o larghe, e le celle della suddivisione domenicale non lo sono: la gag dello stivale sta in una cella di 112 × 88 mm. Ogni zona sicura è tagliata su ciò che serve alla battuta, Pip e Otto e lo stivale, così il ritaglio non mette mai l’immagine in letterbox ([vignette e disegni](/it/docs/comics#vignette-e-disegni)).
+
+### 4 · Stampa la stessa pagina in dieci giornali
+
+<Excerpt region="editions" />
+
+Ogni edizione compone il giornale in caratteri adatti alla sua scrittura e letteringa le strisce nei propri caratteri da fumetto. I balloon giapponesi corrono in verticale. Le edizioni giapponese e araba leggono le strisce da destra a sinistra, quindi le vignette di ogni riga si scambiano di posto; quella araba, composta da destra a sinistra, specchia anche le colonne della pagina. Le immagini e la suddivisione restano le stesse; cambia solo `content.<lang>.md` ([direzione di lettura](/it/docs/comics#direzione-di-lettura)).
+
+## Varianti
+
+### Dai alla striscia quotidiana un’altezza fissa
+
+```diff
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* | * | * | *" span=page height=45mm}
+```
+
+### Fai scorrere nel testo una striscia di una colonna
+
+Senza `span=page` una striscia è larga quanto la sua colonna e viene composta dove è scritta, come una figura in linea.
+
+```diff
+-:::strip{split="* | * | * | *" span=page}
++:::strip{split="* / * / * / *" aspect=0.25}
+```
+
+## Errori frequenti
+
+- La bandella di sezione è disegnata dall’intestazione, non da un’apertura H1, quindi sopra la striscia della copertina non c’è nulla tranne la riga del folio.
+- Una zona sicura più larga della forma della sua cella mette l’immagine in letterbox con lo sfondo della vignetta, e la build avvisa `comicPanelLetterbox`.

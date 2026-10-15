@@ -58,6 +58,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Entrelinha", "Distância entre a linha de base de uma linha e a da seguinte. Em inglês se chama leading por causa das tiras de chumbo que o compositor colocava entre as linhas de tipos."],
     fr: ["Interlignage", "Distance entre la ligne de base d’une ligne et celle de la suivante. Le mot anglais leading vient des lames de plomb que les typographes glissaient entre les lignes de caractères en métal."],
     de: ["Zeilenabstand", "Der Abstand von einer Grundlinie zur nächsten. Das englische Wort leading geht auf die Bleistreifen zurück, die Setzer zwischen die Zeilen aus Metalllettern legten."],
+    it: ["Interlinea", "Distanza tra la linea di base di una riga e quella della riga successiva. Il termine inglese leading viene dalle strisce di piombo che i compositori inserivano tra le righe dei caratteri mobili."],
   }),
   term("kerning", "type", {
     en: ["Kerning", "A space adjustment between two particular letters, such as A and V, so the pair looks evenly spaced. The font carries the values."],
@@ -69,6 +70,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kerning", "Ajuste do espaço entre duas letras específicas, como A e V, para que o par pareça tão espaçado quanto o resto. Os valores vêm na fonte."],
     fr: ["Crénage", "Ajustement de l’espace entre deux lettres précises, comme A et V, pour que la paire paraisse aussi espacée que le reste. Les valeurs sont fournies par la police."],
     de: ["Unterschneidung (Kerning)", "Der Ausgleich des Abstands zwischen zwei bestimmten Buchstaben wie A und V, damit das Paar so gleichmäßig wirkt wie der übrige Text. Die Werte sind in der Schrift hinterlegt."],
+    it: ["Crenatura", "Regolazione dello spazio tra due lettere precise, come A e V, perché la coppia appaia spaziata come il resto del testo (kerning in inglese). I valori li fornisce il font."],
   }),
   term("tracking", "type", {
     en: ["Tracking", "Extra space added or removed between every letter of a line or a word. Postext measures it in thousandths of an em and uses it sparingly, after word spacing."],
@@ -80,6 +82,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Tracking", "Espaço acrescentado ou retirado entre todas as letras de uma linha ou de uma palavra. O Postext o mede em milésimos de quadratim e o usa com moderação, depois do espaçamento entre palavras."],
     fr: ["Approche", "Espace ajouté ou retiré entre toutes les lettres d’une ligne ou d’un mot (tracking en anglais). Postext la mesure en millièmes de cadratin et l’emploie avec parcimonie, après l’espace entre les mots."],
     de: ["Laufweite", "Zusätzlicher Abstand, der zwischen allen Buchstaben einer Zeile oder eines Wortes hinzugefügt oder weggenommen wird (englisch tracking). Postext misst ihn in Tausendstel Geviert und setzt ihn sparsam ein, erst nach den Wortabständen."],
+    it: ["Spaziatura tra lettere", "Spazio aggiunto o tolto tra tutte le lettere di una riga o di una parola (tracking in inglese). Postext la misura in millesimi di em e la usa con moderazione, dopo lo spazio tra le parole."],
   }),
   term("word-spacing", "type", {
     en: ["Word spacing", "The width of the spaces between words. A justified line stretches or shrinks them within limits set in the configuration."],
@@ -91,6 +94,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Espaçamento entre palavras", "Largura dos espaços que separam as palavras. Uma linha justificada os estica ou os encolhe dentro dos limites definidos na configuração."],
     fr: ["Espace entre les mots", "Largeur des espaces qui séparent les mots. Une ligne justifiée les étire ou les resserre dans les limites fixées par la configuration."],
     de: ["Wortabstand", "Die Breite der Leerräume zwischen den Wörtern. Eine Zeile im Blocksatz dehnt oder staucht sie innerhalb der Grenzen, die die Konfiguration festlegt."],
+    it: ["Spaziatura tra le parole", "Larghezza degli spazi che separano le parole. Una riga giustificata li allarga o li stringe entro i limiti fissati nella configurazione."],
   }),
   term("justification", "type", {
     en: ["Justification", "Setting text so every full line reaches both the left and the right edge of the column, by adjusting the space inside the line."],
@@ -102,6 +106,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Justificação", "Composição em que cada linha completa chega à borda esquerda e à direita da coluna, ajustando o espaço dentro da linha."],
     fr: ["Justification", "Composition où chaque ligne pleine atteint à la fois le bord gauche et le bord droit de la colonne, grâce à l’ajustement des espaces dans la ligne."],
     de: ["Blocksatz", "Satz, bei dem jede volle Zeile den linken und den rechten Rand der Spalte erreicht; dafür wird der Raum innerhalb der Zeile angepasst."],
+    it: ["Giustificazione", "Composizione in cui ogni riga piena raggiunge sia il margine sinistro sia quello destro della colonna, regolando gli spazi all’interno della riga."],
   }),
   term("ragged", "type", {
     en: ["Ragged right", "Text aligned on the left only, with lines of uneven length on the right. Word spacing stays constant."],
@@ -113,6 +118,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Texto em bandeira", "Texto alinhado só à esquerda, com linhas de comprimento desigual à direita. O espaçamento entre palavras não muda."],
     fr: ["Texte en drapeau", "Texte aligné à gauche seulement (au fer à gauche), avec des lignes de longueur inégale à droite. L’espace entre les mots reste constant."],
     de: ["Flattersatz", "Text, der nur am linken Rand ausgerichtet ist, mit rechts unterschiedlich langen Zeilen. Die Wortabstände bleiben gleich."],
+    it: ["Allineamento a sinistra (a bandiera)", "Testo allineato solo a sinistra, con righe di lunghezza irregolare a destra. Lo spazio tra le parole resta costante."],
   }),
   term("knuth-plass", "type", {
     en: ["Knuth–Plass algorithm", "The line-breaking method of the TeX typesetting system. It weighs every possible set of breaks in a paragraph and picks the one with the most even spacing, where a browser fills one line at a time."],
@@ -124,6 +130,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Algoritmo de Knuth-Plass", "Método de quebra de linhas do sistema de composição TeX. Avalia todos os conjuntos possíveis de quebras de um parágrafo e escolhe o de espaçamento mais regular, enquanto um navegador preenche as linhas uma a uma."],
     fr: ["Algorithme de Knuth–Plass", "Méthode de coupure des lignes du système de composition TeX. Il évalue tous les ensembles de coupures possibles d’un paragraphe et retient celui dont l’espacement est le plus régulier, là où un navigateur remplit les lignes une à une."],
     de: ["Knuth-Plass-Algorithmus", "Das Zeilenumbruchverfahren des Satzsystems TeX. Es wägt jede mögliche Kombination von Umbrüchen eines Absatzes ab und wählt die mit den gleichmäßigsten Abständen, während ein Browser eine Zeile nach der anderen füllt."],
+    it: ["Algoritmo di Knuth–Plass", "Il metodo di divisione in righe del sistema di composizione TeX. Valuta ogni possibile insieme di a capo di un paragrafo e sceglie quello con la spaziatura più uniforme, mentre un browser riempie una riga alla volta."],
   }),
   term("greedy-breaking", "type", {
     en: ["Greedy line breaking", "Filling each line with as many words as fit before moving to the next, without looking ahead. It is what CSS does, and it leaves some lines much looser than others."],
@@ -135,6 +142,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Quebra de linhas gulosa", "Preencher cada linha com todas as palavras que couberem antes de passar à seguinte, sem olhar adiante. É o que o CSS faz, e deixa algumas linhas muito mais frouxas que outras."],
     fr: ["Coupure des lignes gloutonne", "Remplir chaque ligne d’autant de mots qu’elle peut en contenir avant de passer à la suivante, sans regarder plus loin. C’est ce que fait CSS, et certaines lignes en sortent bien plus lâches que d’autres."],
     de: ["Gieriger Zeilenumbruch", "Jede Zeile wird mit so vielen Wörtern gefüllt, wie hineinpassen, bevor die nächste beginnt, ohne vorauszuschauen (englisch greedy). So arbeitet CSS, und manche Zeilen werden dabei viel lockerer als andere."],
+    it: ["Divisione in righe greedy", "Riempire ogni riga con tutte le parole che ci stanno prima di passare alla successiva, senza guardare avanti. È ciò che fa il CSS, e lascia alcune righe molto più larghe di altre."],
   }),
   term("box-glue-penalty", "type", {
     en: ["Boxes, glue and penalties", "The model Knuth–Plass works on. Boxes are words or letters of fixed width, glue is space that can stretch or shrink, and penalties mark places where a break is allowed at a cost, such as a hyphen."],
@@ -146,6 +154,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Caixas, cola e penalidades", "O modelo sobre o qual o Knuth-Plass trabalha. As caixas são palavras ou letras de largura fixa, a cola é espaço que pode esticar ou encolher, e as penalidades marcam os pontos onde a linha pode ser quebrada a um certo custo, como num hífen."],
     fr: ["Boîtes, ressorts et pénalités", "Le modèle sur lequel travaille Knuth–Plass. Les boîtes sont des mots ou des lettres de largeur fixe, les ressorts (glue) des espaces qui peuvent s’étirer ou se resserrer, et les pénalités marquent les endroits où une coupure est permise moyennant un coût, comme à un trait d’union."],
     de: ["Boxen, Glue und Penaltys", "Das Modell, mit dem Knuth-Plass arbeitet. Boxen sind Wörter oder Buchstaben fester Breite, Glue ist Leerraum, der sich dehnen oder stauchen lässt, und Penaltys markieren Stellen, an denen ein Umbruch gegen Strafkosten erlaubt ist, etwa ein Trennstrich."],
+    it: ["Box, glue e penalità", "Il modello su cui lavora Knuth–Plass. I box sono parole o lettere di larghezza fissa, la glue è lo spazio che può allargarsi o restringersi, e le penalità segnano i punti in cui un a capo è ammesso a un certo costo, come in corrispondenza di un trattino."],
   }),
   term("badness", "type", {
     en: ["Badness and demerits", "The scores Knuth–Plass gives a line: badness grows with how far its spaces are stretched or squeezed, and demerits add the cost of hyphens and of uneven neighbouring lines. The paragraph with the lowest total wins."],
@@ -157,6 +166,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Feiura e deméritos", "As pontuações que o Knuth-Plass dá a uma linha: a feiura (badness) cresce quanto mais seus espaços são esticados ou apertados, e os deméritos somam o custo dos hífens e das linhas vizinhas desiguais. Vence o parágrafo com o menor total."],
     fr: ["Laideur et démérites", "Les notes que Knuth–Plass attribue à une ligne : la laideur (badness) croît à mesure que ses espaces sont étirés ou resserrés, et les démérites y ajoutent le coût des césures et des lignes voisines d’espacement inégal. Le paragraphe au total le plus bas l’emporte."],
     de: ["Badness und Demerits", "Die Bewertungen, die Knuth-Plass einer Zeile gibt: Die Badness wächst damit, wie stark ihre Abstände gedehnt oder gestaucht sind, und die Demerits rechnen die Kosten von Trennungen und von ungleichmäßigen Nachbarzeilen hinzu. Es gewinnt die Fassung des Absatzes mit der niedrigsten Summe."],
+    it: ["Badness e demeriti", "I punteggi che Knuth–Plass assegna a una riga: la badness cresce quanto più i suoi spazi vengono allargati o compressi, e i demeriti aggiungono il costo delle sillabazioni e delle righe vicine di spaziatura disuguale. Vince il paragrafo con il totale più basso."],
   }),
   term("hyphenation", "type", {
     en: ["Hyphenation", "Dividing a word at the end of a line, with a hyphen, at a point the language allows. Postext finds those points with TeX's patterns for each language."],
@@ -168,6 +178,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Hifenização", "Dividir uma palavra no fim da linha, com um hífen, num ponto que a língua permite. O Postext encontra esses pontos com os padrões do TeX para cada idioma."],
     fr: ["Césure", "Division d’un mot en fin de ligne, avec un trait d’union, à un endroit que la langue autorise. Postext trouve ces endroits grâce aux motifs de TeX propres à chaque langue."],
     de: ["Silbentrennung", "Das Teilen eines Wortes am Zeilenende mit einem Trennstrich, an einer Stelle, die die Sprache erlaubt. Postext findet diese Stellen mit den Trennmustern von TeX für jede Sprache."],
+    it: ["Sillabazione", "Divisione di una parola a fine riga, con un trattino, in un punto che la lingua consente. Postext trova questi punti con i pattern di TeX propri di ogni lingua."],
   }),
   term("soft-hyphen", "type", {
     en: ["Soft hyphen", "An invisible mark inside a word that shows where it may be divided. It prints as a hyphen only when the line actually breaks there."],
@@ -179,6 +190,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Hífen discricionário", "Marca invisível dentro de uma palavra que indica onde ela pode ser dividida. Só é impressa como hífen se a linha for quebrada exatamente ali."],
     fr: ["Trait d’union conditionnel", "Marque invisible, placée dans un mot, qui indique où il peut être coupé. Elle ne s’imprime comme trait d’union que si la ligne se coupe effectivement à cet endroit."],
     de: ["Bedingter Trennstrich", "Eine unsichtbare Markierung in einem Wort, die anzeigt, wo es getrennt werden darf (weiches Trennzeichen). Als Trennstrich erscheint sie nur, wenn die Zeile tatsächlich dort umbricht."],
+    it: ["Trattino facoltativo", "Segno invisibile all’interno di una parola che indica dove può essere divisa (soft hyphen). Si stampa come trattino solo se la riga va davvero a capo in quel punto."],
   }),
   term("orphan", "type", {
     en: ["Orphan", "In Postext, the last line or lines of a paragraph carried alone to the top of the next column or page. Typographers disagree on the name; the rule is about lines stranded by a column break."],
@@ -190,6 +202,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Órfã", "No Postext, a última ou as últimas linhas de um parágrafo que passam sozinhas para o alto da coluna ou da página seguinte. Os tipógrafos não concordam quanto ao nome; a regra trata de linhas isoladas por uma quebra de coluna."],
     fr: ["Orpheline", "Dans Postext, la ou les dernières lignes d’un paragraphe reportées seules en haut de la colonne ou de la page suivante. Les typographes ne s’accordent pas sur le nom ; la règle porte sur les lignes isolées par un saut de colonne."],
     de: ["Waise", "In Postext die letzte Zeile oder die letzten Zeilen eines Absatzes, die allein an den Kopf der nächsten Spalte oder Seite übertragen werden. Typografen sind sich über den Namen uneinig; die Regel betrifft Zeilen, die ein Spaltenumbruch vom Absatz abschneidet."],
+    it: ["Orfana", "In Postext, l’ultima riga o le ultime righe di un paragrafo portate da sole in cima alla colonna o alla pagina successiva. I tipografi non concordano sul nome; la regola riguarda le righe rimaste isolate da un cambio di colonna."],
   }),
   term("widow", "type", {
     en: ["Widow", "In Postext, the first line or lines of a paragraph left alone at the bottom of a column or page, with the rest of the paragraph overleaf."],
@@ -201,6 +214,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Viúva", "No Postext, a primeira ou as primeiras linhas de um parágrafo que ficam sozinhas no pé de uma coluna ou página, com o resto do parágrafo na seguinte."],
     fr: ["Veuve", "Dans Postext, la ou les premières lignes d’un paragraphe laissées seules au pied d’une colonne ou d’une page, le reste du paragraphe passant à la suivante."],
     de: ["Witwe", "In Postext die erste Zeile oder die ersten Zeilen eines Absatzes, die allein am Fuß einer Spalte oder Seite stehen bleiben, während der Rest des Absatzes umseitig weitergeht."],
+    it: ["Vedova", "In Postext, la prima riga o le prime righe di un paragrafo lasciate sole in fondo a una colonna o a una pagina, con il resto del paragrafo nella successiva."],
   }),
   term("runt", "type", {
     en: ["Runt", "A paragraph's last line when it holds only a word or part of one. Postext penalises it and, when it can, sets the paragraph one line shorter."],
@@ -212,6 +226,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Linha curta final", "Última linha de um parágrafo que contém só uma palavra ou parte dela (runt, em inglês). O Postext a penaliza e, quando pode, compõe o parágrafo com uma linha a menos."],
     fr: ["Ligne creuse", "Dernière ligne d’un paragraphe qui ne contient qu’un mot ou un fragment de mot (runt en anglais). Postext la pénalise et, quand il le peut, compose le paragraphe avec une ligne de moins."],
     de: ["Zu kurze Ausgangszeile", "Die letzte Zeile eines Absatzes, wenn sie nur ein Wort oder einen Teil davon enthält (englisch runt). Postext belegt sie mit Strafkosten und setzt den Absatz, wenn möglich, eine Zeile kürzer."],
+    it: ["Riga finale troppo corta", "Ultima riga di un paragrafo che contiene solo una parola o una parte di parola (runt in inglese). Postext la penalizza e, quando può, compone il paragrafo con una riga in meno."],
   }),
   term("baseline", "type", {
     en: ["Baseline", "The invisible line letters sit on. Descenders such as the tail of p go below it."],
@@ -223,6 +238,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Linha de base", "A linha invisível sobre a qual as letras se apoiam. As hastes descendentes, como a perna do p, ficam abaixo dela."],
     fr: ["Ligne de base", "La ligne invisible sur laquelle reposent les lettres. Les jambages descendants, comme la queue du p, passent en dessous."],
     de: ["Grundlinie", "Die unsichtbare Linie, auf der die Buchstaben stehen. Unterlängen wie der Abstrich des p reichen darunter."],
+    it: ["Linea di base", "La linea invisibile su cui poggiano le lettere. I discendenti, come la gamba della p, scendono al di sotto."],
   }),
   term("baseline-grid", "type", {
     en: ["Baseline grid", "A set of equally spaced horizontal lines that every line of body text sits on, so lines in neighbouring columns and on facing pages line up."],
@@ -234,6 +250,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Grade de linhas de base", "Série de linhas horizontais equidistantes sobre as quais se apoia cada linha do texto corrido, para que as linhas de colunas vizinhas e de páginas que se defrontam fiquem alinhadas."],
     fr: ["Grille de ligne de base", "Série de lignes horizontales équidistantes sur lesquelles repose chaque ligne du texte courant, pour que les lignes des colonnes voisines et des pages en regard s’alignent."],
     de: ["Grundlinienraster", "Eine Schar gleichmäßig verteilter waagerechter Linien, auf denen jede Zeile des Grundtexts steht, sodass die Zeilen benachbarter Spalten und gegenüberliegender Seiten auf gleicher Höhe liegen."],
+    it: ["Griglia della linea di base", "Serie di linee orizzontali equidistanti su cui poggia ogni riga del testo corrente, perché le righe delle colonne vicine e delle pagine affiancate restino allineate."],
   }),
   term("type-area", "type", {
     en: ["Type area", "The part of the page that holds the text, inside the margins. Running heads and folios usually sit outside it."],
@@ -245,6 +262,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Mancha gráfica", "A parte da página ocupada pelo texto, dentro das margens. Os cabeços e os fólios costumam ficar fora dela."],
     fr: ["Bloc de texte", "La partie de la page qui reçoit le texte, à l’intérieur des marges. Les titres courants et les folios se placent en général en dehors."],
     de: ["Satzspiegel", "Der Teil der Seite innerhalb der Ränder, der den Text aufnimmt. Kolumnentitel und Seitenzahlen stehen meist außerhalb."],
+    it: ["Gabbia del testo", "La parte della pagina che accoglie il testo, all’interno dei margini. Testatine e folio di solito stanno al di fuori."],
   }),
   term("measure", "type", {
     en: ["Measure", "The length of a line of text, the width of the column. Comfortable reading needs roughly 45 to 75 characters."],
@@ -256,6 +274,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Medida", "O comprimento de uma linha de texto, ou seja, a largura da coluna. Para uma leitura confortável, convém uma medida de uns 45 a 75 caracteres."],
     fr: ["Longueur de ligne", "La longueur d’une ligne de texte, soit la largeur de la colonne. Une lecture confortable demande environ 45 à 75 caractères."],
     de: ["Zeilenlänge (Satzbreite)", "Die Länge einer Textzeile, also die Breite der Spalte. Bequemes Lesen verlangt etwa 45 bis 75 Zeichen."],
+    it: ["Giustezza", "La lunghezza di una riga di testo, cioè la larghezza della colonna. Una lettura comoda richiede da 45 a 75 caratteri circa."],
   }),
   term("gutter", "type", {
     en: ["Gutter", "The space between two columns of text. Some printers also call the inner margin by the spine the gutter."],
@@ -267,6 +286,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Medianiz", "Espaço entre duas colunas de texto. Em inglês, gutter também pode designar a margem interna, junto à lombada."],
     fr: ["Gouttière", "L’espace entre deux colonnes de texte. Certains imprimeurs appellent aussi gouttière la marge intérieure, côté dos (le petit fond)."],
     de: ["Spaltenabstand", "Der Raum zwischen zwei Textspalten. Im Englischen nennen manche Drucker auch den inneren Rand am Buchrücken, den Bundsteg, gutter."],
+    it: ["Intercolonna", "Lo spazio tra due colonne di testo. Alcuni tipografi chiamano gutter, in inglese, anche il margine interno verso la rilegatura."],
   }),
   term("column-balancing", "type", {
     en: ["Column balancing", "Making the columns of a page end at the same height, typically on the last page of a chapter, by moving lines between them or adjusting spacing."],
@@ -278,6 +298,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Balanceamento de colunas", "Fazer com que as colunas de uma página terminem na mesma altura, sobretudo na última página de um capítulo, movendo linhas entre elas ou ajustando o espaçamento."],
     fr: ["Équilibrage des colonnes", "Faire finir les colonnes d’une page à la même hauteur, en général sur la dernière page d’un chapitre, en déplaçant des lignes de l’une à l’autre ou en ajustant les espacements."],
     de: ["Spaltenausgleich", "Das Angleichen der Spalten einer Seite, sodass sie auf gleicher Höhe enden, meist auf der letzten Seite eines Kapitels; dazu werden Zeilen zwischen ihnen verschoben oder Abstände angepasst."],
+    it: ["Bilanciamento delle colonne", "Far terminare le colonne di una pagina alla stessa altezza, di solito nell’ultima pagina di un capitolo, spostando righe dall’una all’altra o regolando le spaziature."],
   }),
   term("keep-together", "type", {
     en: ["Keep together", "A rule that a block, such as a heading with its first lines or a short box, must not be split across columns or pages."],
@@ -289,6 +310,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Manter junto", "Regra pela qual um bloco, como um título com suas primeiras linhas ou um boxe curto, não pode ser dividido entre colunas nem entre páginas."],
     fr: ["Garder ensemble", "Règle selon laquelle un bloc, comme un titre avec ses premières lignes ou un court encadré, ne doit pas être coupé entre deux colonnes ou deux pages."],
     de: ["Zusammenhalten", "Eine Regel, nach der ein Block, etwa eine Überschrift mit ihren ersten Zeilen oder ein kurzer Kasten, nicht über Spalten oder Seiten getrennt werden darf."],
+    it: ["Tenere unito", "Regola per cui un blocco, come un titolo con le sue prime righe o un riquadro breve, non deve essere diviso tra colonne o pagine."],
   }),
   term("folio", "type", {
     en: ["Folio", "The printed page number. A drop folio sits at the foot of the page."],
@@ -300,6 +322,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Fólio", "O número de página impresso. O fólio inferior fica no pé da página."],
     fr: ["Folio", "Le numéro de page imprimé. Un folio en pied se place au bas de la page."],
     de: ["Pagina", "Die gedruckte Seitenzahl. Steht sie am Fuß der Seite, spricht man im Englischen von einem drop folio."],
+    it: ["Folio", "Il numero di pagina stampato. Un folio al piede si colloca in fondo alla pagina."],
   }),
   term("running-head", "type", {
     en: ["Running head", "A line repeated at the top of each page, usually the book or chapter title, to tell the reader where they are."],
@@ -311,6 +334,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Cabeço", "Linha que se repete no alto de cada página, em geral com o título do livro ou do capítulo, para que o leitor saiba onde está."],
     fr: ["Titre courant", "Ligne répétée en haut de chaque page, le plus souvent le titre du livre ou du chapitre, qui indique au lecteur où il se trouve."],
     de: ["Kolumnentitel", "Eine Zeile, die oben auf jeder Seite wiederkehrt, meist mit dem Buch- oder Kapiteltitel, damit man beim Lesen weiß, wo man sich befindet."],
+    it: ["Testatina", "Riga ripetuta in cima a ogni pagina, di solito il titolo del libro o del capitolo, che dice al lettore dove si trova."],
   }),
   term("recto", "type", {
     en: ["Recto", "The right-hand page of an open book in left-to-right binding, always odd-numbered. Chapters traditionally open on a recto."],
@@ -322,6 +346,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Recto (página ímpar)", "A página direita de um livro aberto encadernado pela esquerda; sempre tem número ímpar. Os capítulos costumam começar em página ímpar."],
     fr: ["Recto", "La page de droite d’un livre ouvert qui se lit de gauche à droite, toujours de numéro impair. Les chapitres s’ouvrent traditionnellement sur un recto."],
     de: ["Recto (rechte Seite)", "Die rechte Seite eines aufgeschlagenen Buchs, das von links nach rechts gelesen wird, immer mit ungerader Seitenzahl. Kapitel beginnen traditionell auf einer rechten Seite."],
+    it: ["Recto", "La pagina destra di un libro aperto che si legge da sinistra a destra, sempre di numero dispari. Tradizionalmente i capitoli si aprono su un recto."],
   }),
   term("verso", "type", {
     en: ["Verso", "The left-hand page of an open book in left-to-right binding, always even-numbered. In a book bound on the right, as many vertical Chinese books are, the sides swap."],
@@ -333,6 +358,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Verso (página par)", "A página esquerda de um livro aberto encadernado pela esquerda; sempre tem número par. Num livro encadernado pela direita, como muitos livros chineses em escrita vertical, os lados se invertem."],
     fr: ["Verso", "La page de gauche d’un livre ouvert qui se lit de gauche à droite, toujours de numéro pair. Dans un livre relié à droite, comme beaucoup de livres chinois en écriture verticale, les côtés s’inversent."],
     de: ["Verso (linke Seite)", "Die linke Seite eines aufgeschlagenen Buchs, das von links nach rechts gelesen wird, immer mit gerader Seitenzahl. In einem rechts gebundenen Buch, wie es viele vertikal gesetzte chinesische Bücher sind, tauschen die Seiten ihre Rollen."],
+    it: ["Verso", "La pagina sinistra di un libro aperto che si legge da sinistra a destra, sempre di numero pari. In un libro rilegato a destra, come molti libri cinesi in scrittura verticale, i lati si invertono."],
   }),
   term("spread", "type", {
     en: ["Spread", "Two facing pages seen together, a verso and a recto. Designers plan a book spread by spread."],
@@ -344,6 +370,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Página dupla", "Duas páginas que se defrontam, vistas juntas: uma par e uma ímpar. Um livro é projetado página dupla a página dupla."],
     fr: ["Double page", "Deux pages en regard vues ensemble, un verso et un recto. Les maquettistes conçoivent un livre double page par double page."],
     de: ["Doppelseite", "Zwei gegenüberliegende Seiten, die man zusammen sieht, eine linke und eine rechte. Buchgestalter planen ein Buch Doppelseite für Doppelseite."],
+    it: ["Doppia pagina", "Due pagine affiancate viste insieme, un verso e un recto. I grafici progettano un libro doppia pagina per doppia pagina."],
   }),
   term("mirrored-margins", "type", {
     en: ["Mirrored margins", "Margins that swap sides between left and right pages, so the inner margin is always by the spine."],
@@ -355,6 +382,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Margens espelhadas", "Margens que trocam de lado entre páginas pares e ímpares, de modo que a margem interna fica sempre junto à lombada."],
     fr: ["Marges en miroir", "Marges qui changent de côté entre pages de gauche et de droite, pour que la marge intérieure soit toujours côté dos."],
     de: ["Gespiegelte Ränder", "Ränder, die zwischen linken und rechten Seiten die Seite wechseln, sodass der innere Rand, der Bundsteg, immer am Buchrücken liegt."],
+    it: ["Margini speculari", "Margini che si scambiano di lato tra pagine sinistre e destre, così il margine interno sta sempre dalla parte della rilegatura."],
   }),
   term("float", "type", {
     en: ["Float", "A figure, table or box that the layout may move away from its place in the text, to the top or bottom of a column or page, where it fits."],
@@ -366,6 +394,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Flutuante", "Figura, tabela ou boxe que a diagramação pode afastar do seu lugar no texto e levar ao alto ou ao pé de uma coluna ou página onde caiba."],
     fr: ["Flottant", "Figure, tableau ou encadré que la mise en page peut éloigner de sa place dans le texte, vers le haut ou le bas d’une colonne ou d’une page, là où il trouve de la place."],
     de: ["Gleitobjekt", "Eine Abbildung, eine Tabelle oder ein Kasten, die das Layout von ihrer Stelle im Text wegbewegen darf, an den Kopf oder Fuß einer Spalte oder Seite, wo Platz ist."],
+    it: ["Elemento flottante", "Figura, tabella o riquadro che l’impaginazione può spostare dal suo punto nel testo, in cima o in fondo a una colonna o a una pagina, dove c’è posto."],
   }),
   term("callout", "type", {
     en: ["Callout", "A boxed passage set apart from the running text, such as a note, a warning or a sidebar. Postext writes them with the :::callout directive."],
@@ -377,6 +406,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Boxe", "Trecho emoldurado que se separa do texto corrido, como uma nota, um aviso ou um texto de apoio. O Postext os escreve com a diretiva :::callout."],
     fr: ["Encadré", "Passage mis en boîte à l’écart du texte courant, comme une note, un avertissement ou un aparté. Postext les écrit avec la directive :::callout."],
     de: ["Kasten", "Ein umrahmter Abschnitt, der vom Fließtext abgesetzt ist, etwa ein Hinweis, eine Warnung oder ein Infokasten. Postext schreibt ihn mit der Direktive :::callout."],
+    it: ["Riquadro", "Passaggio incorniciato e separato dal testo corrente, come una nota, un avviso o un box di approfondimento. Postext li scrive con la direttiva :::callout."],
   }),
   term("caption", "type", {
     en: ["Caption", "The text that labels a figure or table, usually with its number: Figure 3, Table 2."],
@@ -388,6 +418,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Legenda", "Texto que identifica uma figura ou uma tabela, normalmente com seu número: Figura 3, Tabela 2."],
     fr: ["Légende", "Le texte qui désigne une figure ou un tableau, en général avec son numéro : Figure 3, Tableau 2."],
     de: ["Bildunterschrift (Legende)", "Der Text, der eine Abbildung oder Tabelle bezeichnet, meist mit ihrer Nummer: Abbildung 3, Tabelle 2."],
+    it: ["Didascalia", "Il testo che accompagna una figura o una tabella, di solito con il suo numero: Figura 3, Tabella 2."],
   }),
   term("footnote", "type", {
     en: ["Footnote", "A note printed at the foot of the column or page where it is cited, linked to the text by a superscript number or mark."],
@@ -399,6 +430,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Nota de rodapé", "Nota impressa no pé da coluna ou da página onde é citada, ligada ao texto por um número sobrescrito ou uma chamada."],
     fr: ["Note de bas de page", "Note imprimée au pied de la colonne ou de la page où elle est appelée, reliée au texte par un numéro ou un signe en exposant."],
     de: ["Fußnote", "Eine Anmerkung am Fuß der Spalte oder Seite, auf der auf sie verwiesen wird, mit dem Text durch eine hochgestellte Ziffer oder ein Zeichen verknüpft."],
+    it: ["Nota a piè di pagina", "Nota stampata in fondo alla colonna o alla pagina in cui è richiamata, collegata al testo da un numero o da un segno in apice."],
   }),
   term("cross-reference", "type", {
     en: ["Cross-reference", "A mention of another place in the same book, such as “see Figure 4” or “page 12”, that stays correct when the layout changes."],
@@ -410,6 +442,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Referência cruzada", "Menção a outro lugar do mesmo livro, como “ver figura 4” ou “página 12”, que continua correta mesmo que a diagramação mude."],
     fr: ["Renvoi", "Mention d’un autre endroit du même livre, comme « voir figure 4 » ou « page 12 », qui reste exacte quand la mise en page change."],
     de: ["Querverweis", "Ein Hinweis auf eine andere Stelle im selben Buch, etwa „siehe Abbildung 4“ oder „Seite 12“, der auch dann stimmt, wenn sich das Layout ändert."],
+    it: ["Rimando", "Riferimento a un altro punto dello stesso libro, come «vedi figura 4» o «pagina 12», che resta corretto quando l’impaginazione cambia."],
   }),
   term("index", "type", {
     en: ["Back-of-book index", "The alphabetical list of subjects at the end of a book, each with the pages where it appears."],
@@ -421,6 +454,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Índice remissivo", "Lista alfabética de assuntos no final de um livro, cada um com as páginas onde aparece."],
     fr: ["Index", "La liste alphabétique des sujets à la fin d’un livre, chacun avec les pages où il apparaît."],
     de: ["Register (Stichwortverzeichnis)", "Die alphabetische Liste der Stichwörter am Ende eines Buchs, jeweils mit den Seiten, auf denen sie vorkommen."],
+    it: ["Indice analitico", "L’elenco alfabetico degli argomenti alla fine di un libro, ciascuno con le pagine in cui compare."],
   }),
   term("front-matter", "type", {
     en: ["Front matter", "The pages before the main text: title page, copyright page, dedication, contents, preface. They are often numbered in roman numerals."],
@@ -432,6 +466,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Elementos pré-textuais", "As páginas que antecedem o texto principal: folha de rosto, página de créditos, dedicatória, sumário e prefácio. Costumam ser numeradas em algarismos romanos."],
     fr: ["Pages liminaires", "Les pages qui précèdent le texte principal : page de titre, page de copyright, dédicace, table des matières, préface. Elles sont souvent numérotées en chiffres romains."],
     de: ["Titelei", "Die Seiten vor dem Haupttext: Titelblatt, Copyright-Seite, Widmung, Inhaltsverzeichnis, Vorwort. Sie werden oft mit römischen Ziffern nummeriert."],
+    it: ["Pagine preliminari", "Le pagine che precedono il testo principale: frontespizio, pagina del copyright, dedica, indice, prefazione. Spesso sono numerate in cifre romane."],
   }),
   term("back-matter", "type", {
     en: ["Back matter", "The pages after the main text: appendices, notes, glossary, bibliography, index."],
@@ -443,6 +478,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Elementos pós-textuais", "As páginas que vêm depois do texto principal: apêndices, notas, glossário, bibliografia e índice remissivo."],
     fr: ["Pages de fin", "Les pages qui suivent le texte principal : annexes, notes, glossaire, bibliographie, index."],
     de: ["Anhang", "Die Seiten nach dem Haupttext: Anhangkapitel, Anmerkungen, Glossar, Literaturverzeichnis, Register."],
+    it: ["Apparati finali", "Le pagine che seguono il testo principale: appendici, note, glossario, bibliografia, indice analitico."],
   }),
   term("colophon", "type", {
     en: ["Colophon", "A short note, usually at the end of a book, on how it was made: the typefaces, the paper, the printer."],
@@ -454,6 +490,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Colofão", "Nota breve, em geral no fim do livro, sobre como ele foi feito: as famílias tipográficas, o papel, a gráfica."],
     fr: ["Colophon", "Courte notice, en général à la fin d’un livre, sur sa fabrication : les caractères, le papier, l’imprimeur."],
     de: ["Impressum (Kolophon)", "Ein kurzer Vermerk, meist am Ende eines Buchs, darüber, wie es hergestellt wurde: die Schriften, das Papier, die Druckerei."],
+    it: ["Colophon", "Breve nota, di solito alla fine di un libro, su come è stato realizzato: i caratteri, la carta, lo stampatore."],
   }),
   term("opener", "type", {
     en: ["Opener", "The designed first page of a chapter or part, with its number, title and often a band of colour or an image."],
@@ -465,6 +502,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Abertura", "A primeira página de um capítulo ou de uma parte, com diagramação própria: o número, o título e muitas vezes uma faixa de cor ou uma imagem."],
     fr: ["Ouverture de chapitre", "La première page mise en forme d’un chapitre ou d’une partie, avec son numéro, son titre et souvent un bandeau de couleur ou une image."],
     de: ["Kapitelauftakt", "Die gestaltete erste Seite eines Kapitels oder Teils, mit Nummer, Titel und oft einem Farbband oder einem Bild."],
+    it: ["Apertura di capitolo", "La prima pagina progettata di un capitolo o di una parte, con il suo numero, il titolo e spesso una fascia di colore o un’immagine."],
   }),
   term("kicker", "type", {
     en: ["Kicker", "A short line set above a heading, such as “Chapter 3” or a section name, in smaller or spaced capitals."],
@@ -476,6 +514,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Antetítulo (chapéu)", "Linha curta acima de um título, como “Capítulo 3” ou o nome de uma seção, em corpo menor ou em versais espaçadas."],
     fr: ["Surtitre", "Courte ligne placée au-dessus d’un titre, comme « Chapitre 3 » ou un nom de rubrique, en capitales plus petites ou espacées."],
     de: ["Dachzeile", "Eine kurze Zeile über einer Überschrift, etwa „Kapitel 3“ oder der Name eines Abschnitts, in kleineren oder gesperrten Versalien."],
+    it: ["Occhiello", "Breve riga posta sopra un titolo, come «Capitolo 3» o il nome di una sezione, in maiuscole più piccole o spaziate."],
   }),
   term("pull-quote", "type", {
     en: ["Pull quote", "A sentence from the text repeated in large type inside the page to catch the eye, common in magazines."],
@@ -487,6 +526,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Olho", "Frase do texto repetida em corpo grande dentro da página para chamar a atenção, muito comum em revistas."],
     fr: ["Citation en exergue", "Phrase du texte reprise en gros caractères dans la page pour attirer l’œil, courante dans les magazines."],
     de: ["Herausgestelltes Zitat", "Ein Satz aus dem Text, der groß gesetzt auf der Seite wiederholt wird, um den Blick zu fangen (englisch pull quote); in Zeitschriften üblich."],
+    it: ["Citazione in evidenza", "Frase del testo ripetuta in corpo grande all’interno della pagina per attirare l’occhio, frequente nelle riviste."],
   }),
   term("epigraph", "type", {
     en: ["Epigraph", "A short quotation placed at the start of a book or chapter, with its source."],
@@ -498,6 +538,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Epígrafe", "Citação breve no início de um livro ou de um capítulo, com a indicação da fonte."],
     fr: ["Épigraphe", "Courte citation placée au début d’un livre ou d’un chapitre, avec sa source."],
     de: ["Motto (Epigraph)", "Ein kurzes Zitat am Anfang eines Buchs oder Kapitels, mit seiner Quelle."],
+    it: ["Epigrafe", "Breve citazione posta all’inizio di un libro o di un capitolo, con la sua fonte."],
   }),
   term("byline", "type", {
     en: ["Byline", "The line that names the author of an article or a chapter in a collection."],
@@ -509,6 +550,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Assinatura", "A linha com o nome do autor de um artigo ou de um capítulo numa obra coletiva."],
     fr: ["Signature", "La ligne qui nomme l’auteur d’un article, ou d’un chapitre dans un ouvrage collectif."],
     de: ["Autorenzeile", "Die Zeile, die den Verfasser oder die Verfasserin eines Artikels oder eines Kapitels in einem Sammelband nennt."],
+    it: ["Firma", "La riga che indica l’autore di un articolo, o di un capitolo in un volume collettivo."],
   }),
   term("drop-cap", "type", {
     en: ["Drop cap", "A large initial letter at the start of a paragraph that sinks several lines into the text beside it."],
@@ -520,6 +562,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Capitular", "Letra inicial grande no começo de um parágrafo que ocupa a altura de várias linhas do texto ao lado."],
     fr: ["Lettrine", "Grande initiale au début d’un paragraphe, qui descend sur plusieurs lignes du texte voisin."],
     de: ["Initiale", "Ein großer Anfangsbuchstabe zu Beginn eines Absatzes, der mehrere Zeilen tief in den Text daneben hineinreicht."],
+    it: ["Capolettera", "Grande iniziale all’inizio di un paragrafo, che scende per più righe del testo accanto."],
   }),
   term("small-caps", "type", {
     en: ["Small caps", "Capital letters drawn at about the height of lowercase letters, used for abbreviations and running heads so they do not shout."],
@@ -531,6 +574,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Versaletes", "Maiúsculas desenhadas mais ou menos na altura das minúsculas, usadas em siglas e cabeços para que não chamem atenção demais."],
     fr: ["Petites capitales", "Capitales dessinées à peu près à la hauteur des minuscules, employées pour les sigles et les titres courants afin qu’ils ne crient pas."],
     de: ["Kapitälchen", "Großbuchstaben, die etwa in der Höhe der Kleinbuchstaben gezeichnet sind; man setzt sie für Abkürzungen und Kolumnentitel, damit diese nicht aufdringlich wirken."],
+    it: ["Maiuscoletto", "Lettere maiuscole disegnate all’incirca all’altezza delle minuscole, usate per sigle e testatine perché non gridino."],
   }),
   term("ligature", "type", {
     en: ["Ligature", "Two or more letters drawn as one glyph, such as fi or ff, to avoid awkward collisions."],
@@ -542,6 +586,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Ligadura", "Duas ou mais letras desenhadas como um único glifo, como fi ou ff, para evitar choques deselegantes."],
     fr: ["Ligature", "Deux lettres ou plus dessinées en un seul glyphe, comme fi ou ff, pour éviter des collisions disgracieuses."],
     de: ["Ligatur", "Zwei oder mehr Buchstaben, die als eine Glyphe gezeichnet sind, etwa fi oder ff, damit sie nicht unschön zusammenstoßen."],
+    it: ["Legatura", "Due o più lettere disegnate come un solo glifo, come fi o ff, per evitare collisioni sgradevoli."],
   }),
   term("glyph", "type", {
     en: ["Glyph", "One drawn shape in a font. A letter may have several glyphs (a ligature, a small cap, a vertical form)."],
@@ -553,6 +598,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Glifo", "Cada forma desenhada de uma fonte. Uma letra pode ter vários glifos: uma ligadura, um versalete, uma forma vertical."],
     fr: ["Glyphe", "Une forme dessinée dans une police. Une lettre peut avoir plusieurs glyphes (une ligature, une petite capitale, une forme verticale)."],
     de: ["Glyphe", "Eine einzelne gezeichnete Form in einer Schrift. Ein Buchstabe kann mehrere Glyphen haben (eine Ligatur, ein Kapitälchen, eine vertikale Form)."],
+    it: ["Glifo", "Una singola forma disegnata in un font. Una lettera può avere più glifi (una legatura, un maiuscoletto, una forma verticale)."],
   }),
   term("typeface", "type", {
     en: ["Typeface and font", "A typeface is the design (Garamond); a font is one file or style of it (Garamond Italic)."],
@@ -564,6 +610,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Família tipográfica e fonte", "A família tipográfica é o desenho (Garamond); a fonte é um arquivo ou um estilo específico desse desenho (o itálico da Garamond)."],
     fr: ["Caractère et police", "Un caractère est le dessin (Garamond) ; une police en est un fichier ou un style (Garamond Italique)."],
     de: ["Schriftart und Font", "Die Schriftart ist der Entwurf (Garamond); ein Font ist eine Datei oder ein Schnitt davon (Garamond Italic)."],
+    it: ["Carattere e font", "Il carattere è il disegno (Garamond); un font ne è un file o uno stile (Garamond Italic)."],
   }),
   term("em", "type", {
     en: ["Em", "A unit equal to the type size: in 10 pt type, an em is 10 pt. Spacing in typesetting is often given in ems or fractions of an em."],
@@ -575,6 +622,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Quadratim (eme)", "Unidade igual ao corpo da letra: num corpo de 10 pt, o quadratim mede 10 pt. Os espaços tipográficos costumam ser dados em quadratins ou em frações de quadratim."],
     fr: ["Cadratin", "Unité égale au corps du caractère : en corps 10 pt, le cadratin mesure 10 pt. En composition, les espacements se donnent souvent en cadratins ou en fractions de cadratin."],
     de: ["Geviert (em)", "Eine Einheit, die dem Schriftgrad entspricht: Bei einer Schrift in 10 pt misst ein Geviert 10 pt. Abstände im Satz werden oft in Gevierten oder Bruchteilen davon angegeben."],
+    it: ["Em", "Unità pari al corpo del carattere: in corpo 10 pt, un em misura 10 pt. In composizione le spaziature si danno spesso in em o in frazioni di em."],
   }),
   term("en", "type", {
     en: ["En", "Half an em. The en dash (–) is about this wide."],
@@ -586,6 +634,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Meio-quadratim", "Metade de um quadratim. A meia-risca (–) tem mais ou menos essa largura."],
     fr: ["Demi-cadratin", "La moitié d’un cadratin. Le tiret demi-cadratin (–) a à peu près cette largeur."],
     de: ["Halbgeviert (en)", "Ein halbes Geviert. Der Halbgeviertstrich (–) ist etwa so breit."],
+    it: ["En", "Metà di un em. Il trattino medio (–) è largo all’incirca così."],
   }),
   term("dashes", "type", {
     en: ["En dash and em dash", "The en dash (–) joins ranges, as in 1914–1918; the em dash (—) sets off a phrase in English. Neither is a hyphen."],
@@ -597,6 +646,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Meia-risca e travessão", "A meia-risca (–) une intervalos, como em 1914–1918; o travessão (—) isola incisos e, em português, abre as falas nos diálogos. Nenhum dos dois é um hífen."],
     fr: ["Tiret demi-cadratin et tiret cadratin", "Le tiret demi-cadratin (–) relie les bornes d’un intervalle, comme dans 1914–1918 ; le tiret cadratin (—) isole une incise en anglais. Ni l’un ni l’autre n’est un trait d’union."],
     de: ["Halbgeviertstrich und Geviertstrich", "Der Halbgeviertstrich (–) verbindet Bereiche wie 1914–1918; der Geviertstrich (—) grenzt im Englischen einen Einschub ab. Keiner von beiden ist ein Bindestrich."],
+    it: ["Trattino medio e trattino lungo", "Il trattino medio (–) unisce gli estremi di un intervallo, come in 1914–1918; il trattino lungo (—) isola un inciso in inglese. Nessuno dei due è un trattino d’unione."],
   }),
   term("point", "type", {
     en: ["Point and pica", "Typographic units. A point is 1/72 of an inch (about 0.35 mm); a pica is 12 points."],
@@ -608,6 +658,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Ponto e paica", "Unidades tipográficas. Um ponto é 1/72 de polegada (cerca de 0,35 mm); uma paica tem 12 pontos."],
     fr: ["Point et pica", "Unités typographiques. Un point vaut 1/72 de pouce (environ 0,35 mm) ; un pica vaut 12 points."],
     de: ["Punkt und Pica", "Typografische Maßeinheiten. Ein Punkt ist 1/72 Zoll (etwa 0,35 mm); ein Pica sind 12 Punkt."],
+    it: ["Punto e pica", "Unità tipografiche. Un punto vale 1/72 di pollice (circa 0,35 mm); una pica vale 12 punti."],
   }),
   term("trim-size", "type", {
     en: ["Trim size", "The final size of a printed page after it is cut, such as 140 × 210 mm."],
@@ -619,6 +670,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Formato (tamanho refilado)", "Tamanho final da página impressa depois do refile, por exemplo 140 × 210 mm."],
     fr: ["Format de la page", "Les dimensions finales d’une page imprimée une fois coupée, comme 140 × 210 mm."],
     de: ["Endformat", "Das endgültige Format einer gedruckten Seite nach dem Beschnitt, etwa 140 × 210 mm."],
+    it: ["Formato rifilato", "Le dimensioni finali di una pagina stampata dopo il taglio, come 140 × 210 mm."],
   }),
   term("bleed", "type", {
     en: ["Bleed", "Artwork that runs past the trim edge, a few millimetres beyond the page, so no white line shows if the cut is slightly off."],
@@ -630,6 +682,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Sangria", "Parte da ilustração ou da cor que ultrapassa em alguns milímetros a linha de corte, para que não apareça um filete branco se o corte se desviar um pouco."],
     fr: ["Fond perdu", "Visuel qui déborde du trait de coupe, de quelques millimètres au-delà de la page, pour qu’aucun filet blanc n’apparaisse si la coupe est légèrement décalée."],
     de: ["Anschnitt", "Bild- und Farbflächen, die einige Millimeter über die Schnittkante der Seite hinauslaufen, damit kein weißer Rand sichtbar wird, wenn der Schnitt leicht danebengeht."],
+    it: ["Abbondanza", "La parte della grafica che va oltre il bordo di taglio, qualche millimetro fuori dalla pagina, perché non compaia un filo bianco se il taglio è un po’ spostato."],
   }),
   term("crop-marks", "type", {
     en: ["Crop marks", "Thin lines printed outside the page corners that show the printer where to cut."],
@@ -641,6 +694,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Marcas de corte", "Linhas finas impressas fora dos cantos da página que indicam à gráfica onde cortar."],
     fr: ["Traits de coupe", "Fins traits imprimés à l’extérieur des coins de la page, qui indiquent à l’imprimeur où couper."],
     de: ["Schnittmarken", "Feine Linien außerhalb der Seitenecken, die der Druckerei zeigen, wo geschnitten wird."],
+    it: ["Segni di taglio", "Linee sottili stampate fuori dagli angoli della pagina, che indicano allo stampatore dove tagliare."],
   }),
   term("signature", "type", {
     en: ["Signature", "A large sheet printed with several pages and folded into a gathering, such as 16 pages. Books are sewn signature by signature."],
@@ -652,6 +706,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Caderno", "Folha grande impressa com várias páginas e dobrada, formando um caderno de, por exemplo, 16 páginas. Os livros são costurados caderno a caderno."],
     fr: ["Cahier", "Grande feuille sur laquelle on imprime plusieurs pages, puis que l’on plie pour former un cahier, par exemple de 16 pages. Les livres sont cousus cahier par cahier."],
     de: ["Druckbogen (Lage)", "Ein großer Bogen, auf den mehrere Seiten gedruckt werden und der zu einer Lage von zum Beispiel 16 Seiten gefalzt wird. Bücher werden Lage für Lage geheftet."],
+    it: ["Segnatura", "Grande foglio stampato con più pagine e piegato a formare un fascicolo, per esempio di 16 pagine. I libri si cuciono segnatura per segnatura."],
   }),
   term("spot-colour", "type", {
     en: ["Spot colour and single ink", "A spot colour is one premixed ink printed on its own. A single-ink book prints everything in one such ink, with lighter tints for greys."],
@@ -663,6 +718,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Cor especial e impressão a uma cor", "Uma cor especial é uma tinta pré-misturada que se imprime separadamente. Um livro impresso a uma cor imprime tudo com uma dessas tintas, com retículas mais claras no lugar dos cinzas."],
     fr: ["Ton direct et impression en une couleur", "Un ton direct est une encre préparée d’avance et imprimée seule. Un livre en une couleur imprime tout avec une seule encre de ce type, en teintes plus claires pour les gris."],
     de: ["Sonderfarbe und Einfarbdruck", "Eine Sonderfarbe ist eine vorgemischte Druckfarbe, die für sich gedruckt wird. Ein einfarbiges Buch druckt alles in einer solchen Farbe, mit helleren Tonwerten statt Grau."],
+    it: ["Colore spot e stampa a un colore", "Un colore spot (tinta piatta) è un inchiostro già miscelato e stampato da solo. Un libro a un colore stampa tutto con un solo inchiostro di questo tipo, con retinature più chiare per i grigi."],
   }),
   term("swatch", "type", {
     en: ["Swatch", "A named colour in a design's palette, reused by headings, rules and boxes so a change in one place reaches them all."],
@@ -674,6 +730,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Amostra de cor", "Cor com nome na paleta de um projeto gráfico, compartilhada por títulos, fios e boxes, de modo que uma mudança num só lugar chega a todos."],
     fr: ["Pastille de couleur", "Couleur nommée de la palette d’une maquette, reprise par les titres, les filets et les encadrés, si bien qu’une modification à un seul endroit les atteint tous."],
     de: ["Farbfeld", "Eine benannte Farbe in der Palette einer Gestaltung, die Überschriften, Linien und Kästen gemeinsam nutzen, sodass eine Änderung an einer Stelle alle erreicht."],
+    it: ["Campione di colore", "Colore con un nome nella tavolozza di un progetto grafico, riusato da titoli, filetti e riquadri, così una modifica in un punto li raggiunge tutti."],
   }),
   term("rule", "type", {
     en: ["Rule", "A printed line, such as the thin line between columns or under a running head."],
@@ -685,6 +742,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Fio", "Linha impressa, como o fio fino entre colunas ou sob um cabeço."],
     fr: ["Filet", "Ligne imprimée, comme le fin trait entre les colonnes ou sous un titre courant."],
     de: ["Linie", "Eine gedruckte Linie, etwa die feine Linie zwischen Spalten oder unter einem Kolumnentitel."],
+    it: ["Filetto", "Linea stampata, come quella sottile tra le colonne o sotto una testatina."],
   }),
   term("gloss", "type", {
     en: ["Gloss", "A short explanation of a word or line, printed in the margin, between the lines or in notes, as in annotated classics."],
@@ -696,6 +754,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Glosa", "Explicação breve de uma palavra ou de um verso, impressa na margem, entre as linhas ou em notas, como nas edições anotadas dos clássicos."],
     fr: ["Glose", "Courte explication d’un mot ou d’une ligne, imprimée dans la marge, entre les lignes ou en note, comme dans les classiques annotés."],
     de: ["Glosse", "Eine kurze Erläuterung eines Wortes oder einer Zeile, gedruckt am Rand, zwischen den Zeilen oder in Anmerkungen, wie in kommentierten Klassikerausgaben."],
+    it: ["Glossa", "Breve spiegazione di una parola o di un verso, stampata a margine, tra le righe o in nota, come nei classici commentati."],
   }),
 
   // ── Chinese layout ─────────────────────────────────────────────────────
@@ -709,6 +768,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Caracteres han", "Os caracteres chineses (hanzi), também usados no japonês e, historicamente, no coreano. Cada um ocupa uma célula quadrada de um quadratim."],
     fr: ["Caractères han", "Les caractères chinois (hanzi), employés aussi en japonais et, autrefois, en coréen. Chacun occupe une case carrée d’un cadratin de côté."],
     de: ["Han-Schriftzeichen", "Die chinesischen Schriftzeichen (Hanzi), die auch im Japanischen und früher im Koreanischen verwendet werden. Jedes nimmt eine quadratische Zelle von einem Geviert Breite ein."],
+    it: ["Caratteri han", "I caratteri cinesi (hanzi), usati anche in giapponese e, in passato, in coreano. Ognuno occupa una cella quadrata larga un em."],
   }, "汉字"),
   term("clreq", "cjk", {
     en: ["clreq", "Requirements for Chinese Text Layout, the W3C document that describes how Chinese text is set. The Postext docs cite it by section."],
@@ -720,6 +780,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["clreq", "Requirements for Chinese Text Layout, o documento do W3C que descreve como se compõe o texto chinês. A documentação do Postext o cita por seção."],
     fr: ["clreq", "Requirements for Chinese Text Layout, le document du W3C qui décrit la composition du texte chinois. La documentation de Postext le cite par section."],
     de: ["clreq", "Requirements for Chinese Text Layout, das Dokument des W3C, das beschreibt, wie chinesischer Text gesetzt wird. Die Postext-Dokumentation zitiert es nach Abschnitten."],
+    it: ["clreq", "Requirements for Chinese Text Layout, il documento del W3C che descrive come si compone il testo cinese. La documentazione di Postext lo cita per sezione."],
   }, "中文排版需求"),
   term("full-width", "cjk", {
     en: ["Full-width", "Occupying a whole em cell, like a Han character. Chinese punctuation and full-width digits (１２) are full-width; Latin letters are not."],
@@ -731,6 +792,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Largura total", "Que ocupa uma célula inteira de um quadratim, como um caractere han. A pontuação chinesa e os algarismos de largura total (１２) são assim; as letras latinas, não."],
     fr: ["Pleine chasse", "Qui occupe toute une case d’un cadratin, comme un caractère han. La ponctuation chinoise et les chiffres pleine chasse (１２) le sont ; les lettres latines, non."],
     de: ["Vollbreit", "Eine ganze Geviertzelle einnehmend, wie ein Han-Zeichen. Chinesische Satzzeichen und vollbreite Ziffern (１２) sind vollbreit, lateinische Buchstaben nicht."],
+    it: ["A larghezza piena", "Che occupa un’intera cella di un em, come un carattere han. La punteggiatura cinese e le cifre a larghezza piena (１２) lo sono; le lettere latine no."],
   }, "全角"),
   term("ideographic-space", "cjk", {
     en: ["Ideographic space", "A blank one em wide (U+3000), the width of a Han character, used for indents and after chapter numbers."],
@@ -742,6 +804,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Espaço ideográfico", "Branco de um quadratim (U+3000), a largura de um caractere han, usado em recuos e depois dos números de capítulo."],
     fr: ["Espace idéographique", "Blanc d’un cadratin de large (U+3000), la largeur d’un caractère han, employé pour les retraits et après les numéros de chapitre."],
     de: ["Ideografisches Leerzeichen", "Ein Leerraum von einem Geviert Breite (U+3000), so breit wie ein Han-Zeichen, für Einzüge und nach Kapitelnummern."],
+    it: ["Spazio ideografico", "Bianco largo un em (U+3000), la larghezza di un carattere han, usato per i rientri e dopo i numeri di capitolo."],
   }, "全角空格"),
   term("line-start-end-rules", "cjk", {
     en: ["Line-start and line-end rules", "The rules that keep certain marks off the start of a line (a comma, a closing bracket) and others off the end (an opening bracket). Japanese calls them kinsoku."],
@@ -753,6 +816,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Regras de início e fim de linha", "Normas que impedem que certos sinais abram uma linha (uma vírgula, um parêntese de fechamento) e que outros a fechem (um parêntese de abertura). Em japonês se chamam kinsoku."],
     fr: ["Règles de début et de fin de ligne", "Les règles qui interdisent certains signes en début de ligne (une virgule, une parenthèse fermante) et d’autres en fin de ligne (une parenthèse ouvrante). Le japonais les appelle kinsoku."],
     de: ["Regeln für Zeilenanfang und Zeilenende", "Die Regeln, die bestimmte Zeichen vom Zeilenanfang fernhalten (ein Komma, eine schließende Klammer) und andere vom Zeilenende (eine öffnende Klammer). Im Japanischen heißen sie Kinsoku."],
+    it: ["Regole di inizio e fine riga", "Le regole che tengono certi segni lontani dall’inizio di una riga (una virgola, una parentesi di chiusura) e altri dalla fine (una parentesi di apertura). In giapponese si chiamano kinsoku."],
   }, "避头尾"),
   term("punctuation-compression", "cjk", {
     en: ["Punctuation width and compression", "A Chinese mark is half an em of glyph and half an em of blank. Compression removes some of that blank, for example where two marks meet, so 。」 takes one and a half ems instead of two."],
@@ -764,6 +828,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Largura e compressão da pontuação", "Um sinal chinês ocupa meio quadratim de glifo e meio de branco. A compressão tira parte desse branco, por exemplo onde dois sinais se encontram, de modo que 。」 ocupa um quadratim e meio em vez de dois."],
     fr: ["Chasse et compression de la ponctuation", "Un signe chinois se compose d’un demi-cadratin de glyphe et d’un demi-cadratin de blanc. La compression retire une partie de ce blanc, par exemple là où deux signes se suivent, si bien que 。」 occupe un cadratin et demi au lieu de deux."],
     de: ["Breite und Stauchung der Satzzeichen", "Ein chinesisches Satzzeichen besteht aus einem halben Geviert Glyphe und einem halben Geviert Leerraum. Die Stauchung entfernt einen Teil dieses Leerraums, etwa wo zwei Zeichen aufeinandertreffen, sodass 。」 anderthalb statt zwei Gevierte einnimmt."],
+    it: ["Larghezza e compressione della punteggiatura", "Un segno cinese è fatto di mezzo em di glifo e mezzo em di bianco. La compressione toglie parte di quel bianco, per esempio dove due segni si incontrano, così 。」 occupa un em e mezzo invece di due."],
   }, "标点挤压"),
   term("hanging-punctuation", "cjk", {
     en: ["Hanging punctuation", "Letting a comma or full stop that does not fit sit just past the end of the line instead of pushing a character down."],
@@ -775,6 +840,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Pontuação pendente", "Deixar que uma vírgula ou um ponto que não cabe fique logo depois do fim da linha, em vez de levar um caractere para a linha seguinte."],
     fr: ["Ponctuation suspendue", "Laisser une virgule ou un point qui ne tient pas dans la ligne se placer juste après sa fin, au lieu de renvoyer un caractère à la ligne suivante."],
     de: ["Hängende Interpunktion", "Ein Komma oder einen Punkt, der nicht mehr in die Zeile passt, knapp hinter das Zeilenende ragen lassen, statt ein Zeichen in die nächste Zeile zu schieben."],
+    it: ["Punteggiatura sporgente", "Lasciare che una virgola o un punto che non ci sta si collochi appena oltre la fine della riga, invece di mandare a capo un carattere."],
   }, "标点悬挂"),
   term("han-latin-spacing", "cjk", {
     en: ["Han–Latin spacing", "A quarter-em gap set between a Han character and a Latin letter or digit next to it, as in 1999 年."],
@@ -786,6 +852,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Espaço entre han e latim", "Separação de um quarto de quadratim entre um caractere han e a letra latina ou o algarismo vizinho, como em 1999 年."],
     fr: ["Espacement han–latin", "Blanc d’un quart de cadratin placé entre un caractère han et une lettre ou un chiffre latin voisin, comme dans 1999 年."],
     de: ["Han-Latein-Abstand", "Ein Viertelgeviert Abstand zwischen einem Han-Zeichen und einem benachbarten lateinischen Buchstaben oder einer Ziffer, wie in 1999 年."],
+    it: ["Spaziatura han–latino", "Bianco di un quarto di em inserito tra un carattere han e una lettera o una cifra latina accanto, come in 1999 年."],
   }, "中西文间距"),
   term("character-grid", "cjk", {
     en: ["Character grid", "The Chinese way to specify a type area: so many characters per line and so many lines per page, every character on a square cell."],
@@ -797,6 +864,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Grade de caracteres", "A forma chinesa de definir a mancha gráfica: tantos caracteres por linha e tantas linhas por página, cada caractere numa célula quadrada."],
     fr: ["Grille de caractères", "La manière chinoise de définir un bloc de texte : tant de caractères par ligne et tant de lignes par page, chaque caractère sur une case carrée."],
     de: ["Zeichenraster", "Die chinesische Art, einen Satzspiegel festzulegen: so viele Zeichen pro Zeile und so viele Zeilen pro Seite, jedes Zeichen in einer quadratischen Zelle."],
+    it: ["Griglia dei caratteri", "Il modo cinese di definire la gabbia del testo: tanti caratteri per riga e tante righe per pagina, ogni carattere su una cella quadrata."],
   }, "字格"),
   term("chinese-point-sizes", "cjk", {
     en: ["Chinese point sizes", "Named type sizes used in China: 五号 is 10.5 pt, the usual book size; 小五 is 9 pt; 四号 is 14 pt."],
@@ -808,6 +876,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Corpos chineses", "Tamanhos de letra com nome usados na China: 五号 tem 10,5 pt, o corpo habitual dos livros; 小五, 9 pt; 四号, 14 pt."],
     fr: ["Corps chinois", "Tailles de caractères nommées en usage en Chine : 五号 vaut 10,5 pt, le corps courant des livres ; 小五, 9 pt ; 四号, 14 pt."],
     de: ["Chinesische Schriftgrade", "Benannte Schriftgrößen, die in China üblich sind: 五号 entspricht 10,5 pt, der üblichen Buchschriftgröße; 小五 entspricht 9 pt; 四号 entspricht 14 pt."],
+    it: ["Corpi cinesi", "Dimensioni di carattere con un nome, in uso in Cina: 五号 vale 10,5 pt, il corpo abituale dei libri; 小五 vale 9 pt; 四号 vale 14 pt."],
   }, "字号"),
   term("vertical-writing", "cjk", {
     en: ["Vertical writing", "Text set in columns that run from top to bottom, read from right to left, as in Japanese novels and in many Taiwanese and classical Chinese books."],
@@ -819,6 +888,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Escrita vertical", "Texto composto em colunas que vão de cima para baixo e se leem da direita para a esquerda, como nos romances japoneses, em muitos livros de Taiwan e nos clássicos chineses."],
     fr: ["Écriture verticale", "Texte composé en colonnes qui vont de haut en bas et se lisent de droite à gauche, comme dans les romans japonais et dans beaucoup de livres taïwanais et chinois classiques."],
     de: ["Vertikaler Satz", "Text in Spalten, die von oben nach unten laufen und von rechts nach links gelesen werden, wie in japanischen Romanen und in vielen taiwanischen und klassischen chinesischen Büchern."],
+    it: ["Scrittura verticale", "Testo composto in colonne che vanno dall’alto in basso e si leggono da destra a sinistra, come nei romanzi giapponesi e in molti libri taiwanesi e cinesi classici."],
   }, "竖排"),
   term("right-binding", "cjk", {
     en: ["Right binding", "A book bound on its right edge, opened from what a Western reader thinks of as the back. Vertical Chinese and Japanese books and Arabic books are bound this way."],
@@ -830,6 +900,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Encadernação pela direita", "Livro encadernado pela borda direita, que se abre pelo que um leitor ocidental consideraria o fim. Os livros chineses e japoneses em escrita vertical e os livros árabes são encadernados assim."],
     fr: ["Reliure à droite", "Livre relié sur son bord droit, qui s’ouvre par ce qu’un lecteur occidental prend pour la fin. Les livres chinois et japonais en écriture verticale et les livres arabes sont reliés ainsi."],
     de: ["Rechtsbindung", "Ein am rechten Rand gebundenes Buch, das von dem Ende her aufgeschlagen wird, das westlichen Lesern als Rückseite gilt. So sind vertikal gesetzte chinesische und japanische Bücher und arabische Bücher gebunden."],
+    it: ["Rilegatura a destra", "Libro rilegato sul bordo destro, che si apre da quella che un lettore occidentale considera la fine. Così sono rilegati i libri cinesi e giapponesi in scrittura verticale e i libri arabi."],
   }, "右装"),
   term("tier", "cjk", {
     en: ["Tier", "In vertical writing, one of the horizontal bands a page is divided into, the vertical counterpart of a column."],
@@ -841,6 +912,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Faixa", "Na escrita vertical, cada uma das faixas horizontais em que a página se divide; equivale a uma coluna na escrita horizontal."],
     fr: ["Étage", "En écriture verticale, l’une des bandes horizontales entre lesquelles la page est divisée, l’équivalent vertical d’une colonne."],
     de: ["Etage (Tier)", "Im vertikalen Satz eines der waagerechten Bänder, in die eine Seite geteilt wird, das vertikale Gegenstück einer Spalte."],
+    it: ["Fascia", "Nella scrittura verticale, una delle bande orizzontali in cui è divisa la pagina, l’equivalente verticale di una colonna."],
   }, "栏"),
   term("tate-chu-yoko", "cjk", {
     en: ["Tate-chū-yoko", "Setting a short number or acronym across the column, upright in a single cell, inside vertical text. The name is Japanese, 縦中横, “horizontal in vertical”."],
@@ -852,6 +924,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Tate-chū-yoko", "Compor um número curto ou uma sigla na horizontal, em pé numa única célula, dentro de um texto vertical. O nome é japonês, 縦中横, e significa “horizontal dentro do vertical”."],
     fr: ["Tate-chū-yoko", "Composer un nombre court ou un sigle en travers de la colonne, debout dans une seule case, au sein d’un texte vertical. Le nom est japonais, 縦中横, « horizontal dans le vertical »."],
     de: ["Tate-chū-yoko", "Das Setzen einer kurzen Zahl oder Abkürzung quer zur Spalte, aufrecht in einer einzigen Zelle, innerhalb von vertikalem Text. Der Name ist japanisch, 縦中横, „waagerecht im Senkrechten“."],
+    it: ["Tate-chū-yoko", "Comporre un numero breve o una sigla di traverso rispetto alla colonna, dritto in una sola cella, dentro un testo verticale. Il nome è giapponese, 縦中横, «orizzontale nel verticale»."],
   }, "纵中横"),
   term("emphasis-dots", "cjk", {
     en: ["Emphasis dots", "Dots set under each character (beside it in vertical text) to stress a phrase. Chinese uses them where Latin text uses italics."],
@@ -863,6 +936,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Pontos de ênfase", "Pontos sob cada caractere (ao lado, no texto vertical) para destacar uma expressão. O chinês os usa onde o texto latino usaria itálico."],
     fr: ["Points d’emphase", "Points placés sous chaque caractère (à côté en texte vertical) pour mettre une expression en relief. Le chinois les emploie là où le texte latin emploie l’italique."],
     de: ["Betonungspunkte", "Punkte unter jedem Zeichen (im vertikalen Text daneben), die eine Wendung hervorheben. Das Chinesische setzt sie dort, wo lateinischer Text kursiv gesetzt wird."],
+    it: ["Punti di enfasi", "Punti posti sotto ogni carattere (accanto, nel testo verticale) per mettere in risalto un’espressione. Il cinese li usa dove il testo latino usa il corsivo."],
   }, "着重号"),
   term("proper-name-mark", "cjk", {
     en: ["Proper-name mark", "A straight line under a personal or place name (beside it in vertical text), found in classical and Taiwanese editions."],
@@ -874,6 +948,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Marca de nome próprio", "Linha reta sob um nome de pessoa ou de lugar (ao lado, no texto vertical), própria das edições clássicas e de Taiwan."],
     fr: ["Trait de nom propre", "Trait droit sous un nom de personne ou de lieu (à côté en texte vertical), que l’on trouve dans les éditions classiques et taïwanaises."],
     de: ["Eigennamenstrich", "Eine gerade Linie unter einem Personen- oder Ortsnamen (im vertikalen Text daneben), zu finden in klassischen und taiwanischen Ausgaben."],
+    it: ["Segno dei nomi propri", "Linea dritta sotto un nome di persona o di luogo (accanto, nel testo verticale), che si trova nelle edizioni classiche e taiwanesi."],
   }, "专名号"),
   term("book-title-mark", "cjk", {
     en: ["Book-title mark", "The marks that set off the title of a book or article: 《》 in modern mainland text, or a wavy line under it in classical and Taiwanese editions."],
@@ -885,6 +960,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Marca de título", "Os sinais que delimitam o título de um livro ou artigo: 《》 no texto atual da China continental, ou uma linha ondulada embaixo nas edições clássicas e de Taiwan."],
     fr: ["Marque de titre", "Les signes qui encadrent le titre d’un livre ou d’un article : 《》 dans le texte moderne de Chine continentale, ou une ligne ondulée dessous dans les éditions classiques et taïwanaises."],
     de: ["Buchtitelzeichen", "Die Zeichen, die den Titel eines Buchs oder Artikels abgrenzen: 《》 in modernen Texten aus der Volksrepublik oder eine Wellenlinie darunter in klassischen und taiwanischen Ausgaben."],
+    it: ["Segno dei titoli", "I segni che racchiudono il titolo di un libro o di un articolo: 《》 nel testo moderno della Cina continentale, o una linea ondulata sotto il titolo nelle edizioni classiche e taiwanesi."],
   }, "书名号"),
   term("ruby", "cjk", {
     en: ["Ruby", "Small text set above or beside characters to give their reading, such as pinyin, zhuyin or Japanese furigana."],
@@ -896,6 +972,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Rubi", "Texto pequeno colocado acima ou ao lado dos caracteres para indicar sua leitura, como o pinyin, o zhuyin ou o furigana japonês."],
     fr: ["Ruby", "Petit texte placé au-dessus ou à côté des caractères pour en donner la lecture, comme le pinyin, le zhuyin ou les furigana japonais."],
     de: ["Ruby", "Kleiner Text über oder neben Schriftzeichen, der ihre Aussprache angibt, etwa Pinyin, Zhuyin oder japanische Furigana."],
+    it: ["Ruby", "Piccolo testo posto sopra o accanto ai caratteri per indicarne la lettura, come il pinyin, lo zhuyin o i furigana giapponesi."],
   }, "注音"),
   term("pinyin", "cjk", {
     en: ["Pinyin", "The official romanisation of Mandarin, with tone marks: hóng lóu."],
@@ -907,6 +984,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Pinyin", "A romanização oficial do mandarim, com marcas de tom: hóng lóu."],
     fr: ["Pinyin", "La romanisation officielle du mandarin, avec les marques de ton : hóng lóu."],
     de: ["Pinyin", "Die amtliche Umschrift des Mandarin in lateinische Buchstaben, mit Tonzeichen: hóng lóu."],
+    it: ["Pinyin", "La romanizzazione ufficiale del mandarino, con i segni dei toni: hóng lóu."],
   }, "拼音"),
   term("zhuyin", "cjk", {
     en: ["Zhuyin (bopomofo)", "A phonetic alphabet for Mandarin used in Taiwan (ㄅㄆㄇㄈ), set in a column beside each character."],
@@ -918,6 +996,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Zhuyin (bopomofo)", "Alfabeto fonético do mandarim usado em Taiwan (ㄅㄆㄇㄈ), colocado numa coluna ao lado de cada caractere."],
     fr: ["Zhuyin (bopomofo)", "Alphabet phonétique du mandarin en usage à Taïwan (ㄅㄆㄇㄈ), composé en colonne à côté de chaque caractère."],
     de: ["Zhuyin (Bopomofo)", "Ein Lautschriftalphabet für Mandarin, das in Taiwan verwendet wird (ㄅㄆㄇㄈ) und in einer Spalte neben jedem Zeichen steht."],
+    it: ["Zhuyin (bopomofo)", "Alfabeto fonetico del mandarino in uso a Taiwan (ㄅㄆㄇㄈ), composto in colonna accanto a ogni carattere."],
   }, "注音符号"),
   term("warichu", "cjk", {
     en: ["Warichu", "A note set in two half-size rows inside the line, the form of commentary in classical Chinese editions and of short glosses in Japanese books. The name is Japanese, 割注."],
@@ -929,6 +1008,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Warichu", "Nota composta em duas fileiras de meio corpo dentro da própria linha, a forma dos comentários nas edições clássicas chinesas e das glosas breves nos livros japoneses. O nome é japonês, 割注."],
     fr: ["Warichu", "Note composée sur deux rangées de demi-taille à l’intérieur de la ligne, forme du commentaire dans les éditions chinoises classiques et des courtes gloses dans les livres japonais. Le nom est japonais, 割注."],
     de: ["Warichu", "Eine Anmerkung in zwei Zeilen halber Größe innerhalb der Zeile, die Form des Kommentars in klassischen chinesischen Ausgaben und kurzer Glossen in japanischen Büchern. Der Name ist japanisch, 割注."],
+    it: ["Warichu", "Nota composta su due righe a mezzo corpo all’interno della riga, la forma del commento nelle edizioni cinesi classiche e delle brevi glosse nei libri giapponesi. Il nome è giapponese, 割注."],
   }, "双行夹注"),
   term("kaiming", "cjk", {
     en: ["Kaiming style", "A punctuation style that sets pause marks (、，) half-width and stops (。) full-width, a compromise between full-width and half-width setting."],
@@ -940,6 +1020,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Estilo kaiming", "Estilo de pontuação que compõe as pausas (、，) em meia largura e os pontos finais (。) em largura total, um meio-termo entre as duas opções."],
     fr: ["Style kaiming", "Style de ponctuation qui compose les signes de pause (、，) en demi-chasse et les points (。) en pleine chasse, un compromis entre composition pleine chasse et demi-chasse."],
     de: ["Kaiming-Stil", "Ein Interpunktionsstil, der Pausenzeichen (、，) halbbreit und Schlusszeichen (。) vollbreit setzt, ein Kompromiss zwischen vollbreitem und halbbreitem Satz."],
+    it: ["Stile kaiming", "Stile di punteggiatura che compone i segni di pausa (、，) a mezza larghezza e i punti fermi (。) a larghezza piena, un compromesso tra composizione a larghezza piena e a mezza larghezza."],
   }, "开明式"),
   term("fore-edge-heads", "cjk", {
     en: ["Fore-edge heads", "In vertical books, the chapter title and folio set down the outer margin of the page rather than across its top."],
@@ -951,6 +1032,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Cabeços na margem externa", "Nos livros verticais, o título do capítulo e o fólio compostos ao longo da margem externa da página em vez de no alto."],
     fr: ["Titres courants en marge extérieure", "Dans les livres verticaux, le titre du chapitre et le folio composés le long de la marge extérieure de la page plutôt qu’en travers de son haut."],
     de: ["Kolumnentitel am Außensteg", "In vertikalen Büchern Kapiteltitel und Pagina, die längs des äußeren Rands der Seite stehen statt quer über ihrem Kopf."],
+    it: ["Testatine sul margine esterno", "Nei libri verticali, il titolo del capitolo e il folio composti lungo il margine esterno della pagina invece che di traverso in cima."],
   }, "书口"),
 
   // ── Japanese layout ────────────────────────────────────────────────────
@@ -964,6 +1046,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kanji", "Os caracteres chineses tal como se escrevem em japonês, misturados aos kana no texto. A maioria tem uma leitura japonesa (kun) e uma ou várias tomadas do chinês (on); 2.136 constam da lista de uso comum (jōyō kanji)."],
     fr: ["Kanji", "Les caractères chinois tels qu’on les écrit en japonais, mêlés aux kana dans le texte courant. La plupart ont une lecture japonaise (kun) et une ou plusieurs lectures empruntées au chinois (on) ; 2 136 sont retenus pour l’usage courant (jōyō kanji)."],
     de: ["Kanji", "Die chinesischen Schriftzeichen, wie sie im Japanischen geschrieben werden, im Fließtext mit Kana gemischt. Die meisten haben eine japanische Lesung (kun) und eine oder mehrere aus dem Chinesischen übernommene Lesungen (on); 2.136 sind für den Alltagsgebrauch festgelegt (Jōyō-Kanji)."],
+    it: ["Kanji", "I caratteri cinesi come si scrivono in giapponese, mescolati ai kana nel testo corrente. Quasi tutti hanno una lettura giapponese (kun) e una o più letture prese dal cinese (on); 2.136 sono elencati per l’uso quotidiano (jōyō kanji)."],
   }, "漢字"),
   term("kana", "japanese", {
     en: ["Kana", "The two Japanese syllabaries, hiragana and katakana, in which each sign stands for a syllable. Japanese text mixes them with kanji."],
@@ -975,6 +1058,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kana", "Os dois silabários japoneses, o hiragana e o katakana, em que cada sinal representa uma sílaba. O texto japonês os mistura com os kanji."],
     fr: ["Kana", "Les deux syllabaires japonais, hiragana et katakana, dont chaque signe note une syllabe. Le texte japonais les mêle aux kanji."],
     de: ["Kana", "Die beiden japanischen Silbenschriften Hiragana und Katakana, in denen jedes Zeichen für eine Silbe steht. Japanischer Text mischt sie mit Kanji."],
+    it: ["Kana", "I due sillabari giapponesi, hiragana e katakana, in cui ogni segno indica una sillaba. Il testo giapponese li mescola ai kanji."],
   }, "仮名"),
   term("hiragana", "japanese", {
     en: ["Hiragana", "The rounded kana. It writes grammatical endings and particles, native words with no kanji or a rare one, and furigana."],
@@ -986,6 +1070,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Hiragana", "O kana de traço arredondado. Com ele se escrevem as terminações gramaticais e as partículas, as palavras japonesas sem kanji ou com um kanji pouco comum, e o furigana."],
     fr: ["Hiragana", "Les kana arrondis. Ils notent les terminaisons grammaticales et les particules, les mots japonais sans kanji ou dont le kanji est rare, et les furigana."],
     de: ["Hiragana", "Die gerundeten Kana. Mit ihnen schreibt man grammatische Endungen und Partikeln, japanische Wörter ohne Kanji oder mit einem seltenen sowie Furigana."],
+    it: ["Hiragana", "I kana arrotondati. Scrivono le desinenze grammaticali e le particelle, le parole giapponesi senza kanji o con un kanji raro, e i furigana."],
   }, "平仮名"),
   term("katakana", "japanese", {
     en: ["Katakana", "The angular kana. It writes words taken from other languages (コーヒー, coffee), foreign names and sound words, and sometimes stands in for italics to stress a word."],
@@ -997,6 +1082,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Katakana", "O kana de traço anguloso. Com ele se escrevem as palavras tomadas de outras línguas (コーヒー, café), os nomes estrangeiros e as onomatopeias, e às vezes ele faz as vezes do itálico para destacar uma palavra."],
     fr: ["Katakana", "Les kana anguleux. Ils notent les mots empruntés à d’autres langues (コーヒー, café), les noms étrangers et les onomatopées, et remplacent parfois l’italique pour mettre un mot en relief."],
     de: ["Katakana", "Die eckigen Kana. Mit ihnen schreibt man Wörter aus anderen Sprachen (コーヒー, Kaffee), fremde Namen und Lautmalereien, und manchmal vertreten sie die Kursive, um ein Wort hervorzuheben."],
+    it: ["Katakana", "I kana spigolosi. Scrivono le parole prese da altre lingue (コーヒー, caffè), i nomi stranieri e le onomatopee, e a volte sostituiscono il corsivo per mettere in risalto una parola."],
   }, "片仮名"),
   term("romaji", "japanese", {
     en: ["Rōmaji", "Japanese written in Latin letters. Books mostly use Hepburn romanisation, which marks long vowels with a macron: Tōkyō, Sōseki."],
@@ -1008,6 +1094,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Rōmaji", "O japonês escrito com letras latinas. Os livros costumam usar a romanização Hepburn, que marca as vogais longas com um mácron: Tōkyō, Sōseki."],
     fr: ["Rōmaji", "Le japonais écrit en lettres latines. Les livres emploient surtout la romanisation Hepburn, qui marque les voyelles longues d’un macron : Tōkyō, Sōseki."],
     de: ["Rōmaji", "Japanisch in lateinischen Buchstaben. Bücher verwenden meist die Hepburn-Umschrift, die lange Vokale mit einem Makron kennzeichnet: Tōkyō, Sōseki."],
+    it: ["Rōmaji", "Il giapponese scritto in lettere latine. I libri usano soprattutto la romanizzazione Hepburn, che segna le vocali lunghe con un macron: Tōkyō, Sōseki."],
   }, "ローマ字"),
   term("furigana", "japanese", {
     en: ["Furigana", "Small kana set over kanji (to their right in vertical text) to give the reading: in children's books, over rare characters and over names. It is the Japanese use of ruby."],
@@ -1019,6 +1106,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Furigana", "Kana pequenos colocados sobre os kanji (à direita deles, no texto vertical) para indicar a leitura: nos livros infantis, sobre os caracteres pouco comuns e sobre os nomes. É o uso japonês do rubi."],
     fr: ["Furigana", "Petits kana placés au-dessus des kanji (à leur droite en texte vertical) pour en donner la lecture : dans les livres pour enfants, sur les caractères rares et sur les noms. C’est l’usage japonais du ruby."],
     de: ["Furigana", "Kleine Kana über Kanji (im vertikalen Text rechts davon), die die Lesung angeben: in Kinderbüchern, über seltenen Zeichen und über Namen. Furigana sind die japanische Form von Ruby."],
+    it: ["Furigana", "Piccoli kana posti sopra i kanji (alla loro destra nel testo verticale) per indicarne la lettura: nei libri per bambini, sopra i caratteri rari e sopra i nomi. È l’uso giapponese del ruby."],
   }, "振り仮名"),
   term("jukugo-ruby", "japanese", {
     en: ["Jukugo ruby", "Ruby for a compound of two or more kanji. Each reading sits over its own kanji, a longer one may spread over its neighbour in the same word, and the word may still break between its kanji at a line end."],
@@ -1030,6 +1118,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Rubi de composto (jukugo)", "Rubi de uma palavra composta de dois ou mais kanji. Cada leitura fica sobre o seu kanji, uma mais longa pode se estender sobre o kanji vizinho da mesma palavra, e a palavra ainda pode ser quebrada entre seus kanji no fim da linha."],
     fr: ["Ruby de composé (jukugo)", "Ruby d’un composé de deux kanji ou plus. Chaque lecture se place sur son propre kanji, une lecture plus longue peut déborder sur son voisin dans le même mot, et le mot peut tout de même se couper entre ses kanji en fin de ligne."],
     de: ["Jukugo-Ruby", "Ruby für ein Kompositum aus zwei oder mehr Kanji. Jede Lesung steht über ihrem eigenen Kanji, eine längere darf über das Nachbarzeichen im selben Wort reichen, und das Wort darf am Zeilenende trotzdem zwischen seinen Kanji umbrechen."],
+    it: ["Ruby di composto (jukugo)", "Ruby per un composto di due o più kanji. Ogni lettura sta sopra il proprio kanji, una lettura più lunga può estendersi sul vicino nella stessa parola, e la parola può comunque andare a capo tra i suoi kanji a fine riga."],
   }, "熟語ルビ"),
   term("group-ruby", "japanese", {
     en: ["Group ruby", "Ruby whose reading belongs to the whole word and is spread evenly over it, as for a name or a word with a special reading (今日 read きょう). The word never breaks across lines."],
@@ -1041,6 +1130,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Rubi de grupo", "Rubi cuja leitura corresponde à palavra inteira e se distribui por igual sobre ela, como num nome ou numa palavra de leitura especial (今日, que se lê きょう). A palavra nunca é dividida entre duas linhas."],
     fr: ["Ruby de groupe", "Ruby dont la lecture appartient au mot entier et se répartit régulièrement sur lui, comme pour un nom ou un mot à lecture particulière (今日 lu きょう). Le mot ne se coupe jamais d’une ligne à l’autre."],
     de: ["Gruppen-Ruby", "Ruby für ein ganzes Wort: Die Lesung gehört zum Wort als Ganzem und wird gleichmäßig darüber verteilt, etwa bei einem Namen oder einem Wort mit besonderer Lesung (今日 gelesen als きょう). Das Wort wird nie über Zeilen getrennt."],
+    it: ["Ruby di gruppo", "Ruby la cui lettura appartiene all’intera parola e si distribuisce in modo uniforme su di essa, come per un nome o una parola con una lettura particolare (今日 letto きょう). La parola non va mai a capo."],
   }, "グループルビ"),
   term("boten", "japanese", {
     en: ["Bōten (kenten)", "Marks set beside each character to stress a word, the Japanese counterpart of italics: usually a sesame dot (﹅), over each character in horizontal text and to its right in vertical text. Chinese puts its emphasis dots under the text."],
@@ -1052,6 +1142,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Bōten (kenten)", "Marcas colocadas junto a cada caractere para destacar uma palavra, o equivalente japonês do itálico: em geral um ponto em forma de gergelim (﹅), acima de cada caractere no texto horizontal e à sua direita no vertical. O chinês põe seus pontos de ênfase embaixo."],
     fr: ["Bōten (kenten)", "Signes placés à côté de chaque caractère pour mettre un mot en relief, l’équivalent japonais de l’italique : le plus souvent un point sésame (﹅), au-dessus de chaque caractère en texte horizontal et à sa droite en texte vertical. Le chinois place ses points d’emphase sous le texte."],
     de: ["Bōten (Kenten)", "Zeichen neben jedem Schriftzeichen, die ein Wort hervorheben, das japanische Gegenstück zur Kursiven: meist ein Sesampunkt (﹅), im waagerechten Text über jedem Zeichen, im vertikalen rechts davon. Das Chinesische setzt seine Betonungspunkte unter den Text."],
+    it: ["Bōten (kenten)", "Segni posti accanto a ogni carattere per mettere in risalto una parola, l’equivalente giapponese del corsivo: di solito un punto a seme di sesamo (﹅), sopra ogni carattere nel testo orizzontale e alla sua destra in quello verticale. Il cinese mette i suoi punti di enfasi sotto il testo."],
   }, "傍点・圏点"),
   term("bosen", "japanese", {
     en: ["Bōsen", "A line drawn beside a run of text, to its right in vertical writing and under it in horizontal, to stress it or mark a passage. It can be single, double, dashed or wavy."],
@@ -1063,6 +1154,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Bōsen", "Linha traçada junto a um trecho de texto, à sua direita na escrita vertical e embaixo na horizontal, para destacá-lo ou marcar uma passagem. Pode ser simples, dupla, tracejada ou ondulada."],
     fr: ["Bōsen", "Trait tracé le long d’une suite de texte, à sa droite en écriture verticale et dessous en horizontale, pour la mettre en relief ou signaler un passage. Il peut être simple, double, tireté ou ondulé."],
     de: ["Bōsen", "Eine Linie neben einer Textstrecke, im vertikalen Satz rechts davon und im waagerechten darunter, die sie hervorhebt oder eine Passage markiert. Sie kann einfach, doppelt, gestrichelt oder gewellt sein."],
+    it: ["Bōsen", "Linea tracciata accanto a un tratto di testo, alla sua destra nella scrittura verticale e sotto in quella orizzontale, per metterlo in risalto o segnalare un passaggio. Può essere singola, doppia, tratteggiata od ondulata."],
   }, "傍線"),
   term("yakumono", "japanese", {
     en: ["Yakumono", "Japanese punctuation and other marks: brackets, 、 and 。, the middle dot ・, dashes and ellipses. Most are a full em wide, half glyph and half blank, and that blank is what the spacing rules compress or keep."],
@@ -1074,6 +1166,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Yakumono", "Os sinais de pontuação e demais marcas do japonês: parênteses e aspas, 、 e 。, o ponto médio ・, travessões e reticências. Quase todos medem um quadratim, metade glifo e metade branco, e é esse branco que as regras de espaçamento comprimem ou conservam."],
     fr: ["Yakumono", "La ponctuation japonaise et les autres signes : crochets, 、 et 。, le point médian ・, tirets et points de suspension. La plupart occupent un cadratin entier, moitié glyphe et moitié blanc, et c’est ce blanc que les règles d’espacement compriment ou conservent."],
     de: ["Yakumono", "Japanische Satzzeichen und andere Zeichen: Klammern, 、 und 。, der Mittelpunkt ・, Striche und Auslassungspunkte. Die meisten sind ein volles Geviert breit, halb Glyphe und halb Leerraum, und diesen Leerraum stauchen oder erhalten die Abstandsregeln."],
+    it: ["Yakumono", "La punteggiatura giapponese e gli altri segni: parentesi, 、 e 。, il punto mediano ・, trattini e puntini di sospensione. Quasi tutti occupano un em intero, metà glifo e metà bianco, ed è quel bianco che le regole di spaziatura comprimono o conservano."],
   }, "約物"),
   term("kinsoku-shori", "japanese", {
     en: ["Kinsoku shori", "The Japanese line-breaking rules: closing brackets, 、 and 。, small kana, ー and iteration marks may not start a line, and opening brackets may not end one. Books follow a strict set; newspapers a looser one that lets small kana and ー start a line."],
@@ -1085,6 +1178,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kinsoku shori", "As regras japonesas de quebra de linha: os fechamentos de parênteses e aspas, 、 e 。, os kana pequenos, ー e os sinais de repetição não podem abrir uma linha, e as aberturas não podem fechá-la. Os livros seguem um conjunto estrito; os jornais, um mais flexível, que deixa os kana pequenos e ー abrirem linha."],
     fr: ["Kinsoku shori", "Les règles japonaises de coupure des lignes : les crochets fermants, 、 et 。, les petits kana, ー et les signes de répétition ne peuvent pas commencer une ligne, et les crochets ouvrants ne peuvent pas en terminer une. Les livres suivent un jeu de règles strict ; les journaux, un jeu plus souple qui laisse les petits kana et ー commencer une ligne."],
     de: ["Kinsoku shori", "Die japanischen Zeilenumbruchregeln: Schließende Klammern, 、 und 。, kleine Kana, ー und Wiederholungszeichen dürfen keine Zeile beginnen, öffnende Klammern keine beenden. Bücher folgen einem strengen Regelsatz, Zeitungen einem lockereren, der kleine Kana und ー am Zeilenanfang erlaubt."],
+    it: ["Kinsoku shori", "Le regole giapponesi di divisione in righe: parentesi di chiusura, 、 e 。, kana piccoli, ー e segni di ripetizione non possono iniziare una riga, e le parentesi di apertura non possono chiuderla. I libri seguono un insieme di regole rigido; i giornali uno più permissivo, che lascia iniziare una riga con i kana piccoli e con ー."],
   }, "禁則処理"),
   term("oikomi-oidashi", "japanese", {
     en: ["Oikomi and oidashi", "The two ways to keep a forbidden mark off the start of a line: oikomi tightens the line so the mark fits at its end; oidashi sends the line's last character down with the mark and spaces out what remains. JLReq prefers oikomi."],
@@ -1096,6 +1190,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Oikomi e oidashi", "As duas maneiras de impedir que um sinal proibido abra uma linha: o oikomi aperta a linha para que o sinal caiba no final; o oidashi leva o último caractere para a linha seguinte junto com o sinal e distribui o espaço no que resta. O JLReq prefere o oikomi."],
     fr: ["Oikomi et oidashi", "Les deux manières d’écarter un signe interdit du début d’une ligne : l’oikomi resserre la ligne pour que le signe tienne à sa fin ; l’oidashi renvoie le dernier caractère de la ligne avec le signe et espace ce qui reste. JLReq préfère l’oikomi."],
     de: ["Oikomi und Oidashi", "Die beiden Wege, ein verbotenes Zeichen vom Zeilenanfang fernzuhalten: Oikomi verengt die Zeile, damit das Zeichen an ihr Ende passt; Oidashi schickt das letzte Zeichen der Zeile mit dem Zeichen in die nächste Zeile und sperrt den Rest aus. JLReq bevorzugt Oikomi."],
+    it: ["Oikomi e oidashi", "I due modi per tenere un segno vietato lontano dall’inizio di una riga: l’oikomi stringe la riga perché il segno ci stia alla fine; l’oidashi manda a capo l’ultimo carattere della riga insieme al segno e spazia ciò che resta. JLReq preferisce l’oikomi."],
   }, "追い込み・追い出し"),
   term("burasagari", "japanese", {
     en: ["Burasagari", "Hanging 、 or 。 just past the end of a full line instead of moving a character down. Japanese books do it only for these marks (and ， and ．), and only when the mark would otherwise start the next line."],
@@ -1107,6 +1202,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Burasagari", "Pendurar 、 ou 。 logo depois do fim de uma linha cheia em vez de levar um caractere para baixo. Os livros japoneses só fazem isso com esses sinais (e com ， e ．), e só quando o sinal, de outro modo, abriria a linha seguinte."],
     fr: ["Burasagari", "Laisser 、 ou 。 pendre juste après la fin d’une ligne pleine au lieu de renvoyer un caractère à la ligne suivante. Les livres japonais ne le font que pour ces signes (et pour ， et ．), et seulement quand le signe commencerait sinon la ligne suivante."],
     de: ["Burasagari", "Das Hängenlassen von 、 oder 。 knapp hinter das Ende einer vollen Zeile, statt ein Zeichen in die nächste zu verschieben. Japanische Bücher tun das nur für diese Zeichen (und ， und ．) und nur dann, wenn das Zeichen sonst die nächste Zeile beginnen würde."],
+    it: ["Burasagari", "Lasciare 、 o 。 appena oltre la fine di una riga piena invece di mandare a capo un carattere. I libri giapponesi lo fanno solo per questi segni (e per ， e ．), e solo quando altrimenti il segno inizierebbe la riga successiva."],
   }, "ぶら下げ"),
   term("gyodori", "japanese", {
     en: ["Gyōdori", "Sizing a heading by the body lines it takes up: a heading set 3行取り is centred in the space of three lines, so the text after it stays on the line grid."],
@@ -1118,6 +1214,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Gyōdori", "Medir o espaço de um título em linhas de texto: um título em 3行取り é centralizado no espaço de três linhas, de modo que o texto seguinte se mantém na grade de linhas."],
     fr: ["Gyōdori", "Dimensionner un titre selon le nombre de lignes du texte courant qu’il occupe : un titre composé en 3行取り est centré dans l’espace de trois lignes, si bien que le texte qui le suit reste sur la grille des lignes."],
     de: ["Gyōdori", "Das Bemessen einer Überschrift nach den Grundtextzeilen, die sie einnimmt: Eine Überschrift mit 3行取り steht mittig im Raum von drei Zeilen, sodass der folgende Text im Zeilenraster bleibt."],
+    it: ["Gyōdori", "Dimensionare un titolo in base alle righe del testo che occupa: un titolo composto 3行取り è centrato nello spazio di tre righe, così il testo che segue resta sulla griglia delle righe."],
   }, "行取り"),
   term("gojuon", "japanese", {
     en: ["Gojūon order", "The order of the kana table, あいうえお, かきくけこ and so on: one row per consonant, five vowels to a row. Japanese dictionaries and indexes sort by it, using each entry's reading in kana."],
@@ -1129,6 +1226,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Ordem gojūon", "A ordem da tabela dos kana, あいうえお, かきくけこ e assim por diante: uma fileira por consoante, com cinco vogais cada. Os dicionários e os índices japoneses seguem essa ordem, pela leitura em kana de cada entrada."],
     fr: ["Ordre gojūon", "L’ordre du tableau des kana, あいうえお, かきくけこ et ainsi de suite : une rangée par consonne, cinq voyelles par rangée. Les dictionnaires et les index japonais classent selon cet ordre, d’après la lecture en kana de chaque entrée."],
     de: ["Gojūon-Reihenfolge", "Die Reihenfolge der Kana-Tafel, あいうえお, かきくけこ und so weiter: eine Reihe je Konsonant, fünf Vokale je Reihe. Japanische Wörterbücher und Register sortieren danach, anhand der Lesung jedes Eintrags in Kana."],
+    it: ["Ordine gojūon", "L’ordine della tabella dei kana, あいうえお, かきくけこ e così via: una riga per consonante, cinque vocali per riga. I dizionari e gli indici giapponesi ordinano così, in base alla lettura in kana di ogni voce."],
   }, "五十音"),
   term("yomi", "japanese", {
     en: ["Yomi", "The reading of a word written in kanji, spelled out in kana. An index files kanji entries by their yomi, and furigana prints it on the page."],
@@ -1140,6 +1238,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Yomi", "A leitura de uma palavra escrita em kanji, soletrada em kana. Os índices ordenam as entradas em kanji pelo seu yomi, e o furigana o imprime na página."],
     fr: ["Yomi", "La lecture d’un mot écrit en kanji, épelée en kana. Un index classe les entrées en kanji d’après leur yomi, et les furigana l’impriment sur la page."],
     de: ["Yomi", "Die Lesung eines in Kanji geschriebenen Wortes, in Kana ausgeschrieben. Ein Register ordnet Kanji-Einträge nach ihrer Yomi ein, und Furigana drucken sie auf die Seite."],
+    it: ["Yomi", "La lettura di una parola scritta in kanji, trascritta in kana. Un indice ordina le voci in kanji in base al loro yomi, e i furigana lo stampano sulla pagina."],
   }, "読み"),
   term("hashira", "japanese", {
     en: ["Hashira", "The running head of a Japanese book: the book, part or chapter title set small in a margin, often on only one page of each spread."],
@@ -1151,6 +1250,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Hashira", "O cabeço de um livro japonês: o título do livro, da parte ou do capítulo em corpo pequeno numa margem, muitas vezes só numa página de cada página dupla."],
     fr: ["Hashira", "Le titre courant d’un livre japonais : le titre du livre, de la partie ou du chapitre, composé en petit dans une marge, souvent sur une seule page de chaque double page."],
     de: ["Hashira", "Der Kolumnentitel eines japanischen Buchs: der Titel des Buchs, Teils oder Kapitels, klein an einem Rand gesetzt, oft nur auf einer Seite jeder Doppelseite."],
+    it: ["Hashira", "La testatina di un libro giapponese: il titolo del libro, della parte o del capitolo composto in piccolo su un margine, spesso in una sola pagina di ogni doppia pagina."],
   }, "柱"),
   term("nombre", "japanese", {
     en: ["Nombre", "The page number, in the words of Japanese printers, who took it from French. It is usually in Arabic numerals, even in vertical books; a folio set vertically uses kanji numerals (一, 二, 三)."],
@@ -1162,6 +1262,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Nombre", "O número de página, no jargão das gráficas japonesas, que tomaram a palavra do francês. Costuma vir em algarismos arábicos, mesmo nos livros verticais; um fólio composto na vertical usa numerais kanji (一, 二, 三)."],
     fr: ["Nombre", "Le numéro de page, dans la langue des imprimeurs japonais, qui l’ont emprunté au français. Il est en général en chiffres arabes, même dans les livres verticaux ; un folio composé verticalement utilise les chiffres en kanji (一, 二, 三)."],
     de: ["Nombre", "Die Seitenzahl in der Sprache japanischer Drucker, die das Wort aus dem Französischen übernommen haben. Sie steht meist in arabischen Ziffern, auch in vertikalen Büchern; eine vertikal gesetzte Pagina verwendet Kanji-Ziffern (一, 二, 三)."],
+    it: ["Nombre", "Il numero di pagina, nel gergo degli stampatori giapponesi, che l’hanno preso dal francese. Di solito è in cifre arabe, anche nei libri verticali; un folio composto in verticale usa i numerali in kanji (一, 二, 三)."],
   }, "ノンブル"),
   term("bunko", "japanese", {
     en: ["Bunko", "The Japanese pocket paperback, A6 (105 × 148 mm) and usually set vertically: the cheap edition a novel gets a few years after its first one (tankōbon)."],
@@ -1173,6 +1274,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Bunko", "O livro de bolso japonês, em A6 (105 × 148 mm) e quase sempre composto na vertical: a edição barata que um romance ganha alguns anos depois da primeira (tankōbon)."],
     fr: ["Bunko", "Le livre de poche japonais, au format A6 (105 × 148 mm) et le plus souvent composé verticalement : l’édition bon marché qu’un roman reçoit quelques années après la première (tankōbon)."],
     de: ["Bunko", "Das japanische Taschenbuch im Format A6 (105 × 148 mm), meist vertikal gesetzt: die günstige Ausgabe, die ein Roman einige Jahre nach seiner Erstausgabe (Tankōbon) erhält."],
+    it: ["Bunko", "Il tascabile giapponese, in formato A6 (105 × 148 mm) e di solito composto in verticale: l’edizione economica che un romanzo riceve qualche anno dopo la prima (tankōbon)."],
   }, "文庫"),
   term("tankobon", "japanese", {
     en: ["Tankōbon", "A book published as a volume of its own, not in a magazine or a pocket series: the first edition of a novel, larger than a bunko (often 四六判, about 127 × 188 mm), and the collected volumes of a manga."],
@@ -1184,6 +1286,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Tankōbon", "Livro publicado como volume próprio, não numa revista nem numa coleção de bolso: a primeira edição de um romance, maior que um bunko (muitas vezes 四六判, cerca de 127 × 188 mm), e os volumes que reúnem os capítulos de um mangá."],
     fr: ["Tankōbon", "Livre publié en volume autonome, hors d’un magazine ou d’une collection de poche : la première édition d’un roman, plus grande qu’un bunko (souvent 四六判, environ 127 × 188 mm), et les volumes reliés d’un manga."],
     de: ["Tankōbon", "Ein Buch, das als eigener Band erscheint, nicht in einer Zeitschrift oder einer Taschenbuchreihe: die Erstausgabe eines Romans, größer als ein Bunko (oft 四六判, etwa 127 × 188 mm), und die Sammelbände eines Mangas."],
+    it: ["Tankōbon", "Libro pubblicato come volume a sé, non in una rivista né in una collana tascabile: la prima edizione di un romanzo, più grande di un bunko (spesso 四六判, circa 127 × 188 mm), e i volumi raccolti di un manga."],
   }, "単行本"),
   term("genko-yoshi", "japanese", {
     en: ["Genkō yōshi", "Japanese manuscript paper with a grid of squares, usually 20 by 20, one character or mark to a square. Lengths are still counted in these 400-character sheets."],
@@ -1195,6 +1298,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Genkō yōshi", "Papel de manuscrito japonês quadriculado, normalmente de 20 por 20, com um caractere ou um sinal em cada quadrado. A extensão de um texto ainda se conta nessas folhas de 400 caracteres."],
     fr: ["Genkō yōshi", "Papier de manuscrit japonais quadrillé, le plus souvent de 20 cases sur 20, à raison d’un caractère ou d’un signe par case. On compte encore les longueurs en feuilles de 400 caractères."],
     de: ["Genkō yōshi", "Japanisches Manuskriptpapier mit einem Raster aus Quadraten, meist 20 mal 20, ein Zeichen oder Satzzeichen je Feld. Textlängen werden noch heute in diesen Blättern zu 400 Zeichen gezählt."],
+    it: ["Genkō yōshi", "Carta giapponese da manoscritto con una griglia di quadretti, di solito 20 per 20, un carattere o un segno per quadretto. Le lunghezze si contano ancora in questi fogli da 400 caratteri."],
   }, "原稿用紙"),
   term("aozora-notation", "japanese", {
     en: ["Aozora Bunko notation", "The plain-text markup of Aozora Bunko, the Japanese online library of out-of-copyright books: ruby written 漢字《かんじ》, and notes in ［＃…］ that call for emphasis marks, indents, headings, page breaks and characters outside the usual set."],
@@ -1206,6 +1310,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Notação do Aozora Bunko", "A marcação em texto simples do Aozora Bunko, a biblioteca japonesa on-line de livros em domínio público: o rubi se escreve 漢字《かんじ》, e notas entre ［＃…］ pedem marcas de ênfase, recuos, títulos, quebras de página e caracteres fora do conjunto habitual."],
     fr: ["Notation Aozora Bunko", "Le balisage en texte brut d’Aozora Bunko, la bibliothèque japonaise en ligne d’œuvres du domaine public : le ruby s’écrit 漢字《かんじ》, et des notes entre ［＃…］ demandent des signes d’emphase, des retraits, des titres, des sauts de page et des caractères hors du jeu habituel."],
     de: ["Aozora-Bunko-Notation", "Das Klartext-Markup von Aozora Bunko, der japanischen Online-Bibliothek gemeinfreier Bücher: Ruby wird 漢字《かんじ》 geschrieben, und Anmerkungen in ［＃…］ verlangen Betonungszeichen, Einzüge, Überschriften, Seitenumbrüche und Zeichen außerhalb des üblichen Zeichensatzes."],
+    it: ["Notazione Aozora Bunko", "Il markup in testo semplice di Aozora Bunko, la biblioteca giapponese online di libri fuori diritti: il ruby si scrive 漢字《かんじ》, e note tra ［＃…］ richiedono segni di enfasi, rientri, titoli, interruzioni di pagina e caratteri fuori dall’insieme abituale."],
   }, "青空文庫注記"),
   term("gaiji", "japanese", {
     en: ["Gaiji", "A character outside the standard character set, such as a rare kanji variant. Aozora Bunko texts describe each one in a note and give its JIS X 0213 position or its Unicode code point when it has one."],
@@ -1217,6 +1322,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Gaiji", "Caractere que fica fora do conjunto de caracteres padrão, como uma variante rara de um kanji. Os textos do Aozora Bunko descrevem cada um numa nota e dão sua posição na JIS X 0213 ou seu ponto de código Unicode, quando existe."],
     fr: ["Gaiji", "Caractère hors du jeu de caractères standard, comme une variante rare de kanji. Les textes d’Aozora Bunko décrivent chacun dans une note et donnent sa position dans JIS X 0213 ou son point de code Unicode quand il en a un."],
     de: ["Gaiji", "Ein Zeichen außerhalb des Standardzeichensatzes, etwa eine seltene Kanji-Variante. Aozora-Bunko-Texte beschreiben jedes in einer Anmerkung und geben seine Position in JIS X 0213 oder seinen Unicode-Codepunkt an, wenn es einen hat."],
+    it: ["Gaiji", "Carattere che non fa parte dell’insieme di caratteri standard, come una variante rara di un kanji. I testi di Aozora Bunko descrivono ciascuno in una nota e ne danno la posizione in JIS X 0213 o il punto di codice Unicode, se ne ha uno."],
   }, "外字"),
   term("choon", "japanese", {
     en: ["Chōon mark", "The long-vowel mark ー, used mostly in katakana (コーヒー). In vertical text it turns to run down the column, and it may not start a line."],
@@ -1228,6 +1334,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Chōon", "O sinal de vogal longa ー, usado sobretudo no katakana (コーヒー). No texto vertical ele gira para correr ao longo da coluna, e não pode abrir uma linha."],
     fr: ["Signe chōon", "Le signe de voyelle longue ー, employé surtout en katakana (コーヒー). En texte vertical, il pivote pour suivre la colonne, et il ne peut pas commencer une ligne."],
     de: ["Chōon-Zeichen", "Das Langvokalzeichen ー, vor allem in Katakana (コーヒー). Im vertikalen Text dreht es sich und läuft die Spalte hinunter, und es darf keine Zeile beginnen."],
+    it: ["Segno chōon", "Il segno di vocale lunga ー, usato soprattutto in katakana (コーヒー). Nel testo verticale ruota per seguire la colonna, e non può iniziare una riga."],
   }, "長音符"),
   term("small-kana", "japanese", {
     en: ["Small kana", "The reduced kana that attach to the sign before them: っ (sokuon) doubles the next consonant, ゃ ゅ ょ make contracted sounds, ァ ィ ゥ ェ ォ spell loanwords. Strict kinsoku keeps them off the start of a line; in vertical text they sit toward the upper right of their cell."],
@@ -1239,6 +1346,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kana pequenos", "Os kana reduzidos que se juntam ao sinal anterior: っ (sokuon) dobra a consoante seguinte, ゃ ゅ ょ formam sílabas contraídas, ァ ィ ゥ ェ ォ servem para escrever empréstimos. O kinsoku estrito não os deixa abrir linha; no texto vertical, ficam na parte superior direita da sua célula."],
     fr: ["Petits kana", "Les kana réduits qui s’attachent au signe qui les précède : っ (sokuon) double la consonne suivante, ゃ ゅ ょ forment des sons contractés, ァ ィ ゥ ェ ォ servent à écrire les mots d’emprunt. Le kinsoku strict les interdit en début de ligne ; en texte vertical, ils se placent vers le haut et la droite de leur case."],
     de: ["Kleine Kana", "Die verkleinerten Kana, die sich an das vorangehende Zeichen anschließen: っ (Sokuon) verdoppelt den folgenden Konsonanten, ゃ ゅ ょ bilden zusammengezogene Laute, ァ ィ ゥ ェ ォ schreiben Lehnwörter. Strenges Kinsoku hält sie vom Zeilenanfang fern; im vertikalen Text sitzen sie zur oberen rechten Ecke ihrer Zelle hin."],
+    it: ["Kana piccoli", "I kana ridotti che si legano al segno che li precede: っ (sokuon) raddoppia la consonante successiva, ゃ ゅ ょ formano suoni contratti, ァ ィ ゥ ェ ォ servono a scrivere i prestiti. Il kinsoku rigido li tiene lontani dall’inizio della riga; nel testo verticale si collocano verso l’alto a destra della loro cella."],
   }, "小書き仮名"),
   term("bochu", "japanese", {
     en: ["Bōchū", "Sidenotes in a vertical book: the notes of a spread gathered on the fore-edge side of its left-hand page, after the last line of text. They interrupt the reading least, though endnotes are more common."],
@@ -1250,6 +1358,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Bōchū", "Notas laterais de um livro vertical: as notas de uma página dupla reunidas no lado do corte da página esquerda, depois da última linha de texto. São as que menos interrompem a leitura, embora as notas de fim sejam mais frequentes."],
     fr: ["Bōchū", "Notes latérales d’un livre vertical : les notes d’une double page réunies côté tranche sur sa page de gauche, après la dernière ligne du texte. Ce sont celles qui interrompent le moins la lecture, même si les notes de fin sont plus courantes."],
     de: ["Bōchū", "Marginalien in einem vertikalen Buch: die Anmerkungen einer Doppelseite, gesammelt an der Außenkante ihrer linken Seite nach der letzten Textzeile. Sie unterbrechen das Lesen am wenigsten, auch wenn Endnoten häufiger sind."],
+    it: ["Bōchū", "Note laterali di un libro verticale: le note di una doppia pagina raccolte sul lato del taglio esterno della pagina sinistra, dopo l’ultima riga del testo. Sono quelle che interrompono meno la lettura, anche se le note di chiusura sono più comuni."],
   }, "傍注"),
   term("kochu", "japanese", {
     en: ["Kōchū", "Notes gathered after the text they belong to: at the end of a paragraph, a section, a chapter or the book. They are the usual notes in vertical books, where footnotes are rare."],
@@ -1261,6 +1370,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kōchū", "Notas reunidas depois do texto a que pertencem: no fim de um parágrafo, de uma seção, de um capítulo ou do livro. São as notas habituais nos livros verticais, onde as notas de rodapé são raras."],
     fr: ["Kōchū", "Notes réunies après le texte auquel elles se rapportent : à la fin d’un paragraphe, d’une section, d’un chapitre ou du livre. Ce sont les notes habituelles des livres verticaux, où les notes de bas de page sont rares."],
     de: ["Kōchū", "Anmerkungen, die nach dem Text gesammelt werden, zu dem sie gehören: am Ende eines Absatzes, eines Abschnitts, eines Kapitels oder des Buchs. Sie sind die üblichen Anmerkungen in vertikalen Büchern, in denen Fußnoten selten sind."],
+    it: ["Kōchū", "Note raccolte dopo il testo a cui appartengono: alla fine di un paragrafo, di una sezione, di un capitolo o del libro. Sono le note abituali dei libri verticali, dove le note a piè di pagina sono rare."],
   }, "後注"),
   term("kunten", "japanese", {
     en: ["Kunten", "Reading marks added to classical Chinese (kanbun) so a Japanese reader can read it in Japanese order. In vertical text, kaeriten (レ, 一, 二, 上, 下) at the lower left of a character show where to jump back, and okurigana in small katakana at the lower right add the Japanese endings; the characters themselves are not reordered."],
@@ -1272,6 +1382,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kunten", "Marcas de leitura acrescentadas ao chinês clássico (kanbun) para que um leitor japonês o leia na ordem do japonês. No texto vertical, os kaeriten (レ, 一, 二, 上, 下), embaixo à esquerda de um caractere, indicam para onde voltar, e os okurigana, em katakana pequeno embaixo à direita, acrescentam as terminações japonesas; os caracteres não são reordenados."],
     fr: ["Kunten", "Signes de lecture ajoutés au chinois classique (kanbun) pour qu’un lecteur japonais puisse le lire dans l’ordre japonais. En texte vertical, les kaeriten (レ, 一, 二, 上, 下), en bas à gauche d’un caractère, indiquent où revenir en arrière, et les okurigana en petits katakana, en bas à droite, ajoutent les terminaisons japonaises ; les caractères eux-mêmes ne changent pas d’ordre."],
     de: ["Kunten", "Lesehilfszeichen, die klassischem Chinesisch (Kanbun) hinzugefügt werden, damit es ein japanischer Leser in japanischer Wortfolge lesen kann. Im vertikalen Text zeigen Kaeriten (レ, 一, 二, 上, 下) links unten an einem Zeichen, wohin zurückgesprungen wird, und Okurigana in kleinen Katakana rechts unten ergänzen die japanischen Endungen; die Zeichen selbst werden nicht umgestellt."],
+    it: ["Kunten", "Segni di lettura aggiunti al cinese classico (kanbun) perché un lettore giapponese possa leggerlo nell’ordine giapponese. Nel testo verticale, i kaeriten (レ, 一, 二, 上, 下) in basso a sinistra di un carattere indicano dove tornare indietro, e gli okurigana in piccoli katakana in basso a destra aggiungono le desinenze giapponesi; i caratteri stessi non cambiano ordine."],
   }, "訓点・返り点"),
   term("jlreq", "japanese", {
     en: ["JLReq", "Requirements for Japanese Text Layout, the W3C document, in Japanese and English, that describes how Japanese text is set. It follows JIS X 4051; the Postext docs cite it by section."],
@@ -1283,6 +1394,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["JLReq", "Requirements for Japanese Text Layout, o documento do W3C, em japonês e em inglês, que descreve como se compõe o texto japonês. Segue a norma JIS X 4051; a documentação do Postext o cita por seção."],
     fr: ["JLReq", "Requirements for Japanese Text Layout, le document du W3C, en japonais et en anglais, qui décrit la composition du texte japonais. Il suit JIS X 4051 ; la documentation de Postext le cite par section."],
     de: ["JLReq", "Requirements for Japanese Text Layout, das Dokument des W3C auf Japanisch und Englisch, das beschreibt, wie japanischer Text gesetzt wird. Es folgt JIS X 4051; die Postext-Dokumentation zitiert es nach Abschnitten."],
+    it: ["JLReq", "Requirements for Japanese Text Layout, il documento del W3C, in giapponese e in inglese, che descrive come si compone il testo giapponese. Segue la JIS X 4051; la documentazione di Postext lo cita per sezione."],
   }, "日本語組版処理の要件"),
   term("jis-x-4051", "japanese", {
     en: ["JIS X 4051", "The Japanese Industrial Standard for the composition of Japanese documents, first issued in 1993 and last revised in 2004. JLReq describes the same rules in English."],
@@ -1294,6 +1406,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["JIS X 4051", "A norma industrial japonesa sobre a composição de documentos em japonês, publicada em 1993 e revisada pela última vez em 2004. O JLReq descreve as mesmas regras em inglês."],
     fr: ["JIS X 4051", "La norme industrielle japonaise sur la composition des documents en japonais, publiée en 1993 et révisée pour la dernière fois en 2004. JLReq décrit les mêmes règles en anglais."],
     de: ["JIS X 4051", "Die japanische Industrienorm für den Satz japanischer Dokumente, erstmals 1993 erschienen und zuletzt 2004 überarbeitet. JLReq beschreibt dieselben Regeln auf Englisch."],
+    it: ["JIS X 4051", "La norma industriale giapponese sulla composizione dei documenti in giapponese, pubblicata nel 1993 e rivista l’ultima volta nel 2004. JLReq descrive le stesse regole in inglese."],
   }, "日本語文書の組版方法"),
 
   // ── Arabic layout ──────────────────────────────────────────────────────
@@ -1307,6 +1420,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Texto bidirecional", "Texto que mistura escritas da direita para a esquerda, como o árabe, com números e palavras latinas lidos da esquerda para a direita. O algoritmo bidirecional do Unicode decide a ordem dos trechos em cada linha."],
     fr: ["Texte bidirectionnel", "Texte qui mêle des écritures de droite à gauche, comme l’arabe, à des nombres et des mots latins lus de gauche à droite. L’algorithme bidirectionnel d’Unicode décide de l’ordre des morceaux sur chaque ligne."],
     de: ["Bidirektionaler Text", "Text, der von rechts nach links geschriebene Schriften wie Arabisch mit Zahlen und lateinischen Wörtern mischt, die von links nach rechts gelesen werden. Der Unicode Bidirectional Algorithm bestimmt die Reihenfolge der Teile in jeder Zeile."],
+    it: ["Testo bidirezionale", "Testo che mescola scritture da destra a sinistra, come l’arabo, con numeri e parole latine che si leggono da sinistra a destra. L’algoritmo bidirezionale di Unicode decide l’ordine dei pezzi su ogni riga."],
   }),
   term("bidi-isolate", "arabic", {
     en: ["Isolate", "A run of text ordered on its own inside a paragraph of the other direction, which the paragraph treats as a single neutral character. In Postext it is written :ltr[…] or :rtl[…]."],
@@ -1318,6 +1432,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Isolamento", "Trecho de texto ordenado por conta própria dentro de um parágrafo da direção oposta, que o parágrafo trata como um único caractere neutro. No Postext se escreve :ltr[…] ou :rtl[…]."],
     fr: ["Isolat", "Suite de texte ordonnée à part au sein d’un paragraphe de l’autre direction, que le paragraphe traite comme un seul caractère neutre. Dans Postext, elle s’écrit :ltr[…] ou :rtl[…]."],
     de: ["Isolat", "Eine Textstrecke innerhalb eines Absatzes der anderen Schreibrichtung, die für sich geordnet wird und die der Absatz als ein einziges neutrales Zeichen behandelt (englisch isolate). In Postext schreibt man sie :ltr[…] oder :rtl[…]."],
+    it: ["Isolato", "Tratto di testo ordinato a sé all’interno di un paragrafo di direzione opposta, che il paragrafo tratta come un unico carattere neutro. In Postext si scrive :ltr[…] o :rtl[…]."],
   }),
   term("kashida", "arabic", {
     en: ["Kashida", "The lengthened join between two connected Arabic letters, used to stretch a justified line instead of spacing its letters apart. Postext inserts it as tatweel characters."],
@@ -1329,6 +1444,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Kashida", "Ligação alongada entre duas letras árabes unidas, usada para esticar uma linha justificada em vez de afastar suas letras. O Postext a insere como caracteres tatweel."],
     fr: ["Kashida", "Allongement de la liaison entre deux lettres arabes liées, qui sert à étirer une ligne justifiée au lieu d’espacer ses lettres. Postext l’insère sous forme de caractères tatweel."],
     de: ["Kashida", "Die verlängerte Verbindung zwischen zwei verbundenen arabischen Buchstaben, mit der eine Zeile im Blocksatz gedehnt wird, statt ihre Buchstaben zu sperren. Postext fügt sie als Tatweel-Zeichen ein."],
+    it: ["Kashida", "Il prolungamento del legamento tra due lettere arabe unite, usato per allungare una riga giustificata invece di spaziarne le lettere. Postext lo inserisce come caratteri tatweel."],
   }, "كشيدة"),
   term("tatweel", "arabic", {
     en: ["Tatweel", "The Arabic elongation character (U+0640, ـ), a stretch of baseline stroke between two joined letters. A run of them draws a kashida."],
@@ -1340,6 +1456,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Tatweel", "Caractere árabe de alongamento (U+0640, ـ), um trecho de traço de base entre duas letras unidas. Uma série deles desenha uma kashida."],
     fr: ["Tatweel", "Le caractère d’allongement arabe (U+0640, ـ), un prolongement du trait de base entre deux lettres liées. Une suite de tatweels trace une kashida."],
     de: ["Tatweel", "Das arabische Dehnungszeichen (U+0640, ـ), ein Stück Grundlinienstrich zwischen zwei verbundenen Buchstaben. Eine Folge davon ergibt eine Kashida."],
+    it: ["Tatweel", "Il carattere arabo di allungamento (U+0640, ـ), un tratto di linea di base tra due lettere unite. Una serie di tatweel disegna una kashida."],
   }, "تطويل"),
   term("harakat", "arabic", {
     en: ["Harakat", "The Arabic vowel marks written above and below the letters, such as fatḥa, kasra and shadda. Fully vocalised text needs more leading."],
@@ -1351,6 +1468,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Harakat", "Os sinais vocálicos árabes escritos acima e abaixo das letras, como a fatḥa, a kasra e a shadda. O texto totalmente vocalizado precisa de mais entrelinha."],
     fr: ["Harakat", "Les signes vocaliques arabes écrits au-dessus et au-dessous des lettres, comme la fatḥa, la kasra et la shadda. Un texte entièrement vocalisé demande plus d’interlignage."],
     de: ["Harakat", "Die arabischen Vokalzeichen über und unter den Buchstaben, etwa Fatḥa, Kasra und Shadda. Voll vokalisierter Text braucht mehr Zeilenabstand."],
+    it: ["Harakat", "I segni vocalici arabi scritti sopra e sotto le lettere, come fatḥa, kasra e shadda. Un testo completamente vocalizzato richiede più interlinea."],
   }, "حركات"),
   term("tashkil", "arabic", {
     en: ["Tashkīl", "The vocalisation of an Arabic text, that is the set of vowel marks it carries. An edition may print it in full, in part or not at all."],
@@ -1362,6 +1480,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Tashkīl", "A vocalização de um texto árabe, ou seja, o conjunto de sinais vocálicos que ele traz. Uma edição pode imprimi-la inteira, em parte ou não imprimi-la."],
     fr: ["Tashkīl", "La vocalisation d’un texte arabe, c’est-à-dire l’ensemble des signes vocaliques qu’il porte. Une édition peut l’imprimer en entier, en partie ou pas du tout."],
     de: ["Tashkīl", "Die Vokalisierung eines arabischen Textes, also die Gesamtheit seiner Vokalzeichen. Eine Ausgabe kann sie vollständig, teilweise oder gar nicht drucken."],
+    it: ["Tashkīl", "La vocalizzazione di un testo arabo, cioè l’insieme dei segni vocalici che porta. Un’edizione può stamparla per intero, in parte o per niente."],
   }, "تشكيل"),
   term("abjad", "arabic", {
     en: ["Abjad numerals", "Numbers written with Arabic letters, each worth a fixed value (ا 1, ي 10, ق 100, غ 1000) and added up. Classical books use them for front matter and dates."],
@@ -1373,6 +1492,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Numeração abjad", "Números escritos com letras árabes, cada uma com um valor fixo (ا 1, ي 10, ق 100, غ 1000), que se somam. Os livros clássicos a usam nos elementos pré-textuais e nas datas."],
     fr: ["Chiffres abjad", "Nombres écrits avec des lettres arabes, chacune d’une valeur fixe (ا 1, ي 10, ق 100, غ 1000), que l’on additionne. Les livres classiques les emploient pour les pages liminaires et les dates."],
     de: ["Abdschad-Zahlen", "Zahlen in arabischen Buchstaben, von denen jeder einen festen Wert hat (ا 1, ي 10, ق 100, غ 1000); die Werte werden addiert. Klassische Bücher verwenden sie für die Titelei und für Jahreszahlen."],
+    it: ["Numerali abjad", "Numeri scritti con lettere arabe, ciascuna con un valore fisso (ا 1, ي 10, ق 100, غ 1000), che si sommano. I libri classici li usano per le pagine preliminari e per le date."],
   }, "أبجد"),
   term("bayt", "arabic", {
     en: ["Bayt", "A verse of classical Arabic poetry, set on one line in two halves: the first (ṣadr) on the right and the second (ʿajuz) on the left."],
@@ -1384,6 +1504,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Bayt", "Verso da poesia árabe clássica, composto numa linha em duas metades: a primeira (ṣadr) à direita e a segunda (ʿajuz) à esquerda."],
     fr: ["Bayt", "Un vers de la poésie arabe classique, composé sur une ligne en deux moitiés : la première (ṣadr) à droite et la seconde (ʿajuz) à gauche."],
     de: ["Bayt", "Ein Vers der klassischen arabischen Dichtung, in einer Zeile in zwei Hälften gesetzt: die erste (ṣadr) rechts und die zweite (ʿajuz) links."],
+    it: ["Bayt", "Un verso della poesia araba classica, composto su una riga in due metà: la prima (ṣadr) a destra e la seconda (ʿajuz) a sinistra."],
   }, "بيت"),
   term("hemistich", "arabic", {
     en: ["Hemistich", "One half of a verse. In an Arabic poem every hemistich is set to one common width, so the rhyme letters line up down the page."],
@@ -1395,6 +1516,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Hemistíquio", "Cada uma das duas metades de um verso. Num poema árabe, todos os hemistíquios são compostos com a mesma largura, de modo que as letras da rima se alinham ao longo da página."],
     fr: ["Hémistiche", "Une moitié de vers. Dans un poème arabe, chaque hémistiche est composé sur une même largeur, pour que les lettres de la rime s’alignent de haut en bas de la page."],
     de: ["Halbvers (Hemistichion)", "Eine Hälfte eines Verses. In einem arabischen Gedicht wird jeder Halbvers auf eine gemeinsame Breite gesetzt, sodass die Reimbuchstaben auf der ganzen Seite untereinanderstehen."],
+    it: ["Emistichio", "Una metà di un verso. In una poesia araba ogni emistichio è composto su una stessa larghezza, così le lettere della rima si allineano lungo la pagina."],
   }, "شطر"),
   term("naskh", "arabic", {
     en: ["Naskh", "The rounded Arabic book hand on which most text typefaces are based, such as Amiri and Noto Naskh Arabic."],
@@ -1406,6 +1528,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Naskh", "A caligrafia árabe arredondada dos livros, na qual se baseia a maioria das famílias tipográficas de texto, como Amiri e Noto Naskh Arabic."],
     fr: ["Naskh", "L’écriture arabe arrondie des livres, sur laquelle reposent la plupart des caractères de texte, comme Amiri et Noto Naskh Arabic."],
     de: ["Naskh", "Die gerundete arabische Buchschrift, auf der die meisten Textschriften beruhen, etwa Amiri und Noto Naskh Arabic."],
+    it: ["Naskh", "La scrittura araba arrotondata dei libri, su cui si basano quasi tutti i caratteri da testo, come Amiri e Noto Naskh Arabic."],
   }, "نسخ"),
 
   // ── Software and the web ───────────────────────────────────────────────
@@ -1419,6 +1542,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Markdown", "Forma de escrever texto formatado em texto simples: # para títulos, * para ênfase, - para listas. O Postext lê capítulos de livro escritos assim."],
     fr: ["Markdown", "Manière d’écrire du texte mis en forme en texte brut : # pour les titres, * pour l’emphase, - pour les listes. Postext lit les chapitres de livres écrits ainsi."],
     de: ["Markdown", "Eine Klartextschreibweise für formatierten Text: # für Überschriften, * für Hervorhebungen, - für Listen. Postext liest Buchkapitel, die darin geschrieben sind."],
+    it: ["Markdown", "Un modo di scrivere testo formattato in testo semplice: # per i titoli, * per l’enfasi, - per gli elenchi. Postext legge i capitoli dei libri scritti così."],
   }),
   term("directive", "web", {
     en: ["Directive", "Postext's extension to Markdown for things Markdown lacks, written with colons: :::callout for a box, :ref[…] for a cross-reference."],
@@ -1430,6 +1554,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Diretiva", "Extensão do Postext ao Markdown para o que o Markdown não tem, escrita com dois-pontos: :::callout para um boxe, :ref[…] para uma referência cruzada."],
     fr: ["Directive", "L’extension de Markdown propre à Postext pour ce qui manque à Markdown, écrite avec des deux-points : :::callout pour un encadré, :ref[…] pour un renvoi."],
     de: ["Direktive", "Die Erweiterung von Markdown in Postext für das, was Markdown fehlt, mit Doppelpunkten geschrieben: :::callout für einen Kasten, :ref[…] für einen Querverweis."],
+    it: ["Direttiva", "L’estensione di Postext a Markdown per ciò che a Markdown manca, scritta con i due punti: :::callout per un riquadro, :ref[…] per un rimando."],
   }),
   term("frontmatter", "web", {
     en: ["Frontmatter", "A block of settings at the top of a file, between two lines of ---, such as the title and author of a chapter. Not the same as a book's front matter."],
@@ -1441,6 +1566,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Frontmatter", "Bloco de configurações no início de um arquivo, entre duas linhas de ---, como o título e o autor de um capítulo. Não deve ser confundido com os elementos pré-textuais de um livro."],
     fr: ["Frontmatter", "Bloc de réglages en tête d’un fichier, entre deux lignes de ---, comme le titre et l’auteur d’un chapitre. À ne pas confondre avec les pages liminaires d’un livre (front matter en anglais)."],
     de: ["Frontmatter", "Ein Block mit Einstellungen am Anfang einer Datei, zwischen zwei Zeilen aus ---, etwa Titel und Autor eines Kapitels. Nicht zu verwechseln mit der Titelei eines Buchs (englisch front matter)."],
+    it: ["Frontmatter", "Blocco di impostazioni in testa a un file, tra due righe di ---, come il titolo e l’autore di un capitolo. Da non confondere con le pagine preliminari di un libro (front matter in inglese)."],
   }),
   term("vdt", "web", {
     en: ["Virtual Document Tree", "Postext's laid-out book: every page, line and glyph with its position, ready for a renderer to draw."],
@@ -1452,6 +1578,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Virtual Document Tree", "O livro diagramado do Postext: cada página, linha e glifo com sua posição, pronto para que um renderizador o desenhe."],
     fr: ["Arbre de document virtuel (VDT)", "Le livre mis en page par Postext : chaque page, chaque ligne et chaque glyphe avec sa position, prêts à être dessinés par un moteur de rendu."],
     de: ["Virtueller Dokumentbaum", "Das gesetzte Buch in Postext: jede Seite, jede Zeile und jede Glyphe mit ihrer Position, bereit, von einem Renderer gezeichnet zu werden."],
+    it: ["Albero virtuale del documento (VDT)", "Il libro impaginato da Postext: ogni pagina, riga e glifo con la sua posizione, pronti perché un renderer li disegni."],
   }),
   term("renderer", "web", {
     en: ["Renderer", "The part that draws the laid-out pages in one output: canvas, HTML or PDF. The layout is the same for all three."],
@@ -1463,6 +1590,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Renderizador", "A parte que desenha as páginas diagramadas numa saída específica: canvas, HTML ou PDF. A diagramação é a mesma para as três."],
     fr: ["Moteur de rendu", "La partie qui dessine les pages mises en page dans une sortie : canvas, HTML ou PDF. La mise en page est la même pour les trois."],
     de: ["Renderer", "Der Teil, der die gesetzten Seiten in einer Ausgabe zeichnet: Canvas, HTML oder PDF. Das Layout ist für alle drei dasselbe."],
+    it: ["Renderer", "La parte che disegna le pagine impaginate in un output: canvas, HTML o PDF. L’impaginazione è la stessa per tutti e tre."],
   }),
   term("canvas", "web", {
     en: ["Canvas", "The HTML element a web page draws pixels on with JavaScript. The Sandbox previews pages on it."],
@@ -1474,6 +1602,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Canvas", "O elemento HTML sobre o qual uma página web desenha pixels com JavaScript. O Sandbox mostra nele a visualização das páginas."],
     fr: ["Canvas", "L’élément HTML sur lequel une page web dessine des pixels avec JavaScript. Le Sandbox y affiche l’aperçu des pages."],
     de: ["Canvas", "Das HTML-Element, auf das eine Webseite mit JavaScript Pixel zeichnet. Die Sandbox zeigt darauf die Vorschau der Seiten."],
+    it: ["Canvas", "L’elemento HTML su cui una pagina web disegna pixel con JavaScript. La Sandbox vi mostra l’anteprima delle pagine."],
   }),
   term("web-worker", "web", {
     en: ["Web Worker", "A script the browser runs in the background, apart from the page, so long work such as laying out a book does not freeze the interface."],
@@ -1485,6 +1614,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Web Worker", "Script que o navegador executa em segundo plano, separado da página, para que um trabalho longo, como diagramar um livro, não trave a interface."],
     fr: ["Web Worker", "Script que le navigateur exécute en arrière-plan, à l’écart de la page, pour qu’un long travail comme la mise en page d’un livre ne fige pas l’interface."],
     de: ["Web Worker", "Ein Skript, das der Browser im Hintergrund, getrennt von der Seite, ausführt, damit lange Arbeiten wie das Setzen eines Buchs die Oberfläche nicht einfrieren."],
+    it: ["Web Worker", "Script che il browser esegue in background, separato dalla pagina, perché un lavoro lungo come impaginare un libro non blocchi l’interfaccia."],
   }),
   term("wasm", "web", {
     en: ["WebAssembly (WASM)", "A compact binary format browsers run at near-native speed, used by libraries that need heavy computation, such as font decompression."],
@@ -1496,6 +1626,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["WebAssembly (WASM)", "Formato binário compacto que os navegadores executam quase à velocidade nativa; é usado por bibliotecas de cálculo pesado, como a descompressão de fontes."],
     fr: ["WebAssembly (WASM)", "Format binaire compact que les navigateurs exécutent à une vitesse proche du natif, utilisé par les bibliothèques qui demandent de lourds calculs, comme la décompression des polices."],
     de: ["WebAssembly (WASM)", "Ein kompaktes Binärformat, das Browser nahezu mit nativer Geschwindigkeit ausführen. Bibliotheken, die viel rechnen müssen, nutzen es, etwa für das Entpacken von Schriften."],
+    it: ["WebAssembly (WASM)", "Formato binario compatto che i browser eseguono a velocità quasi nativa, usato dalle librerie che richiedono calcoli pesanti, come la decompressione dei font."],
   }),
   term("indexeddb", "web", {
     en: ["IndexedDB", "A database built into the browser. The Sandbox keeps your books and drafts in it, on your own device."],
@@ -1507,6 +1638,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["IndexedDB", "Banco de dados embutido no navegador. O Sandbox guarda nele seus livros e rascunhos, no seu próprio dispositivo."],
     fr: ["IndexedDB", "Base de données intégrée au navigateur. Le Sandbox y conserve vos livres et vos brouillons, sur votre propre appareil."],
     de: ["IndexedDB", "Eine in den Browser eingebaute Datenbank. Die Sandbox speichert darin Ihre Bücher und Entwürfe, auf Ihrem eigenen Gerät."],
+    it: ["IndexedDB", "Database integrato nel browser. La Sandbox vi conserva i tuoi libri e le tue bozze, sul tuo dispositivo."],
   }),
   term("headless", "web", {
     en: ["Headless", "Running without a visible window, for example generating PDFs on a server or in a script."],
@@ -1518,6 +1650,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Sem interface (headless)", "Que roda sem janela visível, por exemplo para gerar PDFs num servidor ou a partir de um script."],
     fr: ["Sans interface (headless)", "Exécution sans fenêtre visible, par exemple pour générer des PDF sur un serveur ou dans un script."],
     de: ["Headless", "Ausführung ohne sichtbares Fenster, etwa um PDFs auf einem Server oder in einem Skript zu erzeugen."],
+    it: ["Headless", "Esecuzione senza una finestra visibile, per esempio per generare PDF su un server o in uno script."],
   }),
   term("opentype", "web", {
     en: ["OpenType", "The standard font format, which can hold features such as ligatures, small caps and vertical punctuation forms."],
@@ -1529,6 +1662,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["OpenType", "O formato padrão de fontes, que pode incluir recursos como ligaduras, versaletes e formas verticais da pontuação."],
     fr: ["OpenType", "Le format de police standard, qui peut contenir des fonctionnalités comme les ligatures, les petites capitales et les formes verticales de la ponctuation."],
     de: ["OpenType", "Das Standardformat für Schriften, das Funktionen wie Ligaturen, Kapitälchen und vertikale Formen von Satzzeichen enthalten kann."],
+    it: ["OpenType", "Il formato standard dei font, che può contenere funzioni come legature, maiuscoletto e forme verticali della punteggiatura."],
   }),
   term("variable-font", "web", {
     en: ["Variable font", "One font file that holds a range of weights or widths, picked by a number instead of a separate file for each."],
@@ -1540,6 +1674,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Fonte variável", "Um único arquivo de fonte que contém uma gama de pesos ou larguras, escolhidos por um número em vez de um arquivo para cada um."],
     fr: ["Police variable", "Un seul fichier de police qui contient une gamme de graisses ou de chasses, choisies par un nombre au lieu d’un fichier distinct pour chacune."],
     de: ["Variable Font", "Eine einzige Schriftdatei, die einen ganzen Bereich von Stärken oder Breiten enthält, ausgewählt über eine Zahl statt über eine eigene Datei für jede."],
+    it: ["Font variabile", "Un solo file di font che contiene una gamma di pesi o di larghezze, scelti con un numero invece che con un file separato per ciascuno."],
   }),
   term("font-subset", "web", {
     en: ["Font subset", "A copy of a font that keeps only the characters a document uses, so the file is smaller. PDFs embed subsets."],
@@ -1551,6 +1686,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Subconjunto de fonte", "Cópia de uma fonte que mantém só os caracteres que o documento usa, para que o arquivo fique menor. Os PDFs incorporam subconjuntos."],
     fr: ["Sous-ensemble de police", "Copie d’une police qui ne garde que les caractères qu’utilise un document, pour un fichier plus léger. Les PDF incorporent des sous-ensembles."],
     de: ["Schrift-Subset", "Eine Kopie einer Schrift, die nur die Zeichen enthält, die ein Dokument verwendet, damit die Datei kleiner wird. PDFs betten Subsets ein."],
+    it: ["Sottoinsieme di font", "Copia di un font che conserva solo i caratteri usati da un documento, così il file è più leggero. I PDF incorporano sottoinsiemi."],
   }),
   term("vector-raster", "web", {
     en: ["Vector and raster", "A vector image is drawn from shapes and stays sharp at any size (SVG); a raster image is a grid of pixels (PNG, JPEG)."],
@@ -1562,6 +1698,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Vetorial e bitmap", "Uma imagem vetorial é desenhada com formas e fica nítida em qualquer tamanho (SVG); uma imagem bitmap é uma grade de pixels (PNG, JPEG)."],
     fr: ["Vectoriel et matriciel", "Une image vectorielle est dessinée à partir de formes et reste nette à toute taille (SVG) ; une image matricielle est une grille de pixels (PNG, JPEG)."],
     de: ["Vektor- und Rastergrafik", "Eine Vektorgrafik wird aus Formen gezeichnet und bleibt in jeder Größe scharf (SVG); eine Rastergrafik ist ein Raster aus Pixeln (PNG, JPEG)."],
+    it: ["Vettoriale e raster", "Un’immagine vettoriale è disegnata con forme e resta nitida a qualunque dimensione (SVG); un’immagine raster è una griglia di pixel (PNG, JPEG)."],
   }),
   term("tagged-pdf", "web", {
     en: ["Tagged PDF", "A PDF that carries a structure tree of headings, paragraphs, lists and figures with alternative text, so screen readers can read it in order."],
@@ -1573,6 +1710,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["PDF marcado", "PDF que traz uma árvore de estrutura com títulos, parágrafos, listas e figuras com texto alternativo, para que os leitores de tela o leiam na ordem certa."],
     fr: ["PDF balisé", "PDF qui contient un arbre de structure de titres, paragraphes, listes et figures avec leur texte alternatif, pour que les lecteurs d’écran puissent le lire dans l’ordre."],
     de: ["Getaggtes PDF", "Ein PDF mit einem Strukturbaum aus Überschriften, Absätzen, Listen und Abbildungen mit Alternativtext, sodass Screenreader es in der richtigen Reihenfolge vorlesen können."],
+    it: ["PDF con tag", "PDF che contiene un albero di struttura di titoli, paragrafi, elenchi e figure con testo alternativo, così i lettori di schermo possono leggerlo nell’ordine giusto."],
   }),
   term("alt-text", "web", {
     en: ["Alternative text", "A short description of an image for people who cannot see it, read aloud by screen readers."],
@@ -1584,6 +1722,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Texto alternativo", "Descrição breve de uma imagem para quem não pode vê-la, lida em voz alta pelos leitores de tela."],
     fr: ["Texte alternatif", "Courte description d’une image pour les personnes qui ne peuvent pas la voir, lue à voix haute par les lecteurs d’écran."],
     de: ["Alternativtext", "Eine kurze Beschreibung eines Bildes für Menschen, die es nicht sehen können; Screenreader lesen sie vor."],
+    it: ["Testo alternativo", "Breve descrizione di un’immagine per chi non può vederla, letta ad alta voce dai lettori di schermo."],
   }),
   term("bundle", "web", {
     en: ["Bundle (.postext)", "A single file that packs a book's chapters, configuration, fonts and images, so it opens the same anywhere."],
@@ -1595,6 +1734,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Pacote (.postext)", "Um único arquivo que reúne os capítulos, a configuração, as fontes e as imagens de um livro, para que ele abra igual em qualquer lugar."],
     fr: ["Paquet (.postext)", "Un seul fichier qui réunit les chapitres, la configuration, les polices et les images d’un livre, pour qu’il s’ouvre à l’identique partout."],
     de: ["Paket (.postext)", "Eine einzige Datei, die Kapitel, Konfiguration, Schriften und Bilder eines Buchs bündelt, sodass es sich überall gleich öffnet."],
+    it: ["Pacchetto (.postext)", "Un unico file che raccoglie i capitoli, la configurazione, i font e le immagini di un libro, così si apre uguale ovunque."],
   }),
   term("preset", "web", {
     en: ["Preset", "A ready-made book in the Sandbox, with its design and sample text, to start from or study."],
@@ -1606,6 +1746,7 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Predefinição (preset)", "Livro pronto no Sandbox, com seu projeto gráfico e um texto de exemplo, para partir dele ou estudá-lo."],
     fr: ["Préréglage", "Un livre prêt à l’emploi dans le Sandbox, avec sa maquette et son texte d’exemple, pour partir de lui ou l’étudier."],
     de: ["Vorlage", "Ein fertiges Buch in der Sandbox mit Gestaltung und Beispieltext, um davon auszugehen oder es zu studieren."],
+    it: ["Preset", "Un libro già pronto nella Sandbox, con il suo progetto grafico e un testo di esempio, da cui partire o da studiare."],
   }),
   term("sandbox", "web", {
     en: ["Sandbox", "Postext's editor in the browser: write a book, change its design and see the pages update."],
@@ -1617,5 +1758,6 @@ export const GLOSSARY_TERMS: readonly GlossaryTerm[] = [
     pt: ["Sandbox", "O editor do Postext no navegador: você escreve um livro, muda seu projeto gráfico e vê as páginas se atualizarem."],
     fr: ["Sandbox", "L’éditeur de Postext dans le navigateur : écrivez un livre, changez sa maquette et voyez les pages se mettre à jour."],
     de: ["Sandbox", "Der Editor von Postext im Browser: Sie schreiben ein Buch, ändern seine Gestaltung und sehen, wie sich die Seiten aktualisieren."],
+    it: ["Sandbox", "L’editor di Postext nel browser: scrivi un libro, cambi il progetto grafico e vedi le pagine aggiornarsi."],
   }),
 ];

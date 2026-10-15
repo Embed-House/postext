@@ -2,7 +2,7 @@
 title: "Ein Satz Panels, drei Seitenaufteilungen"
 summary: "Fünf Comic-Panels in drei Aufteilungsbäumen: split in :::page teilt die Seite, der Sicherheitsbereich jedes Bildes hält sein Motiv in jeder Zelle."
 plain: "Eine Comicseite, einmal gezeichnet und auf drei Arten angeordnet. Dieselben fünf Bilder und derselbe Dialog füllen drei verschiedene Panelraster, und jedes Bild wird für sein neues Panel neu beschnitten."
-description: "Ein Comic-Layoutandruck in Postext: dieselben fünf Panels unter drei Aufteilungsbäumen, nach Sicherheitsbereichen neu beschnitten, in neun Sprachen gelettert."
+description: "Ein Comic-Layoutandruck in Postext: dieselben fünf Panels unter drei Aufteilungsbäumen, nach Sicherheitsbereichen neu beschnitten, in zehn Sprachen gelettert."
 question: "Wie teile ich eine Comicseite in Panels und halte ein Gesicht im Bild, wenn das Panel seine Form ändert?"
 aliases: ["Panelraster", "Comicseite aufteilen", "Seitenlayout Comic", "Comic-Raster", "Aufteilungsbaum", "Trennlinie", "splitter", "Panelreihen", "eingelassenes Panel", "Sicherheitsbereich", "Beschnitt", "Bildausschnitt", "viñetas", "コマ割り", "分格", "panel grid"]
 pageNotes: { "1": "Das Deckblatt des Andrucks: der Titel „Eine Seite, drei Varianten“ in roten Display-Versalien, dann die drei Pläne, jeder mit seinem Attribut split in Rot.", "2": "Plan A: eine breite Reihe, in der Maya zum Leuchtturm hinaufgeht („Opa! Ich bin da!“), drei Panels nebeneinander (der Wärter an seinem Funkgerät, „Gerade rechtzeitig. Das Funkgerät ist taub,“; Maya, die nach unten zeigt, „Opa… ich glaube, ich weiß, woran es liegt.“; die schlafende Katze mit SCHNURRR in Rot) und eine breite Nachtszene des erleuchteten Leuchtturms.", "3": "Plan B: zwei Spalten; links Mayas Ankunft und der Wärter an seinem Funkgerät, hoch; rechts die zeigende Maya, die Katze und der Leuchtturm bei Nacht mit „Funk geht, Lampe brennt.“ und „Und Biscuit hat ein neues Bett gefunden.“.", "4": "Plan C: oben eine Reihe aus drei schmalen Panels, die beiden Sprechblasen des Wärters nebeneinander über seiner Mütze und die Katze als eingelassenes Panel über dem von Maya, darunter ein hohes Panel des Leuchtturms bei Nacht mit zwei Sprechblasen nahe der Galerie." }
@@ -10,7 +10,7 @@ pageNotes: { "1": "Das Deckblatt des Andrucks: der Titel „Eine Seite, drei Var
 
 ## Was Sie setzen
 
-Ein Layoutandruck für eine Seite eines Comics, *Der Leuchtturm von Porthcove*: ein Deckblatt und dieselbe Seite in drei Plänen, unter denen die Autorin wählen kann. Die fünf Bilder (Maya steigt zum Leuchtturm hinauf, ihr Großvater an einem toten Funkgerät, Maya zeigt auf den Boden, die Katze schläft auf dem Kabel, die Lampe brennt bei Nacht) und die sechs Zeilen Lettering ändern sich nie; nur das `split` jedes `:::page` ändert sich. Jedes Bild wird für seine Zelle neu beschnitten und jede Sprechblase neu um ihren Sprecher gesetzt. Das Endformat ist das eines amerikanischen Comicheftes, 168 × 259 mm, und der Andruck erscheint in neun Ausgaben, jede in ihrer eigenen Sprache gelettert.
+Ein Layoutandruck für eine Seite eines Comics, *Der Leuchtturm von Porthcove*: ein Deckblatt und dieselbe Seite in drei Plänen, unter denen die Autorin wählen kann. Die fünf Bilder (Maya steigt zum Leuchtturm hinauf, ihr Großvater an einem toten Funkgerät, Maya zeigt auf den Boden, die Katze schläft auf dem Kabel, die Lampe brennt bei Nacht) und die sechs Zeilen Lettering ändern sich nie; nur das `split` jedes `:::page` ändert sich. Jedes Bild wird für seine Zelle neu beschnitten und jede Sprechblase neu um ihren Sprecher gesetzt. Das Endformat ist das eines amerikanischen Comicheftes, 168 × 259 mm, und der Andruck erscheint in zehn Ausgaben, jede in ihrer eigenen Sprache gelettert.
 
 ## Zubereitung
 
@@ -30,7 +30,7 @@ Jedes Bild wird einmal gezeichnet und so beschnitten, dass es die Zelle füllt, 
 
 Die Aufteilung von Plan C ergibt vier Zellen für fünf Panels. Die Katze kommt mit `inset="50 50 46 46"` hinein: ein Panel von 46 % Breite und 46 % Höhe, bei 50 %, 50 % des Panels davor platziert, dem von Maya. Ein eingelassenes Panel nimmt keine Zelle ein, die Panels danach behalten also ihre Plätze, und es wird direkt nach dem Panel gelesen, das es überdeckt.
 
-### 4 · Neun Ausgaben aus einem Layout lettern
+### 4 · Zehn Ausgaben aus einem Layout lettern
 
 <Excerpt region="editions" />
 

@@ -8,6 +8,7 @@ export const LOCALE_INFO = {
   ca: { name: "Català", code: "CA", htmlLang: "ca", dir: "ltr", ogLocale: "ca_ES" },
   de: { name: "Deutsch", code: "DE", htmlLang: "de", dir: "ltr", ogLocale: "de_DE" },
   fr: { name: "Français", code: "FR", htmlLang: "fr", dir: "ltr", ogLocale: "fr_FR" },
+  it: { name: "Italiano", code: "IT", htmlLang: "it", dir: "ltr", ogLocale: "it_IT" },
   pt: { name: "Português", code: "PT", htmlLang: "pt-BR", dir: "ltr", ogLocale: "pt_BR" },
   zh: { name: "简体中文", code: "中", htmlLang: "zh-Hans", dir: "ltr", ogLocale: "zh_CN" },
   ja: { name: "日本語", code: "日", htmlLang: "ja", dir: "ltr", ogLocale: "ja_JP" },
@@ -31,20 +32,22 @@ const YOUTUBE_PLAYLIST: Record<SiteLocale, { video: string; list: string }> = {
   fr: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
   // No German playlist yet: the English one, with German transcripts on the site.
   de: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
+  // No Italian playlist yet: the English one, with Italian transcripts on the site.
+  it: { video: "pTVl1TWvu-A", list: "PLXV_YSL9ROv0" },
   // Brazilian Portuguese; tutorials 2, 6 and 9 are not on YouTube yet.
   pt: { video: "YAqLxlfTMoU", list: "PLQnmecBIhr0w" },
 };
 
 /** The cuts of the narrated videos on the media CDN: one per site locale
- *  (#510; Brazilian Portuguese since #611) but French and German, which
- *  have no cut yet and play the English one with a transcript in their own
- *  language (#822, #824). */
-export type MediaLang = Exclude<SiteLocale, "fr" | "de">;
+ *  (#510; Brazilian Portuguese since #611) but French, German and Italian,
+ *  which have no cut yet and play the English one with a transcript in
+ *  their own language (#822, #824, #830). */
+export type MediaLang = Exclude<SiteLocale, "fr" | "de" | "it">;
 
 /** The cut a route locale plays. */
 export function mediaLang(locale: string): MediaLang {
   const site = siteLocale(locale);
-  return site === "fr" || site === "de" ? "en" : site;
+  return site === "fr" || site === "de" || site === "it" ? "en" : site;
 }
 
 /** The header's YouTube link for a route locale. */

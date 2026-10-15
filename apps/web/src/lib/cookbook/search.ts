@@ -271,6 +271,13 @@ export const STOP_WORDS: Record<Locale, ReadonlySet<string>> = {
     "sie", "sind", "so", "uber", "um", "und", "unter", "vom", "von", "vor", "was", "wenn", "wie",
     "wird", "wo", "zu", "zum", "zur",
   ]),
+  it: new Set([
+    "a", "ad", "agli", "ai", "al", "alla", "alle", "allo", "che", "chi", "ci", "come", "con", "cosa",
+    "da", "dal", "dalla", "dei", "del", "della", "delle", "dello", "di", "e", "ed", "gli", "il", "in",
+    "io", "la", "le", "lo", "ma", "mi", "nei", "nel", "nella", "non", "o", "per", "perche", "piu",
+    "quale", "quando", "questo", "questa", "se", "si", "su", "sul", "sulla", "ti", "tra", "tu", "tuo",
+    "tua", "un", "una", "uno",
+  ]),
 };
 
 /** Lowercase and without diacritics: "Cómo" → "como", "Título" → "titulo". */
@@ -334,6 +341,12 @@ function singular(term: string, locale: Locale): string {
     if (term.length > 4 && /[ens]$/.test(term)) return term.slice(0, -1);
     return term;
   }
+  if (locale === "it") {
+    // tabelle / tabella → tabell, libri / libro → libr, righe / riga → rig
+    if (term.length > 4 && /[cg]h[ei]$/.test(term)) return term.slice(0, -2);
+    if (/[aeio]$/.test(term)) return term.slice(0, -1);
+    return term;
+  }
   if (locale === "ca") {
     // taules / taula → taul, imatges / imatge → imatg, colors → color
     if (term.length > 4 && /es$/.test(term)) return term.slice(0, -2);
@@ -367,7 +380,7 @@ export function makeProcessTerm(locale: Locale): (term: string) => string | null
 
 /** The search locale of a site locale segment, English for anything else. */
 export function searchLocale(locale: string): Locale {
-  return locale === "es" || locale === "ca" || locale === "pt" || locale === "fr" || locale === "de" || locale === "zh" || locale === "ja" || locale === "ar" ? locale : "en";
+  return locale === "es" || locale === "ca" || locale === "pt" || locale === "fr" || locale === "de" || locale === "it" || locale === "zh" || locale === "ja" || locale === "ar" ? locale : "en";
 }
 
 // ─── MiniSearch ─────────────────────────────────────────────────────────────
@@ -405,6 +418,7 @@ export const MINISEARCH_OPTIONS: Record<Locale, Options<SearchDocument>> = {
   pt: miniSearchOptions("pt"),
   fr: miniSearchOptions("fr"),
   de: miniSearchOptions("de"),
+  it: miniSearchOptions("it"),
   zh: miniSearchOptions("zh"),
   ja: miniSearchOptions("ja"),
   ar: miniSearchOptions("ar"),

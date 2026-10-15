@@ -10,7 +10,7 @@ import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
 
-const LANG = 'en'; // @lang: the sample document's language ('en' | 'es' | 'pt' | 'fr' | 'de')
+const LANG = 'en'; // @lang: the sample document's language ('en' | 'es' | 'pt' | 'fr' | 'de' | 'it')
 const RECIPE = 'first-page-from-markdown';
 
 // ─── 1 · Design ─────────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ const TITLE_W = 130; // mm: room for two lines of the title; a third would push 
 // down onto the pale salt pans: keep titles short
 const DECK_W = 104; // mm: the standfirst stops short of the dune and its cairn
 const MAGAZINE = t({ en: 'Field notes', es: 'Cuaderno de campo', pt: 'Caderno de campo',
-  fr: 'Carnet de terrain', de: 'Unterwegs' });
+  fr: 'Carnet de terrain', de: 'Unterwegs', it: 'Quaderno di campo' });
 const label = { fontFamily: 'Inter Tight', fontSize: pt(7.5), fontWeight: 600,
   letterSpacing: pt(1.4), textTransform: 'uppercase' };
 const below = (id, y, width) => ({ anchor: { to: `#${id}`, edge: 'below' },
@@ -84,7 +84,7 @@ const opener = () => ({
       { kind: 'text', id: 'byline', ...label, color: col('sand'),
         content: t({ en: 'By {author} · {publishDate}',
           es: 'Por {author} · {publishDate}', pt: 'Por {author} · {publishDate}',
-          fr: 'Par {author} · {publishDate}', de: 'Von {author} · {publishDate}' }),
+          fr: 'Par {author} · {publishDate}', de: 'Von {author} · {publishDate}', it: 'Di {author} · {publishDate}' }),
         placement: below('deck', 4.5) },
     ],
   },
@@ -123,7 +123,7 @@ const colophon = () => ({ id: 'colophon', backgroundEnabled: false, marginTop: p
 
 // #region answer: one config factory in place of the default skin: page, type, colour, slots
 const config = () => ({
-  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr', de: 'de' }), // the hyphenation patterns
+  locale: t({ en: 'en-us', es: 'es', pt: 'pt', fr: 'fr', de: 'de', it: 'it' }), // the hyphenation
   colorPalette: colorPalette(),
   page: { // mirror: left is the inner margin and right the outer one; versos swap them
     width: mm(PAGE.width), height: mm(PAGE.height),
@@ -189,7 +189,8 @@ showPages(doc, {
     es: 'De una cadena Markdown a una página diseñada',
     pt: 'De uma string Markdown a uma página diagramada',
     fr: 'D’une chaîne Markdown à une page mise en forme',
-    de: 'Von einem Markdown-String zur gestalteten Seite' }),
+    de: 'Von einem Markdown-String zur gestalteten Seite',
+    it: 'Da una stringa Markdown a una pagina progettata' }),
 });
 // #endregion
 

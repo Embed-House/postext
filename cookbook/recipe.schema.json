@@ -281,11 +281,12 @@
               "ja",
               "pt",
               "fr",
-              "de"
+              "de",
+              "it"
             ]
           },
           "minItems": 1,
-          "maxItems": 9,
+          "maxItems": 10,
           "uniqueItems": true
         }
       }
@@ -848,6 +849,10 @@
           "minLength": 1
         },
         "de": {
+          "type": "string",
+          "minLength": 1
+        },
+        "it": {
           "type": "string",
           "minLength": 1
         }

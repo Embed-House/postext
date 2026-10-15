@@ -1,0 +1,75 @@
+---
+title: "Andata e ritorno di un .postext in due lingue"
+summary: "Un pieghevole DL a due facciate scritto via codice in un file .postext e reimpaginato dai suoi byte, con caratteri, disegni e didascalie di ogni edizione."
+plain: "Un pieghevole a due facciate per un vecchio mulino a marea, in inglese e in spagnolo. Mostra come salvare un documento con i suoi font e le sue immagini in un solo file e riottenere le stesse pagine da quel file."
+description: "createBundle scrive il pieghevole in un file .postext e openBundle lo rilegge con i suoi font e i suoi disegni, per un’edizione inglese e una spagnola."
+question: "Come impagino un file .postext con i font, le immagini e la configurazione che contiene?"
+aliases: ["file postext", "pacchetto", "bundle", "createBundle", "openBundle", "loadBundleFonts", "andata e ritorno", "round trip", "pieghevole bilingue", "passare alla Sandbox", "pieghevole DL", "mulino a marea"]
+pageNotes: { "1": "Il fronte di un pieghevole DL: su un campo color sabbia, l’occhiello «Arenal estuary · Visitor leaflet 3» e il titolo «The Tide Mill» in corsivo blu, sopra una ruota di mulino la cui metà inferiore appare pallida sotto l’estuario blu; una linguetta blu sul bordo superiore dice «EN». Un attacco in corsivo e la riga «Open all year · Free on Sundays» stanno nell’acqua.", "2": "Il retro: il mulino in sezione in testa, il bacino a sinistra e l’estuario a destra sotto una linea tratteggiata di alta marea, con la didascalia «Figure 1»; la sezione «Two tides a day» in DM Sans giustificato; gli orari di apertura come «Table 1» con un’intestazione blu; tre righe su accesso e biglietti, un colophon e una striscia blu con il nome dell’editore." }
+---
+
+## Che cosa comporrai
+
+Le due facciate di un pieghevole turistico DL, 99 × 210 mm, per un mulino a marea su un estuario immaginario. Il fronte è un unico disegno: una ruota di mulino sulla linea dell’acqua, con la metà superiore sulla sabbia e quella inferiore pallida sotto l’acqua blu, il titolo in DM Serif Display corsivo da 50 pt e una linguetta blu che indica l’edizione, EN o ES. Il retro si apre con il mulino in sezione, poi viene il testo in DM Sans giustificato, gli orari di apertura in una tabella con intestazione blu, le didascalie in Instrument Sans, un colophon e una striscia blu con l’editore. Ogni edizione viene scritta in un file `.postext`, e ogni pagina qui è impaginata dai byte di quel file, con i caratteri e i disegni che contiene.
+
+## Preparazione
+
+### 1 · Scrivi l’edizione, poi rileggi soltanto i byte
+
+<Excerpt region="answer" highlight="14-17" />
+
+`createBundle` comprime in zip il capitolo, la configurazione, le risorse e ogni file che nominano; `openBundle` riceve soltanto quei byte. I caratteri arrivano da `loadBundleFonts`, i disegni da `registerBundleImages` e il progetto grafico da `bundle.config`. Un carattere lasciato fuori da `files` si stampa nel font di ripiego del browser, e un disegno lasciato fuori viene scartato con un avviso e il suo rimando stampa (?). Dentro lo zip ogni `fileId` diventa un percorso (`mill.svg` ora è `resources/mill.svg`), e le risorse e i `customFonts` restituiti da `openBundle` usano già i nuovi nomi ([aprire un pacchetto](/it/docs/configuration-programmatic-usage#aprire-un-pacchetto)).
+
+### 2 · Metti i caratteri nel file
+
+<Excerpt region="faces" />
+
+Un pacchetto contiene un carattere quando `customFonts` lo nomina e `files` ne custodisce i byte sotto il `fileId` della variante; `createBundle` salva DM Sans 400 come `fonts/dm-sans-400-normal.woff2`. Il pen scarica i sette file woff2 da Fontsource ma non ne registra nessuno: `loadBundleFonts` aggiunge le copie del pacchetto a `document.fonts` prima che `buildBundle` misuri una riga, e il PDF prende i suoi caratteri dagli stessi sette file.
+
+### 3 · Chiama ogni file con il suo fileId
+
+<Excerpt region="resources" />
+
+I due disegni sono markup SVG generato dal pen, passato a `files` sotto lo `svg.fileId` delle loro risorse; la tabella è un dato, quindi viaggia in `preset.json` con la sua didascalia. La sezione e la tabella sono composte con `position: 'here'`: la sezione in testa al retro, gli orari sotto il paragrafo che li cita. Il pieghevole imposta `layout.inlineResourceGap: 'above'`, che lascia lo spazio di una risorsa in linea solo sopra di essa, così il retro sta su una facciata: il titolo sotto la sezione porta con sé il proprio spazio, e una riga `:::space{lines=0.5}` dopo la tabella lascia 3,7 mm sotto la sua didascalia.
+
+### 4 · Tieni le etichette nella lingua del file
+
+<Excerpt region="labels" />
+
+Un lettore costruisce i tipi predefiniti nella lingua del file: senza `resourceTypes` nella configurazione, il pieghevole spagnolo stampa «Figura 1.1» e «Tabla 1.1» ovunque lo si apra, compresa la Sandbox su /it/sandbox. Il pieghevole scrive i tipi solo per i loro numeri: `'{n}'` elimina il numero di capitolo, che a un pieghevole di due pagine non serve ([tipi di risorsa](/it/docs/configuration-resources#tipi-di-risorsa)). La stessa `config()` imposta `locale`, che sceglie i pattern di sillabazione spagnoli (compuer-tas sul retro) e la lingua dichiarata dal PDF.
+
+### 5 · Passa avanti gli stessi byte
+
+<Excerpt region="handoff" />
+
+Il link offre i `bytes` da cui sono state impaginate le pagine, 132 KB con i font. Importato nella Sandbox (*Libri → Nuovo → Apri un file .postext…*), il file diventa un libro spagnolo o inglese con la ruota come immagine, presa da `thumbnail`. Il PDF prende i caratteri da `bundleFontProvider`, che restituisce il carattere del pacchetto più vicino per peso, nello stesso stile quando c’è, e i disegni da `bundleResourceBytes`, così nessun font e nessuna immagine vengono scaricati una seconda volta ([impaginare e renderizzare un pacchetto](/it/docs/configuration-programmatic-usage#impaginare-e-disegnare-un-pacchetto)).
+
+### 6 · Disegna il fronte con un solo titolo
+
+<Excerpt region="cover" />
+
+Il fronte è il progetto grafico del titolo di copertina: il disegno ancorato alla pagina a grandezza piena, il testo del titolo tramite `{titleText}`, l’occhiello, l’attacco e la riga delle informazioni dai suoi attributi, e un elemento di testo con un riquadro per la linguetta della lingua. Il livello H1 è `span: 'page'`, quindi il disegno arriva fino al bordo inferiore del foglio. Un progetto grafico di titolo tenuto nella colonna viene tagliato al piede della gabbia del testo: il disegno si fermerebbe 13 mm sopra il bordo inferiore.
+
+## Varianti
+
+### Leggi un pacchetto bilingue
+
+La guida di Postext contiene i capitoli, la configurazione e le didascalie in inglese e in spagnolo in un solo file; `{ locale }` sceglie l’edizione, che si apre come dodici capitoli su 48 pagine in entrambe le lingue, mentre il link offre ancora il file del pieghevole e il pulsante PDF costruisce la guida.
+
+```diff
+-const bundle = await openBundle(bytes);
++const guide = await fetch('https://postext.dev/bundles/postext-guide.postext');
++const bundle = await openBundle(await guide.arrayBuffer(), { locale: LANG });
+```
+
+### Numera le figure per capitolo
+
+Senza i tipi il lettore li costruisce nella lingua del file con la numerazione predefinita, e le figure si contano dal titolo di copertina: «Figure 1.1» e «Table 1.1» qui, «Figura 1.1» e «Tabla 1.1» nell’edizione spagnola.
+
+```diff
+-  resourceTypes: defaultResourceTypes(LANG).map((type) => ({ ...type, numberingTemplate: '{n}' })),
+```
+
+## Errori frequenti
+
+- Qui ogni edizione è un file a sé. Per portare entrambe le lingue in un solo file, passa a `createBundle` una mappa `localized` ([pacchetti bilingui](/it/docs/configuration-programmatic-usage#pacchetti-bilingui)); `openBundle(bytes, { locale })` legge poi l’una o l’altra edizione.

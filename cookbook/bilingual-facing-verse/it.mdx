@@ -1,0 +1,70 @@
+---
+title: "Traduzione a fronte, strofa per strofa"
+summary: "Ogni poesia è un riquadro senza cornice a due colonne: un salto di colonna fisso apre l’inglese sul suo titolo e :::space allinea ogni strofa all’originale."
+plain: "Un piccolo libro di poesie con lo spagnolo da una parte e la traduzione inglese accanto. Ogni gruppo di versi della traduzione comincia alla stessa altezza dell’originale."
+description: "Una plaquette bilingue composta con Postext: ogni poesia spagnola sta di fronte alla versione inglese in un riquadro a due colonne, con salto fisso e :::space."
+question: "Come compongo una poesia e la sua traduzione affiancate, sulla stessa riga, strofa per strofa?"
+aliases: ["traduzione a fronte", "testo a fronte", "testo parallelo", "edizione bilingue", "poesia bilingue", "traduzione accanto all’originale", "colonne dentro un riquadro", "attributo breaks", "salto di colonna in un riquadro", "allineamento delle strofe", "spazio tra strofe", "verso a capo", "rientro sporgente", "versi", "plaquette", "edición bilingüe", "traducción enfrentada"]
+pageNotes: { "3": "L’acquerello delle saline scende per 84 mm nella pagina. Sotto di esso la poesia I si apre con il suo numerale, e «LA SALINA AL ALBA» intesta la colonna spagnola e «THE SALT PANS AT DAWN» il corsivo inglese. Il quarto verso inglese va a capo, e la prima strofa spagnola finisce con due righe bianche, così entrambe le seconde strofe cominciano sulla stessa riga.", "4": "Le poesie II e III, ciascuna un numerale sopra due colonne le cui strofe si fronteggiano verso per verso." }
+---
+
+## Che cosa comporrai
+
+Una plaquette bilingue di cinque poesie su una salina del sud della Spagna, 156 × 234 mm, con lo spagnolo a sinistra e la versione inglese del poeta stesso a destra, verso per verso. Vengono prima un frontespizio con un fenicottero e la nota dell’autore; le poesie si aprono sotto un acquerello di vasche rosa, cumuli di sale e fenicotteri all’alba. Ogni poesia sta in un riquadro senza cornice sotto un numerale color robbia in Castoro Titling, lo spagnolo in una colonna e l’inglese nell’altra. L’inglese comincia sulla stessa riga dello spagnolo, e ogni strofa comincia all’altezza del suo originale. Quando un verso inglese è troppo lungo per la sua colonna, il resto va a capo rientrato di 2 em, e la strofa spagnola di fronte finisce con una riga bianca in più.
+
+## Preparazione
+
+### 1 · Una poesia è un riquadro con un salto di colonna fisso
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. Ogni poesia è un riquadro attorno a un gruppo `:::columns`; il suo stile elimina il riempimento e il padding e stampa il `title` del blocco, il numerale ([`:::columns`](/it/docs/document-format#columns)). Senza `breaks`, il gruppo taglia dove le sue due colonne risultano pari. Le due metà di queste poesie hanno la stessa altezza, quindi il taglio cade comunque sul titolo inglese; allunga due versi di *The Rake* finché vanno a capo, e il taglio scende di un blocco e lascia «THE RAKE» al piede della colonna spagnola. `breaks="5"` nomina il blocco che apre la seconda colonna, così il titolo inglese la intesta qualunque sia l’altezza delle due metà.
+
+### 2 · Un blocco :::verse per colonna, una riga bianca per ogni cambio di strofa
+
+<Excerpt region="verse" />
+
+Ogni metà di una poesia è un blocco `:::verse`: un verso per ogni riga del Markdown, a bandiera e mai sillabato, e una riga bianca tra le strofe, che lascia una riga bianca nella colonna ([`:::verse`](/it/docs/document-format#verse)). Ogni strofa è un blocco, quindi `breaks` conta le strofe, non i versi. L’inglese *each one standing on its own reflection.* è troppo lungo per la sua colonna di 55 mm e va a capo rientrato di 2 em; la metà spagnola chiude il suo blocco dopo la strofa di fronte e mette un `:::space{lines=2}` prima della successiva, così le strofe seguenti cominciano sulla stessa riga. Un `:::space` non è un blocco, e `breaks` non lo conta ([`:::space`](/it/docs/document-format#space)).
+
+<PageShot page={3} crop="0.1,0.385,0.8,0.248" caption="La poesia I a pagina 3: «reflection.» va a capo nell’inglese, e la strofa spagnola finisce con due righe bianche invece di una." />
+
+### 3 · La nota si sillaba nella sua lingua
+
+<Excerpt region="note" />
+
+`locale` sceglie i pattern di sillabazione. Con `'es'` la nota spagnola divide *ori-ginal* e *Duna-liella*; con i pattern inglesi entrambe le parole vanno intere alla riga successiva, e solo *arras-traba* si divide con l’uno e con l’altro ([lingue supportate](/it/docs/justification#lingue-supportate)). Gli spazi tra parole possono restringersi fino a 0,8 e allargarsi fino a 1,35 della loro larghezza normale, e nessuna riga giustificata delle due note si allarga oltre. Il titolo della nota è un disegno il cui unico elemento, il titolo, sta 36 mm sotto il bordo superiore della gabbia del testo, così la nota comincia a 73 mm dal bordo superiore della sua pagina.
+
+### 4 · Il frontespizio e l’acquerello sono titoli
+
+<Excerpt region="front" />
+
+Ciascuno è un titolo di livello 1 con uno stile proprio ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)): il disegno del frontespizio prende `{author}` dal frontmatter, ed entrambi i disegni prendono `{attr.other}` dagli attributi del titolo. L’acquerello è ancorato al bordo superiore della pagina, sopra la gabbia del testo, e il titolo riserva lo spazio fino al suo piede, 84 mm sotto il bordo. Lo stile imposta `marginBottom: pt(0)`, quindi lo spazio sotto l’immagine è il margine superiore di due righe della poesia stessa, e la poesia I comincia sulla prima riga della griglia ad almeno due righe sotto l’immagine.
+
+### 5 · Le testatine nominano entrambe le lingue
+
+<Excerpt region="heads" />
+
+Il verso porta il titolo spagnolo e il recto quello inglese, nell’ordine delle colonne. `pages: 'body'` le tiene lontane dalle tre pagine che si aprono con un titolo. La nota e l’acquerello hanno invece un folio al piede, e lo stile del frontespizio svuota la sua intestazione e il suo piè di pagina ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)).
+
+## Varianti
+
+### Allarga l’intercolonna
+
+A 12 mm le colonne si restringono a 53 mm, e *Los turistas paran y hacen fotos:* va a capo nella poesia III, così la sua seconda strofa comincia una riga sotto l’inglese; chiudi il blocco inglese dopo quella strofa e metti un `:::space{lines=2}` prima della successiva per allinearle.
+
+```diff
+-const GAP = 8; // mm between the original and the translation: each column is 55 mm wide
++const GAP = 12; // mm between the original and the translation: each column is 53 mm wide
+```
+
+### Rientra di più i versi a capo
+
+A 3 em, *reflection.* a pagina 3 comincia un em più all’interno.
+
+```diff
+-const verse = { id: 'verse', hangingIndent: em(2) };
++const verse = { id: 'verse', hangingIndent: em(3) };
+```
+
+## Errori frequenti
+
+- Un `:::space` messo prima del titolo inglese sparisce: la seconda colonna si apre al blocco che `breaks` nomina, e lo spazio cade sul taglio. Mettilo dopo il titolo, come il `:::space{lines=0.5}` sotto ogni titolo di colonna in questa ricetta.
+- Conta `breaks` dal titolo spagnolo: con un titolo e tre strofe, il titolo inglese è il blocco 5. Ogni strofa è un blocco, quindi una strofa spagnola in più sposta il titolo inglese al blocco 6, e `breaks` deve salire con lui; un verso in più dentro una strofa non sposta nulla.

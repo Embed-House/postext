@@ -1,0 +1,61 @@
+---
+title: "Un racconto giapponese a due fasce, il titolo su entrambe"
+summary: "Due racconti di Akutagawa in un’opera omnia: due fasce di 25 caratteri su una pagina A5, ogni titolo su entrambe in pagina dispari, ultime pagine come cadono."
+plain: "Due racconti come li stampa un’opera omnia giapponese: il testo scende in due fasce sovrapposte, ogni racconto si apre su una pagina sinistra con il titolo alto quanto la pagina, e l’ultima pagina non viene pareggiata."
+description: "Akutagawa in due fasce verticali con Postext: titoli su entrambe le fasce, opere aperte su pagina dispari, sezioni su 3 righe, ultime pagine non pareggiate."
+question: "Come compongo un racconto giapponese in due fasce, con il titolo su entrambe, aperto su una pagina sinistra?"
+aliases: ["二段組", "nidangumi", "due fasce", "due fasce verticali", "段", "dan", "fasce", "zenshū", "全集", "opera omnia", "opere complete", "tankōbon", "単行本", "成り行き", "nariyuki", "ultima pagina non bilanciata", "titolo su più fasce", "Akutagawa", "芥川龍之介", "蜘蛛の糸", "Il filo del ragno", "尾生の信"]
+pageNotes: { "1": "La pagina 211 di un volume di opera omnia, da sola a sinistra del dorso: 蜘蛛の糸 scende in grande lungo il lato destro della pagina attraverso entrambe le fasce, 芥川龍之介 vicino al piede, poi il testo in due fasce con un filetto sottile tra loro, la sezione 一 larga tre righe nella fascia superiore, e un colophon di due righe in inglese al piede.", "4": "L’ultima pagina di «The Spider's Thread»: la fascia superiore contiene la sezione 三 e la fine del racconto in venti delle sue ventuno righe, l’ultima delle quali è la data （大正七年四月十六日）, sollevata di un carattere dal piede; la fascia inferiore resta vuota.", "5": "Il racconto successivo, 尾生の信, si apre sulla pagina sinistra di fronte con il titolo attraverso entrambe le fasce.", "7": "L’ultima pagina: il testo finisce a un terzo della fascia superiore e la fascia inferiore resta vuota." }
+---
+
+## Che cosa comporrai
+
+Sette pagine da un volume di opera omnia (全集) su una pagina A5 rilegata a destra: *Il filo del ragno* e *La fede di Bisei* di Akutagawa Ryūnosuke, composti in due fasce (二段組) di 25 caratteri in verticale e 21 righe in orizzontale, Noto Serif JP a 9 pt con un filetto sottile tra le fasce. Ogni racconto si apre su una pagina dispari, quella sinistra, con il titolo a 20 pt che scende attraverso entrambe le fasce e il nome dell’autore vicino al piede; i folio proseguono da pagina 211. Le sezioni 一 二 三 occupano tre righe della loro fascia. Quando un racconto finisce, la sua ultima pagina resta come cade il testo, il 成り行き (nariyuki) giapponese: a pagina 214 il racconto finisce nella fascia superiore con la sua data, una riga prima che la fascia sia piena, e la fascia inferiore resta vuota. Il giornale cinese in fasce verticali è <RecipeLink slug="vertical-newspaper-tiers">Nº 084</RecipeLink>, e un titolo di capitolo su due colonne orizzontali è <RecipeLink slug="five-chapter-openers">Nº 017</RecipeLink>.
+
+## Preparazione
+
+### 1 · Due colonne ruotate di un quarto di giro sono due fasce
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. In una pagina con `writingMode: 'vertical-rl'`, `layoutType: 'double'` sovrappone le due colonne: la prima riempie la fascia superiore da destra, poi quella inferiore, e l’intercolonna è la banda tra le due ([Vertical writing](/it/docs/configuration-page-layout#scrittura-verticale)). La [griglia dei caratteri](/it/docs/configuration-east-asian#griglia-di-caratteri) conta i caratteri lungo una fascia, quindi ogni fascia è di 25 caratteri da 9 pt e l’intercolonna si arrotonda a due caratteri interi; le 21 righe da 15,75 pt in orizzontale occupano 116,7 mm dei 148 mm della pagina. Il filetto tra le fasce attraversa la pagina, 0,4 pt in un grigio caldo.
+
+Il bilanciatore di Postext chiuderebbe entrambe le fasce dell’ultima pagina di un racconto alla stessa riga, che è il modo in cui i giornali cinesi e la maggior parte dei libri europei a due colonne chiudono un capitolo. Un libro giapponese a fasce lascia cadere il testo: la fascia superiore percorre tutta la pagina prima che cominci quella inferiore. `balancing.trailing: false` è questa scelta, e le fasce verticali non si bilanciano affatto a meno che `enabled: true` non attivi il bilanciatore ([Column balancing](/it/docs/configuration-text#bilanciamento-delle-colonne)).
+
+### 2 · Fai scendere il titolo dell’opera su entrambe le fasce
+
+<Excerpt region="opener" />
+
+Un livello di titolo con `span: 'page'` si impagina su tutta l’altezza della pagina, entrambe le fasce e l’intercolonna, in testa al flusso, cioè a destra di una pagina verticale; le fasce cominciano dopo le sette righe che il suo design riserva. Un titolo così apre sempre una pagina, e `breakBefore.parity: 'odd'` ne fa quella sinistra: *Il filo del ragno* finisce a pagina 214, una pagina pari, quindi *La fede di Bisei* si apre a 215 senza pagina bianca in mezzo ([Span and advanced design](/it/docs/configuration-text#estensione-e-progetto-grafico-avanzato)). Nel design `x` scorre lungo la pagina in verticale e `y` in orizzontale dal bordo destro della gabbia del testo; il nome dell’autore si colloca a partire dal piede della fascia inferiore, tre caratteri più su.
+
+### 3 · Numera le sezioni su tre righe della loro fascia
+
+Il secondo livello, `lineSpan: 3` con `indent: em(8)`, compone 一 二 三 otto caratteri più in basso in una fascia, in una banda di tre righe, come li marca il testo di Aozora (八字下げ, 中見出し), così il testo dopo un numero di sezione resta sulle righe della fascia accanto ([Per-level overrides](/it/docs/configuration-text#sovrascritture-per-livello)). Le date che chiudono i racconti, （大正七年四月十六日）, sono sollevate di un carattere dal piede della loro fascia (地から一字上げ) con `:::paragraphs{align=end endIndent=1}`; il convertitore di Aozora le scrive come uno stile `aozora-end1` che le allinea al piede, e gli attributi del blocco aggiungono il sollevamento di un carattere.
+
+### 4 · Metti il volume e l’opera lungo il margine esterno
+
+<Excerpt region="furniture" />
+
+`anchor.to: 'outer'` mette lo hashira nel margine esterno, il nome del volume 芥川龍之介集 sulle pagine destre e il titolo dell’opera su quelle sinistre, e `pages: 'body'` li tiene entrambi lontani dalle pagine in cui si apre un’opera ([Vertical text elements](/it/docs/configuration-page-layout#elementi-di-testo-verticale)). Il folio si compone di traverso nel margine in cifre arabe, come lo stampano molte opere omnia: lungo il margine esterno tre cifre starebbero coricate. `pageNumbering.startAt: 211` numera le pagine come fa il volume. Lo stile di titolo della prima opera porta il colophon con `pages: 'opener'`, perché il piè di pagina di uno stile serve ogni pagina della sua sezione.
+
+## Varianti
+
+### Pareggia l’ultima pagina
+
+Attiva il bilanciamento e l’ultima pagina di ogni opera si taglia pari: la pagina 214 finisce con 10 righe nella fascia superiore e 10 in quella inferiore, la chiusura che usa un libro cinese o europeo a colonne. Sulla griglia dei caratteri il bilanciatore aggiunge solo righe intere, quindi ogni carattere mantiene la sua cella.
+
+```diff
+-const balancing = { trailing: false };
++const balancing = { enabled: true }; // the closing band is cut level
+```
+
+### Apri ogni opera sulla pagina successiva
+
+`parity: 'any'` fa cominciare un’opera sulla pagina che viene dopo, qualunque sia, come fanno le riviste e le antologie di testi brevissimi.
+
+```diff
+-const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'odd' } };
++const work = { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' } };
+```
+
+### Componi il racconto in una sola fascia
+
+I romanzi e i bunko compongono il testo in una sola fascia, senza intercolonna; <RecipeLink slug="bunko-novel-furigana">Nº 117</RecipeLink> compone così un bunko.

@@ -406,7 +406,7 @@
   "Showcase": {
     "eyebrow": "Vitrine",
     "title": "De vrais livres, composés dans votre navigateur",
-    "lead": "Un manuel, un magazine, un poème épique annoté, un catalogue d’exposition, un classique chinois en 120 chapitres, les Mille et Une Nuits en arabe, un roman japonais composé verticalement, une bande dessinée en neuf langues. Ouvrez n’importe lequel dans le Sandbox, changez une règle et regardez chaque page se recomposer.",
+    "lead": "Un manuel, un magazine, un poème épique annoté, un catalogue d’exposition, un classique chinois en 120 chapitres, les Mille et Une Nuits en arabe, un roman japonais composé verticalement, une bande dessinée en dix langues. Ouvrez n’importe lequel dans le Sandbox, changez une règle et regardez chaque page se recomposer.",
     "open": "Ouvrir dans le Sandbox",
     "guideName": "Le guide de Postext",
     "guideDescription": "Le guide intégré : 13 chapitres, trois parties, une couverture",
@@ -433,7 +433,7 @@
       "kokoro": "Le roman de Natsume Sōseki paru en 1914, en japonais, composé verticalement et relié à droite d’après la première édition Iwanami, avec la couverture, les pages de garde et la page de titre dessinées par Sōseki, trois de ses peintures et des furigana sur les mots les plus difficiles. En japonais uniquement",
       "openstax-fisica": "Un manuel en colonne et demie avec exemples résolus, exercices de vérification, tableaux et formules",
       "paradise-lost": "Une édition annotée du poème de Milton en douze livres : les notes de Verity en bas de page et les cinquante planches de Doré. En anglais uniquement",
-      "pepper-carrot": "L’épisode 8 de la BD en ligne de David Revoy en neuf langues : les cases originales sans texte, avec les bulles et le lettrage que le moteur compose à partir de chaque traduction officielle. L’édition japonaise est lettrée en colonnes et, comme l’édition arabe, se lit de droite à gauche et s’ouvre par la droite",
+      "pepper-carrot": "L’épisode 8 de la BD en ligne de David Revoy en dix langues : les cases originales sans texte, avec les bulles et le lettrage que le moteur compose à partir de chaque traduction officielle. L’édition japonaise est lettrée en colonnes et, comme l’édition arabe, se lit de droite à gauche et s’ouvre par la droite",
       "pintura-espanola": "Un catalogue d’exposition sur une colonne, notice et commentaire face à la planche en pleine page",
       "senales": "Un magazine de l’AEE sur deux colonnes, avec ouvertures photographiques, encadrés, exergues et panneaux de données"
     }
@@ -4373,7 +4373,7 @@
     "title": "Accessibilité",
     "lastUpdated": "Dernière mise à jour : octobre 2026",
     "targetTitle": "Objectif de conformité",
-    "targetText": "Nous visons la conformité de ce site et du Sandbox aux Règles pour l’accessibilité des contenus web (WCAG) 2.2 au niveau AAA, en anglais, espagnol, catalan, chinois, japonais, arabe (de droite à gauche), portugais du Brésil, français et allemand, dans le thème clair comme dans le thème sombre. Chaque page est vérifiée par des tests automatisés (axe-core et nos propres contrôles pour les critères AAA) et parcourue au clavier.",
+    "targetText": "Nous visons la conformité de ce site et du Sandbox aux Règles pour l’accessibilité des contenus web (WCAG) 2.2 au niveau AAA, en anglais, espagnol, catalan, chinois, japonais, arabe (de droite à gauche), portugais du Brésil, français, allemand et italien, dans le thème clair comme dans le thème sombre. Chaque page est vérifiée par des tests automatisés (axe-core et nos propres contrôles pour les critères AAA) et parcourue au clavier.",
     "prefsTitle": "Préférences de lecture",
     "prefsText": "Le site compose ses textes justifiés et avec césure, comme les livres que produit Postext. Si cela vous gêne pour lire, l’icône de livre dans la barre de menu ouvre les préférences de lecture. Elles s’appliquent à toutes les pages du site et sont conservées dans ce navigateur.",
     "prefsTheme": "Thème : clair ou sombre. C’est le même réglage que l’interrupteur de la barre de menu ; sans choix de votre part, le site suit votre système.",

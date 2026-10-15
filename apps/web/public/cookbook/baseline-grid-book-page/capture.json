@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "92ccbc3c733322d9e241c404ef0a206dcf2e5cef1ac96c389299968557f53342",
+  "sourceHash": "ccd17923a9597a08b1ddd98a49d99875318aa1489fbb1a4a13ada2783c970d2f",
   "engine": {
-    "postext": "1.33.5",
+    "postext": "1.33.7",
     "source": "npm"
   },
   "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T12:01:31.974Z",
+  "capturedAt": "2026-10-15T13:41:55.147Z",
   "variants": {
     "en": {
       "hash8": "54fd38d6",
       "vdtHash": "f55297049f1e5f9ea49a89f52e109267aee3fbe3",
       "timings": {
-        "importMs": 3412,
-        "fontsMs": 13,
-        "buildMs": 94,
-        "totalMs": 5704,
+        "importMs": 404,
+        "fontsMs": 6,
+        "buildMs": 72,
+        "totalMs": 1244,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 206
+        "ownLines": 217
       },
       "pages": [
         {
@@ -330,10 +330,10 @@
       "hash8": "ecae0af0",
       "vdtHash": "18cb678cde83a6862dc2b5d160a0456d970249e3",
       "timings": {
-        "importMs": 3434,
+        "importMs": 414,
         "fontsMs": 4,
-        "buildMs": 93,
-        "totalMs": 5697,
+        "buildMs": 66,
+        "totalMs": 1247,
         "builds": 1
       },
       "specimen": {
@@ -356,7 +356,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 206
+        "ownLines": 217
       },
       "pages": [
         {
@@ -634,13 +634,13 @@
       }
     },
     "pt": {
-      "hash8": "58aaa8d3",
+      "hash8": "3e62988a",
       "vdtHash": "2acdd6b557c1c08659556959a5561aab4bda1812",
       "timings": {
-        "importMs": 3598,
-        "fontsMs": 7,
-        "buildMs": 81,
-        "totalMs": 5681,
+        "importMs": 406,
+        "fontsMs": 3,
+        "buildMs": 65,
+        "totalMs": 1233,
         "builds": 1
       },
       "specimen": {
@@ -663,7 +663,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 206
+        "ownLines": 217
       },
       "pages": [
         {
@@ -685,7 +685,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 187020,
+          "bytes": 187168,
           "alt": "Página 10: Linhas onde se apoiar."
         },
         {
@@ -944,10 +944,10 @@
       "hash8": "8d9b5648",
       "vdtHash": "71332f07970bfbd9fff78f945206a795088f1f07",
       "timings": {
-        "importMs": 2200,
+        "importMs": 408,
         "fontsMs": 4,
-        "buildMs": 137,
-        "totalMs": 5120,
+        "buildMs": 83,
+        "totalMs": 1273,
         "builds": 1
       },
       "specimen": {
@@ -970,7 +970,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 206
+        "ownLines": 217
       },
       "pages": [
         {
@@ -1261,10 +1261,10 @@
       "hash8": "e523ddf9",
       "vdtHash": "49cb48b979a884c8b97affd133e774a9ead74d64",
       "timings": {
-        "importMs": 2195,
-        "fontsMs": 3,
-        "buildMs": 129,
-        "totalMs": 4936,
+        "importMs": 407,
+        "fontsMs": 4,
+        "buildMs": 88,
+        "totalMs": 1237,
         "builds": 1
       },
       "specimen": {
@@ -1287,7 +1287,7 @@
           "Vollkorn SC"
         ],
         "pages": 3,
-        "ownLines": 206
+        "ownLines": 217
       },
       "pages": [
         {
@@ -1566,6 +1566,313 @@
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Ziehen Sie die beiden Diagonalen der Doppelseite…”"
           },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "9b4b7f12",
+      "vdtHash": "cc050837b4128f5b234c89b533b97ae4c550b877",
+      "timings": {
+        "importMs": 413,
+        "fontsMs": 4,
+        "buildMs": 94,
+        "totalMs": 1231,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 6,
+        "mirror": true,
+        "body": {
+          "family": "Vollkorn",
+          "sizePt": 9.8,
+          "leadingPt": 13.4
+        },
+        "families": [
+          "Playfair Display",
+          "Vollkorn",
+          "Vollkorn SC"
+        ],
+        "pages": 3,
+        "ownLines": 217
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "9",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 150612,
+          "alt": "Pagina d’apertura 9: Il canone segreto. Figura 1.1. Il canone su una doppia pagina aperta di pagine 2:3. Le diagonali fissano gli angoli delle due gabbie; il cerchio, largo quanto la pagina, è alto esattamente quanto la sua gabbia."
+        },
+        {
+          "n": 2,
+          "label": "10",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 181102,
+          "alt": "Pagina 10: Righe su cui posarsi."
+        },
+        {
+          "n": 3,
+          "label": "11",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 59184,
+          "alt": "Pagina 11. Figura 1.2. La pagina di 210 × 280 mm di questo libro, due volte. A sinistra, divisa in noni dal canone, con una gabbia di 140 × 187 mm. A destra, come la compone il libro: margini di 16, 24, 32 e 48 mm e due colonne di 44 righe."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "baseline-grid-book-page.postext",
+        "bytes": 43616,
+        "folio": "e8c31713",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "0d8b0b20d04eed06",
+            "lines": "ff6100d3c15f7075"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "registerResourceImage",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceBold",
+          "bodyText.referenceColor",
+          "captionStyle",
+          "captionStyle.descriptionItalic",
+          "captionStyle.fontSize",
+          "captionStyle.labelColor",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontSize",
+          "headings.levels[].italic",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.columnRule",
+          "layout.columnRule.color",
+          "layout.columnRule.enabled",
+          "layout.columnRule.lineWidth",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.backgroundColor",
+          "page.baselineGrid",
+          "page.baselineGrid.color",
+          "page.baselineGrid.enabled",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].boldColor",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "unorderedLists",
+          "unorderedLists.bulletChar",
+          "unorderedLists.color",
+          "unorderedLists.fontWeight",
+          "unorderedLists.marginBottom",
+          "unorderedLists.marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles",
+          "unorderedLists"
+        ],
+        "configLeaves": 162,
+        "designElements": 5,
+        "directives": [
+          ":::paragraphs"
+        ],
+        "inline": [
+          ":ref"
+        ],
+        "resources": {
+          "svg": 2,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "italic"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn SC",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Vollkorn",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "baseline-grid",
+          "column-balancing",
+          "column-rule",
+          "figure-citations",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "resources"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 4,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.96
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
           {
             "check": "sandbox",
             "severity": "info",

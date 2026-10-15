@@ -1,0 +1,76 @@
+---
+title: "Scheda tecnica: tabelle dai dati, intestazioni unite"
+summary: "Tabelle incollate come TSV, lette con parseTSV e modellate con mergeCells, setAlignment e setCellBackground; una mappa dei registri si divide da sola."
+plain: "Una scheda prodotto di quattro pagine per un sensore elettronico di temperatura. Mostra come costruire tabelle da dati di un foglio di calcolo, con intestazioni condivise e una tabella lunga che prosegue nella pagina successiva."
+description: "Scheda tecnica di quattro pagine in Postext: intestazione unita su due righe, righe alternate, stili di tabella con nome, mappa dei registri su due pagine."
+question: "Come trasformo dati incollati in una tabella con intestazioni unite, larghezze di colonna e allineamenti?"
+aliases: ["scheda tecnica", "datasheet", "scheda prodotto", "caratteristiche elettriche", "mappa dei registri", "celle unite", "colspan", "rowspan", "righe alternate", "tabella a righe", "TSV", "tabella da un foglio di calcolo", "intestazione di tabella ripetuta"]
+pageNotes: { "1": "La prima pagina: una fascia viola con il codice del componente, un paragrafo d’apertura e tre cifre chiave; sotto, le caratteristiche e le applicazioni, il disegno della piedinatura, con il pad esposto tratteggiato perché sta sotto il package, e il circuito applicativo tipico.", "2": "La tabella delle caratteristiche elettriche occupa tutta la larghezza della pagina sotto una didascalia che indica le condizioni di prova: un’intestazione viola di due righe in cui «Value» copre «Min», «Typ» e «Max», gruppi di parametri uniti lungo una prima colonna lilla, un parametro su due con fondo grigio.", "3": "La tabella dei pin sta in testa alla prima colonna; la mappa dei registri, con indirizzi e valori di reset nel carattere monospaziato delle etichette, riempie la seconda e finisce con «Continued on the next page».", "4": "La mappa dei registri prosegue con l’intestazione ripetuta e «(continued)» nella didascalia, accanto ai codici d’ordine in una cornice arrotondata; il disegno del package attraversa il piede della pagina." }
+---
+
+## Che cosa comporrai
+
+Questa è la scheda tecnica di quattro pagine del PX-7021, un sensore di temperatura di un produttore immaginario, Pyxis Microdevices. È fatta soprattutto di tabelle, con intestazioni piene di celle unite e una mappa dei registri più lunga di una colonna. La prima pagina si apre su una fascia viola con il codice del componente e tre cifre chiave. A pagina 2 una tabella occupa tutta la larghezza della pagina. La sua intestazione di due righe mette Value sopra Min, Typ e Max; i gruppi di parametri sono uniti lungo la prima colonna, e un parametro su due ha il fondo grigio. La mappa dei registri si interrompe al piede di pagina 3 e prosegue a pagina 4 con l’intestazione ripetuta, accanto ai codici d’ordine e sopra il disegno del package. Le tabelle sono dati di un foglio di calcolo incollati come TSV, perché Postext non legge le tabelle Markdown.
+
+## Preparazione
+
+### 1 · Incolla i dati, poi modella la tabella
+
+Il codice è [la risposta breve](#la-risposta-breve) qui sopra. `parseTSV(tsv, { headerRows: 2 })` segna le due righe d’intestazione; se la tabella si dividesse, entrambe si ripeterebbero su ogni parte. I pesi di `columnWidths` sommano 180, la larghezza della gabbia del testo in millimetri, quindi ogni peso è la larghezza della sua colonna sulla pagina. `mergeCells` lascia al suo posto ogni cella coperta e la segna `hiddenBy`, così nessuna colonna si sposta. `setAlignment` lavora cella per cella e azzera l’allineamento verticale quando lo ometti, quindi la maggior parte delle chiamate passa di nuovo `'middle'`. Il grigio si alterna da un parametro all’altro, il che tiene entrambe le righe di Accuracy sullo stesso fondo; alternare per riga, come fa il `bodyAlternateBackground` dello stile della tabella, lascerebbe bianca la seconda.
+
+### 2 · Ogni modello diventa una risorsa
+
+<Excerpt region="resources" />
+
+Ogni tabella e ogni disegno è una risorsa con una didascalia, e le tabelle aggiungono una nota e uno stile con nome. Didascalie e note accettano corsivo, pedici e apici: la tabella elettrica indica le sue condizioni di prova con `*V*~DD~` nella didascalia e numera le sue note con `^1^` nella nota. Un elemento flottante prende il primo spazio libero dopo il suo primo `:ref`. La Table 1 è citata a pagina 1 e collocata in testa a una pagina su tutta la larghezza, quindi apre la pagina 2. Il disegno del package è collocato al piede di una pagina su tutta la larghezza, e le altre tabelle mantengono la collocazione predefinita, un elemento flottante largo una colonna. Una tabella collocata `here` resta nel testo; quando non sta nel resto della sua colonna, anch’essa si divide tra le righe.
+
+### 3 · Lascia che una tabella lunga si divida da sola
+
+<Excerpt region="split" />
+
+La tabella dei pin e la mappa dei registri escono entrambe da `groupedTable`. Una riga con solo la prima cella compilata viene unita su tutta la tabella e colorata di viola come titolo di gruppo. Una cella TSV non può contenere un a capo, quindi i dati scrivono `\n` e la funzione lo trasforma in un a capo; una riga che si apre con `•` viene poi composta come voce di elenco. I codici brevi vanno nello stile di chip `code`, che non ha riempimento, bordo né padding laterale e li compone in Fira Mono a 0,9 em. Quando una tabella flottante non sta nella colonna vuota che le viene offerta, il motore la taglia tra le righe e compone il resto nel successivo spazio libero, sotto l’intestazione ripetuta, con `(continued)` dopo la didascalia. La riga `continuesMarker`, «Continued on the next page», va sotto la prima parte, e la nota aspetta l’ultima ([tabelle più alte della pagina](/it/docs/configuration-resources#tabelle-più-alte-della-pagina)).
+
+### 4 · Uno stile della casa, una variante per tabella
+
+<Excerpt region="styles" />
+
+`tableStyle` contiene ciò che tutte le tabelle condividono. Ogni voce di `tableStyles` imposta solo ciò che le sue tabelle cambiano, e una risorsa ne sceglie una con `table.styleId`. La tabella elettrica sostituisce i filetti sottili grigi con filetti bianchi di 1,4 pt, che separano i suoi riempimenti e mostrano dove finisce ogni unione. La tabella dei codici d’ordine riceve una cornice esterna arrotondata e Fira Sans Condensed, così le sue quattro colonne stanno in una colonna di testo.
+
+### 5 · Etichette che restano testo nel PDF
+
+<Excerpt region="drawing" />
+
+Le etichette della piedinatura, del circuito e del disegno del package sono elementi `<text>` che chiedono Fira Mono, il carattere delle etichette del documento. Un SVG arriva al canvas come immagine, quindi il `loadSvg` del kit passa prima il markup attraverso `inlineSvgFonts`, che incorpora nell’SVG i caratteri nominati dal suo testo; il canvas disegna poi le etichette in Fira Mono. Il PDF compone ogni `<text>` come testo selezionabile nei caratteri che incorpora.
+
+### 6 · Apertura, testatina e piè di pagina
+
+<Excerpt region="furniture" />
+
+Il codice del componente è il titolo di primo livello, e il suo spazio grafico disegna l’apertura: un riquadro viola fino all’abbondanza, il logo, e un occhiello, un paragrafo d’apertura e tre cifre chiave letti dagli attributi del titolo. Gli elementi immagine funzionano negli spazi delle testatine come nelle aperture, quindi il piè di pagina comincia con uno che nomina la risorsa del logo. Gli elementi della testatina portano `pages: 'body'`, quindi nessuno di essi si stampa sulla prima pagina.
+
+## Varianti
+
+### Separa ogni riga con un filetto grigio
+
+Filetti di mezzo punto nel colore grigio `rule` della tavolozza separano ogni riga, colorata o no; quelli bianchi spariscono dove si incontrano due righe senza riempimento.
+
+```diff
+-    { id: 'electrical', borderColor: col('paper'), borderWidth: pt(1.4), cellPadding: mm(1.1) },
++    { id: 'electrical', borderColor: col('rule'), borderWidth: pt(0.5), cellPadding: mm(1.1) },
+```
+
+### Componi le didascalie delle tabelle su una barra
+
+Lo stile della didascalia del tipo tabella può dipingere una barra dietro la didascalia, qui in nero con l’etichetta nel giallo di pericolo.
+
+```diff
+-    ...(type.id === 'table' && { captionStyle: { position: 'above' } }) })),
++    ...(type.id === 'table' && { captionStyle: { position: 'above', backgroundEnabled: true,
++      background: col('ink'), color: col('paper'), labelColor: col('hazard') } }) })),
+```
+
+## Errori frequenti
+
+- La prima parte di una tabella divisa lascia al testo il piede della sua colonna quando sotto ci stanno tre righe o più, e lo fa sempre in una colonna che contiene già un elemento flottante. Fai cominciare una tabella lunga dove la sua colonna non contiene altri elementi flottanti, come fa la mappa dei registri, e adatta le sue righe perché la prima parte arrivi al piede della colonna.
+- Gli elementi di testo dei disegni sono centrati per impostazione predefinita. Il paragrafo d’apertura ha una larghezza fissa, quindi ha bisogno di `align: 'left'` per allinearsi sotto il codice del componente.
+- Nella pagina di chiusura di un capitolo, Postext sposta gli elementi flottanti a tutta larghezza collocati sotto il testo fino a una riga di testo sotto di esso, quindi lì una figura `bottom` sta sotto l’ultima riga di testo invece che al piede della pagina. La pagina 4 è scritta per riempire le sue colonne, e il disegno del package è alto 48,3 mm perché il testo sopra di esso finisca su una riga della griglia. Il disegno non ha allora spazio per salire e finisce alla stessa altezza del piede delle altre pagine. `layout.hugClosingFloats: false` disattiva lo spostamento.

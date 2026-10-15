@@ -1,0 +1,68 @@
+---
+title: "Edizione di lettere: date topiche e firme"
+summary: "Lettere che si susseguono senza salti di pagina: la data topica viene dagli attributi del titolo, stili di paragrafo compongono saluto, firma e poscritto."
+plain: "Un piccolo libro di tre lettere tra il re di Prussia e Voltaire. Mostra come comporre la data, il saluto e la firma di ogni lettera, con le lettere che si susseguono senza pagine nuove."
+description: "Tre lettere di Federico II e Voltaire in Postext, un’edizione di 14 × 21 cm con date topiche prese dagli attributi del titolo e firme allineate a destra."
+question: "Come compongo saluto, firma allineata a destra e poscritto di ogni lettera in un epistolario?"
+aliases: ["lettere", "corrispondenza", "epistolario", "data topica", "firma", "saluto", "poscritto", "intestazione della lettera", "vedette", "letters"]
+pageNotes: { "2": "La nota introduttiva in corsivo, poi la lettera I: «LETTRE I» in maiuscoletto rosso, «Frédéric à Voltaire» in corsivo Fell, la data topica «À Charlottembourg, le 6 juin 1740» allineata a destra, il saluto «Mon cher ami,» e, al piede della lettera, la firma «FÉDÉRIC» allineata a destra.", "3": "La lettera II apre la pagina sotto la testatina «12 juin 1740», con i diciotto versi di Federico rientrati dal margine.", "4": "La lettera II finisce con «FÉDÉRIC» e un poscritto di un corpo più piccolo; più in basso si apre la lettera III con la sua data topica «À Paris, le 1er avril 1778» e il saluto «Sire,».", "5": "La lettera di Voltaire finisce con «VOLTAIRE» allineato a destra, poi il colophon; la testatina dice «1er avril 1778»." }
+---
+
+## Che cosa comporrai
+
+Cinque pagine di *Mon sort est changé*, un’edizione di 14 × 21 cm di tre lettere in francese: le due che Federico II scrisse a Voltaire sei e dodici giorni dopo essere diventato re di Prussia, nel giugno 1740, e la lettera di Voltaire del 1º aprile 1778, due mesi prima della sua morte. In copertina, una fotografia di due lettere piegate e di un sigillo di ceralacca rossa, generata con modelli di diffusione, poggia su un marocchino verde disegnato in codice dentro un doppio filetto dorato. All’interno, le lettere si susseguono senza interruzioni di pagina. Ogni intestazione dà il numero in maiuscoletto rosso e i due corrispondenti in corsivo Fell, con luogo e data allineati a destra sotto di loro. Il saluto ha una riga propria, e la firma, in maiuscoletto, chiude la lettera al margine destro; il poscritto di Federico segue la sua firma un corpo più piccolo. La testatina di ogni recto dà la data della lettera.
+
+## Preparazione
+
+### 1 · Leggi la data topica dal titolo
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Ogni lettera è un titolo di livello 1 i cui attributi contengono luogo e data, e l’intestazione li stampa come `{attr.place}, le {attr.date}.` ([attributi del titolo](/it/docs/document-format#attributi-dei-titoli)). Il riquadro della data topica arriva al bordo destro della colonna (`width: 'fill'`), e `align: 'right'` allinea le parole a quel bordo; senza di esso, il testo dei titoli grafici è centrato. Il saluto, la firma e il poscritto sono [stili di paragrafo](/it/docs/configuration-styles#stili-di-paragrafo) applicati con `:::paragraphs{style="…"}`. La firma usa IM Fell DW Pica SC, una famiglia le cui minuscole sono disegnate come maiuscoletto. `inlineMarks: true` fa leggere alla data topica i segni nel suo attributo, così `date="1^er^ avril 1778"` porta in esponente l’ordinale.
+
+### 2 · Fai susseguire le lettere
+
+<Excerpt region="letters" />
+
+Con `breakBefore` disattivato, una lettera comincia due linee di griglia (`marginTop`) sotto la linea di griglia dove finisce la precedente. A <PageRef page={4}>pagina 4</PageRef> il poscritto, composto su un’interlinea di 12,6 pt, finisce tra due linee di griglia, così sopra la lettera III restano circa tre righe di bianco. A pagina 2, la lettera I arriva al piede della pagina e la lettera II apre la pagina 3. Lasciato al suo valore predefinito, il livello 1 aprirebbe ogni lettera su un recto ([interruzione prima](/it/docs/configuration-text#interruzione-prima-del-titolo)). `numberingTemplate: '{1:I}'` numera le lettere da I a III, e l’intestazione stampa il numero romano tramite `{number}`.
+
+### 3 · Data il recto con la lettera
+
+<Excerpt region="running-heads" />
+
+In un’intestazione di pagina, `{attr.date}` prende l’attributo dell’ultimo titolo di livello 1 che comincia su quella pagina o prima. La pagina 3 stampa «12 juin 1740», e la pagina 5, dove continua la lettera di Voltaire cominciata a pagina 4, stampa «1er avril 1778» con l’ordinale in esponente ([elementi di testo](/it/docs/configuration-page-layout#elementi-di-testo)). Le testatine stanno 12 mm sotto il bordo superiore della pagina, il folio sul margine esterno e le parole 8 mm più all’interno. `pages: 'body'` le tiene fuori dalla copertina, che conta come apertura perché il suo titolo occupa tutta la pagina. La data è composta nel corsivo Crimson Pro della data topica che ripete, e i nomi sul verso nel maiuscoletto dei numeri delle lettere.
+
+### 4 · Fai della copertina un titolo
+
+<Excerpt region="cover" />
+
+La copertina è il primo titolo, nello [stile di titolo](/it/docs/configuration-styles#stili-dei-titoli) `cover`: un elemento immagine ancorato all’abbondanza porta la legatura disegnata, un secondo colloca la fotografia 72 mm più in basso, e il titolo, i nomi e il sottotitolo vengono dal titolo e dal frontmatter. `numbered: false` la esclude dal conteggio, così la prima lettera di Federico è la I. L’immagine della legatura riempie la pagina, e un’apertura riserva spazio fino al suo elemento più basso, quindi la copertina occupa tutta la pagina 1 e la nota introduttiva comincia a pagina 2 senza `:::pagebreak`.
+
+### 5 · Sillaba il francese e tieni aperti gli spazi
+
+<Excerpt region="text" />
+
+`locale: 'fr'` sillaba con i pattern francesi (*ou-vrage* a pagina 2, *représen-tation* a pagina 4). La giustificazione, la divisione in righe sull’intero paragrafo e le regole su vedove, orfane e righe finali troppo corte sono attive per impostazione predefinita. `minWordSpacing: 0.75` impedisce a uno spazio tra parole di restringersi sotto i tre quarti di quello di Crimson Pro; con il valore predefinito 0.6, la riga giustificata più stretta di pagina 5 avrebbe gli spazi a 0,70 di quella larghezza. Con un’interlinea di 14,4 pt la pagina contiene 33 righe, e il margine inferiore è ciò che resta sotto di esse, 20,4 mm.
+
+### 6 · Collega ogni colore alla palette
+
+<Excerpt region="palette" />
+
+`col()` collega ogni colore alla sua voce di palette, e il collegamento vale allo stesso modo negli stili del testo e negli elementi grafici: le intestazioni delle lettere, le testatine e la copertina. Il corsivo della nota introduttiva e del colophon prende il colore predefinito del corsivo, collegato a `main-color`; con quella voce impostata sull’inchiostro, si stampa in nero e non nel blu del motore, #295AA3.
+
+## Varianti
+
+### Nomina il luogo nella testatina
+
+Gli stessi attributi possono dare al recto l’intera data topica, *À Charlottembourg, le 12 juin 1740*.
+
+```diff
+-  head('recto-date', '{attr.date}', 'odd', at('page', 'top-right', -(MARGIN.outer + 8), HEAD_Y),
++  head('recto-date', '{attr.place}, le {attr.date}', 'odd',
++    at('page', 'top-right', -(MARGIN.outer + 8), HEAD_Y),
+```
+
+## Errori frequenti
+
+- Il recto prende la data dell’ultima lettera che *comincia* su quella pagina o prima. Una pagina che chiude una lettera e apre la successiva porta la data della lettera nuova, come la testatina di un dizionario nomina l’ultima voce della pagina.
+- Un titolo senza l’attributo stampa una stringa vuota, senza avvisi: una lettera senza `place="…"` riceve una data topica che comincia con una virgola. Controlla il titolo di ogni lettera.
+- Le lettere conservano i ; : ? e ! senza spazio della trascrizione. L’uso francese mette prima di essi uno spazio stretto indivisibile (U+202F); digitato lì, tiene ogni segno sulla riga della sua parola.
+- Crimson Pro non ha le lettere modificatrici ᵉ (U+1D49) né ʳ (U+02B3), quindi 1ᵉʳ scritto in Unicode si stamperebbe in un font di riserva. Scrivi invece `1^er^`: la nota introduttiva, che è testo corrente, lo compone in esponente, e così fanno la data topica e la testatina del recto, i cui elementi di testo hanno `inlineMarks: true`.
