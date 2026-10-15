@@ -115,7 +115,7 @@ for (const doc of buildBundle(book))
               <span className="flex flex-col">
                 <span className="text-sm font-semibold">{t("download")}</span>
                 <span dir="ltr" className="font-mono text-xs text-slate">
-                  {GUIDE_BUNDLE_FILE} · {stats.kb} KB
+                  {GUIDE_BUNDLE_FILE} · {stats.kb} {pageLocale.startsWith("fr") ? "Ko" : "KB"}
                 </span>
               </span>
             </a>
