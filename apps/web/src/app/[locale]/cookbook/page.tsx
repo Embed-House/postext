@@ -9,7 +9,6 @@ import { CookbookResults, ResultsSkeleton } from "@/components/cookbook/gallery/
 import { ContentsStrip } from "@/components/cookbook/gallery/ContentsStrip";
 import { getGalleryData } from "@/components/cookbook/gallery/data";
 import { EditorsPicks } from "@/components/cookbook/gallery/EditorsPicks";
-import { plateLabels } from "@/components/cookbook/gallery/labels";
 import { askRecipeUrl } from "@/components/cookbook/gallery/links";
 import type { Locale } from "@/lib/cookbook/types";
 import { buildMetadata, localizedUrl, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -38,7 +37,6 @@ export default async function CookbookPage({ params }: { params: Promise<{ local
   const t = await getTranslations("Cookbook");
   const data = getGalleryData(locale);
   const { catalog } = data;
-  const labels = plateLabels(t, catalog.facets);
   const published = catalog.recipes.filter((r) => !r.draft);
 
   const url = localizedUrl(locale, "/cookbook");
@@ -106,8 +104,8 @@ export default async function CookbookPage({ params }: { params: Promise<{ local
               <CookbookFilters locale={locale} chapters={data.chapters} />
             </Suspense>
             <div id="cb-book" className="cb-book">
-              <EditorsPicks data={data} labels={labels} locale={locale} />
-              <ChapterShelves data={data} labels={labels} />
+              <EditorsPicks data={data} locale={locale} />
+              <ChapterShelves data={data} />
             </div>
             <Suspense fallback={<ResultsSkeleton />}>
               <CookbookResults locale={locale} parts={parts} />

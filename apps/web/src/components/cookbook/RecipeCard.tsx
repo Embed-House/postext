@@ -151,7 +151,9 @@ export function RecipeCard({
             <PlaceholderStage />
           )}
         </div>
-        <CropMarks offset={4} length={10} className="cb-plate-marks" />
+        {/* Gilt crop marks, drawn by the stylesheet: eight spans per plate
+            weighed ~140 KB on the gallery page. */}
+        <span aria-hidden="true" className="cb-plate-marks" />
         {recipe.draft && <span className="cb-draft">{labels.draft}</span>}
       </div>
 
