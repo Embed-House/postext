@@ -14,7 +14,7 @@
 //
 // Every word a figure, table, caption or alternative text prints is given
 // once per edition of the guide (English, Spanish, Simplified Chinese,
-// Catalan, Arabic, Japanese, Brazilian Portuguese and French; see `lang.ts`). The Arabic edition's figures read from
+// Catalan, Arabic, Japanese, Brazilian Portuguese, French and German; see `lang.ts`). The Arabic edition's figures read from
 // the right: those whose layout follows the reading order are drawn as
 // their mirror image, their labels set right to left (see `drawn`).
 
@@ -100,6 +100,7 @@ const PIPELINE = byLang(
   { parse: '解析', measure: '計測', layout: '組版', config: '設定', loop: ['最大5回'], aria: 'Postextの処理の流れ' },
   { parse: 'Análise', measure: 'Medição', layout: 'Diagramação', config: 'Configuração', loop: ['até', '5 passadas'], aria: 'pipeline do Postext' },
   { parse: 'Analyse', measure: 'Mesure', layout: 'Mise en page', config: 'Configuration', loop: ['jusqu’à', '5 passes'], aria: 'chaîne de traitement de Postext' },
+  { parse: 'Parsen', measure: 'Messen', layout: 'Setzen', config: 'Konfiguration', loop: ['höchstens', '5 Läufe'], aria: 'Verarbeitungskette von Postext' },
 );
 
 /** The Postext pipeline: Markdown and configuration → parse → measure →
@@ -147,6 +148,7 @@ const CONVERGENCE = byLang(
   { place: '配置', check: '検査', adjust: '調整', done: '収束', ok: '問題なし', conflict: '衝突', iters: '最大5回', aria: '組版の収束ループ', itersWidth: 72 },
   { place: 'Posicionar', check: 'Verificar', adjust: 'Ajustar', done: 'Convergiu', ok: 'atende', conflict: 'conflito', iters: 'até 5 iterações', aria: 'laço de convergência da diagramação', itersWidth: 104 },
   { place: 'Placer', check: 'Vérifier', adjust: 'Ajuster', done: 'Convergé', ok: 'satisfait', conflict: 'conflit', iters: 'au plus 5 itérations', aria: 'boucle de convergence de la mise en page', itersWidth: 112 },
+  { place: 'Platzieren', check: 'Prüfen', adjust: 'Anpassen', done: 'Konvergiert', ok: 'erfüllt', conflict: 'Konflikt', iters: 'höchstens 5 Durchläufe', aria: 'Konvergenzschleife des Layouts', itersWidth: 124 },
 );
 
 /** The convergence loop: place → check → (conflict ⇒ adjust ⇒ back) until the
@@ -180,6 +182,7 @@ const SPEED = byLang(
   { withDom: 'DOMを使う', withoutDom: 'DOMを使わない', faster: '高速', time: '時間', aria: 'DOMを使う計測と使わない計測の速度比較' },
   { withDom: 'Com DOM', withoutDom: 'Sem DOM', faster: 'mais rápido', time: 'tempo', aria: 'comparação de velocidade entre a medição com DOM e sem DOM' },
   { withDom: 'Avec DOM', withoutDom: 'Sans DOM', faster: 'plus rapide', time: 'temps', aria: 'comparaison de vitesse entre la mesure avec DOM et sans DOM' },
+  { withDom: 'Mit DOM', withoutDom: 'Ohne DOM', faster: 'schneller', time: 'Zeit', aria: 'Geschwindigkeitsvergleich zwischen der Messung mit DOM und ohne DOM' },
 );
 
 /** A two-bar chart contrasting DOM-based measurement with DOM-free measurement,
@@ -210,9 +213,10 @@ function measurementSpeedSvg(lang: GuideLang): string {
 /** The two labels of the orphan-and-widow figure: the one under the foot of
  *  the left column and the one over the head of the right. The Latin
  *  editions follow the engine's names (`avoidWidows` at a column's foot,
- *  `avoidOrphans` at the next one's head); the Chinese and Japanese editions
- *  name them by place, as their text does (段首孤行, オーファン at the foot:
- *  a paragraph's first line; 段末孤行, ウィドウ at the head: its last). */
+ *  `avoidOrphans` at the next one's head); the Chinese, Japanese and German
+ *  editions name them by place, as their text does (段首孤行, オーファン,
+ *  Waise at the foot: a paragraph's first line; 段末孤行, ウィドウ, Witwe at
+ *  the head: its last). */
 const ORPHAN_WIDOW = byLang(
   { foot: 'Widow', head: 'Orphan', aria: 'widow and orphan lines across columns' },
   { foot: 'Viuda', head: 'Huérfana', aria: 'líneas viuda y huérfana entre columnas' },
@@ -222,16 +226,17 @@ const ORPHAN_WIDOW = byLang(
   { foot: 'オーファン', head: 'ウィドウ', aria: '段の切れ目の両側にできるオーファンとウィドウ' },
   { foot: 'Viúva', head: 'Órfã', aria: 'linhas viúva e órfã entre colunas' },
   { foot: 'Veuve', head: 'Orpheline', aria: 'lignes veuve et orpheline de part et d’autre des colonnes' },
+  { foot: 'Waise', head: 'Witwe', aria: 'Waise und Witwe zu beiden Seiten eines Spaltenumbruchs' },
 );
 
 /** Two columns of text lines illustrating a widow (lone last line at the foot of
  *  a column) and an orphan (lone first line at the head of the next). In
- *  the Chinese and Japanese editions the stranded lines are drawn the way
+ *  the Chinese, Japanese and German editions the stranded lines are drawn the way
  *  their names read them: a full first line at the foot, a short last line
  *  at the head. */
 function orphanWidowSvg(lang: GuideLang): string {
   const { foot: widow, head: orphan, aria: ariaLabel } = ORPHAN_WIDOW[lang];
-  const byPlace = lang === 'zh-Hans' || lang === 'ja';
+  const byPlace = lang === 'zh-Hans' || lang === 'ja' || lang === 'de';
   // Full body lines fill the left column; its paragraph's last line strands
   // alone at the foot. The continuation paragraph opens the right column with
   // a lone first line before the next paragraph begins.
@@ -285,6 +290,10 @@ const KNUTH_PLASS = byLang(
     box: 'Boîte', glue: 'Ressort', penalty: 'Pénalité', measure: 'longueur de la ligne · r = 0,42 · médiocrité 7',
     aria: 'primitives de Knuth-Plass : boîtes, ressorts et pénalités',
   },
+  {
+    box: 'Box', glue: 'Leim', penalty: 'Strafpunkt', measure: 'Satzbreite · r = 0,42 · Schlechtigkeit 7',
+    aria: 'Grundelemente von Knuth-Plass: Boxen, Leim und Strafpunkte',
+  },
 );
 /** The words of the example line. The hyphenated line is a Western one, so
  *  the Chinese and Arabic editions show the English line (Arabic is never
@@ -297,6 +306,7 @@ const KP_WORDS = byLang(
   ['Every', 'paragraph', 'is', 'balan', 'ced'],
   ['Every', 'paragraph', 'is', 'balan', 'ced'],  ['Cada', 'parágrafo', 'é', 'equili', 'brado'],
   ['Chaque', 'paragraphe', 'est', 'équili', 'bré'],
+  ['Jeder', 'Absatz', 'ist', 'ausge', 'wogen'],
 );
 
 /** The Knuth-Plass primitives on a real line: word boxes, glue springs
@@ -349,6 +359,7 @@ const BASELINE = byLang(
   { label: 'ベースライングリッド', aria: '行をベースライングリッドにそろえる', pillW: 128 },
   { label: 'Grade de linhas de base', aria: 'alinhamento à grade de linhas de base', pillW: 160 },
   { label: 'Grille de ligne de base', aria: 'alignement sur la grille de ligne de base', pillW: 156 },
+  { label: 'Grundlinienraster', aria: 'Ausrichtung am Grundlinienraster', pillW: 120 },
 );
 
 /** Two columns whose text lines snap to a shared horizontal baseline grid, with
@@ -495,6 +506,21 @@ function featureTableModel(lang: GuideLang): TableModel {
       ],
     );
   }
+  if (lang === 'de') {
+    const yes = '**Ja**';
+    return table(
+      ['Fähigkeit', 'CSS', 'Postext'],
+      [
+        ['Spalten, nach ihrem Inhalt ausgeglichen', 'Teilweise', yes],
+        ['Waisen, Witwen und zu kurze Ausgangszeilen', 'Uneinheitlich', yes],
+        ['Optimaler Absatzumbruch (Knuth-Plass)', 'Nein', yes],
+        ['Abbildungen, die nach ihrem Verweis gleiten', 'Nein', yes],
+        ['Grundlinienraster über die Spalten hinweg', 'Nein', yes],
+        ['Kolumnentitel, Seitenzahlen und ein paginiertes Inhaltsverzeichnis', 'Nein', yes],
+        ['Getaggtes PDF aus derselben Quelle', 'Nein', yes],
+      ],
+    );
+  }
   if (lang === 'fr') {
     const yes = '**Oui**';
     return table(
@@ -613,6 +639,22 @@ function toolsTableModel(lang: GuideLang): TableModel {
       ],
     );
   }
+  if (lang === 'de') {
+    const full = '**Voll**';
+    const yes = '**Ja**';
+    const basic = 'Einfach';
+    const partial = 'Teilweise';
+    return table(
+      ['Werkzeug', 'Satzkontrolle', 'Im Web', 'Einbettbar', 'Open Source'],
+      [
+        ['Textverarbeitungen', basic, partial, 'Nein', 'Nein'],
+        ['Adobe InDesign', full, 'Nein', 'Nein', 'Nein'],
+        ['LaTeX', full, 'Nein', 'Nein', yes],
+        ['Paginiertes CSS', partial, yes, partial, yes],
+        ['Postext', full, yes, yes, yes],
+      ],
+    );
+  }
   if (lang === 'fr') {
     const full = '**Complet**';
     const yes = '**Oui**';
@@ -726,6 +768,19 @@ function placementTableModel(lang: GuideLang): TableModel {
         ['align', 'left · center · right', '在这个宽度内的位置'],
         ['rotate', 'ccw · cw', '转90度，单独占一页'],
         ['captionSide', 'true · false', '题注排在边栏'],
+      ],
+    );
+  }
+  if (lang === 'de') {
+    return table(
+      ['Feld', 'Werte', 'Wirkung'],
+      [
+        ['position', 'auto · top · bottom · here', 'Erste freie Stelle, Kopf oder Fuß einer Spalte oder genau an der Stelle'],
+        ['span', 'column · page · side', 'Eine Spalte, die ganze Seite oder die Nebenspalte'],
+        ['width', '0–1', 'Anteil an der verfügbaren Breite'],
+        ['align', 'left · center · right', 'Position innerhalb dieser Breite'],
+        ['rotate', 'ccw · cw', 'Eine Vierteldrehung, auf einer eigenen Seite'],
+        ['captionSide', 'ja · nein', 'Legende in der Nebenspalte'],
       ],
     );
   }
@@ -883,6 +938,35 @@ function documentFormatTableModel(lang: GuideLang): TableModel {
         [':chip', '随行排进小框里的词'],
         [':ltr · :rtl', '从左到右或从右到左排的一段文字'],
         ['# 标题 {style="…"}', '标题样式，以及供版面设计取用的属性'],
+      ],
+    );
+  }
+  if (lang === 'de') {
+    return table(
+      ['Syntax', 'Was sie bewirkt'],
+      [
+        [':::pagebreak', 'Eine neue Seite; parity="odd" oder "even" verlangt eine rechte oder eine linke Seite'],
+        [':::columnbreak', 'Beendet die aktuelle Spalte'],
+        [':::space', 'Eine Leerzeile; lines=2 lässt zwei frei'],
+        [':::numbering', 'Wechselt die Folge der Seitenzahlen: Format und Beginn'],
+        [':::toc', 'Druckt das Inhaltsverzeichnis mit echten Seitenzahlen'],
+        [':::part', 'Öffnet einen Teiltitel mit Titel, Nummer und Palette'],
+        [':::callout', 'Ein Kasten in einem der Kastenformate: Anmerkung, Zitat, Kennzahlen …'],
+        [':::columns', 'Ausgeglichene Spalten in einem Kasten'],
+        [':::paragraphs', 'Wendet ein Absatzformat auf das an, was es umschließt'],
+        [':::paper', 'Seiten auf einem anderen Papier, gezeigt vom Betrachter Folio'],
+        [':ref', 'Erwähnt eine Ressource, nummeriert sie und lässt sie gleiten'],
+        ['::resource', 'Bettet eine Ressource genau an dieser Stelle ein'],
+        [':swatch', 'Ein Farbfeld in der Zeile'],
+        ['[^id]', 'Ein Fußnotenzeichen; [^id]: eröffnet ihren Text'],
+        [':index', 'Nimmt einen Begriff in das Register auf'],
+        [':::index', 'Druckt das Register mit echten Seitenzahlen'],
+        [':::verse', 'Ein klassisches Gedicht, seine Vershälften durch || getrennt'],
+        [':::page · ::panel', 'Eine Comicseite, durch split in Panels geteilt; jedes ::panel trägt ein Bild und sein Skript'],
+        ['Sprecher{…}: Text', 'Eine Sprechblase des Comicskripts; caption:, sfx: und note: sind die reservierten Schlüssel'],
+        [':chip', 'Ein Wort in einem kleinen Kasten, der mit der Zeile läuft'],
+        [':ltr · :rtl', 'Ein Abschnitt, von links nach rechts oder von rechts nach links gesetzt'],
+        ['# Überschrift {style="…"}', 'Ein Überschriftenstil und Attribute für die Designs'],
       ],
     );
   }
@@ -1080,6 +1164,22 @@ function paperStocksTableModel(lang: GuideLang): TableModel {
       ],
     );
   }
+  if (lang === 'de') {
+    return table(
+      ['Papier', 'Grammatur', 'Dicke', 'Oberfläche', 'Typische Verwendung'],
+      [
+        ['Ungestrichenes Offsetpapier', '90 g/m²', '113 µm', 'Ungestrichen', 'Bücher und Berichte'],
+        ['Werkdruck, chamois, voluminös', '80 g/m²', '128 µm', 'Ungestrichen', 'Romane und Essays'],
+        ['Matt gestrichen', '115 g/m²', '115 µm', 'Matt', 'Lehrbücher, Kunstbücher'],
+        ['Seidenmatt gestrichen', '115 g/m²', '104 µm', 'Seidenmatt', 'Kataloge und Magazine'],
+        ['Glänzend gestrichen', '115 g/m²', '92 µm', 'Glänzend', 'Magazine und Bildtafeln'],
+        ['Dünndruckpapier', '40 g/m²', '44 µm', 'Ungestrichen', 'Wörterbücher und Klassiker'],
+        ['Zeitungspapier', '48 g/m²', '72 µm', 'Ungestrichen', 'Zeitungen'],
+        ['Karton', '250 g/m²', '300 µm', 'Ungestrichen', 'Umschläge und Trennblätter'],
+        ['Pappe', '1250 g/m²', '2000 µm', 'Seidenmatt', 'Pappbilderbücher für Kinder'],
+      ],
+    );
+  }
   if (lang === 'fr') {
     return table(
       ['Papier', 'Grammage', 'Épaisseur', 'Finition', 'Usage courant'],
@@ -1196,6 +1296,18 @@ function presetTableModel(lang: GuideLang): TableModel {
       ],
     );
   }
+  if (lang === 'de') {
+    return table(
+      ['Format', 'Typische Verwendung'],
+      [
+        ['11 × 17 cm', 'Ratgeber im Taschenformat'],
+        ['12 × 19 cm', 'Romane als Taschenbuch'],
+        ['17 × 24 cm', 'Lehrbücher und Handbücher'],
+        ['21 × 28 cm', 'Magazine, Großformate und dieser Leitfaden'],
+        ['Eigenes Format', 'Jedes Format, in cm, mm, Zoll oder Punkt'],
+      ],
+    );
+  }
   if (lang === 'fr') {
     return table(
       ['Format', 'Usage courant'],
@@ -1293,6 +1405,18 @@ function phasesTableModel(lang: GuideLang): TableModel {
       ],
     );
   }
+  if (lang === 'de') {
+    const open = 'Offen';
+    return table(
+      ['Phase', 'Ausgeliefert', 'Noch offen'],
+      [
+        ['1 · Grundlagen', 'Datenmodell, Parser, Messung ohne DOM, Dokumentformat', open + ': das Konfigurationsformat festschreiben'],
+        ['2 · Verlegerisches Layout', 'Spalten, Spaltenausgleich, Gleitobjekte, Tabellen, die sich teilen oder drehen, Bücher und Teile', open + ': Text, der Hindernisse umfließt'],
+        ['3 · Professionelle Typografie', 'Knuth-Plass, Silbentrennung in 8 Sprachen, Waisen, Witwen und zu kurze Ausgangszeilen, Mathematik, Fußnoten und Kapitelendnoten, Chinesisch horizontal und vertikal gesetzt', open + ': Marginalien'],
+        ['4 · Ausgabe', 'Canvas, HTML, getaggtes PDF, EPUB 3, Worker, Sandbox mit Vorlagen', '**Ausgeliefert**'],
+      ],
+    );
+  }
   if (lang === 'fr') {
     const open = 'Ouvert';
     return table(
@@ -1380,7 +1504,7 @@ const FIGURE_SPECS: FigureSpec[] = [
     id: DEFAULT_RESOURCE_IDS.cover,
     fileId: 'default-guide-cover',
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('Cover art of the guide.', 'Arte de cubierta de la guía.', '本指南的封面图。', 'Art de coberta de la guia.', 'صورة غلاف الدليل.', 'ガイドの表紙画。', 'Arte da capa do guia.', 'Illustration de couverture du guide.'),
+    caption: byLang('Cover art of the guide.', 'Arte de cubierta de la guía.', '本指南的封面图。', 'Art de coberta de la guia.', 'صورة غلاف الدليل.', 'ガイドの表紙画。', 'Arte da capa do guia.', 'Illustration de couverture du guide.', 'Umschlagillustration des Leitfadens.'),
     altText: byLang(
       'An open spread drawn the way the engine sees it: justified lines of word boxes, a chapter band, a floated figure and one line opened into boxes, glue and a penalty.',
       'Un pliego abierto dibujado como lo ve el motor: líneas justificadas de cajas de palabra, una banda de capítulo, una figura flotante y una línea abierta en cajas, gomas y una penalización.',
@@ -1390,6 +1514,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'エンジンの目で描いた縦組みの一ページ：上下二段に並ぶ縦の行、右端を走る章扉の帯、フロートした図、そしてボックスとグルーとペナルティに分けた一行。',
       'Uma página dupla aberta desenhada como o motor a vê: linhas justificadas de caixas de palavra, uma faixa de capítulo, uma figura flutuante e uma linha aberta em caixas, colas e uma penalidade.',
       'Une double page ouverte dessinée comme le moteur la voit : des lignes justifiées de boîtes de mots, un bandeau de chapitre, une figure flottante et une ligne ouverte en boîtes, ressorts et une pénalité.',
+      'Eine aufgeschlagene Doppelseite, so gezeichnet, wie die Engine sie sieht: Zeilen im Blocksatz aus Wortboxen, ein Kapitelband, eine gleitende Abbildung und eine Zeile, aufgelöst in Boxen, Leim und einen Strafpunkt.',
     ),
   },
   {
@@ -1405,6 +1530,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '処理の流れ：Markdownと設定を解析し、計測し、組版して（組版は最大5回まで繰り返す）、三つのレンダラーが共通に描くVDTを得る。',
       'O pipeline: o Markdown e a configuração são analisados, medidos e diagramados, num laço de no máximo cinco passadas, até chegar ao VDT que os três renderizadores desenham.',
       'La chaîne de traitement : le Markdown et une configuration sont analysés, mesurés et mis en page, dans une boucle d’au plus cinq passes, jusqu’au VDT que dessinent les trois moteurs de rendu.',
+      'Die Pipeline: Markdown und eine Konfiguration werden geparst, gemessen und gesetzt, in einer Schleife von höchstens fünf Durchläufen, bis zum VDT, den alle drei Renderer zeichnen.',
     ),
     altText: byLang(
       'Markdown and Configuration flow into Parse, Measure and Layout, which loops on itself, then into the VDT and out to Canvas, HTML and PDF.',
@@ -1415,6 +1541,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'Markdownと設定が解析、計測、組版へと進み、組版は自分自身に戻る。そのあとVDTを経て、Canvas、HTML、PDFに出力される。',
       'Markdown e Configuração entram em Análise, Medição e Diagramação, que volta sobre si mesma; depois vêm o VDT e as saídas Canvas, HTML e PDF.',
       'Markdown et Configuration passent par Analyse, Mesure et Mise en page, qui reboucle sur elle-même, puis vers le VDT et en sortie vers Canvas, HTML et PDF.',
+      'Markdown und Konfiguration durchlaufen Parsen, Messen und Setzen, das in sich zurückläuft, dann den VDT und gehen als Canvas, HTML und PDF hinaus.',
     ),
   },
   {
@@ -1430,6 +1557,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'DOMのリフローではなく、Canvasのフォントメトリクスと計算で計測すると、300〜600倍速い。',
       'Medir com as métricas do canvas e aritmética, em vez de refluxos do DOM, é de 300 a 600 vezes mais rápido.',
       'Mesurer avec les métriques du canvas et de simples calculs, plutôt qu’en provoquant des reflows du DOM, va de 300 à 600 fois plus vite.',
+      'Mit den Metriken des Canvas und Arithmetik zu messen statt mit Reflows des DOM ist 300- bis 600-mal schneller.',
     ),
     altText: byLang(
       'A tall bar for DOM-based measurement beside a tiny bar for DOM-free measurement, annotated 300–600× faster.',
@@ -1440,6 +1568,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'DOMを使う計測の高い棒と、DOMを使わない計測のごく低い棒。「300–600×　高速」と注記がある。',
       'Uma barra alta para a medição com DOM ao lado de uma barra minúscula para a medição sem DOM, com a anotação 300–600× mais rápido.',
       'Une barre haute pour la mesure avec DOM à côté d’une barre minuscule pour la mesure sans DOM, annotée 300–600× plus rapide.',
+      'Ein hoher Balken für die Messung mit DOM neben einem winzigen Balken für die Messung ohne DOM, beschriftet mit 300–600× schneller.',
     ),
   },
   {
@@ -1455,6 +1584,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '収束ループ：配置し、検査し、衝突した箇所を調整して配置し直す。何も動かなくなるまで繰り返し、最大5回、たいていは1〜2回で済む。',
       'O laço de convergência: posicionar, verificar, ajustar o que entra em conflito e posicionar de novo até que nada se mova; no máximo cinco iterações, quase sempre uma ou duas.',
       'La boucle de convergence : placer, vérifier, ajuster ce qui entre en conflit et placer de nouveau, jusqu’à ce que plus rien ne bouge ; cinq itérations au plus, le plus souvent une ou deux.',
+      'Die Konvergenzschleife: platzieren, prüfen, anpassen, was kollidiert, und erneut platzieren, bis sich nichts mehr bewegt – höchstens fünf Durchläufe, meist einer oder zwei.',
     ),
     altText: byLang(
       'A flow from Place to Check to Converged, with a conflict branch through Adjust looping back to Place, capped at five iterations.',
@@ -1465,6 +1595,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '配置から検査、収束へと進む流れ。衝突があると調整を経て配置に戻る。繰り返しは最大5回。',
       'Um fluxo de Posicionar a Verificar e a Convergiu, com um ramo de conflito por Ajustar que volta a Posicionar, limitado a cinco iterações.',
       'Un flux de Placer à Vérifier puis à Convergé, avec une branche de conflit qui passe par Ajuster et revient à Placer, limitée à cinq itérations.',
+      'Ein Ablauf von Platzieren über Prüfen zu Konvergiert, mit einem Konfliktzweig, der über Anpassen zu Platzieren zurückführt, begrenzt auf fünf Durchläufe.',
     ),
   },
   {
@@ -1480,6 +1611,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'Knuth–Plass法は欧文の一行をボックス、グルー、ペナルティの列として見る。旗の付いたペナルティはハイフネーションの位置で、比rはグルーがどれだけ伸びたかを表す。',
       'O Knuth-Plass vê uma linha como caixas, colas e penalidades; a penalidade marcada é um ponto de hifenização, e a razão r mede quanto as colas se esticam.',
       'Knuth-Plass voit une ligne comme des boîtes, des ressorts et des pénalités ; la pénalité marquée d’un drapeau est un point de césure, et le rapport r mesure de combien les ressorts s’étirent.',
+      'Knuth-Plass sieht eine Zeile als Boxen, Leim und Strafpunkte; der Strafpunkt mit dem Fähnchen ist eine Trennstelle, und das Verhältnis r misst, wie weit sich der Leim dehnt.',
     ),
     altText: byLang(
       'The words Every paragraph is balan- ced as boxes joined by springs, a hyphen penalty with a flag, and a legend.',
@@ -1490,6 +1622,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '英単語Every paragraph is balan- cedをばねでつないだボックスとして並べ、旗の付いたハイフンのペナルティと凡例を添えた図。',
       'As palavras Cada parágrafo é equili- brado como caixas unidas por molas, uma penalidade de hífen com bandeira e uma legenda.',
       'Les mots Chaque paragraphe est équili- bré sous forme de boîtes reliées par des ressorts, une pénalité de césure avec un drapeau, et une légende.',
+      'Die Wörter Jeder Absatz ist ausge- wogen als Boxen, verbunden durch Federn, ein Strafpunkt für den Trennstrich mit einem Fähnchen und eine Legende.',
     ),
   },
   {
@@ -1505,6 +1638,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '同じ一行を三通りに組む：約物をすべて全角で組むベタ組み、JLReqに従って隣り合う約物の間のアキを詰めた組み、そして縦組み（括弧は縦向きになり、句点は字面の右上に移る）。',
       'Uma mesma linha em chinês de três maneiras: cada sinal ocupando um quadratim inteiro; no estilo Kaiming da China continental, em que os parênteses, os sinais de título e o ponto final ocupam meio quadratim; e na vertical, com os parênteses e os sinais de título girados e o ponto no canto da sua casa.',
       'Une même ligne chinoise de trois façons : chaque signe sur un cadratin entier ; dans le style Kaiming de Chine continentale, où les parenthèses et le point final en fin de ligne prennent un demi-cadratin ; et composée verticalement, les parenthèses tournées et le point déplacé dans le coin de sa case.',
+      'Eine chinesische Zeile auf drei Arten: jedes Zeichen auf einem ganzen Quadrat; im Kaiming-Stil des Festlands, in dem Klammern und der Punkt am Zeilenende ein halbes Quadrat einnehmen; und vertikal gesetzt, die Klammern gedreht und der Punkt in die Ecke seines Feldes gerückt.',
     ),
     altText: byLang(
       'Two rows of the same Chinese sentence on a grid of em squares, the second shorter because its brackets take half a square, and the sentence again in two vertical columns.',
@@ -1515,6 +1649,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '全角の升目に組んだ同じ日本語の文が二行。二行目は約物どうしの間のアキを詰めた分だけ短い。右には同じ文を縦二行に組んだもの。',
       'Duas fileiras da mesma frase em chinês sobre uma grade de quadratins, a segunda mais curta porque os seus parênteses ocupam meio quadratim, e a frase de novo em duas colunas verticais.',
       'Deux rangées de la même phrase chinoise sur une grille de cadratins, la seconde plus courte parce que ses parenthèses prennent un demi-cadratin, et la phrase à nouveau en deux colonnes verticales.',
+      'Zwei Reihen desselben chinesischen Satzes auf einem Raster aus Quadraten, die zweite kürzer, weil ihre Klammern ein halbes Quadrat einnehmen, und der Satz noch einmal in zwei senkrechten Spalten.',
     ),
   },
   {
@@ -1530,6 +1665,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '段末に取り残されたオーファンと、次の段の頭に送られたウィドウ：段落が段をまたぐとき、分割の最適化はこの二つの欠陥に代価を課す。',
       'Uma viúva no pé de uma coluna e uma órfã no topo da seguinte: os dois defeitos que o otimizador de quebras avalia.',
       'Une veuve au pied d’une colonne et une orpheline en tête de la suivante : les deux défauts auxquels l’optimiseur de coupures attribue un coût.',
+      'Eine Waise am Fuß einer Spalte und eine Witwe am Kopf der nächsten: die beiden Fehler, die der Optimierer der Spaltenteilung mit Kosten belegt.',
     ),
     altText: byLang(
       'Two columns: the left ends with a lone short line, the right begins with a lone line.',
@@ -1540,6 +1676,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '二つの段。左の段は段落の最初の一行で終わり、右の段は前の段落の最後の一行だけで始まる。',
       'Duas colunas: a da esquerda termina com uma linha curta isolada, a da direita começa com uma linha isolada.',
       'Deux colonnes : celle de gauche se termine par une ligne courte isolée, celle de droite commence par une ligne isolée.',
+      'Zwei Spalten: Die linke endet mit der allein stehenden ersten Zeile eines Absatzes, die rechte beginnt mit der allein stehenden letzten Zeile des Absatzes davor.',
     ),
   },
   {
@@ -1555,6 +1692,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '段組の構成：1段組、2段組、そして主段に脇段を添えた構成。脇段には本文を流すことも、フロートだけを置くこともできる。',
       'As estruturas de colunas: uma coluna, duas, e coluna e meia, cuja coluna lateral leva texto ou só flutuantes.',
       'Les structures de colonnes : une colonne, deux, et une colonne et demie dont la colonne latérale porte du texte ou seulement des flottants.',
+      'Die Spaltenaufbauten: eine Spalte, zwei und anderthalb Spalten, deren Nebenspalte Text oder nur Gleitobjekte trägt.',
     ),
     altText: byLang(
       'Four page thumbnails: single column, two columns, a main column with a narrow text column, and a main column with figures and boxes in the side column.',
@@ -1565,6 +1703,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '四つのページの縮小図：1段組、2段組、主段と本文を流す細い脇段、主段と図や囲みを置く脇段。',
       'Quatro miniaturas de página: uma coluna, duas colunas, uma coluna principal com uma coluna estreita de texto, e uma coluna principal com figuras e boxes na coluna lateral.',
       'Quatre vignettes de page : une colonne, deux colonnes, une colonne principale avec une étroite colonne de texte, et une colonne principale avec des figures et des encadrés dans la colonne latérale.',
+      'Vier Seitenminiaturen: eine Spalte, zwei Spalten, eine Hauptspalte mit einer schmalen Textspalte und eine Hauptspalte mit Abbildungen und Kästen in der Nebenspalte.',
     ),
   },
   {
@@ -1580,6 +1719,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'ベースライングリッドはすべての行を共通のリズムに乗せ、段間をはさんで行どうしが向かい合う。',
       'A grade de linhas de base põe todas as linhas no mesmo ritmo, de modo que elas se correspondem de um lado e do outro da medianiz.',
       'La grille de ligne de base pose chaque ligne sur un rythme commun, si bien que les lignes se font face de part et d’autre de la gouttière.',
+      'Das Grundlinienraster setzt jede Zeile auf einen gemeinsamen Rhythmus, sodass die Zeilen einander über den Spaltenabstand hinweg gegenüberstehen.',
     ),
     altText: byLang(
       'Two columns of lines resting on a shared horizontal grid, with a dashed alignment guide.',
@@ -1590,6 +1730,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '共通の水平グリッドに乗った二段の行と、そろいを示す破線のガイド。',
       'Duas colunas de linhas apoiadas numa grade horizontal comum, com uma guia de alinhamento tracejada.',
       'Deux colonnes de lignes posées sur une grille horizontale commune, avec un repère d’alignement en pointillés.',
+      'Zwei Spalten von Zeilen auf einem gemeinsamen waagerechten Raster, mit einer gestrichelten Hilfslinie für die Ausrichtung.',
     ),
   },
   {
@@ -1605,6 +1746,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '短い段をそろえる：見出しの前にグリッド1行分、リストのあとに1行、そして1行ゆるく組んだ段落で、隣の段と段末がそろう。',
       'Balancear uma coluna curta: uma linha de grade acima de um título, uma linha depois de uma lista e um parágrafo composto uma linha mais solto a deixam no mesmo nível da vizinha.',
       'Équilibrer une colonne courte : une ligne de grille au-dessus d’un titre, une ligne après une liste et un paragraphe composé une ligne plus lâche la mettent au niveau de sa voisine.',
+      'Eine kurze Spalte ausgleichen: eine Rasterzeile über einer Überschrift, eine Zeile nach einer Liste und ein um eine Zeile lockerer gesetzter Absatz bringen sie auf die Höhe ihrer Nachbarin.',
     ),
     altText: byLang(
       'Two page sketches: before, the second column ends three lines short; after, the three levers are highlighted and both columns end level.',
@@ -1615,6 +1757,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '二つのページの略図。調整前は二段目が三行短く、調整後は三つの手段が強調され、両段の段末がそろっている。',
       'Dois esboços de página: antes, a segunda coluna termina três linhas mais curta; depois, os três recursos aparecem destacados e as duas colunas terminam no mesmo nível.',
       'Deux croquis de page : avant, la deuxième colonne finit trois lignes plus haut ; après, les trois leviers sont mis en évidence et les deux colonnes finissent au même niveau.',
+      'Zwei Seitenskizzen: Vorher endet die zweite Spalte drei Zeilen zu früh; nachher sind die drei Hebel hervorgehoben, und beide Spalten enden auf gleicher Höhe.',
     ),
   },
   {
@@ -1630,6 +1773,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'フロートの行き先：参照のあとの場所を順に試す——同じ段の段末、次の段の段頭、次ページの帯——そして最初に入る場所に決まる。',
       'Onde cai um flutuante: os espaços depois da sua referência são testados em ordem (o pé da mesma coluna, o topo da seguinte, uma faixa na página seguinte), e fica com o primeiro que tiver lugar.',
       'Où tombe un flottant : les emplacements qui suivent son renvoi sont essayés dans l’ordre (le pied de la même colonne, la tête de la suivante, un bandeau sur la page suivante), et le premier qui a de la place l’emporte.',
+      'Wo ein Gleitobjekt landet: Die Stellen nach seinem Verweis werden der Reihe nach geprüft – der Fuß derselben Spalte, der Kopf der nächsten, ein Streifen auf der nächsten Seite –, und die erste mit Platz gewinnt.',
     ),
     altText: byLang(
       'A page with a reference near the foot of column 1; slot 1 below it has no room, slot 2 at the head of column 2 is filled; slot 3 on the next page is not needed.',
@@ -1640,6 +1784,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '第1段の段末近くに参照のあるページ。その下の場所1には入らず、第2段の段頭の場所2に入る。次ページの場所3は使われない。',
       'Uma página com uma referência perto do pé da coluna 1; o espaço 1, abaixo dela, não tem lugar, e o espaço 2, no topo da coluna 2, é ocupado; o espaço 3, na página seguinte, não é necessário.',
       'Une page avec un renvoi près du pied de la colonne 1 ; l’emplacement 1, en dessous, n’a pas de place, et l’emplacement 2, en tête de la colonne 2, est occupé ; l’emplacement 3, sur la page suivante, n’est pas nécessaire.',
+      'Eine Seite mit einem Verweis nahe dem Fuß von Spalte 1; Stelle 1 darunter hat keinen Platz, Stelle 2 am Kopf von Spalte 2 wird belegt; Stelle 3 auf der nächsten Seite wird nicht gebraucht.',
     ),
   },
   {
@@ -1655,6 +1800,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'この本の構成：見出しスタイルで組んだ表紙、ページ番号を自動で入れる目次、部扉、章扉、柱とノンブルの付いた本文ページ。',
       'A anatomia deste livro: uma capa composta por um estilo de título, um sumário que se numera sozinho, uma página de parte, uma abertura de capítulo e páginas de miolo com cabeços.',
       'L’anatomie de ce livre : une couverture composée par un style de titre, une table des matières qui se numérote seule, une page de partie, une ouverture de chapitre et des pages courantes avec titres courants.',
+      'Der Aufbau dieses Buches: ein Umschlag, gesetzt von einem Überschriftenstil, ein Inhaltsverzeichnis, das sich selbst paginiert, ein Teiltitel, ein Kapitelauftakt und Textseiten mit Kolumnentiteln.',
     ),
     altText: byLang(
       'Six page thumbnails: a dark cover, a contents page with leaders, a gilt part page, a chapter opener with a band, and two body pages.',
@@ -1665,6 +1811,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '右から左へ並ぶ六つのページの縮小図：暗い表紙、リーダー付きの目次、金色の部扉、帯のある章扉、二つの本文ページ。',
       'Seis miniaturas de página: uma capa escura, um sumário com linhas pontilhadas, uma página de parte dourada, uma abertura de capítulo com faixa e duas páginas de miolo.',
       'Six vignettes de page : une couverture sombre, une table des matières avec points de conduite, une page de partie dorée, une ouverture de chapitre avec bandeau et deux pages courantes.',
+      'Sechs Seitenminiaturen: ein dunkler Umschlag, eine Inhaltsseite mit Führungspunkten, eine goldene Teiltitelseite, ein Kapitelauftakt mit Band und zwei Textseiten.',
     ),
   },
   {
@@ -1680,6 +1827,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       'Sandbox：七つのパネルを持つアクティビティバー、章の切り替えを備えたテキストエディター、CanvasからEPUB 3までの五つのタブを持つビューポート。',
       'O Sandbox: a barra de atividades com os seus sete painéis, o editor de texto com o seletor de capítulos e a área de visualização com as suas cinco abas, de Canvas a EPUB 3.',
       'Le Sandbox : la barre d’activité et ses sept panneaux, l’éditeur de texte et son sélecteur de chapitres, et la zone d’affichage et ses cinq onglets, de Canvas à EPUB 3.',
+      'Die Sandbox: die Aktivitätsleiste mit ihren sieben Bedienfeldern, der Texteditor mit der Kapitelauswahl und der Anzeigebereich mit seinen fünf Tabs, von Canvas bis EPUB 3.',
     ),
     altText: byLang(
       'Interface sketch: a column of seven icons, an editor panel with a chapter title, and a viewport showing a two-page spread.',
@@ -1690,6 +1838,7 @@ const FIGURE_SPECS: FigureSpec[] = [
       '画面の略図：七つのアイコンの列、章題を表示したエディターのパネル、見開きを表示したビューポート。',
       'Esboço da interface: uma coluna de sete ícones, um painel de editor com um título de capítulo e uma área de visualização que mostra uma página dupla.',
       'Croquis de l’interface : une colonne de sept icônes, un panneau d’éditeur avec un titre de chapitre et une zone d’affichage montrant une double page.',
+      'Skizze der Oberfläche: eine Spalte aus sieben Symbolen, ein Editorbereich mit einem Kapiteltitel und ein Anzeigebereich mit einer Doppelseite.',
     ),
   },
 ];
@@ -1708,6 +1857,7 @@ FIGURE_SPECS.push(
       'ベジェ曲線の花弁、極細の円環、一行の微小文字：PDFをどこまで拡大しても輪郭は鮮明なままである。',
       'Pétalas de Bézier, anéis de traço finíssimo e uma linha de microtexto: aproxime o PDF quanto quiser e todas as bordas continuam nítidas.',
       'Pétales de Bézier, anneaux en filet fin et une ligne de microtexte : zoomez autant que vous voulez dans le PDF, chaque contour reste net.',
+      'Bézier-Blütenblätter, Ringe aus Haarlinien und eine Zeile Mikroschrift: Vergrößern Sie das PDF, so weit Sie wollen, jede Kante bleibt scharf.',
     ),
     altText: byLang(
       'A rosette of eighteen overlapping blue and gilt petals inside thin rings, above five lines of tiny text.',
@@ -1718,6 +1868,7 @@ FIGURE_SPECS.push(
       '細い円環の中で重なり合う青と金の十八枚の花弁と、その下の五行のごく小さな文字。',
       'Uma roseta de dezoito pétalas azuis e douradas sobrepostas dentro de anéis finos, acima de cinco linhas de texto minúsculo.',
       'Une rosace de dix-huit pétales bleus et dorés qui se chevauchent dans des anneaux fins, au-dessus de cinq lignes de texte minuscule.',
+      'Eine Rosette aus achtzehn einander überlappenden blauen und goldenen Blütenblättern in dünnen Ringen, über fünf Zeilen winziger Schrift.',
     ),
   },
   {
@@ -1733,6 +1884,7 @@ FIGURE_SPECS.push(
       'パスと文字で描いたグラフ：PDFではラベルが本物のテキストで、選択も検索もできる。',
       'Um gráfico desenhado com caminhos e texto: no PDF os seus rótulos são texto de verdade, selecionável e pesquisável.',
       'Un graphique dessiné en tracés et en texte : dans le PDF, ses étiquettes sont du vrai texte, que l’on peut sélectionner et rechercher.',
+      'Ein Diagramm aus Pfaden und Text: Im PDF sind seine Beschriftungen echter Text, auswählbar und durchsuchbar.',
     ),
     altText: byLang(
       'An area chart with a solid blue line and a dashed gilt line over eight months, with axis labels and a legend.',
@@ -1743,6 +1895,7 @@ FIGURE_SPECS.push(
       '8か月にわたる青い実線と金色の破線の面グラフ。軸のラベルと凡例が付く。',
       'Um gráfico de área com uma linha azul contínua e uma linha dourada tracejada ao longo de oito meses, com rótulos nos eixos e uma legenda.',
       'Un graphique en aires avec une ligne bleue continue et une ligne dorée en pointillés sur huit mois, avec des étiquettes d’axes et une légende.',
+      'Ein Flächendiagramm mit einer durchgezogenen blauen und einer gestrichelten goldenen Linie über acht Monate, mit Achsenbeschriftungen und einer Legende.',
     ),
   },
   {
@@ -1758,6 +1911,7 @@ FIGURE_SPECS.push(
       'クリッピングパス、半透明の三つの円、五回再利用した一つの星：どれもPDFのネイティブな描画命令に変換される。',
       'Um traçado de recorte, três círculos translúcidos e uma estrela reutilizada cinco vezes: tudo é convertido em operações de desenho nativas do PDF.',
       'Un tracé de détourage, trois cercles translucides et une étoile réutilisée cinq fois : tout est converti en opérations de dessin natives du PDF.',
+      'Ein Beschneidungspfad, drei durchscheinende Kreise und ein fünfmal wiederverwendeter Stern: All das wird in native Zeichenoperationen des PDF umgewandelt.',
     ),
     altText: byLang(
       'Blue stripes clipped to a disc, three overlapping translucent circles in vermilion, blue and gilt, and five gilt stars.',
@@ -1768,6 +1922,7 @@ FIGURE_SPECS.push(
       '円盤の形に切り抜いた青い縞、朱・青・金の三つの半透明の円の重なり、五つの金色の星。',
       'Listras azuis recortadas num disco, três círculos translúcidos sobrepostos em vermelhão, azul e dourado, e cinco estrelas douradas.',
       'Des bandes bleues détourées dans un disque, trois cercles translucides superposés vermillon, bleu et or, et cinq étoiles dorées.',
+      'Blaue Streifen, auf eine Scheibe beschnitten, drei einander überlappende durchscheinende Kreise in Zinnoberrot, Blau und Gold und fünf goldene Sterne.',
     ),
   },
   {
@@ -1783,6 +1938,7 @@ FIGURE_SPECS.push(
       '一つの版面から二種類の電子書籍：固定レイアウトは印刷ページをそのまま残し、リフロー型はテキストを残して組み直しを読書システムに任せ、印刷ページの始まりごとに印を置く。',
       'Uma diagramação, dois livros digitais: o layout fixo conserva cada página impressa; o fluido conserva o texto e deixa que o sistema de leitura o componha de novo, com uma marca onde começa cada página impressa.',
       'Une mise en page, deux livres numériques : la mise en page fixe conserve chaque page imprimée, le livre recomposable garde le texte et laisse le système de lecture le composer à nouveau, avec un repère là où commence chaque page imprimée.',
+      'Ein Layout, zwei E-Books: Das feste Layout bewahrt jede gedruckte Seite, das umfließende Buch bewahrt den Text und lässt ihn vom Lesesystem neu setzen, mit einer Marke, wo jede gedruckte Seite beginnt.',
     ),
     altText: byLang(
       'A two-column page in the middle, with arrows to a tablet on one side showing the same spread and to a phone on the other showing one column of larger text, a figure and a page marker.',
@@ -1793,6 +1949,7 @@ FIGURE_SPECS.push(
       '中央に二段組のページ。矢印の一方は同じ見開きを表示するタブレットへ、もう一方は大きめの文字の一段、図、ページの印を表示するスマートフォンへ向かう。',
       'Uma página de duas colunas no meio, com setas para um tablet de um lado, que mostra a mesma página dupla, e para um celular do outro, que mostra uma coluna de texto maior, uma figura e uma marca de página.',
       'Une page à deux colonnes au centre, avec des flèches vers une tablette d’un côté, qui montre la même double page, et vers un téléphone de l’autre, qui montre une seule colonne de texte plus gros, une figure et un repère de page.',
+      'In der Mitte eine zweispaltige Seite, mit Pfeilen zu einem Tablet auf der einen Seite, das dieselbe Doppelseite zeigt, und zu einem Telefon auf der anderen, das eine Spalte in größerer Schrift, eine Abbildung und eine Seitenmarke zeigt.',
     ),
   },
 );
@@ -1802,31 +1959,31 @@ const TABLE_SPECS: TableSpec[] = [
     id: DEFAULT_RESOURCE_IDS.featureTable,
     model: featureTableModel,
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('What editorial layout needs, in plain CSS and in Postext.', 'Lo que necesita la maquetación editorial, en CSS y en Postext.', '出版排版需要的能力：纯CSS与Postext对比。', 'El que necessita la maquetació editorial, en CSS i en Postext.', 'ما يحتاجه التنضيد التحريري، في CSS وحده وفي Postext.', '組版に必要な機能：CSSだけの場合とPostextの比較。', 'O que a diagramação editorial exige, em CSS puro e no Postext.', 'Ce dont la mise en page éditoriale a besoin, en CSS seul et dans Postext.'),
+    caption: byLang('What editorial layout needs, in plain CSS and in Postext.', 'Lo que necesita la maquetación editorial, en CSS y en Postext.', '出版排版需要的能力：纯CSS与Postext对比。', 'El que necessita la maquetació editorial, en CSS i en Postext.', 'ما يحتاجه التنضيد التحريري، في CSS وحده وفي Postext.', '組版に必要な機能：CSSだけの場合とPostextの比較。', 'O que a diagramação editorial exige, em CSS puro e no Postext.', 'Ce dont la mise en page éditoriale a besoin, en CSS seul et dans Postext.', 'Was verlegerisches Layout braucht, in reinem CSS und in Postext.'),
   },
   {
     id: DEFAULT_RESOURCE_IDS.toolsTable,
     model: toolsTableModel,
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('How Postext compares with established editorial tools.', 'Cómo se sitúa Postext frente a las herramientas editoriales establecidas.', 'Postext与现有出版工具的比较。', 'Com se situa Postext davant de les eines editorials establertes.', 'موقع Postext من أدوات النشر الراسخة.', '既存の組版ツールとPostextの比較。', 'Como o Postext se compara com as ferramentas editoriais consagradas.', 'Postext face aux outils éditoriaux établis.'),
+    caption: byLang('How Postext compares with established editorial tools.', 'Cómo se sitúa Postext frente a las herramientas editoriales establecidas.', 'Postext与现有出版工具的比较。', 'Com se situa Postext davant de les eines editorials establertes.', 'موقع Postext من أدوات النشر الراسخة.', '既存の組版ツールとPostextの比較。', 'Como o Postext se compara com as ferramentas editoriais consagradas.', 'Postext face aux outils éditoriaux établis.', 'Postext im Vergleich mit etablierten verlegerischen Werkzeugen.'),
   },
   {
     id: DEFAULT_RESOURCE_IDS.placementTable,
     model: placementTableModel,
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('The placement fields of a resource.', 'Los campos de colocación de un recurso.', '资源的位置字段。', 'Els camps de col·locació d\'un recurs.', 'حقول موضع المورد.', 'リソースの配置フィールド。', 'Os campos de posicionamento de um recurso.', 'Les champs de placement d’une ressource.'),
+    caption: byLang('The placement fields of a resource.', 'Los campos de colocación de un recurso.', '资源的位置字段。', 'Els camps de col·locació d\'un recurs.', 'حقول موضع المورد.', 'リソースの配置フィールド。', 'Os campos de posicionamento de um recurso.', 'Les champs de placement d’une ressource.', 'Die Platzierungsfelder einer Ressource.'),
   },
   {
     id: DEFAULT_RESOURCE_IDS.documentFormatTable,
     model: documentFormatTableModel,
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('The extensions of the document format.', 'Las extensiones del formato del documento.', '文档格式的扩展语法。', 'Les extensions del format del document.', 'امتدادات صيغة المستند.', '文書形式の拡張記法。', 'As extensões do formato de documento.', 'Les extensions du format de document.'),
+    caption: byLang('The extensions of the document format.', 'Las extensiones del formato del documento.', '文档格式的扩展语法。', 'Les extensions del format del document.', 'امتدادات صيغة المستند.', '文書形式の拡張記法。', 'As extensões do formato de documento.', 'Les extensions du format de document.', 'Die Erweiterungen des Dokumentformats.'),
   },
   {
     id: DEFAULT_RESOURCE_IDS.presetTable,
     model: presetTableModel,
     placement: { position: 'auto', span: 'column' },
-    caption: byLang('Preset page sizes and their typical use.', 'Tamaños de página predefinidos y su uso habitual.', '预设开本及其常见用途。', 'Mides de pàgina predefinides i el seu ús habitual.', 'مقاسات الصفحة الجاهزة واستعمالاتها المعتادة.', '定義済みの判型と主な用途。', 'Formatos de página predefinidos e o seu uso habitual.', 'Formats de page prédéfinis et leur usage courant.'),
+    caption: byLang('Preset page sizes and their typical use.', 'Tamaños de página predefinidos y su uso habitual.', '预设开本及其常见用途。', 'Mides de pàgina predefinides i el seu ús habitual.', 'مقاسات الصفحة الجاهزة واستعمالاتها المعتادة.', '定義済みの判型と主な用途。', 'Formatos de página predefinidos e o seu uso habitual.', 'Formats de page prédéfinis et leur usage courant.', 'Vordefinierte Seitenformate und ihre typische Verwendung.'),
   },
   {
     id: DEFAULT_RESOURCE_IDS.paperStocksTable,
@@ -1841,13 +1998,14 @@ const TABLE_SPECS: TableSpec[] = [
       'Folioビューの用紙と、それぞれが決める値：坪量、一枚の厚さ、表面。',
       'Os papéis da visualização Folio e os valores que cada um define: gramatura, espessura de uma folha e acabamento.',
       'Les papiers de la vue Folio et les valeurs que chacun fixe : grammage, épaisseur d’une feuille et finition.',
+      'Die Papiersorten der Ansicht Folio und die Werte, die jede festlegt: Grammatur, Dicke eines Blattes und Oberfläche.',
     ),
   },
   {
     id: DEFAULT_RESOURCE_IDS.phasesTable,
     model: phasesTableModel,
     placement: { position: 'auto', span: 'page' },
-    caption: byLang('The four phases of the project: what has shipped and what is still open.', 'Las cuatro fases del proyecto: lo que ya está hecho y lo que sigue abierto.', '项目的四个阶段：已完成的和待完成的。', 'Les quatre fases del projecte: el que ja està fet i el que continua obert.', 'مراحل المشروع الأربع: ما أُنجز وما لا يزال مفتوحًا.', 'プロジェクトの四つの段階：完了したことと残っていること。', 'As quatro fases do projeto: o que já foi entregue e o que continua em aberto.', 'Les quatre phases du projet : ce qui est livré et ce qui reste ouvert.'),
+    caption: byLang('The four phases of the project: what has shipped and what is still open.', 'Las cuatro fases del proyecto: lo que ya está hecho y lo que sigue abierto.', '项目的四个阶段：已完成的和待完成的。', 'Les quatre fases del projecte: el que ja està fet i el que continua obert.', 'مراحل المشروع الأربع: ما أُنجز وما لا يزال مفتوحًا.', 'プロジェクトの四つの段階：完了したことと残っていること。', 'As quatro fases do projeto: o que já foi entregue e o que continua em aberto.', 'Les quatre phases du projet : ce qui est livré et ce qui reste ouvert.', 'Die vier Phasen des Projekts: was ausgeliefert ist und was noch offen ist.'),
   },
 ];
 

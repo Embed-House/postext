@@ -6,3 +6,4 @@ export { DEFAULT_MARKDOWN_AR } from './ar';
 export { DEFAULT_MARKDOWN_JA } from './ja';
 export { DEFAULT_MARKDOWN_PT_BR } from './pt-BR';
 export { DEFAULT_MARKDOWN_FR } from './fr';
+export { DEFAULT_MARKDOWN_DE } from './de';
